@@ -1,0 +1,62 @@
+{
+    "name": "radius-product-bundles",
+    "version": "1.0.0",
+    "license": "MIT",
+    "scripts": {
+        "build": "next build",
+        "dev": "next dev",
+        "migrate": "prisma migrate dev",
+        "postinstall": "prisma generate",
+        "graphql-codegen": "graphql-codegen --config codegen.ts",
+        "-----> Prisma <-----": "",
+        "prisma:push": "npx prisma db push",
+        "prisma:pull": "npx prisma db pull",
+        "prepare": "npx prisma generate",
+        "prisma:migrate": "npx prisma migrate dev --name",
+        "prisma:studio": "npx prisma studio"
+    },
+    "dependencies": {
+        "@apollo/client": "^3.13.9",
+        "@graphql-codegen/cli": "^5.0.7",
+        "@graphql-codegen/client-preset": "^4.8.3",
+        "@graphql-typed-document-node/core": "^3.2.0",
+        "@prisma/client": "^6.13.0",
+        "@shopify/api-codegen-preset": "^1.1.9",
+        "@shopify/app-bridge": "^3.7.10",
+        "@shopify/app-bridge-react": "^4.2.1",
+        "@shopify/polaris": "^13.9.5",
+        "@shopify/shopify-api": "^11.14.1",
+        "@tanstack/react-query": "^5.84.1",
+        "graphql-request": "^7.2.0",
+        "mongodb": "^6.18.0",
+        "mongoose": "^8.17.0",
+        "next": "15.4.5",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "tailwind-merge": "^3.3.1",
+        "zustand": "^5.0.7"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.1.11",
+        "@types/node": "^24.2.0",
+        "@types/react": "^19.1.9",
+        "@types/react-dom": "^19.1.7",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.32.0",
+        "eslint-config-next": "^15.4.5",
+        "eslint-config-prettier": "^10.1.8",
+        "postcss": "^8.5.6",
+        "prettier": "^3.6.2",
+        "prisma": "^6.13.0",
+        "tailwindcss": "^4.1.11",
+        "typescript": "^5.9.2"
+    },
+    "author": "ozzyonfire",
+    "keywords": [
+        "shopify",
+        "nextjs",
+        "polaris",
+        "prisma",
+        "template"
+    ]
+}

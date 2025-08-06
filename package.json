@@ -1,0 +1,25 @@
+{
+    "name": "radius-product-bundles",
+    "version": "1.0.0",
+    "main": "web/dist/index.js",
+    "license": "MIT",
+    "scripts": {
+        "dev": "shopify app dev",
+        "info": "shopify app info",
+        "build": "shopify app build",
+        "generate": "shopify app generate",
+        "deploy": "shopify app deploy"
+    },
+    "author": "radiustheme",
+    "keywords": [
+        "shopify",
+        "nextjs",
+        "polaris",
+        "prisma",
+        "template"
+    ],
+    "dependencies": {
+        "prettier": "^3.6.2"
+    },
+    "private": true
+}
