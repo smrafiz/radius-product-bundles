@@ -5,9 +5,13 @@ export default function Navigation() {
     return (
         <NavMenu>
             <Link href={"/"} rel="home">
-                Home
+                Dashboard
             </Link>
-            <Link href={"/new"}>New page</Link>
+            <Link href={"/bundles"}>Bundles</Link>
+            <Link href={"/analytics"}>Analytics</Link>
+            <Link href={"/pricing"}>Pricing</Link>
+            <Link href={"/settings"}>Settings</Link>
+            <Link href={"/get-help"}>Get Help</Link>
         </NavMenu>
     );
 }

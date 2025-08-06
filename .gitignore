@@ -68,3 +68,4 @@ next-env.d.ts
 # TOML
 shopify.app.toml
 shopify.app.app-next-vercel.toml
+/web/lib/gql/graphql.ts

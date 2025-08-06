@@ -13,15 +13,8 @@ import {
     Toast,
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
-import {
-    createMultipleNotes,
-    getProductNotes,
-    ProductNoteInput,
-} from "@/actions/notes.action";
-import ProductNoteRepeater from "@/components/ProductNote";
 import { NoteAddIcon, ViewIcon, SearchIcon } from "@shopify/polaris-icons";
 import { useGraphQL } from "@/hooks/useGraphQL";
-import { WebhookListCard } from "@/components/WebhookListCard";
 import { getProductInfo } from "@/actions/product.action";
 
 interface Data {
@@ -59,9 +52,6 @@ export default function Home() {
 
     const handleOpenModal = () => setModalOpen(true);
     const handleCloseModal = () => setModalOpen(false);
-    const [noteRows, setNoteRows] = useState<ProductNoteInput[]>([
-        { productId: "", note: "" },
-    ]);
     const [toastActive, setToastActive] = useState(false);
     const [sessionToken, setSessionToken] = useState("");
     const [shopName, setShopName] = useState<string | null>(null);
@@ -95,48 +85,10 @@ export default function Home() {
             }
         }
 
-        const fetchNotes = async () => {
-            const token = await app.idToken();
-            const notes = await getProductNotes(token);
-
-            if (notes.length > 0) {
-                const rows = notes.map((note) => ({
-                    productId: note.productId,
-                    note: note.note,
-                }));
-                setNoteRows(rows);
-            }
-        };
-
         void fetchProducts();
-        void fetchNotes();
 
         app.idToken().then(setSessionToken);
     }, [app]);
-
-    const handleAddProductNote = async () => {
-        setLoadingNotes(true);
-        const token = await app.idToken();
-
-        const validNotes = noteRows.filter(
-            (row) => row.productId && row.note.trim(),
-        );
-        if (validNotes.length === 0) {
-            alert("Please fill out at least one valid product and note.");
-            setLoadingNotes(false);
-            return;
-        }
-
-        const result = await createMultipleNotes(token, validNotes);
-
-        setLoadingNotes(false);
-
-        if (result.status === "success") {
-            setToastActive(true);
-        } else {
-            console.error("Failed to save notes");
-        }
-    };
 
     const handleGQLQuery = async () => {
         setError(null);
@@ -172,25 +124,6 @@ export default function Home() {
     return (
         <Frame>
             <Page>
-                <Card
-                    sectioned
-                    title="Add custom note to Postgres"
-                    primaryFooterAction={{
-                        content: loadingNotes ? "Saving..." : "Save Notes",
-                        onAction: handleAddProductNote,
-                        disabled: loadingNotes,
-                        icon: NoteAddIcon,
-                    }}
-                >
-                    <ProductNoteRepeater
-                        products={products}
-                        value={noteRows}
-                        onChange={setNoteRows}
-                        sessionToken={sessionToken}
-                        productsLoading={loadingProducts}
-                    />
-                </Card>
-
                 <Card
                     sectioned
                     title="Get product details using server actions"
@@ -319,7 +252,6 @@ export default function Home() {
                         </Text>
                     )}
                 </Card>
-                <WebhookListCard />
 
                 {/* toast notification */}
                 {toastActive && (
