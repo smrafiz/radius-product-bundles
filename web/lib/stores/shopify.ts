@@ -22,7 +22,7 @@ export const useShopifyStore = create<ShopifyStore>()(
         }),
         {
             name: "sd-shopify-product-notes",
-            storage: createJSONStorage(() => sessionStorage)
-        }
-    )
+            storage: createJSONStorage(() => sessionStorage),
+        },
+    ),
 );

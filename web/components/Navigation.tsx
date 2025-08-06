@@ -7,9 +7,7 @@ export default function Navigation() {
             <Link href={"/"} rel="home">
                 Home
             </Link>
-            <Link href={"/new"}>
-                New page
-            </Link>
+            <Link href={"/new"}>New page</Link>
         </NavMenu>
     );
 }

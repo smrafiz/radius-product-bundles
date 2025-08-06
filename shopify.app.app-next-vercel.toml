@@ -1,31 +1,31 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+# Avoid writing to toml directly. Use your .env file instead
 
-client_id = "5030b0d85db9f9e35cb92eb98a25122f"
-name = "app-next-template-vercel"
-application_url = "https://shopify-next-app-six.vercel.app/"
+name = "Product Bundles 47"
+handle = "product-bundles47"
+client_id = "90639cf08512143558f29fdc47f10d98"
+application_url = "https://example.com"
 embedded = true
+extension_directories = [ "../extension/extensions/**" ]
 
 [build]
-automatically_update_urls_on_dev = false
-dev_store_url = "matts-tech-test.myshopify.com"
 include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+dev_store_url = "bundles47.myshopify.com"
+
+[webhooks]
+api_version = "2025-07"
 
 [access.admin]
 direct_api_mode = "offline"
 embedded_app_direct_api_access = true
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "read_customers,read_orders,read_price_rules,read_products,read_themes,write_price_rules,write_products,write_script_tags"
+optional_scopes = [ ]
+use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [
-  "https://shopify-next-app-six.vercel.app/api/auth",
-  "https://shopify-next-app-six.vercel.app/api/auth/callback"
-]
-
-[webhooks]
-api_version = "2024-01"
+redirect_urls = [ "https://example.com/api/" ]
 
 [pos]
 embedded = false

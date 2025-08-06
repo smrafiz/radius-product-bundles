@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { loadSession } from "@/lib/db/session-storage";
 import shopify from "@/lib/shopify/initialize-context";
@@ -43,14 +43,16 @@ type GraphQLResponse = {
     };
 };
 
-export async function fetchRegisteredWebhooks(token: string): Promise<ServerActionResult> {
+export async function fetchRegisteredWebhooks(
+    token: string,
+): Promise<ServerActionResult> {
     try {
         const { session } = await handleSessionToken(token);
 
         if (!session) {
             return {
                 status: "error",
-                error: "Invalid session or token"
+                error: "Invalid session or token",
             } as const;
         }
 
@@ -77,13 +79,15 @@ export async function fetchRegisteredWebhooks(token: string): Promise<ServerActi
         }
         `;
 
-        const response = await client.query({ data: query }) as GraphQLResponse;
+        const response = (await client.query({
+            data: query,
+        })) as GraphQLResponse;
 
         // Check for GraphQL errors
         if (response.body.errors && response.body.errors.length > 0) {
             return {
                 status: "error",
-                error: response.body.errors[0].message
+                error: response.body.errors[0].message,
             } as const;
         }
 
@@ -91,20 +95,22 @@ export async function fetchRegisteredWebhooks(token: string): Promise<ServerActi
         if (response.body?.data?.webhookSubscriptions) {
             return {
                 status: "success",
-                data: response.body.data
+                data: response.body.data,
             } as const;
         } else {
             return {
                 status: "error",
-                error: "Invalid response structure from Shopify API"
+                error: "Invalid response structure from Shopify API",
             } as const;
         }
-
     } catch (error) {
         console.error("Error fetching webhooks:", error);
         return {
             status: "error",
-            error: error instanceof Error ? error.message : "Unknown error occurred"
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "Unknown error occurred",
         } as const;
     }
 }

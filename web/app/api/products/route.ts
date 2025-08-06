@@ -11,10 +11,13 @@ export type APIResponse<DataType> = {
 export async function GET(req: Request) {
     const session = await verifyRequest(req, true);
     if (!session) {
-        return NextResponse.json<APIResponse<null>>({
-            status: "error",
-            message: "Invalid session",
-        }, { status: 401 });
+        return NextResponse.json<APIResponse<null>>(
+            {
+                status: "error",
+                message: "Invalid session",
+            },
+            { status: 401 },
+        );
     }
 
     try {
@@ -24,9 +27,12 @@ export async function GET(req: Request) {
             data: products,
         });
     } catch (err: any) {
-        return NextResponse.json<APIResponse<null>>({
-            status: "error",
-            message: err.message ?? "Something went wrong",
-        }, { status: 500 });
+        return NextResponse.json<APIResponse<null>>(
+            {
+                status: "error",
+                message: err.message ?? "Something went wrong",
+            },
+            { status: 500 },
+        );
     }
 }

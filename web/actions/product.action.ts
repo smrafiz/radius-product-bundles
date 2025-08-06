@@ -27,7 +27,7 @@ const GET_PRODUCT_BY_ID = `
 
 export const getProductInfo = async (
     token: string,
-    productId: string
+    productId: string,
 ): Promise<
     | {
           status: "success";
@@ -37,7 +37,7 @@ export const getProductInfo = async (
               tags: string[];
           };
       }
-    | { status: "error", error?: string }
+    | { status: "error"; error?: string }
 > => {
     try {
         const { session } = await handleSessionToken(token);
@@ -49,7 +49,7 @@ export const getProductInfo = async (
                 variables: {
                     id: productId,
                 } as GetProductsQueryVariables,
-            }
+            },
         );
 
         if (errors || !data?.product) {

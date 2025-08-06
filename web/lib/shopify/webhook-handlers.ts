@@ -5,7 +5,6 @@ export async function handleProductUpdate(shop: string, rawBody: string) {
         if (!product.variants || product.variants.length === 0) {
             return;
         }
-
     } catch (error) {
         console.error("Error handling product update webhook:", error);
     }

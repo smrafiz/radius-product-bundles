@@ -12,7 +12,9 @@ export async function POST(req: Request) {
     // Re-add handlers if none are found (likely cold start on serverless)
     const handlers = shopify.webhooks.getHandlers(topic);
     if (!handlers || handlers.length === 0) {
-        console.warn(`⚠️ No handlers found for topic: ${topic}, re-adding handlers.`);
+        console.warn(
+            `⚠️ No handlers found for topic: ${topic}, re-adding handlers.`,
+        );
         addHandlers();
     }
 
@@ -24,7 +26,10 @@ export async function POST(req: Request) {
 
         return new Response(null, { status: statusCode });
     } catch (err) {
-        console.error(`❌ Webhook processing failed for ${topic} from ${shop}:`, err);
+        console.error(
+            `❌ Webhook processing failed for ${topic} from ${shop}:`,
+            err,
+        );
         return new Response("Webhook processing failed", { status: 500 });
     }
 }

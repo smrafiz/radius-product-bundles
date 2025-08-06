@@ -15,14 +15,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 <Navigation />
             </Suspense>
             <TanstackProvider>
-                <SessionProvider>
-                    {children}
-                </SessionProvider>
+                <SessionProvider>{children}</SessionProvider>
             </TanstackProvider>
         </AppProvider>
     );
 }
 
 export function ExitProvider({ children }: { children: React.ReactNode }) {
-    return <AppProvider i18n={translations}><SessionProvider>{children}</SessionProvider></AppProvider>;
+    return (
+        <AppProvider i18n={translations}>
+            <SessionProvider>{children}</SessionProvider>
+        </AppProvider>
+    );
 }

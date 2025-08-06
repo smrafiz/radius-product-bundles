@@ -8,7 +8,9 @@
         "info": "shopify app info",
         "build": "shopify app build",
         "generate": "shopify app generate",
-        "deploy": "shopify app deploy"
+        "deploy": "shopify app deploy",
+        "pretty": "prettier --write ./",
+        "update:config": "bun run web/_developer/tomlWriter.ts; npm run pretty; shopify app deploy;"
     },
     "author": "radiustheme",
     "keywords": [
@@ -19,6 +21,7 @@
         "template"
     ],
     "dependencies": {
+        "@iarna/toml": "^2.2.5",
         "prettier": "^3.6.2"
     },
     "private": true

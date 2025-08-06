@@ -59,7 +59,9 @@ export async function deleteProductNote(
     sessionIdToken: string,
 ) {
     try {
-        const { session: { shop }} = await handleSessionToken(sessionIdToken);
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionIdToken);
 
         await prisma.productNote.deleteMany({
             where: {

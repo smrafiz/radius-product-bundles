@@ -1,11 +1,11 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useState } from "react";
-import {
-    LegacyCard as Card,
-    Text,
-} from "@shopify/polaris";
+import { LegacyCard as Card, Text } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
-import { fetchRegisteredWebhooks, ServerActionResult } from "@/actions/webhooks.action";
+import {
+    fetchRegisteredWebhooks,
+    ServerActionResult,
+} from "@/actions/webhooks.action";
 
 export function WebhookListCard() {
     const app = useAppBridge();

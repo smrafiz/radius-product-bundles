@@ -1,15 +1,16 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+# Avoid writing to toml directly. Use your .env file instead
 
-client_id = "90639cf08512143558f29fdc47f10d98"
 name = "Product Bundles 47"
 handle = "product-bundles47"
-application_url = "https://ferrari-entered-timer-call.trycloudflare.com"
+client_id = "90639cf08512143558f29fdc47f10d98"
+application_url = "https://example.com"
 embedded = true
+extension_directories = [ "../extension/extensions/**" ]
 
 [build]
+include_config_on_deploy = true
 automatically_update_urls_on_dev = true
 dev_store_url = "bundles47.myshopify.com"
-include_config_on_deploy = true
 
 [webhooks]
 api_version = "2025-07"
@@ -19,12 +20,12 @@ direct_api_mode = "offline"
 embedded_app_direct_api_access = true
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,write_price_rules,write_script_tags,read_themes,write_themes,read_inventory,read_orders,read_customers,read_price_rules"
+scopes = "read_customers,read_orders,read_price_rules,read_products,read_themes,write_price_rules,write_products,write_script_tags"
+optional_scopes = [ ]
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = ["https://ferrari-entered-timer-call.trycloudflare.com/auth/callback", "https://ferrari-entered-timer-call.trycloudflare.com/auth/shopify/callback", "https://ferrari-entered-timer-call.trycloudflare.com/api/auth/callback"]
+redirect_urls = [ "https://example.com/api/" ]
 
 [pos]
 embedded = false

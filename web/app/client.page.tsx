@@ -229,7 +229,11 @@ export default function Home() {
                                 ? [{ label: "Loading products...", value: "" }]
                                 : products
                         }
-                        value={loadingProducts ? "Select a product" : selectedProduct}
+                        value={
+                            loadingProducts
+                                ? "Select a product"
+                                : selectedProduct
+                        }
                         onChange={setSelectedProduct}
                         disabled={loadingProducts}
                     />
