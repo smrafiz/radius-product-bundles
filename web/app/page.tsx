@@ -1,5 +1,5 @@
-import Home from "@/app/client.page";
+import BundleDashboard from "@/components/dashboard/BundleDashboard";
 
 export default function Page() {
-    return <Home />;
+    return <BundleDashboard />;
 }

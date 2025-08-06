@@ -7,11 +7,33 @@ export default function Navigation() {
             <Link href={"/"} rel="home">
                 Dashboard
             </Link>
-            <Link href={"/bundles"}>Bundles</Link>
-            <Link href={"/analytics"}>Analytics</Link>
-            <Link href={"/pricing"}>Pricing</Link>
-            <Link href={"/settings"}>Settings</Link>
-            <Link href={"/get-help"}>Get Help</Link>
+            <Link href={"/bundles"}>
+                Bundles
+            </Link>
+            <Link href={"/ab-testing"}>
+                A/B Testing
+            </Link>
+            <Link href={"/automation"}>
+                Automation
+            </Link>
+            <Link href={"/pricing-rules"}>
+                Pricing Rules
+            </Link>
+            <Link href={"/analytics"}>
+                Analytics
+            </Link>
+            <Link href={"/customers"}>
+                Customers
+            </Link>
+            <Link href={"/templates"}>
+                Templates
+            </Link>
+            <Link href={"/integrations"}>
+                Integrations
+            </Link>
+            <Link href={"/settings"}>
+                Settings
+            </Link>
         </NavMenu>
     );
 }
