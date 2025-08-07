@@ -78,21 +78,94 @@
 	}
 }
 
-.shimmer {
-	position: relative;
-	overflow: hidden;
-}
-.shimmer::after {
-	content: '';
-	position: absolute;
-	top: 0; left: -100%;
-	height: 100%; width: 100%;
-	background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
-	animation: shimmer 1.5s infinite;
+/* Quick Actions Wrapper - No Polaris class targeting */
+.radius-quick-actions-wrapper {
+	/* Main wrapper styling if needed */
 }
 
-@keyframes shimmer {
-	100% {
-		left: 100%;
+/* Quick Action Item Wrapper */
+.radius-quick-action-item {
+	height: 100%;
+}
+
+.radius-quick-action-item a {
+	text-decoration: none !important;
+	color: inherit !important;
+	display: block;
+	height: 100%;
+}
+
+/* Card hover effects within wrapper */
+.radius-quick-action-item .Polaris-Card {
+	transition: all 0.2s ease;
+	height: 100%;
+	cursor: pointer;
+}
+
+.radius-quick-action-item:hover .Polaris-Card {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transform: translateY(-1px);
+	border-color: #6366f1;
+}
+
+.radius-quick-action-item:focus-within .Polaris-Card {
+	outline: 2px solid #6366f1;
+	outline-offset: 2px;
+	border-radius: 8px;
+}
+
+/* Text color consistency within wrapper */
+.radius-quick-action-item .Polaris-Text {
+	color: inherit !important;
+}
+
+/* Link styling within wrapper */
+.radius-quick-action-item .Polaris-Link {
+	text-decoration: none !important;
+	color: inherit !important;
+}
+
+.radius-quick-action-item .Polaris-Link:hover {
+	text-decoration: none !important;
+	color: inherit !important;
+}
+
+/* Active/pressed state */
+.radius-quick-action-item:active .Polaris-Card {
+	transform: translateY(0px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure full height for better click area */
+.radius-quick-action-item,
+.radius-quick-action-item a,
+.radius-quick-action-item .Polaris-Card {
+	height: 100%;
+	min-height: 80px;
+}
+
+/* Icon wrapper consistency */
+.radius-quick-actions-wrapper [style*="width: 32px"] {
+	flex-shrink: 0;
+}
+
+.radius-quick-action-icon {
+	> span {
+		width: 25px;
+		height: 25px;
 	}
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+	.radius-quick-action-item .Polaris-Card {
+		min-height: 70px;
+	}
+}
+
+/* Remove any old conflicting styles */
+.radius-quick-actions-grid,
+.radius-quick-action-card,
+.radius-quick-action-primary {
+	display: none;
 }

@@ -16,6 +16,8 @@ import {
     formatCurrency,
     formatPercentage,
 } from "@/utils/formatters";
+import { ViewIcon } from "@shopify/polaris-icons";
+import React from "react";
 
 export const BundleList = () => {
     const { bundles, error } = useDashboardStore();
@@ -36,12 +38,18 @@ export const BundleList = () => {
         <Card>
             <Box padding="400">
                 <BlockStack gap="400">
-                    <InlineStack align="space-between">
-                        <Text as="h2" variant="headingMd">
-                            Top Performing Bundles
-                        </Text>
-                        <Button variant="plain" url="/bundles">
-                            View All Bundles
+                    <InlineStack blockAlign="center" align="space-between" gap="400" >
+                        <BlockStack gap="200">
+                            <Text as="h2" variant="headingMd">
+                                Top Performing Bundles
+                            </Text>
+                            <Text as="p" variant="bodyMd" tone="subdued">
+                                Check out the top performing bundles across your
+                                store.
+                            </Text>
+                        </BlockStack>
+                        <Button icon={ViewIcon} url="/bundles">
+                            View All
                         </Button>
                     </InlineStack>
 

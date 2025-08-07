@@ -1,46 +1,152 @@
+import React from "react";
 import {
     BlockStack,
     Box,
-    Button,
     Card,
+    Grid,
+    Icon,
     InlineStack,
+    Link,
     Text,
 } from "@shopify/polaris";
 import {
-    AutomationIcon,
     ChartVerticalIcon,
-    PlusIcon,
+    OrderIcon,
     SandboxIcon,
 } from "@shopify/polaris-icons";
 
+interface QuickActionItem {
+    title: string;
+    description: string;
+    icon: any;
+    url: string;
+    backgroundColor: string;
+    iconColor?: "success" | "critical" | "info";
+}
+
+const quickActions: QuickActionItem[] = [
+    {
+        title: "Manage Bundle",
+        description: "Create and edit bundle offers",
+        icon: OrderIcon,
+        url: "/bundles/create",
+        backgroundColor: "var(--p-color-bg-surface-success-hover)",
+        iconColor: "success",
+    },
+    {
+        title: "View Analytics",
+        description: "Track performance metrics",
+        icon: ChartVerticalIcon,
+        url: "/analytics",
+        backgroundColor: "var(--p-color-bg-surface-info-hover)",
+        iconColor: "info",
+    },
+    {
+        title: "Bundle Studio",
+        description: "Create just like the templates",
+        icon: SandboxIcon,
+        url: "/templates",
+        backgroundColor: "var(--p-color-bg-surface-critical-hover)",
+        iconColor: "critical",
+    },
+];
+
 export const QuickActions = () => {
     return (
-        <Card>
-            <Box padding="400">
-                <BlockStack gap="400">
-                    <Text as="h2" variant="headingMd">
-                        Quick Actions
-                    </Text>
-                    <InlineStack gap="300" wrap={false}>
-                        <Button
-                            variant="primary"
-                            icon={PlusIcon}
-                            url="/bundles/create"
-                        >
-                            Create Bundle
-                        </Button>
-                        <Button icon={SandboxIcon} url="/ab-testing">
-                            Run A/B Test
-                        </Button>
-                        <Button icon={AutomationIcon} url="/automation">
-                            Setup Automation
-                        </Button>
-                        <Button icon={ChartVerticalIcon} url="/analytics">
-                            View Analytics
-                        </Button>
-                    </InlineStack>
-                </BlockStack>
-            </Box>
-        </Card>
+        <div className="radius-quick-actions-wrapper">
+            <Card>
+                <Box padding="400">
+                    <BlockStack gap="400">
+                        <BlockStack gap="200">
+                            <Text as="h2" variant="headingMd">
+                                Quick Actions
+                            </Text>
+                            <Text as="p" variant="bodyMd" tone="subdued">
+                                Common tasks and shortcuts for managing your
+                                product bundles
+                            </Text>
+                        </BlockStack>
+
+                        <Grid>
+                            {quickActions.map((action, index) => (
+                                <Grid.Cell
+                                    key={index}
+                                    columnSpan={{
+                                        xs: 6,
+                                        sm: 4,
+                                        md: 4,
+                                        lg: 4,
+                                        xl: 4,
+                                    }}
+                                >
+                                    <div className="radius-quick-action-item">
+                                        <Link url={action.url} removeUnderline>
+                                            <div className="transition-all hover:-translate-y-[3px]">
+                                                <Card>
+                                                    <Box padding="300">
+                                                        <InlineStack
+                                                            gap="300"
+                                                            align="start"
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    width: "40px",
+                                                                    height: "40px",
+                                                                    borderRadius:
+                                                                        "6px",
+                                                                    backgroundColor:
+                                                                        action.backgroundColor,
+                                                                    display:
+                                                                        "flex",
+                                                                    alignItems:
+                                                                        "center",
+                                                                    justifyContent:
+                                                                        "center",
+                                                                }}
+                                                            >
+                                                                <div className="radius-quick-action-icon">
+                                                                    <Icon
+                                                                        source={
+                                                                            action.icon
+                                                                        }
+                                                                        tone={
+                                                                            action.iconColor
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <BlockStack gap="100">
+                                                                <Text
+                                                                    as="h3"
+                                                                    variant="bodyMd"
+                                                                    fontWeight="medium"
+                                                                >
+                                                                    {
+                                                                        action.title
+                                                                    }
+                                                                </Text>
+                                                                <Text
+                                                                    as="p"
+                                                                    variant="bodySm"
+                                                                    tone="subdued"
+                                                                >
+                                                                    {
+                                                                        action.description
+                                                                    }
+                                                                </Text>
+                                                            </BlockStack>
+                                                        </InlineStack>
+                                                    </Box>
+                                                </Card>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                </Grid.Cell>
+                            ))}
+                        </Grid>
+                    </BlockStack>
+                </Box>
+            </Card>
+        </div>
     );
 };

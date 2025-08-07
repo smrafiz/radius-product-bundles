@@ -15,7 +15,7 @@ export const config = {
     ],
 };
 
-export function middleware(request: NextRequest) {
+export function oldMiddleware(request: NextRequest) {
     const {
         nextUrl: { search },
     } = request;
