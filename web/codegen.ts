@@ -10,6 +10,7 @@ const config: CodegenConfig = {
         "./providers/**/*.{js,ts,jsx,tsx}",
         "./lib/**/*.{js,ts,jsx,tsx}",
         "!./lib/gql/**/*.{js,ts,jsx,tsx}",
+        "!./types/**/*.{js,ts,jsx,tsx}",
     ],
     generates: {
         "./lib/gql/": {

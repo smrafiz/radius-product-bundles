@@ -1,5 +1,5 @@
-import BundleDashboard from "@/components/dashboard/BundleDashboard";
+import { redirect } from 'next/navigation';
 
-export default function Page() {
-    return <BundleDashboard />;
+export default function RootPage() {
+    redirect('/dashboard');
 }

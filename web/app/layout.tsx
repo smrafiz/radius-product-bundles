@@ -1,9 +1,12 @@
-import Providers from "@/providers/providers";
-import { Metadata } from "next";
 import "./globals.css";
+import React from "react";
+import "@/styles/main.css";
+import { Metadata } from "next";
+import Providers from "@/providers/providers";
+import AppLayout from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-    title: "Next.js Shopify App",
+    title: "Radius Product Bundles App for Shopify",
     other: {
         "shopify-api-key": process.env.NEXT_PUBLIC_SHOPIFY_API_KEY || "",
         "shopify-app-origins": process.env.NEXT_PUBLIC_HOST || "",
@@ -22,7 +25,9 @@ export default async function RootLayout({
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" />
             </head>
             <body>
-                <Providers>{children}</Providers>
+                <Providers>
+                    <AppLayout>{children}</AppLayout>
+                </Providers>
             </body>
         </html>
     );

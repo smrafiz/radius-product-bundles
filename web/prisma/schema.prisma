@@ -1,5 +1,6 @@
 /**
  * This is the Prisma schema file.
+ * It contains the schema for the database.
  */
 
 generator client {
@@ -12,9 +13,7 @@ datasource db {
     directUrl = env("DIRECT_DATABASE_URL")
 }
 
-/**
- * Stores information about a session.
- */
+// Stores information about a session.
 model Session {
     id               String            @id @default(uuid())
     accessToken      String?
@@ -24,31 +23,26 @@ model Session {
     shop             String
     state            String
     apiKey           String
-    onlineAccessInfo OnlineAccessInfo?
     createdAt        DateTime          @default(now())
     updatedAt        DateTime          @updatedAt
+    onlineAccessInfo OnlineAccessInfo?
 }
 
-/**
- * Stores information about an online access token.
- */
+// Stores information about an online access token.
 model OnlineAccessInfo {
     id                  String          @id @default(uuid())
-    session             Session?        @relation(fields: [sessionId], references: [id])
     sessionId           String?         @unique
     expiresIn           Int
     associatedUserScope String
-    associatedUser      AssociatedUser?
     createdAt           DateTime        @default(now())
     updatedAt           DateTime        @updatedAt
+    associatedUser      AssociatedUser?
+    session             Session?        @relation(fields: [sessionId], references: [id])
 }
 
-/**
- * Stores information about an associated user.
- */
+// Stores information about an associated user.
 model AssociatedUser {
     id                 String            @id @default(uuid())
-    onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
     onlineAccessInfoId String?           @unique
     createdAt          DateTime          @default(now())
     updatedAt          DateTime          @updatedAt
@@ -60,11 +54,10 @@ model AssociatedUser {
     locale             String
     collaborator       Boolean
     emailVerified      Boolean
+    onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
 }
 
-/**
- * Stores a bundle of products for a given shop.
- */
+// Stores a bundle of products for a given shop.
 model Bundle {
     id          String       @id @default(cuid())
     shop        String
@@ -74,22 +67,21 @@ model Bundle {
     status      BundleStatus @default(DRAFT)
 
     // Shopify Integration
-    mainProductId  String? // Shopify product ID
-    bundleProducts BundleProduct[]
+    mainProductId String?
 
-    // Bundle-Specific Configuration
+    // Pricing Configuration
     discountType      DiscountType
     discountValue     Float
-    minOrderValue     Float? // Minimum order value to qualify
-    maxDiscountAmount Float? // Cap discount amount
+    minOrderValue     Float?
+    maxDiscountAmount Float?
 
-    // Marketing & SEO
-    images         String[] // Image URLs
+    // Marketing Assets
+    images         String[]
     marketingCopy  String?
     seoTitle       String?
     seoDescription String?
 
-    // Bundle Performance (Analytics)
+    // Performance Metrics
     views       Int   @default(0)
     conversions Int   @default(0)
     revenue     Float @default(0)
@@ -98,405 +90,315 @@ model Bundle {
     startDate DateTime?
     endDate   DateTime?
 
-    // AI Optimization
+    // AI Features
     aiOptimized Boolean @default(false)
-    aiScore     Float? // AI confidence score
-
-    // Relations
-    abTests      ABTest[]
-    automations  AutomationBundle[]
-    analytics    BundleAnalytics[]
-    pricingRules PricingRuleBundle[]
+    aiScore     Float?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    // Relations
+    bundleProducts BundleProduct[]
+    abTests        ABTest[]
+    automations    AutomationBundle[]
+    analytics      BundleAnalytics[]
+    pricingRules   PricingRuleBundle[]
 
     @@unique([shop, name])
     @@index([shop, status])
 }
 
-/**
- * Stores the products in a bundle.
- */
+// Stores the products in a bundle.
 model BundleProduct {
     id       String @id @default(cuid())
     bundleId String
-    bundle   Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
-    // Shopify References
-    productId String // Shopify product ID
-    variantId String? // Shopify variant ID (if specific variant)
+    // Shopify Integration
+    productId String
+    variantId String?
 
-    // Bundle Configuration
+    // Configuration
     quantity     Int     @default(1)
     displayOrder Int     @default(0)
-    isMain       Boolean @default(false) // Is this the main product?
-    isRequired   Boolean @default(true) // Required vs optional in bundle
+    isMain       Boolean @default(false)
+    isRequired   Boolean @default(true)
 
     createdAt DateTime @default(now())
+
+    // Relations
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
     @@unique([bundleId, productId, variantId])
     @@index([bundleId, displayOrder])
 }
 
-/**
- * Stores information about an A/B test.
- */
+// Stores information about an A/B test.
 model ABTest {
-    id         String     @id @default(cuid())
-    shop       String
-    name       String
-    hypothesis String?
-    type       TestType
-    status     TestStatus @default(DRAFT)
-
-    // Test Configuration
-    trafficSplit  Int @default(50) // Percentage for variant
-    duration      Int @default(14) // Days
-    minSampleSize Int @default(100)
-
-    // Test Subject
+    id              String       @id @default(cuid())
+    shop            String
+    name            String
+    hypothesis      String?
+    type            TestType
+    status          TestStatus   @default(DRAFT)
+    trafficSplit    Int          @default(50)
+    duration        Int          @default(14)
+    minSampleSize   Int          @default(100)
     controlBundleId String
-    controlBundle   Bundle @relation(fields: [controlBundleId], references: [id])
     variantConfig   Json
-
-    // Results
-    winner       String? // 'control' or 'variant'
-    significance Float? // Statistical significance %
-    improvement  Float? // Performance improvement %
-
-    // Relations
-    results TestResult[]
-
-    startedAt   DateTime?
-    completedAt DateTime?
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    winner          String?
+    significance    Float?
+    improvement     Float?
+    startedAt       DateTime?
+    completedAt     DateTime?
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
+    controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id])
+    results         TestResult[]
 
     @@index([shop, status])
 }
 
-/**
- * Stores the results of an A/B test.
- */
+// Stores the results of an A/B test.
 model TestResult {
-    id      String   @id @default(cuid())
-    testId  String
-    test    ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
-    variant String // 'control' or 'variant'
-    date    DateTime @default(now())
-
-    // Daily metrics
-    views       Int   @default(0)
-    conversions Int   @default(0)
-    revenue     Float @default(0)
-
-    recordedAt DateTime @default(now())
+    id          String   @id @default(cuid())
+    testId      String
+    variant     String
+    date        DateTime @default(now())
+    views       Int      @default(0)
+    conversions Int      @default(0)
+    revenue     Float    @default(0)
+    recordedAt  DateTime @default(now())
+    test        ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
     @@unique([testId, variant, date])
 }
 
-/**
- * Stores information about an automation.
- */
+// Stores information about an automation.
 model Automation {
-    id          String           @id @default(cuid())
-    shop        String
-    name        String
-    description String?
-    status      AutomationStatus @default(ACTIVE)
-
-    // Trigger & Logic
+    id            String             @id @default(cuid())
+    shop          String
+    name          String
+    description   String?
+    status        AutomationStatus   @default(ACTIVE)
     triggerType   TriggerType
-    triggerConfig Json // Flexible trigger settings
-    conditions    Json // Array of conditions
-    actions       Json // Array of actions
-
-    // Performance
-    triggerCount Int @default(0)
-    successCount Int @default(0)
-    errorCount   Int @default(0)
-
-    // Relations
-    bundles AutomationBundle[]
-    logs    AutomationLog[]
-
+    triggerConfig Json
+    conditions    Json
+    actions       Json
+    triggerCount  Int                @default(0)
+    successCount  Int                @default(0)
+    errorCount    Int                @default(0)
     lastTriggered DateTime?
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    createdAt     DateTime           @default(now())
+    updatedAt     DateTime           @updatedAt
+    bundles       AutomationBundle[]
+    logs          AutomationLog[]
 
     @@index([shop, status])
 }
 
-/**
- * Stores the bundles associated with an automation.
- */
+// Stores the bundles associated with an automation.
 model AutomationBundle {
     id           String     @id @default(cuid())
     automationId String
-    automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
     bundleId     String
+    automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
     bundle       Bundle     @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
     @@unique([automationId, bundleId])
 }
 
-/**
- * Stores the logs for an automation.
- */
+// Stores the logs for an automation.
 model AutomationLog {
     id           String     @id @default(cuid())
     automationId String
+    event        String
+    success      Boolean
+    data         Json?
+    error        String?
+    createdAt    DateTime   @default(now())
     automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
-
-    event   String // Event type
-    success Boolean
-    data    Json? // Event data
-    error   String? // Error message
-
-    createdAt DateTime @default(now())
 
     @@index([automationId, createdAt])
 }
 
-/**
- * Stores information about a pricing rule.
- */
+// Stores information about a pricing rule.
 model PricingRule {
-    id       String        @id @default(cuid())
-    shop     String
-    name     String
-    priority Int           @default(0) // Higher = executed first
-    status   PricingStatus @default(ACTIVE)
-
-    // Rule Logic
-    conditions        Json // Customer/order conditions
+    id                String              @id @default(cuid())
+    shop              String
+    name              String
+    priority          Int                 @default(0)
+    status            PricingStatus       @default(ACTIVE)
+    conditions        Json
     discountType      DiscountType
     discountValue     Float
     maxDiscountAmount Float?
-
-    // Performance Tracking
-    applicationsCount Int   @default(0)
-    revenueImpact     Float @default(0)
-
-    // Relations
-    bundles PricingRuleBundle[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    applicationsCount Int                 @default(0)
+    revenueImpact     Float               @default(0)
+    createdAt         DateTime            @default(now())
+    updatedAt         DateTime            @updatedAt
+    bundles           PricingRuleBundle[]
 
     @@index([shop, priority])
 }
 
-/**
- * Stores the bundles associated with a pricing rule.
- */
+// Stores the bundles associated with a pricing rule.
 model PricingRuleBundle {
     id            String      @id @default(cuid())
     pricingRuleId String
-    pricingRule   PricingRule @relation(fields: [pricingRuleId], references: [id], onDelete: Cascade)
     bundleId      String
     bundle        Bundle      @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    pricingRule   PricingRule @relation(fields: [pricingRuleId], references: [id], onDelete: Cascade)
 
     @@unique([pricingRuleId, bundleId])
 }
 
-/**
- * Stores analytics for bundles.
- */
+// Stores analytics for bundles.
 model BundleAnalytics {
     id       String @id @default(cuid())
     bundleId String
-    bundle   Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
-    // Time dimension
+    // Analytics
     date DateTime
-    hour Int? // For hourly analytics
+    hour Int?
 
-    // Bundle-Specific Metrics (Not available in Shopify)
-    bundleViews      Int   @default(0) // Bundle page views
-    bundleAddToCarts Int   @default(0) // Bundle added to cart
-    bundlePurchases  Int   @default(0) // Complete bundle purchases
-    bundleRevenue    Float @default(0) // Revenue from this bundle
+    // Performance
+    bundleViews      Int   @default(0)
+    bundleAddToCarts Int   @default(0)
+    bundlePurchases  Int   @default(0)
+    bundleRevenue    Float @default(0)
 
-    // Cross-sell Performance
-    crossSellViews     Int @default(0) // Related product views
-    crossSellPurchases Int @default(0) // Related products purchased
+    // Cross Sell
+    crossSellViews     Int @default(0)
+    crossSellPurchases Int @default(0)
 
-    // Customer Context (Shopify Customer IDs)
-    newCustomerPurchases       Int @default(0) // Purchases by new customers
-    returningCustomerPurchases Int @default(0) // Purchases by returning customers
+    // Conversion Rates
+    newCustomerPurchases       Int @default(0)
+    returningCustomerPurchases Int @default(0)
+
+    // Relations
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
     @@unique([bundleId, date, hour])
     @@index([bundleId, date])
 }
 
-/**
- * Stores analytics for bundles.
- */
+// Stores analytics for bundles.
 model AIInsight {
-    id       String        @id @default(cuid())
-    shop     String
-    type     AIInsightType
-    category String // pricing, products, timing, etc.
-
-    // Insight Content
+    id          String        @id @default(cuid())
+    shop        String
+    type        AIInsightType
+    category    String
     title       String
     description String
-    confidence  Float // 0-100 confidence score
-    impact      String // low, medium, high
-
-    // Implementation
-    actionable  Boolean @default(true)
-    actionType  String? // What action to take
-    actionData  Json? // Action parameters
-    implemented Boolean @default(false)
-
-    // Performance
-    views       Int    @default(0)
-    applied     Int    @default(0)
-    improvement Float? // Measured improvement %
-
-    // Relations
-    bundleId String?
-    testId   String?
-
-    createdAt DateTime  @default(now())
-    expiresAt DateTime? // When insight becomes stale
+    confidence  Float
+    impact      String
+    actionable  Boolean       @default(true)
+    actionType  String?
+    actionData  Json?
+    implemented Boolean       @default(false)
+    views       Int           @default(0)
+    applied     Int           @default(0)
+    improvement Float?
+    bundleId    String?
+    testId      String?
+    createdAt   DateTime      @default(now())
+    expiresAt   DateTime?
 
     @@index([shop, type, confidence])
 }
 
-/**
- * Stores information about a template.
- */
+// Stores information about a template.
 model Template {
-    id          String             @id @default(cuid())
-    name        String
-    description String
-    category    String // Fashion, Tech, Beauty, etc.
-    bundleType  BundleType
-    difficulty  TemplateDifficulty
-
-    // Template Configuration
-    bundleConfig    Json // Bundle setup template
-    pricingConfig   Json // Pricing strategy
-    marketingConfig Json? // Marketing copy templates
-
-    // Performance Data
-    downloads   Int    @default(0)
-    rating      Float?
-    reviewCount Int    @default(0)
-
-    // Creator
-    createdBy  String // Shop domain or "official"
-    isPublic   Boolean @default(false)
-    isOfficial Boolean @default(false)
-
-    // Relations
-    reviews TemplateReview[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id              String             @id @default(cuid())
+    name            String
+    description     String
+    category        String
+    bundleType      BundleType
+    difficulty      TemplateDifficulty
+    bundleConfig    Json
+    pricingConfig   Json
+    marketingConfig Json?
+    downloads       Int                @default(0)
+    rating          Float?
+    reviewCount     Int                @default(0)
+    createdBy       String
+    isPublic        Boolean            @default(false)
+    isOfficial      Boolean            @default(false)
+    createdAt       DateTime           @default(now())
+    updatedAt       DateTime           @updatedAt
+    reviews         TemplateReview[]
 
     @@index([category, rating])
 }
 
-/**
- * Stores information about a template review.
- */
+// Stores information about a template review.
 model TemplateReview {
     id         String   @id @default(cuid())
     templateId String
-    template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
-    shop       String // Reviewer shop
-    rating     Int // 1-5 stars
+    shop       String
+    rating     Int
     review     String?
     helpful    Int      @default(0)
-
-    createdAt DateTime @default(now())
+    createdAt  DateTime @default(now())
+    template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
     @@unique([templateId, shop])
 }
 
-/**
- * Stores information about a notification.
- */
+// Stores information about a notification.
 model Notification {
-    id      String           @id @default(cuid())
-    shop    String
-    type    NotificationType
-    title   String
-    message String
-    data    Json?
-
-    read     Boolean              @default(false)
-    priority NotificationPriority @default(NORMAL)
-
-    // Actions
+    id          String               @id @default(cuid())
+    shop        String
+    type        NotificationType
+    title       String
+    message     String
+    data        Json?
+    read        Boolean              @default(false)
+    priority    NotificationPriority @default(NORMAL)
     actionLabel String?
     actionUrl   String?
-
-    createdAt DateTime  @default(now())
-    expiresAt DateTime?
+    createdAt   DateTime             @default(now())
+    expiresAt   DateTime?
 
     @@index([shop, read, createdAt])
 }
 
-/**
- * Stores information about an alert rule.
- */
+// Stores information about an alert rule.
 model AlertRule {
-    id     String           @id @default(cuid())
-    shop   String
-    name   String
-    type   NotificationType
-    status AlertRuleStatus  @default(ACTIVE)
-
-    // Alert Logic
-    conditions Json // Alert conditions
-    threshold  Float?
-    comparison String? // greater_than, less_than, equals
-
-    // Delivery
-    deliveryMethods Json // [in_app, email, webhook]
-    frequency       AlertFrequency @default(IMMEDIATE)
-
-    triggerCount  Int       @default(0)
-    lastTriggered DateTime?
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id              String           @id @default(cuid())
+    shop            String
+    name            String
+    type            NotificationType
+    status          AlertRuleStatus  @default(ACTIVE)
+    conditions      Json
+    threshold       Float?
+    comparison      String?
+    deliveryMethods Json
+    frequency       AlertFrequency   @default(IMMEDIATE)
+    triggerCount    Int              @default(0)
+    lastTriggered   DateTime?
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
 
     @@index([shop, status])
 }
 
-/**
- * Stores information about an app.
- */
+// Stores information about an app.
 model AppSettings {
-    id   String @id @default(cuid())
-    shop String @unique
-
-    // Bundle Defaults
+    id                   String       @id @default(cuid())
+    shop                 String       @unique
     defaultDiscountType  DiscountType @default(PERCENTAGE)
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
-
-    // Feature Flags
-    aiOptimizations Boolean @default(true)
-    betaFeatures    Boolean @default(false)
-
-    // Notification Preferences (App-specific)
-    emailNotifications Boolean @default(true)
-    weeklyDigest       Boolean @default(true)
-    aiRecommendations  Boolean @default(true)
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    aiOptimizations      Boolean      @default(true)
+    betaFeatures         Boolean      @default(false)
+    emailNotifications   Boolean      @default(true)
+    weeklyDigest         Boolean      @default(true)
+    aiRecommendations    Boolean      @default(true)
+    createdAt            DateTime     @default(now())
+    updatedAt            DateTime     @updatedAt
 }
 
-// ===== ENUMS =====
 enum BundleType {
     BUY_X_GET_Y
     BOGO
