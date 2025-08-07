@@ -77,3 +77,22 @@
 		font-size: 16px;
 	}
 }
+
+.shimmer {
+	position: relative;
+	overflow: hidden;
+}
+.shimmer::after {
+	content: '';
+	position: absolute;
+	top: 0; left: -100%;
+	height: 100%; width: 100%;
+	background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+	animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+	100% {
+		left: 100%;
+	}
+}

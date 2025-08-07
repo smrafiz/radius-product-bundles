@@ -54,6 +54,7 @@ export const BundleList = () => {
                             items={bundles}
                             renderItem={(bundle) => (
                                 <ResourceItem
+                                    key={bundle.id}
                                     id={bundle.id}
                                     url={`/bundles/${bundle.id}`}
                                     media={

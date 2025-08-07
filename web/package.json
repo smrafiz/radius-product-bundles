@@ -61,5 +61,8 @@
         "polaris",
         "prisma",
         "template"
-    ]
+    ],
+	"prisma": {
+		"seed": "node prisma/seed.js"
+	}
 }

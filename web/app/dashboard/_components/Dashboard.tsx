@@ -5,7 +5,7 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { useDashboardStore } from "@/lib/stores/dashboardStore";
 import { ErrorCard } from "@/app/dashboard/_components/ErrorCard";
-import { DashboardSkeleton } from "@/components/global/Skeletons";
+import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { MetricCard } from "@/app/dashboard/_components/MetricCard";
 import { BundleList } from "@/app/dashboard/_components/BundleList";
 import { AIInsights } from "@/app/dashboard/_components/AIInsights";
