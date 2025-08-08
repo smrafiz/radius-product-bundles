@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    // Build the OAuth URL
+    console.log(`🔄 Starting OAuth flow for shop: ${shop}`);
+
+    // Generate secure state parameter
+    const state = `${shop}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+
     const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
     authUrl.searchParams.append("client_id", process.env.SHOPIFY_API_KEY!);
     authUrl.searchParams.append(
@@ -23,7 +27,7 @@ export async function GET(request: NextRequest) {
         "redirect_uri",
         `${process.env.SHOPIFY_APP_URL}/api/auth/callback`,
     );
-    authUrl.searchParams.append("state", "your-state-here");
+    authUrl.searchParams.append("state", state);
 
     if (returnTo) {
         authUrl.searchParams.append("return_to", returnTo);
