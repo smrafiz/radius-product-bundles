@@ -20,26 +20,55 @@ export async function GET(request: NextRequest) {
     try {
         console.log(`✅ Processing OAuth callback for shop: ${shop}`);
 
-        // Exchange code for access token
+        // Use Shopify's built-in callback handler which manages cookies properly
         const { session } = await shopify.auth.callback({
             rawRequest: request,
         });
+
+        console.log(`✅ OAuth callback successful for shop: ${shop}`);
+        console.log(`📋 Session details: ID=${session.id}, isOnline=${session.isOnline}`);
 
         // Store session in the database
         await storeSession(session);
         console.log(`✅ Session stored for shop: ${shop}`);
 
-        // Redirect back to the app with session parameters
-        const redirectUrl = new URL(returnTo || "/dashboard", request.url);
+        // Build redirect URL with proper parameters
+        const baseUrl = returnTo || "/dashboard";
+        const redirectUrl = new URL(baseUrl, request.url);
+        
+        // Always include shop parameter
         redirectUrl.searchParams.set("shop", shop);
-        if (host) redirectUrl.searchParams.set("host", host);
+        
+        // Include host parameter if available
+        if (host) {
+            redirectUrl.searchParams.set("host", host);
+        }
 
+        // For embedded apps, add embedded parameter
+        redirectUrl.searchParams.set("embedded", "1");
+
+        console.log(`🔄 Redirecting to: ${redirectUrl.toString()}`);
         return NextResponse.redirect(redirectUrl.toString());
+        
     } catch (error) {
-        console.error("OAuth callback error:", error);
+        console.error("❌ OAuth callback error:", error);
+        
+        // Provide more specific error information
+        let errorMessage = "OAuth authentication failed";
+        if (error instanceof Error) {
+            if (error.message.includes("OAuth cookie")) {
+                errorMessage = "OAuth session expired or invalid. Please try installing the app again.";
+            } else if (error.message.includes("Invalid")) {
+                errorMessage = "Invalid OAuth parameters. Please check your app configuration.";
+            }
+        }
+        
         return NextResponse.json(
-            { error: "OAuth authentication failed" },
-            { status: 500 },
+            { 
+                error: errorMessage,
+                details: error instanceof Error ? error.message : "Unknown error"
+            },
+            { status: 500 }
         );
     }
 }

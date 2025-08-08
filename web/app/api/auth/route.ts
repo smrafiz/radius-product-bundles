@@ -1,3 +1,4 @@
+import shopify from "@/lib/shopify/initialize-context";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -14,24 +15,35 @@ export async function GET(request: NextRequest) {
 
     console.log(`🔄 Starting OAuth flow for shop: ${shop}`);
 
-    // Generate secure state parameter
-    const state = `${shop}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+    try {
+        // Use Shopify's built-in OAuth flow which handles cookies properly
+        const { redirect } = await shopify.auth.begin({
+            shop,
+            callbackPath: "/api/auth/callback",
+            isOnline: false, // Use offline tokens for app-level access
+            rawRequest: request,
+        });
 
-    const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
-    authUrl.searchParams.append("client_id", process.env.SHOPIFY_API_KEY!);
-    authUrl.searchParams.append(
-        "scope",
-        process.env.SCOPES || "read_products,read_orders",
-    );
-    authUrl.searchParams.append(
-        "redirect_uri",
-        `${process.env.HOST}/api/auth/callback`,
-    );
-    authUrl.searchParams.append("state", state);
+        console.log(`✅ OAuth redirect generated for shop: ${shop}`);
+        console.log(`🔗 Redirect URL: ${redirect}`);
 
-    if (returnTo) {
-        authUrl.searchParams.append("return_to", returnTo);
+        // Add return_to parameter to the redirect if provided
+        if (returnTo) {
+            const redirectUrl = new URL(redirect);
+            redirectUrl.searchParams.append("return_to", returnTo);
+            return NextResponse.redirect(redirectUrl.toString());
+        }
+
+        return NextResponse.redirect(redirect);
+        
+    } catch (error) {
+        console.error("❌ OAuth begin error:", error);
+        return NextResponse.json(
+            { 
+                error: "Failed to start OAuth flow",
+                details: error instanceof Error ? error.message : "Unknown error"
+            },
+            { status: 500 }
+        );
     }
-
-    return NextResponse.redirect(authUrl.toString());
 }

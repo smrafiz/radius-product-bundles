@@ -1,4 +1,4 @@
-import { storeSession, loadSession } from "@/lib/db/session-storage";
+import { storeSession, findOfflineSessionByShop } from "@/lib/db/session-storage";
 import shopify from "@/lib/shopify/initialize-context";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
 
@@ -57,7 +57,7 @@ export async function verifyRequest(
 /**
  * Do the token exchange from the sessionIdToken that comes from the client
  * This returns a valid session object.
- * NOW WITH SESSION CACHING - checks DB first before creating new sessions
+ * NOW WITH PROPER SESSION CACHING - checks DB by shop instead of custom ID
  */
 export async function tokenExchange({
     shop,
@@ -71,28 +71,26 @@ export async function tokenExchange({
     store?: boolean;
 }): Promise<Session> {
     
-    // Generate consistent session ID
-    const sessionId = `${shop}_${online ? 'online' : 'offline'}`;
-    
-    // First, try to load existing session from database
-    try {
-        const existingSession = await loadSession(sessionId);
-        
-        // Check if session is still valid
-        if (existingSession && existingSession.accessToken) {
-            const now = new Date();
-            const isExpired = existingSession.expires && new Date(existingSession.expires) < now;
+    // For offline sessions, try to find existing session by shop
+    if (!online) {
+        try {
+            const existingSession = await findOfflineSessionByShop(shop);
             
-            if (!isExpired) {
-                console.log(`♻️  Reusing existing session for shop: ${shop}`);
-                return existingSession;
-            } else {
-                console.log(`⏰ Session expired for shop: ${shop}, creating new one`);
+            if (existingSession && existingSession.accessToken) {
+                const now = new Date();
+                const isExpired = existingSession.expires && new Date(existingSession.expires) < now;
+                
+                if (!isExpired) {
+                    console.log(`♻️  Reusing existing offline session for shop: ${shop}`);
+                    return existingSession;
+                } else {
+                    console.log(`⏰ Offline session expired for shop: ${shop}, creating new one`);
+                }
             }
+        } catch (error) {
+            // Session doesn't exist in DB, will create new one
+            console.log(`🆕 No existing offline session found for shop: ${shop}, creating new one`);
         }
-    } catch (error) {
-        // Session doesn't exist in DB, will create new one
-        console.log(`🆕 No existing session found for shop: ${shop}, creating new one`);
     }
 
     // Create new session via token exchange
