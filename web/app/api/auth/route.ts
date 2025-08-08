@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     );
     authUrl.searchParams.append(
         "redirect_uri",
-        `${process.env.SHOPIFY_APP_URL}/api/auth/callback`,
+        `${process.env.HOST}/api/auth/callback`,
     );
     authUrl.searchParams.append("state", state);
 

@@ -9,6 +9,8 @@ const apiKey = process.env.SHOPIFY_API_KEY || "";
  * This could be useful if we need to do something with the access token later.
  */
 export async function storeSession(session: ShopifySession) {
+    console.log(`💾 Storing session for shop: ${session.shop} (${session.isOnline ? 'online' : 'offline'})`);
+    
     await prisma.session.upsert({
         where: { id: session.id },
         update: {
@@ -74,16 +76,22 @@ export async function storeSession(session: ShopifySession) {
             },
         });
     }
+    
+    console.log(`✅ Session stored successfully for shop: ${session.shop}`);
 }
 
 export async function loadSession(id: string) {
+    console.log(`🔍 Loading session from DB: ${id}`);
+    
     const session = await prisma.session.findUnique({
         where: { id },
     });
 
     if (session) {
+        console.log(`✅ Session found in DB: ${session.shop} (${session.isOnline ? 'online' : 'offline'})`);
         return generateShopifySessionFromDB(session);
     } else {
+        console.log(`❌ Session not found in DB: ${id}`);
         throw new SessionNotFoundError();
     }
 }

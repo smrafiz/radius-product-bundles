@@ -1,4 +1,4 @@
-import { storeSession } from "@/lib/db/session-storage";
+import { storeSession, loadSession } from "@/lib/db/session-storage";
 import shopify from "@/lib/shopify/initialize-context";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
 
@@ -57,8 +57,7 @@ export async function verifyRequest(
 /**
  * Do the token exchange from the sessionIdToken that comes from the client
  * This returns a valid session object.
- * Optionally store the session in the database. Sometimes, if you are focused on speed,
- * you don't want to always store the session in the database.
+ * NOW WITH SESSION CACHING - checks DB first before creating new sessions
  */
 export async function tokenExchange({
     shop,
@@ -71,6 +70,33 @@ export async function tokenExchange({
     online?: boolean;
     store?: boolean;
 }): Promise<Session> {
+    
+    // Generate consistent session ID
+    const sessionId = `${shop}_${online ? 'online' : 'offline'}`;
+    
+    // First, try to load existing session from database
+    try {
+        const existingSession = await loadSession(sessionId);
+        
+        // Check if session is still valid
+        if (existingSession && existingSession.accessToken) {
+            const now = new Date();
+            const isExpired = existingSession.expires && new Date(existingSession.expires) < now;
+            
+            if (!isExpired) {
+                console.log(`♻️  Reusing existing session for shop: ${shop}`);
+                return existingSession;
+            } else {
+                console.log(`⏰ Session expired for shop: ${shop}, creating new one`);
+            }
+        }
+    } catch (error) {
+        // Session doesn't exist in DB, will create new one
+        console.log(`🆕 No existing session found for shop: ${shop}, creating new one`);
+    }
+
+    // Create new session via token exchange
+    console.log(`🔄 Creating new session for shop: ${shop} (${online ? 'online' : 'offline'})`);
     const response = await shopify.auth.tokenExchange({
         shop,
         sessionToken,
@@ -78,10 +104,15 @@ export async function tokenExchange({
             ? RequestedTokenType.OnlineAccessToken
             : RequestedTokenType.OfflineAccessToken,
     });
+    
     const { session } = response;
-    if (store) {
+    
+    // Store the new session
+    if (store !== false) { // Store by default unless explicitly disabled
         await storeSession(session);
+        console.log(`✅ Session stored for shop: ${shop}`);
     }
+    
     return session;
 }
 
@@ -98,6 +129,14 @@ export async function handleSessionToken(
 ): Promise<{ shop: string; session: Session }> {
     const payload = await shopify.session.decodeSessionToken(sessionToken);
     const shop = payload.dest.replace("https://", "");
-    const session = await tokenExchange({ shop, sessionToken, online, store });
+    
+    // Always store sessions by default for caching
+    const session = await tokenExchange({ 
+        shop, 
+        sessionToken, 
+        online, 
+        store: store !== false 
+    });
+    
     return { shop, session };
 }

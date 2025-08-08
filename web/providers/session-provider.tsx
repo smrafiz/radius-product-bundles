@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useSessionStore } from "@/lib/stores/sessionStore";
@@ -15,8 +15,10 @@ export default function SessionProvider({
     const searchParams = useSearchParams();
     const dispatch = useSessionStore((state) => state.dispatch);
     const isInitialized = useSessionStore((state) => state.isInitialized);
+    const hasValidSession = useSessionStore((state) => state.hasValidSession);
     const [isAppBridgeReady, setIsAppBridgeReady] = useState(false);
     const [authRedirectAttempted, setAuthRedirectAttempted] = useState(false);
+    const tokenProcessed = useRef(false); // Prevent multiple token processing
 
     // Enhanced App Bridge readiness check
     useEffect(() => {
@@ -35,7 +37,7 @@ export default function SessionProvider({
 
         // Poll for App Bridge readiness
         let attempts = 0;
-        const maxAttempts = 30; // 3 seconds max (reduced from 5)
+        const maxAttempts = 30; // 3 seconds max
 
         const checkInterval = setInterval(() => {
             attempts++;
@@ -51,8 +53,6 @@ export default function SessionProvider({
                     "❌ App Bridge failed to initialize after 3 seconds",
                 );
 
-                // Only redirect if middleware hasn't already handled this
-                // and we haven't already attempted a redirect
                 if (!authRedirectAttempted) {
                     setAuthRedirectAttempted(true);
 
@@ -62,8 +62,6 @@ export default function SessionProvider({
                         searchParams.get("host") ||
                         searchParams.get("embedded");
 
-                    // Only redirect if we don't have any Shopify parameters
-                    // (if we have them, the issue might be temporary)
                     if (!hasMinimalParams) {
                         console.log(
                             "🔄 No Shopify parameters and App Bridge failed, redirecting to auth",
@@ -77,7 +75,6 @@ export default function SessionProvider({
                         console.log(
                             "⚠️ App Bridge failed but Shopify parameters present, not redirecting",
                         );
-                        // Dispatch an error state but don't redirect
                         dispatch({
                             type: "SESSION_VALIDATION_FAILED",
                             payload: {
@@ -92,11 +89,17 @@ export default function SessionProvider({
         return () => clearInterval(checkInterval);
     }, [app, searchParams, authRedirectAttempted, dispatch]);
 
-    // Token handling with better error management
+    // Token handling with prevention of multiple calls
     useEffect(() => {
-        if (!isAppBridgeReady) return;
+        if (!isAppBridgeReady || tokenProcessed.current || hasValidSession) {
+            return; // Don't process if already done or have valid session
+        }
 
         const handleTokenAndWebhooks = async () => {
+            if (tokenProcessed.current) return; // Double-check
+            
+            tokenProcessed.current = true; // Mark as being processed
+            
             try {
                 console.log("🔑 Getting session token...");
                 const token = await app.idToken();
@@ -109,7 +112,7 @@ export default function SessionProvider({
                         payload: { token },
                     });
 
-                    // Store token and register webhooks
+                    // Store token and register webhooks (run in parallel)
                     const [tokenResult, webhookResult] =
                         await Promise.allSettled([
                             storeToken(token),
@@ -117,10 +120,10 @@ export default function SessionProvider({
                         ]);
 
                     if (tokenResult.status === "fulfilled") {
-                        console.log("✅ Token stored successfully");
+                        console.log("✅ Token processed successfully");
                     } else {
                         console.error(
-                            "❌ Error storing token:",
+                            "❌ Error processing token:",
                             tokenResult.reason,
                         );
                     }
@@ -134,7 +137,7 @@ export default function SessionProvider({
                         );
                     }
 
-                    // Always mark as success if we got a token
+                    // Mark session as valid
                     dispatch({
                         type: "SESSION_VALIDATION_SUCCESS",
                         payload: { token },
@@ -144,6 +147,7 @@ export default function SessionProvider({
                 }
             } catch (error) {
                 console.error("❌ Session token error:", error);
+                tokenProcessed.current = false; // Reset on error to allow retry
                 dispatch({
                     type: "SESSION_VALIDATION_FAILED",
                     payload: {
@@ -157,7 +161,7 @@ export default function SessionProvider({
         };
 
         void handleTokenAndWebhooks();
-    }, [app, dispatch, isAppBridgeReady]);
+    }, [app, dispatch, isAppBridgeReady, hasValidSession]);
 
     // URL parameter handling
     useEffect(() => {

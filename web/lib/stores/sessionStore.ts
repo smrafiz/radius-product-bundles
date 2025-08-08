@@ -32,7 +32,6 @@ export const useSessionStore = create<ShopifyStore>()(
                 try {
                     dispatch({ type: "START_SESSION_VALIDATION" });
 
-                    // Get App Bridge instance if available
                     if (
                         typeof window !== "undefined" &&
                         (window as any).__APP_BRIDGE__
@@ -41,25 +40,35 @@ export const useSessionStore = create<ShopifyStore>()(
                         const token = await app.idToken();
 
                         if (token) {
-                            // Validate with server
+                            // Use the new validation API
                             const response = await fetch(
                                 "/api/validate-session",
                                 {
+                                    method: "POST",
                                     headers: {
                                         Authorization: `Bearer ${token}`,
+                                        "Content-Type": "application/json",
                                     },
                                 },
                             );
 
                             if (response.ok) {
                                 const data = await response.json();
-                                dispatch({
-                                    type: "SESSION_VALIDATION_SUCCESS",
-                                    payload: {
-                                        token,
-                                        shop: data.shop,
-                                    },
-                                });
+
+                                if (data.valid) {
+                                    dispatch({
+                                        type: "SESSION_VALIDATION_SUCCESS",
+                                        payload: {
+                                            token,
+                                            shop: data.shop,
+                                        },
+                                    });
+                                } else {
+                                    throw new Error(
+                                        data.error ||
+                                            "Session validation failed",
+                                    );
+                                }
                             } else {
                                 throw new Error("Server validation failed");
                             }
