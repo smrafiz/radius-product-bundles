@@ -1,11 +1,11 @@
 "use client";
 
-import { Page } from "@shopify/polaris";
 import React from "react";
-import { useShopifyStore } from "@/lib/stores/shopify";
+import { Page } from "@shopify/polaris";
+import { useSessionStore } from "@/lib/stores/sessionStore";
 
 export default function NewPage() {
-    const { shop, host, isInitialized } = useShopifyStore();
+    const { shop, host, isInitialized } = useSessionStore();
 
     if (!isInitialized || !shop || !host) {
         return <h1>Missing Shop and Host Parameters</h1>;

@@ -1,0 +1,103 @@
+import { NextRequest, NextResponse } from "next/server";
+
+export async function middleware(request: NextRequest) {
+    const { pathname, searchParams } = request.nextUrl;
+
+    console.log(`🔍 MIDDLEWARE: ${request.method} ${pathname}`);
+
+    // Skip middleware for these paths
+    const skipPaths = [
+        "/api/",
+        "/_next/",
+        "/favicon.ico",
+        "/public/",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+        ".svg",
+        ".ico",
+        ".css",
+        ".js",
+        ".map",
+    ];
+
+    const shouldSkip = skipPaths.some(
+        (path) => pathname.startsWith(path) || pathname.includes(path),
+    );
+
+    if (shouldSkip) {
+        return NextResponse.next();
+    }
+
+    // For embedded Shopify apps, be more permissive since SessionProvider handles auth
+    const isEmbeddedRequest = 
+        searchParams.get('embedded') === '1' ||
+        request.headers.get('sec-fetch-dest') === 'iframe' ||
+        request.headers.get('sec-fetch-site') === 'cross-site' ||
+        searchParams.has('shop') ||
+        searchParams.has('host') ||
+        searchParams.has('id_token');
+
+    if (isEmbeddedRequest) {
+        console.log(`✅ Embedded Shopify app detected, letting SessionProvider handle auth`);
+        return NextResponse.next();
+    }
+
+    // Check if this looks like a returning user (has session cookie)
+    const sessionCookie = request.cookies.get('shopify-session');
+    const shopCookie = request.cookies.get('shopify-shop');
+    
+    if (sessionCookie || shopCookie) {
+        console.log(`🍪 Found session/shop cookie, allowing access`);
+        return NextResponse.next();
+    }
+
+    // Only redirect to auth for protected routes if this is clearly a direct browser access
+    const protectedRoutes = [
+        "/dashboard",
+        "/bundles",
+        "/analytics",
+        "/ab-testing",
+        "/automation",
+        "/pricing-rules",
+        "/customers",
+        "/templates",
+        "/integrations",
+        "/settings",
+    ];
+
+    const isProtectedRoute = protectedRoutes.some(
+        (route) => pathname === route || pathname.startsWith(route + "/"),
+    );
+
+    if (isProtectedRoute) {
+        // Check if this looks like a direct browser access (not embedded)
+        const userAgent = request.headers.get('user-agent') || '';
+        const referer = request.headers.get('referer') || '';
+        
+        // Don't redirect if it looks like an embedded app or internal navigation
+        if (referer.includes(request.nextUrl.origin) || userAgent.includes('Shopify')) {
+            console.log(`✅ Internal navigation or Shopify user agent, allowing access`);
+            return NextResponse.next();
+        }
+
+        console.log(`🔒 Direct access to protected route without session, redirecting to auth`);
+        const authUrl = new URL("/api/auth", request.url);
+        authUrl.searchParams.set("returnTo", pathname);
+        
+        // Try to preserve any existing parameters
+        if (searchParams.toString()) {
+            authUrl.searchParams.set("originalParams", searchParams.toString());
+        }
+        
+        return NextResponse.redirect(authUrl);
+    }
+
+    console.log(`✅ Allowing access to: ${pathname}`);
+    return NextResponse.next();
+}
+
+export const config = {
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};

@@ -1,0 +1,116 @@
+import {
+    Action,
+    initialState,
+    sessionReducer,
+    ShopifyState,
+} from "../reducers/session";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+type ShopifyStore = ShopifyState & {
+    dispatch: (action: Action) => void;
+    validateSession: () => Promise<void>;
+    clearSession: () => void;
+    isSessionExpired: () => boolean;
+    retryValidation: () => Promise<void>;
+};
+
+export const useSessionStore = create<ShopifyStore>()(
+    persist(
+        (set, get) => ({
+            ...initialState,
+
+            dispatch: (action: Action) => {
+                const newState = sessionReducer(get(), action);
+                set(newState);
+            },
+
+            // Session validation method
+            validateSession: async () => {
+                const { dispatch } = get();
+
+                try {
+                    dispatch({ type: "START_SESSION_VALIDATION" });
+
+                    // Get App Bridge instance if available
+                    if (
+                        typeof window !== "undefined" &&
+                        (window as any).__APP_BRIDGE__
+                    ) {
+                        const app = (window as any).__APP_BRIDGE__;
+                        const token = await app.idToken();
+
+                        if (token) {
+                            // Validate with server
+                            const response = await fetch(
+                                "/api/validate-session",
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                },
+                            );
+
+                            if (response.ok) {
+                                const data = await response.json();
+                                dispatch({
+                                    type: "SESSION_VALIDATION_SUCCESS",
+                                    payload: {
+                                        token,
+                                        shop: data.shop,
+                                    },
+                                });
+                            } else {
+                                throw new Error("Server validation failed");
+                            }
+                        } else {
+                            throw new Error("No session token available");
+                        }
+                    } else {
+                        throw new Error("App Bridge not available");
+                    }
+                } catch (error) {
+                    dispatch({
+                        type: "SESSION_VALIDATION_FAILED",
+                        payload: {
+                            error:
+                                error instanceof Error
+                                    ? error.message
+                                    : "Session validation failed",
+                        },
+                    });
+                }
+            },
+
+            // Clear session
+            clearSession: () => {
+                const { dispatch } = get();
+                dispatch({ type: "CLEAR_SESSION" });
+            },
+
+            // Check if the session is expired (5 minutes)
+            isSessionExpired: () => {
+                const { lastValidated } = get();
+                if (!lastValidated) return true;
+
+                const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+                return new Date(lastValidated) < fiveMinutesAgo;
+            },
+
+            // Retry validation
+            retryValidation: async () => {
+                const { validateSession } = get();
+                await validateSession();
+            },
+        }),
+        {
+            name: "radius-product-bundles-session",
+            storage: createJSONStorage(() => sessionStorage),
+            partialize: (state) => ({
+                shop: state.shop,
+                host: state.host,
+                isInitialized: state.isInitialized,
+            }),
+        },
+    ),
+);

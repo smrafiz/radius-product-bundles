@@ -1,8 +1,8 @@
 import React from "react";
-import { useShopifyStore } from "@/lib/stores/shopify";
+import { useSessionStore } from "@/lib/stores/sessionStore";
 
 const ProviderLayout = ({ children }: { children: React.ReactNode }) => {
-    const { shop, host, isInitialized } = useShopifyStore();
+    const { shop, host, isInitialized } = useSessionStore();
     if (!isInitialized || !shop || !host) {
         return <h1>Missing Shop and Host Parameters</h1>;
     }

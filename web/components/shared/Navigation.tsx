@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Navigation() {
     return (
         <NavMenu>
-            <Link href="/" rel="home">
+            <Link href="/dashboard" rel="home">
                 Dashboard
             </Link>
             <Link href="/bundles">
