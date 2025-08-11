@@ -15,7 +15,7 @@ export function generateOfflineSessionId(shop: string): string {
 export function validateSessionToken(token: string | undefined): boolean {
     if (!token) return false;
     
-    // Check if token has a valid format
+    // Check if the token has a valid format
     if (!token.startsWith('shpat_')) return false;
     
     // Additional validation can be added here
@@ -32,7 +32,7 @@ export function createSessionConfig(shop: string, accessToken: string, scope: st
         accessToken,
         scope,
         isOnline: false,
-        state: state || undefined,
+        state: state || "",
     };
 }
 

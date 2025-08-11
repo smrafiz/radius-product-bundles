@@ -92,7 +92,7 @@ export default function ProtectedRoute({
             }
         };
 
-        refreshSession();
+        void refreshSession();
     }, [
         isInitialized,
         hasValidSession,
@@ -104,12 +104,12 @@ export default function ProtectedRoute({
         refreshAttempted,
     ]);
 
-    // Don't protect root path - let it redirect
+    // Don't protect the root path - let it redirect
     if (pathname === "/") {
         return <>{children}</>;
     }
 
-    // Show skeleton while checking/refreshing session
+    // Show skeleton while checking/refreshing a session
     if (!isInitialized || isRefreshing || (!hasValidSession && !sessionToken)) {
         return (
             <SkeletonPage primaryAction>

@@ -1,17 +1,12 @@
-import { verifyRequest } from "@/lib/shopify/verify";
-import { getProducts } from "@/lib/get-products";
+import { ApiResponse } from "@/types";
 import { NextResponse } from "next/server";
-
-export type APIResponse<DataType> = {
-    status: "success" | "error";
-    data?: DataType;
-    message?: string;
-};
+import { getProducts } from "@/lib/get-products";
+import { verifyRequest } from "@/lib/shopify/verify";
 
 export async function GET(req: Request) {
     const session = await verifyRequest(req, true);
     if (!session) {
-        return NextResponse.json<APIResponse<null>>(
+        return NextResponse.json<ApiResponse<null>>(
             {
                 status: "error",
                 message: "Invalid session",
@@ -22,12 +17,12 @@ export async function GET(req: Request) {
 
     try {
         const products = await getProducts(session.shop); // uses stored session from DB
-        return NextResponse.json<APIResponse<typeof products>>({
+        return NextResponse.json<ApiResponse<typeof products>>({
             status: "success",
             data: products,
         });
     } catch (err: any) {
-        return NextResponse.json<APIResponse<null>>(
+        return NextResponse.json<ApiResponse<null>>(
             {
                 status: "error",
                 message: err.message ?? "Something went wrong",

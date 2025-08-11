@@ -1,19 +1,9 @@
 "use server";
 
+import { GetProductByIdQuery } from "@/types";
+import { GetProductsQueryVariables } from "@/types/admin.generated";
 import shopify from "@/lib/shopify/initialize-context";
 import { handleSessionToken } from "@/lib/shopify/verify";
-import {
-    GetProductsQuery,
-    GetProductsQueryVariables,
-} from "@/types/admin.generated";
-
-type GetProductByIdQuery = {
-    product: {
-        id: string;
-        title: string;
-        tags: string[];
-    };
-};
 
 const GET_PRODUCT_BY_ID = `
     query getProductById($id: ID!) {

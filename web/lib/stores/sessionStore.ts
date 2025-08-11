@@ -14,8 +14,9 @@ type ShopifyStore = ShopifyState & {
     retryValidation: () => Promise<void>;
 };
 
-// Create store WITHOUT persistence to avoid sessionStorage issues
-// Shopify review requires apps to work without browser storage
+/**
+ * Create a store for managing the session state
+ */
 export const useSessionStore = create<ShopifyStore>()((set, get) => ({
     ...initialState,
 

@@ -1,6 +1,6 @@
+import { Session } from "@shopify/shopify-api";
 import { NextRequest, NextResponse } from "next/server";
 import { storeSession } from "@/lib/db/session-storage";
-import { Session } from "@shopify/shopify-api";
 import { isValidShopifyToken, createSessionConfig } from "@/utils";
 
 export async function GET(request: NextRequest) {
@@ -43,12 +43,14 @@ export async function GET(request: NextRequest) {
             throw new Error("Invalid access token format received");
         }
 
-        // Create session object using utility function
+        const sessionState = state || crypto.randomUUID();
+
+        // Create a session object
         const sessionConfig = createSessionConfig(
             shop,
             tokenData.access_token,
             tokenData.scope,
-            state || undefined
+            sessionState
         );
         
         const session = new Session(sessionConfig);

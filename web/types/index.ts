@@ -71,3 +71,8 @@ export type {
     CreateNotificationPayload,
     NotificationSettings,
 } from "./notification.types";
+
+// Product types
+export type {
+    GetProductByIdQuery,
+} from "./product.type"
