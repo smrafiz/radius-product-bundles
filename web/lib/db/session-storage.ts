@@ -6,11 +6,8 @@ const apiKey = process.env.SHOPIFY_API_KEY || "";
 
 /**
  * Stores the session in the database
- * This could be useful if we need to do something with the access token later.
  */
 export async function storeSession(session: ShopifySession) {
-    console.log(`💾 Storing session for shop: ${session.shop} (${session.isOnline ? 'online' : 'offline'}) with ID: ${session.id}`);
-    
     await prisma.session.upsert({
         where: { id: session.id },
         update: {
@@ -76,22 +73,16 @@ export async function storeSession(session: ShopifySession) {
             },
         });
     }
-    
-    console.log(`✅ Session stored successfully for shop: ${session.shop} with ID: ${session.id}`);
 }
 
 export async function loadSession(id: string) {
-    console.log(`🔍 Loading session from DB by ID: ${id}`);
-    
     const session = await prisma.session.findUnique({
         where: { id },
     });
 
     if (session) {
-        console.log(`✅ Session found in DB: ${session.shop} (${session.isOnline ? 'online' : 'offline'}) with ID: ${session.id}`);
         return generateShopifySessionFromDB(session);
     } else {
-        console.log(`❌ Session not found in DB by ID: ${id}`);
         throw new SessionNotFoundError();
     }
 }
@@ -115,8 +106,6 @@ export async function cleanUpSession(shop: string, accessToken: string) {
 }
 
 export async function findSessionsByShop(shop: string) {
-    console.log(`🔍 Looking for sessions by shop: ${shop}`);
-    
     const sessions = await prisma.session.findMany({
         where: { shop, apiKey },
         include: {
@@ -126,11 +115,6 @@ export async function findSessionsByShop(shop: string) {
                 },
             },
         },
-    });
-
-    console.log(`📊 Found ${sessions.length} sessions for shop: ${shop}`);
-    sessions.forEach(s => {
-        console.log(`  - Session ID: ${s.id}, isOnline: ${s.isOnline}, expires: ${s.expires}`);
     });
 
     return sessions.map((session) => generateShopifySessionFromDB(session));
@@ -156,17 +140,12 @@ export class SessionNotFoundError extends Error {
 }
 
 export async function findOfflineSessionByShop(shop: string) {
-    console.log(`🔍 Looking for OFFLINE session for shop: ${shop}`);
-    
     const sessions = await findSessionsByShop(shop);
-    // Return the offline session (isOnline === false)
     const offlineSession = sessions.find((session) => !session.isOnline);
     
     if (!offlineSession) {
-        console.log(`❌ No offline session found for shop: ${shop}`);
         throw new SessionNotFoundError();
     }
     
-    console.log(`✅ Found offline session for shop: ${shop} with ID: ${offlineSession.id}`);
     return offlineSession;
 }

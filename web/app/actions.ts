@@ -1,6 +1,7 @@
 "use server";
 import { registerWebhooks } from "@/lib/shopify/register-webhooks";
 import { handleSessionToken } from "@/lib/shopify/verify";
+import { findOfflineSessionByShop } from "@/lib/db/session-storage";
 
 /**
  * Do the server action and return the status
@@ -38,9 +39,15 @@ export async function storeToken(sessionToken: string) {
 }
 
 /**
- * Register the webooks that we want setup.
+ * Register the webhooks using the stored offline session
  */
 export async function doWebhookRegistration(sessionToken: string) {
-    const { session } = await handleSessionToken(sessionToken);
-    await registerWebhooks(session);
+    try {
+        const { shop } = await handleSessionToken(sessionToken);
+        const offlineSession = await findOfflineSessionByShop(shop);
+        await registerWebhooks(offlineSession);
+    } catch (error) {
+        console.error("Webhook registration failed:", error);
+        throw error;
+    }
 }

@@ -1,4 +1,3 @@
-import shopify from "@/lib/shopify/initialize-context";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -13,31 +12,25 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    console.log(`🔄 Starting OAuth flow for shop: ${shop}`);
-
     try {
-        // Use Shopify's built-in OAuth flow which handles cookies properly
-        const { redirect } = await shopify.auth.begin({
-            shop,
-            callbackPath: "/api/auth/callback",
-            isOnline: false, // Use offline tokens for app-level access
-            rawRequest: request,
-        });
+        // Generate secure state parameter
+        const state = `${shop}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
 
-        console.log(`✅ OAuth redirect generated for shop: ${shop}`);
-        console.log(`🔗 Redirect URL: ${redirect}`);
+        // Build OAuth URL
+        const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
+        authUrl.searchParams.append("client_id", process.env.SHOPIFY_API_KEY!);
+        authUrl.searchParams.append("scope", process.env.SCOPES!);
+        authUrl.searchParams.append("redirect_uri", `${process.env.HOST}/api/auth/callback`);
+        authUrl.searchParams.append("state", state);
 
-        // Add return_to parameter to the redirect if provided
         if (returnTo) {
-            const redirectUrl = new URL(redirect);
-            redirectUrl.searchParams.append("return_to", returnTo);
-            return NextResponse.redirect(redirectUrl.toString());
+            authUrl.searchParams.append("return_to", returnTo);
         }
 
-        return NextResponse.redirect(redirect);
+        return NextResponse.redirect(authUrl.toString());
         
     } catch (error) {
-        console.error("❌ OAuth begin error:", error);
+        console.error("OAuth error:", error);
         return NextResponse.json(
             { 
                 error: "Failed to start OAuth flow",

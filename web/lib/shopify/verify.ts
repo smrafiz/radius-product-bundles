@@ -56,8 +56,7 @@ export async function verifyRequest(
 
 /**
  * Do the token exchange from the sessionIdToken that comes from the client
- * This returns a valid session object.
- * NOW WITH PROPER SESSION CACHING - checks DB by shop instead of custom ID
+ * This returns a valid session object with session caching.
  */
 export async function tokenExchange({
     shop,
@@ -81,20 +80,15 @@ export async function tokenExchange({
                 const isExpired = existingSession.expires && new Date(existingSession.expires) < now;
                 
                 if (!isExpired) {
-                    console.log(`♻️  Reusing existing offline session for shop: ${shop}`);
                     return existingSession;
-                } else {
-                    console.log(`⏰ Offline session expired for shop: ${shop}, creating new one`);
                 }
             }
         } catch (error) {
             // Session doesn't exist in DB, will create new one
-            console.log(`🆕 No existing offline session found for shop: ${shop}, creating new one`);
         }
     }
 
     // Create new session via token exchange
-    console.log(`🔄 Creating new session for shop: ${shop} (${online ? 'online' : 'offline'})`);
     const response = await shopify.auth.tokenExchange({
         shop,
         sessionToken,
@@ -106,19 +100,15 @@ export async function tokenExchange({
     const { session } = response;
     
     // Store the new session
-    if (store !== false) { // Store by default unless explicitly disabled
+    if (store !== false) {
         await storeSession(session);
-        console.log(`✅ Session stored for shop: ${shop}`);
     }
     
     return session;
 }
 
 /**
- * @description Do all the necessary steps, to validate the session token and refresh it if it needs to.
- * @param sessionToken The session token from the request headers or directly sent by the client
- * @param online
- * @returns The session object
+ * Do all the necessary steps to validate the session token and refresh it if needed.
  */
 export async function handleSessionToken(
     sessionToken: string,
@@ -128,7 +118,6 @@ export async function handleSessionToken(
     const payload = await shopify.session.decodeSessionToken(sessionToken);
     const shop = payload.dest.replace("https://", "");
     
-    // Always store sessions by default for caching
     const session = await tokenExchange({ 
         shop, 
         sessionToken, 
