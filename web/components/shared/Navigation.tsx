@@ -1,5 +1,5 @@
-import { NavMenu } from "@shopify/app-bridge-react";
 import Link from "next/link";
+import { NavMenu } from "@shopify/app-bridge-react";
 
 export default function Navigation() {
     return (

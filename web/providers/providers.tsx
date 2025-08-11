@@ -7,8 +7,8 @@ import "@shopify/polaris/build/esm/styles.css";
 import SessionProvider from "./session-provider";
 import { TanstackProvider } from "./tanstack-provider";
 import Navigation from "@/components/shared/Navigation";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import translations from "@shopify/polaris/locales/en.json";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const inter = Inter({ subsets: ["latin"] });
 

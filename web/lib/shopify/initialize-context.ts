@@ -20,23 +20,6 @@ const shopify = shopifyApi({
                 ? LogSeverity.Debug
                 : LogSeverity.Error,
     },
-    sessionStorage: {
-        storeSession: async (session) => {
-            await storeSession(session);
-            return true;
-        },
-        loadSession: async (id) => {
-            try {
-                return await loadSession(id);
-            } catch (error) {
-                return undefined;
-            }
-        },
-        deleteSession: async (id) => {
-            await deleteSession(id);
-            return true;
-        },
-    },
 });
 
 export default shopify;
