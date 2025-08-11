@@ -48,7 +48,6 @@ export function setupGDPRWebHooks(path: string) {
                     // For this app, we primarily store bundle and session data
                     // Customer-specific data would be minimal
                     
-                    return { success: true };
                 } catch (error) {
                     console.error("❌ GDPR data request error:", error);
                     throw error;
@@ -100,7 +99,6 @@ export function setupGDPRWebHooks(path: string) {
                         console.log(`✅ Customer data redacted for customer ID: ${customerId}`);
                     }
                     
-                    return { success: true };
                 } catch (error) {
                     console.error("❌ GDPR redaction error:", error);
                     throw error;
@@ -150,7 +148,6 @@ export function setupGDPRWebHooks(path: string) {
                     
                     console.log(`✅ All data removed for shop: ${shop}`);
                     
-                    return { success: true };
                 } catch (error) {
                     console.error("❌ GDPR shop redaction error:", error);
                     throw error;
