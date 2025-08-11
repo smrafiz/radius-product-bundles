@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { storeSession } from "@/lib/db/session-storage";
 import { Session } from "@shopify/shopify-api";
+import { isValidShopifyToken, createSessionConfig } from "@/utils";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -37,20 +38,20 @@ export async function GET(request: NextRequest) {
 
         const tokenData = await tokenResponse.json();
 
-        // Validate token format
-        if (!tokenData.access_token || !tokenData.access_token.startsWith('shpat_')) {
+        // Validate token format using utility function
+        if (!isValidShopifyToken(tokenData.access_token)) {
             throw new Error("Invalid access token format received");
         }
 
-        // Create session object
-        const session = new Session({
-            id: `offline_${shop}`,
-            shop: shop,
-            accessToken: tokenData.access_token,
-            scope: tokenData.scope,
-            isOnline: false,
-            state: state || undefined,
-        });
+        // Create session object using utility function
+        const sessionConfig = createSessionConfig(
+            shop,
+            tokenData.access_token,
+            tokenData.scope,
+            state || undefined
+        );
+        
+        const session = new Session(sessionConfig);
 
         // Store session in the database
         await storeSession(session);

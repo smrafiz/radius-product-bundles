@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSessionStore } from "@/lib/stores/sessionStore";
-import { doWebhookRegistration, storeToken } from "@/app/actions";
+import { doWebhookRegistration, storeToken } from "@/actions";
 
 export default function SessionProvider({
     children,
@@ -137,7 +137,7 @@ export default function SessionProvider({
                         // Non-critical - app can still function
                     }
 
-                    // Mark session as valid if at least token storage succeeded
+                    // Mark the session as valid if at least token storage succeeded
                     if (tokenSuccess) {
                         dispatch({
                             type: "SESSION_VALIDATION_SUCCESS",

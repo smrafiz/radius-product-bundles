@@ -1,11 +1,13 @@
 import { verifyRequest } from "@/lib/shopify/verify";
 import { NextRequest, NextResponse } from "next/server";
+import { extractBearerToken, isSessionExpired, formatErrorResponse } from "@/utils";
 
 export async function POST(request: NextRequest) {
     try {
         const authHeader = request.headers.get("authorization");
+        const token = extractBearerToken(authHeader);
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (!token) {
             return NextResponse.json(
                 {
                     valid: false,
@@ -25,8 +27,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Check if session is expired
-        if (session.expires && new Date() > new Date(session.expires)) {
+        // Check if session is expired using utility function
+        if (isSessionExpired(session.expires)) {
             return NextResponse.json(
                 { valid: false, error: "Session expired" },
                 { status: 401 },
@@ -60,9 +62,10 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        const errorResponse = formatErrorResponse(error, "Session validation failed");
         return NextResponse.json(
-            { valid: false, error: "Session validation failed" },
-            { status: 500 },
+            { valid: false, ...errorResponse },
+            { status: 500 }
         );
     }
 }

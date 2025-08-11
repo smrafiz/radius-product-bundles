@@ -1,6 +1,6 @@
-import { DeliveryMethod } from "@shopify/shopify-api";
 import shopify from "./initialize-context";
 import prisma from "../db/prisma-connect";
+import { DeliveryMethod } from "@shopify/shopify-api";
 
 export function setupGDPRWebHooks(path: string) {
     /**

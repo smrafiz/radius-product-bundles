@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateOAuthState } from "@/utils";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -13,8 +14,8 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // Generate secure state parameter
-        const state = `${shop}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+        // Generate secure state parameter using utility function
+        const state = generateOAuthState(shop);
 
         // Build OAuth URL
         const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
