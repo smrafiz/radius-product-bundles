@@ -142,10 +142,10 @@ export class SessionNotFoundError extends Error {
 export async function findOfflineSessionByShop(shop: string) {
     const sessions = await findSessionsByShop(shop);
     const offlineSession = sessions.find((session) => !session.isOnline);
-    
+
     if (!offlineSession) {
         throw new SessionNotFoundError();
     }
-    
+
     return offlineSession;
 }

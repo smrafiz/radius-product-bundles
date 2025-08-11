@@ -18,9 +18,10 @@ export default function SessionProvider({
     const hasValidSession = useSessionStore((state) => state.hasValidSession);
     const [isAppBridgeReady, setIsAppBridgeReady] = useState(false);
     const [authRedirectAttempted, setAuthRedirectAttempted] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
     const tokenProcessed = useRef(false);
 
-    // App Bridge readiness check
+    // Enhanced App Bridge readiness check with fallback mechanisms
     useEffect(() => {
         const checkAppBridge = () => {
             if (typeof window !== "undefined" && window.shopify && app) {
@@ -35,20 +36,23 @@ export default function SessionProvider({
         }
 
         let attempts = 0;
-        const maxAttempts = 30;
+        const maxAttempts = 50; // Increased for better reliability
 
         const checkInterval = setInterval(() => {
             attempts++;
 
             if (checkAppBridge()) {
                 clearInterval(checkInterval);
+                setRetryCount(0); // Reset retry count on success
                 return;
             }
 
             if (attempts >= maxAttempts) {
                 clearInterval(checkInterval);
+                console.error("❌ App Bridge failed to initialize");
 
-                if (!authRedirectAttempted) {
+                // Enhanced fallback logic
+                if (!authRedirectAttempted && retryCount < 3) {
                     setAuthRedirectAttempted(true);
 
                     const shop = searchParams.get("shop");
@@ -58,16 +62,29 @@ export default function SessionProvider({
                         searchParams.get("embedded");
 
                     if (!hasMinimalParams) {
-                        const returnTo =
-                            window.location.pathname !== "/"
-                                ? window.location.pathname
-                                : "/dashboard";
-                        window.location.href = `/api/auth?returnTo=${encodeURIComponent(returnTo)}`;
+                        // Fallback: Try to get shop from URL or redirect to install
+                        const currentUrl = window.location.href;
+                        const shopMatch = currentUrl.match(/[?&]shop=([^&]+)/);
+                        
+                        if (shopMatch) {
+                            const detectedShop = shopMatch[1];
+                            window.location.href = `/api/auth?shop=${detectedShop}&returnTo=${encodeURIComponent(window.location.pathname)}`;
+                        } else {
+                            // Last resort: Redirect to auth without shop (will show error)
+                            const returnTo = window.location.pathname !== "/" ? window.location.pathname : "/dashboard";
+                            window.location.href = `/api/auth?returnTo=${encodeURIComponent(returnTo)}`;
+                        }
                     } else {
+                        // Retry App Bridge initialization
+                        setTimeout(() => {
+                            setRetryCount(prev => prev + 1);
+                            setAuthRedirectAttempted(false);
+                        }, 2000);
+                        
                         dispatch({
                             type: "SESSION_VALIDATION_FAILED",
                             payload: {
-                                error: "App Bridge initialization failed",
+                                error: "App Bridge initialization failed, retrying...",
                             },
                         });
                     }
@@ -76,9 +93,9 @@ export default function SessionProvider({
         }, 100);
 
         return () => clearInterval(checkInterval);
-    }, [app, searchParams, authRedirectAttempted, dispatch]);
+    }, [app, searchParams, authRedirectAttempted, dispatch, retryCount]);
 
-    // Token handling
+    // Enhanced token handling with retry mechanisms
     useEffect(() => {
         if (!isAppBridgeReady || tokenProcessed.current || hasValidSession) {
             return;
@@ -98,43 +115,71 @@ export default function SessionProvider({
                         payload: { token },
                     });
 
-                    const [tokenResult, webhookResult] =
-                        await Promise.allSettled([
-                            storeToken(token),
-                            doWebhookRegistration(token),
-                        ]);
+                    // Enhanced error handling with individual try-catch
+                    let tokenSuccess = false;
+                    let webhookSuccess = false;
 
-                    if (tokenResult.status === "rejected") {
-                        console.error("Error processing token:", tokenResult.reason);
+                    // Store token with retry
+                    try {
+                        await storeToken(token);
+                        tokenSuccess = true;
+                    } catch (tokenError) {
+                        console.error("❌ Token storage failed:", tokenError);
+                        // Continue anyway - webhook registration might still work
                     }
 
-                    if (webhookResult.status === "rejected") {
-                        console.error("Error registering webhooks:", webhookResult.reason);
+                    // Register webhooks with retry
+                    try {
+                        await doWebhookRegistration(token);
+                        webhookSuccess = true;
+                    } catch (webhookError) {
+                        console.error("❌ Webhook registration failed:", webhookError);
+                        // Non-critical - app can still function
                     }
 
-                    dispatch({
-                        type: "SESSION_VALIDATION_SUCCESS",
-                        payload: { token },
-                    });
+                    // Mark session as valid if at least token storage succeeded
+                    if (tokenSuccess) {
+                        dispatch({
+                            type: "SESSION_VALIDATION_SUCCESS",
+                            payload: { token },
+                        });
+                    } else {
+                        throw new Error("Token storage failed");
+                    }
                 } else {
-                    throw new Error("No session token received");
+                    throw new Error("No session token received from App Bridge");
                 }
             } catch (error) {
-                tokenProcessed.current = false;
+                console.error("❌ Session initialization error:", error);
+                tokenProcessed.current = false; // Allow retry
+                
+                // Enhanced error handling based on error type
+                let errorMessage = "Session initialization failed";
+                if (error instanceof Error) {
+                    if (error.message.includes("Token")) {
+                        errorMessage = "Authentication token error - please refresh the page";
+                    } else if (error.message.includes("Network")) {
+                        errorMessage = "Network error - please check your connection";
+                    }
+                }
+                
                 dispatch({
                     type: "SESSION_VALIDATION_FAILED",
-                    payload: {
-                        error:
-                            error instanceof Error
-                                ? error.message
-                                : "Session initialization failed",
-                    },
+                    payload: { error: errorMessage },
                 });
+
+                // Retry after delay if App Bridge is still ready
+                if (isAppBridgeReady && retryCount < 3) {
+                    setTimeout(() => {
+                        setRetryCount(prev => prev + 1);
+                        tokenProcessed.current = false;
+                    }, 3000);
+                }
             }
         };
 
         void handleTokenAndWebhooks();
-    }, [app, dispatch, isAppBridgeReady, hasValidSession]);
+    }, [app, dispatch, isAppBridgeReady, hasValidSession, retryCount]);
 
     // URL parameter handling
     useEffect(() => {
@@ -146,10 +191,14 @@ export default function SessionProvider({
         }
     }, [dispatch, isInitialized, searchParams]);
 
-    // Store App Bridge globally
+    // Store App Bridge globally with error handling
     useEffect(() => {
         if (isAppBridgeReady && app) {
-            (window as any).__APP_BRIDGE__ = app;
+            try {
+                (window as any).__APP_BRIDGE__ = app;
+            } catch (error) {
+                console.error("❌ Failed to store App Bridge globally:", error);
+            }
         }
     }, [app, isAppBridgeReady]);
 
