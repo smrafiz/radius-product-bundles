@@ -4,3 +4,4 @@ export * from "./session-utils";
 export * from "./error-utils";
 export * from "./formatters";
 export * from "./setupCheck";
+export * from "./bundle-table";
