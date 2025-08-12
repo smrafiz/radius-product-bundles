@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useBundlesStore } from "@/lib/stores/bundlesStore";
-import { getBundleMetrics, getBundles } from "@/actions/bundles.action";
+import { getBundles } from "@/actions/bundles.action";
 
 export const useBundlesData = () => {
     const app = useAppBridge();
