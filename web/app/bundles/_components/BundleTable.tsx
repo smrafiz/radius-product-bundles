@@ -1,23 +1,26 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
-    IndexTable,
-    useIndexResourceState,
     Card,
+    IndexTable,
     useBreakpoints,
+    useIndexResourceState,
 } from "@shopify/polaris";
-import { useBundlesStore } from "@/lib/stores/bundlesStore";
-import { useBundleTableActions } from "@/hooks/useBundleTableActions";
-import { BundleIndexFilters } from "./BundleIndexFilters";
 import { BundleTableRow } from "./BundleTableRow";
-import { BundleTableEmptyStates } from "./BundleTableEmptyStates";
 import { BundlePagination } from "./BundlePagination";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { BundleIndexFilters } from "./BundleIndexFilters";
+import { useBundlesStore } from "@/lib/stores/bundlesStore";
+import { BundleTableEmptyStates } from "./BundleTableEmptyStates";
+import { useBundleTableActions } from "@/hooks/useBundleTableActions";
 
 export function BundleTable() {
     const breakpoints = useBreakpoints();
+    const app = useAppBridge();
     const {
         getPaginatedBundles,
         getTotalBundlesCount,
         getFilteredBundles,
+        fetchBundles,
         showToast,
     } = useBundlesStore();
 
@@ -25,15 +28,41 @@ export function BundleTable() {
     const totalBundles = getTotalBundlesCount();
     const filteredBundles = getFilteredBundles();
 
+    // Fetch bundles on mount
+    useEffect(() => {
+        let mounted = true;
+        const loadBundles = async () => {
+            try {
+                const token = await app.idToken();
+                if (!mounted) return;
+                await fetchBundles(token);
+            } catch (err) {
+                console.error("Failed to fetch bundles:", err);
+                showToast("Failed to load bundles");
+            }
+        };
+        loadBundles();
+        return () => {
+            mounted = false;
+        };
+    }, [app, fetchBundles, showToast]);
+
     // Selection state
     const resourceIDResolver = (bundle: any) => bundle.id;
-    const { selectedResources, allResourcesSelected, handleSelectionChange, clearSelection } =
-        useIndexResourceState(paginatedBundles, { resourceIDResolver });
+    const {
+        selectedResources,
+        allResourcesSelected,
+        handleSelectionChange,
+        clearSelection,
+    } = useIndexResourceState(paginatedBundles, { resourceIDResolver });
 
     // Get selected bundle for single selection
-    const selectedBundle = selectedResources.length === 1
-        ? paginatedBundles.find(bundle => bundle.id === selectedResources[0])
-        : null;
+    const selectedBundle =
+        selectedResources.length === 1
+            ? paginatedBundles.find(
+                  (bundle) => bundle.id === selectedResources[0],
+              )
+            : null;
 
     // Actions hook
     const { getPromotedBulkActions, getBulkActions } = useBundleTableActions();
@@ -46,20 +75,22 @@ export function BundleTable() {
         }
     }, [clearSelection, showToast]);
 
-    // Get bulk actions with clear selection button
-    const promotedBulkActions = selectedResources.length > 0 ? [
-        ...getPromotedBulkActions(selectedResources, selectedBundle),
-        { content: "Cancel", onAction: handleClearSelection },
-    ] : [];
-
+    // Bulk actions
+    const promotedBulkActions =
+        selectedResources.length > 0
+            ? [
+                  ...getPromotedBulkActions(selectedResources, selectedBundle),
+                  { content: "Cancel", onAction: handleClearSelection },
+              ]
+            : [];
     const bulkActions = getBulkActions(selectedResources, selectedBundle);
 
-    // Check for empty states
+    // Empty state
     if (totalBundles === 0 || filteredBundles.length === 0) {
         return (
             <Card padding="0">
                 <BundleIndexFilters />
-                <BundleTableEmptyStates 
+                <BundleTableEmptyStates
                     totalBundles={totalBundles}
                     filteredBundlesCount={filteredBundles.length}
                 />
@@ -83,19 +114,21 @@ export function BundleTable() {
             <BundleIndexFilters />
             <IndexTable
                 condensed={breakpoints.smDown}
-                resourceName={{ singular: 'bundle', plural: 'bundles' }}
+                resourceName={{ singular: "bundle", plural: "bundles" }}
                 itemCount={paginatedBundles.length}
-                selectedItemsCount={allResourcesSelected ? 'All' : selectedResources.length}
+                selectedItemsCount={
+                    allResourcesSelected ? "All" : selectedResources.length
+                }
                 onSelectionChange={handleSelectionChange}
                 promotedBulkActions={promotedBulkActions}
                 bulkActions={bulkActions}
                 headings={[
-                    { title: 'Bundle' },
-                    { title: 'Type' },
-                    { title: 'Status' },
-                    { title: 'Revenue' },
-                    { title: 'Views' },
-                    { title: 'Products' },
+                    { title: "Bundle" },
+                    { title: "Type" },
+                    { title: "Status" },
+                    { title: "Revenue" },
+                    { title: "Views" },
+                    { title: "Products" },
                 ]}
                 selectable
             >

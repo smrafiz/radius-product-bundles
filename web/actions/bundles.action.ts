@@ -3,6 +3,15 @@
 import prisma from "@/lib/db/prisma-connect";
 import { handleSessionToken } from "@/lib/shopify/verify";
 
+export interface GetBundlesParams {
+    search?: string;
+    statusFilter?: string[];
+    typeFilter?: string[];
+    sort?: string[];
+    page?: number;
+    itemsPerPage?: number;
+}
+
 /**
  * Get bundles for a shop
  */
@@ -54,6 +63,87 @@ export async function getBundles(sessionToken: string) {
             status: "error" as const,
             message: "Failed to fetch bundles",
             data: [],
+        };
+    }
+}
+
+export async function getBundlesServer(
+    sessionToken: string,
+    params: GetBundlesParams,
+) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const {
+            search = "",
+            statusFilter = [],
+            typeFilter = [],
+            sort = ["created_at desc"],
+            page = 1,
+            itemsPerPage = 10,
+        } = params;
+
+        // Build where clause
+        const where: any = { shop };
+        if (statusFilter.length > 0) where.status = { in: statusFilter };
+        if (typeFilter.length > 0) where.type = { in: typeFilter };
+        if (search) where.name = { contains: search, mode: "insensitive" };
+
+        // Sort
+        const [sortKey, sortDir] = sort[0].split(" ");
+        const orderBy: any = {};
+        switch (sortKey) {
+            case "name":
+                orderBy.name = sortDir;
+                break;
+            case "revenue":
+                orderBy.revenue = sortDir;
+                break;
+            case "views":
+                orderBy.views = sortDir;
+                break;
+            default:
+                orderBy.updatedAt = sortDir;
+                break;
+        }
+
+        const bundles = await prisma.bundle.findMany({
+            where,
+            include: { bundleProducts: { orderBy: { displayOrder: "asc" } } },
+            orderBy,
+            skip: (page - 1) * itemsPerPage,
+            take: itemsPerPage,
+        });
+
+        const totalCount = await prisma.bundle.count({ where });
+
+        const transformedBundles = bundles.map((b) => ({
+            id: b.id,
+            name: b.name,
+            type: b.type,
+            status: b.status,
+            views: b.views,
+            conversions: b.conversions,
+            revenue: b.revenue,
+            conversionRate: b.views > 0 ? (b.conversions / b.views) * 100 : 0,
+            productCount: b.bundleProducts.length,
+            createdAt: b.createdAt.toISOString(),
+        }));
+
+        return {
+            status: "success" as const,
+            data: transformedBundles,
+            totalCount,
+        };
+    } catch (error) {
+        console.error("Failed to fetch bundles:", error);
+        return {
+            status: "error" as const,
+            data: [],
+            totalCount: 0,
+            message: "Failed to fetch bundles",
         };
     }
 }

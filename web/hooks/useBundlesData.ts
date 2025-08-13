@@ -1,11 +1,11 @@
 import { useEffect } from "react";
+import { getBundles } from "@/actions/bundles.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useBundlesStore } from "@/lib/stores/bundlesStore";
-import { getBundles } from "@/actions/bundles.action";
 
 export const useBundlesData = () => {
     const app = useAppBridge();
-    const { setBundles, setLoading, setError, showToast } =
+    const { fetchBundles, setBundles, setLoading, setError, showToast } =
         useBundlesStore();
 
     useEffect(() => {
@@ -50,4 +50,22 @@ export const useBundlesData = () => {
             mounted = false;
         };
     }, [app, setBundles, setLoading, setError, showToast]);
+
+    useEffect(() => {
+        let mounted = true;
+
+        const loadBundles = async () => {
+            try {
+                const token = await app.idToken();
+                if (!mounted) return;
+                fetchBundles(token);
+            } catch (err) {
+                console.error("Failed to fetch bundles:", err);
+            }
+        };
+
+        void loadBundles();
+
+        return () => { mounted = false; };
+    }, [app, fetchBundles]);
 };
