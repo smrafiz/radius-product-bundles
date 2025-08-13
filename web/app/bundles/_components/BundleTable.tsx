@@ -57,7 +57,7 @@ export function BundleTable() {
     // Check for empty states
     if (totalBundles === 0 || filteredBundles.length === 0) {
         return (
-            <Card>
+            <Card padding="0">
                 <BundleIndexFilters />
                 <BundleTableEmptyStates 
                     totalBundles={totalBundles}

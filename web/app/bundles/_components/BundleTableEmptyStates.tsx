@@ -1,6 +1,6 @@
 import React from "react";
 import { PlusIcon } from "@shopify/polaris-icons";
-import { EmptySearchResult, EmptyState } from "@shopify/polaris";
+import { Box, EmptySearchResult, EmptyState } from "@shopify/polaris";
 import { useBundleTableActions } from "@/hooks/useBundleTableActions";
 
 interface BundleTableEmptyStatesProps {
@@ -37,13 +37,15 @@ export function BundleTableEmptyStates({
     // No bundles match filters
     if (filteredBundlesCount === 0) {
         return (
-            <EmptySearchResult
-                title={"No bundles match your filters"}
-                description={
-                    "Try adjusting your search terms or filters to see more results."
-                }
-                withIllustration
-            />
+            <Box padding="600">
+                <EmptySearchResult
+                    title={"No bundles match your filters"}
+                    description={
+                        "Try adjusting your search terms or filters to see more results."
+                    }
+                    withIllustration
+                />
+            </Box>
         );
     }
 
