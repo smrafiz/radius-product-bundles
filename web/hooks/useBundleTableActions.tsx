@@ -8,7 +8,7 @@ export function useBundleTableActions() {
     const { showToast } = useBundlesStore();
 
     const handleCreateBundle = () => {
-        router.push("/bundles/new");
+        router.push("/bundles/create");
     };
 
     const handleEditBundle = (bundleId: string) => {

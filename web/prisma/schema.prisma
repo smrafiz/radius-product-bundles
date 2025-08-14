@@ -400,14 +400,12 @@ model AppSettings {
 }
 
 enum BundleType {
+    FIXED_BUNDLE
     BUY_X_GET_Y
     BOGO
     VOLUME_DISCOUNT
     MIX_MATCH
     CROSS_SELL
-    TIERED
-    FLASH_SALE
-    GIFT
 }
 
 enum BundleStatus {

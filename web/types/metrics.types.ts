@@ -1,8 +1,10 @@
 export interface DashboardMetrics {
     totalRevenue: number;
+    revenueAllTime: number;
     totalViews: number;
     avgConversionRate: number;
     totalBundles: number;
+    activeBundles: number;
     revenueGrowth: number;
     conversionGrowth: number;
 }

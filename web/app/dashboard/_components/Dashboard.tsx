@@ -64,7 +64,7 @@ export default function Dashboard() {
                             />
                             <MetricCard
                                 title="Active Bundles"
-                                value={(metrics?.totalBundles || 0).toString()}
+                                value={(metrics?.activeBundles || 0).toString()}
                                 action={{ label: "View all", url: "/bundles" }}
                                 comparisonLabel="Total created"
                             />

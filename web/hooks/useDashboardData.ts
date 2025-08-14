@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { getBundleMetrics, getBundles } from "@/actions/bundles.action";
 import { useDashboardStore } from "@/lib/stores/dashboardStore";
+import { getBundleMetrics, getBundles } from "@/actions/bundles.action";
 
 export const useDashboardData = () => {
     const app = useAppBridge();
@@ -37,18 +37,22 @@ export const useDashboardData = () => {
                     const data = metricsResult.data;
                     setMetrics({
                         totalRevenue: data.totals?.revenue || 0,
+                        revenueAllTime: data.totals?.revenueAllTime || 0,
                         totalViews: data.totals?.views || 0,
                         avgConversionRate: data.metrics?.conversionRate || 0,
-                        totalBundles: bundlesResult.data?.length || 0,
+                        totalBundles: data?.totals?.totalBundles || 0,
+                        activeBundles: data?.totals?.activeBundles || 0,
                         revenueGrowth: data.growth?.revenue || 0,
                         conversionGrowth: data.growth?.conversion || 0,
                     });
                 } else {
                     setMetrics({
                         totalRevenue: 0,
+                        revenueAllTime: 0,
                         totalViews: 0,
                         avgConversionRate: 0,
                         totalBundles: 0,
+                        activeBundles: 0,
                         revenueGrowth: 0,
                         conversionGrowth: 0,
                     });
@@ -61,9 +65,11 @@ export const useDashboardData = () => {
                 setBundles([]);
                 setMetrics({
                     totalRevenue: 0,
+                    revenueAllTime: 0,
                     totalViews: 0,
                     avgConversionRate: 0,
                     totalBundles: 0,
+                    activeBundles: 0,
                     revenueGrowth: 0,
                     conversionGrowth: 0,
                 });
@@ -72,7 +78,7 @@ export const useDashboardData = () => {
             }
         };
 
-        loadData();
+        void loadData();
 
         return () => {
             mounted = false;

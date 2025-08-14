@@ -1,29 +1,38 @@
 "use client";
 
 import React from "react";
+import { formatCurrency } from "@/utils";
 import { useRouter } from "next/navigation";
-import { Frame, Layout, Page, Toast } from "@shopify/polaris";
-import { PlusIcon } from "@shopify/polaris-icons";
-
 import { useBundlesData } from "@/hooks/useBundlesData";
 import { useBundlesStore } from "@/lib/stores/bundlesStore";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
+import { Frame, Layout, Page, Toast } from "@shopify/polaris";
+import { useDashboardStore } from "@/lib/stores/dashboardStore";
+import { MetricCard } from "@/app/dashboard/_components/MetricCard";
 import { BundleTable } from "@/app/bundles/_components/BundleTable";
 import { BundleSkeleton } from "@/app/bundles/_components/BundleSkeleton";
 import { BundleErrorCard } from "@/app/bundles/_components/BundleErrorCard";
-import { BundleNavigation } from "@/app/bundles/_components/BundleNavigation";
 
 export default function Bundles() {
     const router = useRouter();
+    const { metrics } = useDashboardStore();
 
     // Load data using the hook
     useBundlesData();
+    useDashboardData();
 
     // Get state from the store
     const { loading, toast, hideToast } = useBundlesStore();
 
     // Handle primary action
     const handleCreateBundle = () => {
-        router.push("/bundles/new");
+        router.push("/bundles/create");
+    };
+
+    // Handle secondary action
+    const handleBundleStudio = () => {
+        router.push("/bundles/studio");
     };
 
     // Show loading skeleton
@@ -41,6 +50,13 @@ export default function Bundles() {
                     icon: PlusIcon,
                     onAction: handleCreateBundle,
                 }}
+                secondaryActions={[
+                    {
+                        content: "Bundle Studio",
+                        icon: ColorIcon,
+                        onAction: handleBundleStudio,
+                    }
+                ]}
             >
                 <Layout>
                     <Layout.Section>
@@ -48,7 +64,30 @@ export default function Bundles() {
                     </Layout.Section>
 
                     <Layout.Section>
-                        <BundleNavigation />
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <MetricCard
+                                title="Active Bundles"
+                                value={(metrics?.activeBundles || 0).toString()}
+                                comparisonLabel="Total created"
+                            />
+                            <MetricCard
+                                title="Total Bundles"
+                                value={(metrics?.totalBundles || 0).toString()}
+                                comparisonLabel="Total created"
+                            />
+                            <MetricCard
+                                title="Total Views"
+                                value={(
+                                    metrics?.totalViews || 0
+                                ).toLocaleString()}
+                            />
+                            <MetricCard
+                                title="Total Revenue"
+                                value={formatCurrency(
+                                    metrics?.revenueAllTime || 0,
+                                )}
+                            />
+                        </div>
                     </Layout.Section>
 
                     <Layout.Section>

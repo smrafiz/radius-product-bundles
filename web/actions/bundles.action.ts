@@ -73,34 +73,49 @@ export async function getBundleMetrics(sessionToken: string) {
         const sixtyDaysAgo = new Date();
         sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
-        const [currentPeriod, previousPeriod] = await Promise.all([
-            prisma.bundleAnalytics.aggregate({
-                where: {
-                    bundle: { shop },
-                    date: { gte: thirtyDaysAgo },
-                },
-                _sum: {
-                    bundleViews: true,
-                    bundlePurchases: true,
-                    bundleRevenue: true,
-                    bundleAddToCarts: true,
-                },
-            }),
-            prisma.bundleAnalytics.aggregate({
-                where: {
-                    bundle: { shop },
-                    date: {
-                        gte: sixtyDaysAgo,
-                        lt: thirtyDaysAgo,
+        const [currentPeriod, previousPeriod, totalRevenueAllTime, totalBundles, activeBundles] =
+            await Promise.all([
+                prisma.bundleAnalytics.aggregate({
+                    where: {
+                        bundle: { shop },
+                        date: { gte: thirtyDaysAgo },
                     },
-                },
-                _sum: {
-                    bundleViews: true,
-                    bundlePurchases: true,
-                    bundleRevenue: true,
-                },
-            }),
-        ]);
+                    _sum: {
+                        bundleViews: true,
+                        bundlePurchases: true,
+                        bundleRevenue: true,
+                        bundleAddToCarts: true,
+                    },
+                }),
+                prisma.bundleAnalytics.aggregate({
+                    where: {
+                        bundle: { shop },
+                        date: {
+                            gte: sixtyDaysAgo,
+                            lt: thirtyDaysAgo,
+                        },
+                    },
+                    _sum: {
+                        bundleViews: true,
+                        bundlePurchases: true,
+                        bundleRevenue: true,
+                    },
+                }),
+                prisma.bundleAnalytics.aggregate({
+                    where: {
+                        bundle: { shop },
+                    },
+                    _sum: {
+                        bundleRevenue: true,
+                    },
+                }),
+                prisma.bundle.count({
+                    where: { shop },
+                }),
+                prisma.bundle.count({
+                    where: { shop, status: "ACTIVE" },
+                }),
+            ]);
 
         const currentRevenue = currentPeriod._sum.bundleRevenue || 0;
         const currentViews = currentPeriod._sum.bundleViews || 0;
@@ -135,7 +150,10 @@ export async function getBundleMetrics(sessionToken: string) {
             status: "success" as const,
             data: {
                 totals: {
+                    totalBundles,
+                    activeBundles,
                     revenue: currentRevenue,
+                    revenueAllTime: totalRevenueAllTime._sum.bundleRevenue || 0,
                     views: currentViews,
                     purchases: currentPurchases,
                     addToCarts: currentAddToCarts,
@@ -163,7 +181,14 @@ export async function getBundleMetrics(sessionToken: string) {
             status: "error" as const,
             message: "Failed to fetch metrics",
             data: {
-                totals: { revenue: 0, views: 0, purchases: 0, addToCarts: 0 },
+                totals: {
+                    totalBundles: 0,
+                    activeBundles: 0,
+                    revenue: 0,
+                    views: 0,
+                    purchases: 0,
+                    addToCarts: 0,
+                },
                 metrics: {
                     conversionRate: 0,
                     avgOrderValue: 0,
