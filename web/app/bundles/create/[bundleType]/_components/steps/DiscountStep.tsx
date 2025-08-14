@@ -28,6 +28,7 @@ export default function DiscountStep({ bundleData, setBundleData }: Props) {
                     label="Discount Value"
                     type="number"
                     value={bundleData.discountValue?.toString() || '0'}
+                    autoComplete={bundleData.discountType === 'PERCENTAGE' ? 'off' : 'on'}
                     onChange={(value) => setBundleData((prev) => ({ ...prev, discountValue: parseFloat(value) }))}
                 />
             </Layout.Section>

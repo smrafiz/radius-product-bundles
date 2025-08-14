@@ -1,18 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Page, Layout, Card, ProgressBar, Button } from '@shopify/polaris';
-import type { BundleType, CreateBundlePayload } from '@/types';
+import { Page, Layout, Card, ProgressBar } from '@shopify/polaris';
+import type { BundleType } from '@/types';
 
-// Step Components (to be created)
-import SelectProductsStep from './steps/SelectProductsStep';
-import DiscountStep from './steps/DiscountStep';
-import WidgetsStep from './steps/WidgetsStep';
-import ReviewStep from './steps/ReviewStep';
-
-// Preview Component (to be created)
 import BundlePreview from './BundlePreview';
+import { useBundleStore } from "@/lib/stores/bundleStore";
+import SelectProductsStep from "@/app/bundles/create/[bundleType]/_components/steps/SelectProductsStep";
+import DiscountStep from "@/app/bundles/create/[bundleType]/_components/steps/DiscountStep";
+import WidgetsStep from "@/app/bundles/create/[bundleType]/_components/steps/WidgetsStep";
+import ReviewStep from "@/app/bundles/create/[bundleType]/_components/steps/ReviewStep";
 
 interface Props {
     bundleType: BundleType;
@@ -27,36 +25,31 @@ const steps = [
 
 export default function BundleCreationForm({ bundleType }: Props) {
     const router = useRouter();
-    const [currentStep, setCurrentStep] = useState(1);
-    const [bundleData, setBundleData] = useState<Partial<CreateBundlePayload>>({
-        type: bundleType,
-        name: '',
-        products: [],
-        discountType: undefined,
-        discountValue: 0,
-        description: '',
-        minOrderValue: undefined,
-        maxDiscountAmount: undefined,
-        startDate: undefined,
-        endDate: undefined,
-    });
+    const { currentStep, setStep, nextStep, prevStep, bundleData, setBundleData } = useBundleStore();
+
+    // Initialize type only once
+    React.useEffect(() => {
+        if (!bundleData.type) {
+            setBundleData({ ...bundleData, type: bundleType });
+        }
+    }, [bundleType, bundleData, setBundleData]);
 
     const handleBack = () => {
         if (currentStep === 1) {
             router.push('/bundles/create');
         } else {
-            setCurrentStep(currentStep - 1);
+            prevStep();
         }
     };
 
     const handleNext = () => {
         if (currentStep < steps.length) {
-            setCurrentStep(currentStep + 1);
+            nextStep();
         }
     };
 
     const handleStepClick = (stepNumber: number) => {
-        setCurrentStep(stepNumber);
+        setStep(stepNumber);
     };
 
     const getBundleTypeTitle = (type: BundleType): string => {
@@ -74,15 +67,15 @@ export default function BundleCreationForm({ bundleType }: Props) {
     const renderCurrentStep = () => {
         switch (currentStep) {
             case 1:
-                return <SelectProductsStep bundleData={bundleData} setBundleData={setBundleData} />;
+                return <SelectProductsStep />;
             case 2:
-                return <DiscountStep bundleData={bundleData} setBundleData={setBundleData} />;
+                return <DiscountStep />;
             case 3:
-                return <WidgetsStep bundleData={bundleData} setBundleData={setBundleData} />;
+                return <WidgetsStep />;
             case 4:
-                return <ReviewStep bundleData={bundleData} setBundleData={setBundleData} />;
+                return <ReviewStep />;
             default:
-                return <SelectProductsStep bundleData={bundleData} setBundleData={setBundleData} />;
+                return <SelectProductsStep />;
         }
     };
 
@@ -90,26 +83,14 @@ export default function BundleCreationForm({ bundleType }: Props) {
         <Page
             title={`Create ${getBundleTypeTitle(bundleType)}`}
             subtitle="Configure your bundle settings and preview the customer experience"
-            backAction={{
-                content: currentStep === 1 ? 'Bundle types' : 'Previous step',
-                onAction: handleBack,
-            }}
-            primaryAction={{
-                content: currentStep === steps.length ? 'Create bundle' : 'Next step',
-                onAction: handleNext,
-            }}
+            backAction={{ content: currentStep === 1 ? 'Bundle types' : 'Previous step', onAction: handleBack }}
+            primaryAction={{ content: currentStep === steps.length ? 'Create bundle' : 'Next step', onAction: handleNext }}
         >
             {/* Progress Steps */}
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     {steps.map((step, index) => (
-                        <div
-                            key={step.id}
-                            className={`flex items-center cursor-pointer ${
-                                index < steps.length - 1 ? 'flex-1' : ''
-                            }`}
-                            onClick={() => handleStepClick(step.id)}
-                        >
+                        <div key={step.id} className={`flex items-center cursor-pointer ${index < steps.length - 1 ? 'flex-1' : ''}`} onClick={() => handleStepClick(step.id)}>
                             <div className="flex items-center">
                                 <div
                                     className={`
@@ -118,8 +99,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
                                         ? 'bg-blue-600 text-white'
                                         : currentStep > step.id
                                             ? 'bg-green-600 text-white'
-                                            : 'bg-gray-200 text-gray-600'
-                                    }
+                                            : 'bg-gray-200 text-gray-600'}
                                     `}
                                 >
                                     {step.id}
@@ -130,9 +110,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
                                 </div>
                             </div>
                             {index < steps.length - 1 && (
-                                <div className={`flex-1 h-px mx-4 ${
-                                    currentStep > step.id ? 'bg-green-600' : 'bg-gray-300'
-                                }`} />
+                                <div className={`flex-1 h-px mx-4 ${currentStep > step.id ? 'bg-green-600' : 'bg-gray-300'}`} />
                             )}
                         </div>
                     ))}
@@ -141,14 +119,10 @@ export default function BundleCreationForm({ bundleType }: Props) {
             </div>
 
             <Layout>
-                {/* Left Side - Form Steps */}
                 <Layout.Section variant="oneHalf">
-                    <Card>
-                        {renderCurrentStep()}
-                    </Card>
+                    <Card>{renderCurrentStep()}</Card>
                 </Layout.Section>
 
-                {/* Right Side - Preview */}
                 <Layout.Section variant="oneHalf">
                     <BundlePreview bundleData={bundleData} bundleType={bundleType} />
                 </Layout.Section>
