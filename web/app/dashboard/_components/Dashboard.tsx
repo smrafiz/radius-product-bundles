@@ -2,7 +2,7 @@
 
 import React from "react";
 import { withLoader } from "@/utils";
-import { router } from "next/client";
+import { useRouter } from "next/navigation";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { useDashboardStore } from "@/lib/stores/dashboardStore";
@@ -16,6 +16,7 @@ import { formatCurrency, formatPercentage } from "@/utils/formatters";
 import { QuickActions } from "@/app/dashboard/_components/QuickActions";
 
 export default function Dashboard() {
+    const router = useRouter();
     const { loading, error, metrics, toast, hideToast } = useDashboardStore();
     useDashboardData();
 

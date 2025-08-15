@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import {
     BlockStack,
@@ -13,6 +15,8 @@ import {
     ArrowRightIcon,
     ArrowUpIcon,
 } from "@shopify/polaris-icons";
+import { withLoader } from "@/utils";
+import { useRouter } from "next/navigation";
 import { formatGrowth } from "@/utils/formatters";
 
 interface MetricCardProps {
@@ -34,6 +38,7 @@ export const MetricCard = ({
     action,
     comparisonLabel = "vs last month",
 }: MetricCardProps) => {
+    const router = useRouter();
     const getGrowthIcon = (value: number) => {
         if (value > 0) return ArrowUpIcon;
         if (value < 0) return ArrowDownIcon;
@@ -77,7 +82,7 @@ export const MetricCard = ({
                         </InlineStack>
                     )}
                     {action && (
-                        <Button variant="plain" size="slim" url={action.url}>
+                        <Button variant="plain" size="slim" onClick={withLoader(() => router.push(action.url))}>
                             {action.label}
                         </Button>
                     )}

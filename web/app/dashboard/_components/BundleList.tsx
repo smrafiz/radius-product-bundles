@@ -10,14 +10,16 @@ import {
     ResourceList,
     Text,
 } from "@shopify/polaris";
-import { useDashboardStore } from "@/lib/stores/dashboardStore";
+import React from "react";
 import {
     formatBundleType,
     formatCurrency,
     formatPercentage,
 } from "@/utils/formatters";
+import { withLoader } from "@/utils";
+import { router } from "next/client";
 import { ViewIcon } from "@shopify/polaris-icons";
-import React from "react";
+import { useDashboardStore } from "@/lib/stores/dashboardStore";
 
 export const BundleList = () => {
     const { bundles, error } = useDashboardStore();
@@ -38,7 +40,11 @@ export const BundleList = () => {
         <Card>
             <Box padding="400">
                 <BlockStack gap="400">
-                    <InlineStack blockAlign="center" align="space-between" gap="400" >
+                    <InlineStack
+                        blockAlign="center"
+                        align="space-between"
+                        gap="400"
+                    >
                         <BlockStack gap="200">
                             <Text as="h2" variant="headingMd">
                                 Top Performing Bundles
@@ -48,7 +54,10 @@ export const BundleList = () => {
                                 store.
                             </Text>
                         </BlockStack>
-                        <Button icon={ViewIcon} url="/bundles">
+                        <Button
+                            icon={ViewIcon}
+                            onClick={withLoader(() => router.push("/bundles"))}
+                        >
                             View All
                         </Button>
                     </InlineStack>
