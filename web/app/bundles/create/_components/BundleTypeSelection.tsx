@@ -108,7 +108,11 @@ export default function BundleTypeSelection() {
     const router = useRouter();
 
     const handleBundleTypeSelect = (bundleType: BundleType) => {
-        const urlType = bundleType.toLowerCase().replace("_", "-");
+        const urlType = bundleType
+            .toLowerCase()
+            .replace(/_/g, "-")
+            .replace(/\s+/g, "-");
+        console.log(bundleType);
         router.push(`/bundles/create/${urlType}`);
     };
 
