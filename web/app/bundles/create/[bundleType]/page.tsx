@@ -6,7 +6,6 @@ interface Props {
     params: { bundleType: string };
 }
 
-// Map URL params to Prisma enum values
 const bundleTypeMap: Record<string, BundleType> = {
     "buy-x-get-y": "BUY_X_GET_Y",
     "bogo": "BOGO",
@@ -16,11 +15,11 @@ const bundleTypeMap: Record<string, BundleType> = {
     "fixed-bundle": "FIXED_BUNDLE",
 };
 
-export default function BundleCreationPage({ params }: Props) {
-    // Convert URL param to enum value
-    const bundleType = bundleTypeMap[params.bundleType];
+export default async function BundleCreationPage({ params }: Props) {
+    const { bundleType: bundleTypeParam } = await params;
 
-    // Validate bundle type
+    const bundleType = bundleTypeMap[bundleTypeParam];
+
     if (!bundleType) {
         notFound();
     }

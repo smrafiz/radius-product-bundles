@@ -1,37 +1,56 @@
-// steps/DiscountStep.tsx
 'use client';
+
 import React from 'react';
-import { Layout, TextField, Select } from '@shopify/polaris';
-import type { CreateBundlePayload } from '@/types';
+import { BlockStack, Text, Card, TextField, Select } from '@shopify/polaris';
+import { useBundleStore } from "@/lib/stores/bundleStore";
 
-interface Props {
-    bundleData: Partial<CreateBundlePayload>;
-    setBundleData: React.Dispatch<React.SetStateAction<Partial<CreateBundlePayload>>>;
-}
+export default function DiscountStep() {
+    const { bundleData, updateBundleField } = useBundleStore();
 
-export default function DiscountStep({ bundleData, setBundleData }: Props) {
+    const discountTypeOptions = [
+        { label: 'Percentage', value: 'PERCENTAGE' },
+        { label: 'Fixed Amount', value: 'FIXED_AMOUNT' },
+        { label: 'Free Shipping', value: 'FREE_SHIPPING' },
+    ];
+
     return (
-        <Layout>
-            <Layout.Section>
-                <Select
-                    label="Discount Type"
-                    options={[
-                        { label: 'Percentage', value: 'PERCENTAGE' },
-                        { label: 'Fixed', value: 'FIXED' },
-                    ]}
-                    value={bundleData.discountType || 'PERCENTAGE'}
-                    onChange={(value) =>
-                        setBundleData((prev) => ({ ...prev, discountType: value as 'PERCENTAGE' | 'FIXED' }))
-                    }
-                />
-                <TextField
-                    label="Discount Value"
-                    type="number"
-                    value={bundleData.discountValue?.toString() || '0'}
-                    autoComplete={bundleData.discountType === 'PERCENTAGE' ? 'off' : 'on'}
-                    onChange={(value) => setBundleData((prev) => ({ ...prev, discountValue: parseFloat(value) }))}
-                />
-            </Layout.Section>
-        </Layout>
+        <BlockStack gap="400">
+            <Text variant="headingMd" as="h2">
+                Discount Settings
+            </Text>
+
+            <Text as="p" variant="bodySm" tone="subdued">
+                Configure the discount type and amount for your bundle.
+            </Text>
+
+            <Card>
+                <BlockStack gap="400">
+                    <Select
+                        label="Discount Type"
+                        options={discountTypeOptions}
+                        value={bundleData.discountType || ''}
+                        onChange={(value) => updateBundleField('discountType', value as any)}
+                    />
+
+                    <TextField
+                        label="Discount Value"
+                        type="number"
+                        autoComplete="off"
+                        value={bundleData.discountValue?.toString() || ''}
+                        onChange={(value) => updateBundleField('discountValue', parseInt(value) || 0)}
+                        suffix={bundleData.discountType === 'PERCENTAGE' ? '%' : '$'}
+                    />
+
+                    <TextField
+                        label="Minimum Order Value (Optional)"
+                        type="number"
+                        autoComplete="off"
+                        value={bundleData.minOrderValue?.toString() || ''}
+                        onChange={(value) => updateBundleField('minOrderValue', parseInt(value) || 0)}
+                        prefix="$"
+                    />
+                </BlockStack>
+            </Card>
+        </BlockStack>
     );
 }

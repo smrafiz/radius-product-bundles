@@ -1,4 +1,3 @@
-// store/bundleStore.ts
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { CreateBundlePayload } from "@/types";
@@ -17,22 +16,41 @@ interface BundleState {
     resetBundle: () => void;
 }
 
+const initialBundleData: Partial<CreateBundlePayload> = {
+    name: '',
+    products: [],
+    discountType: undefined,
+    discountValue: 0,
+    description: '',
+    minOrderValue: undefined,
+    maxDiscountAmount: undefined,
+    startDate: undefined,
+    endDate: undefined,
+};
+
 export const useBundleStore = create(
     immer<BundleState>((set, get) => ({
         currentStep: 1,
-        bundleData: {} as Partial<CreateBundlePayload>,
+        bundleData: initialBundleData,
 
         setStep: (step) => set(() => ({ currentStep: step })),
+
         nextStep: () =>
             set((state) => {
-                state.currentStep += 1;
-            }),
-        prevStep: () =>
-            set((state) => {
-                if (state.currentStep > 1) state.currentStep -= 1;
+                if (state.currentStep < 4) {
+                    state.currentStep += 1;
+                }
             }),
 
-        setBundleData: (data) => set(() => ({ bundleData: data })),
+        prevStep: () =>
+            set((state) => {
+                if (state.currentStep > 1) {
+                    state.currentStep -= 1;
+                }
+            }),
+
+        setBundleData: (data) => set(() => ({ bundleData: { ...data } })),
+
         updateBundleField: (key, value) =>
             set((state) => {
                 state.bundleData[key] = value;
@@ -41,7 +59,7 @@ export const useBundleStore = create(
         resetBundle: () =>
             set(() => ({
                 currentStep: 1,
-                bundleData: {} as Partial<CreateBundlePayload>,
+                bundleData: { ...initialBundleData },
             })),
     })),
 );

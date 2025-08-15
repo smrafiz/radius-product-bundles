@@ -2,23 +2,22 @@
 
 import {
     Badge,
-    BlockStack,
-    Box,
     Button,
-    CalloutCard,
     Card,
-    Divider,
-    Grid,
-    InlineStack,
     Layout,
     Page,
     Text,
+    Grid,
+    Box,
+    Divider,
+    InlineStack,
+    BlockStack,
+    CalloutCard,
 } from "@shopify/polaris";
 import React from "react";
 import { withLoader } from "@/utils";
 import type { BundleType } from "@/types";
 import { useRouter } from "next/navigation";
-import { InfoIcon } from "@shopify/polaris-icons";
 
 interface BundleTypeConfig {
     id: BundleType;
@@ -44,7 +43,6 @@ const bundleTypesConfig: BundleTypeConfig[] = [
             "Set discount amount",
         ],
         icon: "📦",
-        popular: true,
     },
     {
         id: "VOLUME_DISCOUNT",
@@ -56,7 +54,6 @@ const bundleTypesConfig: BundleTypeConfig[] = [
             "Automatic tier detection",
         ],
         icon: "📊",
-        popular: true,
     },
     {
         id: "MIX_MATCH",
@@ -92,7 +89,6 @@ const bundleTypesConfig: BundleTypeConfig[] = [
             "Same or different products",
         ],
         icon: "🔄",
-        popular: true,
     },
     {
         id: "CROSS_SELL",
@@ -121,10 +117,16 @@ export default function BundleTypeSelection() {
     };
 
     const renderBundleTypeCard = (bundleType: BundleTypeConfig) => (
-        <Grid.Cell key={bundleType.id}>
+        <Grid.Cell key={bundleType.id + bundleType.title}>
             <Card>
                 <BlockStack gap="400">
-                    {/* Bundle Type Illustration */}
+                    <InlineStack align="space-between" blockAlign="start">
+                        <Box />
+                        {bundleType.popular && (
+                            <Badge tone="success">Popular</Badge>
+                        )}
+                    </InlineStack>
+
                     <Box
                         padding="800"
                         background="bg-surface-secondary"
@@ -137,9 +139,7 @@ export default function BundleTypeSelection() {
                         </InlineStack>
                     </Box>
 
-                    {/* Bundle Type Info */}
                     <BlockStack gap="300">
-                        {/* Title and Badge */}
                         <InlineStack
                             gap="200"
                             align="space-between"
@@ -148,26 +148,17 @@ export default function BundleTypeSelection() {
                             <Text variant="headingMd" as="h3">
                                 {bundleType.title}
                             </Text>
-                            <InlineStack gap="200">
-                                {bundleType.badge && (
-                                    <Badge tone={bundleType.badge.tone}>
-                                        {bundleType.badge.text}
-                                    </Badge>
-                                )}
-                                <Button
-                                    variant="plain"
-                                    icon={InfoIcon}
-                                    size="micro"
-                                />
-                            </InlineStack>
+                            {bundleType.badge && (
+                                <Badge tone={bundleType.badge.tone}>
+                                    {bundleType.badge.text}
+                                </Badge>
+                            )}
                         </InlineStack>
 
-                        {/* Description */}
                         <Text variant="bodySm" tone="subdued" as="p">
                             {bundleType.description}
                         </Text>
 
-                        {/* Features List */}
                         <BlockStack gap="150">
                             {bundleType.features.map((feature, index) => (
                                 <InlineStack
@@ -194,11 +185,12 @@ export default function BundleTypeSelection() {
                         </BlockStack>
                     </BlockStack>
 
-                    {/* Select Button */}
                     <Button
                         fullWidth
                         variant={bundleType.popular ? "primary" : "secondary"}
-                        onClick={withLoader(() => handleBundleTypeSelect(bundleType.id))}
+                        onClick={withLoader(() =>
+                            handleBundleTypeSelect(bundleType.id),
+                        )}
                     >
                         Select
                     </Button>
@@ -217,9 +209,7 @@ export default function BundleTypeSelection() {
             }}
         >
             <Layout>
-                {/* Bundle Types Section */}
                 <Layout.Section>
-                    {/* 3-Column Responsive Grid */}
                     <Grid columns={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}>
                         {bundleTypesConfig.map(renderBundleTypeCard)}
                     </Grid>
@@ -231,7 +221,9 @@ export default function BundleTypeSelection() {
                         illustration="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
                         primaryAction={{
                             content: "Show me some ideas",
-                            onAction: withLoader(() => router.push("/bundle-studio")),
+                            onAction: withLoader(() =>
+                                router.push("/bundle-studio"),
+                            ),
                         }}
                     >
                         <p>
@@ -241,37 +233,21 @@ export default function BundleTypeSelection() {
                     </CalloutCard>
                 </Layout.Section>
 
-                {/* Help Section */}
                 <Layout.Section>
                     <div className="pb-6">
                         <Card>
                             <BlockStack gap="400">
-                                <BlockStack gap="200">
-                                    <InlineStack gap="200" blockAlign="center">
-                                        <Button
-                                            variant="plain"
-                                            icon={InfoIcon}
-                                            size="micro"
-                                        />
-                                        <Text variant="headingMd" as="h3">
-                                            Need help choosing?
-                                        </Text>
-                                    </InlineStack>
+                                <Text variant="headingMd" as="h3">
+                                    Need help choosing?
+                                </Text>
 
-                                    <Text
-                                        variant="bodySm"
-                                        tone="subdued"
-                                        as="p"
-                                    >
-                                        Not sure which bundle type is right for
-                                        your products? Here are some quick
-                                        guidelines:
-                                    </Text>
-                                </BlockStack>
+                                <Text variant="bodySm" tone="subdued" as="p">
+                                    Not sure which bundle type is right for your
+                                    products? Here are some quick guidelines:
+                                </Text>
 
                                 <Divider />
 
-                                {/* Guidelines in 2x2 Grid */}
                                 <Grid
                                     columns={{
                                         xs: 1,
@@ -295,26 +271,7 @@ export default function BundleTypeSelection() {
                                                 tone="subdued"
                                                 as="p"
                                             >
-                                                Volume Discounts, Cross Sell
-                                            </Text>
-                                        </BlockStack>
-                                    </Grid.Cell>
-
-                                    <Grid.Cell>
-                                        <BlockStack gap="100">
-                                            <Text
-                                                variant="bodyMd"
-                                                fontWeight="medium"
-                                                as="p"
-                                            >
-                                                For clearing inventory:
-                                            </Text>
-                                            <Text
-                                                variant="bodySm"
-                                                tone="subdued"
-                                                as="p"
-                                            >
-                                                BOGO, Flash Sale
+                                                Volume Discount, Fixed Bundle
                                             </Text>
                                         </BlockStack>
                                     </Grid.Cell>
@@ -333,7 +290,8 @@ export default function BundleTypeSelection() {
                                                 tone="subdued"
                                                 as="p"
                                             >
-                                                Mix & Match, Gift Bundles
+                                                Mix & Match, Frequently Bought
+                                                Together
                                             </Text>
                                         </BlockStack>
                                     </Grid.Cell>
@@ -352,7 +310,26 @@ export default function BundleTypeSelection() {
                                                 tone="subdued"
                                                 as="p"
                                             >
-                                                Buy X Get Y, Tiered
+                                                Buy X Get Y, Gift with Purchase
+                                            </Text>
+                                        </BlockStack>
+                                    </Grid.Cell>
+
+                                    <Grid.Cell>
+                                        <BlockStack gap="100">
+                                            <Text
+                                                variant="bodyMd"
+                                                fontWeight="medium"
+                                                as="p"
+                                            >
+                                                For promotional campaigns:
+                                            </Text>
+                                            <Text
+                                                variant="bodySm"
+                                                tone="subdued"
+                                                as="p"
+                                            >
+                                                Gift with Purchase, Buy X Get Y
                                             </Text>
                                         </BlockStack>
                                     </Grid.Cell>
