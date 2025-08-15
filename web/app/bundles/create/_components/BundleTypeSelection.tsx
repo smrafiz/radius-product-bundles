@@ -213,7 +213,7 @@ export default function BundleTypeSelection() {
             subtitle="Choose the type of bundle that best fits your offer"
             backAction={{
                 content: "Bundles",
-                onAction: handleBack,
+                onAction: withLoader(() => handleBack()),
             }}
         >
             <Layout>

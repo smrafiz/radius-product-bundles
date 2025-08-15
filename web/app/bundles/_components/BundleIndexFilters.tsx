@@ -3,9 +3,10 @@ import {
     IndexFilters,
     useSetIndexFiltersMode,
     ChoiceList,
+    IndexFiltersMode,
 } from "@shopify/polaris";
-import type { IndexFiltersProps, TabProps } from '@shopify/polaris';
 import { useBundlesStore } from "@/lib/stores/bundlesStore";
+import type { IndexFiltersProps, TabProps } from '@shopify/polaris';
 
 export function BundleIndexFilters() {
     const {
@@ -66,7 +67,7 @@ export function BundleIndexFilters() {
     }, [setSearch]);
 
     const handleCancel = useCallback(() => {
-        setMode('DEFAULT');
+        setMode('DEFAULT' as IndexFiltersMode);
     }, [setMode]);
 
     // Filter configuration

@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Page, Layout, Card, ProgressBar } from '@shopify/polaris';
+import NProgress from "nprogress";
 import type { BundleType } from '@/types';
-
+import { useRouter } from 'next/navigation';
 import BundlePreview from './BundlePreview';
 import { useBundleStore } from "@/lib/stores/bundleStore";
-import SelectProductsStep from "@/app/bundles/create/[bundleType]/_components/steps/SelectProductsStep";
-import DiscountStep from "@/app/bundles/create/[bundleType]/_components/steps/DiscountStep";
-import WidgetsStep from "@/app/bundles/create/[bundleType]/_components/steps/WidgetsStep";
+import { Page, Layout, Card, ProgressBar } from '@shopify/polaris';
 import ReviewStep from "@/app/bundles/create/[bundleType]/_components/steps/ReviewStep";
+import WidgetsStep from "@/app/bundles/create/[bundleType]/_components/steps/WidgetsStep";
+import DiscountStep from "@/app/bundles/create/[bundleType]/_components/steps/DiscountStep";
+import SelectProductsStep from "@/app/bundles/create/[bundleType]/_components/steps/SelectProductsStep";
 
 interface Props {
     bundleType: BundleType;
@@ -36,6 +36,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
 
     const handleBack = () => {
         if (currentStep === 1) {
+            NProgress.start();
             router.push('/bundles/create');
         } else {
             prevStep();
