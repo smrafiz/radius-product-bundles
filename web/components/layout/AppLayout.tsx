@@ -3,16 +3,14 @@
 import React from "react";
 import { Frame } from "@shopify/polaris";
 
-interface SimpleAppLayoutProps {
+export default function AppLayoutWrapper({
+    children,
+}: {
     children: React.ReactNode;
-}
-
-export default function SimpleAppLayout({ children }: SimpleAppLayoutProps) {
+}) {
     return (
         <div className="radius-app-wrapper">
-            <Frame>
-                {children}
-            </Frame>
+            <Frame>{children}</Frame>
         </div>
     );
 }

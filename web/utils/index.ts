@@ -5,3 +5,4 @@ export * from "./error-utils";
 export * from "./formatters";
 export * from "./setupCheck";
 export * from "./bundle-table";
+export * from "./global";

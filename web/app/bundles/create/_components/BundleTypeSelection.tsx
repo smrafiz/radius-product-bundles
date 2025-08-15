@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
 import {
     Badge,
     BlockStack,
@@ -16,7 +14,10 @@ import {
     Page,
     Text,
 } from "@shopify/polaris";
+import React from "react";
+import { withLoader } from "@/utils";
 import type { BundleType } from "@/types";
+import { useRouter } from "next/navigation";
 import { InfoIcon } from "@shopify/polaris-icons";
 
 interface BundleTypeConfig {
@@ -197,7 +198,7 @@ export default function BundleTypeSelection() {
                     <Button
                         fullWidth
                         variant={bundleType.popular ? "primary" : "secondary"}
-                        onClick={() => handleBundleTypeSelect(bundleType.id)}
+                        onClick={withLoader(() => handleBundleTypeSelect(bundleType.id))}
                     >
                         Select
                     </Button>
@@ -230,7 +231,7 @@ export default function BundleTypeSelection() {
                         illustration="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
                         primaryAction={{
                             content: "Show me some ideas",
-                            url: "/bundle-studio",
+                            onAction: withLoader(() => router.push("/bundle-studio")),
                         }}
                     >
                         <p>

@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { withLoader } from "@/utils";
+import { router } from "next/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { useDashboardStore } from "@/lib/stores/dashboardStore";
@@ -28,8 +30,8 @@ export default function Dashboard() {
                 subtitle="Welcome to Radius Product Bundles"
                 primaryAction={{
                     content: "Create Bundle",
-                    url: "/bundles/create",
                     icon: PlusIcon,
+                    onAction: withLoader(() => router.push("/bundles/create")),
                 }}
                 secondaryActions={[
                     {

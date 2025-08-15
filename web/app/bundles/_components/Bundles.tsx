@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { formatCurrency } from "@/utils";
+import { formatCurrency, withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useBundlesData } from "@/hooks/useBundlesData";
 import { useBundlesStore } from "@/lib/stores/bundlesStore";
@@ -48,14 +48,14 @@ export default function Bundles() {
                 primaryAction={{
                     content: "Create Bundle",
                     icon: PlusIcon,
-                    onAction: handleCreateBundle,
+                    onAction: withLoader(handleCreateBundle),
                 }}
                 secondaryActions={[
                     {
                         content: "Bundle Studio",
                         icon: ColorIcon,
-                        onAction: handleBundleStudio,
-                    }
+                        onAction: withLoader(handleBundleStudio),
+                    },
                 ]}
             >
                 <Layout>

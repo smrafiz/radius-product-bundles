@@ -1,13 +1,8 @@
 "use client";
 
-import {
-    Card,
-    SkeletonBodyText,
-    SkeletonDisplayText,
-    SkeletonPage,
-} from "@shopify/polaris";
 import React, { useEffect, useState } from "react";
 import { useSessionStore } from "@/lib/stores/sessionStore";
+import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function ProtectedRoute({
@@ -112,20 +107,7 @@ export default function ProtectedRoute({
     // Show skeleton while checking/refreshing a session
     if (!isInitialized || isRefreshing || (!hasValidSession && !sessionToken)) {
         return (
-            <SkeletonPage primaryAction>
-                <Card>
-                    <SkeletonDisplayText size="small" />
-                    <SkeletonBodyText lines={3} />
-                </Card>
-                <Card>
-                    <SkeletonDisplayText size="small" />
-                    <SkeletonBodyText lines={2} />
-                </Card>
-                <Card>
-                    <SkeletonDisplayText size="small" />
-                    <SkeletonBodyText lines={4} />
-                </Card>
-            </SkeletonPage>
+            <DashboardSkeleton />
         );
     }
 

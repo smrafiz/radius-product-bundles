@@ -3,6 +3,7 @@ import {
     Box,
     Card,
     InlineStack,
+    Layout,
     SkeletonBodyText,
     SkeletonDisplayText,
     SkeletonPage,
@@ -44,18 +45,84 @@ export const BundleListSkeleton = () => (
     </Card>
 );
 
-export const DashboardSkeleton = () => (
-    <SkeletonPage primaryAction title="Dashboard">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-                <MetricCardSkeleton key={i} />
-            ))}
-        </div>
-        <BundleListSkeleton />
-        <Card>
-            <Box padding="400">
-                <SkeletonBodyText lines={3} />
-            </Box>
-        </Card>
-    </SkeletonPage>
-);
+// export const DashboardSkeleton = () => (
+//     <SkeletonPage primaryAction title="Dashboard">
+//         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+//             {[1, 2, 3, 4].map((i) => (
+//                 <MetricCardSkeleton key={i} />
+//             ))}
+//         </div>
+//         <BundleListSkeleton />
+//         <Card>
+//             <Box padding="400">
+//                 <SkeletonBodyText lines={3} />
+//             </Box>
+//         </Card>
+//     </SkeletonPage>
+// );
+
+export const DashboardSkeleton = () => {
+    return (
+        <SkeletonPage primaryAction>
+            <Layout>
+                <Layout.Section>
+                    <BlockStack gap="500">
+                        <Card>
+                            <div className="animate-pulse">
+                                <Box padding="400">
+                                    <SkeletonBodyText />
+                                </Box>
+                            </div>
+                        </Card>
+                        <Card>
+                            <div className="animate-pulse">
+                                <Box padding="400">
+                                    <SkeletonBodyText />
+                                </Box>
+                            </div>
+                        </Card>
+                        <Card>
+                            <div className="animate-pulse">
+                                <Box padding="400">
+                                    <SkeletonBodyText />
+                                </Box>
+                            </div>
+                        </Card>
+                    </BlockStack>
+                </Layout.Section>
+
+                <Layout.Section variant="oneThird">
+                    <BlockStack gap="500">
+                        <Card>
+                            <div className="animate-pulse">
+                                <Box padding="400">
+                                    <BlockStack gap="200">
+                                        <SkeletonDisplayText size="small" />
+                                        <SkeletonBodyText lines={2} />
+                                    </BlockStack>
+                                </Box>
+                                <Box padding="400">
+                                    <SkeletonBodyText lines={1} />
+                                </Box>
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <div className="animate-pulse">
+                                <Box padding="400">
+                                    <BlockStack gap="200">
+                                        <SkeletonDisplayText size="small" />
+                                        <SkeletonBodyText lines={2} />
+                                    </BlockStack>
+                                </Box>
+                                <Box padding="400">
+                                    <SkeletonBodyText lines={1} />
+                                </Box>
+                            </div>
+                        </Card>
+                    </BlockStack>
+                </Layout.Section>
+            </Layout>
+        </SkeletonPage>
+    );
+};
