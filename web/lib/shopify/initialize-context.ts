@@ -4,7 +4,6 @@ import {
     LATEST_API_VERSION,
     LogSeverity,
 } from "@shopify/shopify-api";
-import { loadSession, storeSession, deleteSession } from "@/lib/db/session-storage";
 
 const shopify = shopifyApi({
     apiKey: process.env.SHOPIFY_API_KEY || "",

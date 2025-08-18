@@ -1,6 +1,6 @@
+import prisma from "./prisma-connect";
 import { Session } from "@prisma/client";
 import { Session as ShopifySession } from "@shopify/shopify-api";
-import prisma from "./prisma-connect";
 
 const apiKey = process.env.SHOPIFY_API_KEY || "";
 

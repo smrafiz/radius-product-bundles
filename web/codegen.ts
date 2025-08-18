@@ -4,14 +4,7 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 const config: CodegenConfig = {
     schema: "https://shopify.dev/admin-graphql-direct-proxy/2024-10",
     documents: [
-        "./app/**/*.{js,ts,jsx,tsx}",
-        "./components/**/*.{js,ts,jsx,tsx}",
-        "./hooks/**/*.{js,ts,jsx,tsx}",
-        "./providers/**/*.{js,ts,jsx,tsx}",
-        "./lib/**/*.{js,ts,jsx,tsx}",
-        "./actions/**/*.{js,ts,jsx,tsx}",
-        "!./lib/gql/**/*.{js,ts,jsx,tsx}",
-        "!./types/**/*.{js,ts,jsx,tsx}",
+        "./lib/queries/**/*.graphql",
     ],
     generates: {
         "./lib/gql/": {
