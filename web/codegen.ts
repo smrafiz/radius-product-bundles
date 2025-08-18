@@ -9,6 +9,7 @@ const config: CodegenConfig = {
         "./hooks/**/*.{js,ts,jsx,tsx}",
         "./providers/**/*.{js,ts,jsx,tsx}",
         "./lib/**/*.{js,ts,jsx,tsx}",
+        "./actions/**/*.{js,ts,jsx,tsx}",
         "!./lib/gql/**/*.{js,ts,jsx,tsx}",
         "!./types/**/*.{js,ts,jsx,tsx}",
     ],
