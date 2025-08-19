@@ -1,0 +1,20 @@
+query GetProductFilters {
+    shop {
+        id
+        productTypes(first: 250) {
+            edges {
+                node
+            }
+        }
+        productVendors(first: 250) {
+            edges {
+                node
+            }
+        }
+        productTags(first: 250) {
+            edges {
+                node
+            }
+        }
+    }
+}

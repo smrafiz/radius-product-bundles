@@ -1,71 +1,61 @@
+export const buildProductSearchQuery = (filters: {
+    query?: string;
+    categories?: string[];
+    collections?: string;
+    tags?: string[];
+    types?: string[];
+    vendors?: string[];
+    status?: string;
+}) => {
+    const queryParts: string[] = [];
 
-// Convert filter form values to GraphQL-compatible filters
-import { ProductSortKeys, ProductStatus } from "@/lib/gql/graphql";
-
-export const buildProductFilters = (formFilters: {
-    queryValue?: string;
-    statusFilter?: string[];
-    vendorFilter?: string;
-    collectionFilter?: string[];
-    categoryFilter?: string[];
-    sortKey?: string;
-    reverse?: boolean;
-}): ProductFilters => {
-    const filters: ProductFilters = {};
-
-    if (formFilters.queryValue) {
-        filters.query = formFilters.queryValue;
+    if (filters.query) {
+        queryParts.push(`title:*${filters.query}* OR sku:*${filters.query}*`);
     }
 
-    if (formFilters.statusFilter && formFilters.statusFilter.length > 0) {
-        filters.status = formFilters.statusFilter.map(status =>
-            status.toUpperCase() as ProductStatus
-        );
+    if (filters.categories && filters.categories.length > 0) {
+        const categoriesQuery = filters.categories.map(cat => `category:${cat}`).join(' OR ');
+        queryParts.push(`(${categoriesQuery})`);
     }
 
-    if (formFilters.vendorFilter) {
-        filters.vendor = formFilters.vendorFilter;
+    if (filters.collections) {
+        queryParts.push(`collection_id:${filters.collections}`);
     }
 
-    if (formFilters.collectionFilter && formFilters.collectionFilter.length > 0) {
-        filters.collections = formFilters.collectionFilter;
+    if (filters.tags && filters.tags.length > 0) {
+        const tagsQuery = filters.tags.map(tag => `tag:"${tag}"`).join(' OR ');
+        queryParts.push(`(${tagsQuery})`);
     }
 
-    if (formFilters.categoryFilter && formFilters.categoryFilter.length > 0) {
-        filters.tags = formFilters.categoryFilter;
+    if (filters.types && filters.types.length > 0) {
+        const typesQuery = filters.types.map(type => `product_type:"${type}"`).join(' OR ');
+        queryParts.push(`(${typesQuery})`);
     }
 
-    if (formFilters.sortKey) {
-        // Map string values to enum values
-        const sortKeyMap: Record<string, ProductSortKeys> = {
-            'title asc': ProductSortKeys.Title,
-            'title desc': ProductSortKeys.Title,
-            'created asc': ProductSortKeys.CreatedAt,
-            'created desc': ProductSortKeys.CreatedAt,
-            'vendor asc': ProductSortKeys.Vendor,
-            'vendor desc': ProductSortKeys.Vendor,
-        };
-
-        filters.sortKey = sortKeyMap[formFilters.sortKey] || ProductSortKeys.Title;
-        filters.reverse = formFilters.sortKey.includes('desc');
+    if (filters.vendors && filters.vendors.length > 0) {
+        const vendorsQuery = filters.vendors.map(vendor => `vendor:"${vendor}"`).join(' OR ');
+        queryParts.push(`(${vendorsQuery})`);
     }
 
-    return filters;
+    // Always include status filter
+    queryParts.push(`status:${filters.status || 'ACTIVE'}`);
+
+    return queryParts.length > 0 ? queryParts.join(' AND ') : 'status:ACTIVE';
 };
 
-// Get status options from codegen types
-export const getStatusOptions = () => [
-    { label: 'Active', value: ProductStatus.Active },
-    { label: 'Draft', value: ProductStatus.Draft },
-    { label: 'Archived', value: ProductStatus.Archived },
-];
+export const formatPrice = (price: string | number, currency: string = 'Tk'): string => {
+    const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+    return `${currency} ${numericPrice.toFixed(2)}`;
+};
 
-// Get sort options from codegen types
-export const getSortOptions = () => [
-    { label: 'Title A-Z', value: 'title asc' },
-    { label: 'Title Z-A', value: 'title desc' },
-    { label: 'Created (Newest)', value: 'created desc' },
-    { label: 'Created (Oldest)', value: 'created asc' },
-    { label: 'Vendor A-Z', value: 'vendor asc' },
-    { label: 'Vendor Z-A', value: 'vendor desc' },
-];
+export const getVariantDisplayName = (variant: {
+    title: string;
+    selectedOptions: Array<{ name: string; value: string }>;
+}): string => {
+    if (variant.title === 'Default Title') {
+        return variant.selectedOptions
+            .map(option => option.value)
+            .join(' / ') || 'Default';
+    }
+    return variant.title;
+};

@@ -31,19 +31,26 @@ query GetProducts(
                     width
                     height
                 }
-                variants(first: 1) {
-                    edges {
-                        node {
-                            id
-                            price
-                            compareAtPrice
-                            sku
-                            barcode
-                            inventoryQuantity
-                            availableForSale
-                            inventoryItem {
-                                tracked
-                            }
+                variants(first: 100) {
+                    nodes {
+                        id
+                        title
+                        price
+                        compareAtPrice
+                        sku
+                        barcode
+                        inventoryQuantity
+                        availableForSale
+                        selectedOptions {
+                            name
+                            value
+                        }
+                        image {
+                            url
+                            altText
+                        }
+                        inventoryItem {
+                            tracked
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
     BlockStack,
     Text,
@@ -9,64 +9,36 @@ import {
     InlineStack,
     TextField,
     Icon,
-    Box
+    Box,
+    Badge
 } from '@shopify/polaris';
 import { PlusIcon, DeleteIcon, DragHandleIcon } from '@shopify/polaris-icons';
 import { useBundleStore } from "@/lib/stores/bundleStore";
+import { formatPrice } from '@/utils/productFilters';
 import ProductSelectionModal from './ProductSelectionModal';
 
-interface Product {
-    id: string;
-    title: string;
-    price: number;
-    image?: string;
-    variants: number;
-    quantity: number;
-}
-
 export default function ProductsStep() {
-    const { bundleData, updateBundleField } = useBundleStore();
-    const [selectedProducts, setSelectedProducts] = useState<Product[]>([
-        {
-            id: 'snowboard2',
-            title: 'The Collection Snowboard: Liquid',
-            price: 749.95,
-            image: 'https://via.placeholder.com/60x60/E8F5E8/388E3C?text=SB2',
-            variants: 1,
-            quantity: 1
-        },
-        {
-            id: 'snowboard5',
-            title: 'The Videographer Snowboard',
-            price: 1299.95,
-            image: 'https://via.placeholder.com/60x60/FFE0B2/FF8F00?text=SB5',
-            variants: 1,
-            quantity: 1
-        }
-    ]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {
+        selectedItems,
+        addSelectedItems,
+        removeSelectedItem,
+        updateSelectedItemQuantity,
+        setSelectedItems
+    } = useBundleStore();
+
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
 
     const handleAddProducts = () => {
         setIsModalOpen(true);
     };
 
-    const handleProductsSelected = (products: Product[]) => {
-        setSelectedProducts([...selectedProducts, ...products]);
+    const handleProductsSelected = (items: any[]) => {
+        addSelectedItems(items);
         setIsModalOpen(false);
     };
 
-    const handleRemoveProduct = (productId: string) => {
-        setSelectedProducts(selectedProducts.filter(p => p.id !== productId));
-    };
-
-    const handleQuantityChange = (productId: string, quantity: number) => {
-        setSelectedProducts(selectedProducts.map(p =>
-            p.id === productId ? { ...p, quantity } : p
-        ));
-    };
-
     const handleClearAll = () => {
-        setSelectedProducts([]);
+        setSelectedItems([]);
     };
 
     return (
@@ -76,14 +48,12 @@ export default function ProductsStep() {
                     Products
                 </Text>
                 <Text variant="bodySm" tone="subdued">
-                    Select products to include in your bundle
+                    Select products and variants to include in your bundle
                 </Text>
             </BlockStack>
 
-            {/* Products Section */}
             <Card>
                 <BlockStack gap="400">
-                    {/* Header */}
                     <InlineStack align="space-between" blockAlign="center">
                         <Button
                             variant="primary"
@@ -93,7 +63,7 @@ export default function ProductsStep() {
                             Add Products
                         </Button>
 
-                        {selectedProducts.length > 0 && (
+                        {selectedItems.length > 0 && (
                             <Button
                                 variant="plain"
                                 tone="critical"
@@ -105,42 +75,53 @@ export default function ProductsStep() {
                         )}
                     </InlineStack>
 
-                    {/* Selected Products List with Sortable Design */}
-                    {selectedProducts.length > 0 ? (
+                    {selectedItems.length > 0 ? (
                         <BlockStack gap="200">
-                            {selectedProducts.map((product) => (
-                                <Card key={product.id} background="bg-surface-secondary">
+                            {selectedItems.map((item, index) => (
+                                <Card key={`${item.productId}-${item.variantId || 'product'}-${index}`} background="bg-surface-secondary">
                                     <Box padding="300">
                                         <InlineStack align="space-between" blockAlign="center" gap="400">
-                                            {/* Drag Handle */}
                                             <Icon source={DragHandleIcon} tone="subdued" />
 
-                                            {/* Product Info */}
                                             <InlineStack gap="300" blockAlign="center">
-                                                {/* Product Image */}
-                                                <Box
-                                                    borderRadius="100"
-                                                    minWidth="60px"
-                                                    minHeight="60px"
-                                                    style={{
-                                                        backgroundImage: `url(${product.image})`,
-                                                        backgroundSize: 'cover',
-                                                        backgroundPosition: 'center',
-                                                        border: '1px solid #E1E3E5'
-                                                    }}
-                                                />
+                                                {item.image && (
+                                                    <Box
+                                                        borderRadius="100"
+                                                        minWidth="60px"
+                                                        minHeight="60px"
+                                                        style={{
+                                                            backgroundImage: `url(${item.image})`,
+                                                            backgroundSize: 'cover',
+                                                            backgroundPosition: 'center',
+                                                            border: '1px solid #E1E3E5'
+                                                        }}
+                                                    />
+                                                )}
 
-                                                {/* Product Title */}
-                                                <Text variant="bodyMd" fontWeight="medium">
-                                                    {product.title}
-                                                </Text>
+                                                <BlockStack gap="100">
+                                                    <Text variant="bodyMd" fontWeight="medium">
+                                                        {item.title}
+                                                    </Text>
+                                                    <InlineStack gap="200">
+                                                        <Badge tone={item.type === 'variant' ? 'info' : 'success'}>
+                                                            {item.type === 'variant' ? 'Variant' : 'Product'}
+                                                        </Badge>
+                                                        {item.sku && (
+                                                            <Text variant="bodySm" tone="subdued">
+                                                                SKU: {item.sku}
+                                                            </Text>
+                                                        )}
+                                                        <Text variant="bodySm" tone="subdued">
+                                                            {formatPrice(item.price)}
+                                                        </Text>
+                                                    </InlineStack>
+                                                </BlockStack>
                                             </InlineStack>
 
-                                            {/* Quantity & Remove */}
                                             <InlineStack gap="300" blockAlign="center">
                                                 <TextField
-                                                    value={product.quantity.toString()}
-                                                    onChange={(value) => handleQuantityChange(product.id, parseInt(value) || 1)}
+                                                    value={item.quantity.toString()}
+                                                    onChange={(value) => updateSelectedItemQuantity(index, parseInt(value) || 1)}
                                                     type="number"
                                                     min="1"
                                                     autoComplete="off"
@@ -150,7 +131,7 @@ export default function ProductsStep() {
                                                 <Button
                                                     variant="plain"
                                                     icon={DeleteIcon}
-                                                    onClick={() => handleRemoveProduct(product.id)}
+                                                    onClick={() => removeSelectedItem(index)}
                                                 />
                                             </InlineStack>
                                         </InlineStack>
@@ -166,7 +147,7 @@ export default function ProductsStep() {
                                         No products selected
                                     </Text>
                                     <Text variant="bodySm" tone="subdued">
-                                        Add products to create your bundle
+                                        Add products and variants to create your bundle
                                     </Text>
                                 </BlockStack>
                             </InlineStack>
@@ -175,12 +156,11 @@ export default function ProductsStep() {
                 </BlockStack>
             </Card>
 
-            {/* Product Selection Modal */}
             <ProductSelectionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onProductsSelected={handleProductsSelected}
-                selectedProductIds={selectedProducts.map(p => p.id)}
+                selectedProductIds={selectedItems.map(item => item.productId)}
             />
         </BlockStack>
     );

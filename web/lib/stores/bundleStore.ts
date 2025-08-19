@@ -2,9 +2,21 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { CreateBundlePayload } from "@/types";
 
+interface SelectedItem {
+    type: 'product' | 'variant';
+    productId: string;
+    variantId?: string;
+    title: string;
+    price: string;
+    image?: string;
+    sku?: string;
+    quantity: number;
+}
+
 interface BundleState {
     currentStep: number;
     bundleData: Partial<CreateBundlePayload>;
+    selectedItems: SelectedItem[];
     setStep: (step: number) => void;
     nextStep: () => void;
     prevStep: () => void;
@@ -13,6 +25,10 @@ interface BundleState {
         key: K,
         value: CreateBundlePayload[K],
     ) => void;
+    setSelectedItems: (items: SelectedItem[]) => void;
+    addSelectedItems: (items: SelectedItem[]) => void;
+    removeSelectedItem: (index: number) => void;
+    updateSelectedItemQuantity: (index: number, quantity: number) => void;
     resetBundle: () => void;
 }
 
@@ -32,6 +48,7 @@ export const useBundleStore = create(
     immer<BundleState>((set, get) => ({
         currentStep: 1,
         bundleData: initialBundleData,
+        selectedItems: [],
 
         setStep: (step) => set(() => ({ currentStep: step })),
 
@@ -56,10 +73,34 @@ export const useBundleStore = create(
                 state.bundleData[key] = value;
             }),
 
+        setSelectedItems: (items) =>
+            set((state) => {
+                state.selectedItems = items;
+            }),
+
+        addSelectedItems: (items) =>
+            set((state) => {
+                const itemsWithQuantity = items.map(item => ({ ...item, quantity: 1 }));
+                state.selectedItems.push(...itemsWithQuantity);
+            }),
+
+        removeSelectedItem: (index) =>
+            set((state) => {
+                state.selectedItems.splice(index, 1);
+            }),
+
+        updateSelectedItemQuantity: (index, quantity) =>
+            set((state) => {
+                if (state.selectedItems[index]) {
+                    state.selectedItems[index].quantity = quantity;
+                }
+            }),
+
         resetBundle: () =>
             set(() => ({
                 currentStep: 1,
                 bundleData: { ...initialBundleData },
+                selectedItems: [],
             })),
     })),
 );
