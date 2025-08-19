@@ -1,26 +1,43 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+    Badge,
     BlockStack,
     Box,
+    Button,
     Card,
     Checkbox,
-    ChoiceList,
     Divider,
-    Filters,
+    Icon,
     InlineStack,
     Modal,
-    Scrollable,
+    Popover,
+    Select,
+    Spinner,
     Text,
     TextField,
+    Thumbnail,
 } from "@shopify/polaris";
+import { FilterIcon, SearchIcon } from "@shopify/polaris-icons";
 import {
     GetProductsDocument,
     GetProductsQuery,
     GetProductsQueryVariables,
 } from "@/lib/gql/graphql";
 import { useGraphQL } from "@/hooks/useGraphQL";
+
+// ------------------ Custom debounce hook ------------------
+function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => setDebouncedValue(value), delay);
+        return () => clearTimeout(handler);
+    }, [value, delay]);
+
+    return debouncedValue;
+}
 
 interface Product {
     id: string;
@@ -29,13 +46,18 @@ interface Product {
     image?: string;
     variants: number;
     quantity: number;
-    available?: number;
+    handle?: string;
     type?: string;
-    status?: "active" | "draft" | "archived";
+    compareAtPrice?: number;
+    status?: string;
     vendor?: string;
-    sku?: string;
-    collection?: string;
-    category?: string;
+}
+
+interface FilterState {
+    status: string;
+    productType: string;
+    vendor: string;
+    availability: string;
 }
 
 interface Props {
@@ -43,53 +65,122 @@ interface Props {
     onClose: () => void;
     onProductsSelected: (products: Product[]) => void;
     selectedProductIds: string[];
-    shop: string;
+    title?: string;
 }
+
+const FILTER_OPTIONS = {
+    status: [
+        { label: "All", value: "" },
+        { label: "Active", value: "active" },
+        { label: "Draft", value: "draft" },
+        { label: "Archived", value: "archived" },
+    ],
+    availability: [
+        { label: "All", value: "" },
+        { label: "Available", value: "available" },
+        { label: "Unavailable", value: "unavailable" },
+    ],
+};
 
 export default function ProductSelectionModal({
     isOpen,
     onClose,
     onProductsSelected,
     selectedProductIds,
-    shop,
+    title = "Add products",
 }: Props) {
     const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-    const [queryValue, setQueryValue] = useState<string>("");
-    const [statusFilter, setStatusFilter] = useState<string[] | undefined>(
-        undefined,
-    );
-    const [vendorFilter, setVendorFilter] = useState<string | undefined>(
-        undefined,
-    );
-    const [collectionFilter, setCollectionFilter] = useState<
-        string[] | undefined
-    >(undefined);
-    const [categoryFilter, setCategoryFilter] = useState<string[] | undefined>(
-        undefined,
-    );
-    const [first, setFirst] = useState(50);
+    const [searchInput, setSearchInput] = useState<string>("");
+    const [searchBy, setSearchBy] = useState<string>("all");
+    const [filters, setFilters] = useState<FilterState>({
+        status: "",
+        productType: "",
+        vendor: "",
+        availability: "",
+    });
+    const [showFilters, setShowFilters] = useState<boolean>(false);
+    const [filterPopoverActive, setFilterPopoverActive] =
+        useState<boolean>(false);
 
-    // Build GraphQL query variables
+    const debouncedSearch = useDebounce(searchInput, 300);
+    const [first] = useState(50);
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Build search query
+    const buildSearchQuery = useCallback(() => {
+        let query = "";
+
+        if (debouncedSearch) {
+            switch (searchBy) {
+                case "title":
+                    query += `title:*${debouncedSearch}*`;
+                    break;
+                case "sku":
+                    query += `sku:*${debouncedSearch}*`;
+                    break;
+                case "barcode":
+                    query += `barcode:*${debouncedSearch}*`;
+                    break;
+                default:
+                    query += `*${debouncedSearch}*`;
+            }
+        }
+
+        // Add filters
+        if (filters.status) {
+            query += query
+                ? ` AND status:${filters.status}`
+                : `status:${filters.status}`;
+        }
+        if (filters.productType) {
+            query += query
+                ? ` AND product_type:${filters.productType}`
+                : `product_type:${filters.productType}`;
+        }
+        if (filters.vendor) {
+            query += query
+                ? ` AND vendor:${filters.vendor}`
+                : `vendor:${filters.vendor}`;
+        }
+
+        return query;
+    }, [debouncedSearch, searchBy, filters]);
+
+    // ------------------ GraphQL query ------------------
     const variables: GetProductsQueryVariables = {
         first,
-        query: buildShopifyQuery(
-            queryValue,
-            statusFilter,
-            vendorFilter,
-            collectionFilter,
-            categoryFilter,
-        ),
+        query: buildSearchQuery(),
+        sortKey: "UPDATED_AT",
+        reverse: true,
     };
 
-    // Fetch products using useGraphQL hook
-    const { data, isLoading, error } = useGraphQL<
+    const { data, isLoading, error, refetch } = useGraphQL<
         GetProductsQuery,
         GetProductsQueryVariables
-    >(GetProductsDocument, shop, variables);
+    >(GetProductsDocument, variables);
 
-    const products = data?.products?.edges?.map((edge) => edge.node) ?? [];
+    const products =
+        data?.products?.edges.map((edge) => {
+            const node = edge.node;
+            const firstVariant = node.variants.edges[0]?.node;
+            return {
+                id: node.id,
+                title: node.title,
+                price: parseFloat(firstVariant?.price || "0"),
+                compareAtPrice: parseFloat(firstVariant?.compareAtPrice || "0"),
+                image: node.featuredImage?.url,
+                variants: node.variants.edges.length,
+                quantity: node.totalInventory ?? 0,
+                handle: node.handle,
+                type: node.productType,
+                status: node.status?.toLowerCase(),
+                vendor: node.vendor,
+            };
+        }) ?? [];
 
-    // ------------------ Selection Logic ------------------
+    const hasNextPage = data?.products?.pageInfo.hasNextPage;
+
+    // ------------------ Selection handlers ------------------
     const handleProductToggle = (productId: string) => {
         setSelectedProducts((prev) =>
             prev.includes(productId)
@@ -98,16 +189,42 @@ export default function ProductSelectionModal({
         );
     };
 
+    const handleSelectAll = () => {
+        const availableProductIds = products
+            .filter((p) => !selectedProductIds.includes(p.id))
+            .map((p) => p.id);
+
+        setSelectedProducts(availableProductIds);
+    };
+
+    const handleDeselectAll = () => {
+        setSelectedProducts([]);
+    };
+
     const handleAdd = () => {
         const productsToAdd = products.filter((p) =>
             selectedProducts.includes(p.id),
         );
         onProductsSelected(productsToAdd);
         setSelectedProducts([]);
+        setSearchInput("");
+        setFilters({
+            status: "",
+            productType: "",
+            vendor: "",
+            availability: "",
+        });
     };
 
     const handleCancel = () => {
         setSelectedProducts([]);
+        setSearchInput("");
+        setFilters({
+            status: "",
+            productType: "",
+            vendor: "",
+            availability: "",
+        });
         onClose();
     };
 
@@ -118,213 +235,99 @@ export default function ProductSelectionModal({
         );
     };
 
-    // ------------------ Filters ------------------
-    const handleFiltersQueryChange = useCallback(
-        (value: string) => setQueryValue(value),
-        [],
-    );
-    const handleStatusChange = useCallback(
-        (value: string[]) => setStatusFilter(value),
-        [],
-    );
-    const handleVendorChange = useCallback(
-        (value: string) => setVendorFilter(value),
-        [],
-    );
-    const handleCollectionChange = useCallback(
-        (value: string[]) => setCollectionFilter(value),
-        [],
-    );
-    const handleCategoryChange = useCallback(
-        (value: string[]) => setCategoryFilter(value),
-        [],
-    );
+    // ------------------ Filter handlers ------------------
+    const handleFilterChange = (key: keyof FilterState, value: string) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+    };
 
-    const handleStatusRemove = useCallback(
-        () => setStatusFilter(undefined),
-        [],
-    );
-    const handleVendorRemove = useCallback(
-        () => setVendorFilter(undefined),
-        [],
-    );
-    const handleCollectionRemove = useCallback(
-        () => setCollectionFilter(undefined),
-        [],
-    );
-    const handleCategoryRemove = useCallback(
-        () => setCategoryFilter(undefined),
-        [],
-    );
-    const handleQueryValueRemove = useCallback(() => setQueryValue(""), []);
-
-    const handleFiltersClearAll = useCallback(() => {
-        handleStatusRemove();
-        handleVendorRemove();
-        handleCollectionRemove();
-        handleCategoryRemove();
-        handleQueryValueRemove();
-    }, [
-        handleStatusRemove,
-        handleVendorRemove,
-        handleCollectionRemove,
-        handleCategoryRemove,
-        handleQueryValueRemove,
-    ]);
-
-    const filters = [
-        {
-            key: "status",
-            label: "Product status",
-            filter: (
-                <ChoiceList
-                    titleHidden
-                    choices={[
-                        { label: "Active", value: "active" },
-                        { label: "Draft", value: "draft" },
-                        { label: "Archived", value: "archived" },
-                    ]}
-                    selected={statusFilter || []}
-                    onChange={handleStatusChange}
-                    allowMultiple
-                />
-            ),
-            shortcut: true,
-        },
-        {
-            key: "vendor",
-            label: "Vendor",
-            filter: (
-                <TextField
-                    labelHidden
-                    value={vendorFilter || ""}
-                    onChange={handleVendorChange}
-                    autoComplete="off"
-                />
-            ),
-            shortcut: true,
-        },
-        {
-            key: "collection",
-            label: "Collection",
-            filter: (
-                <ChoiceList
-                    titleHidden
-                    choices={[
-                        {
-                            label: "Winter Collection",
-                            value: "Winter Collection",
-                        },
-                        { label: "Pro Collection", value: "Pro Collection" },
-                        { label: "Accessories", value: "Accessories" },
-                        { label: "Gift Cards", value: "Gift Cards" },
-                    ]}
-                    selected={collectionFilter || []}
-                    onChange={handleCollectionChange}
-                    allowMultiple
-                />
-            ),
-        },
-        {
-            key: "category",
-            label: "Category",
-            filter: (
-                <ChoiceList
-                    titleHidden
-                    choices={[
-                        { label: "Snowboards", value: "Snowboards" },
-                        { label: "Equipment", value: "Equipment" },
-                        { label: "Digital", value: "Digital" },
-                        { label: "Maintenance", value: "Maintenance" },
-                    ]}
-                    selected={categoryFilter || []}
-                    onChange={handleCategoryChange}
-                    allowMultiple
-                />
-            ),
-        },
-    ];
-
-    const appliedFilters = [];
-    if (!isEmpty(statusFilter))
-        appliedFilters.push({
-            key: "status",
-            label: disambiguateLabel("status", statusFilter),
-            onRemove: handleStatusRemove,
+    const clearFilters = () => {
+        setFilters({
+            status: "",
+            productType: "",
+            vendor: "",
+            availability: "",
         });
-    if (!isEmpty(vendorFilter))
-        appliedFilters.push({
-            key: "vendor",
-            label: disambiguateLabel("vendor", vendorFilter),
-            onRemove: handleVendorRemove,
-        });
-    if (!isEmpty(collectionFilter))
-        appliedFilters.push({
-            key: "collection",
-            label: disambiguateLabel("collection", collectionFilter),
-            onRemove: handleCollectionRemove,
-        });
-    if (!isEmpty(categoryFilter))
-        appliedFilters.push({
-            key: "category",
-            label: disambiguateLabel("category", categoryFilter),
-            onRemove: handleCategoryRemove,
-        });
+        setShowFilters(false);
+    };
 
-    // ------------------ Utility Functions ------------------
-    function buildShopifyQuery(
-        search: string,
-        status?: string[],
-        vendor?: string,
-        collections?: string[],
-        categories?: string[],
-    ) {
-        const queries: string[] = [];
-        if (search) queries.push(`${search}*`);
-        if (status?.length)
-            queries.push(status.map((s) => `status:${s}`).join(" OR "));
-        if (vendor) queries.push(`vendor:${vendor}`);
-        if (collections?.length)
-            queries.push(
-                collections.map((c) => `collection:${c}`).join(" OR "),
-            );
-        if (categories?.length)
-            queries.push(
-                categories.map((c) => `product_type:${c}`).join(" OR "),
-            );
-        return queries.join(" ");
-    }
+    const hasActiveFilters = Object.values(filters).some(
+        (filter) => filter !== "",
+    );
+    const activeFilterCount = Object.values(filters).filter(
+        (filter) => filter !== "",
+    ).length;
 
-    function disambiguateLabel(key: string, value: any) {
-        switch (key) {
-            case "status":
-                return value?.map((v: string) => `Status: ${v}`).join(", ");
-            case "vendor":
-                return `Vendor: ${value}`;
-            case "collection":
-                return value?.map((v: string) => `Collection: ${v}`).join(", ");
-            case "category":
-                return value?.map((v: string) => `Category: ${v}`).join(", ");
-            default:
-                return value;
+    // ------------------ Scroll handler for pagination ------------------
+    const handleScroll = useCallback(() => {
+        if (!scrollRef.current || !hasNextPage || isLoading) return;
+        const { scrollTop, clientHeight, scrollHeight } = scrollRef.current;
+        if (scrollTop + clientHeight >= scrollHeight - 50) {
+            // Implement fetchMore logic here if needed
+            console.log("Load more products");
         }
-    }
+    }, [hasNextPage, isLoading]);
 
-    function isEmpty(value: string | string[] | undefined) {
-        if (Array.isArray(value)) return value.length === 0;
-        else return !value;
-    }
+    useEffect(() => {
+        const scrollElement = scrollRef.current;
+        if (scrollElement) {
+            scrollElement.addEventListener("scroll", handleScroll);
+            return () =>
+                scrollElement.removeEventListener("scroll", handleScroll);
+        }
+    }, [handleScroll]);
 
-    const formatPrice = (price: number) => `Tk ${price.toFixed(2)}`;
+    // ------------------ Render helpers ------------------
+    const renderProductImage = (product: Product) => {
+        if (product.image) {
+            return (
+                <Thumbnail
+                    source={product.image}
+                    alt={product.title}
+                    size="small"
+                />
+            );
+        }
+        return (
+            <div
+                style={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#f6f6f7",
+                    border: "1px solid #e1e3e5",
+                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Icon source={SearchIcon} tone="subdued" />
+            </div>
+        );
+    };
 
-    // ------------------ Render ------------------
+    const renderProductStatus = (status?: string) => {
+        if (!status) return null;
+
+        const statusConfig = {
+            active: { tone: "success" as const, label: "Active" },
+            draft: { tone: "warning" as const, label: "Draft" },
+            archived: { tone: "subdued" as const, label: "Archived" },
+        };
+
+        const config = statusConfig[status as keyof typeof statusConfig];
+        if (!config) return null;
+
+        return <Badge tone={config.tone}>{config.label}</Badge>;
+    };
+
+    // ------------------ Main render ------------------
     return (
         <Modal
             open={isOpen}
             onClose={handleCancel}
-            title="Add products"
+            title={title}
             primaryAction={{
-                content: "Select",
+                content: `Add ${selectedProducts.length > 0 ? `(${selectedProducts.length})` : ""}`,
                 onAction: handleAdd,
                 disabled: selectedProducts.length === 0,
             }}
@@ -333,102 +336,302 @@ export default function ProductSelectionModal({
         >
             <Modal.Section>
                 <BlockStack gap="400">
-                    {/* Filters */}
-                    <Card>
-                        <Filters
-                            queryValue={queryValue}
-                            filters={filters}
-                            appliedFilters={appliedFilters}
-                            onQueryChange={handleFiltersQueryChange}
-                            onQueryClear={handleQueryValueRemove}
-                            onClearAll={handleFiltersClearAll}
-                        />
-                    </Card>
+                    {/* Search and Filter Section */}
+                    <Card padding="0">
+                        <Box padding="400">
+                            <BlockStack gap="300">
+                                {/* Search Bar */}
+                                <InlineStack gap="200" align="space-between">
+                                    <div style={{ flex: 1 }}>
+                                        <TextField
+                                            placeholder="Search products"
+                                            value={searchInput}
+                                            onChange={setSearchInput}
+                                            prefix={
+                                                <Icon source={SearchIcon} />
+                                            }
+                                            clearButton
+                                            onClearButtonClick={() =>
+                                                setSearchInput("")
+                                            }
+                                            autoComplete="off"
+                                        />
+                                    </div>
+                                    <Select
+                                        options={[
+                                            {
+                                                label: "Search by All",
+                                                value: "all",
+                                            },
+                                            {
+                                                label: "Search by Title",
+                                                value: "title",
+                                            },
+                                            {
+                                                label: "Search by SKU",
+                                                value: "sku",
+                                            },
+                                            {
+                                                label: "Search by Barcode",
+                                                value: "barcode",
+                                            },
+                                        ]}
+                                        value={searchBy}
+                                        onChange={setSearchBy}
+                                    />
+                                </InlineStack>
 
-                    {/* Product List */}
-                    <div style={{ height: "450px" }}>
-                        <Scrollable shadow style={{ height: "100%" }}>
-                            <BlockStack gap="0">
-                                {isLoading && (
-                                    <Text variant="bodyMd" tone="subdued">
-                                        Loading products...
-                                    </Text>
-                                )}
-                                {!isLoading && products.length === 0 && (
-                                    <Text variant="bodyMd" tone="subdued">
-                                        No products found
-                                    </Text>
-                                )}
-                                {products.map((product) => (
-                                    <React.Fragment key={product.id}>
-                                        <Box padding="400">
-                                            <InlineStack
-                                                align="space-between"
-                                                blockAlign="center"
+                                {/* Filter Toggle */}
+                                <InlineStack gap="200" align="space-between">
+                                    <Popover
+                                        active={filterPopoverActive}
+                                        activator={
+                                            <Button
+                                                onClick={() =>
+                                                    setFilterPopoverActive(
+                                                        !filterPopoverActive,
+                                                    )
+                                                }
+                                                disclosure={
+                                                    filterPopoverActive
+                                                        ? "up"
+                                                        : "down"
+                                                }
+                                                icon={FilterIcon}
                                             >
-                                                <InlineStack
-                                                    gap="400"
-                                                    blockAlign="center"
-                                                >
-                                                    <Checkbox
-                                                        checked={isProductSelected(
-                                                            product.id,
-                                                        )}
-                                                        onChange={() =>
-                                                            handleProductToggle(
-                                                                product.id,
+                                                Add filter
+                                                {activeFilterCount > 0 &&
+                                                    ` (${activeFilterCount})`}
+                                            </Button>
+                                        }
+                                        onClose={() =>
+                                            setFilterPopoverActive(false)
+                                        }
+                                        preferredAlignment="left"
+                                    >
+                                        <div
+                                            style={{
+                                                padding: "16px",
+                                                minWidth: "200px",
+                                            }}
+                                        >
+                                            <BlockStack gap="300">
+                                                <Select
+                                                    label="Status"
+                                                    options={
+                                                        FILTER_OPTIONS.status
+                                                    }
+                                                    value={filters.status}
+                                                    onChange={(value) =>
+                                                        handleFilterChange(
+                                                            "status",
+                                                            value,
+                                                        )
+                                                    }
+                                                />
+                                                <Select
+                                                    label="Availability"
+                                                    options={
+                                                        FILTER_OPTIONS.availability
+                                                    }
+                                                    value={filters.availability}
+                                                    onChange={(value) =>
+                                                        handleFilterChange(
+                                                            "availability",
+                                                            value,
+                                                        )
+                                                    }
+                                                />
+                                                <InlineStack gap="200">
+                                                    <Button
+                                                        size="slim"
+                                                        onClick={clearFilters}
+                                                    >
+                                                        Clear all
+                                                    </Button>
+                                                    <Button
+                                                        size="slim"
+                                                        variant="primary"
+                                                        onClick={() =>
+                                                            setFilterPopoverActive(
+                                                                false,
                                                             )
                                                         }
-                                                        disabled={selectedProductIds.includes(
-                                                            product.id,
-                                                        )}
-                                                    />
-                                                    <Box
-                                                        borderRadius="100"
-                                                        minWidth="80px"
-                                                        minHeight="80px"
-                                                        style={{
-                                                            backgroundImage: `url(${product.images?.edges?.[0]?.node?.url})`,
-                                                            backgroundSize:
-                                                                "cover",
-                                                            backgroundPosition:
-                                                                "center",
-                                                            border: "1px solid #E1E3E5",
-                                                        }}
-                                                    />
-                                                    <Text
-                                                        variant="bodyLg"
-                                                        fontWeight="medium"
                                                     >
-                                                        {product.title}
-                                                    </Text>
+                                                        Done
+                                                    </Button>
                                                 </InlineStack>
-                                                <Text
-                                                    variant="bodyLg"
-                                                    fontWeight="medium"
-                                                >
-                                                    Tk{" "}
-                                                    {parseFloat(
-                                                        product.priceRangeV2
-                                                            ?.minVariantPrice
-                                                            .amount || "0",
-                                                    ).toFixed(2)}
-                                                </Text>
-                                            </InlineStack>
-                                        </Box>
-                                        <Divider />
-                                    </React.Fragment>
-                                ))}
-                            </BlockStack>
-                        </Scrollable>
-                    </div>
+                                            </BlockStack>
+                                        </div>
+                                    </Popover>
 
-                    {/* Selected Count */}
+                                    {/* Bulk Actions */}
+                                    {products.length > 0 && (
+                                        <InlineStack gap="200">
+                                            <Button
+                                                size="slim"
+                                                onClick={handleSelectAll}
+                                            >
+                                                Select all
+                                            </Button>
+                                            <Button
+                                                size="slim"
+                                                onClick={handleDeselectAll}
+                                            >
+                                                Deselect all
+                                            </Button>
+                                        </InlineStack>
+                                    )}
+                                </InlineStack>
+                            </BlockStack>
+                        </Box>
+                    </Card>
+
+                    {/* Loading State */}
+                    {isLoading && (
+                        <Box paddingY="800">
+                            <InlineStack align="center">
+                                <Spinner
+                                    accessibilityLabel="Loading products"
+                                    size="large"
+                                />
+                            </InlineStack>
+                        </Box>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <Card>
+                            <Box padding="400">
+                                <Text tone="critical">
+                                    Error loading products. Please try again.
+                                </Text>
+                            </Box>
+                        </Card>
+                    )}
+
+                    {/* Product List */}
+                    {!isLoading && !error && (
+                        <Card padding="0">
+                            <div
+                                style={{
+                                    maxHeight: "500px",
+                                    overflow: "auto",
+                                    border: "1px solid #e1e3e5",
+                                    borderRadius: "6px",
+                                }}
+                                ref={scrollRef}
+                            >
+                                {products.length === 0 ? (
+                                    <Box padding="800">
+                                        <InlineStack align="center">
+                                            <Text
+                                                variant="bodyLg"
+                                                tone="subdued"
+                                            >
+                                                No products found
+                                            </Text>
+                                        </InlineStack>
+                                    </Box>
+                                ) : (
+                                    <BlockStack gap="0">
+                                        {products.map((product, index) => (
+                                            <React.Fragment key={product.id}>
+                                                <Box padding="300">
+                                                    <InlineStack
+                                                        align="space-between"
+                                                        blockAlign="center"
+                                                    >
+                                                        <InlineStack
+                                                            gap="300"
+                                                            blockAlign="center"
+                                                        >
+                                                            <Checkbox
+                                                                checked={isProductSelected(
+                                                                    product.id,
+                                                                )}
+                                                                onChange={() =>
+                                                                    handleProductToggle(
+                                                                        product.id,
+                                                                    )
+                                                                }
+                                                                disabled={selectedProductIds.includes(
+                                                                    product.id,
+                                                                )}
+                                                            />
+                                                            {renderProductImage(
+                                                                product,
+                                                            )}
+                                                            <BlockStack gap="100">
+                                                                <InlineStack
+                                                                    gap="200"
+                                                                    blockAlign="center"
+                                                                >
+                                                                    <Text
+                                                                        variant="bodyMd"
+                                                                        fontWeight="medium"
+                                                                    >
+                                                                        {
+                                                                            product.title
+                                                                        }
+                                                                    </Text>
+                                                                    {renderProductStatus(
+                                                                        product.status,
+                                                                    )}
+                                                                </InlineStack>
+                                                                {product.type && (
+                                                                    <Text
+                                                                        variant="bodySm"
+                                                                        tone="subdued"
+                                                                    >
+                                                                        {
+                                                                            product.type
+                                                                        }
+                                                                    </Text>
+                                                                )}
+                                                                <Text
+                                                                    variant="bodySm"
+                                                                    tone="subdued"
+                                                                >
+                                                                    {
+                                                                        product.quantity
+                                                                    }{" "}
+                                                                    available
+                                                                </Text>
+                                                            </BlockStack>
+                                                        </InlineStack>
+                                                        <Text
+                                                            variant="bodyMd"
+                                                            fontWeight="medium"
+                                                        >
+                                                            ৳
+                                                            {product.price.toFixed(
+                                                                2,
+                                                            )}
+                                                        </Text>
+                                                    </InlineStack>
+                                                </Box>
+                                                {index <
+                                                    products.length - 1 && (
+                                                    <Divider />
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </BlockStack>
+                                )}
+                            </div>
+                        </Card>
+                    )}
+
+                    {/* Selection Summary */}
                     {selectedProducts.length > 0 && (
-                        <Text variant="bodySm" tone="subdued">
-                            {selectedProducts.length} product
-                            {selectedProducts.length !== 1 ? "s" : ""} selected
-                        </Text>
+                        <Box padding="200">
+                            <Text variant="bodySm" tone="subdued">
+                                {selectedProducts.length} product
+                                {selectedProducts.length !== 1 ? "s" : ""}{" "}
+                                selected
+                            </Text>
+                        </Box>
                     )}
                 </BlockStack>
             </Modal.Section>

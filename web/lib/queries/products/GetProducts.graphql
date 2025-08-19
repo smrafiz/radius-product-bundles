@@ -17,14 +17,53 @@ query GetProducts(
                 id
                 title
                 handle
-                vendor
                 status
+                vendor
+                productType
+                tags
+                totalInventory
+                createdAt
+                updatedAt
+                featuredImage {
+                    id
+                    url
+                    altText
+                    width
+                    height
+                }
+                variants(first: 1) {
+                    edges {
+                        node {
+                            id
+                            price
+                            compareAtPrice
+                            sku
+                            barcode
+                            inventoryQuantity
+                            availableForSale
+                            inventoryItem {
+                                tracked
+                            }
+                        }
+                    }
+                }
+                collections(first: 10) {
+                    edges {
+                        node {
+                            id
+                            title
+                            handle
+                        }
+                    }
+                }
             }
             cursor
         }
         pageInfo {
             hasNextPage
             endCursor
+            hasPreviousPage
+            startCursor
         }
     }
 }

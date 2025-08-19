@@ -1,60 +1,19 @@
-"use client";
-
-import request from "graphql-request";
-import { type TypedDocumentNode } from "@graphql-typed-document-node/core";
-import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { request } from "graphql-request";
 import { LATEST_API_VERSION } from "@shopify/shopify-api";
-import { findSessionsByShop } from "@/lib/db/session-storage";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { type TypedDocumentNode } from "@graphql-typed-document-node/core";
 
-let cachedSession: {
-    shop: string;
-    accessToken: string;
-    apiVersion: string;
-} | null = null;
+const url = `shopify:admin/api/${LATEST_API_VERSION}/graphql.json`;
 
-async function getSession(shop: string) {
-    if (cachedSession?.shop === shop) return cachedSession;
-
-    const sessions = await findSessionsByShop(shop);
-    if (!sessions?.[0] || !sessions[0].accessToken)
-        throw new Error("No active session found");
-
-    const session = {
-        shop,
-        accessToken: sessions[0].accessToken!,
-        apiVersion: LATEST_API_VERSION,
-    };
-
-    cachedSession = session;
-    return session;
-}
-
-async function graphqlRequest<TResult, TVariables>(
-    url: string,
+export function useGraphQL<TResult, TVariables>(
     document: TypedDocumentNode<TResult, TVariables>,
-    variables: TVariables,
-    headers: Record<string, string>
-) {
-    // @ts-ignore graphql-request v5 typing issue workaround
-    return await request(url, document, variables, headers) as Promise<TResult>;
-}
-
-export function useGraphQL<TResult, TVariables extends Record<string, any> = Record<string, any>>(
-    document: TypedDocumentNode<TResult, TVariables>,
-    shop: string,
-    variables?: TVariables
-): UseQueryResult<TResult, Error> {
-    return useQuery<TResult, Error>({
-        queryKey: [(document.definitions[0] as any).name.value, shop, variables],
-        queryFn: async () => {
-            const { shop: domain, accessToken, apiVersion } = await getSession(shop);
-            const url = `https://${domain}/admin/api/${apiVersion}/graphql.json`;
-
-            return graphqlRequest(url, document, variables ?? ({} as TVariables), {
-                "X-Shopify-Access-Token": accessToken,
-            });
+    ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
+): UseQueryResult<TResult> {
+    return useQuery({
+        queryKey: [(document.definitions[0] as any).name?.value ?? "GraphQLQuery", variables],
+        queryFn: async ({ queryKey }) => {
+            const [, vars] = queryKey as [string, TVariables | undefined];
+            return request<TResult, TVariables>(url, document, vars);
         },
-        staleTime: 1000 * 60 * 5,
-        enabled: !!shop,
     });
 }

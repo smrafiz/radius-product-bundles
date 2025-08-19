@@ -1,7 +1,7 @@
-import { ProductStatus, ProductSortKeys } from '@/types/admin.generated';
-import type { ProductFilters } from '@/actions/product.actions';
 
 // Convert filter form values to GraphQL-compatible filters
+import { ProductSortKeys, ProductStatus } from "@/lib/gql/graphql";
+
 export const buildProductFilters = (formFilters: {
     queryValue?: string;
     statusFilter?: string[];
