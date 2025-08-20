@@ -1,0 +1,136 @@
+"use client";
+
+import React, { forwardRef } from "react";
+import {
+    BlockStack,
+    Box,
+    Card,
+    InlineStack,
+    Spinner,
+    Text,
+} from "@shopify/polaris";
+import { ProductItem } from "@/app/bundles/create/[bundleType]/_components/productSelection";
+
+import { Product } from "@/types";
+
+interface Props {
+    products: Product[];
+    selectedProductIds: string[];
+    isLoading: boolean;
+    error?: Error | null;
+    nextCursor: string | null;
+    isLoadingMore: boolean;
+}
+
+export const ProductList = forwardRef<HTMLDivElement, Props>(
+    (
+        {
+            products,
+            selectedProductIds,
+            isLoading,
+            error,
+            nextCursor,
+            isLoadingMore,
+        },
+        ref,
+    ) => {
+        if (isLoading) {
+            return (
+                <Box>
+                    <InlineStack align="center">
+                        <Spinner
+                            accessibilityLabel="Loading products"
+                            size="large"
+                        />
+                    </InlineStack>
+                </Box>
+            );
+        }
+
+        if (error) {
+            return (
+                <Card>
+                    <Box padding="400">
+                        <Text as="p" variant="bodyMd" tone="critical">
+                            Error loading products. Please try again.
+                        </Text>
+                    </Box>
+                </Card>
+            );
+        }
+
+        return (
+            <Card padding="0">
+                <div
+                    style={{
+                        height: "500px",
+                        minHeight: "500px",
+                        overflow: "auto",
+                        border: "1px solid #e1e3e5",
+                        borderRadius: "6px",
+                    }}
+                    ref={ref}
+                >
+                    {products.length === 0 ? (
+                        <Box padding="800">
+                            <InlineStack align="center">
+                                <Text as="p" variant="bodyLg" tone="subdued">
+                                    No products found
+                                </Text>
+                            </InlineStack>
+                        </Box>
+                    ) : (
+                        <BlockStack gap="0">
+                            {products.map((product, index) => (
+                                <ProductItem
+                                    key={product.id}
+                                    product={product}
+                                    isLast={index === products.length - 1}
+                                    isDisabled={selectedProductIds.includes(
+                                        product.id,
+                                    )}
+                                />
+                            ))}
+
+                            {/* Loading more indicator */}
+                            {nextCursor && isLoadingMore && (
+                                <Box padding="400">
+                                    <InlineStack align="center">
+                                        <Spinner size="small" />
+                                        <Text
+                                            as="p"
+                                            variant="bodySm"
+                                            tone="subdued"
+                                        >
+                                            Loading more products...
+                                        </Text>
+                                    </InlineStack>
+                                </Box>
+                            )}
+
+                            {/* End of result indicator */}
+                            {!nextCursor && products.length > 10 && (
+                                <Box padding="400">
+                                    <InlineStack align="center">
+                                        <Text
+                                            as="p"
+                                            variant="bodySm"
+                                            tone="subdued"
+                                        >
+                                            All products loaded (
+                                            {products.length} total)
+                                        </Text>
+                                    </InlineStack>
+                                </Box>
+                            )}
+                        </BlockStack>
+                    )}
+                </div>
+            </Card>
+        );
+    },
+);
+
+ProductList.displayName = "ProductList";
+
+export default ProductList;

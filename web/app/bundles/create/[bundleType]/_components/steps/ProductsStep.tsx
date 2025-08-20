@@ -1,21 +1,24 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
+    Badge,
     BlockStack,
-    Text,
-    Card,
-    Button,
-    InlineStack,
-    TextField,
-    Icon,
     Box,
-    Badge
-} from '@shopify/polaris';
-import { PlusIcon, DeleteIcon, DragHandleIcon } from '@shopify/polaris-icons';
+    Button,
+    Card,
+    Icon,
+    InlineStack,
+    Text,
+    TextField,
+} from "@shopify/polaris";
+import { formatPrice } from "@/utils/productFilters";
 import { useBundleStore } from "@/lib/stores/bundleStore";
-import { formatPrice } from '@/utils/productFilters';
-import ProductSelectionModal from './ProductSelectionModal';
+import {
+    ProductSelectionModal,
+    SelectedItem,
+} from "@/app/bundles/create/[bundleType]/_components/productSelection";
+import { DeleteIcon, DragHandleIcon, PlusIcon } from "@shopify/polaris-icons";
 
 export default function ProductsStep() {
     const {
@@ -23,7 +26,7 @@ export default function ProductsStep() {
         addSelectedItems,
         removeSelectedItem,
         updateSelectedItemQuantity,
-        setSelectedItems
+        setSelectedItems,
     } = useBundleStore();
 
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -32,14 +35,27 @@ export default function ProductsStep() {
         setIsModalOpen(true);
     };
 
-    const handleProductsSelected = (items: any[]) => {
-        addSelectedItems(items);
+    const handleProductsSelected = (items: SelectedItem[]) => {
+        // Transform the SelectedItem[] to match your bundle store format
+        const transformedItems = items.map((item) => ({
+            ...item,
+            quantity: 1, // Default quantity for new items
+        }));
+
+        addSelectedItems(transformedItems);
         setIsModalOpen(false);
     };
 
     const handleClearAll = () => {
         setSelectedItems([]);
     };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    // Get already selected product IDs to prevent duplicates
+    const selectedProductIds = selectedItems.map((item) => item.productId);
 
     return (
         <BlockStack gap="500">
@@ -78,12 +94,25 @@ export default function ProductsStep() {
                     {selectedItems.length > 0 ? (
                         <BlockStack gap="200">
                             {selectedItems.map((item, index) => (
-                                <Card key={`${item.productId}-${item.variantId || 'product'}-${index}`} background="bg-surface-secondary">
+                                <Card
+                                    key={`${item.productId}-${item.variantId || "product"}-${index}`}
+                                    background="bg-surface-secondary"
+                                >
                                     <Box padding="300">
-                                        <InlineStack align="space-between" blockAlign="center" gap="400">
-                                            <Icon source={DragHandleIcon} tone="subdued" />
+                                        <InlineStack
+                                            align="space-between"
+                                            blockAlign="center"
+                                            gap="400"
+                                        >
+                                            <Icon
+                                                source={DragHandleIcon}
+                                                tone="subdued"
+                                            />
 
-                                            <InlineStack gap="300" blockAlign="center">
+                                            <InlineStack
+                                                gap="300"
+                                                blockAlign="center"
+                                            >
                                                 {item.image && (
                                                     <Box
                                                         borderRadius="100"
@@ -91,63 +120,158 @@ export default function ProductsStep() {
                                                         minHeight="60px"
                                                         style={{
                                                             backgroundImage: `url(${item.image})`,
-                                                            backgroundSize: 'cover',
-                                                            backgroundPosition: 'center',
-                                                            border: '1px solid #E1E3E5'
+                                                            backgroundSize:
+                                                                "cover",
+                                                            backgroundPosition:
+                                                                "center",
+                                                            border: "1px solid #E1E3E5",
                                                         }}
                                                     />
                                                 )}
 
                                                 <BlockStack gap="100">
-                                                    <Text variant="bodyMd" fontWeight="medium">
+                                                    <Text
+                                                        variant="bodyMd"
+                                                        fontWeight="medium"
+                                                    >
                                                         {item.title}
                                                     </Text>
                                                     <InlineStack gap="200">
-                                                        <Badge tone={item.type === 'variant' ? 'info' : 'success'}>
-                                                            {item.type === 'variant' ? 'Variant' : 'Product'}
+                                                        <Badge
+                                                            tone={
+                                                                item.type ===
+                                                                "variant"
+                                                                    ? "info"
+                                                                    : "success"
+                                                            }
+                                                        >
+                                                            {item.type ===
+                                                            "variant"
+                                                                ? "Variant"
+                                                                : "Product"}
                                                         </Badge>
                                                         {item.sku && (
-                                                            <Text variant="bodySm" tone="subdued">
+                                                            <Text
+                                                                variant="bodySm"
+                                                                tone="subdued"
+                                                            >
                                                                 SKU: {item.sku}
                                                             </Text>
                                                         )}
-                                                        <Text variant="bodySm" tone="subdued">
-                                                            {formatPrice(item.price)}
+                                                        <Text
+                                                            variant="bodySm"
+                                                            tone="subdued"
+                                                        >
+                                                            {formatPrice(
+                                                                item.price,
+                                                            )}
                                                         </Text>
                                                     </InlineStack>
                                                 </BlockStack>
                                             </InlineStack>
 
-                                            <InlineStack gap="300" blockAlign="center">
+                                            <InlineStack
+                                                gap="300"
+                                                blockAlign="center"
+                                            >
                                                 <TextField
-                                                    value={item.quantity.toString()}
-                                                    onChange={(value) => updateSelectedItemQuantity(index, parseInt(value) || 1)}
+                                                    value={
+                                                        item.quantity?.toString() ||
+                                                        "1"
+                                                    }
+                                                    onChange={(value) =>
+                                                        updateSelectedItemQuantity(
+                                                            index,
+                                                            parseInt(value) ||
+                                                                1,
+                                                        )
+                                                    }
                                                     type="number"
                                                     min="1"
                                                     autoComplete="off"
-                                                    style={{ width: '80px' }}
+                                                    style={{ width: "80px" }}
                                                 />
 
                                                 <Button
                                                     variant="plain"
                                                     icon={DeleteIcon}
-                                                    onClick={() => removeSelectedItem(index)}
+                                                    onClick={() =>
+                                                        removeSelectedItem(
+                                                            index,
+                                                        )
+                                                    }
                                                 />
                                             </InlineStack>
                                         </InlineStack>
                                     </Box>
                                 </Card>
                             ))}
+
+                            {/* Summary */}
+                            <Card>
+                                <Box
+                                    padding="300"
+                                    background="bg-surface-hover"
+                                >
+                                    <InlineStack
+                                        align="space-between"
+                                        blockAlign="center"
+                                    >
+                                        <Text
+                                            variant="bodyMd"
+                                            fontWeight="medium"
+                                        >
+                                            Total Items: {selectedItems.length}
+                                        </Text>
+                                        <Text
+                                            variant="bodyMd"
+                                            fontWeight="medium"
+                                        >
+                                            Total Quantity:{" "}
+                                            {selectedItems.reduce(
+                                                (sum, item) =>
+                                                    sum + (item.quantity || 1),
+                                                0,
+                                            )}
+                                        </Text>
+                                        <Text
+                                            variant="bodyMd"
+                                            fontWeight="medium"
+                                        >
+                                            Bundle Value:{" "}
+                                            {formatPrice(
+                                                selectedItems
+                                                    .reduce(
+                                                        (sum, item) =>
+                                                            sum +
+                                                            parseFloat(
+                                                                item.price,
+                                                            ) *
+                                                                (item.quantity ||
+                                                                    1),
+                                                        0,
+                                                    )
+                                                    .toString(),
+                                            )}
+                                        </Text>
+                                    </InlineStack>
+                                </Box>
+                            </Card>
                         </BlockStack>
                     ) : (
-                        <Box padding="800" background="bg-surface-secondary" borderRadius="200">
+                        <Box
+                            padding="800"
+                            background="bg-surface-secondary"
+                            borderRadius="200"
+                        >
                             <InlineStack align="center">
                                 <BlockStack gap="200" inlineAlign="center">
                                     <Text variant="bodyMd" tone="subdued">
                                         No products selected
                                     </Text>
                                     <Text variant="bodySm" tone="subdued">
-                                        Add products and variants to create your bundle
+                                        Add products and variants to create your
+                                        bundle
                                     </Text>
                                 </BlockStack>
                             </InlineStack>
@@ -158,9 +282,10 @@ export default function ProductsStep() {
 
             <ProductSelectionModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={handleCloseModal}
                 onProductsSelected={handleProductsSelected}
-                selectedProductIds={selectedItems.map(item => item.productId)}
+                selectedProductIds={selectedProductIds}
+                title="Add Products to Bundle"
             />
         </BlockStack>
     );

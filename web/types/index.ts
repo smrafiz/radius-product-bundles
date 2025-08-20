@@ -1,78 +1,10 @@
-// Bundle-related types
-export type {
-    Bundle,
-    BundleStatus,
-    BundleType,
-    DiscountType,
-    BundleStatusBadge,
-    CreateBundlePayload,
-    UpdateBundlePayload,
-    BundleWithDetails,
-} from "./bundle.types";
-
-// Metrics related types
-export type {
-    DashboardMetrics,
-    MetricsTotals,
-    MetricsData,
-    MetricsGrowth,
-    BundleMetricsResponse,
-    AnalyticsTimeframe,
-} from "./metrics.types";
-
-// API-related types
-export type {
-    ApiResponse,
-    ApiError,
-    PaginationParams,
-    PaginatedResponse,
-    FilterParams,
-} from "./api.types";
-
-// UI-related types
-export type {
-    ToastState,
-    LoadingState,
-    ErrorState,
-    GrowthTone,
-    MetricCardProps,
-    QuickAction,
-    NavigationItem,
-} from "./ui.types";
-
-// A/B Testing types
-export type {
-    ABTest,
-    TestResult,
-    TestType,
-    TestStatus,
-    CreateTestPayload,
-    TestPerformance,
-} from "./testing.types";
-
-// Automation types
-export type {
-    Automation,
-    AutomationLog,
-    AutomationStatus,
-    TriggerType,
-    CreateAutomationPayload,
-    AutomationPerformance,
-} from "./automation.types";
-
-// Notification types
-export type {
-    Notification,
-    AlertRule,
-    NotificationType,
-    NotificationPriority,
-    AlertRuleStatus,
-    AlertFrequency,
-    CreateNotificationPayload,
-    NotificationSettings,
-} from "./notification.types";
-
-// Product types
-export type {
-    GetProductByIdQuery,
-} from "./product.type"
+export type * from "@/types/ui.types";
+export type * from "@/types/api.types";
+export type * from "@/types/product.type";
+export type * from "@/types/bundle.types";
+export type * from "@/types/metrics.types";
+export type * from "@/types/testing.types";
+export type * from "@/types/admin.generated";
+export type * from "@/types/automation.types";
+export type * from "@/types/notification.types";
+export type * from "@/types/productSelection.type";
