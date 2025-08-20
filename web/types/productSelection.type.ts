@@ -53,6 +53,7 @@ export interface ProductSelectionState {
     toggleProductExpansion: (productId: string) => void;
 
     // Selection Actions
+    isProductIndeterminate: (product: Product) => boolean;
     setSelectedItems: (items: SelectedItem[]) => void;
     addSelectedItem: (item: SelectedItem) => void;
     removeSelectedItem: (itemId: string, type: 'product' | 'variant') => void;

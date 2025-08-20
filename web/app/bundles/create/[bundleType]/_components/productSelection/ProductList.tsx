@@ -97,13 +97,6 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                                 <Box padding="400">
                                     <InlineStack align="center">
                                         <Spinner size="small" />
-                                        <Text
-                                            as="p"
-                                            variant="bodySm"
-                                            tone="subdued"
-                                        >
-                                            Loading more products...
-                                        </Text>
                                     </InlineStack>
                                 </Box>
                             )}

@@ -36,12 +36,24 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
         expandedProducts,
         isProductSelected,
         toggleProductSelection,
+        isProductIndeterminate,
         toggleProductExpansion,
     } = useProductSelectionStore();
 
     const handleProductToggle = () => {
         if (!isDisabled) {
-            toggleProductSelection(product, []); // Pass empty array since we don't track selected IDs in store
+            toggleProductSelection(product, []);
+        }
+    };
+
+    // Determine checkbox state
+    const getCheckboxState = () => {
+        if (isProductSelected(product)) {
+            return true;
+        } else if (isProductIndeterminate(product)) {
+            return "indeterminate";
+        } else {
+            return false;
         }
     };
 
@@ -113,7 +125,7 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
                     <InlineStack gap="300" blockAlign="center">
                         <Checkbox
                             label=""
-                            checked={isProductSelected(product)}
+                            checked={getCheckboxState()}
                             onChange={handleProductToggle}
                             disabled={isDisabled}
                         />
