@@ -17,7 +17,6 @@ export function useBundleTableActions() {
 
     const handleDuplicateBundle = (bundleId: string) => {
         showToast(`Duplicating bundle ${bundleId}...`);
-        console.log("Duplicate bundle:", bundleId);
     };
 
     const handleToggleBundleStatus = (
@@ -26,27 +25,22 @@ export function useBundleTableActions() {
     ) => {
         const newStatus = currentStatus === "ACTIVE" ? "PAUSED" : "ACTIVE";
         showToast(`Bundle status changed to ${newStatus.toLowerCase()}`);
-        console.log("Toggle status for bundle:", bundleId, currentStatus);
     };
 
     const handleDeleteBundle = (bundleId: string) => {
         showToast("Bundle deleted successfully");
-        console.log("Delete bundle:", bundleId);
     };
 
     const handleBulkActivate = (selectedCount: number) => {
         showToast(`Activated ${selectedCount} bundles`);
-        console.log("Bulk activate:", selectedCount);
     };
 
     const handleBulkPause = (selectedCount: number) => {
         showToast(`Paused ${selectedCount} bundles`);
-        console.log("Bulk pause:", selectedCount);
     };
 
     const handleBulkDelete = (selectedCount: number) => {
         showToast(`Deleted ${selectedCount} bundles`);
-        console.log("Bulk delete:", selectedCount);
     };
 
     // Get promoted bulk actions

@@ -45,7 +45,13 @@ export function SearchBar({
         updateFilter,
         clearFilters,
         setFilterPopoverActive,
+        resetState
     } = useProductSelectionStore();
+
+    const handleClearSearch = () => {
+        setSearchInput("");
+        resetState();
+    };
 
     return (
         <Card padding="0">
@@ -55,13 +61,13 @@ export function SearchBar({
                     <InlineStack gap="200" align="space-between">
                         <div style={{ flex: 1 }}>
                             <TextField
-                                label="Search products"
+                                label=""
                                 placeholder="Search products"
                                 value={searchInput}
                                 onChange={setSearchInput}
                                 prefix={<Icon source={SearchIcon} />}
                                 clearButton
-                                onClearButtonClick={() => setSearchInput("")}
+                                onClearButtonClick={handleClearSearch}
                                 autoComplete="off"
                             />
                         </div>

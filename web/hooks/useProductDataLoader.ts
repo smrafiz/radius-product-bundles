@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { request } from 'graphql-request';
 import { useQueryBuilder } from './useQueryBuilder';
@@ -33,13 +33,22 @@ export function useProductDataLoader() {
 
     const { buildSearchQuery } = useQueryBuilder();
 
+    const [queryKey, setQueryKey] = useState(0);
+
+    useEffect(() => {
+        if (isModalOpen) {
+            setQueryKey(prev => prev + 1);
+        }
+    }, [debouncedSearch, filters, isModalOpen]);
+
     // Memoize query variables to prevent unnecessary re-renders
     const productsVariables = useMemo((): GetProductsQueryVariables => ({
         first,
         query: buildSearchQuery(),
         sortKey: "UPDATED_AT",
         reverse: true,
-    }), [first, buildSearchQuery]);
+        ...(queryKey > 0 && { _key: queryKey.toString() })
+    }), [first, buildSearchQuery, queryKey]);
 
     // Initial products query
     const productsQuery = useGraphQL(
@@ -158,6 +167,7 @@ export function useProductDataLoader() {
         clearLoadedProducts,
         setAllLoadedProducts,
         setNextCursor,
+        queryKey
     ]);
 
     // Clear loaded products when search/filters change

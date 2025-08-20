@@ -70,7 +70,7 @@ export function ProductSelectionModal({
     // Fetch all products for filter options
     const allProductsVariables: GetProductsQueryVariables = {
         first: 100,
-        query: "status:ACTIVE",
+        query: "",
     };
 
     const allProductsQuery = useGraphQL(
@@ -209,16 +209,6 @@ export function ProductSelectionModal({
                         nextCursor={nextCursor}
                         isLoadingMore={isLoadingMore}
                     />
-
-                    {/* Selection Summary */}
-                    {selectedItems.length > 0 && (
-                        <Box padding="200">
-                            <Text as="p" variant="bodySm" tone="subdued">
-                                {selectedItems.length} item
-                                {selectedItems.length !== 1 ? "s" : ""} selected
-                            </Text>
-                        </Box>
-                    )}
                 </BlockStack>
             </Modal.Section>
         </Modal>

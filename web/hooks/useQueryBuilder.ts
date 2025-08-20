@@ -7,54 +7,54 @@ export function useQueryBuilder() {
     const buildSearchQuery = useCallback(() => {
         let query = "";
 
-        if (debouncedSearch) {
+        // Start with the status filter first
+        const statusFilter = filters.status || "ACTIVE";
+        query = `status:${statusFilter}`;
+
+        const cleanSearch = debouncedSearch
+            ?.replace(/^["']+|["']+$/g, '')
+            ?.trim();
+
+        // Add search term if exists
+        if (cleanSearch && cleanSearch.length > 0) {
+            const searchTerm = debouncedSearch.trim();
+            let searchQuery = "";
+
             switch (searchBy) {
                 case "title":
-                    query += `title:*${debouncedSearch}*`;
+                    searchQuery = `title:*${searchTerm}*`;
                     break;
                 case "sku":
-                    query += `sku:*${debouncedSearch}*`;
+                    searchQuery = `sku:*${searchTerm}*`;
                     break;
                 case "barcode":
-                    query += `barcode:*${debouncedSearch}*`;
+                    searchQuery = `barcode:*${searchTerm}*`;
                     break;
                 default:
-                    query += `*${debouncedSearch}*`;
+                    searchQuery = `*${searchTerm}*`;
             }
+
+            query += ` AND ${searchQuery}`;
         }
 
-        // Add filters
-        if (filters.status) {
-            query += query
-                ? ` AND status:${filters.status}`
-                : `status:${filters.status}`;
-        } else {
-            query += query ? ` AND status:ACTIVE` : `status:ACTIVE`;
-        }
-
+        // Add other filters
         if (filters.productType) {
-            query += query
-                ? ` AND product_type:"${filters.productType}"`
-                : `product_type:"${filters.productType}"`;
+            query += ` AND product_type:"${filters.productType}"`;
         }
         if (filters.vendor) {
-            query += query
-                ? ` AND vendor:"${filters.vendor}"`
-                : `vendor:"${filters.vendor}"`;
+            query += ` AND vendor:"${filters.vendor}"`;
         }
         if (filters.collection) {
-            query += query
-                ? ` AND collection_id:${filters.collection}`
-                : `collection_id:${filters.collection}`;
+            query += ` AND collection_id:${filters.collection}`;
         }
         if (filters.tags.length > 0) {
             const tagsQuery = filters.tags
                 .map((tag) => `tag:"${tag}"`)
                 .join(" OR ");
-            query += query ? ` AND (${tagsQuery})` : `(${tagsQuery})`;
+            query += ` AND (${tagsQuery})`;
         }
 
-        return query || "status:ACTIVE";
+        return query;
     }, [debouncedSearch, searchBy, filters]);
 
     return { buildSearchQuery };
