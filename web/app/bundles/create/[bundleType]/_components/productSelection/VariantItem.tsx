@@ -37,7 +37,7 @@ export function VariantItem({ product, variant }: Props) {
         return (
             <BlockStack gap="050" inlineAlign="end">
                 <Text as="p" variant="bodySm" fontWeight="medium">
-                    ৳{price}
+                    {price}
                 </Text>
                 {hasDiscount && (
                     <Text
@@ -46,12 +46,38 @@ export function VariantItem({ product, variant }: Props) {
                         tone="subdued"
                         textDecorationLine="line-through"
                     >
-                        ৳{compareAtPrice.toFixed(2)}
+                        {compareAtPrice.toFixed(2)}
                     </Text>
                 )}
             </BlockStack>
         );
     };
+
+    const shouldShowInventory = () => {
+        return (
+            variant.inventoryItem?.tracked === true &&
+            variant.inventoryQuantity !== null &&
+            variant.inventoryQuantity !== undefined
+        );
+    };
+
+    const getInventoryText = () => {
+        if (!shouldShowInventory()) {
+            return null;
+        }
+
+        const quantity = variant.inventoryQuantity;
+
+        if (quantity === 0) {
+            return "Out of stock";
+        } else if (quantity < 5) {
+            return `${quantity} remaining`;
+        } else {
+            return `${quantity} available`;
+        }
+    };
+
+    const inventoryText = getInventoryText();
 
     return (
         <Box key={variant.id} padding="200">
@@ -81,9 +107,15 @@ export function VariantItem({ product, variant }: Props) {
                                     SKU: {variant.sku}
                                 </Text>
                             )}
-                            <Text as="p" variant="bodySm" tone="subdued">
-                                {variant.inventoryQuantity} available
-                            </Text>
+                            {inventoryText && (
+                                <Text
+                                    as="p"
+                                    variant="bodySm"
+                                    tone={variant.inventoryQuantity === 0 ? "critical" : "subdued"}
+                                >
+                                    {inventoryText}
+                                </Text>
+                            )}
                         </InlineStack>
                     </BlockStack>
                 </InlineStack>

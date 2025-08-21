@@ -22,14 +22,6 @@ export type GetProductByIdQueryVariables = AdminTypes.Exact<{
 
 export type GetProductByIdQuery = { product?: AdminTypes.Maybe<Pick<AdminTypes.Product, 'id' | 'title' | 'handle' | 'vendor' | 'productType' | 'tags' | 'totalInventory'>> };
 
-export type GetProductFiltersQueryVariables = AdminTypes.Exact<{ [key: string]: never; }>;
-
-
-export type GetProductFiltersQuery = { shop: (
-    Pick<AdminTypes.Shop, 'id'>
-    & { productTypes: { edges: Array<Pick<AdminTypes.StringEdge, 'node'>> }, productVendors: { edges: Array<Pick<AdminTypes.StringEdge, 'node'>> }, productTags: { edges: Array<Pick<AdminTypes.StringEdge, 'node'>> } }
-  ) };
-
 export type GetProductsQueryVariables = AdminTypes.Exact<{
   first: AdminTypes.Scalars['Int']['input'];
   after?: AdminTypes.InputMaybe<AdminTypes.Scalars['String']['input']>;
@@ -50,35 +42,19 @@ export type GetProductsQuery = { products: { edges: Array<(
       ) }
     )>, pageInfo: Pick<AdminTypes.PageInfo, 'hasNextPage' | 'endCursor' | 'hasPreviousPage' | 'startCursor'> } };
 
-export type GetProductsWithVariantsQueryVariables = AdminTypes.Exact<{
-  first: AdminTypes.Scalars['Int']['input'];
-  after?: AdminTypes.InputMaybe<AdminTypes.Scalars['String']['input']>;
-  query?: AdminTypes.InputMaybe<AdminTypes.Scalars['String']['input']>;
-  sortKey?: AdminTypes.InputMaybe<AdminTypes.ProductSortKeys>;
-  reverse?: AdminTypes.InputMaybe<AdminTypes.Scalars['Boolean']['input']>;
-}>;
+export type GetShopInfoQueryVariables = AdminTypes.Exact<{ [key: string]: never; }>;
 
 
-export type GetProductsWithVariantsQuery = { products: { edges: Array<(
-      Pick<AdminTypes.ProductEdge, 'cursor'>
-      & { node: (
-        Pick<AdminTypes.Product, 'id' | 'title' | 'handle' | 'status' | 'vendor' | 'productType' | 'tags' | 'totalInventory' | 'hasOnlyDefaultVariant' | 'tracksInventory' | 'totalVariants'>
-        & { featuredMedia?: AdminTypes.Maybe<(
-          Pick<AdminTypes.MediaImage, 'id'>
-          & { preview?: AdminTypes.Maybe<{ image?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'altText' | 'url'>> }> }
-        )>, variants: { edges: Array<{ node: (
-              Pick<AdminTypes.ProductVariant, 'id' | 'title' | 'displayName' | 'sku' | 'barcode' | 'price' | 'compareAtPrice' | 'availableForSale' | 'inventoryQuantity'>
-              & { selectedOptions: Array<Pick<AdminTypes.SelectedOption, 'name' | 'value'>>, image?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'altText' | 'url'>>, inventoryItem: Pick<AdminTypes.InventoryItem, 'id' | 'tracked'> }
-            ) }> }, collections: { edges: Array<{ node: Pick<AdminTypes.Collection, 'id' | 'title' | 'handle'> }> } }
-      ) }
-    )>, pageInfo: Pick<AdminTypes.PageInfo, 'hasNextPage' | 'hasPreviousPage' | 'startCursor' | 'endCursor'> } };
+export type GetShopInfoQuery = { shop: (
+    Pick<AdminTypes.Shop, 'currencyCode' | 'myshopifyDomain' | 'email' | 'name'>
+    & { plan: Pick<AdminTypes.ShopPlan, 'displayName'>, billingAddress: Pick<AdminTypes.ShopAddress, 'countryCode'> }
+  ) };
 
 interface GeneratedQueryTypes {
   "query GetCollectionsForFilters($query: String, $first: Int!, $after: String) {\n  collections(first: $first, after: $after, query: $query, sortKey: TITLE) {\n    edges {\n      node {\n        id\n        title\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}": {return: GetCollectionsForFiltersQuery, variables: GetCollectionsForFiltersQueryVariables},
   "query GetProductById($id: ID!) {\n  product(id: $id) {\n    id\n    title\n    handle\n    vendor\n    productType\n    tags\n    totalInventory\n  }\n}": {return: GetProductByIdQuery, variables: GetProductByIdQueryVariables},
-  "query GetProductFilters {\n  shop {\n    id\n    productTypes(first: 250) {\n      edges {\n        node\n      }\n    }\n    productVendors(first: 250) {\n      edges {\n        node\n      }\n    }\n    productTags(first: 250) {\n      edges {\n        node\n      }\n    }\n  }\n}": {return: GetProductFiltersQuery, variables: GetProductFiltersQueryVariables},
   "query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {\n  products(\n    first: $first\n    after: $after\n    query: $query\n    sortKey: $sortKey\n    reverse: $reverse\n  ) {\n    edges {\n      node {\n        id\n        title\n        handle\n        status\n        vendor\n        productType\n        tags\n        totalInventory\n        createdAt\n        updatedAt\n        featuredImage {\n          id\n          url\n          altText\n          width\n          height\n        }\n        variants(first: 100) {\n          nodes {\n            id\n            title\n            price\n            compareAtPrice\n            sku\n            barcode\n            inventoryQuantity\n            availableForSale\n            selectedOptions {\n              name\n              value\n            }\n            image {\n              url\n              altText\n            }\n            inventoryItem {\n              tracked\n            }\n          }\n        }\n        collections(first: 10) {\n          edges {\n            node {\n              id\n              title\n              handle\n            }\n          }\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n      hasPreviousPage\n      startCursor\n    }\n  }\n}": {return: GetProductsQuery, variables: GetProductsQueryVariables},
-  "query GetProductsWithVariants($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {\n  products(\n    first: $first\n    after: $after\n    query: $query\n    sortKey: $sortKey\n    reverse: $reverse\n  ) {\n    edges {\n      node {\n        id\n        title\n        handle\n        status\n        vendor\n        productType\n        tags\n        totalInventory\n        hasOnlyDefaultVariant\n        tracksInventory\n        totalVariants\n        featuredMedia {\n          ... on MediaImage {\n            id\n            preview {\n              image {\n                id\n                altText\n                url(transform: {maxHeight: 200, maxWidth: 200})\n              }\n            }\n          }\n        }\n        variants(first: 50) {\n          edges {\n            node {\n              id\n              title\n              displayName\n              sku\n              barcode\n              price\n              compareAtPrice\n              availableForSale\n              inventoryQuantity\n              selectedOptions {\n                name\n                value\n              }\n              image {\n                id\n                altText\n                url(transform: {maxWidth: 100, maxHeight: 100})\n              }\n              inventoryItem {\n                id\n                tracked\n              }\n            }\n          }\n        }\n        collections(first: 10) {\n          edges {\n            node {\n              id\n              title\n              handle\n            }\n          }\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      startCursor\n      endCursor\n    }\n  }\n}": {return: GetProductsWithVariantsQuery, variables: GetProductsWithVariantsQueryVariables},
+  "query GetShopInfo {\n  shop {\n    currencyCode\n    myshopifyDomain\n    email\n    name\n    plan {\n      displayName\n    }\n    billingAddress {\n      countryCode\n    }\n  }\n}": {return: GetShopInfoQuery, variables: GetShopInfoQueryVariables},
 }
 
 interface GeneratedMutationTypes {

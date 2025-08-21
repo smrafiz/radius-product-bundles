@@ -24,6 +24,7 @@ import {
 } from "@/app/bundles/create/[bundleType]/_components/productSelection";
 
 import { Product } from "@/types";
+import { formatCurrency } from "@/utils";
 
 interface Props {
     product: Product;
@@ -114,8 +115,38 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
         return "0.00";
     };
 
+    const getInventoryDisplay = () => {
+        if (!product.variants || product.variants.length === 0) {
+            return null;
+        }
+
+        const trackedVariants = product.variants.filter(
+            variant => variant.inventoryItem?.tracked === true
+        );
+
+        if (trackedVariants.length === 0) {
+            return null;
+        }
+
+        if (trackedVariants.length === product.variants.length) {
+            const totalInventory = trackedVariants.reduce(
+                (sum, variant) => sum + (variant.inventoryQuantity || 0),
+                0
+            );
+
+            if (totalInventory === 0) {
+                return { text: "Out of stock", tone: "critical" as const };
+            } else {
+                return { text: `${totalInventory} available`, tone: "subdued" as const };
+            }
+        }
+
+        return { text: "Mixed inventory tracking", tone: "subdued" as const };
+    };
+
     const isExpanded = expandedProducts.has(product.id);
     const hasMultipleVariants = product.variants && product.variants.length > 1;
+    const inventoryDisplay = getInventoryDisplay();
 
     return (
         <>
@@ -151,15 +182,19 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
                                     {product.productType}
                                 </Text>
                             )}
-                            <Text as="p" variant="bodySm" tone="subdued">
-                                {product.totalInventory} available
-                            </Text>
+                            {inventoryDisplay && (
+                                <Text as="p" variant="bodySm" tone={inventoryDisplay.tone}>
+                                    {inventoryDisplay.text}
+                                </Text>
+                            )}
                         </BlockStack>
                     </InlineStack>
                     <InlineStack gap="200" blockAlign="center">
-                        <Text as="p" variant="bodyMd" fontWeight="medium">
-                            From ৳{getMinPrice()}
-                        </Text>
+                        {!hasMultipleVariants && (
+                            <Text as="p" variant="bodyMd" fontWeight="medium">
+                                {formatCurrency(getMinPrice())}
+                            </Text>
+                        )}
                         {hasMultipleVariants && (
                             <Button
                                 variant="plain"
@@ -169,7 +204,7 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
                                 }
                                 onClick={handleExpansionToggle}
                             >
-                                {isExpanded ? "Hide" : "Show"} variants
+                                Variants
                             </Button>
                         )}
                     </InlineStack>

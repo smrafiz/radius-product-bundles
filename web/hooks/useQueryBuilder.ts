@@ -7,7 +7,6 @@ export function useQueryBuilder() {
     const buildSearchQuery = useCallback(() => {
         let query = "";
 
-        // Start with the status filter first
         const statusFilter = filters.status || "ACTIVE";
         query = `status:${statusFilter}`;
 

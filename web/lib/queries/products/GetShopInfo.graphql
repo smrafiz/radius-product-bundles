@@ -1,0 +1,14 @@
+query GetShopInfo {
+    shop {
+        currencyCode
+        myshopifyDomain
+        email
+        name
+        plan {
+            displayName
+        }
+        billingAddress {
+            countryCode
+        }
+    }
+}

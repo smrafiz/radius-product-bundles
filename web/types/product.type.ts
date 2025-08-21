@@ -14,6 +14,9 @@ export interface ProductVariant {
         name: string;
         value: string;
     }>;
+    inventoryItem: {
+        tracked: boolean;
+    }
 }
 
 export interface Product {

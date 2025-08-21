@@ -1,5 +1,6 @@
 export type * from "@/types/ui.types";
 export type * from "@/types/api.types";
+export type * from "@/types/shop.types";
 export type * from "@/types/product.type";
 export type * from "@/types/bundle.types";
 export type * from "@/types/metrics.types";

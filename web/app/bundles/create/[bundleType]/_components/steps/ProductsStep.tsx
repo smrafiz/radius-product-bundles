@@ -12,7 +12,7 @@ import {
     Text,
     TextField,
 } from "@shopify/polaris";
-import { formatPrice } from "@/utils/productFilters";
+import { formatCurrency } from "@/utils";
 import { useBundleStore } from "@/lib/stores/bundleStore";
 import {
     ProductSelectionModal,
@@ -162,7 +162,7 @@ export default function ProductsStep() {
                                                             variant="bodySm"
                                                             tone="subdued"
                                                         >
-                                                            {formatPrice(
+                                                            {formatCurrency(
                                                                 item.price,
                                                             )}
                                                         </Text>
@@ -239,7 +239,7 @@ export default function ProductsStep() {
                                             fontWeight="medium"
                                         >
                                             Bundle Value:{" "}
-                                            {formatPrice(
+                                            {formatCurrency(
                                                 selectedItems
                                                     .reduce(
                                                         (sum, item) =>

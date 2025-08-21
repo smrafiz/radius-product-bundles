@@ -199,7 +199,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
 
         deselectAllProducts: () => set({ selectedItems: [] }),
 
-        // Computed State - FIXED
         isProductSelected: (product) => {
             const state = get();
             if (!product.variants || product.variants.length === 0) return false;
@@ -208,11 +207,9 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 (item) => item.productId === product.id
             );
 
-            // Return true only if ALL variants are selected
             return selectedVariants.length === product.variants.length;
         },
 
-        // ADD THIS NEW FUNCTION
         isProductIndeterminate: (product) => {
             const state = get();
             if (!product.variants || product.variants.length === 0) return false;
@@ -221,7 +218,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 (item) => item.productId === product.id
             );
 
-            // Return true if some (but not all) variants are selected
             return selectedVariants.length > 0 && selectedVariants.length < product.variants.length;
         },
 

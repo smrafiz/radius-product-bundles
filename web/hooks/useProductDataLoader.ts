@@ -85,6 +85,11 @@ export function useProductDataLoader() {
                 compareAtPrice: variant.compareAtPrice || undefined,
                 availableForSale: variant.availableForSale,
                 inventoryQuantity: variant.inventoryQuantity || 0,
+                inventoryItem: variant.inventoryItem
+                    ? {
+                        tracked: variant.inventoryItem.tracked,
+                    }
+                    : undefined,
                 image: variant.image
                     ? {
                         url: variant.image.url,

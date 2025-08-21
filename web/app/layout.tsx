@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import Providers from "@/providers/providers";
 import AppLayout from "@/components/layout/AppLayout";
 import GlobalLoader from "@/components/shared/GlobalLoader";
+import { ShopSettings } from "@/components/shared/ShopSettings";
 
 export const metadata: Metadata = {
     title: "Radius Product Bundles App for Shopify",
@@ -27,8 +28,10 @@ export default async function RootLayout({
             </head>
             <body>
                 <Providers>
-                    <GlobalLoader />
-                    <AppLayout>{children}</AppLayout>
+                    <ShopSettings>
+                        <GlobalLoader />
+                        <AppLayout>{children}</AppLayout>
+                    </ShopSettings>
                 </Providers>
             </body>
         </html>
