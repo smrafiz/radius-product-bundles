@@ -7,8 +7,13 @@ export function useQueryBuilder() {
     const buildSearchQuery = useCallback(() => {
         let query = "";
 
-        const statusFilter = filters.status || "ACTIVE";
-        query = `status:${statusFilter}`;
+        const statusFilter = filters.status;
+
+        if (!statusFilter || statusFilter === "ALL") {
+            query = `status:DRAFT OR status:ACTIVE OR status:ARCHIVED`;
+        } else {
+            query = `status:${statusFilter}`;
+        }
 
         const cleanSearch = debouncedSearch
             ?.replace(/^["']+|["']+$/g, '')

@@ -112,7 +112,6 @@ export default function BundleTypeSelection() {
             .toLowerCase()
             .replace(/_/g, "-")
             .replace(/\s+/g, "-");
-        console.log(bundleType);
         router.push(`/bundles/create/${urlType}`);
     };
 

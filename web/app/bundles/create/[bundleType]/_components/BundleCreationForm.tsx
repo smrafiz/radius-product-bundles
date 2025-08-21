@@ -221,15 +221,13 @@ export default function BundleCreationForm({ bundleType }: Props) {
                 {/* Main Content Section */}
                 <Layout.Section>
                     <Layout>
-                        {/* Left Side - Form Steps */}
-                        <Layout.Section variant="oneHalf">
+                        <Layout.Section>
                             <Card>
                                 {renderCurrentStep()}
                             </Card>
                         </Layout.Section>
 
-                        {/* Right Side - Preview */}
-                        <Layout.Section variant="oneHalf">
+                        <Layout.Section variant="oneThird">
                             <BundlePreview bundleData={bundleData} bundleType={bundleType} />
                         </Layout.Section>
                     </Layout>

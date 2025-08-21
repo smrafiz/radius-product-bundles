@@ -8,6 +8,8 @@ export interface SelectedItem {
     price: string;
     image?: string;
     sku?: string;
+    quantity?: number;
+    totalVariants?: number;
 }
 
 export interface FilterState {

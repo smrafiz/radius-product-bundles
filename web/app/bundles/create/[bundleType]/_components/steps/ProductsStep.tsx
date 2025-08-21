@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
-    Badge,
     BlockStack,
     Box,
     Button,
@@ -11,14 +10,45 @@ import {
     InlineStack,
     Text,
     TextField,
+    Thumbnail,
 } from "@shopify/polaris";
-import { formatCurrency } from "@/utils";
 import { useBundleStore } from "@/lib/stores/bundleStore";
 import {
     ProductSelectionModal,
     SelectedItem,
 } from "@/app/bundles/create/[bundleType]/_components/productSelection";
 import { DeleteIcon, DragHandleIcon, PlusIcon } from "@shopify/polaris-icons";
+
+import {
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from "@dnd-kit/core";
+import {
+    arrayMove,
+    SortableContext,
+    verticalListSortingStrategy,
+    useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+// Sortable item wrapper
+function SortableItem({ id, children }: { id: string; children: React.ReactNode }) {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    return (
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            {children}
+        </div>
+    );
+}
 
 export default function ProductsStep() {
     const {
@@ -29,32 +59,41 @@ export default function ProductsStep() {
         setSelectedItems,
     } = useBundleStore();
 
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleAddProducts = () => {
-        setIsModalOpen(true);
+    const groupedItems = useMemo(() => {
+        const groups: Record<string, { product: SelectedItem; variants: SelectedItem[] }> = {};
+        selectedItems.forEach((item) => {
+            if (!groups[item.productId]) groups[item.productId] = { product: item, variants: [] };
+            if (item.type === "variant") groups[item.productId].variants.push(item);
+        });
+        return Object.values(groups);
+    }, [selectedItems]);
+
+    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            const oldIndex = groupedItems.findIndex((item) => item.product.productId === active.id);
+            const newIndex = groupedItems.findIndex((item) => item.product.productId === over.id);
+
+            const newOrder = arrayMove(selectedItems, oldIndex, newIndex);
+            setSelectedItems(newOrder);
+        }
     };
 
-    const handleProductsSelected = (items: SelectedItem[]) => {
-        // Transform the SelectedItem[] to match your bundle store format
-        const transformedItems = items.map((item) => ({
-            ...item,
-            quantity: 1, // Default quantity for new items
-        }));
+    const handleAddProducts = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
 
+    const handleProductsSelected = (items: SelectedItem[]) => {
+        const transformedItems = items.map((item) => ({ ...item, quantity: 1 }));
         addSelectedItems(transformedItems);
         setIsModalOpen(false);
     };
 
-    const handleClearAll = () => {
-        setSelectedItems([]);
-    };
+    const handleClearAll = () => setSelectedItems([]);
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    // Get already selected product IDs to prevent duplicates
     const selectedProductIds = selectedItems.map((item) => item.productId);
 
     return (
@@ -63,7 +102,7 @@ export default function ProductsStep() {
                 <Text variant="headingLg" as="h2">
                     Products
                 </Text>
-                <Text variant="bodySm" tone="subdued">
+                <Text as="p" variant="bodySm" tone="subdued">
                     Select products and variants to include in your bundle
                 </Text>
             </BlockStack>
@@ -71,207 +110,96 @@ export default function ProductsStep() {
             <Card>
                 <BlockStack gap="400">
                     <InlineStack align="space-between" blockAlign="center">
-                        <Button
-                            variant="primary"
-                            icon={PlusIcon}
-                            onClick={handleAddProducts}
-                        >
+                        <Button variant="primary" icon={PlusIcon} onClick={handleAddProducts}>
                             Add Products
                         </Button>
-
                         {selectedItems.length > 0 && (
-                            <Button
-                                variant="plain"
-                                tone="critical"
-                                icon={DeleteIcon}
-                                onClick={handleClearAll}
-                            >
+                            <Button variant="plain" tone="critical" icon={DeleteIcon} onClick={handleClearAll}>
                                 Clear all
                             </Button>
                         )}
                     </InlineStack>
 
-                    {selectedItems.length > 0 ? (
-                        <BlockStack gap="200">
-                            {selectedItems.map((item, index) => (
-                                <Card
-                                    key={`${item.productId}-${item.variantId || "product"}-${index}`}
-                                    background="bg-surface-secondary"
-                                >
-                                    <Box padding="300">
-                                        <InlineStack
-                                            align="space-between"
-                                            blockAlign="center"
-                                            gap="400"
-                                        >
-                                            <Icon
-                                                source={DragHandleIcon}
-                                                tone="subdued"
-                                            />
+                    {groupedItems.length > 0 ? (
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                            <SortableContext
+                                items={groupedItems.map((item) => item.product.productId)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {groupedItems.map((group, groupIndex) => {
+                                    const { product, variants } = group;
 
-                                            <InlineStack
-                                                gap="300"
-                                                blockAlign="center"
-                                            >
-                                                {item.image && (
-                                                    <Box
-                                                        borderRadius="100"
-                                                        minWidth="60px"
-                                                        minHeight="60px"
-                                                        style={{
-                                                            backgroundImage: `url(${item.image})`,
-                                                            backgroundSize:
-                                                                "cover",
-                                                            backgroundPosition:
-                                                                "center",
-                                                            border: "1px solid #E1E3E5",
-                                                        }}
-                                                    />
-                                                )}
-
-                                                <BlockStack gap="100">
-                                                    <Text
-                                                        variant="bodyMd"
-                                                        fontWeight="medium"
-                                                    >
-                                                        {item.title}
-                                                    </Text>
-                                                    <InlineStack gap="200">
-                                                        <Badge
-                                                            tone={
-                                                                item.type ===
-                                                                "variant"
-                                                                    ? "info"
-                                                                    : "success"
-                                                            }
-                                                        >
-                                                            {item.type ===
-                                                            "variant"
-                                                                ? "Variant"
-                                                                : "Product"}
-                                                        </Badge>
-                                                        {item.sku && (
-                                                            <Text
-                                                                variant="bodySm"
-                                                                tone="subdued"
-                                                            >
-                                                                SKU: {item.sku}
-                                                            </Text>
-                                                        )}
-                                                        <Text
-                                                            variant="bodySm"
-                                                            tone="subdued"
-                                                        >
-                                                            {formatCurrency(
-                                                                item.price,
+                                    return (
+                                        <SortableItem key={product.productId} id={product.productId}>
+                                            <Card background="bg-surface-secondary" key={product.productId}>
+                                                <Box padding="0">
+                                                    <InlineStack align="space-between" blockAlign="center" gap="400" wrap={false}>
+                                                        <InlineStack gap="300" blockAlign="center" wrap={false}>
+                                                            <div className="cursor-grab">
+                                                                <Icon source={DragHandleIcon} />
+                                                            </div>
+                                                            {product.image && (
+                                                                <Thumbnail source={product.image} alt={product.title} size="small" />
                                                             )}
-                                                        </Text>
+                                                        </InlineStack>
+
+                                                        <div className="w-full">
+                                                            <BlockStack gap="100">
+                                                                <div className="w-full">
+                                                                    <Text as="h3" variant="bodyMd" fontWeight="medium">
+                                                                        {product.title.replace(/ - .+$/, "")}
+                                                                    </Text>
+                                                                </div>
+
+                                                                {variants.length > 1 && (
+                                                                    <InlineStack align="start" gap="300">
+                                                                        <Text as="p" variant="bodySm" tone="subdued">
+                                                                            {variants.length} of {product.totalVariants ?? variants.length} variants
+                                                                            selected
+                                                                        </Text>
+                                                                        <Button variant="plain">Edit variants</Button>
+                                                                    </InlineStack>
+                                                                )}
+                                                            </BlockStack>
+                                                        </div>
+
+                                                        <div className="max-w-[100px]">
+                                                            <TextField
+                                                                label="Quantity"
+                                                                labelHidden
+                                                                value={(product.quantity || 1).toString()}
+                                                                onChange={(value) =>
+                                                                    updateSelectedItemQuantity(groupIndex, parseInt(value) || 1)
+                                                                }
+                                                                type="number"
+                                                                min="1"
+                                                                autoComplete="off"
+                                                                autoSize
+                                                            />
+                                                        </div>
+
+                                                        <Button
+                                                            variant="plain"
+                                                            icon={DeleteIcon}
+                                                            onClick={() => removeSelectedItem(groupIndex)}
+                                                        />
                                                     </InlineStack>
-                                                </BlockStack>
-                                            </InlineStack>
-
-                                            <InlineStack
-                                                gap="300"
-                                                blockAlign="center"
-                                            >
-                                                <TextField
-                                                    value={
-                                                        item.quantity?.toString() ||
-                                                        "1"
-                                                    }
-                                                    onChange={(value) =>
-                                                        updateSelectedItemQuantity(
-                                                            index,
-                                                            parseInt(value) ||
-                                                                1,
-                                                        )
-                                                    }
-                                                    type="number"
-                                                    min="1"
-                                                    autoComplete="off"
-                                                    style={{ width: "80px" }}
-                                                />
-
-                                                <Button
-                                                    variant="plain"
-                                                    icon={DeleteIcon}
-                                                    onClick={() =>
-                                                        removeSelectedItem(
-                                                            index,
-                                                        )
-                                                    }
-                                                />
-                                            </InlineStack>
-                                        </InlineStack>
-                                    </Box>
-                                </Card>
-                            ))}
-
-                            {/* Summary */}
-                            <Card>
-                                <Box
-                                    padding="300"
-                                    background="bg-surface-hover"
-                                >
-                                    <InlineStack
-                                        align="space-between"
-                                        blockAlign="center"
-                                    >
-                                        <Text
-                                            variant="bodyMd"
-                                            fontWeight="medium"
-                                        >
-                                            Total Items: {selectedItems.length}
-                                        </Text>
-                                        <Text
-                                            variant="bodyMd"
-                                            fontWeight="medium"
-                                        >
-                                            Total Quantity:{" "}
-                                            {selectedItems.reduce(
-                                                (sum, item) =>
-                                                    sum + (item.quantity || 1),
-                                                0,
-                                            )}
-                                        </Text>
-                                        <Text
-                                            variant="bodyMd"
-                                            fontWeight="medium"
-                                        >
-                                            Bundle Value:{" "}
-                                            {formatCurrency(
-                                                selectedItems
-                                                    .reduce(
-                                                        (sum, item) =>
-                                                            sum +
-                                                            parseFloat(
-                                                                item.price,
-                                                            ) *
-                                                                (item.quantity ||
-                                                                    1),
-                                                        0,
-                                                    )
-                                                    .toString(),
-                                            )}
-                                        </Text>
-                                    </InlineStack>
-                                </Box>
-                            </Card>
-                        </BlockStack>
+                                                </Box>
+                                            </Card>
+                                        </SortableItem>
+                                    );
+                                })}
+                            </SortableContext>
+                        </DndContext>
                     ) : (
-                        <Box
-                            padding="800"
-                            background="bg-surface-secondary"
-                            borderRadius="200"
-                        >
+                        <Box padding="800" background="bg-surface-secondary" borderRadius="200">
                             <InlineStack align="center">
                                 <BlockStack gap="200" inlineAlign="center">
-                                    <Text variant="bodyMd" tone="subdued">
+                                    <Text as="h6" variant="headingSm" tone="subdued">
                                         No products selected
                                     </Text>
-                                    <Text variant="bodySm" tone="subdued">
-                                        Add products and variants to create your
-                                        bundle
+                                    <Text as="p" variant="bodySm" tone="subdued">
+                                        Add products to create your bundle
                                     </Text>
                                 </BlockStack>
                             </InlineStack>

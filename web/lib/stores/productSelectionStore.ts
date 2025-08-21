@@ -38,7 +38,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         isLoadingMore: false,
         first: 10,
 
-        // UI Actions
         setModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
         setSearchInput: (search) => set({ searchInput: search }),
         setDebouncedSearch: (search) => set({ debouncedSearch: search }),
@@ -57,7 +56,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 return { expandedProducts: newSet };
             }),
 
-        // Selection Actions
         setSelectedItems: (items) => set({ selectedItems: items }),
         addSelectedItem: (item) =>
             set((state) => ({
@@ -75,7 +73,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
             })),
         clearSelectedItems: () => set({ selectedItems: [] }),
 
-        // Product Actions
         setAllLoadedProducts: (products) =>
             set({ allLoadedProducts: products }),
         addLoadedProducts: (products) =>
@@ -84,7 +81,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
             })),
         clearLoadedProducts: () => set({ allLoadedProducts: [] }),
 
-        // Filter Actions
         setFilters: (filters) => set({ filters }),
         updateFilter: (key, value) =>
             set((state) => ({
@@ -93,15 +89,12 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         clearFilters: () => set({ filters: initialFilterState }),
         setFilterOptions: (options) => set({ filterOptions: options }),
 
-        // Pagination Actions
         setNextCursor: (cursor) => set({ nextCursor: cursor }),
         setIsLoadingMore: (loading) => set({ isLoadingMore: loading }),
 
-        // Complex Actions - FIXED
         toggleProductSelection: (product) => {
             const state = get();
 
-            // Check how many variants of this product are currently selected
             const selectedVariants = state.selectedItems.filter(
                 (item) => item.productId === product.id
             );
@@ -111,51 +104,49 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 selectedVariants.length === product.variants.length;
 
             if (allVariantsSelected) {
-                // If all variants are selected, deselect all variants of this product
+                // Deselect all variants
                 set({
                     selectedItems: state.selectedItems.filter(
                         (item) => item.productId !== product.id
-                    )
+                    ),
                 });
             } else {
-                // If no variants or partial variants are selected, select all variants
-                // First remove any existing variants of this product
+                // Replace existing selection for this product with all variants
                 const filteredItems = state.selectedItems.filter(
                     (item) => item.productId !== product.id
                 );
 
-                if (product.variants && product.variants.length > 0) {
-                    const newItems: SelectedItem[] = product.variants.map((variant) => ({
-                        type: "variant",
-                        productId: product.id,
-                        variantId: variant.id,
-                        title: `${product.title} - ${variant.title}`,
-                        price: variant.price,
-                        image: variant.image?.url || product.featuredImage?.url,
-                        sku: variant.sku,
-                    }));
+                const newItems: SelectedItem[] = (product.variants || []).map((variant) => ({
+                    type: "variant",
+                    productId: product.id,
+                    variantId: variant.id,
+                    title: `${product.title} - ${variant.title}`,
+                    price: variant.price,
+                    image: variant.image?.url || product.featuredImage?.url,
+                    sku: variant.sku,
+                }));
 
-                    set({
-                        selectedItems: [...filteredItems, ...newItems]
-                    });
-                }
+                set({
+                    selectedItems: [...filteredItems, ...newItems],
+                });
             }
         },
 
         toggleVariantSelection: (product, variant) => {
             const state = get();
             const variantSelected = state.selectedItems.some(
-                (item) =>
-                    item.type === "variant" && item.variantId === variant.id,
+                (item) => item.type === "variant" && item.variantId === variant.id
             );
 
             if (variantSelected) {
+                // Remove only this variant
                 set({
                     selectedItems: state.selectedItems.filter(
-                        (item) => item.variantId !== variant.id,
+                        (item) => item.variantId !== variant.id
                     ),
                 });
             } else {
+                // Add this variant
                 const newItem: SelectedItem = {
                     type: "variant",
                     productId: product.id,
@@ -165,6 +156,7 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                     image: variant.image?.url || product.featuredImage?.url,
                     sku: variant.sku,
                 };
+
                 set({
                     selectedItems: [...state.selectedItems, newItem],
                 });
@@ -242,7 +234,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
             ).length;
         },
 
-        // Reset Actions
         resetState: () =>
             set({
                 searchInput: "",

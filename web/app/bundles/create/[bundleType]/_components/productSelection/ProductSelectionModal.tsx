@@ -70,7 +70,7 @@ export function ProductSelectionModal({
     // Fetch all products for filter options
     const allProductsVariables: GetProductsQueryVariables = {
         first: 100,
-        query: "",
+        query: "status:ACTIVE or status:ARCHIVED or status:DRAFT",
     };
 
     const allProductsQuery = useGraphQL(
@@ -177,13 +177,17 @@ export function ProductSelectionModal({
         onClose();
     }, [resetState, onClose]);
 
+    const uniqueProductCount = useMemo(() => {
+        return new Set(selectedItems.map((item) => item.productId)).size;
+    }, [selectedItems]);
+
     return (
         <Modal
             open={isOpen}
             onClose={handleCancel}
             title={title}
             primaryAction={{
-                content: `Add ${selectedItems.length > 0 ? `(${selectedItems.length})` : ""}`,
+                content: `Add ${uniqueProductCount > 0 ? `(${uniqueProductCount})` : ""}`,
                 onAction: handleAdd,
                 disabled: selectedItems.length === 0,
             }}
