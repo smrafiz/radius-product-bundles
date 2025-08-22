@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
     BlockStack,
@@ -8,16 +10,11 @@ import {
     Text,
 } from "@shopify/polaris";
 
-import { FilterState } from "@/types";
+import { useProductSelectionStore } from "@/app/bundles/create/[bundleType]/_components/productSelection";
 import type { GetCollectionsForFiltersQuery } from "@/types/admin.generated";
 
 interface Props {
-    filters: any;
-    filterOptions: any;
     collectionsData?: GetCollectionsForFiltersQuery;
-    onFilterChange: (key: keyof FilterState, value: string | string[]) => void;
-    onClearFilters: () => void;
-    onClose: () => void;
 }
 
 const FILTER_OPTIONS = {
@@ -29,22 +26,23 @@ const FILTER_OPTIONS = {
     ],
 };
 
-export function FilterPopover({
-    filters,
-    filterOptions,
-    collectionsData,
-    onFilterChange,
-    onClearFilters,
-    onClose,
-}: Props) {
+export function FilterPopover({ collectionsData }: Props) {
+    const {
+        filters,
+        filterOptions,
+        updateFilter,
+        clearFilters,
+        setFilterPopoverActive,
+    } = useProductSelectionStore();
+
     return (
-        <div style={{ padding: "16px", minWidth: "300px" }}>
+        <div className="p-4 min-w-[300px]">
             <BlockStack gap="300">
                 <Select
                     label="Status"
                     options={FILTER_OPTIONS.status}
                     value={filters.status}
-                    onChange={(value) => onFilterChange("status", value)}
+                    onChange={(value) => updateFilter("status", value)}
                 />
 
                 <Select
@@ -57,7 +55,7 @@ export function FilterPopover({
                         })),
                     ]}
                     value={filters.productType}
-                    onChange={(value) => onFilterChange("productType", value)}
+                    onChange={(value) => updateFilter("productType", value)}
                 />
 
                 <Select
@@ -70,7 +68,7 @@ export function FilterPopover({
                         })),
                     ]}
                     value={filters.vendor}
-                    onChange={(value) => onFilterChange("vendor", value)}
+                    onChange={(value) => updateFilter("vendor", value)}
                 />
 
                 {collectionsData?.collections?.edges && (
@@ -85,18 +83,15 @@ export function FilterPopover({
                                     <RadioButton
                                         key={edge.node.id}
                                         label={edge.node.title}
-                                        checked={
-                                            filters.collection === edge.node.id
-                                        }
+                                        checked={filters.collection === edge.node.id}
                                         id={edge.node.id}
                                         name="collections"
                                         onChange={() =>
-                                            onFilterChange(
+                                            updateFilter(
                                                 "collection",
-                                                filters.collection ===
-                                                    edge.node.id
+                                                filters.collection === edge.node.id
                                                     ? ""
-                                                    : edge.node.id,
+                                                    : edge.node.id
                                             )
                                         }
                                     />
@@ -106,10 +101,10 @@ export function FilterPopover({
                 )}
 
                 <InlineStack gap="200">
-                    <Button size="slim" onClick={onClearFilters}>
+                    <Button size="slim" onClick={clearFilters}>
                         Clear all
                     </Button>
-                    <Button size="slim" variant="primary" onClick={onClose}>
+                    <Button size="slim" variant="primary" onClick={() => setFilterPopoverActive(false)}>
                         Done
                     </Button>
                 </InlineStack>

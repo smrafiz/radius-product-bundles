@@ -17,7 +17,12 @@ import {
     ProductSelectionModal,
     SelectedItem,
 } from "@/app/bundles/create/[bundleType]/_components/productSelection";
-import { DeleteIcon, DragHandleIcon, PlusIcon } from "@shopify/polaris-icons";
+import {
+    DeleteIcon,
+    DragHandleIcon,
+    ImageIcon,
+    PlusIcon,
+} from "@shopify/polaris-icons";
 
 import {
     DndContext,
@@ -63,10 +68,12 @@ export default function ProductsStep() {
 
     const groupedItems = useMemo(() => {
         const groups: Record<string, { product: SelectedItem; variants: SelectedItem[] }> = {};
+
         selectedItems.forEach((item) => {
             if (!groups[item.productId]) groups[item.productId] = { product: item, variants: [] };
             if (item.type === "variant") groups[item.productId].variants.push(item);
         });
+
         return Object.values(groups);
     }, [selectedItems]);
 
@@ -138,8 +145,12 @@ export default function ProductsStep() {
                                                             <div className="cursor-grab">
                                                                 <Icon source={DragHandleIcon} />
                                                             </div>
-                                                            {product.image && (
+                                                            {product.image ? (
                                                                 <Thumbnail source={product.image} alt={product.title} size="small" />
+                                                            ) : (
+                                                                <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center">
+                                                                    <Icon source={ImageIcon} tone="subdued" />
+                                                                </div>
                                                             )}
                                                         </InlineStack>
 

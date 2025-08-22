@@ -89,19 +89,10 @@ export const QuickActions = () => {
                                                             align="start"
                                                         >
                                                             <div
+                                                                className="w-10 h-10 rounded-[var(--p-border-radius-150)] flex items-center justify-center"
                                                                 style={{
-                                                                    width: "40px",
-                                                                    height: "40px",
-                                                                    borderRadius:
-                                                                        "6px",
                                                                     backgroundColor:
                                                                         action.backgroundColor,
-                                                                    display:
-                                                                        "flex",
-                                                                    alignItems:
-                                                                        "center",
-                                                                    justifyContent:
-                                                                        "center",
                                                                 }}
                                                             >
                                                                 <div className="radius-quick-action-icon">

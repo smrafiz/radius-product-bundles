@@ -36,14 +36,10 @@ export function SearchBar({
     const {
         searchInput,
         searchBy,
-        filters,
-        filterOptions,
         filterPopoverActive,
         activeFilterCount,
         setSearchInput,
         setSearchBy,
-        updateFilter,
-        clearFilters,
         setFilterPopoverActive,
         resetState
     } = useProductSelectionStore();
@@ -59,7 +55,7 @@ export function SearchBar({
                 <BlockStack gap="300">
                     {/* Search Bar */}
                     <InlineStack gap="200" align="space-between">
-                        <div style={{ flex: 1 }}>
+                        <div className="flex-1">
                             <TextField
                                 label=""
                                 placeholder="Search products"
@@ -110,14 +106,7 @@ export function SearchBar({
                             onClose={() => setFilterPopoverActive(false)}
                             preferredAlignment="left"
                         >
-                            <FilterPopover
-                                filters={filters}
-                                filterOptions={filterOptions}
-                                collectionsData={collectionsData}
-                                onFilterChange={updateFilter}
-                                onClearFilters={clearFilters}
-                                onClose={() => setFilterPopoverActive(false)}
-                            />
+                            <FilterPopover collectionsData={collectionsData} />
                         </Popover>
 
                         {/* Bulk Actions */}

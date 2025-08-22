@@ -16,6 +16,7 @@ import {
 import {
     ChevronDownIcon,
     ChevronUpIcon,
+    ImageIcon,
     SearchIcon,
 } from "@shopify/polaris-icons";
 import {
@@ -73,19 +74,8 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
             );
         }
         return (
-            <div
-                style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#f6f6f7",
-                    border: "1px solid #e1e3e5",
-                    borderRadius: "6px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
-                <Icon source={SearchIcon} tone="subdued" />
+            <div className="w-10 h-10 bg-[var(--p-color-bg-surface-hover)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center">
+                <Icon source={ImageIcon} tone="subdued" />
             </div>
         );
     };

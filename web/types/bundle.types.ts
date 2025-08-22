@@ -3,6 +3,7 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType
 } from "@prisma/client";
+import type { SelectedItem } from "@/types/productSelection.type";
 
 export interface Bundle {
     id: string;
@@ -73,4 +74,23 @@ export interface BundleWithDetails {
     // Computed fields
     conversionRate: number;
     productCount: number;
+}
+
+export interface BundleState {
+    currentStep: number;
+    bundleData: Partial<CreateBundlePayload>;
+    selectedItems: SelectedItem[];
+    setStep: (step: number) => void;
+    nextStep: () => void;
+    prevStep: () => void;
+    setBundleData: (data: Partial<CreateBundlePayload>) => void;
+    updateBundleField: <K extends keyof CreateBundlePayload>(
+        key: K,
+        value: CreateBundlePayload[K],
+    ) => void;
+    setSelectedItems: (items: SelectedItem[]) => void;
+    addSelectedItems: (items: SelectedItem[]) => void;
+    removeSelectedItem: (index: number) => void;
+    updateSelectedItemQuantity: (index: number, quantity: number) => void;
+    resetBundle: () => void;
 }

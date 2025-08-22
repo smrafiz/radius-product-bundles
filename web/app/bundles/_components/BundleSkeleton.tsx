@@ -22,17 +22,7 @@ export function BundleSkeleton() {
                                     align="center"
                                     blockAlign="center"
                                 >
-                                    <div
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            border: "2px solid #e1e3e5",
-                                            borderTop: "2px solid #008060",
-                                            borderRadius: "50%",
-                                            animation:
-                                                "spin 1s linear infinite",
-                                        }}
-                                    />
+                                    <div className="w-5 h-5 border-2 border-[var(--p-color-border)] border-t-[var(--p-color-bg-fill-success)] rounded-full animate-spin" />
                                     <Text
                                         variant="bodyMd"
                                         alignment="center"
@@ -42,16 +32,6 @@ export function BundleSkeleton() {
                                         Loading bundles...
                                     </Text>
                                 </InlineStack>
-                                <style jsx>{`
-                                    @keyframes spin {
-                                        0% {
-                                            transform: rotate(0deg);
-                                        }
-                                        100% {
-                                            transform: rotate(360deg);
-                                        }
-                                    }
-                                `}</style>
                             </Box>
                         </Card>
                     </Layout.Section>

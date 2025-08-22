@@ -10,41 +10,28 @@ import {
     Text,
 } from "@shopify/polaris";
 import { ProductItem } from "@/app/bundles/create/[bundleType]/_components/productSelection";
+import { useProductSelectionStore } from "@/app/bundles/create/[bundleType]/_components/productSelection";
 
-import { Product } from "@/types";
-
-interface Props {
-    products: Product[];
-    selectedProductIds: string[];
-    isLoading: boolean;
-    error?: Error | null;
-    nextCursor: string | null;
-    isLoadingMore: boolean;
-}
-
-export const ProductList = forwardRef<HTMLDivElement, Props>(
-    (
-        {
-            products,
-            selectedProductIds,
-            isLoading,
-            error,
+export const ProductList = forwardRef<HTMLDivElement, { scrollRef?: React.Ref<HTMLDivElement> }>(
+    ({ scrollRef }, ref) => {
+        const {
+            allLoadedProducts: products,
+            selectedItems,
             nextCursor,
             isLoadingMore,
-        },
-        ref,
-    ) => {
-        if (isLoading) {
+            productsQuery,
+        } = useProductSelectionStore();
+
+        const selectedProductIds = selectedItems.map((item) => item.productId);
+
+        if (productsQuery.loading) {
             return (
                 <Card padding="0">
                     <div className="h-[500px] min-h-[500px]">
                         <Box padding="0">
                             <InlineStack align="center" blockAlign="center">
                                 <div className="flex items-center h-[500px] min-h-[500px]">
-                                <Spinner
-                                    accessibilityLabel="Loading products"
-                                    size="large"
-                                />
+                                    <Spinner accessibilityLabel="Loading products" />
                                 </div>
                             </InlineStack>
                         </Box>
@@ -53,18 +40,10 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
             );
         }
 
-        if (error) {
+        if (productsQuery.error) {
             return (
                 <Card padding="0">
-                    <div
-                        style={{
-                            height: "500px",
-                            minHeight: "500px",
-                            overflow: "auto",
-                            border: "1px solid #e1e3e5",
-                            borderRadius: "6px",
-                        }}
-                    >
+                    <div className="h-[500px] min-h-[500px] overflow-auto border border-gray-200 rounded-md">
                         <Box padding="400">
                             <Text as="p" variant="bodyMd" tone="critical">
                                 Error loading products. Please try again.
@@ -78,21 +57,17 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
         return (
             <Card padding="0">
                 <div
-                    style={{
-                        height: "500px",
-                        minHeight: "500px",
-                        overflow: "auto",
-                        border: "1px solid #e1e3e5",
-                        borderRadius: "6px",
-                    }}
-                    ref={ref}
+                    className="h-[500px] min-h-[500px] overflow-auto border border-gray-200 rounded-md"
+                    ref={scrollRef || ref}
                 >
                     {products.length === 0 ? (
-                        <Box padding="800">
+                        <Box padding="0">
                             <InlineStack align="center">
-                                <Text as="p" variant="bodyLg" tone="subdued">
-                                    No products found
-                                </Text>
+                                <div className="flex items-center h-[500px] min-h-[500px]">
+                                    <Text as="p" variant="bodyLg" tone="subdued">
+                                        No products found
+                                    </Text>
+                                </div>
                             </InlineStack>
                         </Box>
                     ) : (
@@ -102,9 +77,7 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                                     key={product.id}
                                     product={product}
                                     isLast={index === products.length - 1}
-                                    isDisabled={selectedProductIds.includes(
-                                        product.id,
-                                    )}
+                                    isDisabled={selectedProductIds.includes(product.id)}
                                 />
                             ))}
 
@@ -121,13 +94,8 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                             {!nextCursor && products.length > 10 && (
                                 <Box padding="400">
                                     <InlineStack align="center">
-                                        <Text
-                                            as="p"
-                                            variant="bodySm"
-                                            tone="subdued"
-                                        >
-                                            All products loaded (
-                                            {products.length} total)
+                                        <Text as="p" variant="bodySm" tone="subdued">
+                                            All products loaded ({products.length} total)
                                         </Text>
                                     </InlineStack>
                                 </Box>
@@ -141,5 +109,4 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
 );
 
 ProductList.displayName = "ProductList";
-
 export default ProductList;
