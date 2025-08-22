@@ -10,28 +10,38 @@ import {
     Text,
 } from "@shopify/polaris";
 import { ProductItem } from "@/app/bundles/create/[bundleType]/_components/productSelection";
-import { useProductSelectionStore } from "@/app/bundles/create/[bundleType]/_components/productSelection";
 
-export const ProductList = forwardRef<HTMLDivElement, { scrollRef?: React.Ref<HTMLDivElement> }>(
-    ({ scrollRef }, ref) => {
-        const {
-            allLoadedProducts: products,
-            selectedItems,
+import { Product } from "@/types";
+
+interface Props {
+    products: Product[];
+    selectedProductIds: string[];
+    isLoading: boolean;
+    error?: Error | null;
+    nextCursor: string | null;
+    isLoadingMore: boolean;
+}
+
+export const ProductList = forwardRef<HTMLDivElement, Props>(
+    (
+        {
+            products,
+            selectedProductIds,
+            isLoading,
+            error,
             nextCursor,
             isLoadingMore,
-            productsQuery,
-        } = useProductSelectionStore();
-
-        const selectedProductIds = selectedItems.map((item) => item.productId);
-
-        if (productsQuery.loading) {
+        },
+        ref,
+    ) => {
+        if (isLoading) {
             return (
                 <Card padding="0">
                     <div className="h-[500px] min-h-[500px]">
                         <Box padding="0">
                             <InlineStack align="center" blockAlign="center">
                                 <div className="flex items-center h-[500px] min-h-[500px]">
-                                    <Spinner accessibilityLabel="Loading products" />
+                                    <Spinner accessibilityLabel="Loading products" size="large" />
                                 </div>
                             </InlineStack>
                         </Box>
@@ -40,7 +50,7 @@ export const ProductList = forwardRef<HTMLDivElement, { scrollRef?: React.Ref<HT
             );
         }
 
-        if (productsQuery.error) {
+        if (error) {
             return (
                 <Card padding="0">
                     <div className="h-[500px] min-h-[500px] overflow-auto border border-gray-200 rounded-md">
@@ -58,7 +68,7 @@ export const ProductList = forwardRef<HTMLDivElement, { scrollRef?: React.Ref<HT
             <Card padding="0">
                 <div
                     className="h-[500px] min-h-[500px] overflow-auto border border-gray-200 rounded-md"
-                    ref={scrollRef || ref}
+                    ref={ref}
                 >
                     {products.length === 0 ? (
                         <Box padding="0">
