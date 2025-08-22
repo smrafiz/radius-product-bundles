@@ -1,0 +1,37 @@
+query GetProducts(
+    $first: Int!
+    $after: String
+    $query: String
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
+) {
+    products(
+        first: $first
+        after: $after
+        query: $query
+        sortKey: $sortKey
+        reverse: $reverse
+    ) {
+        edges {
+            node {
+                ...ProductFields
+            }
+            cursor
+        }
+        pageInfo {
+            ...PageInfoFields
+        }
+    }
+}
+
+query GetProductById($id: ID!) {
+    product(id: $id) {
+        id
+        title
+        handle
+        vendor
+        productType
+        tags
+        totalInventory
+    }
+}

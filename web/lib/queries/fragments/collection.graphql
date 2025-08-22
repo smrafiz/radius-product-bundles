@@ -1,0 +1,21 @@
+fragment CollectionFilterFields on Collection {
+    id
+    title
+}
+
+fragment CollectionFields on Collection {
+    id
+    title
+    handle
+}
+
+fragment CollectionDetailsFields on Collection {
+    id
+    title
+    handle
+    description
+    image {
+        ...ImageFields
+    }
+    updatedAt
+}

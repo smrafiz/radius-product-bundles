@@ -1,0 +1,44 @@
+query GetCollectionsForFilters($query: String, $first: Int!, $after: String) {
+    collections(first: $first, after: $after, query: $query, sortKey: TITLE) {
+        edges {
+            node {
+                ...CollectionFilterFields
+            }
+            cursor
+        }
+        pageInfo {
+            ...PageInfoFields
+        }
+    }
+}
+
+query GetCollections($first: Int!, $after: String, $query: String) {
+    collections(first: $first, after: $after, query: $query) {
+        edges {
+            node {
+                ...CollectionFields
+            }
+            cursor
+        }
+        pageInfo {
+            ...PageInfoFields
+        }
+    }
+}
+
+query GetCollectionByHandle($handle: String!) {
+    collectionByHandle(handle: $handle) {
+        ...CollectionDetailsFields
+        products(first: 50) {
+            edges {
+                node {
+                    ...ProductCardFields
+                }
+                cursor
+            }
+            pageInfo {
+                ...PageInfoFields
+            }
+        }
+    }
+}
