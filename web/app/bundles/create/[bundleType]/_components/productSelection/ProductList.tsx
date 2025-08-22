@@ -36,25 +36,41 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
     ) => {
         if (isLoading) {
             return (
-                <Box>
-                    <InlineStack align="center">
-                        <Spinner
-                            accessibilityLabel="Loading products"
-                            size="large"
-                        />
-                    </InlineStack>
-                </Box>
+                <Card padding="0">
+                    <div className="h-[500px] min-h-[500px]">
+                        <Box padding="0">
+                            <InlineStack align="center" blockAlign="center">
+                                <div className="flex items-center h-[500px] min-h-[500px]">
+                                <Spinner
+                                    accessibilityLabel="Loading products"
+                                    size="large"
+                                />
+                                </div>
+                            </InlineStack>
+                        </Box>
+                    </div>
+                </Card>
             );
         }
 
         if (error) {
             return (
-                <Card>
-                    <Box padding="400">
-                        <Text as="p" variant="bodyMd" tone="critical">
-                            Error loading products. Please try again.
-                        </Text>
-                    </Box>
+                <Card padding="0">
+                    <div
+                        style={{
+                            height: "500px",
+                            minHeight: "500px",
+                            overflow: "auto",
+                            border: "1px solid #e1e3e5",
+                            borderRadius: "6px",
+                        }}
+                    >
+                        <Box padding="400">
+                            <Text as="p" variant="bodyMd" tone="critical">
+                                Error loading products. Please try again.
+                            </Text>
+                        </Box>
+                    </div>
                 </Card>
             );
         }
