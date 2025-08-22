@@ -1,186 +1,226 @@
-# Shopify App Template - Next.js App Router
+# Radius Product Bundles - Shopify App
 
-This is a template for building a
-[Shopify app](https://shopify.dev/apps/getting-started) using Next.js and
-Typescript. It contains the basics for building a Shopify app on Next.js using
-the app router and server components.
+A comprehensive Shopify app for creating and managing product bundles with advanced analytics, automation, and customer management features. Built with Next.js 15, TypeScript, and Shopify Polaris.
 
-## Features
+## 🚀 Overview
 
-- **Next.js**: Using the latest app router and server components.
-- **Prisma (Optional)**: For managing database connections and migrations.
-- **Tanstack Query**: For interacting with the Shopify GraphQL API.
-- **App Bridge v4**: For authenticating API requests in the frontend.
-- **Shopify API library**: For managing OAuth on the serverless backend.
-- **Polaris React**: For building high quality, consistent experiences for
-  Shopify merchants.
-- **Tailwind CSS**: For fast, flexible styling and design.
-- **Docker (Optional)**: For setting up the postgres database for local
-  development.
-- **Graphql-Codegen**: For generating types for graphql queries and mutations.
+Radius Product Bundles is a powerful Shopify application that enables merchants to create, manage, and optimize product bundles. The app provides a complete suite of tools including bundle creation, analytics dashboard, customer management, A/B testing, automation workflows, and pricing rules.
 
-### Installing the template
+## ✨ Key Features
 
-This template can be installed using your preferred package manager:
+### 📦 Bundle Management
+- **Multiple Bundle Types**: Support for various bundle configurations and types
+- **Advanced Product Selection**: Enhanced modal with intelligent filtering and search
+- **Real-time Preview**: Live bundle preview with drag-and-drop reordering
+- **Bundle Templates**: Pre-built templates for quick bundle creation
 
-Using pnpm (recommended):
+### 📊 Analytics & Dashboard
+- **Real-time Metrics**: Track bundle performance, revenue, and conversion rates
+- **Revenue Analytics**: Detailed revenue tracking and forecasting
+- **Performance Insights**: Bundle efficiency and optimization recommendations
+- **Custom Reports**: Generate detailed reports for business intelligence
 
-```shell
-pnpx @shopify/create-app@latest --template https://github.com/ozzyonfire/shopify-next-app.git
-```
+### 🎯 Customer Management
+- **Customer Segmentation**: Advanced customer grouping and targeting
+- **Purchase History**: Track customer bundle purchase patterns
+- **Personalization**: Tailored bundle recommendations based on customer behavior
 
-This will clone the template and install the required dependencies.
+### 🧪 A/B Testing
+- **Bundle Testing**: Test different bundle configurations and pricing
+- **Performance Comparison**: Compare metrics across test variants
+- **Statistical Analysis**: Data-driven insights for optimization
 
-## Next.js and Shopify Embedded Apps
+### ⚙️ Automation & Integrations
+- **Workflow Automation**: Automated bundle creation and management
+- **Third-party Integrations**: Connect with external tools and services
+- **Event-driven Actions**: Trigger actions based on customer behavior
 
-The goal of this template is to provide a quick and easy way to spin up a
-Shopify Embedded App that uses the Next.js app router platform.
+### 💰 Pricing Rules
+- **Dynamic Pricing**: Flexible pricing strategies for bundles
+- **Discount Management**: Advanced discount rules and conditions
+- **Price Optimization**: AI-driven pricing recommendations
 
-The template uses a couple features of app bridge v4 to make your life easier,
-like authentication and session management.
+### 🛠️ Settings & Configuration
+- **App Configuration**: Comprehensive app settings and preferences
+- **Theme Integration**: Seamless integration with Shopify themes
+- **Permission Management**: Role-based access control
 
-### Providers
+## 🏗️ Tech Stack
 
-- in `__layout.tsx` we setup some providers that are necessary for the app to run.
-    - **ApolloProvider**: (Optional) Sets up the Apollo context for running
-      Graphql queries and mutations. This runs through the `/api/graphql` Next.js
-      route and is handled by the Shopify API library.
-    - **SessionProvider**: (Optional) This ensures that the user always has an
-      active session and that the app is installed correctly. It basically
-      redirects the user to authenticate when it needs to.
+### Frontend
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **UI Library**: Shopify Polaris
+- **Styling**: Tailwind CSS 4.1
+- **State Management**: Zustand 5.0
+- **Animations**: @dnd-kit for drag-and-drop functionality
 
-### App Bridge
+### Backend & Data
+- **Runtime**: Node.js
+- **Database**: PostgreSQL with Prisma ORM 6.14
+- **GraphQL**: Apollo Client 3.13
+- **API**: Shopify Admin API
+- **Authentication**: Shopify App Bridge 4.2
 
-We use direct api mode and the new install flow so app installs are handled
-automatically.
+### Development Tools
+- **Package Manager**: pnpm
+- **Code Generation**: GraphQL Code Generator 5.0
+- **Type Safety**: TypeScript 5.9
+- **Linting**: ESLint 9
+- **Formatting**: Prettier 3.6
 
-```toml
-[access.admin]
-direct_api_mode = "offline"
-embedded_app_direct_api_access = true
+### Shopify Integration
+- **Shopify CLI**: 3.83
+- **Shopify API**: 11.14
+- **App Bridge**: React integration for embedded apps
+- **Webhooks**: Real-time data synchronization
 
-[access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = ""
-use_legacy_install_flow = false
-```
+## 🛠️ Installation & Setup
 
-### Token exchange
+### Prerequisites
+- Node.js 18+
+- pnpm (recommended) or npm
+- Shopify CLI
+- PostgreSQL database
+- Shopify Partner account
 
-The app template uses token exchange by default. The user gets the ID Token from
-the initial page load and sends it to the server where it is stored. This
-happens using a server action.
-
-Also, all server actions should have the session token sent along with them, the
-server can then verify and exchange the token if needed.
-
-### Environment Variables
-
-There are a couple environment variables you need to set up in order for the app
-to run. Create a file called `.env` in the root directory (or the root of your
-Next.js app) and add the following lines;
-
+### 1. Clone the Repository
 ```bash
-DATABASE_URL= # database connection string - for connecting to prisma
-POSTGRES_PASSWORD= # optional database password - when running postgres db locally through docker
+git clone <repository-url>
+cd radius-product-bundles
 ```
 
-The first two variables are automatically populated by the Shopify CLI.
+### 2. Install Dependencies
+```bash
+# Install root dependencies
+pnpm install
 
-## Tech Stack
-
-This template combines a number of third party open-source tools:
-
-- [Next.js](https://nextjs.org/) builds the [React](https://reactjs.org/)
-  frontend.
-
-The following Shopify tools complement these third-party tools to ease app
-development:
-
-- [Shopify API library](https://github.com/Shopify/shopify-api-js?tab=readme-ov-file)
-  manages OAuth on the serverless backend. This lets users install the app and
-  grant scope permissions.
-- [App Bridge React](https://shopify.dev/apps/tools/app-bridge/getting-started/using-react)
-  adds authentication to API requests in the frontend and renders components
-  outside of the App’s iFrame.
-- [Apollo](https://www.apollographql.com/) for interacting with the Shopify
-  GraphQL API (Optional).
-- [Prisma](https://www.prisma.io/) for managing database connections and
-  migrations. This is optional, but gives you a nice ORM to work with. The
-  template is database agnostic, so you can use any database you want.
-
-## Getting started
-
-### Local Development
-
-[The Shopify CLI](https://shopify.dev/apps/tools/cli) connects to an app in your
-Partners dashboard. It provides environment variables, runs commands in
-parallel, and updates application URLs for easier development.
-
-You can develop locally using your preferred package manager.
-
-Using pnpm:
-
-```shell
-pnpm run dev
+# Install web dependencies
+cd web
+pnpm install
 ```
 
-#### Docker for local development
+### 3. Environment Setup
+```bash
+# Copy environment files
+cp .env.example .env
+cp web/.env.example web/.env
 
-You can also get up and running with Docker. This will setup and initialize the
-postgres database for you.
-
-```shell
-docker-compose up
-pnpm run migrate
+# Configure your environment variables
+# DATABASE_URL, SHOPIFY_API_KEY, SHOPIFY_API_SECRET, etc.
 ```
 
-#### Graphql-Codegen
+### 4. Database Setup
+```bash
+# Generate Prisma client
+cd web
+pnpm run prepare
 
-If you run the following command, it will generate the types for the graphql
-queries and mutations.
+# Run database migrations
+pnpm run prisma:migrate init
 
-```shell
+# (Optional) Open Prisma Studio
+pnpm run prisma:studio
+```
+
+### 5. GraphQL Code Generation
+```bash
+# Generate TypeScript types from GraphQL schema
 pnpm run graphql-codegen
 ```
 
-This sets up your types when using Apollo client and gives your intellisense in
-your IDE.
+## 🚀 Development Commands
 
-## Deployment
+### Starting Development Server
+```bash
+# Start the development server
+pnpm run dev
 
-You can deploy this app to a hosting service of your choice. Here is the basic
-setup for deploying to Vercel:
-
-- Create you Shopify App in the Shopify Partners Dashboard
-- Create your project on Vercel and add the environment variables from your
-  Shopify App
-    - `SHOPIFY_API_KEY`
-    - `SHOPIFY_API_SECRET`
-    - `SCOPES`
-    - `HOST`
-    - Any database connection strings
-- Setup your Shopify App to have the same `/api/auth/callback` and `/api/auth`
-  routes as your Vercel deployment (with your hostname)
-
-Vercel should be setup to build using the default Next.js build settings.
-
-You should also be using a managed Shopify deployment. This will handle scope
-changes on your app.
-
-```shell
-pnpm run deploy
+# Alternative: Using Shopify CLI
+shopify app dev
 ```
 
-### Application Storage
+### Database Commands
+```bash
+# Generate Prisma client
+pnpm run prepare
 
-This template uses Prisma to store and manage sessions. For more information on
-how to set up Prisma, see the
-[Prisma documentation](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch-typescript-postgres).
+# Create and apply migrations
+pnpm run prisma:migrate <migration-name>
 
-## Developer resources
+# Push schema changes without migration
+pnpm run prisma:push
 
-- [Introduction to Shopify apps](https://shopify.dev/apps/getting-started)
-- [App authentication](https://shopify.dev/apps/auth)
-- [Shopify CLI](https://shopify.dev/apps/tools/cli)
-- [Shopify API Library documentation](https://github.com/Shopify/shopify-api-node/tree/main/docs)
+# Pull schema from database
+pnpm run prisma:pull
+
+# Open Prisma Studio
+pnpm run prisma:studio
+
+# Reset database
+npx prisma migrate reset
+```
+
+### GraphQL & Code Generation
+```bash
+# Generate GraphQL types
+pnpm run graphql-codegen
+
+# Watch for GraphQL changes (development)
+pnpm run graphql-codegen --watch
+```
+
+### Build & Deployment
+```bash
+# Build for production
+pnpm run build
+
+# Deploy to Shopify (production)
+shopify app deploy
+
+# Generate production build
+npm run build
+```
+
+## 📁 Example Project Structure
+
+```
+radius-product-bundles/
+├── web/                          # Main Next.js application
+│   ├── app/                      # Next.js 15 App Router
+│   │   ├── dashboard/           # Analytics dashboard
+│   │   ├── bundles/             # Bundle management
+│   │   │   ├── create/          # Bundle creation wizard
+│   │   │   └── [id]/            # Bundle details/editing
+│   │   ├── customers/           # Customer management
+│   │   ├── analytics/           # Advanced analytics
+│   │   ├── ab-testing/          # A/B testing suite
+│   │   ├── automation/          # Workflow automation
+│   │   ├── pricing-rules/       # Pricing management
+│   │   ├── integrations/        # Third-party integrations
+│   │   ├── templates/           # Bundle templates
+│   │   ├── settings/            # App configuration
+│   │   └── api/                 # API routes
+│   ├── components/              # Reusable UI components
+│   ├── lib/                     # Utilities and configurations
+│   │   ├── stores/              # Zustand state stores
+│   │   ├── gql/                 # GraphQL client setup
+│   │   └── queries/             # GraphQL queries & fragments
+│   ├── hooks/                   # Custom React hooks
+│   ├── types/                   # TypeScript type definitions
+│   ├── prisma/                  # Database schema and migrations
+│   └── providers/               # React context providers
+├── extension/                   # Shopify theme extensions (if any)
+└── docs/                        # Documentation
+```
+
+## 🔧 Key Configuration Files
+
+### Shopify App Configuration
+- **Access Scopes**: `read_customers`, `read_orders`, `read_products`, `write_products`, `write_price_rules`
+- **App Type**: Embedded app with direct API access
+- **Webhooks**: Real-time synchronization with Shopify data
+
+---
+
+Built with ❤️ by [RadiusTheme](https://radiustheme.com)
