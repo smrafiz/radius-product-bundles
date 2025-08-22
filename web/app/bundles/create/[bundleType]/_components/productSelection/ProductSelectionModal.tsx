@@ -9,7 +9,7 @@ import {
     GetCollectionsForFiltersDocument,
     GetProductsDocument,
 } from "@/lib/gql/graphql";
-import { BlockStack, Box, Modal, Text } from "@shopify/polaris";
+import { BlockStack, Modal } from "@shopify/polaris";
 import {
     ProductList,
     SearchBar,
@@ -91,7 +91,7 @@ export function ProductSelectionModal({
     const collectionsQuery = useGraphQL<
         GetCollectionsForFiltersQuery,
         GetCollectionsForFiltersQueryVariables
-    >(GetCollectionsForFiltersDocument, collectionsVariables);
+    >(GetCollectionsForFiltersDocument as any, collectionsVariables);
 
     // Extract filter options from all product data
     const filterOptions = useMemo(() => {

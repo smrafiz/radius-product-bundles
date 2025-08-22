@@ -18,11 +18,6 @@ export type MoneyFieldsFragment = Pick<AdminTypes.MoneyV2, 'amount' | 'currencyC
 
 export type PageInfoFieldsFragment = Pick<AdminTypes.PageInfo, 'hasNextPage' | 'endCursor' | 'hasPreviousPage' | 'startCursor'>;
 
-export type VariantFieldsFragment = (
-  Pick<AdminTypes.ProductVariant, 'id' | 'title' | 'price' | 'compareAtPrice' | 'sku' | 'barcode' | 'inventoryQuantity' | 'availableForSale'>
-  & { selectedOptions: Array<Pick<AdminTypes.SelectedOption, 'name' | 'value'>>, image?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>>, inventoryItem: Pick<AdminTypes.InventoryItem, 'tracked'> }
-);
-
 export type ProductFieldsFragment = (
   Pick<AdminTypes.Product, 'id' | 'title' | 'handle' | 'status' | 'vendor' | 'productType' | 'tags' | 'totalInventory' | 'createdAt' | 'updatedAt'>
   & { featuredImage?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>>, variants: { nodes: Array<(
@@ -34,6 +29,11 @@ export type ProductFieldsFragment = (
 export type ProductCardFieldsFragment = (
   Pick<AdminTypes.Product, 'id' | 'title' | 'handle' | 'vendor'>
   & { featuredImage?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>>, priceRange: { minVariantPrice: Pick<AdminTypes.MoneyV2, 'amount' | 'currencyCode'>, maxVariantPrice: Pick<AdminTypes.MoneyV2, 'amount' | 'currencyCode'> } }
+);
+
+export type VariantFieldsFragment = (
+  Pick<AdminTypes.ProductVariant, 'id' | 'title' | 'price' | 'compareAtPrice' | 'sku' | 'barcode' | 'inventoryQuantity' | 'availableForSale'>
+  & { selectedOptions: Array<Pick<AdminTypes.SelectedOption, 'name' | 'value'>>, image?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>>, inventoryItem: Pick<AdminTypes.InventoryItem, 'tracked'> }
 );
 
 export type GetCollectionsForFiltersQueryVariables = AdminTypes.Exact<{
@@ -112,7 +112,7 @@ export type GetShopInfoQuery = { shop: (
   ) };
 
 interface GeneratedQueryTypes {
-  "query GetCollectionsForFilters($query: String, $first: Int!, $after: String) {\n  collections(first: $first, after: $after, query: $query, sortKey: UPDATED_AT) {\n    edges {\n      node {\n        ...CollectionFilterFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetCollections($first: Int!, $after: String, $query: String) {\n  collections(first: $first, after: $after, query: $query) {\n    edges {\n      node {\n        ...CollectionFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetCollectionByHandle($handle: String!) {\n  collectionByHandle(handle: $handle) {\n    ...CollectionDetailsFields\n    products(first: 50) {\n      edges {\n        node {\n          ...ProductCardFields\n        }\n        cursor\n      }\n      pageInfo {\n        ...PageInfoFields\n      }\n    }\n  }\n}": {return: never, variables: GetCollectionsForFiltersQueryVariables & GetCollectionsQueryVariables & GetCollectionByHandleQueryVariables},
+  "query GetCollectionsForFilters($query: String, $first: Int!, $after: String) {\n  collections(first: $first, after: $after, query: $query, sortKey: TITLE) {\n    edges {\n      node {\n        ...CollectionFilterFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetCollections($first: Int!, $after: String, $query: String) {\n  collections(first: $first, after: $after, query: $query) {\n    edges {\n      node {\n        ...CollectionFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetCollectionByHandle($handle: String!) {\n  collectionByHandle(handle: $handle) {\n    ...CollectionDetailsFields\n    products(first: 50) {\n      edges {\n        node {\n          ...ProductCardFields\n        }\n        cursor\n      }\n      pageInfo {\n        ...PageInfoFields\n      }\n    }\n  }\n}": {return: never, variables: GetCollectionsForFiltersQueryVariables & GetCollectionsQueryVariables & GetCollectionByHandleQueryVariables},
   "query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {\n  products(\n    first: $first\n    after: $after\n    query: $query\n    sortKey: $sortKey\n    reverse: $reverse\n  ) {\n    edges {\n      node {\n        ...ProductFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetProductById($id: ID!) {\n  product(id: $id) {\n    id\n    title\n    handle\n    vendor\n    productType\n    tags\n    totalInventory\n  }\n}": {return: never, variables: GetProductsQueryVariables & GetProductByIdQueryVariables},
   "query GetShopInfo {\n  shop {\n    currencyCode\n    myshopifyDomain\n    email\n    name\n    plan {\n      displayName\n    }\n    billingAddress {\n      countryCode\n    }\n  }\n}": {return: GetShopInfoQuery, variables: GetShopInfoQueryVariables},
 }
