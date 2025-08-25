@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
     BlockStack,
     Button,
@@ -13,7 +12,6 @@ import {
     Text,
     TextField,
 } from "@shopify/polaris";
-
 import { useProductSelectionStore } from "@/lib/stores/productSelectionStore";
 import { useGraphQL } from "@/hooks/useGraphQL";
 import { GetCollectionsForFiltersDocument } from "@/lib/gql/graphql";
@@ -36,77 +34,73 @@ export function FilterPopover() {
         updateFilter,
         clearFilters,
         setFilterPopoverActive,
+        collectionQuery,
+        collections,
+        collectionsPageInfo,
+        selectedCollectionTitle,
+        collectionVariables,
+        setCollectionQuery,
+        setCollections,
+        setCollectionsPageInfo,
+        setSelectedCollectionTitle,
+        setCollectionVariables,
+        clearCollectionStates,
     } = useProductSelectionStore();
-
-    const [query, setQuery] = useState("");
-    const [collections, setCollections] = useState<any[]>([]);
-    const [pageInfo, setPageInfo] = useState<any>(null);
-    const [selectedCollectionTitle, setSelectedCollectionTitle] = useState<
-        string | null
-    >(null);
-
-    const [variables, setVariables] = useState({
-        query: "",
-        first: PAGE_SIZE,
-        after: null,
-    });
 
     const { data, isLoading, refetch } = useGraphQL(
         GetCollectionsForFiltersDocument,
-        variables,
+        collectionVariables,
     );
 
     // Update collections when data arrives
     useEffect(() => {
         if (data?.collections) {
             setCollections(data.collections.edges);
-            setPageInfo(data.collections.pageInfo);
+            setCollectionsPageInfo(data.collections.pageInfo);
         }
-    }, [data]);
+    }, [data, setCollections, setCollectionsPageInfo]);
 
     // Refetch when variables change
     useEffect(() => {
         void refetch();
-    }, [variables, refetch]);
+    }, [collectionVariables, refetch]);
 
-// Sync selectedCollectionTitle whenever filters.collection or collections change
+    // Sync selectedCollectionTitle whenever filters.collection or collections change
     useEffect(() => {
         if (!filters.collection) {
             setSelectedCollectionTitle(null);
             return;
         }
-
         const found = collections.find(e => e.node.id === filters.collection);
-
         if (found) {
             setSelectedCollectionTitle(found.node.title);
         }
-    }, [filters.collection, collections]);
+    }, [filters.collection, collections, setSelectedCollectionTitle]);
 
     const handleQueryChange = (value: string) => {
-        setQuery(value);
+        setCollectionQuery(value);
         if (value.length >= 1) {
-            setVariables({
+            setCollectionVariables({
                 query: `title:*${value}*`,
                 first: PAGE_SIZE,
                 after: null,
             });
         } else {
-            setVariables({
+            setCollectionVariables({
                 query: "",
                 first: PAGE_SIZE,
                 after: null,
             });
             setCollections([]);
-            setPageInfo(null);
+            setCollectionsPageInfo(null);
         }
     };
 
     const handleLazyLoad = () => {
-        if (!pageInfo?.hasNextPage || isLoading) return;
-        setVariables({
-            ...variables,
-            after: pageInfo.endCursor,
+        if (!collectionsPageInfo?.hasNextPage || isLoading) return;
+        setCollectionVariables({
+            ...collectionVariables,
+            after: collectionsPageInfo.endCursor,
         });
     };
 
@@ -114,18 +108,12 @@ export function FilterPopover() {
         const selected = collections.find((e) => e.node.id === id);
         setSelectedCollectionTitle(selected?.node.title ?? null);
         updateFilter("collection", id);
-        setQuery("");
-        setCollections([]);
-        setPageInfo(null);
+        clearCollectionStates();
     };
 
     const handleClear = () => {
-        setQuery("");
         updateFilter("collection", "");
-        setCollections([]);
-        setPageInfo(null);
-        setSelectedCollectionTitle(null);
-        setVariables({ query: "", first: PAGE_SIZE, after: null });
+        clearCollectionStates();
     };
 
     return (
@@ -138,7 +126,6 @@ export function FilterPopover() {
                     value={filters.status}
                     onChange={(value) => updateFilter("status", value)}
                 />
-
                 {/* Product Type */}
                 <Select
                     label="Product Type"
@@ -152,25 +139,22 @@ export function FilterPopover() {
                     value={filters.productType}
                     onChange={(value) => updateFilter("productType", value)}
                 />
-
                 {/* Collections */}
                 <BlockStack gap="200">
                     <Text as="p" variant="bodyMd" fontWeight="medium">
                         Collections
                     </Text>
-
                     <TextField
                         label="Search collections"
                         labelHidden
                         placeholder="Search collections"
-                        value={query}
+                        value={collectionQuery}
                         onChange={handleQueryChange}
                         autoComplete="off"
                         clearButton
                         onClearButtonClick={handleClear}
                     />
-
-                    {query && (
+                    {collectionQuery && (
                         <Scrollable
                             style={{ maxHeight: "200px" }}
                             onScrolledToBottom={handleLazyLoad}
@@ -198,12 +182,11 @@ export function FilterPopover() {
                             ) : (
                                 <EmptySearchResult
                                     title=""
-                                    description={`No collections found matching "${query}"`}
+                                    description={`No collections found matching "${collectionQuery}"`}
                                 />
                             )}
                         </Scrollable>
                     )}
-
                     {/* Selected collection tag */}
                     <div style={{ minHeight: "20px", marginTop: "8px" }}>
                         {filters.collection && selectedCollectionTitle && (
@@ -213,14 +196,13 @@ export function FilterPopover() {
                         )}
                     </div>
                 </BlockStack>
-
                 {/* Actions */}
                 <InlineStack gap="200">
                     <Button
                         size="slim"
                         onClick={() => {
                             clearFilters();
-                            handleClear();
+                            clearCollectionStates();
                             setFilterPopoverActive(false);
                         }}
                     >

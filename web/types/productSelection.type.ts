@@ -41,6 +41,17 @@ export interface ProductSelectionState {
     filters: FilterState;
     filterOptions: FilterOptions;
 
+    // Collection State
+    collectionQuery: string;
+    collections: any[];
+    collectionsPageInfo: any;
+    selectedCollectionTitle: string | null;
+    collectionVariables: {
+        query: string;
+        first: number;
+        after: any;
+    };
+
     // Pagination State
     nextCursor: string | null;
     isLoadingMore: boolean;
@@ -53,6 +64,18 @@ export interface ProductSelectionState {
     setSearchBy: (searchBy: string) => void;
     setFilterPopoverActive: (active: boolean) => void;
     toggleProductExpansion: (productId: string) => void;
+
+    // Collection Actions
+    setCollectionQuery: (query: string) => void;
+    setCollections: (collections: any[]) => void;
+    setCollectionsPageInfo: (pageInfo: any) => void;
+    setSelectedCollectionTitle: (title: string | null) => void;
+    setCollectionVariables: (variables: {
+        query: string;
+        first: number;
+        after: any;
+    }) => void;
+    clearCollectionStates: () => void;
 
     // Selection Actions
     isProductIndeterminate: (product: Product) => boolean;

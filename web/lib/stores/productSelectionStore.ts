@@ -1,5 +1,4 @@
 import { create } from "zustand";
-
 import {
     FilterOptions,
     FilterState,
@@ -38,13 +37,24 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         isLoadingMore: false,
         first: 10,
 
+        // Collection filtering states
+        collectionQuery: "",
+        collections: [],
+        collectionsPageInfo: null,
+        selectedCollectionTitle: null,
+        collectionVariables: {
+            query: "",
+            first: 25,
+            after: null,
+        },
+
+        // Existing actions
         setModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
         setSearchInput: (search) => set({ searchInput: search }),
         setDebouncedSearch: (search) => set({ debouncedSearch: search }),
         setSearchBy: (searchBy) => set({ searchBy }),
         setFilterPopoverActive: (active) =>
             set({ filterPopoverActive: active }),
-
         toggleProductExpansion: (productId) =>
             set((state) => {
                 const newSet = new Set(state.expandedProducts);
@@ -55,7 +65,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 }
                 return { expandedProducts: newSet };
             }),
-
         setSelectedItems: (items) => set({ selectedItems: items }),
         addSelectedItem: (item) =>
             set((state) => ({
@@ -72,7 +81,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 }),
             })),
         clearSelectedItems: () => set({ selectedItems: [] }),
-
         setAllLoadedProducts: (products) =>
             set({ allLoadedProducts: products }),
         addLoadedProducts: (products) =>
@@ -80,7 +88,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 allLoadedProducts: [...state.allLoadedProducts, ...products],
             })),
         clearLoadedProducts: () => set({ allLoadedProducts: [] }),
-
         setFilters: (filters) => set({ filters }),
         updateFilter: (key, value) =>
             set((state) => ({
@@ -88,21 +95,36 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
             })),
         clearFilters: () => set({ filters: initialFilterState }),
         setFilterOptions: (options) => set({ filterOptions: options }),
-
         setNextCursor: (cursor) => set({ nextCursor: cursor }),
         setIsLoadingMore: (loading) => set({ isLoadingMore: loading }),
 
+        // Collection filtering actions
+        setCollectionQuery: (query) => set({ collectionQuery: query }),
+        setCollections: (collections) => set({ collections }),
+        setCollectionsPageInfo: (pageInfo) => set({ collectionsPageInfo: pageInfo }),
+        setSelectedCollectionTitle: (title) => set({ selectedCollectionTitle: title }),
+        setCollectionVariables: (variables) => set({ collectionVariables: variables }),
+        clearCollectionStates: () => set({
+            collectionQuery: "",
+            collections: [],
+            collectionsPageInfo: null,
+            selectedCollectionTitle: null,
+            collectionVariables: {
+                query: "",
+                first: 25,
+                after: null,
+            },
+        }),
+
+        // Existing product selection actions
         toggleProductSelection: (product) => {
             const state = get();
-
             const selectedVariants = state.selectedItems.filter(
                 (item) => item.productId === product.id
             );
-
             const allVariantsSelected = product.variants &&
                 product.variants.length > 0 &&
                 selectedVariants.length === product.variants.length;
-
             if (allVariantsSelected) {
                 // Deselect all variants
                 set({
@@ -115,7 +137,6 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 const filteredItems = state.selectedItems.filter(
                     (item) => item.productId !== product.id
                 );
-
                 const newItems: SelectedItem[] = (product.variants || []).map((variant) => ({
                     type: "variant",
                     productId: product.id,
@@ -125,19 +146,16 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                     image: variant.image?.url || product.featuredImage?.url,
                     sku: variant.sku,
                 }));
-
                 set({
                     selectedItems: [...filteredItems, ...newItems],
                 });
             }
         },
-
         toggleVariantSelection: (product, variant) => {
             const state = get();
             const variantSelected = state.selectedItems.some(
                 (item) => item.type === "variant" && item.variantId === variant.id
             );
-
             if (variantSelected) {
                 // Remove only this variant
                 set({
@@ -156,13 +174,11 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                     image: variant.image?.url || product.featuredImage?.url,
                     sku: variant.sku,
                 };
-
                 set({
                     selectedItems: [...state.selectedItems, newItem],
                 });
             }
         },
-
         selectAllProducts: (products, selectedProductIds) => {
             const availableItems: SelectedItem[] = [];
             products.forEach((product) => {
@@ -188,52 +204,41 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
             });
             set({ selectedItems: availableItems });
         },
-
         deselectAllProducts: () => set({ selectedItems: [] }),
-
         isProductSelected: (product) => {
             const state = get();
             if (!product.variants || product.variants.length === 0) return false;
-
             const selectedVariants = state.selectedItems.filter(
                 (item) => item.productId === product.id
             );
-
             return selectedVariants.length === product.variants.length;
         },
-
         isProductIndeterminate: (product) => {
             const state = get();
             if (!product.variants || product.variants.length === 0) return false;
-
             const selectedVariants = state.selectedItems.filter(
                 (item) => item.productId === product.id
             );
-
             return selectedVariants.length > 0 && selectedVariants.length < product.variants.length;
         },
-
         isVariantSelected: (variant) => {
             const state = get();
             return state.selectedItems.some(
                 (item) => item.variantId === variant.id,
             );
         },
-
         hasActiveFilters: () => {
             const state = get();
             return Object.entries(state.filters).some(([key, value]) =>
                 key !== "tags" ? value !== "" : (value as string[]).length > 0,
             );
         },
-
         activeFilterCount: () => {
             const state = get();
             return Object.entries(state.filters).filter(([key, value]) =>
                 key !== "tags" ? value !== "" : (value as string[]).length > 0,
             ).length;
         },
-
         resetState: () =>
             set({
                 searchInput: "",
@@ -246,6 +251,16 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 filters: initialFilterState,
                 nextCursor: null,
                 isLoadingMore: false,
+                // Reset collection states
+                collectionQuery: "",
+                collections: [],
+                collectionsPageInfo: null,
+                selectedCollectionTitle: null,
+                collectionVariables: {
+                    query: "",
+                    first: 25,
+                    after: null,
+                },
             }),
     }),
 );
