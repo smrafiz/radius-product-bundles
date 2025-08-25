@@ -18,6 +18,19 @@ const initialFilterOptions: FilterOptions = {
     types: [],
     vendors: [],
     tags: [],
+    statuses: [], // Add this field
+};
+
+// Define types for the GraphQL response
+type ProductEdge = {
+    node: {
+        productType?: string | null;
+        status?: string | null;
+    };
+};
+
+type ProductsData = {
+    edges?: ProductEdge[] | null;
 };
 
 export const useProductSelectionStore = create<ProductSelectionState>()(
@@ -115,6 +128,29 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                 after: null,
             },
         }),
+
+        // Update product types and status from GraphQL response
+        updateFilterOptionsFromProducts: (products: ProductsData) => {
+            if (!products?.edges) return;
+
+            // Extract unique product types
+            const types = Array.from(
+                new Set(products.edges.map((edge) => edge.node.productType).filter(Boolean))
+            ) as string[];
+
+            // Extract unique statuses
+            const statuses = Array.from(
+                new Set(products.edges.map((edge) => edge.node.status).filter(Boolean))
+            ) as string[];
+
+            set((state) => ({
+                filterOptions: {
+                    ...state.filterOptions,
+                    types,
+                    statuses,
+                }
+            }));
+        },
 
         // Existing product selection actions
         toggleProductSelection: (product) => {

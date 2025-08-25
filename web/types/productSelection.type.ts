@@ -24,6 +24,7 @@ export interface FilterOptions {
     types: string[];
     vendors: string[];
     tags: string[];
+    statuses: string[];
 }
 
 export interface ProductSelectionState {
@@ -76,6 +77,7 @@ export interface ProductSelectionState {
         after: any;
     }) => void;
     clearCollectionStates: () => void;
+    updateFilterOptionsFromProducts: (products: any) => void;
 
     // Selection Actions
     isProductIndeterminate: (product: Product) => boolean;
@@ -113,4 +115,12 @@ export interface ProductSelectionState {
 
     // Reset Actions
     resetState: () => void;
+}
+
+export interface FilterState {
+    status: string;
+    productType: string;
+    vendor: string;
+    collection: string;
+    tags: string[];
 }

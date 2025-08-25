@@ -34,17 +34,21 @@ export function FilterPopover() {
         updateFilter,
         clearFilters,
         setFilterPopoverActive,
+        // Collection states
         collectionQuery,
         collections,
         collectionsPageInfo,
         selectedCollectionTitle,
         collectionVariables,
+        // Collection actions
         setCollectionQuery,
         setCollections,
         setCollectionsPageInfo,
         setSelectedCollectionTitle,
         setCollectionVariables,
         clearCollectionStates,
+        // New action for filter options
+        updateFilterOptionsFromProducts,
     } = useProductSelectionStore();
 
     const { data, isLoading, refetch } = useGraphQL(
@@ -52,13 +56,18 @@ export function FilterPopover() {
         collectionVariables,
     );
 
-    // Update collections when data arrives
+    // Update collections and filter options when data arrives
     useEffect(() => {
         if (data?.collections) {
             setCollections(data.collections.edges);
             setCollectionsPageInfo(data.collections.pageInfo);
         }
-    }, [data, setCollections, setCollectionsPageInfo]);
+
+        // Update filter options from products
+        if (data?.products) {
+            updateFilterOptionsFromProducts(data.products);
+        }
+    }, [data, setCollections, setCollectionsPageInfo, updateFilterOptionsFromProducts]);
 
     // Refetch when variables change
     useEffect(() => {
