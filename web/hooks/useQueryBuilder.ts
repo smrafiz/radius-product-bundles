@@ -5,14 +5,14 @@ export function useQueryBuilder() {
     const { debouncedSearch, searchBy, filters } = useProductSelectionStore();
 
     const buildSearchQuery = useCallback(() => {
+        // Start with status filter wrapped in parentheses
         let query = "";
-
         const statusFilter = filters.status;
 
         if (!statusFilter || statusFilter === "ALL") {
-            query = `status:DRAFT OR status:ACTIVE OR status:ARCHIVED`;
+            query = "(status:DRAFT OR status:ACTIVE OR status:ARCHIVED)";
         } else {
-            query = `status:${statusFilter}`;
+            query = `(status:${statusFilter})`;
         }
 
         const cleanSearch = debouncedSearch
@@ -23,37 +23,43 @@ export function useQueryBuilder() {
         if (cleanSearch && cleanSearch.length > 0) {
             const searchTerm = debouncedSearch.trim();
             let searchQuery = "";
-
             switch (searchBy) {
                 case "title":
-                    searchQuery = `title:*${searchTerm}*`;
+                    searchQuery = "(title:*${searchTerm}*)";
                     break;
                 case "sku":
-                    searchQuery = `sku:*${searchTerm}*`;
+                    searchQuery = "(sku:*${searchTerm}*)";
                     break;
                 case "barcode":
-                    searchQuery = `barcode:*${searchTerm}*`;
+                    searchQuery = "(barcode:*${searchTerm}*)";
                     break;
                 default:
-                    searchQuery = `*${searchTerm}*`;
+                    searchQuery = "(*${searchTerm}*)";
             }
-
             query += ` AND ${searchQuery}`;
         }
 
-        // Add other filters
+        // Add other filters with parentheses
         if (filters.productType) {
-            query += ` AND product_type:"${filters.productType}"`;
+            query += ` AND (product_type:"${filters.productType}")`;
         }
+
         if (filters.vendor) {
-            query += ` AND vendor:"${filters.vendor}"`;
+            query += ` AND (vendor:"${filters.vendor}")`;
         }
+
+        // Fixed: Use 'collection_id' with numeric ID
         if (filters.collection) {
-            query += ` AND collection_id:${filters.collection}`;
+            // Extract numeric ID from GID
+            const numericId = filters.collection.split('/').pop();
+            if (numericId) {
+                query += ` AND (collection_id:${numericId})`;
+            }
         }
+
         if (filters.tags.length > 0) {
             const tagsQuery = filters.tags
-                .map((tag) => `tag:"${tag}"`)
+                .map((tag) => `(tag:"${tag}")`)
                 .join(" OR ");
             query += ` AND (${tagsQuery})`;
         }
