@@ -18,7 +18,7 @@ const initialFilterOptions: FilterOptions = {
     types: [],
     vendors: [],
     tags: [],
-    statuses: [], // Add this field
+    statuses: [],
 };
 
 // Define types for the GraphQL response
@@ -48,7 +48,7 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         filterOptions: initialFilterOptions,
         nextCursor: null,
         isLoadingMore: false,
-        first: 10,
+        first: 100,
 
         // Collection filtering states
         collectionQuery: "",

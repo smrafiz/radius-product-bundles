@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
-import toml from "@iarna/toml";
 
 // Load .env from one directory above
 dotenv.config({ path: path.resolve(__dirname, "../.env") });

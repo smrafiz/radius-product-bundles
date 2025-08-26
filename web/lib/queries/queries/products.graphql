@@ -15,6 +15,15 @@ query GetProducts(
         edges {
             node {
                 ...ProductFields
+                allCollections: collections(first: 100) {
+                    edges {
+                        node {
+                            id
+                            title
+                            handle
+                        }
+                    }
+                }
             }
             cursor
         }

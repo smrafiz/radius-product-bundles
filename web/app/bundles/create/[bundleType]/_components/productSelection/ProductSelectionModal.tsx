@@ -1,28 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { useGraphQL } from "@/hooks/useGraphQL";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useProductDataLoader } from "@/hooks/useProductDataLoader";
-
-import {
-    GetCollectionsForFiltersDocument,
-    GetProductsDocument,
-} from "@/lib/gql/graphql";
-import { BlockStack, Modal } from "@shopify/polaris";
-import {
-    ProductList,
-    SearchBar,
-    useProductSelectionStore,
-} from "@/app/bundles/create/[bundleType]/_components/productSelection";
-
-import type {
-    GetCollectionsForFiltersQuery,
-    GetCollectionsForFiltersQueryVariables,
-    GetProductsQuery,
-    GetProductsQueryVariables,
-} from "@/types/admin.generated";
-import { SelectedItem } from "@/types";
+import React, { useEffect, useRef, useCallback } from "react";
+import { Modal, Button, Select, TextField, InlineStack } from "@shopify/polaris";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import type { SelectedItem } from "@/types";
 
 interface Props {
     isOpen: boolean;
@@ -30,190 +11,102 @@ interface Props {
     onProductsSelected: (items: SelectedItem[]) => void;
     selectedProductIds: string[];
     title?: string;
+    collectionId?: string;
 }
 
 export function ProductSelectionModal({
-    isOpen,
-    onClose,
-    onProductsSelected,
-    selectedProductIds,
-    title = "Add products",
-}: Props) {
-    const scrollRef = useRef<HTMLDivElement>(null);
+                                          isOpen,
+                                          onClose,
+                                          onProductsSelected,
+                                          selectedProductIds,
+                                          title = "Add products",
+                                          collectionId,
+                                      }: Props) {
+    const app = useAppBridge();
 
-    // Zustand store state and actions
-    const {
-        searchInput,
-        selectedItems,
-        allLoadedProducts,
-        nextCursor,
-        isLoadingMore,
-        setModalOpen,
-        setDebouncedSearch,
-        resetState,
-        selectAllProducts,
-        deselectAllProducts,
-        setFilterOptions,
-    } = useProductSelectionStore();
+    const [statusFilter, setStatusFilter] = React.useState("ALL");
+    const [searchInput, setSearchInput] = React.useState("");
 
-    // Debounce search input
-    const debouncedSearch = useDebounce(searchInput, 500);
+    const openResourcePicker = useCallback(async () => {
+        if (!app) return;
 
-    // Update debounced search in store
-    useEffect(() => {
-        setDebouncedSearch(debouncedSearch);
-    }, [debouncedSearch, setDebouncedSearch]);
+        try {
+            const queryParts = [];
 
-    // Product data loader
-    const { productsQuery, loadMoreProducts } = useProductDataLoader();
-
-    // Fetch all products for filter options
-    const allProductsVariables: GetProductsQueryVariables = {
-        first: 100,
-        query: "status:ACTIVE or status:ARCHIVED or status:DRAFT",
-    };
-
-    const allProductsQuery = useGraphQL(
-        GetProductsDocument as any,
-        allProductsVariables,
-    ) as {
-        data?: GetProductsQuery;
-        loading: boolean;
-        error?: Error | null;
-    };
-
-    // Collection data for filters
-    const collectionsVariables: GetCollectionsForFiltersQueryVariables = {
-        query: "",
-        first: 50,
-    };
-
-    const collectionsQuery = useGraphQL<
-        GetCollectionsForFiltersQuery,
-        GetCollectionsForFiltersQueryVariables
-    >(GetCollectionsForFiltersDocument as any, collectionsVariables);
-
-    // Extract filter options from all product data
-    const filterOptions = useMemo(() => {
-        if (!allProductsQuery.data?.products?.edges) {
-            return { types: [], vendors: [], tags: [] };
-        }
-
-        const types = new Set<string>();
-        const vendors = new Set<string>();
-        const tags = new Set<string>();
-
-        allProductsQuery.data.products.edges.forEach((edge: any) => {
-            const product = edge.node;
-
-            if (product.productType) {
-                types.add(product.productType);
+            // Status filter
+            if (statusFilter === "ALL") {
+                queryParts.push("status:ACTIVE,DRAFT,ARCHIVED");
+            } else {
+                queryParts.push(`status:${statusFilter}`);
             }
 
-            if (product.vendor) {
-                vendors.add(product.vendor);
+            // Search input
+            if (searchInput.trim()) {
+                queryParts.push(`*${searchInput.trim()}*`);
             }
 
-            (product.tags || []).forEach((tag: string) => tags.add(tag));
-        });
+            // Collection filter
+            if (collectionId) {
+                queryParts.push(`collection_id:${collectionId}`);
+            }
 
-        return {
-            types: Array.from(types).sort(),
-            vendors: Array.from(vendors).sort(),
-            tags: Array.from(tags).sort(),
-        };
-    }, [allProductsQuery.data]);
+            const queryString = queryParts.join(" ");
 
-    // Update filter options in store
-    useEffect(() => {
-        setFilterOptions(filterOptions);
-    }, [filterOptions, setFilterOptions]);
+            const result = await app.resourcePicker({
+                type: "product",
+                multiple: true,
+                selectionIds: selectedProductIds,
+                query: queryString,
+            });
 
-    // Modal state management
-    useEffect(() => {
-        setModalOpen(isOpen);
-    }, [isOpen, setModalOpen]);
+            if (!result || !result.selection) return;
 
-    // Scroll handler for pagination
-    const handleScroll = useCallback(() => {
-        if (!scrollRef.current || !nextCursor || isLoadingMore) return;
+            const selected: SelectedItem[] = result.selection.map((p: any) => ({
+                productId: p.id,
+                title: p.title,
+                variants: p.variants.map((v: any) => ({
+                    variantId: v.id,
+                    title: v.title,
+                    sku: v.sku,
+                    price: v.price,
+                })),
+            }));
 
-        const { scrollTop, clientHeight, scrollHeight } = scrollRef.current;
-        const threshold = 50;
-
-        if (scrollTop + clientHeight >= scrollHeight - threshold) {
-            void loadMoreProducts();
+            onProductsSelected(selected);
+            onClose();
+        } catch (err) {
+            console.error("Resource picker error:", err);
         }
-    }, [nextCursor, isLoadingMore, loadMoreProducts]);
-
-    // Attach scroll listener
-    useEffect(() => {
-        const scrollElement = scrollRef.current;
-        if (scrollElement) {
-            scrollElement.addEventListener("scroll", handleScroll);
-            return () =>
-                scrollElement.removeEventListener("scroll", handleScroll);
-        }
-    }, [handleScroll]);
-
-    // Bulk selection handlers
-    const handleSelectAll = useCallback(() => {
-        selectAllProducts(allLoadedProducts, selectedProductIds);
-    }, [selectAllProducts, allLoadedProducts, selectedProductIds]);
-
-    const handleDeselectAll = useCallback(() => {
-        deselectAllProducts();
-    }, [deselectAllProducts]);
-
-    // Modal action handlers
-    const handleAdd = useCallback(() => {
-        onProductsSelected(selectedItems);
-        resetState();
-        onClose();
-    }, [selectedItems, onProductsSelected, resetState, onClose]);
-
-    const handleCancel = useCallback(() => {
-        resetState();
-        onClose();
-    }, [resetState, onClose]);
-
-    const uniqueProductCount = useMemo(() => {
-        return new Set(selectedItems.map((item) => item.productId)).size;
-    }, [selectedItems]);
+    }, [app, statusFilter, searchInput, collectionId, selectedProductIds, onProductsSelected, onClose]);
 
     return (
         <Modal
             open={isOpen}
-            onClose={handleCancel}
+            onClose={onClose}
             title={title}
-            primaryAction={{
-                content: `Add ${uniqueProductCount > 0 ? `(${uniqueProductCount})` : ""}`,
-                onAction: handleAdd,
-                disabled: selectedItems.length === 0,
-            }}
-            secondaryActions={[{ content: "Cancel", onAction: handleCancel }]}
+            primaryAction={{ content: "Open Shopify Picker", onAction: openResourcePicker }}
+            secondaryActions={[{ content: "Cancel", onAction: onClose }]}
         >
             <Modal.Section>
-                <BlockStack gap="400">
-                    {/* Search and Filter Section */}
-                    <SearchBar
-                        collectionsData={collectionsQuery.data}
-                        onBulkSelectAll={handleSelectAll}
-                        onBulkDeselectAll={handleDeselectAll}
-                        hasProducts={allLoadedProducts.length > 0}
+                <InlineStack gap="4">
+                    <Select
+                        label="Status"
+                        options={[
+                            { label: "All", value: "ALL" },
+                            { label: "Active", value: "ACTIVE" },
+                            { label: "Draft", value: "DRAFT" },
+                            { label: "Archived", value: "ARCHIVED" },
+                        ]}
+                        value={statusFilter}
+                        onChange={setStatusFilter}
                     />
-
-                    {/* Product List */}
-                    <ProductList
-                        ref={scrollRef}
-                        products={allLoadedProducts}
-                        selectedProductIds={selectedProductIds}
-                        isLoading={productsQuery.loading}
-                        error={productsQuery.error}
-                        nextCursor={nextCursor}
-                        isLoadingMore={isLoadingMore}
+                    <TextField
+                        label="Search"
+                        value={searchInput}
+                        onChange={setSearchInput}
+                        placeholder="Search by title, SKU, or barcode"
                     />
-                </BlockStack>
+                </InlineStack>
             </Modal.Section>
         </Modal>
     );

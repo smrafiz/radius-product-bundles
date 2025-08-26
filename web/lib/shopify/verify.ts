@@ -1,35 +1,45 @@
 import {
-    AppNotInstalledError, 
-    SessionNotFoundError, 
-    ScopeMismatchError, 
+    AppNotInstalledError,
     ExpiredTokenError,
-    normalizeShopDomain,
     extractBearerToken,
-    isSessionExpired
+    isSessionExpired,
+    normalizeShopDomain,
+    ScopeMismatchError,
+    SessionNotFoundError,
 } from "@/utils";
+import {
+    findOfflineSessionByShop,
+    storeSession,
+} from "@/lib/db/session-storage";
 import shopify from "@/lib/shopify/initialize-context";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
-import { storeSession, findOfflineSessionByShop } from "@/lib/db/session-storage";
 
-export { AppNotInstalledError, SessionNotFoundError, ScopeMismatchError, ExpiredTokenError };
+export {
+    AppNotInstalledError,
+    SessionNotFoundError,
+    ScopeMismatchError,
+    ExpiredTokenError,
+};
 
+/**
+ * Verify the request and return the shop and session
+ */
 export async function verifyRequest(
     req: Request,
     isOnline: boolean,
 ): Promise<{ shop: string; session: Session }> {
     const authHeader = req.headers.get("authorization");
     const sessionToken = extractBearerToken(authHeader);
-    
+
     if (!sessionToken) {
         throw new Error("No bearer or session token present");
     }
-    
+
     return handleSessionToken(sessionToken, isOnline);
 }
 
 /**
- * Do the token exchange from the sessionIdToken that comes from the client
- * This returns a valid session object with session caching.
+ * Exchange the session token for a new session
  */
 export async function tokenExchange({
     shop,
@@ -42,12 +52,11 @@ export async function tokenExchange({
     online?: boolean;
     store?: boolean;
 }): Promise<Session> {
-    
     // For offline sessions, try to find an existing session by shop
     if (!online) {
         try {
             const existingSession = await findOfflineSessionByShop(shop);
-            
+
             if (existingSession && existingSession.accessToken) {
                 if (!isSessionExpired(existingSession.expires)) {
                     return existingSession;
@@ -66,14 +75,14 @@ export async function tokenExchange({
             ? RequestedTokenType.OnlineAccessToken
             : RequestedTokenType.OfflineAccessToken,
     });
-    
+
     const { session } = response;
-    
+
     // Store the new session
     if (store) {
         await storeSession(session);
     }
-    
+
     return session;
 }
 
@@ -87,13 +96,13 @@ export async function handleSessionToken(
 ): Promise<{ shop: string; session: Session }> {
     const payload = await shopify.session.decodeSessionToken(sessionToken);
     const shop = normalizeShopDomain(payload.dest);
-    
-    const session = await tokenExchange({ 
-        shop, 
-        sessionToken, 
-        online, 
-        store: store !== false 
+
+    const session = await tokenExchange({
+        shop,
+        sessionToken,
+        online,
+        store: store !== false,
     });
-    
+
     return { shop, session };
 }

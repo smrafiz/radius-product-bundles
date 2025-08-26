@@ -5,63 +5,61 @@ export function useQueryBuilder() {
     const { debouncedSearch, searchBy, filters } = useProductSelectionStore();
 
     const buildSearchQuery = useCallback(() => {
-        // Start with status filter wrapped in parentheses
         let query = "";
-        const statusFilter = filters.status;
 
-        if (!statusFilter || statusFilter === "ALL") {
-            query = "(status:DRAFT OR status:ACTIVE OR status:ARCHIVED)";
-        } else {
-            query = `(status:${statusFilter})`;
-        }
-
+        // Search term
         const cleanSearch = debouncedSearch
-            ?.replace(/^["']+|["']+$/g, '')
+            ?.replace(/^["']+|["']+$/g, "")
             ?.trim();
 
-        // Add search term if exists
         if (cleanSearch && cleanSearch.length > 0) {
-            const searchTerm = debouncedSearch.trim();
-            let searchQuery = "";
             switch (searchBy) {
                 case "title":
-                    searchQuery = "(title:*${searchTerm}*)";
+                    query += `title:*${cleanSearch}*`;
                     break;
                 case "sku":
-                    searchQuery = "(sku:*${searchTerm}*)";
+                    query += `sku:*${cleanSearch}*`;
                     break;
                 case "barcode":
-                    searchQuery = "(barcode:*${searchTerm}*)";
+                    query += `barcode:*${cleanSearch}*`;
                     break;
                 default:
-                    searchQuery = "(*${searchTerm}*)";
+                    query += `*${cleanSearch}*`;
             }
-            query += ` AND ${searchQuery}`;
         }
 
-        // Add other filters with parentheses
+        // Status filter
+        if (filters.status && filters.status !== "ALL") {
+            if (query) query += " ";
+            query += `status:${filters.status}`;
+        }
+
+        // Collection filter
+        if (filters.collection) {
+            const numericId = filters.collection.split("/").pop();
+            if (numericId) {
+                if (query) query += " ";
+                query += `collection_id:${numericId}`;
+            }
+        }
+
+        // Other filters
         if (filters.productType) {
-            query += ` AND (product_type:"${filters.productType}")`;
+            if (query) query += " ";
+            query += `product_type:"${filters.productType}"`;
         }
 
         if (filters.vendor) {
-            query += ` AND (vendor:"${filters.vendor}")`;
-        }
-
-        // Fixed: Use 'collection_id' with numeric ID
-        if (filters.collection) {
-            // Extract numeric ID from GID
-            const numericId = filters.collection.split('/').pop();
-            if (numericId) {
-                query += ` AND (collection_id:${numericId})`;
-            }
+            if (query) query += " ";
+            query += `vendor:"${filters.vendor}"`;
         }
 
         if (filters.tags.length > 0) {
             const tagsQuery = filters.tags
-                .map((tag) => `(tag:"${tag}")`)
+                .map((tag) => `tag:"${tag}"`)
                 .join(" OR ");
-            query += ` AND (${tagsQuery})`;
+            if (query) query += " ";
+            query += `(${tagsQuery})`;
         }
 
         return query;

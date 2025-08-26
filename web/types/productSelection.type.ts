@@ -24,7 +24,6 @@ export interface FilterOptions {
     types: string[];
     vendors: string[];
     tags: string[];
-    statuses: string[];
 }
 
 export interface ProductSelectionState {

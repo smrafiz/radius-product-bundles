@@ -50,6 +50,8 @@ export function useProductDataLoader() {
         ...(queryKey > 0 && { _key: queryKey.toString() })
     }), [first, buildSearchQuery, queryKey]);
 
+    console.log(productsVariables);
+
     // Initial products query
     const productsQuery = useGraphQL(
         GetProductsDocument as any,
@@ -98,7 +100,7 @@ export function useProductDataLoader() {
                     : undefined,
                 selectedOptions: variant.selectedOptions || [],
             })),
-            collections: (node.collections?.edges || []).map(
+            collections: (node.allCollections?.edges || node.collections?.edges || []).map(
                 (collectionEdge: any) => ({
                     id: collectionEdge.node.id,
                     title: collectionEdge.node.title,
@@ -157,7 +159,15 @@ export function useProductDataLoader() {
 
         if (productsQuery.data?.products?.edges) {
             const transformedProducts = productsQuery.data.products.edges.map(
-                (edge: any) => transformProduct(edge.node),
+                (edge: any) => {
+                    // Debug: Log the raw node data for the first product
+                    if (edge.node.title.includes("Liquid")) {
+                        console.log("Raw product node:", edge.node);
+                        console.log("AllCollections:", edge.node.allCollections);
+                        console.log("Collections:", edge.node.collections);
+                    }
+                    return transformProduct(edge.node);
+                }
             );
 
             setAllLoadedProducts(transformedProducts);

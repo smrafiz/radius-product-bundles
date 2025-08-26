@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
     BlockStack,
     Box,
@@ -13,10 +13,8 @@ import {
     Thumbnail,
 } from "@shopify/polaris";
 import { useBundleStore } from "@/lib/stores/bundleStore";
-import {
-    ProductSelectionModal,
-    SelectedItem,
-} from "@/app/bundles/create/[bundleType]/_components/productSelection";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import type { SelectedItem } from "@/types";
 import {
     DeleteIcon,
     DragHandleIcon,
@@ -56,6 +54,9 @@ function SortableItem({ id, children }: { id: string; children: React.ReactNode 
 }
 
 export default function ProductsStep() {
+    const app = useAppBridge();
+    const [isLoading, setIsLoading] = useState(false);
+
     const {
         selectedItems,
         addSelectedItems,
@@ -63,8 +64,6 @@ export default function ProductsStep() {
         updateSelectedItemQuantity,
         setSelectedItems,
     } = useBundleStore();
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const groupedItems = useMemo(() => {
         const groups: Record<string, { product: SelectedItem; variants: SelectedItem[] }> = {};
@@ -90,18 +89,63 @@ export default function ProductsStep() {
         }
     };
 
-    const handleAddProducts = () => setIsModalOpen(true);
-    const handleCloseModal = () => setIsModalOpen(false);
+    const handleAddProducts = useCallback(async () => {
+        if (!app) return;
 
-    const handleProductsSelected = (items: SelectedItem[]) => {
-        const transformedItems = items.map((item) => ({ ...item, quantity: 1 }));
-        addSelectedItems(transformedItems);
-        setIsModalOpen(false);
-    };
+        setIsLoading(true);
+        try {
+            const result = await app.resourcePicker({
+                type: "product",
+                multiple: true,
+                selectionIds: selectedItems.map((i) => i.productId),
+            });
 
-    const handleClearAll = () => setSelectedItems([]);
+            if (!result?.selection || result.selection.length === 0) {
+                setIsLoading(false);
+                return;
+            }
 
-    const selectedProductIds = selectedItems.map((item) => item.productId);
+            const selected: SelectedItem[] = result.selection.flatMap((p: any) => {
+                const defaultVariant = p.variants?.[0];
+
+                return {
+                    id: `product-${p.id}`,
+                    productId: p.id,
+                    variantId: defaultVariant?.id || null,
+                    title: p.title,
+                    type: "product" as const,
+                    quantity: 1,
+                    image: p.images?.[0]?.originalSrc,
+                    price: defaultVariant?.price || "0.00",
+                    sku: defaultVariant?.sku || undefined,
+                    handle: p.handle,
+                    vendor: p.vendor,
+                    productType: p.productType,
+                    totalVariants: p.variants?.length || 1,
+                };
+            });
+
+            // Filter out already selected products to avoid duplicates
+            const existingProductIds = selectedItems.map(item => item.productId);
+            const newItems = selected.filter(
+                item => !existingProductIds.includes(item.productId)
+            );
+
+            if (newItems.length > 0) {
+                addSelectedItems(newItems);
+            }
+        } catch (err) {
+            console.error("Resource picker error:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [app, addSelectedItems, selectedItems]);
+
+    const handleClearAll = useCallback(() => {
+        setSelectedItems([]);
+    }, [setSelectedItems]);
+
+    console.log(selectedItems);
 
     return (
         <BlockStack gap="500">
@@ -117,7 +161,12 @@ export default function ProductsStep() {
             <Card>
                 <BlockStack gap="400">
                     <InlineStack align="space-between" blockAlign="center">
-                        <Button variant="primary" icon={PlusIcon} onClick={handleAddProducts}>
+                        <Button
+                            variant="primary"
+                            icon={PlusIcon}
+                            onClick={handleAddProducts}
+                            loading={isLoading}
+                        >
                             Add Products
                         </Button>
                         {selectedItems.length > 0 && (
@@ -168,7 +217,7 @@ export default function ProductsStep() {
                                                                             {variants.length} of {product.totalVariants ?? variants.length} variants
                                                                             selected
                                                                         </Text>
-                                                                        <Button variant="plain">Edit variants</Button>
+                                                                        <Button variant="plain" size="micro">Edit variants</Button>
                                                                     </InlineStack>
                                                                 )}
                                                             </BlockStack>
@@ -180,7 +229,7 @@ export default function ProductsStep() {
                                                                 labelHidden
                                                                 value={(product.quantity || 1).toString()}
                                                                 onChange={(value) =>
-                                                                    updateSelectedItemQuantity(groupIndex, parseInt(value) || 1)
+                                                                    updateSelectedItemQuantity(product.id, parseInt(value) || 1)
                                                                 }
                                                                 type="number"
                                                                 min="1"
@@ -192,7 +241,8 @@ export default function ProductsStep() {
                                                         <Button
                                                             variant="plain"
                                                             icon={DeleteIcon}
-                                                            onClick={() => removeSelectedItem(groupIndex)}
+                                                            onClick={() => removeSelectedItem(product.id)}
+                                                            accessibilityLabel={`Remove ${product.title}`}
                                                         />
                                                     </InlineStack>
                                                 </Box>
@@ -210,7 +260,7 @@ export default function ProductsStep() {
                                         No products selected
                                     </Text>
                                     <Text as="p" variant="bodySm" tone="subdued">
-                                        Add products to create your bundle
+                                        Click "Add Products" to get started
                                     </Text>
                                 </BlockStack>
                             </InlineStack>
@@ -218,14 +268,6 @@ export default function ProductsStep() {
                     )}
                 </BlockStack>
             </Card>
-
-            <ProductSelectionModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onProductsSelected={handleProductsSelected}
-                selectedProductIds={selectedProductIds}
-                title="Add Products to Bundle"
-            />
         </BlockStack>
     );
 }
