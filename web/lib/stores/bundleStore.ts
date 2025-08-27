@@ -96,6 +96,26 @@ export const useBundleStore = create(
                 }
             }),
 
+        removeProductAndAllVariants: (productId: string) =>
+            set((state) => ({
+                selectedItems: state.selectedItems.filter(item => item.productId !== productId)
+            })),
+
+        updateProductVariants: (productId: string, variants: SelectedItem[], position?: number) =>
+            set((state) => {
+                const otherItems = state.selectedItems.filter(item => item.productId !== productId);
+
+                if (typeof position === 'number') {
+                    // Insert at specific position to maintain order
+                    const result = [...otherItems];
+                    result.splice(position, 0, ...variants);
+                    return { selectedItems: result };
+                } else {
+                    // Default behavior - add at end
+                    return { selectedItems: [...otherItems, ...variants] };
+                }
+            }),
+
         resetBundle: () =>
             set(() => ({
                 currentStep: 1,

@@ -220,7 +220,8 @@ export default function BundleCreationForm({ bundleType }: Props) {
 
                 {/* Main Content Section */}
                 <Layout.Section>
-                    <Layout>
+                    <div className="pb-6">
+                        <Layout>
                         <Layout.Section>
                             <Card>
                                 {renderCurrentStep()}
@@ -231,6 +232,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
                             <BundlePreview bundleData={bundleData} bundleType={bundleType} />
                         </Layout.Section>
                     </Layout>
+                    </div>
                 </Layout.Section>
             </Layout>
         </Page>
