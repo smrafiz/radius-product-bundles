@@ -1,13 +1,13 @@
 import React from "react";
 import { Banner } from "@shopify/polaris";
-import { useBundlesStore } from "@/stores";
+import { useBundleListingStore } from "@/stores";
 
 interface BundleErrorCardProps {
     onRetry?: () => void;
 }
 
 export function BundleErrorCard({ onRetry }: BundleErrorCardProps) {
-    const { error, setError } = useBundlesStore();
+    const { error, setError } = useBundleListingStore();
 
     if (!error) {
         return null;

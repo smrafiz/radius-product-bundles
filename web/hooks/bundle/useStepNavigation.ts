@@ -1,5 +1,5 @@
 import { useBundleStore } from '@/stores';
-import { useBundleValidation } from '@/hooks/bundle';
+import { useBundleValidation } from '@/hooks';
 
 export function useStepNavigation() {
     const {

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useBundleStore } from '@/stores';
-import { useBundleValidation } from "@/hooks/bundle";
+import { useBundleValidation } from "@/hooks";
 
 export function useBundleSave() {
     const {

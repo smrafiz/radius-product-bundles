@@ -3,7 +3,7 @@
 import React from "react";
 import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDashboardData } from "@/hooks";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { useDashboardStore } from "@/stores";
 import { ErrorCard } from "@/app/dashboard/_components/ErrorCard";
@@ -12,7 +12,7 @@ import { MetricCard } from "@/app/dashboard/_components/MetricCard";
 import { BundleList } from "@/app/dashboard/_components/BundleList";
 import { AIInsights } from "@/app/dashboard/_components/AIInsights";
 import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
-import { formatCurrency, formatPercentage } from "@/utils/formatters";
+import { formatCurrency, formatPercentage } from "@/utils";
 import { QuickActions } from "@/app/dashboard/_components/QuickActions";
 
 export default function Dashboard() {

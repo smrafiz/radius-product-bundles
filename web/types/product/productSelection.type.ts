@@ -1,3 +1,5 @@
+import { CreateBundlePayload } from "@/types";
+
 export interface SelectedItem {
     id: string;
     type: 'product' | 'variant';

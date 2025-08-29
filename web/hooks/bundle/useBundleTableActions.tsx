@@ -1,11 +1,11 @@
 import { useRouter } from "next/navigation";
 import type { BundleStatus } from "@/types";
-import { useBundlesStore } from "@/stores";
+import { useBundleListingStore } from "@/stores";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 export function useBundleTableActions() {
     const router = useRouter();
-    const { showToast } = useBundlesStore();
+    const { showToast } = useBundleListingStore();
 
     const handleCreateBundle = () => {
         router.push("/bundles/create");

@@ -1,4 +1,3 @@
-// web/hooks/useBundleValidation.ts
 import { useBundleStore } from '@/stores';
 
 interface ValidationError {

@@ -17,7 +17,7 @@ import {
 } from "@shopify/polaris-icons";
 import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
-import { formatGrowth } from "@/utils/formatters";
+import { formatGrowth } from "@/utils";
 
 interface MetricCardProps {
     title: string;

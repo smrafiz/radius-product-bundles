@@ -5,7 +5,7 @@ import {
     ChoiceList,
     IndexFiltersMode,
 } from "@shopify/polaris";
-import { useBundlesStore } from "@/stores";
+import { useBundleListingStore } from "@/stores";
 import type { IndexFiltersProps, TabProps } from '@shopify/polaris';
 
 export function BundleIndexFilters() {
@@ -17,7 +17,7 @@ export function BundleIndexFilters() {
         setSelectedTab,
         setSortSelected,
         clearFilters,
-    } = useBundlesStore();
+    } = useBundleListingStore();
 
     const { mode, setMode } = useSetIndexFiltersMode();
 

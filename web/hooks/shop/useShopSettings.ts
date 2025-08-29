@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { convertShopifyLocale } from "@/utils";
-import { useGraphQL } from "@/hooks/useGraphQL";
+import { useGraphQL } from "@/hooks";
 import { GetShopInfoDocument } from "@/lib/gql/graphql";
 import { useShopSettingsStore } from "@/stores";
 
-export const useInitializeShopSettings = () => {
+export const useShopSettings = () => {
     const { setSettings, markAsInitialized } = useShopSettingsStore();
     const hasInitialized = useRef(false);
 

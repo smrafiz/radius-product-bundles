@@ -1,4 +1,3 @@
-// web/hooks/useDragAndDrop.ts
 import { useSensors, useSensor, PointerSensor, DragEndEvent } from '@dnd-kit/core';
 import { useBundleStore } from '@/stores';
 

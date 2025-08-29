@@ -1,7 +1,7 @@
 import React from "react";
 import { PlusIcon } from "@shopify/polaris-icons";
 import { Box, EmptySearchResult, EmptyState } from "@shopify/polaris";
-import { useBundleTableActions } from "@/hooks/useBundleTableActions";
+import { useBundleTableActions } from "@/hooks";
 
 interface BundleTableEmptyStatesProps {
     totalBundles: number;

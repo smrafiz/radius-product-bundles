@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useBundlesStore } from "@/stores";
+import { useBundleListingStore } from "@/stores";
 import { getBundles } from "@/actions/bundles.action";
 
 export const useBundlesData = () => {
     const app = useAppBridge();
     const { setBundles, setLoading, setError, showToast } =
-        useBundlesStore();
+        useBundleListingStore();
 
     useEffect(() => {
         let mounted = true;

@@ -99,7 +99,7 @@ interface BundlesState {
     };
 }
 
-export const useBundlesStore = create<BundlesState>()((set, get) => ({
+export const useBundleListingStore = create<BundlesState>()((set, get) => ({
     // Initial state
     bundles: [],
     metrics: null,

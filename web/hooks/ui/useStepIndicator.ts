@@ -1,4 +1,3 @@
-// web/hooks/ui/useStepIndicator.ts
 import { useBundleStore } from '@/stores';
 import { BUNDLE_STEPS } from '@/lib/constants/bundleConstants';
 

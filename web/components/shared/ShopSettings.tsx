@@ -1,11 +1,11 @@
 'use client';
 
-import { useInitializeShopSettings } from "@/hooks/useInitializeShopSettings";
+import { useShopSettings } from "@/hooks";
 
 export const ShopSettings: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const { isLoading, error, isInitialized } = useInitializeShopSettings();
+    const { isLoading, error, isInitialized } = useShopSettings();
 
     if (!isInitialized && isLoading) {
         return;

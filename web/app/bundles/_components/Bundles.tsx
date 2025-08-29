@@ -3,9 +3,9 @@
 import React from "react";
 import { formatCurrency, withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
-import { useBundlesData } from "@/hooks/useBundlesData";
-import { useBundlesStore } from "@/stores";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useBundlesData } from "@/hooks";
+import { useBundleListingStore } from "@/stores";
+import { useDashboardData } from "@/hooks";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { useDashboardStore } from "@/stores";
@@ -23,7 +23,7 @@ export default function Bundles() {
     useDashboardData();
 
     // Get state from the store
-    const { loading, toast, hideToast } = useBundlesStore();
+    const { loading, toast, hideToast } = useBundleListingStore();
 
     // Handle primary action
     const handleCreateBundle = () => {

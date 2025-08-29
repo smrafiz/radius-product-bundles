@@ -15,7 +15,7 @@ import {
     formatBundleType,
     formatCurrency,
     formatPercentage,
-} from "@/utils/formatters";
+} from "@/utils";
 import { withLoader } from "@/utils";
 import { router } from "next/client";
 import { ViewIcon } from "@shopify/polaris-icons";

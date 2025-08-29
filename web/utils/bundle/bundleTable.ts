@@ -6,10 +6,8 @@ import {
     ColorIcon,
     OrderIcon,
     PlusCircleIcon,
-    PlusIcon,
 } from "@shopify/polaris-icons";
 
-// Pure utility functions (no React components)
 export const getBundleTypeLabel = (type: BundleType): string => {
     const typeMap: Record<BundleType, string> = {
         BUY_X_GET_Y: "Buy X Get Y",

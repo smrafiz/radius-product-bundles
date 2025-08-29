@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { request } from 'graphql-request';
-import { useQueryBuilder } from './useQueryBuilder';
+import { useQueryBuilder } from '@/hooks';
 import { GetProductsDocument } from '@/lib/gql/graphql';
 import { LATEST_API_VERSION } from '@shopify/shopify-api';
 
-import { useGraphQL } from '@/hooks/useGraphQL';
+import { useGraphQL } from '@/hooks';
 import { useProductSelectionStore } from '@/stores';
 
 import type {

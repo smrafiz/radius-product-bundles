@@ -5,8 +5,8 @@ import {
     Card,
     useBreakpoints,
 } from "@shopify/polaris";
-import { useBundlesStore } from "@/stores";
-import { useBundleTableActions } from "@/hooks/useBundleTableActions";
+import { useBundleListingStore } from "@/stores";
+import { useBundleTableActions } from "@/hooks";
 import { BundleIndexFilters } from "./BundleIndexFilters";
 import { BundleTableRow } from "./BundleTableRow";
 import { BundleTableEmptyStates } from "./BundleTableEmptyStates";
@@ -19,7 +19,7 @@ export function BundleTable() {
         getTotalBundlesCount,
         getFilteredBundles,
         showToast,
-    } = useBundlesStore();
+    } = useBundleListingStore();
 
     const paginatedBundles = getPaginatedBundles();
     const totalBundles = getTotalBundlesCount();
