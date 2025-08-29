@@ -3,7 +3,11 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType
 } from "@prisma/client";
-import type { SelectedItem } from "@/types/productSelection.type";
+import { SelectedItem } from "@/types";
+
+export type BundleStatus = PrismaBundleStatus;
+export type BundleType = PrismaBundleType;
+export type DiscountType = PrismaDiscountType;
 
 export interface Bundle {
     id: string;
@@ -18,9 +22,16 @@ export interface Bundle {
     createdAt: string;
 }
 
-export type BundleStatus = PrismaBundleStatus;
-export type BundleType = PrismaBundleType;
-export type DiscountType = PrismaDiscountType;
+export type BundleConfig = {
+    title: BundleType;
+    id: BundleType;
+    label: string;
+    slug: string;
+    description?: string;
+    features?: string[];
+    icon?: any;
+    badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
+};
 
 export interface BundleStatusBadge {
     status: 'success' | 'info' | 'warning' | 'critical';

@@ -1,5 +1,40 @@
-// web/lib/utils/bundleUtils.ts
-import { SelectedItem, ProductGroup } from '@/types';
+import { bundleTypeConfigs } from "@/config";
+import { BundleType, SelectedItem, ProductGroup, BundleConfig } from "@/types";
+
+/**
+ * Get bundle type options for select
+ */
+export const bundleTypeOptions = Object.values(bundleTypeConfigs).map((c) => ({
+    label: c.label,
+    value: c.id,
+}));
+
+/**
+ * Map bundle type slug to ID
+ */
+export const bundleTypeMap = Object.values(bundleTypeConfigs).reduce(
+    (acc, c) => {
+        acc[c.slug] = c.id;
+        return acc;
+    },
+    {} as Record<string, BundleType>
+);
+
+/**
+ * Get bundle configuration properties
+ *
+ * @param type - The bundle type
+ * @param property - The property to retrieve ('label', 'icon', 'slug')
+ */
+export const getBundleProperty = <
+    T extends keyof Pick<BundleConfig, "label" | "icon" | "slug">
+>(
+    type: BundleType,
+    property: T
+): BundleConfig[T] | null => {
+    const config = bundleTypeConfigs[type];
+    return config?.[property] ?? null;
+};
 
 /**
  * Calculate total bundle price

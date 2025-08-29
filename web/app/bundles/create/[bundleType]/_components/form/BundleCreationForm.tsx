@@ -10,6 +10,7 @@ import {
     StepNavigation,
 } from "@/app/bundles/create/[bundleType]/_components/form/index";
 import BundlePreview from "@/app/bundles/create/[bundleType]/_components/preview";
+import { bundleTypeConfigs } from "@/config";
 
 interface Props {
     bundleType: BundleType;
@@ -25,15 +26,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
     }, [bundleType, bundleData, setBundleData]);
 
     const getBundleTypeTitle = (type: BundleType): string => {
-        const titleMap: Record<BundleType, string> = {
-            BUY_X_GET_Y: "Buy X Get Y",
-            BOGO: "BOGO",
-            VOLUME_DISCOUNT: "Volume Discount",
-            MIX_MATCH: "Mix & Match",
-            CROSS_SELL: "Frequently Bought Together",
-            FIXED_BUNDLE: "Fixed Bundle",
-        };
-        return titleMap[type] || type;
+        return bundleTypeConfigs[type]?.title ?? type;
     };
 
     return (

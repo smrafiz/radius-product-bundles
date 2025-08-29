@@ -1,4 +1,3 @@
-// web/hooks/useProductPicker.ts
 import { useCallback } from 'react';
 import { useAppBridge } from '@shopify/app-bridge-react';
 import { useBundleStore } from '@/stores';
