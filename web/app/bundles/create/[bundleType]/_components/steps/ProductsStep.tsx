@@ -12,7 +12,7 @@ import {
     TextField,
     Thumbnail,
 } from "@shopify/polaris";
-import { useBundleStore } from "@/lib/stores/bundleStore";
+import { useBundleStore } from "@/stores";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import type { SelectedItem } from "@/types";
 import {

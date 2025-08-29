@@ -6,7 +6,7 @@ import { GetProductsDocument } from '@/lib/gql/graphql';
 import { LATEST_API_VERSION } from '@shopify/shopify-api';
 
 import { useGraphQL } from '@/hooks/useGraphQL';
-import { useProductSelectionStore } from '@/lib/stores/productSelectionStore';
+import { useProductSelectionStore } from '@/stores';
 
 import type {
     Product,

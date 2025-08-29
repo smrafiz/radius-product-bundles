@@ -11,7 +11,7 @@ import {
     TextField,
     Select
 } from '@shopify/polaris';
-import { useBundleStore } from "@/lib/stores/bundleStore";
+import { useBundleStore } from "@/stores";
 
 export default function DisplayStep() {
     const positionOptions = [

@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import React, { useEffect, useState, useRef } from "react";
-import { useSessionStore } from "@/lib/stores/sessionStore";
+import { useSessionStore } from "@/stores";
 import { doWebhookRegistration, storeToken } from "@/actions";
 
 export default function SessionProvider({

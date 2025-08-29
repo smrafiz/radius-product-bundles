@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Pagination } from "@shopify/polaris";
-import { useBundlesStore } from "@/lib/stores/bundlesStore";
+import { useBundlesStore } from "@/stores";
 
 export function BundlePagination() {
     const { pagination, setCurrentPage, getPaginationInfo } = useBundlesStore();

@@ -12,7 +12,7 @@ import {
     Text,
     TextField,
 } from "@shopify/polaris";
-import { useProductSelectionStore } from "@/lib/stores/productSelectionStore";
+import { useProductSelectionStore } from "@/stores";
 import { useGraphQL } from "@/hooks/useGraphQL";
 import { GetCollectionsForFiltersDocument } from "@/lib/gql/graphql";
 

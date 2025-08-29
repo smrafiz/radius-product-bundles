@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useDashboardStore } from "@/lib/stores/dashboardStore";
+import { useDashboardStore } from "@/stores";
 import { getBundleMetrics, getBundles } from "@/actions/bundles.action";
 
 export const useDashboardData = () => {

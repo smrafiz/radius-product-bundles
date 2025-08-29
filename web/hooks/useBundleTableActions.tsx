@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import type { BundleStatus } from "@/types";
-import { useBundlesStore } from "@/lib/stores/bundlesStore";
+import { useBundlesStore } from "@/stores";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 export function useBundleTableActions() {

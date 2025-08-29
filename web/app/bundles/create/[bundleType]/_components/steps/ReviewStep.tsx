@@ -2,7 +2,7 @@
 
 import React from "react";
 import { BlockStack, Card, InlineStack, Text } from "@shopify/polaris";
-import { useBundleStore } from "@/lib/stores/bundleStore";
+import { useBundleStore } from "@/stores";
 
 export default function ReviewStep() {
     const { bundleData } = useBundleStore();

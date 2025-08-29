@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useProductSelectionStore } from "@/lib/stores/productSelectionStore";
+import { useProductSelectionStore } from "@/stores";
 
 export function useQueryBuilder() {
     const { debouncedSearch, searchBy, filters } = useProductSelectionStore();

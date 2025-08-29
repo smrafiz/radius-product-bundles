@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/utils";
-import { useShopSettingsStore } from "@/lib/stores/useShopSettingsStore";
+import { useShopSettingsStore } from "@/stores";
 
 export const useCurrency = () => {
     const { getCurrencyCode, getLocale, isInitialized } = useShopSettingsStore();

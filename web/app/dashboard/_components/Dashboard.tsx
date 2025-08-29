@@ -5,7 +5,7 @@ import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
-import { useDashboardStore } from "@/lib/stores/dashboardStore";
+import { useDashboardStore } from "@/stores";
 import { ErrorCard } from "@/app/dashboard/_components/ErrorCard";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { MetricCard } from "@/app/dashboard/_components/MetricCard";

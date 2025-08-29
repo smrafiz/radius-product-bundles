@@ -18,7 +18,7 @@ interface Props {
     bundleType: BundleType;
 }
 
-export default function BundlePreview({ bundleData, bundleType }: Props) {
+export default function OldBundlePreview({ bundleData, bundleType }: Props) {
     const getBundleTypeTitle = (type: BundleType): string => {
         const titleMap: Record<BundleType, string> = {
             BUY_X_GET_Y: 'Buy X Get Y',

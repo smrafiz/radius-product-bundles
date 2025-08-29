@@ -1,6 +1,6 @@
 import type { BundleType } from "@/types";
 import { notFound } from "next/navigation";
-import BundleCreationForm from "@/app/bundles/create/[bundleType]/_components/BundleCreationForm";
+import BundleCreationForm from "@/app/bundles/create/[bundleType]/_components/form";
 
 interface Props {
     params: { bundleType: string };

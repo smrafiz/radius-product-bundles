@@ -5,7 +5,7 @@ import {
     Card,
     useBreakpoints,
 } from "@shopify/polaris";
-import { useBundlesStore } from "@/lib/stores/bundlesStore";
+import { useBundlesStore } from "@/stores";
 import { useBundleTableActions } from "@/hooks/useBundleTableActions";
 import { BundleIndexFilters } from "./BundleIndexFilters";
 import { BundleTableRow } from "./BundleTableRow";

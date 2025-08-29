@@ -1,125 +1,103 @@
-import { Product, ProductVariant } from "@/types";
-
 export interface SelectedItem {
-    type: "product" | "variant";
+    id: string;
+    type: 'product' | 'variant';
     productId: string;
-    variantId?: string;
+    variantId?: string | null;
     title: string;
     price: string;
     image?: string;
     sku?: string;
-    quantity?: number;
+    quantity: number;
+    handle?: string;
+    vendor?: string;
+    productType?: string;
     totalVariants?: number;
 }
 
-export interface FilterState {
-    status: string;
-    productType: string;
-    vendor: string;
-    collection: string;
-    tags: string[];
+export interface ProductGroup {
+    product: SelectedItem;
+    variants: SelectedItem[];
+    originalTotalVariants: number;
 }
 
-export interface FilterOptions {
-    types: string[];
-    vendors: string[];
-    tags: string[];
+export interface DisplaySettings {
+    layout: 'horizontal' | 'vertical' | 'grid';
+    position: 'above_cart' | 'below_cart' | 'description' | 'custom';
+    title: string;
+    colorTheme: 'brand' | 'success' | 'warning' | 'critical';
+    showPrices: boolean;
+    showSavings: boolean;
+    enableQuickSwap: boolean;
 }
 
-export interface ProductSelectionState {
-    // UI State
-    isModalOpen: boolean;
-    searchInput: string;
-    searchBy: string;
-    debouncedSearch: string;
-    filterPopoverActive: boolean;
-    expandedProducts: Set<string>;
+export interface BundleConfiguration {
+    discountApplication: 'bundle' | 'products' | 'shipping';
+}
 
-    // Data State
+interface BundleState {
+    // Step management
+    currentStep: number;
+    totalSteps: number;
+
+    // Bundle data
+    bundleData: Partial<CreateBundlePayload>;
     selectedItems: SelectedItem[];
-    allLoadedProducts: Product[];
-    filters: FilterState;
-    filterOptions: FilterOptions;
 
-    // Collection State
-    collectionQuery: string;
-    collections: any[];
-    collectionsPageInfo: any;
-    selectedCollectionTitle: string | null;
-    collectionVariables: {
-        query: string;
-        first: number;
-        after: any;
-    };
+    // Display settings
+    displaySettings: DisplaySettings;
 
-    // Pagination State
-    nextCursor: string | null;
-    isLoadingMore: boolean;
-    first: number;
+    // Configuration
+    configuration: BundleConfiguration;
 
-    // Actions
-    setModalOpen: (isOpen: boolean) => void;
-    setSearchInput: (search: string) => void;
-    setDebouncedSearch: (search: string) => void;
-    setSearchBy: (searchBy: string) => void;
-    setFilterPopoverActive: (active: boolean) => void;
-    toggleProductExpansion: (productId: string) => void;
+    // Loading states
+    isLoading: boolean;
+    isSaving: boolean;
 
-    // Collection Actions
-    setCollectionQuery: (query: string) => void;
-    setCollections: (collections: any[]) => void;
-    setCollectionsPageInfo: (pageInfo: any) => void;
-    setSelectedCollectionTitle: (title: string | null) => void;
-    setCollectionVariables: (variables: {
-        query: string;
-        first: number;
-        after: any;
-    }) => void;
-    clearCollectionStates: () => void;
-    updateFilterOptionsFromProducts: (products: any) => void;
+    // Step actions
+    setStep: (step: number) => void;
+    nextStep: () => void;
+    prevStep: () => void;
+    canGoNext: () => boolean;
+    canGoPrevious: () => boolean;
 
-    // Selection Actions
-    isProductIndeterminate: (product: Product) => boolean;
+    // Bundle data actions
+    setBundleData: (data: Partial<CreateBundlePayload>) => void;
+    updateBundleField: <K extends keyof CreateBundlePayload>(
+        key: K,
+        value: CreateBundlePayload[K],
+    ) => void;
+
+    // Selected items actions
     setSelectedItems: (items: SelectedItem[]) => void;
-    addSelectedItem: (item: SelectedItem) => void;
-    removeSelectedItem: (itemId: string, type: 'product' | 'variant') => void;
-    clearSelectedItems: () => void;
+    addSelectedItems: (items: SelectedItem[]) => void;
+    removeSelectedItem: (itemId: string) => void;
+    removeProductAndAllVariants: (productId: string) => void;
+    updateSelectedItemQuantity: (itemId: string, quantity: number) => void;
+    updateProductVariants: (productId: string, variants: SelectedItem[], position?: number) => void;
+    reorderItems: (activeId: string, overId: string) => void;
 
-    // Product Actions
-    setAllLoadedProducts: (products: Product[]) => void;
-    addLoadedProducts: (products: Product[]) => void;
-    clearLoadedProducts: () => void;
+    // Computed values
+    getGroupedItems: () => ProductGroup[];
+    getTotalProducts: () => number;
+    getTotalItems: () => number;
+    getVariantInfo: (productId: string) => { selectedCount: number; originalTotal: number };
 
-    // Filter Actions
-    setFilters: (filters: FilterState) => void;
-    updateFilter: (key: keyof FilterState, value: string | string[]) => void;
-    clearFilters: () => void;
-    setFilterOptions: (options: FilterOptions) => void;
+    // Display settings actions
+    updateDisplaySettings: <K extends keyof DisplaySettings>(
+        key: K,
+        value: DisplaySettings[K],
+    ) => void;
 
-    // Pagination Actions
-    setNextCursor: (cursor: string | null) => void;
-    setIsLoadingMore: (loading: boolean) => void;
+    // Configuration actions
+    updateConfiguration: <K extends keyof BundleConfiguration>(
+        key: K,
+        value: BundleConfiguration[K],
+    ) => void;
 
-    // Complex Actions
-    toggleProductSelection: (product: Product, selectedProductIds: string[]) => void;
-    toggleVariantSelection: (product: Product, variant: ProductVariant) => void;
-    selectAllProducts: (products: Product[], selectedProductIds: string[]) => void;
-    deselectAllProducts: () => void;
+    // Loading states
+    setLoading: (loading: boolean) => void;
+    setSaving: (saving: boolean) => void;
 
-    // Computed State
-    isProductSelected: (product: Product) => boolean;
-    isVariantSelected: (variant: ProductVariant) => boolean;
-    hasActiveFilters: () => boolean;
-    activeFilterCount: () => number;
-
-    // Reset Actions
-    resetState: () => void;
-}
-
-export interface FilterState {
-    status: string;
-    productType: string;
-    vendor: string;
-    collection: string;
-    tags: string[];
+    // Reset
+    resetBundle: () => void;
 }

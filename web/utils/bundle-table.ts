@@ -17,9 +17,7 @@ export const getBundleTypeLabel = (type: BundleType): string => {
         VOLUME_DISCOUNT: "Volume Discount",
         MIX_MATCH: "Mix & Match",
         CROSS_SELL: "Cross Sell",
-        TIERED: "Tiered",
-        FLASH_SALE: "Flash Sale",
-        GIFT: "Gift",
+        FIXED_BUNDLE: "Fixed Bundle",
     };
     return typeMap[type] || type;
 };
@@ -31,9 +29,7 @@ export const getBundleIcon = (type: BundleType) => {
         VOLUME_DISCOUNT: ChartVerticalIcon,
         MIX_MATCH: CheckCircleIcon,
         CROSS_SELL: ColorIcon,
-        TIERED: ChartVerticalIcon,
-        FLASH_SALE: CalendarIcon,
-        GIFT: PlusIcon,
+        FIXED_BUNDLE: CalendarIcon,
     };
     return iconMap[type] || OrderIcon;
 };

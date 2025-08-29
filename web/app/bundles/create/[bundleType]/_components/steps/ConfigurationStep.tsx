@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useBundleStore } from "@/lib/stores/bundleStore";
+import { useBundleStore } from "@/stores";
 import { BlockStack, Text, Card, TextField, Select, RadioButton } from '@shopify/polaris';
 
 export default function ConfigurationStep() {

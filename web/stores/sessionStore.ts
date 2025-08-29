@@ -3,7 +3,7 @@ import {
     initialState,
     sessionReducer,
     ShopifyState,
-} from "../reducers/session";
+} from "@/lib/reducers/session";
 import { create } from "zustand";
 
 type ShopifyStore = ShopifyState & {

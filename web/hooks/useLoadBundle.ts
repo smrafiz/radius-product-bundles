@@ -1,7 +1,7 @@
 // hooks/useLoadBundle.ts
 import { useEffect, useState } from 'react';
 import type { CreateBundlePayload } from '@/types';
-import { useBundleStore } from "@/lib/stores/bundleStore";
+import { useBundleStore } from "@/stores";
 
 interface LoadBundleOptions {
     bundleId: string;

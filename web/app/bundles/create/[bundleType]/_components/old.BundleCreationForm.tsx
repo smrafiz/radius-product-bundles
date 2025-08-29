@@ -4,8 +4,8 @@ import React from 'react';
 import NProgress from "nprogress";
 import type { BundleType } from '@/types';
 import { useRouter } from 'next/navigation';
-import BundlePreview from './BundlePreview';
-import { useBundleStore } from "@/lib/stores/bundleStore";
+import OldBundlePreview from './old.BundlePreview';
+import { useBundleStore } from "@/stores";
 import {
     Page,
     Layout,
@@ -34,7 +34,7 @@ const steps = [
     { id: 4, title: 'Review', subtitle: 'Offer summary & publish' },
 ];
 
-export default function BundleCreationForm({ bundleType }: Props) {
+export default function OldBundleCreationForm({ bundleType }: Props) {
     const router = useRouter();
     const { currentStep, setStep, nextStep, prevStep, bundleData, setBundleData } = useBundleStore();
 
@@ -229,7 +229,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
                         </Layout.Section>
 
                         <Layout.Section variant="oneThird">
-                            <BundlePreview bundleData={bundleData} bundleType={bundleType} />
+                            <OldBundlePreview bundleData={bundleData} bundleType={bundleType} />
                         </Layout.Section>
                     </Layout>
                     </div>

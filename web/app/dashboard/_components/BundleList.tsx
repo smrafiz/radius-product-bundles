@@ -19,7 +19,7 @@ import {
 import { withLoader } from "@/utils";
 import { router } from "next/client";
 import { ViewIcon } from "@shopify/polaris-icons";
-import { useDashboardStore } from "@/lib/stores/dashboardStore";
+import { useDashboardStore } from "@/stores";
 
 export const BundleList = () => {
     const { bundles, error } = useDashboardStore();

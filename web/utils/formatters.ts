@@ -1,4 +1,4 @@
-import { useShopSettingsStore } from "@/lib/stores/useShopSettingsStore";
+import { useShopSettingsStore } from "@/stores";
 
 export const formatCurrency = (
     amount?: number | string | null,

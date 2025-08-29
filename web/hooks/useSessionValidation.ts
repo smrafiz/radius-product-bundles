@@ -2,7 +2,7 @@
 
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect, useCallback } from "react";
-import { useSessionStore } from "@/lib/stores/sessionStore";
+import { useSessionStore } from "@/stores";
 
 export function useSessionValidation() {
     const app = useAppBridge();
