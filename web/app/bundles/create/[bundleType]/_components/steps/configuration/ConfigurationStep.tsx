@@ -1,11 +1,12 @@
-// web/app/bundles/create/[bundleType]/_components/steps/ConfigurationStep.tsx
-'use client';
+"use client";
 
-import React from 'react';
-import { BlockStack, Text } from '@shopify/polaris';
-import BundleDetails from './BundleDetails';
-import DiscountSettings from './DiscountSettings';
-import BundleBehavior from './BundleBehavior';
+import React from "react";
+import { BlockStack, Text } from "@shopify/polaris";
+import {
+    BundleBehavior,
+    BundleDetails,
+    DiscountSettings,
+} from "@/bundles/create/[bundleType]/_components/steps/configuration";
 
 export default function ConfigurationStep() {
     return (

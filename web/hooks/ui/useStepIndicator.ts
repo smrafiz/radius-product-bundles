@@ -13,16 +13,16 @@ export function useStepIndicator() {
     const getStepColor = (status: string) => {
         switch (status) {
             case 'completed':
-                return 'bg-fill-success';
+                return 'success';
             case 'current':
-                return 'bg-fill-brand';
+                return 'interactive';
             default:
-                return 'bg-surface-secondary';
+                return 'subdued';
         }
     };
 
     const getProgressLineColor = (stepNumber: number) => {
-        return currentStep > stepNumber ? 'bg-fill-success' : 'bg-surface-secondary';
+        return currentStep > stepNumber ? 'success' : 'subdued';
     };
 
     const canNavigateToStep = (stepNumber: number) => {

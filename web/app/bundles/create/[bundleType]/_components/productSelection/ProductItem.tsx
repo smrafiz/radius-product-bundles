@@ -22,7 +22,7 @@ import {
 import {
     useProductSelectionStore,
     VariantItem,
-} from "@/app/bundles/create/[bundleType]/_components/productSelection";
+} from "@/bundles/create/[bundleType]/_components/productSelection";
 
 import { Product } from "@/types";
 import { formatCurrency } from "@/utils";

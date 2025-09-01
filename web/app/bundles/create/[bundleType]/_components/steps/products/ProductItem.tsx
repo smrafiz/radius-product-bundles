@@ -17,9 +17,10 @@ import {
     DragHandleIcon,
     ImageIcon,
 } from "@shopify/polaris-icons";
-import { useSortable } from "@dnd-kit/sortable";
 import { useBundleStore } from "@/stores";
+import { useSortable } from "@dnd-kit/sortable";
 import { useProductPicker } from "@/hooks/product";
+
 import { ProductGroup } from "@/types";
 
 interface ProductItemProps {
@@ -56,7 +57,7 @@ export default function ProductItem({ group }: ProductItemProps) {
 
     const { product, originalTotalVariants } = group;
     const { selectedCount, originalTotal } = getVariantInfo(product.productId);
-    const isMultiVariant = product.totalVariants > 1 && originalTotalVariants >= 1;
+    const isMultiVariant = product.totalVariants && product.totalVariants > 1 && originalTotalVariants >= 1;
 
     const handleQuantityChange = (value: string) => {
         const quantity = parseInt(value) || 1;
@@ -68,7 +69,7 @@ export default function ProductItem({ group }: ProductItemProps) {
     };
 
     const handleEditVariants = () => {
-        editProductVariants(product);
+        void editProductVariants(product);
     };
 
     return (

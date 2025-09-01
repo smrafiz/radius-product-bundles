@@ -1,14 +1,9 @@
 "use client";
 
-import React from 'react';
-import {
-    BlockStack,
-    Card,
-    Text,
-    TextField
-} from '@shopify/polaris';
+import React from "react";
 import { useBundleStore } from "@/stores";
-import { useBundleValidation } from "@/hooks/bundle";
+import { useBundleValidation } from "@/hooks";
+import { BlockStack, Card, Text, TextField } from "@shopify/polaris";
 
 export default function BundleDetails() {
     const { bundleData, updateBundleField } = useBundleStore();
@@ -24,18 +19,20 @@ export default function BundleDetails() {
                 <TextField
                     autoComplete="off"
                     label="Bundle Name"
-                    value={bundleData.name || ''}
-                    onChange={(value) => updateBundleField('name', value)}
+                    value={bundleData.name || ""}
+                    onChange={(value) => updateBundleField("name", value)}
                     placeholder="Enter bundle name"
-                    error={getFieldError('name')}
+                    error={getFieldError("name") || undefined}
                     requiredIndicator
                 />
 
                 <TextField
                     autoComplete="off"
                     label="Description (Optional)"
-                    value={bundleData.description || ''}
-                    onChange={(value) => updateBundleField('description', value)}
+                    value={bundleData.description || ""}
+                    onChange={(value) =>
+                        updateBundleField("description", value)
+                    }
                     multiline={3}
                     placeholder="Describe your bundle offer"
                 />

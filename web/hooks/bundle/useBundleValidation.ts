@@ -1,116 +1,80 @@
 import { useBundleStore } from '@/stores';
-
-interface ValidationError {
-    field: string;
-    message: string;
-}
-
-interface ValidationResult {
-    isValid: boolean;
-    errors: ValidationError[];
-}
+import { bundleSchema } from '@/lib/validation';
 
 export function useBundleValidation() {
-    const { bundleData, selectedItems, currentStep } = useBundleStore();
+    const { bundleData, selectedItems, validationAttempted, currentStep } = useBundleStore();
 
-    const validateStep = (step: number): ValidationResult => {
-        const errors: ValidationError[] = [];
+    const getValidationData = () => ({
+        ...bundleData,
+        products: selectedItems,
+        discountValue: bundleData.discountValue || 0,
+        minOrderValue: bundleData.minOrderValue,
+        maxDiscountAmount: bundleData.maxDiscountAmount,
+    });
 
-        switch (step) {
+    const validateCurrentStep = () => {
+        const data = getValidationData();
+
+        switch (currentStep) {
             case 1: // Products step
-                if (selectedItems.length === 0) {
-                    errors.push({
-                        field: 'products',
-                        message: 'At least one product must be selected'
-                    });
-                }
-                break;
+                const productsSchema = bundleSchema.pick({ products: true });
+                return productsSchema.safeParse(data);
 
             case 2: // Configuration step
-                if (!bundleData.name?.trim()) {
-                    errors.push({
-                        field: 'name',
-                        message: 'Bundle name is required'
-                    });
-                }
-
-                if (!bundleData.discountType) {
-                    errors.push({
-                        field: 'discountType',
-                        message: 'Discount type is required'
-                    });
-                }
-
-                if (!bundleData.discountValue || bundleData.discountValue <= 0) {
-                    errors.push({
-                        field: 'discountValue',
-                        message: 'Discount value must be greater than 0'
-                    });
-                }
-
-                if (bundleData.discountType === 'PERCENTAGE' && bundleData.discountValue > 100) {
-                    errors.push({
-                        field: 'discountValue',
-                        message: 'Percentage discount cannot exceed 100%'
-                    });
-                }
-
-                if (bundleData.minOrderValue && bundleData.minOrderValue < 0) {
-                    errors.push({
-                        field: 'minOrderValue',
-                        message: 'Minimum order value cannot be negative'
-                    });
-                }
-
-                if (bundleData.maxDiscountAmount && bundleData.maxDiscountAmount < 0) {
-                    errors.push({
-                        field: 'maxDiscountAmount',
-                        message: 'Maximum discount amount cannot be negative'
-                    });
-                }
-                break;
+                const configSchema = bundleSchema.pick({
+                    name: true,
+                    discountType: true,
+                    discountValue: true,
+                    minOrderValue: true,
+                    maxDiscountAmount: true
+                });
+                return configSchema.safeParse(data);
 
             case 3: // Display step
-                // Display step validation (if needed)
-                break;
+                return { success: true } as const;
 
             case 4: // Review step
-                // Final validation combining all previous steps
-                const step1Validation = validateStep(1);
-                const step2Validation = validateStep(2);
-                errors.push(...step1Validation.errors, ...step2Validation.errors);
-                break;
+                return bundleSchema.safeParse(data);
+
+            default:
+                return { success: false } as const;
+        }
+    };
+
+    const getFieldError = (fieldName: string): string | undefined => {
+        if (!validationAttempted) return undefined;
+
+        const result = validateCurrentStep();
+
+        if (!result.success && 'error' in result && result.error) {
+            const fieldError = result.error.issues.find((issue) =>
+                issue.path.includes(fieldName)
+            );
+            return fieldError?.message;
         }
 
-        return {
-            isValid: errors.length === 0,
-            errors
-        };
-    };
-
-    const validateCurrentStep = (): ValidationResult => {
-        return validateStep(currentStep);
-    };
-
-    const validateAllSteps = (): ValidationResult => {
-        return validateStep(4); // This validates all steps
-    };
-
-    const getFieldError = (fieldName: string): string | null => {
-        const validation = validateCurrentStep();
-        const fieldError = validation.errors.find(error => error.field === fieldName);
-        return fieldError ? fieldError.message : null;
+        return undefined;
     };
 
     const canProceedToNextStep = (): boolean => {
-        return validateCurrentStep().isValid;
+        const result = validateCurrentStep();
+        return result.success;
+    };
+
+    const getAllErrors = () => {
+        if (!validationAttempted) return [];
+
+        const result = validateCurrentStep();
+        if (!result.success && 'error' in result && result.error) {
+            return result.error.issues;
+        }
+        return [];
     };
 
     return {
-        validateStep,
-        validateCurrentStep,
-        validateAllSteps,
         getFieldError,
         canProceedToNextStep,
+        getAllErrors,
+        validateCurrentStep,
     };
 }

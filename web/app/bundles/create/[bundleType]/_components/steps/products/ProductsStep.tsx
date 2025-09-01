@@ -2,27 +2,37 @@
 
 import React from "react";
 import {
+    Banner,
     BlockStack,
     Button,
     Card,
     InlineStack,
     Text,
 } from "@shopify/polaris";
+import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
+import { ProductList } from "@/bundles/create/[bundleType]/_components/steps/products";
+
 import { useBundleStore } from "@/stores";
-import {
-    DeleteIcon,
-    PlusIcon,
-} from "@shopify/polaris-icons";
-import ProductList from "./ProductList";
-import { useProductPicker } from "@/hooks/product/useProductPicker";
+import { useBundleValidation, useProductPicker } from "@/hooks";
 
 export default function ProductsStep() {
-    const { selectedItems, setSelectedItems } = useBundleStore();
+    const { selectedItems, setSelectedItems, validationAttempted } =
+        useBundleStore();
+    const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
 
     const handleClearAll = () => {
         setSelectedItems([]);
     };
+
+    // Get validation errors for this step
+    const errors = getAllErrors();
+    const hasProductError =
+        validationAttempted &&
+        errors.some((error) => error.path.includes("products"));
+    const productErrorMessage = errors.find((error) =>
+        error.path.includes("products"),
+    )?.message;
 
     return (
         <BlockStack gap="500">
@@ -35,6 +45,11 @@ export default function ProductsStep() {
                 </Text>
             </BlockStack>
 
+            {/* Validation Error Banner */}
+            {hasProductError && (
+                <Banner tone="critical">{productErrorMessage}</Banner>
+            )}
+
             <Card>
                 <BlockStack gap="400">
                     <InlineStack align="space-between" blockAlign="center">
@@ -43,6 +58,7 @@ export default function ProductsStep() {
                             icon={PlusIcon}
                             onClick={openProductPicker}
                             loading={isLoading}
+                            tone={hasProductError ? "critical" : undefined}
                         >
                             Add Products
                         </Button>

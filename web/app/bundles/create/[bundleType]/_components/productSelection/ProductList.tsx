@@ -9,7 +9,7 @@ import {
     Spinner,
     Text,
 } from "@shopify/polaris";
-import { ProductItem } from "@/app/bundles/create/[bundleType]/_components/productSelection";
+import { ProductItem } from "@/bundles/create/[bundleType]/_components/steps/products";
 
 import { Product } from "@/types";
 

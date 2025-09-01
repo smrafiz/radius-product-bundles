@@ -1,22 +1,13 @@
-// web/app/bundles/create/[bundleType]/_components/shared/HorizontalStepIndicator.tsx
 "use client";
 
-import React from 'react';
-import {
-    Card,
-    InlineStack,
-    BlockStack,
-    Text,
-    Box,
-    Icon
-} from '@shopify/polaris';
-import { CheckIcon } from '@shopify/polaris-icons';
-import { useStepIndicator } from '@/hooks/ui/useStepIndicator';
+import React from "react";
+import { useStepIndicator } from "@/hooks/";
+import { CheckIcon } from "@shopify/polaris-icons";
+import { BlockStack, Card, Icon, Text } from "@shopify/polaris";
 
 export default function HorizontalStepIndicator() {
     const {
         steps,
-        currentStep,
         getStepStatus,
         getStepColor,
         getProgressLineColor,
@@ -26,74 +17,81 @@ export default function HorizontalStepIndicator() {
 
     return (
         <Card>
-            <InlineStack align="space-between" gap="400">
+            <div className="flex items-center justify-between">
                 {steps.map((step, index) => (
                     <React.Fragment key={step.number}>
                         {/* Step Item */}
-                        <InlineStack
-                            gap="300"
-                            blockAlign="center"
-                            style={{
-                                cursor: canNavigateToStep(step.number) ? 'pointer' : 'default',
-                                opacity: canNavigateToStep(step.number) ? 1 : 0.6
-                            }}
-                            onClick={() => navigateToStep(step.number)}
+                        <div
+                            className={`flex gap-[12px] items-center ${
+                                canNavigateToStep(step.number)
+                                    ? "cursor-pointer opacity-100"
+                                    : "cursor-default opacity-60"
+                            }`}
+                            onClick={() =>
+                                canNavigateToStep(step.number) &&
+                                navigateToStep(step.number)
+                            }
                         >
                             {/* Step Circle */}
-                            <Box
-                                background={getStepColor(getStepStatus(step.number))}
-                                borderRadius="full"
-                                padding="300"
-                                minWidth="40px"
-                                minHeight="40px"
+                            <div
+                                className={`flex items-center justify-center rounded-full w-10 h-10 ${
+                                    getStepStatus(step.number) === "completed"
+                                        ? getStepColor("completed")
+                                        : getStepColor(
+                                              getStepStatus(step.number),
+                                          )
+                                }`}
                             >
-                                <InlineStack align="center">
-                                    {getStepStatus(step.number) === 'completed' ? (
-                                        <Icon source={CheckIcon} tone="text-inverse" />
-                                    ) : (
-                                        <Text
-                                            variant="bodyMd"
-                                            fontWeight="medium"
-                                            tone={getStepStatus(step.number) === 'current' ? 'text-inverse' : 'subdued'}
-                                            as="span"
-                                        >
-                                            {String(step.number).padStart(2, '0')}
-                                        </Text>
-                                    )}
-                                </InlineStack>
-                            </Box>
+                                {getStepStatus(step.number) === "completed" ? (
+                                    <Icon source={CheckIcon} tone="subdued" />
+                                ) : (
+                                    <span
+                                        className={`flex items-center justify-center rounded-full w-6 h-6 ${
+                                            getStepStatus(step.number) ===
+                                            "current"
+                                                ? "bg-green-400 text-black"
+                                                : "bg-gray-200 text-gray-600"
+                                        } font-medium text-sm`}
+                                    >
+                                        {String(step.number).padStart(2, "0")}
+                                    </span>
+                                )}
+                            </div>
 
                             {/* Step Content */}
                             <BlockStack gap="050">
                                 <Text
                                     as="p"
                                     variant="bodyMd"
-                                    fontWeight={getStepStatus(step.number) === 'current' ? "medium" : "regular"}
-                                    tone={getStepStatus(step.number) === 'current' ? "base" : "subdued"}
+                                    fontWeight="medium"
+                                    tone={
+                                        getStepStatus(step.number) === "current"
+                                            ? "base"
+                                            : "subdued"
+                                    }
                                 >
                                     {step.title}
                                 </Text>
-                                <Text variant="caption" tone="subdued">
+                                <Text as="p" variant="bodySm" tone="subdued">
                                     {step.description}
                                 </Text>
                             </BlockStack>
-                        </InlineStack>
+                        </div>
 
                         {/* Progress Line */}
                         {index < steps.length - 1 && (
-                            <Box
-                                background={getProgressLineColor(step.number)}
-                                minHeight="3px"
+                            <div
+                                className={`h-[3px] flex-1 max-w-[120px] min-w-[60px]`}
                                 style={{
-                                    flex: 1,
-                                    maxWidth: '120px',
-                                    minWidth: '60px'
+                                    backgroundColor: getProgressLineColor(
+                                        step.number,
+                                    ),
                                 }}
                             />
                         )}
                     </React.Fragment>
                 ))}
-            </InlineStack>
+            </div>
         </Card>
     );
 }

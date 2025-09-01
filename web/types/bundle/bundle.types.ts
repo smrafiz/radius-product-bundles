@@ -1,14 +1,16 @@
 import type {
     BundleStatus as PrismaBundleStatus,
     BundleType as PrismaBundleType,
-    DiscountType as PrismaDiscountType
+    DiscountType as PrismaDiscountType,
 } from "@prisma/client";
 import { SelectedItem } from "@/types";
 
+// ----- Prisma passthrough types -----
 export type BundleStatus = PrismaBundleStatus;
 export type BundleType = PrismaBundleType;
 export type DiscountType = PrismaDiscountType;
 
+// ----- Core bundle types -----
 export interface Bundle {
     id: string;
     name: string;
@@ -23,7 +25,6 @@ export interface Bundle {
 }
 
 export type BundleConfig = {
-    title: BundleType;
     id: BundleType;
     label: string;
     slug: string;
@@ -34,14 +35,18 @@ export type BundleConfig = {
 };
 
 export interface BundleStatusBadge {
-    status: 'success' | 'info' | 'warning' | 'critical';
+    status: "success" | "info" | "warning" | "critical";
     children: string;
 }
 
 export interface CreateBundlePayload {
     name: string;
     type: PrismaBundleType;
-    products: string[];
+    products: {
+        productId: string;
+        variantId: string;
+        quantity: number;
+    }[];
     discountType?: PrismaDiscountType;
     discountValue?: number;
     description?: string;
@@ -82,26 +87,95 @@ export interface BundleWithDetails {
     createdAt: Date;
     updatedAt: Date;
 
-    // Computed fields
+    // Computed
     conversionRate: number;
     productCount: number;
 }
 
+// ---- BundleState for Zustand ----
+export interface ProductGroup {
+    product: SelectedItem;
+    variants: SelectedItem[];
+    originalTotalVariants: number;
+}
+
+export interface DisplaySettings {
+    layout: "horizontal" | "vertical";
+    position: "above_cart" | "below_cart" | "popup";
+    title: string;
+    colorTheme: "brand" | "light" | "dark";
+    showPrices: boolean;
+    showSavings: boolean;
+    enableQuickSwap: boolean;
+}
+
+export interface BundleConfiguration {
+    discountApplication: "bundle" | "products" | "shipping";
+}
+
 export interface BundleState {
+    totalSteps: number;
     currentStep: number;
     bundleData: Partial<CreateBundlePayload>;
     selectedItems: SelectedItem[];
+    displaySettings: DisplaySettings;
+    configuration: BundleConfiguration;
+    isLoading: boolean;
+    isSaving: boolean;
+    validationAttempted: boolean;
+
+    // Step management
     setStep: (step: number) => void;
+    setValidationAttempted: (attempted: boolean) => void;
     nextStep: () => void;
     prevStep: () => void;
+    canGoNext: () => boolean;
+    canGoPrevious: () => boolean;
+
+    // Bundle data actions
     setBundleData: (data: Partial<CreateBundlePayload>) => void;
     updateBundleField: <K extends keyof CreateBundlePayload>(
         key: K,
-        value: CreateBundlePayload[K],
+        value: CreateBundlePayload[K]
     ) => void;
+
+    // Selected items actions
     setSelectedItems: (items: SelectedItem[]) => void;
     addSelectedItems: (items: SelectedItem[]) => void;
-    removeSelectedItem: (index: number) => void;
-    updateSelectedItemQuantity: (index: number, quantity: number) => void;
+    removeSelectedItem: (itemId: string) => void;
+    removeProductAndAllVariants: (productId: string) => void;
+    updateSelectedItemQuantity: (itemId: string, quantity: number) => void;
+    updateProductVariants: (
+        productId: string,
+        variants: SelectedItem[],
+        position?: number
+    ) => void;
+    reorderItems: (activeId: string, overId: string) => void;
+
+    // Computed values
+    getGroupedItems: () => ProductGroup[];
+    getTotalProducts: () => number;
+    getTotalItems: () => number;
+    getVariantInfo: (
+        productId: string
+    ) => { selectedCount: number; originalTotal: number };
+
+    // Display settings
+    updateDisplaySettings: <K extends keyof DisplaySettings>(
+        key: K,
+        value: DisplaySettings[K]
+    ) => void;
+
+    // Configuration
+    updateConfiguration: <K extends keyof BundleConfiguration>(
+        key: K,
+        value: BundleConfiguration[K]
+    ) => void;
+
+    // Loading states
+    setLoading: (loading: boolean) => void;
+    setSaving: (saving: boolean) => void;
+
+    // Reset
     resetBundle: () => void;
 }

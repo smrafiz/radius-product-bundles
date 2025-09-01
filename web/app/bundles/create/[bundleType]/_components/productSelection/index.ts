@@ -1,10 +1,10 @@
 // // Components
-// export { SearchBar } from "@/app/bundles/create/[bundleType]/_components/productSelection/SearchBar";
-// export { ProductList } from "@/app/bundles/create/[bundleType]/_components/productSelection/ProductList";
-// export { ProductItem } from "@/app/bundles/create/[bundleType]/_components/productSelection/ProductItem";
-// export { VariantItem } from "@/app/bundles/create/[bundleType]/_components/productSelection/VariantItem";
-// export { FilterPopover } from "@/app/bundles/create/[bundleType]/_components/productSelection/FilterPopover";
-// export { ProductSelectionModal } from "@/app/bundles/create/[bundleType]/_components/productSelection/ProductSelectionModal";
+// export { SearchBar } from "@/bundles/create/[bundleType]/_components/productSelection/SearchBar";
+// export { ProductList } from "@/bundles/create/[bundleType]/_components/productSelection/ProductList";
+// export { ProductItem } from "@/bundles/create/[bundleType]/_components/productSelection/ProductItem";
+// export { VariantItem } from "@/bundles/create/[bundleType]/_components/productSelection/VariantItem";
+// export { FilterPopover } from "@/bundles/create/[bundleType]/_components/productSelection/FilterPopover";
+// export { ProductSelectionModal } from "@/bundles/create/[bundleType]/_components/productSelection/ProductSelectionModal";
 //
 // // Store
 // export { useProductSelectionStore } from "@/stores";

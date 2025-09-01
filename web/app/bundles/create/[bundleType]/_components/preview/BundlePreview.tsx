@@ -1,25 +1,25 @@
-// web/app/bundles/create/[bundleType]/_components/preview/BundlePreview.tsx
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
-    Card,
-    BlockStack,
-    Text,
-    Button,
-    InlineStack,
-    Box,
     Badge,
-    Select
-} from '@shopify/polaris';
-import type { BundleType } from '@/types';
-import { useBundleStore } from '@/stores';
+    BlockStack,
+    Box,
+    Button,
+    Card,
+    InlineStack,
+    Select,
+    Text,
+} from "@shopify/polaris";
+import type { BundleType } from "@/types";
+import { useBundleStore } from "@/stores";
 import {
     calculateBundlePrice,
     calculateDiscountAmount,
+    calculateSavingsPercentage,
     formatPrice,
-    calculateSavingsPercentage
-} from '@/utils/';
+    getBundleProperty,
+} from "@/utils/";
 
 interface Props {
     bundleType: BundleType;
@@ -27,18 +27,6 @@ interface Props {
 
 export default function BundlePreview({ bundleType }: Props) {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
-
-    const getBundleTypeTitle = (type: BundleType): string => {
-        const titleMap: Record<BundleType, string> = {
-            BUY_X_GET_Y: 'Buy X Get Y',
-            BOGO: 'BOGO',
-            VOLUME_DISCOUNT: 'Volume Discount',
-            MIX_MATCH: 'Mix & Match',
-            CROSS_SELL: 'Frequently Bought Together',
-            FIXED_BUNDLE: 'Fixed Bundle',
-        };
-        return titleMap[type] || type;
-    };
 
     const renderSelectedProducts = () => {
         if (selectedItems.length === 0) {
@@ -52,12 +40,17 @@ export default function BundlePreview({ bundleType }: Props) {
                         minWidth="80px"
                         minHeight="80px"
                         style={{
-                            backgroundImage: 'url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
+                            backgroundImage:
+                                "url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
                         }}
                     />
-                    {i < 2 && <Text variant="headingMd" as="span">+</Text>}
+                    {i < 2 && (
+                        <Text variant="headingMd" as="span">
+                            +
+                        </Text>
+                    )}
                 </React.Fragment>
             ));
         }
@@ -72,36 +65,47 @@ export default function BundlePreview({ bundleType }: Props) {
                         borderRadius="100"
                         minWidth="80px"
                         minHeight="80px"
+                    />
+                    <div
                         style={{
                             backgroundImage: item.image
                                 ? `url(${item.image})`
-                                : 'url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
+                                : "url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
                         }}
-                    />
+                    ></div>
                     <Text variant="caption" alignment="center" truncate>
-                        {item.title.length > 15 ? `${item.title.substring(0, 15)}...` : item.title}
+                        {item.title.length > 15
+                            ? `${item.title.substring(0, 15)}...`
+                            : item.title}
                     </Text>
                     <Text variant="caption" tone="subdued" alignment="center">
-                        Qty: {item.quantity} × {formatPrice(parseFloat(item.price))}
+                        Qty: {item.quantity} ×{" "}
+                        {formatPrice(parseFloat(item.price))}
                     </Text>
                 </BlockStack>
                 {index < Math.min(selectedItems.length, 4) - 1 && (
-                    <Text variant="headingMd" as="span">+</Text>
+                    <Text variant="headingMd" as="span">
+                        +
+                    </Text>
                 )}
             </React.Fragment>
         ));
     };
 
     const calculatePreviewPricing = () => {
-        if (selectedItems.length === 0 || !bundleData.discountType || !bundleData.discountValue) {
+        if (
+            selectedItems.length === 0 ||
+            !bundleData.discountType ||
+            !bundleData.discountValue
+        ) {
             // Show placeholder values when no products selected or discount configured
             return {
                 originalPrice: 300,
                 discountAmount: 30,
                 finalPrice: 270,
-                savingsPercentage: 10
+                savingsPercentage: 10,
             };
         }
 
@@ -110,20 +114,24 @@ export default function BundlePreview({ bundleType }: Props) {
             originalPrice,
             bundleData.discountType,
             bundleData.discountValue,
-            bundleData.maxDiscountAmount
+            bundleData.maxDiscountAmount,
         );
         const finalPrice = Math.max(0, originalPrice - discountAmount);
-        const savingsPercentage = calculateSavingsPercentage(originalPrice, finalPrice);
+        const savingsPercentage = calculateSavingsPercentage(
+            originalPrice,
+            finalPrice,
+        );
 
         return {
             originalPrice,
             discountAmount,
             finalPrice,
-            savingsPercentage
+            savingsPercentage,
         };
     };
 
-    const { originalPrice, discountAmount, finalPrice, savingsPercentage } = calculatePreviewPricing();
+    const { originalPrice, discountAmount, finalPrice, savingsPercentage } =
+        calculatePreviewPricing();
 
     return (
         <BlockStack gap="400">
@@ -135,7 +143,9 @@ export default function BundlePreview({ bundleType }: Props) {
                     <Text as="p" variant="bodySm" tone="subdued">
                         The widget will match your store's look
                     </Text>
-                    <Badge tone="info">{getBundleTypeTitle(bundleType)}</Badge>
+                    <Badge tone="info">
+                        {getBundleProperty(bundleType, "label")}
+                    </Badge>
                 </InlineStack>
             </BlockStack>
 
@@ -148,7 +158,9 @@ export default function BundlePreview({ bundleType }: Props) {
                     >
                         <BlockStack gap="400">
                             <Text variant="headingMd" as="h3">
-                                {displaySettings.title || bundleData.name || 'Frequently Bought Together'}
+                                {displaySettings.title ||
+                                    bundleData.name ||
+                                    "Frequently Bought Together"}
                             </Text>
 
                             {/* Product Images */}
@@ -158,44 +170,68 @@ export default function BundlePreview({ bundleType }: Props) {
 
                             {/* Product quantity summary for multiple products */}
                             {selectedItems.length > 4 && (
-                                <Text variant="caption" tone="subdued" alignment="center">
+                                <Text
+                                    variant="caption"
+                                    tone="subdued"
+                                    alignment="center"
+                                >
                                     + {selectedItems.length - 4} more products
                                 </Text>
                             )}
 
                             {/* Product Selection Dropdowns */}
-                            {selectedItems.length > 0 && selectedItems.some(item => item.totalVariants && item.totalVariants > 1) && displaySettings.enableQuickSwap && (
-                                <InlineStack gap="200">
-                                    {selectedItems
-                                        .filter(item => item.totalVariants && item.totalVariants > 1)
-                                        .slice(0, 2)
-                                        .map((item, index) => (
-                                            <Select
-                                                key={index}
-                                                label=""
-                                                options={[{
-                                                    label: `${item.title.split(' - ')[0]} - Pick variant`,
-                                                    value: 'pick'
-                                                }]}
-                                                value="pick"
-                                                onChange={() => {}}
-                                            />
-                                        ))
-                                    }
-                                </InlineStack>
-                            )}
+                            {selectedItems.length > 0 &&
+                                selectedItems.some(
+                                    (item) =>
+                                        item.totalVariants &&
+                                        item.totalVariants > 1,
+                                ) &&
+                                displaySettings.enableQuickSwap && (
+                                    <InlineStack gap="200">
+                                        {selectedItems
+                                            .filter(
+                                                (item) =>
+                                                    item.totalVariants &&
+                                                    item.totalVariants > 1,
+                                            )
+                                            .slice(0, 2)
+                                            .map((item, index) => (
+                                                <Select
+                                                    key={index}
+                                                    label=""
+                                                    options={[
+                                                        {
+                                                            label: `${item.title.split(" - ")[0]} - Pick variant`,
+                                                            value: "pick",
+                                                        },
+                                                    ]}
+                                                    value="pick"
+                                                    onChange={() => {}}
+                                                />
+                                            ))}
+                                    </InlineStack>
+                                )}
 
                             {/* Pricing */}
                             <BlockStack gap="100">
                                 {displaySettings.showPrices && (
                                     <InlineStack align="space-between">
-                                        <Text variant="bodyMd">Total Price:</Text>
+                                        <Text variant="bodyMd">
+                                            Total Price:
+                                        </Text>
                                         <InlineStack gap="200">
-                                            <Text variant="bodyMd" fontWeight="medium">
+                                            <Text
+                                                variant="bodyMd"
+                                                fontWeight="medium"
+                                            >
                                                 {formatPrice(finalPrice)}
                                             </Text>
                                             {discountAmount > 0 && (
-                                                <Text variant="bodyMd" tone="subdued" textDecorationLine="line-through">
+                                                <Text
+                                                    variant="bodyMd"
+                                                    tone="subdued"
+                                                    textDecorationLine="line-through"
+                                                >
                                                     {formatPrice(originalPrice)}
                                                 </Text>
                                             )}
@@ -203,16 +239,25 @@ export default function BundlePreview({ bundleType }: Props) {
                                     </InlineStack>
                                 )}
 
-                                {displaySettings.showSavings && discountAmount > 0 && (
-                                    <InlineStack align="space-between">
-                                        <Text variant="bodyMd" tone="success">
-                                            You save:
-                                        </Text>
-                                        <Text variant="bodyMd" fontWeight="medium" tone="success">
-                                            {formatPrice(discountAmount)} ({savingsPercentage}%)
-                                        </Text>
-                                    </InlineStack>
-                                )}
+                                {displaySettings.showSavings &&
+                                    discountAmount > 0 && (
+                                        <InlineStack align="space-between">
+                                            <Text
+                                                variant="bodyMd"
+                                                tone="success"
+                                            >
+                                                You save:
+                                            </Text>
+                                            <Text
+                                                variant="bodyMd"
+                                                fontWeight="medium"
+                                                tone="success"
+                                            >
+                                                {formatPrice(discountAmount)} (
+                                                {savingsPercentage}%)
+                                            </Text>
+                                        </InlineStack>
+                                    )}
                             </BlockStack>
 
                             <Button fullWidth variant="primary">
@@ -245,7 +290,8 @@ export default function BundlePreview({ bundleType }: Props) {
                             • {displaySettings.layout} layout
                         </Text>
                         <Text variant="caption" tone="subdued">
-                            • Position: {displaySettings.position.replace('_', ' ')}
+                            • Position:{" "}
+                            {displaySettings.position.replace("_", " ")}
                         </Text>
                     </BlockStack>
                 </BlockStack>

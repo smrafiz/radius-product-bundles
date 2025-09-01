@@ -10,7 +10,7 @@ import {
     Thumbnail,
 } from "@shopify/polaris";
 import { Product, ProductVariant } from "@/types";
-import { useProductSelectionStore } from "@/app/bundles/create/[bundleType]/_components/productSelection";
+import { useProductSelectionStore } from "@/bundles/create/[bundleType]/_components/productSelection";
 
 interface Props {
     product: Product;

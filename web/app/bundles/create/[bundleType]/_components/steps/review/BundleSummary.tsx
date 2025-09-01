@@ -1,4 +1,3 @@
-// web/app/bundles/create/[bundleType]/_components/steps/BundleSummary.tsx
 "use client";
 
 import React from "react";

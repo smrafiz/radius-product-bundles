@@ -1,11 +1,12 @@
 "use client";
 
 import React from 'react';
+import { ReviewStep } from "@/bundles/create/[bundleType]/_components/steps/review";
+import { DisplayStep } from "@/bundles/create/[bundleType]/_components/steps/display";
+import { ProductsStep } from "@/bundles/create/[bundleType]/_components/steps/products";
+import { ConfigurationStep } from "@/bundles/create/[bundleType]/_components/steps/configuration";
+
 import { useBundleStore } from "@/stores";
-import ProductsStep from '../steps/products';
-import ConfigurationStep from "@/app/bundles/create/[bundleType]/_components/steps/configuration/ConfigurationStep";
-import DisplayStep from "@/app/bundles/create/[bundleType]/_components/steps/display/DisplayStep";
-import ReviewStep from "@/app/bundles/create/[bundleType]/_components/steps/review/ReviewStep";
 
 export default function StepContent() {
     const { currentStep } = useBundleStore();

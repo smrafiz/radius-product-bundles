@@ -20,8 +20,10 @@
             }
         ],
         "paths": {
-            "@/*": ["./*"]
-        }
+            "@/*": ["./*"],
+			"@/bundles/*": ["./app/bundles/*"],
+			"@/dashboard/*": ["./app/dashboard/*"]
+		}
     },
     "include": [
         "../next-env.d.ts",

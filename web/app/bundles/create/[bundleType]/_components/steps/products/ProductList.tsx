@@ -12,7 +12,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useBundleStore } from "@/stores";
 import { useDragAndDrop } from "@/hooks/ui";
-import { ProductItem } from "@/app/bundles/create/[bundleType]/_components/steps/products/index";
+import { ProductItem } from "@/bundles/create/[bundleType]/_components/steps/products";
 
 export default function ProductList() {
     const { getGroupedItems } = useBundleStore();

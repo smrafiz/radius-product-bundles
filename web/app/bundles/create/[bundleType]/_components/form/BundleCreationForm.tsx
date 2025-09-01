@@ -1,16 +1,17 @@
 "use client";
 
 import React from "react";
-import type { BundleType } from "@/types";
-import { useBundleStore } from "@/stores";
+import { getBundleProperty } from "@/utils";
 import { Card, Layout, Page } from "@shopify/polaris";
-import { HorizontalStepIndicator } from "@/app/bundles/create/[bundleType]/_components/shared";
 import {
     StepContent,
     StepNavigation,
-} from "@/app/bundles/create/[bundleType]/_components/form/index";
-import BundlePreview from "@/app/bundles/create/[bundleType]/_components/preview";
-import { bundleTypeConfigs } from "@/config";
+} from "@/bundles/create/[bundleType]/_components/form";
+import { BundlePreview } from "@/bundles/create/[bundleType]/_components/preview";
+import { HorizontalStepIndicator } from "@/bundles/create/[bundleType]/_components/shared";
+
+import type { BundleType } from "@/types";
+import { useBundleStore } from "@/stores";
 
 interface Props {
     bundleType: BundleType;
@@ -25,13 +26,9 @@ export default function BundleCreationForm({ bundleType }: Props) {
         }
     }, [bundleType, bundleData, setBundleData]);
 
-    const getBundleTypeTitle = (type: BundleType): string => {
-        return bundleTypeConfigs[type]?.title ?? type;
-    };
-
     return (
         <Page
-            title={`Create ${getBundleTypeTitle(bundleType)}`}
+            title={`Create ${getBundleProperty(bundleType, "label")}`}
             subtitle="Configure your bundle settings and preview the customer experience"
         >
             <Layout>

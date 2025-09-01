@@ -16,7 +16,7 @@ import { FilterIcon, SearchIcon } from "@shopify/polaris-icons";
 import {
     FilterPopover,
     useProductSelectionStore,
-} from "@/app/bundles/create/[bundleType]/_components/productSelection";
+} from "@/bundles/create/[bundleType]/_components/productSelection";
 
 import type { GetCollectionsForFiltersQuery } from "@/types/admin.generated";
 

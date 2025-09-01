@@ -10,9 +10,9 @@ import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { useDashboardStore } from "@/stores";
 import { MetricCard } from "@/app/dashboard/_components/MetricCard";
-import { BundleTable } from "@/app/bundles/_components/BundleTable";
-import { BundleSkeleton } from "@/app/bundles/_components/BundleSkeleton";
-import { BundleErrorCard } from "@/app/bundles/_components/BundleErrorCard";
+import { BundleTable } from "@/bundles/_components/BundleTable";
+import { BundleSkeleton } from "@/bundles/_components/BundleSkeleton";
+import { BundleErrorCard } from "@/bundles/_components/BundleErrorCard";
 
 export default function Bundles() {
     const router = useRouter();
