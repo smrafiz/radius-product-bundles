@@ -418,8 +418,10 @@ enum BundleStatus {
 
 enum DiscountType {
     PERCENTAGE
-    FIXED
+    FIXED_AMOUNT
     CUSTOM_PRICE
+    FREE_SHIPPING
+    NO_DISCOUNT
 }
 
 enum TestType {
