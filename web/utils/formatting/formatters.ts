@@ -1,4 +1,15 @@
 import { useShopSettingsStore } from "@/stores";
+import { CURRENCY_SYMBOLS, CURRENCY_LOCALES } from "@/lib/constants";
+
+/**
+ * Get currency symbol for a given currency code
+ * @param currencyCode - The currency code (e.g., 'USD', 'EUR')
+ * @returns The currency symbol (e.g., '$', '€')
+ */
+export const getCurrencySymbol = (currencyCode?: string): string => {
+    const finalCurrencyCode = currencyCode || useShopSettingsStore.getState().currencyCode || 'USD';
+    return CURRENCY_SYMBOLS[finalCurrencyCode] || '$';
+};
 
 export const formatCurrency = (
     amount?: number | string | null,
@@ -7,40 +18,10 @@ export const formatCurrency = (
 ): string => {
     if (amount == null) return "";
 
-    const currencySymbols: Record<string, string> = {
-        BDT: "৳",
-        USD: "$",
-        EUR: "€",
-        GBP: "£",
-        JPY: "¥",
-        CAD: "$",
-        AUD: "$",
-        INR: "₹",
-        NZD: "$",
-        CHF: "CHF",
-        SEK: "kr",
-        NOK: "kr",
-        DKK: "kr",
-        ZAR: "R",
-        SGD: "$",
-        HKD: "$",
-        CNY: "¥",
-        KRW: "₩",
-        TRY: "₺",
-        RUB: "₽",
-        BRL: "R$",
-        MXN: "$",
-        PLN: "zł",
-        THB: "฿",
-        TWD: "NT$",
-        AED: "د.إ",
-        SAR: "﷼",
-    };
-
     const finalCurrencyCode =
-        currencyCode || useShopSettingsStore.getState().getCurrencyCode();
+        currencyCode || useShopSettingsStore.getState().currencyCode || 'USD';
     const finalLocale =
-        locale || convertShopifyLocale(useShopSettingsStore.getState().getLocale());
+        locale || convertShopifyLocale(useShopSettingsStore.getState().locale || 'en-US');
 
     try {
         const formatted = Intl.NumberFormat(finalLocale, {
@@ -49,7 +30,7 @@ export const formatCurrency = (
             currencyDisplay: "symbol",
         }).format(Number(amount));
 
-        const symbol = currencySymbols[finalCurrencyCode];
+        const symbol = getCurrencySymbol(finalCurrencyCode);
 
         if (symbol && !formatted.includes(symbol)) {
             return `${symbol}${Number(amount).toLocaleString(finalLocale)}`;
@@ -88,67 +69,12 @@ export const formatBundleType = (type: string) => {
 };
 
 export const convertShopifyLocale = (shopifyLocaleOrCountry: string): string => {
-    const languageMap: Record<string, string> = {
-        'en': 'en-US',
-        'fr': 'fr-FR',
-        'de': 'de-DE',
-        'es': 'es-ES',
-        'it': 'it-IT',
-        'ja': 'ja-JP',
-        'zh': 'zh-CN',
-        'pt': 'pt-BR',
-        'nl': 'nl-NL',
-        'sv': 'sv-SE',
-        'da': 'da-DK',
-        'no': 'no-NO',
-        'fi': 'fi-FI',
-        'pl': 'pl-PL',
-        'cs': 'cs-CZ',
-        'hu': 'hu-HU',
-        'ro': 'ro-RO',
-        'ru': 'ru-RU',
-        'tr': 'tr-TR',
-        'ar': 'ar-SA',
-        'he': 'he-IL',
-        'th': 'th-TH',
-        'ko': 'ko-KR',
-        'hi': 'hi-IN',
-    };
-
-    const countryMap: Record<string, string> = {
-        US: 'en-US',
-        CA: 'en-CA',
-        FR: 'fr-FR',
-        DE: 'de-DE',
-        GB: 'en-GB',
-        AU: 'en-AU',
-        JP: 'ja-JP',
-        CN: 'zh-CN',
-        BR: 'pt-BR',
-        NL: 'nl-NL',
-        SE: 'sv-SE',
-        DK: 'da-DK',
-        NO: 'no-NO',
-        FI: 'fi-FI',
-        PL: 'pl-PL',
-        CZ: 'cs-CZ',
-        HU: 'hu-HU',
-        RO: 'ro-RO',
-        RU: 'ru-RU',
-        TR: 'tr-TR',
-        SA: 'ar-SA',
-        IL: 'he-IL',
-        TH: 'th-TH',
-        KR: 'ko-KR',
-        IN: 'hi-IN',
-    };
-
-    if (shopifyLocaleOrCountry.length === 2 && languageMap[shopifyLocaleOrCountry]) {
-        return languageMap[shopifyLocaleOrCountry];
+    if (shopifyLocaleOrCountry.length === 2 && CURRENCY_SYMBOLS[shopifyLocaleOrCountry]) {
+        return CURRENCY_SYMBOLS[shopifyLocaleOrCountry];
     }
 
-    if (countryMap[shopifyLocaleOrCountry]) {
-        return countryMap[shopifyLocaleOrCountry];
+    if (CURRENCY_LOCALES[shopifyLocaleOrCountry]) {
+        return CURRENCY_LOCALES[shopifyLocaleOrCountry];
     }
 
     return 'en-US';

@@ -12,8 +12,8 @@ import { BundleFormData } from "@/lib/validation";
 const initialBundleData: Partial<BundleFormData> = {
     name: "",
     products: [],
-    discountType: "PERCENTAGE",
-    discountValue: 0,
+    discountType: undefined,
+    discountValue: undefined,
     description: "",
     minOrderValue: undefined,
     maxDiscountAmount: undefined,
@@ -79,25 +79,26 @@ export const useBundleStore = create(
                 }
             }),
 
+        goToNextStep: () =>
+            set((state) => {
+                if (state.currentStep < state.totalSteps) {
+                    state.currentStep += 1;
+                    state.validationAttempted = false;
+                }
+            }),
+
         canGoNext: () => {
             const state = get();
-            const { currentStep, selectedItems, bundleData } = state;
+            const { currentStep, selectedItems } = state;
 
             switch (currentStep) {
                 case 1: // Products step
                     return selectedItems.length > 0;
                 case 2: // Configuration step
-                    return !!(
-                        bundleData.name &&
-                        bundleData.discountType &&
-                        bundleData.discountValue
-                    );
                 case 3: // Display step
-                    return true; // Always can proceed from display
                 case 4: // Review step
-                    return false; // Can't go next from review
                 default:
-                    return false;
+                    return true;
             }
         },
 
@@ -114,7 +115,21 @@ export const useBundleStore = create(
 
         updateBundleField: (key, value) =>
             set((state) => {
-                state.bundleData[key] = value;
+                if ((key === 'discountValue' || key === 'minOrderValue' || key === 'maxDiscountAmount') && value !== undefined) {
+                    if (typeof value === 'string') {
+                        const trimmed = value.trim();
+                        if (trimmed === '') {
+                            state.bundleData[key] = undefined;
+                        } else {
+                            const numValue = parseFloat(trimmed);
+                            state.bundleData[key] = isNaN(numValue) ? undefined : numValue;
+                        }
+                    } else {
+                        state.bundleData[key] = value;
+                    }
+                } else {
+                    state.bundleData[key] = value;
+                }
             }),
 
         // Selected items actions

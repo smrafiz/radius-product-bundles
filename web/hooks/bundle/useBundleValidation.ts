@@ -1,55 +1,77 @@
-import { useBundleStore } from '@/stores';
-import { bundleSchema } from '@/lib/validation';
+import { useMemo } from "react";
+import { useBundleStore } from "@/stores";
+import { bundleSchema } from "@/lib/validation";
 
 export function useBundleValidation() {
-    const { bundleData, selectedItems, validationAttempted, currentStep } = useBundleStore();
+    const { bundleData, selectedItems, validationAttempted, currentStep } =
+        useBundleStore();
 
-    const getValidationData = () => ({
-        ...bundleData,
-        products: selectedItems,
-        discountValue: bundleData.discountValue || 0,
-        minOrderValue: bundleData.minOrderValue,
-        maxDiscountAmount: bundleData.maxDiscountAmount,
-    });
+    // Memoize validation data to prevent excessive recalculations
+    const validationData = useMemo(() => {
+        return {
+            ...bundleData,
+            products: selectedItems,
+            discountValue: bundleData.discountValue,
+            minOrderValue: bundleData.minOrderValue,
+            maxDiscountAmount: bundleData.maxDiscountAmount,
+        };
+    }, [bundleData, selectedItems]);
 
-    const validateCurrentStep = () => {
-        const data = getValidationData();
+    // Memoize validation result to prevent excessive validation calls
+    const validationResult = useMemo(() => {
+        let result;
 
         switch (currentStep) {
-            case 1: // Products step
+            case 1: // Product step
                 const productsSchema = bundleSchema.pick({ products: true });
-                return productsSchema.safeParse(data);
+                result = productsSchema.safeParse(validationData);
+                break;
 
             case 2: // Configuration step
-                const configSchema = bundleSchema.pick({
-                    name: true,
-                    discountType: true,
-                    discountValue: true,
-                    minOrderValue: true,
-                    maxDiscountAmount: true
-                });
-                return configSchema.safeParse(data);
+                const configData = {
+                    ...validationData,
+                    products: validationData.products?.length
+                        ? validationData.products
+                        : [{ id: "temp" }],
+                    startDate: undefined,
+                    endDate: undefined,
+                };
+                result = bundleSchema.safeParse(configData);
+                break;
 
             case 3: // Display step
-                return { success: true } as const;
+                result = { success: true } as const;
+                break;
 
             case 4: // Review step
-                return bundleSchema.safeParse(data);
+                result = bundleSchema.safeParse(validationData);
+                break;
 
             default:
-                return { success: false } as const;
+                result = { success: false, error: { issues: [] } } as const;
         }
+
+        return result;
+    }, [validationData, currentStep, validationAttempted]);
+
+    const validateCurrentStep = () => {
+        return validationResult;
     };
 
     const getFieldError = (fieldName: string): string | undefined => {
-        if (!validationAttempted) return undefined;
+        if (!validationAttempted) {
+            return undefined;
+        }
 
-        const result = validateCurrentStep();
-
-        if (!result.success && 'error' in result && result.error) {
-            const fieldError = result.error.issues.find((issue) =>
-                issue.path.includes(fieldName)
+        if (
+            !validationResult.success &&
+            "error" in validationResult &&
+            validationResult.error
+        ) {
+            const fieldError = validationResult.error.issues.find((issue) =>
+                issue.path.includes(fieldName),
             );
+
             return fieldError?.message;
         }
 
@@ -57,17 +79,22 @@ export function useBundleValidation() {
     };
 
     const canProceedToNextStep = (): boolean => {
-        const result = validateCurrentStep();
-        return result.success;
+        return validationResult.success;
     };
 
     const getAllErrors = () => {
-        if (!validationAttempted) return [];
-
-        const result = validateCurrentStep();
-        if (!result.success && 'error' in result && result.error) {
-            return result.error.issues;
+        if (!validationAttempted) {
+            return [];
         }
+
+        if (
+            !validationResult.success &&
+            "error" in validationResult &&
+            validationResult.error
+        ) {
+            return validationResult.error.issues;
+        }
+
         return [];
     };
 
@@ -76,5 +103,6 @@ export function useBundleValidation() {
         canProceedToNextStep,
         getAllErrors,
         validateCurrentStep,
+        validationData,
     };
 }
