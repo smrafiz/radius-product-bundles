@@ -1,28 +1,21 @@
-// web/app/bundles/create/[bundleType]/_components/steps/WidgetAppearance.tsx
-"use client";
-
-import React from 'react';
+import React from "react";
 import {
     BlockStack,
     Card,
     Text,
     TextField,
     InlineStack,
-    Box
-} from '@shopify/polaris';
+    Box,
+} from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
+import { COLOR_THEMES } from "@/lib/constants";
+
+type ColorTheme = typeof COLOR_THEMES[number]['value'];
 
 export default function WidgetAppearance() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
-    const colorThemes = [
-        { value: 'brand', background: 'bg-fill-brand' },
-        { value: 'success', background: 'bg-fill-success' },
-        { value: 'warning', background: 'bg-fill-warning' },
-        { value: 'critical', background: 'bg-fill-critical' },
-    ] as const;
-
-    const handleColorThemeSelect = (theme: typeof colorThemes[0]['value']) => {
+    const handleColorThemeSelect = (theme: ColorTheme) => {
         updateDisplaySettings('colorTheme', theme);
     };
 
@@ -37,7 +30,7 @@ export default function WidgetAppearance() {
                     autoComplete="off"
                     label="Widget Title"
                     value={displaySettings.title}
-                    onChange={(value) => updateDisplaySettings('title', value)}
+                    onChange={(value) => updateDisplaySettings("title", value)}
                     helpText="Title displayed above the bundle"
                 />
 
@@ -46,21 +39,26 @@ export default function WidgetAppearance() {
                         Color Theme
                     </Text>
                     <InlineStack gap="300">
-                        {colorThemes.map((theme) => (
-                            <Box
+                        {COLOR_THEMES.map((theme) => (
+                            <div
                                 key={theme.value}
-                                background={theme.background}
-                                borderRadius="100"
-                                minWidth="40px"
-                                minHeight="40px"
                                 onClick={() => handleColorThemeSelect(theme.value)}
                                 style={{
                                     cursor: 'pointer',
                                     border: displaySettings.colorTheme === theme.value
                                         ? '3px solid var(--p-color-border-emphasis)'
-                                        : '1px solid transparent'
+                                        : '1px solid transparent',
+                                    borderRadius: '8px',
+                                    padding: '2px'
                                 }}
-                            />
+                            >
+                                <Box
+                                    background={theme.background}
+                                    borderRadius="100"
+                                    minWidth="40px"
+                                    minHeight="40px"
+                                />
+                            </div>
                         ))}
                     </InlineStack>
                 </BlockStack>

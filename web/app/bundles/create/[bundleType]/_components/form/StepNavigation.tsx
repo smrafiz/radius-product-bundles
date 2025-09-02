@@ -3,7 +3,7 @@
 import React from "react";
 import NProgress from "nprogress";
 import { useRouter } from "next/navigation";
-import { BUNDLE_STEPS } from "@/lib/constants/bundleConstants";
+import { BUNDLE_STEPS } from "@/lib/constants";
 import { Box, Button, InlineStack, Text } from "@shopify/polaris";
 import { ArrowLeftIcon, ArrowRightIcon } from "@shopify/polaris-icons";
 

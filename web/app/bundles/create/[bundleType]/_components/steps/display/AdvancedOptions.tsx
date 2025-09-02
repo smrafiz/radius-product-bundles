@@ -1,14 +1,10 @@
-// web/app/bundles/create/[bundleType]/_components/steps/AdvancedOptions.tsx
 "use client";
 
-import React from 'react';
-import {
-    BlockStack,
-    Card,
-    Text,
-    RadioButton
-} from '@shopify/polaris';
+import React from "react";
 import { useBundleStore } from "@/stores";
+import { Knob } from "@/components/fields/Knob";
+import { ADVANCED_OPTIONS } from "@/lib/constants";
+import { BlockStack, Card, Divider, InlineStack, Text } from "@shopify/polaris";
 
 export default function AdvancedOptions() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
@@ -20,28 +16,57 @@ export default function AdvancedOptions() {
                     Advanced Options
                 </Text>
 
-                <BlockStack gap="200">
-                    <RadioButton
-                        label="Show individual product prices"
-                        checked={displaySettings.showPrices}
-                        id="show-prices"
-                        name="pricing"
-                        onChange={(checked) => updateDisplaySettings('showPrices', checked)}
-                    />
-                    <RadioButton
-                        label="Show bundle savings amount"
-                        checked={displaySettings.showSavings}
-                        id="show-savings"
-                        name="savings"
-                        onChange={(checked) => updateDisplaySettings('showSavings', checked)}
-                    />
-                    <RadioButton
-                        label="Enable quick product swap"
-                        checked={displaySettings.enableQuickSwap}
-                        id="quick-swap"
-                        name="swap"
-                        onChange={(checked) => updateDisplaySettings('enableQuickSwap', checked)}
-                    />
+                <BlockStack gap="300">
+                    {ADVANCED_OPTIONS.map(
+                        ({ key, title, description }, index) => {
+                            const selected = displaySettings[key];
+                            return (
+                                <React.Fragment key={key}>
+                                    <InlineStack
+                                        align="space-between"
+                                        blockAlign="center"
+                                        wrap={false}
+                                        gap="200"
+                                    >
+                                        <BlockStack gap="050">
+                                            <InlineStack
+                                                align="start"
+                                                gap="100"
+                                            >
+                                                <Text
+                                                    as="p"
+                                                    variant="bodyMd"
+                                                    fontWeight="medium"
+                                                >
+                                                    {title}
+                                                </Text>
+                                            </InlineStack>
+                                            <Text
+                                                as="p"
+                                                variant="bodySm"
+                                                tone="subdued"
+                                            >
+                                                {description}
+                                            </Text>
+                                        </BlockStack>
+
+                                        <Knob
+                                            selected={selected}
+                                            ariaLabel={title}
+                                            onClick={() =>
+                                                updateDisplaySettings(
+                                                    key,
+                                                    !selected,
+                                                )
+                                            }
+                                        />
+                                    </InlineStack>
+
+                                    {index < ADVANCED_OPTIONS.length - 1 && <Divider />}
+                                </React.Fragment>
+                            );
+                        },
+                    )}
                 </BlockStack>
             </BlockStack>
         </Card>

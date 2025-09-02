@@ -4,6 +4,7 @@ import type {
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
 import { SelectedItem } from "@/types";
+import { BundleFormData } from "@/lib/validation";
 
 // ----- Prisma passthrough types -----
 export type BundleStatus = PrismaBundleStatus;
@@ -100,10 +101,10 @@ export interface ProductGroup {
 }
 
 export interface DisplaySettings {
-    layout: "horizontal" | "vertical";
-    position: "above_cart" | "below_cart" | "popup";
+    layout: "horizontal" | "vertical" | "grid";
+    position: "above_cart" | "below_cart" | "description" | "custom";
     title: string;
-    colorTheme: "brand" | "light" | "dark";
+    colorTheme: "brand" | "success" | "warning" | "critical";
     showPrices: boolean;
     showSavings: boolean;
     enableQuickSwap: boolean;
@@ -116,7 +117,7 @@ export interface BundleConfiguration {
 export interface BundleState {
     totalSteps: number;
     currentStep: number;
-    bundleData: Partial<CreateBundlePayload>;
+    bundleData: Partial<BundleFormData>;
     selectedItems: SelectedItem[];
     displaySettings: DisplaySettings;
     configuration: BundleConfiguration;
@@ -129,6 +130,7 @@ export interface BundleState {
     setValidationAttempted: (attempted: boolean) => void;
     nextStep: () => void;
     prevStep: () => void;
+    goToNextStep: () => void;
     canGoNext: () => boolean;
     canGoPrevious: () => boolean;
 

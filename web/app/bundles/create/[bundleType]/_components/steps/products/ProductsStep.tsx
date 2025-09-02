@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
     Banner,
@@ -10,6 +8,7 @@ import {
     Text,
 } from "@shopify/polaris";
 import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
+import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
 import { ProductList } from "@/bundles/create/[bundleType]/_components/steps/products";
 
 import { useBundleStore } from "@/stores";
@@ -36,14 +35,10 @@ export default function ProductsStep() {
 
     return (
         <BlockStack gap="500">
-            <BlockStack gap="200">
-                <Text variant="headingLg" as="h2">
-                    Products
-                </Text>
-                <Text as="p" variant="bodySm" tone="subdued">
-                    Select products and variants to include in your bundle
-                </Text>
-            </BlockStack>
+            <StepHeading
+                title="Products"
+                description="Select products and variants to include in your bundle"
+            />
 
             {/* Validation Error Banner */}
             {hasProductError && (

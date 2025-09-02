@@ -4,15 +4,17 @@ import { immer } from "zustand/middleware/immer";
 import type {
     BundleConfiguration,
     BundleState,
-    CreateBundlePayload,
+    DiscountType,
     DisplaySettings,
+    ProductGroup,
+    SelectedItem,
 } from "@/types";
 import { BundleFormData } from "@/lib/validation";
 
 const initialBundleData: Partial<BundleFormData> = {
     name: "",
     products: [],
-    discountType: undefined,
+    discountType: undefined as DiscountType | undefined,
     discountValue: undefined,
     description: "",
     minOrderValue: undefined,
@@ -110,25 +112,43 @@ export const useBundleStore = create(
         // Bundle data actions
         setBundleData: (data) =>
             set((state) => {
-                state.bundleData = { ...state.bundleData, ...data };
+                state.bundleData = { ...state.bundleData, ...data } as Partial<BundleFormData>;
             }),
 
         updateBundleField: (key, value) =>
             set((state) => {
-                if ((key === 'discountValue' || key === 'minOrderValue' || key === 'maxDiscountAmount') && value !== undefined) {
-                    if (typeof value === 'string') {
+                if (key === "discountType") {
+                    (state.bundleData as any)[key] = value;
+
+                    if (value === "CUSTOM_PRICE") {
+                        state.bundleData.maxDiscountAmount = undefined;
+                    }
+
+                    return;
+                }
+
+                if (
+                    (key === "discountValue" ||
+                        key === "minOrderValue" ||
+                        key === "maxDiscountAmount") &&
+                    value !== undefined
+                ) {
+                    if (typeof value === "string") {
                         const trimmed = value.trim();
-                        if (trimmed === '') {
-                            state.bundleData[key] = undefined;
+
+                        if (trimmed === "") {
+                            (state.bundleData as any)[key] = undefined;
                         } else {
                             const numValue = parseFloat(trimmed);
-                            state.bundleData[key] = isNaN(numValue) ? undefined : numValue;
+                            (state.bundleData as any)[key] = isNaN(numValue)
+                                ? undefined
+                                : numValue;
                         }
                     } else {
-                        state.bundleData[key] = value;
+                        (state.bundleData as any)[key] = value;
                     }
                 } else {
-                    state.bundleData[key] = value;
+                    (state.bundleData as any)[key] = value;
                 }
             }),
 

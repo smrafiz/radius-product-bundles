@@ -1,38 +1,22 @@
-// web/app/bundles/create/[bundleType]/_components/steps/ReviewStep.tsx
-"use client";
-
 import React from "react";
-import { BlockStack, Card, Text } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
-import BundleSummary from "./BundleSummary";
+import { BlockStack, Card, Text } from "@shopify/polaris";
+import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
+import { BundleSummary } from "@/bundles/create/[bundleType]/_components/steps/review";
+import SelectedProductsAccordion from "@/components/shared/SelectedProductsAccordion";
 
 export default function ReviewStep() {
     const { bundleData } = useBundleStore();
 
     return (
-        <BlockStack gap="400">
-            <Text variant="headingMd" as="h2">
-                Review & Publish
-            </Text>
+        <BlockStack gap="500">
+            <StepHeading
+                title="Review & Publish"
+                description="Review your bundle settings and publish when ready."
+            />
 
-            <Text as="p" variant="bodySm" tone="subdued">
-                Review your bundle settings and publish when ready.
-            </Text>
-
+            <SelectedProductsAccordion />
             <BundleSummary />
-
-            {bundleData.description && (
-                <Card>
-                    <BlockStack gap="200">
-                        <Text as="p" variant="bodyMd" fontWeight="medium">
-                            Description
-                        </Text>
-                        <Text as="p" variant="bodySm" tone="subdued">
-                            {bundleData.description}
-                        </Text>
-                    </BlockStack>
-                </Card>
-            )}
         </BlockStack>
     );
 }

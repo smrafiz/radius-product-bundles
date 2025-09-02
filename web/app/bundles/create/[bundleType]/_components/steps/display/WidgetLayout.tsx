@@ -1,14 +1,7 @@
-// web/app/bundles/create/[bundleType]/_components/steps/WidgetLayout.tsx
-"use client";
-
-import React from 'react';
-import {
-    BlockStack,
-    Card,
-    Text,
-    RadioButton
-} from '@shopify/polaris';
+import React from "react";
+import { BlockStack, Card, RadioButton, Text } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
+import { WIDGET_LAYOUTS } from "@/lib/constants";
 
 export default function WidgetLayout() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
@@ -21,30 +14,19 @@ export default function WidgetLayout() {
                 </Text>
 
                 <BlockStack gap="300">
-                    <RadioButton
-                        label="Horizontal Layout"
-                        checked={displaySettings.layout === 'horizontal'}
-                        id="horizontal"
-                        name="layout"
-                        onChange={() => updateDisplaySettings('layout', 'horizontal')}
-                        helpText="Products displayed side by side"
-                    />
-                    <RadioButton
-                        label="Vertical Layout"
-                        checked={displaySettings.layout === 'vertical'}
-                        id="vertical"
-                        name="layout"
-                        onChange={() => updateDisplaySettings('layout', 'vertical')}
-                        helpText="Products stacked vertically"
-                    />
-                    <RadioButton
-                        label="Grid Layout"
-                        checked={displaySettings.layout === 'grid'}
-                        id="grid"
-                        name="layout"
-                        onChange={() => updateDisplaySettings('layout', 'grid')}
-                        helpText="Products in a responsive grid"
-                    />
+                    {WIDGET_LAYOUTS.map(({ label, value, description }) => (
+                        <RadioButton
+                            key={value}
+                            label={label}
+                            id={value}
+                            name="layout"
+                            checked={displaySettings.layout === value}
+                            onChange={() =>
+                                updateDisplaySettings("layout", value)
+                            }
+                            helpText={description}
+                        />
+                    ))}
                 </BlockStack>
             </BlockStack>
         </Card>

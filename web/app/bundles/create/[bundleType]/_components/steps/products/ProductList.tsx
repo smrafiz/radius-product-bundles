@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { BlockStack, Box, InlineStack, Text } from "@shopify/polaris";
 import {

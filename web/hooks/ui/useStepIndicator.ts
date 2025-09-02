@@ -1,5 +1,5 @@
 import { useBundleStore } from '@/stores';
-import { BUNDLE_STEPS } from '@/lib/constants/bundleConstants';
+import { BUNDLE_STEPS } from '@/lib/constants';
 
 export function useStepIndicator() {
     const { currentStep, setStep } = useBundleStore();

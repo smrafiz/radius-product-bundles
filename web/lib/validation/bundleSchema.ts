@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DISCOUNT_TYPES } from "@/lib/constants";
+import { VALIDATION_MESSAGES } from "@/lib/constants";
 
 const discountTypeValues = DISCOUNT_TYPES.map((type) => type.value) as [
     string,
@@ -8,27 +9,27 @@ const discountTypeValues = DISCOUNT_TYPES.map((type) => type.value) as [
 
 export const bundleSchema = z
     .object({
-        name: z.string().min(1, "Bundle name is required").trim(),
+        name: z.string().min(1, VALIDATION_MESSAGES.REQUIRED_FIELD).trim(),
         description: z.string().optional(),
         products: z
             .array(z.any())
-            .min(1, "At least one product must be selected"),
+            .min(1, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED),
         discountType: z.enum(discountTypeValues, {
-            message: "Discount type is required",
+            message: VALIDATION_MESSAGES.DISCOUNT_TYPE_REQUIRED,
         }),
         discountValue: z
             .number({
-                message: "Discount value is required",
+                message: VALIDATION_MESSAGES.REQUIRED_FIELD,
             })
-            .positive("Discount value must be greater than 0")
+            .positive(VALIDATION_MESSAGES.INVALID_DISCOUNT_VALUE)
             .optional(),
         minOrderValue: z
             .number()
-            .min(0, "Minimum order value cannot be negative")
+            .min(0, VALIDATION_MESSAGES.INVALID_MIN_ORDER)
             .optional(),
         maxDiscountAmount: z
             .number()
-            .min(0, "Maximum discount amount cannot be negative")
+            .min(0, VALIDATION_MESSAGES.INVALID_MAX_DISCOUNT)
             .optional(),
         startDate: z.date().optional(),
         endDate: z.date().optional(),
@@ -46,7 +47,7 @@ export const bundleSchema = z
             );
         },
         {
-            message: "Discount value is required for this discount type",
+            message: VALIDATION_MESSAGES.REQUIRED_FIELD,
             path: ["discountValue"],
         },
     )
@@ -58,11 +59,10 @@ export const bundleSchema = z
             ) {
                 return data.discountValue <= 100;
             }
-
             return true;
         },
         {
-            message: "Percentage discount cannot exceed 100%",
+            message: VALIDATION_MESSAGES.INVALID_PERCENTAGE,
             path: ["discountValue"],
         },
     )
@@ -74,11 +74,10 @@ export const bundleSchema = z
             ) {
                 return data.discountValue > 0;
             }
-
             return true;
         },
         {
-            message: "Custom price must be greater than 0",
+            message: VALIDATION_MESSAGES.CUSTOM_PRICE_INVALID,
             path: ["discountValue"],
         },
     )
@@ -87,11 +86,10 @@ export const bundleSchema = z
             if (data.startDate && data.endDate) {
                 return data.endDate > data.startDate;
             }
-
             return true;
         },
         {
-            message: "End date must be after start date",
+            message: VALIDATION_MESSAGES.END_DATE_AFTER_START,
             path: ["endDate"],
         },
     )
@@ -100,12 +98,10 @@ export const bundleSchema = z
             if (data.discountType === "CUSTOM_PRICE") {
                 return data.maxDiscountAmount == null;
             }
-
             return true;
         },
         {
-            message:
-                "Maximum discount amount is not applicable for custom price",
+            message: VALIDATION_MESSAGES.MAX_DISCOUNT_NOT_APPLICABLE,
             path: ["maxDiscountAmount"],
         },
     );

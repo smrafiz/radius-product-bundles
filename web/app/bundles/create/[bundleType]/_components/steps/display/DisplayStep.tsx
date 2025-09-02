@@ -1,24 +1,20 @@
-// web/app/bundles/create/[bundleType]/_components/steps/DisplayStep.tsx
-'use client';
-
-import React from 'react';
-import { BlockStack, Text } from '@shopify/polaris';
-import WidgetLayout from './WidgetLayout';
-import WidgetPosition from './WidgetPosition';
-import WidgetAppearance from './WidgetAppearance';
-import AdvancedOptions from './AdvancedOptions';
+import React from "react";
+import { BlockStack } from "@shopify/polaris";
+import {
+    AdvancedOptions,
+    WidgetAppearance,
+    WidgetLayout,
+    WidgetPosition,
+} from "@/bundles/create/[bundleType]/_components/steps/display";
+import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
 
 export default function DisplayStep() {
     return (
         <BlockStack gap="500">
-            <BlockStack gap="200">
-                <Text variant="headingLg" as="h2">
-                    Display
-                </Text>
-                <Text as="p" variant="bodySm" tone="subdued">
-                    Customize how your bundle appears to customers
-                </Text>
-            </BlockStack>
+            <StepHeading
+                title="Display"
+                description="Customize how your bundle appears to customers"
+            />
 
             <WidgetLayout />
             <WidgetPosition />
