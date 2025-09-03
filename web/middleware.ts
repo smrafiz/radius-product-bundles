@@ -37,6 +37,11 @@ export async function middleware(request: NextRequest) {
  */
 export const config = {
     matcher: [
+        /*
+         * Exceptions:
+         * /api/auth, /api/webhooks, /api/proxy_route, /api/gdpr, /_next,
+         * /_proxy, /_auth, /_static, /_vercel, /public (/favicon.ico, etc)
+         */
         "/((?!api/auth|api/webhooks|api/proxy_route|api/gdpr|_next|_proxy|_auth|_static|_vercel|favicon.ico|[\\w-]+\\.\\w+).*)",
     ],
 };

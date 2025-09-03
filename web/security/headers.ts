@@ -15,6 +15,14 @@ export function addSecurityHeaders(response: NextResponse, shop: string) {
     response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     response.headers.set("X-DNS-Prefetch-Control", "on");
     response.headers.set(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    response.headers.set(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization",
+    );
+    response.headers.set(
         "Strict-Transport-Security",
         "max-age=63072000; includeSubDomains; preload",
     );
