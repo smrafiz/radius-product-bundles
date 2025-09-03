@@ -55,6 +55,13 @@ export const ADVANCED_OPTIONS = [
 
 export const VALIDATION_MESSAGES = {
     REQUIRED_FIELD: "This field is required",
+    MAX_LENGTH: "Bundle name cannot exceed 100 characters",
+    MAX_DESC_LENGTH: "Description cannot exceed 500 characters",
+    PRODUCT_ID: "Product ID is required",
+    MAX_PRODUCTS: "Bundle cannot have more than 10 products",
+    MIN_QUANTITY: "Quantity must be at least 1",
+    MAX_QUANTITY: "Quantity cannot exceed 99",
+    DUPLICATE_PRODUCTS: "Duplicate products are not allowed in the bundle",
     INVALID_DISCOUNT_VALUE: "Discount value must be greater than 0",
     INVALID_PERCENTAGE: "Percentage discount cannot exceed 100%",
     NEGATIVE_VALUE: "Value cannot be negative",

@@ -97,13 +97,31 @@ export const useSessionStore = create<ShopifyStore>()((set, get) => ({
         dispatch({ type: "CLEAR_SESSION" });
     },
 
-    // Check if the session is expired (5 minutes)
-    isSessionExpired: () => {
-        const { lastValidated } = get();
-        if (!lastValidated) return true;
 
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-        return new Date(lastValidated) < fiveMinutesAgo;
+    // Check if the session is expired based on JWT `exp`
+    isSessionExpired: () => {
+        const { sessionToken } = get();
+
+        if (!sessionToken) {
+            return true;
+        }
+
+        const payload = (() => {
+            try {
+                const base64Payload = sessionToken.split(".")[1];
+                return JSON.parse(atob(base64Payload));
+            } catch {
+                return null;
+            }
+        })();
+
+        if (!payload?.exp) {
+            return true;
+        }
+
+        const expiryTime = payload.exp * 1000;
+
+        return Date.now() >= expiryTime;
     },
 
     // Retry validation
