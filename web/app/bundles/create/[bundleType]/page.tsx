@@ -20,7 +20,6 @@ export default function BundleCreationPage({ params }: Props) {
     }
 
     const bundleData = useBundleStore((s) => s.bundleData);
-    const isDirty = useBundleStore((s) => s.isDirty);
     const resetDirty = useBundleStore((s) => s.resetDirty);
 
     const handleSubmit = () => {
@@ -28,7 +27,11 @@ export default function BundleCreationPage({ params }: Props) {
     };
 
     return (
-        <GlobalForm onSubmit={handleSubmit} isDirty={isDirty} resetDirty={resetDirty}>
+        <GlobalForm
+            onSubmit={handleSubmit}
+            resetDirty={resetDirty}
+            discardPath={"/bundles/create"}
+        >
             <BundleCreationForm bundleType={bundleType} />
         </GlobalForm>
     );

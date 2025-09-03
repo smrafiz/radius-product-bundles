@@ -1,35 +1,50 @@
 "use client";
 
+import NProgress from "nprogress";
+import { useRouter } from "next/navigation";
 import React, { useRef, useEffect } from "react";
 
 interface Props {
     children: React.ReactNode;
     onSubmit?: () => Promise<void> | void;
-    isDirty: boolean;
     resetDirty: () => void;
+    discardPath?: string;
 }
 
-export default function GlobalForm({ children, onSubmit, isDirty, resetDirty }: Props) {
+export default function GlobalForm({ children, onSubmit, resetDirty, discardPath }: Props) {
     const formRef = useRef<HTMLFormElement>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const form = formRef.current;
-        if (!form) return;
 
-        // Add the official Save Bar attributes
+        if (!form) {
+            return;
+        }
+
         form.dataset.saveBar = "true";
         form.dataset.discardConfirmation = "true";
 
-        // Subscribe to save (submit) event
+        // Subscribe to the save (submit) event
         const handleSubmit = async (e: Event) => {
             e.preventDefault();
-            if (onSubmit) await onSubmit();
+
+            if (onSubmit) {
+                await onSubmit();
+            }
+
             resetDirty();
         };
 
         // Subscribe to discard (reset) event
         const handleReset = () => {
+            form.reset();
             resetDirty();
+
+            if (discardPath) {
+                NProgress.start();
+                router.push(discardPath);
+            }
         };
 
         form.addEventListener("submit", handleSubmit);
