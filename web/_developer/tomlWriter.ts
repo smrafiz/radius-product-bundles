@@ -2,7 +2,7 @@ import fs from "fs";
 import "dotenv/config";
 import path from "path";
 import toml from "@iarna/toml";
-import setupCheck from "../utils/setupCheck";
+import setupCheck from "@/utils/shopify/setupCheck";
 import type { AppConfig } from "@/_developer/types/toml";
 
 // Initialize config

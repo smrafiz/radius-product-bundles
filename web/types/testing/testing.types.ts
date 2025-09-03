@@ -1,6 +1,6 @@
 import type {
     TestType as PrismaTestType,
-    TestStatus as PrismaTestStatus
+    TestStatus as PrismaTestStatus,
 } from "@prisma/client";
 
 export type TestType = PrismaTestType;

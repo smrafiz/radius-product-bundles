@@ -41,15 +41,15 @@ export function addHandlers() {
 
 export async function registerWebhooks(session: Session) {
     addHandlers();
-    
+
     if (!session.accessToken) {
         throw new Error(`No access token in session for shop: ${session.shop}`);
     }
-    
+
     if (!session.shop) {
         throw new Error("No shop in session");
     }
-    
+
     try {
         const responses = await shopify.webhooks.register({ session });
         console.log("Webhooks registered successfully");

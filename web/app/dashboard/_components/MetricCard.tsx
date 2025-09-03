@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import {
@@ -82,7 +82,11 @@ export const MetricCard = ({
                         </InlineStack>
                     )}
                     {action && (
-                        <Button variant="plain" size="slim" onClick={withLoader(() => router.push(action.url))}>
+                        <Button
+                            variant="plain"
+                            size="slim"
+                            onClick={withLoader(() => router.push(action.url))}
+                        >
                             {action.label}
                         </Button>
                     )}

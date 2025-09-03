@@ -1,10 +1,5 @@
-import React from 'react';
-import {
-    BlockStack,
-    Card,
-    Text,
-    Select
-} from '@shopify/polaris';
+import React from "react";
+import { BlockStack, Card, Text, Select } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 import { WIDGET_POSITIONS } from "@/lib/constants";
 
@@ -22,7 +17,9 @@ export default function WidgetPosition() {
                     label="Display Position"
                     options={WIDGET_POSITIONS}
                     value={displaySettings.position}
-                    onChange={(value) => updateDisplaySettings('position', value as any)}
+                    onChange={(value) =>
+                        updateDisplaySettings("position", value as any)
+                    }
                     helpText="Choose where the bundle widget appears on product pages"
                 />
             </BlockStack>

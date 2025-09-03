@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { request } from 'graphql-request';
-import { useQueryBuilder } from '@/hooks';
-import { GetProductsDocument } from '@/lib/gql/graphql';
-import { LATEST_API_VERSION } from '@shopify/shopify-api';
+import { request } from "graphql-request";
+import { useQueryBuilder } from "@/hooks";
+import { GetProductsDocument } from "@/lib/gql/graphql";
+import { LATEST_API_VERSION } from "@shopify/shopify-api";
 
-import { useGraphQL } from '@/hooks';
-import { useProductSelectionStore } from '@/stores';
+import { useGraphQL } from "@/hooks";
+import { useProductSelectionStore } from "@/stores";
 
 import type {
     Product,
     GetProductsQuery,
     GetProductsQueryVariables,
-} from '@/types';
+} from "@/types";
 
 const url = `shopify:admin/api/${LATEST_API_VERSION}/graphql.json`;
 
@@ -37,25 +37,28 @@ export function useProductDataLoader() {
 
     useEffect(() => {
         if (isModalOpen) {
-            setQueryKey(prev => prev + 1);
+            setQueryKey((prev) => prev + 1);
         }
     }, [debouncedSearch, filters, isModalOpen]);
 
     // Memoize query variables to prevent unnecessary re-renders
-    const productsVariables = useMemo((): GetProductsQueryVariables => ({
-        first,
-        query: buildSearchQuery(),
-        sortKey: "UPDATED_AT",
-        reverse: true,
-        ...(queryKey > 0 && { _key: queryKey.toString() })
-    }), [first, buildSearchQuery, queryKey]);
+    const productsVariables = useMemo(
+        (): GetProductsQueryVariables => ({
+            first,
+            query: buildSearchQuery(),
+            sortKey: "UPDATED_AT",
+            reverse: true,
+            ...(queryKey > 0 && { _key: queryKey.toString() }),
+        }),
+        [first, buildSearchQuery, queryKey],
+    );
 
     console.log(productsVariables);
 
     // Initial products query
     const productsQuery = useGraphQL(
         GetProductsDocument as any,
-        productsVariables
+        productsVariables,
     ) as {
         data?: GetProductsQuery;
         loading: boolean;
@@ -75,9 +78,9 @@ export function useProductDataLoader() {
             status: node.status,
             featuredImage: node.featuredImage
                 ? {
-                    url: node.featuredImage.url,
-                    altText: node.featuredImage.altText || undefined,
-                }
+                      url: node.featuredImage.url,
+                      altText: node.featuredImage.altText || undefined,
+                  }
                 : undefined,
             variants: (node.variants?.nodes || []).map((variant: any) => ({
                 id: variant.id,
@@ -89,38 +92,47 @@ export function useProductDataLoader() {
                 inventoryQuantity: variant.inventoryQuantity || 0,
                 inventoryItem: variant.inventoryItem
                     ? {
-                        tracked: variant.inventoryItem.tracked,
-                    }
+                          tracked: variant.inventoryItem.tracked,
+                      }
                     : undefined,
                 image: variant.image
                     ? {
-                        url: variant.image.url,
-                        altText: variant.image.altText || undefined,
-                    }
+                          url: variant.image.url,
+                          altText: variant.image.altText || undefined,
+                      }
                     : undefined,
                 selectedOptions: variant.selectedOptions || [],
             })),
-            collections: (node.allCollections?.edges || node.collections?.edges || []).map(
-                (collectionEdge: any) => ({
-                    id: collectionEdge.node.id,
-                    title: collectionEdge.node.title,
-                }),
-            ),
+            collections: (
+                node.allCollections?.edges ||
+                node.collections?.edges ||
+                []
+            ).map((collectionEdge: any) => ({
+                id: collectionEdge.node.id,
+                title: collectionEdge.node.title,
+            })),
         };
     }, []);
 
     // Memoize the request variables for loadMoreProducts
-    const memoizedRequestVariables = useMemo(() => ({
-        ...productsVariables,
-        after: nextCursor,
-    }), [productsVariables, nextCursor]);
+    const memoizedRequestVariables = useMemo(
+        () => ({
+            ...productsVariables,
+            after: nextCursor,
+        }),
+        [productsVariables, nextCursor],
+    );
 
     const loadMoreProducts = useCallback(async () => {
         if (isLoadingMore || !nextCursor) return;
 
         setIsLoadingMore(true);
         try {
-            const result = await request(url, GetProductsDocument, memoizedRequestVariables) as any;
+            const result = (await request(
+                url,
+                GetProductsDocument,
+                memoizedRequestVariables,
+            )) as any;
             const newProducts = result?.products?.edges || [];
 
             if (newProducts.length > 0) {
@@ -163,15 +175,20 @@ export function useProductDataLoader() {
                     // Debug: Log the raw node data for the first product
                     if (edge.node.title.includes("Liquid")) {
                         console.log("Raw product node:", edge.node);
-                        console.log("AllCollections:", edge.node.allCollections);
+                        console.log(
+                            "AllCollections:",
+                            edge.node.allCollections,
+                        );
                         console.log("Collections:", edge.node.collections);
                     }
                     return transformProduct(edge.node);
-                }
+                },
             );
 
             setAllLoadedProducts(transformedProducts);
-            setNextCursor(productsQuery.data.products.pageInfo?.endCursor || null);
+            setNextCursor(
+                productsQuery.data.products.pageInfo?.endCursor || null,
+            );
         }
     }, [
         isModalOpen,
@@ -182,7 +199,7 @@ export function useProductDataLoader() {
         clearLoadedProducts,
         setAllLoadedProducts,
         setNextCursor,
-        queryKey
+        queryKey,
     ]);
 
     // Clear loaded products when search/filters change

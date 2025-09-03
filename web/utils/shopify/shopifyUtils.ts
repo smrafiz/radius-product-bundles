@@ -56,7 +56,7 @@ export function generateOAuthState(shop: string): string {
  * Utility function to validate token format
  */
 export function isValidShopifyToken(token: string): boolean {
-    return token.startsWith('shpat_') && token.length > 20;
+    return token.startsWith("shpat_") && token.length > 20;
 }
 
 /**

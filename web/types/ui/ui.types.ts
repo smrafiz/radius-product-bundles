@@ -16,11 +16,11 @@ export interface ErrorState {
 }
 
 export type GrowthTone =
-    | 'base'
-    | 'success'
-    | 'critical'
-    | 'caution'
-    | 'subdued';
+    | "base"
+    | "success"
+    | "critical"
+    | "caution"
+    | "subdued";
 
 export interface MetricCardProps {
     title: string;
@@ -37,7 +37,7 @@ export interface QuickAction {
     label: string;
     icon: React.ComponentType;
     url: string;
-    variant?: 'primary' | 'secondary';
+    variant?: "primary" | "secondary";
 }
 
 export interface NavigationItem {

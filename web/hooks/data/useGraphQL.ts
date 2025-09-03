@@ -1,6 +1,6 @@
 "use client";
 
-import { print } from 'graphql';
+import { print } from "graphql";
 import { useCallback } from "react";
 import { queryKey } from "@/utils";
 import { GraphQLClient } from "graphql-request";
@@ -27,7 +27,10 @@ export function useGraphQL<TResult = any, TVariables extends object = any>(
     ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ): UseGraphQLReturn<TResult> {
     const app = useAppBridge();
-    const key = queryKey(document, variables as [string, TVariables | undefined]);
+    const key = queryKey(
+        document,
+        variables as [string, TVariables | undefined],
+    );
     const query = useQuery<TResult, Error>({
         queryKey: key,
         queryFn: async () => {
@@ -70,10 +73,16 @@ export function useGraphQL<TResult = any, TVariables extends object = any>(
 /**
  * Generic GraphQL mutation hook using App Bridge
  */
-export function useGraphQLMutation<TResult = any, TVariables extends object = any>(
+export function useGraphQLMutation<
+    TResult = any,
+    TVariables extends object = any,
+>(
     document: TypedDocumentNode<TResult, TVariables>,
     options?: {
-        invalidate?: Array<{ document: TypedDocumentNode<any, any>; variables?: object }>;
+        invalidate?: Array<{
+            document: TypedDocumentNode<any, any>;
+            variables?: object;
+        }>;
         onSuccess?: (data: TResult) => void;
     },
 ) {

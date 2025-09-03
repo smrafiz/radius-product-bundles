@@ -23,7 +23,7 @@ export const bundleTypeMap = Object.values(bundleTypeConfigs).reduce(
         acc[c.slug] = c.id;
         return acc;
     },
-    {} as Record<string, BundleType>
+    {} as Record<string, BundleType>,
 );
 
 /**
@@ -33,10 +33,10 @@ export const bundleTypeMap = Object.values(bundleTypeConfigs).reduce(
  * @param property - The property to retrieve ('label', 'icon', 'slug')
  */
 export const getBundleProperty = <
-    T extends keyof Pick<BundleConfig, "label" | "icon" | "slug">
+    T extends keyof Pick<BundleConfig, "label" | "icon" | "slug">,
 >(
     type: BundleType,
-    property: T
+    property: T,
 ): BundleConfig[T] | null => {
     const config = bundleTypeConfigs[type];
     return config?.[property] ?? null;
@@ -48,7 +48,7 @@ export const getBundleProperty = <
 export function calculateBundlePrice(items: SelectedItem[]): number {
     return items.reduce((total, item) => {
         const price = parseFloat(item.price) || 0;
-        return total + (price * item.quantity);
+        return total + price * item.quantity;
     }, 0);
 }
 
@@ -59,18 +59,18 @@ export function calculateDiscountAmount(
     bundlePrice: number,
     discountType: string,
     discountValue: number,
-    maxDiscountAmount?: number
+    maxDiscountAmount?: number,
 ): number {
     let discount = 0;
 
     switch (discountType) {
-        case 'PERCENTAGE':
+        case "PERCENTAGE":
             discount = (bundlePrice * discountValue) / 100;
             break;
-        case 'FIXED_AMOUNT':
+        case "FIXED_AMOUNT":
             discount = discountValue;
             break;
-        case 'FREE_SHIPPING':
+        case "FREE_SHIPPING":
             discount = 0; // Shipping discount is handled separately
             break;
         default:
@@ -93,13 +93,13 @@ export function calculateFinalPrice(
     bundlePrice: number,
     discountType: string,
     discountValue: number,
-    maxDiscountAmount?: number
+    maxDiscountAmount?: number,
 ): number {
     const discountAmount = calculateDiscountAmount(
         bundlePrice,
         discountType,
         discountValue,
-        maxDiscountAmount
+        maxDiscountAmount,
     );
 
     return Math.max(0, bundlePrice - discountAmount);
@@ -109,9 +109,9 @@ export function calculateFinalPrice(
  * Format price for display
  */
 export function formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
     }).format(price);
 }
 
@@ -126,7 +126,7 @@ export function groupItemsByProduct(items: SelectedItem[]): ProductGroup[] {
             groups[item.productId] = {
                 product: item,
                 variants: [],
-                originalTotalVariants: item.totalVariants || 1
+                originalTotalVariants: item.totalVariants || 1,
             };
         }
         if (item.type === "variant") {
@@ -140,7 +140,10 @@ export function groupItemsByProduct(items: SelectedItem[]): ProductGroup[] {
 /**
  * Generate unique item ID
  */
-export function generateItemId(type: 'product' | 'variant', id: string): string {
+export function generateItemId(
+    type: "product" | "variant",
+    id: string,
+): string {
     return `${type}-${id}`;
 }
 
@@ -148,7 +151,7 @@ export function generateItemId(type: 'product' | 'variant', id: string): string 
  * Extract product ID from Shopify GID
  */
 export function extractProductId(gid: string): string {
-    return gid.split('/').pop() || gid;
+    return gid.split("/").pop() || gid;
 }
 
 /**
@@ -156,7 +159,7 @@ export function extractProductId(gid: string): string {
  */
 export function validateMinimumOrder(
     bundlePrice: number,
-    minOrderValue?: number
+    minOrderValue?: number,
 ): boolean {
     if (!minOrderValue) return true;
     return bundlePrice >= minOrderValue;
@@ -167,8 +170,10 @@ export function validateMinimumOrder(
  */
 export function calculateSavingsPercentage(
     originalPrice: number,
-    discountedPrice: number
+    discountedPrice: number,
 ): number {
     if (originalPrice === 0) return 0;
-    return Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+    return Math.round(
+        ((originalPrice - discountedPrice) / originalPrice) * 100,
+    );
 }

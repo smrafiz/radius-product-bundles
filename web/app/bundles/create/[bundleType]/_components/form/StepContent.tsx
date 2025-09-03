@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import { ReviewStep } from "@/bundles/create/[bundleType]/_components/steps/review";
 import { DisplayStep } from "@/bundles/create/[bundleType]/_components/steps/display";
 import { ProductsStep } from "@/bundles/create/[bundleType]/_components/steps/products";

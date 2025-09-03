@@ -5,7 +5,10 @@
 /**
  * Format error for API responses
  */
-export function formatErrorResponse(error: unknown, defaultMessage: string = "An error occurred") {
+export function formatErrorResponse(
+    error: unknown,
+    defaultMessage: string = "An error occurred",
+) {
     if (error instanceof Error) {
         return {
             error: error.message,
@@ -37,7 +40,11 @@ export function isAuthError(error: unknown): boolean {
 /**
  * Log error with context
  */
-export function logError(context: string, error: unknown, additionalInfo?: any) {
+export function logError(
+    context: string,
+    error: unknown,
+    additionalInfo?: any,
+) {
     console.error(`❌ ${context}:`, error);
     if (additionalInfo) {
         console.error("Additional info:", additionalInfo);
@@ -50,26 +57,26 @@ export function logError(context: string, error: unknown, additionalInfo?: any) 
 export function createRetryFunction<T>(
     fn: () => Promise<T>,
     maxRetries: number = 3,
-    baseDelay: number = 1000
+    baseDelay: number = 1000,
 ): () => Promise<T> {
     return async () => {
         let lastError: unknown;
-        
+
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
                 return await fn();
             } catch (error) {
                 lastError = error;
-                
+
                 if (attempt === maxRetries) {
                     throw error;
                 }
-                
+
                 const delay = baseDelay * Math.pow(2, attempt);
-                await new Promise(resolve => setTimeout(resolve, delay));
+                await new Promise((resolve) => setTimeout(resolve, delay));
             }
         }
-        
+
         throw lastError;
     };
 }

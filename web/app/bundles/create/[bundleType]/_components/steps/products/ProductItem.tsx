@@ -10,11 +10,7 @@ import {
     Thumbnail,
     BlockStack,
 } from "@shopify/polaris";
-import {
-    DeleteIcon,
-    DragHandleIcon,
-    ImageIcon,
-} from "@shopify/polaris-icons";
+import { DeleteIcon, DragHandleIcon, ImageIcon } from "@shopify/polaris-icons";
 import { useBundleStore } from "@/stores";
 import { useSortable } from "@dnd-kit/sortable";
 import { useProductPicker } from "@/hooks/product";
@@ -26,8 +22,21 @@ interface ProductItemProps {
 }
 
 // Sortable wrapper component
-function SortableWrapper({ id, children }: { id: string; children: React.ReactNode }) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+function SortableWrapper({
+    id,
+    children,
+}: {
+    id: string;
+    children: React.ReactNode;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
 
     const style = {
         transform: transform
@@ -48,14 +57,17 @@ export default function ProductItem({ group }: ProductItemProps) {
     const {
         updateSelectedItemQuantity,
         removeProductAndAllVariants,
-        getVariantInfo
+        getVariantInfo,
     } = useBundleStore();
 
     const { editProductVariants } = useProductPicker();
 
     const { product, originalTotalVariants } = group;
     const { selectedCount, originalTotal } = getVariantInfo(product.productId);
-    const isMultiVariant = product.totalVariants && product.totalVariants > 1 && originalTotalVariants >= 1;
+    const isMultiVariant =
+        product.totalVariants &&
+        product.totalVariants > 1 &&
+        originalTotalVariants >= 1;
 
     const handleQuantityChange = (value: string) => {
         const quantity = parseInt(value) || 1;
@@ -74,7 +86,12 @@ export default function ProductItem({ group }: ProductItemProps) {
         <SortableWrapper id={product.productId}>
             <Card background="bg-surface-secondary" padding="300">
                 <Box padding="0">
-                    <InlineStack align="space-between" blockAlign="center" gap="400" wrap={false}>
+                    <InlineStack
+                        align="space-between"
+                        blockAlign="center"
+                        gap="400"
+                        wrap={false}
+                    >
                         {/* Drag handle and image */}
                         <InlineStack gap="300" blockAlign="center" wrap={false}>
                             <div className="cursor-grab">
@@ -97,15 +114,24 @@ export default function ProductItem({ group }: ProductItemProps) {
                         <div className="w-full">
                             <BlockStack>
                                 <div className="w-full">
-                                    <Text as="h3" variant="bodyMd" fontWeight="medium">
+                                    <Text
+                                        as="h3"
+                                        variant="bodyMd"
+                                        fontWeight="medium"
+                                    >
                                         {product.title.replace(/ - .+$/, "")}
                                     </Text>
                                 </div>
 
                                 {isMultiVariant && (
                                     <InlineStack align="start" gap="300">
-                                        <Text as="p" variant="bodySm" tone="subdued">
-                                            {selectedCount} of {originalTotal} variants selected
+                                        <Text
+                                            as="p"
+                                            variant="bodySm"
+                                            tone="subdued"
+                                        >
+                                            {selectedCount} of {originalTotal}{" "}
+                                            variants selected
                                         </Text>
                                         <Button
                                             variant="plain"

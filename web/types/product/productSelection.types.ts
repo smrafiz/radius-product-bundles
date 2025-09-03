@@ -2,7 +2,7 @@ import { CreateBundlePayload } from "@/types";
 
 export interface SelectedItem {
     id: string;
-    type: 'product' | 'variant';
+    type: "product" | "variant";
     productId: string;
     variantId?: string | null;
     title: string;
@@ -23,17 +23,17 @@ export interface ProductGroup {
 }
 
 export interface DisplaySettings {
-    layout: 'horizontal' | 'vertical' | 'grid';
-    position: 'above_cart' | 'below_cart' | 'description' | 'custom';
+    layout: "horizontal" | "vertical" | "grid";
+    position: "above_cart" | "below_cart" | "description" | "custom";
     title: string;
-    colorTheme: 'brand' | 'success' | 'warning' | 'critical';
+    colorTheme: "brand" | "success" | "warning" | "critical";
     showPrices: boolean;
     showSavings: boolean;
     enableQuickSwap: boolean;
 }
 
 export interface BundleConfiguration {
-    discountApplication: 'bundle' | 'products' | 'shipping';
+    discountApplication: "bundle" | "products" | "shipping";
 }
 
 interface BundleState {
@@ -75,14 +75,21 @@ interface BundleState {
     removeSelectedItem: (itemId: string) => void;
     removeProductAndAllVariants: (productId: string) => void;
     updateSelectedItemQuantity: (itemId: string, quantity: number) => void;
-    updateProductVariants: (productId: string, variants: SelectedItem[], position?: number) => void;
+    updateProductVariants: (
+        productId: string,
+        variants: SelectedItem[],
+        position?: number,
+    ) => void;
     reorderItems: (activeId: string, overId: string) => void;
 
     // Computed values
     getGroupedItems: () => ProductGroup[];
     getTotalProducts: () => number;
     getTotalItems: () => number;
-    getVariantInfo: (productId: string) => { selectedCount: number; originalTotal: number };
+    getVariantInfo: (productId: string) => {
+        selectedCount: number;
+        originalTotal: number;
+    };
 
     // Display settings actions
     updateDisplaySettings: <K extends keyof DisplaySettings>(

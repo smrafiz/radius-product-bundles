@@ -11,11 +11,7 @@ import {
     Text,
 } from "@shopify/polaris";
 import React from "react";
-import {
-    formatBundleType,
-    formatCurrency,
-    formatPercentage,
-} from "@/utils";
+import { formatBundleType, formatCurrency, formatPercentage } from "@/utils";
 import { withLoader } from "@/utils";
 import { router } from "next/client";
 import { ViewIcon } from "@shopify/polaris-icons";

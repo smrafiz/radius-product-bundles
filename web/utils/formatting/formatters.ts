@@ -7,8 +7,9 @@ import { CURRENCY_SYMBOLS, CURRENCY_LOCALES } from "@/lib/constants";
  * @returns The currency symbol (e.g., '$', '€')
  */
 export const getCurrencySymbol = (currencyCode?: string): string => {
-    const finalCurrencyCode = currencyCode || useShopSettingsStore.getState().currencyCode || 'USD';
-    return CURRENCY_SYMBOLS[finalCurrencyCode] || '$';
+    const finalCurrencyCode =
+        currencyCode || useShopSettingsStore.getState().currencyCode || "USD";
+    return CURRENCY_SYMBOLS[finalCurrencyCode] || "$";
 };
 
 export const formatCurrency = (
@@ -19,9 +20,10 @@ export const formatCurrency = (
     if (amount == null) return "";
 
     const finalCurrencyCode =
-        currencyCode || useShopSettingsStore.getState().currencyCode || 'USD';
+        currencyCode || useShopSettingsStore.getState().currencyCode || "USD";
     const finalLocale =
-        locale || convertShopifyLocale(useShopSettingsStore.getState().locale || 'en-US');
+        locale ||
+        convertShopifyLocale(useShopSettingsStore.getState().locale || "en-US");
 
     try {
         const formatted = Intl.NumberFormat(finalLocale, {
@@ -38,11 +40,10 @@ export const formatCurrency = (
 
         return formatted;
     } catch (error) {
-        console.warn(
-            "Currency formatting error:",
-            error,
-            { finalCurrencyCode, finalLocale }
-        );
+        console.warn("Currency formatting error:", error, {
+            finalCurrencyCode,
+            finalLocale,
+        });
 
         // Fallback
         return new Intl.NumberFormat("en-US", {
@@ -68,8 +69,13 @@ export const formatBundleType = (type: string) => {
         .replace(/\b\w/g, (l) => l.toUpperCase());
 };
 
-export const convertShopifyLocale = (shopifyLocaleOrCountry: string): string => {
-    if (shopifyLocaleOrCountry.length === 2 && CURRENCY_SYMBOLS[shopifyLocaleOrCountry]) {
+export const convertShopifyLocale = (
+    shopifyLocaleOrCountry: string,
+): string => {
+    if (
+        shopifyLocaleOrCountry.length === 2 &&
+        CURRENCY_SYMBOLS[shopifyLocaleOrCountry]
+    ) {
         return CURRENCY_SYMBOLS[shopifyLocaleOrCountry];
     }
 
@@ -77,5 +83,5 @@ export const convertShopifyLocale = (shopifyLocaleOrCountry: string): string => 
         return CURRENCY_LOCALES[shopifyLocaleOrCountry];
     }
 
-    return 'en-US';
+    return "en-US";
 };

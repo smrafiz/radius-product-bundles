@@ -14,10 +14,10 @@ export function generateOfflineSessionId(shop: string): string {
  */
 export function validateSessionToken(token: string | undefined): boolean {
     if (!token) return false;
-    
+
     // Check if the token has a valid format
-    if (!token.startsWith('shpat_')) return false;
-    
+    if (!token.startsWith("shpat_")) return false;
+
     // Additional validation can be added here
     return token.length > 20;
 }
@@ -25,7 +25,12 @@ export function validateSessionToken(token: string | undefined): boolean {
 /**
  * Create a session configuration object
  */
-export function createSessionConfig(shop: string, accessToken: string, scope: string, state?: string) {
+export function createSessionConfig(
+    shop: string,
+    accessToken: string,
+    scope: string,
+    state?: string,
+) {
     return {
         id: generateOfflineSessionId(shop),
         shop,

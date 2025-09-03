@@ -3,7 +3,8 @@ import { Pagination } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 
 export function BundlePagination() {
-    const { pagination, setCurrentPage, getPaginationInfo } = useBundleListingStore();
+    const { pagination, setCurrentPage, getPaginationInfo } =
+        useBundleListingStore();
 
     const { hasNext, hasPrevious, label } = getPaginationInfo();
 

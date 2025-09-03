@@ -32,11 +32,11 @@ interface BundleFormProps {
 }
 
 export default function BundleForm({
-                                       bundleId,
-                                       initialData,
-                                       onSuccess,
-                                       onCancel,
-                                   }: BundleFormProps) {
+    bundleId,
+    initialData,
+    onSuccess,
+    onCancel,
+}: BundleFormProps) {
     const [showExitModal, setShowExitModal] = useState(false);
 
     const {
@@ -280,10 +280,13 @@ export default function BundleForm({
                                                     blockAlign="center"
                                                 >
                                                     <Text variant="headingMd">
-                                                        Products ({productCount})
+                                                        Products ({productCount}
+                                                        )
                                                     </Text>
                                                     <Button
-                                                        onClick={handleAddProduct}
+                                                        onClick={
+                                                            handleAddProduct
+                                                        }
                                                     >
                                                         Add Products
                                                     </Button>
@@ -309,14 +312,16 @@ export default function BundleForm({
                                                                 variant="headingMd"
                                                                 tone="subdued"
                                                             >
-                                                                No products selected
+                                                                No products
+                                                                selected
                                                             </Text>
                                                             <Text
                                                                 variant="bodyMd"
                                                                 tone="subdued"
                                                             >
                                                                 Add products to
-                                                                create your bundle
+                                                                create your
+                                                                bundle
                                                             </Text>
                                                             <Button
                                                                 variant="primary"
@@ -356,9 +361,9 @@ export default function BundleForm({
                                                 name="discountType"
                                                 control={form.control}
                                                 render={({
-                                                             field,
-                                                             fieldState,
-                                                         }) => (
+                                                    field,
+                                                    fieldState,
+                                                }) => (
                                                     <Select
                                                         label="Discount Type"
                                                         options={DISCOUNT_TYPES}
@@ -376,9 +381,9 @@ export default function BundleForm({
                                                     name="discountValue"
                                                     control={form.control}
                                                     render={({
-                                                                 field,
-                                                                 fieldState,
-                                                             }) => (
+                                                        field,
+                                                        fieldState,
+                                                    }) => (
                                                         <TextField
                                                             label={
                                                                 isPercentageDiscount
@@ -431,9 +436,9 @@ export default function BundleForm({
                                                 name="minOrderValue"
                                                 control={form.control}
                                                 render={({
-                                                             field,
-                                                             fieldState,
-                                                         }) => (
+                                                    field,
+                                                    fieldState,
+                                                }) => (
                                                     <TextField
                                                         label="Minimum Order Value (Optional)"
                                                         type="number"
@@ -465,9 +470,9 @@ export default function BundleForm({
                                                 name="maxDiscountAmount"
                                                 control={form.control}
                                                 render={({
-                                                             field,
-                                                             fieldState,
-                                                         }) => (
+                                                    field,
+                                                    fieldState,
+                                                }) => (
                                                     <TextField
                                                         label="Maximum Discount (Optional)"
                                                         type="number"

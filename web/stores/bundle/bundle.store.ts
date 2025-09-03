@@ -53,8 +53,14 @@ export const useBundleStore = create(
         validationAttempted: false,
         isDirty: false,
 
-        markDirty: () => set((state) => { state.isDirty = true; }),
-        resetDirty: () => set((state) => { state.isDirty = false; }),
+        markDirty: () =>
+            set((state) => {
+                state.isDirty = true;
+            }),
+        resetDirty: () =>
+            set((state) => {
+                state.isDirty = false;
+            }),
 
         // Step management
         setStep: (step) =>
@@ -118,7 +124,10 @@ export const useBundleStore = create(
         // Bundle data actions
         setBundleData: (data) =>
             set((state) => {
-                state.bundleData = { ...state.bundleData, ...data } as Partial<BundleFormData>;
+                state.bundleData = {
+                    ...state.bundleData,
+                    ...data,
+                } as Partial<BundleFormData>;
                 state.isDirty = false;
             }),
 

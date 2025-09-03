@@ -17,7 +17,7 @@ export function useSessionValidation() {
         validateSession,
         clearSession,
         isSessionExpired,
-        retryValidation
+        retryValidation,
     } = useSessionStore();
 
     // Store App Bridge instance globally
@@ -35,11 +35,14 @@ export function useSessionValidation() {
     // Periodic validation (every 4 minutes)
     useEffect(() => {
         if (hasValidSession) {
-            const interval = setInterval(() => {
-                if (isSessionExpired()) {
-                    validateSession();
-                }
-            }, 4 * 60 * 1000); // 4 minutes
+            const interval = setInterval(
+                () => {
+                    if (isSessionExpired()) {
+                        validateSession();
+                    }
+                },
+                4 * 60 * 1000,
+            ); // 4 minutes
 
             return () => clearInterval(interval);
         }
@@ -53,11 +56,11 @@ export function useSessionValidation() {
                 if (token && token !== sessionToken) {
                     dispatch({
                         type: "UPDATE_SESSION_TOKEN",
-                        payload: { token }
+                        payload: { token },
                     });
                 }
             } catch (error) {
-                console.error('Failed to get token from App Bridge:', error);
+                console.error("Failed to get token from App Bridge:", error);
             }
         };
 
@@ -68,7 +71,7 @@ export function useSessionValidation() {
     const logout = useCallback(() => {
         clearSession();
         // Optionally redirect to auth
-        window.location.href = '/api/auth';
+        window.location.href = "/api/auth";
     }, [clearSession]);
 
     return {

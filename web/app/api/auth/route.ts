@@ -21,7 +21,10 @@ export async function GET(request: NextRequest) {
         const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
         authUrl.searchParams.append("client_id", process.env.SHOPIFY_API_KEY!);
         authUrl.searchParams.append("scope", process.env.SCOPES!);
-        authUrl.searchParams.append("redirect_uri", `${process.env.HOST}/api/auth/callback`);
+        authUrl.searchParams.append(
+            "redirect_uri",
+            `${process.env.HOST}/api/auth/callback`,
+        );
         authUrl.searchParams.append("state", state);
 
         if (returnTo) {
@@ -29,15 +32,15 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.redirect(authUrl.toString());
-        
     } catch (error) {
         console.error("OAuth error:", error);
         return NextResponse.json(
-            { 
+            {
                 error: "Failed to start OAuth flow",
-                details: error instanceof Error ? error.message : "Unknown error"
+                details:
+                    error instanceof Error ? error.message : "Unknown error",
             },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }

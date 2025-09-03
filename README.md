@@ -9,38 +9,45 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 ## ✨ Key Features
 
 ### 📦 Bundle Management
+
 - **Multiple Bundle Types**: Support for various bundle configurations and types
 - **Advanced Product Selection**: Enhanced modal with intelligent filtering and search
 - **Real-time Preview**: Live bundle preview with drag-and-drop reordering
 - **Bundle Templates**: Pre-built templates for quick bundle creation
 
 ### 📊 Analytics & Dashboard
+
 - **Real-time Metrics**: Track bundle performance, revenue, and conversion rates
 - **Revenue Analytics**: Detailed revenue tracking and forecasting
 - **Performance Insights**: Bundle efficiency and optimization recommendations
 - **Custom Reports**: Generate detailed reports for business intelligence
 
 ### 🎯 Customer Management
+
 - **Customer Segmentation**: Advanced customer grouping and targeting
 - **Purchase History**: Track customer bundle purchase patterns
 - **Personalization**: Tailored bundle recommendations based on customer behavior
 
 ### 🧪 A/B Testing
+
 - **Bundle Testing**: Test different bundle configurations and pricing
 - **Performance Comparison**: Compare metrics across test variants
 - **Statistical Analysis**: Data-driven insights for optimization
 
 ### ⚙️ Automation & Integrations
+
 - **Workflow Automation**: Automated bundle creation and management
 - **Third-party Integrations**: Connect with external tools and services
 - **Event-driven Actions**: Trigger actions based on customer behavior
 
 ### 💰 Pricing Rules
+
 - **Dynamic Pricing**: Flexible pricing strategies for bundles
 - **Discount Management**: Advanced discount rules and conditions
 - **Price Optimization**: AI-driven pricing recommendations
 
 ### 🛠️ Settings & Configuration
+
 - **App Configuration**: Comprehensive app settings and preferences
 - **Theme Integration**: Seamless integration with Shopify themes
 - **Permission Management**: Role-based access control
@@ -48,6 +55,7 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 ## 🏗️ Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **UI Library**: Shopify Polaris
@@ -56,6 +64,7 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 - **Animations**: @dnd-kit for drag-and-drop functionality
 
 ### Backend & Data
+
 - **Runtime**: Node.js
 - **Database**: PostgreSQL with Prisma ORM 6.14
 - **GraphQL**: Apollo Client 3.13
@@ -63,6 +72,7 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 - **Authentication**: Shopify App Bridge 4.2
 
 ### Development Tools
+
 - **Package Manager**: pnpm
 - **Code Generation**: GraphQL Code Generator 5.0
 - **Type Safety**: TypeScript 5.9
@@ -70,6 +80,7 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 - **Formatting**: Prettier 3.6
 
 ### Shopify Integration
+
 - **Shopify CLI**: 3.83
 - **Shopify API**: 11.14
 - **App Bridge**: React integration for embedded apps
@@ -78,6 +89,7 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - pnpm (recommended) or npm
 - Shopify CLI
@@ -85,12 +97,14 @@ Radius Product Bundles is a powerful Shopify application that enables merchants 
 - Shopify Partner account
 
 ### 1. Clone the Repository
+
 ```bash
 git clone <repository-url>
 cd radius-product-bundles
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 # Install root dependencies
 pnpm install
@@ -101,6 +115,7 @@ pnpm install
 ```
 
 ### 3. Environment Setup
+
 ```bash
 # Copy environment files
 cp .env.example .env
@@ -111,6 +126,7 @@ cp web/.env.example web/.env
 ```
 
 ### 4. Database Setup
+
 ```bash
 # Generate Prisma client
 cd web
@@ -124,6 +140,7 @@ pnpm run prisma:studio
 ```
 
 ### 5. GraphQL Code Generation
+
 ```bash
 # Generate TypeScript types from GraphQL schema
 pnpm run graphql-codegen
@@ -132,6 +149,7 @@ pnpm run graphql-codegen
 ## 🚀 Development Commands
 
 ### Starting Development Server
+
 ```bash
 # Start the development server
 pnpm run dev
@@ -141,6 +159,7 @@ shopify app dev
 ```
 
 ### Database Commands
+
 ```bash
 # Generate Prisma client
 pnpm run prepare
@@ -162,6 +181,7 @@ npx prisma migrate reset
 ```
 
 ### GraphQL & Code Generation
+
 ```bash
 # Generate GraphQL types
 pnpm run graphql-codegen
@@ -171,6 +191,7 @@ pnpm run graphql-codegen --watch
 ```
 
 ### Build & Deployment
+
 ```bash
 # Build for production
 pnpm run build
@@ -217,6 +238,7 @@ radius-product-bundles/
 ## 🔧 Key Configuration Files
 
 ### Shopify App Configuration
+
 - **Access Scopes**: `read_customers`, `read_orders`, `read_products`, `write_products`, `write_price_rules`
 - **App Type**: Embedded app with direct API access
 - **Webhooks**: Real-time synchronization with Shopify data

@@ -17,9 +17,7 @@ export const useBundlesData = () => {
                 setError(null);
 
                 const token = await app.idToken();
-                const [bundlesResult] = await Promise.all([
-                    getBundles(token),
-                ]);
+                const [bundlesResult] = await Promise.all([getBundles(token)]);
 
                 if (!mounted) return;
 

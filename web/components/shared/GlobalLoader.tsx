@@ -22,17 +22,25 @@ export default function GlobalLoader() {
         // Links with data-nprogress
         const links = document.querySelectorAll("a[data-nprogress]");
         const handleLinkClick = () => startLoader();
-        links.forEach(link => link.addEventListener("click", handleLinkClick));
+        links.forEach((link) =>
+            link.addEventListener("click", handleLinkClick),
+        );
 
         // Buttons that trigger navigation (optional: add data-nprogress)
         const buttons = document.querySelectorAll("button[data-nprogress]");
         const handleButtonClick = () => startLoader();
-        buttons.forEach(btn => btn.addEventListener("click", handleButtonClick));
+        buttons.forEach((btn) =>
+            btn.addEventListener("click", handleButtonClick),
+        );
 
         // Cleanup
         return () => {
-            links.forEach(link => link.removeEventListener("click", handleLinkClick));
-            buttons.forEach(btn => btn.removeEventListener("click", handleButtonClick));
+            links.forEach((link) =>
+                link.removeEventListener("click", handleLinkClick),
+            );
+            buttons.forEach((btn) =>
+                btn.removeEventListener("click", handleButtonClick),
+            );
         };
     }, []);
 

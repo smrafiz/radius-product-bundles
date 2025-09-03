@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useBundleStore } from '@/stores';
+import { useCallback } from "react";
+import { useBundleStore } from "@/stores";
 import { useBundleValidation } from "@/hooks";
 
 export function useBundleSave() {
@@ -9,7 +9,7 @@ export function useBundleSave() {
         displaySettings,
         configuration,
         setSaving,
-        resetBundle
+        resetBundle,
     } = useBundleStore();
 
     const { validateAllSteps } = useBundleValidation();
@@ -18,7 +18,9 @@ export function useBundleSave() {
         const validation = validateAllSteps();
 
         if (!validation.isValid) {
-            throw new Error(`Validation failed: ${validation.errors.map(e => e.message).join(', ')}`);
+            throw new Error(
+                `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`,
+            );
         }
 
         setSaving(true);
@@ -26,7 +28,7 @@ export function useBundleSave() {
         try {
             const bundlePayload = {
                 ...bundleData,
-                products: selectedItems.map(item => ({
+                products: selectedItems.map((item) => ({
                     productId: item.productId,
                     variantId: item.variantId,
                     quantity: item.quantity,
@@ -36,16 +38,16 @@ export function useBundleSave() {
             };
 
             // TODO: Replace with actual API call
-            const response = await fetch('/api/bundles', {
-                method: 'POST',
+            const response = await fetch("/api/bundles", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(bundlePayload),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to save bundle');
+                throw new Error("Failed to save bundle");
             }
 
             const result = await response.json();
@@ -55,12 +57,20 @@ export function useBundleSave() {
 
             return result;
         } catch (error) {
-            console.error('Save bundle error:', error);
+            console.error("Save bundle error:", error);
             throw error;
         } finally {
             setSaving(false);
         }
-    }, [bundleData, selectedItems, displaySettings, configuration, validateAllSteps, setSaving, resetBundle]);
+    }, [
+        bundleData,
+        selectedItems,
+        displaySettings,
+        configuration,
+        validateAllSteps,
+        setSaving,
+        resetBundle,
+    ]);
 
     const saveDraft = useCallback(async () => {
         setSaving(true);
@@ -68,33 +78,33 @@ export function useBundleSave() {
         try {
             const draftPayload = {
                 ...bundleData,
-                products: selectedItems.map(item => ({
+                products: selectedItems.map((item) => ({
                     productId: item.productId,
                     variantId: item.variantId,
                     quantity: item.quantity,
                 })),
                 displaySettings,
                 configuration,
-                status: 'draft',
+                status: "draft",
             };
 
             // TODO: Replace with actual API call
-            const response = await fetch('/api/bundles/draft', {
-                method: 'POST',
+            const response = await fetch("/api/bundles/draft", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(draftPayload),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to save draft');
+                throw new Error("Failed to save draft");
             }
 
             const result = await response.json();
             return result;
         } catch (error) {
-            console.error('Save draft error:', error);
+            console.error("Save draft error:", error);
             throw error;
         } finally {
             setSaving(false);
@@ -104,6 +114,6 @@ export function useBundleSave() {
     return {
         saveBundle,
         saveDraft,
-        isSaving: useBundleStore(state => state.isSaving),
+        isSaving: useBundleStore((state) => state.isSaving),
     };
 }

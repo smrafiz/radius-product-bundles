@@ -1,13 +1,18 @@
-import { useSensors, useSensor, PointerSensor, DragEndEvent } from '@dnd-kit/core';
-import { useBundleStore } from '@/stores';
+import {
+    useSensors,
+    useSensor,
+    PointerSensor,
+    DragEndEvent,
+} from "@dnd-kit/core";
+import { useBundleStore } from "@/stores";
 
 export function useDragAndDrop() {
     const { reorderItems } = useBundleStore();
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
-            activationConstraint: { distance: 8 } // Prevent accidental drags
-        })
+            activationConstraint: { distance: 8 }, // Prevent accidental drags
+        }),
     );
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -19,6 +24,6 @@ export function useDragAndDrop() {
 
     return {
         sensors,
-        handleDragEnd
+        handleDragEnd,
     };
 }

@@ -1,9 +1,6 @@
 import React from "react";
 import { BlockStack, Box, InlineStack, Text } from "@shopify/polaris";
-import {
-    DndContext,
-    closestCenter,
-} from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -20,7 +17,11 @@ export default function ProductList() {
 
     if (groupedItems.length === 0) {
         return (
-            <Box padding="800" background="bg-surface-secondary" borderRadius="200">
+            <Box
+                padding="800"
+                background="bg-surface-secondary"
+                borderRadius="200"
+            >
                 <InlineStack align="center">
                     <BlockStack gap="200" inlineAlign="center">
                         <Text as="h6" variant="headingSm" tone="subdued">
@@ -47,7 +48,10 @@ export default function ProductList() {
             >
                 <BlockStack gap="200">
                     {groupedItems.map((group) => (
-                        <ProductItem key={group.product.productId} group={group} />
+                        <ProductItem
+                            key={group.product.productId}
+                            group={group}
+                        />
                     ))}
                 </BlockStack>
             </SortableContext>

@@ -114,20 +114,24 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         // Collection filtering actions
         setCollectionQuery: (query) => set({ collectionQuery: query }),
         setCollections: (collections) => set({ collections }),
-        setCollectionsPageInfo: (pageInfo) => set({ collectionsPageInfo: pageInfo }),
-        setSelectedCollectionTitle: (title) => set({ selectedCollectionTitle: title }),
-        setCollectionVariables: (variables) => set({ collectionVariables: variables }),
-        clearCollectionStates: () => set({
-            collectionQuery: "",
-            collections: [],
-            collectionsPageInfo: null,
-            selectedCollectionTitle: null,
-            collectionVariables: {
-                query: "",
-                first: 25,
-                after: null,
-            },
-        }),
+        setCollectionsPageInfo: (pageInfo) =>
+            set({ collectionsPageInfo: pageInfo }),
+        setSelectedCollectionTitle: (title) =>
+            set({ selectedCollectionTitle: title }),
+        setCollectionVariables: (variables) =>
+            set({ collectionVariables: variables }),
+        clearCollectionStates: () =>
+            set({
+                collectionQuery: "",
+                collections: [],
+                collectionsPageInfo: null,
+                selectedCollectionTitle: null,
+                collectionVariables: {
+                    query: "",
+                    first: 25,
+                    after: null,
+                },
+            }),
 
         // Update product types and status from GraphQL response
         updateFilterOptionsFromProducts: (products: ProductsData) => {
@@ -135,12 +139,20 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
 
             // Extract unique product types
             const types = Array.from(
-                new Set(products.edges.map((edge) => edge.node.productType).filter(Boolean))
+                new Set(
+                    products.edges
+                        .map((edge) => edge.node.productType)
+                        .filter(Boolean),
+                ),
             ) as string[];
 
             // Extract unique statuses
             const statuses = Array.from(
-                new Set(products.edges.map((edge) => edge.node.status).filter(Boolean))
+                new Set(
+                    products.edges
+                        .map((edge) => edge.node.status)
+                        .filter(Boolean),
+                ),
             ) as string[];
 
             set((state) => ({
@@ -148,7 +160,7 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
                     ...state.filterOptions,
                     types,
                     statuses,
-                }
+                },
             }));
         },
 
@@ -156,32 +168,35 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         toggleProductSelection: (product) => {
             const state = get();
             const selectedVariants = state.selectedItems.filter(
-                (item) => item.productId === product.id
+                (item) => item.productId === product.id,
             );
-            const allVariantsSelected = product.variants &&
+            const allVariantsSelected =
+                product.variants &&
                 product.variants.length > 0 &&
                 selectedVariants.length === product.variants.length;
             if (allVariantsSelected) {
                 // Deselect all variants
                 set({
                     selectedItems: state.selectedItems.filter(
-                        (item) => item.productId !== product.id
+                        (item) => item.productId !== product.id,
                     ),
                 });
             } else {
                 // Replace existing selection for this product with all variants
                 const filteredItems = state.selectedItems.filter(
-                    (item) => item.productId !== product.id
+                    (item) => item.productId !== product.id,
                 );
-                const newItems: SelectedItem[] = (product.variants || []).map((variant) => ({
-                    type: "variant",
-                    productId: product.id,
-                    variantId: variant.id,
-                    title: `${product.title} - ${variant.title}`,
-                    price: variant.price,
-                    image: variant.image?.url || product.featuredImage?.url,
-                    sku: variant.sku,
-                }));
+                const newItems: SelectedItem[] = (product.variants || []).map(
+                    (variant) => ({
+                        type: "variant",
+                        productId: product.id,
+                        variantId: variant.id,
+                        title: `${product.title} - ${variant.title}`,
+                        price: variant.price,
+                        image: variant.image?.url || product.featuredImage?.url,
+                        sku: variant.sku,
+                    }),
+                );
                 set({
                     selectedItems: [...filteredItems, ...newItems],
                 });
@@ -190,13 +205,14 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         toggleVariantSelection: (product, variant) => {
             const state = get();
             const variantSelected = state.selectedItems.some(
-                (item) => item.type === "variant" && item.variantId === variant.id
+                (item) =>
+                    item.type === "variant" && item.variantId === variant.id,
             );
             if (variantSelected) {
                 // Remove only this variant
                 set({
                     selectedItems: state.selectedItems.filter(
-                        (item) => item.variantId !== variant.id
+                        (item) => item.variantId !== variant.id,
                     ),
                 });
             } else {
@@ -243,19 +259,24 @@ export const useProductSelectionStore = create<ProductSelectionState>()(
         deselectAllProducts: () => set({ selectedItems: [] }),
         isProductSelected: (product) => {
             const state = get();
-            if (!product.variants || product.variants.length === 0) return false;
+            if (!product.variants || product.variants.length === 0)
+                return false;
             const selectedVariants = state.selectedItems.filter(
-                (item) => item.productId === product.id
+                (item) => item.productId === product.id,
             );
             return selectedVariants.length === product.variants.length;
         },
         isProductIndeterminate: (product) => {
             const state = get();
-            if (!product.variants || product.variants.length === 0) return false;
+            if (!product.variants || product.variants.length === 0)
+                return false;
             const selectedVariants = state.selectedItems.filter(
-                (item) => item.productId === product.id
+                (item) => item.productId === product.id,
             );
-            return selectedVariants.length > 0 && selectedVariants.length < product.variants.length;
+            return (
+                selectedVariants.length > 0 &&
+                selectedVariants.length < product.variants.length
+            );
         },
         isVariantSelected: (variant) => {
             const state = get();

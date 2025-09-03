@@ -1,7 +1,7 @@
 // app/bundles/create/page.tsx
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import BundleForm from "@/bundles/_components/BundleForm";
 
 export default function CreateBundlePage() {
@@ -14,13 +14,8 @@ export default function CreateBundlePage() {
 
     const handleCancel = () => {
         // Go back to bundles list
-        router.push('/bundles');
+        router.push("/bundles");
     };
 
-    return (
-        <BundleForm
-            onSuccess={handleSuccess}
-            onCancel={handleCancel}
-        />
-    );
+    return <BundleForm onSuccess={handleSuccess} onCancel={handleCancel} />;
 }

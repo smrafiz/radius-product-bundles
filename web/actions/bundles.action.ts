@@ -76,49 +76,54 @@ export async function getBundleMetrics(sessionToken: string) {
         const sixtyDaysAgo = new Date();
         sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
-        const [currentPeriod, previousPeriod, totalRevenueAllTime, totalBundles, activeBundles] =
-            await Promise.all([
-                prisma.bundleAnalytics.aggregate({
-                    where: {
-                        bundle: { shop },
-                        date: { gte: thirtyDaysAgo },
+        const [
+            currentPeriod,
+            previousPeriod,
+            totalRevenueAllTime,
+            totalBundles,
+            activeBundles,
+        ] = await Promise.all([
+            prisma.bundleAnalytics.aggregate({
+                where: {
+                    bundle: { shop },
+                    date: { gte: thirtyDaysAgo },
+                },
+                _sum: {
+                    bundleViews: true,
+                    bundlePurchases: true,
+                    bundleRevenue: true,
+                    bundleAddToCarts: true,
+                },
+            }),
+            prisma.bundleAnalytics.aggregate({
+                where: {
+                    bundle: { shop },
+                    date: {
+                        gte: sixtyDaysAgo,
+                        lt: thirtyDaysAgo,
                     },
-                    _sum: {
-                        bundleViews: true,
-                        bundlePurchases: true,
-                        bundleRevenue: true,
-                        bundleAddToCarts: true,
-                    },
-                }),
-                prisma.bundleAnalytics.aggregate({
-                    where: {
-                        bundle: { shop },
-                        date: {
-                            gte: sixtyDaysAgo,
-                            lt: thirtyDaysAgo,
-                        },
-                    },
-                    _sum: {
-                        bundleViews: true,
-                        bundlePurchases: true,
-                        bundleRevenue: true,
-                    },
-                }),
-                prisma.bundleAnalytics.aggregate({
-                    where: {
-                        bundle: { shop },
-                    },
-                    _sum: {
-                        bundleRevenue: true,
-                    },
-                }),
-                prisma.bundle.count({
-                    where: { shop },
-                }),
-                prisma.bundle.count({
-                    where: { shop, status: "ACTIVE" },
-                }),
-            ]);
+                },
+                _sum: {
+                    bundleViews: true,
+                    bundlePurchases: true,
+                    bundleRevenue: true,
+                },
+            }),
+            prisma.bundleAnalytics.aggregate({
+                where: {
+                    bundle: { shop },
+                },
+                _sum: {
+                    bundleRevenue: true,
+                },
+            }),
+            prisma.bundle.count({
+                where: { shop },
+            }),
+            prisma.bundle.count({
+                where: { shop, status: "ACTIVE" },
+            }),
+        ]);
 
         const currentRevenue = currentPeriod._sum.bundleRevenue || 0;
         const currentViews = currentPeriod._sum.bundleViews || 0;
@@ -345,7 +350,7 @@ export async function createBundle(sessionToken: string, data: unknown) {
 export async function updateBundle(
     sessionToken: string,
     bundleId: string,
-    data: unknown
+    data: unknown,
 ) {
     try {
         const {
@@ -367,7 +372,10 @@ export async function updateBundle(
 
         const validatedData = validationResult.data;
 
-        const businessValidation = await validateBusinessRules(shop, validatedData);
+        const businessValidation = await validateBusinessRules(
+            shop,
+            validatedData,
+        );
 
         if (!businessValidation.success) {
             return {
@@ -392,7 +400,9 @@ export async function updateBundle(
             });
 
             if (!existingBundle) {
-                throw new Error("Bundle not found or you don't have permission to update it");
+                throw new Error(
+                    "Bundle not found or you don't have permission to update it",
+                );
             }
 
             // Check name uniqueness (excluding current bundle)
@@ -405,7 +415,9 @@ export async function updateBundle(
             });
 
             if (nameConflict) {
-                throw new Error(`Bundle with name "${validatedData.name}" already exists`);
+                throw new Error(
+                    `Bundle with name "${validatedData.name}" already exists`,
+                );
             }
 
             // Update the bundle
@@ -434,15 +446,17 @@ export async function updateBundle(
 
                 // Add new products
                 if (validatedData.products.length > 0) {
-                    const bundleProducts = validatedData.products.map((product, index) => ({
-                        bundleId: bundleId,
-                        productId: product.productId,
-                        variantId: product.variantId || null,
-                        quantity: product.quantity,
-                        displayOrder: product.displayOrder ?? index,
-                        isMain: index === 0,
-                        isRequired: product.isRequired,
-                    }));
+                    const bundleProducts = validatedData.products.map(
+                        (product, index) => ({
+                            bundleId: bundleId,
+                            productId: product.productId,
+                            variantId: product.variantId || null,
+                            quantity: product.quantity,
+                            displayOrder: product.displayOrder ?? index,
+                            isMain: index === 0,
+                            isRequired: product.isRequired,
+                        }),
+                    );
 
                     await tx.bundleProduct.createMany({
                         data: bundleProducts,
@@ -453,7 +467,7 @@ export async function updateBundle(
             return updatedBundle;
         });
 
-        revalidatePath('/bundles');
+        revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
 
         return {
@@ -467,7 +481,6 @@ export async function updateBundle(
             },
             errors: null,
         };
-
     } catch (error) {
         console.error("Failed to update bundle:", error);
 
@@ -543,7 +556,7 @@ export async function getBundle(sessionToken: string, bundleId: string) {
                 maxDiscountAmount: bundle.maxDiscountAmount,
                 startDate: bundle.startDate?.toISOString(),
                 endDate: bundle.endDate?.toISOString(),
-                products: bundle.bundleProducts.map(bp => ({
+                products: bundle.bundleProducts.map((bp) => ({
                     id: bp.id,
                     productId: bp.productId,
                     variantId: bp.variantId,
@@ -556,7 +569,6 @@ export async function getBundle(sessionToken: string, bundleId: string) {
                 updatedAt: bundle.updatedAt.toISOString(),
             },
         };
-
     } catch (error) {
         console.error("Failed to fetch bundle:", error);
         return {
@@ -598,7 +610,8 @@ async function validateBusinessRules(shop: string, data: BundleFormData) {
 
         // Check if a discount value is reasonable for fixed amounts
         if (data.discountType === "FIXED_AMOUNT" && data.discountValue) {
-            if (data.discountValue > 10000) { // Business rule
+            if (data.discountValue > 10000) {
+                // Business rule
                 errors.discountValue = {
                     _errors: ["Fixed discount amount seems too high"],
                 };
@@ -619,10 +632,12 @@ async function validateBusinessRules(shop: string, data: BundleFormData) {
 
         return {
             success: Object.keys(errors).length === 0,
-            message: Object.keys(errors).length > 0 ? "Business validation failed" : "Validation passed",
+            message:
+                Object.keys(errors).length > 0
+                    ? "Business validation failed"
+                    : "Validation passed",
             errors: Object.keys(errors).length > 0 ? errors : null,
         };
-
     } catch (error) {
         console.error("Business validation error:", error);
         return {

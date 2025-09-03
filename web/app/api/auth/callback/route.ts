@@ -20,17 +20,20 @@ export async function GET(request: NextRequest) {
 
     try {
         // Exchange code for access token
-        const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        const tokenResponse = await fetch(
+            `https://${shop}/admin/oauth/access_token`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    client_id: process.env.SHOPIFY_API_KEY,
+                    client_secret: process.env.SHOPIFY_API_SECRET,
+                    code: code,
+                }),
             },
-            body: JSON.stringify({
-                client_id: process.env.SHOPIFY_API_KEY,
-                client_secret: process.env.SHOPIFY_API_SECRET,
-                code: code,
-            }),
-        });
+        );
 
         if (!tokenResponse.ok) {
             throw new Error(`Token exchange failed: ${tokenResponse.status}`);
@@ -50,9 +53,9 @@ export async function GET(request: NextRequest) {
             shop,
             tokenData.access_token,
             tokenData.scope,
-            sessionState
+            sessionState,
         );
-        
+
         const session = new Session(sessionConfig);
 
         // Store session in the database
@@ -61,9 +64,9 @@ export async function GET(request: NextRequest) {
         // Build redirect URL with proper parameters
         const baseUrl = returnTo || "/dashboard";
         const redirectUrl = new URL(baseUrl, request.url);
-        
+
         redirectUrl.searchParams.set("shop", shop);
-        
+
         if (host) {
             redirectUrl.searchParams.set("host", host);
         }
@@ -71,16 +74,16 @@ export async function GET(request: NextRequest) {
         redirectUrl.searchParams.set("embedded", "1");
 
         return NextResponse.redirect(redirectUrl.toString());
-        
     } catch (error) {
         console.error("OAuth callback error:", error);
-        
+
         return NextResponse.json(
-            { 
+            {
                 error: "OAuth authentication failed",
-                details: error instanceof Error ? error.message : "Unknown error"
+                details:
+                    error instanceof Error ? error.message : "Unknown error",
             },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }

@@ -111,7 +111,7 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
         }
 
         const trackedVariants = product.variants.filter(
-            variant => variant.inventoryItem?.tracked === true
+            (variant) => variant.inventoryItem?.tracked === true,
         );
 
         if (trackedVariants.length === 0) {
@@ -121,13 +121,16 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
         if (trackedVariants.length === product.variants.length) {
             const totalInventory = trackedVariants.reduce(
                 (sum, variant) => sum + (variant.inventoryQuantity || 0),
-                0
+                0,
             );
 
             if (totalInventory === 0) {
                 return { text: "Out of stock", tone: "critical" as const };
             } else {
-                return { text: `${totalInventory} available`, tone: "subdued" as const };
+                return {
+                    text: `${totalInventory} available`,
+                    tone: "subdued" as const,
+                };
             }
         }
 
@@ -173,7 +176,11 @@ export const ProductItem = ({ product, isLast, isDisabled }: Props) => {
                                 </Text>
                             )}
                             {inventoryDisplay && (
-                                <Text as="p" variant="bodySm" tone={inventoryDisplay.tone}>
+                                <Text
+                                    as="p"
+                                    variant="bodySm"
+                                    tone={inventoryDisplay.tone}
+                                >
                                     {inventoryDisplay.text}
                                 </Text>
                             )}

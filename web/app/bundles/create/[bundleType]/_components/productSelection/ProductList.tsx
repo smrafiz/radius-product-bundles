@@ -41,7 +41,10 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                         <Box padding="0">
                             <InlineStack align="center" blockAlign="center">
                                 <div className="flex items-center h-[500px] min-h-[500px]">
-                                    <Spinner accessibilityLabel="Loading products" size="large" />
+                                    <Spinner
+                                        accessibilityLabel="Loading products"
+                                        size="large"
+                                    />
                                 </div>
                             </InlineStack>
                         </Box>
@@ -74,7 +77,11 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                         <Box padding="0">
                             <InlineStack align="center">
                                 <div className="flex items-center h-[500px] min-h-[500px]">
-                                    <Text as="p" variant="bodyLg" tone="subdued">
+                                    <Text
+                                        as="p"
+                                        variant="bodyLg"
+                                        tone="subdued"
+                                    >
                                         No products found
                                     </Text>
                                 </div>
@@ -87,7 +94,9 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                                     key={product.id}
                                     product={product}
                                     isLast={index === products.length - 1}
-                                    isDisabled={selectedProductIds.includes(product.id)}
+                                    isDisabled={selectedProductIds.includes(
+                                        product.id,
+                                    )}
                                 />
                             ))}
 
@@ -104,8 +113,13 @@ export const ProductList = forwardRef<HTMLDivElement, Props>(
                             {!nextCursor && products.length > 10 && (
                                 <Box padding="400">
                                     <InlineStack align="center">
-                                        <Text as="p" variant="bodySm" tone="subdued">
-                                            All products loaded ({products.length} total)
+                                        <Text
+                                            as="p"
+                                            variant="bodySm"
+                                            tone="subdued"
+                                        >
+                                            All products loaded (
+                                            {products.length} total)
                                         </Text>
                                     </InlineStack>
                                 </Box>

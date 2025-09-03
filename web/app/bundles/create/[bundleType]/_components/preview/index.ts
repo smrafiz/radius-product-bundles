@@ -1,1 +1,1 @@
-export { default as BundlePreview } from './BundlePreview';
+export { default as BundlePreview } from "./BundlePreview";

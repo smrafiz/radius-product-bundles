@@ -1,28 +1,28 @@
-import { useBundleStore } from '@/stores';
-import { BUNDLE_STEPS } from '@/lib/constants';
+import { useBundleStore } from "@/stores";
+import { BUNDLE_STEPS } from "@/lib/constants";
 
 export function useStepIndicator() {
     const { currentStep, setStep } = useBundleStore();
 
     const getStepStatus = (stepNumber: number) => {
-        if (currentStep > stepNumber) return 'completed';
-        if (stepNumber === currentStep) return 'current';
-        return 'upcoming';
+        if (currentStep > stepNumber) return "completed";
+        if (stepNumber === currentStep) return "current";
+        return "upcoming";
     };
 
     const getStepColor = (status: string) => {
         switch (status) {
-            case 'completed':
-                return 'success';
-            case 'current':
-                return 'interactive';
+            case "completed":
+                return "success";
+            case "current":
+                return "interactive";
             default:
-                return 'subdued';
+                return "subdued";
         }
     };
 
     const getProgressLineColor = (stepNumber: number) => {
-        return currentStep > stepNumber ? 'success' : 'subdued';
+        return currentStep > stepNumber ? "success" : "subdued";
     };
 
     const canNavigateToStep = (stepNumber: number) => {

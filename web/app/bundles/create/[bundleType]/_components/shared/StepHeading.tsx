@@ -9,7 +9,11 @@ interface Props {
     gap?: Gap;
 }
 
-export default function StepHeading({ title, description, gap = "200" }: Props) {
+export default function StepHeading({
+    title,
+    description,
+    gap = "200",
+}: Props) {
     return (
         <BlockStack gap={gap}>
             <Text as="h2" variant="headingLg">

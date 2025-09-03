@@ -1,6 +1,10 @@
 import { verifyRequest } from "@/lib/shopify/verify";
 import { NextRequest, NextResponse } from "next/server";
-import { extractBearerToken, isSessionExpired, formatErrorResponse } from "@/utils";
+import {
+    extractBearerToken,
+    isSessionExpired,
+    formatErrorResponse,
+} from "@/utils";
 
 export async function POST(request: NextRequest) {
     try {
@@ -62,10 +66,13 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        const errorResponse = formatErrorResponse(error, "Session validation failed");
+        const errorResponse = formatErrorResponse(
+            error,
+            "Session validation failed",
+        );
         return NextResponse.json(
             { valid: false, ...errorResponse },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }

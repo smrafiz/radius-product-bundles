@@ -62,7 +62,9 @@ export default function AdvancedOptions() {
                                         />
                                     </InlineStack>
 
-                                    {index < ADVANCED_OPTIONS.length - 1 && <Divider />}
+                                    {index < ADVANCED_OPTIONS.length - 1 && (
+                                        <Divider />
+                                    )}
                                 </React.Fragment>
                             );
                         },

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useRef } from "react";
 import { convertShopifyLocale } from "@/utils";
@@ -17,7 +17,9 @@ export const useShopSettings = () => {
 
         if (shopQuery.data?.shop) {
             const { currencyCode, billingAddress } = shopQuery.data.shop;
-            const newLocale = convertShopifyLocale(billingAddress?.countryCode || "US");
+            const newLocale = convertShopifyLocale(
+                billingAddress?.countryCode || "US",
+            );
 
             const currentStore = useShopSettingsStore.getState();
 

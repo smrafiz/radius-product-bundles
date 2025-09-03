@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef, useCallback } from "react";
-import { Modal, Button, Select, TextField, InlineStack } from "@shopify/polaris";
+import {
+    Modal,
+    Button,
+    Select,
+    TextField,
+    InlineStack,
+} from "@shopify/polaris";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import type { SelectedItem } from "@/types";
 
@@ -15,13 +21,13 @@ interface Props {
 }
 
 export function ProductSelectionModal({
-                                          isOpen,
-                                          onClose,
-                                          onProductsSelected,
-                                          selectedProductIds,
-                                          title = "Add products",
-                                          collectionId,
-                                      }: Props) {
+    isOpen,
+    onClose,
+    onProductsSelected,
+    selectedProductIds,
+    title = "Add products",
+    collectionId,
+}: Props) {
     const app = useAppBridge();
 
     const [statusFilter, setStatusFilter] = React.useState("ALL");
@@ -77,14 +83,25 @@ export function ProductSelectionModal({
         } catch (err) {
             console.error("Resource picker error:", err);
         }
-    }, [app, statusFilter, searchInput, collectionId, selectedProductIds, onProductsSelected, onClose]);
+    }, [
+        app,
+        statusFilter,
+        searchInput,
+        collectionId,
+        selectedProductIds,
+        onProductsSelected,
+        onClose,
+    ]);
 
     return (
         <Modal
             open={isOpen}
             onClose={onClose}
             title={title}
-            primaryAction={{ content: "Open Shopify Picker", onAction: openResourcePicker }}
+            primaryAction={{
+                content: "Open Shopify Picker",
+                onAction: openResourcePicker,
+            }}
             secondaryActions={[{ content: "Cancel", onAction: onClose }]}
         >
             <Modal.Section>

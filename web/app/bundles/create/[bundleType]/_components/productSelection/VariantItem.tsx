@@ -111,7 +111,11 @@ export function VariantItem({ product, variant }: Props) {
                                 <Text
                                     as="p"
                                     variant="bodySm"
-                                    tone={variant.inventoryQuantity === 0 ? "critical" : "subdued"}
+                                    tone={
+                                        variant.inventoryQuantity === 0
+                                            ? "critical"
+                                            : "subdued"
+                                    }
                                 >
                                     {inventoryText}
                                 </Text>

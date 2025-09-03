@@ -65,22 +65,25 @@ export default function SessionProvider({
                         // Fallback: Try to get shop from URL or redirect to install
                         const currentUrl = window.location.href;
                         const shopMatch = currentUrl.match(/[?&]shop=([^&]+)/);
-                        
+
                         if (shopMatch) {
                             const detectedShop = shopMatch[1];
                             window.location.href = `/api/auth?shop=${detectedShop}&returnTo=${encodeURIComponent(window.location.pathname)}`;
                         } else {
                             // Last resort: Redirect to auth without shop (will show error)
-                            const returnTo = window.location.pathname !== "/" ? window.location.pathname : "/dashboard";
+                            const returnTo =
+                                window.location.pathname !== "/"
+                                    ? window.location.pathname
+                                    : "/dashboard";
                             window.location.href = `/api/auth?returnTo=${encodeURIComponent(returnTo)}`;
                         }
                     } else {
                         // Retry App Bridge initialization
                         setTimeout(() => {
-                            setRetryCount(prev => prev + 1);
+                            setRetryCount((prev) => prev + 1);
                             setAuthRedirectAttempted(false);
                         }, 2000);
-                        
+
                         dispatch({
                             type: "SESSION_VALIDATION_FAILED",
                             payload: {
@@ -103,9 +106,9 @@ export default function SessionProvider({
 
         const handleTokenAndWebhooks = async () => {
             if (tokenProcessed.current) return;
-            
+
             tokenProcessed.current = true;
-            
+
             try {
                 const token = await app.idToken();
 
@@ -133,7 +136,10 @@ export default function SessionProvider({
                         await doWebhookRegistration(token);
                         webhookSuccess = true;
                     } catch (webhookError) {
-                        console.error("❌ Webhook registration failed:", webhookError);
+                        console.error(
+                            "❌ Webhook registration failed:",
+                            webhookError,
+                        );
                         // Non-critical - app can still function
                     }
 
@@ -147,22 +153,26 @@ export default function SessionProvider({
                         throw new Error("Token storage failed");
                     }
                 } else {
-                    throw new Error("No session token received from App Bridge");
+                    throw new Error(
+                        "No session token received from App Bridge",
+                    );
                 }
             } catch (error) {
                 console.error("❌ Session initialization error:", error);
                 tokenProcessed.current = false; // Allow retry
-                
+
                 // Enhanced error handling based on error type
                 let errorMessage = "Session initialization failed";
                 if (error instanceof Error) {
                     if (error.message.includes("Token")) {
-                        errorMessage = "Authentication token error - please refresh the page";
+                        errorMessage =
+                            "Authentication token error - please refresh the page";
                     } else if (error.message.includes("Network")) {
-                        errorMessage = "Network error - please check your connection";
+                        errorMessage =
+                            "Network error - please check your connection";
                     }
                 }
-                
+
                 dispatch({
                     type: "SESSION_VALIDATION_FAILED",
                     payload: { error: errorMessage },
@@ -171,7 +181,7 @@ export default function SessionProvider({
                 // Retry after delay if App Bridge is still ready
                 if (isAppBridgeReady && retryCount < 3) {
                     setTimeout(() => {
-                        setRetryCount(prev => prev + 1);
+                        setRetryCount((prev) => prev + 1);
                         tokenProcessed.current = false;
                     }, 3000);
                 }

@@ -2,7 +2,7 @@ import type {
     NotificationType as PrismaNotificationType,
     NotificationPriority as PrismaNotificationPriority,
     AlertRuleStatus as PrismaAlertRuleStatus,
-    AlertFrequency as PrismaAlertFrequency
+    AlertFrequency as PrismaAlertFrequency,
 } from "@prisma/client";
 
 export type NotificationType = PrismaNotificationType;

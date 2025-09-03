@@ -11,7 +11,12 @@ interface Props {
     discardPath?: string;
 }
 
-export default function GlobalForm({ children, onSubmit, resetDirty, discardPath }: Props) {
+export default function GlobalForm({
+    children,
+    onSubmit,
+    resetDirty,
+    discardPath,
+}: Props) {
     const formRef = useRef<HTMLFormElement>(null);
     const router = useRouter();
 

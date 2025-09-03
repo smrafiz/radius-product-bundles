@@ -1,6 +1,6 @@
 import type {
     AutomationStatus as PrismaAutomationStatus,
-    TriggerType as PrismaTriggerType
+    TriggerType as PrismaTriggerType,
 } from "@prisma/client";
 
 export type AutomationStatus = PrismaAutomationStatus;

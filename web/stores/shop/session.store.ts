@@ -41,16 +41,13 @@ export const useSessionStore = create<ShopifyStore>()((set, get) => ({
 
                 if (token) {
                     // Use the new validation API
-                    const response = await fetch(
-                        "/api/validate-session",
-                        {
-                            method: "POST",
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                                "Content-Type": "application/json",
-                            },
+                    const response = await fetch("/api/validate-session", {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
                         },
-                    );
+                    });
 
                     if (response.ok) {
                         const data = await response.json();
@@ -65,8 +62,7 @@ export const useSessionStore = create<ShopifyStore>()((set, get) => ({
                             });
                         } else {
                             throw new Error(
-                                data.error ||
-                                    "Session validation failed",
+                                data.error || "Session validation failed",
                             );
                         }
                     } else {
@@ -96,7 +92,6 @@ export const useSessionStore = create<ShopifyStore>()((set, get) => ({
         const { dispatch } = get();
         dispatch({ type: "CLEAR_SESSION" });
     },
-
 
     // Check if the session is expired based on JWT `exp`
     isSessionExpired: () => {

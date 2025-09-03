@@ -1,186 +1,194 @@
 /* Radius Product Bundles - Minimal Styles */
 .radius-app-wrapper {
-	--radius-primary: #6366f1;
-	--radius-accent: #f59e0b;
+    --radius-primary: #6366f1;
+    --radius-accent: #f59e0b;
 }
 
 /* Metrics grid */
 .radius-metrics-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: 20px;
-	margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
 }
 
 /* Bundle cards */
 .radius-bundle-card {
-	padding: 16px;
-	border-radius: 8px;
-	border: 1px solid #e1e3e5;
-	transition: all 0.2s ease;
-	background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e1e3e5;
+    transition: all 0.2s ease;
+    background: white;
 }
 
 .radius-bundle-card:hover {
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 /* Bundle avatar */
 .radius-bundle-avatar {
-	width: 48px;
-	height: 48px;
-	background: linear-gradient(135deg, var(--radius-primary), var(--radius-accent));
-	border-radius: 12px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: white;
-	font-weight: 600;
-	font-size: 18px;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(
+        135deg,
+        var(--radius-primary),
+        var(--radius-accent)
+    );
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
 }
 
 /* Empty state icon */
 .radius-empty-icon {
-	width: 64px;
-	height: 64px;
-	background: #f3f4f6;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #6b7280;
+    width: 64px;
+    height: 64px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
 }
 
 /* AI insight */
 .radius-ai-insight {
-	background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-	padding: 16px;
-	border-radius: 8px;
-	border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-	.radius-metrics-grid {
-		grid-template-columns: 1fr;
-		gap: 16px;
-	}
+    .radius-metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 
-	.radius-bundle-card {
-		padding: 12px;
-	}
+    .radius-bundle-card {
+        padding: 12px;
+    }
 
-	.radius-bundle-avatar {
-		width: 40px;
-		height: 40px;
-		font-size: 16px;
-	}
+    .radius-bundle-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
 }
 
 /* Quick Actions Wrapper - No Polaris class targeting */
 .radius-quick-actions-wrapper {
-	/* Main wrapper styling if needed */
+    /* Main wrapper styling if needed */
 }
 
 /* Quick Action Item Wrapper */
 .radius-quick-action-item {
-	height: 100%;
+    height: 100%;
 }
 
 .radius-quick-action-item a {
-	text-decoration: none !important;
-	color: inherit !important;
-	display: block;
-	height: 100%;
+    text-decoration: none !important;
+    color: inherit !important;
+    display: block;
+    height: 100%;
 }
 
 /* Card hover effects within wrapper */
 .radius-quick-action-item .Polaris-Card {
-	transition: all 0.2s ease;
-	height: 100%;
-	cursor: pointer;
+    transition: all 0.2s ease;
+    height: 100%;
+    cursor: pointer;
 }
 
 .radius-quick-action-item:hover .Polaris-Card {
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	transform: translateY(-1px);
-	border-color: #6366f1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    border-color: #6366f1;
 }
 
 .radius-quick-action-item:focus-within .Polaris-Card {
-	outline: 2px solid #6366f1;
-	outline-offset: 2px;
-	border-radius: 8px;
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+    border-radius: 8px;
 }
 
 /* Text color consistency within wrapper */
 .radius-quick-action-item .Polaris-Text {
-	color: inherit !important;
+    color: inherit !important;
 }
 
 /* Link styling within wrapper */
 .radius-quick-action-item .Polaris-Link {
-	text-decoration: none !important;
-	color: inherit !important;
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 .radius-quick-action-item .Polaris-Link:hover {
-	text-decoration: none !important;
-	color: inherit !important;
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 /* Active/pressed state */
 .radius-quick-action-item:active .Polaris-Card {
-	transform: translateY(0px);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Ensure full height for better click area */
 .radius-quick-action-item,
 .radius-quick-action-item a,
 .radius-quick-action-item .Polaris-Card {
-	height: 100%;
-	min-height: 80px;
+    height: 100%;
+    min-height: 80px;
 }
 
 /* Icon wrapper consistency */
 .radius-quick-actions-wrapper [style*="width: 32px"] {
-	flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 .radius-quick-action-icon {
-	> span {
-		width: 25px;
-		height: 25px;
-	}
+    > span {
+        width: 25px;
+        height: 25px;
+    }
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-	.radius-quick-action-item .Polaris-Card {
-		min-height: 70px;
-	}
+    .radius-quick-action-item .Polaris-Card {
+        min-height: 70px;
+    }
 }
 
 /* Remove any old conflicting styles */
 .radius-quick-actions-grid,
 .radius-quick-action-card,
 .radius-quick-action-primary {
-	display: none;
+    display: none;
 }
 
 /* Progress bar */
 #nprogress .bar {
-	background-color: var(--p-color-bg-fill-brand) !important; /* Polaris brand color */
-	height: 3px; /* optional: adjust thickness */
+    background-color: var(
+        --p-color-bg-fill-brand
+    ) !important; /* Polaris brand color */
+    height: 3px; /* optional: adjust thickness */
 }
 
 #nprogress .peg {
-	box-shadow: 0 0 10px var(--p-color-bg-fill-brand), 0 0 5px var(--p-color-bg-fill-brand);
+    box-shadow:
+        0 0 10px var(--p-color-bg-fill-brand),
+        0 0 5px var(--p-color-bg-fill-brand);
 }
 
 #nprogress .spinner-icon {
-	border-top-color: var(--p-color-bg-fill-brand);
-	border-left-color: var(--p-color-bg-fill-brand);
+    border-top-color: var(--p-color-bg-fill-brand);
+    border-left-color: var(--p-color-bg-fill-brand);
 }

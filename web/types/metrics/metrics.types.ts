@@ -37,5 +37,5 @@ export interface BundleMetricsResponse {
 export interface AnalyticsTimeframe {
     start: string;
     end: string;
-    period: 'day' | 'week' | 'month' | 'quarter' | 'year';
+    period: "day" | "week" | "month" | "quarter" | "year";
 }

@@ -1,6 +1,6 @@
 // hooks/useLoadBundle.ts
-import { useEffect, useState } from 'react';
-import type { CreateBundlePayload } from '@/types';
+import { useEffect, useState } from "react";
+import type { CreateBundlePayload } from "@/types";
 import { useBundleStore } from "@/stores";
 
 interface LoadBundleOptions {
@@ -23,8 +23,8 @@ export function useLoadBundle({ bundleId, fetchBundle }: LoadBundleOptions) {
                 setError(null);
             })
             .catch((err) => {
-                console.error('Failed to load bundle:', err);
-                setError('Failed to load bundle data.');
+                console.error("Failed to load bundle:", err);
+                setError("Failed to load bundle data.");
             })
             .finally(() => setLoading(false));
     }, [bundleId, fetchBundle, setBundleData]);

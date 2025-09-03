@@ -42,6 +42,6 @@ export const useShopSettingsStore = create<ShopSettingsStore>()(
                 lastFetched: state.lastFetched,
                 isInitialized: state.isInitialized,
             }),
-        }
-    )
+        },
+    ),
 );

@@ -35,7 +35,7 @@ export default function BundleSummary() {
         const productPrice = parseFloat(group.product.price ?? "0");
         const variantSum = group.variants.reduce(
             (s, v) => s + parseFloat(v.price ?? "0"),
-            0
+            0,
         );
         return sum + productPrice + variantSum;
     }, 0);
@@ -44,9 +44,10 @@ export default function BundleSummary() {
     const discount =
         bundleData.discountType === "PERCENTAGE" && bundleData.discountValue
             ? (subtotal * bundleData.discountValue) / 100
-            : bundleData.discountType === "FIXED_AMOUNT" && bundleData.discountValue
-                ? bundleData.discountValue
-                : 0;
+            : bundleData.discountType === "FIXED_AMOUNT" &&
+                bundleData.discountValue
+              ? bundleData.discountValue
+              : 0;
 
     const total = subtotal - discount;
 
@@ -91,22 +92,30 @@ export default function BundleSummary() {
 
                 {/* Subtotal without discount */}
                 <InlineStack align="space-between">
-                    <Text as="p" tone="subdued">Subtotal</Text>
+                    <Text as="p" tone="subdued">
+                        Subtotal
+                    </Text>
                     <Text as="p">${subtotal.toFixed(2)}</Text>
                 </InlineStack>
 
                 {/* Discount */}
                 {discount > 0 && (
                     <InlineStack align="space-between">
-                        <Text as="p" tone="subdued">Discount</Text>
+                        <Text as="p" tone="subdued">
+                            Discount
+                        </Text>
                         <Text as="p">- ${discount.toFixed(2)}</Text>
                     </InlineStack>
                 )}
 
                 {/* Total with discount */}
                 <InlineStack align="space-between">
-                    <Text as="p" fontWeight="medium">Total</Text>
-                    <Text as="p" fontWeight="bold">${total.toFixed(2)}</Text>
+                    <Text as="p" fontWeight="medium">
+                        Total
+                    </Text>
+                    <Text as="p" fontWeight="bold">
+                        ${total.toFixed(2)}
+                    </Text>
                 </InlineStack>
 
                 {/* Optional: min order, max discount, dates */}
@@ -138,7 +147,9 @@ export default function BundleSummary() {
                             Start Date:
                         </Text>
                         <Text as="p" variant="bodySm">
-                            {new Date(bundleData.startDate).toLocaleDateString()}
+                            {new Date(
+                                bundleData.startDate,
+                            ).toLocaleDateString()}
                         </Text>
                     </InlineStack>
                 )}

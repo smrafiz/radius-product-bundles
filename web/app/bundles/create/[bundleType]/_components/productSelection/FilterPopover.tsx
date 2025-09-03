@@ -67,7 +67,12 @@ export function FilterPopover() {
         if (data?.products) {
             updateFilterOptionsFromProducts(data.products);
         }
-    }, [data, setCollections, setCollectionsPageInfo, updateFilterOptionsFromProducts]);
+    }, [
+        data,
+        setCollections,
+        setCollectionsPageInfo,
+        updateFilterOptionsFromProducts,
+    ]);
 
     // Refetch when variables change
     useEffect(() => {
@@ -80,7 +85,7 @@ export function FilterPopover() {
             setSelectedCollectionTitle(null);
             return;
         }
-        const found = collections.find(e => e.node.id === filters.collection);
+        const found = collections.find((e) => e.node.id === filters.collection);
         if (found) {
             setSelectedCollectionTitle(found.node.title);
         }
@@ -175,14 +180,25 @@ export function FilterPopover() {
                                     <Listbox.Loading accessibilityLabel="Loading collections..." />
                                 </Listbox>
                             ) : collections.length > 0 ? (
-                                <Listbox accessibilityLabel="Collections" onSelect={handleSelect}>
+                                <Listbox
+                                    accessibilityLabel="Collections"
+                                    onSelect={handleSelect}
+                                >
                                     {collections.map((edge) => (
                                         <Listbox.Option
                                             key={edge.node.id}
                                             value={edge.node.id}
-                                            selected={filters.collection === edge.node.id}
+                                            selected={
+                                                filters.collection ===
+                                                edge.node.id
+                                            }
                                         >
-                                            <Listbox.TextOption selected={filters.collection === edge.node.id}>
+                                            <Listbox.TextOption
+                                                selected={
+                                                    filters.collection ===
+                                                    edge.node.id
+                                                }
+                                            >
                                                 {edge.node.title}
                                             </Listbox.TextOption>
                                         </Listbox.Option>
@@ -200,7 +216,9 @@ export function FilterPopover() {
                     <div style={{ minHeight: "20px", marginTop: "8px" }}>
                         {filters.collection && selectedCollectionTitle && (
                             <InlineStack gap="200">
-                                <Tag onRemove={handleClear}>{selectedCollectionTitle}</Tag>
+                                <Tag onRemove={handleClear}>
+                                    {selectedCollectionTitle}
+                                </Tag>
                             </InlineStack>
                         )}
                     </div>

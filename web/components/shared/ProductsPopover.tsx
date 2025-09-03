@@ -15,10 +15,7 @@ interface Props {
     maxVisible?: number;
 }
 
-export default function ProductsPopover({
-    products,
-    maxVisible = 5,
-}: Props) {
+export default function ProductsPopover({ products, maxVisible = 5 }: Props) {
     const [popoverActive, setPopoverActive] = useState(false);
 
     const togglePopover = () => setPopoverActive((active) => !active);

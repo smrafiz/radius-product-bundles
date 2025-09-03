@@ -10,13 +10,13 @@ import {
 import { useBundleStore } from "@/stores";
 import { COLOR_THEMES } from "@/lib/constants";
 
-type ColorTheme = typeof COLOR_THEMES[number]['value'];
+type ColorTheme = (typeof COLOR_THEMES)[number]["value"];
 
 export default function WidgetAppearance() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
     const handleColorThemeSelect = (theme: ColorTheme) => {
-        updateDisplaySettings('colorTheme', theme);
+        updateDisplaySettings("colorTheme", theme);
     };
 
     return (
@@ -42,14 +42,18 @@ export default function WidgetAppearance() {
                         {COLOR_THEMES.map((theme) => (
                             <div
                                 key={theme.value}
-                                onClick={() => handleColorThemeSelect(theme.value)}
+                                onClick={() =>
+                                    handleColorThemeSelect(theme.value)
+                                }
                                 style={{
-                                    cursor: 'pointer',
-                                    border: displaySettings.colorTheme === theme.value
-                                        ? '3px solid var(--p-color-border-emphasis)'
-                                        : '1px solid transparent',
-                                    borderRadius: '8px',
-                                    padding: '2px'
+                                    cursor: "pointer",
+                                    border:
+                                        displaySettings.colorTheme ===
+                                        theme.value
+                                            ? "3px solid var(--p-color-border-emphasis)"
+                                            : "1px solid transparent",
+                                    borderRadius: "8px",
+                                    padding: "2px",
                                 }}
                             >
                                 <Box

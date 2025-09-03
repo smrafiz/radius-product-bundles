@@ -106,9 +106,7 @@ export default function ProtectedRoute({
 
     // Show skeleton while checking/refreshing a session
     if (!isInitialized || isRefreshing || (!hasValidSession && !sessionToken)) {
-        return (
-            <DashboardSkeleton />
-        );
+        return <DashboardSkeleton />;
     }
 
     return <>{children}</>;

@@ -63,7 +63,9 @@ export default function SelectedProductsAccordion() {
                                         {group.product.vendor} •{" "}
                                         {group.product.productType}
                                     </Text>
-                                    <Text as="span">${group.product.price}</Text>
+                                    <Text as="span">
+                                        ${group.product.price}
+                                    </Text>
                                 </BlockStack>
                             </InlineStack>
 
@@ -85,7 +87,11 @@ export default function SelectedProductsAccordion() {
                                             }}
                                         />
                                     )}
-                                    <Text as="p" variant="bodyMd" fontWeight="medium">
+                                    <Text
+                                        as="p"
+                                        variant="bodyMd"
+                                        fontWeight="medium"
+                                    >
                                         {variant.title}
                                     </Text>
                                     <Text tone="subdued" as="span">

@@ -2,7 +2,8 @@ import { formatCurrency } from "@/utils";
 import { useShopSettingsStore } from "@/stores";
 
 export const useCurrency = () => {
-    const { getCurrencyCode, getLocale, isInitialized } = useShopSettingsStore();
+    const { getCurrencyCode, getLocale, isInitialized } =
+        useShopSettingsStore();
 
     return {
         currencyCode: getCurrencyCode(),
@@ -10,6 +11,6 @@ export const useCurrency = () => {
         isInitialized,
         formatPrice: (amount: number | string | null) => {
             return formatCurrency(amount, getCurrencyCode(), getLocale());
-        }
+        },
     };
 };

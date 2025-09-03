@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useAppBridge } from '@shopify/app-bridge-react';
+import { useState, useEffect } from "react";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
 export function useSessionToken() {
     const app = useAppBridge();
-    const [sessionToken, setSessionToken] = useState<string>('');
+    const [sessionToken, setSessionToken] = useState<string>("");
 
     useEffect(() => {
         if (!app) return;
@@ -13,7 +13,7 @@ export function useSessionToken() {
                 const token = await app.idToken();
                 setSessionToken(token);
             } catch (error) {
-                console.error('Failed to get session token:', error);
+                console.error("Failed to get session token:", error);
             }
         };
 

@@ -143,7 +143,7 @@ export interface BundleState {
     setBundleData: (data: Partial<CreateBundlePayload>) => void;
     updateBundleField: <K extends keyof CreateBundlePayload>(
         key: K,
-        value: CreateBundlePayload[K]
+        value: CreateBundlePayload[K],
     ) => void;
 
     // Selected items actions
@@ -155,7 +155,7 @@ export interface BundleState {
     updateProductVariants: (
         productId: string,
         variants: SelectedItem[],
-        position?: number
+        position?: number,
     ) => void;
     reorderItems: (activeId: string, overId: string) => void;
 
@@ -163,20 +163,21 @@ export interface BundleState {
     getGroupedItems: () => ProductGroup[];
     getTotalProducts: () => number;
     getTotalItems: () => number;
-    getVariantInfo: (
-        productId: string
-    ) => { selectedCount: number; originalTotal: number };
+    getVariantInfo: (productId: string) => {
+        selectedCount: number;
+        originalTotal: number;
+    };
 
     // Display settings
     updateDisplaySettings: <K extends keyof DisplaySettings>(
         key: K,
-        value: DisplaySettings[K]
+        value: DisplaySettings[K],
     ) => void;
 
     // Configuration
     updateConfiguration: <K extends keyof BundleConfiguration>(
         key: K,
-        value: BundleConfiguration[K]
+        value: BundleConfiguration[K],
     ) => void;
 
     // Loading states

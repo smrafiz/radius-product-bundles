@@ -41,7 +41,7 @@ export function SearchBar({
         setSearchInput,
         setSearchBy,
         setFilterPopoverActive,
-        resetState
+        resetState,
     } = useProductSelectionStore();
 
     const handleClearSearch = () => {
