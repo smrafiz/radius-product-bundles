@@ -125,6 +125,11 @@ export interface BundleState {
     isSaving: boolean;
     validationAttempted: boolean;
 
+    // Dirty tracking
+    isDirty: boolean;
+    markDirty: () => void;
+    resetDirty: () => void;
+
     // Step management
     setStep: (step: number) => void;
     setValidationAttempted: (attempted: boolean) => void;

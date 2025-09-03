@@ -1,9 +1,11 @@
 import { create } from "zustand";
+import { markDirty } from "@/utils";
 import { immer } from "zustand/middleware/immer";
 
-import type {
+import {
     BundleConfiguration,
     BundleState,
+    CreateBundlePayload,
     DiscountType,
     DisplaySettings,
     ProductGroup,
@@ -11,7 +13,7 @@ import type {
 } from "@/types";
 import { BundleFormData } from "@/lib/validation";
 
-const initialBundleData: Partial<BundleFormData> = {
+const initialBundleData: Partial<CreateBundlePayload> = {
     name: "",
     products: [],
     discountType: undefined as DiscountType | undefined,
@@ -49,6 +51,10 @@ export const useBundleStore = create(
         isLoading: false,
         isSaving: false,
         validationAttempted: false,
+        isDirty: false,
+
+        markDirty: () => set((state) => { state.isDirty = true; }),
+        resetDirty: () => set((state) => { state.isDirty = false; }),
 
         // Step management
         setStep: (step) =>
@@ -113,6 +119,7 @@ export const useBundleStore = create(
         setBundleData: (data) =>
             set((state) => {
                 state.bundleData = { ...state.bundleData, ...data } as Partial<BundleFormData>;
+                state.isDirty = false;
             }),
 
         updateBundleField: (key, value) =>
@@ -150,6 +157,8 @@ export const useBundleStore = create(
                 } else {
                     (state.bundleData as any)[key] = value;
                 }
+
+                state.isDirty = false;
             }),
 
         // Selected items actions
@@ -162,6 +171,8 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+
+                state.isDirty = false;
             }),
 
         addSelectedItems: (items) =>
@@ -178,6 +189,8 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+
+                state.isDirty = false;
             }),
 
         removeSelectedItem: (itemId) =>
@@ -192,6 +205,8 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+
+                state.isDirty = false;
             }),
 
         removeProductAndAllVariants: (productId) =>
@@ -206,6 +221,8 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+
+                state.isDirty = false;
             }),
 
         updateSelectedItemQuantity: (itemId, quantity) =>
@@ -228,6 +245,8 @@ export const useBundleStore = create(
                         }),
                     );
                 }
+
+                state.isDirty = false;
             }),
 
         updateProductVariants: (productId, variants, position) =>
@@ -250,6 +269,8 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+
+                state.isDirty = false;
             }),
 
         reorderItems: (activeId, overId) =>
@@ -299,6 +320,8 @@ export const useBundleStore = create(
                         }),
                     );
                 }
+
+                state.isDirty = false;
             }),
 
         // Computed values
@@ -352,12 +375,14 @@ export const useBundleStore = create(
         updateDisplaySettings: (key, value) =>
             set((state) => {
                 state.displaySettings[key] = value;
+                state.isDirty = false;
             }),
 
         // Configuration actions
         updateConfiguration: (key, value) =>
             set((state) => {
                 state.configuration[key] = value;
+                state.isDirty = false;
             }),
 
         // Loading states
@@ -382,6 +407,7 @@ export const useBundleStore = create(
                 state.isLoading = false;
                 state.isSaving = false;
                 state.validationAttempted = false;
+                state.isDirty = false;
             }),
     })),
 );

@@ -1,5 +1,11 @@
 import { bundleTypeConfigs } from "@/config";
-import { BundleType, SelectedItem, ProductGroup, BundleConfig } from "@/types";
+import {
+    BundleType,
+    SelectedItem,
+    ProductGroup,
+    BundleConfig,
+    BundleState,
+} from "@/types";
 
 /**
  * Get bundle type options for select

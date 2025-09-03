@@ -1,19 +1,35 @@
+"use client";
+
+import React from "react";
 import { bundleTypeMap } from "@/utils";
+import { useBundleStore } from "@/stores";
+import { GlobalForm } from "@/components";
 import { notFound } from "next/navigation";
 import { BundleCreationForm } from "@/bundles/create/[bundleType]/_components/form";
 
 interface Props {
-    params: { bundleType: string };
+    params: Promise<{ bundleType: string }>;
 }
 
-export default async function BundleCreationPage({ params }: Props) {
-    const { bundleType: bundleTypeParam } = await params;
-
+export default function BundleCreationPage({ params }: Props) {
+    const { bundleType: bundleTypeParam } = React.use(params);
     const bundleType = bundleTypeMap[bundleTypeParam];
 
     if (!bundleType) {
         notFound();
     }
 
-    return <BundleCreationForm bundleType={bundleType} />;
+    const bundleData = useBundleStore((s) => s.bundleData);
+    const isDirty = useBundleStore((s) => s.isDirty);
+    const resetDirty = useBundleStore((s) => s.resetDirty);
+
+    const handleSubmit = () => {
+        console.log("Submitted bundle data:", bundleData);
+    };
+
+    return (
+        <GlobalForm onSubmit={handleSubmit} isDirty={isDirty} resetDirty={resetDirty}>
+            <BundleCreationForm bundleType={bundleType} />
+        </GlobalForm>
+    );
 }

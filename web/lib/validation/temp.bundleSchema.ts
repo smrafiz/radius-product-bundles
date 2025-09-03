@@ -1,38 +1,78 @@
+@ -1,163 +0,0 @@
 import { z } from "zod";
-import { DISCOUNT_TYPES } from "@/lib/constants";
-import { VALIDATION_MESSAGES } from "@/lib/constants";
+import { DISCOUNT_TYPES, VALIDATION_MESSAGES } from "@/lib/constants";
 
 const discountTypeValues = DISCOUNT_TYPES.map((type) => type.value) as [
     string,
     ...string[],
 ];
 
+// Product schema for bundle products
+export const bundleProductSchema = z.object({
+    id: z.string().min(1, VALIDATION_MESSAGES.PRODUCT_ID),
+    productId: z.string().min(1, VALIDATION_MESSAGES.PRODUCT_ID),
+    variantId: z.string().optional(),
+    quantity: z
+        .number()
+        .int()
+        .min(1, VALIDATION_MESSAGES.MIN_QUANTITY)
+        .max(99, VALIDATION_MESSAGES.MAX_QUANTITY),
+    isRequired: z.boolean().default(true),
+    displayOrder: z.number().int().min(0).optional(),
+    // UI-only fields (not saved to DB)
+    title: z.string().optional(),
+    price: z.number().min(0).optional(),
+    image: z.string().optional(),
+});
+
+// Main bundle schema
 export const bundleSchema = z
     .object({
-        name: z.string().min(1, VALIDATION_MESSAGES.REQUIRED_FIELD).trim(),
-        description: z.string().optional(),
+        name: z
+            .string()
+            .min(1, VALIDATION_MESSAGES.REQUIRED_FIELD)
+            .max(100, VALIDATION_MESSAGES.MAX_LENGTH)
+            .trim(),
+
+        description: z
+            .string()
+            .max(500, VALIDATION_MESSAGES.MAX_DESC_LENGTH)
+            .optional()
+            .or(z.literal("")), // Allow empty string
+
         products: z
-            .array(z.any())
-            .min(1, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED),
+            .array(bundleProductSchema)
+            .min(1, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED)
+            .max(10, VALIDATION_MESSAGES.MAX_PRODUCTS),
+
         discountType: z.enum(discountTypeValues, {
             message: VALIDATION_MESSAGES.DISCOUNT_TYPE_REQUIRED,
         }),
+
         discountValue: z
             .number({
                 message: VALIDATION_MESSAGES.REQUIRED_FIELD,
             })
-            .positive(VALIDATION_MESSAGES.INVALID_DISCOUNT_VALUE)
+            .min(0, VALIDATION_MESSAGES.INVALID_DISCOUNT_VALUE)
             .optional(),
+
         minOrderValue: z
             .number()
             .min(0, VALIDATION_MESSAGES.INVALID_MIN_ORDER)
             .optional(),
+
         maxDiscountAmount: z
             .number()
             .min(0, VALIDATION_MESSAGES.INVALID_MAX_DISCOUNT)
             .optional(),
+
         startDate: z.date().optional(),
         endDate: z.date().optional(),
+
+        // Bundle status
+        status: z
+            .enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED", "SCHEDULED"])
+            .default("DRAFT"),
     })
     .refine(
         (data) => {
@@ -104,6 +144,21 @@ export const bundleSchema = z
             message: VALIDATION_MESSAGES.MAX_DISCOUNT_NOT_APPLICABLE,
             path: ["maxDiscountAmount"],
         },
+    )
+    .refine(
+        (data) => {
+            // Check for duplicate products
+            const productIds = data.products.map(
+                (p) => `${p.productId}-${p.variantId || "default"}`,
+            );
+            const uniqueIds = new Set(productIds);
+            return uniqueIds.size === productIds.length;
+        },
+        {
+            message: VALIDATION_MESSAGES.DUPLICATE_PRODUCTS,
+            path: ["products"],
+        },
     );
 
 export type BundleFormData = z.infer<typeof bundleSchema>;
+export type BundleProduct = z.infer<typeof bundleProductSchema>;

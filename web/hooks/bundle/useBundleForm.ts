@@ -1,11 +1,15 @@
 // hooks/bundle/useBundleForm.ts
-import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { toast } from "@shopify/polaris";
 
-import { bundleSchema, BundleFormData, BundleProduct } from "@/lib/validation/bundleSchema";
+import {
+    BundleFormData,
+    BundleProduct,
+    bundleSchema,
+} from "@/lib/validation/bundleSchema";
 import { createBundle, updateBundle } from "@/actions/bundles.action";
 import { useSaveBar } from "@/hooks";
 
@@ -18,12 +22,12 @@ interface UseBundleFormProps {
 }
 
 export function useBundleForm({
-                                  bundleId,
-                                  initialData = {},
-                                  onSuccess,
-                                  onError,
-                                  enableSaveBar = true,
-                              }: UseBundleFormProps = {}) {
+    bundleId,
+    initialData = {},
+    onSuccess,
+    onError,
+    enableSaveBar = true,
+}: UseBundleFormProps = {}) {
     const queryClient = useQueryClient();
 
     // Initialize React Hook Form with Zod validation
@@ -68,13 +72,22 @@ export function useBundleForm({
     };
 
     // Computed values
-    const computedValues = useMemo(() => ({
-        showDiscountValue: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE"].includes(watchedFields.discountType),
-        showMaxDiscount: ["PERCENTAGE", "FIXED_AMOUNT"].includes(watchedFields.discountType),
-        isPercentageDiscount: watchedFields.discountType === "PERCENTAGE",
-        isCustomPrice: watchedFields.discountType === "CUSTOM_PRICE",
-        productCount: watchedFields.products?.length || 0,
-    }), [watchedFields]);
+    const computedValues = useMemo(
+        () => ({
+            showDiscountValue: [
+                "PERCENTAGE",
+                "FIXED_AMOUNT",
+                "CUSTOM_PRICE",
+            ].includes(watchedFields.discountType),
+            showMaxDiscount: ["PERCENTAGE", "FIXED_AMOUNT"].includes(
+                watchedFields.discountType,
+            ),
+            isPercentageDiscount: watchedFields.discountType === "PERCENTAGE",
+            isCustomPrice: watchedFields.discountType === "CUSTOM_PRICE",
+            productCount: watchedFields.products?.length || 0,
+        }),
+        [watchedFields],
+    );
 
     // Create bundle mutation
     const createMutation = useMutation({
@@ -97,7 +110,9 @@ export function useBundleForm({
         },
         onError: (error) => {
             console.error("Create bundle error:", error);
-            toast.show("Failed to create bundle. Please try again.", { tone: "critical" });
+            toast.show("Failed to create bundle. Please try again.", {
+                tone: "critical",
+            });
             onError?.(error);
         },
     });
@@ -106,14 +121,16 @@ export function useBundleForm({
     const updateMutation = useMutation({
         mutationFn: async (data: BundleFormData) => {
             if (!bundleId) throw new Error("Bundle ID is required for update");
-            if (!sessionToken) throw new Error('No session token available');
+            if (!sessionToken) throw new Error("No session token available");
             return updateBundle(sessionToken, bundleId, data);
         },
         onSuccess: (result) => {
             if (result.status === "success") {
                 toast.show("Bundle updated successfully!", { tone: "success" });
                 queryClient.invalidateQueries({ queryKey: ["bundles"] });
-                queryClient.invalidateQueries({ queryKey: ["bundle", bundleId] });
+                queryClient.invalidateQueries({
+                    queryKey: ["bundle", bundleId],
+                });
                 form.reset(form.getValues()); // Reset dirty state
                 onSuccess?.(result.data);
             } else {
@@ -124,24 +141,32 @@ export function useBundleForm({
         },
         onError: (error) => {
             console.error("Update bundle error:", error);
-            toast.show("Failed to update bundle. Please try again.", { tone: "critical" });
+            toast.show("Failed to update bundle. Please try again.", {
+                tone: "critical",
+            });
             onError?.(error);
         },
     });
 
     // Handle server validation errors
-    const handleServerErrors = useCallback((errors: any) => {
-        if (!errors) return;
+    const handleServerErrors = useCallback(
+        (errors: any) => {
+            if (!errors) return;
 
-        Object.keys(errors).forEach((field) => {
-            if (errors[field]?._errors && errors[field]._errors.length > 0) {
-                form.setError(field as keyof BundleFormData, {
-                    type: "server",
-                    message: errors[field]._errors[0],
-                });
-            }
-        });
-    }, [form]);
+            Object.keys(errors).forEach((field) => {
+                if (
+                    errors[field]?._errors &&
+                    errors[field]._errors.length > 0
+                ) {
+                    form.setError(field as keyof BundleFormData, {
+                        type: "server",
+                        message: errors[field]._errors[0],
+                    });
+                }
+            });
+        },
+        [form],
+    );
 
     // Form state
     const isLoading = createMutation.isPending || updateMutation.isPending;
@@ -156,12 +181,16 @@ export function useBundleForm({
 
             // Basic validation before save
             if (!currentData.name?.trim()) {
-                toast.show("Please enter a bundle name before saving", { tone: "critical" });
+                toast.show("Please enter a bundle name before saving", {
+                    tone: "critical",
+                });
                 return;
             }
 
             if (currentData.products.length === 0) {
-                toast.show("Please add at least one product before saving", { tone: "critical" });
+                toast.show("Please add at least one product before saving", {
+                    tone: "critical",
+                });
                 return;
             }
 
@@ -186,52 +215,69 @@ export function useBundleForm({
         isLoading,
         onSave: handleSaveBarSave,
         onDiscard: handleSaveBarDiscard,
-        saveBarId: `bundle-form-${bundleId || 'new'}`,
+        saveBarId: `bundle-form-${bundleId || "new"}`,
         showDiscardConfirmation: true,
     });
 
     // Product management functions
     const productActions = {
-        addProduct: useCallback((product: any) => {
-            const newProduct: BundleProduct = {
-                id: product.id,
-                productId: product.id,
-                variantId: product.selectedVariant?.id || undefined,
-                quantity: 1,
-                isRequired: true,
-                displayOrder: productFields.length,
-                title: product.title,
-                price: parseFloat(product.selectedVariant?.price || product.price || "0"),
-                image: product.image?.url || product.images?.[0]?.url,
-            };
-            appendProduct(newProduct);
-        }, [appendProduct, productFields.length]),
+        addProduct: useCallback(
+            (product: any) => {
+                const newProduct: BundleProduct = {
+                    id: product.id,
+                    productId: product.id,
+                    variantId: product.selectedVariant?.id || undefined,
+                    quantity: 1,
+                    isRequired: true,
+                    displayOrder: productFields.length,
+                    title: product.title,
+                    price: parseFloat(
+                        product.selectedVariant?.price || product.price || "0",
+                    ),
+                    image: product.image?.url || product.images?.[0]?.url,
+                };
+                appendProduct(newProduct);
+            },
+            [appendProduct, productFields.length],
+        ),
 
-        removeProductAt: useCallback((index: number) => {
-            removeProduct(index);
-        }, [removeProduct]),
+        removeProductAt: useCallback(
+            (index: number) => {
+                removeProduct(index);
+            },
+            [removeProduct],
+        ),
 
-        updateProductQuantity: useCallback((index: number, quantity: number) => {
-            const currentProduct = productFields[index];
-            if (currentProduct) {
-                updateProduct(index, {
-                    ...currentProduct,
-                    quantity: Math.max(1, Math.min(99, quantity)),
-                });
-            }
-        }, [productFields, updateProduct]),
+        updateProductQuantity: useCallback(
+            (index: number, quantity: number) => {
+                const currentProduct = productFields[index];
+                if (currentProduct) {
+                    updateProduct(index, {
+                        ...currentProduct,
+                        quantity: Math.max(1, Math.min(99, quantity)),
+                    });
+                }
+            },
+            [productFields, updateProduct],
+        ),
 
-        moveProductUp: useCallback((index: number) => {
-            if (index > 0) {
-                swapProduct(index, index - 1);
-            }
-        }, [swapProduct]),
+        moveProductUp: useCallback(
+            (index: number) => {
+                if (index > 0) {
+                    swapProduct(index, index - 1);
+                }
+            },
+            [swapProduct],
+        ),
 
-        moveProductDown: useCallback((index: number) => {
-            if (index < productFields.length - 1) {
-                swapProduct(index, index + 1);
-            }
-        }, [swapProduct, productFields.length]),
+        moveProductDown: useCallback(
+            (index: number) => {
+                if (index < productFields.length - 1) {
+                    swapProduct(index, index + 1);
+                }
+            },
+            [swapProduct, productFields.length],
+        ),
     };
 
     // Form submission
@@ -249,18 +295,30 @@ export function useBundleForm({
 
     // Helper functions
     const helpers = {
-        getFieldError: useCallback((fieldName: keyof BundleFormData) => {
-            const error = form.formState.errors[fieldName];
-            return error?.message;
-        }, [form.formState.errors]),
+        getFieldError: useCallback(
+            (fieldName: keyof BundleFormData) => {
+                const error = form.formState.errors[fieldName];
+                return error?.message;
+            },
+            [form.formState.errors],
+        ),
 
-        resetForm: useCallback((values?: Partial<BundleFormData>) => {
-            form.reset(values || initialData);
-        }, [form, initialData]),
+        resetForm: useCallback(
+            (values?: Partial<BundleFormData>) => {
+                form.reset(values || initialData);
+            },
+            [form, initialData],
+        ),
 
-        setFormValue: useCallback((field: keyof BundleFormData, value: any) => {
-            form.setValue(field, value, { shouldValidate: true, shouldDirty: true });
-        }, [form]),
+        setFormValue: useCallback(
+            (field: keyof BundleFormData, value: any) => {
+                form.setValue(field, value, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                });
+            },
+            [form],
+        ),
     };
 
     return {
