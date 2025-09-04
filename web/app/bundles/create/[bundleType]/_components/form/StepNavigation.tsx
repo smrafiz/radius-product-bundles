@@ -1,109 +1,84 @@
+// web/app/bundles/create/[bundleType]/_components/form/StepNavigation.tsx
 "use client";
 
 import React from "react";
-import NProgress from "nprogress";
-import { useRouter } from "next/navigation";
-import { BUNDLE_STEPS } from "@/lib/constants";
-import { Box, Button, InlineStack, Text } from "@shopify/polaris";
-import { ArrowLeftIcon, ArrowRightIcon } from "@shopify/polaris-icons";
-
-import { useBundleSave, useStepNavigation, useBundleValidation } from "@/hooks";
-
+import { InlineStack, Button } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
+import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 export default function StepNavigation() {
-    const router = useRouter();
     const {
         currentStep,
         totalSteps,
-        goToPreviousStep,
-        goToNextStep,
-        canGoNext,
+        prevStep,
         canGoPrevious,
-    } = useStepNavigation();
+    } = useBundleStore();
 
-    const { saveBundle, isSaving } = useBundleSave();
-    const { canProceedToNextStep } = useBundleValidation();
-    const { setValidationAttempted } = useBundleStore();
+    const {
+        handleNextStep,
+        canProceedToNextStep,
+    } = useBundleFormMethods();
 
-    const handleBack = () => {
-        if (currentStep === 1) {
-            NProgress.start();
-            router.push("/bundles/create");
-        } else {
-            goToPreviousStep();
+    const isLastStep = currentStep === totalSteps;
+    const canGoNext = canProceedToNextStep();
+    const canGoPrev = canGoPrevious();
+
+    const getNextButtonText = () => {
+        switch (currentStep) {
+            case 1:
+                return "Continue to Configuration";
+            case 2:
+                return "Continue to Display";
+            case 3:
+                return "Continue to Review";
+            case 4:
+                return "Review Complete";
+            default:
+                return "Continue";
         }
     };
 
-    const handleNext = async () => {
-        if (currentStep === totalSteps) {
-            try {
-                await saveBundle();
-                router.push("/bundles");
-            } catch (error) {
-                // Handle error (show toast, etc.)
-            }
-        } else {
-            setValidationAttempted(true);
-
-            if (canProceedToNextStep()) {
-                goToNextStep();
-            }
+    const getPrevButtonText = () => {
+        switch (currentStep) {
+            case 2:
+                return "Back to Products";
+            case 3:
+                return "Back to Configuration";
+            case 4:
+                return "Back to Display";
+            default:
+                return "Back";
         }
-    };
-
-    const getCurrentStepInfo = () => {
-        return BUNDLE_STEPS[currentStep - 1] || { title: "Step" };
-    };
-
-    const getPrevStepTitle = () => {
-        if (currentStep === 1) return "Bundle types";
-        return BUNDLE_STEPS[currentStep - 2]?.title || "Previous";
-    };
-
-    const getNextStepTitle = () => {
-        if (currentStep === totalSteps) return "Create bundle";
-        return BUNDLE_STEPS[currentStep]?.title || "Next";
     };
 
     return (
         <InlineStack align="space-between">
-            {/* Previous Button */}
             <Button
+                onClick={prevStep}
+                disabled={!canGoPrev}
                 variant="secondary"
-                icon={ArrowLeftIcon}
-                onClick={handleBack}
-                disabled={!canGoPrevious && currentStep !== 1}
             >
-                {getPrevStepTitle()}
+                {getPrevButtonText()}
             </Button>
 
-            {/* Current Step Indicator */}
-            <Box
-                background="bg-surface-secondary"
-                padding="200"
-                borderRadius="100"
-            >
-                <Text as="p" variant="bodySm" tone="subdued">
-                    Step {currentStep} of {totalSteps}:{" "}
-                    {getCurrentStepInfo().title}
-                </Text>
-            </Box>
+            {!isLastStep && (
+                <Button
+                    onClick={handleNextStep}
+                    disabled={!canGoNext}
+                    variant="primary"
+                >
+                    {getNextButtonText()}
+                </Button>
+            )}
 
-            {/* Next Button */}
-            <div className="rt-bundle-next-button">
+            {isLastStep && (
                 <Button
                     variant="primary"
-                    icon={
-                        currentStep === totalSteps ? undefined : ArrowRightIcon
-                    }
-                    onClick={handleNext}
-                    // Remove disabled prop - let users click to trigger validation
-                    loading={isSaving && currentStep === totalSteps}
+                    disabled={!canGoNext}
                 >
-                    {getNextStepTitle()}
+                    Ready to Create
                 </Button>
-            </div>
+            )}
         </InlineStack>
     );
 }

@@ -1,51 +1,56 @@
+// web/hooks/data/useBundlesData.ts (Updated to work with React Query)
 import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useBundleListingStore } from "@/stores";
-import { getBundles } from "@/actions/bundles.action";
+import { useBundles, useBundleMetrics } from "@/hooks/bundle/useBundleQueries";
 
 export const useBundlesData = () => {
-    const app = useAppBridge();
-    const { setBundles, setLoading, setError, showToast } =
-        useBundleListingStore();
+    const { setBundles, setLoading, setError, showToast } = useBundleListingStore();
 
+    // Use React Query hooks
+    const {
+        data: bundlesData,
+        isLoading: bundlesLoading,
+        error: bundlesError,
+        refetch: refetchBundles
+    } = useBundles();
+
+    const {
+        data: metricsData,
+        isLoading: metricsLoading,
+        error: metricsError
+    } = useBundleMetrics();
+
+    // Update store when data changes
     useEffect(() => {
-        let mounted = true;
+        if (bundlesData) {
+            setBundles(bundlesData);
+        }
+    }, [bundlesData, setBundles]);
 
-        const loadData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+    // Handle loading states
+    useEffect(() => {
+        setLoading(bundlesLoading || metricsLoading);
+    }, [bundlesLoading, metricsLoading, setLoading]);
 
-                const token = await app.idToken();
-                const [bundlesResult] = await Promise.all([getBundles(token)]);
+    // Handle errors
+    useEffect(() => {
+        const error = bundlesError || metricsError;
+        if (error) {
+            const errorMsg = error.message || "Failed to load bundle data";
+            setError(errorMsg);
+            showToast(errorMsg);
+            setBundles([]);
+        } else {
+            setError(null);
+        }
+    }, [bundlesError, metricsError, setError, showToast, setBundles]);
 
-                if (!mounted) return;
-
-                if (bundlesResult.status === "success") {
-                    setBundles(bundlesResult.data || []);
-                } else {
-                    const errorMsg =
-                        bundlesResult.message || "Failed to load bundles";
-                    setError(errorMsg);
-                    showToast(errorMsg);
-                    setBundles([]);
-                }
-            } catch (err) {
-                if (!mounted) return;
-                console.error("Bundles load error:", err);
-                const errorMsg = "Failed to load bundle data";
-                setError(errorMsg);
-                showToast(errorMsg);
-                setBundles([]);
-            } finally {
-                if (mounted) setLoading(false);
-            }
-        };
-
-        void loadData();
-
-        return () => {
-            mounted = false;
-        };
-    }, [app, setBundles, setLoading, setError, showToast]);
+    return {
+        bundles: bundlesData || [],
+        metrics: metricsData,
+        isLoading: bundlesLoading || metricsLoading,
+        error: bundlesError || metricsError,
+        refetch: refetchBundles,
+    };
 };

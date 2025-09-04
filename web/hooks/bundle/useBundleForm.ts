@@ -1,353 +1,302 @@
-// hooks/bundle/useBundleForm.ts
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
-import { toast } from "@shopify/polaris";
-
-import {
-    BundleFormData,
-    BundleProduct,
-    bundleSchema,
-} from "@/lib/validation/bundleSchema";
+import { bundleSchema, BundleFormData } from "@/lib/validation";
+import { useBundleStore } from "@/stores";
+import { useCallback, useEffect, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { createBundle, updateBundle } from "@/actions/bundles.action";
-import { useSaveBar } from "@/hooks";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import type { BundleType, CreateBundlePayload } from "@/types";
 
-interface UseBundleFormProps {
-    bundleId?: string;
-    initialData?: Partial<BundleFormData>;
-    onSuccess?: (data: any) => void;
-    onError?: (error: any) => void;
-    enableSaveBar?: boolean;
-}
+// Helper to convert BundleFormData to server action format
+const transformFormDataForServer = (data: BundleFormData, bundleType?: BundleType): CreateBundlePayload => {
+    return {
+        name: data.name,
+        type: bundleType || "FIXED_BUNDLE",
+        description: data.description,
+        discountType: data.discountType,
+        discountValue: data.discountValue,
+        minOrderValue: data.minOrderValue,
+        maxDiscountAmount: data.maxDiscountAmount,
+        startDate: data.startDate?.toISOString(),
+        endDate: data.endDate?.toISOString(),
+        products: data.products?.map((product, index) => ({
+            productId: product.productId,
+            variantId: product.variantId || "",
+            quantity: product.quantity || 1,
+        })) || [],
+    };
+};
 
-export function useBundleForm({
-    bundleId,
-    initialData = {},
-    onSuccess,
-    onError,
-    enableSaveBar = true,
-}: UseBundleFormProps = {}) {
+export function useBundleForm(bundleId?: string) {
+    const router = useRouter();
     const queryClient = useQueryClient();
+    const app = useAppBridge();
+    const [isPending, startTransition] = useTransition();
 
-    // Initialize React Hook Form with Zod validation
+    const {
+        bundleData,
+        selectedItems,
+        currentStep,
+        setBundleData,
+        setSaving,
+        resetBundle,
+        nextStep,
+        setValidationAttempted,
+        markDirty,
+    } = useBundleStore();
+
+    // Initialize form with React Hook Form
     const form = useForm<BundleFormData>({
         resolver: zodResolver(bundleSchema),
         defaultValues: {
             name: "",
             description: "",
             products: [],
-            discountType: "PERCENTAGE",
-            discountValue: 10,
-            minOrderValue: 0,
-            maxDiscountAmount: 0,
+            discountType: undefined,
+            discountValue: undefined,
+            minOrderValue: undefined,
+            maxDiscountAmount: undefined,
             startDate: undefined,
             endDate: undefined,
-            status: "DRAFT",
-            ...initialData,
         },
-        mode: "onChange", // Enable real-time validation
-        criteriaMode: "all", // Show all validation errors
+        mode: "onChange",
     });
 
-    // Product field array management
     const {
-        fields: productFields,
-        append: appendProduct,
-        remove: removeProduct,
-        move: moveProduct,
-        update: updateProduct,
-        swap: swapProduct,
-    } = useFieldArray({
-        control: form.control,
-        name: "products",
-        keyName: "fieldId", // Avoid conflicts with product id
-    });
+        register,
+        handleSubmit,
+        setValue,
+        watch,
+        formState: { errors, isValid, isSubmitting },
+        trigger,
+        reset,
+        setError,
+    } = form;
 
-    // Watch form fields for conditional logic
-    const watchedFields = {
-        discountType: useWatch({ control: form.control, name: "discountType" }),
-        products: useWatch({ control: form.control, name: "products" }),
-        status: useWatch({ control: form.control, name: "status" }),
-    };
-
-    // Computed values
-    const computedValues = useMemo(
-        () => ({
-            showDiscountValue: [
-                "PERCENTAGE",
-                "FIXED_AMOUNT",
-                "CUSTOM_PRICE",
-            ].includes(watchedFields.discountType),
-            showMaxDiscount: ["PERCENTAGE", "FIXED_AMOUNT"].includes(
-                watchedFields.discountType,
-            ),
-            isPercentageDiscount: watchedFields.discountType === "PERCENTAGE",
-            isCustomPrice: watchedFields.discountType === "CUSTOM_PRICE",
-            productCount: watchedFields.products?.length || 0,
-        }),
-        [watchedFields],
-    );
-
-    // Create bundle mutation
-    const createMutation = useMutation({
+    // Create bundle mutation using server action
+    const createBundleMutation = useMutation({
         mutationFn: async (data: BundleFormData) => {
-            // Get session token - adjust this to match your session handling
-            const sessionToken = ""; // TODO: Get from your session management
-            return createBundle(sessionToken, data);
+            const token = await app.idToken();
+            const transformedData = transformFormDataForServer(data, bundleData.type as BundleType);
+            const result = await createBundle(token, transformedData);
+
+            if (result.status === "error") {
+                throw new Error(JSON.stringify(result));
+            }
+
+            return result;
         },
         onSuccess: (result) => {
-            if (result.status === "success") {
-                toast.show("Bundle created successfully!", { tone: "success" });
-                queryClient.invalidateQueries({ queryKey: ["bundles"] });
-                form.reset(); // Reset form state
-                onSuccess?.(result.data);
-            } else {
-                handleServerErrors(result.errors);
-                toast.show(result.message, { tone: "critical" });
-                onError?.(result);
-            }
+            console.log("Bundle created successfully:", result);
+            queryClient.invalidateQueries({ queryKey: ["bundles"] });
+            queryClient.invalidateQueries({ queryKey: ["bundle-metrics"] });
+            resetBundle();
+            router.push("/bundles");
         },
         onError: (error) => {
-            console.error("Create bundle error:", error);
-            toast.show("Failed to create bundle. Please try again.", {
-                tone: "critical",
-            });
-            onError?.(error);
+            console.error("Failed to create bundle:", error);
+
+            try {
+                const errorData = JSON.parse(error.message);
+
+                // Handle validation errors from your server action
+                if (errorData.errors) {
+                    Object.entries(errorData.errors).forEach(([field, fieldErrors]: [string, any]) => {
+                        if (fieldErrors && fieldErrors._errors && fieldErrors._errors.length > 0) {
+                            setError(field as keyof BundleFormData, {
+                                type: "server",
+                                message: fieldErrors._errors[0]
+                            });
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Error parsing server response:", e);
+            }
         },
     });
 
-    // Update bundle mutation
-    const updateMutation = useMutation({
+    // Update bundle mutation using server action
+    const updateBundleMutation = useMutation({
         mutationFn: async (data: BundleFormData) => {
-            if (!bundleId) throw new Error("Bundle ID is required for update");
-            if (!sessionToken) throw new Error("No session token available");
-            return updateBundle(sessionToken, bundleId, data);
+            if (!bundleId) {
+                throw new Error("No bundle ID available for update");
+            }
+
+            const token = await app.idToken();
+            const transformedData = transformFormDataForServer(data, bundleData.type as BundleType);
+            const result = await updateBundle(token, bundleId, transformedData);
+
+            if (result.status === "error") {
+                throw new Error(JSON.stringify(result));
+            }
+
+            return result;
         },
         onSuccess: (result) => {
-            if (result.status === "success") {
-                toast.show("Bundle updated successfully!", { tone: "success" });
-                queryClient.invalidateQueries({ queryKey: ["bundles"] });
-                queryClient.invalidateQueries({
-                    queryKey: ["bundle", bundleId],
-                });
-                form.reset(form.getValues()); // Reset dirty state
-                onSuccess?.(result.data);
-            } else {
-                handleServerErrors(result.errors);
-                toast.show(result.message, { tone: "critical" });
-                onError?.(result);
-            }
+            console.log("Bundle updated successfully:", result);
+            queryClient.invalidateQueries({ queryKey: ["bundles"] });
+            queryClient.invalidateQueries({ queryKey: ["bundle", bundleId] });
+            router.push("/bundles");
         },
         onError: (error) => {
-            console.error("Update bundle error:", error);
-            toast.show("Failed to update bundle. Please try again.", {
-                tone: "critical",
-            });
-            onError?.(error);
+            console.error("Failed to update bundle:", error);
+
+            try {
+                const errorData = JSON.parse(error.message);
+
+                if (errorData.errors) {
+                    Object.entries(errorData.errors).forEach(([field, fieldErrors]: [string, any]) => {
+                        if (fieldErrors && fieldErrors._errors && fieldErrors._errors.length > 0) {
+                            setError(field as keyof BundleFormData, {
+                                type: "server",
+                                message: fieldErrors._errors[0]
+                            });
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Error parsing server response:", e);
+            }
         },
     });
 
-    // Handle server validation errors
-    const handleServerErrors = useCallback(
-        (errors: any) => {
-            if (!errors) return;
+    // Sync form with Zustand store
+    useEffect(() => {
+        const formData = {
+            ...bundleData,
+            products: selectedItems.map(item => ({
+                productId: item.productId,
+                variantId: item.variantId,
+                quantity: item.quantity,
+            })),
+        };
 
-            Object.keys(errors).forEach((field) => {
-                if (
-                    errors[field]?._errors &&
-                    errors[field]._errors.length > 0
-                ) {
-                    form.setError(field as keyof BundleFormData, {
-                        type: "server",
-                        message: errors[field]._errors[0],
-                    });
-                }
-            });
-        },
-        [form],
-    );
-
-    // Form state
-    const isLoading = createMutation.isPending || updateMutation.isPending;
-    const isDirty = form.formState.isDirty;
-    const isValid = form.formState.isValid;
-    const hasErrors = Object.keys(form.formState.errors).length > 0;
-
-    // SaveBar actions
-    const handleSaveBarSave = useCallback(async () => {
-        try {
-            const currentData = form.getValues();
-
-            // Basic validation before save
-            if (!currentData.name?.trim()) {
-                toast.show("Please enter a bundle name before saving", {
-                    tone: "critical",
-                });
-                return;
+        // Update form values when store changes
+        Object.entries(formData).forEach(([key, value]) => {
+            const currentValue = watch(key as keyof BundleFormData);
+            if (JSON.stringify(currentValue) !== JSON.stringify(value)) {
+                setValue(key as keyof BundleFormData, value);
             }
+        });
+    }, [bundleData, selectedItems, setValue, watch]);
 
-            if (currentData.products.length === 0) {
-                toast.show("Please add at least one product before saving", {
-                    tone: "critical",
-                });
-                return;
+    // Sync store with form changes
+    useEffect(() => {
+        const subscription = watch((value, { name, type }) => {
+            if (name && type === "change") {
+                setBundleData(value as Partial<CreateBundlePayload>);
+                markDirty();
             }
+        });
+        return () => subscription.unsubscribe();
+    }, [watch, setBundleData, markDirty]);
 
-            if (bundleId) {
-                await updateMutation.mutateAsync(currentData);
-            } else {
-                await createMutation.mutateAsync(currentData);
-            }
-        } catch (error) {
-            console.error("SaveBar save failed:", error);
+    // Handle loading states
+    useEffect(() => {
+        setSaving(isPending || createBundleMutation.isPending || updateBundleMutation.isPending);
+    }, [isPending, createBundleMutation.isPending, updateBundleMutation.isPending, setSaving]);
+
+    // Step validation function
+    const validateCurrentStep = useCallback(async () => {
+        setValidationAttempted(true);
+
+        let fieldsToValidate: (keyof BundleFormData)[] = [];
+
+        switch (currentStep) {
+            case 1: // Products step
+                fieldsToValidate = ["products"];
+                break;
+            case 2: // Configuration step
+                fieldsToValidate = ["name", "discountType", "discountValue"];
+                break;
+            case 3: // Display step
+                return true;
+            case 4: // Review step
+                return await trigger();
         }
-    }, [form, bundleId, updateMutation, createMutation]);
 
-    const handleSaveBarDiscard = useCallback(async () => {
-        form.reset(initialData);
-        toast.show("Changes discarded", { tone: "info" });
-    }, [form, initialData]);
+        const isStepValid = await trigger(fieldsToValidate);
+        return isStepValid;
+    }, [currentStep, trigger, setValidationAttempted]);
 
-    // Initialize SaveBar
-    const { showSaveBar, hideSaveBar, leaveConfirmation } = useSaveBar({
-        isDirty: isDirty && enableSaveBar,
-        isLoading,
-        onSave: handleSaveBarSave,
-        onDiscard: handleSaveBarDiscard,
-        saveBarId: `bundle-form-${bundleId || "new"}`,
-        showDiscardConfirmation: true,
-    });
-
-    // Product management functions
-    const productActions = {
-        addProduct: useCallback(
-            (product: any) => {
-                const newProduct: BundleProduct = {
-                    id: product.id,
-                    productId: product.id,
-                    variantId: product.selectedVariant?.id || undefined,
-                    quantity: 1,
-                    isRequired: true,
-                    displayOrder: productFields.length,
-                    title: product.title,
-                    price: parseFloat(
-                        product.selectedVariant?.price || product.price || "0",
-                    ),
-                    image: product.image?.url || product.images?.[0]?.url,
-                };
-                appendProduct(newProduct);
-            },
-            [appendProduct, productFields.length],
-        ),
-
-        removeProductAt: useCallback(
-            (index: number) => {
-                removeProduct(index);
-            },
-            [removeProduct],
-        ),
-
-        updateProductQuantity: useCallback(
-            (index: number, quantity: number) => {
-                const currentProduct = productFields[index];
-                if (currentProduct) {
-                    updateProduct(index, {
-                        ...currentProduct,
-                        quantity: Math.max(1, Math.min(99, quantity)),
-                    });
-                }
-            },
-            [productFields, updateProduct],
-        ),
-
-        moveProductUp: useCallback(
-            (index: number) => {
-                if (index > 0) {
-                    swapProduct(index, index - 1);
-                }
-            },
-            [swapProduct],
-        ),
-
-        moveProductDown: useCallback(
-            (index: number) => {
-                if (index < productFields.length - 1) {
-                    swapProduct(index, index + 1);
-                }
-            },
-            [swapProduct, productFields.length],
-        ),
-    };
-
-    // Form submission
-    const handleSubmit = form.handleSubmit(async (data) => {
-        try {
-            if (bundleId) {
-                await updateMutation.mutateAsync(data);
-            } else {
-                await createMutation.mutateAsync(data);
-            }
-        } catch (error) {
-            console.error("Form submission error:", error);
+    // Handle next step with validation
+    const handleNextStep = useCallback(async () => {
+        const isStepValid = await validateCurrentStep();
+        if (isStepValid) {
+            nextStep();
         }
-    });
+    }, [validateCurrentStep, nextStep]);
 
-    // Helper functions
-    const helpers = {
-        getFieldError: useCallback(
-            (fieldName: keyof BundleFormData) => {
-                const error = form.formState.errors[fieldName];
-                return error?.message;
-            },
-            [form.formState.errors],
-        ),
+    // Submit handler using server actions
+    const onSubmit = useCallback((data: BundleFormData) => {
+        console.log("Submitting bundle:", data);
 
-        resetForm: useCallback(
-            (values?: Partial<BundleFormData>) => {
-                form.reset(values || initialData);
-            },
-            [form, initialData],
-        ),
+        startTransition(() => {
+            if (bundleId) {
+                updateBundleMutation.mutate(data);
+            } else {
+                createBundleMutation.mutate(data);
+            }
+        });
+    }, [bundleId, createBundleMutation, updateBundleMutation]);
 
-        setFormValue: useCallback(
-            (field: keyof BundleFormData, value: any) => {
-                form.setValue(field, value, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                });
-            },
-            [form],
-        ),
-    };
+    // Get field error
+    const getFieldError = useCallback((fieldName: string) => {
+        const error = errors[fieldName as keyof BundleFormData];
+        return error?.message;
+    }, [errors]);
+
+    // Check if can proceed to next step
+    const canProceedToNextStep = useCallback(() => {
+        switch (currentStep) {
+            case 1: // Products step
+                return selectedItems.length > 0;
+            case 2: // Configuration step
+                return !errors.name && !errors.discountType && !errors.discountValue &&
+                    bundleData.name && bundleData.discountType;
+            case 3: // Display step
+                return true;
+            case 4: // Review step
+                return isValid;
+            default:
+                return false;
+        }
+    }, [currentStep, selectedItems.length, errors, isValid, bundleData.name, bundleData.discountType]);
+
+    const mutation = bundleId ? updateBundleMutation : createBundleMutation;
 
     return {
-        // Form instance
+        // Form methods
         form,
-
-        // Product management
-        productFields,
-        ...productActions,
-
-        // Watched values
-        ...watchedFields,
-        ...computedValues,
-
-        // Form actions
+        register,
         handleSubmit,
-
-        // Form state
-        isLoading,
-        isDirty,
+        setValue,
+        watch,
+        errors,
         isValid,
-        hasErrors,
+        isSubmitting,
+        trigger,
+        reset,
 
-        // SaveBar actions
-        showSaveBar,
-        hideSaveBar,
-        leaveConfirmation,
+        // Custom methods
+        onSubmit,
+        handleNextStep,
+        validateCurrentStep,
+        getFieldError,
+        canProceedToNextStep,
 
-        // Helper functions
-        ...helpers,
+        // Mutation state
+        isCreating: mutation.isPending || isPending,
+        createError: mutation.error,
+        isSuccess: mutation.isSuccess,
+
+        // Mutation methods
+        createBundle: mutation.mutate,
+
+        // Mode detection
+        isEditMode: !!bundleId,
     };
 }

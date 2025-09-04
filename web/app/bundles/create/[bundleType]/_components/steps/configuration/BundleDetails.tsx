@@ -1,13 +1,23 @@
+// web/app/bundles/create/[bundleType]/_components/steps/configuration/BundleDetails.tsx
 "use client";
 
 import React from "react";
-import { useBundleStore } from "@/stores";
-import { useBundleValidation } from "@/hooks";
 import { BlockStack, Card, Text, TextField } from "@shopify/polaris";
+import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 export default function BundleDetails() {
-    const { bundleData, updateBundleField } = useBundleStore();
-    const { getFieldError } = useBundleValidation();
+    const { watch, setValue, getFieldError } = useBundleFormMethods();
+
+    const name = watch("name");
+    const description = watch("description");
+
+    const handleNameChange = (value: string) => {
+        setValue("name", value, { shouldValidate: true, shouldDirty: true });
+    };
+
+    const handleDescriptionChange = (value: string) => {
+        setValue("description", value, { shouldValidate: true, shouldDirty: true });
+    };
 
     return (
         <Card>
@@ -19,22 +29,21 @@ export default function BundleDetails() {
                 <TextField
                     autoComplete="off"
                     label="Bundle Name"
-                    value={bundleData.name || ""}
-                    onChange={(value) => updateBundleField("name", value)}
+                    value={name || ""}
+                    onChange={handleNameChange}
                     placeholder="Enter bundle name"
-                    error={getFieldError("name") || undefined}
+                    error={getFieldError("name")}
                     requiredIndicator
                 />
 
                 <TextField
                     autoComplete="off"
                     label="Description (Optional)"
-                    value={bundleData.description || ""}
-                    onChange={(value) =>
-                        updateBundleField("description", value)
-                    }
+                    value={description || ""}
+                    onChange={handleDescriptionChange}
                     multiline={3}
                     placeholder="Describe your bundle offer"
+                    error={getFieldError("description")}
                 />
             </BlockStack>
         </Card>

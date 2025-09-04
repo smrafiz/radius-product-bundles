@@ -1,8 +1,9 @@
 "use client";
 
 import NProgress from "nprogress";
+import { useBundleStore } from "@/stores";
 import { useRouter } from "next/navigation";
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface Props {
     children: React.ReactNode;
@@ -20,17 +21,15 @@ export default function GlobalForm({
     const formRef = useRef<HTMLFormElement>(null);
     const router = useRouter();
 
+    const isDirty = useBundleStore((s) => s.isDirty);
+
     useEffect(() => {
         const form = formRef.current;
-
-        if (!form) {
-            return;
-        }
+        if (!form) return;
 
         form.dataset.saveBar = "true";
         form.dataset.discardConfirmation = "true";
 
-        // Subscribe to the save (submit) event
         const handleSubmit = async (e: Event) => {
             e.preventDefault();
 
@@ -41,7 +40,6 @@ export default function GlobalForm({
             resetDirty();
         };
 
-        // Subscribe to discard (reset) event
         const handleReset = () => {
             form.reset();
             resetDirty();
@@ -59,7 +57,14 @@ export default function GlobalForm({
             form.removeEventListener("submit", handleSubmit);
             form.removeEventListener("reset", handleReset);
         };
-    }, [onSubmit, resetDirty]);
+    }, [onSubmit, resetDirty, discardPath, router]);
+
+    useEffect(() => {
+        const form = formRef.current;
+        if (!form) return;
+
+        form.dataset.dirty = isDirty ? "true" : "false";
+    }, [isDirty]);
 
     return (
         <form ref={formRef} onSubmit={(e) => e.preventDefault()}>

@@ -1,9 +1,12 @@
 import { z } from "zod";
+import { BundleStatus } from "@prisma/client";
 import { DISCOUNT_TYPES, VALIDATION_MESSAGES } from "@/lib/constants";
 
-const discountTypeValues = DISCOUNT_TYPES.map((type) => type.value) as [
-    string,
-    ...string[],
+export type DiscountType = (typeof DISCOUNT_TYPES)[number]["value"];
+
+const discountTypeValues = DISCOUNT_TYPES.map((t) => t.value) as [
+    DiscountType,
+    ...DiscountType[],
 ];
 
 // Product schema for bundle products
@@ -49,9 +52,7 @@ export const bundleSchema = z
         }),
 
         discountValue: z
-            .number({
-                message: VALIDATION_MESSAGES.REQUIRED_FIELD,
-            })
+            .number({ message: VALIDATION_MESSAGES.REQUIRED_FIELD })
             .min(0, VALIDATION_MESSAGES.INVALID_DISCOUNT_VALUE)
             .optional(),
 
@@ -69,19 +70,19 @@ export const bundleSchema = z
         endDate: z.date().optional(),
 
         // Bundle status
-        status: z
-            .enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED", "SCHEDULED"])
-            .default("DRAFT"),
+        status: z.enum(Object.values(BundleStatus) as [BundleStatus, ...BundleStatus[]])
+            .default(BundleStatus.DRAFT),
     })
+    // Discount refinements
     .refine(
         (data) => {
-            const requiresDiscountValue = [
+            const requiresDiscountValue: DiscountType[] = [
                 "PERCENTAGE",
                 "FIXED_AMOUNT",
                 "CUSTOM_PRICE",
-            ].includes(data.discountType);
+            ];
             return (
-                !requiresDiscountValue ||
+                !requiresDiscountValue.includes(data.discountType) ||
                 (data.discountValue != null && data.discountValue > 0)
             );
         },
@@ -92,10 +93,7 @@ export const bundleSchema = z
     )
     .refine(
         (data) => {
-            if (
-                data.discountType === "PERCENTAGE" &&
-                data.discountValue != null
-            ) {
+            if (data.discountType === "PERCENTAGE" && data.discountValue != null) {
                 return data.discountValue <= 100;
             }
             return true;
@@ -107,10 +105,7 @@ export const bundleSchema = z
     )
     .refine(
         (data) => {
-            if (
-                data.discountType === "CUSTOM_PRICE" &&
-                data.discountValue != null
-            ) {
+            if (data.discountType === "CUSTOM_PRICE" && data.discountValue != null) {
                 return data.discountValue > 0;
             }
             return true;

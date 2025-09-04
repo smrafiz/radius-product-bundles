@@ -1,66 +1,69 @@
+// web/app/bundles/create/[bundleType]/_components/steps/configuration/DiscountSettings.tsx
 "use client";
 
 import React from "react";
-import { BlockStack, Card, Text, TextField, Select } from "@shopify/polaris";
-import { getCurrencySymbol } from "@/utils";
-import { useBundleValidation } from "@/hooks";
+import {
+    BlockStack,
+    Card,
+    Text,
+    Select,
+    TextField,
+    InlineStack,
+} from "@shopify/polaris";
 import { DISCOUNT_TYPES } from "@/lib/constants";
-import { useBundleStore, useShopSettingsStore } from "@/stores";
+import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 export default function DiscountSettings() {
-    const { bundleData, updateBundleField } = useBundleStore();
-    const { getFieldError } = useBundleValidation();
-    const { currencyCode } = useShopSettingsStore();
+    const { watch, setValue, getFieldError } = useBundleFormMethods();
 
-    const discountTypeOptions = [
-        { label: "Select discount type", value: "", disabled: true },
-        ...DISCOUNT_TYPES,
-    ];
+    const discountType = watch("discountType");
+    const discountValue = watch("discountValue");
+    const minOrderValue = watch("minOrderValue");
+    const maxDiscountAmount = watch("maxDiscountAmount");
 
-    const getSuffix = () => {
-        switch (bundleData.discountType) {
-            case "PERCENTAGE":
-                return "%";
-            case "FIXED_AMOUNT":
-            case "CUSTOM_PRICE":
-                return getCurrencySymbol(currencyCode);
-            default:
-                return "";
+    const handleDiscountTypeChange = (value: string) => {
+        setValue("discountType", value as any, { shouldValidate: true });
+
+        // Reset max discount amount for custom price
+        if (value === "CUSTOM_PRICE") {
+            setValue("maxDiscountAmount", undefined, { shouldValidate: true });
         }
     };
 
-    const shouldShowDiscountValue = () => {
-        return (
-            bundleData.discountType &&
-            !["FREE_SHIPPING", "NO_DISCOUNT"].includes(bundleData.discountType)
-        );
+    const handleDiscountValueChange = (value: string) => {
+        const numValue = value === "" ? undefined : parseFloat(value);
+        setValue("discountValue", numValue, { shouldValidate: true });
+    };
+
+    const handleMinOrderValueChange = (value: string) => {
+        const numValue = value === "" ? undefined : parseFloat(value);
+        setValue("minOrderValue", numValue, { shouldValidate: true });
+    };
+
+    const handleMaxDiscountAmountChange = (value: string) => {
+        const numValue = value === "" ? undefined : parseFloat(value);
+        setValue("maxDiscountAmount", numValue, { shouldValidate: true });
     };
 
     const getDiscountValueLabel = () => {
-        switch (bundleData.discountType) {
+        switch (discountType) {
             case "PERCENTAGE":
                 return "Discount Percentage";
             case "FIXED_AMOUNT":
                 return "Discount Amount";
             case "CUSTOM_PRICE":
-                return "Custom Bundle Price";
+                return "Bundle Price";
             default:
                 return "Discount Value";
         }
     };
 
-    const getDiscountValueHelpText = () => {
-        switch (bundleData.discountType) {
-            case "PERCENTAGE":
-                return "Enter percentage off (0-100)";
-            case "FIXED_AMOUNT":
-                return "Enter fixed amount to discount from total";
-            case "CUSTOM_PRICE":
-                return "Set a fixed price for the entire bundle";
-            default:
-                return "";
-        }
+    const getDiscountValueSuffix = () => {
+        return discountType === "PERCENTAGE" ? "%" : "$";
     };
+
+    const showDiscountValue = ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE"].includes(discountType || "");
+    const showMaxDiscountAmount = discountType !== "CUSTOM_PRICE" && discountType !== undefined;
 
     return (
         <Card>
@@ -71,85 +74,66 @@ export default function DiscountSettings() {
 
                 <Select
                     label="Discount Type"
-                    options={discountTypeOptions}
-                    value={bundleData.discountType || ""}
-                    onChange={(value) =>
-                        updateBundleField("discountType", value as any)
-                    }
+                    options={[
+                        { label: "Select discount type", value: "" },
+                        ...DISCOUNT_TYPES.map((type) => ({
+                            label: type.label,
+                            value: type.value,
+                        })),
+                    ]}
+                    value={discountType || ""}
+                    onChange={handleDiscountTypeChange}
                     error={getFieldError("discountType")}
                     requiredIndicator
                 />
 
-                {shouldShowDiscountValue() && (
+                {showDiscountValue && (
                     <TextField
-                        autoComplete="off"
                         label={getDiscountValueLabel()}
                         type="number"
-                        value={bundleData.discountValue?.toString() || ""}
-                        onChange={(value) =>
-                            updateBundleField(
-                                "discountValue",
-                                parseFloat(value) || 0,
-                            )
-                        }
-                        suffix={getSuffix()}
-                        helpText={getDiscountValueHelpText()}
+                        value={discountValue?.toString() || ""}
+                        onChange={handleDiscountValueChange}
+                        suffix={getDiscountValueSuffix()}
+                        placeholder="0"
+                        min={0}
+                        max={discountType === "PERCENTAGE" ? 100 : undefined}
+                        step="any"
                         error={getFieldError("discountValue")}
                         requiredIndicator
-                        min={0}
-                        max={
-                            bundleData.discountType === "PERCENTAGE"
-                                ? 100
-                                : undefined
-                        }
                     />
                 )}
 
-                {bundleData.discountType &&
-                    bundleData.discountType !== "NO_DISCOUNT" && (
-                        <>
-                            <TextField
-                                autoComplete="off"
-                                label="Minimum Order Value (Optional)"
-                                type="number"
-                                value={
-                                    bundleData.minOrderValue?.toString() || ""
-                                }
-                                onChange={(value) =>
-                                    updateBundleField(
-                                        "minOrderValue",
-                                        parseFloat(value) || undefined,
-                                    )
-                                }
-                                prefix={getCurrencySymbol(currencyCode)}
-                                helpText="Minimum cart value required to apply this discount"
-                                error={getFieldError("minOrderValue")}
-                                min={0}
-                            />
+                <InlineStack gap="400">
+                    <div style={{ flex: 1 }}>
+                        <TextField
+                            label="Minimum Order Value (Optional)"
+                            type="number"
+                            value={minOrderValue?.toString() || ""}
+                            onChange={handleMinOrderValueChange}
+                            prefix="$"
+                            placeholder="0.00"
+                            min={0}
+                            step="any"
+                            error={getFieldError("minOrderValue")}
+                        />
+                    </div>
 
-                            {bundleData.discountType !== "CUSTOM_PRICE" && (
-                                <TextField
-                                    autoComplete="off"
-                                    label="Maximum Discount Amount (Optional)"
-                                    type="number"
-                                    value={
-                                        bundleData.maxDiscountAmount?.toString() ||
-                                        ""
-                                    }
-                                    onChange={(value) =>
-                                        updateBundleField(
-                                            "maxDiscountAmount",
-                                            parseFloat(value) || undefined,
-                                        )
-                                    }
-                                    prefix={getCurrencySymbol(currencyCode)}
-                                    helpText="Cap the maximum discount amount"
-                                    error={getFieldError("maxDiscountAmount")}
-                                    min={0}
-                                />
-                            )}
-                        </>
+                    {showMaxDiscountAmount && (
+                        <div style={{ flex: 1 }}>
+                            <TextField
+                                label="Maximum Discount Amount (Optional)"
+                                type="number"
+                                value={maxDiscountAmount?.toString() || ""}
+                                onChange={handleMaxDiscountAmountChange}
+                                prefix="$"
+                                placeholder="No limit"
+                                min={0}
+                                step="any"
+                                error={getFieldError("maxDiscountAmount")}
+                            />
+                        </div>
                     )}
+                </InlineStack>
             </BlockStack>
         </Card>
     );

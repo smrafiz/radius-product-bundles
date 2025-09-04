@@ -45,10 +45,10 @@ export interface CreateBundlePayload {
     type: PrismaBundleType;
     products: {
         productId: string;
-        variantId: string;
+        variantId?: string;
         quantity: number;
     }[];
-    discountType?: PrismaDiscountType;
+    discountType: PrismaDiscountType;
     discountValue?: number;
     description?: string;
     minOrderValue?: number;
@@ -60,6 +60,10 @@ export interface CreateBundlePayload {
 export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
     id: string;
     status?: PrismaBundleStatus;
+}
+
+export interface ExtendedBundleFormData extends BundleFormData {
+    type?: PrismaBundleType;
 }
 
 export interface BundleWithDetails {
@@ -117,7 +121,7 @@ export interface BundleConfiguration {
 export interface BundleState {
     totalSteps: number;
     currentStep: number;
-    bundleData: Partial<BundleFormData>;
+    bundleData: Partial<ExtendedBundleFormData>;
     selectedItems: SelectedItem[];
     displaySettings: DisplaySettings;
     configuration: BundleConfiguration;
@@ -140,10 +144,10 @@ export interface BundleState {
     canGoPrevious: () => boolean;
 
     // Bundle data actions
-    setBundleData: (data: Partial<CreateBundlePayload>) => void;
-    updateBundleField: <K extends keyof CreateBundlePayload>(
+    setBundleData: (data: Partial<ExtendedBundleFormData>) => void;
+    updateBundleField: <K extends keyof ExtendedBundleFormData>(
         key: K,
-        value: CreateBundlePayload[K],
+        value: ExtendedBundleFormData[K],
     ) => void;
 
     // Selected items actions

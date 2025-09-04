@@ -1,20 +1,20 @@
+// web/stores/bundle/bundle.store.ts (Updated)
 import { create } from "zustand";
-import { markDirty } from "@/utils";
 import { immer } from "zustand/middleware/immer";
-
 import {
     BundleConfiguration,
     BundleState,
-    CreateBundlePayload,
+    BundleType,
     DiscountType,
     DisplaySettings,
     ProductGroup,
     SelectedItem,
+    ExtendedBundleFormData,
 } from "@/types";
-import { BundleFormData } from "@/lib/validation";
 
-const initialBundleData: Partial<CreateBundlePayload> = {
+const initialBundleData: Partial<ExtendedBundleFormData> = {
     name: "",
+    type: undefined as BundleType | undefined,
     products: [],
     discountType: undefined as DiscountType | undefined,
     discountValue: undefined,
@@ -121,25 +121,25 @@ export const useBundleStore = create(
             return state.currentStep > 1;
         },
 
-        // Bundle data actions
-        setBundleData: (data) =>
+        // Bundle data actions - Updated types
+        setBundleData: (data) => {
             set((state) => {
                 state.bundleData = {
                     ...state.bundleData,
                     ...data,
-                } as Partial<BundleFormData>;
-                state.isDirty = false;
-            }),
+                };
+            });
+            get().resetDirty();
+        },
 
-        updateBundleField: (key, value) =>
+        updateBundleField: (key, value) => {
             set((state) => {
                 if (key === "discountType") {
-                    (state.bundleData as any)[key] = value;
+                    state.bundleData.discountType = value as DiscountType;
 
                     if (value === "CUSTOM_PRICE") {
                         state.bundleData.maxDiscountAmount = undefined;
                     }
-
                     return;
                 }
 
@@ -151,7 +151,6 @@ export const useBundleStore = create(
                 ) {
                     if (typeof value === "string") {
                         const trimmed = value.trim();
-
                         if (trimmed === "") {
                             (state.bundleData as any)[key] = undefined;
                         } else {
@@ -166,12 +165,12 @@ export const useBundleStore = create(
                 } else {
                     (state.bundleData as any)[key] = value;
                 }
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        // Selected items actions
-        setSelectedItems: (items) =>
+        // ... rest of the methods remain the same
+        setSelectedItems: (items) => {
             set((state) => {
                 state.selectedItems = items;
                 // Update bundle data products
@@ -180,11 +179,11 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        addSelectedItems: (items) =>
+        addSelectedItems: (items) => {
             set((state) => {
                 const itemsWithQuantity = items.map((item) => ({
                     ...item,
@@ -198,11 +197,11 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        removeSelectedItem: (itemId) =>
+        removeSelectedItem: (itemId) => {
             set((state) => {
                 state.selectedItems = state.selectedItems.filter(
                     (item) => item.id !== itemId,
@@ -214,11 +213,11 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        removeProductAndAllVariants: (productId) =>
+        removeProductAndAllVariants: (productId) => {
             set((state) => {
                 state.selectedItems = state.selectedItems.filter(
                     (item) => item.productId !== productId,
@@ -230,11 +229,11 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        updateSelectedItemQuantity: (itemId, quantity) =>
+        updateSelectedItemQuantity: (itemId, quantity) => {
             set((state) => {
                 const itemIndex = state.selectedItems.findIndex(
                     (item) => item.id === itemId,
@@ -254,11 +253,11 @@ export const useBundleStore = create(
                         }),
                     );
                 }
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        updateProductVariants: (productId, variants, position) =>
+        updateProductVariants: (productId, variants, position) => {
             set((state) => {
                 const otherItems = state.selectedItems.filter(
                     (item) => item.productId !== productId,
@@ -278,11 +277,11 @@ export const useBundleStore = create(
                     variantId: item.variantId,
                     quantity: item.quantity,
                 }));
+            });
+            get().resetDirty();
+        },
 
-                state.isDirty = false;
-            }),
-
-        reorderItems: (activeId, overId) =>
+        reorderItems: (activeId, overId) => {
             set((state) => {
                 const groupedItems = get().getGroupedItems();
                 const activeProductIndex = groupedItems.findIndex(
@@ -329,9 +328,9 @@ export const useBundleStore = create(
                         }),
                     );
                 }
-
-                state.isDirty = false;
-            }),
+            });
+            get().resetDirty();
+        },
 
         // Computed values
         getGroupedItems: () => {
@@ -381,18 +380,20 @@ export const useBundleStore = create(
         },
 
         // Display settings actions
-        updateDisplaySettings: (key, value) =>
+        updateDisplaySettings: (key, value) => {
             set((state) => {
                 state.displaySettings[key] = value;
-                state.isDirty = false;
-            }),
+            });
+            get().resetDirty();
+        },
 
         // Configuration actions
-        updateConfiguration: (key, value) =>
+        updateConfiguration: (key, value) => {
             set((state) => {
                 state.configuration[key] = value;
-                state.isDirty = false;
-            }),
+            });
+            get().resetDirty();
+        },
 
         // Loading states
         setLoading: (loading) =>

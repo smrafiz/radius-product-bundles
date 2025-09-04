@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { DISCOUNT_TYPES } from "@/lib/constants";
-import { VALIDATION_MESSAGES } from "@/lib/constants";
+import { DISCOUNT_TYPES, VALIDATION_MESSAGES } from "@/lib/constants";
 
 const discountTypeValues = DISCOUNT_TYPES.map((type) => type.value) as [
     string,
     ...string[],
 ];
+
+const requiresValueTypes = ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE"];
 
 export const bundleSchema = z
     .object({
@@ -36,11 +37,9 @@ export const bundleSchema = z
     })
     .refine(
         (data) => {
-            const requiresDiscountValue = [
-                "PERCENTAGE",
-                "FIXED_AMOUNT",
-                "CUSTOM_PRICE",
-            ].includes(data.discountType);
+            const requiresDiscountValue = requiresValueTypes.includes(
+                data.discountType,
+            );
             return (
                 !requiresDiscountValue ||
                 (data.discountValue != null && data.discountValue > 0)

@@ -10,7 +10,6 @@ const nextConfig = {
         NEXT_PUBLIC_SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY,
         NEXT_PUBLIC_SHOP: process.env.NEXT_PUBLIC_SHOP,
     },
-    allowedDevOrigins: [process.env.HOST.toString().replace("https://", "")],
     async headers() {
         return [
             {
