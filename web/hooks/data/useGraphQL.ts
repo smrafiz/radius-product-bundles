@@ -31,6 +31,7 @@ export function useGraphQL<TResult = any, TVariables extends object = any>(
         document,
         variables as [string, TVariables | undefined],
     );
+
     const query = useQuery<TResult, Error>({
         queryKey: key,
         queryFn: async () => {
@@ -38,21 +39,36 @@ export function useGraphQL<TResult = any, TVariables extends object = any>(
                 throw new Error("App Bridge instance not found");
             }
 
-            const token = await app.idToken();
-
             const gqlString = print(document);
-
             if (!gqlString) {
                 throw new Error("GraphQL document string is empty");
             }
 
-            const headers = {
-                Authorization: `Bearer ${token}`,
-            };
+            // ✅ Use app.fetch instead of GraphQLClient for shopify: URLs
+            const response = await app.fetch(`shopify:admin/api/${LATEST_API_VERSION}/graphql.json`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    query: gqlString,
+                    variables: variables || {},
+                }),
+            });
 
-            const client = new GraphQLClient(SHOPIFY_GRAPHQL_URL, { headers });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`GraphQL Error (${response.status}): ${errorText}`);
+            }
 
-            return (client.request as any)(gqlString, variables);
+            const result = await response.json();
+
+            // Check for GraphQL errors
+            if (result.errors && result.errors.length > 0) {
+                throw new Error(`GraphQL Errors: ${result.errors.map((e: any) => e.message).join(', ')}`);
+            }
+
+            return result.data;
         },
         staleTime: 1000 * 60 * 5,
         refetchOnMount: "always",
