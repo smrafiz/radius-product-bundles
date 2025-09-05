@@ -1,11 +1,10 @@
 import "./globals.css";
-import React from "react";
 import "@/styles/main.css";
 import { Metadata } from "next";
+import { ReactNode } from "react";
 import Providers from "@/providers/providers";
 import AppLayout from "@/components/layout/AppLayout";
 import GlobalLoader from "@/components/shared/GlobalLoader";
-import { ShopSettings } from "@/components/shared/ShopSettings";
 
 export const metadata: Metadata = {
     title: "Radius Product Bundles App for Shopify",
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
     children,
 }: {
-    children: React.ReactNode;
+    children: ReactNode;
 }) {
     return (
         <html lang="en">
@@ -28,10 +27,8 @@ export default async function RootLayout({
             </head>
             <body>
                 <Providers>
-                    <ShopSettings>
-                        <GlobalLoader />
-                        <AppLayout>{children}</AppLayout>
-                    </ShopSettings>
+                    <GlobalLoader />
+                    <AppLayout>{children}</AppLayout>
                 </Providers>
             </body>
         </html>
