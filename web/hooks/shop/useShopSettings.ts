@@ -11,6 +11,7 @@ export const useShopSettings = () => {
     const hasInitialized = useRef(false);
 
     const shopQuery = useGraphQL(GetShopInfoDocument);
+    console.log(shopQuery);
 
     useEffect(() => {
         if (hasInitialized.current) return;
