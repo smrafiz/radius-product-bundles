@@ -1,4 +1,3 @@
-// web/app/bundles/create/[bundleType]/_components/steps/configuration/DiscountSettings.tsx
 "use client";
 
 import {
@@ -8,9 +7,12 @@ import {
     Select,
     TextField,
     InlineStack,
+    SkeletonDisplayText,
 } from "@shopify/polaris";
 import { DISCOUNT_TYPES } from "@/lib/constants";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import { useShopSettings } from "@/hooks";
+import { getCurrencySymbol } from "@/utils";
 
 export default function DiscountSettings() {
     const { watch, setValue, getFieldError } = useBundleFormMethods();
@@ -19,6 +21,9 @@ export default function DiscountSettings() {
     const discountValue = watch("discountValue");
     const minOrderValue = watch("minOrderValue");
     const maxDiscountAmount = watch("maxDiscountAmount");
+
+    const { isLoading, currencyCode } = useShopSettings();
+    const currencySymbol = getCurrencySymbol(currencyCode);
 
     const handleDiscountTypeChange = (value: string) => {
         setValue("discountType", value as any, { shouldValidate: true });
@@ -57,8 +62,12 @@ export default function DiscountSettings() {
         }
     };
 
-    const getDiscountValueSuffix = () => {
-        return discountType === "PERCENTAGE" ? "%" : "$";
+    const getCurrency = () => {
+        if (isLoading && !currencyCode) {
+            return '•';
+        }
+
+        return discountType === "PERCENTAGE" ? "%" : currencySymbol;
     };
 
     const showDiscountValue = [
@@ -95,13 +104,13 @@ export default function DiscountSettings() {
                     <TextField
                         label={getDiscountValueLabel()}
                         type="number"
+                        autoComplete="off"
                         value={discountValue?.toString() || ""}
                         onChange={handleDiscountValueChange}
-                        suffix={getDiscountValueSuffix()}
+                        suffix={getCurrency()}
                         placeholder="0"
                         min={0}
                         max={discountType === "PERCENTAGE" ? 100 : undefined}
-                        step="any"
                         error={getFieldError("discountValue")}
                         requiredIndicator
                     />
@@ -112,12 +121,12 @@ export default function DiscountSettings() {
                         <TextField
                             label="Minimum Order Value (Optional)"
                             type="number"
+                            autoComplete="off"
                             value={minOrderValue?.toString() || ""}
                             onChange={handleMinOrderValueChange}
-                            prefix="$"
+                            prefix={getCurrency()}
                             placeholder="0.00"
                             min={0}
-                            step="any"
                             error={getFieldError("minOrderValue")}
                         />
                     </div>
@@ -127,12 +136,12 @@ export default function DiscountSettings() {
                             <TextField
                                 label="Maximum Discount Amount (Optional)"
                                 type="number"
+                                autoComplete="off"
                                 value={maxDiscountAmount?.toString() || ""}
                                 onChange={handleMaxDiscountAmountChange}
-                                prefix="$"
+                                prefix={getCurrency()}
                                 placeholder="No limit"
                                 min={0}
-                                step="any"
                                 error={getFieldError("maxDiscountAmount")}
                             />
                         </div>

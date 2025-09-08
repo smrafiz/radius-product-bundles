@@ -1,4 +1,3 @@
-import { useShopSettingsStore } from "@/stores";
 import { CURRENCY_SYMBOLS, CURRENCY_LOCALES } from "@/lib/constants";
 
 /**
@@ -7,9 +6,7 @@ import { CURRENCY_SYMBOLS, CURRENCY_LOCALES } from "@/lib/constants";
  * @returns The currency symbol (e.g., '$', '€')
  */
 export const getCurrencySymbol = (currencyCode?: string): string => {
-    const finalCurrencyCode =
-        currencyCode || useShopSettingsStore.getState().currencyCode || "USD";
-    return CURRENCY_SYMBOLS[finalCurrencyCode] || "$";
+    return CURRENCY_SYMBOLS[currencyCode || "USD"] || "$";
 };
 
 export const formatCurrency = (
@@ -20,10 +17,10 @@ export const formatCurrency = (
     if (amount == null) return "";
 
     const finalCurrencyCode =
-        currencyCode || useShopSettingsStore.getState().currencyCode || "USD";
+        currencyCode || "USD";
     const finalLocale =
         locale ||
-        convertShopifyLocale(useShopSettingsStore.getState().locale || "en-US");
+        convertShopifyLocale("en-US");
 
     try {
         const formatted = Intl.NumberFormat(finalLocale, {
