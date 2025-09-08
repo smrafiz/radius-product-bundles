@@ -3,15 +3,20 @@
 
 import { BlockStack, Card, Text, TextField } from "@shopify/polaris";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import { useBundleValidation } from "@/hooks/bundle/useBundleValidation";
+import { useBundleStore } from "@/stores";
 
 export default function BundleDetails() {
-    const { watch, setValue, getFieldError } = useBundleFormMethods();
+    const { watch, setValue } = useBundleFormMethods();
+    const { getFieldError } = useBundleValidation();
+    const { markDirty } = useBundleStore();
 
     const name = watch("name");
     const description = watch("description");
 
     const handleNameChange = (value: string) => {
         setValue("name", value, { shouldValidate: true, shouldDirty: true });
+        markDirty();
     };
 
     const handleDescriptionChange = (value: string) => {
@@ -19,6 +24,7 @@ export default function BundleDetails() {
             shouldValidate: true,
             shouldDirty: true,
         });
+        markDirty();
     };
 
     return (

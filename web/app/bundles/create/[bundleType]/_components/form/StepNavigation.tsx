@@ -1,19 +1,42 @@
-// web/app/bundles/create/[bundleType]/_components/form/StepNavigation.tsx
 "use client";
 
 import { InlineStack, Button } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import { useFormContext } from "react-hook-form";
+import { BundleFormData } from "@/lib/validation";
 
 export default function StepNavigation() {
-    const { currentStep, totalSteps, prevStep, canGoPrevious } =
-        useBundleStore();
-
+    const { currentStep, totalSteps, prevStep, canGoPrevious } = useBundleStore();
     const { handleNextStep, canProceedToNextStep } = useBundleFormMethods();
+    const { handleSubmit, getValues } = useFormContext<BundleFormData>();
 
     const isLastStep = currentStep === totalSteps;
-    const canGoNext = canProceedToNextStep();
     const canGoPrev = canGoPrevious();
+
+    // Handle form submission for the last step
+    const onSubmit = (data: BundleFormData) => {
+        console.log("=== FORM SUBMISSION DATA ===");
+        console.log("Form Data:", data);
+        console.log("Form Values (getValues):", getValues());
+        console.log("==========================");
+
+        // Trigger the GlobalForm submit by dispatching a form submit event
+        const form = document.querySelector('form[data-save-bar="true"]') as HTMLFormElement;
+        if (form) {
+            form.requestSubmit();
+        }
+    };
+
+    const onError = (errors: any) => {
+        console.log("=== FORM VALIDATION ERRORS ===");
+        console.log("Errors:", errors);
+        console.log("==============================");
+    };
+
+    const handleFinalSubmit = () => {
+        handleSubmit(onSubmit, onError)();
+    };
 
     const getNextButtonText = () => {
         switch (currentStep) {
@@ -24,7 +47,7 @@ export default function StepNavigation() {
             case 3:
                 return "Continue to Review";
             case 4:
-                return "Review Complete";
+                return "Create Bundle";
             default:
                 return "Continue";
         }
@@ -56,16 +79,20 @@ export default function StepNavigation() {
             {!isLastStep && (
                 <Button
                     onClick={handleNextStep}
-                    disabled={!canGoNext}
                     variant="primary"
+                    // Remove disabled state - let validation happen on click
                 >
                     {getNextButtonText()}
                 </Button>
             )}
 
             {isLastStep && (
-                <Button variant="primary" disabled={!canGoNext}>
-                    Ready to Create
+                <Button
+                    onClick={handleFinalSubmit}
+                    variant="primary"
+                    // Remove disabled state - let validation happen on click
+                >
+                    {getNextButtonText()}
                 </Button>
             )}
         </InlineStack>

@@ -10,81 +10,81 @@ import { BundleFormData, bundleSchema } from "@/lib/validation";
 interface BundleFormProviderProps {
     children: ReactNode;
     bundleType: BundleType;
+    initialData?: Partial<BundleFormData>;
 }
 
 export function BundleFormProvider({
     children,
     bundleType,
+    initialData,
 }: BundleFormProviderProps) {
     const { bundleData, selectedItems, setBundleData, markDirty } =
         useBundleStore();
 
-    // Initialize the form with React Hook Form
     const form = useForm<BundleFormData>({
         resolver: zodResolver(bundleSchema),
         defaultValues: {
-            name: "",
-            description: "",
-            products: [],
-            discountType: undefined,
-            discountValue: undefined,
-            minOrderValue: undefined,
-            maxDiscountAmount: undefined,
-            startDate: undefined,
-            endDate: undefined,
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            products: initialData?.products || [],
+            discountType: initialData?.discountType || undefined,
+            discountValue: initialData?.discountValue || undefined,
+            minOrderValue: initialData?.minOrderValue || undefined,
+            maxDiscountAmount: initialData?.maxDiscountAmount || undefined,
+            startDate: initialData?.startDate || undefined,
+            endDate: initialData?.endDate || undefined,
         },
-        mode: "onChange",
+        mode: "onChange", // Changed to onChange for immediate validation
     });
 
-    const { setValue, watch } = form;
+    const { setValue, watch, reset, formState } = form;
 
     // Set bundle type when provider mounts
     useEffect(() => {
-        if (!bundleData.type) {
-            setBundleData({ ...bundleData, type: bundleType });
-        }
-    }, [bundleType, bundleData, setBundleData]);
+        setBundleData({ ...bundleData, type: bundleType });
+    }, [bundleType, setBundleData]);
 
-    // Sync form with Zustand store
+    // Sync selectedItems with form products and mark dirty
     useEffect(() => {
-        const formData = {
-            name: bundleData.name || "",
-            description: bundleData.description || "",
-            discountType: bundleData.discountType,
-            discountValue: bundleData.discountValue,
-            minOrderValue: bundleData.minOrderValue,
-            maxDiscountAmount: bundleData.maxDiscountAmount,
-            startDate: bundleData.startDate,
-            endDate: bundleData.endDate,
-            products: selectedItems.map((item) => ({
-                productId: item.productId,
-                variantId: item.variantId,
-                quantity: item.quantity,
-            })),
-        };
+        const products = selectedItems.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId,
+            quantity: item.quantity,
+        }));
+        setValue("products", products, { shouldDirty: true });
+        markDirty(); // Always mark dirty when products change
+    }, [selectedItems, setValue, markDirty]);
 
-        // Update form values when store changes
-        Object.entries(formData).forEach(([key, value]) => {
-            const currentValue = watch(key as keyof BundleFormData);
-            if (JSON.stringify(currentValue) !== JSON.stringify(value)) {
-                setValue(key as keyof BundleFormData, value);
-            }
-        });
-    }, [bundleData, selectedItems, setValue, watch]);
-
-    // Sync store with form changes
+    // Watch for ANY form changes and mark dirty immediately
     useEffect(() => {
         const subscription = watch((value, { name, type }) => {
             if (name && type === "change") {
+                // Update store with form values
                 setBundleData({
                     ...value,
-                    type: bundleType, // Ensure type is always set
-                });
+                    type: bundleType,
+                } as any);
+
+                // Mark dirty for save bar
                 markDirty();
             }
         });
         return () => subscription.unsubscribe();
     }, [watch, setBundleData, markDirty, bundleType]);
+
+    // Also watch formState.isDirty for additional safety
+    useEffect(() => {
+        if (formState.isDirty) {
+            markDirty();
+        }
+    }, [formState.isDirty, markDirty]);
+
+    // Reset form when initialData changes (for edit mode)
+    useEffect(() => {
+        if (initialData) {
+            reset(initialData);
+        }
+    }, [initialData, reset]);
 
     return <FormProvider {...form}>{children}</FormProvider>;
 }

@@ -68,6 +68,8 @@ model Bundle {
 
     // Shopify Integration
     mainProductId String?
+    isPublished   Boolean   @default(false)
+    publishedAt   DateTime?
 
     // Pricing Configuration
     discountType      DiscountType
@@ -120,7 +122,6 @@ model BundleProduct {
     // Configuration
     quantity     Int     @default(1)
     displayOrder Int     @default(0)
-    isMain       Boolean @default(false)
     isRequired   Boolean @default(true)
 
     createdAt DateTime @default(now())

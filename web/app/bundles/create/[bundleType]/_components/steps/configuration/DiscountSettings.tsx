@@ -7,15 +7,18 @@ import {
     Select,
     TextField,
     InlineStack,
-    SkeletonDisplayText,
 } from "@shopify/polaris";
 import { DISCOUNT_TYPES } from "@/lib/constants";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import { useBundleValidation } from "@/hooks/bundle/useBundleValidation";
 import { useShopSettings } from "@/hooks";
 import { getCurrencySymbol } from "@/utils";
+import { useBundleStore } from "@/stores";
 
 export default function DiscountSettings() {
-    const { watch, setValue, getFieldError } = useBundleFormMethods();
+    const { watch, setValue } = useBundleFormMethods();
+    const { getFieldError } = useBundleValidation();
+    const { markDirty } = useBundleStore();
 
     const discountType = watch("discountType");
     const discountValue = watch("discountValue");
@@ -26,27 +29,30 @@ export default function DiscountSettings() {
     const currencySymbol = getCurrencySymbol(currencyCode);
 
     const handleDiscountTypeChange = (value: string) => {
-        setValue("discountType", value as any, { shouldValidate: true });
+        setValue("discountType", value as any, { shouldValidate: true, shouldDirty: true });
+        markDirty();
 
-        // Reset max discount amount for custom price
         if (value === "CUSTOM_PRICE") {
-            setValue("maxDiscountAmount", undefined, { shouldValidate: true });
+            setValue("maxDiscountAmount", undefined, { shouldValidate: true, shouldDirty: true });
         }
     };
 
     const handleDiscountValueChange = (value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("discountValue", numValue, { shouldValidate: true });
+        setValue("discountValue", numValue, { shouldValidate: true, shouldDirty: true });
+        markDirty();
     };
 
     const handleMinOrderValueChange = (value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("minOrderValue", numValue, { shouldValidate: true });
+        setValue("minOrderValue", numValue, { shouldValidate: true, shouldDirty: true });
+        markDirty();
     };
 
     const handleMaxDiscountAmountChange = (value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("maxDiscountAmount", numValue, { shouldValidate: true });
+        setValue("maxDiscountAmount", numValue, { shouldValidate: true, shouldDirty: true });
+        markDirty();
     };
 
     const getDiscountValueLabel = () => {
@@ -66,9 +72,12 @@ export default function DiscountSettings() {
         if (isLoading && !currencyCode) {
             return '•';
         }
-
-        return discountType === "PERCENTAGE" ? "%" : currencySymbol;
+        return currencySymbol;
     };
+
+    const getSuffix = () => {
+        return discountType === "PERCENTAGE" ? "%" : getCurrency();
+    }
 
     const showDiscountValue = [
         "PERCENTAGE",
@@ -107,7 +116,7 @@ export default function DiscountSettings() {
                         autoComplete="off"
                         value={discountValue?.toString() || ""}
                         onChange={handleDiscountValueChange}
-                        suffix={getCurrency()}
+                        suffix={getSuffix()}
                         placeholder="0"
                         min={0}
                         max={discountType === "PERCENTAGE" ? 100 : undefined}

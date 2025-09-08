@@ -1,104 +1,46 @@
-// web/hooks/bundle/useBundleFormMethods.ts
 import { useFormContext } from "react-hook-form";
 import { BundleFormData } from "@/lib/validation";
 import { useBundleStore } from "@/stores";
+import { useBundleValidation } from "./useBundleValidation";
 import { useCallback } from "react";
 
-/**
- * Hook to use bundle form methods when inside FormProvider context
- * Works with your GlobalForm architecture
- */
 export function useBundleFormMethods() {
-    const methods = useFormContext<BundleFormData>();
+    const form = useFormContext<BundleFormData>();
+    const { nextStep, setValidationAttempted, markDirty } = useBundleStore();
+    const { validateCurrentStep, canProceedToNextStep, getFieldError } = useBundleValidation();
 
-    if (!methods) {
-        throw new Error(
-            "useBundleFormMethods must be used within BundleFormProvider",
-        );
+    if (!form) {
+        throw new Error("useBundleFormMethods must be used within BundleFormProvider");
     }
 
-    const { currentStep, selectedItems, nextStep, setValidationAttempted } =
-        useBundleStore();
+    const { setValue: originalSetValue, formState, ...restForm } = form;
 
-    const {
-        setValue,
-        watch,
-        formState: { errors, isValid },
-        trigger,
-    } = methods;
+    // Wrap setValue to always mark dirty
+    const setValue = useCallback((name: any, value: any, options?: any) => {
+        originalSetValue(name, value, { ...options, shouldDirty: true });
+        markDirty();
+    }, [originalSetValue, markDirty]);
 
-    // Step validation function
-    const validateCurrentStep = useCallback(async () => {
+    const handleNextStep = useCallback(async () => {
         setValidationAttempted(true);
 
-        let fieldsToValidate: (keyof BundleFormData)[] = [];
-
-        switch (currentStep) {
-            case 1: // Products step
-                fieldsToValidate = ["products"];
-                break;
-            case 2: // Configuration step
-                fieldsToValidate = ["name", "discountType", "discountValue"];
-                break;
-            case 3: // Display step
-                return true;
-            case 4: // Review step
-                return await trigger();
-        }
-
-        const isStepValid = await trigger(fieldsToValidate);
-        return isStepValid;
-    }, [currentStep, trigger, setValidationAttempted]);
-
-    // Handle next step with validation
-    const handleNextStep = useCallback(async () => {
-        const isStepValid = await validateCurrentStep();
-        if (isStepValid) {
+        const isValid = await validateCurrentStep();
+        if (isValid) {
             nextStep();
+            setValidationAttempted(false);
         }
-    }, [validateCurrentStep, nextStep]);
-
-    // Get field error
-    const getFieldError = useCallback(
-        (fieldName: string) => {
-            const error = errors[fieldName as keyof BundleFormData];
-            return error?.message;
-        },
-        [errors],
-    );
-
-    // Check if can proceed to next step
-    const canProceedToNextStep = useCallback(() => {
-        switch (currentStep) {
-            case 1: // Products step
-                return selectedItems.length > 0;
-            case 2: // Configuration step
-                return (
-                    !errors.name &&
-                    !errors.discountType &&
-                    !errors.discountValue
-                );
-            case 3: // Display step
-                return true;
-            case 4: // Review step
-                return isValid;
-            default:
-                return false;
-        }
-    }, [currentStep, selectedItems.length, errors, isValid]);
+    }, [validateCurrentStep, nextStep, setValidationAttempted]);
 
     return {
-        // Form methods from context
-        ...methods,
-
-        // Custom methods
+        ...restForm,
+        formState, // Make sure formState is returned
+        setValue,
         handleNextStep,
-        validateCurrentStep,
-        getFieldError,
         canProceedToNextStep,
-
-        // Validation state
-        isValid,
-        errors,
+        getFieldError,
+        validateCurrentStep,
+        // Add safe access to errors
+        errors: formState?.errors || {},
+        isValid: formState?.isValid ?? false,
     };
 }

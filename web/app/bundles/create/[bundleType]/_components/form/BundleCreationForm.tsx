@@ -1,4 +1,3 @@
-// web/app/bundles/create/[bundleType]/_components/form/BundleCreationForm.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -11,6 +10,7 @@ import {
 import { BundlePreview } from "@/bundles/create/[bundleType]/_components/preview";
 import { HorizontalStepIndicator } from "@/bundles/create/[bundleType]/_components/shared";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+
 import type { BundleType } from "@/types";
 import { useBundleStore } from "@/stores";
 
@@ -25,7 +25,6 @@ export default function BundleCreationForm({ bundleType }: Props) {
     useEffect(() => {
         if (!bundleData.type) {
             setBundleData({ ...bundleData, type: bundleType });
-            // Also set it in the form
             setValue("type", bundleType);
         }
     }, [bundleType, bundleData, setBundleData, setValue]);

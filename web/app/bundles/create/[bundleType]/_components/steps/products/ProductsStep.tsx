@@ -4,7 +4,6 @@ import {
     Button,
     Card,
     InlineStack,
-    Text,
 } from "@shopify/polaris";
 import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
 import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
@@ -23,13 +22,13 @@ export default function ProductsStep() {
         setSelectedItems([]);
     };
 
-    // Get validation errors for this step
+    // Get validation errors for this step - FIXED
     const errors = getAllErrors();
     const hasProductError =
         validationAttempted &&
-        errors.some((error) => error.path.includes("products"));
+        errors.some((error) => error.field === "products" || error.path === "products");
     const productErrorMessage = errors.find((error) =>
-        error.path.includes("products"),
+        error.field === "products" || error.path === "products"
     )?.message;
 
     return (

@@ -1,37 +1,51 @@
+// app/bundles/create/[bundleType]/page.tsx
 "use client";
 
 import { use } from "react";
-import { bundleTypeMap } from "@/utils";
+import {
+    BundleCreationForm,
+    BundleFormProvider,
+} from "@/bundles/create/[bundleType]/_components/form";
 import { useBundleStore } from "@/stores";
-import { GlobalForm } from "@/components";
-import { notFound } from "next/navigation";
-import { BundleFormProvider } from "./_components/form/BundleFormProvider";
-import { BundleCreationForm } from "@/bundles/create/[bundleType]/_components/form";
-import { useGlobalForm } from "@/hooks/bundle/useGlobalForm";
-
+import { createBundle } from "@/actions";
+import { useAppBridge } from "@shopify/app-bridge-react";
 import type { BundleType } from "@/types";
+import { BundleFormData } from "@/lib/validation";
+import { GlobalForm } from "@/components";
 
-interface Props {
-    params: Promise<{ bundleType: string }>;
-}
+export default function CreateBundlePage({
+    params,
+}: {
+    params: Promise<{ bundleType: BundleType }>;
+}) {
+    const { bundleType } = use(params);
+    const app = useAppBridge();
+    const { resetDirty } = useBundleStore();
 
-export default function BundleCreationPage({ params }: Props) {
-    const { bundleType: bundleTypeParam } = use(params);
-    const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
+    const handleSubmit = async (data: BundleFormData) => {
+        try {
+            const token = await app.idToken();
+            const result = await createBundle(token, {
+                ...data,
+                type: bundleType,
+            });
 
-    if (!bundleType) {
-        notFound();
-    }
-
-    const resetDirty = useBundleStore((s) => s.resetDirty);
-    const { handleGlobalFormSubmit } = useGlobalForm(bundleType);
+            if (result.status === "success") {
+                console.log("Bundle created successfully:", result);
+            } else {
+                console.error("Validation errors:", result.errors);
+            }
+        } catch (error) {
+            console.error("Submit error:", error);
+        }
+    };
 
     return (
         <BundleFormProvider bundleType={bundleType}>
             <GlobalForm
-                onSubmit={handleGlobalFormSubmit}
+                onSubmit={handleSubmit}
                 resetDirty={resetDirty}
-                discardPath={"/bundles/create"}
+                discardPath="/bundles"
             >
                 <BundleCreationForm bundleType={bundleType} />
             </GlobalForm>

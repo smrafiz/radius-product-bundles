@@ -3,10 +3,21 @@
 
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Spinner, Stack, Text, Banner } from "@shopify/polaris";
+import {
+    Card,
+    Spinner,
+    Text,
+    Banner,
+    BlockStack,
+} from "@shopify/polaris";
 import { getBundle } from "@/actions";
-import BundleForm from "@/bundles/_components/BundleForm";
 import { useSessionToken } from "@/hooks/shop/useSessionToken";
+import {
+    BundleCreationForm,
+    BundleFormProvider,
+} from "@/bundles/create/[bundleType]/_components/form";
+import { GlobalForm } from "@/components";
+import { use } from "react";
 
 interface EditBundlePageProps {
     params: {
@@ -17,6 +28,7 @@ interface EditBundlePageProps {
 export default function EditBundlePage({ params }: EditBundlePageProps) {
     const router = useRouter();
     const sessionToken = useSessionToken();
+    const { bundleType } = use(params);
 
     // Fetch bundle data
     const {
@@ -45,10 +57,10 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
         return (
             <Card>
                 <div style={{ padding: "40px", textAlign: "center" }}>
-                    <Stack vertical spacing="loose" alignment="center">
+                    <BlockStack spacing="loose" alignment="center">
                         <Spinner size="large" />
                         <Text variant="headingMd">Loading bundle...</Text>
-                    </Stack>
+                    </BlockStack>
                 </div>
             </Card>
         );
@@ -100,11 +112,8 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
         : undefined;
 
     return (
-        <BundleForm
-            bundleId={params.id}
-            initialData={initialData}
-            onSuccess={handleSuccess}
-            onCancel={handleCancel}
-        />
+        <BundleFormProvider bundleType={bundleType}>
+            <BundleCreationForm bundleType={bundleType} />
+        </BundleFormProvider>
     );
 }
