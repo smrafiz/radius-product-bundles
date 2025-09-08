@@ -11,7 +11,11 @@ export interface ShopSettingsStore {
     lastFetched: number | null;
     isInitialized: boolean;
 
-    setSettings: (newSettings: Partial<Pick<ShopSettingsStore, 'currencyCode' | 'locale'>>) => void;
+    setSettings: (
+        newSettings: Partial<
+            Pick<ShopSettingsStore, "currencyCode" | "locale">
+        >,
+    ) => void;
     getCurrencyCode: () => string;
     getLocale: () => string;
     shouldRefresh: () => boolean;

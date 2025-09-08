@@ -6,11 +6,7 @@ import { ReactNode, useEffect, useState, useRef } from "react";
 import { useSessionStore } from "@/stores";
 import { doWebhookRegistration, storeToken } from "@/actions";
 
-export default function SessionProvider({
-    children,
-}: {
-    children: ReactNode;
-}) {
+export default function SessionProvider({ children }: { children: ReactNode }) {
     const app = useAppBridge();
     const searchParams = useSearchParams();
     const dispatch = useSessionStore((state) => state.dispatch);

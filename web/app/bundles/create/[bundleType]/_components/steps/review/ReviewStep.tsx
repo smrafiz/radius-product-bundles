@@ -12,20 +12,22 @@ export default function ReviewStep() {
     // Get all form errors
     const formErrors = Object.entries(errors).map(([field, error]) => ({
         field,
-        message: error?.message || "Invalid value"
+        message: error?.message || "Invalid value",
     }));
 
     const hasErrors = formErrors.length > 0;
 
     // Parse server error if exists
-    const serverError = createError ? (() => {
-        try {
-            const errorData = JSON.parse(createError.message);
-            return errorData;
-        } catch {
-            return { error: createError.message };
-        }
-    })() : null;
+    const serverError = createError
+        ? (() => {
+              try {
+                  const errorData = JSON.parse(createError.message);
+                  return errorData;
+              } catch {
+                  return { error: createError.message };
+              }
+          })()
+        : null;
 
     return (
         <BlockStack gap="500">
@@ -36,7 +38,10 @@ export default function ReviewStep() {
 
             {/* Show validation errors */}
             {hasErrors && (
-                <Banner tone="critical" title="Please fix the following errors:">
+                <Banner
+                    tone="critical"
+                    title="Please fix the following errors:"
+                >
                     <List type="bullet">
                         {formErrors.map(({ field, message }, index) => (
                             <List.Item key={index}>
@@ -52,14 +57,23 @@ export default function ReviewStep() {
                 <Banner tone="critical" title="Failed to create bundle">
                     {serverError.details ? (
                         <List type="bullet">
-                            {serverError.details.map((detail: { field: string; message: string }, index: number) => (
-                                <List.Item key={index}>
-                                    <strong>{detail.field}:</strong> {detail.message}
-                                </List.Item>
-                            ))}
+                            {serverError.details.map(
+                                (
+                                    detail: { field: string; message: string },
+                                    index: number,
+                                ) => (
+                                    <List.Item key={index}>
+                                        <strong>{detail.field}:</strong>{" "}
+                                        {detail.message}
+                                    </List.Item>
+                                ),
+                            )}
                         </List>
                     ) : (
-                        <Text as="p">{serverError.error || "An unexpected error occurred"}</Text>
+                        <Text as="p">
+                            {serverError.error ||
+                                "An unexpected error occurred"}
+                        </Text>
                     )}
                 </Banner>
             )}
@@ -67,7 +81,8 @@ export default function ReviewStep() {
             {/* Show success message when valid */}
             {isValid && !hasErrors && (
                 <Banner tone="success" title="Bundle is ready to create">
-                    All required fields are filled and validation passed. Click "Create Bundle" to save your bundle.
+                    All required fields are filled and validation passed. Click
+                    "Create Bundle" to save your bundle.
                 </Banner>
             )}
 

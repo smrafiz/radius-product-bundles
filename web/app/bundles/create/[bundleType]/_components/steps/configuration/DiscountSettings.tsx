@@ -61,8 +61,13 @@ export default function DiscountSettings() {
         return discountType === "PERCENTAGE" ? "%" : "$";
     };
 
-    const showDiscountValue = ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE"].includes(discountType || "");
-    const showMaxDiscountAmount = discountType !== "CUSTOM_PRICE" && discountType !== undefined;
+    const showDiscountValue = [
+        "PERCENTAGE",
+        "FIXED_AMOUNT",
+        "CUSTOM_PRICE",
+    ].includes(discountType || "");
+    const showMaxDiscountAmount =
+        discountType !== "CUSTOM_PRICE" && discountType !== undefined;
 
     return (
         <Card>

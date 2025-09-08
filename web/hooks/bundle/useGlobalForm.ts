@@ -17,11 +17,7 @@ export function useGlobalForm(bundleType: BundleType) {
     const queryClient = useQueryClient();
     const methods = useFormContext<BundleFormData>();
 
-    const {
-        setSaving,
-        resetBundle,
-        setValidationAttempted,
-    } = useBundleStore();
+    const { setSaving, resetBundle, setValidationAttempted } = useBundleStore();
 
     const { handleSubmit, setError } = methods || {};
 
@@ -41,11 +37,12 @@ export function useGlobalForm(bundleType: BundleType) {
                 maxDiscountAmount: data.maxDiscountAmount,
                 startDate: data.startDate?.toISOString(),
                 endDate: data.endDate?.toISOString(),
-                products: data.products?.map((product) => ({
-                    productId: product.productId,
-                    variantId: product.variantId || "",
-                    quantity: product.quantity || 1,
-                })) || [],
+                products:
+                    data.products?.map((product) => ({
+                        productId: product.productId,
+                        variantId: product.variantId || "",
+                        quantity: product.quantity || 1,
+                    })) || [],
             };
 
             const result = await createBundle(token, transformedData);
@@ -62,7 +59,9 @@ export function useGlobalForm(bundleType: BundleType) {
         onSuccess: (result) => {
             console.log("Bundle created successfully:", result);
             void queryClient.invalidateQueries({ queryKey: ["bundles"] });
-            void queryClient.invalidateQueries({ queryKey: ["bundle-metrics"] });
+            void queryClient.invalidateQueries({
+                queryKey: ["bundle-metrics"],
+            });
             resetBundle();
             router.push("/bundles");
         },
@@ -75,14 +74,20 @@ export function useGlobalForm(bundleType: BundleType) {
 
                     // Handle validation errors from server action
                     if (errorData.errors) {
-                        Object.entries(errorData.errors).forEach(([field, fieldErrors]: [string, any]) => {
-                            if (fieldErrors && fieldErrors._errors && fieldErrors._errors.length > 0) {
-                                setError(field as keyof BundleFormData, {
-                                    type: "server",
-                                    message: fieldErrors._errors[0]
-                                });
-                            }
-                        });
+                        Object.entries(errorData.errors).forEach(
+                            ([field, fieldErrors]: [string, any]) => {
+                                if (
+                                    fieldErrors &&
+                                    fieldErrors._errors &&
+                                    fieldErrors._errors.length > 0
+                                ) {
+                                    setError(field as keyof BundleFormData, {
+                                        type: "server",
+                                        message: fieldErrors._errors[0],
+                                    });
+                                }
+                            },
+                        );
                     }
                 } catch (e) {
                     console.error("Error parsing server response:", e);
@@ -119,7 +124,7 @@ export function useGlobalForm(bundleType: BundleType) {
                 (errors) => {
                     console.log("Form validation errors:", errors);
                     reject(new Error("Form validation failed"));
-                }
+                },
             )();
         });
     }, [handleSubmit, createBundleMutation, setValidationAttempted]);

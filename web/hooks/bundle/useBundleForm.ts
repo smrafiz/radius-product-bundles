@@ -10,7 +10,10 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import type { BundleType, CreateBundlePayload } from "@/types";
 
 // Helper to convert BundleFormData to server action format
-const transformFormDataForServer = (data: BundleFormData, bundleType?: BundleType): CreateBundlePayload => {
+const transformFormDataForServer = (
+    data: BundleFormData,
+    bundleType?: BundleType,
+): CreateBundlePayload => {
     return {
         name: data.name,
         type: bundleType || "FIXED_BUNDLE",
@@ -21,11 +24,12 @@ const transformFormDataForServer = (data: BundleFormData, bundleType?: BundleTyp
         maxDiscountAmount: data.maxDiscountAmount,
         startDate: data.startDate?.toISOString(),
         endDate: data.endDate?.toISOString(),
-        products: data.products?.map((product, index) => ({
-            productId: product.productId,
-            variantId: product.variantId || "",
-            quantity: product.quantity || 1,
-        })) || [],
+        products:
+            data.products?.map((product, index) => ({
+                productId: product.productId,
+                variantId: product.variantId || "",
+                quantity: product.quantity || 1,
+            })) || [],
     };
 };
 
@@ -79,7 +83,10 @@ export function useBundleForm(bundleId?: string) {
     const createBundleMutation = useMutation({
         mutationFn: async (data: BundleFormData) => {
             const token = await app.idToken();
-            const transformedData = transformFormDataForServer(data, bundleData.type as BundleType);
+            const transformedData = transformFormDataForServer(
+                data,
+                bundleData.type as BundleType,
+            );
             const result = await createBundle(token, transformedData);
 
             if (result.status === "error") {
@@ -103,14 +110,20 @@ export function useBundleForm(bundleId?: string) {
 
                 // Handle validation errors from your server action
                 if (errorData.errors) {
-                    Object.entries(errorData.errors).forEach(([field, fieldErrors]: [string, any]) => {
-                        if (fieldErrors && fieldErrors._errors && fieldErrors._errors.length > 0) {
-                            setError(field as keyof BundleFormData, {
-                                type: "server",
-                                message: fieldErrors._errors[0]
-                            });
-                        }
-                    });
+                    Object.entries(errorData.errors).forEach(
+                        ([field, fieldErrors]: [string, any]) => {
+                            if (
+                                fieldErrors &&
+                                fieldErrors._errors &&
+                                fieldErrors._errors.length > 0
+                            ) {
+                                setError(field as keyof BundleFormData, {
+                                    type: "server",
+                                    message: fieldErrors._errors[0],
+                                });
+                            }
+                        },
+                    );
                 }
             } catch (e) {
                 console.error("Error parsing server response:", e);
@@ -126,7 +139,10 @@ export function useBundleForm(bundleId?: string) {
             }
 
             const token = await app.idToken();
-            const transformedData = transformFormDataForServer(data, bundleData.type as BundleType);
+            const transformedData = transformFormDataForServer(
+                data,
+                bundleData.type as BundleType,
+            );
             const result = await updateBundle(token, bundleId, transformedData);
 
             if (result.status === "error") {
@@ -148,14 +164,20 @@ export function useBundleForm(bundleId?: string) {
                 const errorData = JSON.parse(error.message);
 
                 if (errorData.errors) {
-                    Object.entries(errorData.errors).forEach(([field, fieldErrors]: [string, any]) => {
-                        if (fieldErrors && fieldErrors._errors && fieldErrors._errors.length > 0) {
-                            setError(field as keyof BundleFormData, {
-                                type: "server",
-                                message: fieldErrors._errors[0]
-                            });
-                        }
-                    });
+                    Object.entries(errorData.errors).forEach(
+                        ([field, fieldErrors]: [string, any]) => {
+                            if (
+                                fieldErrors &&
+                                fieldErrors._errors &&
+                                fieldErrors._errors.length > 0
+                            ) {
+                                setError(field as keyof BundleFormData, {
+                                    type: "server",
+                                    message: fieldErrors._errors[0],
+                                });
+                            }
+                        },
+                    );
                 }
             } catch (e) {
                 console.error("Error parsing server response:", e);
@@ -167,7 +189,7 @@ export function useBundleForm(bundleId?: string) {
     useEffect(() => {
         const formData = {
             ...bundleData,
-            products: selectedItems.map(item => ({
+            products: selectedItems.map((item) => ({
                 productId: item.productId,
                 variantId: item.variantId,
                 quantity: item.quantity,
@@ -196,8 +218,17 @@ export function useBundleForm(bundleId?: string) {
 
     // Handle loading states
     useEffect(() => {
-        setSaving(isPending || createBundleMutation.isPending || updateBundleMutation.isPending);
-    }, [isPending, createBundleMutation.isPending, updateBundleMutation.isPending, setSaving]);
+        setSaving(
+            isPending ||
+                createBundleMutation.isPending ||
+                updateBundleMutation.isPending,
+        );
+    }, [
+        isPending,
+        createBundleMutation.isPending,
+        updateBundleMutation.isPending,
+        setSaving,
+    ]);
 
     // Step validation function
     const validateCurrentStep = useCallback(async () => {
@@ -231,23 +262,29 @@ export function useBundleForm(bundleId?: string) {
     }, [validateCurrentStep, nextStep]);
 
     // Submit handler using server actions
-    const onSubmit = useCallback((data: BundleFormData) => {
-        console.log("Submitting bundle:", data);
+    const onSubmit = useCallback(
+        (data: BundleFormData) => {
+            console.log("Submitting bundle:", data);
 
-        startTransition(() => {
-            if (bundleId) {
-                updateBundleMutation.mutate(data);
-            } else {
-                createBundleMutation.mutate(data);
-            }
-        });
-    }, [bundleId, createBundleMutation, updateBundleMutation]);
+            startTransition(() => {
+                if (bundleId) {
+                    updateBundleMutation.mutate(data);
+                } else {
+                    createBundleMutation.mutate(data);
+                }
+            });
+        },
+        [bundleId, createBundleMutation, updateBundleMutation],
+    );
 
     // Get field error
-    const getFieldError = useCallback((fieldName: string) => {
-        const error = errors[fieldName as keyof BundleFormData];
-        return error?.message;
-    }, [errors]);
+    const getFieldError = useCallback(
+        (fieldName: string) => {
+            const error = errors[fieldName as keyof BundleFormData];
+            return error?.message;
+        },
+        [errors],
+    );
 
     // Check if can proceed to next step
     const canProceedToNextStep = useCallback(() => {
@@ -255,8 +292,13 @@ export function useBundleForm(bundleId?: string) {
             case 1: // Products step
                 return selectedItems.length > 0;
             case 2: // Configuration step
-                return !errors.name && !errors.discountType && !errors.discountValue &&
-                    bundleData.name && bundleData.discountType;
+                return (
+                    !errors.name &&
+                    !errors.discountType &&
+                    !errors.discountValue &&
+                    bundleData.name &&
+                    bundleData.discountType
+                );
             case 3: // Display step
                 return true;
             case 4: // Review step
@@ -264,7 +306,14 @@ export function useBundleForm(bundleId?: string) {
             default:
                 return false;
         }
-    }, [currentStep, selectedItems.length, errors, isValid, bundleData.name, bundleData.discountType]);
+    }, [
+        currentStep,
+        selectedItems.length,
+        errors,
+        isValid,
+        bundleData.name,
+        bundleData.discountType,
+    ]);
 
     const mutation = bundleId ? updateBundleMutation : createBundleMutation;
 

@@ -6,17 +6,10 @@ import { useBundleStore } from "@/stores";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 export default function StepNavigation() {
-    const {
-        currentStep,
-        totalSteps,
-        prevStep,
-        canGoPrevious,
-    } = useBundleStore();
+    const { currentStep, totalSteps, prevStep, canGoPrevious } =
+        useBundleStore();
 
-    const {
-        handleNextStep,
-        canProceedToNextStep,
-    } = useBundleFormMethods();
+    const { handleNextStep, canProceedToNextStep } = useBundleFormMethods();
 
     const isLastStep = currentStep === totalSteps;
     const canGoNext = canProceedToNextStep();
@@ -71,10 +64,7 @@ export default function StepNavigation() {
             )}
 
             {isLastStep && (
-                <Button
-                    variant="primary"
-                    disabled={!canGoNext}
-                >
+                <Button variant="primary" disabled={!canGoNext}>
                     Ready to Create
                 </Button>
             )}

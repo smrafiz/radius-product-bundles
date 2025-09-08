@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBundles, getBundleMetrics, getBundle, createBundle, updateBundle } from "@/actions";
+import {
+    getBundles,
+    getBundleMetrics,
+    getBundle,
+    createBundle,
+    updateBundle,
+} from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { BundleFormData } from "@/lib/validation";
 import type {
@@ -110,7 +116,9 @@ export function useCreateBundle() {
     const app = useAppBridge();
 
     return useMutation({
-        mutationFn: async (data: BundleFormData & { type?: BundleType; status?: BundleStatus }) => {
+        mutationFn: async (
+            data: BundleFormData & { type?: BundleType; status?: BundleStatus },
+        ) => {
             const token = await app.idToken();
 
             // Transform data to match server action expectations (CreateBundlePayload)
@@ -124,11 +132,12 @@ export function useCreateBundle() {
                 maxDiscountAmount: data.maxDiscountAmount,
                 startDate: data.startDate?.toISOString(),
                 endDate: data.endDate?.toISOString(),
-                products: data.products?.map((product, index) => ({
-                    productId: product.productId,
-                    variantId: product.variantId || "",
-                    quantity: product.quantity || 1,
-                })) || [],
+                products:
+                    data.products?.map((product, index) => ({
+                        productId: product.productId,
+                        variantId: product.variantId || "",
+                        quantity: product.quantity || 1,
+                    })) || [],
             };
 
             const result = await createBundle(token, transformedData);
@@ -166,11 +175,14 @@ export function useUpdateBundle() {
 
     return useMutation({
         mutationFn: async ({
-                               bundleId,
-                               data
-                           }: {
+            bundleId,
+            data,
+        }: {
             bundleId: string;
-            data: Partial<BundleFormData> & { type?: BundleType; status?: BundleStatus }
+            data: Partial<BundleFormData> & {
+                type?: BundleType;
+                status?: BundleStatus;
+            };
         }) => {
             const token = await app.idToken();
 
@@ -179,19 +191,29 @@ export function useUpdateBundle() {
                 id: bundleId,
                 ...(data.name && { name: data.name }),
                 ...(data.type && { type: data.type }),
-                ...(data.description !== undefined && { description: data.description }),
+                ...(data.description !== undefined && {
+                    description: data.description,
+                }),
                 ...(data.discountType && { discountType: data.discountType }),
-                ...(data.discountValue !== undefined && { discountValue: data.discountValue }),
-                ...(data.minOrderValue !== undefined && { minOrderValue: data.minOrderValue }),
-                ...(data.maxDiscountAmount !== undefined && { maxDiscountAmount: data.maxDiscountAmount }),
-                ...(data.startDate && { startDate: data.startDate.toISOString() }),
+                ...(data.discountValue !== undefined && {
+                    discountValue: data.discountValue,
+                }),
+                ...(data.minOrderValue !== undefined && {
+                    minOrderValue: data.minOrderValue,
+                }),
+                ...(data.maxDiscountAmount !== undefined && {
+                    maxDiscountAmount: data.maxDiscountAmount,
+                }),
+                ...(data.startDate && {
+                    startDate: data.startDate.toISOString(),
+                }),
                 ...(data.endDate && { endDate: data.endDate.toISOString() }),
                 ...(data.products && {
                     products: data.products.map((product, index) => ({
                         productId: product.productId,
                         variantId: product.variantId || "",
                         quantity: product.quantity || 1,
-                    }))
+                    })),
                 }),
             };
 
@@ -208,7 +230,10 @@ export function useUpdateBundle() {
         onSuccess: (data, variables) => {
             // Update the specific bundle in cache
             if (data.data?.id) {
-                queryClient.setQueryData(["bundle", variables.bundleId], data.data);
+                queryClient.setQueryData(
+                    ["bundle", variables.bundleId],
+                    data.data,
+                );
             }
 
             // Invalidate bundles list and metrics to refresh
@@ -235,17 +260,17 @@ export function useBulkBundleOperations() {
 
             // For now, delete one by one (you can optimize with a bulk server action later)
             const results = await Promise.allSettled(
-                bundleIds.map(id =>
+                bundleIds.map((id) =>
                     // You'll need to implement deleteBundle server action
-                    Promise.resolve({ id, deleted: true })
-                )
+                    Promise.resolve({ id, deleted: true }),
+                ),
             );
 
             return results;
         },
         onSuccess: (_, variables) => {
             // Remove bundles from cache
-            variables.forEach(id => {
+            variables.forEach((id) => {
                 queryClient.removeQueries({ queryKey: ["bundle", id] });
             });
 

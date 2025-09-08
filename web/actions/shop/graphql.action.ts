@@ -1,7 +1,7 @@
 "use server";
 
-import { GraphQLClient } from 'graphql-request';
-import { handleSessionToken } from '@/lib/shopify/verify';
+import { GraphQLClient } from "graphql-request";
+import { handleSessionToken } from "@/lib/shopify/verify";
 
 interface GraphQLRequest {
     query: string;
@@ -31,7 +31,7 @@ interface GraphQLResponse<T = any> {
 }
 
 export async function executeGraphQLQuery<T = any>(
-    request: GraphQLRequest
+    request: GraphQLRequest,
 ): Promise<GraphQLResponse<T>> {
     try {
         const { query, variables = {}, sessionToken } = request;
@@ -44,7 +44,11 @@ export async function executeGraphQLQuery<T = any>(
             throw new Error("GraphQL query is required");
         }
 
-        const { shop, session } = await handleSessionToken(sessionToken, false, false);
+        const { shop, session } = await handleSessionToken(
+            sessionToken,
+            false,
+            false,
+        );
 
         if (!session?.accessToken) {
             throw new Error("No access token found in session");
@@ -59,8 +63,8 @@ export async function executeGraphQLQuery<T = any>(
         const endpoint = `https://${shop}/admin/api/2025-07/graphql.json`;
         const client = new GraphQLClient(endpoint, {
             headers: {
-                'X-Shopify-Access-Token': accessToken,
-                'Content-Type': 'application/json',
+                "X-Shopify-Access-Token": accessToken,
+                "Content-Type": "application/json",
             },
         });
 
@@ -69,35 +73,39 @@ export async function executeGraphQLQuery<T = any>(
         return {
             data: result,
         };
-
     } catch (error) {
         console.error("GraphQL server action error:", error);
 
-        if (error && typeof error === 'object' && 'response' in error) {
+        if (error && typeof error === "object" && "response" in error) {
             const gqlError = error as any;
             if (gqlError.response?.errors) {
                 return {
-                    errors: gqlError.response.errors
+                    errors: gqlError.response.errors,
                 };
             }
         }
 
-        const errorMessage = error instanceof Error ? error.message : 'Unknown GraphQL error occurred';
+        const errorMessage =
+            error instanceof Error
+                ? error.message
+                : "Unknown GraphQL error occurred";
 
         return {
-            errors: [{
-                message: errorMessage,
-                extensions: {
-                    code: 'INTERNAL_ERROR',
-                    timestamp: new Date().toISOString()
-                }
-            }]
+            errors: [
+                {
+                    message: errorMessage,
+                    extensions: {
+                        code: "INTERNAL_ERROR",
+                        timestamp: new Date().toISOString(),
+                    },
+                },
+            ],
         };
     }
 }
 
 export async function executeGraphQLMutation<T = any>(
-    request: GraphQLRequest
+    request: GraphQLRequest,
 ): Promise<GraphQLResponse<T>> {
     return executeGraphQLQuery<T>(request);
 }

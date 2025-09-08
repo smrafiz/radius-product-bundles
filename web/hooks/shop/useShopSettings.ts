@@ -11,13 +11,8 @@ interface UseShopSettingsOptions {
 
 export const useShopSettings = (options: UseShopSettingsOptions = {}) => {
     const hasInitialized = useRef(false);
-    const {
-        settings,
-        setSettings,
-        markAsInitialized,
-        reset,
-        isInitialized
-    } = useShopSettingsStore();
+    const { settings, setSettings, markAsInitialized, reset, isInitialized } =
+        useShopSettingsStore();
 
     const shopQuery = useGraphQL(GetShopInfoDocument, undefined, {
         enabled: options.enabled !== false,
@@ -28,7 +23,9 @@ export const useShopSettings = (options: UseShopSettingsOptions = {}) => {
     });
 
     const memoizedSetSettings = useCallback(setSettings, [setSettings]);
-    const memoizedMarkAsInitialized = useCallback(markAsInitialized, [markAsInitialized]);
+    const memoizedMarkAsInitialized = useCallback(markAsInitialized, [
+        markAsInitialized,
+    ]);
 
     useEffect(() => {
         if (hasInitialized.current) return;
@@ -37,10 +34,10 @@ export const useShopSettings = (options: UseShopSettingsOptions = {}) => {
             const shopData = shopQuery.data.shop;
 
             const newSettings = {
-                name: shopData.name || '',
+                name: shopData.name || "",
                 email: shopData.email,
                 myshopifyDomain: shopData.myshopifyDomain,
-                currencyCode: shopData.currencyCode || 'USD',
+                currencyCode: shopData.currencyCode || "USD",
                 countryCode: shopData.billingAddress?.countryCode,
                 planDisplayName: shopData.plan?.displayName,
             };
@@ -58,10 +55,16 @@ export const useShopSettings = (options: UseShopSettingsOptions = {}) => {
             shopQuery.refetch();
         };
 
-        window.addEventListener('radius-shop-settings-changed', handleWebhookRefresh);
+        window.addEventListener(
+            "radius-shop-settings-changed",
+            handleWebhookRefresh,
+        );
 
         return () => {
-            window.removeEventListener('radius-shop-settings-changed', handleWebhookRefresh);
+            window.removeEventListener(
+                "radius-shop-settings-changed",
+                handleWebhookRefresh,
+            );
         };
     }, [shopQuery.refetch]);
 

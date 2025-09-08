@@ -5,20 +5,21 @@ import { useBundleListingStore } from "@/stores";
 import { useBundles, useBundleMetrics } from "@/hooks/bundle/useBundleQueries";
 
 export const useBundlesData = () => {
-    const { setBundles, setLoading, setError, showToast } = useBundleListingStore();
+    const { setBundles, setLoading, setError, showToast } =
+        useBundleListingStore();
 
     // Use React Query hooks
     const {
         data: bundlesData,
         isLoading: bundlesLoading,
         error: bundlesError,
-        refetch: refetchBundles
+        refetch: refetchBundles,
     } = useBundles();
 
     const {
         data: metricsData,
         isLoading: metricsLoading,
-        error: metricsError
+        error: metricsError,
     } = useBundleMetrics();
 
     // Update store when data changes

@@ -15,7 +15,10 @@ export default function BundleDetails() {
     };
 
     const handleDescriptionChange = (value: string) => {
-        setValue("description", value, { shouldValidate: true, shouldDirty: true });
+        setValue("description", value, {
+            shouldValidate: true,
+            shouldDirty: true,
+        });
     };
 
     return (

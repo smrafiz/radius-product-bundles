@@ -5,11 +5,7 @@ import { useSessionStore } from "@/stores";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function ProtectedRoute({
-    children,
-}: {
-    children: ReactNode;
-}) {
+export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isInitialized, hasValidSession, shop, sessionToken } =
         useSessionStore();
     const [isRefreshing, setIsRefreshing] = useState(false);

@@ -70,7 +70,13 @@ export const bundleSchema = z
         endDate: z.date().optional(),
 
         // Bundle status
-        status: z.enum(Object.values(BundleStatus) as [BundleStatus, ...BundleStatus[]])
+        status: z
+            .enum(
+                Object.values(BundleStatus) as [
+                    BundleStatus,
+                    ...BundleStatus[],
+                ],
+            )
             .default(BundleStatus.DRAFT),
     })
     // Discount refinements
@@ -93,7 +99,10 @@ export const bundleSchema = z
     )
     .refine(
         (data) => {
-            if (data.discountType === "PERCENTAGE" && data.discountValue != null) {
+            if (
+                data.discountType === "PERCENTAGE" &&
+                data.discountValue != null
+            ) {
                 return data.discountValue <= 100;
             }
             return true;
@@ -105,7 +114,10 @@ export const bundleSchema = z
     )
     .refine(
         (data) => {
-            if (data.discountType === "CUSTOM_PRICE" && data.discountValue != null) {
+            if (
+                data.discountType === "CUSTOM_PRICE" &&
+                data.discountValue != null
+            ) {
                 return data.discountValue > 0;
             }
             return true;

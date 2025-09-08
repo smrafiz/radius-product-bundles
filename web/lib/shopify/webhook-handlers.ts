@@ -20,10 +20,11 @@ export async function handleShopUpdate(shop: string, body: string) {
         });
 
         // Trigger client refresh
-        if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('radius-shop-settings-changed'));
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(
+                new CustomEvent("radius-shop-settings-changed"),
+            );
         }
-
     } catch (error) {
         console.error("Failed to handle shop update webhook:", error);
     }

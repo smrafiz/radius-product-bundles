@@ -1,6 +1,6 @@
 "use client";
 
-import { print } from 'graphql';
+import { print } from "graphql";
 import { useCallback } from "react";
 import { queryKey } from "@/utils";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -29,10 +29,13 @@ interface UseGraphQLOptions {
 export function useGraphQL<TResult = any, TVariables extends object = any>(
     document: TypedDocumentNode<TResult, TVariables>,
     variables?: TVariables,
-    options?: UseGraphQLOptions
+    options?: UseGraphQLOptions,
 ): UseGraphQLReturn<TResult> {
     const app = useAppBridge();
-    const key = queryKey(document, variables as [string, TVariables | undefined]);
+    const key = queryKey(
+        document,
+        variables as [string, TVariables | undefined],
+    );
 
     const query = useQuery<TResult, Error>({
         queryKey: key,
@@ -52,11 +55,13 @@ export function useGraphQL<TResult = any, TVariables extends object = any>(
             const result = await executeGraphQLQuery<TResult>({
                 query: gqlString,
                 variables: variables || {},
-                sessionToken
+                sessionToken,
             });
 
             if (result.errors && result.errors.length > 0) {
-                throw new Error(`GraphQL Error: ${result.errors.map(e => e.message).join(', ')}`);
+                throw new Error(
+                    `GraphQL Error: ${result.errors.map((e) => e.message).join(", ")}`,
+                );
             }
 
             if (!result.data) {
@@ -84,10 +89,16 @@ export function useGraphQL<TResult = any, TVariables extends object = any>(
 /**
  * Generic GraphQL mutation hook using Server Actions
  */
-export function useGraphQLMutation<TResult = any, TVariables extends object = any>(
+export function useGraphQLMutation<
+    TResult = any,
+    TVariables extends object = any,
+>(
     document: TypedDocumentNode<TResult, TVariables>,
     options?: {
-        invalidate?: Array<{ document: TypedDocumentNode<any, any>; variables?: object }>;
+        invalidate?: Array<{
+            document: TypedDocumentNode<any, any>;
+            variables?: object;
+        }>;
         onSuccess?: (data: TResult) => void;
         onError?: (error: Error) => void;
     },
@@ -111,11 +122,13 @@ export function useGraphQLMutation<TResult = any, TVariables extends object = an
             const result = await executeGraphQLMutation<TResult>({
                 query: gqlString,
                 variables: variables || {},
-                sessionToken
+                sessionToken,
             });
 
             if (result.errors && result.errors.length > 0) {
-                throw new Error(`GraphQL Mutation Error: ${result.errors.map(e => e.message).join(', ')}`);
+                throw new Error(
+                    `GraphQL Mutation Error: ${result.errors.map((e) => e.message).join(", ")}`,
+                );
             }
 
             if (!result.data) {

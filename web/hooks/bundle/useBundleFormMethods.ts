@@ -12,15 +12,13 @@ export function useBundleFormMethods() {
     const methods = useFormContext<BundleFormData>();
 
     if (!methods) {
-        throw new Error("useBundleFormMethods must be used within BundleFormProvider");
+        throw new Error(
+            "useBundleFormMethods must be used within BundleFormProvider",
+        );
     }
 
-    const {
-        currentStep,
-        selectedItems,
-        nextStep,
-        setValidationAttempted,
-    } = useBundleStore();
+    const { currentStep, selectedItems, nextStep, setValidationAttempted } =
+        useBundleStore();
 
     const {
         setValue,
@@ -61,10 +59,13 @@ export function useBundleFormMethods() {
     }, [validateCurrentStep, nextStep]);
 
     // Get field error
-    const getFieldError = useCallback((fieldName: string) => {
-        const error = errors[fieldName as keyof BundleFormData];
-        return error?.message;
-    }, [errors]);
+    const getFieldError = useCallback(
+        (fieldName: string) => {
+            const error = errors[fieldName as keyof BundleFormData];
+            return error?.message;
+        },
+        [errors],
+    );
 
     // Check if can proceed to next step
     const canProceedToNextStep = useCallback(() => {
@@ -72,7 +73,11 @@ export function useBundleFormMethods() {
             case 1: // Products step
                 return selectedItems.length > 0;
             case 2: // Configuration step
-                return !errors.name && !errors.discountType && !errors.discountValue;
+                return (
+                    !errors.name &&
+                    !errors.discountType &&
+                    !errors.discountValue
+                );
             case 3: // Display step
                 return true;
             case 4: // Review step
