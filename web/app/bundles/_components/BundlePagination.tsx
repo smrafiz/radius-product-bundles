@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { Pagination } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 

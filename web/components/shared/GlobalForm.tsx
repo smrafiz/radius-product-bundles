@@ -3,10 +3,10 @@
 import NProgress from "nprogress";
 import { useBundleStore } from "@/stores";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 interface Props {
-    children: React.ReactNode;
+    children: ReactNode;
     onSubmit?: () => Promise<void> | void;
     resetDirty: () => void;
     discardPath?: string;

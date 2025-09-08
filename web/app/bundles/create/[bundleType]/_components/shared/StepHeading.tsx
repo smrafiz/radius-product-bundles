@@ -1,4 +1,3 @@
-import React from "react";
 import { BlockStack, Text } from "@shopify/polaris";
 
 type Gap = "050" | "100" | "200" | "300" | "400" | "500";

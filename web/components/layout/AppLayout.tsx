@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
+import { ReactNode } from "react";
 import { Frame } from "@shopify/polaris";
 
 export default function AppLayoutWrapper({
     children,
 }: {
-    children: React.ReactNode;
+    children: ReactNode;
 }) {
     return (
         <div className="radius-app-wrapper">

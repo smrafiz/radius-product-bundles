@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useSessionStore } from "@/stores";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -8,7 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 export default function ProtectedRoute({
     children,
 }: {
-    children: React.ReactNode;
+    children: ReactNode;
 }) {
     const { isInitialized, hasValidSession, shop, sessionToken } =
         useSessionStore();

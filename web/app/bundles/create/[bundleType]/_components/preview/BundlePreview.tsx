@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { Fragment } from "react";
 import {
     Badge,
     BlockStack,
@@ -32,7 +32,7 @@ export default function BundlePreview({ bundleType }: Props) {
         if (selectedItems.length === 0) {
             // Show placeholder when no products selected
             return Array.from({ length: 3 }, (_, i) => (
-                <React.Fragment key={i}>
+                <Fragment key={i}>
                     <Box
                         background="bg-surface"
                         padding="300"
@@ -51,13 +51,13 @@ export default function BundlePreview({ bundleType }: Props) {
                             +
                         </Text>
                     )}
-                </React.Fragment>
+                </Fragment>
             ));
         }
 
         // Show actual selected products (limit to first 4 for space)
         return selectedItems.slice(0, 4).map((item, index) => (
-            <React.Fragment key={item.id}>
+            <Fragment key={item.id}>
                 <BlockStack gap="100" inlineAlign="center">
                     <Box
                         background="bg-surface"
@@ -90,7 +90,7 @@ export default function BundlePreview({ bundleType }: Props) {
                         +
                     </Text>
                 )}
-            </React.Fragment>
+            </Fragment>
         ));
     };
 

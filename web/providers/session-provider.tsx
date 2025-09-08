@@ -2,14 +2,14 @@
 
 import { useSearchParams } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import React, { useEffect, useState, useRef } from "react";
+import { ReactNode, useEffect, useState, useRef } from "react";
 import { useSessionStore } from "@/stores";
 import { doWebhookRegistration, storeToken } from "@/actions";
 
 export default function SessionProvider({
     children,
 }: {
-    children: React.ReactNode;
+    children: ReactNode;
 }) {
     const app = useAppBridge();
     const searchParams = useSearchParams();

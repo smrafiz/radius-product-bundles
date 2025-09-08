@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBundles, getBundleMetrics, getBundle, createBundle, updateBundle } from "@/actions/bundles.action";
+import { getBundles, getBundleMetrics, getBundle, createBundle, updateBundle } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { BundleFormData } from "@/lib/validation";
 import type {

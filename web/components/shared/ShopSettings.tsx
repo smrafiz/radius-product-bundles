@@ -2,7 +2,7 @@
 
 import { useShopSettings } from "@/hooks";
 
-export const ShopSettings: React.FC<{ children: React.ReactNode }> = ({
+export const ShopSettings: FC<{ children: ReactNode }> = ({
     children,
 }) => {
     const { isLoading, error, isInitialized } = useShopSettings();

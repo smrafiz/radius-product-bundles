@@ -1,7 +1,6 @@
 // web/app/bundles/create/[bundleType]/_components/form/StepNavigation.tsx
 "use client";
 
-import React from "react";
 import { InlineStack, Button } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";

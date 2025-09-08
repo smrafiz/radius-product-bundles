@@ -1,4 +1,3 @@
-import React from "react";
 import { Banner } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 
@@ -17,7 +16,6 @@ export function BundleErrorCard({ onRetry }: BundleErrorCardProps) {
         if (onRetry) {
             onRetry();
         } else {
-            // Default retry action - you might want to expose a retry function from the hook
             window.location.reload();
         }
     };

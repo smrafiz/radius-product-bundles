@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card, Spinner, Stack, Text, Banner } from "@shopify/polaris";
-import { getBundle } from "@/actions/bundles.action";
+import { getBundle } from "@/actions";
 import BundleForm from "@/bundles/_components/BundleForm";
 import { useSessionToken } from "@/hooks/shop/useSessionToken";
 

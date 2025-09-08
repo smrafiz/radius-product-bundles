@@ -1,4 +1,3 @@
-import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Box, Button, ButtonGroup, Card } from "@shopify/polaris";
 import { ColorIcon, DiscountIcon, OrderIcon } from "@shopify/polaris-icons";

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { formatCurrency, withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useBundlesData } from "@/hooks";

@@ -1,4 +1,3 @@
-import React from "react";
 import { BlockStack, Card, Text, Select } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 import { WIDGET_POSITIONS } from "@/lib/constants";

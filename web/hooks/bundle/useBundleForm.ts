@@ -5,7 +5,7 @@ import { bundleSchema, BundleFormData } from "@/lib/validation";
 import { useBundleStore } from "@/stores";
 import { useCallback, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createBundle, updateBundle } from "@/actions/bundles.action";
+import { createBundle, updateBundle } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import type { BundleType, CreateBundlePayload } from "@/types";
 

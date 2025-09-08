@@ -1,51 +1,75 @@
-// /web/components/shared/ShopSettingsProvider.tsx
 "use client";
 
-import { useShopSettings } from "@/hooks";
-import { ReactNode } from "react";
+import { getShopSettings } from "@/actions";
+import { ReactNode, useEffect, useState } from "react";
 import { Banner } from "@shopify/polaris";
 
 interface ShopSettingsProviderProps {
     children: ReactNode;
-    // 🔥 Control when to load shop settings
+    shop: string;
     loadSettings?: boolean;
-    // 🔥 Show loading UI or render children immediately
     showLoadingState?: boolean;
-    // 🔥 Custom loading component
     loadingComponent?: ReactNode;
-    // 🔥 Custom error component
     errorComponent?: (error: Error, retry: () => void) => ReactNode;
+}
+
+interface ShopSettings {
+    shop: string;
+    name: string;
+    email?: string;
+    myshopifyDomain?: string;
+    currencyCode: string;
+    countryCode?: string;
+    planDisplayName?: string;
 }
 
 export const ShopSettingsProvider: React.FC<ShopSettingsProviderProps> = ({
     children,
+    shop,
     loadSettings = true,
     showLoadingState = true,
     loadingComponent,
     errorComponent,
 }) => {
-    const {
-        isLoading,
-        error,
-        isInitialized,
-        refreshShopSettings,
-        hasValidCache,
-    } = useShopSettings({
-        enabled: loadSettings,
-    });
+    const [settings, setSettings] = useState<ShopSettings | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
 
-    // 🔥 Custom loading component
-    if (loadSettings && isLoading && showLoadingState && !hasValidCache) {
+    const fetchSettings = async () => {
+        if (!shop || !loadSettings) return;
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const shopSettings = await getShopSettings(shop);
+            setSettings(shopSettings);
+        } catch (err) {
+            const error =
+                err instanceof Error
+                    ? err
+                    : new Error("Failed to load shop settings");
+            setError(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        void fetchSettings();
+    }, [shop, loadSettings]);
+
+    // Show loading state
+    if (loadSettings && isLoading && showLoadingState && !settings) {
         if (loadingComponent) {
             return <>{loadingComponent}</>;
         }
-
-        return;
     }
 
+    // Show error state
     if (error && loadSettings) {
         if (errorComponent) {
-            return <>{errorComponent(error, refreshShopSettings)}</>;
+            return <>{errorComponent(error, fetchSettings)}</>;
         }
 
         return (
@@ -54,7 +78,7 @@ export const ShopSettingsProvider: React.FC<ShopSettingsProviderProps> = ({
                 title="Failed to load shop settings"
                 action={{
                     content: "Retry",
-                    onAction: refreshShopSettings,
+                    onAction: fetchSettings,
                 }}
             >
                 <p>{error.message}</p>

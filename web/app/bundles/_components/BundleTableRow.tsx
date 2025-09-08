@@ -1,4 +1,3 @@
-import React from "react";
 import type { BundleListItem } from "@/stores";
 import { Badge, IndexTable, Text } from "@shopify/polaris";
 import {

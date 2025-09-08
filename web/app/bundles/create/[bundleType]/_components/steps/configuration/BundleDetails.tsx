@@ -1,7 +1,6 @@
 // web/app/bundles/create/[bundleType]/_components/steps/configuration/BundleDetails.tsx
 "use client";
 
-import React from "react";
 import { BlockStack, Card, Text, TextField } from "@shopify/polaris";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { PlusIcon } from "@shopify/polaris-icons";
 import { Box, EmptySearchResult, EmptyState } from "@shopify/polaris";
 import { useBundleTableActions } from "@/hooks";

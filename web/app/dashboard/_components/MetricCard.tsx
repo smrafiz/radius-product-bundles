@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { ComponentType } from "react";
 import {
     BlockStack,
     Box,
@@ -23,7 +23,7 @@ interface MetricCardProps {
     title: string;
     value: string;
     growth?: number;
-    icon?: React.ComponentType<any>;
+    icon?: ComponentType<any>;
     tone?: "success" | "caution" | "subdued";
     action?: { label: string; url: string };
     comparisonLabel?: string;

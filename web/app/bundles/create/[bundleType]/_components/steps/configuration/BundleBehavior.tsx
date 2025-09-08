@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { BlockStack, Card, RadioButton, Text } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 

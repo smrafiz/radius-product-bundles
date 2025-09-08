@@ -1,7 +1,7 @@
 // web/app/bundles/create/[bundleType]/_components/form/BundleCreationForm.tsx
 "use client";
 
-import React from "react";
+import { useEffect } from "react";
 import { getBundleProperty } from "@/utils";
 import { Card, Layout, Page } from "@shopify/polaris";
 import {
@@ -22,7 +22,7 @@ export default function BundleCreationForm({ bundleType }: Props) {
     const { bundleData, setBundleData } = useBundleStore();
     const { setValue } = useBundleFormMethods();
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!bundleData.type) {
             setBundleData({ ...bundleData, type: bundleType });
             // Also set it in the form

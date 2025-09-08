@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useDashboardData } from "@/hooks";

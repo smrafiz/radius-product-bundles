@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import { ReactNode, Suspense } from "react";
 import { Inter } from "next/font/google";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
@@ -12,7 +12,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: ReactNode }) {
     return (
         <AppProvider i18n={translations}>
             <Suspense fallback={null}>

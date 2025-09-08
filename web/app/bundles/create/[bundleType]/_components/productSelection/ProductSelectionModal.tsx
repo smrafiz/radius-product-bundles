@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import {
     Modal,
     Button,
@@ -30,8 +30,8 @@ export function ProductSelectionModal({
 }: Props) {
     const app = useAppBridge();
 
-    const [statusFilter, setStatusFilter] = React.useState("ALL");
-    const [searchInput, setSearchInput] = React.useState("");
+    const [statusFilter, setStatusFilter] = useState("ALL");
+    const [searchInput, setSearchInput] = useState("");
 
     const openResourcePicker = useCallback(async () => {
         if (!app) return;

@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useMemo } from "react";
 import { Card, InlineStack, Text, BlockStack, Divider } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 import { useGroupedProducts } from "@/hooks";

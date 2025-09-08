@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { Fragment } from "react";
 import { useBundleStore } from "@/stores";
 import { Knob } from "@/components/fields/Knob";
 import { ADVANCED_OPTIONS } from "@/lib/constants";
@@ -21,7 +21,7 @@ export default function AdvancedOptions() {
                         ({ key, title, description }, index) => {
                             const selected = displaySettings[key];
                             return (
-                                <React.Fragment key={key}>
+                                <Fragment key={key}>
                                     <InlineStack
                                         align="space-between"
                                         blockAlign="center"
@@ -65,7 +65,7 @@ export default function AdvancedOptions() {
                                     {index < ADVANCED_OPTIONS.length - 1 && (
                                         <Divider />
                                     )}
-                                </React.Fragment>
+                                </Fragment>
                             );
                         },
                     )}

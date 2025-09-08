@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 import {
     Box,
     Button,
@@ -27,7 +27,7 @@ function SortableWrapper({
     children,
 }: {
     id: string;
-    children: React.ReactNode;
+    children: ReactNode;
 }) {
     const {
         attributes,

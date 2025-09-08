@@ -1,60 +1,39 @@
-// /web/stores/shop/shopSettings.store.ts
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { ShopSettingsStore } from "@/types";
+import { create } from 'zustand';
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+interface ShopSettings {
+    name: string;
+    email?: string;
+    myshopifyDomain?: string;
+    currencyCode: string;
+    countryCode?: string;
+    planDisplayName?: string;
+}
 
-export const useShopSettingsStore = create<ShopSettingsStore>()(
-    persist(
-        (set, get) => ({
-            // Default values
-            currencyCode: "USD",
-            locale: "en-US",
-            lastFetched: null,
+interface ShopSettingsState {
+    settings: ShopSettings | null;
+    isInitialized: boolean;
+
+    setSettings: (settings: ShopSettings) => void;
+    markAsInitialized: () => void;
+    reset: () => void;
+}
+
+export const useShopSettingsStore = create<ShopSettingsState>()((set) => ({
+    settings: null,
+    isInitialized: false,
+
+    setSettings: (settings: ShopSettings) => {
+        set({ settings });
+    },
+
+    markAsInitialized: () => {
+        set({ isInitialized: true });
+    },
+
+    reset: () => {
+        set({
+            settings: null,
             isInitialized: false,
-
-            setSettings: (newSettings) => {
-                set((state) => ({
-                    ...state,
-                    ...newSettings,
-                    lastFetched: Date.now(),
-                    isInitialized: true,
-                }));
-            },
-
-            getCurrencyCode: () => get().currencyCode,
-            getLocale: () => get().locale,
-
-            shouldRefresh: () => {
-                const state = get();
-                if (!state.lastFetched) return true;
-                return Date.now() - state.lastFetched > CACHE_DURATION;
-            },
-
-            markAsInitialized: () => set({ isInitialized: true }),
-
-            // FIX: Add missing methods
-            reset: () => set({
-                currencyCode: "USD",
-                locale: "en-US",
-                lastFetched: null,
-                isInitialized: false,
-            }),
-
-            hasValidCache: () => {
-                const state = get();
-                return state.isInitialized && !state.shouldRefresh();
-            }
-        }),
-        {
-            name: "rt-shopify-shop-settings",
-            partialize: (state) => ({
-                currencyCode: state.currencyCode,
-                locale: state.locale,
-                lastFetched: state.lastFetched,
-                isInitialized: state.isInitialized,
-            }),
-        },
-    ),
-);
+        });
+    },
+}));

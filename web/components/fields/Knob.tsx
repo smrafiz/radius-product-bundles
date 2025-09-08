@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import "@/styles/fields/Knob.css";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 /**
  * Accessible toggle knob
  */
-export const Knob: React.FC<Props> = ({ ariaLabel, selected, onClick }) => {
+export const Knob: FC<Props> = ({ ariaLabel, selected, onClick }) => {
     return (
         <button
             type="button"

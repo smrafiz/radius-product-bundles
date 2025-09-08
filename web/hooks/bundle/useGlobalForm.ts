@@ -1,26 +1,23 @@
-// web/hooks/bundle/useBundleFormWithGlobalForm.ts
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useBundleStore } from "@/stores";
-import { createBundle } from "@/actions/bundles.action";
+import { createBundle } from "@/actions";
 import { BundleFormData } from "@/lib/validation";
 import type { BundleType, CreateBundlePayload } from "@/types";
 
 /**
  * Hook to integrate React Hook Form with your GlobalForm component
  */
-export function useBundleFormWithGlobalForm(bundleType: BundleType) {
+export function useGlobalForm(bundleType: BundleType) {
     const app = useAppBridge();
     const router = useRouter();
     const queryClient = useQueryClient();
     const methods = useFormContext<BundleFormData>();
 
     const {
-        bundleData,
-        selectedItems,
         setSaving,
         resetBundle,
         setValidationAttempted,
@@ -28,7 +25,7 @@ export function useBundleFormWithGlobalForm(bundleType: BundleType) {
 
     const { handleSubmit, setError } = methods || {};
 
-    // Create bundle mutation
+    // Create the bundle mutation
     const createBundleMutation = useMutation({
         mutationFn: async (data: BundleFormData) => {
             const token = await app.idToken();
@@ -64,8 +61,8 @@ export function useBundleFormWithGlobalForm(bundleType: BundleType) {
         },
         onSuccess: (result) => {
             console.log("Bundle created successfully:", result);
-            queryClient.invalidateQueries({ queryKey: ["bundles"] });
-            queryClient.invalidateQueries({ queryKey: ["bundle-metrics"] });
+            void queryClient.invalidateQueries({ queryKey: ["bundles"] });
+            void queryClient.invalidateQueries({ queryKey: ["bundle-metrics"] });
             resetBundle();
             router.push("/bundles");
         },

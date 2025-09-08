@@ -10,7 +10,6 @@ import {
     Page,
     Text,
 } from "@shopify/polaris";
-import React from "react";
 import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
 import { bundleTypeConfigs } from "@/config";

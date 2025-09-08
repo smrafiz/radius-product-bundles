@@ -1,7 +1,6 @@
 // web/app/bundles/create/[bundleType]/_components/steps/configuration/DiscountSettings.tsx
 "use client";
 
-import React from "react";
 import {
     BlockStack,
     Card,

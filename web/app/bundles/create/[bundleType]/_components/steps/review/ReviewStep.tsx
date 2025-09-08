@@ -1,7 +1,6 @@
 // web/app/bundles/create/[bundleType]/_components/steps/review/ReviewStep.tsx
 "use client";
 
-import React from "react";
 import { BlockStack, Card, Text, Banner, List } from "@shopify/polaris";
 import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
 import { BundleSummary } from "@/bundles/create/[bundleType]/_components/steps/review";

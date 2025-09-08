@@ -8,7 +8,6 @@ import {
     InlineStack,
     Text,
 } from "@shopify/polaris";
-import React from "react";
 import { withLoader } from "@/utils";
 import type { BundleConfig } from "@/types";
 import { useRouter } from "next/navigation";

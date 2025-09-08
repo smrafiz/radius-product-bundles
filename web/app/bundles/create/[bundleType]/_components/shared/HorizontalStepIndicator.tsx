@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { Fragment } from "react";
 import { useStepIndicator } from "@/hooks/";
 import { CheckIcon } from "@shopify/polaris-icons";
 import { BlockStack, Card, Icon, Text } from "@shopify/polaris";
@@ -19,7 +19,7 @@ export default function HorizontalStepIndicator() {
         <Card>
             <div className="flex items-center justify-between">
                 {steps.map((step, index) => (
-                    <React.Fragment key={step.number}>
+                    <Fragment key={step.number}>
                         {/* Step Item */}
                         <div
                             className={`flex gap-[12px] items-center ${
@@ -89,7 +89,7 @@ export default function HorizontalStepIndicator() {
                                 }}
                             />
                         )}
-                    </React.Fragment>
+                    </Fragment>
                 ))}
             </div>
         </Card>
