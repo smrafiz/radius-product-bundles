@@ -12,6 +12,7 @@ import type { BundleType } from "@/types";
 import { BundleFormData } from "@/lib/validation";
 import { GlobalForm } from "@/components";
 import { bundleTypeMap } from "@/utils";
+import { useGlobalForm } from "@/hooks/";
 
 export default function CreateBundlePage({
     params,
@@ -28,6 +29,8 @@ export default function CreateBundlePage({
     console.log("bundleType from params:", bundleType);
     console.log("typeof bundleType:", typeof bundleType);
     console.log("========================");
+
+    const { handleGlobalFormSubmit } = useGlobalForm(bundleType);
 
     const handleSubmit = async (data: BundleFormData) => {
         try {
