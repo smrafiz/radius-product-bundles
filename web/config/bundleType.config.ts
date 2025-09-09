@@ -48,10 +48,10 @@ export const bundleTypeConfigs: Record<BundleType, BundleConfig> = {
         icon: "🔄",
         badge: { text: "New", tone: "success" },
     },
-    CROSS_SELL: {
+    FREQUENTLY_BOUGHT_TOGETHER: {
         label: "Frequently Bought Together",
-        id: "CROSS_SELL",
-        slug: "cross-sell",
+        id: "FREQUENTLY_BOUGHT_TOGETHER",
+        slug: "frequently-bought-together",
         description: "Frequently Bought Together",
         features: ["Smart product suggestions", "AI-powered recommendations"],
         icon: "🤝",

@@ -20,10 +20,7 @@ export default function BundleTypeCard({ bundleType }: Props) {
     const router = useRouter();
 
     const handleSelect = () => {
-        const urlType = bundleType.id
-            .toLowerCase()
-            .replace(/_/g, "-")
-            .replace(/\s+/g, "-");
+        const urlType = bundleType.slug;
         router.push(`/bundles/create/${urlType}`);
     };
 

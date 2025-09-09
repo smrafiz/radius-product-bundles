@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getBundleProperty } from "@/utils";
+import { getBundleProperty, withLoader } from "@/utils";
 import { Card, Layout, Page } from "@shopify/polaris";
 import {
     StepContent,
@@ -13,14 +13,20 @@ import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 import type { BundleType } from "@/types";
 import { useBundleStore } from "@/stores";
+import { useRouter } from "next/navigation";
 
 interface Props {
     bundleType: BundleType;
 }
 
 export default function BundleCreationForm({ bundleType }: Props) {
+    const router = useRouter();
     const { bundleData, setBundleData } = useBundleStore();
     const { setValue } = useBundleFormMethods();
+
+    const handleBack = () => {
+        router.push("/bundles/create");
+    };
 
     useEffect(() => {
         if (!bundleData.type) {
@@ -33,6 +39,10 @@ export default function BundleCreationForm({ bundleType }: Props) {
         <Page
             title={`Create ${getBundleProperty(bundleType, "label")}`}
             subtitle="Configure your bundle settings and preview the customer experience"
+            backAction={{
+                content: "Bundle Selection",
+                onAction: withLoader(() => handleBack()),
+            }}
         >
             <Layout>
                 {/* Horizontal Step Navigation */}

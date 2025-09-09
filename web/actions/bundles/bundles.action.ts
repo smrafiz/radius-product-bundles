@@ -652,7 +652,7 @@ async function validateBusinessRules(shop: string, data: BundleFormData) {
  */
 function inferBundleType(data: BundleFormData) {
     if (data.discountType === "NO_DISCOUNT") {
-        return "CROSS_SELL";
+        return "FREQUENTLY_BOUGHT_TOGETHER";
     }
 
     if (data.discountType === "FREE_SHIPPING") {

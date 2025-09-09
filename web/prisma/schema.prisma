@@ -406,7 +406,7 @@ enum BundleType {
     BOGO
     VOLUME_DISCOUNT
     MIX_MATCH
-    CROSS_SELL
+    FREQUENTLY_BOUGHT_TOGETHER
 }
 
 enum BundleStatus {

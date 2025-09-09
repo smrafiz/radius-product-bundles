@@ -1,4 +1,3 @@
-// app/bundles/create/[bundleType]/page.tsx
 "use client";
 
 import { use } from "react";
@@ -12,15 +11,18 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import type { BundleType } from "@/types";
 import { BundleFormData } from "@/lib/validation";
 import { GlobalForm } from "@/components";
+import { bundleTypeMap } from "@/utils";
 
 export default function CreateBundlePage({
     params,
 }: {
     params: Promise<{ bundleType: BundleType }>;
 }) {
-    const { bundleType } = use(params);
     const app = useAppBridge();
+    const { bundleType: bundleTypeParam } = use(params);
     const { resetDirty } = useBundleStore();
+
+    const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
 
     const handleSubmit = async (data: BundleFormData) => {
         try {
