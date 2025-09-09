@@ -39,10 +39,10 @@ export const bundleTypeConfigs: Record<BundleType, BundleConfig> = {
         icon: "🎁",
         badge: { text: "New", tone: "success" },
     },
-    MIX_MATCH: {
+    MIX_AND_MATCH: {
         label: "Mix & Match",
-        id: "MIX_MATCH",
-        slug: "mix-match",
+        id: "MIX_AND_MATCH",
+        slug: "mix-and-match",
         description: "Choose any combination from products",
         features: ["Pick any 3 for $50", "Mix different categories"],
         icon: "🔄",

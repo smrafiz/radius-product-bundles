@@ -13,7 +13,7 @@ export const getBundleTypeLabel = (type: BundleType): string => {
         BUY_X_GET_Y: "Buy X Get Y",
         BOGO: "BOGO",
         VOLUME_DISCOUNT: "Volume Discount",
-        MIX_MATCH: "Mix & Match",
+        MIX_AND_MATCH: "Mix & Match",
         FREQUENTLY_BOUGHT_TOGETHER: "Frequently Bought Together",
         FIXED_BUNDLE: "Fixed Bundle",
     };
@@ -25,7 +25,7 @@ export const getBundleIcon = (type: BundleType) => {
         BUY_X_GET_Y: PlusCircleIcon,
         BOGO: OrderIcon,
         VOLUME_DISCOUNT: ChartVerticalIcon,
-        MIX_MATCH: CheckCircleIcon,
+        MIX_AND_MATCH: CheckCircleIcon,
         FREQUENTLY_BOUGHT_TOGETHER: ColorIcon,
         FIXED_BUNDLE: CalendarIcon,
     };

@@ -66,16 +66,29 @@ model Bundle {
     type        BundleType
     status      BundleStatus @default(DRAFT)
 
-    // Shopify Integration
+    // Main product for anchor-based bundles
     mainProductId String?
     isPublished   Boolean   @default(false)
     publishedAt   DateTime?
+
+    // Bundle mechanics for different types
+    buyQuantity  Int? // For Buy X Get Y (X value)
+    getQuantity  Int? // For Buy X Get Y (Y value)
+    minimumItems Int? // Minimum items to qualify
+    maximumItems Int? // Maximum items allowed
 
     // Pricing Configuration
     discountType      DiscountType
     discountValue     Float
     minOrderValue     Float?
     maxDiscountAmount Float?
+
+    // Volume discount tiers (JSON for flexibility)
+    volumeTiers Json? // [{quantity: 2, discount: 10}, {quantity: 5, discount: 20}]
+
+    // Mix & Match settings
+    allowMixAndMatch Boolean @default(false)
+    mixAndMatchPrice Float? // "Pick any 3 for $50"
 
     // Marketing Assets
     images         String[]
@@ -101,36 +114,109 @@ model Bundle {
 
     // Relations
     bundleProducts BundleProduct[]
+    productGroups  BundleProductGroup[]
+    settings       BundleSettings?
     abTests        ABTest[]
     automations    AutomationBundle[]
     analytics      BundleAnalytics[]
     pricingRules   PricingRuleBundle[]
 
     @@unique([shop, name])
-    @@index([shop, status])
+    @@index([shop, status, type])
+    @@index([mainProductId])
 }
 
 // Stores the products in a bundle.
 model BundleProduct {
-    id       String @id @default(cuid())
-    bundleId String
+    id           String            @id @default(cuid())
+    bundleId     String
+    productId    String
+    variantId    String?
+    quantity     Int               @default(1)
+    displayOrder Int               @default(0)
+    role         BundleProductRole @default(INCLUDED)
 
-    // Shopify Integration
-    productId String
-    variantId String?
+    // Group assignment for Mix & Match
+    groupId String?
 
-    // Configuration
-    quantity     Int     @default(1)
-    displayOrder Int     @default(0)
-    isRequired   Boolean @default(true)
+    // Pricing overrides
+    customPrice     Float?
+    discountPercent Float?
+
+    // Conditions
+    isRequired  Boolean @default(true)
+    minQuantity Int? // For volume discounts
+    maxQuantity Int?
 
     createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-    // Relations
+    bundle Bundle              @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    group  BundleProductGroup? @relation(fields: [groupId], references: [id])
+
+    @@unique([bundleId, productId, variantId, role])
+    @@index([bundleId, role])
+    @@index([productId])
+}
+
+// Stores groups of products for Mix & Match
+model BundleProductGroup {
+    id           String  @id @default(cuid())
+    bundleId     String
+    name         String
+    description  String?
+    minSelection Int     @default(0)
+    maxSelection Int?
+    displayOrder Int     @default(0)
+
+    bundle   Bundle          @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    products BundleProduct[]
+
+    @@index([bundleId])
+}
+
+// Stores settings for a bundle.
+model BundleSettings {
+    id       String @id @default(cuid())
+    bundleId String @unique
+
+    // Layout settings
+    layout   WidgetLayout   @default(GRID)
+    theme    WidgetTheme    @default(STORE_DEFAULT)
+    position WidgetPosition @default(ABOVE_ADD_TO_CART)
+
+    // Widget behavior
+    widget Json? // { floating: true, autoHide: false, showOnMobile: true }
+
+    // Visual styling
+    style Json? // { primaryColor: "#FF0000", font: "Roboto", borderRadius: "8px" }
+
+    // Display options
+    showPrices        Boolean @default(true)
+    showSavings       Boolean @default(true)
+    showProductImages Boolean @default(true)
+    enableQuickAdd    Boolean @default(false)
+
+    // Animation & UX
+    animations Json? // { fadeIn: true, slideDirection: "left" }
+
+    // Responsive settings
+    mobileSettings Json? // { hideOnMobile: false, stackVertically: true }
+
+    // A/B testing
+    variant String? // For A/B testing different layouts
+
+    // Catch-all for future features
+    misc Json?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
-    @@unique([bundleId, productId, variantId])
-    @@index([bundleId, displayOrder])
+    @@index([layout])
+    @@index([theme])
+    @@index([position])
 }
 
 // Stores information about an A/B test.
@@ -405,7 +491,7 @@ enum BundleType {
     BUY_X_GET_Y
     BOGO
     VOLUME_DISCOUNT
-    MIX_MATCH
+    MIX_AND_MATCH
     FREQUENTLY_BOUGHT_TOGETHER
 }
 
@@ -423,6 +509,41 @@ enum DiscountType {
     CUSTOM_PRICE
     FREE_SHIPPING
     NO_DISCOUNT
+    BUY_X_GET_Y
+    QUANTITY_BREAKS
+}
+
+enum BundleProductRole {
+    TRIGGER
+    REWARD
+    INCLUDED
+    OPTIONAL
+    GROUP_OPTION
+}
+
+enum WidgetLayout {
+    GRID
+    CAROUSEL
+    LIST
+    COMPACT
+    FLOATING
+}
+
+enum WidgetTheme {
+    LIGHT
+    DARK
+    STORE_DEFAULT
+    CUSTOM
+}
+
+enum WidgetPosition {
+    PRODUCT_PAGE_TOP
+    PRODUCT_PAGE_BOTTOM
+    ABOVE_ADD_TO_CART
+    BELOW_ADD_TO_CART
+    SIDEBAR
+    FLOATING
+    POPUP
 }
 
 enum TestType {

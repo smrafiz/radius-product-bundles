@@ -4,7 +4,15 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db/prisma-connect";
 import { handleSessionToken } from "@/lib/shopify/verify";
-import { bundleSchema, BundleFormData } from "@/lib/validation";
+import { BundleFormData, bundleSchema } from "@/lib/validation";
+import {
+    bundleProductGroupQueries,
+    bundleProductQueries,
+    bundleQueries,
+    bundleSettingsQueries,
+    shopQueries,
+} from "@/lib/queries";
+import { logger } from "@shopify/shopify-api/dist/ts/lib/logger";
 
 /**
  * Get bundles for a shop
@@ -217,15 +225,13 @@ export async function createBundle(sessionToken: string, data: unknown) {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        // Parse and validate data
         const validationResult = bundleSchema.safeParse(data);
 
         if (!validationResult.success) {
-            // Format Zod errors for client consumption
             const formattedErrors: Record<string, { _errors: string[] }> = {};
 
             validationResult.error.issues.forEach((issue) => {
-                const path = issue.path.join('.');
+                const path = issue.path.join(".");
                 if (!formattedErrors[path]) {
                     formattedErrors[path] = { _errors: [] };
                 }
@@ -243,7 +249,10 @@ export async function createBundle(sessionToken: string, data: unknown) {
         const validatedData = validationResult.data;
 
         // Business rules validation
-        const businessValidation = await validateBusinessRules(shop, validatedData);
+        const businessValidation = await validateBusinessRules(
+            shop,
+            validatedData,
+        );
         if (!businessValidation.success) {
             return {
                 status: "error" as const,
@@ -253,56 +262,49 @@ export async function createBundle(sessionToken: string, data: unknown) {
             };
         }
 
-        // Database transaction
         const result = await prisma.$transaction(async (tx) => {
             // Check for duplicate names
-            const existingBundle = await tx.bundle.findUnique({
-                where: {
-                    shop_name: {
-                        shop: shop,
-                        name: validatedData.name,
-                    },
-                },
-            });
+            const existingBundle = await bundleQueries.findByName(
+                shop,
+                validatedData.name,
+            );
 
             if (existingBundle) {
-                throw new Error(`Bundle with name "${validatedData.name}" already exists`);
+                throw new Error(
+                    `Bundle with name "${validatedData.name}" already exists`,
+                );
             }
 
-            // Create bundle
-            const bundle = await tx.bundle.create({
-                data: {
-                    shop,
-                    name: validatedData.name,
-                    description: validatedData.description || null,
-                    type: inferBundleType(validatedData),
-                    status: "DRAFT", // Default status
-                    discountType: validatedData.discountType,
-                    discountValue: validatedData.discountValue || 0,
-                    minOrderValue: validatedData.minOrderValue || null,
-                    maxDiscountAmount: validatedData.maxDiscountAmount || null,
-                    startDate: validatedData.startDate || null,
-                    endDate: validatedData.endDate || null,
-                    images: [],
-                    views: 0,
-                    conversions: 0,
-                    revenue: 0,
-                    aiOptimized: false,
-                },
+            // Create the bundle
+            const bundle = await bundleQueries.create({
+                ...validatedData,
+                shop,
             });
 
             // Create bundle products
-            if (validatedData.products && validatedData.products.length > 0) {
-                await tx.bundleProduct.createMany({
-                    data: validatedData.products.map((product, index) => ({
-                        bundleId: bundle.id,
-                        productId: product.productId,
-                        variantId: product.variantId || null,
-                        quantity: product.quantity || 1,
-                        displayOrder: index,
-                        isMain: index === 0,
-                        isRequired: true,
-                    })),
+            if (validatedData.products.length > 0) {
+                await bundleProductQueries.createManyFromValidatedData(
+                    bundle.id,
+                    validatedData.products
+                );
+            }
+
+            // Create product groups for Mix & Match
+            if (
+                validatedData.productGroups &&
+                validatedData.productGroups.length > 0
+            ) {
+                await bundleProductGroupQueries.createManyFromValidatedData(
+                    bundle.id,
+                    validatedData.productGroups
+                );
+            }
+
+            // Create bundle settings
+            if (validatedData.settings) {
+                await bundleSettingsQueries.create({
+                    bundleId: bundle.id,
+                    ...validatedData.settings,
                 });
             }
 
@@ -322,18 +324,16 @@ export async function createBundle(sessionToken: string, data: unknown) {
             },
             errors: null,
         };
-
     } catch (error) {
         console.error("Failed to create bundle:", error);
 
-        // Handle specific errors
         if (error instanceof Error) {
             if (error.message.includes("already exists")) {
                 return {
                     status: "error" as const,
                     message: error.message,
                     errors: {
-                        name: { _errors: [error.message] }
+                        name: { _errors: [error.message] },
                     },
                     data: null,
                 };
@@ -588,55 +588,97 @@ export async function getBundle(sessionToken: string, bundleId: string) {
  * Helper function to validate business rules
  */
 async function validateBusinessRules(shop: string, data: BundleFormData) {
+    const [recentCount, shopSettings] = await Promise.all([
+        bundleQueries.countRecent(shop, 1),
+        shopQueries.getSettings(shop),
+    ]);
+
     const errors: Record<string, { _errors: string[] }> = {};
 
     try {
-        // Product limits
-        if (data.products && data.products.length > 10) {
-            errors.products = { _errors: ["Bundle can have maximum 10 products"] };
+        // Bundle-type-specific validations
+        if (
+            data.type === "VOLUME_DISCOUNT" &&
+            (!data.volumeTiers || data.volumeTiers.length === 0)
+        ) {
+            errors.volumeTiers = {
+                _errors: ["Volume discount bundles require at least one tier"],
+            };
         }
 
-        if (data.products && data.products.length === 0) {
-            errors.products = { _errors: ["At least one product is required"] };
+        if (data.type === "BUY_X_GET_Y" || data.type === "BOGO") {
+            if (!data.buyQuantity || !data.getQuantity) {
+                errors.buyQuantity = {
+                    _errors: [
+                        "Buy X Get Y bundles require buy and get quantities",
+                    ],
+                };
+            }
+
+            // Validate trigger and reward products
+            const triggerProducts = data.products.filter(
+                (p) => p.role === "TRIGGER",
+            );
+            const rewardProducts = data.products.filter(
+                (p) => p.role === "REWARD",
+            );
+
+            if (triggerProducts.length === 0) {
+                errors.products = {
+                    _errors: ["Buy X Get Y bundles require trigger products"],
+                };
+            }
+
+            if (rewardProducts.length === 0) {
+                errors.products = {
+                    _errors: ["Buy X Get Y bundles require reward products"],
+                };
+            }
+        }
+
+        // Product limits
+        if (data.products.length > 20) {
+            errors.products = {
+                _errors: ["Bundle can have maximum 20 products"],
+            };
         }
 
         // Discount validation
-        if (data.discountType === "PERCENTAGE" && data.discountValue) {
-            if (data.discountValue > 100) {
-                errors.discountValue = { _errors: ["Percentage discount cannot exceed 100%"] };
-            }
-            if (data.discountValue <= 0) {
-                errors.discountValue = { _errors: ["Percentage discount must be greater than 0"] };
-            }
+        if (data.discountType === "PERCENTAGE" && data.discountValue > 100) {
+            errors.discountValue = {
+                _errors: ["Percentage discount cannot exceed 100%"],
+            };
         }
 
-        if (data.discountType === "FIXED_AMOUNT" && data.discountValue) {
-            if (data.discountValue <= 0) {
-                errors.discountValue = { _errors: ["Fixed discount must be greater than 0"] };
-            }
-            if (data.discountValue > 10000) {
-                errors.discountValue = { _errors: ["Fixed discount amount seems too high"] };
-            }
+        if (
+            data.discountType === "FIXED_AMOUNT" &&
+            data.discountValue > 10000
+        ) {
+            errors.discountValue = {
+                _errors: ["Fixed discount amount seems too high"],
+            };
         }
 
-        // Date validation
-        if (data.startDate && data.endDate) {
-            if (data.endDate <= data.startDate) {
-                errors.endDate = { _errors: ["End date must be after start date"] };
-            }
+        // Rate limiting
+        if (recentCount > 5) {
+            errors.general = {
+                _errors: ["Too many bundles created recently. Please wait."],
+            };
         }
 
-        // Min order value validation
-        if (data.minOrderValue && data.minOrderValue < 0) {
-            errors.minOrderValue = { _errors: ["Minimum order value cannot be negative"] };
+        // Shop settings validation
+        if (shopSettings?.maxBundleProducts && data.products.length > shopSettings.maxBundleProducts) {
+            errors.products = { _errors: [`Shop limit: max ${shopSettings.maxBundleProducts} products`] };
         }
 
         return {
             success: Object.keys(errors).length === 0,
-            message: Object.keys(errors).length > 0 ? "Business validation failed" : "Validation passed",
+            message:
+                Object.keys(errors).length > 0
+                    ? "Business validation failed"
+                    : "Validation passed",
             errors: Object.keys(errors).length > 0 ? errors : null,
         };
-
     } catch (error) {
         console.error("Business validation error:", error);
         return {
@@ -663,7 +705,10 @@ function inferBundleType(data: BundleFormData) {
     return "FIXED_BUNDLE";
 }
 
-function isValidShopifyGid(gid: string, type: 'Product' | 'ProductVariant'): boolean {
+function isValidShopifyGid(
+    gid: string,
+    type: "Product" | "ProductVariant",
+): boolean {
     const pattern = new RegExp(`^gid://shopify/${type}/\\d+$`);
     return pattern.test(gid);
 }
@@ -676,20 +721,24 @@ async function validateSecurity(shop: string, data: BundleFormData) {
         if (data.products) {
             for (const product of data.products) {
                 // Validate product GID format
-                if (!isValidShopifyGid(product.productId, 'Product')) {
-                    errors.products = { _errors: ["Invalid product ID format"] };
+                if (!isValidShopifyGid(product.productId, "Product")) {
+                    errors.products = {
+                        _errors: ["Invalid product ID format"],
+                    };
                     break;
                 }
 
                 // Validate variant GID format
-                if (!isValidShopifyGid(product.variantId, 'ProductVariant')) {
-                    errors.products = { _errors: ["Invalid variant ID format"] };
+                if (!isValidShopifyGid(product.variantId, "ProductVariant")) {
+                    errors.products = {
+                        _errors: ["Invalid variant ID format"],
+                    };
                     break;
                 }
 
                 // Extract numeric IDs for additional validation
-                const productNumericId = product.productId.split('/').pop();
-                const variantNumericId = product.variantId.split('/').pop();
+                const productNumericId = product.productId.split("/").pop();
+                const variantNumericId = product.variantId.split("/").pop();
 
                 // Check if numeric IDs are valid numbers
                 if (!productNumericId || isNaN(Number(productNumericId))) {
@@ -706,10 +755,12 @@ async function validateSecurity(shop: string, data: BundleFormData) {
 
         // Check for duplicate products
         if (data.products) {
-            const productIds = data.products.map(p => p.productId);
+            const productIds = data.products.map((p) => p.productId);
             const uniqueProductIds = new Set(productIds);
             if (productIds.length !== uniqueProductIds.size) {
-                errors.products = { _errors: ["Duplicate products are not allowed"] };
+                errors.products = {
+                    _errors: ["Duplicate products are not allowed"],
+                };
             }
         }
 
@@ -724,14 +775,15 @@ async function validateSecurity(shop: string, data: BundleFormData) {
         });
 
         if (recentBundles > 5) {
-            errors.general = { _errors: ["Too many bundles created recently. Please wait."] };
+            errors.general = {
+                _errors: ["Too many bundles created recently. Please wait."],
+            };
         }
 
         return {
             success: Object.keys(errors).length === 0,
             errors: Object.keys(errors).length > 0 ? errors : null,
         };
-
     } catch (error) {
         console.error("Security validation error:", error);
         return {

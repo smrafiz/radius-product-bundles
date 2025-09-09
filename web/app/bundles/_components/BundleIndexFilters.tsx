@@ -45,7 +45,7 @@ export function BundleIndexFilters() {
         { label: "Buy X Get Y", value: "BUY_X_GET_Y" },
         { label: "BOGO", value: "BOGO" },
         { label: "Volume Discount", value: "VOLUME_DISCOUNT" },
-        { label: "Mix & Match", value: "MIX_MATCH" },
+        { label: "Mix & Match", value: "MIX_AND_MATCH" },
         { label: "Frequently Bought Together", value: "FREQUENTLY_BOUGHT_TOGETHER" },
         { label: "Tiered", value: "TIERED" },
         { label: "Flash Sale", value: "FLASH_SALE" },

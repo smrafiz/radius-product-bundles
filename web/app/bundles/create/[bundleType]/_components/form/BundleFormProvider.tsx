@@ -26,6 +26,7 @@ export function BundleFormProvider({
         defaultValues: {
             name: initialData?.name || "",
             description: initialData?.description || "",
+            type: bundleType,
             products: initialData?.products || [],
             discountType: initialData?.discountType || undefined,
             discountValue: initialData?.discountValue || undefined,
@@ -41,8 +42,9 @@ export function BundleFormProvider({
 
     // Set bundle type when provider mounts
     useEffect(() => {
+        setValue("type", bundleType, { shouldValidate: true });
         setBundleData({ ...bundleData, type: bundleType });
-    }, [bundleType, setBundleData]);
+    }, [bundleType, setValue, setBundleData]);
 
     // Sync selectedItems with form products and mark dirty
     useEffect(() => {

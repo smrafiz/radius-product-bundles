@@ -3,7 +3,7 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
     schema: "https://shopify.dev/admin-graphql-direct-proxy/2024-10",
-    documents: ["./lib/queries/**/*.graphql"],
+    documents: ["./lib/queries/shopify/**/*.graphql"],
     generates: {
         "./lib/gql/": {
             preset: "client",
