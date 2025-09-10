@@ -4,8 +4,8 @@ import {
     SelectedItem,
     ProductGroup,
     BundleConfig,
-    BundleState,
 } from "@/types";
+import { customAlphabet } from "nanoid";
 
 /**
  * Get bundle type options for select
@@ -177,3 +177,12 @@ export function calculateSavingsPercentage(
         ((originalPrice - discountedPrice) / originalPrice) * 100,
     );
 }
+
+/**
+ * Generate bundle ID
+ */
+export const generateBundleId = () => {
+    const timestamp = Date.now().toString();
+    const random = customAlphabet('0123456789', 4)(); // 4 digits (e.g., "1234")
+    return `${timestamp}${random}`;
+};

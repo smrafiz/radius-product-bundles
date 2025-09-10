@@ -1,7 +1,7 @@
 "use client";
 
-import { ReactNode, Suspense } from "react";
 import { Inter } from "next/font/google";
+import { ReactNode, Suspense } from "react";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
 import SessionProvider from "./session-provider";

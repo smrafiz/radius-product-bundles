@@ -6,4 +6,3 @@ export { useBundleTableActions } from "@/hooks/bundle/useBundleTableActions";
 export * from "./useBundleFormMethods";
 export * from "./useBundleQueries";
 export * from "./useBundleForm";
-export { useGlobalForm } from "./useGlobalForm";

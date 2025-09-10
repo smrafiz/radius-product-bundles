@@ -44,3 +44,11 @@ query GetProductById($id: ID!) {
         totalInventory
     }
 }
+
+query GetProductsByIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+        ... on Product {
+            ...ProductFields
+        }
+    }
+}

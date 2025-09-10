@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { BundleFormData } from "@/lib/validation";
+import { withLoader } from "@/utils";
 
 interface Props {
     children: ReactNode;
@@ -15,11 +16,11 @@ interface Props {
 }
 
 export default function GlobalForm({
-                                       children,
-                                       onSubmit,
-                                       resetDirty,
-                                       discardPath,
-                                   }: Props) {
+    children,
+    onSubmit,
+    resetDirty,
+    discardPath,
+}: Props) {
     const formRef = useRef<HTMLFormElement>(null);
     const router = useRouter();
     const form = useFormContext<BundleFormData>();
@@ -37,15 +38,18 @@ export default function GlobalForm({
             e.preventDefault();
 
             if (onSubmit && form) {
-                // Use React Hook Form's handleSubmit for validation
                 await form.handleSubmit(
-                    async (data) => {
-                        console.log("GlobalForm submitting data:", data);
-                        await onSubmit(data);
-                        resetDirty();
-                    },
+                    (data) =>
+                        withLoader(async () => {
+                            console.log("GlobalForm submitting data:", data);
+                            await onSubmit(data);
+                            NProgress.done();
+                            resetDirty();
+                        })(),
                     (errors) => {
                         console.log("GlobalForm validation errors:", errors);
+                        resetDirty();
+                        NProgress.done();
                     }
                 )();
             }

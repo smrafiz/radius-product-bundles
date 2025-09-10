@@ -1,11 +1,15 @@
 import prisma from "@/lib/db/prisma-connect";
 import { bundleFragments, dateRanges } from "@/lib/queries";
+import { generateBundleId } from "@/utils";
 
 export const bundleQueries = {
     // Create
     async create(data: any) {
+        const id = generateBundleId();
+
         return await prisma.bundle.create({
             data: {
+                id,
                 shop: data.shop,
                 name: data.name,
                 description: data.description,

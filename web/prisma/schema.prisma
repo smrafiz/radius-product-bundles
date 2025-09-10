@@ -59,7 +59,7 @@ model AssociatedUser {
 
 // Stores a bundle of products for a given shop.
 model Bundle {
-    id          String       @id @default(cuid())
+    id          String       @id
     shop        String
     name        String
     description String?

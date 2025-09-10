@@ -2,7 +2,7 @@
 
 import { useBundleStore } from "@/stores";
 import type { BundleType } from "@/types";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { BundleFormData, bundleSchema } from "@/lib/validation";
@@ -18,8 +18,16 @@ export function BundleFormProvider({
     bundleType,
     initialData,
 }: BundleFormProviderProps) {
-    const { bundleData, selectedItems, setBundleData, markDirty } =
-        useBundleStore();
+    const {
+        selectedItems,
+        setBundleData,
+        markDirty,
+        resetBundle,
+        setStep,
+    } = useBundleStore();
+
+    const isEditMode = Boolean(initialData);
+    const isInitialized = useRef(false);
 
     const form = useForm<BundleFormData>({
         resolver: zodResolver(bundleSchema),
@@ -34,59 +42,95 @@ export function BundleFormProvider({
             maxDiscountAmount: initialData?.maxDiscountAmount || undefined,
             startDate: initialData?.startDate || undefined,
             endDate: initialData?.endDate || undefined,
+
+            // Add missing fields for edit mode
+            mainProductId: initialData?.mainProductId || undefined,
+            buyQuantity: initialData?.buyQuantity || undefined,
+            getQuantity: initialData?.getQuantity || undefined,
+            minimumItems: initialData?.minimumItems || undefined,
+            maximumItems: initialData?.maximumItems || undefined,
+            volumeTiers: initialData?.volumeTiers || undefined,
+            allowMixAndMatch: initialData?.allowMixAndMatch || false,
+            mixAndMatchPrice: initialData?.mixAndMatchPrice || undefined,
+            marketingCopy: initialData?.marketingCopy || undefined,
+            seoTitle: initialData?.seoTitle || undefined,
+            seoDescription: initialData?.seoDescription || undefined,
+            images: initialData?.images || [],
+            productGroups: initialData?.productGroups || undefined,
+            settings: initialData?.settings || undefined,
         },
-        mode: "onChange", // Changed to onChange for immediate validation
+        mode: "onChange",
     });
 
     const { setValue, watch, reset, formState } = form;
 
-    // Set bundle type when provider mounts
+    // Initialize store based on mode (run once)
     useEffect(() => {
-        setValue("type", bundleType, { shouldValidate: true });
-        setBundleData({ ...bundleData, type: bundleType });
-    }, [bundleType, setValue, setBundleData]);
-
-    // Sync selectedItems with form products and mark dirty
-    useEffect(() => {
-        const products = selectedItems.map((item) => ({
-            productId: item.productId,
-            variantId: item.variantId,
-            quantity: item.quantity,
-        }));
-        setValue("products", products, { shouldDirty: true });
-        markDirty(); // Always mark dirty when products change
-    }, [selectedItems, setValue, markDirty]);
-
-    // Watch for ANY form changes and mark dirty immediately
-    useEffect(() => {
-        const subscription = watch((value, { name, type }) => {
-            if (name && type === "change") {
-                // Update store with form values
+        if (!isInitialized.current) {
+            if (isEditMode && initialData) {
                 setBundleData({
-                    ...value,
+                    ...initialData,
                     type: bundleType,
                 } as any);
 
-                // Mark dirty for save bar
+                setStep(1);
+            } else {
+                // Create mode: reset store
+                resetBundle();
+                setBundleData({ type: bundleType });
+                setStep(1);
+            }
+            isInitialized.current = true;
+        }
+    }, []);
+
+    // Set bundle type in form
+    useEffect(() => {
+        setValue("type", bundleType, { shouldValidate: true });
+    }, [bundleType, setValue]);
+
+    // Sync selectedItems with form products
+    useEffect(() => {
+        if (isInitialized.current) {
+            const products = selectedItems.map((item) => ({
+                productId: item.productId,
+                variantId: item.variantId || "",
+                quantity: item.quantity,
+                role: "INCLUDED" as const,
+            }));
+            setValue("products", products, { shouldDirty: !isEditMode });
+
+            if (!isEditMode && selectedItems.length > 0) {
+                markDirty();
+            }
+        }
+    }, [selectedItems, setValue, markDirty, isEditMode]);
+
+    // Watch for form changes and update store (with debouncing)
+    useEffect(() => {
+        if (!isInitialized.current) return;
+
+        const subscription = watch((value, { name, type }) => {
+            if (name && type === "change") {
+                // Only update specific fields to avoid infinite loops
+                const updatedData = {
+                    [name]: value[name as keyof BundleFormData],
+                    type: bundleType,
+                };
+
+                setBundleData(updatedData as any);
                 markDirty();
             }
         });
         return () => subscription.unsubscribe();
     }, [watch, setBundleData, markDirty, bundleType]);
 
-    // Also watch formState.isDirty for additional safety
+    // Watch formState.isDirty
     useEffect(() => {
-        if (formState.isDirty) {
+        if (formState.isDirty && isInitialized.current) {
             markDirty();
         }
     }, [formState.isDirty, markDirty]);
-
-    // Reset form when initialData changes (for edit mode)
-    useEffect(() => {
-        if (initialData) {
-            reset(initialData);
-        }
-    }, [initialData, reset]);
 
     return <FormProvider {...form}>{children}</FormProvider>;
 }

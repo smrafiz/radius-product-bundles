@@ -53,8 +53,6 @@ export function useProductDataLoader() {
         [first, buildSearchQuery, queryKey],
     );
 
-    console.log(productsVariables);
-
     // Initial products query
     const productsQuery = useGraphQL(
         GetProductsDocument as any,

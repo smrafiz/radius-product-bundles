@@ -1,18 +1,24 @@
-// app/bundles/[id]/edit/page.tsx
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {
-    Card,
-    Spinner,
-    Text,
     Banner,
     BlockStack,
+    Card,
+    Page,
+    Spinner,
+    Text,
 } from "@shopify/polaris";
 import { getBundle, updateBundle } from "@/actions";
 import { useSessionToken } from "@/hooks/shop/useSessionToken";
+import { useGraphQL } from "@/hooks/data/useGraphQL";
+import {
+    GetProductsByIdsDocument,
+    GetProductsByIdsQuery,
+    GetProductsByIdsQueryVariables,
+} from "@/lib/gql/graphql";
 import {
     BundleCreationForm,
     BundleFormProvider,
@@ -20,6 +26,7 @@ import {
 import { GlobalForm } from "@/components";
 import { useBundleStore } from "@/stores";
 import { BundleFormData } from "@/lib/validation";
+import { DashboardSkeleton } from "@/components/shared/Skeletons";
 
 interface EditBundlePageProps {
     params: Promise<{
@@ -31,13 +38,14 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
     const { id: bundleId } = use(params);
     const router = useRouter();
     const sessionToken = useSessionToken();
-    const { resetDirty } = useBundleStore();
+    const { resetDirty, setSaving, setSelectedItems } = useBundleStore();
 
     // Fetch bundle data
     const {
         data: bundleResult,
-        isLoading,
-        error,
+        isLoading: bundleLoading,
+        error: bundleError,
+        isError: isBundleError,
     } = useQuery({
         queryKey: ["bundle", bundleId],
         queryFn: async () => {
@@ -45,69 +53,164 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
             return getBundle(sessionToken, bundleId);
         },
         enabled: !!sessionToken,
+        retry: 1, // Only retry once to avoid long loading times
     });
 
+    // Extract product IDs for GraphQL query
+    const productIds = useMemo(() => {
+        if (!bundleResult?.data?.products) return [];
+        return [...new Set(bundleResult.data.products.map((p) => p.productId))];
+    }, [bundleResult?.data?.products]);
+
+    // GraphQL variables for fetching products
+    const productsVariables = useMemo(
+        (): GetProductsByIdsQueryVariables => ({
+            ids: productIds,
+        }),
+        [productIds],
+    );
+
+    // Fetch product details via GraphQL
+    const productsQuery = useGraphQL(
+        GetProductsByIdsDocument as any,
+        productsVariables,
+        {
+            enabled: productIds.length > 0,
+        },
+    ) as {
+        data?: GetProductsByIdsQuery;
+        loading: boolean;
+        error?: Error | null;
+    };
+
+    // Convert GraphQL product data to selectedItems
+    useEffect(() => {
+        if (
+            bundleResult?.data?.products &&
+            productsQuery.data?.nodes &&
+            !productsQuery.loading
+        ) {
+            const selectedItems = bundleResult.data.products.map(
+                (bundleProduct, index) => {
+                    const shopifyProduct = productsQuery.data.nodes.find(
+                        (node: any) => node?.id === bundleProduct.productId,
+                    );
+
+                    const variant = shopifyProduct?.variants?.nodes?.find(
+                        (v: any) => v.id === bundleProduct.variantId,
+                    );
+
+                    return {
+                        id:
+                            bundleProduct.id ||
+                            `${bundleProduct.productId}-${bundleProduct.variantId}-${index}`,
+                        productId: bundleProduct.productId,
+                        variantId: bundleProduct.variantId,
+                        quantity: bundleProduct.quantity || 1,
+                        type: "product" as const,
+                        title: shopifyProduct?.title || `Product ${index + 1}`,
+                        price:
+                            variant?.price ||
+                            shopifyProduct?.variants?.nodes?.[0]?.price ||
+                            "0.00",
+                        image:
+                            variant?.image?.url ||
+                            shopifyProduct?.featuredImage?.url,
+                        sku: variant?.sku || "",
+                        handle: shopifyProduct?.handle || "",
+                        vendor: shopifyProduct?.vendor || "",
+                        productType: shopifyProduct?.productType || "",
+                        totalVariants:
+                            shopifyProduct?.variants?.nodes?.length || 1,
+                        displayOrder: bundleProduct.displayOrder || 0,
+                        isRequired: bundleProduct.isRequired !== false,
+                        inventoryQuantity: variant?.inventoryQuantity || 0,
+                        availableForSale: variant?.availableForSale || false,
+                        compareAtPrice: variant?.compareAtPrice,
+                    };
+                },
+            );
+
+            setSelectedItems(selectedItems);
+        }
+    }, [
+        bundleResult?.data?.products,
+        productsQuery.data,
+        productsQuery.loading,
+        setSelectedItems,
+    ]);
+
     const handleSubmit = async (data: BundleFormData) => {
+        setSaving(true);
+
         try {
             if (!sessionToken) throw new Error("No session token");
 
             const result = await updateBundle(sessionToken, bundleId, {
                 ...data,
-                type: bundleResult?.data?.type, // Keep existing bundle type
+                type: bundleResult?.data?.type,
             });
 
             if (result.status === "success") {
                 console.log("Bundle updated successfully:", result);
-                router.push(`/bundles/${bundleId}`);
+                router.push(`/bundles/${bundleId}/edit?success=updated`);
             } else {
                 console.error("Update failed:", result.errors);
             }
         } catch (error) {
             console.error("Submit error:", error);
+        } finally {
+            setSaving(false);
         }
     };
 
-    // Loading state
-    if (isLoading) {
+    // 1. LOADING STATE (highest priority)
+    if (
+        bundleLoading ||
+        !sessionToken ||
+        (productIds.length > 0 && productsQuery.loading)
+    ) {
+        return <DashboardSkeleton />;
+    }
+
+    // 2. ERROR STATE (only after we're sure it's not loading)
+    if (
+        (isBundleError && bundleError) ||
+        bundleResult?.status === "error" ||
+        (productsQuery.error && !productsQuery.loading)
+    ) {
         return (
-            <Card>
-                <div style={{ padding: "40px", textAlign: "center" }}>
-                    <BlockStack gap="400" align="center">
-                        <Spinner size="large" />
-                        <Text variant="headingMd">Loading bundle...</Text>
-                    </BlockStack>
-                </div>
-            </Card>
+            <Page title="Error">
+                <Card>
+                    <div style={{ padding: "20px" }}>
+                        <Banner tone="critical" title="Error loading data">
+                            <Text variant="bodyMd">
+                                {bundleResult?.message ||
+                                    bundleError?.message ||
+                                    productsQuery.error?.message ||
+                                    "Failed to load data. Please try again."}
+                            </Text>
+                        </Banner>
+                    </div>
+                </Card>
+            </Page>
         );
     }
 
-    // Error state
-    if (error || bundleResult?.status === "error") {
-        return (
-            <Card>
-                <div style={{ padding: "20px" }}>
-                    <Banner tone="critical" title="Error loading bundle">
-                        <Text variant="bodyMd">
-                            {bundleResult?.message ||
-                                "Failed to load bundle. Please try again."}
-                        </Text>
-                    </Banner>
-                </div>
-            </Card>
-        );
-    }
-
+    // 3. NOT FOUND STATE
     if (!bundleResult?.data) {
         return (
-            <Card>
-                <div style={{ padding: "20px" }}>
-                    <Banner tone="critical" title="Bundle not found">
-                        <Text variant="bodyMd">
-                            The bundle you're looking for doesn't exist.
-                        </Text>
-                    </Banner>
-                </div>
-            </Card>
+            <Page title="Not Found">
+                <Card>
+                    <div style={{ padding: "20px" }}>
+                        <Banner tone="critical" title="Bundle not found">
+                            <Text variant="bodyMd">
+                                The bundle you're looking for doesn't exist.
+                            </Text>
+                        </Banner>
+                    </div>
+                </Card>
+            </Page>
         );
     }
 
@@ -128,7 +231,7 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
         discountType: bundleResult.data.discountType,
         discountValue: bundleResult.data.discountValue,
         minOrderValue: bundleResult.data.minOrderValue,
-        maxDiscountAmount: bundleResult.data.maxDiscountAmount || null,
+        maxDiscountAmount: bundleResult.data.maxDiscountAmount || undefined,
 
         // Volume tiers
         volumeTiers: bundleResult.data.volumeTiers,
@@ -151,7 +254,7 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
             ? new Date(bundleResult.data.endDate)
             : undefined,
 
-        // Products - transform to match form structure
+        // Products
         products: bundleResult.data.products.map((product) => ({
             productId: product.productId,
             variantId: product.variantId,
@@ -162,10 +265,7 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
             discountPercent: product.discountPercent,
         })),
 
-        // Product groups for Mix & Match
         productGroups: bundleResult.data.productGroups || [],
-
-        // Settings (if you have them)
         settings: bundleResult.data.settings || {
             layout: "GRID",
             theme: "STORE_DEFAULT",
@@ -187,7 +287,10 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
                 resetDirty={resetDirty}
                 discardPath={`/bundles/${bundleId}`}
             >
-                <BundleCreationForm bundleType={bundleResult.data.type} />
+                <BundleCreationForm
+                    bundleType={bundleResult.data.type}
+                    bundleName={bundleResult.data.name}
+                />
             </GlobalForm>
         </BundleFormProvider>
     );

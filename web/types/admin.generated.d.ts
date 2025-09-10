@@ -103,6 +103,19 @@ export type GetProductByIdQueryVariables = AdminTypes.Exact<{
 
 export type GetProductByIdQuery = { product?: AdminTypes.Maybe<Pick<AdminTypes.Product, 'id' | 'title' | 'handle' | 'vendor' | 'productType' | 'tags' | 'totalInventory'>> };
 
+export type GetProductsByIdsQueryVariables = AdminTypes.Exact<{
+  ids: Array<AdminTypes.Scalars['ID']['input']> | AdminTypes.Scalars['ID']['input'];
+}>;
+
+
+export type GetProductsByIdsQuery = { nodes: Array<AdminTypes.Maybe<(
+    Pick<AdminTypes.Product, 'id' | 'title' | 'handle' | 'status' | 'vendor' | 'productType' | 'tags' | 'totalInventory' | 'createdAt' | 'updatedAt'>
+    & { featuredImage?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>>, variants: { nodes: Array<(
+        Pick<AdminTypes.ProductVariant, 'id' | 'title' | 'price' | 'compareAtPrice' | 'sku' | 'barcode' | 'inventoryQuantity' | 'availableForSale'>
+        & { selectedOptions: Array<Pick<AdminTypes.SelectedOption, 'name' | 'value'>>, image?: AdminTypes.Maybe<Pick<AdminTypes.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>>, inventoryItem: Pick<AdminTypes.InventoryItem, 'tracked'> }
+      )> }, collections: { edges: Array<{ node: Pick<AdminTypes.Collection, 'id' | 'title' | 'handle'> }> } }
+  )>> };
+
 export type GetShopInfoQueryVariables = AdminTypes.Exact<{ [key: string]: never; }>;
 
 
@@ -113,7 +126,7 @@ export type GetShopInfoQuery = { shop: (
 
 interface GeneratedQueryTypes {
   "query GetCollectionsForFilters($query: String, $first: Int!, $after: String) {\n  collections(first: $first, after: $after, query: $query, sortKey: TITLE) {\n    edges {\n      node {\n        ...CollectionFilterFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n  products(first: 100) {\n    edges {\n      node {\n        productType\n        status\n      }\n    }\n  }\n}\n\nquery GetCollections($first: Int!, $after: String, $query: String) {\n  collections(first: $first, after: $after, query: $query) {\n    edges {\n      node {\n        ...CollectionFields\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetCollectionByHandle($handle: String!) {\n  collectionByHandle(handle: $handle) {\n    ...CollectionDetailsFields\n    products(first: 50) {\n      edges {\n        node {\n          ...ProductCardFields\n        }\n        cursor\n      }\n      pageInfo {\n        ...PageInfoFields\n      }\n    }\n  }\n}": {return: never, variables: GetCollectionsForFiltersQueryVariables & GetCollectionsQueryVariables & GetCollectionByHandleQueryVariables},
-  "query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {\n  products(\n    first: $first\n    after: $after\n    query: $query\n    sortKey: $sortKey\n    reverse: $reverse\n  ) {\n    edges {\n      node {\n        ...ProductFields\n        allCollections: collections(first: 100) {\n          edges {\n            node {\n              id\n              title\n              handle\n            }\n          }\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetProductById($id: ID!) {\n  product(id: $id) {\n    id\n    title\n    handle\n    vendor\n    productType\n    tags\n    totalInventory\n  }\n}": {return: never, variables: GetProductsQueryVariables & GetProductByIdQueryVariables},
+  "query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {\n  products(\n    first: $first\n    after: $after\n    query: $query\n    sortKey: $sortKey\n    reverse: $reverse\n  ) {\n    edges {\n      node {\n        ...ProductFields\n        allCollections: collections(first: 100) {\n          edges {\n            node {\n              id\n              title\n              handle\n            }\n          }\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      ...PageInfoFields\n    }\n  }\n}\n\nquery GetProductById($id: ID!) {\n  product(id: $id) {\n    id\n    title\n    handle\n    vendor\n    productType\n    tags\n    totalInventory\n  }\n}\n\nquery GetProductsByIds($ids: [ID!]!) {\n  nodes(ids: $ids) {\n    ... on Product {\n      ...ProductFields\n    }\n  }\n}": {return: never, variables: GetProductsQueryVariables & GetProductByIdQueryVariables & GetProductsByIdsQueryVariables},
   "query GetShopInfo {\n  shop {\n    currencyCode\n    myshopifyDomain\n    email\n    name\n    plan {\n      displayName\n    }\n    billingAddress {\n      countryCode\n    }\n  }\n}": {return: GetShopInfoQuery, variables: GetShopInfoQueryVariables},
 }
 

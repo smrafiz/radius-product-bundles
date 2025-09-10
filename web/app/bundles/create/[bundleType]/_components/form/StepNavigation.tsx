@@ -2,14 +2,17 @@
 
 import { InlineStack, Button } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
-import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import { useBundleFormMethods } from "@/hooks";
 import { useFormContext } from "react-hook-form";
 import { BundleFormData } from "@/lib/validation";
+import { usePathname } from "next/navigation";
 
 export default function StepNavigation() {
     const { currentStep, totalSteps, prevStep, canGoPrevious } = useBundleStore();
     const { handleNextStep, canProceedToNextStep } = useBundleFormMethods();
     const { handleSubmit, getValues } = useFormContext<BundleFormData>();
+    const pathname = usePathname();
+    const isEditMode = pathname.includes('/edit');
 
     const isLastStep = currentStep === totalSteps;
     const canGoPrev = canGoPrevious();
@@ -47,7 +50,7 @@ export default function StepNavigation() {
             case 3:
                 return "Continue to Review";
             case 4:
-                return "Create Bundle";
+                return isEditMode ? "Update Bundle" : "Create Bundle";
             default:
                 return "Continue";
         }

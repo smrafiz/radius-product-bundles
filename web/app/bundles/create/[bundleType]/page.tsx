@@ -12,7 +12,7 @@ import type { BundleType } from "@/types";
 import { BundleFormData } from "@/lib/validation";
 import { GlobalForm } from "@/components";
 import { bundleTypeMap } from "@/utils";
-import { useGlobalForm } from "@/hooks/";
+import { useRouter } from "next/navigation";
 
 export default function CreateBundlePage({
     params,
@@ -21,7 +21,8 @@ export default function CreateBundlePage({
 }) {
     const app = useAppBridge();
     const { bundleType: bundleTypeParam } = use(params);
-    const { resetDirty } = useBundleStore();
+    const { setSaving, resetDirty, resetBundle, setNavigating } = useBundleStore();
+    const router = useRouter();
 
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
 
@@ -30,9 +31,9 @@ export default function CreateBundlePage({
     console.log("typeof bundleType:", typeof bundleType);
     console.log("========================");
 
-    const { handleGlobalFormSubmit } = useGlobalForm(bundleType);
-
     const handleSubmit = async (data: BundleFormData) => {
+        setSaving(true);
+
         try {
             const token = await app.idToken();
             const result = await createBundle(token, {
@@ -42,11 +43,15 @@ export default function CreateBundlePage({
 
             if (result.status === "success") {
                 console.log("Bundle created successfully:", result);
+                // Next.js will automatically show loading.tsx during navigation
+                router.push(`/bundles/${result.data.id}/edit?success=created`);
             } else {
                 console.error("Validation errors:", result.errors);
             }
         } catch (error) {
             console.error("Submit error:", error);
+        } finally {
+            setSaving(false);
         }
     };
 

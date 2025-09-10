@@ -216,97 +216,187 @@ export async function getBundleMetrics(sessionToken: string) {
     }
 }
 
+// Helper functions
+async function validateBundleData(data: unknown) {
+    const validationResult = bundleSchema.safeParse(data);
+
+    if (!validationResult.success) {
+        const formattedErrors: Record<string, { _errors: string[] }> = {};
+
+        validationResult.error.issues.forEach((issue) => {
+            const path = issue.path.join(".");
+            if (!formattedErrors[path]) {
+                formattedErrors[path] = { _errors: [] };
+            }
+            formattedErrors[path]._errors.push(issue.message);
+        });
+
+        return {
+            success: false,
+            errors: {
+                status: "error" as const,
+                message: "Validation failed",
+                errors: formattedErrors,
+                data: null,
+            },
+        };
+    }
+
+    return {
+        success: true,
+        data: validationResult.data,
+    };
+}
+
+async function validateAndCheckBusinessRules(shop: string, data: unknown) {
+    // Schema validation
+    const validation = await validateBundleData(data);
+    if (!validation.success) {
+        return validation.errors;
+    }
+
+    // Business rules validation
+    const businessValidation = await validateBusinessRules(shop, validation.data);
+    if (!businessValidation.success) {
+        return {
+            status: "error" as const,
+            message: businessValidation.message,
+            errors: businessValidation.errors,
+            data: null,
+        };
+    }
+
+    return {
+        success: true,
+        data: validation.data,
+    };
+}
+
+async function checkNameConflict(shop: string, name: string, excludeId?: string) {
+    const existingBundle = excludeId
+        ? await prisma.bundle.findFirst({
+            where: {
+                shop,
+                name,
+                id: { not: excludeId },
+            },
+        })
+        : await bundleQueries.findByName(shop, name);
+
+    if (existingBundle) {
+        throw new Error(`Bundle with name "${name}" already exists`);
+    }
+}
+
+async function updateBundleRelations(bundleId: string, validatedData: any) {
+    // Update bundle products
+    if (validatedData.products !== undefined) {
+        await bundleProductQueries.deleteByBundle(bundleId);
+        if (validatedData.products.length > 0) {
+            await bundleProductQueries.createManyFromValidatedData(
+                bundleId,
+                validatedData.products
+            );
+        }
+    }
+
+    // Update product groups
+    if (validatedData.productGroups !== undefined) {
+        await bundleProductGroupQueries.deleteByBundle(bundleId);
+        if (validatedData.productGroups.length > 0) {
+            await bundleProductGroupQueries.createManyFromValidatedData(
+                bundleId,
+                validatedData.productGroups
+            );
+        }
+    }
+
+    // Update bundle settings
+    if (validatedData.settings) {
+        await bundleSettingsQueries.updateByBundle(bundleId, validatedData.settings);
+    }
+}
+
+async function createBundleRelations(bundleId: string, validatedData: any) {
+    // Create bundle products
+    if (validatedData.products.length > 0) {
+        await bundleProductQueries.createManyFromValidatedData(
+            bundleId,
+            validatedData.products
+        );
+    }
+
+    // Create product groups
+    if (validatedData.productGroups?.length > 0) {
+        await bundleProductGroupQueries.createManyFromValidatedData(
+            bundleId,
+            validatedData.productGroups
+        );
+    }
+
+    // Create bundle settings
+    if (validatedData.settings) {
+        await bundleSettingsQueries.create({
+            bundleId,
+            ...validatedData.settings,
+        });
+    }
+}
+
+function handleBundleError(error: unknown) {
+    console.error("Bundle operation failed:", error);
+
+    if (error instanceof Error) {
+        if (error.message.includes("already exists")) {
+            return {
+                status: "error" as const,
+                message: error.message,
+                errors: { name: { _errors: [error.message] } },
+                data: null,
+            };
+        }
+
+        if (error.message.includes("not found")) {
+            return {
+                status: "error" as const,
+                message: error.message,
+                errors: null,
+                data: null,
+            };
+        }
+    }
+
+    return {
+        status: "error" as const,
+        message: "Operation failed. Please try again.",
+        errors: null,
+        data: null,
+    };
+}
+
 /**
  * Create a new bundle
  */
 export async function createBundle(sessionToken: string, data: unknown) {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { session: { shop } } = await handleSessionToken(sessionToken);
 
-        const validationResult = bundleSchema.safeParse(data);
-
-        if (!validationResult.success) {
-            const formattedErrors: Record<string, { _errors: string[] }> = {};
-
-            validationResult.error.issues.forEach((issue) => {
-                const path = issue.path.join(".");
-                if (!formattedErrors[path]) {
-                    formattedErrors[path] = { _errors: [] };
-                }
-                formattedErrors[path]._errors.push(issue.message);
-            });
-
-            return {
-                status: "error" as const,
-                message: "Validation failed",
-                errors: formattedErrors,
-                data: null,
-            };
+        const validation = await validateAndCheckBusinessRules(shop, data);
+        if (!validation.success) {
+            return validation;
         }
 
-        const validatedData = validationResult.data;
+        const validatedData = validation.data;
 
-        // Business rules validation
-        const businessValidation = await validateBusinessRules(
-            shop,
-            validatedData,
-        );
-        if (!businessValidation.success) {
-            return {
-                status: "error" as const,
-                message: businessValidation.message,
-                errors: businessValidation.errors,
-                data: null,
-            };
-        }
+        const result = await prisma.$transaction(async () => {
+            await checkNameConflict(shop, validatedData.name);
 
-        const result = await prisma.$transaction(async (tx) => {
-            // Check for duplicate names
-            const existingBundle = await bundleQueries.findByName(
-                shop,
-                validatedData.name,
-            );
-
-            if (existingBundle) {
-                throw new Error(
-                    `Bundle with name "${validatedData.name}" already exists`,
-                );
-            }
-
-            // Create the bundle
             const bundle = await bundleQueries.create({
                 ...validatedData,
                 shop,
             });
 
-            // Create bundle products
-            if (validatedData.products.length > 0) {
-                await bundleProductQueries.createManyFromValidatedData(
-                    bundle.id,
-                    validatedData.products
-                );
-            }
-
-            // Create product groups for Mix & Match
-            if (
-                validatedData.productGroups &&
-                validatedData.productGroups.length > 0
-            ) {
-                await bundleProductGroupQueries.createManyFromValidatedData(
-                    bundle.id,
-                    validatedData.productGroups
-                );
-            }
-
-            // Create bundle settings
-            if (validatedData.settings) {
-                await bundleSettingsQueries.create({
-                    bundleId: bundle.id,
-                    ...validatedData.settings,
-                });
-            }
+            await createBundleRelations(bundle.id, validatedData);
 
             return bundle;
         });
@@ -325,27 +415,7 @@ export async function createBundle(sessionToken: string, data: unknown) {
             errors: null,
         };
     } catch (error) {
-        console.error("Failed to create bundle:", error);
-
-        if (error instanceof Error) {
-            if (error.message.includes("already exists")) {
-                return {
-                    status: "error" as const,
-                    message: error.message,
-                    errors: {
-                        name: { _errors: [error.message] },
-                    },
-                    data: null,
-                };
-            }
-        }
-
-        return {
-            status: "error" as const,
-            message: "Failed to create bundle. Please try again.",
-            errors: null,
-            data: null,
-        };
+        return handleBundleError(error);
     }
 }
 
@@ -358,116 +428,52 @@ export async function updateBundle(
     data: unknown,
 ) {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        console.log(data);
+        const { session: { shop } } = await handleSessionToken(sessionToken);
 
-        const validationResult = bundleSchema.safeParse(data);
-
-        if (!validationResult.success) {
-            const validationError = z.treeifyError(validationResult.error);
-
-            return {
-                status: "error" as const,
-                message: "Validation failed",
-                errors: validationError,
-                data: null,
-            };
+        const validation = await validateAndCheckBusinessRules(shop, data);
+        if (!validation.success) {
+            return validation;
         }
 
-        const validatedData = validationResult.data;
+        const validatedData = validation.data;
 
-        const businessValidation = await validateBusinessRules(
-            shop,
-            validatedData,
-        );
-
-        if (!businessValidation.success) {
-            return {
-                status: "error" as const,
-                message: businessValidation.message,
-                errors: businessValidation.errors,
-                data: null,
-            };
-        }
-
-        // Update bundle in transaction
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async () => {
             // Verify bundle ownership
-            const existingBundle = await tx.bundle.findFirst({
-                where: {
-                    id: bundleId,
-                    shop,
-                },
-                include: {
-                    bundleProducts: true,
-                },
-            });
-
-            if (!existingBundle) {
+            const existingBundle = await bundleQueries.findById(bundleId);
+            if (!existingBundle || existingBundle.shop !== shop) {
                 throw new Error(
                     "Bundle not found or you don't have permission to update it",
                 );
             }
 
-            // Check name uniqueness (excluding current bundle)
-            const nameConflict = await tx.bundle.findFirst({
-                where: {
-                    shop,
-                    name: validatedData.name,
-                    id: { not: bundleId },
-                },
+            await checkNameConflict(shop, validatedData.name, bundleId);
+
+            const updatedBundle = await bundleQueries.updateById(bundleId, {
+                name: validatedData.name,
+                description: validatedData.description || null,
+                type: validatedData.type,
+                mainProductId: validatedData.mainProductId || null,
+                buyQuantity: validatedData.buyQuantity || null,
+                getQuantity: validatedData.getQuantity || null,
+                minimumItems: validatedData.minimumItems || null,
+                maximumItems: validatedData.maximumItems || null,
+                discountType: validatedData.discountType,
+                discountValue: validatedData.discountValue || 0,
+                minOrderValue: validatedData.minOrderValue || null,
+                maxDiscountAmount: validatedData.maxDiscountAmount || null,
+                volumeTiers: validatedData.volumeTiers || null,
+                allowMixAndMatch: validatedData.allowMixAndMatch || false,
+                mixAndMatchPrice: validatedData.mixAndMatchPrice || null,
+                marketingCopy: validatedData.marketingCopy || null,
+                seoTitle: validatedData.seoTitle || null,
+                seoDescription: validatedData.seoDescription || null,
+                images: validatedData.images || [],
+                startDate: validatedData.startDate || null,
+                endDate: validatedData.endDate || null,
             });
 
-            if (nameConflict) {
-                throw new Error(
-                    `Bundle with name "${validatedData.name}" already exists`,
-                );
-            }
-
-            // Update the bundle
-            const updatedBundle = await tx.bundle.update({
-                where: { id: bundleId },
-                data: {
-                    name: validatedData.name,
-                    description: validatedData.description || null,
-                    type: inferBundleType(validatedData),
-                    status: validatedData.status,
-                    discountType: validatedData.discountType,
-                    discountValue: validatedData.discountValue || 0,
-                    minOrderValue: validatedData.minOrderValue || null,
-                    maxDiscountAmount: validatedData.maxDiscountAmount || null,
-                    startDate: validatedData.startDate || null,
-                    endDate: validatedData.endDate || null,
-                },
-            });
-
-            // Update bundle products
-            if (validatedData.products) {
-                // Remove existing products
-                await tx.bundleProduct.deleteMany({
-                    where: { bundleId },
-                });
-
-                // Add new products
-                if (validatedData.products.length > 0) {
-                    const bundleProducts = validatedData.products.map(
-                        (product, index) => ({
-                            bundleId: bundleId,
-                            productId: product.productId,
-                            variantId: product.variantId || null,
-                            quantity: product.quantity,
-                            displayOrder: product.displayOrder ?? index,
-                            isMain: index === 0,
-                            isRequired: product.isRequired,
-                        }),
-                    );
-
-                    await tx.bundleProduct.createMany({
-                        data: bundleProducts,
-                    });
-                }
-            }
+            await updateBundleRelations(bundleId, validatedData);
 
             return updatedBundle;
         });
@@ -487,34 +493,7 @@ export async function updateBundle(
             errors: null,
         };
     } catch (error) {
-        console.error("Failed to update bundle:", error);
-
-        if (error instanceof Error) {
-            if (error.message.includes("already exists")) {
-                return {
-                    status: "error" as const,
-                    message: error.message,
-                    errors: { name: { _errors: [error.message] } },
-                    data: null,
-                };
-            }
-
-            if (error.message.includes("not found")) {
-                return {
-                    status: "error" as const,
-                    message: error.message,
-                    errors: null,
-                    data: null,
-                };
-            }
-        }
-
-        return {
-            status: "error" as const,
-            message: "Failed to update bundle. Please try again.",
-            errors: null,
-            data: null,
-        };
+        return handleBundleError(error);
     }
 }
 
