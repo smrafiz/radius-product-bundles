@@ -1,6 +1,4 @@
-// web/hooks/data/useBundlesData.ts (Updated to work with React Query)
 import { useEffect } from "react";
-import { useAppBridge } from "@shopify/app-bridge-react";
 import { useBundleListingStore } from "@/stores";
 import { useBundles, useBundleMetrics } from "@/hooks/bundle/useBundleQueries";
 

@@ -50,7 +50,7 @@ export default function GlobalForm({
                         console.log("GlobalForm validation errors:", errors);
                         resetDirty();
                         NProgress.done();
-                    }
+                    },
                 )();
             }
         };

@@ -2,10 +2,19 @@ import { useRouter } from "next/navigation";
 import type { BundleStatus } from "@/types";
 import { useBundleListingStore } from "@/stores";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
+import { useGlobalBanner, useSessionToken } from "@/hooks";
+import {
+    bulkToggleBundleStatus,
+    deleteBundle,
+    deleteBundles,
+    toggleBundleStatus,
+} from "@/actions";
 
 export function useBundleTableActions() {
     const router = useRouter();
-    const { showToast } = useBundleListingStore();
+    const { showToast, refreshBundles } = useBundleListingStore();
+    const { showSuccess, showError } = useGlobalBanner();
+    const sessionToken = useSessionToken();
 
     const handleCreateBundle = () => {
         router.push("/bundles/create");
@@ -19,28 +28,162 @@ export function useBundleTableActions() {
         showToast(`Duplicating bundle ${bundleId}...`);
     };
 
-    const handleToggleBundleStatus = (
+    const handleToggleBundleStatus = async (
         bundleId: string,
         currentStatus: BundleStatus,
     ) => {
+        // const newStatus = currentStatus === "ACTIVE" ? "PAUSED" : "ACTIVE";
+        // showToast(`Bundle status changed to ${newStatus.toLowerCase()}`);
+
+        if (!sessionToken) {
+            return;
+        }
+
         const newStatus = currentStatus === "ACTIVE" ? "PAUSED" : "ACTIVE";
-        showToast(`Bundle status changed to ${newStatus.toLowerCase()}`);
+
+        try {
+            const result = await toggleBundleStatus(
+                sessionToken,
+                bundleId,
+                newStatus,
+            );
+            console.log(result);
+
+            if (result.status === "success") {
+                await refreshBundles();
+                showSuccess(`Bundle ${newStatus.toLowerCase()}`, {
+                    content: result.message,
+                    autoHide: true,
+                    duration: 2000,
+                });
+            } else {
+                showError("Status update failed", {
+                    content: result.message,
+                });
+            }
+        } catch (error) {
+            showError("Status update failed", {
+                content: "An unexpected error occurred.",
+            });
+        }
     };
 
-    const handleDeleteBundle = (bundleId: string) => {
-        showToast("Bundle deleted successfully");
+    const handleDeleteBundle = async (bundleId: string) => {
+        if (!sessionToken) {
+            return;
+        }
+
+        try {
+            const result = await deleteBundle(sessionToken, bundleId);
+
+            if (result.status === "success") {
+                await refreshBundles();
+                showSuccess("Bundle deleted successfully", {
+                    content: `"${result.data.name}" has been deleted.`,
+                    autoHide: true,
+                    duration: 3000,
+                });
+            } else {
+                showError("Failed to delete bundle", {
+                    content: result.message,
+                });
+            }
+        } catch (error) {
+            showError("Delete failed", {
+                content: "An unexpected error occurred.",
+            });
+        }
     };
 
-    const handleBulkActivate = (selectedCount: number) => {
-        showToast(`Activated ${selectedCount} bundles`);
+    const handleBulkActivate = async (bundleIds: string[]) => {
+        // showToast(`Activated ${selectedCount} bundles`);
+        if (!sessionToken) {
+            return;
+        }
+
+        try {
+            const result = await bulkToggleBundleStatus(
+                sessionToken,
+                bundleIds,
+                "ACTIVE",
+            );
+
+            if (result.status === "success") {
+                await refreshBundles();
+                showSuccess(`${result.data.updatedCount} bundles activated`, {
+                    content: "Selected bundles have been activated.",
+                    autoHide: true,
+                    duration: 2000,
+                });
+            } else {
+                showError("Bulk activation failed", {
+                    content: result.message,
+                });
+            }
+        } catch (error) {
+            showError("Bulk activation failed", {
+                content: "An unexpected error occurred.",
+            });
+        }
     };
 
-    const handleBulkPause = (selectedCount: number) => {
-        showToast(`Paused ${selectedCount} bundles`);
+    const handleBulkPause = async (bundleIds: string[]) => {
+        // showToast(`Paused ${selectedCount} bundles`);
+        if (!sessionToken) {
+            return;
+        }
+
+        try {
+            const result = await bulkToggleBundleStatus(
+                sessionToken,
+                bundleIds,
+                "PAUSED",
+            );
+
+            if (result.status === "success") {
+                showSuccess(`${result.data.updatedCount} bundles paused`, {
+                    content: "Selected bundles have been paused.",
+                    autoHide: true,
+                    duration: 2000,
+                });
+            } else {
+                showError("Bulk pause failed", {
+                    content: result.message,
+                });
+            }
+        } catch (error) {
+            showError("Bulk pause failed", {
+                content: "An unexpected error occurred.",
+            });
+        }
     };
 
-    const handleBulkDelete = (selectedCount: number) => {
-        showToast(`Deleted ${selectedCount} bundles`);
+    const handleBulkDelete = async (bundleIds: string[]) => {
+        // showToast(`Deleted ${selectedCount} bundles`);
+        if (!sessionToken) {
+            return;
+        }
+
+        try {
+            const result = await deleteBundles(sessionToken, bundleIds);
+
+            if (result.status === "success") {
+                await refreshBundles();
+                showSuccess(`${result.data.deletedCount} bundles deleted`, {
+                    content: "Selected bundles have been deleted successfully.",
+                    autoHide: true,
+                    duration: 3000,
+                });
+            } else {
+                showError("Bulk delete failed", {
+                    content: result.message,
+                });
+            }
+        } catch (error) {
+            showError("Bulk delete failed", {
+                content: "An unexpected error occurred.",
+            });
+        }
     };
 
     // Get promoted bulk actions
@@ -74,12 +217,11 @@ export function useBundleTableActions() {
             actions.push(
                 {
                     content: "Set as active",
-                    onAction: () =>
-                        handleBulkActivate(selectedResources.length),
+                    onAction: () => handleBulkActivate(selectedResources),
                 },
                 {
                     content: "Set as draft",
-                    onAction: () => handleBulkPause(selectedResources.length),
+                    onAction: () => handleBulkPause(selectedResources),
                 },
             );
         }
@@ -114,7 +256,7 @@ export function useBundleTableActions() {
                     content: "Delete bundles",
                     icon: DeleteIcon,
                     destructive: true,
-                    onAction: () => handleBulkDelete(selectedResources.length),
+                    onAction: () => handleBulkDelete(selectedResources),
                 },
             ];
         }

@@ -1,10 +1,5 @@
 import { bundleTypeConfigs } from "@/config";
-import {
-    BundleType,
-    SelectedItem,
-    ProductGroup,
-    BundleConfig,
-} from "@/types";
+import { BundleType, SelectedItem, ProductGroup, BundleConfig } from "@/types";
 import { customAlphabet } from "nanoid";
 
 /**
@@ -183,6 +178,6 @@ export function calculateSavingsPercentage(
  */
 export const generateBundleId = () => {
     const timestamp = Date.now().toString();
-    const random = customAlphabet('0123456789', 4)(); // 4 digits (e.g., "1234")
+    const random = customAlphabet("0123456789", 4)(); // 4 digits (e.g., "1234")
     return `${timestamp}${random}`;
 };

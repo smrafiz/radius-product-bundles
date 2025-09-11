@@ -1,16 +1,9 @@
 "use client";
 
 import { use, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import {
-    Banner,
-    BlockStack,
-    Card,
-    Page,
-    Spinner,
-    Text,
-} from "@shopify/polaris";
+import { Banner, Card, Page, Text } from "@shopify/polaris";
 import { getBundle, updateBundle } from "@/actions";
 import { useSessionToken } from "@/hooks/shop/useSessionToken";
 import { useGraphQL } from "@/hooks/data/useGraphQL";
@@ -27,6 +20,7 @@ import { GlobalForm } from "@/components";
 import { useBundleStore } from "@/stores";
 import { BundleFormData } from "@/lib/validation";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
+import { useGlobalBanner } from "@/hooks";
 
 interface EditBundlePageProps {
     params: Promise<{
@@ -36,9 +30,11 @@ interface EditBundlePageProps {
 
 export default function EditBundlePage({ params }: EditBundlePageProps) {
     const { id: bundleId } = use(params);
-    const router = useRouter();
     const sessionToken = useSessionToken();
-    const { resetDirty, setSaving, setSelectedItems } = useBundleStore();
+
+    const { resetDirty, setSaving, setSelectedItems, setStep } =
+        useBundleStore();
+    const { showSuccess, showError } = useGlobalBanner();
 
     // Fetch bundle data
     const {
@@ -144,7 +140,9 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
         setSaving(true);
 
         try {
-            if (!sessionToken) throw new Error("No session token");
+            if (!sessionToken) {
+                throw new Error("No session token");
+            }
 
             const result = await updateBundle(sessionToken, bundleId, {
                 ...data,
@@ -152,15 +150,25 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
             });
 
             if (result.status === "success") {
-                console.log("Bundle updated successfully:", result);
-                router.push(`/bundles/${bundleId}/edit?success=updated`);
+                showSuccess("Bundle updated successfully!", {
+                    content: "Your changes have been saved.",
+                    autoHide: true,
+                    duration: 4000,
+                });
             } else {
                 console.error("Update failed:", result.errors);
+                showError("Failed to update bundle", {
+                    content: "Please check your inputs and try again.",
+                });
             }
         } catch (error) {
             console.error("Submit error:", error);
+            showError("Update failed", {
+                content: "Please try again later.",
+            });
         } finally {
             setSaving(false);
+            setStep(1);
         }
     };
 

@@ -26,9 +26,11 @@ export default function ProductsStep() {
     const errors = getAllErrors();
     const hasProductError =
         validationAttempted &&
-        errors.some((error) => error.field === "products" || error.path === "products");
-    const productErrorMessage = errors.find((error) =>
-        error.field === "products" || error.path === "products"
+        errors.some(
+            (error) => error.field === "products" || error.path === "products",
+        );
+    const productErrorMessage = errors.find(
+        (error) => error.field === "products" || error.path === "products",
     )?.message;
 
     return (

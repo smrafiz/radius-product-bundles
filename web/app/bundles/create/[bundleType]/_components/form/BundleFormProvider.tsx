@@ -18,13 +18,8 @@ export function BundleFormProvider({
     bundleType,
     initialData,
 }: BundleFormProviderProps) {
-    const {
-        selectedItems,
-        setBundleData,
-        markDirty,
-        resetBundle,
-        setStep,
-    } = useBundleStore();
+    const { selectedItems, setBundleData, markDirty, resetBundle, setStep } =
+        useBundleStore();
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);

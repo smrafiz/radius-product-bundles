@@ -3,7 +3,7 @@ import { bundleFragments, dateRanges } from "@/lib/queries";
 import { generateBundleId } from "@/utils";
 
 export const bundleQueries = {
-    // Create
+    // Create bundle
     async create(data: any) {
         const id = generateBundleId();
 
@@ -41,7 +41,7 @@ export const bundleQueries = {
         });
     },
 
-    // Read operations
+    // Find bundle by ID
     async findById(id: string) {
         return await prisma.bundle.findUnique({
             where: { id },
@@ -49,6 +49,7 @@ export const bundleQueries = {
         });
     },
 
+    // Find bundle by name
     async findByName(shop: string, name: string) {
         return await prisma.bundle.findUnique({
             where: {
@@ -57,6 +58,7 @@ export const bundleQueries = {
         });
     },
 
+    // Find bundles by shop
     async findByShop(
         shop: string,
         options?: {
@@ -78,6 +80,7 @@ export const bundleQueries = {
         });
     },
 
+    // Find bundles by main product
     async findByMainProduct(mainProductId: string) {
         return await prisma.bundle.findMany({
             where: {
@@ -96,6 +99,7 @@ export const bundleQueries = {
         });
     },
 
+    // Find bundles by product ID
     async findByProductId(productId: string, shop: string) {
         return await prisma.bundle.findMany({
             where: {
@@ -111,7 +115,7 @@ export const bundleQueries = {
         });
     },
 
-    // Validation queries
+    // Count recent bundles
     async countRecent(shop: string, minutes: number = 1) {
         return await prisma.bundle.count({
             where: {
@@ -123,7 +127,7 @@ export const bundleQueries = {
         });
     },
 
-    // Update
+    // Update bundle by ID
     async updateById(id: string, data: any) {
         return await prisma.bundle.update({
             where: { id },
@@ -131,11 +135,63 @@ export const bundleQueries = {
         });
     },
 
-    // Delete
+    // Delete bundle by ID
     async deleteById(id: string) {
         return await prisma.bundle.delete({
             where: { id },
         });
+    },
+
+    // Delete bundles by IDs
+    async deleteMany(ids: string[]) {
+        return await prisma.bundle.deleteMany({
+            where: { id: { in: ids } },
+        });
+    },
+
+    // Delete bundles by shop
+    async deleteByIdWithOwnership(id: string, shop: string) {
+        // First verify ownership, then delete
+        const bundle = await prisma.bundle.findFirst({
+            where: { id, shop },
+            select: { id: true, name: true },
+        });
+
+        if (!bundle) {
+            throw new Error(
+                "Bundle not found or you don't have permission to delete it",
+            );
+        }
+
+        await prisma.bundle.delete({
+            where: { id },
+        });
+
+        return bundle;
+    },
+
+    // Delete bundles by IDs with ownership
+    async deleteManyWithOwnership(ids: string[], shop: string) {
+        // First, verify all bundles belong to the shop
+        const existingBundles = await prisma.bundle.findMany({
+            where: {
+                id: { in: ids },
+                shop,
+            },
+            select: { id: true, name: true },
+        });
+
+        if (existingBundles.length !== ids.length) {
+            throw new Error(
+                "Some bundles not found or you don't have permission to delete them",
+            );
+        }
+
+        await prisma.bundle.deleteMany({
+            where: { id: { in: ids } },
+        });
+
+        return existingBundles;
     },
 
     // Analytics queries

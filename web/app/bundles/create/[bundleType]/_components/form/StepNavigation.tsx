@@ -8,11 +8,12 @@ import { BundleFormData } from "@/lib/validation";
 import { usePathname } from "next/navigation";
 
 export default function StepNavigation() {
-    const { currentStep, totalSteps, prevStep, canGoPrevious } = useBundleStore();
+    const { currentStep, totalSteps, prevStep, canGoPrevious } =
+        useBundleStore();
     const { handleNextStep, canProceedToNextStep } = useBundleFormMethods();
     const { handleSubmit, getValues } = useFormContext<BundleFormData>();
     const pathname = usePathname();
-    const isEditMode = pathname.includes('/edit');
+    const isEditMode = pathname.includes("/edit");
 
     const isLastStep = currentStep === totalSteps;
     const canGoPrev = canGoPrevious();
@@ -25,7 +26,9 @@ export default function StepNavigation() {
         console.log("==========================");
 
         // Trigger the GlobalForm submit by dispatching a form submit event
-        const form = document.querySelector('form[data-save-bar="true"]') as HTMLFormElement;
+        const form = document.querySelector(
+            'form[data-save-bar="true"]',
+        ) as HTMLFormElement;
         if (form) {
             form.requestSubmit();
         }

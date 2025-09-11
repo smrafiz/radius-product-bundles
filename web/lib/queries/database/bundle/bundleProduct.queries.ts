@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/prisma-connect';
+import prisma from "@/lib/db/prisma-connect";
 
 export const bundleProductQueries = {
     async createMany(products: any[]) {
@@ -38,7 +38,7 @@ export const bundleProductQueries = {
         return await prisma.bundleProduct.findMany({
             where: {
                 bundleId,
-                role: role as any
+                role: role as any,
             },
             orderBy: { displayOrder: "asc" },
         });
@@ -80,7 +80,7 @@ export const bundleProductQueries = {
             prisma.bundleProduct.update({
                 where: { id },
                 data: { displayOrder },
-            })
+            }),
         );
 
         return await Promise.all(updatePromises);
@@ -103,7 +103,7 @@ export const bundleProductQueries = {
         return await prisma.bundleProduct.deleteMany({
             where: {
                 bundleId,
-                productId
+                productId,
             },
         });
     },

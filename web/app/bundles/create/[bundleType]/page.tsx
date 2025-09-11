@@ -13,6 +13,7 @@ import { BundleFormData } from "@/lib/validation";
 import { GlobalForm } from "@/components";
 import { bundleTypeMap } from "@/utils";
 import { useRouter } from "next/navigation";
+import { useGlobalBanner } from "@/hooks";
 
 export default function CreateBundlePage({
     params,
@@ -21,8 +22,11 @@ export default function CreateBundlePage({
 }) {
     const app = useAppBridge();
     const { bundleType: bundleTypeParam } = use(params);
-    const { setSaving, resetDirty, resetBundle, setNavigating } = useBundleStore();
     const router = useRouter();
+
+    const { setSaving, resetDirty, resetBundle, setNavigating } =
+        useBundleStore();
+    const { showSuccess, showError } = useGlobalBanner();
 
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
 
@@ -43,13 +47,27 @@ export default function CreateBundlePage({
 
             if (result.status === "success") {
                 console.log("Bundle created successfully:", result);
-                // Next.js will automatically show loading.tsx during navigation
-                router.push(`/bundles/${result.data.id}/edit?success=created`);
+                // Store success message for one-time display
+                showSuccess("Bundle created successfully!", {
+                    content:
+                        "Your bundle has been created and is ready to go live.",
+                    autoHide: true,
+                    duration: 4000,
+                });
+
+                // Navigate without URL params
+                router.push(`/bundles/${result.data.id}/edit`);
             } else {
                 console.error("Validation errors:", result.errors);
+                showError("Failed to create bundle", {
+                    content: "Please check your inputs and try again.",
+                });
             }
         } catch (error) {
             console.error("Submit error:", error);
+            showError("Unexpected error occurred", {
+                content: "Please try again later.",
+            });
         } finally {
             setSaving(false);
         }

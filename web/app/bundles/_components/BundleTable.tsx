@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import {
-    IndexTable,
-    useIndexResourceState,
     Card,
+    IndexTable,
     useBreakpoints,
+    useIndexResourceState,
 } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 import { useBundleTableActions } from "@/hooks";

@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/prisma-connect';
+import prisma from "@/lib/db/prisma-connect";
 
 export const bundleProductGroupQueries = {
     async createManyFromValidatedData(bundleId: string, productGroups: any[]) {

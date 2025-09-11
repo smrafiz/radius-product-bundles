@@ -16,11 +16,8 @@ export const formatCurrency = (
 ): string => {
     if (amount == null) return "";
 
-    const finalCurrencyCode =
-        currencyCode || "USD";
-    const finalLocale =
-        locale ||
-        convertShopifyLocale("en-US");
+    const finalCurrencyCode = currencyCode || "USD";
+    const finalLocale = locale || convertShopifyLocale("en-US");
 
     try {
         const formatted = Intl.NumberFormat(finalLocale, {

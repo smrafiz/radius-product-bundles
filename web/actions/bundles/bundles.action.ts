@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db/prisma-connect";
 import { handleSessionToken } from "@/lib/shopify/verify";
@@ -12,7 +11,6 @@ import {
     bundleSettingsQueries,
     shopQueries,
 } from "@/lib/queries";
-import { logger } from "@shopify/shopify-api/dist/ts/lib/logger";
 
 /**
  * Get bundles for a shop
@@ -256,7 +254,10 @@ async function validateAndCheckBusinessRules(shop: string, data: unknown) {
     }
 
     // Business rules validation
-    const businessValidation = await validateBusinessRules(shop, validation.data);
+    const businessValidation = await validateBusinessRules(
+        shop,
+        validation.data,
+    );
     if (!businessValidation.success) {
         return {
             status: "error" as const,
@@ -272,15 +273,19 @@ async function validateAndCheckBusinessRules(shop: string, data: unknown) {
     };
 }
 
-async function checkNameConflict(shop: string, name: string, excludeId?: string) {
+async function checkNameConflict(
+    shop: string,
+    name: string,
+    excludeId?: string,
+) {
     const existingBundle = excludeId
         ? await prisma.bundle.findFirst({
-            where: {
-                shop,
-                name,
-                id: { not: excludeId },
-            },
-        })
+              where: {
+                  shop,
+                  name,
+                  id: { not: excludeId },
+              },
+          })
         : await bundleQueries.findByName(shop, name);
 
     if (existingBundle) {
@@ -295,7 +300,7 @@ async function updateBundleRelations(bundleId: string, validatedData: any) {
         if (validatedData.products.length > 0) {
             await bundleProductQueries.createManyFromValidatedData(
                 bundleId,
-                validatedData.products
+                validatedData.products,
             );
         }
     }
@@ -306,14 +311,17 @@ async function updateBundleRelations(bundleId: string, validatedData: any) {
         if (validatedData.productGroups.length > 0) {
             await bundleProductGroupQueries.createManyFromValidatedData(
                 bundleId,
-                validatedData.productGroups
+                validatedData.productGroups,
             );
         }
     }
 
     // Update bundle settings
     if (validatedData.settings) {
-        await bundleSettingsQueries.updateByBundle(bundleId, validatedData.settings);
+        await bundleSettingsQueries.updateByBundle(
+            bundleId,
+            validatedData.settings,
+        );
     }
 }
 
@@ -322,7 +330,7 @@ async function createBundleRelations(bundleId: string, validatedData: any) {
     if (validatedData.products.length > 0) {
         await bundleProductQueries.createManyFromValidatedData(
             bundleId,
-            validatedData.products
+            validatedData.products,
         );
     }
 
@@ -330,7 +338,7 @@ async function createBundleRelations(bundleId: string, validatedData: any) {
     if (validatedData.productGroups?.length > 0) {
         await bundleProductGroupQueries.createManyFromValidatedData(
             bundleId,
-            validatedData.productGroups
+            validatedData.productGroups,
         );
     }
 
@@ -379,7 +387,9 @@ function handleBundleError(error: unknown) {
  */
 export async function createBundle(sessionToken: string, data: unknown) {
     try {
-        const { session: { shop } } = await handleSessionToken(sessionToken);
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
 
         const validation = await validateAndCheckBusinessRules(shop, data);
         if (!validation.success) {
@@ -429,7 +439,9 @@ export async function updateBundle(
 ) {
     try {
         console.log(data);
-        const { session: { shop } } = await handleSessionToken(sessionToken);
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
 
         const validation = await validateAndCheckBusinessRules(shop, data);
         if (!validation.success) {
@@ -564,6 +576,237 @@ export async function getBundle(sessionToken: string, bundleId: string) {
 }
 
 /**
+ * Delete a bundle
+ */
+export async function deleteBundle(sessionToken: string, bundleId: string) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const result = await prisma.$transaction(async (tx) => {
+            // Verify bundle ownership and get bundle info
+            const existingBundle = await bundleQueries.findById(bundleId);
+            console.log(existingBundle);
+
+            if (!existingBundle || existingBundle.shop !== shop) {
+                throw new Error(
+                    "Bundle not found or you don't have permission to delete it",
+                );
+            }
+
+            // Delete related records first
+            await bundleProductQueries.deleteByBundle(bundleId);
+            await bundleProductGroupQueries.deleteByBundle(bundleId);
+
+            // Delete settings if they exist
+            try {
+                await tx.bundleSettings.deleteMany({
+                    where: { bundleId },
+                });
+            } catch (error) {
+                // Settings might not exist, continue
+            }
+
+            // Delete analytics
+            await tx.bundleAnalytics.deleteMany({
+                where: { bundleId },
+            });
+
+            // Delete the bundle using query method
+            const deletedBundle = await bundleQueries.deleteById(bundleId);
+
+            return {
+                id: deletedBundle.id,
+                name: deletedBundle.name,
+            };
+        });
+
+        revalidatePath("/bundles");
+
+        return {
+            status: "success" as const,
+            message: "Bundle deleted successfully",
+            data: result,
+            errors: null,
+        };
+    } catch (error) {
+        return handleBundleError(error);
+    }
+}
+
+/**
+ * Bulk delete bundles
+ */
+export async function deleteBundles(sessionToken: string, bundleIds: string[]) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        if (bundleIds.length === 0) {
+            return {
+                status: "error" as const,
+                message: "No bundles selected for deletion",
+                errors: null,
+                data: null,
+            };
+        }
+
+        const result = await prisma.$transaction(async (tx) => {
+            // Verify all bundles belong to the shop using query method
+            const existingBundles = await bundleQueries.deleteManyWithOwnership(
+                bundleIds,
+                shop,
+            );
+
+            // Delete related records for all bundles
+            await tx.bundleProduct.deleteMany({
+                where: { bundleId: { in: bundleIds } },
+            });
+
+            await tx.bundleProductGroup.deleteMany({
+                where: { bundleId: { in: bundleIds } },
+            });
+
+            await tx.bundleSettings.deleteMany({
+                where: { bundleId: { in: bundleIds } },
+            });
+
+            await tx.bundleAnalytics.deleteMany({
+                where: { bundleId: { in: bundleIds } },
+            });
+
+            return existingBundles;
+        });
+
+        revalidatePath("/bundles");
+
+        return {
+            status: "success" as const,
+            message: `${result.length} bundle${result.length > 1 ? "s" : ""} deleted successfully`,
+            data: {
+                deletedCount: result.length,
+                deletedBundles: result,
+            },
+            errors: null,
+        };
+    } catch (error) {
+        return handleBundleError(error);
+    }
+}
+
+/**
+ * Toggle bundle status (activate/pause)
+ */
+export async function toggleBundleStatus(
+    sessionToken: string,
+    bundleId: string,
+    newStatus: "ACTIVE" | "PAUSED",
+) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const result = await prisma.$transaction(async () => {
+            // Verify bundle ownership
+            const existingBundle = await bundleQueries.findById(bundleId);
+            if (!existingBundle || existingBundle.shop !== shop) {
+                throw new Error(
+                    "Bundle not found or you don't have permission to update it",
+                );
+            }
+
+            // Update using query method
+            const updatedBundle = await bundleQueries.updateById(bundleId, {
+                status: newStatus,
+            });
+
+            return updatedBundle;
+        });
+
+        revalidatePath("/bundles");
+
+        return {
+            status: "success" as const,
+            message: `Bundle ${newStatus.toLowerCase()} successfully`,
+            data: {
+                id: result.id,
+                name: result.name,
+                status: result.status,
+            },
+            errors: null,
+        };
+    } catch (error) {
+        return handleBundleError(error);
+    }
+}
+
+/**
+ * Bulk toggle bundle status
+ */
+export async function bulkToggleBundleStatus(
+    sessionToken: string,
+    bundleIds: string[],
+    newStatus: "ACTIVE" | "PAUSED",
+) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        if (bundleIds.length === 0) {
+            return {
+                status: "error" as const,
+                message: "No bundles selected",
+                errors: null,
+                data: null,
+            };
+        }
+
+        const result = await prisma.$transaction(async () => {
+            // Verify all bundles belong to the shop
+            const existingBundles = await prisma.bundle.findMany({
+                where: {
+                    id: { in: bundleIds },
+                    shop,
+                },
+                select: { id: true, name: true },
+            });
+
+            if (existingBundles.length !== bundleIds.length) {
+                throw new Error(
+                    "Some bundles not found or you don't have permission to update them",
+                );
+            }
+
+            // Update all bundles
+            await prisma.bundle.updateMany({
+                where: { id: { in: bundleIds } },
+                data: { status: newStatus },
+            });
+
+            return existingBundles;
+        });
+
+        revalidatePath("/bundles");
+
+        return {
+            status: "success" as const,
+            message: `${result.length} bundle${result.length > 1 ? "s" : ""} ${newStatus.toLowerCase()} successfully`,
+            data: {
+                updatedCount: result.length,
+                updatedBundles: result,
+            },
+            errors: null,
+        };
+    } catch (error) {
+        return handleBundleError(error);
+    }
+}
+
+/**
  * Helper function to validate business rules
  */
 async function validateBusinessRules(shop: string, data: BundleFormData) {
@@ -646,8 +889,15 @@ async function validateBusinessRules(shop: string, data: BundleFormData) {
         }
 
         // Shop settings validation
-        if (shopSettings?.maxBundleProducts && data.products.length > shopSettings.maxBundleProducts) {
-            errors.products = { _errors: [`Shop limit: max ${shopSettings.maxBundleProducts} products`] };
+        if (
+            shopSettings?.maxBundleProducts &&
+            data.products.length > shopSettings.maxBundleProducts
+        ) {
+            errors.products = {
+                _errors: [
+                    `Shop limit: max ${shopSettings.maxBundleProducts} products`,
+                ],
+            };
         }
 
         return {

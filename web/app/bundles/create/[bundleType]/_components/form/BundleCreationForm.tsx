@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getBundleProperty, withLoader } from "@/utils";
-import { Banner, Card, Layout, Page } from "@shopify/polaris";
+import { Card, Layout, Page } from "@shopify/polaris";
 import {
     StepContent,
     StepNavigation,
@@ -13,7 +13,8 @@ import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 import type { BundleType } from "@/types";
 import { useBundleStore } from "@/stores";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import GlobalBanner from "@/components/shared/GlobalBanner";
 
 interface Props {
     bundleType: BundleType;
@@ -23,12 +24,15 @@ interface Props {
 export default function BundleCreationForm({ bundleType, bundleName }: Props) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
     const { setStep } = useBundleStore();
 
     const { bundleData, setBundleData } = useBundleStore();
     const { setValue } = useBundleFormMethods();
     const [showSuccess, setShowSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<{
+        title: string;
+        content: string;
+    } | null>(null);
 
     const isEditMode = pathname.includes("/edit");
 
@@ -39,25 +43,6 @@ export default function BundleCreationForm({ bundleType, bundleName }: Props) {
             router.push("/bundles/create");
         }
     };
-
-    useEffect(() => {
-        const successParam = searchParams.get('success');
-
-        if (successParam === 'created' || successParam === 'updated') {
-            setShowSuccess(true);
-            setStep(1);
-
-            // Auto-hide after 5 seconds
-            const timer = setTimeout(() => {
-                const url = new URL(window.location.href);
-                url.searchParams.delete('success');
-                window.history.replaceState({}, '', url.toString());
-                setShowSuccess(false);
-            }, 5000);
-
-            return () => clearTimeout(timer);
-        }
-    }, [searchParams]);
 
     useEffect(() => {
         if (!bundleData.type) {
@@ -91,44 +76,11 @@ export default function BundleCreationForm({ bundleType, bundleName }: Props) {
 
     const pageProps = getPageProps();
 
-    // Determine banner content based on success parameter
-    const getSuccessBanner = () => {
-        const successParam = searchParams.get('success');
-
-        if (successParam === 'created') {
-            return {
-                title: "Bundle created successfully!",
-                content: "Your bundle has been created and is ready to go live."
-            };
-        }
-
-        if (successParam === 'updated') {
-            return {
-                title: "Bundle updated successfully!",
-                content: "Your bundle has been updated."
-            };
-        }
-
-        return null;
-    };
-
-    const successBanner = getSuccessBanner();
-
     return (
         <Page {...pageProps}>
             <Layout>
-                {/* Single success banner */}
-                {showSuccess && successBanner && (
-                    <Layout.Section>
-                        <Banner
-                            title={successBanner.title}
-                            tone="success"
-                            onDismiss={() => setShowSuccess(false)}
-                        >
-                            {successBanner.content}
-                        </Banner>
-                    </Layout.Section>
-                )}
+                {/* Success banner - shows once, no autohide */}
+                <GlobalBanner />
 
                 {/* Horizontal Step Navigation */}
                 <Layout.Section>

@@ -29,29 +29,44 @@ export default function DiscountSettings() {
     const currencySymbol = getCurrencySymbol(currencyCode);
 
     const handleDiscountTypeChange = (value: string) => {
-        setValue("discountType", value as any, { shouldValidate: true, shouldDirty: true });
+        setValue("discountType", value as any, {
+            shouldValidate: true,
+            shouldDirty: true,
+        });
         markDirty();
 
         if (value === "CUSTOM_PRICE") {
-            setValue("maxDiscountAmount", undefined, { shouldValidate: true, shouldDirty: true });
+            setValue("maxDiscountAmount", undefined, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
         }
     };
 
     const handleDiscountValueChange = (value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("discountValue", numValue, { shouldValidate: true, shouldDirty: true });
+        setValue("discountValue", numValue, {
+            shouldValidate: true,
+            shouldDirty: true,
+        });
         markDirty();
     };
 
     const handleMinOrderValueChange = (value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("minOrderValue", numValue, { shouldValidate: true, shouldDirty: true });
+        setValue("minOrderValue", numValue, {
+            shouldValidate: true,
+            shouldDirty: true,
+        });
         markDirty();
     };
 
     const handleMaxDiscountAmountChange = (value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("maxDiscountAmount", numValue, { shouldValidate: true, shouldDirty: true });
+        setValue("maxDiscountAmount", numValue, {
+            shouldValidate: true,
+            shouldDirty: true,
+        });
         markDirty();
     };
 
@@ -70,14 +85,14 @@ export default function DiscountSettings() {
 
     const getCurrency = () => {
         if (isLoading && !currencyCode) {
-            return '•';
+            return "•";
         }
         return currencySymbol;
     };
 
     const getSuffix = () => {
         return discountType === "PERCENTAGE" ? "%" : getCurrency();
-    }
+    };
 
     const showDiscountValue = [
         "PERCENTAGE",

@@ -22,7 +22,7 @@ try {
     config.client_id = process.env.SHOPIFY_API_KEY!;
     config.application_url = appUrl;
     config.embedded = true;
-    config.extension_directories = ["../extension/extensions/**"];
+    config.extension_directories = ["./extension/extensions/**"];
 
     // Build section
     config.build = {

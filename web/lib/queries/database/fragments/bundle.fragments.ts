@@ -1,4 +1,4 @@
-import { commonIncludes } from './common.fragments';
+import { commonIncludes } from "./common.fragments";
 
 export const bundleFragments = {
     // Basic bundle fields

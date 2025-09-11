@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import type { BundleStatus, BundleType } from "@/types";
+import { getBundles } from "@/actions";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
 export interface BundleListItem {
     id: string;
@@ -54,6 +56,7 @@ interface BundlesState {
     // Data
     bundles: BundleListItem[];
     metrics: BundleMetrics | null;
+    refreshBundles: () => Promise<void>;
 
     // UI State
     loading: boolean;
@@ -333,5 +336,38 @@ export const useBundleListingStore = create<BundlesState>()((set, get) => ({
                     ? `Showing Page ${startIndex + 1} of ${totalPages}`
                     : "Showing page 1 of 1",
         };
+    },
+
+    updateBundleInStore: (updatedBundle) =>
+        set((state) => ({
+            bundles: state.bundles.map((bundle) =>
+                bundle.id === updatedBundle.id
+                    ? { ...bundle, ...updatedBundle }
+                    : bundle,
+            ),
+        })),
+
+    removeBundlesFromStore: (ids) =>
+        set((state) => ({
+            bundles: state.bundles.filter((bundle) => !ids.includes(bundle.id)),
+        })),
+
+    refreshBundles: async () => {
+        try {
+            const app = useAppBridge();
+            const token = await app.idToken();
+            const bundles = await getBundles(token);
+
+            if (bundles.status === "success") {
+                set({ bundles: bundles.data ?? [], loading: false });
+            } else {
+                set({ error: bundles.message, loading: false });
+            }
+        } catch (error: any) {
+            set({
+                error: error.message || "Failed to refresh bundles",
+                loading: false,
+            });
+        }
     },
 }));

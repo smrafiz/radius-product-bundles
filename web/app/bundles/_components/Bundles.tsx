@@ -12,6 +12,7 @@ import { MetricCard } from "@/app/dashboard/_components/MetricCard";
 import { BundleTable } from "@/bundles/_components/BundleTable";
 import { BundleSkeleton } from "@/bundles/_components/BundleSkeleton";
 import { BundleErrorCard } from "@/bundles/_components/BundleErrorCard";
+import { GlobalBanner } from "@/components";
 
 export default function Bundles() {
     const router = useRouter();
@@ -58,6 +59,7 @@ export default function Bundles() {
                 ]}
             >
                 <Layout>
+                    <GlobalBanner />
                     <Layout.Section>
                         <BundleErrorCard />
                     </Layout.Section>
