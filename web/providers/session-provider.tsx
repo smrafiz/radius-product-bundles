@@ -2,9 +2,10 @@
 
 import { useSearchParams } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { ReactNode, useEffect, useState, useRef } from "react";
-import { useSessionStore } from "@/stores";
 import { doWebhookRegistration, storeToken } from "@/actions";
+import { ReactNode, useEffect, useState, useRef } from "react";
+
+import { useSessionStore } from "@/stores";
 
 export default function SessionProvider({ children }: { children: ReactNode }) {
     const app = useAppBridge();
@@ -17,8 +18,23 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     const [retryCount, setRetryCount] = useState(0);
     const tokenProcessed = useRef(false);
 
-    // Enhanced App Bridge readiness check with fallback mechanisms
+    // Check if we're in a theme extension context
+    const isThemeExtension = typeof window !== 'undefined' &&
+        (window.parent !== window ||
+            document.referrer.includes('admin.shopify.com') ||
+            document.referrer.includes('myshopify.com/admin/themes'));
+
+    // Skip App Bridge initialization for theme extensions
     useEffect(() => {
+        if (isThemeExtension) {
+            // For theme extensions, just mark as initialized without App Bridge
+            dispatch({
+                type: "SESSION_VALIDATION_SUCCESS",
+                payload: { token: "theme-extension-context" }
+            });
+            return;
+        }
+
         const checkAppBridge = () => {
             if (typeof window !== "undefined" && window.shopify && app) {
                 setIsAppBridgeReady(true);
@@ -32,14 +48,14 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         }
 
         let attempts = 0;
-        const maxAttempts = 50; // Increased for better reliability
+        const maxAttempts = 50;
 
         const checkInterval = setInterval(() => {
             attempts++;
 
             if (checkAppBridge()) {
                 clearInterval(checkInterval);
-                setRetryCount(0); // Reset retry count on success
+                setRetryCount(0);
                 return;
             }
 
@@ -47,18 +63,13 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                 clearInterval(checkInterval);
                 console.error("❌ App Bridge failed to initialize");
 
-                // Enhanced fallback logic
                 if (!authRedirectAttempted && retryCount < 3) {
                     setAuthRedirectAttempted(true);
 
                     const shop = searchParams.get("shop");
-                    const hasMinimalParams =
-                        shop ||
-                        searchParams.get("host") ||
-                        searchParams.get("embedded");
+                    const hasMinimalParams = shop || searchParams.get("host") || searchParams.get("embedded");
 
                     if (!hasMinimalParams) {
-                        // Fallback: Try to get shop from URL or redirect to install
                         const currentUrl = window.location.href;
                         const shopMatch = currentUrl.match(/[?&]shop=([^&]+)/);
 
@@ -66,15 +77,10 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                             const detectedShop = shopMatch[1];
                             window.location.href = `/api/auth?shop=${detectedShop}&returnTo=${encodeURIComponent(window.location.pathname)}`;
                         } else {
-                            // Last resort: Redirect to auth without shop (will show error)
-                            const returnTo =
-                                window.location.pathname !== "/"
-                                    ? window.location.pathname
-                                    : "/dashboard";
+                            const returnTo = window.location.pathname !== "/" ? window.location.pathname : "/dashboard";
                             window.location.href = `/api/auth?returnTo=${encodeURIComponent(returnTo)}`;
                         }
                     } else {
-                        // Retry App Bridge initialization
                         setTimeout(() => {
                             setRetryCount((prev) => prev + 1);
                             setAuthRedirectAttempted(false);
@@ -92,11 +98,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         }, 100);
 
         return () => clearInterval(checkInterval);
-    }, [app, searchParams, authRedirectAttempted, dispatch, retryCount]);
+    }, [app, searchParams, authRedirectAttempted, dispatch, retryCount, isThemeExtension]);
 
-    // Enhanced token handling with retry mechanisms
+    // Rest of your existing code for non-theme-extension contexts...
     useEffect(() => {
-        if (!isAppBridgeReady || tokenProcessed.current || hasValidSession) {
+        if (isThemeExtension || !isAppBridgeReady || tokenProcessed.current || hasValidSession) {
             return;
         }
 
@@ -114,32 +120,21 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                         payload: { token },
                     });
 
-                    // Enhanced error handling with individual try-catch
                     let tokenSuccess = false;
-                    let webhookSuccess = false;
 
-                    // Store token with retry
                     try {
                         await storeToken(token);
                         tokenSuccess = true;
                     } catch (tokenError) {
                         console.error("❌ Token storage failed:", tokenError);
-                        // Continue anyway - webhook registration might still work
                     }
 
-                    // Register webhooks with retry
                     try {
                         await doWebhookRegistration(token);
-                        webhookSuccess = true;
                     } catch (webhookError) {
-                        console.error(
-                            "❌ Webhook registration failed:",
-                            webhookError,
-                        );
-                        // Non-critical - app can still function
+                        console.error("❌ Webhook registration failed:", webhookError);
                     }
 
-                    // Mark the session as valid if at least token storage succeeded
                     if (tokenSuccess) {
                         dispatch({
                             type: "SESSION_VALIDATION_SUCCESS",
@@ -149,23 +144,18 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                         throw new Error("Token storage failed");
                     }
                 } else {
-                    throw new Error(
-                        "No session token received from App Bridge",
-                    );
+                    throw new Error("No session token received from App Bridge");
                 }
             } catch (error) {
                 console.error("❌ Session initialization error:", error);
-                tokenProcessed.current = false; // Allow retry
+                tokenProcessed.current = false;
 
-                // Enhanced error handling based on error type
                 let errorMessage = "Session initialization failed";
                 if (error instanceof Error) {
                     if (error.message.includes("Token")) {
-                        errorMessage =
-                            "Authentication token error - please refresh the page";
+                        errorMessage = "Authentication token error - please refresh the page";
                     } else if (error.message.includes("Network")) {
-                        errorMessage =
-                            "Network error - please check your connection";
+                        errorMessage = "Network error - please check your connection";
                     }
                 }
 
@@ -174,7 +164,6 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                     payload: { error: errorMessage },
                 });
 
-                // Retry after delay if App Bridge is still ready
                 if (isAppBridgeReady && retryCount < 3) {
                     setTimeout(() => {
                         setRetryCount((prev) => prev + 1);
@@ -185,28 +174,30 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         };
 
         void handleTokenAndWebhooks();
-    }, [app, dispatch, isAppBridgeReady, hasValidSession, retryCount]);
+    }, [app, dispatch, isAppBridgeReady, hasValidSession, retryCount, isThemeExtension]);
 
-    // URL parameter handling
+    // URL parameter handling (skip for theme extensions)
     useEffect(() => {
+        if (isThemeExtension) return;
+
         const shop = searchParams.get("shop");
         const host = searchParams.get("host");
 
         if (!isInitialized && shop && host) {
             dispatch({ type: "SET_PARAMS", payload: { shop, host } });
         }
-    }, [dispatch, isInitialized, searchParams]);
+    }, [dispatch, isInitialized, searchParams, isThemeExtension]);
 
-    // Store App Bridge globally with error handling
+    // Store App Bridge globally (skip for theme extensions)
     useEffect(() => {
-        if (isAppBridgeReady && app) {
+        if (!isThemeExtension && isAppBridgeReady && app) {
             try {
                 (window as any).__APP_BRIDGE__ = app;
             } catch (error) {
                 console.error("❌ Failed to store App Bridge globally:", error);
             }
         }
-    }, [app, isAppBridgeReady]);
+    }, [app, isAppBridgeReady, isThemeExtension]);
 
     return <>{children}</>;
 }

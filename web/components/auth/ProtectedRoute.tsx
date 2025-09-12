@@ -1,9 +1,10 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { useSessionStore } from "@/stores";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { useSessionStore } from "@/stores";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isInitialized, hasValidSession, shop, sessionToken } =
@@ -15,9 +16,25 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
+    // Check if we're in a theme extension context
+    const isThemeExtension =
+        typeof window !== "undefined" &&
+        (window.parent !== window ||
+            document.referrer.includes("admin.shopify.com") ||
+            document.referrer.includes("myshopify.com/admin/themes"));
+
+    // Skip authentication for theme extensions
+    if (isThemeExtension) {
+        return <>{children}</>;
+    }
+
     useEffect(() => {
+        // Skip session refresh for theme extensions
+        if (isThemeExtension) {
+            return;
+        }
+
         const refreshSession = async () => {
-            // Only try refresh if initialized, no valid session, and haven't tried yet
             if (
                 isInitialized &&
                 !hasValidSession &&
@@ -52,7 +69,6 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
                         if (data.success && data.session) {
                             console.log("✅ Session refreshed successfully");
 
-                            // Update session store
                             useSessionStore.getState().dispatch({
                                 type: "SESSION_VALIDATION_SUCCESS",
                                 payload: {
@@ -62,14 +78,13 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
                             });
 
                             setIsRefreshing(false);
-                            return; // Success - don't redirect
+                            return;
                         }
                     }
                 } catch (error) {
                     console.log("❌ Session refresh failed:", error);
                 }
 
-                // If refresh fails, redirect to auth
                 console.log("🔄 Redirecting to OAuth flow");
                 const currentShop = searchParams.get("shop") || shop;
                 const authUrl = `/api/auth?returnTo=${encodeURIComponent(pathname)}`;
@@ -93,6 +108,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
         router,
         isRefreshing,
         refreshAttempted,
+        isThemeExtension,
     ]);
 
     // Don't protect the root path - let it redirect

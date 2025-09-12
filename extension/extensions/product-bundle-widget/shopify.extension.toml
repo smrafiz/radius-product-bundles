@@ -3,16 +3,12 @@ api_version = "2025-07"
 
 [[extensions]]
 name = "Product Bundle Widget"
+description = "Display product bundles on product pages"
+handle = "product-bundle-widget"
 type = "theme"
 uid = "b54c4e5c-e85a-34dc-e9e2-a7c9e951e8dc75e66ac3"
-handle = "product-bundle-widget"
-
-[[extensions.targeting]]
-target = "section"
-
-[[extensions.targeting.group]]
-group = "product"
 
 [[extensions.blocks]]
-type = "bundle_widget"
+type = "app_block"
 name = "Product Bundle Widget"
+templates = ["product"]
