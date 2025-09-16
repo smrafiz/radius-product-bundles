@@ -49,9 +49,10 @@ export class ProductBundleWidget {
 
     private async fetchBundle(): Promise<Bundle | null> {
         try {
-            const url = `/apps/bundle-api/product?productId=${encodeURIComponent(this.productId)}`;
+            const appUrl = process.env.NEXT_PUBLIC_SHOPIFY_APP_URL || window.location.origin;
+            const url = `/api/storefront/product?productId=${encodeURIComponent(this.productId)}`;
             const res = await fetch(url);
-            console.log(url, res);
+            console.log(res);
             if (!res.ok) return null;
             const data = await res.json();
             return data?.products?.length ? data : null;

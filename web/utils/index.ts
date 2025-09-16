@@ -4,6 +4,7 @@ export * from "@/utils/error/errorUtils";
 export * from "@/utils/shop/sessionUtils";
 export * from "@/utils/bundle/bundleUtils";
 export * from "@/utils/shopify/setupCheck";
+export * from "@/utils/shopify/env-config";
 export * from "@/utils/bundle/bundleTable";
 export * from "@/utils/shopify/shopifyUtils";
 export * from "@/utils/formatting/formatters";

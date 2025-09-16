@@ -7,6 +7,9 @@
     "scripts": {
         "dev:app": "shopify app dev",
         "dev:widgets": "cd web/widgets && vite build --watch",
+        "dev:auto": "node scripts/update-env-host.js",
+        "dev:auto-base": "./scripts/dev-with-auto-host.sh",
+        "dev:full": "node scripts/update-and-generate.js",
         "dev": "concurrently --raw \"npm:dev:app\" \"npm:dev:widgets\"",
         "build:widgets": "cd web/widgets-src && vite build",
         "info": "shopify app info",

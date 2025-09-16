@@ -11,7 +11,12 @@ const config: AppConfig = {} as AppConfig;
 try {
     setupCheck(); // Ensure all env vars are loaded
 
-    let appUrl = process.env.SHOPIFY_APP_URL || "https://www.app.example.com/";
+    let appUrl =
+        process.env.HOST ||
+        process.env.SHOPIFY_APP_URL ||
+        process.env.APP_URL ||
+        "https://www.app.example.com/";
+
     if (appUrl.endsWith("/")) {
         appUrl = appUrl.slice(0, -1);
     }
@@ -25,11 +30,11 @@ try {
     config.extension_directories = ["./extension/extensions/**"];
 
     // App Proxy Configuration
-    config.app_proxy = {
-        url: "https://app.example.com/api/proxy",
-        subpath: "bundle-api",
-        prefix: "apps",
-    };
+    // config.app_proxy = {
+    //     url: `${appUrl}/api/proxy`,
+    //     subpath: "bundle-api",
+    //     prefix: "apps",
+    // };
 
     // Build section
     config.build = {
