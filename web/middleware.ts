@@ -11,7 +11,13 @@ export async function middleware(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
 
     // Paths to skip for performance because headers are unnecessary
-    const skipPaths = ["/api/", "/_next/", "/favicon.ico", "/public/", "/extensions/"];
+    const skipPaths = [
+        "/api/",
+        "/_next/",
+        "/favicon.ico",
+        "/public/",
+        "/extensions/",
+    ];
 
     const shop = detectShop(request, searchParams);
 
@@ -26,14 +32,16 @@ export async function middleware(request: NextRequest) {
     }
 
     // Skip for theme extensions (detect by iframe context)
-    const referer = request.headers.get('referer');
-    const userAgent = request.headers.get('user-agent');
-    const secFetchDest = request.headers.get('sec-fetch-dest');
+    const referer = request.headers.get("referer");
+    const userAgent = request.headers.get("user-agent");
+    const secFetchDest = request.headers.get("sec-fetch-dest");
 
     // Theme extensions run in iframe context
-    if (secFetchDest === 'iframe' ||
-        referer?.includes('admin.shopify.com') ||
-        referer?.includes('myshopify.com/admin/themes')) {
+    if (
+        secFetchDest === "iframe" ||
+        referer?.includes("admin.shopify.com") ||
+        referer?.includes("myshopify.com/admin/themes")
+    ) {
         return NextResponse.next();
     }
 

@@ -11,7 +11,7 @@ const config: AppConfig = {} as AppConfig;
 try {
     setupCheck(); // Ensure all env vars are loaded
 
-    let appUrl = process.env.SHOPIFY_APP_URL || "https://example.com";
+    let appUrl = process.env.SHOPIFY_APP_URL || "https://www.app.example.com/";
     if (appUrl.endsWith("/")) {
         appUrl = appUrl.slice(0, -1);
     }
@@ -23,6 +23,13 @@ try {
     config.application_url = appUrl;
     config.embedded = true;
     config.extension_directories = ["./extension/extensions/**"];
+
+    // App Proxy Configuration
+    config.app_proxy = {
+        url: "https://app.example.com/api/proxy",
+        subpath: "bundle-api",
+        prefix: "apps",
+    };
 
     // Build section
     config.build = {
@@ -65,7 +72,10 @@ try {
 
     // Auth
     config.auth = {
-        redirect_urls: [`${appUrl}/api/`],
+        redirect_urls: [
+            `${appUrl}/api/auth/callback`,
+            `${appUrl}/api/auth/oauth/callback`,
+        ],
     };
 
     // PoS support

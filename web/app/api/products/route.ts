@@ -5,21 +5,21 @@ const prisma = new PrismaClient();
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { productId: string } }
+    { params }: { params: { productId: string } },
 ) {
     try {
         const searchParams = request.nextUrl.searchParams;
-        const shop = searchParams.get('shop');
+        const shop = searchParams.get("shop");
 
         if (!shop) {
             return NextResponse.json(
-                { success: false, error: 'Shop parameter required' },
-                { status: 400 }
+                { success: false, error: "Shop parameter required" },
+                { status: 400 },
             );
         }
 
         const productId = decodeURIComponent(params.productId);
-        console.log('Fetching bundles for product:', productId, 'shop:', shop);
+        console.log("Fetching bundles for product:", productId, "shop:", shop);
 
         // Find bundles that include this product
         const bundles = await prisma.bundle.findMany({
@@ -28,26 +28,26 @@ export async function GET(
                 isActive: true,
                 bundleProducts: {
                     some: {
-                        productId: productId
-                    }
-                }
+                        productId: productId,
+                    },
+                },
             },
             include: {
                 bundleProducts: {
                     include: {
-                        product: true
+                        product: true,
                     },
                     orderBy: {
-                        createdAt: 'asc'
-                    }
-                }
-            }
+                        createdAt: "asc",
+                    },
+                },
+            },
         });
 
         if (bundles.length === 0) {
             return NextResponse.json({
                 success: true,
-                bundles: []
+                bundles: [],
             });
         }
 
@@ -57,20 +57,27 @@ export async function GET(
                 const products = await Promise.all(
                     bundle.bundleProducts.map(async (bp) => {
                         // Fetch additional product data from Shopify if needed
-                        const productData = bp.product || await fetchProductFromShopify(bp.productId, shop);
+                        const productData =
+                            bp.product ||
+                            (await fetchProductFromShopify(bp.productId, shop));
 
                         return {
                             id: bp.productId,
-                            variantId: bp.variantId || `gid://shopify/ProductVariant/${bp.productId.split('/').pop()}`,
-                            title: productData?.title || 'Product',
+                            variantId:
+                                bp.variantId ||
+                                `gid://shopify/ProductVariant/${bp.productId.split("/").pop()}`,
+                            title: productData?.title || "Product",
                             image: productData?.image || null,
                             price: bp.price || productData?.price || 0,
-                            compareAtPrice: bp.compareAtPrice || productData?.compareAtPrice || null,
+                            compareAtPrice:
+                                bp.compareAtPrice ||
+                                productData?.compareAtPrice ||
+                                null,
                             quantity: bp.quantity,
                             isRequired: bp.isRequired,
-                            position: bp.position
+                            position: bp.position,
                         };
-                    })
+                    }),
                 );
 
                 return {
@@ -80,21 +87,20 @@ export async function GET(
                     discountType: bundle.discountType,
                     discountValue: bundle.discountValue,
                     isActive: bundle.isActive,
-                    products: products.sort((a, b) => a.position - b.position)
+                    products: products.sort((a, b) => a.position - b.position),
                 };
-            })
+            }),
         );
 
         return NextResponse.json({
             success: true,
-            bundles: transformedBundles
+            bundles: transformedBundles,
         });
-
     } catch (error) {
-        console.error('Bundle API error:', error);
+        console.error("Bundle API error:", error);
         return NextResponse.json(
-            { success: false, error: 'Internal server error' },
-            { status: 500 }
+            { success: false, error: "Internal server error" },
+            { status: 500 },
         );
     }
 }
@@ -106,7 +112,7 @@ async function fetchProductFromShopify(productId: string, shop: string) {
         // Your Shopify API implementation here
         return null;
     } catch (error) {
-        console.error('Error fetching product from Shopify:', error);
+        console.error("Error fetching product from Shopify:", error);
         return null;
     }
 }
@@ -115,9 +121,9 @@ export async function OPTIONS() {
     return new NextResponse(null, {
         status: 200,
         headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type',
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
         },
     });
 }

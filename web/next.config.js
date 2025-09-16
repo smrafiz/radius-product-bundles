@@ -29,6 +29,14 @@ const nextConfig = {
             },
         ];
     },
+    async rewrites() {
+        return [
+            {
+                source: "/apps/bundle-api/:path*",
+                destination: "/api/bundle-api/:path*", // Next.js API route
+            },
+        ];
+    },
 };
 
 export default nextConfig;

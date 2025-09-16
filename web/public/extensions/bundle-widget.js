@@ -16,10 +16,10 @@
             this.quantity = 1;
             this.selectedProducts = new Set();
 
-            console.log('ProductBundleWidget initialized:', {
+            console.log("ProductBundleWidget initialized:", {
                 shop: this.shop,
                 productId: this.productId,
-                settings: this.settings
+                settings: this.settings,
             });
 
             if (this.shop && this.productId && this.settings.appUrl) {
@@ -50,7 +50,9 @@
 
         extractProductIdFromPage() {
             // Try JSON-LD first
-            const jsonLd = document.querySelector('script[type="application/ld+json"]');
+            const jsonLd = document.querySelector(
+                'script[type="application/ld+json"]',
+            );
             if (jsonLd) {
                 try {
                     const data = JSON.parse(jsonLd.textContent);
@@ -61,7 +63,9 @@
             }
 
             // Try meta tag
-            const productMeta = document.querySelector('meta[property="product:retailer_item_id"]');
+            const productMeta = document.querySelector(
+                'meta[property="product:retailer_item_id"]',
+            );
             if (productMeta) {
                 return "gid://shopify/Product/" + productMeta.content;
             }
@@ -77,15 +81,22 @@
                 showSavings: true,
                 showImages: true,
                 currency: "USD",
-                moneyFormat: "${{amount}}"
+                moneyFormat: "${{amount}}",
             };
 
             if (this.container) {
-                Object.keys(defaults).forEach(key => {
-                    const dataKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+                Object.keys(defaults).forEach((key) => {
+                    const dataKey = key
+                        .replace(/([A-Z])/g, "-$1")
+                        .toLowerCase();
                     const value = this.container.dataset[dataKey];
                     if (value !== undefined) {
-                        defaults[key] = value === "true" ? true : value === "false" ? false : value;
+                        defaults[key] =
+                            value === "true"
+                                ? true
+                                : value === "false"
+                                  ? false
+                                  : value;
                     }
                 });
             }
@@ -95,7 +106,9 @@
 
         async loadBundles() {
             if (this.isLoading || !this.settings.appUrl) {
-                console.log('Bundle Widget: Skipping load - already loading or no app URL');
+                console.log(
+                    "Bundle Widget: Skipping load - already loading or no app URL",
+                );
                 return;
             }
 
@@ -105,7 +118,7 @@
             const cacheKey = `${this.shop}-${this.productId}`;
 
             if (this.cache.has(cacheKey)) {
-                console.log('Bundle Widget: Using cached data');
+                console.log("Bundle Widget: Using cached data");
                 this.bundles = this.cache.get(cacheKey);
                 this.renderBundles();
                 this.isLoading = false;
@@ -114,38 +127,47 @@
 
             try {
                 const url = `${this.settings.appUrl}/api/bundles/product/${encodeURIComponent(this.productId)}?shop=${encodeURIComponent(this.shop)}`;
-                console.log('Bundle Widget: Fetching bundles from:', url);
+                console.log("Bundle Widget: Fetching bundles from:", url);
 
                 const response = await fetch(url, {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
                     },
-                    signal: AbortSignal.timeout(15000)
+                    signal: AbortSignal.timeout(15000),
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(
+                        `HTTP ${response.status}: ${response.statusText}`,
+                    );
                 }
 
                 const data = await response.json();
-                console.log('Bundle Widget: API response:', data);
+                console.log("Bundle Widget: API response:", data);
 
                 if (data.success && data.bundles && data.bundles.length > 0) {
                     this.bundles = data.bundles;
                     this.cache.set(cacheKey, this.bundles);
 
                     // Cache for 5 minutes
-                    setTimeout(() => this.cache.delete(cacheKey), 5 * 60 * 1000);
+                    setTimeout(
+                        () => this.cache.delete(cacheKey),
+                        5 * 60 * 1000,
+                    );
 
                     this.renderBundles();
                 } else {
-                    console.log('Bundle Widget: No bundles found for this product');
+                    console.log(
+                        "Bundle Widget: No bundles found for this product",
+                    );
                     this.hideWidget();
                 }
             } catch (error) {
-                console.error('Bundle Widget: Failed to load bundles:', error);
-                this.showError('Unable to load bundle information. Please try again later.');
+                console.error("Bundle Widget: Failed to load bundles:", error);
+                this.showError(
+                    "Unable to load bundle information. Please try again later.",
+                );
             } finally {
                 this.isLoading = false;
                 this.hideLoading();
@@ -173,7 +195,7 @@
         initializeSelectedProducts() {
             this.selectedProducts.clear();
             if (this.selectedBundle) {
-                this.selectedBundle.products.forEach(product => {
+                this.selectedBundle.products.forEach((product) => {
                     if (product.isRequired) {
                         this.selectedProducts.add(product.id);
                     }
@@ -182,7 +204,9 @@
         }
 
         generateBundleHTML(bundle) {
-            const savingsHTML = this.settings.showSavings ? this.generateSavingsHTML(bundle) : '';
+            const savingsHTML = this.settings.showSavings
+                ? this.generateSavingsHTML(bundle)
+                : "";
 
             return `
                 <div class="bundle-container" data-bundle-id="${bundle.id}">
@@ -223,38 +247,40 @@
             } else if (bundle.discountType === "FIXED_AMOUNT") {
                 return `<span class="bundle-savings">Save ${this.formatMoney(bundle.discountValue)}</span>`;
             }
-            return '';
+            return "";
         }
 
         generateProductsHTML(bundle) {
             const currentProductId = this.productId;
 
-            return bundle.products.map(product => {
-                const isCurrent = product.id === currentProductId;
-                const isSelected = this.selectedProducts.has(product.id);
-                const canToggle = !product.isRequired && !isCurrent;
+            return bundle.products
+                .map((product) => {
+                    const isCurrent = product.id === currentProductId;
+                    const isSelected = this.selectedProducts.has(product.id);
+                    const canToggle = !product.isRequired && !isCurrent;
 
-                let badgeClass = 'required';
-                let badgeText = 'Required';
+                    let badgeClass = "required";
+                    let badgeText = "Required";
 
-                if (isCurrent) {
-                    badgeClass = 'current';
-                    badgeText = 'Current Item';
-                } else if (!product.isRequired) {
-                    badgeClass = 'optional';
-                    badgeText = 'Optional';
-                }
+                    if (isCurrent) {
+                        badgeClass = "current";
+                        badgeText = "Current Item";
+                    } else if (!product.isRequired) {
+                        badgeClass = "optional";
+                        badgeText = "Optional";
+                    }
 
-                const imageHTML = this.settings.showImages && product.image
-                    ? `<img src="${product.image}" alt="${this.escapeHtml(product.title)}" loading="lazy">`
-                    : '<div class="placeholder">📦</div>';
+                    const imageHTML =
+                        this.settings.showImages && product.image
+                            ? `<img src="${product.image}" alt="${this.escapeHtml(product.title)}" loading="lazy">`
+                            : '<div class="placeholder">📦</div>';
 
-                const checkboxHTML = canToggle
-                    ? `<input type="checkbox" class="bundle-product-checkbox" ${isSelected ? 'checked' : ''} data-product-id="${product.id}">`
-                    : '';
+                    const checkboxHTML = canToggle
+                        ? `<input type="checkbox" class="bundle-product-checkbox" ${isSelected ? "checked" : ""} data-product-id="${product.id}">`
+                        : "";
 
-                return `
-                    <div class="bundle-product ${product.isRequired || isCurrent ? 'required' : 'optional'} ${isCurrent ? 'current' : ''}" 
+                    return `
+                    <div class="bundle-product ${product.isRequired || isCurrent ? "required" : "optional"} ${isCurrent ? "current" : ""}" 
                          data-product-id="${product.id}" 
                          data-variant-id="${product.variantId}" 
                          data-quantity="${product.quantity}">
@@ -267,10 +293,12 @@
                             <div class="bundle-product-title">${this.escapeHtml(product.title)}</div>
                             
                             <div class="bundle-product-price">
-                                ${product.compareAtPrice && product.compareAtPrice > product.price
-                    ? `<span class="original-price">${this.formatMoney(product.compareAtPrice)}</span>`
-                    : ''
-                }
+                                ${
+                                    product.compareAtPrice &&
+                                    product.compareAtPrice > product.price
+                                        ? `<span class="original-price">${this.formatMoney(product.compareAtPrice)}</span>`
+                                        : ""
+                                }
                                 <span class="sale-price">${this.formatMoney(product.price)}</span>
                             </div>
                             
@@ -282,7 +310,8 @@
                         ${checkboxHTML}
                     </div>
                 `;
-            }).join('');
+                })
+                .join("");
         }
 
         generatePricingHTML(bundle) {
@@ -294,12 +323,16 @@
                     <span class="bundle-pricing-value">${this.formatMoney(pricing.subtotal)}</span>
                 </div>
                 
-                ${pricing.discount > 0 ? `
+                ${
+                    pricing.discount > 0
+                        ? `
                     <div class="bundle-pricing-row">
                         <span class="bundle-pricing-label">Bundle Discount:</span>
                         <span class="bundle-pricing-value bundle-pricing-savings">-${this.formatMoney(pricing.discount)}</span>
                     </div>
-                ` : ''}
+                `
+                        : ""
+                }
                 
                 <div class="bundle-pricing-row">
                     <span class="bundle-pricing-label">Bundle Total:</span>
@@ -309,20 +342,22 @@
         }
 
         calculatePricing() {
-            if (!this.selectedBundle) return { subtotal: 0, discount: 0, total: 0 };
+            if (!this.selectedBundle)
+                return { subtotal: 0, discount: 0, total: 0 };
 
             let subtotal = 0;
 
-            this.selectedBundle.products.forEach(product => {
+            this.selectedBundle.products.forEach((product) => {
                 if (this.selectedProducts.has(product.id)) {
-                    subtotal += product.price * product.quantity * this.quantity;
+                    subtotal +=
+                        product.price * product.quantity * this.quantity;
                 }
             });
 
             let discount = 0;
-            if (this.selectedBundle.discountType === 'PERCENTAGE') {
+            if (this.selectedBundle.discountType === "PERCENTAGE") {
                 discount = (subtotal * this.selectedBundle.discountValue) / 100;
-            } else if (this.selectedBundle.discountType === 'FIXED_AMOUNT') {
+            } else if (this.selectedBundle.discountType === "FIXED_AMOUNT") {
                 discount = this.selectedBundle.discountValue * this.quantity;
             }
 
@@ -332,9 +367,12 @@
         }
 
         updatePricing() {
-            const pricingContainer = this.container?.querySelector('.bundle-pricing');
+            const pricingContainer =
+                this.container?.querySelector(".bundle-pricing");
             if (pricingContainer) {
-                pricingContainer.innerHTML = this.generatePricingHTML(this.selectedBundle);
+                pricingContainer.innerHTML = this.generatePricingHTML(
+                    this.selectedBundle,
+                );
             }
         }
 
@@ -342,33 +380,55 @@
             if (!this.container) return;
 
             // Add to cart button
-            const addToCartBtn = this.container.querySelector('.bundle-add-to-cart');
+            const addToCartBtn = this.container.querySelector(
+                ".bundle-add-to-cart",
+            );
             if (addToCartBtn) {
-                addToCartBtn.addEventListener('click', (e) => this.handleAddToCart(e));
+                addToCartBtn.addEventListener("click", (e) =>
+                    this.handleAddToCart(e),
+                );
             }
 
             // Quantity controls
-            const quantityInput = this.container.querySelector('.bundle-quantity-input');
-            const decreaseBtn = this.container.querySelector('[data-action="decrease"]');
-            const increaseBtn = this.container.querySelector('[data-action="increase"]');
+            const quantityInput = this.container.querySelector(
+                ".bundle-quantity-input",
+            );
+            const decreaseBtn = this.container.querySelector(
+                '[data-action="decrease"]',
+            );
+            const increaseBtn = this.container.querySelector(
+                '[data-action="increase"]',
+            );
 
             if (quantityInput) {
-                quantityInput.addEventListener('change', (e) => this.handleQuantityChange(e));
-                quantityInput.addEventListener('input', (e) => this.handleQuantityChange(e));
+                quantityInput.addEventListener("change", (e) =>
+                    this.handleQuantityChange(e),
+                );
+                quantityInput.addEventListener("input", (e) =>
+                    this.handleQuantityChange(e),
+                );
             }
 
             if (decreaseBtn) {
-                decreaseBtn.addEventListener('click', () => this.changeQuantity(-1));
+                decreaseBtn.addEventListener("click", () =>
+                    this.changeQuantity(-1),
+                );
             }
 
             if (increaseBtn) {
-                increaseBtn.addEventListener('click', () => this.changeQuantity(1));
+                increaseBtn.addEventListener("click", () =>
+                    this.changeQuantity(1),
+                );
             }
 
             // Product selection checkboxes
-            const checkboxes = this.container.querySelectorAll('.bundle-product-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', (e) => this.handleProductToggle(e));
+            const checkboxes = this.container.querySelectorAll(
+                ".bundle-product-checkbox",
+            );
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", (e) =>
+                    this.handleProductToggle(e),
+                );
             });
         }
 
@@ -380,10 +440,15 @@
         }
 
         changeQuantity(delta) {
-            const newQuantity = Math.max(1, Math.min(10, this.quantity + delta));
+            const newQuantity = Math.max(
+                1,
+                Math.min(10, this.quantity + delta),
+            );
             this.quantity = newQuantity;
 
-            const input = this.container?.querySelector('.bundle-quantity-input');
+            const input = this.container?.querySelector(
+                ".bundle-quantity-input",
+            );
             if (input) {
                 input.value = newQuantity;
             }
@@ -407,60 +472,74 @@
             event.preventDefault();
 
             if (this.selectedProducts.size === 0) {
-                this.showMessage('Please select at least one product to add to cart.', 'error');
+                this.showMessage(
+                    "Please select at least one product to add to cart.",
+                    "error",
+                );
                 return;
             }
 
-            const button = event.target.closest('.bundle-add-to-cart');
-            const textSpan = button.querySelector('.bundle-btn-text');
-            const spinner = button.querySelector('.bundle-btn-spinner');
+            const button = event.target.closest(".bundle-add-to-cart");
+            const textSpan = button.querySelector(".bundle-btn-text");
+            const spinner = button.querySelector(".bundle-btn-spinner");
 
             button.disabled = true;
-            button.classList.add('loading');
-            textSpan.style.display = 'none';
-            spinner.style.display = 'inline-block';
+            button.classList.add("loading");
+            textSpan.style.display = "none";
+            spinner.style.display = "inline-block";
 
             try {
                 const items = this.buildCartItems();
-                console.log('Bundle Widget: Adding items to cart:', items);
+                console.log("Bundle Widget: Adding items to cart:", items);
 
                 const result = await this.addToCart(items);
 
                 if (result.success) {
-                    this.showMessage('Bundle added to cart successfully!', 'success');
+                    this.showMessage(
+                        "Bundle added to cart successfully!",
+                        "success",
+                    );
                     this.triggerCartUpdate();
                 } else {
-                    throw new Error(result.error || 'Failed to add bundle to cart');
+                    throw new Error(
+                        result.error || "Failed to add bundle to cart",
+                    );
                 }
-
             } catch (error) {
-                console.error('Bundle Widget: Add to cart error:', error);
-                this.showMessage('Failed to add bundle to cart. Please try again.', 'error');
+                console.error("Bundle Widget: Add to cart error:", error);
+                this.showMessage(
+                    "Failed to add bundle to cart. Please try again.",
+                    "error",
+                );
             } finally {
                 button.disabled = false;
-                button.classList.remove('loading');
-                textSpan.style.display = 'inline';
-                spinner.style.display = 'none';
+                button.classList.remove("loading");
+                textSpan.style.display = "inline";
+                spinner.style.display = "none";
             }
         }
 
         buildCartItems() {
             const items = [];
 
-            this.selectedBundle.products.forEach(product => {
+            this.selectedBundle.products.forEach((product) => {
                 if (this.selectedProducts.has(product.id)) {
                     // Extract numeric ID from Shopify GID
-                    const variantId = product.variantId.replace('gid://shopify/ProductVariant/', '');
+                    const variantId = product.variantId.replace(
+                        "gid://shopify/ProductVariant/",
+                        "",
+                    );
 
                     items.push({
                         id: variantId,
                         quantity: product.quantity * this.quantity,
                         properties: {
-                            '_bundle_id': this.selectedBundle.id,
-                            '_bundle_name': this.selectedBundle.name,
-                            '_bundle_discount': this.selectedBundle.discountValue,
-                            '_bundle_discount_type': this.selectedBundle.discountType
-                        }
+                            _bundle_id: this.selectedBundle.id,
+                            _bundle_name: this.selectedBundle.name,
+                            _bundle_discount: this.selectedBundle.discountValue,
+                            _bundle_discount_type:
+                                this.selectedBundle.discountType,
+                        },
                     });
                 }
             });
@@ -470,12 +549,12 @@
 
         async addToCart(items) {
             try {
-                const response = await fetch('/cart/add.js', {
-                    method: 'POST',
+                const response = await fetch("/cart/add.js", {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ items })
+                    body: JSON.stringify({ items }),
                 });
 
                 const data = await response.json();
@@ -483,7 +562,10 @@
                 if (response.ok) {
                     return { success: true, data };
                 } else {
-                    return { success: false, error: data.message || data.description };
+                    return {
+                        success: false,
+                        error: data.message || data.description,
+                    };
                 }
             } catch (error) {
                 return { success: false, error: error.message };
@@ -492,11 +574,11 @@
 
         triggerCartUpdate() {
             // Trigger Shopify theme cart update events
-            document.dispatchEvent(new CustomEvent('cart:updated'));
+            document.dispatchEvent(new CustomEvent("cart:updated"));
 
             // For themes that use jQuery
             if (window.jQuery) {
-                window.jQuery(document).trigger('cart.requestComplete');
+                window.jQuery(document).trigger("cart.requestComplete");
             }
 
             // For some themes
@@ -505,11 +587,12 @@
             }
         }
 
-        showMessage(message, type = 'info') {
-            const messagesContainer = this.container?.querySelector('.bundle-messages');
+        showMessage(message, type = "info") {
+            const messagesContainer =
+                this.container?.querySelector(".bundle-messages");
             if (!messagesContainer) return;
 
-            const messageEl = document.createElement('div');
+            const messageEl = document.createElement("div");
             messageEl.className = `bundle-message bundle-message--${type}`;
             messageEl.textContent = message;
 
@@ -524,18 +607,22 @@
 
         showLoading() {
             if (this.container) {
-                const loading = this.container.querySelector('.bundle-widget-loading');
+                const loading = this.container.querySelector(
+                    ".bundle-widget-loading",
+                );
                 if (loading) {
-                    loading.style.display = 'flex';
+                    loading.style.display = "flex";
                 }
             }
         }
 
         hideLoading() {
             if (this.container) {
-                const loading = this.container.querySelector('.bundle-widget-loading');
+                const loading = this.container.querySelector(
+                    ".bundle-widget-loading",
+                );
                 if (loading) {
-                    loading.style.display = 'none';
+                    loading.style.display = "none";
                 }
             }
         }
@@ -548,25 +635,28 @@
 
         hideWidget() {
             if (this.container) {
-                this.container.classList.add('bundle-widget-hidden');
+                this.container.classList.add("bundle-widget-hidden");
             }
         }
 
         formatMoney(amount) {
-            const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-            if (isNaN(numAmount)) return '$0.00';
+            const numAmount =
+                typeof amount === "string" ? parseFloat(amount) : amount;
+            if (isNaN(numAmount)) return "$0.00";
 
             // Basic money formatting - you can enhance this based on your needs
-            return this.settings.moneyFormat.replace('{{amount}}', (numAmount / 100).toFixed(2));
+            return this.settings.moneyFormat.replace(
+                "{{amount}}",
+                (numAmount / 100).toFixed(2),
+            );
         }
 
         escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text || '';
+            const div = document.createElement("div");
+            div.textContent = text || "";
             return div.innerHTML;
         }
     }
 
     window.ProductBundleWidget = ProductBundleWidget;
-
 })(window, document);

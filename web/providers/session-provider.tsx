@@ -19,10 +19,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     const tokenProcessed = useRef(false);
 
     // Check if we're in a theme extension context
-    const isThemeExtension = typeof window !== 'undefined' &&
+    const isThemeExtension =
+        typeof window !== "undefined" &&
         (window.parent !== window ||
-            document.referrer.includes('admin.shopify.com') ||
-            document.referrer.includes('myshopify.com/admin/themes'));
+            document.referrer.includes("admin.shopify.com") ||
+            document.referrer.includes("myshopify.com/admin/themes"));
 
     // Skip App Bridge initialization for theme extensions
     useEffect(() => {
@@ -30,7 +31,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
             // For theme extensions, just mark as initialized without App Bridge
             dispatch({
                 type: "SESSION_VALIDATION_SUCCESS",
-                payload: { token: "theme-extension-context" }
+                payload: { token: "theme-extension-context" },
             });
             return;
         }
@@ -67,7 +68,10 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                     setAuthRedirectAttempted(true);
 
                     const shop = searchParams.get("shop");
-                    const hasMinimalParams = shop || searchParams.get("host") || searchParams.get("embedded");
+                    const hasMinimalParams =
+                        shop ||
+                        searchParams.get("host") ||
+                        searchParams.get("embedded");
 
                     if (!hasMinimalParams) {
                         const currentUrl = window.location.href;
@@ -77,7 +81,10 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                             const detectedShop = shopMatch[1];
                             window.location.href = `/api/auth?shop=${detectedShop}&returnTo=${encodeURIComponent(window.location.pathname)}`;
                         } else {
-                            const returnTo = window.location.pathname !== "/" ? window.location.pathname : "/dashboard";
+                            const returnTo =
+                                window.location.pathname !== "/"
+                                    ? window.location.pathname
+                                    : "/dashboard";
                             window.location.href = `/api/auth?returnTo=${encodeURIComponent(returnTo)}`;
                         }
                     } else {
@@ -98,11 +105,23 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         }, 100);
 
         return () => clearInterval(checkInterval);
-    }, [app, searchParams, authRedirectAttempted, dispatch, retryCount, isThemeExtension]);
+    }, [
+        app,
+        searchParams,
+        authRedirectAttempted,
+        dispatch,
+        retryCount,
+        isThemeExtension,
+    ]);
 
     // Rest of your existing code for non-theme-extension contexts...
     useEffect(() => {
-        if (isThemeExtension || !isAppBridgeReady || tokenProcessed.current || hasValidSession) {
+        if (
+            isThemeExtension ||
+            !isAppBridgeReady ||
+            tokenProcessed.current ||
+            hasValidSession
+        ) {
             return;
         }
 
@@ -132,7 +151,10 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                     try {
                         await doWebhookRegistration(token);
                     } catch (webhookError) {
-                        console.error("❌ Webhook registration failed:", webhookError);
+                        console.error(
+                            "❌ Webhook registration failed:",
+                            webhookError,
+                        );
                     }
 
                     if (tokenSuccess) {
@@ -144,7 +166,9 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                         throw new Error("Token storage failed");
                     }
                 } else {
-                    throw new Error("No session token received from App Bridge");
+                    throw new Error(
+                        "No session token received from App Bridge",
+                    );
                 }
             } catch (error) {
                 console.error("❌ Session initialization error:", error);
@@ -153,9 +177,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
                 let errorMessage = "Session initialization failed";
                 if (error instanceof Error) {
                     if (error.message.includes("Token")) {
-                        errorMessage = "Authentication token error - please refresh the page";
+                        errorMessage =
+                            "Authentication token error - please refresh the page";
                     } else if (error.message.includes("Network")) {
-                        errorMessage = "Network error - please check your connection";
+                        errorMessage =
+                            "Network error - please check your connection";
                     }
                 }
 
@@ -174,7 +200,14 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
         };
 
         void handleTokenAndWebhooks();
-    }, [app, dispatch, isAppBridgeReady, hasValidSession, retryCount, isThemeExtension]);
+    }, [
+        app,
+        dispatch,
+        isAppBridgeReady,
+        hasValidSession,
+        retryCount,
+        isThemeExtension,
+    ]);
 
     // URL parameter handling (skip for theme extensions)
     useEffect(() => {
