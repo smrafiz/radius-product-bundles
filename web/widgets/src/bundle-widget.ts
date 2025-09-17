@@ -26,6 +26,7 @@ export class ProductBundleWidget {
     constructor(container: HTMLElement) {
         this.container = container;
         this.productId = container.dataset.productId!;
+        console.log(this.productId);
         this.init();
     }
 
@@ -51,10 +52,34 @@ export class ProductBundleWidget {
         try {
             const url = `/apps/bundles/products?productId=${encodeURIComponent(this.productId)}`;
             const res = await fetch(url);
-            console.log(res);
             if (!res.ok) return null;
             const data = await res.json();
-            return data?.products?.length ? data : null;
+            console.log("API response:", data);
+
+            if (!data?.bundles?.length) return null;
+
+            // Transform API bundle → widget bundle
+            const apiBundle = data.bundles[0];
+
+            console.log(apiBundle);
+
+            const bundle: Bundle = {
+                name: apiBundle.name,
+                discountType: apiBundle.discountType,
+                discountValue: apiBundle.discountValue,
+                settings: apiBundle.settings,
+                products: apiBundle.products.map((p: any) => ({
+                    productId: p.id,
+                    variantId: p.variantId,
+                    quantity: p.quantity,
+                    title: p.title,
+                    price: Number(p.price) || 0,
+                    role: p.role,
+                    image: p.featuredImage,
+                })),
+            };
+
+            return bundle;
         } catch (err) {
             console.error(err);
             return null;
