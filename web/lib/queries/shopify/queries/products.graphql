@@ -52,3 +52,24 @@ query GetProductsByIds($ids: [ID!]!) {
         }
     }
 }
+
+query GetBundleProducts($ids: [ID!]!) {
+    nodes(ids: $ids) {
+        ... on Product {
+            id
+            title
+            handle
+            featuredImage {
+                url
+                altText
+            }
+            variants(first: 1) {
+                nodes {
+                    id
+                    price
+                    compareAtPrice
+                }
+            }
+        }
+    }
+}
