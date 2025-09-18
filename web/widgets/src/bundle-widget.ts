@@ -129,30 +129,69 @@ export class ProductBundleWidget {
         const showSavings = bundle.settings?.showSavings ?? this.showSavings;
         const showImages = bundle.settings?.showProductImages ?? this.showImages;
 
+        // Calculate pricing
+        const originalTotal = bundle.products.reduce((sum, product) => sum + product.price, 0);
+        const discountAmount = bundle.discountType === "PERCENTAGE"
+            ? (originalTotal * bundle.discountValue!) / 100
+            : bundle.discountValue || 0;
+        const bundleTotal = originalTotal - discountAmount;
+
         const content = this.container.querySelector(".bundle-widget-content");
         if (!content) return;
 
         content.innerHTML = `
-            <div class="bundle-widget">
-                <div class="bundle-header">
-                    <h3 class="bundle-title">${this.escapeHtml(bundle.name)}</h3>
-                    ${showSavings && bundle.discountValue
-            ? `<span class="bundle-savings">Save ${bundle.discountValue}${bundle.discountType === "PERCENTAGE" ? "%" : "$"}</span>`
-            : ""
-        }
-                </div>
-                <div class="bundle-products bundle-products--${layout}">
-                    ${bundle.products
-            .sort((a, b) => a.displayOrder - b.displayOrder)
-            .map(product => this.renderProduct(product, showImages))
-            .join("")
-        }
-                </div>
-                <button class="bundle-add-to-cart" data-bundle-id="${bundle.id}">
-                    Add Bundle to Cart
-                </button>
+        <div class="bundle-widget bundle-widget--fbt">
+            <div class="bundle-header">
+                <h3 class="bundle-title">${this.escapeHtml(bundle.name)}</h3>
             </div>
-        `;
+            
+            <div class="bundle-products-horizontal">
+                ${bundle.products
+            .sort((a, b) => a.displayOrder - b.displayOrder)
+            .map((product, index, array) => `
+                        <div class="bundle-product-item">
+                            ${showImages && product.featuredImage
+                ? `<div class="bundle-product-image">
+                                     <img src="${product.featuredImage}" alt="${this.escapeHtml(product.title)}" loading="lazy" />
+                                   </div>`
+                : `<div class="bundle-product-placeholder">
+                                     <span>📦</span>
+                                   </div>`
+            }
+                            <div class="bundle-product-details">
+                                <h4 class="bundle-product-name">${this.escapeHtml(product.title)}</h4>
+                                <p class="bundle-product-price">Qty: ${product.quantity} × $${product.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    `).join('')
+        }
+            </div>
+
+            <div class="bundle-pricing">
+                <div class="bundle-pricing-row">
+                    <span class="bundle-pricing-label">Total Price:</span>
+                    <div class="bundle-pricing-values">
+                        <span class="bundle-current-price">$${bundleTotal.toFixed(2)}</span>
+                        <span class="bundle-original-price">$${originalTotal.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                ${showSavings && bundle.discountValue ? `
+                    <div class="bundle-savings-row">
+                        <span class="bundle-savings-label">You save:</span>
+                        <span class="bundle-savings-amount">
+                            $${discountAmount.toFixed(2)} 
+                            (${bundle.discountValue}${bundle.discountType === "PERCENTAGE" ? "%" : ""})
+                        </span>
+                    </div>
+                ` : ''}
+            </div>
+
+            <button class="bundle-add-to-cart bundle-add-to-cart--primary" data-bundle-id="${bundle.id}">
+                Add Bundle to Cart
+            </button>
+        </div>
+    `;
 
         // Add event listener for add to cart button
         const addToCartBtn = content.querySelector(".bundle-add-to-cart") as HTMLButtonElement;

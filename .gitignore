@@ -69,4 +69,8 @@ next-env.d.ts
 # TOML
 shopify.app.toml
 shopify.app.app-next-vercel.toml
+
+# Others
 /web/lib/gql/graphql.ts
+/extension/extensions/product-bundle-widget/assets/bundle-widget.css
+/extension/extensions/product-bundle-widget/assets/bundle-widget.js
