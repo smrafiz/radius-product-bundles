@@ -3,8 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { request } from "graphql-request";
 import { useQueryBuilder } from "@/hooks";
 import { GetProductsDocument } from "@/lib/gql/graphql";
-import { LATEST_API_VERSION } from "@shopify/shopify-api";
-
 import { useGraphQL } from "@/hooks";
 import { useProductSelectionStore } from "@/stores";
 
@@ -13,8 +11,9 @@ import type {
     GetProductsQuery,
     GetProductsQueryVariables,
 } from "@/types";
+import { SHOPIFY_API_VERSION } from "@/lib/constants";
 
-const url = `shopify:admin/api/${LATEST_API_VERSION}/graphql.json`;
+const url = `shopify:admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
 export function useProductDataLoader() {
     const {

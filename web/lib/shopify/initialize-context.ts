@@ -1,9 +1,9 @@
 import "@shopify/shopify-api/adapters/web-api";
 import {
     shopifyApi,
-    LATEST_API_VERSION,
     LogSeverity,
 } from "@shopify/shopify-api";
+import { SHOPIFY_API_VERSION } from "@/lib/constants";
 
 const shopify = shopifyApi({
     apiKey: process.env.SHOPIFY_API_KEY || "",
@@ -12,7 +12,7 @@ const shopify = shopifyApi({
     hostName: process.env.HOST?.replace(/https?:\/\//, "") || "",
     hostScheme: "https",
     isEmbeddedApp: true,
-    apiVersion: LATEST_API_VERSION,
+    apiVersion: SHOPIFY_API_VERSION,
     logger: {
         level:
             process.env.NODE_ENV === "development"

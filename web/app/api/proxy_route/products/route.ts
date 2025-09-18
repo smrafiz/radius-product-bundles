@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
 
         // fetch bundles for this shop + product
         const bundles = await bundleQueries.findByProductId(productId, shop);
-        console.log(bundles, productId, shop);
 
         const transformedBundles = bundles.map((bundle) => ({
             id: bundle.id,
