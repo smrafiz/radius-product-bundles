@@ -1,6 +1,5 @@
 "use client";
 
-import { ComponentType } from "react";
 import {
     BlockStack,
     Box,
@@ -10,45 +9,19 @@ import {
     InlineStack,
     Text,
 } from "@shopify/polaris";
-import {
-    ArrowDownIcon,
-    ArrowRightIcon,
-    ArrowUpIcon,
-} from "@shopify/polaris-icons";
-import { formatGrowth, withLoader } from "@/utils";
+import { MetricCardProps } from "@/types";
 import { useRouter } from "next/navigation";
-
-interface MetricCardProps {
-    title: string;
-    value: string;
-    growth?: number;
-    icon?: ComponentType<any>;
-    tone?: "success" | "caution" | "subdued";
-    action?: { label: string; url: string };
-    comparisonLabel?: string;
-}
+import { formatGrowth, withLoader } from "@/utils";
+import { getGrowthIcon, getGrowthTone } from "@/utils";
 
 export const MetricCard = ({
     title,
     value,
     growth,
-    icon,
-    tone,
     action,
     comparisonLabel = "vs last month",
 }: MetricCardProps) => {
     const router = useRouter();
-    const getGrowthIcon = (value: number) => {
-        if (value > 0) return ArrowUpIcon;
-        if (value < 0) return ArrowDownIcon;
-        return ArrowRightIcon;
-    };
-
-    const getGrowthTone = (value: number) => {
-        if (value >= 50) return "success";
-        if (value >= 10) return "caution";
-        return "subdued";
-    };
 
     return (
         <Card>

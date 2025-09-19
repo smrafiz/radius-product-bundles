@@ -1,2 +1,2 @@
-export * from "@/config/bundleType.config";
-// export * from "@/config/bundleStatus";
+export * from "./bundleType.config";
+export * from "./metrics.config";

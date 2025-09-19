@@ -22,17 +22,6 @@ export type GrowthTone =
     | "caution"
     | "subdued";
 
-export interface MetricCardProps {
-    title: string;
-    value: string | number;
-    growth?: number;
-    subtitle?: string;
-    action?: {
-        text: string;
-        url: string;
-    };
-}
-
 export interface QuickAction {
     label: string;
     icon: React.ComponentType;

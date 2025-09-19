@@ -39,3 +39,16 @@ export interface AnalyticsTimeframe {
     end: string;
     period: "day" | "week" | "month" | "quarter" | "year";
 }
+
+export interface MetricCardProps {
+    title: string;
+    value: string | number;
+    growth?: number;
+    subtitle?: string;
+    tone?: "success" | "caution" | "subdued";
+    action?: {
+        label: string;
+        url: string;
+    };
+    comparisonLabel?: string;
+}

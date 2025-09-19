@@ -1,8 +1,10 @@
 "use client";
 
-import { formatCurrency, withLoader } from "@/utils";
+import { withLoader } from "@/utils";
+import { metricsConfig } from "@/config";
 import { useRouter } from "next/navigation";
 import { GlobalBanner } from "@/components";
+import { useBundlesData, useDashboardData } from "@/hooks";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { BundleTable } from "@/bundles/_components/BundleTable";
@@ -10,7 +12,6 @@ import { MetricCard } from "@/app/dashboard/_components/MetricCard";
 import { useBundleListingStore, useDashboardStore } from "@/stores";
 import { BundleSkeleton } from "@/bundles/_components/BundleSkeleton";
 import { BundleErrorCard } from "@/bundles/_components/BundleErrorCard";
-import { useBundlesData, useDashboardData, useWithLoader } from "@/hooks";
 
 export default function Bundles() {
     const router = useRouter();
@@ -63,28 +64,16 @@ export default function Bundles() {
 
                     <Layout.Section>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <MetricCard
-                                title="Active Bundles"
-                                value={(metrics?.activeBundles || 0).toString()}
-                                comparisonLabel="Total created"
-                            />
-                            <MetricCard
-                                title="Total Bundles"
-                                value={(metrics?.totalBundles || 0).toString()}
-                                comparisonLabel="Total created"
-                            />
-                            <MetricCard
-                                title="Total Views"
-                                value={(
-                                    metrics?.totalViews || 0
-                                ).toLocaleString()}
-                            />
-                            <MetricCard
-                                title="Total Revenue"
-                                value={formatCurrency(
-                                    metrics?.revenueAllTime || 0,
-                                )}
-                            />
+                            {metricsConfig(metrics).map((metric, index) => (
+                                <MetricCard
+                                    key={index}
+                                    title={metric.title}
+                                    value={metric.value}
+                                    comparisonLabel={metric.comparisonLabel}
+                                    growth={metric.growth}
+                                    tone={metric.tone}
+                                />
+                            ))}
                         </div>
                     </Layout.Section>
 

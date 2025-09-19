@@ -63,7 +63,7 @@ export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
 }
 
 export interface ExtendedBundleFormData extends BundleFormData {
-    type?: PrismaBundleType;
+    type: PrismaBundleType;
 }
 
 export interface BundleWithDetails {
