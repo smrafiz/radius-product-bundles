@@ -48,8 +48,9 @@ export class ProductBundleWidget {
         this.productId = container.dataset.productId!;
         this.shop = container.dataset.shop!;
         this.layout = (container.dataset.layout as "grid" | "list") || "grid";
-        this.showSavings = container.dataset.showSavings === "true";
+        // this.showSavings = container.dataset.showSavings === "true";
         // this.showImages = container.dataset.showImages === "true";
+        this.showSavings = true;
         this.showImages = true;
 
         this.init();
