@@ -1,6 +1,5 @@
 "use client";
 
-import NProgress from "nprogress";
 import { useBundleStore } from "@/stores";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useRef } from "react";
@@ -43,13 +42,13 @@ export default function GlobalForm({
                         withLoader(async () => {
                             console.log("GlobalForm submitting data:", data);
                             await onSubmit(data);
-                            NProgress.done();
+                            window.shopify.loading(false);
                             resetDirty();
                         })(),
                     (errors) => {
                         console.log("GlobalForm validation errors:", errors);
                         resetDirty();
-                        NProgress.done();
+                        window.shopify.loading(false);
                     },
                 )();
             }

@@ -175,20 +175,20 @@
 }
 
 /* Progress bar */
-#nprogress .bar {
-    background-color: var(
-        --p-color-bg-fill-brand
-    ) !important; /* Polaris brand color */
-    height: 3px; /* optional: adjust thickness */
-}
+/*#nprogress .bar {*/
+/*    background-color: var(*/
+/*        --p-color-bg-fill-brand*/
+/*    ) !important; !* Polaris brand color *!*/
+/*    height: 3px; !* optional: adjust thickness *!*/
+/*}*/
 
-#nprogress .peg {
-    box-shadow:
-        0 0 10px var(--p-color-bg-fill-brand),
-        0 0 5px var(--p-color-bg-fill-brand);
-}
+/*#nprogress .peg {*/
+/*    box-shadow:*/
+/*        0 0 10px var(--p-color-bg-fill-brand),*/
+/*        0 0 5px var(--p-color-bg-fill-brand);*/
+/*}*/
 
-#nprogress .spinner-icon {
-    border-top-color: var(--p-color-bg-fill-brand);
-    border-left-color: var(--p-color-bg-fill-brand);
-}
+/*#nprogress .spinner-icon {*/
+/*    border-top-color: var(--p-color-bg-fill-brand);*/
+/*    border-left-color: var(--p-color-bg-fill-brand);*/
+/*}*/

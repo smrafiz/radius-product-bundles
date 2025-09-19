@@ -13,7 +13,13 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Providers({ children, dehydratedState }: { children: ReactNode, dehydratedState?: DehydratedState | null }) {
+export default function Providers({
+    children,
+    dehydratedState,
+}: {
+    children: ReactNode;
+    dehydratedState?: DehydratedState | null;
+}) {
     return (
         <AppProvider i18n={translations}>
             <Suspense fallback={null}>

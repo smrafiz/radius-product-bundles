@@ -1,5 +1,3 @@
-import NProgress from "nprogress";
-
 /**
  * Wrapper function to start the loader and execute the callback
  * @param callback
@@ -7,7 +5,7 @@ import NProgress from "nprogress";
  */
 export const withLoader = (callback: () => void) => {
     return () => {
-        NProgress.start(); // start instantly
+        window.shopify.loading(true);
         callback();
     };
 };

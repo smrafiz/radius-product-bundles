@@ -15,9 +15,8 @@ import {
     ArrowRightIcon,
     ArrowUpIcon,
 } from "@shopify/polaris-icons";
-import { withLoader } from "@/utils";
+import { formatGrowth, withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
-import { formatGrowth } from "@/utils";
 
 interface MetricCardProps {
     title: string;

@@ -2,27 +2,24 @@
 
 import { formatCurrency, withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
-import { useBundlesData } from "@/hooks";
-import { useBundleListingStore } from "@/stores";
-import { useDashboardData } from "@/hooks";
+import { GlobalBanner } from "@/components";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
-import { useDashboardStore } from "@/stores";
-import { MetricCard } from "@/app/dashboard/_components/MetricCard";
 import { BundleTable } from "@/bundles/_components/BundleTable";
+import { MetricCard } from "@/app/dashboard/_components/MetricCard";
+import { useBundleListingStore, useDashboardStore } from "@/stores";
 import { BundleSkeleton } from "@/bundles/_components/BundleSkeleton";
 import { BundleErrorCard } from "@/bundles/_components/BundleErrorCard";
-import { GlobalBanner } from "@/components";
+import { useBundlesData, useDashboardData, useWithLoader } from "@/hooks";
 
 export default function Bundles() {
     const router = useRouter();
     const { metrics } = useDashboardStore();
 
-    // Load data using the hook
+    // Load data
     useBundlesData();
     useDashboardData();
 
-    // Get state from the store
     const { loading, toast, hideToast } = useBundleListingStore();
 
     // Handle primary action
