@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 export function useSessionToken() {

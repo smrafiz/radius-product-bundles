@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { BundleFormData } from "@/lib/validation";
 import { useBundleStore } from "@/stores";
-import { useBundleValidation } from "./useBundleValidation";
+import { useBundleValidation } from "@/hooks";
 import { useCallback } from "react";
 
 export function useBundleFormMethods() {

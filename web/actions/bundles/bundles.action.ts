@@ -11,32 +11,98 @@ import {
     bundleSettingsQueries,
     shopQueries,
 } from "@/lib/queries";
+import { executeGraphQLQuery } from "@/actions";
+import {
+    GetBundleProductsDocument,
+    GetBundleProductsQuery,
+} from "@/lib/gql/graphql";
 
 /**
  * Get bundles for a shop
  */
-export async function getBundles(sessionToken: string) {
+export async function getBundles(
+    sessionToken: string,
+    page: number = 1,
+    itemsPerPage: number = 10
+) {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { session: { shop } } = await handleSessionToken(sessionToken);
 
-        const bundles = await prisma.bundle.findMany({
-            where: { shop },
-            include: {
-                bundleProducts: {
-                    orderBy: { displayOrder: "asc" },
-                },
-                _count: {
-                    select: {
-                        analytics: true,
+        // Calculate pagination
+        const skip = (page - 1) * itemsPerPage;
+
+        // Get paginated bundles from database
+        const [bundles, totalCount] = await Promise.all([
+            prisma.bundle.findMany({
+                where: { shop },
+                include: {
+                    bundleProducts: {
+                        orderBy: { displayOrder: "asc" },
+                        take: 5, // Limit to first 5 products per bundle for preview
+                    },
+                    _count: {
+                        select: {
+                            analytics: true,
+                        },
                     },
                 },
-            },
-            orderBy: { updatedAt: "desc" },
-            take: 10, // For the dashboard view.
-        });
+                orderBy: { updatedAt: "desc" },
+                skip,
+                take: itemsPerPage,
+            }),
+            prisma.bundle.count({ where: { shop } })
+        ]);
 
+        if (bundles.length === 0) {
+            return {
+                status: "success" as const,
+                data: [],
+                pagination: {
+                    page,
+                    itemsPerPage,
+                    totalItems: totalCount,
+                    totalPages: Math.ceil(totalCount / itemsPerPage),
+                },
+            };
+        }
+
+        // Collect all unique product IDs from this page's bundles
+        const allProductIds = Array.from(
+            new Set(
+                bundles.flatMap(bundle =>
+                    bundle.bundleProducts.map(bp => bp.productId)
+                )
+            )
+        );
+
+        // Fetch product details from Shopify in one GraphQL call
+        let productMap = new Map();
+        if (allProductIds.length > 0) {
+            const productsResult = await executeGraphQLQuery<GetBundleProductsQuery>({
+                query: GetBundleProductsDocument,
+                variables: { ids: allProductIds },
+                sessionToken: sessionToken,
+            });
+
+            if (productsResult.data?.nodes) {
+                productsResult.data.nodes
+                    .filter(product => product)
+                    .forEach(product => {
+                        productMap.set(product.id, {
+                            id: product.id,
+                            title: product.title,
+                            featuredImage: product.featuredImage?.url || null,
+                            handle: product.handle,
+                        });
+                    });
+            }
+
+            if (productsResult.errors) {
+                console.error("GraphQL errors:", productsResult.errors);
+            }
+        }
+
+        // Transform bundles with product data
         const transformedBundles = bundles.map((bundle) => ({
             id: bundle.id,
             name: bundle.name,
@@ -51,11 +117,21 @@ export async function getBundles(sessionToken: string) {
                     : 0,
             productCount: bundle.bundleProducts.length,
             createdAt: bundle.createdAt.toISOString(),
+            // Add products array for BundleProductsPreview
+            products: bundle.bundleProducts
+                .map(bp => productMap.get(bp.productId))
+                .filter(Boolean) // Remove any products that couldn't be fetched
         }));
 
         return {
             status: "success" as const,
             data: transformedBundles,
+            pagination: {
+                page,
+                itemsPerPage,
+                totalItems: totalCount,
+                totalPages: Math.ceil(totalCount / itemsPerPage),
+            },
         };
     } catch (error) {
         console.error("Failed to fetch bundles:", error);
@@ -63,6 +139,12 @@ export async function getBundles(sessionToken: string) {
             status: "error" as const,
             message: "Failed to fetch bundles",
             data: [],
+            pagination: {
+                page,
+                itemsPerPage,
+                totalItems: 0,
+                totalPages: 0,
+            },
         };
     }
 }

@@ -1,14 +1,11 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import type { BundleStatus } from "@/types";
 import { useBundleListingStore } from "@/stores";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 import { useGlobalBanner, useSessionToken } from "@/hooks";
-import {
-    bulkToggleBundleStatus,
-    deleteBundle,
-    deleteBundles,
-    toggleBundleStatus,
-} from "@/actions";
+import { bulkToggleBundleStatus, deleteBundle, deleteBundles, toggleBundleStatus, } from "@/actions";
 
 export function useBundleTableActions() {
     const router = useRouter();

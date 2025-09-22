@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { useBundleListingStore } from "@/stores";
 import { useBundles, useBundleMetrics } from "@/hooks/bundle/useBundleQueries";

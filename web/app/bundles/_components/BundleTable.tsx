@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback } from "react";
 import {
     Card,
@@ -7,12 +9,14 @@ import {
 } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 import { useBundleTableActions } from "@/hooks";
-import { BundleIndexFilters } from "./BundleIndexFilters";
-import { BundleTableRow } from "./BundleTableRow";
-import { BundleTableEmptyStates } from "./BundleTableEmptyStates";
-import { BundlePagination } from "./BundlePagination";
+import {
+    BundleIndexFilters,
+    BundlePagination,
+    BundleTableEmptyStates,
+    BundleTableRow,
+} from "@/bundles/_components";
 
-export function BundleTable() {
+export default function BundleTable() {
     const breakpoints = useBreakpoints();
     const {
         getPaginatedBundles,
@@ -53,7 +57,6 @@ export function BundleTable() {
         }
     }, [clearSelection, showToast]);
 
-    // Get bulk actions with clear selection button
     const promotedBulkActions =
         selectedResources.length > 0
             ? [
@@ -102,12 +105,13 @@ export function BundleTable() {
                 promotedBulkActions={promotedBulkActions}
                 bulkActions={bulkActions}
                 headings={[
-                    { title: "Bundle" },
+                    { title: "Bundle Name" },
+                    { title: "Bundled Products" },
                     { title: "Type" },
                     { title: "Status" },
-                    { title: "Revenue" },
+                    { title: "Discount" },
                     { title: "Views" },
-                    { title: "Products" },
+                    { title: "Actions" },
                 ]}
                 selectable
             >

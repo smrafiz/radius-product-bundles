@@ -1,18 +1,21 @@
 "use client";
 
+import {
+    AIInsights,
+    BundleList,
+    ErrorCard,
+    PageSkeleton,
+} from "@/dashboard/_components";
 import { withLoader } from "@/utils";
+import { MetricCard } from "@/components";
 import { useRouter } from "next/navigation";
-import { useDashboardData } from "@/hooks";
-import { Frame, Layout, Page, Toast } from "@shopify/polaris";
-import { useDashboardStore } from "@/stores";
-import { ErrorCard } from "@/app/dashboard/_components/ErrorCard";
-import { DashboardSkeleton } from "@/components/shared/Skeletons";
-import { MetricCard } from "@/app/dashboard/_components/MetricCard";
-import { BundleList } from "@/app/dashboard/_components/BundleList";
-import { AIInsights } from "@/app/dashboard/_components/AIInsights";
-import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
 import { formatCurrency, formatPercentage } from "@/utils";
+import { Frame, Layout, Page, Toast } from "@shopify/polaris";
+import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
 import { QuickActions } from "@/app/dashboard/_components/QuickActions";
+
+import { useDashboardData } from "@/hooks";
+import { useDashboardStore } from "@/stores";
 
 export default function Dashboard() {
     const router = useRouter();
@@ -20,7 +23,7 @@ export default function Dashboard() {
     useDashboardData();
 
     if (loading) {
-        return <DashboardSkeleton />;
+        return <PageSkeleton />;
     }
 
     return (

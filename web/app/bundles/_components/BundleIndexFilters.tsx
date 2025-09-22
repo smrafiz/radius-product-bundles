@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback } from "react";
 import {
     IndexFilters,
@@ -8,7 +10,7 @@ import {
 import { useBundleListingStore } from "@/stores";
 import type { IndexFiltersProps, TabProps } from "@shopify/polaris";
 
-export function BundleIndexFilters() {
+export default function BundleIndexFilters() {
     const {
         filters,
         setSearch,

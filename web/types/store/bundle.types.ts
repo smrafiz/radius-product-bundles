@@ -1,5 +1,7 @@
 import {
     BundleConfiguration,
+    type BundleStatus,
+    type BundleType,
     DisplaySettings,
     ExtendedBundleFormData,
     ProductGroup,

@@ -5,7 +5,7 @@ interface ErrorCardProps {
     onRetry?: () => void;
 }
 
-export const ErrorCard = ({ error, onRetry }: ErrorCardProps) => {
+export default function ErrorCard({ error, onRetry }: ErrorCardProps) {
     const handleRetry = () => {
         if (onRetry) {
             onRetry();

@@ -1,17 +1,24 @@
 "use client";
 
+import {
+    Box,
+    Card,
+    Frame,
+    Layout,
+    Page,
+    SkeletonBodyText,
+    SkeletonDisplayText,
+    Toast,
+} from "@shopify/polaris";
 import { withLoader } from "@/utils";
 import { metricsConfig } from "@/config";
 import { useRouter } from "next/navigation";
-import { GlobalBanner } from "@/components";
-import { useBundlesData, useDashboardData } from "@/hooks";
+import { GlobalBanner, MetricCard } from "@/components";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
-import { Frame, Layout, Page, Toast } from "@shopify/polaris";
-import { BundleTable } from "@/bundles/_components/BundleTable";
-import { MetricCard } from "@/app/dashboard/_components/MetricCard";
+import { BundleErrorCard, BundleTable } from "@/bundles/_components";
+
+import { useBundlesData, useDashboardData } from "@/hooks";
 import { useBundleListingStore, useDashboardStore } from "@/stores";
-import { BundleSkeleton } from "@/bundles/_components/BundleSkeleton";
-import { BundleErrorCard } from "@/bundles/_components/BundleErrorCard";
 
 /*
  * Bundles page
@@ -35,11 +42,6 @@ export default function Bundles() {
     const handleBundleStudio = () => {
         router.push("/bundles/studio");
     };
-
-    // Show loading skeleton
-    if (loading) {
-        return <BundleSkeleton />;
-    }
 
     return (
         <Frame>
@@ -81,7 +83,26 @@ export default function Bundles() {
                     </Layout.Section>
 
                     <Layout.Section>
-                        <BundleTable />
+                        {loading ? (
+                            <Card>
+                                <Box padding="400">
+                                    <SkeletonDisplayText
+                                        size="small"
+                                        maxWidth="20ch"
+                                    />
+                                    <div className="mt-4 space-y-4 animate-pulse">
+                                        {[1, 2, 3, 4, 5].map((row) => (
+                                            <SkeletonBodyText
+                                                key={row}
+                                                lines={1}
+                                            />
+                                        ))}
+                                    </div>
+                                </Box>
+                            </Card>
+                        ) : (
+                            <BundleTable />
+                        )}
                     </Layout.Section>
                 </Layout>
 

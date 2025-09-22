@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import type { CreateBundlePayload } from "@/types";
 import { useBundleStore } from "@/stores";

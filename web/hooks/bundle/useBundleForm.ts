@@ -1,7 +1,9 @@
+"use client";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bundleSchema, BundleFormData } from "@/lib/validation";
+import { BundleFormData, bundleSchema } from "@/lib/validation";
 import { useBundleStore } from "@/stores";
 import { useCallback, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";

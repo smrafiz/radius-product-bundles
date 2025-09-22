@@ -1,15 +1,16 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { request } from "graphql-request";
-import { useQueryBuilder } from "@/hooks";
+import { useGraphQL, useQueryBuilder } from "@/hooks";
 import { GetProductsDocument } from "@/lib/gql/graphql";
-import { useGraphQL } from "@/hooks";
 import { useProductSelectionStore } from "@/stores";
 
 import type {
-    Product,
     GetProductsQuery,
     GetProductsQueryVariables,
+    Product,
 } from "@/types";
 import { SHOPIFY_API_VERSION } from "@/lib/constants";
 

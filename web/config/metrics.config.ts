@@ -1,23 +1,23 @@
-import { MetricCardProps } from "@/types";
 import { formatCurrency } from "@/utils";
+import { MetricCardProps } from "@/types";
 
 export const metricsConfig = (metrics: any): MetricCardProps[] => [
     {
         title: "Active Bundles",
-        value: (metrics?.activeBundles || '').toString(),
+        value: (metrics?.activeBundles ?? '').toString(),
         comparisonLabel: "Total created",
     },
     {
         title: "Total Bundles",
-        value: (metrics?.totalBundles || '').toString(),
+        value: (metrics?.totalBundles ?? '').toString(),
         comparisonLabel: "Total created",
     },
     {
         title: "Total Views",
-        value: (metrics?.totalViews || 0).toLocaleString(),
+        value: metrics?.totalViews !== undefined ? metrics.totalViews.toLocaleString() : '',
     },
     {
         title: "Total Revenue",
-        value: formatCurrency(metrics?.revenueAllTime || ''),
+        value: metrics?.revenueAllTime !== undefined ? formatCurrency(metrics.revenueAllTime) : '',
     },
 ];

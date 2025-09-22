@@ -1,8 +1,10 @@
+"use client";
+
 import { useCallback } from "react";
 import { Pagination } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 
-export function BundlePagination() {
+export default function BundlePagination() {
     const { pagination, setCurrentPage, getPaginationInfo } =
         useBundleListingStore();
 
@@ -20,9 +22,9 @@ export function BundlePagination() {
         }
     }, [hasNext, pagination.currentPage, setCurrentPage]);
 
-    if (!hasNext && !hasPrevious) {
-        return null;
-    }
+    // if (!hasNext && !hasPrevious) {
+    //     return null;
+    // }
 
     return (
         <div className="flex items-center justify-center p-6 bg-[var(--p-color-bg-surface-secondary)] border-t-[var(--p-color-border)] border-solid border-t">

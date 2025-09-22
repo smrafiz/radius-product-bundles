@@ -19,13 +19,13 @@ import {
     withLoader,
 } from "@/utils";
 
-export const MetricCard = ({
+export default function MetricCard({
     title,
     value,
     growth,
     action,
     comparisonLabel = "vs last month",
-}: MetricCardProps) => {
+}: MetricCardProps) {
     const router = useRouter();
     const isLoading = value === undefined || value === null || value === '';
 
@@ -39,7 +39,7 @@ export const MetricCard = ({
 
                     {/* Metric Value */}
                     {isLoading ? (
-                        <div className="animate-pulse">
+                        <div className="animate-pulse h-[40px]">
                             <SkeletonDisplayText size="large" maxWidth="4ch" />
                         </div>
                     ) : (

@@ -1,10 +1,13 @@
-import type { BundleListItem } from "@/stores";
+"use client";
+
 import { Badge, IndexTable, Text } from "@shopify/polaris";
 import {
     formatCurrency,
     getBundleTypeLabel,
     getStatusBadgeProps,
 } from "@/utils";
+import { BundleListItem } from "@/types";
+import { BundleProductsPreview } from "@/bundles/_components";
 
 interface BundleTableRowProps {
     bundle: BundleListItem;
@@ -12,7 +15,7 @@ interface BundleTableRowProps {
     isSelected: boolean;
 }
 
-export function BundleTableRow({
+export default function BundleTableRow({
     bundle,
     index,
     isSelected,
@@ -29,6 +32,12 @@ export function BundleTableRow({
             <IndexTable.Cell>
                 <Text variant="bodyMd" fontWeight="medium" as="span">
                     {bundle.name}
+                </Text>
+            </IndexTable.Cell>
+
+            <IndexTable.Cell>
+                <Text variant="bodyMd" as="span">
+                    <BundleProductsPreview bundle={bundle} />
                 </Text>
             </IndexTable.Cell>
 
@@ -51,12 +60,6 @@ export function BundleTableRow({
             <IndexTable.Cell>
                 <Text variant="bodyMd" as="span">
                     {bundle.views.toLocaleString()}
-                </Text>
-            </IndexTable.Cell>
-
-            <IndexTable.Cell>
-                <Text variant="bodyMd" as="span">
-                    {bundle.productCount}
                 </Text>
             </IndexTable.Cell>
         </IndexTable.Row>

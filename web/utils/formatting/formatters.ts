@@ -1,4 +1,4 @@
-import { CURRENCY_SYMBOLS, CURRENCY_LOCALES } from "@/lib/constants";
+import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/lib/constants";
 
 /**
  * Get currency symbol for a given currency code

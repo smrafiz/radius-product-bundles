@@ -9,7 +9,7 @@ import {
 } from "@shopify/polaris";
 import { useDashboardStore } from "@/stores";
 
-export const AIInsights = () => {
+export default function AIInsights() {
     const { bundles } = useDashboardStore();
 
     if (bundles.length === 0) return null;
@@ -47,4 +47,4 @@ export const AIInsights = () => {
             </Box>
         </Card>
     );
-};
+}
