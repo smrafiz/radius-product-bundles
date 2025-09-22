@@ -13,6 +13,9 @@ import { useBundleListingStore, useDashboardStore } from "@/stores";
 import { BundleSkeleton } from "@/bundles/_components/BundleSkeleton";
 import { BundleErrorCard } from "@/bundles/_components/BundleErrorCard";
 
+/*
+ * Bundles page
+ */
 export default function Bundles() {
     const router = useRouter();
     const { metrics } = useDashboardStore();

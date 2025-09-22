@@ -4,12 +4,12 @@ import { formatCurrency } from "@/utils";
 export const metricsConfig = (metrics: any): MetricCardProps[] => [
     {
         title: "Active Bundles",
-        value: (metrics?.activeBundles || 0).toString(),
+        value: (metrics?.activeBundles || '').toString(),
         comparisonLabel: "Total created",
     },
     {
         title: "Total Bundles",
-        value: (metrics?.totalBundles || 0).toString(),
+        value: (metrics?.totalBundles || '').toString(),
         comparisonLabel: "Total created",
     },
     {
@@ -18,6 +18,6 @@ export const metricsConfig = (metrics: any): MetricCardProps[] => [
     },
     {
         title: "Total Revenue",
-        value: formatCurrency(metrics?.revenueAllTime || 0),
+        value: formatCurrency(metrics?.revenueAllTime || ''),
     },
 ];

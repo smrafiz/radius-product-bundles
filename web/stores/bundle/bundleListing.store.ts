@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import type { BundleStatus, BundleType } from "@/types";
 import { getBundles } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
+
+import type { BundleStatus, BundleType } from "@/types";
 
 export interface BundleListItem {
     id: string;
@@ -337,20 +338,6 @@ export const useBundleListingStore = create<BundlesState>()((set, get) => ({
                     : "Showing page 1 of 1",
         };
     },
-
-    updateBundleInStore: (updatedBundle) =>
-        set((state) => ({
-            bundles: state.bundles.map((bundle) =>
-                bundle.id === updatedBundle.id
-                    ? { ...bundle, ...updatedBundle }
-                    : bundle,
-            ),
-        })),
-
-    removeBundlesFromStore: (ids) =>
-        set((state) => ({
-            bundles: state.bundles.filter((bundle) => !ids.includes(bundle.id)),
-        })),
 
     refreshBundles: async () => {
         try {

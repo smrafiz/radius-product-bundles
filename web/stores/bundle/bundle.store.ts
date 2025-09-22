@@ -1,4 +1,3 @@
-// web/stores/bundle/bundle.store.ts (Updated)
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
@@ -52,7 +51,6 @@ export const useBundleStore = create(
         isSaving: false,
         validationAttempted: false,
         isDirty: false,
-        isNavigating: false,
 
         markDirty: () =>
             set((state) => {
@@ -61,10 +59,6 @@ export const useBundleStore = create(
         resetDirty: () =>
             set((state) => {
                 state.isDirty = false;
-            }),
-        setNavigating: (navigating: boolean) =>
-            set((state) => {
-                state.isNavigating = navigating;
             }),
 
         // Step management
@@ -413,12 +407,6 @@ export const useBundleStore = create(
 
         // Reset
         resetBundle: () => {
-            const state = get();
-
-            if (state.isNavigating) {
-                return;
-            }
-
             set((state) => {
                 state.currentStep = 1;
                 state.bundleData = { ...initialBundleData };

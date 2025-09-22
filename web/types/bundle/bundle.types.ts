@@ -3,15 +3,37 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
-import { SelectedItem } from "@/types";
 import { BundleFormData } from "@/lib/validation";
 
-// ----- Prisma passthrough types -----
+import { type DashboardMetrics, SelectedItem } from "@/types";
+
+/*
+ * Type aliases for Prisma enums
+ */
 export type BundleStatus = PrismaBundleStatus;
 export type BundleType = PrismaBundleType;
 export type DiscountType = PrismaDiscountType;
 
-// ----- Core bundle types -----
+/*
+ * Dashboard state types
+ */
+export interface DashboardState {
+    bundles: Bundle[];
+    metrics: DashboardMetrics | null;
+    loading: boolean;
+    error: string | null;
+    toast: { active: boolean; message: string };
+    setBundles: (bundles: Bundle[]) => void;
+    setMetrics: (metrics: DashboardMetrics) => void;
+    setLoading: (loading: boolean) => void;
+    setError: (error: string | null) => void;
+    showToast: (message: string) => void;
+    hideToast: () => void;
+}
+
+/*
+ * Bundle types
+ */
 export interface Bundle {
     id: string;
     name: string;
@@ -25,6 +47,9 @@ export interface Bundle {
     createdAt: string;
 }
 
+/*
+ * Bundle config types
+ */
 export type BundleConfig = {
     id: BundleType;
     label: string;
@@ -35,11 +60,17 @@ export type BundleConfig = {
     badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
 };
 
+/*
+ * Bundle status badge types
+ */
 export interface BundleStatusBadge {
     status: "success" | "info" | "warning" | "critical";
     children: string;
 }
 
+/*
+ * Create bundle payload types
+ */
 export interface CreateBundlePayload {
     name: string;
     type: PrismaBundleType;
@@ -57,15 +88,24 @@ export interface CreateBundlePayload {
     endDate?: string;
 }
 
+/*
+ * Update bundle payload types
+ */
 export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
     id: string;
     status?: PrismaBundleStatus;
 }
 
+/*
+ * Extended bundle form data types
+ */
 export interface ExtendedBundleFormData extends BundleFormData {
     type: PrismaBundleType;
 }
 
+/*
+ * Bundle details types
+ */
 export interface BundleWithDetails {
     id: string;
     shop: string;
@@ -95,99 +135,4 @@ export interface BundleWithDetails {
     // Computed
     conversionRate: number;
     productCount: number;
-}
-
-// ---- BundleState for Zustand ----
-export interface ProductGroup {
-    product: SelectedItem;
-    variants: SelectedItem[];
-    originalTotalVariants: number;
-}
-
-export interface DisplaySettings {
-    layout: "horizontal" | "vertical" | "grid";
-    position: "above_cart" | "below_cart" | "description" | "custom";
-    title: string;
-    colorTheme: "brand" | "success" | "warning" | "critical";
-    showPrices: boolean;
-    showSavings: boolean;
-    enableQuickSwap: boolean;
-}
-
-export interface BundleConfiguration {
-    discountApplication: "bundle" | "products" | "shipping";
-}
-
-export interface BundleState {
-    totalSteps: number;
-    currentStep: number;
-    bundleData: Partial<ExtendedBundleFormData>;
-    selectedItems: SelectedItem[];
-    displaySettings: DisplaySettings;
-    configuration: BundleConfiguration;
-    isLoading: boolean;
-    isSaving: boolean;
-    validationAttempted: boolean;
-
-    // Dirty tracking
-    isDirty: boolean;
-    markDirty: () => void;
-    resetDirty: () => void;
-
-    // Step management
-    setStep: (step: number) => void;
-    setValidationAttempted: (attempted: boolean) => void;
-    nextStep: () => void;
-    prevStep: () => void;
-    goToNextStep: () => void;
-    canGoNext: () => boolean;
-    canGoPrevious: () => boolean;
-
-    // Bundle data actions
-    setBundleData: (data: Partial<ExtendedBundleFormData>) => void;
-    updateBundleField: <K extends keyof ExtendedBundleFormData>(
-        key: K,
-        value: ExtendedBundleFormData[K],
-    ) => void;
-
-    // Selected items actions
-    setSelectedItems: (items: SelectedItem[]) => void;
-    addSelectedItems: (items: SelectedItem[]) => void;
-    removeSelectedItem: (itemId: string) => void;
-    removeProductAndAllVariants: (productId: string) => void;
-    updateSelectedItemQuantity: (itemId: string, quantity: number) => void;
-    updateProductVariants: (
-        productId: string,
-        variants: SelectedItem[],
-        position?: number,
-    ) => void;
-    reorderItems: (activeId: string, overId: string) => void;
-
-    // Computed values
-    getGroupedItems: () => ProductGroup[];
-    getTotalProducts: () => number;
-    getTotalItems: () => number;
-    getVariantInfo: (productId: string) => {
-        selectedCount: number;
-        originalTotal: number;
-    };
-
-    // Display settings
-    updateDisplaySettings: <K extends keyof DisplaySettings>(
-        key: K,
-        value: DisplaySettings[K],
-    ) => void;
-
-    // Configuration
-    updateConfiguration: <K extends keyof BundleConfiguration>(
-        key: K,
-        value: BundleConfiguration[K],
-    ) => void;
-
-    // Loading states
-    setLoading: (loading: boolean) => void;
-    setSaving: (saving: boolean) => void;
-
-    // Reset
-    resetBundle: () => void;
 }

@@ -7,12 +7,17 @@ import {
     Card,
     Icon,
     InlineStack,
+    SkeletonDisplayText,
     Text,
 } from "@shopify/polaris";
 import { MetricCardProps } from "@/types";
 import { useRouter } from "next/navigation";
-import { formatGrowth, withLoader } from "@/utils";
-import { getGrowthIcon, getGrowthTone } from "@/utils";
+import {
+    formatGrowth,
+    getGrowthIcon,
+    getGrowthTone,
+    withLoader,
+} from "@/utils";
 
 export const MetricCard = ({
     title,
@@ -22,6 +27,7 @@ export const MetricCard = ({
     comparisonLabel = "vs last month",
 }: MetricCardProps) => {
     const router = useRouter();
+    const isLoading = value === undefined || value === null || value === '';
 
     return (
         <Card>
@@ -30,10 +36,20 @@ export const MetricCard = ({
                     <Text as="h3" variant="headingMd" tone="subdued">
                         {title}
                     </Text>
-                    <Text as="p" variant="heading2xl">
-                        {value}
-                    </Text>
-                    {growth !== undefined && (
+
+                    {/* Metric Value */}
+                    {isLoading ? (
+                        <div className="animate-pulse">
+                            <SkeletonDisplayText size="large" maxWidth="4ch" />
+                        </div>
+                    ) : (
+                        <Text as="p" variant="heading2xl">
+                            {value}
+                        </Text>
+                    )}
+
+                    {/* Growth Section */}
+                    {!isLoading && growth !== undefined && (
                         <InlineStack align="space-between">
                             <InlineStack gap="100" align="center">
                                 <Icon
@@ -53,6 +69,8 @@ export const MetricCard = ({
                             </Text>
                         </InlineStack>
                     )}
+
+                    {/* Optional Action */}
                     {action && (
                         <Button
                             variant="plain"

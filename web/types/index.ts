@@ -1,6 +1,7 @@
 export type * from "@/types/ui";
 export type * from "@/types/api";
 export type * from "@/types/shop";
+export type * from "@/types/store";
 export type * from "@/types/bundle";
 export type * from "@/types/product";
 export type * from "@/types/metrics";
