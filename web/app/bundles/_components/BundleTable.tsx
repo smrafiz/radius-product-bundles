@@ -7,14 +7,15 @@ import {
     useBreakpoints,
     useIndexResourceState,
 } from "@shopify/polaris";
-import { useBundleListingStore } from "@/stores";
-import { useBundleTableActions } from "@/hooks";
 import {
     BundleIndexFilters,
     BundlePagination,
     BundleTableEmptyStates,
     BundleTableRow,
 } from "@/bundles/_components";
+
+import { useBundleTableActions } from "@/hooks";
+import { useBundleListingStore } from "@/stores";
 
 export default function BundleTable() {
     const breakpoints = useBreakpoints();

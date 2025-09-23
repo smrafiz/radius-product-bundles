@@ -64,8 +64,8 @@ export type BundleConfig = {
  * Bundle status badge types
  */
 export interface BundleStatusBadge {
-    status: "success" | "info" | "warning" | "critical";
-    children: string;
+    text: string;
+    tone: "success" | "info" | "warning" | "critical" | "subdued";
 }
 
 /*

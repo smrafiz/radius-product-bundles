@@ -63,7 +63,7 @@ query GetBundleProducts($ids: [ID!]!) {
                 url
                 altText
             }
-            variants(first: 1) {
+            variants(first: 50) {
                 nodes {
                     id
                     price

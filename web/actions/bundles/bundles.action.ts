@@ -16,6 +16,8 @@ import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,
 } from "@/lib/gql/graphql";
+import { BundleStatus } from "@/types";
+import { bundleStatusConfigs } from "@/config";
 
 /**
  * Get bundles for a shop
@@ -38,7 +40,7 @@ export async function getBundles(
                 include: {
                     bundleProducts: {
                         orderBy: { displayOrder: "asc" },
-                        take: 5, // Limit to first 5 products per bundle for preview
+                        take: 20,
                     },
                     _count: {
                         select: {
@@ -77,6 +79,8 @@ export async function getBundles(
 
         // Fetch product details from Shopify in one GraphQL call
         let productMap = new Map();
+        let variantMap = new Map();
+
         if (allProductIds.length > 0) {
             const productsResult = await executeGraphQLQuery<GetBundleProductsQuery>({
                 query: GetBundleProductsDocument,
@@ -93,6 +97,16 @@ export async function getBundles(
                             title: product.title,
                             featuredImage: product.featuredImage?.url || null,
                             handle: product.handle,
+                        });
+
+                        // Store variant data
+                        product.variants?.nodes?.forEach(variant => {
+                            variantMap.set(variant.id, {
+                                id: variant.id,
+                                title: variant.title,
+                                price: parseFloat(variant.price || '0'),
+                                compareAtPrice: parseFloat(variant.compareAtPrice || '0'),
+                            });
                         });
                     });
             }
@@ -119,8 +133,21 @@ export async function getBundles(
             createdAt: bundle.createdAt.toISOString(),
             // Add products array for BundleProductsPreview
             products: bundle.bundleProducts
-                .map(bp => productMap.get(bp.productId))
-                .filter(Boolean) // Remove any products that couldn't be fetched
+                .map(bp => {
+                    const product = productMap.get(bp.productId);
+                    const selectedVariant = variantMap.get(bp.variantId); // Match the specific variant
+
+                    if (!product) return null;
+
+                    return {
+                        ...product,
+                        selectedVariant: selectedVariant || null,
+                        quantity: bp.quantity,
+                        role: bp.role,
+                        displayOrder: bp.displayOrder,
+                    };
+                })
+                .filter(Boolean)
         }));
 
         return {
@@ -588,6 +615,52 @@ export async function updateBundle(
         };
     } catch (error) {
         return handleBundleError(error);
+    }
+}
+
+/**
+ * Update bundle status
+ */
+export async function updateBundleStatus(
+    sessionToken: string,
+    bundleId: string,
+    status: BundleStatus,
+) {
+    try {
+        // Validate status
+        if (!bundleStatusConfigs[status]) {
+            throw new Error("Invalid bundle status");
+        }
+
+        // Get shop from the session
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        // Update only the status
+        const updatedBundle = await bundleQueries.updateStatusById(
+            bundleId,
+            shop,
+            status,
+        );
+
+        // Revalidate affected pages
+        revalidatePath("/bundles");
+        revalidatePath(`/bundles/${bundleId}`);
+
+        return {
+            status: "success" as const,
+            message: "Bundle status updated successfully",
+            data: updatedBundle,
+            errors: null,
+        };
+    } catch (error: any) {
+        return {
+            status: "error" as const,
+            message: error.message || "Failed to update bundle status",
+            data: null,
+            errors: [error],
+        };
     }
 }
 

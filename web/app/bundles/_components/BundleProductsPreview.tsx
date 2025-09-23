@@ -1,75 +1,68 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import Image from "next/image";
+import { useCallback, useState } from "react";
 import {
-    Popover,
-    ActionList,
-    Thumbnail,
-    InlineStack,
-    Text,
     Box,
-    ResourceList,
+    InlineStack,
+    Popover,
     ResourceItem,
+    ResourceList,
+    Text,
+    Thumbnail,
 } from "@shopify/polaris";
 import { BundleListItem } from "@/types";
+import { groupProductsById } from "@/utils";
 
-interface BundleProductsPreviewProps {
+interface Props {
     bundle: BundleListItem;
 }
 
-export default function BundleProductsPreview({ bundle }: BundleProductsPreviewProps) {
+export default function BundleProductsPreview({ bundle }: Props) {
     const [popoverActive, setPopoverActive] = useState(false);
 
-    const togglePopover = useCallback(() =>
-        setPopoverActive((active) => !active), []
+    const togglePopover = useCallback(
+        () => setPopoverActive((active) => !active),
+        [],
     );
 
     // Use pre-fetched products from bundle data
     const displayProducts = bundle.products.slice(0, 3);
     const remainingCount = Math.max(0, bundle.products.length - 3);
+    const groupedProducts = groupProductsById(bundle.products);
 
     const activator = (
         <div
+            className="cursor-pointer flex items-center gap-1"
             onClick={togglePopover}
-            style={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-            }}
         >
             <InlineStack gap="100" align="center">
                 {displayProducts.map((product, index) => (
-                    <Box key={product.id} position="relative">
-                        <Thumbnail
-                            source={product.featuredImage || ''}
-                            alt={product.title}
-                            size="small"
-                        />
+                    <Box key={`${product.id}-${index}`} position="relative">
+                        <div
+                            className={`relative w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${
+                                index === 1
+                                    ? "-left-4"
+                                    : index === 2
+                                      ? "-left-8"
+                                      : ""
+                            }`}
+                        >
+                            <Image
+                                src={product.featuredImage || ""}
+                                alt={product.title}
+                                width={40}
+                                height={40}
+                                className="object-cover"
+                            />
+                        </div>
                         {index === 2 && remainingCount > 0 && (
-                            <div style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                                color: 'white',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                borderRadius: '3px'
-                            }}>
+                            <div className="absolute inset-0 bg-white/90 flex items-center justify-center text-[12px] font-bold rounded-full -left-8 right-8 border border-[var(--p-color-border)]">
                                 +{remainingCount}
                             </div>
                         )}
                     </Box>
                 ))}
-                <Text variant="bodyMd" as="span" tone="subdued">
-                    ({bundle.productCount})
-                </Text>
             </InlineStack>
         </div>
     );
@@ -81,14 +74,14 @@ export default function BundleProductsPreview({ bundle }: BundleProductsPreviewP
             onClose={togglePopover}
             preferredAlignment="left"
         >
-            <Box padding="200" minWidth="280px" maxHeight="300px">
+            <Box padding="200" minWidth="280px">
                 <ResourceList
-                    resourceName={{ singular: 'product', plural: 'products' }}
-                    items={bundle.products}
+                    resourceName={{ singular: "product", plural: "products" }}
+                    items={groupedProducts}
                     renderItem={(product) => {
                         const media = (
                             <Thumbnail
-                                source={product.featuredImage || ''}
+                                source={product.featuredImage || ""}
                                 alt={product.title}
                                 size="small"
                             />
@@ -97,14 +90,25 @@ export default function BundleProductsPreview({ bundle }: BundleProductsPreviewP
                         return (
                             <ResourceItem
                                 id={product.id}
+                                key={product.id}
                                 media={media}
+                                verticalAlignment="center"
                                 onClick={() => {
-                                    console.log('Product clicked:', product.title);
+                                    console.log(
+                                        "Product clicked:",
+                                        product.title,
+                                    );
                                 }}
                             >
-                                <Text variant="bodyMd" fontWeight="medium">
-                                    {product.title}
-                                </Text>
+                                <div className="flex items-center">
+                                    <Text
+                                        as="h4"
+                                        variant="bodyMd"
+                                        fontWeight="medium"
+                                    >
+                                        {product.title}
+                                    </Text>
+                                </div>
                             </ResourceItem>
                         );
                     }}

@@ -8,6 +8,7 @@ export interface BundleListItem {
     views: number;
     conversions: number;
     revenue: number;
+    revenueAllTime: number;
     conversionRate: number;
     productCount: number;
     createdAt: string;
@@ -59,7 +60,8 @@ export interface BundleListingState {
     // Data
     bundles: BundleListItem[];
     metrics: BundleMetrics | null;
-    refreshBundles: () => Promise<void>;
+    refreshBundles: (page?: number, itemsPerPage?: number) => Promise<void>;
+    updateBundleInStore: (bundleId: string, data: Partial<BundleListItem>) => void;
 
     // UI State
     loading: boolean;

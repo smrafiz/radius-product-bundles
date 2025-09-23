@@ -17,7 +17,7 @@ import { GlobalBanner, MetricCard } from "@/components";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { BundleErrorCard, BundleTable } from "@/bundles/_components";
 
-import { useBundlesData, useDashboardData } from "@/hooks";
+import { useSyncBundles, useBundlesData, useDashboardData } from "@/hooks";
 import { useBundleListingStore, useDashboardStore } from "@/stores";
 
 /*
@@ -30,6 +30,7 @@ export default function Bundles() {
     // Load data
     useBundlesData();
     useDashboardData();
+    useSyncBundles();
 
     const { loading, toast, hideToast } = useBundleListingStore();
 

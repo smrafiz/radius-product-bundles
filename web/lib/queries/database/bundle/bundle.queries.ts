@@ -1,6 +1,8 @@
+import { generateBundleId } from "@/utils";
 import prisma from "@/lib/db/prisma-connect";
 import { bundleFragments, dateRanges } from "@/lib/queries";
-import { generateBundleId } from "@/utils";
+
+import { BundleStatus } from "@/types";
 
 export const bundleQueries = {
     // Create bundle
@@ -229,5 +231,28 @@ export const bundleQueries = {
         ]);
 
         return { currentPeriod, previousPeriod };
+    },
+
+    // Update only the status of a bundle (with ownership check)
+    async updateStatusById(id: string, shop: string, status: string) {
+        const bundle = await prisma.bundle.findFirst({
+            where: { id, shop },
+            select: { id: true, name: true },
+        });
+
+        if (!bundle) {
+            throw new Error("Bundle not found or you don't have permission to update it");
+        }
+
+        return prisma.bundle.update({
+            where: { id },
+            data: { status: status as BundleStatus },
+            select: {
+                id: true,
+                name: true,
+                status: true,
+                updatedAt: true,
+            },
+        });
     },
 };

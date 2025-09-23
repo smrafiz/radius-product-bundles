@@ -1,26 +1,40 @@
 "use client";
 
-import { Badge, IndexTable, Text } from "@shopify/polaris";
-import {
-    formatCurrency,
-    getBundleTypeLabel,
-    getStatusBadgeProps,
-} from "@/utils";
-import { BundleListItem } from "@/types";
-import { BundleProductsPreview } from "@/bundles/_components";
+import { IndexTable, Text } from "@shopify/polaris";
+import { formatCurrency, getBundleProperty } from "@/utils";
+import { BundleProductsPreview, StatusPopover } from "@/bundles/_components";
 
-interface BundleTableRowProps {
+import { updateBundleStatus } from "@/actions";
+import { useAppBridge } from "@shopify/app-bridge-react";
+
+import { BundleListItem, BundleStatus } from "@/types";
+import { useBundleListingStore } from "@/stores";
+
+interface Props {
     bundle: BundleListItem;
     index: number;
     isSelected: boolean;
 }
 
-export default function BundleTableRow({
-    bundle,
-    index,
-    isSelected,
-}: BundleTableRowProps) {
-    const statusBadgeProps = getStatusBadgeProps(bundle.status);
+export default function BundleTableRow({ bundle, index, isSelected }: Props) {
+    const app = useAppBridge();
+    const updateBundleInStore = useBundleListingStore((s) => s.updateBundleInStore);
+
+    const handleStatusUpdate = async (status: BundleStatus) => {
+        try {
+            const token = await app.idToken();
+            const result = await updateBundleStatus(token, bundle.id, status);
+
+            if (result.status === "success") {
+                updateBundleInStore(bundle.id, { status: result.data.status });
+                console.log("Updated:", result.data);
+            } else {
+                console.error("Update failed:", result.message);
+            }
+        } catch (err) {
+            console.error("Error updating status:", err);
+        }
+    };
 
     return (
         <IndexTable.Row
@@ -30,7 +44,7 @@ export default function BundleTableRow({
             position={index}
         >
             <IndexTable.Cell>
-                <Text variant="bodyMd" fontWeight="medium" as="span">
+                <Text variant="bodyMd" fontWeight="medium" as="h2">
                     {bundle.name}
                 </Text>
             </IndexTable.Cell>
@@ -42,13 +56,13 @@ export default function BundleTableRow({
             </IndexTable.Cell>
 
             <IndexTable.Cell>
-                <Badge>{getBundleTypeLabel(bundle.type)}</Badge>
+                <Text variant="bodyMd" fontWeight="medium" as="span">
+                    {getBundleProperty(bundle.type, "label")}
+                </Text>
             </IndexTable.Cell>
 
             <IndexTable.Cell>
-                <Badge tone={statusBadgeProps.tone as any}>
-                    {statusBadgeProps.text}
-                </Badge>
+                <StatusPopover bundle={bundle} onStatusUpdate={handleStatusUpdate} />
             </IndexTable.Cell>
 
             <IndexTable.Cell>
@@ -60,6 +74,12 @@ export default function BundleTableRow({
             <IndexTable.Cell>
                 <Text variant="bodyMd" as="span">
                     {bundle.views.toLocaleString()}
+                </Text>
+            </IndexTable.Cell>
+
+            <IndexTable.Cell>
+                <Text variant="bodyMd" as="span">
+                    Actions
                 </Text>
             </IndexTable.Cell>
         </IndexTable.Row>

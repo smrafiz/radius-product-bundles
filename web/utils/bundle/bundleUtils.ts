@@ -1,5 +1,5 @@
 import { bundleTypeConfigs } from "@/config";
-import { BundleType, SelectedItem, ProductGroup, BundleConfig } from "@/types";
+import { BundleType, SelectedItem, } from "@/types";
 import { customAlphabet } from "nanoid";
 
 /**
@@ -20,22 +20,6 @@ export const bundleTypeMap = Object.values(bundleTypeConfigs).reduce(
     },
     {} as Record<string, BundleType>,
 );
-
-/**
- * Get bundle configuration properties
- *
- * @param type - The bundle type
- * @param property - The property to retrieve ('label', 'icon', 'slug')
- */
-export const getBundleProperty = <
-    T extends keyof Pick<BundleConfig, "label" | "icon" | "slug">,
->(
-    type: BundleType,
-    property: T,
-): BundleConfig[T] | null => {
-    const config = bundleTypeConfigs[type];
-    return config?.[property] ?? null;
-};
 
 /**
  * Calculate total bundle price
@@ -108,28 +92,6 @@ export function formatPrice(price: number): string {
         style: "currency",
         currency: "USD",
     }).format(price);
-}
-
-/**
- * Group selected items by product
- */
-export function groupItemsByProduct(items: SelectedItem[]): ProductGroup[] {
-    const groups: Record<string, ProductGroup> = {};
-
-    items.forEach((item) => {
-        if (!groups[item.productId]) {
-            groups[item.productId] = {
-                product: item,
-                variants: [],
-                originalTotalVariants: item.totalVariants || 1,
-            };
-        }
-        if (item.type === "variant") {
-            groups[item.productId].variants.push(item);
-        }
-    });
-
-    return Object.values(groups);
 }
 
 /**

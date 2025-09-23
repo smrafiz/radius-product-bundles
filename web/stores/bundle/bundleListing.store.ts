@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { getBundles } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-import type { BundleListingState } from "@/types";
+import type { BundleListingState, BundleListItem } from "@/types";
 
 export const useBundleListingStore = create<BundleListingState>()(
     (set, get) => ({
@@ -249,6 +249,13 @@ export const useBundleListingStore = create<BundleListingState>()(
                         : "Showing page 1 of 1",
             };
         },
+
+        updateBundleInStore: (bundleId: string, data: Partial<BundleListItem>) =>
+            set((state) => ({
+                bundles: state.bundles.map((b) =>
+                    b.id === bundleId ? { ...b, ...data } : b
+                ),
+            })),
 
         refreshBundles: async (page: number = 1, itemsPerPage: number = 10) => {
             try {
