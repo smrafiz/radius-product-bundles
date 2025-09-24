@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { ActionList, Badge, Icon, InlineStack, Link, Modal, Popover, Text, } from "@shopify/polaris";
-import { BundleListItem, BundleStatus } from "@/types";
 import { getStatusBadge } from "@/utils";
+import { useCallback, useState } from "react";
 import { bundleStatusConfigs } from "@/config";
+import { BundleListItem, BundleStatus } from "@/types";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
+import { ActionList, Badge, Icon, InlineStack, Link, Modal, Popover, Text, } from "@shopify/polaris";
+
 import { useBundleListingStore } from "@/stores";
 
 interface Props {
