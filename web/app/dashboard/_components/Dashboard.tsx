@@ -6,25 +6,32 @@ import {
     ErrorCard,
     PageSkeleton,
 } from "@/dashboard/_components";
-import { withLoader } from "@/utils";
 import { MetricCard } from "@/components";
 import { useRouter } from "next/navigation";
-import { formatCurrency, formatPercentage } from "@/utils";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
+import { formatCurrency, formatPercentage, withLoader } from "@/utils";
 import { QuickActions } from "@/app/dashboard/_components/QuickActions";
 
-import { useDashboardData } from "@/hooks";
 import { useDashboardStore } from "@/stores";
+import { useDashboardData, useSyncBundles } from "@/hooks";
 
 export default function Dashboard() {
     const router = useRouter();
-    const { loading, error, metrics, toast, hideToast } = useDashboardStore();
+    const { loading, error, metrics, bundles, toast, hideToast } =
+        useDashboardStore();
+
+    // Load data
     useDashboardData();
+    useSyncBundles();
 
     if (loading) {
         return <PageSkeleton />;
     }
+
+    const activeBundles = bundles.filter(
+        (bundle) => bundle.status === "ACTIVE",
+    ).length;
 
     return (
         <Frame>
@@ -69,7 +76,7 @@ export default function Dashboard() {
                             />
                             <MetricCard
                                 title="Active Bundles"
-                                value={(metrics?.activeBundles || 0).toString()}
+                                value={(activeBundles || 0).toString()}
                                 action={{ label: "View all", url: "/bundles" }}
                                 comparisonLabel="Total created"
                             />

@@ -24,13 +24,13 @@ import { useBundleListingStore, useDashboardStore } from "@/stores";
  * Bundles page
  */
 export default function Bundles() {
-    const router = useRouter();
-    const { metrics } = useDashboardStore();
-
     // Load data
     useBundlesData();
     useDashboardData();
     useSyncBundles();
+
+    const router = useRouter();
+    const { metrics } = useDashboardStore();
 
     const { loading, toast, hideToast } = useBundleListingStore();
 
