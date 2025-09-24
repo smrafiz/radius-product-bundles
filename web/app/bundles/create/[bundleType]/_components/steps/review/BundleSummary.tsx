@@ -3,6 +3,7 @@
 import { Card, InlineStack, Text, BlockStack, Divider } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
 import { useGroupedProducts } from "@/hooks";
+import { getDiscountProperty } from "@/utils";
 
 export default function BundleSummary() {
     const bundleData = useBundleStore((state) => state.bundleData);
@@ -13,20 +14,16 @@ export default function BundleSummary() {
     const groupedItems = useGroupedProducts(selectedItems);
 
     const formatDiscountValue = () => {
-        if (!bundleData.discountValue) return "0";
-
-        switch (bundleData.discountType) {
-            case "PERCENTAGE":
-                return `${bundleData.discountValue}%`;
-            case "FIXED_AMOUNT":
-                return `$${bundleData.discountValue}`;
-            case "FREE_SHIPPING":
-                return "Free shipping";
-            case "CUSTOM_PRICE":
-                return `$${bundleData.discountValue} (Custom Price)`;
-            default:
-                return `${bundleData.discountValue}`;
+        if (!bundleData.discountValue) {
+            return "0";
         }
+
+        if (!bundleData.discountType) {
+            return `${bundleData.discountValue}`;
+        }
+
+        const formatFunction = getDiscountProperty(bundleData.discountType, 'format');
+        return formatFunction?.(bundleData.discountValue) || `${bundleData.discountValue}`;
     };
 
     // Calculate subtotal (sum of all products and variants)

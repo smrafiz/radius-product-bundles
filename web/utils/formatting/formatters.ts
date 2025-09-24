@@ -1,5 +1,8 @@
 import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/lib/constants";
 
+import { BundleListItem } from "@/types";
+import { discountTypeConfigs } from "@/config";
+
 /**
  * Get currency symbol for a given currency code
  * @param currencyCode - The currency code (e.g., 'USD', 'EUR')
@@ -79,3 +82,18 @@ export const convertShopifyLocale = (
 
     return "en-US";
 };
+
+export function formatDiscount(bundle: BundleListItem): string {
+    if (!bundle.discountType) {
+        return "No Discount";
+    }
+
+    const config = discountTypeConfigs[bundle.discountType];
+    if (!config) {
+        return "No Discount";
+    }
+
+    console.log(bundle);
+
+    return config.format(bundle.discountValue, formatCurrency);
+}

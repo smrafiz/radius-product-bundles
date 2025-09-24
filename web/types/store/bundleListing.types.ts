@@ -1,4 +1,4 @@
-import type { BundleStatus, BundleType } from "@/types";
+import type { BundleStatus, BundleType, DiscountType } from "@/types";
 
 export interface BundleListItem {
     id: string;
@@ -12,6 +12,10 @@ export interface BundleListItem {
     conversionRate: number;
     productCount: number;
     createdAt: string;
+
+    discountType: DiscountType;
+    discountValue: number;
+
     products: Array<{
         id: string;
         title: string;

@@ -131,7 +131,8 @@ export async function getBundles(
                     : 0,
             productCount: bundle.bundleProducts.length,
             createdAt: bundle.createdAt.toISOString(),
-            // Add products array for BundleProductsPreview
+            discountType: bundle.discountType,
+            discountValue: bundle.discountValue,
             products: bundle.bundleProducts
                 .map(bp => {
                     const product = productMap.get(bp.productId);

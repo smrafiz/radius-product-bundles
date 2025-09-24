@@ -9,3 +9,4 @@ export { default as BundleIndexFilters } from "./BundleIndexFilters";
 export { default as BundleTableEmptyStates } from "./BundleTableEmptyStates";
 export { default as BundleProductsPreview } from "./BundleProductsPreview";
 export { default as StatusPopover } from "./StatusPopover";
+export { default as BundleActionsGroup } from "./BundleActionsGroup";

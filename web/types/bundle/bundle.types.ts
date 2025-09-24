@@ -69,6 +69,19 @@ export interface BundleStatusBadge {
 }
 
 /*
+ * Discount config types
+ */
+export interface DiscountConfig {
+    label: string;
+    id: DiscountType;
+    slug: string;
+    description: string;
+    symbol: string;
+    suffix: string;
+    format: (value?: number, formatCurrency?: (val: number) => string, includeLabel?: boolean) => string;
+}
+
+/*
  * Create bundle payload types
  */
 export interface CreateBundlePayload {

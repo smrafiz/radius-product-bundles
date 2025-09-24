@@ -1,13 +1,5 @@
 import { DiscountType } from "@/types";
 
-export const DISCOUNT_TYPES: { label: string; value: DiscountType }[] = [
-    { label: "Percentage", value: "PERCENTAGE" },
-    { label: "Fixed Amount", value: "FIXED_AMOUNT" },
-    { label: "Custom Price", value: "CUSTOM_PRICE" },
-    { label: "Free Shipping", value: "FREE_SHIPPING" },
-    { label: "No Discount", value: "NO_DISCOUNT" },
-];
-
 export const WIDGET_LAYOUTS = [
     {
         label: "Horizontal Layout",

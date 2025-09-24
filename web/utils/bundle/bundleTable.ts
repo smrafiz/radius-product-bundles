@@ -1,5 +1,13 @@
-import { bundleStatusConfigs, bundleTypeConfigs } from "@/config";
-import { BundleConfig, BundleStatus, BundleStatusBadge, BundleType, ProductGroup, } from "@/types";
+import { bundleStatusConfigs, bundleTypeConfigs, discountTypeConfigs, } from "@/config";
+import {
+    BundleConfig,
+    BundleStatus,
+    BundleStatusBadge,
+    BundleType,
+    DiscountConfig,
+    DiscountType,
+    ProductGroup,
+} from "@/types";
 
 /**
  * Get bundle configuration properties
@@ -48,3 +56,17 @@ export function groupProductsById(products: any[]): ProductGroup[] {
 
     return Object.values(groups);
 }
+
+export const getDiscountProperty = <
+    T extends keyof Pick<
+        DiscountConfig,
+        "label" | "slug" | "description" | "symbol" | "suffix" | "format"
+    >,
+>(
+    type: DiscountType,
+    property: T,
+): DiscountConfig[T] | null => {
+    const config = discountTypeConfigs[type];
+    return config?.[property] ?? null;
+};
+
