@@ -20,8 +20,6 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
     const [newStatus, setNewStatus] = useState<BundleStatus | null>(null);
     const [updating, setUpdating] = useState(false);
 
-    const refreshBundles = useBundleListingStore((s) => s.refreshBundles);
-    const pagination = useBundleListingStore((s) => s.pagination);
     const showToast = useBundleListingStore((s) => s.showToast);
 
     const togglePopover = useCallback(

@@ -109,9 +109,9 @@ export default function BundleTable() {
                     { title: "Bundle Name" },
                     { title: "Bundled Products" },
                     { title: "Type" },
-                    { title: "Status", alignment: 'center' },
                     { title: "Discount" },
-                    { title: "Views" },
+                    { title: "Status" },
+                    // { title: "Views" },
                     { title: "Actions", alignment: 'center' },
                 ]}
                 selectable

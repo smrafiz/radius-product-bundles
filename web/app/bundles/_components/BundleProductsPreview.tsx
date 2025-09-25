@@ -33,7 +33,7 @@ export default function BundleProductsPreview({ bundle }: Props) {
     const displayProducts = groupedProducts.slice(0, 3);
     const totalCount = groupedProducts.length;
     const remainingCount = Math.max(0, totalCount - 3);
-    let arrowClass = '-left-12';
+    let arrowClass = '-left-2';
 
     if (totalCount === 1) {
         arrowClass = '-left-2';
@@ -51,7 +51,7 @@ export default function BundleProductsPreview({ bundle }: Props) {
                     {displayProducts.map((product, index) => (
                         <Box key={`${product.id}-${index}`} position="relative">
                             <div
-                                className={`relative w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${
+                                className={`${index === 2 ? "absolute" : "relative"} w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${
                                     index === 1
                                         ? "-left-5"
                                         : index === 2
@@ -68,7 +68,7 @@ export default function BundleProductsPreview({ bundle }: Props) {
                                 />
                             </div>
                             {index === 2 && remainingCount > 0 && (
-                                <div className="absolute inset-0 bg-white/92 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 right-10 border border-[var(--p-color-border)]">
+                                <div className="absolute w-10 h-10 inset-0 bg-white/92 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 right-10 border border-[var(--p-color-border)]">
                                     +{remainingCount}
                                 </div>
                             )}

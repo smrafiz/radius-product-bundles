@@ -77,7 +77,7 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
             position={index}
         >
             {/* Bundle name */}
-            <IndexTable.Cell>
+            <IndexTable.Cell className="w-[220px] !whitespace-normal">
                 <Text variant="bodyMd" fontWeight="medium" as="h2">
                     {bundle.name}
                 </Text>
@@ -97,11 +97,6 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
                 </Text>
             </IndexTable.Cell>
 
-            {/* Bundle status */}
-            <IndexTable.Cell className="text-center">
-                <StatusPopover bundle={bundle} onStatusUpdate={handleStatusUpdate} />
-            </IndexTable.Cell>
-
             {/* Bundle price */}
             <IndexTable.Cell>
                 <Text variant="bodyMd" fontWeight="medium" as="span">
@@ -110,10 +105,15 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
             </IndexTable.Cell>
 
             {/* Bundle views */}
+            {/*<IndexTable.Cell>*/}
+            {/*    <Text variant="bodyMd" as="span">*/}
+            {/*        {bundle.views.toLocaleString()}*/}
+            {/*    </Text>*/}
+            {/*</IndexTable.Cell>*/}
+
+            {/* Bundle status */}
             <IndexTable.Cell>
-                <Text variant="bodyMd" as="span">
-                    {bundle.views.toLocaleString()}
-                </Text>
+                <StatusPopover bundle={bundle} onStatusUpdate={handleStatusUpdate} />
             </IndexTable.Cell>
 
             {/* Bundle actions */}

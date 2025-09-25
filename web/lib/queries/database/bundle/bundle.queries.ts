@@ -60,6 +60,21 @@ export const bundleQueries = {
         });
     },
 
+    // Find bundle by name (with excludeId)
+    async findByNameWithExclusion(
+        shop: string,
+        name: string,
+        excludeId?: string,
+    ) {
+        return await prisma.bundle.findFirst({
+            where: {
+                shop,
+                name,
+                id: { not: excludeId },
+            },
+        });
+    },
+
     // Find bundles by shop
     async findByShop(
         shop: string,
@@ -117,6 +132,18 @@ export const bundleQueries = {
         });
     },
 
+    // Find bundles by product ID with products
+    async findByIdWithProducts(id: string, shop: string) {
+        return await prisma.bundle.findFirst({
+            where: { id, shop },
+            include: {
+                bundleProducts: {
+                    orderBy: { displayOrder: "asc" },
+                },
+            },
+        });
+    },
+
     // Count recent bundles
     async countRecent(shop: string, minutes: number = 1) {
         return await prisma.bundle.count({
@@ -126,6 +153,13 @@ export const bundleQueries = {
                     gte: dateRanges.recentMinutes(minutes),
                 },
             },
+        });
+    },
+
+    // Count bundles by shop
+    async countByShop(shop: string) {
+        return await prisma.bundle.count({
+            where: { shop },
         });
     },
 
@@ -241,7 +275,9 @@ export const bundleQueries = {
         });
 
         if (!bundle) {
-            throw new Error("Bundle not found or you don't have permission to update it");
+            throw new Error(
+                "Bundle not found or you don't have permission to update it",
+            );
         }
 
         return prisma.bundle.update({

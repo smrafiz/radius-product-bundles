@@ -1,3 +1,4 @@
+import { IconSource } from "@shopify/polaris";
 import type { BundleStatus, BundleType, DiscountType } from "@/types";
 
 export interface BundleListItem {
@@ -22,6 +23,14 @@ export interface BundleListItem {
         featuredImage?: string;
         handle: string;
     }>;
+}
+
+export interface BundleAction {
+    key: string;
+    icon: IconSource;
+    tooltip: string;
+    tone?: "success" | "critical";
+    disabled?: boolean;
 }
 
 export interface BundleMetrics {

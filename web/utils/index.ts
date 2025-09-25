@@ -2,10 +2,12 @@ export * from "./query/query";
 export * from "./shared/global";
 export * from "./error/errorUtils";
 export * from "./shop/sessionUtils";
-export * from "./bundle/bundleUtils";
+
 export * from "./shopify/setupCheck";
 export * from "./shopify/env-config";
-export * from "./bundle/bundleTable";
-export * from "./metric/metric.utils";
+
 export * from "./shopify/shopifyUtils";
 export * from "./formatting/formatters";
+
+export * from "./bundle";
+export * from "./metric";

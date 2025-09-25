@@ -1,64 +1,46 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
-import {
-    EditIcon,
-    DuplicateIcon,
-    DeleteIcon,
-    ViewIcon
-} from "@shopify/polaris-icons";
-import { BundleListItem } from "@/types";
 
-interface BundleAction {
-    icon: React.ComponentType<any>;
-    tooltip: string;
-    onClick: (bundle: BundleListItem) => void;
-    tone?: "success" | "critical" | "base";
-    disabled?: boolean;
-}
+import { BundleListItem } from "@/types";
+import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
 
 interface Props {
     bundle: BundleListItem;
-    actions?: BundleAction[];
 }
 
-export default function BundleActionsGroup({ bundle, actions }: Props) {
-    // Default actions if none provided
-    const defaultActions: BundleAction[] = [
-        {
-            icon: EditIcon,
-            tooltip: "Edit bundle",
-            onClick: (bundle) => console.log("Edit", bundle.id),
-        },
-        {
-            icon: ViewIcon,
-            tooltip: "View bundle",
-            onClick: (bundle) => console.log("View", bundle.id),
-        },
-        {
-            icon: DuplicateIcon,
-            tooltip: "Duplicate bundle",
-            onClick: (bundle) => console.log("Duplicate", bundle.id),
-        },
-        {
-            icon: DeleteIcon,
-            tooltip: "Delete bundle",
-            onClick: (bundle) => console.log("Delete", bundle.id),
-            tone: "critical",
-        },
-    ];
+export default function BundleActionsGroup({ bundle }: Props) {
+    const router = useRouter();
 
-    const actionsToRender = actions || defaultActions;
+    const handleActionClick = (actionKey: string, bundle: BundleListItem) => {
+        switch (actionKey) {
+            case "edit":
+                router.push(`/bundles/${bundle.id}/edit`);
+                break;
+            case "view":
+                window.open(`/bundles/${bundle.id}/preview`, '_blank');
+                break;
+            case "duplicate":
+                onDuplicate ? onDuplicate(bundle) : console.log("Duplicate", bundle.id);
+                break;
+            case "delete":
+                onDelete ? onDelete(bundle) : console.log("Delete", bundle.id);
+                break;
+            default:
+                console.warn(`Unknown action: ${actionKey}`);
+        }
+    };
 
     return (
         <ButtonGroup variant="segmented">
-            {actionsToRender.map((action, index) => (
+            {LISTING_DEFAULT_ACTIONS.map((action, index) => (
                 <Tooltip key={index} content={action.tooltip}>
                     <Button
                         icon={action.icon}
                         tone={action.tone}
                         disabled={action.disabled}
-                        onClick={() => action.onClick(bundle)}
+                        onClick={() => handleActionClick(action.key, bundle)}
                         accessibilityLabel={action.tooltip}
                     />
                 </Tooltip>

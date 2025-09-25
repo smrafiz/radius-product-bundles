@@ -1,3 +1,3 @@
-export type * from "@/types/api/graphql";
-export type * from "@/types/api/api.types";
-export type * from "@/types/api/automation.types";
+export type * from "./graphql";
+export type * from "./api.types";
+export type * from "./automation.types";

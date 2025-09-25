@@ -66,6 +66,7 @@ query GetBundleProducts($ids: [ID!]!) {
             variants(first: 50) {
                 nodes {
                     id
+                    title
                     price
                     compareAtPrice
                 }
