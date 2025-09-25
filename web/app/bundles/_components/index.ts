@@ -10,3 +10,4 @@ export { default as BundleTableEmptyStates } from "./BundleTableEmptyStates";
 export { default as BundleProductsPreview } from "./BundleProductsPreview";
 export { default as StatusPopover } from "./StatusPopover";
 export { default as BundleActionsGroup } from "./BundleActionsGroup";
+export { default as DeleteBundleModal } from "./DeleteBundleModal";
