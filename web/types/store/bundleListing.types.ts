@@ -75,6 +75,7 @@ export interface BundleListingState {
     metrics: BundleMetrics | null;
     refreshBundles: (page?: number, itemsPerPage?: number) => Promise<void>;
     updateBundleInStore: (bundleId: string, data: Partial<BundleListItem>) => void;
+    removeBundleFromStore: (bundleId: string) => void;
 
     // UI State
     loading: boolean;

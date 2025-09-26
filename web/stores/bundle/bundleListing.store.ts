@@ -257,6 +257,11 @@ export const useBundleListingStore = create<BundleListingState>()(
                 ),
             })),
 
+        removeBundleFromStore: (bundleId: string) =>
+            set((state) => ({
+                bundles: state.bundles.filter(bundle => bundle.id !== bundleId)
+            })),
+
         refreshBundles: async (page: number = 1, itemsPerPage: number = 10) => {
             try {
                 set({ loading: true });

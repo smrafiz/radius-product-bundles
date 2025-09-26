@@ -8,6 +8,9 @@ import { BundleListItem } from "@/types";
 import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
 import { useState } from "react";
 import { DeleteBundleModal } from "@/bundles/_components";
+import { useBundleListingStore } from "@/stores";
+import { useSessionToken } from "@/hooks";
+import { duplicateBundle } from "@/actions/bundleActions";
 
 interface Props {
     bundle: BundleListItem;
@@ -15,8 +18,13 @@ interface Props {
 
 export default function BundleActionsGroup({ bundle }: Props) {
     const router = useRouter();
+    const showToast = useBundleListingStore((s) => s.showToast);
+    const removeBundleFromStore = useBundleListingStore((s) => s.removeBundleFromStore);
+
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isDuplicating, setIsDuplicating] = useState(false);
     const [toast, setToast] = useState({ active: false, message: "" });
+    const sessionToken = useSessionToken();
 
     const handleActionClick = (actionKey: string, bundle: BundleListItem) => {
         switch (actionKey) {
@@ -27,7 +35,7 @@ export default function BundleActionsGroup({ bundle }: Props) {
                 window.open(`/bundles/${bundle.id}/preview`, "_blank");
                 break;
             case "duplicate":
-                console.log("Duplicate", bundle.id);
+                await handleDuplicateBundle(bundle);
                 break;
             case "delete":
                 setDeleteModalOpen(true);
@@ -38,10 +46,40 @@ export default function BundleActionsGroup({ bundle }: Props) {
     };
 
     const handleDeleteSuccess = (bundleName: string) => {
-        setToast({
-            active: true,
-            message: `Bundle "${bundleName}" has been deleted successfully`,
-        });
+        removeBundleFromStore(bundle.id);
+        showToast(`Bundle "${bundleName}" has been deleted successfully`);
+    };
+
+    const handleDuplicateBundle = async (bundle: BundleListItem) => {
+        if (!sessionToken) {
+            setToast({
+                active: true,
+                message: "Session expired. Please refresh the page and try again.",
+            });
+            return;
+        }
+
+        setIsDuplicating(true);
+        try {
+            const result = await duplicateBundle(sessionToken, bundle.id);
+            if (result.status === "success") {
+                router.push(`/bundles/${result.data.id}/edit`);
+                showToast(`Bundle "${bundle.name}" duplicated successfully`);
+            } else {
+                setToast({
+                    active: true,
+                    message: result.message || "Failed to duplicate bundle",
+                });
+            }
+        } catch (error) {
+            console.error("Error duplicating bundle:", error);
+            setToast({
+                active: true,
+                message: "An error occurred while duplicating the bundle",
+            });
+        } finally {
+            setIsDuplicating(false);
+        }
     };
 
     const handleDeleteError = (error: string) => {

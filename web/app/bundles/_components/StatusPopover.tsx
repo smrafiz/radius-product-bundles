@@ -104,7 +104,7 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
                 onClose={toggleConfirm}
                 title="Confirm Status Change"
                 primaryAction={{
-                    content: updating ? undefined : "Confirm",
+                    content: "Confirm",
                     loading: updating,
                     onAction: handleConfirm,
                 }}

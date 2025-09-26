@@ -1,7 +1,9 @@
+import { BundleStatus, BundleType, DiscountType } from "@/types";
+
 export interface TransformedProduct {
     id: string;
     title: string;
-    featuredImage: string | null;
+    featuredImage?: string;
     handle: string;
     selectedVariant: TransformedVariant | null;
     quantity: number;
@@ -19,22 +21,23 @@ export interface TransformedVariant {
 export interface TransformedBundleBase {
     id: string;
     name: string;
-    type: string;
-    status: string;
+    type: BundleType;
+    status: BundleStatus;
     views: number;
     conversions: number;
     revenue: number;
+    revenueAllTime: number;
     conversionRate: number;
     productCount: number;
     createdAt: string;
     updatedAt: string;
+    discountType: DiscountType;
+    discountValue: number;
     products: TransformedProduct[];
 }
 
 export interface TransformedBundle extends TransformedBundleBase {
     description: string | null;
-    discountType: string;
-    discountValue: number;
     minOrderValue: number | null;
     maxDiscountAmount: number | null;
     startDate: string | null;

@@ -7,16 +7,16 @@ export function useSyncBundles() {
         (state) => state.bundles,
         useDashboardStore,
         (target, bundles) => {
-            // Calculate active bundles count
             const activeBundlesCount = bundles.filter(bundle => bundle.status === 'ACTIVE').length;
+            const totalBundlesCount = bundles.length;
 
             return {
                 ...target,
                 bundles,
-                // Also update the metrics with calculated active bundles
                 metrics: target.metrics ? {
                     ...target.metrics,
-                    activeBundles: activeBundlesCount
+                    activeBundles: activeBundlesCount,
+                    totalBundles: totalBundlesCount,
                 } : null
             };
         }

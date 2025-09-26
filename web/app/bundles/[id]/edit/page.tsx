@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Banner, Card, Page, Text } from "@shopify/polaris";
 import { getBundle, updateBundle } from "@/actions";
@@ -20,7 +19,7 @@ import { GlobalForm } from "@/components";
 import { useBundleStore } from "@/stores";
 import { BundleFormData } from "@/lib/validation";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
-import { useGlobalBanner } from "@/hooks";
+import { useGlobalBanner, useSyncActiveBundleDeletion } from "@/hooks";
 
 interface EditBundlePageProps {
     params: Promise<{
@@ -35,6 +34,8 @@ export default function EditBundlePage({ params }: EditBundlePageProps) {
     const { resetDirty, setSaving, setSelectedItems, setStep } =
         useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
+
+    useSyncActiveBundleDeletion();
 
     // Fetch bundle data
     const {

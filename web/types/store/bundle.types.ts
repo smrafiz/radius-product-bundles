@@ -1,7 +1,5 @@
 import {
     BundleConfiguration,
-    type BundleStatus,
-    type BundleType,
     DisplaySettings,
     ExtendedBundleFormData,
     ProductGroup,
@@ -80,4 +78,5 @@ export interface BundleState {
 
     // Reset
     resetBundle: () => void;
+    handleActiveBundleDeletion: (bundles: any[]) => boolean;
 }

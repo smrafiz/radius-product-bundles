@@ -4,3 +4,4 @@ export { useBundlesData } from "@/hooks/data/useBundlesData";
 export { useSyncBundles } from "@/hooks/data/useSyncBundles";
 export { useQueryBuilder } from "@/hooks/data/useQueryBuilder";
 export { useDashboardData } from "@/hooks/data/useDashboardData";
+export { useSyncActiveBundleDeletion } from "@/hooks/data/useSyncActiveBundleDeletion";

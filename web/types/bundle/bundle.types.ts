@@ -113,6 +113,7 @@ export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
  * Extended bundle form data types
  */
 export interface ExtendedBundleFormData extends BundleFormData {
+    id?: string;
     type: PrismaBundleType;
 }
 

@@ -99,7 +99,7 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
 
             {/* Bundle price */}
             <IndexTable.Cell>
-                <Text variant="bodyMd" fontWeight="medium" as="span">
+                <Text variant="bodyMd" fontWeight="medium" as="span" tone="subdued">
                     {formatDiscount(bundle)}
                 </Text>
             </IndexTable.Cell>

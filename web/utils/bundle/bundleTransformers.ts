@@ -1,5 +1,5 @@
 import type { Bundle, BundleProduct } from "@prisma/client";
-import type { TransformedBundle, TransformedBundleListing, TransformedBundle } from "@/types";
+import type { BundleStatus, BundleType, DiscountType, TransformedBundle, TransformedBundleListing, } from "@/types";
 
 /**
  * Core bundle transformation
@@ -7,23 +7,25 @@ import type { TransformedBundle, TransformedBundleListing, TransformedBundle } f
 export function transformBundleCore(
     bundle: Bundle & { bundleProducts: BundleProduct[] },
     productMap?: Map<string, any>,
-    variantMap?: Map<string, any>
+    variantMap?: Map<string, any>,
 ): TransformedBundle {
     return {
         id: bundle.id,
         name: bundle.name,
-        type: bundle.type,
-        status: bundle.status,
+        type: bundle.type as BundleType,
+        status: bundle.status as BundleStatus,
         views: bundle.views,
         conversions: bundle.conversions,
         revenue: bundle.revenue,
-        conversionRate: bundle.views > 0 ? (bundle.conversions / bundle.views) * 100 : 0,
+        revenueAllTime: bundle.revenue,
+        conversionRate:
+            bundle.views > 0 ? (bundle.conversions / bundle.views) * 100 : 0,
         productCount: bundle.bundleProducts.length,
         createdAt: bundle.createdAt.toISOString(),
-        discountType: bundle.discountType,
+        discountType: bundle.discountType as DiscountType,
         discountValue: bundle.discountValue,
         products: bundle.bundleProducts
-            .map(bp => {
+            .map((bp) => {
                 const product = productMap?.get(bp.productId);
                 const selectedVariant = variantMap?.get(bp.variantId);
 
@@ -47,16 +49,18 @@ export function transformBundleCore(
 export function transformBundles(
     bundles: (Bundle & { bundleProducts: BundleProduct[] })[],
     productMap?: Map<string, any>,
-    variantMap?: Map<string, any>
+    variantMap?: Map<string, any>,
 ): TransformedBundleListing {
-    return bundles.map(bundle => transformBundleCore(bundle, productMap, variantMap));
+    return bundles.map((bundle) =>
+        transformBundleCore(bundle, productMap, variantMap),
+    );
 }
 
 /**
  * Single bundle transformation
  */
 export function transformBundle(
-    bundle: Bundle & { bundleProducts: BundleProduct[] }
+    bundle: Bundle & { bundleProducts: BundleProduct[] },
 ): TransformedBundle {
     return {
         id: bundle.id,
@@ -72,7 +76,7 @@ export function transformBundle(
         endDate: bundle.endDate?.toISOString() || null,
         createdAt: bundle.createdAt.toISOString(),
         updatedAt: bundle.updatedAt.toISOString(),
-        products: bundle.bundleProducts.map(bp => ({
+        products: bundle.bundleProducts.map((bp) => ({
             id: bp.id,
             productId: bp.productId,
             variantId: bp.variantId,
