@@ -1,5 +1,12 @@
 import type { Bundle, BundleProduct } from "@prisma/client";
-import type { BundleStatus, BundleType, DiscountType, TransformedBundle, TransformedBundleListing, } from "@/types";
+import type {
+    BundleStatus,
+    BundleType,
+    DiscountType,
+    TransformedBundle,
+    TransformedBundleBase,
+    TransformedBundleListing,
+} from "@/types";
 
 /**
  * Core bundle transformation
@@ -8,7 +15,7 @@ export function transformBundleCore(
     bundle: Bundle & { bundleProducts: BundleProduct[] },
     productMap?: Map<string, any>,
     variantMap?: Map<string, any>,
-): TransformedBundle {
+): TransformedBundleBase {
     return {
         id: bundle.id,
         name: bundle.name,
@@ -27,13 +34,17 @@ export function transformBundleCore(
         products: bundle.bundleProducts
             .map((bp) => {
                 const product = productMap?.get(bp.productId);
-                const selectedVariant = variantMap?.get(bp.variantId);
+                const selectedVariant = bp.variantId
+                    ? variantMap?.get(bp.variantId)
+                    : null;
 
-                if (!product) return null;
+                if (!product) {
+                    return null;
+                }
 
                 return {
                     ...product,
-                    selectedVariant: selectedVariant || null,
+                    selectedVariant,
                     quantity: bp.quantity,
                     role: bp.role,
                     displayOrder: bp.displayOrder,
@@ -61,29 +72,23 @@ export function transformBundles(
  */
 export function transformBundle(
     bundle: Bundle & { bundleProducts: BundleProduct[] },
+    productMap?: Map<string, any>,
+    variantMap?: Map<string, any>,
 ): TransformedBundle {
+    const core = transformBundleCore(bundle, productMap, variantMap);
+
     return {
-        id: bundle.id,
-        name: bundle.name,
+        ...core,
         description: bundle.description,
-        type: bundle.type,
-        status: bundle.status,
-        discountType: bundle.discountType,
-        discountValue: bundle.discountValue,
         minOrderValue: bundle.minOrderValue,
         maxDiscountAmount: bundle.maxDiscountAmount,
         startDate: bundle.startDate?.toISOString() || null,
         endDate: bundle.endDate?.toISOString() || null,
-        createdAt: bundle.createdAt.toISOString(),
         updatedAt: bundle.updatedAt.toISOString(),
-        products: bundle.bundleProducts.map((bp) => ({
-            id: bp.id,
-            productId: bp.productId,
-            variantId: bp.variantId,
-            quantity: bp.quantity,
-            displayOrder: bp.displayOrder,
-            isMain: bp.isMain,
-            isRequired: bp.isRequired,
+        products: core.products.map((p, i) => ({
+            ...p,
+            id: bundle.bundleProducts[i].id,
+            isRequired: bundle.bundleProducts[i].isRequired,
         })),
     };
 }

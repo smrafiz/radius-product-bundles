@@ -30,7 +30,7 @@ export interface TransformedBundleBase {
     conversionRate: number;
     productCount: number;
     createdAt: string;
-    updatedAt: string;
+    updatedAt?: string;
     discountType: DiscountType;
     discountValue: number;
     products: TransformedProduct[];
