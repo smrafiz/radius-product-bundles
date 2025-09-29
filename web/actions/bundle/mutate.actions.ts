@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db/prisma-connect";
 import { handleSessionToken } from "@/lib/shopify/verify";
-import { checkNameConflict, handleBundleError } from "@/utils";
 import { validateAndCheckBusinessRules } from "@/lib/validation";
+import { checkNameConflict, handleBundleError, removeNulls } from "@/utils";
 import { bundleProductGroupQueries, bundleProductQueries, bundleQueries, bundleSettingsQueries, } from "@/lib/queries";
 
 import { BundleStatus } from "@/types";
@@ -178,6 +178,91 @@ export async function updateBundle(
             },
             errors: null,
         };
+    } catch (error) {
+        return handleBundleError(error);
+    }
+}
+
+/**
+ * Duplicate a bundle by fetching original data and calling createBundle
+ */
+/**
+ * Duplicate a bundle by fetching original data and calling createBundle
+ */
+export async function duplicateBundle(sessionToken: string, bundleId: string) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const original = await bundleQueries.findByIdWithAllRelations(
+            bundleId,
+            shop,
+        );
+
+        if (!original) {
+            throw new Error(
+                "Bundle not found or you don't have permission to duplicate it",
+            );
+        }
+
+        const newName = await bundleQueries.generateUniqueName(
+            shop,
+            original.name,
+        );
+
+        // Destructure and exclude fields that should not be duplicated
+        const {
+            id,
+            shop: _,
+            createdAt,
+            updatedAt,
+            views,
+            conversions,
+            revenue,
+            isPublished,
+            publishedAt,
+            aiOptimized,
+            aiScore,
+            bundleProducts,
+            productGroups,
+            settings,
+            ...bundleData
+        } = original;
+
+        // Transform to createBundle format and remove nulls
+        const duplicateData = removeNulls({
+            ...bundleData,
+            name: newName,
+            products: bundleProducts.map(
+                ({ id, bundleId, createdAt, updatedAt, ...bp }) => bp,
+            ),
+            productGroups: productGroups?.map(({ id, bundleId, ...pg }) => pg),
+            settings: settings
+                ? (() => {
+                      const {
+                          id,
+                          bundleId,
+                          createdAt,
+                          updatedAt,
+                          widget,
+                          style,
+                          animations,
+                          mobileSettings,
+                          variant,
+                          misc,
+                          ...s
+                      } = settings;
+                      return s;
+                  })()
+                : undefined,
+        });
+
+        const result = await createBundle(sessionToken, duplicateData);
+
+        return result.status === "success"
+            ? { ...result, message: `Bundle duplicated as "${newName}"` }
+            : result;
     } catch (error) {
         return handleBundleError(error);
     }

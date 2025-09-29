@@ -1,37 +1,43 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { memo, useState } from "react";
+import { DeleteBundleModal, DuplicateBundleModal } from "@/bundles/_components";
+import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
 import { Button, ButtonGroup, Toast, Tooltip } from "@shopify/polaris";
 
-import { withLoader } from "@/utils";
 import { BundleListItem } from "@/types";
-import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
-import { useState } from "react";
-import { DeleteBundleModal } from "@/bundles/_components";
 import { useBundleListingStore } from "@/stores";
 
 interface Props {
     bundle: BundleListItem;
+    onAction: {
+        edit: () => void;
+        view: () => void;
+        duplicate: () => Promise<void>;
+        delete: () => void;
+    };
 }
 
-export default function BundleActionsGroup({ bundle }: Props) {
-    const router = useRouter();
+export default memo(function BundleActionsGroup({ bundle, onAction }: Props) {
     const showToast = useBundleListingStore((s) => s.showToast);
-    const removeBundleFromStore = useBundleListingStore((s) => s.removeBundleFromStore);
+    const removeBundleFromStore = useBundleListingStore(
+        (s) => s.removeBundleFromStore,
+    );
 
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
     const [toast, setToast] = useState({ active: false, message: "" });
 
-    const handleActionClick = (actionKey: string, bundle: BundleListItem) => {
+    const handleActionClick = (actionKey: string) => {
         switch (actionKey) {
             case "edit":
-                withLoader(() => router.push(`/bundles/${bundle.id}/edit`))();
+                onAction.edit();
                 break;
             case "view":
-                window.open(`/bundles/${bundle.id}/preview`, "_blank");
+                onAction.view();
                 break;
             case "duplicate":
-                console.log("Duplicate", bundle.id);
+                setDuplicateModalOpen(true);
                 break;
             case "delete":
                 setDeleteModalOpen(true);
@@ -46,7 +52,12 @@ export default function BundleActionsGroup({ bundle }: Props) {
         showToast(`Bundle "${bundleName}" has been deleted successfully`);
     };
 
-    const handleDeleteError = (error: string) => {
+    const handleDuplicateSuccess = () => {
+        void onAction.duplicate();
+        setDuplicateModalOpen(false);
+    };
+
+    const handleError = (error: string) => {
         setToast({
             active: true,
             message: error,
@@ -62,9 +73,7 @@ export default function BundleActionsGroup({ bundle }: Props) {
                             icon={action.icon}
                             tone={action.tone}
                             disabled={action.disabled}
-                            onClick={() =>
-                                handleActionClick(action.key, bundle)
-                            }
+                            onClick={() => handleActionClick(action.key)}
                             accessibilityLabel={action.tooltip}
                         />
                     </Tooltip>
@@ -77,7 +86,16 @@ export default function BundleActionsGroup({ bundle }: Props) {
                 bundle={bundle}
                 onClose={() => setDeleteModalOpen(false)}
                 onSuccess={handleDeleteSuccess}
-                onError={handleDeleteError}
+                onError={handleError}
+            />
+
+            {/* Duplicate Confirmation Modal */}
+            <DuplicateBundleModal
+                open={duplicateModalOpen}
+                bundle={bundle}
+                onClose={() => setDuplicateModalOpen(false)}
+                onSuccess={handleDuplicateSuccess}
+                onError={handleError}
             />
 
             {/* Toast Notification */}
@@ -89,4 +107,4 @@ export default function BundleActionsGroup({ bundle }: Props) {
             )}
         </>
     );
-}
+});

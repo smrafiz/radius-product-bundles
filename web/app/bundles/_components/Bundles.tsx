@@ -17,8 +17,8 @@ import { GlobalBanner, MetricCard } from "@/components";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { BundleErrorCard, BundleTable } from "@/bundles/_components";
 
-import { useSyncBundles, useBundlesData, useDashboardData } from "@/hooks";
 import { useBundleListingStore, useDashboardStore } from "@/stores";
+import { useSyncBundles, useBundlesData, useDashboardData } from "@/hooks";
 
 /*
  * Bundles page

@@ -11,10 +11,10 @@ import {
 import { updateBundleStatus } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-import { useShopSettings } from "@/hooks";
 import { discountTypeConfigs } from "@/config";
 import { useBundleListingStore } from "@/stores";
 import { BundleListItem, BundleStatus } from "@/types";
+import { useBundleActions, useShopSettings } from "@/hooks";
 
 interface Props {
     bundle: BundleListItem;
@@ -26,6 +26,7 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
     const app = useAppBridge();
     const { isLoading, currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
+    const { actions } = useBundleActions(bundle);
 
     const createCurrencyFormatter = () => {
         return (value: number) => {
@@ -51,7 +52,9 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
         return config.format(bundle.discountValue, currencyFormatter);
     };
 
-    const updateBundleInStore = useBundleListingStore((s) => s.updateBundleInStore);
+    const updateBundleInStore = useBundleListingStore(
+        (s) => s.updateBundleInStore,
+    );
 
     const handleStatusUpdate = async (status: BundleStatus) => {
         try {
@@ -99,7 +102,12 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
 
             {/* Bundle price */}
             <IndexTable.Cell>
-                <Text variant="bodyMd" fontWeight="medium" as="span" tone="subdued">
+                <Text
+                    variant="bodyMd"
+                    fontWeight="medium"
+                    as="span"
+                    tone="subdued"
+                >
                     {formatDiscount(bundle)}
                 </Text>
             </IndexTable.Cell>
@@ -113,14 +121,20 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
 
             {/* Bundle status */}
             <IndexTable.Cell>
-                <StatusPopover bundle={bundle} onStatusUpdate={handleStatusUpdate} />
+                <StatusPopover
+                    bundle={bundle}
+                    onStatusUpdate={handleStatusUpdate}
+                />
             </IndexTable.Cell>
 
             {/* Bundle actions */}
             <IndexTable.Cell>
                 <Box padding="0">
                     <div className="flex justify-center">
-                        <BundleActionsGroup bundle={bundle} />
+                        <BundleActionsGroup
+                            bundle={bundle}
+                            onAction={actions}
+                        />
                     </div>
                 </Box>
             </IndexTable.Cell>

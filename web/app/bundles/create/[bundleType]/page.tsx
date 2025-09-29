@@ -24,8 +24,7 @@ export default function CreateBundlePage({
     const { bundleType: bundleTypeParam } = use(params);
     const router = useRouter();
 
-    const { setSaving, resetDirty, resetBundle, setNavigating } =
-        useBundleStore();
+    const { setSaving, resetDirty } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
 
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;

@@ -171,6 +171,30 @@ export const bundleQueries = {
         });
     },
 
+    // Find a bundle with all relations for duplication
+    async findByIdWithAllRelations(id: string, shop: string) {
+        return await prisma.bundle.findFirst({
+            where: { id, shop },
+            include: {
+                bundleProducts: true,
+                productGroups: true,
+                settings: true,
+            },
+        });
+    },
+
+    // Generate unique bundle name for duplication
+    async generateUniqueName(shop: string, baseName: string): Promise<string> {
+        let newName = `${baseName} (Copy)`;
+        let counter = 1;
+
+        while (await this.findByName(shop, newName)) {
+            newName = `${baseName} (Copy ${++counter})`;
+        }
+
+        return newName;
+    },
+
     // Delete bundle by ID
     async deleteById(id: string) {
         return await prisma.bundle.delete({
