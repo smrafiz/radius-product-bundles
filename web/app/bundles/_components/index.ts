@@ -12,3 +12,4 @@ export { default as StatusPopover } from "./StatusPopover";
 export { default as BundleActionsGroup } from "./BundleActionsGroup";
 export { default as DeleteBundleModal } from "./DeleteBundleModal";
 export { default as DuplicateBundleModal } from "./DuplicateBundleModal";
+export { default as ConfirmationModal } from "./ConfirmationModal";

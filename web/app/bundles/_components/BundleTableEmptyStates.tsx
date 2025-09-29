@@ -4,7 +4,7 @@ import { withLoader } from "@/utils";
 import { PlusIcon } from "@shopify/polaris-icons";
 import { Box, EmptySearchResult, EmptyState } from "@shopify/polaris";
 
-import { useBundleTableActions } from "@/hooks";
+import { useBundleTableBulkActions } from "@/hooks";
 
 interface BundleTableEmptyStatesProps {
     totalBundles: number;
@@ -15,7 +15,7 @@ export default function BundleTableEmptyStates({
     totalBundles,
     filteredBundlesCount,
 }: BundleTableEmptyStatesProps) {
-    const { handleCreateBundle } = useBundleTableActions();
+    const { handleCreateBundle } = useBundleTableBulkActions();
 
     // No bundles created yet
     if (totalBundles === 0) {

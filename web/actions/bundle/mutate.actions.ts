@@ -518,7 +518,7 @@ export async function toggleBundleStatus(
 export async function bulkToggleBundleStatus(
     sessionToken: string,
     bundleIds: string[],
-    newStatus: "ACTIVE" | "PAUSED",
+    newStatus: "ACTIVE" | "DRAFT",
 ) {
     try {
         const {

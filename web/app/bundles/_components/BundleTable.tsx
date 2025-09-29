@@ -14,7 +14,7 @@ import {
     BundleTableRow,
 } from "@/bundles/_components";
 
-import { useBundleTableActions } from "@/hooks";
+import { useBundleActions, useBundleTableBulkActions } from "@/hooks";
 import { useBundleListingStore } from "@/stores";
 
 export default function BundleTable() {
@@ -47,8 +47,13 @@ export default function BundleTable() {
               )
             : null;
 
+    const { actions: selectedBundleActions } = useBundleActions(
+        selectedBundle || paginatedBundles[0],
+    );
+
     // Actions hook
-    const { getPromotedBulkActions, getBulkActions } = useBundleTableActions();
+    const { getPromotedBulkActions, getBulkActions } =
+        useBundleTableBulkActions();
 
     // Handle clear selection
     const handleClearSelection = useCallback(() => {
@@ -61,12 +66,20 @@ export default function BundleTable() {
     const promotedBulkActions =
         selectedResources.length > 0
             ? [
-                  ...getPromotedBulkActions(selectedResources, selectedBundle),
+                  ...getPromotedBulkActions(
+                      selectedResources,
+                      selectedBundle,
+                      selectedBundleActions,
+                  ),
                   { content: "Cancel", onAction: handleClearSelection },
               ]
             : [];
 
-    const bulkActions = getBulkActions(selectedResources, selectedBundle);
+    const bulkActions = getBulkActions(
+        selectedResources,
+        selectedBundle,
+        selectedBundleActions,
+    );
 
     // Check for empty states
     if (totalBundles === 0 || filteredBundles.length === 0) {
@@ -112,7 +125,7 @@ export default function BundleTable() {
                     { title: "Discount" },
                     { title: "Status" },
                     // { title: "Views" },
-                    { title: "Actions", alignment: 'center' },
+                    { title: "Actions", alignment: "center" },
                 ]}
                 selectable
             >

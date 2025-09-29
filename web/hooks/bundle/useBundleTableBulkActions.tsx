@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 import type { BundleStatus } from "@/types";
 import { useBundleListingStore } from "@/stores";
-import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 import { useGlobalBanner, useSessionToken } from "@/hooks";
+import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 import { bulkToggleBundleStatus, deleteBundle, deleteBundles, toggleBundleStatus, } from "@/actions";
 
-export function useBundleTableActions() {
+export function useBundleTableBulkActions() {
     const router = useRouter();
-    const { showToast, refreshBundles } = useBundleListingStore();
+    const { refreshBundles } = useBundleListingStore();
     const { showSuccess, showError } = useGlobalBanner();
     const sessionToken = useSessionToken();
 
@@ -17,21 +17,10 @@ export function useBundleTableActions() {
         router.push("/bundles/create");
     };
 
-    const handleEditBundle = (bundleId: string) => {
-        router.push(`/bundles/${bundleId}/edit`);
-    };
-
-    const handleDuplicateBundle = (bundleId: string) => {
-        showToast(`Duplicating bundle ${bundleId}...`);
-    };
-
     const handleToggleBundleStatus = async (
         bundleId: string,
         currentStatus: BundleStatus,
     ) => {
-        // const newStatus = currentStatus === "ACTIVE" ? "PAUSED" : "ACTIVE";
-        // showToast(`Bundle status changed to ${newStatus.toLowerCase()}`);
-
         if (!sessionToken) {
             return;
         }
@@ -60,33 +49,6 @@ export function useBundleTableActions() {
             }
         } catch (error) {
             showError("Status update failed", {
-                content: "An unexpected error occurred.",
-            });
-        }
-    };
-
-    const handleDeleteBundle = async (bundleId: string) => {
-        if (!sessionToken) {
-            return;
-        }
-
-        try {
-            const result = await deleteBundle(sessionToken, bundleId);
-
-            if (result.status === "success") {
-                await refreshBundles();
-                showSuccess("Bundle deleted successfully", {
-                    content: `"${result.data.name}" has been deleted.`,
-                    autoHide: true,
-                    duration: 3000,
-                });
-            } else {
-                showError("Failed to delete bundle", {
-                    content: result.message,
-                });
-            }
-        } catch (error) {
-            showError("Delete failed", {
                 content: "An unexpected error occurred.",
             });
         }
@@ -124,8 +86,7 @@ export function useBundleTableActions() {
         }
     };
 
-    const handleBulkPause = async (bundleIds: string[]) => {
-        // showToast(`Paused ${selectedCount} bundles`);
+    const handleBulkDraft = async (bundleIds: string[]) => {
         if (!sessionToken) {
             return;
         }
@@ -134,29 +95,28 @@ export function useBundleTableActions() {
             const result = await bulkToggleBundleStatus(
                 sessionToken,
                 bundleIds,
-                "PAUSED",
+                "DRAFT",
             );
 
             if (result.status === "success") {
-                showSuccess(`${result.data.updatedCount} bundles paused`, {
-                    content: "Selected bundles have been paused.",
+                showSuccess(`${result.data.updatedCount} bundles draft`, {
+                    content: "Selected bundles have been set as draft.",
                     autoHide: true,
                     duration: 2000,
                 });
             } else {
-                showError("Bulk pause failed", {
+                showError("Bulk draft failed", {
                     content: result.message,
                 });
             }
         } catch (error) {
-            showError("Bulk pause failed", {
+            showError("Bulk draft failed", {
                 content: "An unexpected error occurred.",
             });
         }
     };
 
     const handleBulkDelete = async (bundleIds: string[]) => {
-        // showToast(`Deleted ${selectedCount} bundles`);
         if (!sessionToken) {
             return;
         }
@@ -187,6 +147,7 @@ export function useBundleTableActions() {
     const getPromotedBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
+        rowActions: any,
     ) => {
         const actions = [];
 
@@ -195,7 +156,7 @@ export function useBundleTableActions() {
             actions.push(
                 {
                     content: "Edit",
-                    onAction: () => handleEditBundle(selectedBundle.id),
+                    onAction: rowActions.edit,
                 },
                 {
                     content:
@@ -218,7 +179,7 @@ export function useBundleTableActions() {
                 },
                 {
                     content: "Set as draft",
-                    onAction: () => handleBulkPause(selectedResources),
+                    onAction: () => handleBulkDraft(selectedResources),
                 },
             );
         }
@@ -230,6 +191,7 @@ export function useBundleTableActions() {
     const getBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
+        rowActions: any,
     ) => {
         if (selectedResources.length === 1 && selectedBundle) {
             // Single selection dropdown actions
@@ -237,13 +199,13 @@ export function useBundleTableActions() {
                 {
                     content: "Duplicate",
                     icon: DuplicateIcon,
-                    onAction: () => handleDuplicateBundle(selectedBundle.id),
+                    onAction: () => rowActions.duplicate,
                 },
                 {
                     content: "Delete bundle",
                     icon: DeleteIcon,
                     destructive: true,
-                    onAction: () => handleDeleteBundle(selectedBundle.id),
+                    onAction: () => rowActions.delete,
                 },
             ];
         } else if (selectedResources.length > 1) {
@@ -262,12 +224,9 @@ export function useBundleTableActions() {
 
     return {
         handleCreateBundle,
-        handleEditBundle,
-        handleDuplicateBundle,
         handleToggleBundleStatus,
-        handleDeleteBundle,
         handleBulkActivate,
-        handleBulkPause,
+        handleBulkDraft,
         handleBulkDelete,
         getPromotedBulkActions,
         getBulkActions,

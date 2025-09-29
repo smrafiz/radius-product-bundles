@@ -3,10 +3,9 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
+import { BundleListItem } from "@/types";
 import { duplicateBundle } from "@/actions";
 import { useBundleListingStore } from "@/stores";
-
-import { BundleListItem } from "@/types";
 
 export function useBundleActions(bundle: BundleListItem) {
     const app = useAppBridge();

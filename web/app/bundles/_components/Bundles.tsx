@@ -18,7 +18,12 @@ import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { BundleErrorCard, BundleTable } from "@/bundles/_components";
 
 import { useBundleListingStore, useDashboardStore } from "@/stores";
-import { useSyncBundles, useBundlesData, useDashboardData } from "@/hooks";
+import {
+    useSyncBundles,
+    useBundlesData,
+    useDashboardData,
+    useBundleTableBulkActions,
+} from "@/hooks";
 
 /*
  * Bundles page
@@ -31,13 +36,8 @@ export default function Bundles() {
 
     const router = useRouter();
     const { metrics } = useDashboardStore();
-
+    const { handleCreateBundle } = useBundleTableBulkActions();
     const { loading, toast, hideToast } = useBundleListingStore();
-
-    // Handle primary action
-    const handleCreateBundle = () => {
-        router.push("/bundles/create");
-    };
 
     // Handle secondary action
     const handleBundleStudio = () => {

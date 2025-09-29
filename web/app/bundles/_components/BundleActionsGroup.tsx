@@ -1,12 +1,11 @@
 "use client";
 
-import { memo, useState } from "react";
-import { DeleteBundleModal, DuplicateBundleModal } from "@/bundles/_components";
-import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
 import { Button, ButtonGroup, Toast, Tooltip } from "@shopify/polaris";
-
 import { BundleListItem } from "@/types";
-import { useBundleListingStore } from "@/stores";
+import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
+import { useState } from "react";
+import { ConfirmationModal } from "@/bundles/_components";
+import { useConfirmation } from "@/hooks";
 
 interface Props {
     bundle: BundleListItem;
@@ -18,14 +17,8 @@ interface Props {
     };
 }
 
-export default memo(function BundleActionsGroup({ bundle, onAction }: Props) {
-    const showToast = useBundleListingStore((s) => s.showToast);
-    const removeBundleFromStore = useBundleListingStore(
-        (s) => s.removeBundleFromStore,
-    );
-
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
+export default function BundleActionsGroup({ bundle, onAction }: Props) {
+    const { confirm, modalProps } = useConfirmation();
     const [toast, setToast] = useState({ active: false, message: "" });
 
     const handleActionClick = (actionKey: string) => {
@@ -37,31 +30,23 @@ export default memo(function BundleActionsGroup({ bundle, onAction }: Props) {
                 onAction.view();
                 break;
             case "duplicate":
-                setDuplicateModalOpen(true);
+                confirm({
+                    title: "Duplicate Bundle",
+                    message: `Are you sure you want to duplicate "${bundle.name}"? This will create a new bundle with all the same settings as a draft.`,
+                    confirmLabel: "Duplicate Bundle",
+                    onConfirm: onAction.duplicate,
+                });
                 break;
             case "delete":
-                setDeleteModalOpen(true);
+                confirm({
+                    title: "Delete Bundle",
+                    message: `Are you sure you want to delete "${bundle.name}"? This action cannot be undone and will permanently remove all bundle data, analytics, and settings.`,
+                    confirmLabel: "Delete Bundle",
+                    destructive: true,
+                    onConfirm: onAction.delete,
+                });
                 break;
-            default:
-                console.warn(`Unknown action: ${actionKey}`);
         }
-    };
-
-    const handleDeleteSuccess = (bundleName: string) => {
-        removeBundleFromStore(bundle.id);
-        showToast(`Bundle "${bundleName}" has been deleted successfully`);
-    };
-
-    const handleDuplicateSuccess = () => {
-        void onAction.duplicate();
-        setDuplicateModalOpen(false);
-    };
-
-    const handleError = (error: string) => {
-        setToast({
-            active: true,
-            message: error,
-        });
     };
 
     return (
@@ -80,25 +65,8 @@ export default memo(function BundleActionsGroup({ bundle, onAction }: Props) {
                 ))}
             </ButtonGroup>
 
-            {/* Delete Confirmation Modal */}
-            <DeleteBundleModal
-                open={deleteModalOpen}
-                bundle={bundle}
-                onClose={() => setDeleteModalOpen(false)}
-                onSuccess={handleDeleteSuccess}
-                onError={handleError}
-            />
+            {modalProps && <ConfirmationModal {...modalProps} />}
 
-            {/* Duplicate Confirmation Modal */}
-            <DuplicateBundleModal
-                open={duplicateModalOpen}
-                bundle={bundle}
-                onClose={() => setDuplicateModalOpen(false)}
-                onSuccess={handleDuplicateSuccess}
-                onError={handleError}
-            />
-
-            {/* Toast Notification */}
             {toast.active && (
                 <Toast
                     content={toast.message}
@@ -107,4 +75,4 @@ export default memo(function BundleActionsGroup({ bundle, onAction }: Props) {
             )}
         </>
     );
-});
+}
