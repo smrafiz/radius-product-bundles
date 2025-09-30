@@ -8,16 +8,14 @@ import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 import {
     ActionList,
     Badge,
-    Button,
     Icon,
     InlineStack,
     Link,
-    Modal,
     Popover,
-    Text,
 } from "@shopify/polaris";
 
-import { useBundleListingStore } from "@/stores";
+import { useModalStore } from "@/stores";
+import { useBundleActions } from "@/hooks";
 
 interface Props {
     bundle: BundleListItem;
@@ -26,49 +24,27 @@ interface Props {
 
 export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
     const [popoverActive, setPopoverActive] = useState(false);
-    const [confirmActive, setConfirmActive] = useState(false);
-    const [newStatus, setNewStatus] = useState<BundleStatus | null>(null);
-    const [updating, setUpdating] = useState(false);
 
-    const showToast = useBundleListingStore((s) => s.showToast);
+    const { openModal, setLoading } = useModalStore();
+    const { actions } = useBundleActions(bundle);
 
     const togglePopover = useCallback(
         () => setPopoverActive((active) => !active),
         [],
     );
-    const toggleConfirm = useCallback(
-        () => setConfirmActive((active) => !active),
-        [],
-    );
 
     const handleStatusClick = (status: BundleStatus) => {
         if (status !== bundle.status) {
-            setNewStatus(status);
-            setConfirmActive(true);
+            openModal({
+                type: "status",
+                bundle,
+                newStatus: status,
+                onConfirm: async () => {
+                    await actions.status(status);
+                },
+            });
         }
         setPopoverActive(false);
-    };
-
-    const handleConfirm = async () => {
-        if (!newStatus) return;
-
-        try {
-            setUpdating(true);
-            if (onStatusUpdate) {
-                await onStatusUpdate(newStatus);
-            }
-            showToast(
-                `Bundle "${bundle.name}" status updated to ${
-                    bundleStatusConfigs[newStatus].text
-                }`,
-            );
-        } catch {
-            showToast("Failed to update bundle status");
-        } finally {
-            setUpdating(false);
-            setNewStatus(null);
-            setConfirmActive(false);
-        }
     };
 
     const badge = getStatusBadge(bundle.status);
@@ -76,9 +52,7 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
     const activator = (
         <Link onClick={togglePopover} monochrome removeUnderline>
             <InlineStack align="center">
-                <Badge tone={badge.tone as any}>
-                    {badge.text}
-                </Badge>
+                <Badge tone={badge.tone as any}>{badge.text}</Badge>
                 <Icon
                     source={popoverActive ? ChevronUpIcon : ChevronDownIcon}
                 />
@@ -87,34 +61,20 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
     );
 
     return (
-        <>
-            <Popover active={popoverActive} activator={activator} onClose={togglePopover}>
-                <ActionList
-                    items={Object.entries(bundleStatusConfigs).map(([statusKey, status]) => ({
+        <Popover
+            active={popoverActive}
+            activator={activator}
+            onClose={togglePopover}
+        >
+            <ActionList
+                items={Object.entries(bundleStatusConfigs).map(
+                    ([statusKey, status]) => ({
                         content: status.text,
-                        onAction: () => handleStatusClick(statusKey as BundleStatus),
-                    }))}
-                />
-            </Popover>
-
-            <Modal
-                open={confirmActive}
-                onClose={toggleConfirm}
-                title="Confirm Status Change"
-                primaryAction={{
-                    content: "Confirm",
-                    loading: updating,
-                    onAction: handleConfirm,
-                }}
-                secondaryActions={[{ content: "Cancel", onAction: toggleConfirm }]}
-            >
-                <Modal.Section>
-                    <Text as="p" variant="bodyMd">
-                        Are you sure you want to change the <strong>{bundle.name}</strong> status
-                        to <strong>{newStatus ? bundleStatusConfigs[newStatus].text : ""}</strong>?
-                    </Text>
-                </Modal.Section>
-            </Modal>
-        </>
+                        onAction: () =>
+                            handleStatusClick(statusKey as BundleStatus),
+                    }),
+                )}
+            />
+        </Popover>
     );
 }

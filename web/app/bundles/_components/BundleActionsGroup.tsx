@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, ButtonGroup, Toast, Tooltip } from "@shopify/polaris";
-import { BundleListItem } from "@/types";
-import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
 import { useState } from "react";
-import { ConfirmationModal } from "@/bundles/_components";
-import { useConfirmation } from "@/hooks";
+import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
+import { Button, ButtonGroup, Toast, Tooltip } from "@shopify/polaris";
+
+import { BundleListItem } from "@/types";
+import { useModalStore } from "@/stores";
 
 interface Props {
     bundle: BundleListItem;
@@ -13,13 +13,12 @@ interface Props {
         edit: () => void;
         view: () => void;
         duplicate: () => Promise<void>;
-        delete: () => void;
+        delete: () => Promise<void>;
     };
 }
 
 export default function BundleActionsGroup({ bundle, onAction }: Props) {
-    const { confirm, modalProps } = useConfirmation();
-    const [toast, setToast] = useState({ active: false, message: "" });
+    const { openModal } = useModalStore();
 
     const handleActionClick = (actionKey: string) => {
         switch (actionKey) {
@@ -30,20 +29,21 @@ export default function BundleActionsGroup({ bundle, onAction }: Props) {
                 onAction.view();
                 break;
             case "duplicate":
-                confirm({
-                    title: "Duplicate Bundle",
-                    message: `Are you sure you want to duplicate "${bundle.name}"? This will create a new bundle with all the same settings as a draft.`,
-                    confirmLabel: "Duplicate Bundle",
-                    onConfirm: onAction.duplicate,
+                openModal({
+                    type: "duplicate",
+                    bundle,
+                    onConfirm: async () => {
+                        await onAction.duplicate();
+                    },
                 });
                 break;
             case "delete":
-                confirm({
-                    title: "Delete Bundle",
-                    message: `Are you sure you want to delete "${bundle.name}"? This action cannot be undone and will permanently remove all bundle data, analytics, and settings.`,
-                    confirmLabel: "Delete Bundle",
-                    destructive: true,
-                    onConfirm: onAction.delete,
+                openModal({
+                    type: "delete",
+                    bundle,
+                    onConfirm: async () => {
+                        await onAction.delete();
+                    },
                 });
                 break;
         }
@@ -64,15 +64,6 @@ export default function BundleActionsGroup({ bundle, onAction }: Props) {
                     </Tooltip>
                 ))}
             </ButtonGroup>
-
-            {modalProps && <ConfirmationModal {...modalProps} />}
-
-            {toast.active && (
-                <Toast
-                    content={toast.message}
-                    onDismiss={() => setToast({ active: false, message: "" })}
-                />
-            )}
         </>
     );
 }

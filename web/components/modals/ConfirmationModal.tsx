@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, Text } from "@shopify/polaris";
+import { Banner, BlockStack, Modal, Text } from "@shopify/polaris";
 
 interface Props {
     open: boolean;
@@ -8,6 +8,7 @@ interface Props {
     message: React.ReactNode;
     loading?: boolean;
     destructive?: boolean;
+    error?: string;
     onClose: () => void;
     onConfirm: () => void | Promise<void>;
 }
@@ -16,8 +17,9 @@ export function ConfirmationModal({
     open,
     title,
     message,
-    loading,
-    destructive,
+    loading = false,
+    destructive = false,
+    error,
     onClose,
     onConfirm,
 }: Props) {
@@ -32,12 +34,21 @@ export function ConfirmationModal({
                 loading,
                 onAction: onConfirm,
             }}
-            secondaryActions={[{ content: "Cancel", onAction: onClose }]}
+            secondaryActions={[
+                { content: "Cancel", onAction: onClose, disabled: loading },
+            ]}
         >
             <Modal.Section>
-                <Text as="p" variant="bodyMd">
-                    {message}
-                </Text>
+                <BlockStack gap="400">
+                    {error && (
+                        <Banner tone="critical" title="Error">
+                            {error}
+                        </Banner>
+                    )}
+                    <Text as="p" variant="bodyMd">
+                        {message}
+                    </Text>
+                </BlockStack>
             </Modal.Section>
         </Modal>
     );

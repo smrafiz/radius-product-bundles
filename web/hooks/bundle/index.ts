@@ -3,7 +3,6 @@ export { useLoadBundle } from "./useLoadBundle";
 export { useStepNavigation } from "./useStepNavigation";
 export { useBundleValidation } from "./useBundleValidation";
 export { useBundleTableBulkActions } from "./useBundleTableBulkActions";
-export { useConfirmation } from "./useConfirmation";
 export * from "./useBundleFormMethods";
 export * from "./useBundleQueries";
 export * from "./useBundleForm";

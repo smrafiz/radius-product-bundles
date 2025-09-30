@@ -1,10 +1,22 @@
 import { create } from "zustand";
-import { ModalState } from "@/types";
+import type { ModalState } from "@/types";
 
 export const useModalStore = create<ModalState>((set) => ({
-    type: null,
-    open: false,
-    payload: undefined,
-    openModal: (type, payload) => set({ type, open: true, payload }),
-    closeModal: () => set({ open: false, type: null, payload: undefined }),
+    modal: { type: null },
+    openModal: (modal) =>
+        set({ modal: { ...modal, loading: false, error: undefined } }),
+    closeModal: () =>
+        set({ modal: { type: null } }),
+    setLoading: (loading) =>
+        set((state) => ({
+            modal: state.modal.type !== null
+                ? { ...state.modal, loading }
+                : state.modal,
+        })),
+    setError: (error) =>
+        set((state) => ({
+            modal: state.modal.type !== null
+                ? { ...state.modal, error: error || undefined }
+                : state.modal,
+        })),
 }));
