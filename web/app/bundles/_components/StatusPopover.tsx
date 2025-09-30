@@ -5,7 +5,17 @@ import { useCallback, useState } from "react";
 import { bundleStatusConfigs } from "@/config";
 import { BundleListItem, BundleStatus } from "@/types";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
-import { ActionList, Badge, Icon, InlineStack, Link, Modal, Popover, Text, } from "@shopify/polaris";
+import {
+    ActionList,
+    Badge,
+    Button,
+    Icon,
+    InlineStack,
+    Link,
+    Modal,
+    Popover,
+    Text,
+} from "@shopify/polaris";
 
 import { useBundleListingStore } from "@/stores";
 
@@ -34,41 +44,40 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
     const handleStatusClick = (status: BundleStatus) => {
         if (status !== bundle.status) {
             setNewStatus(status);
-            toggleConfirm();
+            setConfirmActive(true);
         }
         setPopoverActive(false);
     };
 
     const handleConfirm = async () => {
-        if (!newStatus) {
-            return;
-        }
+        if (!newStatus) return;
 
         try {
             setUpdating(true);
-
             if (onStatusUpdate) {
                 await onStatusUpdate(newStatus);
             }
-
             showToast(
                 `Bundle "${bundle.name}" status updated to ${
                     bundleStatusConfigs[newStatus].text
                 }`,
             );
-        } catch (err) {
+        } catch {
             showToast("Failed to update bundle status");
         } finally {
             setUpdating(false);
-            toggleConfirm();
+            setNewStatus(null);
+            setConfirmActive(false);
         }
     };
+
+    const badge = getStatusBadge(bundle.status);
 
     const activator = (
         <Link onClick={togglePopover} monochrome removeUnderline>
             <InlineStack align="center">
-                <Badge tone={getStatusBadge(bundle.status).tone as any}>
-                    {getStatusBadge(bundle.status).text}
+                <Badge tone={badge.tone as any}>
+                    {badge.text}
                 </Badge>
                 <Icon
                     source={popoverActive ? ChevronUpIcon : ChevronDownIcon}
@@ -79,24 +88,13 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
 
     return (
         <>
-            <Popover
-                active={popoverActive}
-                activator={activator}
-                onClose={togglePopover}
-            >
-                <div className="bg-transparent shadow-none border-0 p-0">
-                    <ActionList
-                        items={Object.entries(bundleStatusConfigs ?? {}).map(
-                            ([statusKey, status]) => ({
-                                content: status.text,
-                                onAction: () =>
-                                    handleStatusClick(
-                                        statusKey as BundleStatus,
-                                    ),
-                            }),
-                        )}
-                    />
-                </div>
+            <Popover active={popoverActive} activator={activator} onClose={togglePopover}>
+                <ActionList
+                    items={Object.entries(bundleStatusConfigs).map(([statusKey, status]) => ({
+                        content: status.text,
+                        onAction: () => handleStatusClick(statusKey as BundleStatus),
+                    }))}
+                />
             </Popover>
 
             <Modal
@@ -108,19 +106,12 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
                     loading: updating,
                     onAction: handleConfirm,
                 }}
-                secondaryActions={[
-                    { content: "Cancel", onAction: toggleConfirm },
-                ]}
+                secondaryActions={[{ content: "Cancel", onAction: toggleConfirm }]}
             >
                 <Modal.Section>
                     <Text as="p" variant="bodyMd">
-                        Are you sure you want to change the <strong>{bundle.name}</strong> status to{" "}
-                        <strong>
-                            {newStatus
-                                ? bundleStatusConfigs[newStatus].text
-                                : ""}
-                        </strong>
-                        ?
+                        Are you sure you want to change the <strong>{bundle.name}</strong> status
+                        to <strong>{newStatus ? bundleStatusConfigs[newStatus].text : ""}</strong>?
                     </Text>
                 </Modal.Section>
             </Modal>

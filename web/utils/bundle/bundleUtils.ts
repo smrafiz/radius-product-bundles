@@ -1,6 +1,6 @@
-import { bundleTypeConfigs } from "@/config";
-import { BundleType, SelectedItem, } from "@/types";
 import { customAlphabet } from "nanoid";
+import { bundleTypeConfigs } from "@/config/bundleType.config";
+import { BundleType, SelectedItem, } from "@/types";
 
 /**
  * Get bundle type options for select

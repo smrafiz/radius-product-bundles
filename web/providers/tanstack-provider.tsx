@@ -10,7 +10,7 @@ import {
 import { DevtoolsPosition } from "@tanstack/query-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-export function TanstackProvider({
+export default function TanstackProvider({
     children,
     dehydratedState,
 }: {

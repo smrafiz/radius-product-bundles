@@ -1,9 +1,11 @@
+"use client";
+
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Banner, BlockStack, Layout } from "@shopify/polaris";
 
 import { MessageType } from "@/types";
 import { useGlobalBannerStore } from "@/stores";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 
 const getToneFromType = (
     type: MessageType,

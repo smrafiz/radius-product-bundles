@@ -55,7 +55,6 @@ export function useBundleTableBulkActions() {
     };
 
     const handleBulkActivate = async (bundleIds: string[]) => {
-        // showToast(`Activated ${selectedCount} bundles`);
         if (!sessionToken) {
             return;
         }

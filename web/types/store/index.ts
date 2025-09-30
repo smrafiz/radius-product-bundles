@@ -1,2 +1,3 @@
-export type * from "@/types/store/bundle.types";
-export type * from "@/types/store/bundleListing.types";
+export type * from "./modal.types";
+export type * from "./bundle.types";
+export type * from "./bundleListing.types";
