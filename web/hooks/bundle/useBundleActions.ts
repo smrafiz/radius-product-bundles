@@ -1,10 +1,10 @@
+import { useMemo } from "react";
 import { withLoader } from "@/utils";
-import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-import { BundleListItem } from "@/types";
 import { useBundleListingStore } from "@/stores";
+import { BundleListItem, BundleStatus } from "@/types";
 import { deleteBundle, duplicateBundle, updateBundleStatus } from "@/actions";
 
 export function useBundleActions(bundle: BundleListItem) {
@@ -41,13 +41,11 @@ export function useBundleActions(bundle: BundleListItem) {
                         showToast(result.message ?? "Bundle duplicated successfully");
                     }
                 } else {
-                    throw new Error(result.message || "Failed to duplicate bundle");
+                    showToast(result.message ?? "Failed to duplicate bundle");
                 }
             } catch (error) {
                 console.error("Error duplicating bundle:", error);
-                throw error instanceof Error
-                    ? error
-                    : new Error("Failed to duplicate bundle");
+                showToast("Failed to duplicate bundle");
             }
         },
 
@@ -62,19 +60,17 @@ export function useBundleActions(bundle: BundleListItem) {
 
                 if (result.status === "success") {
                     await refreshBundles();
-                    showToast(result.message);
+                    showToast(result.message ?? "Bundle deleted successfully");
                 } else {
-                    throw new Error(result.message || "Failed to delete bundle");
+                    showToast(result.message ?? "Failed to delete bundle");
                 }
             } catch (error) {
+                showToast("Failed to delete bundle");
                 console.error("Error deleting bundle:", error);
-                throw error instanceof Error
-                    ? error
-                    : new Error("Failed to delete bundle");
             }
         },
 
-        status: async (status) => {
+        status: async (status: BundleStatus) => {
             if (!bundle) {
                 throw new Error("Bundle not found");
             }
@@ -85,15 +81,13 @@ export function useBundleActions(bundle: BundleListItem) {
 
                 if (result.status === "success") {
                     updateBundleInStore(bundle.id, { status: result.data.status });
-                    showToast(result.message);
+                    showToast(result.message ?? "Bundle status updated successfully");
                 } else {
-                    throw new Error(result.message || "Failed to update bundle status");
+                    showToast(result.message ?? "Failed to update bundle status");
                 }
             } catch (error) {
-                console.error("Error deleting bundle:", error);
-                throw error instanceof Error
-                    ? error
-                    : new Error("Failed to update bundle status");
+                showToast("Failed to update bundle status");
+                console.error("Error updating bundle status:", error);
             }
         },
     }), [bundle.id, router, app, showToast, removeBundleFromStore]);

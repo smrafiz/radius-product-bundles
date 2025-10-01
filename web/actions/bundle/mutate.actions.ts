@@ -319,7 +319,7 @@ export async function updateBundleStatus(
     sessionToken: string,
     bundleId: string,
     status: BundleStatus,
-) {
+): Promise<ApiResponse> {
     try {
         // Validate status
         if (!bundleStatusConfigs[status]) {
@@ -350,13 +350,13 @@ export async function updateBundleStatus(
             status: "success" as const,
             message: "Bundle status updated successfully",
             data: updatedBundle,
-            errors: null,
+            errors: undefined,
         };
     } catch (error: any) {
         return {
             status: "error" as const,
             message: error.message || "Failed to update bundle status",
-            data: null,
+            data: undefined,
             errors: [error],
         };
     }
@@ -365,7 +365,7 @@ export async function updateBundleStatus(
 /**
  * Bulk delete bundles
  */
-export async function deleteBundles(sessionToken: string, bundleIds: string[]) {
+export async function deleteBundles(sessionToken: string, bundleIds: string[]): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -375,8 +375,8 @@ export async function deleteBundles(sessionToken: string, bundleIds: string[]) {
             return {
                 status: "error" as const,
                 message: "No bundles selected for deletion",
-                errors: null,
-                data: null,
+                errors: undefined,
+                data: undefined,
             };
         }
 
@@ -416,7 +416,7 @@ export async function deleteBundles(sessionToken: string, bundleIds: string[]) {
                 deletedCount: result.length,
                 deletedBundles: result,
             },
-            errors: null,
+            errors: undefined,
         };
     } catch (error) {
         return handleBundleError(error);
@@ -426,7 +426,7 @@ export async function deleteBundles(sessionToken: string, bundleIds: string[]) {
 /**
  * Delete a bundle
  */
-export async function deleteBundle(sessionToken: string, bundleId: string) {
+export async function deleteBundle(sessionToken: string, bundleId: string): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -476,7 +476,7 @@ export async function deleteBundle(sessionToken: string, bundleId: string) {
             status: "success" as const,
             message: "Bundle deleted successfully",
             data: result,
-            errors: null,
+            errors: undefined,
         };
     } catch (error) {
         return handleBundleError(error);
