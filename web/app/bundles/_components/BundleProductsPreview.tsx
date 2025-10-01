@@ -33,17 +33,11 @@ export default function BundleProductsPreview({ bundle }: Props) {
     const displayProducts = groupedProducts.slice(0, 3);
     const totalCount = groupedProducts.length;
     const remainingCount = Math.max(0, totalCount - 3);
-    let arrowClass = '-left-2';
-
-    if (totalCount === 1) {
-        arrowClass = '-left-2';
-    } else if (totalCount === 2) {
-        arrowClass = '-left-7';
-    }
+    let arrowClass = totalCount === 2 ? '-left-7' : '-left-2';
 
     const activator = (
         <div
-            className="cursor-pointer flex items-center gap-1"
+            className="cursor-pointer flex items-center gap-1 group"
             onClick={togglePopover}
         >
             <InlineStack gap="100" align="center">
@@ -76,7 +70,9 @@ export default function BundleProductsPreview({ bundle }: Props) {
                     ))}
                 </InlineStack>
                 <div
-                    className={`w-10 h-10 relative ${arrowClass} flex items-center`}
+                    className={`w-10 h-10 relative ${arrowClass} flex items-center transition-opacity duration-200 ${
+                        popoverActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    }`}
                 >
                     <Icon
                         source={popoverActive ? ChevronUpIcon : ChevronDownIcon}

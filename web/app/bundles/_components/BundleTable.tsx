@@ -14,21 +14,23 @@ import {
     BundleTableRow,
 } from "@/bundles/_components";
 
-import { useBundleActions, useBundleTableBulkActions } from "@/hooks";
+import {
+    useBundleActions,
+    useBundlesData,
+    useBundleTableBulkActions,
+} from "@/hooks";
 import { useBundleListingStore } from "@/stores";
 
 export default function BundleTable() {
     const breakpoints = useBreakpoints();
     const {
-        getPaginatedBundles,
-        getTotalBundlesCount,
-        getFilteredBundles,
+        bundles,
+        pagination,
         showToast,
     } = useBundleListingStore();
+    const { isFetching } = useBundlesData();
 
-    const paginatedBundles = getPaginatedBundles();
-    const totalBundles = getTotalBundlesCount();
-    const filteredBundles = getFilteredBundles();
+    const totalBundles = pagination.totalItems;
 
     // Selection state
     const resourceIDResolver = (bundle: any) => bundle.id;
@@ -37,18 +39,18 @@ export default function BundleTable() {
         allResourcesSelected,
         handleSelectionChange,
         clearSelection,
-    } = useIndexResourceState(paginatedBundles, { resourceIDResolver });
+    } = useIndexResourceState(bundles, { resourceIDResolver });
 
     // Get selected bundle for single selection
     const selectedBundle =
         selectedResources.length === 1
-            ? paginatedBundles.find(
+            ? bundles.find(
                   (bundle) => bundle.id === selectedResources[0],
               )
             : null;
 
     const { actions: selectedBundleActions } = useBundleActions(
-        selectedBundle || paginatedBundles[0],
+        selectedBundle || (bundles.length > 0 ? bundles[0] : null)
     );
 
     const { getPromotedBulkActions, getBulkActions } =
@@ -81,21 +83,20 @@ export default function BundleTable() {
     );
 
     // Check for empty states
-    if (totalBundles === 0 || filteredBundles.length === 0) {
+    if (totalBundles === 0 || bundles.length === 0) {
         return (
             <Card padding="0">
                 <BundleIndexFilters />
                 <BundleTableEmptyStates
                     totalBundles={totalBundles}
-                    filteredBundlesCount={filteredBundles.length}
+                    filteredBundlesCount={bundles.length}
                 />
-                <BundlePagination />
             </Card>
         );
     }
 
     // Render table rows
-    const rowMarkup = paginatedBundles.map((bundle, index) => (
+    const rowMarkup = bundles.map((bundle, index) => (
         <BundleTableRow
             key={bundle.id}
             bundle={bundle}
@@ -106,11 +107,11 @@ export default function BundleTable() {
 
     return (
         <Card padding="0">
-            <BundleIndexFilters />
+            <BundleIndexFilters loading={isFetching} />
             <IndexTable
                 condensed={breakpoints.smDown}
                 resourceName={{ singular: "bundle", plural: "bundles" }}
-                itemCount={paginatedBundles.length}
+                itemCount={bundles.length}
                 selectedItemsCount={
                     allResourcesSelected ? "All" : selectedResources.length
                 }

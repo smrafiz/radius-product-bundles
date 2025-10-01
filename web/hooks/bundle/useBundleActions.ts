@@ -7,7 +7,7 @@ import { useBundleListingStore } from "@/stores";
 import { BundleListItem, BundleStatus } from "@/types";
 import { deleteBundle, duplicateBundle, updateBundleStatus } from "@/actions";
 
-export function useBundleActions(bundle: BundleListItem) {
+export function useBundleActions(bundle: BundleListItem | null) {
     const app = useAppBridge();
     const router = useRouter();
     const showToast = useBundleListingStore((s) => s.showToast);
@@ -90,7 +90,7 @@ export function useBundleActions(bundle: BundleListItem) {
                 console.error("Error updating bundle status:", error);
             }
         },
-    }), [bundle.id, router, app, showToast, removeBundleFromStore]);
+    }), [bundle?.id, router, app, showToast, removeBundleFromStore, refreshBundles, updateBundleInStore]);
 
     return { actions };
 }

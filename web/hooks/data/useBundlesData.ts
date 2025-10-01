@@ -5,16 +5,23 @@ import { useBundleListingStore } from "@/stores";
 import { useBundles, useBundleMetrics } from "@/hooks/bundle/useBundleQueries";
 
 export const useBundlesData = () => {
-    const { setBundles, setLoading, setError, showToast } =
-        useBundleListingStore();
-
-    // Use React Query hooks
     const {
-        data: bundlesData,
+        setBundles,
+        setLoading,
+        setError,
+        showToast,
+        pagination,
+        setPaginationMetadata,
+    } = useBundleListingStore();
+
+    // Use React Query hooks with pagination from store
+    const {
+        data: bundlesResponse,
         isLoading: bundlesLoading,
+        isFetching: bundlesFetching,
         error: bundlesError,
         refetch: refetchBundles,
-    } = useBundles();
+    } = useBundles(pagination.currentPage, pagination.itemsPerPage);
 
     const {
         data: metricsData,
@@ -24,10 +31,14 @@ export const useBundlesData = () => {
 
     // Update store when data changes
     useEffect(() => {
-        if (bundlesData) {
-            setBundles(bundlesData);
+        if (bundlesResponse?.bundles && bundlesResponse?.pagination) {
+            setBundles(bundlesResponse.bundles);
+            setPaginationMetadata({
+                totalItems: bundlesResponse.pagination.totalItems,
+                totalPages: bundlesResponse.pagination.totalPages,
+            });
         }
-    }, [bundlesData, setBundles]);
+    }, [bundlesResponse, setBundles, setPaginationMetadata]);
 
     // Handle loading states
     useEffect(() => {
@@ -48,9 +59,10 @@ export const useBundlesData = () => {
     }, [bundlesError, metricsError, setError, showToast, setBundles]);
 
     return {
-        bundles: bundlesData || [],
+        bundles: bundlesResponse?.bundles || [],
         metrics: metricsData,
         isLoading: bundlesLoading || metricsLoading,
+        isFetching: bundlesFetching,
         error: bundlesError || metricsError,
         refetch: refetchBundles,
     };

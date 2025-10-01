@@ -21,6 +21,8 @@ export const useBundleListingStore = create<BundleListingState>()(
         pagination: {
             currentPage: 1,
             itemsPerPage: 10,
+            totalItems: 0,
+            totalPages: 0,
         },
         toast: {
             active: false,
@@ -91,6 +93,15 @@ export const useBundleListingStore = create<BundleListingState>()(
                 },
             })),
 
+        setPaginationMetadata: (metadata: { totalItems: number; totalPages: number }) =>
+            set((state) => ({
+                pagination: {
+                    ...state.pagination,
+                    totalItems: metadata.totalItems,
+                    totalPages: metadata.totalPages,
+                },
+            })),
+
         // Toast actions
         showToast: (message) =>
             set({
@@ -109,110 +120,6 @@ export const useBundleListingStore = create<BundleListingState>()(
             }),
 
         // Computed getters
-        getFilteredBundles: () => {
-            const { bundles, filters } = get();
-            const itemStrings = [
-                "ALL",
-                "ACTIVE",
-                "DRAFT",
-                "PAUSED",
-                "SCHEDULED",
-                "ARCHIVED",
-            ];
-
-            try {
-                let filtered = [...bundles];
-
-                // Search filter
-                if (filters.search && filters.search.trim()) {
-                    const searchTerm = filters.search.toLowerCase().trim();
-                    filtered = filtered.filter(
-                        (bundle) =>
-                            bundle?.name?.toLowerCase()?.includes(searchTerm) ||
-                            false,
-                    );
-                }
-
-                // Status filter
-                if (filters.statusFilter && filters.statusFilter.length > 0) {
-                    filtered = filtered.filter((bundle) =>
-                        filters.statusFilter.includes(bundle?.status),
-                    );
-                }
-
-                // Type filter
-                if (filters.typeFilter && filters.typeFilter.length > 0) {
-                    filtered = filtered.filter((bundle) =>
-                        filters.typeFilter.includes(bundle?.type),
-                    );
-                }
-
-                // Tab filter
-                if (
-                    filters.selectedTab > 0 &&
-                    filters.selectedTab < itemStrings.length
-                ) {
-                    const tabStatus = itemStrings[filters.selectedTab];
-                    if (tabStatus && tabStatus !== "ALL") {
-                        filtered = filtered.filter(
-                            (bundle) => bundle?.status === tabStatus,
-                        );
-                    }
-                }
-
-                // Sort
-                if (filters.sortSelected && filters.sortSelected.length > 0) {
-                    const [sortKey, sortDirection] =
-                        filters.sortSelected[0]?.split(" ") || [
-                            "created_at",
-                            "desc",
-                        ];
-                    filtered.sort((a, b) => {
-                        let aVal, bVal;
-                        switch (sortKey) {
-                            case "name":
-                                aVal = a?.name || "";
-                                bVal = b?.name || "";
-                                break;
-                            case "revenue":
-                                aVal = a?.revenue || 0;
-                                bVal = b?.revenue || 0;
-                                break;
-                            case "views":
-                                aVal = a?.views || 0;
-                                bVal = b?.views || 0;
-                                break;
-                            case "created_at":
-                            default:
-                                aVal = new Date(a?.createdAt || 0);
-                                bVal = new Date(b?.createdAt || 0);
-                                break;
-                        }
-
-                        if (aVal < bVal)
-                            return sortDirection === "asc" ? -1 : 1;
-                        if (aVal > bVal)
-                            return sortDirection === "asc" ? 1 : -1;
-                        return 0;
-                    });
-                }
-
-                return filtered;
-            } catch (error) {
-                console.error("Error in getFilteredBundles:", error);
-                return [];
-            }
-        },
-
-        getPaginatedBundles: () => {
-            const { getFilteredBundles, pagination } = get();
-            const filtered = getFilteredBundles();
-            const startIndex =
-                (pagination.currentPage - 1) * pagination.itemsPerPage;
-            const endIndex = startIndex + pagination.itemsPerPage;
-            return filtered.slice(startIndex, endIndex);
-        },
-
         getActiveBundlesCount: () => {
             const { bundles } = get();
             return bundles.filter((bundle) => bundle.status === "ACTIVE")
@@ -220,42 +127,40 @@ export const useBundleListingStore = create<BundleListingState>()(
         },
 
         getTotalBundlesCount: () => {
-            const { bundles } = get();
-            return bundles.length;
+            const { pagination } = get();
+            return pagination.totalItems || 0;
         },
 
         getTotalPages: () => {
-            const { getFilteredBundles, pagination } = get();
-            const filtered = getFilteredBundles();
-            return Math.ceil(filtered.length / pagination.itemsPerPage);
+            const { pagination } = get();
+            return pagination.totalPages ||
+                Math.ceil(pagination.totalItems / pagination.itemsPerPage);
         },
 
         getPaginationInfo: () => {
-            const { getFilteredBundles, pagination, getTotalPages } = get();
-            const filtered = getFilteredBundles();
-            const totalPages = getTotalPages();
-            const startIndex =
-                (pagination.currentPage - 1) * pagination.itemsPerPage;
-            const endIndex = startIndex + pagination.itemsPerPage;
+            const { pagination } = get();
+            const totalPages = pagination.totalPages || 1;
 
             return {
-                startIndex,
-                endIndex,
                 hasNext: pagination.currentPage < totalPages,
                 hasPrevious: pagination.currentPage > 1,
-                label:
-                    filtered.length > 0
-                        ? `Showing Page ${startIndex + 1} of ${totalPages}`
-                        : "Showing page 1 of 1",
+                label: totalPages > 0
+                    ? `Showing page ${pagination.currentPage} of ${totalPages}`
+                    : "Showing page 1 of 1",
             };
         },
 
-        updateBundleInStore: (bundleId: string, data: Partial<BundleListItem>) =>
-            set((state) => ({
-                bundles: state.bundles.map((b) =>
-                    b.id === bundleId ? { ...b, ...data } : b
-                ),
-            })),
+        updateBundleInStore: (bundleId, data) =>
+            set((state) => {
+                const index = state.bundles.findIndex((b) => b.id === bundleId);
+                if (index === -1) return state;
+
+                const updated = { ...state.bundles[index], ...data };
+                const bundles = [...state.bundles];
+                bundles[index] = updated;
+
+                return { bundles };
+            }),
 
         removeBundleFromStore: (bundleId: string) =>
             set((state) => ({
@@ -277,7 +182,6 @@ export const useBundleListingStore = create<BundleListingState>()(
                             ...get().pagination,
                             currentPage: page,
                             itemsPerPage: itemsPerPage,
-                            // You might want to store total counts from result.pagination
                         }
                     });
                 } else {

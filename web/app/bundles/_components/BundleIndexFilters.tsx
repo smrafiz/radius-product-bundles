@@ -10,7 +10,7 @@ import {
 import { useBundleListingStore } from "@/stores";
 import type { IndexFiltersProps, TabProps } from "@shopify/polaris";
 
-export default function BundleIndexFilters() {
+export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const {
         filters,
         setSearch,
@@ -22,6 +22,7 @@ export default function BundleIndexFilters() {
     } = useBundleListingStore();
 
     const { mode, setMode } = useSetIndexFiltersMode();
+    // const { loading } = useBundleListingStore();
 
     // Fixed tabs
     const itemStrings = [
@@ -184,6 +185,7 @@ export default function BundleIndexFilters() {
             onClearAll={clearFilters}
             mode={mode}
             setMode={setMode}
+            loading={loading || false}
         />
     );
 }

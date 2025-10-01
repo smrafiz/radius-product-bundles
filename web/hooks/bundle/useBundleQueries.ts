@@ -42,23 +42,27 @@ interface BundleMetricsData {
 /**
  * Hook to fetch bundles list
  */
-export function useBundles() {
+export function useBundles(page: number = 1, itemsPerPage: number = 10) {
     const app = useAppBridge();
 
     return useQuery({
-        queryKey: ["bundles"],
+        queryKey: ["bundles", page, itemsPerPage],
         queryFn: async () => {
             const token = await app.idToken();
-            const result = await getBundles(token);
+            const result = await getBundles(token, page, itemsPerPage);
 
             if (result.status === "error") {
                 throw new Error(result.message);
             }
 
-            return result.data as Bundle[];
+            return {
+                bundles: result.data as Bundle[],
+                pagination: result.pagination,
+            };
         },
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false,
+        keepPreviousData: true,
     });
 }
 

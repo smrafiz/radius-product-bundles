@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, IndexTable, Text } from "@shopify/polaris";
+import { Box, IndexTable, Link, Text } from "@shopify/polaris";
 import { getBundleProperty, getCurrencySymbol } from "@/utils";
 import {
     BundleActionsGroup,
@@ -80,36 +80,50 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
             position={index}
         >
             {/* Bundle name */}
-            <IndexTable.Cell className="w-[220px] !whitespace-normal">
-                <Text variant="bodyMd" fontWeight="medium" as="h2">
-                    {bundle.name}
-                </Text>
+            <IndexTable.Cell className="w-[220px] !whitespace-normal" flush>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Link
+                        removeUnderline
+                        monochrome
+                        onClick={() => actions.edit()}
+                    >
+                        <Text variant="bodyMd" fontWeight="medium" as="h2">
+                            {bundle.name}
+                        </Text>
+                    </Link>
+                </div>
             </IndexTable.Cell>
 
             {/* Bundled products */}
             <IndexTable.Cell>
-                <Text variant="bodyMd" as="span">
-                    <BundleProductsPreview bundle={bundle} />
-                </Text>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Text variant="bodyMd" as="span">
+                        <BundleProductsPreview bundle={bundle} />
+                    </Text>
+                </div>
             </IndexTable.Cell>
 
             {/* Bundle type */}
             <IndexTable.Cell>
-                <Text variant="bodyMd" fontWeight="medium" as="span">
-                    {getBundleProperty(bundle.type, "label")}
-                </Text>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Text variant="bodyMd" fontWeight="medium" as="span">
+                        {getBundleProperty(bundle.type, "label")}
+                    </Text>
+                </div>
             </IndexTable.Cell>
 
             {/* Bundle price */}
             <IndexTable.Cell>
-                <Text
-                    variant="bodyMd"
-                    fontWeight="medium"
-                    as="span"
-                    tone="subdued"
-                >
-                    {formatDiscount(bundle)}
-                </Text>
+                <div onClick={(e) => e.stopPropagation()}>
+                    <Text
+                        variant="bodyMd"
+                        fontWeight="medium"
+                        as="span"
+                        tone="subdued"
+                    >
+                        {formatDiscount(bundle)}
+                    </Text>
+                </div>
             </IndexTable.Cell>
 
             {/* Bundle views */}
@@ -121,16 +135,18 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
 
             {/* Bundle status */}
             <IndexTable.Cell>
-                <StatusPopover
-                    bundle={bundle}
-                    onStatusUpdate={handleStatusUpdate}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                    <StatusPopover
+                        bundle={bundle}
+                        onStatusUpdate={handleStatusUpdate}
+                    />
+                </div>
             </IndexTable.Cell>
 
             {/* Bundle actions */}
             <IndexTable.Cell>
                 <Box padding="0">
-                    <div className="flex justify-center">
+                    <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
                         <BundleActionsGroup
                             bundle={bundle}
                             onAction={actions}
