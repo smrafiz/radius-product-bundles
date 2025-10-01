@@ -4,16 +4,21 @@ import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db/prisma-connect";
 import { handleSessionToken } from "@/lib/shopify/verify";
 import { validateAndCheckBusinessRules } from "@/lib/validation";
-import { checkNameConflict, handleBundleError, removeNulls } from "@/utils";
+import {
+    checkNameConflict,
+    handleBundleError,
+    normalizeErrors,
+    removeNulls,
+} from "@/utils";
 import { bundleProductGroupQueries, bundleProductQueries, bundleQueries, bundleSettingsQueries, } from "@/lib/queries";
 
-import { BundleStatus } from "@/types";
+import { ApiResponse, BundleStatus } from "@/types";
 import { bundleStatusConfigs } from "@/config";
 
 /**
  * Create a new bundle
  */
-export async function createBundle(sessionToken: string, data: unknown) {
+export async function createBundle(sessionToken: string, data: unknown): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -22,7 +27,12 @@ export async function createBundle(sessionToken: string, data: unknown) {
         const validation = await validateAndCheckBusinessRules(shop, data);
 
         if (!validation || !validation.success) {
-            return validation;
+            return {
+                status: "error",
+                message: "Validation failed",
+                errors: normalizeErrors(validation?.errors),
+                data: undefined,
+            };
         }
 
         const validatedData = validation.data;
@@ -31,8 +41,8 @@ export async function createBundle(sessionToken: string, data: unknown) {
             return {
                 status: "error" as const,
                 message: "No validated data returned",
-                errors: null,
-                data: null,
+                errors: undefined,
+                data: undefined,
             };
         }
 
@@ -60,7 +70,7 @@ export async function createBundle(sessionToken: string, data: unknown) {
                 status: result.status,
                 createdAt: result.createdAt.toISOString(),
             },
-            errors: null,
+            errors: undefined,
         };
     } catch (error) {
         return handleBundleError(error);
@@ -184,12 +194,12 @@ export async function updateBundle(
 }
 
 /**
- * Duplicate a bundle by fetching original data and calling createBundle
+ * Duplicate a bundle
  */
-/**
- * Duplicate a bundle by fetching original data and calling createBundle
- */
-export async function duplicateBundle(sessionToken: string, bundleId: string) {
+export async function duplicateBundle(
+    sessionToken: string,
+    bundleId: string,
+): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -201,9 +211,11 @@ export async function duplicateBundle(sessionToken: string, bundleId: string) {
         );
 
         if (!original) {
-            throw new Error(
-                "Bundle not found or you don't have permission to duplicate it",
-            );
+            return {
+                status: "error",
+                message: "Bundle not found or you don't have permission to duplicate it",
+                data: null
+            };
         }
 
         const newName = await bundleQueries.generateUniqueName(
@@ -311,7 +323,11 @@ export async function updateBundleStatus(
     try {
         // Validate status
         if (!bundleStatusConfigs[status]) {
-            throw new Error("Invalid bundle status");
+            return {
+                status: "error",
+                message: "Invalid bundle status",
+                data: null
+            };
         }
 
         // Get shop from the session
@@ -473,7 +489,7 @@ export async function deleteBundle(sessionToken: string, bundleId: string) {
 export async function toggleBundleStatus(
     sessionToken: string,
     bundleId: string,
-    newStatus: "ACTIVE" | "PAUSED",
+    newStatus: "ACTIVE" | "DRAFT",
 ) {
     try {
         const {

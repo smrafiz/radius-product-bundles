@@ -1,5 +1,6 @@
 import { bundleQueries } from "@/lib/queries";
 import type { BundleFormData } from "@/lib/validation";
+import { ApiError } from "@/types";
 
 export async function checkNameConflict(shop: string, name: string, excludeId?: string) {
     const existingBundle = excludeId
@@ -17,32 +18,27 @@ export function inferBundleType(data: BundleFormData) {
     return "FIXED_BUNDLE";
 }
 
-export function handleBundleError(error: unknown) {
+export function handleBundleError(error: unknown): ApiError {
     console.error("Bundle operation failed:", error);
 
     if (error instanceof Error) {
         if (error.message.includes("already exists")) {
             return {
-                status: "error" as const,
+                status: "error",
                 message: error.message,
-                errors: { name: { _errors: [error.message] } },
-                data: null,
+                errors: [error.message],
             };
         }
         if (error.message.includes("not found")) {
             return {
-                status: "error" as const,
+                status: "error",
                 message: error.message,
-                errors: null,
-                data: null,
             };
         }
     }
 
     return {
-        status: "error" as const,
+        status: "error",
         message: "Operation failed. Please try again.",
-        errors: null,
-        data: null,
     };
 }

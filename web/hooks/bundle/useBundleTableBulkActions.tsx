@@ -1,176 +1,160 @@
 "use client";
 
+import {
+    bulkToggleBundleStatus,
+    deleteBundles,
+    toggleBundleStatus,
+} from "@/actions";
+import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
 import type { BundleStatus } from "@/types";
-import { useBundleListingStore } from "@/stores";
 import { useGlobalBanner, useSessionToken } from "@/hooks";
+import { useBundleListingStore, useModalStore } from "@/stores";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
-import { bulkToggleBundleStatus, deleteBundle, deleteBundles, toggleBundleStatus, } from "@/actions";
 
 export function useBundleTableBulkActions() {
     const router = useRouter();
     const { refreshBundles } = useBundleListingStore();
     const { showSuccess, showError } = useGlobalBanner();
     const sessionToken = useSessionToken();
+    const { openModal, setLoading, closeModal } = useModalStore();
+    const updateBundleInStore = useBundleListingStore(
+        (s) => s.updateBundleInStore,
+    );
+    const showToast = useBundleListingStore((s) => s.showToast);
 
     const handleCreateBundle = () => {
         router.push("/bundles/create");
     };
 
-    const handleToggleBundleStatus = async (
-        bundleId: string,
-        currentStatus: BundleStatus,
-    ) => {
-        if (!sessionToken) {
-            return;
-        }
+    const handleToggleBundleStatus = (bundleId: string, currentStatus: BundleStatus, bundleName: string) => {
+        if (!sessionToken) return;
 
-        const newStatus = currentStatus === "ACTIVE" ? "PAUSED" : "ACTIVE";
+        const newStatus: BundleStatus =
+            currentStatus === "ACTIVE" ? "DRAFT" : "ACTIVE";
 
-        try {
-            const result = await toggleBundleStatus(
-                sessionToken,
-                bundleId,
-                newStatus,
-            );
-            console.log(result);
-
-            if (result.status === "success") {
-                await refreshBundles();
-                showSuccess(`Bundle ${newStatus.toLowerCase()}`, {
-                    content: result.message,
-                    autoHide: true,
-                    duration: 2000,
-                });
-            } else {
-                showError("Status update failed", {
-                    content: result.message,
-                });
-            }
-        } catch (error) {
-            showError("Status update failed", {
-                content: "An unexpected error occurred.",
-            });
-        }
+        openModal({
+            type: "status",
+            bundle: { id: bundleId, name: bundleName, status: currentStatus } as any,
+            newStatus,
+            onConfirm: async () => {
+                setLoading(true);
+                try {
+                    const result = await toggleBundleStatus(sessionToken, bundleId, newStatus);
+                    if (result.status === "success") {
+                        updateBundleInStore(bundleId, { status: result.data.status });
+                        showToast(result.message);
+                    } else {
+                        showError("Status update failed", { content: result.message });
+                    }
+                } catch {
+                    showError("Status update failed", { content: "An unexpected error occurred." });
+                }
+            },
+        });
     };
 
-    const handleBulkActivate = async (bundleIds: string[]) => {
-        if (!sessionToken) {
-            return;
-        }
+    // 🔹 Bulk activate
+    const handleBulkActivate = (bundleIds: string[]) => {
+        if (!sessionToken) return;
 
-        try {
-            const result = await bulkToggleBundleStatus(
-                sessionToken,
-                bundleIds,
-                "ACTIVE",
-            );
-
-            if (result.status === "success") {
-                await refreshBundles();
-                showSuccess(`${result.data.updatedCount} bundles activated`, {
-                    content: "Selected bundles have been activated.",
-                    autoHide: true,
-                    duration: 2000,
-                });
-            } else {
-                showError("Bulk activation failed", {
-                    content: result.message,
-                });
-            }
-        } catch (error) {
-            showError("Bulk activation failed", {
-                content: "An unexpected error occurred.",
-            });
-        }
+        openModal({
+            type: "status",
+            newStatus: "ACTIVE",
+            bundle: { name: "selected bundles" } as any,
+            onConfirm: async () => {
+                try {
+                    const result = await bulkToggleBundleStatus(sessionToken, bundleIds, "ACTIVE");
+                    if (result.status === "success") {
+                        await refreshBundles();
+                        showToast(`${result.data.updatedCount} bundles activated`);
+                    } else {
+                        showError("Bulk activation failed", { content: result.message });
+                    }
+                } catch {
+                    showError("Bulk activation failed", { content: "An unexpected error occurred." });
+                } finally {
+                    setLoading(false);
+                }
+            },
+        });
     };
 
-    const handleBulkDraft = async (bundleIds: string[]) => {
-        if (!sessionToken) {
-            return;
-        }
+    // 🔹 Bulk draft
+    const handleBulkDraft = (bundleIds: string[]) => {
+        if (!sessionToken) return;
 
-        try {
-            const result = await bulkToggleBundleStatus(
-                sessionToken,
-                bundleIds,
-                "DRAFT",
-            );
-
-            if (result.status === "success") {
-                showSuccess(`${result.data.updatedCount} bundles draft`, {
-                    content: "Selected bundles have been set as draft.",
-                    autoHide: true,
-                    duration: 2000,
-                });
-            } else {
-                showError("Bulk draft failed", {
-                    content: result.message,
-                });
-            }
-        } catch (error) {
-            showError("Bulk draft failed", {
-                content: "An unexpected error occurred.",
-            });
-        }
+        openModal({
+            type: "status",
+            newStatus: "DRAFT",
+            bundle: { name: "selected bundles" } as any,
+            onConfirm: async () => {
+                setLoading(true);
+                try {
+                    const result = await bulkToggleBundleStatus(sessionToken, bundleIds, "DRAFT");
+                    if (result.status === "success") {
+                        await refreshBundles();
+                        showToast(`${result.data.updatedCount} bundles set as draft`);
+                    } else {
+                        showError("Bulk draft failed", { content: result.message });
+                    }
+                } catch {
+                    showError("Bulk draft failed", { content: "An unexpected error occurred." });
+                } finally {
+                    setLoading(false);
+                }
+            },
+        });
     };
 
-    const handleBulkDelete = async (bundleIds: string[]) => {
-        if (!sessionToken) {
-            return;
-        }
+    // 🔹 Bulk delete
+    const handleBulkDelete = (bundleIds: string[]) => {
+        if (!sessionToken) return;
 
-        try {
-            const result = await deleteBundles(sessionToken, bundleIds);
-
-            if (result.status === "success") {
-                await refreshBundles();
-                showSuccess(`${result.data.deletedCount} bundles deleted`, {
-                    content: "Selected bundles have been deleted successfully.",
-                    autoHide: true,
-                    duration: 3000,
-                });
-            } else {
-                showError("Bulk delete failed", {
-                    content: result.message,
-                });
-            }
-        } catch (error) {
-            showError("Bulk delete failed", {
-                content: "An unexpected error occurred.",
-            });
-        }
+        openModal({
+            type: "delete",
+            bundle: { name: "selected bundles" } as any,
+            onConfirm: async () => {
+                setLoading(true);
+                try {
+                    const result = await deleteBundles(sessionToken, bundleIds);
+                    if (result.status === "success") {
+                        await refreshBundles();
+                        showToast("Selected bundles have been deleted successfully");
+                    } else {
+                        showError("Bulk delete failed", { content: result.message });
+                    }
+                } catch {
+                    showError("Bulk delete failed", { content: "An unexpected error occurred." });
+                } finally {
+                    setLoading(false);
+                }
+            },
+        });
     };
 
-    // Get promoted bulk actions
+    // Promoted actions (inline buttons above the table)
     const getPromotedBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
-        rowActions: any,
+        rowActions: any
     ) => {
         const actions = [];
 
         if (selectedResources.length === 1 && selectedBundle) {
-            // Single selection actions
             actions.push(
                 {
                     content: "Edit",
-                    onAction: rowActions.edit,
+                    onAction: withLoader(rowActions.edit),
                 },
                 {
                     content:
-                        selectedBundle.status === "ACTIVE"
-                            ? "Set as draft"
-                            : "Set as active",
+                        selectedBundle.status === "ACTIVE" ? "Set as draft" : "Set as active",
                     onAction: () =>
-                        handleToggleBundleStatus(
-                            selectedBundle.id,
-                            selectedBundle.status,
-                        ),
-                },
+                        handleToggleBundleStatus(selectedBundle.id, selectedBundle.status, selectedBundle.name),
+                }
             );
         } else if (selectedResources.length > 1) {
-            // Multiple selection actions
             actions.push(
                 {
                     content: "Set as active",
@@ -179,36 +163,50 @@ export function useBundleTableBulkActions() {
                 {
                     content: "Set as draft",
                     onAction: () => handleBulkDraft(selectedResources),
-                },
+                }
             );
         }
 
         return actions;
     };
 
-    // Get bulk actions (dropdown)
+    // Dropdown bulk actions
     const getBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
-        rowActions: any,
+        rowActions: any
     ) => {
         if (selectedResources.length === 1 && selectedBundle) {
-            // Single selection dropdown actions
             return [
                 {
                     content: "Duplicate",
                     icon: DuplicateIcon,
-                    onAction: () => rowActions.duplicate,
+                    onAction: () => {
+                        openModal({
+                            type: "duplicate",
+                            bundle: selectedBundle,
+                            onConfirm: async () => {
+                                await rowActions.duplicate();
+                            },
+                        });
+                    },
                 },
                 {
                     content: "Delete bundle",
                     icon: DeleteIcon,
                     destructive: true,
-                    onAction: () => rowActions.delete,
+                    onAction: () => {
+                        openModal({
+                            type: "delete",
+                            bundle: selectedBundle,
+                            onConfirm: async () => {
+                                await rowActions.delete();
+                            },
+                        });
+                    },
                 },
             ];
         } else if (selectedResources.length > 1) {
-            // Multiple selection dropdown actions
             return [
                 {
                     content: "Delete bundles",

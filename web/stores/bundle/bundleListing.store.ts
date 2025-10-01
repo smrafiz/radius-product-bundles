@@ -257,11 +257,6 @@ export const useBundleListingStore = create<BundleListingState>()(
                 ),
             })),
 
-        addBundleToStore: (bundle: BundleListItem) =>
-            set((state) => ({
-                bundles: [bundle, ...state.bundles],
-            })),
-
         removeBundleFromStore: (bundleId: string) =>
             set((state) => ({
                 bundles: state.bundles.filter(bundle => bundle.id !== bundleId)

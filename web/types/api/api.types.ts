@@ -6,7 +6,9 @@ export interface ApiResponse<T = any> {
 }
 
 export interface ApiError {
+    status: "error";
     message: string;
+    errors?: string[];
     code?: string;
     statusCode?: number;
     details?: Record<string, any>;

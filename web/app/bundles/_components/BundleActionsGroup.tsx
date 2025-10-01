@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
-import { Button, ButtonGroup, Toast, Tooltip } from "@shopify/polaris";
+import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
 
 import { BundleListItem } from "@/types";
 import { useModalStore } from "@/stores";

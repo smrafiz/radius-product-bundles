@@ -25,7 +25,7 @@ interface Props {
 export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
     const [popoverActive, setPopoverActive] = useState(false);
 
-    const { openModal, setLoading } = useModalStore();
+    const { openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
 
     const togglePopover = useCallback(

@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 import { BundleListItem } from "@/types";
+import { useBundleListingStore } from "@/stores";
 import { deleteBundle, duplicateBundle, updateBundleStatus } from "@/actions";
-import { useBundleListingStore, useModalStore } from "@/stores";
-import { bundleStatusConfigs } from "@/config";
 
 export function useBundleActions(bundle: BundleListItem) {
     const app = useAppBridge();
@@ -39,7 +38,7 @@ export function useBundleActions(bundle: BundleListItem) {
                 if (result.status === "success") {
                     if (result.data?.id) {
                         await refreshBundles();
-                        showToast(result.message);
+                        showToast(result.message ?? "Bundle duplicated successfully");
                     }
                 } else {
                     throw new Error(result.message || "Failed to duplicate bundle");
@@ -79,8 +78,6 @@ export function useBundleActions(bundle: BundleListItem) {
             if (!bundle) {
                 throw new Error("Bundle not found");
             }
-
-            console.log(status);
 
             try {
                 const token = await app.idToken();

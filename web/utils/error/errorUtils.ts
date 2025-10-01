@@ -2,6 +2,8 @@
  * Error handling utilities
  */
 
+import { ApiResponse } from "@/types";
+
 /**
  * Format error for API responses
  */
@@ -91,4 +93,40 @@ export function safeJsonParse<T>(json: string, fallback: T): T {
         logError("JSON Parse failed", error, { json });
         return fallback;
     }
+}
+
+/**
+ * Normalize different error shapes into string[]
+ */
+export function normalizeErrors(
+    errors: string[] | Record<string, { _errors: string[] }> | null | undefined
+): string[] {
+    if (!errors) return [];
+    if (Array.isArray(errors)) return errors;
+
+    return Object.values(errors).flatMap((err) => err._errors);
+}
+
+/**
+ * Convert an unknown error into ApiResponse<null>
+ */
+export function toErrorResponse(
+    error: unknown,
+    defaultMessage: string = "An error occurred"
+): ApiResponse<null> {
+    if (error instanceof Error) {
+        return {
+            status: "error",
+            message: error.message || defaultMessage,
+            errors: [error.message],
+            data: null,
+        };
+    }
+
+    return {
+        status: "error",
+        message: defaultMessage,
+        errors: [],
+        data: null,
+    };
 }

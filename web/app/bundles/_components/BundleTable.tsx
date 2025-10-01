@@ -51,7 +51,6 @@ export default function BundleTable() {
         selectedBundle || paginatedBundles[0],
     );
 
-    // Actions hook
     const { getPromotedBulkActions, getBulkActions } =
         useBundleTableBulkActions();
 
