@@ -16,7 +16,7 @@ export const useBundleListingStore = create<BundleListingState>()(
             statusFilter: [],
             typeFilter: [],
             selectedTab: 0,
-            sortSelected: ["created_at desc"],
+            sortSelected: ["createdAt desc"],
         },
         pagination: {
             currentPage: 1,

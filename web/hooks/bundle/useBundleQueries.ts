@@ -42,14 +42,24 @@ interface BundleMetricsData {
 /**
  * Hook to fetch bundles list
  */
-export function useBundles(page: number = 1, itemsPerPage: number = 10) {
+export function useBundles(
+    page: number = 1,
+    itemsPerPage: number = 10,
+    filters?: {
+        search?: string;
+        status?: string[];
+        type?: string[];
+        sortBy?: string;
+        sortDirection?: 'asc' | 'desc';
+    }
+) {
     const app = useAppBridge();
 
     return useQuery({
-        queryKey: ["bundles", page, itemsPerPage],
+        queryKey: ["bundles", page, itemsPerPage, filters],
         queryFn: async () => {
             const token = await app.idToken();
-            const result = await getBundles(token, page, itemsPerPage);
+            const result = await getBundles(token, page, itemsPerPage, filters);
 
             if (result.status === "error") {
                 throw new Error(result.message);

@@ -79,28 +79,47 @@ export const bundleQueries = {
     async findByShop(
         shop: string,
         options?: {
-            status?: string;
-            type?: string;
+            search?: string;
+            status?: string[];
+            type?: string[];
             limit?: number;
             offset?: number;
             orderBy?: string;
             orderDirection?: 'asc' | 'desc';
         },
     ) {
+        const where: any = { shop };
+
+        // Search filter
+        if (options?.search) {
+            where.name = {
+                contains: options.search,
+                mode: 'insensitive',
+            };
+        }
+
+        // Status filter (array)
+        if (options?.status && options.status.length > 0) {
+            where.status = {
+                in: options.status,
+            };
+        }
+
+        // Type filter (array)
+        if (options?.type && options.type.length > 0) {
+            where.type = {
+                in: options.type,
+            };
+        }
+
         return await prisma.bundle.findMany({
-            where: {
-                shop,
-                ...(options?.status && { status: options.status as any }),
-                ...(options?.type && { type: options.type as any }),
-            },
+            where,
             ...bundleFragments.forDashboard,
             take: options?.limit || 10,
             skip: options?.offset || 0,
-            ...(options?.orderBy && {
-                orderBy: {
-                    [options.orderBy]: options.orderDirection || 'desc',
-                },
-            }),
+            orderBy: {
+                [options?.orderBy || 'createdAt']: options?.orderDirection || 'desc',
+            },
         });
     },
 
@@ -164,10 +183,36 @@ export const bundleQueries = {
     },
 
     // Count bundles by shop
-    async countByShop(shop: string) {
-        return await prisma.bundle.count({
-            where: { shop },
-        });
+    async countByShop(
+        shop: string,
+        filters?: {
+            search?: string;
+            status?: string[];
+            type?: string[];
+        }
+    ) {
+        const where: any = { shop };
+
+        if (filters?.search) {
+            where.name = {
+                contains: filters.search,
+                mode: 'insensitive',
+            };
+        }
+
+        if (filters?.status && filters.status.length > 0) {
+            where.status = {
+                in: filters.status,
+            };
+        }
+
+        if (filters?.type && filters.type.length > 0) {
+            where.type = {
+                in: filters.type,
+            };
+        }
+
+        return await prisma.bundle.count({ where });
     },
 
     // Update bundle by ID

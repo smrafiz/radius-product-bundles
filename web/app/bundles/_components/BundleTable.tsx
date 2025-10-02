@@ -29,6 +29,7 @@ export default function BundleTable() {
         showToast,
     } = useBundleListingStore();
     const { isFetching } = useBundlesData();
+    const { loading } = useBundleListingStore();
 
     const totalBundles = pagination.totalItems;
 

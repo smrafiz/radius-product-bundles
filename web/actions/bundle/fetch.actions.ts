@@ -15,8 +15,13 @@ export async function getBundles(
     sessionToken: string,
     page: number = 1,
     itemsPerPage: number = 10,
-    sortBy: string = "createdAt",
-    sortDirection: "asc" | "desc" = "desc",
+    filters?: {
+        search?: string;
+        status?: string[];
+        type?: string[];
+        sortBy?: string;
+        sortDirection?: 'asc' | 'desc';
+    }
 ) {
     try {
         const {
@@ -26,11 +31,18 @@ export async function getBundles(
         const bundles = await bundleQueries.findByShop(shop, {
             limit: itemsPerPage,
             offset: (page - 1) * itemsPerPage,
-            orderBy: sortBy,
-            orderDirection: sortDirection,
+            search: filters?.search,
+            status: filters?.status,
+            type: filters?.type,
+            orderBy: filters?.sortBy || 'createdAt',
+            orderDirection: filters?.sortDirection || 'desc',
         });
 
-        const totalCount = await bundleQueries.countByShop(shop);
+        const totalCount = await bundleQueries.countByShop(shop, {
+            search: filters?.search,
+            status: filters?.status,
+            type: filters?.type,
+        });
 
         if (!bundles.length) {
             return {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useBundleListingStore } from "@/stores";
 import { useBundleMetrics, useBundles } from "@/hooks/bundle/useBundleQueries";
 
@@ -11,18 +11,53 @@ export const useBundlesData = () => {
         setError,
         showToast,
         pagination,
+        filters,
         setPaginationMetadata,
-        setCurrentPage,
     } = useBundleListingStore();
 
-    // Use React Query hooks with pagination from store
+    // Parse sort from filters
+    const [sortBy, sortDirection] = filters.sortSelected[0]?.split(' ') || ['createdAt', 'desc'];
+
+    // Map tab names to status values
+    const tabStatusMap = ["ALL", "ACTIVE", "DRAFT", "PAUSED", "SCHEDULED", "ARCHIVED"];
+
+    // Combine tab-based status filter with manual status filter
+    const effectiveStatusFilter = useMemo(() => {
+        const tabStatus = tabStatusMap[filters.selectedTab];
+
+        // If "All" tab selected, use manual filters only
+        if (tabStatus === "ALL") {
+            return filters.statusFilter;
+        }
+
+        // If a specific tab is selected, combine with manual filters
+        // If manual filters exist, use them; otherwise use tab status
+        if (filters.statusFilter.length > 0) {
+            return filters.statusFilter;
+        }
+
+        // Use tab status
+        return [tabStatus];
+    }, [filters.selectedTab, filters.statusFilter]);
+
+    // Use React Query hooks with pagination and filters from store
     const {
         data: bundlesResponse,
         isLoading: bundlesLoading,
         isFetching: bundlesFetching,
         error: bundlesError,
         refetch: refetchBundles,
-    } = useBundles(pagination.currentPage, pagination.itemsPerPage);
+    } = useBundles(
+        pagination.currentPage,
+        pagination.itemsPerPage,
+        {
+            search: filters.search,
+            status: effectiveStatusFilter,
+            type: filters.typeFilter,
+            sortBy,
+            sortDirection: sortDirection as 'asc' | 'desc',
+        }
+    );
 
     const {
         data: metricsData,
@@ -39,18 +74,12 @@ export const useBundlesData = () => {
                 totalPages: bundlesResponse.pagination.totalPages,
             });
         }
-    }, [
-        bundlesResponse,
-        setBundles,
-        setPaginationMetadata,
-        pagination.currentPage,
-        setCurrentPage,
-    ]);
+    }, [bundlesResponse, setBundles, setPaginationMetadata]);
 
-    // Handle loading states
+    // Handle loading states - include fetching for pagination/filter changes
     useEffect(() => {
-        setLoading(bundlesLoading || metricsLoading);
-    }, [bundlesLoading, metricsLoading, setLoading]);
+        setLoading(bundlesLoading || metricsLoading || bundlesFetching);
+    }, [bundlesLoading, metricsLoading, bundlesFetching, setLoading]);
 
     // Handle errors
     useEffect(() => {
