@@ -5,17 +5,20 @@ import {
     deleteBundles,
     toggleBundleStatus,
 } from "@/actions";
-import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateBundleCache, withLoader } from "@/utils";
+import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
+
 import type { BundleStatus } from "@/types";
 import { useGlobalBanner, useSessionToken } from "@/hooks";
 import { useBundleListingStore, useModalStore } from "@/stores";
-import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 export function useBundleTableBulkActions() {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const { refreshBundles } = useBundleListingStore();
-    const { showSuccess, showError } = useGlobalBanner();
+    const { showError } = useGlobalBanner();
     const sessionToken = useSessionToken();
     const { openModal, setLoading, closeModal } = useModalStore();
     const updateBundleInStore = useBundleListingStore(
@@ -43,6 +46,7 @@ export function useBundleTableBulkActions() {
                     const result = await toggleBundleStatus(sessionToken, bundleId, newStatus);
                     if (result.status === "success") {
                         updateBundleInStore(bundleId, { status: result.data.status });
+                        await invalidateBundleCache(queryClient);
                         showToast(result.message);
                     } else {
                         showError("Status update failed", { content: result.message });
@@ -67,6 +71,7 @@ export function useBundleTableBulkActions() {
                     const result = await bulkToggleBundleStatus(sessionToken, bundleIds, "ACTIVE");
                     if (result.status === "success") {
                         await refreshBundles();
+                        await invalidateBundleCache(queryClient);
                         showToast(`${result.data.updatedCount} bundles activated`);
                     } else {
                         showError("Bulk activation failed", { content: result.message });
@@ -94,6 +99,7 @@ export function useBundleTableBulkActions() {
                     const result = await bulkToggleBundleStatus(sessionToken, bundleIds, "DRAFT");
                     if (result.status === "success") {
                         await refreshBundles();
+                        await invalidateBundleCache(queryClient);
                         showToast(`${result.data.updatedCount} bundles set as draft`);
                     } else {
                         showError("Bulk draft failed", { content: result.message });
@@ -120,6 +126,7 @@ export function useBundleTableBulkActions() {
                     const result = await deleteBundles(sessionToken, bundleIds);
                     if (result.status === "success") {
                         await refreshBundles();
+                        await invalidateBundleCache(queryClient);
                         showToast("Selected bundles have been deleted successfully");
                     } else {
                         showError("Bulk delete failed", { content: result.message });
@@ -187,6 +194,7 @@ export function useBundleTableBulkActions() {
                             bundle: selectedBundle,
                             onConfirm: async () => {
                                 await rowActions.duplicate();
+                                await invalidateBundleCache(queryClient);
                             },
                         });
                     },
@@ -201,6 +209,7 @@ export function useBundleTableBulkActions() {
                             bundle: selectedBundle,
                             onConfirm: async () => {
                                 await rowActions.delete();
+                                await invalidateBundleCache(queryClient);
                             },
                         });
                     },

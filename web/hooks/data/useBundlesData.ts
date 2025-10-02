@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useBundleListingStore } from "@/stores";
-import { useBundles, useBundleMetrics } from "@/hooks/bundle/useBundleQueries";
+import { useBundleMetrics, useBundles } from "@/hooks/bundle/useBundleQueries";
 
 export const useBundlesData = () => {
     const {
@@ -12,6 +12,7 @@ export const useBundlesData = () => {
         showToast,
         pagination,
         setPaginationMetadata,
+        setCurrentPage,
     } = useBundleListingStore();
 
     // Use React Query hooks with pagination from store
@@ -38,7 +39,13 @@ export const useBundlesData = () => {
                 totalPages: bundlesResponse.pagination.totalPages,
             });
         }
-    }, [bundlesResponse, setBundles, setPaginationMetadata]);
+    }, [
+        bundlesResponse,
+        setBundles,
+        setPaginationMetadata,
+        pagination.currentPage,
+        setCurrentPage,
+    ]);
 
     // Handle loading states
     useEffect(() => {

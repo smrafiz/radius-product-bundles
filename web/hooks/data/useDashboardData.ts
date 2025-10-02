@@ -37,8 +37,8 @@ export const useDashboardData = () => {
 
     // Sync loading
     useEffect(() => {
-        setLoading(bundlesQuery.isLoading || metricsQuery.isLoading);
-    }, [bundlesQuery.isLoading, metricsQuery.isLoading, setLoading]);
+        setLoading(bundlesQuery.isLoading || metricsQuery.isLoading || metricsQuery.isFetching);
+    }, [bundlesQuery.isLoading, metricsQuery.isLoading, metricsQuery.isFetching, setLoading]);
 
     // Handle bundles
     useEffect(() => {
@@ -53,7 +53,7 @@ export const useDashboardData = () => {
         }
     }, [bundlesQuery.status, bundlesQuery.data, bundlesQuery.error, setBundles, setError, showToast]);
 
-    // Handle metrics
+    // Handle metrics - still update store for other components
     useEffect(() => {
         if (metricsQuery.isSuccess) {
             const d = metricsQuery.data ?? {};
@@ -81,5 +81,24 @@ export const useDashboardData = () => {
         }
     }, [metricsQuery.status, metricsQuery.data, setMetrics]);
 
-    return { bundlesQuery, metricsQuery };
+    // Return metrics directly from query, not from store
+    const currentMetrics = metricsQuery.isFetching ? null : (
+        metricsQuery.data ? {
+            totalRevenue: metricsQuery.data?.totals?.revenue || 0,
+            revenueAllTime: metricsQuery.data?.totals?.revenueAllTime || 0,
+            totalViews: metricsQuery.data?.totals?.views || 0,
+            avgConversionRate: metricsQuery.data?.metrics?.conversionRate || 0,
+            totalBundles: metricsQuery.data?.totals?.totalBundles || 0,
+            activeBundles: metricsQuery.data?.totals?.activeBundles || 0,
+            revenueGrowth: metricsQuery.data?.growth?.revenue || 0,
+            conversionGrowth: metricsQuery.data?.growth?.conversion || 0,
+        } : null
+    );
+
+    return {
+        bundlesQuery,
+        metricsQuery,
+        metrics: currentMetrics, // Return directly
+        isMetricsFetching: metricsQuery.isFetching,
+    };
 };

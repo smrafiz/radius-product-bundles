@@ -15,6 +15,8 @@ export async function getBundles(
     sessionToken: string,
     page: number = 1,
     itemsPerPage: number = 10,
+    sortBy: string = "createdAt",
+    sortDirection: "asc" | "desc" = "desc",
 ) {
     try {
         const {
@@ -24,6 +26,8 @@ export async function getBundles(
         const bundles = await bundleQueries.findByShop(shop, {
             limit: itemsPerPage,
             offset: (page - 1) * itemsPerPage,
+            orderBy: sortBy,
+            orderDirection: sortDirection,
         });
 
         const totalCount = await bundleQueries.countByShop(shop);

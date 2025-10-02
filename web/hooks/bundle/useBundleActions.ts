@@ -1,7 +1,8 @@
 import { useMemo } from "react";
-import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { invalidateBundleCache, withLoader } from "@/utils";
 
 import { useBundleListingStore } from "@/stores";
 import { BundleListItem, BundleStatus } from "@/types";
@@ -10,6 +11,7 @@ import { deleteBundle, duplicateBundle, updateBundleStatus } from "@/actions";
 export function useBundleActions(bundle: BundleListItem | null) {
     const app = useAppBridge();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const showToast = useBundleListingStore((s) => s.showToast);
     const removeBundleFromStore = useBundleListingStore((s) => s.removeBundleFromStore);
     const refreshBundles = useBundleListingStore((s) => s.refreshBundles);
@@ -38,6 +40,7 @@ export function useBundleActions(bundle: BundleListItem | null) {
                 if (result.status === "success") {
                     if (result.data?.id) {
                         await refreshBundles();
+                        await invalidateBundleCache(queryClient);
                         showToast(result.message ?? "Bundle duplicated successfully");
                     }
                 } else {
@@ -60,6 +63,7 @@ export function useBundleActions(bundle: BundleListItem | null) {
 
                 if (result.status === "success") {
                     await refreshBundles();
+                    await invalidateBundleCache(queryClient);
                     showToast(result.message ?? "Bundle deleted successfully");
                 } else {
                     showToast(result.message ?? "Failed to delete bundle");
@@ -81,6 +85,7 @@ export function useBundleActions(bundle: BundleListItem | null) {
 
                 if (result.status === "success") {
                     updateBundleInStore(bundle.id, { status: result.data.status });
+                    await invalidateBundleCache(queryClient);
                     showToast(result.message ?? "Bundle status updated successfully");
                 } else {
                     showToast(result.message ?? "Failed to update bundle status");

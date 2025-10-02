@@ -46,6 +46,7 @@ export interface MetricCardProps {
     growth?: number;
     subtitle?: string;
     tone?: "success" | "caution" | "subdued";
+    loading?: boolean;
     action?: {
         label: string;
         url: string;

@@ -83,6 +83,8 @@ export const bundleQueries = {
             type?: string;
             limit?: number;
             offset?: number;
+            orderBy?: string;
+            orderDirection?: 'asc' | 'desc';
         },
     ) {
         return await prisma.bundle.findMany({
@@ -94,6 +96,11 @@ export const bundleQueries = {
             ...bundleFragments.forDashboard,
             take: options?.limit || 10,
             skip: options?.offset || 0,
+            ...(options?.orderBy && {
+                orderBy: {
+                    [options.orderBy]: options.orderDirection || 'desc',
+                },
+            }),
         });
     },
 

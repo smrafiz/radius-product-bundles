@@ -25,9 +25,11 @@ export default function MetricCard({
     growth,
     action,
     comparisonLabel = "vs last month",
+    loading = false,
 }: MetricCardProps) {
     const router = useRouter();
-    const isLoading = value === undefined || value === null || value === '';
+    const isLoading = loading || value === undefined || value === null || value === '';
+
 
     return (
         <Card>
@@ -84,4 +86,4 @@ export default function MetricCard({
             </Box>
         </Card>
     );
-};
+}

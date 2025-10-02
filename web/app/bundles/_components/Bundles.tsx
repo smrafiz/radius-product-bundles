@@ -23,23 +23,25 @@ import {
     useBundlesData,
     useDashboardData,
     useBundleTableBulkActions,
+    useInitialBundleState,
 } from "@/hooks";
 
-/*
- * Bundles page
- */
 export default function Bundles() {
-    // Load data
-    useBundlesData();
     useDashboardData();
     useSyncBundles();
 
     const router = useRouter();
     const { metrics } = useDashboardStore();
+    const { isLoading } = useBundlesData();
     const { handleCreateBundle } = useBundleTableBulkActions();
-    const { loading, toast, hideToast } = useBundleListingStore();
+    const { bundles, toast, hideToast } = useBundleListingStore();
+    const { metrics: liveMetrics, isMetricsFetching } = useDashboardData();
 
-    // Handle secondary action
+    const { showSkeleton } = useInitialBundleState({
+        hasData: bundles.length > 0,
+        isLoading,
+    });
+
     const handleBundleStudio = () => {
         router.push("/bundles/studio");
     };
@@ -70,7 +72,7 @@ export default function Bundles() {
 
                     <Layout.Section>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            {metricsConfig(metrics).map((metric, index) => (
+                            {metricsConfig(liveMetrics).map((metric, index) => (
                                 <MetricCard
                                     key={index}
                                     title={metric.title}
@@ -78,13 +80,14 @@ export default function Bundles() {
                                     comparisonLabel={metric.comparisonLabel}
                                     growth={metric.growth}
                                     tone={metric.tone}
+                                    loading={isMetricsFetching}
                                 />
                             ))}
                         </div>
                     </Layout.Section>
 
                     <Layout.Section>
-                        {loading ? (
+                        {showSkeleton ? (
                             <Card>
                                 <Box padding="400">
                                     <SkeletonDisplayText
