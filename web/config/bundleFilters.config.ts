@@ -1,5 +1,6 @@
-import { bundleStatusConfigs } from "./bundleStatus.config";
 import { bundleTypeConfigs } from "./bundleType.config";
+import { bundleStatusConfigs } from "./bundleStatus.config";
+
 import type { IndexFiltersProps } from "@shopify/polaris";
 
 // Bundle status filter options
@@ -41,19 +42,37 @@ export const bundleSortOptions: IndexFiltersProps["sortOptions"] = [
 // Tab configuration
 export const bundleTabStrings = [
     "All",
-    "Active",
-    "Draft",
-    "Paused",
-    "Scheduled",
-    "Archived",
+    ...Object.values(bundleStatusConfigs).map(config => config.text)
 ];
 
-// Map tab index to status filter
+// Map tab index to status filter value
 export const tabStatusMap = [
     "ALL",
-    "ACTIVE",
-    "DRAFT",
-    "PAUSED",
-    "SCHEDULED",
-    "ARCHIVED",
+    ...Object.keys(bundleStatusConfigs)
 ];
+
+// Complete bundle filters configuration object
+export const bundleFiltersConfig = {
+    status: {
+        options: bundleStatusFilterOptions,
+        key: "bundleStatus",
+        label: "Status",
+    },
+    type: {
+        options: bundleTypeFilterOptions,
+        key: "bundleType",
+        label: "Bundle type",
+    },
+    sort: {
+        options: bundleSortOptions,
+        default: ["createdAt desc"],
+    },
+    tabs: {
+        items: bundleTabStrings,
+        statusMap: tabStatusMap,
+    },
+    search: {
+        placeholder: "Search bundles...",
+        debounceMs: 500,
+    },
+} as const;

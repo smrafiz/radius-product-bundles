@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
     IndexFilters,
     useSetIndexFiltersMode,
@@ -8,13 +8,14 @@ import {
     IndexFiltersMode,
 } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
-import type { IndexFiltersProps, TabProps } from "@shopify/polaris";
+import type { IndexFiltersProps } from "@shopify/polaris";
 import {
     bundleStatusFilterOptions,
     bundleTypeFilterOptions,
     bundleSortOptions,
-    bundleTabStrings,
-} from "@/config/bundleFilters.config";
+    bundleFiltersConfig,
+} from "@/config";
+import { useDebounce } from "@/hooks";
 
 export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const {
@@ -29,8 +30,26 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     const { mode, setMode } = useSetIndexFiltersMode();
 
+    // Local state for immediate UI update
+    const [queryValue, setQueryValue] = useState(filters.search);
+
+    // Debounce the search query
+    const debouncedQuery = useDebounce(queryValue, bundleFiltersConfig.search.debounceMs);
+
+    // Update store when debounced value changes
+    useEffect(() => {
+        setSearch(debouncedQuery);
+    }, [debouncedQuery, setSearch]);
+
+    // Sync with store when cleared externally
+    useEffect(() => {
+        if (filters.search === "" && queryValue !== "") {
+            setQueryValue("");
+        }
+    }, [filters.search]);
+
     // Tabs from config
-    const tabs: TabProps[] = bundleTabStrings.map((item, index) => ({
+    const tabs = bundleFiltersConfig.tabs.items.map((item, index) => ({
         content: item,
         index,
         onAction: () => {},
@@ -42,12 +61,13 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     // Filter handlers
     const handleQueryChange = useCallback(
         (value: string) => {
-            setSearch(value);
+            setQueryValue(value);
         },
-        [setSearch],
+        [],
     );
 
     const handleQueryClear = useCallback(() => {
+        setQueryValue("");
         setSearch("");
     }, [setSearch]);
 
@@ -58,13 +78,13 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     // Filter configuration
     const filterConfigs = [
         {
-            key: "bundleStatus",
-            label: "Status",
+            key: bundleFiltersConfig.status.key,
+            label: bundleFiltersConfig.status.label,
             filter: (
                 <ChoiceList
-                    title="Bundle status"
+                    title={bundleFiltersConfig.status.label}
                     titleHidden
-                    choices={bundleStatusFilterOptions}
+                    choices={bundleFiltersConfig.status.options}
                     selected={filters.statusFilter}
                     onChange={setStatusFilter}
                     allowMultiple
@@ -73,13 +93,13 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
             shortcut: true,
         },
         {
-            key: "bundleType",
-            label: "Bundle type",
+            key: bundleFiltersConfig.type.key,
+            label: bundleFiltersConfig.type.label,
             filter: (
                 <ChoiceList
-                    title="Bundle type"
+                    title={bundleFiltersConfig.type.label}
                     titleHidden
-                    choices={bundleTypeFilterOptions}
+                    choices={bundleFiltersConfig.type.options}
                     selected={filters.typeFilter}
                     onChange={setTypeFilter}
                     allowMultiple
@@ -120,8 +140,8 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
         <IndexFilters
             sortOptions={bundleSortOptions}
             sortSelected={filters.sortSelected}
-            queryValue={filters.search}
-            queryPlaceholder="Search bundles..."
+            queryValue={queryValue}
+            queryPlaceholder={bundleFiltersConfig.search.placeholder}
             onQueryChange={handleQueryChange}
             onQueryClear={handleQueryClear}
             onSort={setSortSelected}

@@ -1,37 +1,30 @@
 "use client";
 
-import {
-    Box,
-    Card,
-    Frame,
-    Layout,
-    Page,
-    SkeletonBodyText,
-    SkeletonDisplayText,
-    Toast,
-} from "@shopify/polaris";
 import { withLoader } from "@/utils";
 import { metricsConfig } from "@/config";
 import { useRouter } from "next/navigation";
 import { GlobalBanner, MetricCard } from "@/components";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { BundleErrorCard, BundleTable } from "@/bundles/_components";
+import { Box, Card, Frame, Layout, Page, SkeletonBodyText, SkeletonDisplayText, Toast, } from "@shopify/polaris";
 
-import { useBundleListingStore, useDashboardStore } from "@/stores";
 import {
-    useSyncBundles,
     useBundlesData,
-    useDashboardData,
     useBundleTableBulkActions,
+    useDashboardData,
     useInitialBundleState,
+    useSyncBundles,
 } from "@/hooks";
+import { useBundleListingStore } from "@/stores";
 
+/**
+ * Bundles page
+ */
 export default function Bundles() {
     useDashboardData();
     useSyncBundles();
 
     const router = useRouter();
-    const { metrics } = useDashboardStore();
     const { isLoading } = useBundlesData();
     const { handleCreateBundle } = useBundleTableBulkActions();
     const { bundles, toast, hideToast } = useBundleListingStore();

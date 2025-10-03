@@ -1,12 +1,4 @@
 // Re-export all actions from their respective files
+export * from "./table";
+export * from "./shared";
 export { default as Bundles } from "./Bundles";
-export { default as BundleTable } from "./BundleTable";
-export { default as BundleSkeleton } from "./BundleSkeleton";
-export { default as BundleTableRow } from "./BundleTableRow";
-export { default as BundleErrorCard } from "./BundleErrorCard";
-export { default as BundlePagination } from "./BundlePagination";
-export { default as BundleIndexFilters } from "./BundleIndexFilters";
-export { default as BundleTableEmptyStates } from "./BundleTableEmptyStates";
-export { default as BundleProductsPreview } from "./BundleProductsPreview";
-export { default as StatusPopover } from "./StatusPopover";
-export { default as BundleActionsGroup } from "./BundleActionsGroup";

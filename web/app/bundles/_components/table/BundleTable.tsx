@@ -26,11 +26,19 @@ export default function BundleTable() {
     const {
         bundles,
         pagination,
+        filters,
         showToast,
     } = useBundleListingStore();
     const { isFetching } = useBundlesData();
-    const { loading } = useBundleListingStore();
 
+    // Check if any filters are active
+    const hasActiveFilters =
+        filters.search !== "" ||
+        filters.statusFilter.length > 0 ||
+        filters.typeFilter.length > 0 ||
+        filters.selectedTab > 0; // Not on "All" tab
+
+    // For empty state logic
     const totalBundles = pagination.totalItems;
 
     // Selection state
@@ -46,8 +54,8 @@ export default function BundleTable() {
     const selectedBundle =
         selectedResources.length === 1
             ? bundles.find(
-                  (bundle) => bundle.id === selectedResources[0],
-              )
+                (bundle) => bundle.id === selectedResources[0],
+            )
             : null;
 
     const { actions: selectedBundleActions } = useBundleActions(
@@ -68,13 +76,13 @@ export default function BundleTable() {
     const promotedBulkActions =
         selectedResources.length > 0
             ? [
-                  ...getPromotedBulkActions(
-                      selectedResources,
-                      selectedBundle,
-                      selectedBundleActions,
-                  ),
-                  { content: "Cancel", onAction: handleClearSelection },
-              ]
+                ...getPromotedBulkActions(
+                    selectedResources,
+                    selectedBundle,
+                    selectedBundleActions,
+                ),
+                { content: "Cancel", onAction: handleClearSelection },
+            ]
             : [];
 
     const bulkActions = getBulkActions(
@@ -84,14 +92,15 @@ export default function BundleTable() {
     );
 
     // Check for empty states
-    if (totalBundles === 0 || bundles.length === 0) {
+    if (bundles.length === 0) {
         return (
             <Card padding="0">
-                <BundleIndexFilters />
+                <BundleIndexFilters loading={isFetching} />
                 <BundleTableEmptyStates
-                    totalBundles={totalBundles}
-                    filteredBundlesCount={bundles.length}
+                    totalBundles={hasActiveFilters ? 1 : totalBundles}
+                    filteredBundlesCount={totalBundles}
                 />
+                <BundlePagination />
             </Card>
         );
     }
@@ -125,7 +134,6 @@ export default function BundleTable() {
                     { title: "Type" },
                     { title: "Discount" },
                     { title: "Status" },
-                    // { title: "Views" },
                     { title: "Actions", alignment: "center" },
                 ]}
                 selectable
