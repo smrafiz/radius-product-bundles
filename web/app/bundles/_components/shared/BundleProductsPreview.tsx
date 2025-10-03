@@ -1,20 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import { useCallback, useState } from "react";
-import {
-    Box,
-    Icon,
-    InlineStack,
-    Popover,
-    ResourceItem,
-    ResourceList,
-    Text,
-    Thumbnail,
-} from "@shopify/polaris";
-import { BundleListItem } from "@/types";
-import { groupProductsById } from "@/utils";
+import { useState, useCallback } from "react";
+import { Icon, InlineStack, Popover } from "@shopify/polaris";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
+import { ProductAvatarStack, ProductListPopover } from "@/bundles/_components";
+
+import { BundleListItem } from "@/types";
+import { useBundlePreview } from "@/hooks";
 
 interface Props {
     bundle: BundleListItem;
@@ -22,61 +14,32 @@ interface Props {
 
 export default function BundleProductsPreview({ bundle }: Props) {
     const [popoverActive, setPopoverActive] = useState(false);
-
     const togglePopover = useCallback(
         () => setPopoverActive((active) => !active),
-        [],
+        []
     );
 
-    // Use pre-fetched products from bundle data
-    const groupedProducts = groupProductsById(bundle.products);
-    const displayProducts = groupedProducts.slice(0, 3);
-    const totalCount = groupedProducts.length;
-    const remainingCount = Math.max(0, totalCount - 3);
-    let arrowClass = totalCount === 2 ? '-left-7' : '-left-2';
+    const { groupedProducts, displayProducts, remainingCount, arrowClass } =
+        useBundlePreview(bundle.products);
 
     const activator = (
         <div
             className="cursor-pointer flex items-center gap-1 group"
             onClick={togglePopover}
+            aria-expanded={popoverActive}
+            aria-controls="bundle-products-popover"
         >
             <InlineStack gap="100" align="center">
-                <InlineStack gap="100" align="center">
-                    {displayProducts.map((product, index) => (
-                        <Box key={`${product.id}-${index}`} position="relative">
-                            <div
-                                className={`${index === 2 ? "absolute" : "relative"} w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${
-                                    index === 1
-                                        ? "-left-5"
-                                        : index === 2
-                                          ? "-left-10"
-                                          : ""
-                                }`}
-                            >
-                                <Image
-                                    src={product.featuredImage || ""}
-                                    alt={product.title}
-                                    width={40}
-                                    height={40}
-                                    className="object-cover w-full h-full"
-                                />
-                            </div>
-                            {index === 2 && remainingCount > 0 && (
-                                <div className="absolute w-10 h-10 inset-0 bg-white/92 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 right-10 border border-[var(--p-color-border)]">
-                                    +{remainingCount}
-                                </div>
-                            )}
-                        </Box>
-                    ))}
-                </InlineStack>
+                <ProductAvatarStack
+                    products={displayProducts}
+                    remainingCount={remainingCount}
+                />
                 <div
                     className={`w-10 h-10 relative ${arrowClass} flex items-center transition-opacity duration-200 ${
-                        popoverActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        popoverActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                     }`}
                 >
-                    <Icon
-                        source={popoverActive ? ChevronUpIcon : ChevronDownIcon}
-                    />
+                    <Icon source={popoverActive ? ChevronUpIcon : ChevronDownIcon} />
                 </div>
             </InlineStack>
         </div>
@@ -89,46 +52,7 @@ export default function BundleProductsPreview({ bundle }: Props) {
             onClose={togglePopover}
             preferredAlignment="left"
         >
-            <Box padding="200" minWidth="280px">
-                <ResourceList
-                    resourceName={{ singular: "product", plural: "products" }}
-                    items={groupedProducts}
-                    renderItem={(product) => {
-                        const media = (
-                            <Thumbnail
-                                source={product.featuredImage || ""}
-                                alt={product.title}
-                                size="small"
-                            />
-                        );
-
-                        return (
-                            <ResourceItem
-                                id={product.id}
-                                key={product.id}
-                                media={media}
-                                verticalAlignment="center"
-                                onClick={() => {
-                                    console.log(
-                                        "Product clicked:",
-                                        product.title,
-                                    );
-                                }}
-                            >
-                                <div className="flex items-center">
-                                    <Text
-                                        as="h4"
-                                        variant="bodyMd"
-                                        fontWeight="medium"
-                                    >
-                                        {product.title}
-                                    </Text>
-                                </div>
-                            </ResourceItem>
-                        );
-                    }}
-                />
-            </Box>
+            <ProductListPopover products={groupedProducts} />
         </Popover>
     );
 }

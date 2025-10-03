@@ -20,9 +20,9 @@ export interface ProductGroup {
     id: string;
     title: string;
     featuredImage?: string;
-    product: SelectedItem;
-    variants: SelectedItem[];
-    originalTotalVariants: number;
+    product?: SelectedItem;
+    variants?: SelectedItem[];
+    originalTotalVariants?: number;
 }
 
 export interface DisplaySettings {

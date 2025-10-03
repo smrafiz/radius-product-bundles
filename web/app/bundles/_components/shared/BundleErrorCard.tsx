@@ -3,11 +3,11 @@
 import { Banner } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 
-interface BundleErrorCardProps {
+interface Props {
     onRetry?: () => void;
 }
 
-export default function BundleErrorCard({ onRetry }: BundleErrorCardProps) {
+export default function BundleErrorCard({ onRetry }: Props) {
     const { error, setError } = useBundleListingStore();
 
     if (!error) {

@@ -1,7 +1,7 @@
 import { Bundles } from "@/bundles/_components";
 
 /*
- * Bundles page
+ * Bun
  */
 export default function Page() {
     return <Bundles />;

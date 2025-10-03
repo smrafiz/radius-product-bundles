@@ -3,8 +3,8 @@
 import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
 import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
 
-import { BundleListItem } from "@/types";
 import { useModalStore } from "@/stores";
+import { BundleListItem } from "@/types";
 
 interface Props {
     bundle: BundleListItem;

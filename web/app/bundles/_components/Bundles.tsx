@@ -1,43 +1,26 @@
 "use client";
 
-import { withLoader } from "@/utils";
-import { metricsConfig } from "@/config";
-import { useRouter } from "next/navigation";
+import {
+    BundleErrorCard,
+    BundleTable,
+    BundleTableSkeleton,
+} from "@/bundles/_components";
 import { GlobalBanner, MetricCard } from "@/components";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
-import { BundleErrorCard, BundleTable } from "@/bundles/_components";
-import { Box, Card, Frame, Layout, Page, SkeletonBodyText, SkeletonDisplayText, Toast, } from "@shopify/polaris";
+import { Frame, Layout, Page, Toast } from "@shopify/polaris";
 
-import {
-    useBundlesData,
-    useBundleTableBulkActions,
-    useDashboardData,
-    useInitialBundleState,
-    useSyncBundles,
-} from "@/hooks";
-import { useBundleListingStore } from "@/stores";
+import { useBundlesPage } from "@/hooks";
 
-/**
- * Bundles page
- */
 export default function Bundles() {
-    useDashboardData();
-    useSyncBundles();
-
-    const router = useRouter();
-    const { isLoading } = useBundlesData();
-    const { handleCreateBundle } = useBundleTableBulkActions();
-    const { bundles, toast, hideToast } = useBundleListingStore();
-    const { metrics: liveMetrics, isMetricsFetching } = useDashboardData();
-
-    const { showSkeleton } = useInitialBundleState({
-        hasData: bundles.length > 0,
-        isLoading,
-    });
-
-    const handleBundleStudio = () => {
-        router.push("/bundles/studio");
-    };
+    const {
+        metrics,
+        isMetricsLoading,
+        showTableSkeleton,
+        toast,
+        onCreateBundle,
+        onBundleStudio,
+        onDismissToast,
+    } = useBundlesPage();
 
     return (
         <Frame>
@@ -47,13 +30,13 @@ export default function Bundles() {
                 primaryAction={{
                     content: "Create Bundle",
                     icon: PlusIcon,
-                    onAction: withLoader(handleCreateBundle),
+                    onAction: onCreateBundle,
                 }}
                 secondaryActions={[
                     {
                         content: "Bundle Studio",
                         icon: ColorIcon,
-                        onAction: withLoader(handleBundleStudio),
+                        onAction: onBundleStudio,
                     },
                 ]}
             >
@@ -65,38 +48,19 @@ export default function Bundles() {
 
                     <Layout.Section>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            {metricsConfig(liveMetrics).map((metric, index) => (
+                            {metrics.map((metric, index) => (
                                 <MetricCard
                                     key={index}
-                                    title={metric.title}
-                                    value={metric.value}
-                                    comparisonLabel={metric.comparisonLabel}
-                                    growth={metric.growth}
-                                    tone={metric.tone}
-                                    loading={isMetricsFetching}
+                                    {...metric}
+                                    loading={isMetricsLoading}
                                 />
                             ))}
                         </div>
                     </Layout.Section>
 
                     <Layout.Section>
-                        {showSkeleton ? (
-                            <Card>
-                                <Box padding="400">
-                                    <SkeletonDisplayText
-                                        size="small"
-                                        maxWidth="20ch"
-                                    />
-                                    <div className="mt-4 space-y-4 animate-pulse">
-                                        {[1, 2, 3, 4, 5].map((row) => (
-                                            <SkeletonBodyText
-                                                key={row}
-                                                lines={1}
-                                            />
-                                        ))}
-                                    </div>
-                                </Box>
-                            </Card>
+                        {showTableSkeleton ? (
+                            <BundleTableSkeleton />
                         ) : (
                             <BundleTable />
                         )}
@@ -104,7 +68,7 @@ export default function Bundles() {
                 </Layout>
 
                 {toast.active && (
-                    <Toast content={toast.message} onDismiss={hideToast} />
+                    <Toast content={toast.message} onDismiss={onDismissToast} />
                 )}
             </Page>
         </Frame>

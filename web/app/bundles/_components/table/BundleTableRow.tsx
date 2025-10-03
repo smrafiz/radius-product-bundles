@@ -95,7 +95,7 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
             </IndexTable.Cell>
 
             {/* Bundled products */}
-            <IndexTable.Cell>
+            <IndexTable.Cell className="w-[150px]">
                 <div onClick={(e) => e.stopPropagation()}>
                     <Text variant="bodyMd" as="span">
                         <BundleProductsPreview bundle={bundle} />
