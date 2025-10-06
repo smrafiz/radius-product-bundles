@@ -1,0 +1,289 @@
+web/
+├── _developer
+│   ├── tomlWriter.ts
+│   └── types
+│       └── toml.ts
+├── actions
+│   ├── bundle
+│   │   ├── fetch.actions.ts
+│   │   ├── index.ts
+│   │   └── mutate.actions.ts
+│   ├── index.ts
+│   ├── products
+│   │   └── product.actions.ts
+│   ├── shared
+│   │   ├── server.action.ts
+│   │   └── webhook.action.ts
+│   └── shop
+│       ├── graphql.action.ts
+│       └── session.action.ts
+├── app
+│   ├── ab-testing
+│   │   └── page.tsx
+│   ├── analytics
+│   │   └── page.tsx
+│   ├── api
+│   │   ├── auth
+│   │   ├── proxy_route
+│   │   ├── refresh-session
+│   │   ├── validate-session
+│   │   └── webhooks
+│   ├── automation
+│   ├── bundles
+│   │   ├── [id]
+│   │   ├── _components
+│   │   ├── create
+│   │   └── page.tsx
+│   ├── customers
+│   ├── dashboard
+│   │   ├── _components
+│   │   └── page.tsx
+│   ├── globals.css
+│   ├── install
+│   ├── integrations
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── pricing-rules
+│   ├── settings
+│   └── templates
+├── codegen.ts
+├── components
+│   ├── auth
+│   │   └── ProtectedRoute.tsx
+│   ├── bundles
+│   ├── fields
+│   │   └── Knob.tsx
+│   ├── index.ts
+│   ├── layout
+│   │   ├── AppLayout.tsx
+│   │   └── index.ts
+│   ├── modals
+│   │   ├── ConfirmationModal.tsx
+│   │   ├── ModalHost.tsx
+│   │   └── index.ts
+│   └── shared
+│       ├── GlobalBanner.tsx
+│       ├── GlobalForm.tsx
+│       ├── GlobalLoader.tsx
+│       ├── MetricCard.tsx
+│       ├── Navigation.tsx
+│       ├── ProductsPopover.tsx
+│       ├── SelectedProductsAccordion.tsx
+│       ├── Skeletons.tsx
+│       └── index.ts
+├── config
+│   ├── bundleFilters.config.ts
+│   ├── bundleStatus.config.ts
+│   ├── bundleType.config.ts
+│   ├── discountType.config.ts
+│   ├── index.ts
+│   └── metrics.config.ts
+├── docs
+│   └── old-structure.txt
+├── hooks
+│   ├── api
+│   │   └── index.ts
+│   ├── bundle
+│   │   ├── index.ts
+│   │   ├── useBundleActions.ts
+│   │   ├── useBundleForm.ts
+│   │   ├── useBundleFormMethods.ts
+│   │   ├── useBundlePreview.ts
+│   │   ├── useBundleQueries.ts
+│   │   ├── useBundleSave.ts
+│   │   ├── useBundleTableBulkActions.tsx
+│   │   ├── useBundleValidation.ts
+│   │   ├── useBundlesPage.ts
+│   │   ├── useInitialBundleState.ts
+│   │   ├── useLoadBundle.ts
+│   │   └── useStepNavigation.ts
+│   ├── data
+│   │   ├── index.ts
+│   │   ├── useBundlesData.ts
+│   │   ├── useCurrency.ts
+│   │   ├── useDashboardData.ts
+│   │   ├── useGraphQL.ts
+│   │   ├── useSyncActiveBundleDeletion.ts
+│   │   └── useSyncBundles.ts
+│   ├── index.ts
+│   ├── product
+│   │   ├── index.ts
+│   │   ├── useGroupedProducts.ts
+│   │   └── useProductPicker.ts
+│   ├── shop
+│   │   ├── index.ts
+│   │   ├── useGlobalBanner.ts
+│   │   ├── useSessionToken.ts
+│   │   ├── useSessionValidation.ts
+│   │   └── useShopSettings.ts
+│   ├── ui
+│   │   ├── index.ts
+│   │   ├── useDebounce.ts
+│   │   ├── useDragAndDrop.ts
+│   │   └── useStepIndicator.ts
+│   └── utils
+│       ├── index.ts
+│       └── useSyncStore.ts
+├── lib
+│   ├── ai
+│   ├── analytics
+│   ├── bundle
+│   ├── constants
+│   │   ├── bundle.ts
+│   │   ├── currency.ts
+│   │   ├── index.ts
+│   │   └── shopify.ts
+│   ├── db
+│   │   ├── app-installations.ts
+│   │   ├── index.d.ts
+│   │   ├── prisma-connect.ts
+│   │   └── session-storage.ts
+│   ├── gql
+│   │   ├── fragment-masking.ts
+│   │   ├── gql.ts
+│   │   ├── graphql.ts
+│   │   └── index.ts
+│   ├── queries
+│   │   ├── database
+│   │   ├── index.ts
+│   │   └── shopify
+│   ├── reducers
+│   │   └── session.ts
+│   ├── shopify
+│   │   ├── gdpr.ts
+│   │   ├── initialize-context.ts
+│   │   ├── proxy-client.ts
+│   │   ├── register-webhooks.ts
+│   │   ├── unified-auth.ts
+│   │   ├── verify.ts
+│   │   └── webhook-handlers.ts
+│   └── validation
+│       ├── bundleSchema.ts
+│       ├── bundleValidation.ts
+│       ├── index.ts
+│       └── temp.bundleSchema.ts
+├── middleware.ts
+├── middleware.ts.bak
+├── next-env.d.ts
+├── next.config.js
+├── old-middleware.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── prisma
+│   ├── migrations
+│   ├── schema.prisma
+│   └── seed.js
+├── providers
+│   ├── index.ts
+│   ├── providers.tsx
+│   ├── session-provider.tsx
+│   └── tanstack-provider.tsx
+├── public
+│   ├── extensions
+│   │   ├── bundle-widget.css
+│   │   └── bundle-widget.js
+│   ├── favicon.ico
+│   └── vercel.svg
+├── security
+│   ├── csp.ts
+│   ├── headers.ts
+│   └── shop.ts
+├── shopify.web.toml
+├── stores
+│   ├── bundle
+│   │   ├── bundle.store.ts
+│   │   ├── bundleListing.store.ts
+│   │   └── index.ts
+│   ├── dashboard
+│   │   ├── dashboard.store.ts
+│   │   └── index.ts
+│   ├── index.ts
+│   ├── product
+│   │   └── index.ts
+│   └── shop
+│       ├── globalBanner.store.ts
+│       ├── index.ts
+│       ├── modal.store.ts
+│       ├── session.store.ts
+│       └── shopSettings.store.ts
+├── styles
+│   ├── fields
+│   │   └── Knob.css
+│   └── main.css
+├── tsconfig.json
+├── types
+│   ├── admin.generated.d.ts
+│   ├── api
+│   │   ├── api.types.ts
+│   │   ├── automation.types.ts
+│   │   ├── graphql.d.ts
+│   │   └── index.ts
+│   ├── bundle
+│   │   ├── bundle.types.ts
+│   │   ├── index.ts
+│   │   └── transformer.types.ts
+│   ├── generated
+│   │   └── admin.generated.d.ts
+│   ├── index.ts
+│   ├── metrics
+│   │   ├── index.ts
+│   │   └── metrics.types.ts
+│   ├── notification
+│   │   ├── index.ts
+│   │   └── notification.types.ts
+│   ├── product
+│   │   ├── index.ts
+│   │   ├── product.types.ts
+│   │   └── productSelection.types.ts
+│   ├── shop
+│   │   ├── banner.types.ts
+│   │   ├── index.ts
+│   │   └── shop.types.ts
+│   ├── store
+│   │   ├── bundle.types.ts
+│   │   ├── bundleListing.types.ts
+│   │   ├── index.ts
+│   │   └── modal.types.ts
+│   ├── testing
+│   │   ├── index.ts
+│   │   └── testing.types.ts
+│   └── ui
+│       ├── index.ts
+│       └── ui.types.ts
+├── utils
+│   ├── bundle
+│   │   ├── bundleActionHelpers.ts
+│   │   ├── bundleCache.ts
+│   │   ├── bundleTable.ts
+│   │   ├── bundleTransformers.ts
+│   │   ├── bundleUtils.ts
+│   │   └── index.ts
+│   ├── error
+│   │   └── errorUtils.ts
+│   ├── formatting
+│   │   └── formatters.ts
+│   ├── index.ts
+│   ├── metric
+│   │   ├── index.ts
+│   │   ├── metric.utils.ts
+│   │   └── metricTransformers.ts
+│   ├── product
+│   ├── query
+│   │   └── query.ts
+│   ├── shared
+│   │   └── global.ts
+│   ├── shop
+│   │   └── sessionUtils.ts
+│   └── shopify
+│       ├── env-config.ts
+│       ├── setupCheck.ts
+│       └── shopifyUtils.ts
+└── widgets
+    ├── postcss.config.mjs
+    ├── src
+    │   ├── bundle-widget.scss
+    │   └── bundle-widget.ts
+    └── vite.config.ts
+
+96 directories, 191 files

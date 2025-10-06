@@ -1,0 +1,76 @@
+query GetProducts(
+    $first: Int!
+    $after: String
+    $query: String
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
+) {
+    products(
+        first: $first
+        after: $after
+        query: $query
+        sortKey: $sortKey
+        reverse: $reverse
+    ) {
+        edges {
+            node {
+                ...ProductFields
+                allCollections: collections(first: 100) {
+                    edges {
+                        node {
+                            id
+                            title
+                            handle
+                        }
+                    }
+                }
+            }
+            cursor
+        }
+        pageInfo {
+            ...PageInfoFields
+        }
+    }
+}
+
+query GetProductById($id: ID!) {
+    product(id: $id) {
+        id
+        title
+        handle
+        vendor
+        productType
+        tags
+        totalInventory
+    }
+}
+
+query GetProductsByIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+        ... on Product {
+            ...ProductFields
+        }
+    }
+}
+
+query GetBundleProducts($ids: [ID!]!) {
+    nodes(ids: $ids) {
+        ... on Product {
+            id
+            title
+            handle
+            featuredImage {
+                url
+                altText
+            }
+            variants(first: 50) {
+                nodes {
+                    id
+                    title
+                    price
+                    compareAtPrice
+                }
+            }
+        }
+    }
+}

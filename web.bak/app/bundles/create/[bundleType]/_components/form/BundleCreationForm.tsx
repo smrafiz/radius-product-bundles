@@ -1,0 +1,114 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { getBundleProperty, withLoader } from "@/utils";
+import { Card, Layout, Page } from "@shopify/polaris";
+import {
+    StepContent,
+    StepNavigation,
+} from "@/bundles/create/[bundleType]/_components/form";
+import { BundlePreview } from "@/bundles/create/[bundleType]/_components/preview";
+import { HorizontalStepIndicator } from "@/bundles/create/[bundleType]/_components/shared";
+import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+
+import type { BundleType } from "@/types";
+import { useBundleStore } from "@/stores";
+import { usePathname, useRouter } from "next/navigation";
+import GlobalBanner from "@/components/shared/GlobalBanner";
+
+interface Props {
+    bundleType: BundleType;
+    bundleName?: string;
+}
+
+export default function BundleCreationForm({ bundleType, bundleName }: Props) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const { setStep } = useBundleStore();
+
+    const { bundleData, setBundleData } = useBundleStore();
+    const { setValue } = useBundleFormMethods();
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<{
+        title: string;
+        content: string;
+    } | null>(null);
+
+    const isEditMode = pathname.includes("/edit");
+
+    const handleBack = () => {
+        if (isEditMode) {
+            router.push("/bundles");
+        } else {
+            router.push("/bundles/create");
+        }
+    };
+
+    useEffect(() => {
+        if (!bundleData.type) {
+            setBundleData({ ...bundleData, type: bundleType });
+            setValue("type", bundleType);
+        }
+    }, [bundleType, bundleData, setBundleData, setValue]);
+
+    const getPageProps = () => {
+        if (isEditMode) {
+            return {
+                title: `Edit ${bundleName || getBundleProperty(bundleType, "label")}`,
+                subtitle: "Update your bundle settings and preview changes",
+                backAction: {
+                    content: "Back to Bundles",
+                    onAction: withLoader(() => handleBack()),
+                },
+            };
+        }
+
+        return {
+            title: `Create ${getBundleProperty(bundleType, "label")}`,
+            subtitle:
+                "Configure your bundle settings and preview the customer experience",
+            backAction: {
+                content: "Bundle Selection",
+                onAction: withLoader(() => handleBack()),
+            },
+        };
+    };
+
+    const pageProps = getPageProps();
+
+    return (
+        <Page {...pageProps}>
+            <Layout>
+                {/* Success banner - shows once, no autohide */}
+                <GlobalBanner />
+
+                {/* Horizontal Step Navigation */}
+                <Layout.Section>
+                    <HorizontalStepIndicator />
+                </Layout.Section>
+
+                {/* Navigation Buttons */}
+                <Layout.Section>
+                    <StepNavigation />
+                </Layout.Section>
+
+                {/* Main Content Section */}
+                <Layout.Section>
+                    <div className="pb-6">
+                        <Layout>
+                            <Layout.Section>
+                                <Card>
+                                    <StepContent />
+                                </Card>
+                            </Layout.Section>
+
+                            <Layout.Section variant="oneThird">
+                                <BundlePreview bundleType={bundleType} />
+                            </Layout.Section>
+                        </Layout>
+                    </div>
+                </Layout.Section>
+            </Layout>
+        </Page>
+    );
+}

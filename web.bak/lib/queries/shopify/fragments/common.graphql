@@ -1,0 +1,19 @@
+fragment ImageFields on Image {
+    id
+    url
+    altText
+    width
+    height
+}
+
+fragment MoneyFields on MoneyV2 {
+    amount
+    currencyCode
+}
+
+fragment PageInfoFields on PageInfo {
+    hasNextPage
+    endCursor
+    hasPreviousPage
+    startCursor
+}

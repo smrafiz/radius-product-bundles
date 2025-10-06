@@ -1,0 +1,66 @@
+fragment ProductFields on Product {
+    id
+    title
+    handle
+    status
+    vendor
+    productType
+    tags
+    totalInventory
+    createdAt
+    updatedAt
+    featuredImage {
+        ...ImageFields
+    }
+    variants(first: 100) {
+        nodes {
+            ...VariantFields
+        }
+    }
+    collections(first: 10) {
+        edges {
+            node {
+                ...CollectionFields
+            }
+        }
+    }
+}
+
+fragment ProductCardFields on Product {
+    id
+    title
+    handle
+    vendor
+    featuredImage {
+        ...ImageFields
+    }
+    priceRange {
+        minVariantPrice {
+            ...MoneyFields
+        }
+        maxVariantPrice {
+            ...MoneyFields
+        }
+    }
+}
+
+fragment VariantFields on ProductVariant {
+    id
+    title
+    price
+    compareAtPrice
+    sku
+    barcode
+    inventoryQuantity
+    availableForSale
+    selectedOptions {
+        name
+        value
+    }
+    image {
+        ...ImageFields
+    }
+    inventoryItem {
+        tracked
+    }
+}
