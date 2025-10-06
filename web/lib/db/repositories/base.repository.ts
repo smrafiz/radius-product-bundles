@@ -11,10 +11,7 @@ export abstract class BaseRepository<
     TWhereUniqueInput,
     TWhereInput
 > {
-    /*
-     * Prisma model
-     */
-    private model: any;
+    constructor(protected readonly model: any) {}
 
     /**
      * Find a single record by unique identifier

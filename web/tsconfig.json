@@ -28,7 +28,6 @@
 			"@/config/*": ["./config/*"],
 			"@/providers/*": ["./providers/*"],
 
-			// Temporary backwards compatibility
 			"@/actions": ["./actions"],
 			"@/actions/*": ["./actions/*"],
 			"@/components": ["./components"],
