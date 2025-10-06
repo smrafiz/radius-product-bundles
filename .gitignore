@@ -74,3 +74,4 @@ shopify.app.app-next-vercel.toml
 /web/lib/gql/graphql.ts
 /extension/extensions/product-bundle-widget/assets/bundle-widget.css
 /extension/extensions/product-bundle-widget/assets/bundle-widget.js
+/web.bak/
