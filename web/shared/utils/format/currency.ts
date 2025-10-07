@@ -3,11 +3,11 @@
  */
 export function formatCurrency(
     amount: number,
-    currency: string = 'USD',
-    locale: string = 'en-US'
+    currency: string = "USD",
+    locale: string = "en-US",
 ): string {
     return new Intl.NumberFormat(locale, {
-        style: 'currency',
+        style: "currency",
         currency,
     }).format(amount);
 }
@@ -16,6 +16,6 @@ export function formatCurrency(
  * Parse currency string to number
  */
 export function parseCurrency(value: string): number {
-    const cleaned = value.replace(/[^0-9.-]+/g, '');
+    const cleaned = value.replace(/[^0-9.-]+/g, "");
     return parseFloat(cleaned) || 0;
 }

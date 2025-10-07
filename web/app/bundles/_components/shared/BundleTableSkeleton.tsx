@@ -1,6 +1,11 @@
 "use client";
 
-import { Box, Card, SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris";
+import {
+    Box,
+    Card,
+    SkeletonBodyText,
+    SkeletonDisplayText,
+} from "@shopify/polaris";
 
 export default function BundleTableSkeleton() {
     return (

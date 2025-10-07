@@ -16,10 +16,20 @@ export const useBundlesData = () => {
     } = useBundleListingStore();
 
     // Parse sort from filters
-    const [sortBy, sortDirection] = filters.sortSelected[0]?.split(' ') || ['createdAt', 'desc'];
+    const [sortBy, sortDirection] = filters.sortSelected[0]?.split(" ") || [
+        "createdAt",
+        "desc",
+    ];
 
     // Map tab names to status values
-    const tabStatusMap = ["ALL", "ACTIVE", "DRAFT", "PAUSED", "SCHEDULED", "ARCHIVED"];
+    const tabStatusMap = [
+        "ALL",
+        "ACTIVE",
+        "DRAFT",
+        "PAUSED",
+        "SCHEDULED",
+        "ARCHIVED",
+    ];
 
     // Combine tab-based status filter with manual status filter
     const effectiveStatusFilter = useMemo(() => {
@@ -47,17 +57,13 @@ export const useBundlesData = () => {
         isFetching: bundlesFetching,
         error: bundlesError,
         refetch: refetchBundles,
-    } = useBundles(
-        pagination.currentPage,
-        pagination.itemsPerPage,
-        {
-            search: filters.search,
-            status: effectiveStatusFilter,
-            type: filters.typeFilter,
-            sortBy,
-            sortDirection: sortDirection as 'asc' | 'desc',
-        }
-    );
+    } = useBundles(pagination.currentPage, pagination.itemsPerPage, {
+        search: filters.search,
+        status: effectiveStatusFilter,
+        type: filters.typeFilter,
+        sortBy,
+        sortDirection: sortDirection as "asc" | "desc",
+    });
 
     const {
         data: metricsData,

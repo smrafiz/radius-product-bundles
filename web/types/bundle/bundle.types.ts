@@ -78,7 +78,11 @@ export interface DiscountConfig {
     description: string;
     symbol: string;
     suffix: string;
-    format: (value?: number, formatCurrency?: (val: number) => string, includeLabel?: boolean) => string;
+    format: (
+        value?: number,
+        formatCurrency?: (val: number) => string,
+        includeLabel?: boolean,
+    ) => string;
 }
 
 /*

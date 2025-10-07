@@ -1,7 +1,10 @@
 import { bundleQueries, shopQueries } from "@/lib/queries";
 import { bundleSchema, BundleFormData } from "@/lib/validation";
 
-export async function validateAndCheckBusinessRules(shop: string, data: unknown) {
+export async function validateAndCheckBusinessRules(
+    shop: string,
+    data: unknown,
+) {
     // Schema validation
     const validation = await validateBundleData(data);
     if (!validation.success) {
@@ -62,7 +65,10 @@ export async function validateBundleData(data: unknown) {
 /**
  * Business rules validation
  */
-export async function validateBusinessRules(shop: string, data: BundleFormData) {
+export async function validateBusinessRules(
+    shop: string,
+    data: BundleFormData,
+) {
     const [recentCount, shopSettings] = await Promise.all([
         bundleQueries.countRecent(shop, 1),
         shopQueries.getSettings(shop),
@@ -70,23 +76,33 @@ export async function validateBusinessRules(shop: string, data: BundleFormData) 
 
     const errors: Record<string, { _errors: string[] }> = {};
 
-    if (data.type === "VOLUME_DISCOUNT" && (!data.volumeTiers?.length)) {
-        errors.volumeTiers = { _errors: ["Volume discount bundles require at least one tier"] };
+    if (data.type === "VOLUME_DISCOUNT" && !data.volumeTiers?.length) {
+        errors.volumeTiers = {
+            _errors: ["Volume discount bundles require at least one tier"],
+        };
     }
 
     if (["BUY_X_GET_Y", "BOGO"].includes(data.type)) {
         if (!data.buyQuantity || !data.getQuantity) {
-            errors.buyQuantity = { _errors: ["Buy X Get Y bundles require buy and get quantities"] };
+            errors.buyQuantity = {
+                _errors: ["Buy X Get Y bundles require buy and get quantities"],
+            };
         }
 
-        const triggerProducts = data.products.filter(p => p.role === "TRIGGER");
-        const rewardProducts = data.products.filter(p => p.role === "REWARD");
+        const triggerProducts = data.products.filter(
+            (p) => p.role === "TRIGGER",
+        );
+        const rewardProducts = data.products.filter((p) => p.role === "REWARD");
 
         if (!triggerProducts.length) {
-            errors.products = { _errors: ["Buy X Get Y bundles require trigger products"] };
+            errors.products = {
+                _errors: ["Buy X Get Y bundles require trigger products"],
+            };
         }
         if (!rewardProducts.length) {
-            errors.products = { _errors: ["Buy X Get Y bundles require reward products"] };
+            errors.products = {
+                _errors: ["Buy X Get Y bundles require reward products"],
+            };
         }
     }
 
@@ -95,24 +111,39 @@ export async function validateBusinessRules(shop: string, data: BundleFormData) 
     }
 
     if (data.discountType === "PERCENTAGE" && data.discountValue > 100) {
-        errors.discountValue = { _errors: ["Percentage discount cannot exceed 100%"] };
+        errors.discountValue = {
+            _errors: ["Percentage discount cannot exceed 100%"],
+        };
     }
 
     if (data.discountType === "FIXED_AMOUNT" && data.discountValue > 10000) {
-        errors.discountValue = { _errors: ["Fixed discount amount seems too high"] };
+        errors.discountValue = {
+            _errors: ["Fixed discount amount seems too high"],
+        };
     }
 
     if (recentCount > 5) {
-        errors.general = { _errors: ["Too many bundles created recently. Please wait."] };
+        errors.general = {
+            _errors: ["Too many bundles created recently. Please wait."],
+        };
     }
 
-    if (shopSettings?.maxBundleProducts && data.products.length > shopSettings.maxBundleProducts) {
-        errors.products = { _errors: [`Shop limit: max ${shopSettings.maxBundleProducts} products`] };
+    if (
+        shopSettings?.maxBundleProducts &&
+        data.products.length > shopSettings.maxBundleProducts
+    ) {
+        errors.products = {
+            _errors: [
+                `Shop limit: max ${shopSettings.maxBundleProducts} products`,
+            ],
+        };
     }
 
     return {
         success: Object.keys(errors).length === 0,
-        message: Object.keys(errors).length ? "Business validation failed" : "Validation passed",
+        message: Object.keys(errors).length
+            ? "Business validation failed"
+            : "Validation passed",
         errors: Object.keys(errors).length ? errors : null,
     };
 }
@@ -144,7 +175,9 @@ export async function validateSecurity(shop: string, data: BundleFormData) {
     // Rate limiting
     const recentBundles = await bundleQueries.countRecent(shop, 1);
     if (recentBundles > 5) {
-        errors.general = { _errors: ["Too many bundles created recently. Please wait."] };
+        errors.general = {
+            _errors: ["Too many bundles created recently. Please wait."],
+        };
     }
 
     return {

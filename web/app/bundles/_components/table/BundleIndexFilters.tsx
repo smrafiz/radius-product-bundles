@@ -34,7 +34,10 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const [queryValue, setQueryValue] = useState(filters.search);
 
     // Debounce the search query
-    const debouncedQuery = useDebounce(queryValue, bundleFiltersConfig.search.debounceMs);
+    const debouncedQuery = useDebounce(
+        queryValue,
+        bundleFiltersConfig.search.debounceMs,
+    );
 
     // Update store when debounced value changes
     useEffect(() => {
@@ -59,12 +62,9 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     }));
 
     // Filter handlers
-    const handleQueryChange = useCallback(
-        (value: string) => {
-            setQueryValue(value);
-        },
-        [],
-    );
+    const handleQueryChange = useCallback((value: string) => {
+        setQueryValue(value);
+    }, []);
 
     const handleQueryClear = useCallback(() => {
         setQueryValue("");
@@ -114,7 +114,9 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     if (filters.statusFilter.length > 0) {
         const statusLabels = filters.statusFilter.map((val) => {
-            const option = bundleStatusFilterOptions.find((opt) => opt.value === val);
+            const option = bundleStatusFilterOptions.find(
+                (opt) => opt.value === val,
+            );
             return option ? option.label : val;
         });
         appliedFilters.push({
@@ -126,7 +128,9 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     if (filters.typeFilter.length > 0) {
         const typeLabels = filters.typeFilter.map((val) => {
-            const option = bundleTypeFilterOptions.find((opt) => opt.value === val);
+            const option = bundleTypeFilterOptions.find(
+                (opt) => opt.value === val,
+            );
             return option ? option.label : val;
         });
         appliedFilters.push({

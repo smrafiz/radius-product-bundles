@@ -13,11 +13,13 @@ export function useSyncActiveBundleDeletion(redirectOnDeletion = true) {
             const wasReset = target.handleActiveBundleDeletion(bundles);
 
             if (wasReset && redirectOnDeletion) {
-                useBundleListingStore.getState().showToast("Bundle was deleted and removed from workspace");
-                router.push('/bundles');
+                useBundleListingStore
+                    .getState()
+                    .showToast("Bundle was deleted and removed from workspace");
+                router.push("/bundles");
             }
 
             return target;
-        }
+        },
     );
 }

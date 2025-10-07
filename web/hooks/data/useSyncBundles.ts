@@ -7,18 +7,22 @@ export function useSyncBundles() {
         (state) => state.bundles,
         useDashboardStore,
         (target, bundles) => {
-            const activeBundlesCount = bundles.filter(bundle => bundle.status === 'ACTIVE').length;
+            const activeBundlesCount = bundles.filter(
+                (bundle) => bundle.status === "ACTIVE",
+            ).length;
             const totalBundlesCount = bundles.length;
 
             return {
                 ...target,
                 bundles,
-                metrics: target.metrics ? {
-                    ...target.metrics,
-                    activeBundles: activeBundlesCount,
-                    totalBundles: totalBundlesCount,
-                } : null
+                metrics: target.metrics
+                    ? {
+                          ...target.metrics,
+                          activeBundles: activeBundlesCount,
+                          totalBundles: totalBundlesCount,
+                      }
+                    : null,
             };
-        }
+        },
     );
 }

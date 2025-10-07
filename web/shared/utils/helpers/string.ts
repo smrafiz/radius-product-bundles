@@ -10,9 +10,9 @@ export function capitalize(str: string): string {
  */
 export function titleCase(str: string): string {
     return str
-        .split(' ')
+        .split(" ")
         .map((word) => capitalize(word))
-        .join(' ');
+        .join(" ");
 }
 
 /**
@@ -22,9 +22,9 @@ export function slugify(str: string): string {
     return str
         .toLowerCase()
         .trim()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
 }
 
 /**
@@ -32,7 +32,7 @@ export function slugify(str: string): string {
  */
 export function truncate(str: string, maxLength: number): string {
     if (str.length <= maxLength) return str;
-    return str.slice(0, maxLength - 3) + '...';
+    return str.slice(0, maxLength - 3) + "...";
 }
 
 /**

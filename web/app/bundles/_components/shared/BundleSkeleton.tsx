@@ -41,8 +41,14 @@ export default function BundlePageSkeleton() {
                                 <Card key={i}>
                                     <Box padding="400">
                                         <BlockStack gap="200">
-                                            <SkeletonDisplayText size="small" maxWidth="10ch" />
-                                            <SkeletonDisplayText size="large" maxWidth="6ch" />
+                                            <SkeletonDisplayText
+                                                size="small"
+                                                maxWidth="10ch"
+                                            />
+                                            <SkeletonDisplayText
+                                                size="large"
+                                                maxWidth="6ch"
+                                            />
                                             <SkeletonBodyText lines={1} />
                                         </BlockStack>
                                     </Box>
@@ -55,7 +61,10 @@ export default function BundlePageSkeleton() {
                     <Layout.Section>
                         <Card>
                             <Box padding="400">
-                                <SkeletonDisplayText size="small" maxWidth="20ch" />
+                                <SkeletonDisplayText
+                                    size="small"
+                                    maxWidth="20ch"
+                                />
                                 <div className="mt-4 space-y-4">
                                     {[1, 2, 3, 4, 5].map((row) => (
                                         <SkeletonBodyText key={row} lines={1} />

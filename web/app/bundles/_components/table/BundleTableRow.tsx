@@ -105,7 +105,10 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
 
             {/* Bundle type */}
             <IndexTable.Cell>
-                <div className="cursor-default" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="cursor-default"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <Text variant="bodyMd" fontWeight="medium" as="span">
                         {getBundleProperty(bundle.type, "label")}
                     </Text>
@@ -114,7 +117,10 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
 
             {/* Bundle price */}
             <IndexTable.Cell>
-                <div className="cursor-default" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="cursor-default"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <Text
                         variant="bodyMd"
                         fontWeight="medium"
@@ -146,7 +152,10 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
             {/* Bundle actions */}
             <IndexTable.Cell>
                 <Box padding="0">
-                    <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
+                    <div
+                        className="flex justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <BundleActionsGroup
                             bundle={bundle}
                             onAction={actions}

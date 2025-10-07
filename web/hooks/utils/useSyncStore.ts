@@ -5,7 +5,7 @@ export function useSyncStore<SourceState, TargetState, Value>(
     sourceStore: StoreApi<SourceState>,
     selector: (state: SourceState) => Value,
     targetStore: StoreApi<TargetState>,
-    updater: (prev: TargetState, value: Value) => Partial<TargetState>
+    updater: (prev: TargetState, value: Value) => Partial<TargetState>,
 ) {
     useEffect(() => {
         let prevValue = selector(sourceStore.getState());

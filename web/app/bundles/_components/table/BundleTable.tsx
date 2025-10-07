@@ -23,12 +23,7 @@ import { useBundleListingStore } from "@/stores";
 
 export default function BundleTable() {
     const breakpoints = useBreakpoints();
-    const {
-        bundles,
-        pagination,
-        filters,
-        showToast,
-    } = useBundleListingStore();
+    const { bundles, pagination, filters, showToast } = useBundleListingStore();
     const { isFetching } = useBundlesData();
 
     // Check if any filters are active
@@ -53,13 +48,11 @@ export default function BundleTable() {
     // Get selected bundle for single selection
     const selectedBundle =
         selectedResources.length === 1
-            ? bundles.find(
-                (bundle) => bundle.id === selectedResources[0],
-            )
+            ? bundles.find((bundle) => bundle.id === selectedResources[0])
             : null;
 
     const { actions: selectedBundleActions } = useBundleActions(
-        selectedBundle || (bundles.length > 0 ? bundles[0] : null)
+        selectedBundle || (bundles.length > 0 ? bundles[0] : null),
     );
 
     const { getPromotedBulkActions, getBulkActions } =
@@ -76,13 +69,13 @@ export default function BundleTable() {
     const promotedBulkActions =
         selectedResources.length > 0
             ? [
-                ...getPromotedBulkActions(
-                    selectedResources,
-                    selectedBundle,
-                    selectedBundleActions,
-                ),
-                { content: "Cancel", onAction: handleClearSelection },
-            ]
+                  ...getPromotedBulkActions(
+                      selectedResources,
+                      selectedBundle,
+                      selectedBundleActions,
+                  ),
+                  { content: "Cancel", onAction: handleClearSelection },
+              ]
             : [];
 
     const bulkActions = getBulkActions(

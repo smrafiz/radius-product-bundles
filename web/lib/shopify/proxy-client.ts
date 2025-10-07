@@ -12,7 +12,10 @@ interface ProxyGraphQLResponse<T = any> {
 /**
  * Server-side GraphQL executor for proxy routes
  */
-export async function executeProxyGraphQL<TResult = any, TVariables extends object = any>(
+export async function executeProxyGraphQL<
+    TResult = any,
+    TVariables extends object = any,
+>(
     document: TypedDocumentNode<TResult, TVariables>,
     variables: TVariables,
     shop: string,
@@ -26,7 +29,7 @@ export async function executeProxyGraphQL<TResult = any, TVariables extends obje
             return {
                 data: undefined,
                 loading: false,
-                error: new Error("No access token found for shop")
+                error: new Error("No access token found for shop"),
             };
         }
 
@@ -37,7 +40,7 @@ export async function executeProxyGraphQL<TResult = any, TVariables extends obje
             return {
                 data: undefined,
                 loading: false,
-                error: new Error("GraphQL document string is empty")
+                error: new Error("GraphQL document string is empty"),
             };
         }
 
@@ -55,15 +58,14 @@ export async function executeProxyGraphQL<TResult = any, TVariables extends obje
         return {
             data: result,
             loading: false,
-            error: null
+            error: null,
         };
-
     } catch (error) {
         console.error("Proxy GraphQL error:", error);
         return {
             data: undefined,
             loading: false,
-            error: error as Error
+            error: error as Error,
         };
     }
 }
@@ -71,7 +73,10 @@ export async function executeProxyGraphQL<TResult = any, TVariables extends obje
 /**
  * Convenience wrapper for common GraphQL patterns
  */
-export async function queryProxyGraphQL<TResult = any, TVariables extends object = any>(
+export async function queryProxyGraphQL<
+    TResult = any,
+    TVariables extends object = any,
+>(
     document: TypedDocumentNode<TResult, TVariables>,
     variables: TVariables,
     shop: string,

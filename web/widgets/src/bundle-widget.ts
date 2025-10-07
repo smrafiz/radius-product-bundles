@@ -93,7 +93,9 @@ export class ProductBundleWidget {
             const response = await fetch(url);
 
             if (!response.ok) {
-                console.error(`Bundle fetch failed: ${response.status} ${response.statusText}`);
+                console.error(
+                    `Bundle fetch failed: ${response.status} ${response.statusText}`,
+                );
                 return null;
             }
 
@@ -104,7 +106,6 @@ export class ProductBundleWidget {
             }
 
             return data.bundles[0];
-
         } catch (error) {
             console.error("Bundle fetch error:", error);
             return null;
@@ -128,13 +129,18 @@ export class ProductBundleWidget {
     private render(bundle: Bundle): void {
         const layout = bundle.settings?.layout || this.layout;
         const showSavings = bundle.settings?.showSavings ?? this.showSavings;
-        const showImages = bundle.settings?.showProductImages ?? this.showImages;
+        const showImages =
+            bundle.settings?.showProductImages ?? this.showImages;
 
         // Calculate pricing
-        const originalTotal = bundle.products.reduce((sum, product) => sum + product.price, 0);
-        const discountAmount = bundle.discountType === "PERCENTAGE"
-            ? (originalTotal * bundle.discountValue!) / 100
-            : bundle.discountValue || 0;
+        const originalTotal = bundle.products.reduce(
+            (sum, product) => sum + product.price,
+            0,
+        );
+        const discountAmount =
+            bundle.discountType === "PERCENTAGE"
+                ? (originalTotal * bundle.discountValue!) / 100
+                : bundle.discountValue || 0;
         const bundleTotal = originalTotal - discountAmount;
 
         const content = this.container.querySelector(".bundle-widget-content");
@@ -148,24 +154,27 @@ export class ProductBundleWidget {
             
             <div class="bundle-products-horizontal">
                 ${bundle.products
-            .sort((a, b) => a.displayOrder - b.displayOrder)
-            .map((product, index, array) => `
+                    .sort((a, b) => a.displayOrder - b.displayOrder)
+                    .map(
+                        (product, index, array) => `
                         <div class="bundle-product-item">
-                            ${showImages && product.featuredImage
-                ? `<div class="bundle-product-image">
+                            ${
+                                showImages && product.featuredImage
+                                    ? `<div class="bundle-product-image">
                                      <img src="${product.featuredImage}" alt="${this.escapeHtml(product.title)}" loading="lazy" />
                                    </div>`
-                : `<div class="bundle-product-placeholder">
+                                    : `<div class="bundle-product-placeholder">
                                      <span>📦</span>
                                    </div>`
-            }
+                            }
                             <div class="bundle-product-details">
                                 <h4 class="bundle-product-name">${this.escapeHtml(product.title)}</h4>
                                 <p class="bundle-product-price">Qty: ${product.quantity} × $${product.price.toFixed(2)}</p>
                             </div>
                         </div>
-                    `).join('')
-        }
+                    `,
+                    )
+                    .join("")}
             </div>
 
             <div class="bundle-pricing">
@@ -177,7 +186,9 @@ export class ProductBundleWidget {
                     </div>
                 </div>
                 
-                ${showSavings && bundle.discountValue ? `
+                ${
+                    showSavings && bundle.discountValue
+                        ? `
                     <div class="bundle-savings-row">
                         <span class="bundle-savings-label">You save:</span>
                         <span class="bundle-savings-amount">
@@ -185,7 +196,9 @@ export class ProductBundleWidget {
                             (${bundle.discountValue}${bundle.discountType === "PERCENTAGE" ? "%" : ""})
                         </span>
                     </div>
-                ` : ''}
+                `
+                        : ""
+                }
             </div>
 
             <button class="bundle-add-to-cart bundle-add-to-cart--primary" data-bundle-id="${bundle.id}">
@@ -195,37 +208,46 @@ export class ProductBundleWidget {
     `;
 
         // Add event listener for add to cart button
-        const addToCartBtn = content.querySelector(".bundle-add-to-cart") as HTMLButtonElement;
+        const addToCartBtn = content.querySelector(
+            ".bundle-add-to-cart",
+        ) as HTMLButtonElement;
         if (addToCartBtn) {
-            addToCartBtn.addEventListener("click", () => this.handleAddToCart(bundle));
+            addToCartBtn.addEventListener("click", () =>
+                this.handleAddToCart(bundle),
+            );
         }
     }
 
     private renderProduct(product: BundleProduct, showImages: boolean): string {
         const isOptional = product.role === "OPTIONAL";
-        const hasComparePrice = product.compareAtPrice > 0 && product.compareAtPrice > product.price;
+        const hasComparePrice =
+            product.compareAtPrice > 0 &&
+            product.compareAtPrice > product.price;
 
         return `
             <div class="bundle-product ${isOptional ? "bundle-product--optional" : ""}" data-product-id="${product.id}">
-                ${showImages && product.featuredImage
-            ? `<div class="bundle-product__image">
+                ${
+                    showImages && product.featuredImage
+                        ? `<div class="bundle-product__image">
                          <img src="${product.featuredImage}" alt="${this.escapeHtml(product.title)}" loading="lazy" />
                        </div>`
-            : ""
-        }
+                        : ""
+                }
                 <div class="bundle-product__info">
                     <h4 class="bundle-product__title">${this.escapeHtml(product.title)}</h4>
                     <div class="bundle-product__pricing">
                         <span class="bundle-product__price">$${product.price.toFixed(2)}</span>
-                        ${hasComparePrice
-            ? `<span class="bundle-product__compare-price">$${product.compareAtPrice.toFixed(2)}</span>`
-            : ""
-        }
+                        ${
+                            hasComparePrice
+                                ? `<span class="bundle-product__compare-price">$${product.compareAtPrice.toFixed(2)}</span>`
+                                : ""
+                        }
                     </div>
-                    ${isOptional
-            ? `<span class="bundle-product__badge">Optional</span>`
-            : ""
-        }
+                    ${
+                        isOptional
+                            ? `<span class="bundle-product__badge">Optional</span>`
+                            : ""
+                    }
                 </div>
             </div>
         `;
@@ -234,31 +256,36 @@ export class ProductBundleWidget {
     private handleAddToCart(bundle: Bundle): void {
         // Get all products to add to cart
         const cartItems = bundle.products
-            .filter(product => product.role === "INCLUDED" || product.role === "OPTIONAL")
-            .map(product => ({
+            .filter(
+                (product) =>
+                    product.role === "INCLUDED" || product.role === "OPTIONAL",
+            )
+            .map((product) => ({
                 id: product.variantId,
                 quantity: product.quantity,
                 properties: {
-                    '_bundle_id': bundle.id,
-                    '_bundle_name': bundle.name
-                }
+                    _bundle_id: bundle.id,
+                    _bundle_name: bundle.name,
+                },
             }));
 
         // Dispatch custom event for cart integration
-        this.container.dispatchEvent(new CustomEvent("bundle:addToCart", {
-            detail: {
-                bundle,
-                cartItems,
-                totalItems: cartItems.length
-            },
-            bubbles: true
-        }));
+        this.container.dispatchEvent(
+            new CustomEvent("bundle:addToCart", {
+                detail: {
+                    bundle,
+                    cartItems,
+                    totalItems: cartItems.length,
+                },
+                bubbles: true,
+            }),
+        );
 
         // Log for debugging (remove in production if not needed)
         console.log("Adding bundle to cart:", {
             bundleId: bundle.id,
             bundleName: bundle.name,
-            items: cartItems
+            items: cartItems,
         });
     }
 
@@ -271,7 +298,9 @@ export class ProductBundleWidget {
 
 // Auto-initialize all widgets when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-    const containers = document.querySelectorAll<HTMLElement>(".bundle-widget-container");
+    const containers = document.querySelectorAll<HTMLElement>(
+        ".bundle-widget-container",
+    );
 
     containers.forEach((container) => {
         try {

@@ -1,5 +1,5 @@
-import { Prisma, Bundle, BundleStatus } from '@prisma/client';
-import prisma from '../prisma';
+import { Prisma, Bundle, BundleStatus } from "@prisma/client";
+import prisma from "../prisma";
 import { BaseRepository } from "@/lib/db";
 
 /**
@@ -28,15 +28,15 @@ export class BundleRepository extends BaseRepository<
             status?: string[];
             type?: string[];
             orderBy?: string;
-            orderDirection?: 'asc' | 'desc';
-        }
+            orderDirection?: "asc" | "desc";
+        },
     ): Promise<Bundle[]> {
         const where: Prisma.BundleWhereInput = {
             shop,
             ...(options?.search && {
                 name: {
                     contains: options.search,
-                    mode: 'insensitive' as Prisma.QueryMode,
+                    mode: "insensitive" as Prisma.QueryMode,
                 },
             }),
             ...(options?.status?.length && {
@@ -51,7 +51,8 @@ export class BundleRepository extends BaseRepository<
             take: options?.limit,
             skip: options?.offset,
             orderBy: {
-                [options?.orderBy || 'createdAt']: options?.orderDirection || 'desc',
+                [options?.orderBy || "createdAt"]:
+                    options?.orderDirection || "desc",
             },
             include: {
                 bundleProducts: {
@@ -108,14 +109,14 @@ export class BundleRepository extends BaseRepository<
             search?: string;
             status?: string[];
             type?: string[];
-        }
+        },
     ): Promise<number> {
         return this.count({
             shop,
             ...(filters?.search && {
                 name: {
                     contains: filters.search,
-                    mode: 'insensitive' as Prisma.QueryMode,
+                    mode: "insensitive" as Prisma.QueryMode,
                 },
             }),
             ...(filters?.status?.length && {
@@ -133,7 +134,7 @@ export class BundleRepository extends BaseRepository<
     async findByName(
         shop: string,
         name: string,
-        excludeId?: string
+        excludeId?: string,
     ): Promise<Bundle | null> {
         return this.findFirst({
             shop,
@@ -148,12 +149,12 @@ export class BundleRepository extends BaseRepository<
     async updateStatus(
         id: string,
         shop: string,
-        status: BundleStatus
+        status: BundleStatus,
     ): Promise<Bundle> {
         // Verify ownership first
         const bundle = await this.findFirst({ id, shop });
         if (!bundle) {
-            throw new Error('Bundle not found or access denied');
+            throw new Error("Bundle not found or access denied");
         }
 
         return this.update({ id }, { status });
@@ -191,7 +192,7 @@ export class BundleRepository extends BaseRepository<
     async countActiveBundles(shop: string): Promise<number> {
         return this.count({
             shop,
-            status: 'ACTIVE',
+            status: "ACTIVE",
         });
     }
 
@@ -201,7 +202,7 @@ export class BundleRepository extends BaseRepository<
     async findByDateRange(
         shop: string,
         startDate: Date,
-        endDate: Date
+        endDate: Date,
     ): Promise<Bundle[]> {
         return this.findMany({
             shop,

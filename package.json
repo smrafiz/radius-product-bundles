@@ -10,14 +10,14 @@
         "dev:auto": "node scripts/update-env-host.js",
         "dev:auto-base": "./scripts/dev-with-auto-host.sh",
         "dev:full": "node scripts/update-and-generate.js",
-        "dev": "concurrently --raw \"npm:dev:app\" \"npm:dev:widgets\"",
+        "dev": "concurrently --raw \"bun:dev:app\" \"bun:dev:widgets\"",
         "build:widgets": "cd web/widgets-src && vite build",
         "info": "shopify app info",
         "build": "shopify app build",
         "generate": "shopify app generate",
         "deploy": "shopify app deploy",
         "pretty": "prettier --write ./",
-        "update:config": "bun run web/_developer/tomlWriter.ts; npm run pretty; shopify app deploy;"
+        "update:config": "bun run web/_developer/tomlWriter.ts; bun run pretty; shopify app deploy;"
     },
     "author": "radiustheme",
     "keywords": [
@@ -33,7 +33,7 @@
     },
     "private": true,
     "devDependencies": {
-        "@types/node": "^24.6.2",
+        "@types/node": "^24.7.0",
         "concurrently": "^9.2.1",
         "sass-embedded": "^1.93.2",
         "vite": "^7.1.9"

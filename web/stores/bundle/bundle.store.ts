@@ -176,9 +176,9 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = items.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || '',
+                    variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: 'INCLUDED',
+                    role: "INCLUDED",
                 }));
             });
             get().resetDirty();
@@ -195,9 +195,9 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || '',
+                    variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: 'INCLUDED',
+                    role: "INCLUDED",
                 }));
             });
             get().resetDirty();
@@ -212,9 +212,9 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || '',
+                    variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: 'INCLUDED',
+                    role: "INCLUDED",
                 }));
             });
             get().resetDirty();
@@ -229,9 +229,9 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || '',
+                    variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: 'INCLUDED',
+                    role: "INCLUDED",
                 }));
             });
             get().resetDirty();
@@ -252,9 +252,9 @@ export const useBundleStore = create(
                     state.bundleData.products = state.selectedItems.map(
                         (item) => ({
                             productId: item.productId,
-                            variantId: item.variantId || '',
+                            variantId: item.variantId || "",
                             quantity: item.quantity,
-                            role: 'INCLUDED',
+                            role: "INCLUDED",
                         }),
                     );
                 }
@@ -279,9 +279,9 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || '',
+                    variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: 'INCLUDED',
+                    role: "INCLUDED",
                 }));
             });
             get().resetDirty();
@@ -329,9 +329,9 @@ export const useBundleStore = create(
                     state.bundleData.products = state.selectedItems.map(
                         (item) => ({
                             productId: item.productId,
-                            variantId: item.variantId || '',
+                            variantId: item.variantId || "",
                             quantity: item.quantity,
-                            role: 'INCLUDED',
+                            role: "INCLUDED",
                         }),
                     );
                 }
@@ -351,7 +351,7 @@ export const useBundleStore = create(
                         title: item.title,
                         product: item,
                         variants: [],
-                        originalTotalVariants: item.totalVariants || 1
+                        originalTotalVariants: item.totalVariants || 1,
                     };
                 }
                 if (item.type === "variant") {
@@ -434,10 +434,14 @@ export const useBundleStore = create(
             const currentBundleId = get().bundleData.id;
 
             if (currentBundleId) {
-                const bundleStillExists = allBundles.some(bundle => bundle.id === currentBundleId);
+                const bundleStillExists = allBundles.some(
+                    (bundle) => bundle.id === currentBundleId,
+                );
 
                 if (!bundleStillExists) {
-                    console.log(`Active bundle ${currentBundleId} was deleted, resetting store`);
+                    console.log(
+                        `Active bundle ${currentBundleId} was deleted, resetting store`,
+                    );
                     get().resetBundle();
                     return true;
                 }

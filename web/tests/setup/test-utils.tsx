@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement } from "react";
 import { AppProvider } from "@shopify/polaris";
 import translations from "@shopify/polaris/locales/en.json";
-import { render, RenderOptions } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, RenderOptions } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 /**
  * Create a new QueryClient for each test
@@ -25,8 +25,8 @@ function createTestQueryClient() {
  * Mock App Bridge config for v4
  */
 const mockAppConfig = {
-    apiKey: process.env.SHOPIFY_API_KEY || 'test-api-key',
-    host: btoa('test-shop.myshopify.com/admin'), // v4 uses btoa instead of Buffer
+    apiKey: process.env.SHOPIFY_API_KEY || "test-api-key",
+    host: btoa("test-shop.myshopify.com/admin"), // v4 uses btoa instead of Buffer
 };
 
 /**
@@ -38,8 +38,8 @@ const mockShopify = {
         pos: false,
         embedded: true,
     },
-    idToken: () => Promise.resolve('mock-id-token'),
-    sessionToken: () => Promise.resolve('mock-session-token'),
+    idToken: () => Promise.resolve("mock-id-token"),
+    sessionToken: () => Promise.resolve("mock-session-token"),
     config: mockAppConfig,
 };
 
@@ -67,11 +67,11 @@ function AllProviders({ children }: AllProvidersProps) {
  */
 const customRender = (
     ui: ReactElement,
-    options?: Omit<RenderOptions, 'wrapper'>
+    options?: Omit<RenderOptions, "wrapper">,
 ) => render(ui, { wrapper: AllProviders, ...options });
 
 // Re-export everything from React Testing Library
-export * from '@testing-library/react';
+export * from "@testing-library/react";
 export { customRender as render };
 
 /**

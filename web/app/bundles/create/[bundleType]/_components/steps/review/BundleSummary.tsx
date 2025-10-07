@@ -22,8 +22,14 @@ export default function BundleSummary() {
             return `${bundleData.discountValue}`;
         }
 
-        const formatFunction = getDiscountProperty(bundleData.discountType, 'format');
-        return formatFunction?.(bundleData.discountValue) || `${bundleData.discountValue}`;
+        const formatFunction = getDiscountProperty(
+            bundleData.discountType,
+            "format",
+        );
+        return (
+            formatFunction?.(bundleData.discountValue) ||
+            `${bundleData.discountValue}`
+        );
     };
 
     // Calculate subtotal (sum of all products and variants)

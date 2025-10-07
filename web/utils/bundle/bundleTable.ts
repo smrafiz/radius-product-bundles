@@ -1,4 +1,8 @@
-import { bundleStatusConfigs, bundleTypeConfigs, discountTypeConfigs, } from "@/config";
+import {
+    bundleStatusConfigs,
+    bundleTypeConfigs,
+    discountTypeConfigs,
+} from "@/config";
 import {
     BundleConfig,
     BundleStatus,
@@ -69,4 +73,3 @@ export const getDiscountProperty = <
     const config = discountTypeConfigs[type];
     return config?.[property] ?? null;
 };
-

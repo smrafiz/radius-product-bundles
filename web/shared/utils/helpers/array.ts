@@ -21,16 +21,20 @@ export function unique<T>(array: T[]): T[] {
  */
 export function groupBy<T>(
     array: T[],
-    key: keyof T | ((item: T) => string)
+    key: keyof T | ((item: T) => string),
 ): Record<string, T[]> {
-    return array.reduce((groups, item) => {
-        const groupKey = typeof key === 'function' ? key(item) : String(item[key]);
-        if (!groups[groupKey]) {
-            groups[groupKey] = [];
-        }
-        groups[groupKey].push(item);
-        return groups;
-    }, {} as Record<string, T[]>);
+    return array.reduce(
+        (groups, item) => {
+            const groupKey =
+                typeof key === "function" ? key(item) : String(item[key]);
+            if (!groups[groupKey]) {
+                groups[groupKey] = [];
+            }
+            groups[groupKey].push(item);
+            return groups;
+        },
+        {} as Record<string, T[]>,
+    );
 }
 
 /**
@@ -39,14 +43,14 @@ export function groupBy<T>(
 export function sortBy<T>(
     array: T[],
     key: keyof T | ((item: T) => any),
-    direction: 'asc' | 'desc' = 'asc'
+    direction: "asc" | "desc" = "asc",
 ): T[] {
     const sorted = [...array].sort((a, b) => {
-        const aVal = typeof key === 'function' ? key(a) : a[key];
-        const bVal = typeof key === 'function' ? key(b) : b[key];
+        const aVal = typeof key === "function" ? key(a) : a[key];
+        const bVal = typeof key === "function" ? key(b) : b[key];
 
-        if (aVal < bVal) return direction === 'asc' ? -1 : 1;
-        if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+        if (aVal < bVal) return direction === "asc" ? -1 : 1;
+        if (aVal > bVal) return direction === "asc" ? 1 : -1;
         return 0;
     });
 

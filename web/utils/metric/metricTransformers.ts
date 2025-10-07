@@ -26,8 +26,8 @@ export function transformBundleMetrics(rawMetrics: {
         previousRevenue > 0
             ? ((currentRevenue - previousRevenue) / previousRevenue) * 100
             : currentRevenue > 0
-                ? 100
-                : 0;
+              ? 100
+              : 0;
 
     const conversionRate =
         currentViews > 0 ? (currentPurchases / currentViews) * 100 : 0;
@@ -36,11 +36,11 @@ export function transformBundleMetrics(rawMetrics: {
     const conversionGrowth =
         previousConversionRate > 0
             ? ((conversionRate - previousConversionRate) /
-                previousConversionRate) *
-            100
+                  previousConversionRate) *
+              100
             : conversionRate > 0
-                ? 100
-                : 0;
+              ? 100
+              : 0;
 
     return {
         totals: {
@@ -55,9 +55,7 @@ export function transformBundleMetrics(rawMetrics: {
         metrics: {
             conversionRate,
             avgOrderValue:
-                currentPurchases > 0
-                    ? currentRevenue / currentPurchases
-                    : 0,
+                currentPurchases > 0 ? currentRevenue / currentPurchases : 0,
             cartConversionRate:
                 currentAddToCarts > 0
                     ? (currentPurchases / currentAddToCarts) * 100

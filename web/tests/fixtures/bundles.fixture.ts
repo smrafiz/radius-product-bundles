@@ -1,17 +1,17 @@
-import { Bundle, BundleType, BundleStatus, DiscountType } from '@prisma/client';
+import { Bundle, BundleType, BundleStatus, DiscountType } from "@prisma/client";
 
 /**
  * Create a mock bundle with default values
  */
 export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
     return {
-        id: 'bundle-test-1',
-        shop: 'test-shop.myshopify.com',
-        name: 'Test Bundle',
-        description: 'A test bundle for unit testing',
-        type: 'FIXED_BUNDLE' as BundleType,
-        status: 'ACTIVE' as BundleStatus,
-        discountType: 'PERCENTAGE' as DiscountType,
+        id: "bundle-test-1",
+        shop: "test-shop.myshopify.com",
+        name: "Test Bundle",
+        description: "A test bundle for unit testing",
+        type: "FIXED_BUNDLE" as BundleType,
+        status: "ACTIVE" as BundleStatus,
+        discountType: "PERCENTAGE" as DiscountType,
         discountValue: 10,
         minOrderValue: null,
         maxDiscountAmount: null,
@@ -31,13 +31,13 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         conversions: 10,
         revenue: 500,
         isPublished: true,
-        publishedAt: new Date('2024-01-01'),
+        publishedAt: new Date("2024-01-01"),
         startDate: null,
         endDate: null,
         aiOptimized: false,
         aiScore: null,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01'),
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01"),
         ...overrides,
     };
 }
@@ -50,7 +50,7 @@ export function createMockBundles(count: number): Bundle[] {
         createMockBundle({
             id: `bundle-test-${i + 1}`,
             name: `Test Bundle ${i + 1}`,
-        })
+        }),
     );
 }
 

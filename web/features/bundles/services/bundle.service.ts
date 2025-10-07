@@ -1,11 +1,7 @@
-import { bundleRepository } from '@/lib/db/repositories';
-import {
-    BusinessRuleError,
-    NotFoundError,
-    ConflictError,
-} from '@/lib/errors';
-import type { BundleFormData, BundleStatus, BundleType } from '../types';
-import type { Bundle } from '@prisma/client';
+import { bundleRepository } from "@/lib/db/repositories";
+import { BusinessRuleError, NotFoundError, ConflictError } from "@/lib/errors";
+import type { BundleFormData, BundleStatus, BundleType } from "../types";
+import type { Bundle } from "@prisma/client";
 
 /**
  * Bundle service - Contains business logic
@@ -46,7 +42,7 @@ export class BundleService {
             views: 0,
             conversions: 0,
             revenue: 0,
-            status: 'DRAFT',
+            status: "DRAFT",
             isPublished: false,
             aiOptimized: false,
             allowMixAndMatch: false,
@@ -62,7 +58,7 @@ export class BundleService {
     async updateBundle(
         id: string,
         shop: string,
-        data: Partial<BundleFormData>
+        data: Partial<BundleFormData>,
     ): Promise<Bundle> {
         // Verify bundle exists and belongs to shop
         const existing = await this.getBundleWithOwnershipCheck(id, shop);
@@ -102,16 +98,19 @@ export class BundleService {
      * Duplicate bundle
      */
     async duplicateBundle(id: string, shop: string): Promise<Bundle> {
-        const original = await bundleRepository.findByIdWithAllRelations(id, shop);
+        const original = await bundleRepository.findByIdWithAllRelations(
+            id,
+            shop,
+        );
 
         if (!original) {
-            throw new NotFoundError('Bundle', id);
+            throw new NotFoundError("Bundle", id);
         }
 
         // Generate unique name
         const newName = await bundleRepository.generateUniqueName(
             shop,
-            original.name
+            original.name,
         );
 
         // Create duplicate
@@ -128,7 +127,7 @@ export class BundleService {
             views: 0,
             conversions: 0,
             revenue: 0,
-            status: 'DRAFT',
+            status: "DRAFT",
             isPublished: false,
             // ... copy other fields
         } as any);
@@ -140,7 +139,7 @@ export class BundleService {
     async updateBundleStatus(
         id: string,
         shop: string,
-        status: BundleStatus
+        status: BundleStatus,
     ): Promise<Bundle> {
         await this.getBundleWithOwnershipCheck(id, shop);
         return bundleRepository.updateStatus(id, shop, status);
@@ -151,16 +150,16 @@ export class BundleService {
      */
     private async getBundleWithOwnershipCheck(
         id: string,
-        shop: string
+        shop: string,
     ): Promise<Bundle> {
         const bundle = await bundleRepository.findById({ id });
 
         if (!bundle) {
-            throw new NotFoundError('Bundle', id);
+            throw new NotFoundError("Bundle", id);
         }
 
         if (bundle.shop !== shop) {
-            throw new NotFoundError('Bundle', id);
+            throw new NotFoundError("Bundle", id);
         }
 
         return bundle;
@@ -178,7 +177,7 @@ export class BundleService {
                 {
                     currentCount: count,
                     limit: this.MAX_BUNDLES_PER_SHOP,
-                }
+                },
             );
         }
     }
@@ -189,12 +188,16 @@ export class BundleService {
     private async ensureUniqueName(
         shop: string,
         name: string,
-        excludeId?: string
+        excludeId?: string,
     ): Promise<void> {
-        const existing = await bundleRepository.findByName(shop, name, excludeId);
+        const existing = await bundleRepository.findByName(
+            shop,
+            name,
+            excludeId,
+        );
 
         if (existing) {
-            throw new ConflictError('A bundle with this name already exists');
+            throw new ConflictError("A bundle with this name already exists");
         }
     }
 
@@ -202,28 +205,30 @@ export class BundleService {
      * Validate products
      */
     private validateProducts(
-        products: Array<{ productId: string; quantity: number }>
+        products: Array<{ productId: string; quantity: number }>,
     ): void {
         if (!products || products.length === 0) {
-            throw new BusinessRuleError('Bundle must have at least one product');
+            throw new BusinessRuleError(
+                "Bundle must have at least one product",
+            );
         }
 
         if (products.length > this.MAX_PRODUCTS_PER_BUNDLE) {
             throw new BusinessRuleError(
-                `Bundle cannot have more than ${this.MAX_PRODUCTS_PER_BUNDLE} products`
+                `Bundle cannot have more than ${this.MAX_PRODUCTS_PER_BUNDLE} products`,
             );
         }
 
         products.forEach((product, index) => {
             if (!product.productId) {
                 throw new BusinessRuleError(
-                    `Product at position ${index + 1} is missing productId`
+                    `Product at position ${index + 1} is missing productId`,
                 );
             }
 
             if (product.quantity < 1) {
                 throw new BusinessRuleError(
-                    `Product quantity must be at least 1`
+                    `Product quantity must be at least 1`,
                 );
             }
         });
@@ -238,34 +243,36 @@ export class BundleService {
         type: BundleType;
     }): void {
         // BOGO bundles must use percentage discounts
-        if (data.type === 'BOGO' && data.discountType !== 'PERCENTAGE') {
+        if (data.type === "BOGO" && data.discountType !== "PERCENTAGE") {
             throw new BusinessRuleError(
-                'BOGO bundles must use percentage discounts'
+                "BOGO bundles must use percentage discounts",
             );
         }
 
         // Percentage cannot exceed 100%
-        if (data.discountType === 'PERCENTAGE') {
+        if (data.discountType === "PERCENTAGE") {
             if (data.discountValue > 100) {
                 throw new BusinessRuleError(
-                    'Percentage discount cannot exceed 100%'
+                    "Percentage discount cannot exceed 100%",
                 );
             }
             if (data.discountValue < 0) {
                 throw new BusinessRuleError(
-                    'Discount percentage cannot be negative'
+                    "Discount percentage cannot be negative",
                 );
             }
         }
 
         // Fixed amount cannot be negative
-        if (data.discountType === 'FIXED_AMOUNT' && data.discountValue < 0) {
-            throw new BusinessRuleError('Discount amount cannot be negative');
+        if (data.discountType === "FIXED_AMOUNT" && data.discountValue < 0) {
+            throw new BusinessRuleError("Discount amount cannot be negative");
         }
 
         // Custom price must be positive
-        if (data.discountType === 'CUSTOM_PRICE' && data.discountValue <= 0) {
-            throw new BusinessRuleError('Custom price must be greater than zero');
+        if (data.discountType === "CUSTOM_PRICE" && data.discountValue <= 0) {
+            throw new BusinessRuleError(
+                "Custom price must be greater than zero",
+            );
         }
     }
 }

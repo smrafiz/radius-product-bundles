@@ -1,1 +1,1 @@
-export const TEST_CONSTANT = 'bundles-feature';
+export const TEST_CONSTANT = "bundles-feature";

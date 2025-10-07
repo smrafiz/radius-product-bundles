@@ -8,11 +8,15 @@ interface Props {
     remainingCount: number;
 }
 
-export default function ProductAvatarStack({ products, remainingCount }: Props) {
+export default function ProductAvatarStack({
+    products,
+    remainingCount,
+}: Props) {
     return (
         <>
             {products.map((product, index) => {
-                const offset = index === 1 ? "-left-5" : index === 2 ? "-left-10" : "";
+                const offset =
+                    index === 1 ? "-left-5" : index === 2 ? "-left-10" : "";
 
                 return (
                     <Box key={`${product.id}-${index}`} position="relative">

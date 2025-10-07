@@ -3,7 +3,7 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
     Bundle as PrismaBundle,
-} from '@prisma/client';
+} from "@prisma/client";
 
 // Re-export Prisma enums
 export type BundleStatus = PrismaBundleStatus;
@@ -69,7 +69,7 @@ export interface BundleProduct {
     productId: string;
     variantId?: string;
     quantity: number;
-    role: 'INCLUDED' | 'OPTIONAL';
+    role: "INCLUDED" | "OPTIONAL";
 }
 
 /**
@@ -80,7 +80,7 @@ export interface SelectedItem {
     productId: string;
     variantId?: string;
     title: string;
-    type: 'product' | 'variant';
+    type: "product" | "variant";
     quantity: number;
     totalVariants?: number;
 }

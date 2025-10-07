@@ -85,7 +85,7 @@ export const bundleQueries = {
             limit?: number;
             offset?: number;
             orderBy?: string;
-            orderDirection?: 'asc' | 'desc';
+            orderDirection?: "asc" | "desc";
         },
     ) {
         const where: any = { shop };
@@ -94,7 +94,7 @@ export const bundleQueries = {
         if (options?.search) {
             where.name = {
                 contains: options.search,
-                mode: 'insensitive',
+                mode: "insensitive",
             };
         }
 
@@ -118,7 +118,8 @@ export const bundleQueries = {
             take: options?.limit || 10,
             skip: options?.offset || 0,
             orderBy: {
-                [options?.orderBy || 'createdAt']: options?.orderDirection || 'desc',
+                [options?.orderBy || "createdAt"]:
+                    options?.orderDirection || "desc",
             },
         });
     },
@@ -189,14 +190,14 @@ export const bundleQueries = {
             search?: string;
             status?: string[];
             type?: string[];
-        }
+        },
     ) {
         const where: any = { shop };
 
         if (filters?.search) {
             where.name = {
                 contains: filters.search,
-                mode: 'insensitive',
+                mode: "insensitive",
             };
         }
 

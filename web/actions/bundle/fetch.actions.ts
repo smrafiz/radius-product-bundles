@@ -1,11 +1,18 @@
 "use server";
 
-import { GetBundleProductsDocument, GetBundleProductsQuery, } from "@/lib/gql/graphql";
+import {
+    GetBundleProductsDocument,
+    GetBundleProductsQuery,
+} from "@/lib/gql/graphql";
 import { handleSessionToken } from "@/lib/shopify/verify";
 
 import { executeGraphQLQuery } from "@/actions";
 import { analyticsQueries, bundleQueries } from "@/lib/queries";
-import { transformBundle, transformBundleMetrics, transformBundles, } from "@/utils";
+import {
+    transformBundle,
+    transformBundleMetrics,
+    transformBundles,
+} from "@/utils";
 import { Product, ProductVariant } from "@/types";
 
 /**
@@ -20,8 +27,8 @@ export async function getBundles(
         status?: string[];
         type?: string[];
         sortBy?: string;
-        sortDirection?: 'asc' | 'desc';
-    }
+        sortDirection?: "asc" | "desc";
+    },
 ) {
     try {
         const {
@@ -34,8 +41,8 @@ export async function getBundles(
             search: filters?.search,
             status: filters?.status,
             type: filters?.type,
-            orderBy: filters?.sortBy || 'createdAt',
-            orderDirection: filters?.sortDirection || 'desc',
+            orderBy: filters?.sortBy || "createdAt",
+            orderDirection: filters?.sortDirection || "desc",
         });
 
         const totalCount = await bundleQueries.countByShop(shop, {
@@ -88,7 +95,8 @@ export async function getBundles(
                         handle: prod.handle,
                     });
 
-                    const variants = (prod as any).variants?.nodes || prod.variants || [];
+                    const variants =
+                        (prod as any).variants?.nodes || prod.variants || [];
 
                     variants.forEach((variant: any) => {
                         const var_ = variant as ProductVariant;
@@ -97,7 +105,9 @@ export async function getBundles(
                             id: var_.id,
                             title: var_.title,
                             price: parseFloat(var_.price || "0"),
-                            compareAtPrice: parseFloat(var_.compareAtPrice || "0"),
+                            compareAtPrice: parseFloat(
+                                var_.compareAtPrice || "0",
+                            ),
                         });
                     });
                 });

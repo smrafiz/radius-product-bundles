@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from "@prisma/client";
 
 /**
  * Base repository providing common CRUD operations
@@ -9,14 +9,17 @@ export abstract class BaseRepository<
     TCreateInput,
     TUpdateInput,
     TWhereUniqueInput,
-    TWhereInput
+    TWhereInput,
 > {
     constructor(protected readonly model: any) {}
 
     /**
      * Find a single record by unique identifier
      */
-    async findById(where: TWhereUniqueInput, include?: any): Promise<TModel | null> {
+    async findById(
+        where: TWhereUniqueInput,
+        include?: any,
+    ): Promise<TModel | null> {
         return this.model.findUnique({
             where,
             ...(include && { include }),
@@ -34,7 +37,7 @@ export abstract class BaseRepository<
             orderBy?: any;
             include?: any;
             select?: any;
-        }
+        },
     ): Promise<TModel[]> {
         return this.model.findMany({
             where,
@@ -75,7 +78,7 @@ export abstract class BaseRepository<
     async update(
         where: TWhereUniqueInput,
         data: TUpdateInput,
-        include?: any
+        include?: any,
     ): Promise<TModel> {
         return this.model.update({
             where,
@@ -89,7 +92,7 @@ export abstract class BaseRepository<
      */
     async updateMany(
         where: TWhereInput,
-        data: TUpdateInput
+        data: TUpdateInput,
     ): Promise<Prisma.BatchPayload> {
         return this.model.updateMany({ where, data });
     }
@@ -129,7 +132,7 @@ export abstract class BaseRepository<
     async upsert(
         where: TWhereUniqueInput,
         create: TCreateInput,
-        update: TUpdateInput
+        update: TUpdateInput,
     ): Promise<TModel> {
         return this.model.upsert({
             where,

@@ -72,7 +72,7 @@ export default function DiscountSettings() {
     };
 
     const getDiscountValueLabel = () => {
-        return getDiscountProperty(discountType, 'label') || "Discount Value";
+        return getDiscountProperty(discountType, "label") || "Discount Value";
     };
 
     const getCurrency = () => {

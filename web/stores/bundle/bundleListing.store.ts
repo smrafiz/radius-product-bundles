@@ -93,7 +93,10 @@ export const useBundleListingStore = create<BundleListingState>()(
                 },
             })),
 
-        setPaginationMetadata: (metadata: { totalItems: number; totalPages: number }) =>
+        setPaginationMetadata: (metadata: {
+            totalItems: number;
+            totalPages: number;
+        }) =>
             set((state) => ({
                 pagination: {
                     ...state.pagination,
@@ -133,8 +136,10 @@ export const useBundleListingStore = create<BundleListingState>()(
 
         getTotalPages: () => {
             const { pagination } = get();
-            return pagination.totalPages ||
-                Math.ceil(pagination.totalItems / pagination.itemsPerPage);
+            return (
+                pagination.totalPages ||
+                Math.ceil(pagination.totalItems / pagination.itemsPerPage)
+            );
         },
 
         getPaginationInfo: () => {
@@ -144,9 +149,10 @@ export const useBundleListingStore = create<BundleListingState>()(
             return {
                 hasNext: pagination.currentPage < totalPages,
                 hasPrevious: pagination.currentPage > 1,
-                label: totalPages > 0
-                    ? `Showing page ${pagination.currentPage} of ${totalPages}`
-                    : "Showing page 1 of 1",
+                label:
+                    totalPages > 0
+                        ? `Showing page ${pagination.currentPage} of ${totalPages}`
+                        : "Showing page 1 of 1",
             };
         },
 
@@ -164,7 +170,9 @@ export const useBundleListingStore = create<BundleListingState>()(
 
         removeBundleFromStore: (bundleId: string) =>
             set((state) => ({
-                bundles: state.bundles.filter(bundle => bundle.id !== bundleId)
+                bundles: state.bundles.filter(
+                    (bundle) => bundle.id !== bundleId,
+                ),
             })),
 
         refreshBundles: async (page: number = 1, itemsPerPage: number = 10) => {
@@ -182,7 +190,7 @@ export const useBundleListingStore = create<BundleListingState>()(
                             ...get().pagination,
                             currentPage: page,
                             itemsPerPage: itemsPerPage,
-                        }
+                        },
                     });
                 } else {
                     set({ error: result.message, loading: false });

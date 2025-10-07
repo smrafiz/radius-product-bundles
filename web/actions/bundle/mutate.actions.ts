@@ -10,7 +10,12 @@ import {
     normalizeErrors,
     removeNulls,
 } from "@/utils";
-import { bundleProductGroupQueries, bundleProductQueries, bundleQueries, bundleSettingsQueries, } from "@/lib/queries";
+import {
+    bundleProductGroupQueries,
+    bundleProductQueries,
+    bundleQueries,
+    bundleSettingsQueries,
+} from "@/lib/queries";
 
 import { ApiResponse, BundleStatus } from "@/types";
 import { bundleStatusConfigs } from "@/config";
@@ -18,7 +23,10 @@ import { bundleStatusConfigs } from "@/config";
 /**
  * Create a new bundle
  */
-export async function createBundle(sessionToken: string, data: unknown): Promise<ApiResponse> {
+export async function createBundle(
+    sessionToken: string,
+    data: unknown,
+): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -46,20 +54,23 @@ export async function createBundle(sessionToken: string, data: unknown): Promise
             };
         }
 
-        const result = await prisma.$transaction(async () => {
-            await checkNameConflict(shop, validatedData.name);
+        const result = await prisma.$transaction(
+            async () => {
+                await checkNameConflict(shop, validatedData.name);
 
-            const bundle = await bundleQueries.create({
-                ...validatedData,
-                shop,
-            });
+                const bundle = await bundleQueries.create({
+                    ...validatedData,
+                    shop,
+                });
 
-            await createBundleRelations(bundle.id, validatedData);
+                await createBundleRelations(bundle.id, validatedData);
 
-            return bundle;
-        }, {
-            timeout: 10000,
-        });
+                return bundle;
+            },
+            {
+                timeout: 10000,
+            },
+        );
 
         revalidatePath("/bundles");
 
@@ -90,7 +101,7 @@ async function createBundleRelations(bundleId: string, validatedData: any) {
             bundleProductQueries.createManyFromValidatedData(
                 bundleId,
                 validatedData.products,
-            )
+            ),
         );
     }
 
@@ -99,7 +110,7 @@ async function createBundleRelations(bundleId: string, validatedData: any) {
             bundleProductGroupQueries.createManyFromValidatedData(
                 bundleId,
                 validatedData.productGroups,
-            )
+            ),
         );
     }
 
@@ -108,7 +119,7 @@ async function createBundleRelations(bundleId: string, validatedData: any) {
             bundleSettingsQueries.create({
                 bundleId,
                 ...validatedData.settings,
-            })
+            }),
         );
     }
 
@@ -145,47 +156,50 @@ export async function updateBundle(
             };
         }
 
-        const result = await prisma.$transaction(async () => {
-            // Verify bundle ownership
-            const existingBundle = await bundleQueries.findById(bundleId);
-            if (!existingBundle || existingBundle.shop !== shop) {
-                throw new Error(
-                    "Bundle not found or you don't have permission to update it",
-                );
-            }
+        const result = await prisma.$transaction(
+            async () => {
+                // Verify bundle ownership
+                const existingBundle = await bundleQueries.findById(bundleId);
+                if (!existingBundle || existingBundle.shop !== shop) {
+                    throw new Error(
+                        "Bundle not found or you don't have permission to update it",
+                    );
+                }
 
-            await checkNameConflict(shop, validatedData.name, bundleId);
+                await checkNameConflict(shop, validatedData.name, bundleId);
 
-            const updatedBundle = await bundleQueries.updateById(bundleId, {
-                name: validatedData.name,
-                description: validatedData.description || null,
-                type: validatedData.type,
-                mainProductId: validatedData.mainProductId || null,
-                buyQuantity: validatedData.buyQuantity || null,
-                getQuantity: validatedData.getQuantity || null,
-                minimumItems: validatedData.minimumItems || null,
-                maximumItems: validatedData.maximumItems || null,
-                discountType: validatedData.discountType,
-                discountValue: validatedData.discountValue || 0,
-                minOrderValue: validatedData.minOrderValue || null,
-                maxDiscountAmount: validatedData.maxDiscountAmount || null,
-                volumeTiers: validatedData.volumeTiers || null,
-                allowMixAndMatch: validatedData.allowMixAndMatch || false,
-                mixAndMatchPrice: validatedData.mixAndMatchPrice || null,
-                marketingCopy: validatedData.marketingCopy || null,
-                seoTitle: validatedData.seoTitle || null,
-                seoDescription: validatedData.seoDescription || null,
-                images: validatedData.images || [],
-                startDate: validatedData.startDate || null,
-                endDate: validatedData.endDate || null,
-            });
+                const updatedBundle = await bundleQueries.updateById(bundleId, {
+                    name: validatedData.name,
+                    description: validatedData.description || null,
+                    type: validatedData.type,
+                    mainProductId: validatedData.mainProductId || null,
+                    buyQuantity: validatedData.buyQuantity || null,
+                    getQuantity: validatedData.getQuantity || null,
+                    minimumItems: validatedData.minimumItems || null,
+                    maximumItems: validatedData.maximumItems || null,
+                    discountType: validatedData.discountType,
+                    discountValue: validatedData.discountValue || 0,
+                    minOrderValue: validatedData.minOrderValue || null,
+                    maxDiscountAmount: validatedData.maxDiscountAmount || null,
+                    volumeTiers: validatedData.volumeTiers || null,
+                    allowMixAndMatch: validatedData.allowMixAndMatch || false,
+                    mixAndMatchPrice: validatedData.mixAndMatchPrice || null,
+                    marketingCopy: validatedData.marketingCopy || null,
+                    seoTitle: validatedData.seoTitle || null,
+                    seoDescription: validatedData.seoDescription || null,
+                    images: validatedData.images || [],
+                    startDate: validatedData.startDate || null,
+                    endDate: validatedData.endDate || null,
+                });
 
-            await updateBundleRelations(bundleId, validatedData);
+                await updateBundleRelations(bundleId, validatedData);
 
-            return updatedBundle;
-        }, {
-            timeout: 10000,
-        });
+                return updatedBundle;
+            },
+            {
+                timeout: 10000,
+            },
+        );
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
@@ -226,8 +240,9 @@ export async function duplicateBundle(
         if (!original) {
             return {
                 status: "error",
-                message: "Bundle not found or you don't have permission to duplicate it",
-                data: null
+                message:
+                    "Bundle not found or you don't have permission to duplicate it",
+                data: null,
             };
         }
 
@@ -302,30 +317,28 @@ async function updateBundleRelations(bundleId: string, validatedData: any) {
     // Handle products
     if (validatedData.products !== undefined) {
         operations.push(
-            bundleProductQueries.deleteByBundle(bundleId)
-                .then(() => {
-                    if (validatedData.products.length > 0) {
-                        return bundleProductQueries.createManyFromValidatedData(
-                            bundleId,
-                            validatedData.products,
-                        );
-                    }
-                })
+            bundleProductQueries.deleteByBundle(bundleId).then(() => {
+                if (validatedData.products.length > 0) {
+                    return bundleProductQueries.createManyFromValidatedData(
+                        bundleId,
+                        validatedData.products,
+                    );
+                }
+            }),
         );
     }
 
     // Handle product groups
     if (validatedData.productGroups !== undefined) {
         operations.push(
-            bundleProductGroupQueries.deleteByBundle(bundleId)
-                .then(() => {
-                    if (validatedData.productGroups.length > 0) {
-                        return bundleProductGroupQueries.createManyFromValidatedData(
-                            bundleId,
-                            validatedData.productGroups,
-                        );
-                    }
-                })
+            bundleProductGroupQueries.deleteByBundle(bundleId).then(() => {
+                if (validatedData.productGroups.length > 0) {
+                    return bundleProductGroupQueries.createManyFromValidatedData(
+                        bundleId,
+                        validatedData.productGroups,
+                    );
+                }
+            }),
         );
     }
 
@@ -335,7 +348,7 @@ async function updateBundleRelations(bundleId: string, validatedData: any) {
             bundleSettingsQueries.updateByBundle(
                 bundleId,
                 validatedData.settings,
-            )
+            ),
         );
     }
 
@@ -356,7 +369,7 @@ export async function updateBundleStatus(
             return {
                 status: "error",
                 message: "Invalid bundle status",
-                data: null
+                data: null,
             };
         }
 
@@ -395,7 +408,10 @@ export async function updateBundleStatus(
 /**
  * Bulk delete bundles
  */
-export async function deleteBundles(sessionToken: string, bundleIds: string[]): Promise<ApiResponse> {
+export async function deleteBundles(
+    sessionToken: string,
+    bundleIds: string[],
+): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -410,48 +426,53 @@ export async function deleteBundles(sessionToken: string, bundleIds: string[]): 
             };
         }
 
-        const result = await prisma.$transaction(async (tx) => {
-            // Verify all bundles belong to the shop
-            const existingBundles = await tx.bundle.findMany({
-                where: {
-                    id: { in: bundleIds },
-                    shop,
-                },
-                select: { id: true, name: true },
-            });
+        const result = await prisma.$transaction(
+            async (tx) => {
+                // Verify all bundles belong to the shop
+                const existingBundles = await tx.bundle.findMany({
+                    where: {
+                        id: { in: bundleIds },
+                        shop,
+                    },
+                    select: { id: true, name: true },
+                });
 
-            if (existingBundles.length === 0) {
-                throw new Error("No bundles found or you don't have permission to delete them");
-            }
+                if (existingBundles.length === 0) {
+                    throw new Error(
+                        "No bundles found or you don't have permission to delete them",
+                    );
+                }
 
-            // Get IDs of bundles that actually exist
-            const validBundleIds = existingBundles.map(b => b.id);
+                // Get IDs of bundles that actually exist
+                const validBundleIds = existingBundles.map((b) => b.id);
 
-            // Delete all related records in PARALLEL
-            await Promise.all([
-                tx.bundleProduct.deleteMany({
-                    where: { bundleId: { in: validBundleIds } },
-                }),
-                tx.bundleProductGroup.deleteMany({
-                    where: { bundleId: { in: validBundleIds } },
-                }),
-                tx.bundleSettings.deleteMany({
-                    where: { bundleId: { in: validBundleIds } },
-                }),
-                tx.bundleAnalytics.deleteMany({
-                    where: { bundleId: { in: validBundleIds } },
-                }),
-            ]);
+                // Delete all related records in PARALLEL
+                await Promise.all([
+                    tx.bundleProduct.deleteMany({
+                        where: { bundleId: { in: validBundleIds } },
+                    }),
+                    tx.bundleProductGroup.deleteMany({
+                        where: { bundleId: { in: validBundleIds } },
+                    }),
+                    tx.bundleSettings.deleteMany({
+                        where: { bundleId: { in: validBundleIds } },
+                    }),
+                    tx.bundleAnalytics.deleteMany({
+                        where: { bundleId: { in: validBundleIds } },
+                    }),
+                ]);
 
-            // Delete the bundles themselves
-            await tx.bundle.deleteMany({
-                where: { id: { in: validBundleIds } },
-            });
+                // Delete the bundles themselves
+                await tx.bundle.deleteMany({
+                    where: { id: { in: validBundleIds } },
+                });
 
-            return existingBundles;
-        }, {
-            timeout: 15000, // Longer timeout for bulk operations
-        });
+                return existingBundles;
+            },
+            {
+                timeout: 15000, // Longer timeout for bulk operations
+            },
+        );
 
         revalidatePath("/bundles");
 
@@ -472,43 +493,49 @@ export async function deleteBundles(sessionToken: string, bundleIds: string[]): 
 /**
  * Delete a bundle
  */
-export async function deleteBundle(sessionToken: string, bundleId: string): Promise<ApiResponse> {
+export async function deleteBundle(
+    sessionToken: string,
+    bundleId: string,
+): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await prisma.$transaction(async (tx) => {
-            // Verify bundle ownership
-            const existingBundle = await tx.bundle.findUnique({
-                where: { id: bundleId },
-                select: { id: true, name: true, shop: true }
-            });
+        const result = await prisma.$transaction(
+            async (tx) => {
+                // Verify bundle ownership
+                const existingBundle = await tx.bundle.findUnique({
+                    where: { id: bundleId },
+                    select: { id: true, name: true, shop: true },
+                });
 
-            if (!existingBundle || existingBundle.shop !== shop) {
-                throw new Error(
-                    "Bundle not found or you don't have permission to delete it",
-                );
-            }
+                if (!existingBundle || existingBundle.shop !== shop) {
+                    throw new Error(
+                        "Bundle not found or you don't have permission to delete it",
+                    );
+                }
 
-            // Delete all related records in PARALLEL using Promise.all
-            await Promise.all([
-                tx.bundleProduct.deleteMany({ where: { bundleId } }),
-                tx.bundleProductGroup.deleteMany({ where: { bundleId } }),
-                tx.bundleSettings.deleteMany({ where: { bundleId } }),
-                tx.bundleAnalytics.deleteMany({ where: { bundleId } }),
-            ]);
+                // Delete all related records in PARALLEL using Promise.all
+                await Promise.all([
+                    tx.bundleProduct.deleteMany({ where: { bundleId } }),
+                    tx.bundleProductGroup.deleteMany({ where: { bundleId } }),
+                    tx.bundleSettings.deleteMany({ where: { bundleId } }),
+                    tx.bundleAnalytics.deleteMany({ where: { bundleId } }),
+                ]);
 
-            // Delete the bundle itself
-            await tx.bundle.delete({ where: { id: bundleId } });
+                // Delete the bundle itself
+                await tx.bundle.delete({ where: { id: bundleId } });
 
-            return {
-                id: existingBundle.id,
-                name: existingBundle.name,
-            };
-        }, {
-            timeout: 10000,
-        });
+                return {
+                    id: existingBundle.id,
+                    name: existingBundle.name,
+                };
+            },
+            {
+                timeout: 10000,
+            },
+        );
 
         revalidatePath("/bundles");
 

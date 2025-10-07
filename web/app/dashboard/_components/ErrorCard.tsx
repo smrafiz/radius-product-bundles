@@ -28,4 +28,4 @@ export default function ErrorCard({ error, onRetry }: ErrorCardProps) {
             </Box>
         </Card>
     );
-};
+}

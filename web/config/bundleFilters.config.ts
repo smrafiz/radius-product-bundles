@@ -4,19 +4,19 @@ import { bundleStatusConfigs } from "./bundleStatus.config";
 import type { IndexFiltersProps } from "@shopify/polaris";
 
 // Bundle status filter options
-export const bundleStatusFilterOptions = Object.entries(bundleStatusConfigs).map(
-    ([value, config]) => ({
-        label: config.text,
-        value,
-    })
-);
+export const bundleStatusFilterOptions = Object.entries(
+    bundleStatusConfigs,
+).map(([value, config]) => ({
+    label: config.text,
+    value,
+}));
 
 // Bundle type filter options
 export const bundleTypeFilterOptions = Object.values(bundleTypeConfigs).map(
     (config) => ({
         label: config.label,
         value: config.id,
-    })
+    }),
 );
 
 // Sort options configuration
@@ -42,14 +42,11 @@ export const bundleSortOptions: IndexFiltersProps["sortOptions"] = [
 // Tab configuration
 export const bundleTabStrings = [
     "All",
-    ...Object.values(bundleStatusConfigs).map(config => config.text)
+    ...Object.values(bundleStatusConfigs).map((config) => config.text),
 ];
 
 // Map tab index to status filter value
-export const tabStatusMap = [
-    "ALL",
-    ...Object.keys(bundleStatusConfigs)
-];
+export const tabStatusMap = ["ALL", ...Object.keys(bundleStatusConfigs)];
 
 // Complete bundle filters configuration object
 export const bundleFiltersConfig = {

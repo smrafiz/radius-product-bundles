@@ -99,7 +99,7 @@ export function safeJsonParse<T>(json: string, fallback: T): T {
  * Normalize different error shapes into string[]
  */
 export function normalizeErrors(
-    errors: string[] | Record<string, { _errors: string[] }> | null | undefined
+    errors: string[] | Record<string, { _errors: string[] }> | null | undefined,
 ): string[] {
     if (!errors) return [];
     if (Array.isArray(errors)) return errors;
@@ -112,7 +112,7 @@ export function normalizeErrors(
  */
 export function toErrorResponse(
     error: unknown,
-    defaultMessage: string = "An error occurred"
+    defaultMessage: string = "An error occurred",
 ): ApiResponse<null> {
     if (error instanceof Error) {
         return {

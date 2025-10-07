@@ -34,7 +34,7 @@ export default function BundleProductsPreview({ bundle }: Props) {
     const displayProducts = groupedProducts.slice(0, 3);
     const totalCount = groupedProducts.length;
     const remainingCount = Math.max(0, totalCount - 3);
-    let arrowClass = totalCount === 2 ? '-left-7' : '-left-2';
+    let arrowClass = totalCount === 2 ? "-left-7" : "-left-2";
 
     const activator = (
         <div
@@ -72,7 +72,9 @@ export default function BundleProductsPreview({ bundle }: Props) {
                 </InlineStack>
                 <div
                     className={`w-10 h-10 relative ${arrowClass} flex items-center transition-opacity duration-200 ${
-                        popoverActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        popoverActive
+                            ? "opacity-100"
+                            : "opacity-0 group-hover:opacity-100"
                     }`}
                 >
                     <Icon

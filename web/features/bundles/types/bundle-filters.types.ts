@@ -1,4 +1,4 @@
-import { BundleStatus, BundleType } from './bundle.types';
+import { BundleStatus, BundleType } from "./bundle.types";
 
 /**
  * Bundle list filters
@@ -15,13 +15,13 @@ export interface BundleFilters {
  * Bundle sort options
  */
 export type BundleSortBy =
-    | 'createdAt'
-    | 'name'
-    | 'revenue'
-    | 'conversions'
-    | 'views';
+    | "createdAt"
+    | "name"
+    | "revenue"
+    | "conversions"
+    | "views";
 
 /**
  * Bundle sort direction
  */
-export type BundleSortDirection = 'asc' | 'desc';
+export type BundleSortDirection = "asc" | "desc";

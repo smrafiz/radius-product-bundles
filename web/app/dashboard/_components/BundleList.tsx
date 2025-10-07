@@ -16,7 +16,7 @@ import { router } from "next/client";
 import { ViewIcon } from "@shopify/polaris-icons";
 import { useDashboardStore } from "@/stores";
 
-export default function BundleList () {
+export default function BundleList() {
     const { bundles, error } = useDashboardStore();
 
     const getBundleStatusBadge = (status: string) => {
@@ -153,4 +153,4 @@ export default function BundleList () {
             </Box>
         </Card>
     );
-};
+}

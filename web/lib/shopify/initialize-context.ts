@@ -1,8 +1,5 @@
 import "@shopify/shopify-api/adapters/web-api";
-import {
-    shopifyApi,
-    LogSeverity,
-} from "@shopify/shopify-api";
+import { shopifyApi, LogSeverity } from "@shopify/shopify-api";
 import { SHOPIFY_API_VERSION } from "@/lib/constants";
 
 const shopify = shopifyApi({

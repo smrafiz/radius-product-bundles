@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid";
-import { BundleType, SelectedItem, } from "@/types";
+import { BundleType, SelectedItem } from "@/types";
 import { bundleTypeConfigs } from "@/config/bundleType.config";
 
 /**

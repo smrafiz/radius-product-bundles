@@ -1,6 +1,12 @@
 "use client";
 
-import { Box, ResourceList, ResourceItem, Text, Thumbnail } from "@shopify/polaris";
+import {
+    Box,
+    ResourceList,
+    ResourceItem,
+    Text,
+    Thumbnail,
+} from "@shopify/polaris";
 
 import { ProductGroup } from "@/types";
 
@@ -30,10 +36,7 @@ export default function ProductListPopover({ products }: Props) {
                             media={media}
                             verticalAlignment="center"
                             onClick={() => {
-                                console.log(
-                                    "Product clicked:",
-                                    product.title,
-                                );
+                                console.log("Product clicked:", product.title);
                             }}
                         >
                             <div className="flex items-center">

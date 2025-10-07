@@ -8,22 +8,22 @@ import { BundleAction } from "@/types";
 
 export const LISTING_DEFAULT_ACTIONS: BundleAction[] = [
     {
-        key: 'edit',
+        key: "edit",
         icon: EditIcon,
         tooltip: "Edit bundle",
     },
     {
-        key: 'view',
+        key: "view",
         icon: ViewIcon,
         tooltip: "View bundle",
     },
     {
-        key: 'duplicate',
+        key: "duplicate",
         icon: DuplicateIcon,
         tooltip: "Duplicate bundle",
     },
     {
-        key: 'delete',
+        key: "delete",
         icon: DeleteIcon,
         tooltip: "Delete bundle",
         tone: "critical",

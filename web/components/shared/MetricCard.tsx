@@ -28,8 +28,8 @@ export default function MetricCard({
     loading = false,
 }: MetricCardProps) {
     const router = useRouter();
-    const isLoading = loading || value === undefined || value === null || value === '';
-
+    const isLoading =
+        loading || value === undefined || value === null || value === "";
 
     return (
         <Card>

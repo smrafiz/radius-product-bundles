@@ -6,7 +6,7 @@ export class AppError extends Error {
         message: string,
         public code: string,
         public statusCode: number = 500,
-        public metadata?: Record<string, any>
+        public metadata?: Record<string, any>,
     ) {
         super(message);
         this.name = this.constructor.name;
@@ -32,9 +32,9 @@ export class AppError extends Error {
 export class ValidationError extends AppError {
     constructor(
         message: string,
-        public errors: Array<{ field?: string; message: string }>
+        public errors: Array<{ field?: string; message: string }>,
     ) {
-        super(message, 'VALIDATION_ERROR', 400);
+        super(message, "VALIDATION_ERROR", 400);
     }
 }
 
@@ -44,7 +44,7 @@ export class ValidationError extends AppError {
  */
 export class BusinessRuleError extends AppError {
     constructor(message: string, metadata?: Record<string, any>) {
-        super(message, 'BUSINESS_RULE_VIOLATION', 400, metadata);
+        super(message, "BUSINESS_RULE_VIOLATION", 400, metadata);
     }
 }
 
@@ -53,12 +53,10 @@ export class BusinessRuleError extends AppError {
  */
 export class NotFoundError extends AppError {
     constructor(resource: string, id: string) {
-        super(
-            `${resource} with id ${id} not found`,
-            'NOT_FOUND',
-            404,
-            { resource, id }
-        );
+        super(`${resource} with id ${id} not found`, "NOT_FOUND", 404, {
+            resource,
+            id,
+        });
     }
 }
 
@@ -66,8 +64,8 @@ export class NotFoundError extends AppError {
  * Unauthorized - 401
  */
 export class UnauthorizedError extends AppError {
-    constructor(message: string = 'Unauthorized') {
-        super(message, 'UNAUTHORIZED', 401);
+    constructor(message: string = "Unauthorized") {
+        super(message, "UNAUTHORIZED", 401);
     }
 }
 
@@ -75,8 +73,8 @@ export class UnauthorizedError extends AppError {
  * Forbidden - 403
  */
 export class ForbiddenError extends AppError {
-    constructor(message: string = 'Forbidden') {
-        super(message, 'FORBIDDEN', 403);
+    constructor(message: string = "Forbidden") {
+        super(message, "FORBIDDEN", 403);
     }
 }
 
@@ -86,7 +84,7 @@ export class ForbiddenError extends AppError {
  */
 export class ConflictError extends AppError {
     constructor(message: string, metadata?: Record<string, any>) {
-        super(message, 'CONFLICT', 409, metadata);
+        super(message, "CONFLICT", 409, metadata);
     }
 }
 
@@ -94,8 +92,8 @@ export class ConflictError extends AppError {
  * Rate limit exceeded - 429
  */
 export class RateLimitError extends AppError {
-    constructor(message: string = 'Too many requests', retryAfter?: number) {
-        super(message, 'RATE_LIMIT_EXCEEDED', 429, { retryAfter });
+    constructor(message: string = "Too many requests", retryAfter?: number) {
+        super(message, "RATE_LIMIT_EXCEEDED", 429, { retryAfter });
     }
 }
 
@@ -106,9 +104,9 @@ export class ExternalServiceError extends AppError {
     constructor(service: string, originalError?: Error) {
         super(
             `External service ${service} failed`,
-            'EXTERNAL_SERVICE_ERROR',
+            "EXTERNAL_SERVICE_ERROR",
             502,
-            { service, originalError: originalError?.message }
+            { service, originalError: originalError?.message },
         );
     }
 }

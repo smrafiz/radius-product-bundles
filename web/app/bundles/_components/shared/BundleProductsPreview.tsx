@@ -16,7 +16,7 @@ export default function BundleProductsPreview({ bundle }: Props) {
     const [popoverActive, setPopoverActive] = useState(false);
     const togglePopover = useCallback(
         () => setPopoverActive((active) => !active),
-        []
+        [],
     );
 
     const { groupedProducts, displayProducts, remainingCount, arrowClass } =
@@ -36,10 +36,14 @@ export default function BundleProductsPreview({ bundle }: Props) {
                 />
                 <div
                     className={`w-10 h-10 relative ${arrowClass} flex items-center transition-opacity duration-200 ${
-                        popoverActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                        popoverActive
+                            ? "opacity-100"
+                            : "opacity-0 group-hover:opacity-100"
                     }`}
                 >
-                    <Icon source={popoverActive ? ChevronUpIcon : ChevronDownIcon} />
+                    <Icon
+                        source={popoverActive ? ChevronUpIcon : ChevronDownIcon}
+                    />
                 </div>
             </InlineStack>
         </div>

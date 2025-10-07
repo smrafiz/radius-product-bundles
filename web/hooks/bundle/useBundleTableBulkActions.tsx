@@ -30,7 +30,11 @@ export function useBundleTableBulkActions() {
         router.push("/bundles/create");
     };
 
-    const handleToggleBundleStatus = (bundleId: string, currentStatus: BundleStatus, bundleName: string) => {
+    const handleToggleBundleStatus = (
+        bundleId: string,
+        currentStatus: BundleStatus,
+        bundleName: string,
+    ) => {
         if (!sessionToken) return;
 
         const newStatus: BundleStatus =
@@ -38,21 +42,35 @@ export function useBundleTableBulkActions() {
 
         openModal({
             type: "status",
-            bundle: { id: bundleId, name: bundleName, status: currentStatus } as any,
+            bundle: {
+                id: bundleId,
+                name: bundleName,
+                status: currentStatus,
+            } as any,
             newStatus,
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await toggleBundleStatus(sessionToken, bundleId, newStatus);
+                    const result = await toggleBundleStatus(
+                        sessionToken,
+                        bundleId,
+                        newStatus,
+                    );
                     if (result.status === "success") {
-                        updateBundleInStore(bundleId, { status: result.data.status });
+                        updateBundleInStore(bundleId, {
+                            status: result.data.status,
+                        });
                         await invalidateBundleCache(queryClient);
                         showToast(result.message);
                     } else {
-                        showError("Status update failed", { content: result.message });
+                        showError("Status update failed", {
+                            content: result.message,
+                        });
                     }
                 } catch {
-                    showError("Status update failed", { content: "An unexpected error occurred." });
+                    showError("Status update failed", {
+                        content: "An unexpected error occurred.",
+                    });
                 }
             },
         });
@@ -68,16 +86,26 @@ export function useBundleTableBulkActions() {
             bundle: { name: "selected bundles" } as any,
             onConfirm: async () => {
                 try {
-                    const result = await bulkToggleBundleStatus(sessionToken, bundleIds, "ACTIVE");
+                    const result = await bulkToggleBundleStatus(
+                        sessionToken,
+                        bundleIds,
+                        "ACTIVE",
+                    );
                     if (result.status === "success") {
                         await refreshBundles();
                         await invalidateBundleCache(queryClient);
-                        showToast(`${result.data.updatedCount} bundles activated`);
+                        showToast(
+                            `${result.data.updatedCount} bundles activated`,
+                        );
                     } else {
-                        showError("Bulk activation failed", { content: result.message });
+                        showError("Bulk activation failed", {
+                            content: result.message,
+                        });
                     }
                 } catch {
-                    showError("Bulk activation failed", { content: "An unexpected error occurred." });
+                    showError("Bulk activation failed", {
+                        content: "An unexpected error occurred.",
+                    });
                 } finally {
                     setLoading(false);
                 }
@@ -96,16 +124,26 @@ export function useBundleTableBulkActions() {
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await bulkToggleBundleStatus(sessionToken, bundleIds, "DRAFT");
+                    const result = await bulkToggleBundleStatus(
+                        sessionToken,
+                        bundleIds,
+                        "DRAFT",
+                    );
                     if (result.status === "success") {
                         await refreshBundles();
                         await invalidateBundleCache(queryClient);
-                        showToast(`${result.data.updatedCount} bundles set as draft`);
+                        showToast(
+                            `${result.data.updatedCount} bundles set as draft`,
+                        );
                     } else {
-                        showError("Bulk draft failed", { content: result.message });
+                        showError("Bulk draft failed", {
+                            content: result.message,
+                        });
                     }
                 } catch {
-                    showError("Bulk draft failed", { content: "An unexpected error occurred." });
+                    showError("Bulk draft failed", {
+                        content: "An unexpected error occurred.",
+                    });
                 } finally {
                     setLoading(false);
                 }
@@ -127,12 +165,18 @@ export function useBundleTableBulkActions() {
                     if (result.status === "success") {
                         await refreshBundles();
                         await invalidateBundleCache(queryClient);
-                        showToast("Selected bundles have been deleted successfully");
+                        showToast(
+                            "Selected bundles have been deleted successfully",
+                        );
                     } else {
-                        showError("Bulk delete failed", { content: result.message });
+                        showError("Bulk delete failed", {
+                            content: result.message,
+                        });
                     }
                 } catch {
-                    showError("Bulk delete failed", { content: "An unexpected error occurred." });
+                    showError("Bulk delete failed", {
+                        content: "An unexpected error occurred.",
+                    });
                 } finally {
                     setLoading(false);
                 }
@@ -144,7 +188,7 @@ export function useBundleTableBulkActions() {
     const getPromotedBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
-        rowActions: any
+        rowActions: any,
     ) => {
         const actions = [];
 
@@ -156,10 +200,16 @@ export function useBundleTableBulkActions() {
                 },
                 {
                     content:
-                        selectedBundle.status === "ACTIVE" ? "Set as draft" : "Set as active",
+                        selectedBundle.status === "ACTIVE"
+                            ? "Set as draft"
+                            : "Set as active",
                     onAction: () =>
-                        handleToggleBundleStatus(selectedBundle.id, selectedBundle.status, selectedBundle.name),
-                }
+                        handleToggleBundleStatus(
+                            selectedBundle.id,
+                            selectedBundle.status,
+                            selectedBundle.name,
+                        ),
+                },
             );
         } else if (selectedResources.length > 1) {
             actions.push(
@@ -170,7 +220,7 @@ export function useBundleTableBulkActions() {
                 {
                     content: "Set as draft",
                     onAction: () => handleBulkDraft(selectedResources),
-                }
+                },
             );
         }
 
@@ -181,7 +231,7 @@ export function useBundleTableBulkActions() {
     const getBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
-        rowActions: any
+        rowActions: any,
     ) => {
         if (selectedResources.length === 1 && selectedBundle) {
             return [

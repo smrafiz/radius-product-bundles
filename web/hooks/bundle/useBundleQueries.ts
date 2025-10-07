@@ -50,8 +50,8 @@ export function useBundles(
         status?: string[];
         type?: string[];
         sortBy?: string;
-        sortDirection?: 'asc' | 'desc';
-    }
+        sortDirection?: "asc" | "desc";
+    },
 ) {
     const app = useAppBridge();
 

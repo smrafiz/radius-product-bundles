@@ -2,7 +2,11 @@ import { bundleQueries } from "@/lib/queries";
 import type { BundleFormData } from "@/lib/validation";
 import { ApiError } from "@/types";
 
-export async function checkNameConflict(shop: string, name: string, excludeId?: string) {
+export async function checkNameConflict(
+    shop: string,
+    name: string,
+    excludeId?: string,
+) {
     const existingBundle = excludeId
         ? await bundleQueries.findByNameWithExclusion(shop, name, excludeId)
         : await bundleQueries.findByName(shop, name);
@@ -13,7 +17,8 @@ export async function checkNameConflict(shop: string, name: string, excludeId?: 
 }
 
 export function inferBundleType(data: BundleFormData) {
-    if (data.discountType === "NO_DISCOUNT") return "FREQUENTLY_BOUGHT_TOGETHER";
+    if (data.discountType === "NO_DISCOUNT")
+        return "FREQUENTLY_BOUGHT_TOGETHER";
     if (data.discountType === "FREE_SHIPPING") return "FIXED_BUNDLE";
     return "FIXED_BUNDLE";
 }

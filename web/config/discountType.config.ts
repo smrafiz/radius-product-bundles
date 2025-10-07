@@ -9,8 +9,11 @@ export const discountTypeConfigs: Record<DiscountType, DiscountConfig> = {
         description: "Discount as a percentage of the original price",
         symbol: "%",
         suffix: "Off",
-        format: (value = 0, formatCurrencyFn = formatCurrency, includeLabel = true) =>
-            includeLabel ? `${value}% Off` : `${value}%`,
+        format: (
+            value = 0,
+            formatCurrencyFn = formatCurrency,
+            includeLabel = true,
+        ) => (includeLabel ? `${value}% Off` : `${value}%`),
     },
     FIXED_AMOUNT: {
         label: "Discount Amount",
@@ -21,7 +24,9 @@ export const discountTypeConfigs: Record<DiscountType, DiscountConfig> = {
         suffix: "Off",
         format: (value = 0, formatCurrencyFn, includeLabel = true) => {
             const formatter = formatCurrencyFn || ((val: number) => `${val}`);
-            return includeLabel ? `${formatter(value)} Off` : `${formatter(value)}`;
+            return includeLabel
+                ? `${formatter(value)} Off`
+                : `${formatter(value)}`;
         },
     },
     CUSTOM_PRICE: {
@@ -33,7 +38,9 @@ export const discountTypeConfigs: Record<DiscountType, DiscountConfig> = {
         suffix: "",
         format: (value = 0, formatCurrencyFn, includeLabel = true) => {
             const formatter = formatCurrencyFn || ((val: number) => `${val}`);
-            return includeLabel ? `Custom Price ${formatter(value)}` : `${formatter(value)} (Custom Price)`;
+            return includeLabel
+                ? `Custom Price ${formatter(value)}`
+                : `${formatter(value)} (Custom Price)`;
         },
     },
     FREE_SHIPPING: {
@@ -62,7 +69,8 @@ export const discountTypeConfigs: Record<DiscountType, DiscountConfig> = {
         description: "Buy certain quantity and get items free/discounted",
         symbol: "",
         suffix: "",
-        format: (value = 0, formatCurrency, includeLabel = true) => `Buy X Get Y (${value}% Off)`,
+        format: (value = 0, formatCurrency, includeLabel = true) =>
+            `Buy X Get Y (${value}% Off)`,
     },
     QUANTITY_BREAKS: {
         label: "Quantity Breaks",
@@ -71,6 +79,7 @@ export const discountTypeConfigs: Record<DiscountType, DiscountConfig> = {
         description: "Volume-based pricing with quantity tiers",
         symbol: "",
         suffix: "",
-        format: (value = 0, formatCurrency, includeLabel = true) => `Volume Discount (${value}% Off)`,
+        format: (value = 0, formatCurrency, includeLabel = true) =>
+            `Volume Discount (${value}% Off)`,
     },
 };

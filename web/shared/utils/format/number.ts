@@ -4,7 +4,7 @@
 export function formatNumber(
     value: number,
     decimals: number = 0,
-    locale: string = 'en-US'
+    locale: string = "en-US",
 ): string {
     return new Intl.NumberFormat(locale, {
         minimumFractionDigits: decimals,
@@ -15,10 +15,7 @@ export function formatNumber(
 /**
  * Format number as percentage
  */
-export function formatPercentage(
-    value: number,
-    decimals: number = 0
-): string {
+export function formatPercentage(value: number, decimals: number = 0): string {
     return `${formatNumber(value, decimals)}%`;
 }
 
@@ -27,11 +24,11 @@ export function formatPercentage(
  */
 export function formatCompactNumber(
     value: number,
-    locale: string = 'en-US'
+    locale: string = "en-US",
 ): string {
     return new Intl.NumberFormat(locale, {
-        notation: 'compact',
-        compactDisplay: 'short',
+        notation: "compact",
+        compactDisplay: "short",
     }).format(value);
 }
 
