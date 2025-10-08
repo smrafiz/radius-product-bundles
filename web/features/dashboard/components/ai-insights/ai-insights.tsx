@@ -14,7 +14,9 @@ import { useDashboardStore } from "@/features/dashboard";
 export function AIInsights() {
     const { bundles } = useDashboardStore();
 
-    // if (bundles.length === 0) return null;
+    if (bundles.length === 0) {
+        return null;
+    }
 
     return (
         <Card>

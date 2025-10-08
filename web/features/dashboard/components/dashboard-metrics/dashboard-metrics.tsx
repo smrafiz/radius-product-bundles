@@ -2,13 +2,14 @@
 
 import { MetricCard } from "@/shared/components";
 import { formatCurrency, formatPercentage } from "@/shared/utils";
-import { useDashboardStore } from "@/features/dashboard";
+import { useDashboardData, useDashboardStore } from "@/features/dashboard";
 
 /**
  * Dashboard metrics section
  */
 export function DashboardMetrics() {
-    const { metrics, bundles } = useDashboardStore();
+    const { bundles } = useDashboardStore();
+    const { metrics: liveMetrics, isMetricsFetching } = useDashboardData();
 
     const activeBundles = bundles.filter(
         (bundle) => bundle.status === "ACTIVE"
@@ -18,25 +19,29 @@ export function DashboardMetrics() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <MetricCard
                 title="Total Revenue"
-                value={formatCurrency(metrics?.totalRevenue || 0)}
-                growth={metrics?.revenueGrowth}
+                value={formatCurrency(liveMetrics?.totalRevenue || 0)}
+                growth={liveMetrics?.revenueGrowth}
+                loading={isMetricsFetching}
             />
             <MetricCard
                 title="Conversion Rate"
-                value={formatPercentage(metrics?.avgConversionRate || 0)}
-                growth={metrics?.conversionGrowth}
+                value={formatPercentage(liveMetrics?.avgConversionRate || 0)}
+                growth={liveMetrics?.conversionGrowth}
+                loading={isMetricsFetching}
             />
             <MetricCard
                 title="Active Bundles"
                 value={activeBundles.toString()}
                 action={{ label: "View all", url: "/bundles" }}
                 comparisonLabel="Total created"
+                loading={isMetricsFetching}
             />
             <MetricCard
                 title="Total Views"
-                value={(metrics?.totalViews || 0).toLocaleString()}
+                value={(liveMetrics?.totalViews || 0).toLocaleString()}
                 action={{ label: "View details", url: "/analytics" }}
                 comparisonLabel="Last 30 days"
+                loading={isMetricsFetching}
             />
         </div>
     );

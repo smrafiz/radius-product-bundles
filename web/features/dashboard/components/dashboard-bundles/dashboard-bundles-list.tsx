@@ -11,15 +11,22 @@ import {
 } from "@shopify/polaris";
 import { formatBundleType } from "@/utils";
 import { getBundleStatusBadge } from "@/features/bundles";
-import { formatCurrency, formatPercentage } from "@/shared";
+import { formatCurrency, formatPercentage, withLoader } from "@/shared";
 
 import type { Bundle } from "@/types";
+import { useRouter } from "next/navigation";
 
 interface DashboardBundlesListProps {
     bundles: Bundle[];
 }
 
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
+    const router = useRouter();
+
+    const handleNavigate = withLoader((url: string) => {
+        router.push(url);
+    });
+
     return (
         <ResourceList
             resourceName={{ singular: "bundle", plural: "bundles" }}
@@ -28,7 +35,8 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                 <ResourceItem
                     key={bundle.id}
                     id={bundle.id}
-                    url={`/bundles/${bundle.id}`}
+                    accessibilityLabel={`View details for ${bundle.name}`}
+                    onClick={() => handleNavigate(`/bundles/${bundle.id}/edit`)}
                     media={
                         <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
                             <Text

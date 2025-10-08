@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
     BlockStack,
     Box,
@@ -7,7 +8,6 @@ import {
     Grid,
     Icon,
     InlineStack,
-    Link,
     Text,
 } from "@shopify/polaris";
 import {
@@ -15,6 +15,7 @@ import {
     OrderIcon,
     SandboxIcon,
 } from "@shopify/polaris-icons";
+import { withLoader } from "@/utils";
 
 interface QuickActionItem {
     title: string;
@@ -30,7 +31,7 @@ const quickActions: QuickActionItem[] = [
         title: "Manage Bundle",
         description: "Create and edit bundle offers",
         icon: OrderIcon,
-        url: "/bundles/create",
+        url: "/bundles",
         backgroundColor: "var(--p-color-bg-surface-success-hover)",
         iconColor: "success",
     },
@@ -53,6 +54,11 @@ const quickActions: QuickActionItem[] = [
 ];
 
 export const QuickActions = () => {
+    const router = useRouter();
+
+    const handleNavigate = (url: string) =>
+        withLoader(() => router.push(url));
+
     return (
         <div className="radius-quick-actions-wrapper">
             <Card>
@@ -80,58 +86,58 @@ export const QuickActions = () => {
                                         xl: 4,
                                     }}
                                 >
-                                    <div className="radius-quick-action-item">
-                                        <Link url={action.url} removeUnderline>
-                                            <div className="transition-all hover:-translate-y-[3px]">
-                                                <Card>
-                                                    <Box padding="300">
-                                                        <InlineStack
-                                                            gap="300"
-                                                            align="start"
+                                    <div
+                                        className="radius-quick-action-item"
+                                        onClick={() =>
+                                            handleNavigate(action.url)
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <div className="transition-all hover:-translate-y-[3px]">
+                                            <Card>
+                                                <Box padding="300">
+                                                    <InlineStack
+                                                        gap="300"
+                                                        align="start"
+                                                    >
+                                                        <div
+                                                            className="w-10 h-10 rounded-[var(--p-border-radius-150)] flex items-center justify-center"
+                                                            style={{
+                                                                backgroundColor:
+                                                                action.backgroundColor,
+                                                            }}
                                                         >
-                                                            <div
-                                                                className="w-10 h-10 rounded-[var(--p-border-radius-150)] flex items-center justify-center"
-                                                                style={{
-                                                                    backgroundColor:
-                                                                    action.backgroundColor,
-                                                                }}
-                                                            >
-                                                                <div className="radius-quick-action-icon">
-                                                                    <Icon
-                                                                        source={
-                                                                            action.icon
-                                                                        }
-                                                                        tone={
-                                                                            action.iconColor
-                                                                        }
-                                                                    />
-                                                                </div>
+                                                            <div className="radius-quick-action-icon">
+                                                                <Icon
+                                                                    source={
+                                                                        action.icon
+                                                                    }
+                                                                    tone={
+                                                                        action.iconColor
+                                                                    }
+                                                                />
                                                             </div>
-                                                            <BlockStack gap="100">
-                                                                <Text
-                                                                    as="h3"
-                                                                    variant="bodyMd"
-                                                                    fontWeight="medium"
-                                                                >
-                                                                    {
-                                                                        action.title
-                                                                    }
-                                                                </Text>
-                                                                <Text
-                                                                    as="p"
-                                                                    variant="bodySm"
-                                                                    tone="subdued"
-                                                                >
-                                                                    {
-                                                                        action.description
-                                                                    }
-                                                                </Text>
-                                                            </BlockStack>
-                                                        </InlineStack>
-                                                    </Box>
-                                                </Card>
-                                            </div>
-                                        </Link>
+                                                        </div>
+                                                        <BlockStack gap="100">
+                                                            <Text
+                                                                as="h3"
+                                                                variant="bodyMd"
+                                                                fontWeight="medium"
+                                                            >
+                                                                {action.title}
+                                                            </Text>
+                                                            <Text
+                                                                as="p"
+                                                                variant="bodySm"
+                                                                tone="subdued"
+                                                            >
+                                                                {action.description}
+                                                            </Text>
+                                                        </BlockStack>
+                                                    </InlineStack>
+                                                </Box>
+                                            </Card>
+                                        </div>
                                     </div>
                                 </Grid.Cell>
                             ))}
