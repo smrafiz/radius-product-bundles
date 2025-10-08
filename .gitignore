@@ -48,6 +48,7 @@ out
 .vscode
 .idea
 package-lock.json
+pnpm-lock.yaml
 
 # debug
 npm-debug.log*
