@@ -1,77 +1,156 @@
-# Environment Configuration
+# ──────────────────────────────────────────────
+# 🌍 Environment Configuration
+# ──────────────────────────────────────────────
 .env
 .env.*
+.env*.local
+!.env.example
 
-# Dependency directory
-node_modules
-
-# Test coverage directory
-coverage
-
-# Ignore Apple macOS Desktop Services Store
-.DS_Store
-
-# Logs
-logs
-*.log
-
-# ngrok tunnel file
-config/tunnel.pid
-
-# vite build output
-dist/
-
-# extensions build output
-extensions/*/build
-
-# Node library SQLite database
-web/database.sqlite
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/.pnp
+# ──────────────────────────────────────────────
+# 📦 Dependency directories
+# ──────────────────────────────────────────────
+node_modules/
+.pnp
 .pnp.js
 
-# testing
-/coverage
+# ──────────────────────────────────────────────
+# 🧪 Testing & Coverage
+# ──────────────────────────────────────────────
+coverage/
+.vitest/
+jest.config.js
+vitest.config.ts
+cypress/videos/
+cypress/screenshots/
 
-# next.js
-.next
-out
+# ──────────────────────────────────────────────
+# 🍎 macOS & OS Specific Files
+# ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
 
-# production
-/build
-
-# misc
-*.pem
-.vscode
-.idea
-package-lock.json
-pnpm-lock.yaml
-
-# debug
+# ──────────────────────────────────────────────
+# 🪵 Logs
+# ──────────────────────────────────────────────
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
-!.env.example
+# ──────────────────────────────────────────────
+# ⚙️ ngrok / tunnel configs
+# ──────────────────────────────────────────────
+config/tunnel.pid
+ngrok.yml
+tunnel.log
 
-# vercel
-.vercel
+# ──────────────────────────────────────────────
+# ⚡ Vite / Frontend Builds (Extensions / Widgets)
+# ──────────────────────────────────────────────
+dist/
+extensions/*/build/
+extensions/*/dist/
+extensions/*/assets/*.js
+extensions/*/assets/*.css
 
-# typescript
+# ──────────────────────────────────────────────
+# 💾 Databases (Prisma / SQLite)
+# ──────────────────────────────────────────────
+web/database.sqlite
+web/prisma/dev.db
+web/prisma/test.db
+prisma/dev.db
+prisma/test.db
+*.sqlite
+
+# ──────────────────────────────────────────────
+# ⚛️ Next.js Build
+# ──────────────────────────────────────────────
+.next/
+out/
+.next-static/
+.next/cache/
 *.tsbuildinfo
 next-env.d.ts
 
-# TOML
+# ──────────────────────────────────────────────
+# 🚀 Production / Deployment
+# ──────────────────────────────────────────────
+.build/
+.vercel/
+.vercel_build_output/
+tmp/
+.cache/
+web.bak/
+
+# ──────────────────────────────────────────────
+# 🧰 Shopify CLI / App Config Files
+# ──────────────────────────────────────────────
 shopify.app.toml
 shopify.app.app-next-vercel.toml
+shopify.web.toml
+shopify.extensions.toml
+.shopify-cli.yml
+.shopify-cli-*.json
 
-# Others
+# ──────────────────────────────────────────────
+# 🧠 Generated GraphQL / Types / SDKs
+# ──────────────────────────────────────────────
+web/lib/gql/graphql.ts
+web/lib/shopify/graphql/generated.ts
+web/lib/__generated__/
+web/generated/
+lib/gql/graphql.ts
+lib/shopify/graphql/generated.ts
+lib/__generated__/
+generated/
+types/generated.ts
+
+# ──────────────────────────────────────────────
+# 🧱 IDE / Editor / Misc
+# ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.orig
+
+# ──────────────────────────────────────────────
+# 📄 Package Managers
+# ──────────────────────────────────────────────
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# ──────────────────────────────────────────────
+# 🔒 Security / Certificates
+# ──────────────────────────────────────────────
+*.pem
+*.key
+*.crt
+*.p12
+
+# ──────────────────────────────────────────────
+# 🧩 Shopify Extension Specific
+# ──────────────────────────────────────────────
+extensions/**/node_modules/
+extensions/**/.env
+extensions/**/.next
+extensions/**/.vercel
+extensions/**/.vite/
+extensions/**/vite.config.ts.timestamp*
+extensions/**/vite.config.js.timestamp*
+extensions/**/coverage/
+extensions/**/.cache/
+
+# ──────────────────────────────────────────────
+# 🧱 Misc / Temporary
+# ──────────────────────────────────────────────
+*.tmp
+*.bak
+*.old
 /web/lib/gql/graphql.ts
 /extension/extensions/product-bundle-widget/assets/bundle-widget.css
 /extension/extensions/product-bundle-widget/assets/bundle-widget.js
