@@ -18,7 +18,6 @@ node_modules/
 # ──────────────────────────────────────────────
 coverage/
 .vitest/
-jest.config.js
 vitest.config.ts
 cypress/videos/
 cypress/screenshots/
@@ -90,8 +89,6 @@ web.bak/
 # ──────────────────────────────────────────────
 shopify.app.toml
 shopify.app.app-next-vercel.toml
-shopify.web.toml
-shopify.extensions.toml
 .shopify-cli.yml
 .shopify-cli-*.json
 
@@ -144,6 +141,8 @@ extensions/**/vite.config.ts.timestamp*
 extensions/**/vite.config.js.timestamp*
 extensions/**/coverage/
 extensions/**/.cache/
+extension/extensions/**/*.css
+extension/extensions/**/*.js
 
 # ──────────────────────────────────────────────
 # 🧱 Misc / Temporary
@@ -151,7 +150,3 @@ extensions/**/.cache/
 *.tmp
 *.bak
 *.old
-/web/lib/gql/graphql.ts
-/extension/extensions/product-bundle-widget/assets/bundle-widget.css
-/extension/extensions/product-bundle-widget/assets/bundle-widget.js
-/web.bak/
