@@ -7,7 +7,7 @@ import {
     InlineStack,
     Text,
 } from "@shopify/polaris";
-import { useDashboardStore } from "@/stores";
+import { useDashboardStore } from "@/features/dashboard";
 
 export default function AIInsights() {
     const { bundles } = useDashboardStore();

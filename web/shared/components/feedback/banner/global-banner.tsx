@@ -23,7 +23,7 @@ const getToneFromType = (
     }
 };
 
-export default function GlobalBanner() {
+export function GlobalBanner() {
     const pathname = usePathname();
     const { messages, removeMessage, clearAllMessages } =
         useGlobalBannerStore();
@@ -49,9 +49,9 @@ export default function GlobalBanner() {
                         action={
                             message.action
                                 ? {
-                                      content: message.action.label,
-                                      onAction: message.action.onAction,
-                                  }
+                                    content: message.action.label,
+                                    onAction: message.action.onAction,
+                                }
                                 : undefined
                         }
                         onDismiss={

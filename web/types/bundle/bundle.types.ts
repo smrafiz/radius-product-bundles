@@ -5,7 +5,8 @@ import type {
 } from "@prisma/client";
 import { BundleFormData } from "@/lib/validation";
 
-import { type DashboardMetrics, SelectedItem } from "@/types";
+import { type DashboardMetrics } from "@/types";
+import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
 /*
  * Type aliases for Prisma enums
@@ -65,7 +66,7 @@ export type BundleConfig = {
  */
 export interface BundleStatusBadge {
     text: string;
-    tone: "success" | "info" | "warning" | "critical" | "subdued";
+    tone: Tone;
 }
 
 /*

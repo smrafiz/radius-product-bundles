@@ -1,7 +1,7 @@
 "use client";
 
-
-import { ErrorCard } from "@/app/(dashboard)/dashboard/_components";
+import { useEffect } from "react";
+import { useGlobalBannerStore } from "@/shared";
 
 export default function Error({
     error,
@@ -10,9 +10,26 @@ export default function Error({
     error: Error & { digest?: string };
     reset: () => void;
 }) {
-    return (
-        <div className="p-8">
-            <ErrorCard error={error.message} onRetry={reset} />
-        </div>
-    );
+    const { addMessage, clearAllMessages } = useGlobalBannerStore();
+
+    useEffect(() => {
+        clearAllMessages();
+
+        addMessage({
+            type: "error",
+            title: "Something went wrong",
+            content: error.message || "An unexpected error occurred",
+            dismissible: true,
+            action: {
+                label: "Try again",
+                onAction: reset,
+            },
+        });
+
+        return () => {
+            clearAllMessages();
+        };
+    }, [error, reset, addMessage, clearAllMessages]);
+
+    return null;
 }

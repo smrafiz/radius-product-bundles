@@ -1,1 +1,0 @@
-export { AIInsights } from './ai-insights';

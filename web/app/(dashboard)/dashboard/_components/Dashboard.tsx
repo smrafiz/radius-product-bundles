@@ -13,7 +13,7 @@ import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
 import { formatCurrency, formatPercentage, withLoader } from "@/utils";
 import { QuickActions } from "@/app/dashboard/_components/QuickActions";
 
-import { useDashboardStore } from "@/stores";
+import { useDashboardStore } from "@/features/dashboard";
 import { useDashboardData, useSyncBundles } from "@/hooks";
 
 export default function Dashboard() {

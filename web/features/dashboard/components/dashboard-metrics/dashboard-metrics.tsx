@@ -1,8 +1,8 @@
 "use client";
 
 import { MetricCard } from "@/shared/components";
-import { useDashboardStore } from "@/stores/dashboard";
 import { formatCurrency, formatPercentage } from "@/shared/utils";
+import { useDashboardStore } from "@/features/dashboard";
 
 /**
  * Dashboard metrics section

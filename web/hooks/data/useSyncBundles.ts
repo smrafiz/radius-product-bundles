@@ -1,5 +1,6 @@
 import { useSyncStore } from "@/hooks";
-import { useBundleListingStore, useDashboardStore } from "@/stores";
+import { useBundleListingStore } from "@/stores";
+import { useDashboardStore } from "@/features/dashboard";
 
 export function useSyncBundles() {
     useSyncStore(

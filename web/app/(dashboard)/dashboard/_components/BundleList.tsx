@@ -14,7 +14,7 @@ import { formatBundleType, formatCurrency, formatPercentage } from "@/utils";
 import { withLoader } from "@/utils";
 import { router } from "next/client";
 import { ViewIcon } from "@shopify/polaris-icons";
-import { useDashboardStore } from "@/stores";
+import { useDashboardStore } from "@/features/dashboard";
 
 export default function BundleList() {
     const { bundles, error } = useDashboardStore();

@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-import { useDashboardStore } from "@/stores";
-import { dashboardQueries } from "@/features/dashboard";
+import { dashboardQueries, useDashboardStore } from "@/features/dashboard";
+import { useGlobalBannerStore } from "@/shared";
 
 export const useDashboardData = () => {
     const app = useAppBridge();
-    const { setBundles, setMetrics, setLoading, setError, showToast } =
-        useDashboardStore();
+    const { addMessage } = useGlobalBannerStore();
+    const { setBundles, setMetrics, setLoading } = useDashboardStore();
 
     const { bundles, metrics } = dashboardQueries(app);
 
@@ -22,8 +22,8 @@ export const useDashboardData = () => {
     useEffect(() => {
         setLoading(
             bundlesQuery.isLoading ||
-            metricsQuery.isLoading ||
-            metricsQuery.isFetching,
+                metricsQuery.isLoading ||
+                metricsQuery.isFetching,
         );
     }, [
         bundlesQuery.isLoading,
@@ -34,23 +34,24 @@ export const useDashboardData = () => {
 
     // Handle bundles
     useEffect(() => {
-        if (bundlesQuery.isSuccess) {
-            setBundles(bundlesQuery.data);
-        } else if (bundlesQuery.isError) {
+        if (bundlesQuery.isError) {
             const message =
                 (bundlesQuery.error as Error)?.message ||
                 "Failed to load bundles";
-            setError(message);
-            showToast(message);
+            addMessage({
+                type: "error",
+                title: "Error loading bundles",
+                content: message,
+            });
             setBundles([]);
+        } else if (bundlesQuery.isSuccess) {
+            setBundles(bundlesQuery.data);
         }
     }, [
         bundlesQuery.status,
         bundlesQuery.data,
         bundlesQuery.error,
         setBundles,
-        setError,
-        showToast,
     ]);
 
     // Handle metrics - still update the store for other components
@@ -85,7 +86,7 @@ export const useDashboardData = () => {
     const currentMetrics = metricsQuery.isFetching
         ? null
         : metricsQuery.data
-            ? {
+          ? {
                 totalRevenue: metricsQuery.data?.totals?.revenue || 0,
                 revenueAllTime: metricsQuery.data?.totals?.revenueAllTime || 0,
                 totalViews: metricsQuery.data?.totals?.views || 0,
@@ -96,7 +97,7 @@ export const useDashboardData = () => {
                 revenueGrowth: metricsQuery.data?.growth?.revenue || 0,
                 conversionGrowth: metricsQuery.data?.growth?.conversion || 0,
             }
-            : null;
+          : null;
 
     return {
         bundlesQuery,

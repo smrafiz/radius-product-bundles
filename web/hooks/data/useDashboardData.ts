@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-import { useDashboardStore } from "@/stores";
+import { useDashboardStore } from "@/features/dashboard";
 import { getBundleMetrics, getBundles } from "@/actions";
 
 export const useDashboardData = () => {

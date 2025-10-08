@@ -9,7 +9,7 @@ import {
     InlineStack,
     Text,
 } from "@shopify/polaris";
-import { useDashboardStore } from "@/stores";
+import { useDashboardStore } from "@/features/dashboard";
 
 export function AIInsights() {
     const { bundles } = useDashboardStore();

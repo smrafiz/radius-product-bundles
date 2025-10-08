@@ -1,5 +1,5 @@
-import { useGlobalBannerStore } from "@/stores";
 import { GlobalMessage, MessageType } from "@/types";
+import { useGlobalBannerStore } from "@/shared";
 
 type MessageOptions = Omit<GlobalMessage, "id" | "timestamp" | "type">;
 
