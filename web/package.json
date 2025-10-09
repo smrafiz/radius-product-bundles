@@ -32,7 +32,7 @@
         "@prisma/client": "^6.17.0",
         "@shopify/api-codegen-preset": "^1.2.0",
         "@shopify/app-bridge": "^3.7.10",
-        "@shopify/app-bridge-react": "^4.2.5",
+        "@shopify/app-bridge-react": "^4.2.6",
         "@shopify/app-bridge-ui-types": "^0.3.3",
         "@shopify/cli-kit": "^3.85.5",
         "@shopify/polaris": "^13.9.5",

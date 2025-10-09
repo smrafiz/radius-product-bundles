@@ -24,7 +24,7 @@ export default async function RootLayout({
                 {/* eslint-disable-next-line @next/next/no-sync-scripts */}
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" />
             </head>
-            <body suppressHydrationWarning={true}>
+            <body>
                 <Providers>
                     <GlobalLoader />
                     <AppLayout>{children}</AppLayout>

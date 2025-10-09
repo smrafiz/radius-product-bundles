@@ -1,6 +1,5 @@
 "use client";
 
-import { Inter } from "next/font/google";
 import { ReactNode, Suspense } from "react";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
@@ -9,8 +8,6 @@ import { DehydratedState } from "@tanstack/react-query";
 import translations from "@shopify/polaris/locales/en.json";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { SessionProvider, TanstackProvider } from "@/providers";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Providers({
     children,
@@ -27,7 +24,7 @@ export default function Providers({
             <TanstackProvider dehydratedState={dehydratedState}>
                 <SessionProvider>
                     <ProtectedRoute>
-                        <div className={inter.className}>{children}</div>
+                        {children}
                     </ProtectedRoute>
                 </SessionProvider>
             </TanstackProvider>
