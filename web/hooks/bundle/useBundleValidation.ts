@@ -1,7 +1,9 @@
+"use client";
+
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import { useBundleStore } from "@/stores";
-import { bundleSchema, BundleFormData } from "@/lib/validation";
+import { BundleFormData, bundleSchema } from "@/lib/validation";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();

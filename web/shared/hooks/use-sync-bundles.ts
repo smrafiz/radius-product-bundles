@@ -18,10 +18,10 @@ export function useSyncBundles() {
                 bundles,
                 metrics: target.metrics
                     ? {
-                        ...target.metrics,
-                        activeBundles: activeBundlesCount,
-                        totalBundles: totalBundlesCount,
-                    }
+                          ...target.metrics,
+                          activeBundles: activeBundlesCount,
+                          totalBundles: totalBundlesCount,
+                      }
                     : null,
             };
         },

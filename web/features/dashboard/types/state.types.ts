@@ -1,48 +1,19 @@
-/**
- * Dashboard state types
- */
-
-import type { DashboardMetrics } from './metrics.types';
-import type { BundleListItem } from '@/features/bundles/types';
+import { Bundle } from "@/types";
+import { DashboardMetricConfig } from "@/features/dashboard";
 
 /**
  * Main dashboard store state
  */
 export interface DashboardState {
-    // Data
-    bundles: BundleListItem[];
-    metrics: DashboardMetrics | null;
-
-    // UI State
+    bundles: Bundle[];
+    metrics: DashboardMetricConfig | null;
     loading: boolean;
     error: string | null;
-    viewMode: DashboardViewMode;
-
-    // Notifications
-    toast: ToastState;
-}
-
-/**
- * Toast notification state
- */
-export interface ToastState {
-    active: boolean;
-    message: string;
-    type?: 'success' | 'error' | 'warning' | 'info';
-    duration?: number;
-}
-
-/**
- * Dashboard view mode
- */
-export type DashboardViewMode = 'overview' | 'detailed' | 'compact';
-
-/**
- * Dashboard layout preference
- */
-export interface DashboardLayout {
-    showMetrics: boolean;
-    showRecentBundles: boolean;
-    showQuickActions: boolean;
-    showInsights: boolean;
+    toast: { active: boolean; message: string };
+    setBundles: (bundles: Bundle[]) => void;
+    setMetrics: (metrics: DashboardMetricConfig) => void;
+    setLoading: (loading: boolean) => void;
+    setError: (error: string | null) => void;
+    showToast: (message: string) => void;
+    hideToast: () => void;
 }

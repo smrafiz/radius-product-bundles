@@ -2,6 +2,9 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import { getBundles, getBundleMetrics } from "@/actions";
 import { dashboardQueryKeys } from "@/features/dashboard";
 
+/**
+ * Dashboard queries
+ */
 export const dashboardQueries = (app: ReturnType<typeof useAppBridge>) => ({
     bundles: {
         queryKey: dashboardQueryKeys.bundles(),

@@ -1,11 +1,15 @@
 "use client";
 
-import { router } from "next/client";
-import { withLoader } from "@/shared";
+import { useAppNavigation } from "@/shared";
 import { ViewIcon } from "@shopify/polaris-icons";
-import { InlineStack, BlockStack, Text, Button } from "@shopify/polaris";
+import { BlockStack, Button, InlineStack, Text } from "@shopify/polaris";
 
+/*
+ * Dashboard bundles header
+ */
 export function DashboardBundlesHeader() {
+    const { bundleData } = useAppNavigation();
+
     return (
         <InlineStack blockAlign="center" align="space-between" gap="400">
             <BlockStack gap="200">
@@ -16,10 +20,7 @@ export function DashboardBundlesHeader() {
                     Check out the top performing bundles across your store.
                 </Text>
             </BlockStack>
-            <Button
-                icon={ViewIcon}
-                onClick={withLoader(() => router.push("/bundles"))}
-            >
+            <Button icon={ViewIcon} onClick={bundleData.list()}>
                 View All
             </Button>
         </InlineStack>

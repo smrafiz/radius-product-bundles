@@ -49,9 +49,9 @@ export function GlobalBanner() {
                         action={
                             message.action
                                 ? {
-                                    content: message.action.label,
-                                    onAction: message.action.onAction,
-                                }
+                                      content: message.action.label,
+                                      onAction: message.action.onAction,
+                                  }
                                 : undefined
                         }
                         onDismiss={

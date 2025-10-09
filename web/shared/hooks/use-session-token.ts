@@ -1,3 +1,5 @@
+"use client";
+
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useState, useEffect } from "react";
 

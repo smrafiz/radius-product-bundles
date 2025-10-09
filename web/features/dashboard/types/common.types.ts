@@ -31,18 +31,18 @@ export interface DashboardWidget {
  * Widget types
  */
 export type WidgetType =
-    | 'metrics'
-    | 'recent_bundles'
-    | 'top_bundles'
-    | 'quick_actions'
-    | 'insights'
-    | 'activity'
-    | 'chart';
+    | "metrics"
+    | "recent_bundles"
+    | "top_bundles"
+    | "quick_actions"
+    | "insights"
+    | "activity"
+    | "chart";
 
 /**
  * Widget size
  */
-export type WidgetSize = 'small' | 'medium' | 'large' | 'full';
+export type WidgetSize = "small" | "medium" | "large" | "full";
 
 /**
  * Dashboard error

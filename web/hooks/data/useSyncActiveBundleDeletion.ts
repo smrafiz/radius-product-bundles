@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useSyncStore } from "@/hooks/utils";
 import { useBundleListingStore, useBundleStore } from "@/stores";

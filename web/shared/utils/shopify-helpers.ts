@@ -15,7 +15,7 @@ declare global {
  * Check if Shopify App Bridge is available
  */
 const isShopifyAvailable = (): boolean => {
-    return typeof window !== 'undefined' && !!window.shopify?.loading;
+    return typeof window !== "undefined" && !!window.shopify?.loading;
 };
 
 /**
@@ -32,7 +32,7 @@ const isShopifyAvailable = (): boolean => {
  * ```
  */
 export const withLoader = <T extends (...args: any[]) => void>(
-    callback: T
+    callback: T,
 ): ((...args: Parameters<T>) => void) => {
     return (...args: Parameters<T>) => {
         if (isShopifyAvailable()) {
@@ -57,7 +57,7 @@ export const withLoader = <T extends (...args: any[]) => void>(
  * ```
  */
 export const withAsyncLoader = <T extends (...args: any[]) => Promise<any>>(
-    callback: T
+    callback: T,
 ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
     return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
         if (isShopifyAvailable()) {
@@ -104,7 +104,7 @@ export const stopLoading = (): void => {
  * ```
  */
 export const executeWithLoading = async <T>(
-    callback: () => Promise<T>
+    callback: () => Promise<T>,
 ): Promise<T> => {
     startLoading();
     try {

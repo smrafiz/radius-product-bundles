@@ -1,3 +1,5 @@
+"use client";
+
 import { useFormContext } from "react-hook-form";
 import { BundleFormData } from "@/lib/validation";
 import { useBundleStore } from "@/stores";

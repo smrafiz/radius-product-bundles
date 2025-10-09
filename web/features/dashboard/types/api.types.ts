@@ -2,9 +2,9 @@
  * Dashboard API types
  */
 
-import type { BundleListItem } from '@/features/bundles/types';
-import type { DashboardMetricsRaw } from './metrics.types';
-import type { ApiResponse } from '@/shared/types';
+import type { BundleListItem } from "@/features/bundles/types";
+import type { DashboardMetricsRaw } from "./metrics.types";
+import type { ApiResponse } from "@/shared/types";
 
 /**
  * Dashboard data API response
@@ -46,7 +46,7 @@ export interface DashboardSummary {
  */
 export interface ActivityItem {
     id: string;
-    type: 'bundle_created' | 'bundle_updated' | 'sale' | 'view';
+    type: "bundle_created" | "bundle_updated" | "sale" | "view";
     description: string;
     timestamp: string;
     metadata?: Record<string, any>;

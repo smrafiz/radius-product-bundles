@@ -1,25 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useShallow } from "zustand/react/shallow";
-import { Box, Layout, Page, Toast } from "@shopify/polaris";
-import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
 import {
     AIInsights,
     DashboardBundles,
     DashboardMetrics,
-    QuickActions,
+    DashboardQuickActions,
     useDashboardData,
-    useDashboardStore
+    useDashboardStore,
 } from "@/features/dashboard";
-
-import { GlobalBanner, useSyncBundles, withLoader } from "@/shared";
+import { useShallow } from "zustand/react/shallow";
+import { Box, Layout, Page, Toast } from "@shopify/polaris";
+import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
+import { GlobalBanner, useAppNavigation, useSyncBundles } from "@/shared";
 
 /**
  * Main Dashboard Page Component
  */
 export function DashboardPage() {
-    const router = useRouter();
+    const { bundleData, analytics } = useAppNavigation();
     const { toast, hideToast } = useDashboardStore(
         useShallow((state) => ({
             toast: state.toast,
@@ -41,13 +39,13 @@ export function DashboardPage() {
                 primaryAction={{
                     content: "Create Bundle",
                     icon: PlusIcon,
-                    onAction: withLoader(() => router.push("/bundles/create")),
+                    onAction: bundleData.create(),
                 }}
                 secondaryActions={[
                     {
                         content: "View Analytics",
-                        url: "/analytics",
                         icon: ChartVerticalIcon,
+                        onAction: analytics(),
                     },
                 ]}
             >
@@ -67,7 +65,7 @@ export function DashboardPage() {
 
                     {/* Quick actions */}
                     <Layout.Section>
-                        <QuickActions />
+                        <DashboardQuickActions />
                     </Layout.Section>
 
                     {/* AI insights */}

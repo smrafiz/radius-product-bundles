@@ -23,9 +23,7 @@ export default function Providers({
             </Suspense>
             <TanstackProvider dehydratedState={dehydratedState}>
                 <SessionProvider>
-                    <ProtectedRoute>
-                        {children}
-                    </ProtectedRoute>
+                    <ProtectedRoute>{children}</ProtectedRoute>
                 </SessionProvider>
             </TanstackProvider>
         </AppProvider>

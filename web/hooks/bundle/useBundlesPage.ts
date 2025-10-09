@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useBundleListingStore } from "@/stores";
 import { metricsConfig } from "@/config";

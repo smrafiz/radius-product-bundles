@@ -9,7 +9,9 @@ import {
 import { BlockStack, Box, Card } from "@shopify/polaris";
 import { BundleTableSkeleton } from "@/features/bundles";
 
-
+/**
+ * Dashboard Bundles Component
+ */
 export function DashboardBundles() {
     const { loading, error, bundles } = useDashboardStore();
 
@@ -23,10 +25,11 @@ export function DashboardBundles() {
         <Card>
             <Box padding="400">
                 <BlockStack gap="400">
-                    <DashboardBundlesHeader />
-
                     {recentBundles.length > 0 ? (
-                        <DashboardBundlesList bundles={recentBundles}/>
+                        <>
+                            <DashboardBundlesHeader />
+                            <DashboardBundlesList bundles={recentBundles} />
+                        </>
                     ) : (
                         <DashboardBundlesEmpty error={error} />
                     )}

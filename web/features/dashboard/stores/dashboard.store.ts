@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { DashboardState } from "@/types";
+import { DashboardState } from "@/features/dashboard";
 
 /*
  * Dashboard store

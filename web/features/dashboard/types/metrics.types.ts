@@ -5,7 +5,7 @@
 /**
  * Processed dashboard metrics
  */
-export interface DashboardMetrics {
+export interface DashboardMetricsData {
     totalRevenue: number;
     revenueAllTime: number;
     totalViews: number;
@@ -15,6 +15,19 @@ export interface DashboardMetrics {
     revenueGrowth: number;
     conversionGrowth: number;
 }
+
+export interface DashboardMetricConfig {
+    key: keyof DashboardMetricsData;
+    title: string;
+    format: MetricFormat;
+    comparisonLabel?: string;
+    action?: { label: string; url: string };
+}
+
+/**
+ * Metric format
+ */
+export type MetricFormat = "currency" | "percentage" | "number";
 
 /**
  * Raw metrics from API response
@@ -80,28 +93,28 @@ export interface MetricAction {
 /**
  * Metric tone for styling
  */
-export type MetricTone = 'positive' | 'negative' | 'neutral' | 'warning';
+export type MetricTone = "positive" | "negative" | "neutral" | "warning";
 
 /**
  * Time period for metrics
  */
 export type MetricsPeriod =
-    | 'today'
-    | 'yesterday'
-    | 'week'
-    | 'month'
-    | 'quarter'
-    | 'year'
-    | 'custom';
+    | "today"
+    | "yesterday"
+    | "week"
+    | "month"
+    | "quarter"
+    | "year"
+    | "custom";
 
 /**
  * Metric comparison type
  */
 export type MetricComparison =
-    | 'previous_period'
-    | 'previous_year'
-    | 'last_month'
-    | 'none';
+    | "previous_period"
+    | "previous_year"
+    | "last_month"
+    | "none";
 
 /**
  * Metric filter options

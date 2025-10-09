@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
     BlockStack,
     Box,
@@ -10,57 +9,16 @@ import {
     InlineStack,
     Text,
 } from "@shopify/polaris";
-import {
-    ChartVerticalIcon,
-    OrderIcon,
-    SandboxIcon,
-} from "@shopify/polaris-icons";
-import { withLoader } from "@/utils";
+import { useAppNavigation } from "@/shared";
+import { getEnabledQuickActions } from "@/features/dashboard";
 
-interface QuickActionItem {
-    title: string;
-    description: string;
-    icon: any;
-    url: string;
-    backgroundColor: string;
-    iconColor?: "success" | "critical" | "info";
-}
-
-const quickActions: QuickActionItem[] = [
-    {
-        title: "Manage Bundle",
-        description: "Create and edit bundle offers",
-        icon: OrderIcon,
-        url: "/bundles",
-        backgroundColor: "var(--p-color-bg-surface-success-hover)",
-        iconColor: "success",
-    },
-    {
-        title: "View Analytics",
-        description: "Track performance metrics",
-        icon: ChartVerticalIcon,
-        url: "/analytics",
-        backgroundColor: "var(--p-color-bg-surface-info-hover)",
-        iconColor: "info",
-    },
-    {
-        title: "Bundle Studio",
-        description: "Create just like the templates",
-        icon: SandboxIcon,
-        url: "/templates",
-        backgroundColor: "var(--p-color-bg-surface-critical-hover)",
-        iconColor: "critical",
-    },
-];
-
-export const QuickActions = () => {
-    const router = useRouter();
-
-    const handleNavigate = (url: string) =>
-        withLoader(() => router.push(url));
+export const DashboardQuickActions = () => {
+    const { goTo } = useAppNavigation();
+    const actions = getEnabledQuickActions();
 
     return (
         <div className="radius-quick-actions-wrapper">
+            c
             <Card>
                 <Box padding="400">
                     <BlockStack gap="400">
@@ -75,7 +33,7 @@ export const QuickActions = () => {
                         </BlockStack>
 
                         <Grid>
-                            {quickActions.map((action, index) => (
+                            {actions.map((action, index) => (
                                 <Grid.Cell
                                     key={index}
                                     columnSpan={{
@@ -88,9 +46,7 @@ export const QuickActions = () => {
                                 >
                                     <div
                                         className="radius-quick-action-item"
-                                        onClick={() =>
-                                            handleNavigate(action.url)
-                                        }
+                                        onClick={goTo(action.url)}
                                         style={{ cursor: "pointer" }}
                                     >
                                         <div className="transition-all hover:-translate-y-[3px]">
@@ -104,7 +60,7 @@ export const QuickActions = () => {
                                                             className="w-10 h-10 rounded-[var(--p-border-radius-150)] flex items-center justify-center"
                                                             style={{
                                                                 backgroundColor:
-                                                                action.backgroundColor,
+                                                                    action.backgroundColor,
                                                             }}
                                                         >
                                                             <div className="radius-quick-action-icon">
@@ -131,7 +87,9 @@ export const QuickActions = () => {
                                                                 variant="bodySm"
                                                                 tone="subdued"
                                                             >
-                                                                {action.description}
+                                                                {
+                                                                    action.description
+                                                                }
                                                             </Text>
                                                         </BlockStack>
                                                     </InlineStack>

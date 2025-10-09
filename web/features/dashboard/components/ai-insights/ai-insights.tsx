@@ -7,15 +7,71 @@ import {
     Button,
     Card,
     InlineStack,
+    SkeletonBodyText,
     Text,
 } from "@shopify/polaris";
 import { useDashboardStore } from "@/features/dashboard";
 
+/**
+ * AI Insights Component
+ */
 export function AIInsights() {
-    const { bundles } = useDashboardStore();
+    const { bundles, loading } = useDashboardStore();
 
-    if (bundles.length === 0) {
-        return null;
+    if (loading) {
+        return (
+            <Card>
+                <Box padding="400">
+                    <BlockStack gap="400">
+                        <InlineStack align="space-between">
+                            <Text as="h2" variant="headingMd">
+                                🤖 AI Insights
+                            </Text>
+                            <Badge tone="info">Beta</Badge>
+                        </InlineStack>
+
+                        <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg">
+                            <div className="animate-pulse">
+                                <BlockStack gap="200">
+                                    <SkeletonBodyText lines={2} />
+                                    <InlineStack gap="200">
+                                        <SkeletonBodyText lines={1} />
+                                    </InlineStack>
+                                </BlockStack>
+                            </div>
+                        </div>
+                    </BlockStack>
+                </Box>
+            </Card>
+        );
+    }
+
+    if (!bundles || bundles.length === 0) {
+        return (
+            <Card>
+                <Box padding="400">
+                    <BlockStack gap="400">
+                        <InlineStack align="space-between">
+                            <Text as="h2" variant="headingMd">
+                                🤖 AI Insights
+                            </Text>
+                            <Badge tone="info">Beta</Badge>
+                        </InlineStack>
+
+                        <Box
+                            background="bg-surface-secondary"
+                            padding="400"
+                            borderRadius="200"
+                        >
+                            <Text as="p" variant="bodyMd" tone="subdued">
+                                To access AI insights, please create at least
+                                one bundle.
+                            </Text>
+                        </Box>
+                    </BlockStack>
+                </Box>
+            </Card>
+        );
     }
 
     return (

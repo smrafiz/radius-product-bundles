@@ -1,6 +1,12 @@
 "use client";
 
 import {
+    firstLetterCapital,
+    formatCurrency,
+    formatPercentage,
+    useAppNavigation,
+} from "@/shared";
+import {
     Badge,
     BlockStack,
     InlineStack,
@@ -11,21 +17,10 @@ import {
 } from "@shopify/polaris";
 import { formatBundleType } from "@/utils";
 import { getBundleStatusBadge } from "@/features/bundles";
-import { formatCurrency, formatPercentage, withLoader } from "@/shared";
-
-import type { Bundle } from "@/types";
-import { useRouter } from "next/navigation";
-
-interface DashboardBundlesListProps {
-    bundles: Bundle[];
-}
+import { DashboardBundlesListProps } from "@/features/dashboard";
 
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
-    const router = useRouter();
-
-    const handleNavigate = withLoader((url: string) => {
-        router.push(url);
-    });
+    const { bundleData } = useAppNavigation();
 
     return (
         <ResourceList
@@ -36,7 +31,7 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                     key={bundle.id}
                     id={bundle.id}
                     accessibilityLabel={`View details for ${bundle.name}`}
-                    onClick={() => handleNavigate(`/bundles/${bundle.id}/edit`)}
+                    onClick={bundleData.edit(bundle.id)}
                     media={
                         <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
                             <Text
@@ -44,7 +39,7 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                                 variant="headingSm"
                                 tone="text-inverse"
                             >
-                                {bundle.name.charAt(0).toUpperCase()}
+                                {firstLetterCapital(bundle.name)}
                             </Text>
                         </div>
                     }

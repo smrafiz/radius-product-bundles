@@ -1,12 +1,23 @@
 /**
- * Capitalize first letter of string
+ * Capitalize the first letter of string
  */
 export function capitalize(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 /**
- * Convert string to title case
+ * Extract & capitalize the first letter of string
+ */
+export function firstLetterCapital(str: string): string {
+    if (!str) {
+        return "";
+    }
+
+    return str.trim().charAt(0).toUpperCase();
+}
+
+/**
+ * Convert a string to a title case
  */
 export function titleCase(str: string): string {
     return str
@@ -36,7 +47,7 @@ export function truncate(str: string, maxLength: number): string {
 }
 
 /**
- * Check if string is empty or whitespace
+ * Check if the string is empty or whitespace
  */
 export function isEmpty(str: string | null | undefined): boolean {
     return !str || str.trim().length === 0;
