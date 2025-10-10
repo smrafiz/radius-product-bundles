@@ -1,15 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useBundleListingStore } from "@/stores";
-import { metricsConfig } from "@/config";
-import { withLoader } from "@/utils";
-import { useBundlesData, useSyncBundles } from "@/shared";
-import { useDashboardData } from "@/features/dashboard";
 import {
+    useBundleListingStore,
     useBundleTableBulkActions,
     useInitialBundleState,
 } from "@/features/bundles";
+import { metricsConfig } from "@/config";
+import { useDashboardData } from "@/features/dashboard";
+import { useBundlesData, useSyncBundles, withLoader } from "@/shared";
 
 export function useBundlesPage() {
     const router = useRouter();

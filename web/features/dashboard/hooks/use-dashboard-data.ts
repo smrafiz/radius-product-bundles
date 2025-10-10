@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-import { dashboardQueries, useDashboardStore } from "@/features/dashboard";
 import { useGlobalBannerStore } from "@/shared";
+import { dashboardQueries, useDashboardStore } from "@/features/dashboard";
 
 export const useDashboardData = () => {
     const app = useAppBridge();

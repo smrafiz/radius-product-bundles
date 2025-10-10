@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useGlobalBannerStore } from "@/shared";
+import { useGlobalBannerStore } from "@/shared/stores/global-banner.store";
 
 export default function Error({
     error,
@@ -10,7 +10,8 @@ export default function Error({
     error: Error & { digest?: string };
     reset: () => void;
 }) {
-    const { addMessage, clearAllMessages } = useGlobalBannerStore();
+    const addMessage = useGlobalBannerStore((state) => state.addMessage);
+    const clearAllMessages = useGlobalBannerStore((state) => state.clearAllMessages);
 
     useEffect(() => {
         clearAllMessages();

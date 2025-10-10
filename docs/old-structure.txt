@@ -99,7 +99,7 @@ web/
 │   │   └── useStepNavigation.ts
 │   ├── data
 │   │   ├── index.ts
-│   │   ├── useBundlesData.ts
+│   │   ├── bundles-data.store.ts
 │   │   ├── useCurrency.ts
 │   │   ├── useDashboardData.ts
 │   │   ├── useGraphQL.ts

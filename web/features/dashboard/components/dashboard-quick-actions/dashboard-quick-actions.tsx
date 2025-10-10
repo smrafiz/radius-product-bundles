@@ -18,7 +18,6 @@ export const DashboardQuickActions = () => {
 
     return (
         <div className="radius-quick-actions-wrapper">
-            c
             <Card>
                 <Box padding="400">
                     <BlockStack gap="400">

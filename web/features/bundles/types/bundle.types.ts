@@ -92,6 +92,7 @@ export interface ProductGroup {
     id: string;
     title: string;
     product: SelectedItem;
+    featuredImage?: string;
     variants: SelectedItem[];
     originalTotalVariants: number;
 }
