@@ -1,9 +1,8 @@
 "use client";
 
-import { useModalStore } from "@/stores";
-import type { BundleStatus } from "@/types";
-import { bundleStatusConfigs } from "@/config";
+import { useModalStore } from "@/shared";
 import { ConfirmationModal } from "@/components";
+import { BUNDLE_STATUSES, BundleStatus } from "@/features/bundles";
 
 export function ModalHost() {
     const { modal, closeModal, setLoading, setError } = useModalStore();
@@ -83,7 +82,7 @@ export function ModalHost() {
                             <strong>{modal.bundle?.name}</strong> to{" "}
                             <strong>
                                 {modal.newStatus
-                                    ? bundleStatusConfigs[
+                                    ? BUNDLE_STATUSES[
                                           modal.newStatus as BundleStatus
                                       ]?.text
                                     : ""}

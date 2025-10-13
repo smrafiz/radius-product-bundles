@@ -4,6 +4,8 @@ import type {
     DiscountType as PrismaDiscountType,
     Bundle as PrismaBundle,
 } from "@prisma/client";
+import { IconSource } from "@shopify/polaris";
+import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
 // Re-export Prisma enums
 export type BundleStatus = PrismaBundleStatus;
@@ -95,4 +97,54 @@ export interface ProductGroup {
     featuredImage?: string;
     variants: SelectedItem[];
     originalTotalVariants: number;
+}
+
+/**
+ * Bundle action
+ */
+export interface BundleAction {
+    key: string;
+    icon: IconSource;
+    tooltip: string;
+    tone?: "success" | "critical";
+    disabled?: boolean;
+}
+
+/*
+ * Bundle status badge types
+ */
+export interface BundleStatusBadge {
+    text: string;
+    tone: Tone;
+    children?: string;
+}
+
+/*
+ * Bundle config types
+ */
+export type BundleConfig = {
+    id: BundleType;
+    label: string;
+    slug: string;
+    description?: string;
+    features?: string[];
+    icon?: any;
+    badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
+};
+
+/*
+ * Discount config types
+ */
+export interface DiscountConfig {
+    label: string;
+    id: DiscountType;
+    slug: string;
+    description: string;
+    symbol: string;
+    suffix: string;
+    format: (
+        value?: number,
+        formatCurrency?: (val: number) => string,
+        includeLabel?: boolean,
+    ) => string;
 }

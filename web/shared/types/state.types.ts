@@ -1,4 +1,4 @@
-import { GlobalMessage, MessageType } from "@/types";
+import { GlobalMessage, MessageType, ModalPayload } from "@/shared";
 
 export interface GlobalMessageState {
     messages: GlobalMessage[];
@@ -6,4 +6,14 @@ export interface GlobalMessageState {
     removeMessage: (id: string) => void;
     clearAllMessages: () => void;
     getMessagesByType: (type: MessageType) => GlobalMessage[];
+}
+
+export interface ModalState {
+    modal: ModalPayload | { type: null };
+    openModal: (
+        modal: Omit<ModalPayload, "loading"> & { loading?: boolean },
+    ) => void;
+    closeModal: () => void;
+    setLoading: (loading: boolean) => void;
+    setError: (error: string | null) => void;
 }

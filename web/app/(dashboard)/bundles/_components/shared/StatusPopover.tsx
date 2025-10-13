@@ -1,10 +1,5 @@
 "use client";
 
-import { getStatusBadge } from "@/utils";
-import { useCallback, useState } from "react";
-import { bundleStatusConfigs } from "@/config";
-import { BundleListItem, BundleStatus } from "@/types";
-import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 import {
     ActionList,
     Badge,
@@ -13,9 +8,12 @@ import {
     Link,
     Popover,
 } from "@shopify/polaris";
-
-import { useModalStore } from "@/stores";
-import { useBundleActions } from "@/hooks";
+import { useModalStore } from "@/shared";
+import { useCallback, useState } from "react";
+import { BundleListItem, BundleStatus } from "@/types";
+import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
+import { BUNDLE_STATUSES, useBundleActions } from "@/features/bundles";
+import { getStatusBadge } from "@/utils";
 
 interface Props {
     bundle: BundleListItem;
@@ -67,7 +65,7 @@ export default function StatusPopover({ bundle, onStatusUpdate }: Props) {
             onClose={togglePopover}
         >
             <ActionList
-                items={Object.entries(bundleStatusConfigs).map(
+                items={Object.entries(BUNDLE_STATUSES).map(
                     ([statusKey, status]) => ({
                         content: status.text,
                         onAction: () =>

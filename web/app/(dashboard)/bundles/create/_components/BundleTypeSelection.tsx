@@ -12,8 +12,8 @@ import {
 } from "@shopify/polaris";
 import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
-import { bundleTypeConfigs } from "@/config";
-import BundleTypeCard from "@/bundles/create/_components/BundleTypeCard";
+import BundleTypeCard from "@/app/(dashboard)/bundles/create/_components/BundleTypeCard";
+import { BUNDLE_TYPES } from "@/features/bundles";
 
 export default function BundleTypeSelection() {
     const router = useRouter();
@@ -34,7 +34,7 @@ export default function BundleTypeSelection() {
             <Layout>
                 <Layout.Section>
                     <Grid columns={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}>
-                        {Object.values(bundleTypeConfigs).map((bundleType) => (
+                        {Object.values(BUNDLE_TYPES).map((bundleType) => (
                             <BundleTypeCard
                                 key={bundleType.id}
                                 bundleType={bundleType}

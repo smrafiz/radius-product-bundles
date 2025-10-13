@@ -7,13 +7,9 @@ import {
     Text,
     Thumbnail,
 } from "@shopify/polaris";
-import { ProductGroup } from "@/features/bundles";
+import { ProductListPopoverProps } from "@/features/bundles";
 
-interface Props {
-    products: ProductGroup[];
-}
-
-export function ProductListPopover({ products }: Props) {
+export function ProductListPopover({ products }: ProductListPopoverProps) {
     return (
         <Box padding="200" minWidth="280px">
             <ResourceList

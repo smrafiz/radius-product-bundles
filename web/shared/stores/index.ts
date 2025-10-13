@@ -1,1 +1,2 @@
+export { useModalStore } from "./modal.store";
 export { useGlobalBannerStore } from "./global-banner.store";

@@ -1,13 +1,8 @@
 import Image from "next/image";
 import { Box } from "@shopify/polaris";
-import { ProductGroup } from "@/features/bundles";
+import { ProductAvatarStackProps } from "@/features/bundles";
 
-interface Props {
-    products: ProductGroup[];
-    remainingCount: number;
-}
-
-export function ProductAvatarStack({ products, remainingCount }: Props) {
+export function ProductAvatarStack({ products, remainingCount }: ProductAvatarStackProps) {
     return (
         <>
             {products.map((product, index) => {

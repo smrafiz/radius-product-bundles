@@ -9,13 +9,13 @@ import {
 } from "@shopify/polaris";
 import { useBundleListingStore } from "@/stores";
 import type { IndexFiltersProps } from "@shopify/polaris";
+import { useDebounce } from "@/hooks";
+import { BUNDLE_FILTERS } from "@/features/bundles";
 import {
+    bundleSortOptions,
     bundleStatusFilterOptions,
     bundleTypeFilterOptions,
-    bundleSortOptions,
-    bundleFiltersConfig,
 } from "@/config";
-import { useDebounce } from "@/hooks";
 
 export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const {
@@ -36,7 +36,7 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     // Debounce the search query
     const debouncedQuery = useDebounce(
         queryValue,
-        bundleFiltersConfig.search.debounceMs,
+        BUNDLE_FILTERS.search.debounceMs,
     );
 
     // Update store when debounced value changes
@@ -52,7 +52,7 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     }, [filters.search]);
 
     // Tabs from config
-    const tabs = bundleFiltersConfig.tabs.items.map((item, index) => ({
+    const tabs = BUNDLE_FILTERS.tabs.items.map((item, index) => ({
         content: item,
         index,
         onAction: () => {},
@@ -78,13 +78,13 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
     // Filter configuration
     const filterConfigs = [
         {
-            key: bundleFiltersConfig.status.key,
-            label: bundleFiltersConfig.status.label,
+            key: BUNDLE_FILTERS.status.key,
+            label: BUNDLE_FILTERS.status.label,
             filter: (
                 <ChoiceList
-                    title={bundleFiltersConfig.status.label}
+                    title={BUNDLE_FILTERS.status.label}
                     titleHidden
-                    choices={bundleFiltersConfig.status.options}
+                    choices={BUNDLE_FILTERS.status.options}
                     selected={filters.statusFilter}
                     onChange={setStatusFilter}
                     allowMultiple
@@ -93,13 +93,13 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
             shortcut: true,
         },
         {
-            key: bundleFiltersConfig.type.key,
-            label: bundleFiltersConfig.type.label,
+            key: BUNDLE_FILTERS.type.key,
+            label: BUNDLE_FILTERS.type.label,
             filter: (
                 <ChoiceList
-                    title={bundleFiltersConfig.type.label}
+                    title={BUNDLE_FILTERS.type.label}
                     titleHidden
-                    choices={bundleFiltersConfig.type.options}
+                    choices={BUNDLE_FILTERS.type.options}
                     selected={filters.typeFilter}
                     onChange={setTypeFilter}
                     allowMultiple
@@ -145,7 +145,7 @@ export default function BundleIndexFilters({ loading }: { loading?: boolean }) {
             sortOptions={bundleSortOptions}
             sortSelected={filters.sortSelected}
             queryValue={queryValue}
-            queryPlaceholder={bundleFiltersConfig.search.placeholder}
+            queryPlaceholder={BUNDLE_FILTERS.search.placeholder}
             onQueryChange={handleQueryChange}
             onQueryClear={handleQueryClear}
             onSort={setSortSelected}

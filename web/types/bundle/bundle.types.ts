@@ -49,44 +49,6 @@ export interface Bundle {
 }
 
 /*
- * Bundle config types
- */
-export type BundleConfig = {
-    id: BundleType;
-    label: string;
-    slug: string;
-    description?: string;
-    features?: string[];
-    icon?: any;
-    badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
-};
-
-/*
- * Bundle status badge types
- */
-export interface BundleStatusBadge {
-    text: string;
-    tone: Tone;
-}
-
-/*
- * Discount config types
- */
-export interface DiscountConfig {
-    label: string;
-    id: DiscountType;
-    slug: string;
-    description: string;
-    symbol: string;
-    suffix: string;
-    format: (
-        value?: number,
-        formatCurrency?: (val: number) => string,
-        includeLabel?: boolean,
-    ) => string;
-}
-
-/*
  * Create bundle payload types
  */
 export interface CreateBundlePayload {

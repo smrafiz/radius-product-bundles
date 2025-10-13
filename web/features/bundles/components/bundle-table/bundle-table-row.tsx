@@ -1,30 +1,28 @@
 "use client";
 
-import { Box, IndexTable, Link, Text } from "@shopify/polaris";
-
-import { updateBundleStatus } from "@/actions";
-import { useAppBridge } from "@shopify/app-bridge-react";
-
-import { discountTypeConfigs } from "@/config";
 import {
     BundleActionsGroup,
     BundleListItem,
     BundleProductsPreview,
     BundleStatus,
+    BundleTableRowProps,
+    getBundleProperty,
     StatusPopover,
     useBundleActions,
     useBundleListingStore,
 } from "@/features/bundles";
 import { useShopSettings } from "@/hooks";
-import { getBundleProperty, getCurrencySymbol } from "@/utils";
+import { updateBundleStatus } from "@/actions";
+import { discountTypeConfigs } from "@/config";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { Box, IndexTable, Link, Text } from "@shopify/polaris";
+import { getCurrencySymbol } from "@/shared";
 
-interface Props {
-    bundle: BundleListItem;
-    index: number;
-    isSelected: boolean;
-}
-
-export function BundleTableRow({ bundle, index, isSelected }: Props) {
+export function BundleTableRow({
+    bundle,
+    index,
+    isSelected,
+}: BundleTableRowProps) {
     const app = useAppBridge();
     const { isLoading, currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);

@@ -11,13 +11,3 @@ export interface ModalPayload {
     loading?: boolean;
     error?: string;
 }
-
-export interface ModalState {
-    modal: ModalPayload | { type: null };
-    openModal: (
-        modal: Omit<ModalPayload, "loading"> & { loading?: boolean },
-    ) => void;
-    closeModal: () => void;
-    setLoading: (loading: boolean) => void;
-    setError: (error: string | null) => void;
-}

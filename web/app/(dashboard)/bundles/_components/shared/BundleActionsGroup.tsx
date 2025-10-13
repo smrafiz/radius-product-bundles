@@ -1,10 +1,8 @@
 "use client";
 
-import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
+import { useModalStore } from "@/shared";
 import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
-
-import { useModalStore } from "@/stores";
-import { BundleListItem } from "@/types";
+import { BundleListItem, BUNDLE_LISTING_ACTIONS } from "@/features/bundles";
 
 interface Props {
     bundle: BundleListItem;
@@ -51,7 +49,7 @@ export default function BundleActionsGroup({ bundle, onAction }: Props) {
     return (
         <>
             <ButtonGroup variant="segmented">
-                {LISTING_DEFAULT_ACTIONS.map((action, index) => (
+                {BUNDLE_LISTING_ACTIONS.map((action, index) => (
                     <Tooltip key={index} content={action.tooltip}>
                         <Button
                             icon={action.icon}

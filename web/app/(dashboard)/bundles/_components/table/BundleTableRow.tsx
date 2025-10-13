@@ -1,20 +1,21 @@
 "use client";
 
-import { Box, IndexTable, Link, Text } from "@shopify/polaris";
-import { getBundleProperty, getCurrencySymbol } from "@/utils";
 import {
     BundleActionsGroup,
+    BundleListItem,
     BundleProductsPreview,
+    BundleStatus,
+    DISCOUNT_TYPES,
+    getBundleProperty,
     StatusPopover,
-} from "@/bundles/_components";
-
+    useBundleActions,
+    useBundleListingStore,
+} from "@/features/bundles";
+import { useShopSettings } from "@/hooks";
+import { getCurrencySymbol } from "@/shared";
 import { updateBundleStatus } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
-
-import { discountTypeConfigs } from "@/config";
-import { useBundleListingStore } from "@/stores";
-import { BundleListItem, BundleStatus } from "@/types";
-import { useBundleActions, useShopSettings } from "@/hooks";
+import { Box, IndexTable, Link, Text } from "@shopify/polaris";
 
 interface Props {
     bundle: BundleListItem;
@@ -42,7 +43,7 @@ export default function BundleTableRow({ bundle, index, isSelected }: Props) {
             return "No Discount";
         }
 
-        const config = discountTypeConfigs[bundle.discountType];
+        const config = DISCOUNT_TYPES[bundle.discountType];
         if (!config) {
             return "No Discount";
         }

@@ -1,21 +1,21 @@
 "use client";
 
-import { useCallback, useState, useEffect } from "react";
 import {
-    IndexFilters,
-    useSetIndexFiltersMode,
     ChoiceList,
+    IndexFilters,
     IndexFiltersMode,
+    useSetIndexFiltersMode,
 } from "@shopify/polaris";
-import type { IndexFiltersProps } from "@shopify/polaris";
 import {
-    bundleStatusFilterOptions,
-    bundleTypeFilterOptions,
-    bundleSortOptions,
-    bundleFiltersConfig,
-} from "@/config";
+    BUNDLE_FILTERS,
+    BUNDLE_SORT_OPTIONS,
+    BUNDLE_STATUS_FILTER_OPTIONS,
+    BUNDLE_TYPE_FILTER_OPTIONS,
+    useBundleListingStore,
+} from "@/features/bundles";
 import { useDebounce } from "@/shared";
-import { useBundleListingStore } from "@/features/bundles";
+import { useCallback, useEffect, useState } from "react";
+import type { IndexFiltersProps } from "@shopify/polaris";
 
 export function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const {
@@ -36,7 +36,7 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
     // Debounce the search query
     const debouncedQuery = useDebounce(
         queryValue,
-        bundleFiltersConfig.search.debounceMs,
+        BUNDLE_FILTERS.search.debounceMs,
     );
 
     // Update store when debounced value changes
@@ -52,7 +52,7 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
     }, [filters.search]);
 
     // Tabs from config
-    const tabs = bundleFiltersConfig.tabs.items.map((item, index) => ({
+    const tabs = BUNDLE_FILTERS.tabs.items.map((item, index) => ({
         content: item,
         index,
         onAction: () => {},
@@ -78,13 +78,13 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
     // Filter configuration
     const filterConfigs = [
         {
-            key: bundleFiltersConfig.status.key,
-            label: bundleFiltersConfig.status.label,
+            key: BUNDLE_FILTERS.status.key,
+            label: BUNDLE_FILTERS.status.label,
             filter: (
                 <ChoiceList
-                    title={bundleFiltersConfig.status.label}
+                    title={BUNDLE_FILTERS.status.label}
                     titleHidden
-                    choices={bundleFiltersConfig.status.options}
+                    choices={BUNDLE_FILTERS.status.options}
                     selected={filters.statusFilter}
                     onChange={setStatusFilter}
                     allowMultiple
@@ -93,13 +93,13 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
             shortcut: true,
         },
         {
-            key: bundleFiltersConfig.type.key,
-            label: bundleFiltersConfig.type.label,
+            key: BUNDLE_FILTERS.type.key,
+            label: BUNDLE_FILTERS.type.label,
             filter: (
                 <ChoiceList
-                    title={bundleFiltersConfig.type.label}
+                    title={BUNDLE_FILTERS.type.label}
                     titleHidden
-                    choices={bundleFiltersConfig.type.options}
+                    choices={BUNDLE_FILTERS.type.options}
                     selected={filters.typeFilter}
                     onChange={setTypeFilter}
                     allowMultiple
@@ -114,7 +114,7 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     if (filters.statusFilter.length > 0) {
         const statusLabels = filters.statusFilter.map((val) => {
-            const option = bundleStatusFilterOptions.find(
+            const option = BUNDLE_STATUS_FILTER_OPTIONS.find(
                 (opt) => opt.value === val,
             );
             return option ? option.label : val;
@@ -128,7 +128,7 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     if (filters.typeFilter.length > 0) {
         const typeLabels = filters.typeFilter.map((val) => {
-            const option = bundleTypeFilterOptions.find(
+            const option = BUNDLE_TYPE_FILTER_OPTIONS.find(
                 (opt) => opt.value === val,
             );
             return option ? option.label : val;
@@ -142,10 +142,10 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     return (
         <IndexFilters
-            sortOptions={bundleSortOptions}
+            sortOptions={BUNDLE_SORT_OPTIONS}
             sortSelected={filters.sortSelected}
             queryValue={queryValue}
-            queryPlaceholder={bundleFiltersConfig.search.placeholder}
+            queryPlaceholder={BUNDLE_FILTERS.search.placeholder}
             onQueryChange={handleQueryChange}
             onQueryClear={handleQueryClear}
             onSort={setSortSelected}

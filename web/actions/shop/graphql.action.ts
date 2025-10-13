@@ -34,7 +34,7 @@ export async function executeGraphQLQuery<T = any>(
             throw new Error("Access token is undefined");
         }
 
-        const endpoint = `https://${shop}/admin/api/2025-07/graphql.json`;
+        const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
         const client = new GraphQLClient(endpoint, {
             headers: {
                 "X-Shopify-Access-Token": accessToken,

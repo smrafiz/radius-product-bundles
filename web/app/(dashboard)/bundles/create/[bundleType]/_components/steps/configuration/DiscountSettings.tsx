@@ -8,13 +8,16 @@ import {
     TextField,
     InlineStack,
 } from "@shopify/polaris";
-import { getCurrencySymbol, getDiscountProperty } from "@/utils";
 import { useBundleValidation } from "@/hooks/bundle/useBundleValidation";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 import { useShopSettings } from "@/hooks";
-import { useBundleStore } from "@/stores";
-import { discountTypeConfigs } from "@/config";
+import {
+    DISCOUNT_TYPES,
+    getDiscountProperty,
+    useBundleStore,
+} from "@/features/bundles";
+import { getCurrencySymbol } from "@/shared";
 
 export default function DiscountSettings() {
     const { watch, setValue } = useBundleFormMethods();
@@ -105,7 +108,7 @@ export default function DiscountSettings() {
                     label="Discount Type"
                     options={[
                         { label: "Select discount type", value: "" },
-                        ...Object.values(discountTypeConfigs).map((config) => ({
+                        ...Object.values(DISCOUNT_TYPES).map((config) => ({
                             label: config.label,
                             value: config.id,
                         })),

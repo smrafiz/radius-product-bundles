@@ -1,1 +1,1 @@
-export { getBundleStatusBadge } from "./status";
+export * from "./bundle-getters";

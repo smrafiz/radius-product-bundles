@@ -25,14 +25,6 @@ export interface BundleListItem {
     }>;
 }
 
-export interface BundleAction {
-    key: string;
-    icon: IconSource;
-    tooltip: string;
-    tone?: "success" | "critical";
-    disabled?: boolean;
-}
-
 export interface BundleMetrics {
     totals: {
         revenue: number;

@@ -1,15 +1,12 @@
 "use client";
 
+import {
+    BundleTableEmptyStatesProps,
+    useBundleTableBulkActions,
+} from "@/features/bundles";
 import { withLoader } from "@/shared";
 import { PlusIcon } from "@shopify/polaris-icons";
-import { useBundleTableBulkActions } from "@/features/bundles";
 import { Box, EmptySearchResult, EmptyState } from "@shopify/polaris";
-
-
-interface BundleTableEmptyStatesProps {
-    totalBundles: number;
-    filteredBundlesCount: number;
-}
 
 export function BundleTableEmptyStates({
     totalBundles,

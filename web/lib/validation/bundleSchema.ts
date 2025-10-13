@@ -1,6 +1,6 @@
 import { z } from "zod";
 import DOMPurify from "isomorphic-dompurify";
-import { VALIDATION_MESSAGES } from "@/lib/constants";
+import { VALIDATION_MESSAGES } from "@/lib/constants/bundle";
 
 // Sanitization transformer
 const sanitizeHtml = (value: string) => {

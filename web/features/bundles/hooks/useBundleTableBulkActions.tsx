@@ -12,7 +12,8 @@ import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 import type { BundleStatus } from "@/types";
 import { useGlobalBanner, useSessionToken } from "@/hooks";
-import { useBundleListingStore, useModalStore } from "@/stores";
+import { useBundleListingStore } from "@/stores";
+import { useModalStore } from "@/shared";
 
 export function useBundleTableBulkActions() {
     const router = useRouter();

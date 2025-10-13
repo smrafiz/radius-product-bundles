@@ -1,22 +1,10 @@
 "use client";
 
-import { LISTING_DEFAULT_ACTIONS } from "@/lib/constants";
+import { useModalStore } from "@/shared";
 import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
+import { BundleActionsGroupProps, BUNDLE_LISTING_ACTIONS } from "@/features/bundles";
 
-import { useModalStore } from "@/stores";
-import { BundleListItem } from "@/types";
-
-interface Props {
-    bundle: BundleListItem;
-    onAction: {
-        edit: () => void;
-        view: () => void;
-        duplicate: () => Promise<void>;
-        delete: () => Promise<void>;
-    };
-}
-
-export function BundleActionsGroup({ bundle, onAction }: Props) {
+export function BundleActionsGroup({ bundle, onAction }: BundleActionsGroupProps) {
     const { openModal } = useModalStore();
 
     const handleActionClick = (actionKey: string) => {
@@ -51,7 +39,7 @@ export function BundleActionsGroup({ bundle, onAction }: Props) {
     return (
         <>
             <ButtonGroup variant="segmented">
-                {LISTING_DEFAULT_ACTIONS.map((action, index) => (
+                {BUNDLE_LISTING_ACTIONS.map((action, index) => (
                     <Tooltip key={index} content={action.tooltip}>
                         <Button
                             icon={action.icon}
