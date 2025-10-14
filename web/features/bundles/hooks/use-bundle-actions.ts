@@ -25,6 +25,10 @@ export function useBundleActions(bundle: BundleListItem | null) {
     const actions = useMemo(
         () => ({
             edit: () => {
+                if (!bundle) {
+                    throw new Error("Bundle not found");
+                }
+
                 withLoader(() => router.push(`/bundles/${bundle.id}/edit`))();
             },
 

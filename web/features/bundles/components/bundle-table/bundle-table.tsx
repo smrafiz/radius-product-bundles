@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import {
     Card,
     IndexTable,
@@ -16,6 +15,7 @@ import {
     useBundleListingStore,
     useBundleTableBulkActions,
 } from "@/features/bundles";
+import { useCallback } from "react";
 import { useBundlesData } from "@/shared";
 
 export function BundleTable() {

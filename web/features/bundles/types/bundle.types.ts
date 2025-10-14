@@ -20,14 +20,17 @@ export interface BundleListItem {
     name: string;
     type: BundleType;
     status: BundleStatus;
-    discountType: DiscountType;
-    discountValue: number;
     views: number;
     conversions: number;
     revenue: number;
+    revenueAllTime: number;
     conversionRate: number;
     productCount: number;
     createdAt: string;
+
+    discountType: DiscountType;
+    discountValue: number;
+
     products: Array<{
         id: string;
         title: string;
@@ -97,6 +100,26 @@ export interface ProductGroup {
     featuredImage?: string;
     variants: SelectedItem[];
     originalTotalVariants: number;
+}
+
+export interface ProductPreviewGroup {
+    id: string;
+    title: string;
+    handle: string;
+    featuredImage?: string;
+    product?: {
+        id: string;
+        title: string;
+        handle: string;
+        featuredImage?: string;
+    };
+    variants?: Array<{
+        id: string;
+        title: string;
+        handle: string;
+        featuredImage?: string;
+    }>;
+    originalTotalVariants?: number;
 }
 
 /**

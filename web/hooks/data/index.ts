@@ -1,4 +1,4 @@
-export { useGraphQL } from "@/hooks/data/useGraphQL";
+// export { useGraphQL } from "@/hooks/data/useGraphQL";
 export { useCurrency } from "@/hooks/data/useCurrency";
 // export { useBundlesData } from "@/hooks/data/useBundlesData";
 export { useSyncBundles } from "@/hooks/data/useSyncBundles";

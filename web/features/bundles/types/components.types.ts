@@ -1,4 +1,9 @@
-import { BundleListItem, BundleStatus, ProductGroup } from "@/features/bundles";
+import {
+    BundleListItem,
+    BundleStatus,
+    ProductGroup,
+    ProductPreviewGroup,
+} from "@/features/bundles";
 
 /**
  * Bundles component prop types
@@ -13,7 +18,7 @@ export interface ProductAvatarStackProps {
 }
 
 export interface ProductListPopoverProps {
-    products: ProductGroup[];
+    products: ProductPreviewGroup[];
 }
 
 export interface BundleTableEmptyStatesProps {

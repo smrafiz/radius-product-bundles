@@ -85,18 +85,18 @@ web/
 │   │   └── index.ts
 │   ├── bundle
 │   │   ├── index.ts
-│   │   ├── useBundleActions.ts
-│   │   ├── useBundleForm.ts
+│   │   ├── use-bundle-actions.ts
+│   │   ├── use-bundle-form.ts
 │   │   ├── useBundleFormMethods.ts
-│   │   ├── useBundlePreview.ts
+│   │   ├── use-bundle-preview.ts
 │   │   ├── useBundleQueries.ts
 │   │   ├── useBundleSave.ts
-│   │   ├── useBundleTableBulkActions.tsx
-│   │   ├── useBundleValidation.ts
-│   │   ├── useBundlesPage.ts
-│   │   ├── useInitialBundleState.ts
+│   │   ├── use-bundle-table-bulk-actions.tsx
+│   │   ├── use-bundle-validation.ts
+│   │   ├── use-bundles-page.ts
+│   │   ├── use-initial-bundle-state.ts
 │   │   ├── useLoadBundle.ts
-│   │   └── useStepNavigation.ts
+│   │   └── use-step-navigation.ts
 │   ├── data
 │   │   ├── index.ts
 │   │   ├── bundles-data.store.ts
@@ -270,7 +270,7 @@ web/
 │   │   └── metricTransformers.ts
 │   ├── product
 │   ├── query
-│   │   └── query.ts
+│   │   └── query-key.ts
 │   ├── shared
 │   │   └── global.ts
 │   ├── shop
