@@ -83,21 +83,27 @@ export const useDashboardData = () => {
     }, [metricsQuery.status, metricsQuery.data, setMetrics]);
 
     // Return metrics directly from the query
-    const currentMetrics = metricsQuery.isFetching
-        ? null
-        : metricsQuery.data
-          ? {
-                totalRevenue: metricsQuery.data?.totals?.revenue || 0,
-                revenueAllTime: metricsQuery.data?.totals?.revenueAllTime || 0,
-                totalViews: metricsQuery.data?.totals?.views || 0,
-                avgConversionRate:
-                    metricsQuery.data?.metrics?.conversionRate || 0,
-                totalBundles: metricsQuery.data?.totals?.totalBundles || 0,
-                activeBundles: metricsQuery.data?.totals?.activeBundles || 0,
-                revenueGrowth: metricsQuery.data?.growth?.revenue || 0,
-                conversionGrowth: metricsQuery.data?.growth?.conversion || 0,
-            }
-          : null;
+    const currentMetrics = metricsQuery.data
+        ? {
+            totalRevenue: metricsQuery.data?.totals?.revenue || 0,
+            revenueAllTime: metricsQuery.data?.totals?.revenueAllTime || 0,
+            totalViews: metricsQuery.data?.totals?.views || 0,
+            avgConversionRate: metricsQuery.data?.metrics?.conversionRate || 0,
+            totalBundles: metricsQuery.data?.totals?.totalBundles || 0,
+            activeBundles: metricsQuery.data?.totals?.activeBundles || 0,
+            revenueGrowth: metricsQuery.data?.growth?.revenue || 0,
+            conversionGrowth: metricsQuery.data?.growth?.conversion || 0,
+        }
+        : {
+            totalRevenue: 0,
+            revenueAllTime: 0,
+            totalViews: 0,
+            avgConversionRate: 0,
+            totalBundles: 0,
+            activeBundles: 0,
+            revenueGrowth: 0,
+            conversionGrowth: 0,
+        };
 
     return {
         bundlesQuery,

@@ -1,5 +1,6 @@
+import { BUNDLE_TYPES } from "./bundle-types.constants";
 import type { IndexFiltersProps } from "@shopify/polaris";
-import { BUNDLE_STATUSES, BUNDLE_TYPES } from "@/features/bundles";
+import { BUNDLE_STATUSES } from "./bundle-statuses.constants";
 
 /**
  * Bundle status filter options for IndexFilters

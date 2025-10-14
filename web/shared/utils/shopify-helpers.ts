@@ -1,8 +1,11 @@
 /**
  * Shopify App Bridge helper utilities
  */
+import { useAppBridge } from "@shopify/app-bridge-react";
 
-// Type for the Shopify window object
+/*
+ * Type for the Shopify window object
+ */
 declare global {
     interface Window {
         shopify?: {
@@ -113,3 +116,27 @@ export const executeWithLoading = async <T>(
         stopLoading();
     }
 };
+
+let tokenPromise: Promise<string> | null = null;
+
+/**
+ * Session token request.
+ */
+export async function getSessionToken(
+    app: ReturnType<typeof useAppBridge>
+): Promise<string> {
+    if (!tokenPromise) {
+        tokenPromise = app
+            .idToken()
+            .then((token) => {
+                if (!token.length) {
+                    throw new Error("Invalid Shopify session token");
+                }
+                return token;
+            })
+            .finally(() => {
+                tokenPromise = null; // reset cache
+            });
+    }
+    return tokenPromise;
+}
