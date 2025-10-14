@@ -3,10 +3,10 @@
 import { print } from "graphql";
 import { useCallback } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { executeGraphQLQuery, executeGraphQLMutation } from "@/actions";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import { executeGraphQLQuery, executeGraphQLMutation } from "@/actions";
 import { queryKey, UseGraphQLOptions, UseGraphQLReturn } from "@/shared";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Generic GraphQL query hook using Server Actions

@@ -193,7 +193,7 @@ web/
 ├── stores
 │   ├── bundle
 │   │   ├── bundle.store.ts
-│   │   ├── bundleListing.store.ts
+│   │   ├── bundle-listing.store.ts
 │   │   └── index.ts
 │   ├── dashboard
 │   │   ├── dashboard.store.ts

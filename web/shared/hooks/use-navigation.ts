@@ -1,9 +1,8 @@
 "use client";
 
-import { ROUTES } from "@/shared";
 import { useCallback } from "react";
-import { withLoader } from "@/utils";
 import { useRouter } from "next/navigation";
+import { ROUTES, withLoader } from "@/shared";
 
 /*
  * Navigation hooks

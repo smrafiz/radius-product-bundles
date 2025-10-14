@@ -11,12 +11,11 @@ import {
     useBundleActions,
     useBundleListingStore,
 } from "@/features/bundles";
-import { useShopSettings } from "@/hooks";
 import { updateBundleStatus } from "@/actions";
 import { discountTypeConfigs } from "@/config";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Box, IndexTable, Link, Text } from "@shopify/polaris";
-import { getCurrencySymbol } from "@/shared";
+import { getCurrencySymbol, useShopSettings } from "@/shared";
 
 export function BundleTableRow({
     bundle,

@@ -1,5 +1,5 @@
 // export * from "./query/query";
-export * from "./shared/global";
+// export * from "./shared/global";
 export * from "./error/errorUtils";
 export * from "./shop/sessionUtils";
 

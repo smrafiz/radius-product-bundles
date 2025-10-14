@@ -1,8 +1,8 @@
 import type {
+    Bundle as PrismaBundle,
     BundleStatus as PrismaBundleStatus,
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
-    Bundle as PrismaBundle,
 } from "@prisma/client";
 import { IconSource } from "@shopify/polaris";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
@@ -170,4 +170,34 @@ export interface DiscountConfig {
         formatCurrency?: (val: number) => string,
         includeLabel?: boolean,
     ) => string;
+}
+
+export interface BundleMetrics {
+    totals: {
+        revenue: number;
+        views: number;
+        purchases: number;
+        addToCarts: number;
+    };
+    metrics: {
+        conversionRate: number;
+        avgOrderValue: number;
+        cartConversionRate: number;
+    };
+    growth: {
+        revenue: number;
+        conversion: number;
+    };
+}
+
+export interface Toast {
+    active: boolean;
+    message: string;
+}
+
+export interface Pagination {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
 }

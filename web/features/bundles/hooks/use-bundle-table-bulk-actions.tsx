@@ -7,13 +7,13 @@ import {
 } from "@/actions";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { invalidateBundleCache, withLoader } from "@/utils";
+import { invalidateBundleCache } from "@/utils";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 import type { BundleStatus } from "@/types";
 import { useGlobalBanner, useSessionToken } from "@/hooks";
-import { useBundleListingStore } from "@/stores";
-import { useModalStore } from "@/shared";
+import { useModalStore, withLoader } from "@/shared";
+import { useBundleListingStore } from "@/features/bundles";
 
 export function useBundleTableBulkActions() {
     const router = useRouter();

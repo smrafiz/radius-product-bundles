@@ -16,8 +16,8 @@ import {
     formatGrowth,
     getGrowthIcon,
     getGrowthTone,
-    withLoader,
 } from "@/utils";
+import { withLoader } from "@/shared";
 
 export default function MetricCard({
     title,

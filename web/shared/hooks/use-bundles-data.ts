@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { useBundleListingStore } from "@/stores";
 import { useBundleMetrics, useBundles } from "@/hooks/bundle/useBundleQueries";
+import { useBundleListingStore } from "@/features/bundles";
 
 export const useBundlesData = () => {
     const {

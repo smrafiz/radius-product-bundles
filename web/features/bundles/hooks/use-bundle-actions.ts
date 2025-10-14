@@ -4,10 +4,14 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { invalidateBundleCache, withLoader } from "@/utils";
-import { useBundleListingStore } from "@/stores";
-import { BundleListItem, BundleStatus } from "@/types";
+import { invalidateBundleCache } from "@/utils";
 import { deleteBundle, duplicateBundle, updateBundleStatus } from "@/actions";
+import {
+    BundleListItem,
+    BundleStatus,
+    useBundleListingStore,
+} from "@/features/bundles";
+import { withLoader } from "@/shared";
 
 export function useBundleActions(bundle: BundleListItem | null) {
     const app = useAppBridge();

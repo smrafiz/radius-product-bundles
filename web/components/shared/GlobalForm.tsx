@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { BundleFormData } from "@/lib/validation";
-import { withLoader } from "@/utils";
+import { withLoader } from "@/shared";
 
 interface Props {
     children: ReactNode;

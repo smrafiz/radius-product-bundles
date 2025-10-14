@@ -12,7 +12,6 @@ export const useShopSettings = (options: { enabled?: boolean } = {}) => {
     const shopQuery = useGraphQL(GetShopInfoDocument, undefined, {
         enabled: options.enabled !== false,
         staleTime: 24 * 60 * 60 * 1000, // 24 hours
-        cacheTime: Infinity,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
     });
@@ -33,7 +32,7 @@ export const useShopSettings = (options: { enabled?: boolean } = {}) => {
                 email: shopData.email,
                 myshopifyDomain: shopData.myshopifyDomain,
                 currencyCode: shopData.currencyCode || "USD",
-                countryCode: shopData.billingAddress?.countryCode,
+                countryCode: shopData.billingAddress?.countryCode ?? undefined,
                 planDisplayName: shopData.plan?.displayName,
             };
 

@@ -1,4 +1,4 @@
-import { useSyncStore } from "@/hooks";
+import { useSyncStore } from "@/shared";
 import { useDashboardStore } from "@/features/dashboard";
 import { useBundleListingStore } from "@/features/bundles";
 

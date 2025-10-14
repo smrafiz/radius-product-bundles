@@ -1,8 +1,8 @@
 /**
  * Dashboard component prop types
  */
-import type { Bundle } from "@/types";
 import { IconSource } from "@shopify/polaris";
+import { Bundle } from "@/types";
 
 export interface DashboardBundlesListProps {
     bundles: Bundle[];
