@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-interface Props {
+export function useInitialBundleState({
+    hasData,
+    isLoading,
+}: {
     hasData: boolean;
     isLoading: boolean;
-}
-
-export function useInitialBundleState({ hasData, isLoading }: Props) {
+}) {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     useEffect(() => {

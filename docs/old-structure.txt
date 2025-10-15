@@ -89,7 +89,7 @@ web/
 │   │   ├── use-bundle-form.ts
 │   │   ├── useBundleFormMethods.ts
 │   │   ├── use-bundle-preview.ts
-│   │   ├── useBundleQueries.ts
+│   │   ├── use-bundle-queries.ts
 │   │   ├── useBundleSave.ts
 │   │   ├── use-bundle-table-bulk-actions.tsx
 │   │   ├── use-bundle-validation.ts

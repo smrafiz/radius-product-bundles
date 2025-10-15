@@ -4,6 +4,10 @@ import { BundleStatus, BundleType } from "./bundle.types";
  * Bundle list filters
  */
 export interface BundleFilters {
+    typeFilter: string[];
+    statusFilter: string[];
+    selectedTab: number;
+    sortSelected: string[];
     search?: string;
     status?: BundleStatus[];
     type?: BundleType[];

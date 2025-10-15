@@ -30,7 +30,7 @@ export const formatCompactNumber = (value: number): string => {
 };
 
 /**
- * Format number with thousands separator
+ * Format number with thousand separator
  */
 export const formatNumber = (
     value: number,

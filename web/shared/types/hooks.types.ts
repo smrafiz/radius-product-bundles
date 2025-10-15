@@ -1,3 +1,5 @@
+import { GlobalMessage } from "@/shared";
+
 export interface UseGraphQLReturn<TResult> {
     data?: TResult;
     loading: boolean;
@@ -12,3 +14,5 @@ export interface UseGraphQLOptions {
     refetchOnMount?: boolean | "always";
     refetchOnWindowFocus?: boolean;
 }
+
+export type GlobalMessageOptions = Omit<GlobalMessage, "id" | "timestamp" | "type">;

@@ -13,10 +13,10 @@ import {
     BundleTableRow,
     useBundleActions,
     useBundleListingStore,
+    useBundlesData,
     useBundleTableBulkActions,
 } from "@/features/bundles";
 import { useCallback } from "react";
-import { useBundlesData } from "@/shared";
 
 export function BundleTable() {
     const breakpoints = useBreakpoints();

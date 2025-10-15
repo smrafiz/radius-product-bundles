@@ -36,6 +36,10 @@ export interface BundleListingState {
     setTypeFilter: (filter: string[]) => void;
     setSelectedTab: (tab: number) => void;
     setSortSelected: (sort: string[]) => void;
+    setPaginationMetadata: (metadata: {
+        totalItems: number;
+        totalPages: number;
+    }) => void;
     clearFilters: () => void;
 
     // Pagination actions

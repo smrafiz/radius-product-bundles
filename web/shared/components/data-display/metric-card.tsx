@@ -1,6 +1,13 @@
 "use client";
 
 import {
+    formatGrowth,
+    getGrowthIcon,
+    getGrowthTone,
+    MetricCardProps,
+    withLoader,
+} from "@/shared";
+import {
     BlockStack,
     Box,
     Button,
@@ -10,14 +17,7 @@ import {
     SkeletonDisplayText,
     Text,
 } from "@shopify/polaris";
-import { MetricCardProps } from "@/types";
 import { useRouter } from "next/navigation";
-import {
-    formatGrowth,
-    getGrowthIcon,
-    getGrowthTone,
-} from "@/utils";
-import { withLoader } from "@/shared";
 
 export function MetricCard({
     title,

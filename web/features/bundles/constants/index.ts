@@ -1,3 +1,4 @@
+export * from "./bundle-metrics.constants";
 export * from "./bundle-types.constants";
 export * from "./bundle-actions.constants";
 export * from "./discount-types.constants";

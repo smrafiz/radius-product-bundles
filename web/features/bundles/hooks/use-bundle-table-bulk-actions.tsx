@@ -1,22 +1,25 @@
 "use client";
 
 import {
+    useGlobalBanner,
+    useModalStore,
+    useSessionToken,
+    withLoader,
+} from "@/shared";
+import {
     bulkToggleBundleStatus,
     deleteBundles,
     toggleBundleStatus,
 } from "@/actions";
-import { useRouter } from "next/navigation";
+import {
+    BundleStatus,
+    invalidateBundleCache,
+    useBundleListingStore,
+} from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
-import { invalidateBundleCache } from "@/utils";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
-import type { BundleStatus } from "@/types";
-import { useGlobalBanner, useSessionToken } from "@/hooks";
-import { useModalStore, withLoader } from "@/shared";
-import { useBundleListingStore } from "@/features/bundles";
-
 export function useBundleTableBulkActions() {
-    const router = useRouter();
     const queryClient = useQueryClient();
     const { refreshBundles } = useBundleListingStore();
     const { showError } = useGlobalBanner();
@@ -26,10 +29,6 @@ export function useBundleTableBulkActions() {
         (s) => s.updateBundleInStore,
     );
     const showToast = useBundleListingStore((s) => s.showToast);
-
-    const handleCreateBundle = () => {
-        router.push("/bundles/create");
-    };
 
     const handleToggleBundleStatus = (
         bundleId: string,
@@ -280,7 +279,6 @@ export function useBundleTableBulkActions() {
     };
 
     return {
-        handleCreateBundle,
         handleToggleBundleStatus,
         handleBulkActivate,
         handleBulkDraft,

@@ -3,7 +3,7 @@
  * Generic utilities for currency formatting and locale handling
  */
 
-import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/shared/constants";
+import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/shared";
 
 /**
  * Get currency symbol for a given currency code
@@ -20,7 +20,9 @@ export const formatCurrency = (
     currencyCode?: string,
     locale?: string,
 ): string => {
-    if (amount == null) return "";
+    if (amount == null) {
+        return "";
+    }
 
     const finalCurrencyCode = currencyCode || "USD";
     const finalLocale = locale || convertShopifyLocale("en-US");

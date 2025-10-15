@@ -4,7 +4,7 @@ export type * from "@/types/shop";
 export type * from "@/types/store";
 export type * from "@/types/bundle";
 export type * from "@/types/product";
-export type * from "@/types/metrics";
+// export type * from "@/types/metrics";
 export type * from "@/types/testing";
 export type * from "@/types/product";
 export type * from "@/types/notification";

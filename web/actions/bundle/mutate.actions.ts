@@ -5,21 +5,15 @@ import prisma from "@/lib/db/prisma-connect";
 import { handleSessionToken } from "@/lib/shopify/verify";
 import { validateAndCheckBusinessRules } from "@/lib/validation";
 import {
-    checkNameConflict,
-    handleBundleError,
-    normalizeErrors,
-    removeNulls,
-} from "@/utils";
-import {
     bundleProductGroupQueries,
     bundleProductQueries,
     bundleQueries,
     bundleSettingsQueries,
 } from "@/lib/queries";
-
-import { ApiResponse, BundleStatus } from "@/types";
-import { bundleStatusConfigs } from "@/config";
-
+import { ApiResponse } from "@/shared";
+import { checkNameConflict, handleBundleError, normalizeErrors } from "@/utils";
+import { removeNulls } from "@/utils/shared/global";
+import { BUNDLE_STATUSES, BundleStatus } from "@/features/bundles";
 /**
  * Create a new bundle
  */
@@ -365,7 +359,7 @@ export async function updateBundleStatus(
 ): Promise<ApiResponse> {
     try {
         // Validate status
-        if (!bundleStatusConfigs[status]) {
+        if (!BUNDLE_STATUSES[status]) {
             return {
                 status: "error",
                 message: "Invalid bundle status",

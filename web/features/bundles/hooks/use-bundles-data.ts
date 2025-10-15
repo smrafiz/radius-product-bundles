@@ -1,10 +1,16 @@
 "use client";
 
+import {
+    BUNDLE_FILTERS,
+    bundlesQueries,
+    useBundleListingStore,
+} from "@/features/bundles";
 import { useEffect, useMemo } from "react";
-import { useBundleMetrics, useBundles } from "@/hooks/bundle/useBundleQueries";
-import { useBundleListingStore } from "@/features/bundles";
+import { useQuery } from "@tanstack/react-query";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
 export const useBundlesData = () => {
+    const app = useAppBridge();
     const {
         setBundles,
         setLoading,
@@ -21,34 +27,33 @@ export const useBundlesData = () => {
         "desc",
     ];
 
-    // Map tab names to status values
-    const tabStatusMap = [
-        "ALL",
-        "ACTIVE",
-        "DRAFT",
-        "PAUSED",
-        "SCHEDULED",
-        "ARCHIVED",
-    ];
-
-    // Combine tab-based status filter with manual status filter
     const effectiveStatusFilter = useMemo(() => {
-        const tabStatus = tabStatusMap[filters.selectedTab];
+        const tabStatus = BUNDLE_FILTERS.tabs.statusMap[filters.selectedTab];
 
-        // If "All" tab selected, use manual filters only
         if (tabStatus === "ALL") {
-            return filters.statusFilter;
+            return [];
         }
 
-        // If a specific tab is selected, combine with manual filters
-        // If manual filters exist, use them; otherwise use tab status
         if (filters.statusFilter.length > 0) {
             return filters.statusFilter;
         }
 
-        // Use tab status
+        // Otherwise, use the status from the selected tab
         return [tabStatus];
     }, [filters.selectedTab, filters.statusFilter]);
+
+    const { list, metrics } = bundlesQueries(
+        app,
+        pagination.currentPage,
+        pagination.itemsPerPage,
+        {
+            search: filters.search,
+            status: effectiveStatusFilter,
+            type: filters.typeFilter,
+            sortBy,
+            sortDirection: sortDirection as "asc" | "desc",
+        },
+    );
 
     // Use React Query hooks with pagination and filters from store
     const {
@@ -57,19 +62,21 @@ export const useBundlesData = () => {
         isFetching: bundlesFetching,
         error: bundlesError,
         refetch: refetchBundles,
-    } = useBundles(pagination.currentPage, pagination.itemsPerPage, {
-        search: filters.search,
-        status: effectiveStatusFilter,
-        type: filters.typeFilter,
-        sortBy,
-        sortDirection: sortDirection as "asc" | "desc",
+    } = useQuery({
+        ...list,
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
     });
 
     const {
         data: metricsData,
         isLoading: metricsLoading,
         error: metricsError,
-    } = useBundleMetrics();
+    } = useQuery({
+        ...metrics,
+        staleTime: 2 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     // Update store when data changes
     useEffect(() => {

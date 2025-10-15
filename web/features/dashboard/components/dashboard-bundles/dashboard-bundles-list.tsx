@@ -15,9 +15,8 @@ import {
     ResourceList,
     Text,
 } from "@shopify/polaris";
-import { formatBundleType } from "@/utils";
-import { getBundleStatusBadge } from "@/features/bundles";
 import { DashboardBundlesListProps } from "@/features/dashboard";
+import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();

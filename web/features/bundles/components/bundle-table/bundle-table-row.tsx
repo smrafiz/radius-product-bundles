@@ -2,20 +2,20 @@
 
 import {
     BundleActionsGroup,
-    BundleListItem,
+    bundleCurrencyFormatter,
     BundleProductsPreview,
     BundleStatus,
     BundleTableRowProps,
+    formatBundleDiscount,
     getBundleProperty,
     StatusPopover,
     useBundleActions,
     useBundleListingStore,
 } from "@/features/bundles";
+import { useShopSettings } from "@/shared";
 import { updateBundleStatus } from "@/actions";
-import { discountTypeConfigs } from "@/config";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Box, IndexTable, Link, Text } from "@shopify/polaris";
-import { getCurrencySymbol, useShopSettings } from "@/shared";
 
 export function BundleTableRow({
     bundle,
@@ -24,32 +24,11 @@ export function BundleTableRow({
 }: BundleTableRowProps) {
     const app = useAppBridge();
     const { isLoading, currencyCode } = useShopSettings();
-    const currencySymbol = getCurrencySymbol(currencyCode);
     const { actions } = useBundleActions(bundle);
 
-    const createCurrencyFormatter = () => {
-        return (value: number) => {
-            if (isLoading && !currencyCode) {
-                return "•";
-            }
-            return `${currencySymbol}${value}`;
-        };
-    };
-
-    const formatDiscount = (bundle: BundleListItem) => {
-        if (!bundle.discountType) {
-            return "No Discount";
-        }
-
-        const config = discountTypeConfigs[bundle.discountType];
-        if (!config) {
-            return "No Discount";
-        }
-
-        // Use the dynamic currency formatter
-        const currencyFormatter = createCurrencyFormatter();
-        return config.format(bundle.discountValue, currencyFormatter);
-    };
+    const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
+    const formatDiscount = () =>
+        formatBundleDiscount(bundle, currencyFormatter);
 
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
@@ -126,7 +105,7 @@ export function BundleTableRow({
                         as="span"
                         tone="subdued"
                     >
-                        {formatDiscount(bundle)}
+                        {isLoading ? "•" : formatDiscount()}
                     </Text>
                 </div>
             </IndexTable.Cell>

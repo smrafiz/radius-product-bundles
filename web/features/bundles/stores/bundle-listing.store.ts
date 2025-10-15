@@ -144,8 +144,14 @@ export const useBundleListingStore = create<BundleListingState>()(
         getPaginationInfo: () => {
             const { pagination } = get();
             const totalPages = pagination.totalPages || 1;
+            const { currentPage, itemsPerPage, totalItems } = pagination;
+
+            const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
             return {
+                startIndex,
+                endIndex,
                 hasNext: pagination.currentPage < totalPages,
                 hasPrevious: pagination.currentPage > 1,
                 label:
@@ -153,6 +159,45 @@ export const useBundleListingStore = create<BundleListingState>()(
                         ? `Showing page ${pagination.currentPage} of ${totalPages}`
                         : "Showing page 1 of 1",
             };
+        },
+
+        getFilteredBundles: () => {
+            const { bundles, filters } = get();
+            let filtered = [...bundles];
+
+            // Apply search filter
+            if (filters.search) {
+                const searchLower = filters.search.toLowerCase();
+                filtered = filtered.filter((bundle) =>
+                    bundle.name.toLowerCase().includes(searchLower)
+                );
+            }
+
+            // Apply status filter
+            if (filters.statusFilter.length > 0) {
+                filtered = filtered.filter((bundle) =>
+                    filters.statusFilter.includes(bundle.status)
+                );
+            }
+
+            // Apply type filter
+            if (filters.typeFilter.length > 0) {
+                filtered = filtered.filter((bundle) =>
+                    filters.typeFilter.includes(bundle.type)
+                );
+            }
+
+            return filtered;
+        },
+
+        getPaginatedBundles: () => {
+            const { pagination } = get();
+            const filteredBundles = get().getFilteredBundles();
+
+            const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
+            const endIndex = startIndex + pagination.itemsPerPage;
+
+            return filteredBundles.slice(startIndex, endIndex);
         },
 
         updateBundleInStore: (bundleId, data) =>

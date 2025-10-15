@@ -1,17 +1,15 @@
-import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/lib/constants";
-
-import { BundleListItem } from "@/types";
-import { discountTypeConfigs } from "@/config";
+import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/shared";
 
 /**
  * Get currency symbol for a given currency code
- * @param currencyCode - The currency code (e.g., 'USD', 'EUR')
- * @returns The currency symbol (e.g., '$', '€')
  */
 export const getCurrencySymbol = (currencyCode?: string): string => {
     return CURRENCY_SYMBOLS[currencyCode || "USD"] || "$";
 };
 
+/**
+ * Format currency with currency code and locale
+ */
 export const formatCurrency = (
     amount?: number | string | null,
     currencyCode?: string,
@@ -50,22 +48,24 @@ export const formatCurrency = (
     }
 };
 
+/**
+ * Format percentage with 1 decimal place
+ */
 export const formatPercentage = (value: number) => {
     return `${value.toFixed(1)}%`;
 };
 
+/**
+ * Format growth with 1 decimal place
+ */
 export const formatGrowth = (value: number) => {
     const prefix = value >= 0 ? "+" : "";
     return `${prefix}${value.toFixed(1)}%`;
 };
 
-export const formatBundleType = (type: string) => {
-    return type
-        .replace(/_/g, " ")
-        .toLowerCase()
-        .replace(/\b\w/g, (l) => l.toUpperCase());
-};
-
+/**
+ * Convert Shopify locale
+ */
 export const convertShopifyLocale = (
     shopifyLocaleOrCountry: string,
 ): string => {
@@ -82,18 +82,3 @@ export const convertShopifyLocale = (
 
     return "en-US";
 };
-
-export function formatDiscount(bundle: BundleListItem): string {
-    if (!bundle.discountType) {
-        return "No Discount";
-    }
-
-    const config = discountTypeConfigs[bundle.discountType];
-    if (!config) {
-        return "No Discount";
-    }
-
-    console.log(bundle);
-
-    return config.format(bundle.discountValue, formatCurrency);
-}
