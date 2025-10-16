@@ -4,6 +4,9 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
 
+/*
+ * Root Page (redirects to dashboard)
+ */
 export default function RootPage() {
     const router = useRouter();
     const searchParams = useSearchParams();

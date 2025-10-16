@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     },
 };
 
+/*
+ * Root Layout
+ */
 export default async function RootLayout({
     children,
 }: {

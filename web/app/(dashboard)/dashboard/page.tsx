@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     description: "Radius Product Bundles Dashboard",
 };
 
+/*
+ * Dashboard Page
+ */
 export default function Page() {
     return <DashboardPage />;
 }

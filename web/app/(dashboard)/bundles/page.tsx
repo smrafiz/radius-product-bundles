@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     description: "Create and manage your product bundle offers",
 };
 
+/*
+ * Bundle Management Page
+ */
 export default function Page() {
     return <BundleListingPage />;
 }
