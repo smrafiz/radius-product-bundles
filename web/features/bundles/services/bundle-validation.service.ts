@@ -1,133 +1,266 @@
-import { bundleQueries } from "@/features/bundles";
+/**
+ * Bundle Validation Service
+ */
+import { BundleFormData, bundleSchema } from "@/lib/validation";
+import {
+    bundleQueries,
+    BusinessRulesResult,
+    CombinedValidationResult,
+    SchemaValidationResult,
+    SecurityValidationResult,
+    ValidationErrors,
+} from "@/features/bundles";
+import { shopQueries } from "@/lib/queries/database/shop/shop.queries";
 
 /**
- * Validate bundle data
+ * Validate bundle data against Zod schema
  */
-export async function validateBundleData(shop: string, data: unknown) {
-    // Basic validation
-    if (!data || typeof data !== "object") {
-        throw {
-            message: "Invalid bundle data",
-            errors: [{ path: "data", message: "Data must be an object" }],
-        };
-    }
+export async function validateBundleData(
+    data: unknown,
+): Promise<SchemaValidationResult> {
+    const validationResult = bundleSchema.safeParse(data);
 
-    const bundle = data as any;
+    if (!validationResult.success) {
+        const formattedErrors: ValidationErrors = {};
 
-    // Required fields
-    const errors = [];
-
-    if (!bundle.name || typeof bundle.name !== "string") {
-        errors.push({ path: "name", message: "Name is required" });
-    }
-
-    if (!bundle.type) {
-        errors.push({ path: "type", message: "Bundle type is required" });
-    }
-
-    if (!bundle.discountType) {
-        errors.push({
-            path: "discountType",
-            message: "Discount type is required",
+        validationResult.error.issues.forEach((issue) => {
+            const path = issue.path.join(".");
+            if (!formattedErrors[path]) {
+                formattedErrors[path] = { _errors: [] };
+            }
+            formattedErrors[path]._errors.push(issue.message);
         });
+
+        return {
+            success: false,
+            errors: {
+                status: "error" as const,
+                message: "Validation failed",
+                errors: formattedErrors,
+                data: null,
+            },
+        };
     }
 
-    if (errors.length > 0) {
-        throw { message: "Validation failed", errors };
-    }
-
-    // Business rules
-    await validateBusinessRules(shop, bundle);
-
-    return bundle;
+    return {
+        success: true,
+        data: validationResult.data as BundleFormData,
+    };
 }
 
 /**
- * Validate business rules
+ * Validate business rules for bundle data
  */
-async function validateBusinessRules(shop: string, data: any) {
-    // Check active bundles limit
-    const activeCount = await bundleQueries.countActiveByShop(shop);
-    const MAX_ACTIVE_BUNDLES = 100;
+export async function validateBusinessRules(
+    shop: string,
+    data: BundleFormData,
+): Promise<BusinessRulesResult> {
+    const [recentCount, shopSettings] = await Promise.all([
+        bundleQueries.countRecent(shop, 1),
+        shopQueries.getSettings(shop),
+    ]);
 
-    if (data.status === "ACTIVE" && activeCount >= MAX_ACTIVE_BUNDLES) {
-        throw {
-            message: "Active bundles limit reached",
-            errors: [
-                {
-                    path: "status",
-                    message: `Maximum of ${MAX_ACTIVE_BUNDLES} active bundles allowed`,
-                },
+    const errors: ValidationErrors = {};
+
+    if (data.type === "VOLUME_DISCOUNT" && !data.volumeTiers?.length) {
+        errors.volumeTiers = {
+            _errors: ["Volume discount bundles require at least one tier"],
+        };
+    }
+
+    if (["BUY_X_GET_Y", "BOGO"].includes(data.type)) {
+        if (!data.buyQuantity || !data.getQuantity) {
+            errors.buyQuantity = {
+                _errors: ["Buy X Get Y bundles require buy and get quantities"],
+            };
+        }
+
+        const triggerProducts = data.products.filter(
+            (p) => p.role === "TRIGGER",
+        );
+        const rewardProducts = data.products.filter((p) => p.role === "REWARD");
+
+        if (!triggerProducts.length) {
+            errors.products = {
+                _errors: ["Buy X Get Y bundles require trigger products"],
+            };
+        }
+        if (!rewardProducts.length) {
+            errors.products = {
+                _errors: ["Buy X Get Y bundles require reward products"],
+            };
+        }
+    }
+
+    if (data.products.length > 20) {
+        errors.products = { _errors: ["Bundle can have maximum 20 products"] };
+    }
+
+    if (data.discountType === "PERCENTAGE" && data.discountValue > 100) {
+        errors.discountValue = {
+            _errors: ["Percentage discount cannot exceed 100%"],
+        };
+    }
+
+    if (data.discountType === "FIXED_AMOUNT" && data.discountValue > 10000) {
+        errors.discountValue = {
+            _errors: ["Fixed discount amount seems too high"],
+        };
+    }
+
+    if (recentCount > 5) {
+        errors.general = {
+            _errors: ["Too many bundles created recently. Please wait."],
+        };
+    }
+
+    if (
+        shopSettings?.maxBundleProducts &&
+        data.products.length > shopSettings.maxBundleProducts
+    ) {
+        errors.products = {
+            _errors: [
+                `Shop limit: max ${shopSettings.maxBundleProducts} products`,
             ],
         };
     }
 
-    // Validate discount
-    if (data.discountType && data.discountValue !== undefined) {
-        validateDiscount(data.discountType, data.discountValue);
-    }
-
-    // Validate dates
-    if (data.startDate && data.endDate) {
-        validateDateRange(data.startDate, data.endDate);
-    }
-
-    // Validate products
-    if (data.products && data.products.length === 0) {
-        throw {
-            message: "Bundle must have at least one product",
-            errors: [
-                { path: "products", message: "At least one product required" },
-            ],
-        };
-    }
+    return {
+        success: Object.keys(errors).length === 0,
+        message: Object.keys(errors).length
+            ? "Business validation failed"
+            : "Validation passed",
+        errors: Object.keys(errors).length ? errors : null,
+    };
 }
 
 /**
- * Validate discount values
+ * Validate security aspects of bundle data
  */
-function validateDiscount(type: string, value: number) {
-    if (type === "PERCENTAGE" && (value < 0 || value > 100)) {
-        throw {
-            message: "Invalid discount percentage",
-            errors: [
-                {
-                    path: "discountValue",
-                    message: "Percentage must be between 0 and 100",
-                },
-            ],
+export async function validateSecurity(
+    shop: string,
+    data: BundleFormData,
+): Promise<SecurityValidationResult> {
+    const errors: ValidationErrors = {};
+
+    // Validate Shopify GIDs
+    for (const product of data.products) {
+        if (!/^gid:\/\/shopify\/Product\/\d+$/.test(product.productId)) {
+            errors.products = { _errors: ["Invalid product ID format"] };
+            break;
+        }
+        if (!/^gid:\/\/shopify\/ProductVariant\/\d+$/.test(product.variantId)) {
+            errors.products = { _errors: ["Invalid variant ID format"] };
+            break;
+        }
+    }
+
+    // Duplicates
+    const productIds = data.products.map((p) => p.productId);
+    if (productIds.length !== new Set(productIds).size) {
+        errors.products = { _errors: ["Duplicate products are not allowed"] };
+    }
+
+    // Rate limiting
+    const recentBundles = await bundleQueries.countRecent(shop, 1);
+    if (recentBundles > 5) {
+        errors.general = {
+            _errors: ["Too many bundles created recently. Please wait."],
         };
     }
 
-    if (type === "FIXED_AMOUNT" && value < 0) {
-        throw {
-            message: "Invalid discount amount",
-            errors: [
-                {
-                    path: "discountValue",
-                    message: "Amount must be greater than 0",
-                },
-            ],
-        };
-    }
+    return {
+        success: Object.keys(errors).length === 0,
+        errors: Object.keys(errors).length ? errors : null,
+    };
 }
 
-/**
- * Validate date range
- */
-function validateDateRange(startDate: Date, endDate: Date) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+// ==========================================
+// Combined Validation
+// ==========================================
 
-    if (start >= end) {
-        throw {
-            message: "Invalid date range",
-            errors: [
-                {
-                    path: "endDate",
-                    message: "End date must be after start date",
-                },
-            ],
+/**
+ * Validate bundle with schema and business rules
+ * Main validation function - Same as your original
+ */
+export async function validateAndCheckBusinessRules(
+    shop: string,
+    data: unknown,
+): Promise<CombinedValidationResult> {
+    // Schema validation
+    const validation = await validateBundleData(data);
+    if (!validation.success) {
+        return validation.errors!;
+    }
+
+    // Business rules validation
+    const businessValidation = await validateBusinessRules(
+        shop,
+        validation.data!,
+    );
+    if (!businessValidation.success) {
+        return {
+            status: "error" as const,
+            message: businessValidation.message,
+            errors: businessValidation.errors!,
+            data: null,
         };
     }
+
+    return {
+        success: true,
+        data: validation.data,
+    };
+}
+
+export function formatValidationErrors(
+    errors: ValidationErrors,
+): Record<string, string> {
+    const formatted: Record<string, string> = {};
+    for (const [field, error] of Object.entries(errors)) {
+        formatted[field] = error._errors.join(", ");
+    }
+    return formatted;
+}
+
+export function hasFieldError(
+    errors: ValidationErrors | undefined,
+    field: string,
+): boolean {
+    return Boolean(errors?.[field]?._errors?.length);
+}
+
+export function getFieldErrors(
+    errors: ValidationErrors | undefined,
+    field: string,
+): string[] {
+    return errors?.[field]?._errors || [];
+}
+
+export function hasErrors(errors: ValidationErrors | undefined): boolean {
+    return Boolean(errors && Object.keys(errors).length > 0);
+}
+
+// Cleaner aliases
+export const validateSchema = validateBundleData;
+export const validateBundle = validateAndCheckBusinessRules;
+
+export async function validateBundleWithSecurity(
+    shop: string,
+    data: unknown,
+): Promise<CombinedValidationResult> {
+    const standardResult = await validateAndCheckBusinessRules(shop, data);
+    if (!standardResult.success) return standardResult;
+
+    const securityResult = await validateSecurity(shop, standardResult.data!);
+    if (!securityResult.success) {
+        return {
+            status: "error" as const,
+            message: "Security validation failed",
+            errors: securityResult.errors!,
+            data: null,
+        };
+    }
+
+    return { success: true, data: standardResult.data };
 }
