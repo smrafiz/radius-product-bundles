@@ -18,7 +18,7 @@ import { Product, ProductVariant } from "@/types";
 /**
  * Get bundles for a shop
  */
-export async function getBundles(
+export async function oldgetBundles(
     sessionToken: string,
     page: number = 1,
     itemsPerPage: number = 10,

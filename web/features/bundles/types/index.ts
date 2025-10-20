@@ -6,3 +6,4 @@ export * from "./service.types";
 export * from "./actions.types";
 export * from "./components.types";
 export * from "./bundle-filters.types";
+export * from "./bundle-transformers.types";

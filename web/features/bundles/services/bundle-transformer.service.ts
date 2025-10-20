@@ -1,107 +1,94 @@
-/**
- * Transform bundles for listing
- */
-export async function transformBundles(bundles: any[]): Promise<any[]> {
-    // Collect all product IDs
-    const allProductIds = Array.from(
-        new Set(
-            bundles.flatMap((bundle) =>
-                bundle.bundleProducts.map((bp: any) => bp.productId)
-            )
-        )
-    );
-
-    // Fetch product data
-    const { productMap, variantMap } = await fetchProductData(allProductIds);
-
-    // Transform each bundle
-    return bundles.map((bundle) =>
-        transformBundleForListing(bundle, productMap, variantMap)
-    );
-}
+import {
+    BundleStatus,
+    BundleType,
+    DiscountType,
+    TransformedBundle,
+    TransformedBundleBase,
+    TransformedBundleListing,
+} from "@/features/bundles";
+import type { Bundle, BundleProduct } from "@prisma/client";
 
 /**
- * Transform single bundle for listing
+ * Core bundle transformation
  */
-function transformBundleForListing(
-    bundle: any,
-    productMap: Map<string, any>,
-    variantMap: Map<string, any>
-) {
+export function transformBundleCore(
+    bundle: Bundle & { bundleProducts: BundleProduct[] },
+    productMap?: Map<string, any>,
+    variantMap?: Map<string, any>,
+): TransformedBundleBase {
     return {
         id: bundle.id,
         name: bundle.name,
-        type: bundle.type,
-        status: bundle.status,
-        discountType: bundle.discountType,
-        discountValue: bundle.discountValue,
-        products:
-            bundle.bundleProducts?.map((bp: any) => ({
-                productId: bp.productId,
-                variantId: bp.variantId,
-                quantity: bp.quantity,
-                product: productMap.get(bp.productId),
-                variant: variantMap.get(bp.variantId),
-            })) || [],
+        type: bundle.type as BundleType,
+        status: bundle.status as BundleStatus,
         views: bundle.views,
         conversions: bundle.conversions,
         revenue: bundle.revenue,
-        createdAt: bundle.createdAt?.toISOString(),
-        updatedAt: bundle.updatedAt?.toISOString(),
+        revenueAllTime: bundle.revenue,
+        conversionRate:
+            bundle.views > 0 ? (bundle.conversions / bundle.views) * 100 : 0,
+        productCount: bundle.bundleProducts.length,
+        createdAt: bundle.createdAt.toISOString(),
+        discountType: bundle.discountType as DiscountType,
+        discountValue: bundle.discountValue,
+        products: bundle.bundleProducts
+            .map((bp) => {
+                const product = productMap?.get(bp.productId);
+                const selectedVariant = bp.variantId
+                    ? variantMap?.get(bp.variantId)
+                    : null;
+
+                if (!product) {
+                    return null;
+                }
+
+                return {
+                    ...product,
+                    selectedVariant,
+                    quantity: bp.quantity,
+                    role: bp.role,
+                    displayOrder: bp.displayOrder,
+                };
+            })
+            .filter(Boolean),
     };
 }
 
 /**
- * Transform single bundle for detail view
+ * Listing transformation
  */
-export function transformBundle(bundle: any) {
+export function transformBundles(
+    bundles: (Bundle & { bundleProducts: BundleProduct[] })[],
+    productMap?: Map<string, any>,
+    variantMap?: Map<string, any>,
+): TransformedBundleListing {
+    return bundles.map((bundle) =>
+        transformBundleCore(bundle, productMap, variantMap),
+    );
+}
+
+/**
+ * Single bundle transformation
+ */
+export function transformBundle(
+    bundle: Bundle & { bundleProducts: BundleProduct[] },
+    productMap?: Map<string, any>,
+    variantMap?: Map<string, any>,
+): TransformedBundle {
+    const core = transformBundleCore(bundle, productMap, variantMap);
+
     return {
-        id: bundle.id,
-        name: bundle.name,
+        ...core,
         description: bundle.description,
-        type: bundle.type,
-        status: bundle.status,
-        mainProductId: bundle.mainProductId,
-        discountType: bundle.discountType,
-        discountValue: bundle.discountValue,
         minOrderValue: bundle.minOrderValue,
         maxDiscountAmount: bundle.maxDiscountAmount,
-        products:
-            bundle.bundleProducts?.map((bp: any) => ({
-                productId: bp.productId,
-                variantId: bp.variantId,
-                quantity: bp.quantity,
-                displayOrder: bp.displayOrder,
-            })) || [],
-        settings: bundle.settings || null,
-        images: bundle.images || [],
-        startDate: bundle.startDate,
-        endDate: bundle.endDate,
-        views: bundle.views,
-        conversions: bundle.conversions,
-        revenue: bundle.revenue,
-        createdAt: bundle.createdAt?.toISOString(),
-        updatedAt: bundle.updatedAt?.toISOString(),
-    };
-}
-
-/**
- * Transform metrics
- */
-export function transformMetrics(rawMetrics: any) {
-    return {
-        totalBundles: rawMetrics.totalBundles || 0,
-        activeBundles: rawMetrics.activeBundles || 0,
-        totalViews: rawMetrics.totalViews || 0,
-        totalConversions: rawMetrics.totalConversions || 0,
-        totalRevenue: rawMetrics.totalRevenue || 0,
-        conversionRate: calculateConversionRate(
-            rawMetrics.totalConversions,
-            rawMetrics.totalViews
-        ),
-        averageOrderValue: calculateAOV(
-            rawMetrics.totalRevenue,
-            rawMetrics.totalConversions
-        ),
+        startDate: bundle.startDate?.toISOString() || null,
+        endDate: bundle.endDate?.toISOString() || null,
+        updatedAt: bundle.updatedAt.toISOString(),
+        products: core.products.map((p, i) => ({
+            ...p,
+            id: bundle.bundleProducts[i].id,
+            isRequired: bundle.bundleProducts[i].isRequired,
+        })),
     };
 }

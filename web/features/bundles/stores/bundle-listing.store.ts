@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { getBundles } from "@/actions";
-import { BundleListingState } from "@/features/bundles";
+import { BundleListingState, getBundles } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 export const useBundleListingStore = create<BundleListingState>()(
@@ -174,16 +173,16 @@ export const useBundleListingStore = create<BundleListingState>()(
             }
 
             // Apply status filter
-            if (filters.statusFilter.length > 0) {
+            if (filters.statusFilter && filters.statusFilter.length > 0) {
                 filtered = filtered.filter((bundle) =>
-                    filters.statusFilter.includes(bundle.status)
+                    filters.statusFilter?.includes(bundle.status)
                 );
             }
 
             // Apply type filter
-            if (filters.typeFilter.length > 0) {
+            if (filters.typeFilter && filters.typeFilter.length > 0) {
                 filtered = filtered.filter((bundle) =>
-                    filters.typeFilter.includes(bundle.type)
+                    filters.typeFilter?.includes(bundle.type)
                 );
             }
 

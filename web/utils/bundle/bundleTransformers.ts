@@ -1,12 +1,10 @@
-import type { Bundle, BundleProduct } from "@prisma/client";
 import type {
-    BundleStatus,
-    BundleType,
-    DiscountType,
     TransformedBundle,
     TransformedBundleBase,
     TransformedBundleListing,
 } from "@/types";
+import type { Bundle, BundleProduct } from "@prisma/client";
+import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
 
 /**
  * Core bundle transformation

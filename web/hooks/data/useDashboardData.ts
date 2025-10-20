@@ -5,7 +5,8 @@ import { useQueries } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 import { useDashboardStore } from "@/features/dashboard";
-import { getBundleMetrics, getBundles } from "@/actions";
+import { getBundleMetrics } from "@/actions";
+import { getBundles } from "@/features/bundles";
 
 export const useDashboardData = () => {
     const app = useAppBridge();

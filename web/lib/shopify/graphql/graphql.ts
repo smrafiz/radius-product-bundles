@@ -11,11 +11,27 @@ export async function executeGraphQLQuery<T = any>(
         const { query, variables = {}, sessionToken } = request;
 
         if (!sessionToken) {
-            throw new Error("Session token is required");
+            return {
+                errors: [{
+                    message: "Session token is required",
+                    extensions: {
+                        code: "MISSING_SESSION_TOKEN",
+                        timestamp: new Date().toISOString()
+                    }
+                }]
+            } as GraphQLResponse<T>;
         }
 
         if (!query) {
-            throw new Error("GraphQL query is required");
+            return {
+                errors: [{
+                    message: "GraphQL query is required",
+                    extensions: {
+                        code: "MISSING_QUERY",
+                        timestamp: new Date().toISOString()
+                    }
+                }]
+            } as GraphQLResponse<T>;
         }
 
         const { shop, session } = await handleSessionToken(
@@ -25,13 +41,29 @@ export async function executeGraphQLQuery<T = any>(
         );
 
         if (!session?.accessToken) {
-            throw new Error("No access token found in session");
+            return {
+                errors: [{
+                    message: "No access token found in session",
+                    extensions: {
+                        code: "MISSING_ACCESS_TOKEN",
+                        timestamp: new Date().toISOString()
+                    }
+                }]
+            } as GraphQLResponse<T>;
         }
 
         const accessToken = session.accessToken;
 
         if (!accessToken) {
-            throw new Error("Access token is undefined");
+            return {
+                errors: [{
+                    message: "Access token is undefined",
+                    extensions: {
+                        code: "INVALID_ACCESS_TOKEN",
+                        timestamp: new Date().toISOString()
+                    }
+                }]
+            } as GraphQLResponse<T>;
         }
 
         const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
@@ -46,7 +78,7 @@ export async function executeGraphQLQuery<T = any>(
 
         return {
             data: result,
-        };
+        } as GraphQLResponse<T>;
     } catch (error) {
         console.error("GraphQL server action error:", error);
 
@@ -54,8 +86,14 @@ export async function executeGraphQLQuery<T = any>(
             const gqlError = error as any;
             if (gqlError.response?.errors) {
                 return {
-                    errors: gqlError.response.errors,
-                };
+                    errors: gqlError.response.errors.map((err: any) => ({
+                        ...err,
+                        extensions: {
+                            ...(err.extensions || {}),
+                            timestamp: new Date().toISOString()
+                        }
+                    }))
+                } as GraphQLResponse<T>;
             }
         }
 
@@ -74,7 +112,7 @@ export async function executeGraphQLQuery<T = any>(
                     },
                 },
             ],
-        };
+        } as GraphQLResponse<T>;
     }
 }
 

@@ -43,14 +43,6 @@ export interface BundleMetrics {
     };
 }
 
-export interface BundleFilters {
-    search: string;
-    statusFilter: string[];
-    typeFilter: string[];
-    selectedTab: number;
-    sortSelected: string[];
-}
-
 export interface Toast {
     active: boolean;
     message: string;

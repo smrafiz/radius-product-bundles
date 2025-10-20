@@ -4,15 +4,15 @@ import { BundleStatus, BundleType } from "./bundle.types";
  * Bundle list filters
  */
 export interface BundleFilters {
-    typeFilter: string[];
-    statusFilter: string[];
-    selectedTab: number;
-    sortSelected: string[];
+    typeFilter?: string[] | undefined;
+    statusFilter?: string[] | undefined;
+    selectedTab?: number | undefined;
+    sortSelected?: string[] | undefined;
     search?: string;
     status?: BundleStatus[];
     type?: BundleType[];
-    dateFrom?: Date;
-    dateTo?: Date;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
 }
 
 /**

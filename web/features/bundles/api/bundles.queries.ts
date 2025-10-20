@@ -5,9 +5,10 @@ import {
     BundleListItem,
     BundleMetricsData,
     bundlesQueryKeys,
+    getBundles,
 } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { getBundleMetrics, getBundles } from "@/actions";
+import { getBundleMetrics } from "@/actions";
 
 /**
  * Dashboard queries

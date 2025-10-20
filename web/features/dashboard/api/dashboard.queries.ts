@@ -1,7 +1,8 @@
 import { getSessionToken } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { getBundles, getBundleMetrics } from "@/actions";
 import { dashboardQueryKeys } from "@/features/dashboard";
+import { getBundles } from "@/features/bundles";
+import { getBundleMetrics } from "@/actions";
 
 /**
  * Dashboard queries

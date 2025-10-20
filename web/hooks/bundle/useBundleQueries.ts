@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    getBundles,
     getBundleMetrics,
     getBundle,
     createBundle,
@@ -8,14 +7,7 @@ import {
 } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { BundleFormData } from "@/lib/validation";
-import type {
-    Bundle,
-    BundleWithDetails,
-    CreateBundlePayload,
-    UpdateBundlePayload,
-    BundleType,
-    BundleStatus,
-} from "@/types";
+import { getBundles } from "@/features/bundles";
 
 // Metrics type based on your server action return
 interface BundleMetricsData {
