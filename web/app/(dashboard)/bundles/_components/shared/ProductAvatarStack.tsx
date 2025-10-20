@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Box } from "@shopify/polaris";
-
-import { ProductGroup } from "@/types";
+import { ProductGroup } from "@/features/bundles";
 
 interface Props {
     products: ProductGroup[];

@@ -2,13 +2,14 @@ import {
     getSessionToken,
 } from "@/shared";
 import {
+    BundleFilters,
     BundleListItem,
     BundleMetricsData,
     bundlesQueryKeys,
+    getBundleMetrics,
     getBundles,
 } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { getBundleMetrics } from "@/actions";
 
 /**
  * Dashboard queries
@@ -17,13 +18,7 @@ export const bundlesQueries = (
     app: ReturnType<typeof useAppBridge>,
     page: number = 1,
     itemsPerPage: number = 10,
-    filters?: {
-        search?: string;
-        status?: string[];
-        type?: string[];
-        sortBy?: string;
-        sortDirection?: "asc" | "desc";
-    },
+    filters?: BundleFilters,
 ) => ({
     list: {
         queryKey: [bundlesQueryKeys.list(), page, itemsPerPage, filters],

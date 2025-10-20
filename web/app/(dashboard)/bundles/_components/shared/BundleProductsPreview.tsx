@@ -1,18 +1,18 @@
 "use client";
 
+import {
+    BundleListItem,
+    ProductAvatarStack,
+    ProductListPopover,
+    useBundlePreview,
+} from "@/features/bundles";
 import { useState, useCallback } from "react";
 import { Icon, InlineStack, Popover } from "@shopify/polaris";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
-import { ProductAvatarStack, ProductListPopover } from "@/bundles/_components";
 
-import { BundleListItem } from "@/types";
-import { useBundlePreview } from "@/hooks";
-
-interface Props {
+export default function BundleProductsPreview({ bundle }: {
     bundle: BundleListItem;
-}
-
-export default function BundleProductsPreview({ bundle }: Props) {
+}) {
     const [popoverActive, setPopoverActive] = useState(false);
     const togglePopover = useCallback(
         () => setPopoverActive((active) => !active),

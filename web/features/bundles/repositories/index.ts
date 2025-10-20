@@ -1,2 +1,2 @@
-export * from "./queries/bundle.queries";
+export * from "./queries";
 export * from "./mutations/bundle.mutations";

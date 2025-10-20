@@ -47,6 +47,7 @@ export function BundleProductsPreview({ bundle }: BundleProductsPreviewProps) {
         </div>
     );
 
+
     return (
         <Popover
             active={popoverActive}

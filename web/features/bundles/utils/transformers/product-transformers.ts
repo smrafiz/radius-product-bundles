@@ -9,9 +9,15 @@ export function groupProductsById(products: any[]): ProductGroup[] {
     products.forEach((product) => {
         if (!groups[product.id]) {
             groups[product.id] = {
-                featuredImage: product.featuredImage,
+                featuredImage: product.featuredImage
+                    ? {
+                        url: product.featuredImage.url,
+                        altText: product.featuredImage.altText ?? product.title,
+                    }
+                    : undefined,
                 id: product.id,
                 title: product.title,
+                handle: product.handle,
                 product: product,
                 variants: [],
                 originalTotalVariants: product.totalVariants || 1,

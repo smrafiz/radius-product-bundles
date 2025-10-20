@@ -1,10 +1,7 @@
 import {
     BundleListItem,
     BundleStatus,
-    BundleType,
-    DiscountType,
     ProductGroup,
-    ProductPreviewGroup,
 } from "@/features/bundles";
 
 /**
@@ -20,7 +17,7 @@ export interface ProductAvatarStackProps {
 }
 
 export interface ProductListPopoverProps {
-    products: ProductPreviewGroup[];
+    products: ProductGroup[];
 }
 
 export interface BundleTableEmptyStatesProps {

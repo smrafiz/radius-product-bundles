@@ -17,8 +17,8 @@ export function ProductAvatarStack({ products, remainingCount }: ProductAvatarSt
                             } w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${offset}`}
                         >
                             <Image
-                                src={product.featuredImage || ""}
-                                alt={product.title}
+                                src={product.featuredImage?.url || ""}
+                                alt={product.featuredImage?.altText || ''}
                                 width={40}
                                 height={40}
                                 className="object-cover w-full h-full"

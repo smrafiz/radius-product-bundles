@@ -43,14 +43,17 @@ export function transformBundleCore(
                 }
 
                 return {
-                    ...product,
+                    id: product.id,
+                    title: product.title,
+                    handle: product.handle,
+                    featuredImage: product.featuredImage,
                     selectedVariant,
                     quantity: bp.quantity,
                     role: bp.role,
                     displayOrder: bp.displayOrder,
                 };
             })
-            .filter(Boolean),
+            .filter((p): p is NonNullable<typeof p> => p !== null),
     };
 }
 

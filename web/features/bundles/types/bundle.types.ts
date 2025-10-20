@@ -97,7 +97,11 @@ export interface ProductGroup {
     id: string;
     title: string;
     product: SelectedItem;
-    featuredImage?: string;
+    handle?: string;
+    featuredImage?: {
+        url: string;
+        altText?: string;
+    };
     variants: SelectedItem[];
     originalTotalVariants: number;
 }
@@ -105,7 +109,7 @@ export interface ProductGroup {
 export interface ProductPreviewGroup {
     id: string;
     title: string;
-    handle: string;
+    handle?: string;
     featuredImage?: string;
     product?: {
         id: string;

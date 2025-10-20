@@ -26,9 +26,9 @@ export function BundleTable() {
     // Check if any filters are active
     const hasActiveFilters =
         filters.search !== "" ||
-        filters.statusFilter.length > 0 ||
-        filters.typeFilter.length > 0 ||
-        filters.selectedTab > 0; // Not on "All" tab
+        (filters.statusFilter as string[]).length > 0 ||
+        (filters.typeFilter as string[]).length > 0 ||
+        (filters.selectedTab as number) > 0;
 
     // For empty state logic
     const totalBundles = pagination.totalItems;

@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { BundleListingState, getBundles } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { BundleListingState, getBundles } from "@/features/bundles";
 
 export const useBundleListingStore = create<BundleListingState>()(
     (set, get) => ({

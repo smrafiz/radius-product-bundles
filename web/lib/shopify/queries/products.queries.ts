@@ -21,7 +21,12 @@ export async function fetchProductsFromShopify(sessionToken: string, allProductI
         productMap.set(prod.id, {
             id: prod.id,
             title: prod.title,
-            featuredImage: prod.featuredImage?.url ? { url: prod.featuredImage.url } : undefined,
+            featuredImage: prod.featuredImage
+                ? {
+                    url: prod.featuredImage.url,
+                    altText: prod.featuredImage.altText ?? prod.title,
+                }
+                : undefined,
             handle: prod.handle,
             tags: prod.tags || [],
             variants: prod.variants || [],
