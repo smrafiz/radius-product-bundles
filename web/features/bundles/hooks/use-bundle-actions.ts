@@ -3,6 +3,7 @@
 import {
     BundleListItem,
     BundleStatus,
+    deleteBundle,
     invalidateBundleCache,
     updateBundleStatus,
     useBundleListingStore,
@@ -12,7 +13,7 @@ import { withLoader } from "@/shared";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { deleteBundle, duplicateBundle } from "@/actions/bundle";
+import { duplicateBundle } from "@/actions/bundle/mutate.actions";
 
 export function useBundleActions(bundle: BundleListItem | null) {
     const app = useAppBridge();

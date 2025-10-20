@@ -54,3 +54,26 @@ export interface UpdateBundleStatusResult {
     bundle: any;
     message?: string;
 }
+
+export interface DeleteBundleInput {
+    bundleId: string;
+    shop: string;
+}
+
+export interface DeleteBundleServiceResult {
+    success: boolean;
+    bundle: DeleteBundleResult;
+    message?: string;
+}
+
+export interface BulkDeleteBundlesInput {
+    bundleIds: string[];
+    shop: string;
+}
+
+export interface BulkDeleteBundlesServiceResult {
+    success: boolean;
+    bundles: DeleteBundleResult[];
+    deletedCount: number;
+    message?: string;
+}

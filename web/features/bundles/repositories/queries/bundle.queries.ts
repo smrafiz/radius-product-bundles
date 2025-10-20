@@ -1,7 +1,11 @@
-import { FindByShopFilters, FindByShopOptions } from "@/features/bundles";
 import { Prisma } from "@prisma/client";
 import prisma from "@/lib/db/prisma-connect";
 import { bundleFragments } from "../bundle.fragments";
+import {
+    BundleOwnershipCheck,
+    FindByShopFilters,
+    FindByShopOptions,
+} from "@/features/bundles";
 
 /**
  * Bundle Queries - Database Layer
@@ -283,4 +287,54 @@ export const bundleQueries = {
 
         return { currentPeriod, previousPeriod, allTimeRevenue };
     },
+
+    /*
+     * Find a bundle by name (excluding specific ID)
+     */
+    async findBundleByName(shop: string, name: string, excludeId?: string) {
+        if (excludeId) {
+            return await bundleQueries.findByNameWithExclusion(
+                shop,
+                name,
+                excludeId,
+            );
+        } else {
+            return await bundleQueries.findByName(shop, name);
+        }
+    },
+
+    /*
+     * Check if the bundle name exists
+     */
+    async bundleNameExists(
+        shop: string,
+        name: string,
+        excludeId?: string,
+    ): Promise<boolean> {
+        const existing = await bundleQueries.findBundleByName(shop, name, excludeId);
+        return existing !== null;
+    },
+
+    /*
+     * Verify bundle ownership
+     */
+    async verifyBundleOwnership(
+        bundleId: string,
+        shop: string
+    ): Promise<BundleOwnershipCheck> {
+        const bundle = await prisma.bundle.findUnique({
+            where: { id: bundleId },
+            select: { id: true, name: true, shop: true },
+        });
+
+        if (!bundle) {
+            throw new Error("Bundle not found");
+        }
+
+        if (bundle.shop !== shop) {
+            throw new Error("You don't have permission to delete this bundle");
+        }
+
+        return bundle;
+    }
 };

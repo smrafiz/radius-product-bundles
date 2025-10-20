@@ -10,6 +10,7 @@ import {
     BundleStatus,
     invalidateBundleCache,
     useBundleListingStore,
+    deleteBundle,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
@@ -17,7 +18,7 @@ import {
     bulkToggleBundleStatus,
     deleteBundles,
     toggleBundleStatus,
-} from "@/actions/bundle";
+} from "@/actions/bundle/mutate.actions";
 
 export function useBundleTableBulkActions() {
     const queryClient = useQueryClient();

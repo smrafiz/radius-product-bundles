@@ -44,3 +44,42 @@ export async function updateBundleStatus(
         };
     }
 }
+
+/**
+ * Delete a bundle
+ */
+export async function deleteBundle(
+    sessionToken: string,
+    bundleId: string
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const result = await bundleWriteService.deleteBundle({
+            bundleId,
+            shop,
+        });
+
+        revalidatePath("/bundles");
+        revalidatePath(`/bundles/${bundleId}`);
+
+        return {
+            status: "success",
+            message: result.message || "Bundle deleted successfully",
+            data: result.bundle,
+        };
+    } catch (error) {
+        console.error("[deleteBundle] Error:", error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+
+        return {
+            status: "error" as const,
+            message: errorMessage || "Failed to delete bundle",
+            data: undefined,
+            errors: [errorMessage],
+        };
+    }
+}
+

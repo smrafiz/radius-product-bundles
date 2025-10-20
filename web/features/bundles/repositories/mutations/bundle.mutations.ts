@@ -2,6 +2,7 @@ import {
     bundleQueries,
     BundleStatus,
     CreateBundleInput,
+    DeleteBundleResult,
     UpdateBundleInput,
 } from "@/features/bundles";
 import { Prisma } from "@prisma/client";
@@ -190,6 +191,96 @@ export const bundleMutations = {
         });
 
         return existingBundles;
+    },
+
+    /*
+     * Delete a bundle with all related records (transaction)
+     */
+    async deleteBundleWithRelations(
+        bundleId: string,
+        shop: string
+    ): Promise<DeleteBundleResult> {
+        return await prisma.$transaction(
+            async (tx) => {
+                const existingBundle = await bundleQueries.verifyBundleOwnership(
+                    bundleId,
+                    shop
+                );
+
+                if (!existingBundle || existingBundle.shop !== shop) {
+                    throw new Error(
+                        "Bundle not found or you don't have permission to delete it"
+                    );
+                }
+
+                await Promise.all([
+                    tx.bundleProduct.deleteMany({ where: { bundleId } }),
+                    tx.bundleProductGroup.deleteMany({ where: { bundleId } }),
+                    tx.bundleSettings.deleteMany({ where: { bundleId } }),
+                    tx.bundleAnalytics.deleteMany({ where: { bundleId } }),
+                ]);
+
+                await tx.bundle.delete({ where: { id: bundleId } });
+
+                return {
+                    id: existingBundle.id,
+                    name: existingBundle.name,
+                };
+            },
+            {
+                timeout: 10000,
+            }
+        );
+    },
+
+    /**
+     * Delete multiple bundles with relations (bulk delete)
+     */
+    async deleteBundlesWithRelations(
+        bundleIds: string[],
+        shop: string
+    ): Promise<DeleteBundleResult[]> {
+        return await prisma.$transaction(
+            async (tx) => {
+                const bundles = await tx.bundle.findMany({
+                    where: {
+                        id: { in: bundleIds },
+                        shop,
+                    },
+                    select: { id: true, name: true },
+                });
+
+                if (bundles.length !== bundleIds.length) {
+                    throw new Error("Some bundles not found or not owned by you");
+                }
+
+                // Delete all related records for all bundles in parallel
+                await Promise.all([
+                    tx.bundleProduct.deleteMany({
+                        where: { bundleId: { in: bundleIds } },
+                    }),
+                    tx.bundleProductGroup.deleteMany({
+                        where: { bundleId: { in: bundleIds } },
+                    }),
+                    tx.bundleSettings.deleteMany({
+                        where: { bundleId: { in: bundleIds } },
+                    }),
+                    tx.bundleAnalytics.deleteMany({
+                        where: { bundleId: { in: bundleIds } },
+                    }),
+                ]);
+
+                // Delete all bundles
+                await tx.bundle.deleteMany({
+                    where: { id: { in: bundleIds } },
+                });
+
+                return bundles;
+            },
+            {
+                timeout: 15000,
+            }
+        );
     },
 
     /**
