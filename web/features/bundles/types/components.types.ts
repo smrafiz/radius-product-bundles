@@ -1,15 +1,11 @@
+/**
+ * Bundles component prop types
+ */
 import {
     BundleListItem,
     BundleStatus,
     ProductGroup,
 } from "@/features/bundles";
-
-/**
- * Bundles component prop types
- */
-export interface BundleProductsPreviewProps {
-    bundle: BundleListItem;
-}
 
 export interface ProductAvatarStackProps {
     products: ProductGroup[];

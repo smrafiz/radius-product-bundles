@@ -1,12 +1,5 @@
-import {
-    BundleStatus,
-    CreateBundleInput,
-    FindByShopFilters,
-    FindByShopOptions,
-    UpdateBundleInput,
-} from "@/features/bundles";
+import { FindByShopFilters, FindByShopOptions } from "@/features/bundles";
 import { Prisma } from "@prisma/client";
-import { generateBundleId } from "@/shared";
 import prisma from "@/lib/db/prisma-connect";
 import { bundleFragments } from "../bundle.fragments";
 
@@ -17,10 +10,7 @@ export const bundleQueries = {
     /**
      * Find bundle by ID
      */
-    findById: async (
-        id: string,
-        tx?: Prisma.TransactionClient
-    ) => {
+    findById: async (id: string, tx?: Prisma.TransactionClient) => {
         const client = tx || prisma;
         return await client.bundle.findUnique({
             where: { id },
@@ -34,7 +24,7 @@ export const bundleQueries = {
     findByIdWithProducts: async (
         id: string,
         shop: string,
-        tx?: Prisma.TransactionClient
+        tx?: Prisma.TransactionClient,
     ) => {
         const client = tx || prisma;
         return await client.bundle.findFirst({
@@ -53,7 +43,7 @@ export const bundleQueries = {
     findByIdWithAllRelations: async (
         id: string,
         shop: string,
-        tx?: Prisma.TransactionClient
+        tx?: Prisma.TransactionClient,
     ) => {
         const client = tx || prisma;
         return await client.bundle.findFirst({
@@ -72,7 +62,7 @@ export const bundleQueries = {
     findByName: async (
         shop: string,
         name: string,
-        tx?: Prisma.TransactionClient
+        tx?: Prisma.TransactionClient,
     ) => {
         const client = tx || prisma;
         return await client.bundle.findFirst({
@@ -87,7 +77,7 @@ export const bundleQueries = {
         shop: string,
         name: string,
         excludeId: string,
-        tx?: Prisma.TransactionClient
+        tx?: Prisma.TransactionClient,
     ) => {
         const client = tx || prisma;
         return await client.bundle.findFirst({
@@ -105,7 +95,7 @@ export const bundleQueries = {
     findByProductId: async (
         productId: string,
         shop: string,
-        tx?: Prisma.TransactionClient
+        tx?: Prisma.TransactionClient,
     ) => {
         const client = tx || prisma;
         return await client.bundle.findMany({
@@ -128,7 +118,7 @@ export const bundleQueries = {
     findByIds: async (
         bundleIds: string[],
         shop: string,
-        tx?: Prisma.TransactionClient
+        tx?: Prisma.TransactionClient,
     ) => {
         const client = tx || prisma;
         return await client.bundle.findMany({
@@ -143,10 +133,7 @@ export const bundleQueries = {
     /**
      * Find bundles by shop with filters
      */
-    findByShop: async (
-        shop: string,
-        options?: FindByShopOptions
-    ) => {
+    findByShop: async (shop: string, options?: FindByShopOptions) => {
         const where: Prisma.BundleWhereInput = { shop };
 
         // Apply search filter
@@ -182,10 +169,7 @@ export const bundleQueries = {
     /**
      * Count bundles by shop with filters
      */
-    countByShop: async (
-        shop: string,
-        filters?: FindByShopFilters
-    ) => {
+    countByShop: async (shop: string, filters?: FindByShopFilters) => {
         const where: Prisma.BundleWhereInput = { shop };
 
         if (filters?.search) {
@@ -258,43 +242,44 @@ export const bundleQueries = {
         const sixtyDaysAgo = bundleFragments.dates.sixtyDaysAgo();
 
         // ✅ Promise.all is correct here - parallel reads
-        const [currentPeriod, previousPeriod, allTimeRevenue] = await Promise.all([
-            prisma.bundleAnalytics.aggregate({
-                where: {
-                    bundle: { shop },
-                    date: { gte: thirtyDaysAgo },
-                },
-                _sum: {
-                    bundleViews: true,
-                    bundlePurchases: true,
-                    bundleRevenue: true,
-                    bundleAddToCarts: true,
-                },
-            }),
-            prisma.bundleAnalytics.aggregate({
-                where: {
-                    bundle: { shop },
-                    date: {
-                        gte: sixtyDaysAgo,
-                        lt: thirtyDaysAgo,
+        const [currentPeriod, previousPeriod, allTimeRevenue] =
+            await Promise.all([
+                prisma.bundleAnalytics.aggregate({
+                    where: {
+                        bundle: { shop },
+                        date: { gte: thirtyDaysAgo },
                     },
-                },
-                _sum: {
-                    bundleViews: true,
-                    bundlePurchases: true,
-                    bundleRevenue: true,
-                },
-            }),
-            // Add all-time revenue query
-            prisma.bundleAnalytics.aggregate({
-                where: {
-                    bundle: { shop },
-                },
-                _sum: {
-                    bundleRevenue: true,
-                },
-            }),
-        ]);
+                    _sum: {
+                        bundleViews: true,
+                        bundlePurchases: true,
+                        bundleRevenue: true,
+                        bundleAddToCarts: true,
+                    },
+                }),
+                prisma.bundleAnalytics.aggregate({
+                    where: {
+                        bundle: { shop },
+                        date: {
+                            gte: sixtyDaysAgo,
+                            lt: thirtyDaysAgo,
+                        },
+                    },
+                    _sum: {
+                        bundleViews: true,
+                        bundlePurchases: true,
+                        bundleRevenue: true,
+                    },
+                }),
+                // Add all-time revenue query
+                prisma.bundleAnalytics.aggregate({
+                    where: {
+                        bundle: { shop },
+                    },
+                    _sum: {
+                        bundleRevenue: true,
+                    },
+                }),
+            ]);
 
         return { currentPeriod, previousPeriod, allTimeRevenue };
     },

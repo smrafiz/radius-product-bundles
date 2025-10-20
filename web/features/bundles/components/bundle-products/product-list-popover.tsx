@@ -18,8 +18,8 @@ export function ProductListPopover({ products }: ProductListPopoverProps) {
                 renderItem={(product) => {
                     const media = (
                         <Thumbnail
-                            source={product.featuredImage || ""}
-                            alt={product.title}
+                            source={product.featuredImage?.url || ""}
+                            alt={product.featuredImage?.altText || product.title}
                             size="small"
                         />
                     );

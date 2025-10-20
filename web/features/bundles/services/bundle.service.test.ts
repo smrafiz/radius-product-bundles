@@ -1,5 +1,5 @@
 // tests/unit/features/bundles/services/bundle.service.test.ts
-import { bundleService } from "@/features/bundles/services";
+import { bundleReadService } from "@/features/bundles/services";
 import { bundleRepository } from "@/lib/db/repositories";
 import { BusinessRuleError, NotFoundError } from "@/lib/errors";
 import { createMockBundle } from "@/tests/fixtures/bundles.fixture";
@@ -24,7 +24,7 @@ describe("BundleService", () => {
                 products: [{ productId: "prod-1", quantity: 1 }],
             };
 
-            const result = await bundleService.createBundle(
+            const result = await bundleReadService.createBundle(
                 "test-shop.myshopify.com",
                 data,
             );
@@ -48,7 +48,7 @@ describe("BundleService", () => {
             };
 
             await expect(
-                bundleService.createBundle("test-shop.myshopify.com", data),
+                bundleReadService.createBundle("test-shop.myshopify.com", data),
             ).rejects.toThrow("A bundle with this name already exists");
         });
 
@@ -64,7 +64,7 @@ describe("BundleService", () => {
             };
 
             await expect(
-                bundleService.createBundle("test-shop.myshopify.com", data),
+                bundleReadService.createBundle("test-shop.myshopify.com", data),
             ).rejects.toThrow(BusinessRuleError);
         });
     });

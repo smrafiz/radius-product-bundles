@@ -9,11 +9,11 @@ import {
     formatBundleDiscount,
     getBundleProperty,
     StatusPopover,
+    updateBundleStatus,
     useBundleActions,
     useBundleListingStore,
 } from "@/features/bundles";
 import { useShopSettings } from "@/shared";
-import { updateBundleStatus } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Box, IndexTable, Link, Text } from "@shopify/polaris";
 

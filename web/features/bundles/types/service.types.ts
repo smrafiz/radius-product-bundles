@@ -1,4 +1,9 @@
+/*
+ * Service types
+ */
+
 import { BundleFormData } from "@/lib/validation";
+import { BundleStatus } from "@/features/bundles";
 
 export interface ValidationError {
     _errors: string[];
@@ -36,4 +41,16 @@ export interface CombinedValidationResult {
     message?: string;
     errors?: ValidationErrors;
     data?: BundleFormData | null;
+}
+
+export interface UpdateBundleStatusInput {
+    bundleId: string;
+    shop: string;
+    status: BundleStatus;
+}
+
+export interface UpdateBundleStatusResult {
+    success: boolean;
+    bundle: any;
+    message?: string;
 }

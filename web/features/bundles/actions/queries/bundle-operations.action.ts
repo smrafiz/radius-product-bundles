@@ -1,12 +1,8 @@
 "use server";
 
-import {
-    analyticsQueries,
-    BundleFilters,
-    bundleService,
-} from "@/features/bundles";
-import { transformBundleMetrics } from "@/utils";
+import { transformBundleMetrics } from "@/shared";
 import { handleSessionToken } from "@/lib/shopify/verify";
+import { analyticsQueries, BundleFilters, bundleReadService } from "@/features/bundles";
 
 /**
  * Get bundles for a shop
@@ -22,7 +18,7 @@ export async function getBundles(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await bundleService.getBundles(shop, sessionToken, {
+        const result = await bundleReadService.getBundles(shop, sessionToken, {
             page,
             itemsPerPage,
             filters,

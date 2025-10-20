@@ -5,7 +5,7 @@ import {
 } from "@/features/bundles";
 import { fetchProductsFromShopify } from "@/lib/shopify";
 
-export const bundleService = {
+export const bundleReadService = {
     async getBundles(
         shop: string,
         sessionToken: string,
