@@ -1,0 +1,505 @@
+/**
+ * Bundle Mutations - Data Access Layer
+ *
+ * Write operations.
+ */
+
+import {
+    BundleStatus,
+    CreateBundleInput,
+    DeleteBundleResult,
+    UpdateBundleInput,
+    verifyBundleOwnership,
+    verifyBundleOwnershipTx,
+    verifyMultipleBundlesOwnershipTx,
+} from "@/features/bundles";
+import { generateBundleId } from "@/shared";
+import prisma from "@/lib/db/prisma-connect";
+import { BundleProductRole, Prisma } from "@prisma/client";
+
+// ==========================================
+// CREATE Operations
+// ==========================================
+
+/**
+ * Create a new bundle (within transaction)
+ */
+export async function createBundle(
+    tx: Prisma.TransactionClient,
+    data: CreateBundleInput,
+) {
+    const id = generateBundleId();
+
+    return await tx.bundle.create({
+        data: {
+            id,
+            shop: data.shop,
+            name: data.name,
+            description: data.description,
+            type: data.type,
+            status: data.status || "DRAFT",
+            mainProductId: data.mainProductId,
+            buyQuantity: data.buyQuantity,
+            getQuantity: data.getQuantity,
+            minimumItems: data.minimumItems,
+            maximumItems: data.maximumItems,
+            discountType: data.discountType,
+            discountValue: data.discountValue,
+            minOrderValue: data.minOrderValue,
+            maxDiscountAmount: data.maxDiscountAmount,
+            volumeTiers: data.volumeTiers ?? Prisma.JsonNull,
+            allowMixAndMatch: data.allowMixAndMatch,
+            mixAndMatchPrice: data.mixAndMatchPrice,
+            marketingCopy: data.marketingCopy,
+            seoTitle: data.seoTitle,
+            seoDescription: data.seoDescription,
+            images: data.images || [],
+            startDate: data.startDate,
+            endDate: data.endDate,
+            views: 0,
+            conversions: 0,
+            revenue: 0,
+            aiOptimized: false,
+        },
+    });
+}
+
+/**
+ * Create bundle products (within transaction)
+ */
+export async function createBundleProducts(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+    products: Array<{
+        productId: string;
+        variantId?: string;
+        quantity: number;
+        role?: BundleProductRole;
+        displayOrder?: number;
+    }>,
+) {
+    return await tx.bundleProduct.createMany({
+        data: products.map((product, index) => ({
+            bundleId,
+            productId: product.productId,
+            variantId: product.variantId,
+            quantity: product.quantity,
+            role: product.role || ("INCLUDED" as BundleProductRole),
+            displayOrder: product.displayOrder ?? index,
+        })),
+    });
+}
+
+/**
+ * Create bundle settings (within transaction)
+ */
+export async function createBundleSettings(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+    settings: any,
+) {
+    return await tx.bundleSettings.create({
+        data: {
+            bundleId,
+            ...settings,
+        },
+    });
+}
+
+// ==========================================
+// UPDATE Operations
+// ==========================================
+
+/**
+ * Update bundle by ID (within transaction)
+ */
+export async function updateBundleById(
+    tx: Prisma.TransactionClient,
+    id: string,
+    data: UpdateBundleInput,
+) {
+    return await tx.bundle.update({
+        where: { id },
+        data,
+    });
+}
+
+/**
+ * Update bundle status by ID (standalone - manages own transaction)
+ */
+export async function updateBundleStatusById(
+    id: string,
+    shop: string,
+    status: BundleStatus,
+) {
+    // Verify ownership first
+    await verifyBundleOwnership(id, shop);
+
+    // Update status
+    return await prisma.bundle.update({
+        where: { id },
+        data: { status },
+        select: {
+            id: true,
+            name: true,
+            status: true,
+            updatedAt: true,
+        },
+    });
+}
+
+/**
+ * Update status for multiple bundles (within transaction)
+ */
+export async function updateBundlesStatusByIds(
+    tx: Prisma.TransactionClient,
+    bundleIds: string[],
+    status: BundleStatus,
+) {
+    return await tx.bundle.updateMany({
+        where: { id: { in: bundleIds } },
+        data: { status },
+    });
+}
+
+/**
+ * Update bundle metrics (within transaction)
+ */
+export async function updateBundleMetrics(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+    metrics: {
+        views?: number;
+        conversions?: number;
+        revenue?: number;
+    },
+) {
+    return await tx.bundle.update({
+        where: { id: bundleId },
+        data: metrics,
+    });
+}
+
+/**
+ * Increment bundle views (atomic operation)
+ */
+export async function incrementBundleViews(bundleId: string) {
+    return await prisma.bundle.update({
+        where: { id: bundleId },
+        data: {
+            views: { increment: 1 },
+        },
+    });
+}
+
+/**
+ * Increment bundle conversions (atomic operation)
+ */
+export async function incrementBundleConversions(
+    bundleId: string,
+    revenue: number,
+) {
+    return await prisma.bundle.update({
+        where: { id: bundleId },
+        data: {
+            conversions: { increment: 1 },
+            revenue: { increment: revenue },
+        },
+    });
+}
+
+// ==========================================
+// DELETE Operations (Simple)
+// ==========================================
+
+/**
+ * Delete bundle by ID (within transaction)
+ */
+export async function deleteBundleById(
+    tx: Prisma.TransactionClient,
+    id: string,
+) {
+    return await tx.bundle.delete({
+        where: { id },
+    });
+}
+
+/**
+ * Delete multiple bundles (within transaction)
+ */
+export async function deleteBundlesByIds(
+    tx: Prisma.TransactionClient,
+    bundleIds: string[],
+) {
+    return await tx.bundle.deleteMany({
+        where: { id: { in: bundleIds } },
+    });
+}
+
+/**
+ * Delete bundle by ID with ownership verification (within transaction)
+ */
+export async function deleteBundleByIdWithOwnership(
+    tx: Prisma.TransactionClient,
+    id: string,
+    shop: string,
+) {
+    // Verify ownership
+    const bundle = await verifyBundleOwnershipTx(tx, id, shop);
+
+    // Delete bundle
+    await tx.bundle.delete({
+        where: { id },
+    });
+
+    return bundle;
+}
+
+/**
+ * Delete multiple bundles with ownership verification (within transaction)
+ */
+export async function deleteBundlesByIdsWithOwnership(
+    tx: Prisma.TransactionClient,
+    ids: string[],
+    shop: string,
+) {
+    // Verify all bundles belong to the shop
+    const existingBundles = await verifyMultipleBundlesOwnershipTx(
+        tx,
+        ids,
+        shop,
+    );
+
+    // Delete bundles
+    await tx.bundle.deleteMany({
+        where: { id: { in: ids } },
+    });
+
+    return existingBundles;
+}
+
+// ==========================================
+// DELETE Operations (Relations)
+// ==========================================
+
+/**
+ * Delete bundle products (within transaction)
+ */
+export async function deleteBundleProducts(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+) {
+    return await tx.bundleProduct.deleteMany({
+        where: { bundleId },
+    });
+}
+
+/**
+ * Delete bundle product groups (within transaction)
+ */
+export async function deleteBundleProductGroups(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+) {
+    return await tx.bundleProductGroup.deleteMany({
+        where: { bundleId },
+    });
+}
+
+/**
+ * Delete bundle settings (within transaction)
+ */
+export async function deleteBundleSettings(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+) {
+    return await tx.bundleSettings.deleteMany({
+        where: { bundleId },
+    });
+}
+
+/**
+ * Delete bundle analytics (within transaction)
+ */
+export async function deleteBundleAnalytics(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+) {
+    return await tx.bundleAnalytics.deleteMany({
+        where: { bundleId },
+    });
+}
+
+/**
+ * Delete all bundle related records (within transaction)
+ */
+export async function deleteAllBundleRelations(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+) {
+    await Promise.all([
+        deleteBundleProducts(tx, bundleId),
+        deleteBundleProductGroups(tx, bundleId),
+        deleteBundleSettings(tx, bundleId),
+        deleteBundleAnalytics(tx, bundleId),
+    ]);
+}
+
+/**
+ * Delete all relations for multiple bundles (within transaction)
+ */
+export async function deleteAllBundleRelationsForMany(
+    tx: Prisma.TransactionClient,
+    bundleIds: string[],
+) {
+    await Promise.all([
+        tx.bundleProduct.deleteMany({ where: { bundleId: { in: bundleIds } } }),
+        tx.bundleProductGroup.deleteMany({
+            where: { bundleId: { in: bundleIds } },
+        }),
+        tx.bundleSettings.deleteMany({
+            where: { bundleId: { in: bundleIds } },
+        }),
+        tx.bundleAnalytics.deleteMany({
+            where: { bundleId: { in: bundleIds } },
+        }),
+    ]);
+}
+
+// ==========================================
+// COMPLEX Operations (Transaction Management)
+// These manage their own transactions - complete atomic operations
+// ==========================================
+
+/**
+ * Delete a bundle with all related records (manages transaction)
+ */
+export async function deleteBundleWithRelations(
+    bundleId: string,
+    shop: string,
+): Promise<DeleteBundleResult> {
+    return await prisma.$transaction(
+        async (tx) => {
+            // Step 1: Verify ownership
+            const existingBundle = await verifyBundleOwnershipTx(
+                tx,
+                bundleId,
+                shop,
+            );
+
+            // Step 2: Delete all related records in parallel
+            await deleteAllBundleRelations(tx, bundleId);
+
+            // Step 3: Delete bundle
+            await tx.bundle.delete({ where: { id: bundleId } });
+
+            // Step 4: Return deleted bundle info
+            return {
+                id: existingBundle.id,
+                name: existingBundle.name,
+            };
+        },
+        {
+            timeout: 10000, // 10 second timeout
+        },
+    );
+}
+
+/**
+ * Delete multiple bundles with relations (manages transaction)
+ */
+export async function deleteBundlesWithRelations(
+    bundleIds: string[],
+    shop: string,
+): Promise<DeleteBundleResult[]> {
+    return await prisma.$transaction(
+        async (tx) => {
+            // Step 1: Verify all bundles exist and are owned
+            const bundles = await verifyMultipleBundlesOwnershipTx(
+                tx,
+                bundleIds,
+                shop,
+            );
+
+            // Step 2: Delete all related records in parallel
+            await deleteAllBundleRelationsForMany(tx, bundleIds);
+
+            // Step 3: Delete all bundles
+            await tx.bundle.deleteMany({
+                where: { id: { in: bundleIds } },
+            });
+
+            // Step 4: Return deleted bundles info
+            return bundles;
+        },
+        {
+            timeout: 15000, // 15 second timeout for bulk operations
+        },
+    );
+}
+
+// ==========================================
+// UTILITY Operations
+// ==========================================
+
+/**
+ * Generate unique bundle name for duplication
+ */
+export async function generateUniqueBundleName(
+    shop: string,
+    baseName: string,
+): Promise<string> {
+    let counter = 1;
+    let newName = `${baseName} (Copy)`;
+
+    // Keep trying until we find a unique name
+    while (true) {
+        const existing = await prisma.bundle.findFirst({
+            where: { shop, name: newName },
+            select: { id: true },
+        });
+
+        if (!existing) {
+            return newName;
+        }
+
+        counter++;
+        newName = `${baseName} (Copy ${counter})`;
+
+        // Safety check: prevent infinite loop
+        if (counter > 1000) {
+            throw new Error("Unable to generate unique bundle name");
+        }
+    }
+}
+
+/**
+ * Publish bundle (set to ACTIVE with timestamp)
+ */
+export async function publishBundle(bundleId: string, shop: string) {
+    await verifyBundleOwnership(bundleId, shop);
+
+    return await prisma.bundle.update({
+        where: { id: bundleId },
+        data: {
+            status: "ACTIVE",
+            isPublished: true,
+            publishedAt: new Date(),
+        },
+    });
+}
+
+/**
+ * Unpublish bundle (set to DRAFT)
+ */
+export async function unpublishBundle(bundleId: string, shop: string) {
+    await verifyBundleOwnership(bundleId, shop);
+
+    return await prisma.bundle.update({
+        where: { id: bundleId },
+        data: {
+            status: "DRAFT",
+            isPublished: false,
+        },
+    });
+}

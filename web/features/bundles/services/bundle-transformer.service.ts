@@ -6,6 +6,7 @@ import {
     TransformedBundleBase,
     TransformedBundleListing,
 } from "@/features/bundles";
+import { removeNulls } from "@/shared";
 import type { Bundle, BundleProduct } from "@prisma/client";
 
 /**
@@ -94,4 +95,69 @@ export function transformBundle(
             isRequired: bundle.bundleProducts[i].isRequired,
         })),
     };
+}
+
+/**
+ * Transform bundle for duplication
+ */
+export function transformBundleForDuplication(
+    original: any,
+    newName: string,
+): any {
+    const {
+        id,
+        shop: _,
+        createdAt,
+        updatedAt,
+        views,
+        conversions,
+        revenue,
+        isPublished,
+        publishedAt,
+        aiOptimized,
+        aiScore,
+        bundleProducts,
+        productGroups,
+        settings,
+        ...bundleData
+    } = original;
+
+    const transformedProducts =
+        bundleProducts?.map(
+            ({ id, bundleId, createdAt, updatedAt, ...bp }: any) => bp,
+        ) || [];
+
+    const transformedProductGroups =
+        productGroups?.map(({ id, bundleId, ...pg }: any) => pg) || [];
+
+    const transformedSettings = settings
+        ? (() => {
+              const {
+                  id,
+                  bundleId,
+                  createdAt,
+                  updatedAt,
+                  widget,
+                  style,
+                  animations,
+                  mobileSettings,
+                  variant,
+                  misc,
+                  ...s
+              } = settings;
+              return s;
+          })()
+        : undefined;
+
+    // Combine all data
+    const duplicateData = {
+        ...bundleData,
+        name: newName,
+        products: transformedProducts,
+        productGroups: transformedProductGroups,
+        settings: transformedSettings,
+    };
+
+    // Remove null values
+    return removeNulls(duplicateData);
 }

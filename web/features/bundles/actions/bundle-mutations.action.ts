@@ -3,7 +3,12 @@
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify/verify";
-import { BundleStatus, bundleWriteService } from "@/features/bundles";
+import {
+    BundleStatus,
+    deleteSingleBundleService,
+    duplicateBundleService,
+    updateBundleStatusService,
+} from "@/features/bundles";
 
 /**
  * Update bundle status
@@ -18,7 +23,7 @@ export async function updateBundleStatus(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await bundleWriteService.updateBundleStatus({
+        const result = await updateBundleStatusService({
             bundleId,
             shop,
             status,
@@ -34,7 +39,8 @@ export async function updateBundleStatus(
         };
     } catch (error) {
         console.error("[updateBundleStatus] Error:", error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+            error instanceof Error ? error.message : String(error);
 
         return {
             status: "error" as const,
@@ -50,14 +56,14 @@ export async function updateBundleStatus(
  */
 export async function deleteBundle(
     sessionToken: string,
-    bundleId: string
+    bundleId: string,
 ): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await bundleWriteService.deleteBundle({
+        const result = await deleteSingleBundleService({
             bundleId,
             shop,
         });
@@ -72,7 +78,8 @@ export async function deleteBundle(
         };
     } catch (error) {
         console.error("[deleteBundle] Error:", error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+            error instanceof Error ? error.message : String(error);
 
         return {
             status: "error" as const,
@@ -83,3 +90,39 @@ export async function deleteBundle(
     }
 }
 
+/**
+ * Duplicate a single bundle
+ */
+export async function duplicateBundle(
+    sessionToken: string,
+    bundleId: string,
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const result = await duplicateBundleService({
+            bundleId,
+            shop,
+        });
+
+        revalidatePath("/bundles");
+
+        return {
+            status: "success" as const,
+            ...result,
+        };
+    } catch (error) {
+        console.error("[duplicateBundle] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to duplicate bundle",
+            data: null,
+        };
+    }
+}

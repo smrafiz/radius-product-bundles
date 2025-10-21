@@ -2,7 +2,11 @@
  * Bundle Validation Service - Business Logic Layer
  */
 
-import { BundleFormData, bundleQueries, BundleType } from "@/features/bundles";
+import {
+    BundleFormData,
+    BundleType,
+    findBundleByName,
+} from "@/features/bundles";
 
 /**
  * Check for name conflicts
@@ -12,7 +16,7 @@ export async function checkNameConflict(
     name: string,
     excludeId?: string
 ): Promise<void> {
-    const existingBundle = await bundleQueries.findBundleByName(shop, name, excludeId);
+    const existingBundle = await findBundleByName(shop, name, excludeId);
 
     if (existingBundle) {
         throw new Error(`Bundle with name "${name}" already exists`);

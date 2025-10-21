@@ -1,96 +1,93 @@
 /**
- * Bundle Fragments.
+ * Bundle Prisma Fragments
+ *
+ * Reusable query parts for Prisma queries.
  */
 
-export const bundleFragments = {
-    // Common reusable includes
-    common: {
-        products: {
-            orderBy: { displayOrder: "asc" } as const,
-        },
-        withProducts: {
-            bundleProducts: {
-                orderBy: { displayOrder: "asc" } as const,
-            },
-        },
-        withSettings: {
-            settings: true,
-            bundleProducts: {
-                orderBy: { displayOrder: "asc" } as const,
-            },
-        },
-        withAnalytics: {
-            _count: {
-                select: {
-                    analytics: true,
-                },
-            },
-        },
-    },
+import { Prisma } from "@prisma/client";
 
-    // Basic bundle fields
-    basic: {
-        id: true,
-        name: true,
-        type: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-    },
+// ==========================================
+// SELECT Fragments (Field Selection)
+// ==========================================
 
-    // Bundle with products
-    withProducts: {
+export const BUNDLE_BASIC_SELECT = {
+    id: true,
+    name: true,
+    type: true,
+    status: true,
+    createdAt: true,
+    updatedAt: true,
+} satisfies Prisma.BundleSelect;
+
+export const BUNDLE_WITH_METRICS_SELECT = {
+    ...BUNDLE_BASIC_SELECT,
+    views: true,
+    conversions: true,
+    revenue: true,
+} satisfies Prisma.BundleSelect;
+
+// ==========================================
+// INCLUDE Fragments (Relations)
+// ==========================================
+
+export const INCLUDE_BUNDLE_PRODUCTS = {
+    bundleProducts: {
+        orderBy: { displayOrder: "asc" } as const,
+    },
+} satisfies Prisma.BundleInclude;
+
+export const INCLUDE_PRODUCT_GROUPS = {
+    productGroups: {
         include: {
-            bundleProducts: {
-                orderBy: { displayOrder: "asc" } as const,
-            },
+            products: true,
         },
     },
+} satisfies Prisma.BundleInclude;
 
-    // Bundle with full details
-    withDetails: {
-        include: {
-            bundleProducts: {
-                orderBy: { displayOrder: "asc" } as const,
-            },
-            productGroups: {
-                include: {
-                    products: true,
-                },
-            },
-            settings: true,
-        },
-    },
+export const INCLUDE_SETTINGS = {
+    settings: true,
+} satisfies Prisma.BundleInclude;
 
-    // Bundle for dashboard/listing
-    forDashboard: {
-        include: {
-            bundleProducts: {
-                orderBy: { displayOrder: "asc" } as const,
-            },
-            _count: {
-                select: {
-                    analytics: true,
-                },
-            },
+export const INCLUDE_ANALYTICS_COUNT = {
+    _count: {
+        select: {
+            analytics: true,
         },
-        orderBy: { updatedAt: "desc" } as const,
     },
+} satisfies Prisma.BundleInclude;
 
-    // Date range helpers
-    dates: {
-        thirtyDaysAgo: () => {
-            const date = new Date();
-            date.setDate(date.getDate() - 30);
-            return date;
-        },
-        sixtyDaysAgo: () => {
-            const date = new Date();
-            date.setDate(date.getDate() - 60);
-            return date;
-        },
-        recentMinutes: (minutes: number) => {
-            return new Date(Date.now() - minutes * 60 * 1000);
-        },
-    },
-} as const;
+// ==========================================
+// COMPOSITE Includes
+// ==========================================
+
+export const INCLUDE_BUNDLE_DETAILS = {
+    ...INCLUDE_BUNDLE_PRODUCTS,
+    ...INCLUDE_SETTINGS,
+} satisfies Prisma.BundleInclude;
+
+export const INCLUDE_BUNDLE_FULL = {
+    ...INCLUDE_BUNDLE_PRODUCTS,
+    ...INCLUDE_PRODUCT_GROUPS,
+    ...INCLUDE_SETTINGS,
+} satisfies Prisma.BundleInclude;
+
+export const INCLUDE_BUNDLE_DASHBOARD = {
+    ...INCLUDE_BUNDLE_PRODUCTS,
+    ...INCLUDE_ANALYTICS_COUNT,
+} satisfies Prisma.BundleInclude;
+
+// ==========================================
+// ORDER BY Fragments
+// ==========================================
+
+export const ORDER_BY_RECENT = {
+    updatedAt: "desc",
+} as const satisfies Prisma.BundleOrderByWithRelationInput;
+
+export const ORDER_BY_NEWEST = {
+    createdAt: "desc",
+} as const satisfies Prisma.BundleOrderByWithRelationInput;
+
+export const ORDER_BY_NAME = {
+    name: "asc",
+} as const satisfies Prisma.BundleOrderByWithRelationInput;

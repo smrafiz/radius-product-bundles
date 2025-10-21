@@ -2,8 +2,13 @@
  * Service types
  */
 
+import {
+    BundleFilters,
+    BundleStatus,
+    CreateBundleInput,
+    DeleteBundleResult,
+} from "@/features/bundles";
 import { BundleFormData } from "@/lib/validation";
-import { BundleStatus } from "@/features/bundles";
 
 export interface ValidationError {
     _errors: string[];
@@ -76,4 +81,42 @@ export interface BulkDeleteBundlesServiceResult {
     bundles: DeleteBundleResult[];
     deletedCount: number;
     message?: string;
+}
+
+export interface DuplicateBundleInput {
+    bundleId: string;
+    shop: string;
+}
+
+export interface DuplicateBundleResult {
+    success: boolean;
+    bundle: any;
+    message: string;
+}
+
+export interface CreateBundleWithValidationInput {
+    shop: string;
+    data: CreateBundleInput;
+}
+
+export interface GetBundlesInput {
+    shop: string;
+    sessionToken: string;
+    pagination: {
+        page: number;
+        itemsPerPage: number;
+    };
+    filters?: BundleFilters;
+}
+
+export interface PaginationResult {
+    page: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+}
+
+export interface BundlesListResult {
+    data: any[];
+    pagination: PaginationResult;
 }

@@ -5,6 +5,11 @@ export interface CreateBundleInput {
     shop: string;
     name: string;
     description?: string | null;
+    products?: Array<{
+        productId: string;
+        variantId: string;
+        quantity: number;
+    }>;
     type: BundleType;
     status?: BundleStatus;
     mainProductId?: string | null;
@@ -62,4 +67,35 @@ export interface BundleProductGroupCreateInput {
     minSelection?: number | null;
     maxSelection?: number | null;
     displayOrder?: number;
+}
+
+export interface BundleOwnershipCheck {
+    id: string;
+    name: string;
+    shop: string;
+}
+
+export interface AnalyticsMetrics {
+    currentPeriod: {
+        _sum: {
+            bundleViews: number | null;
+            bundlePurchases: number | null;
+            bundleRevenue: number | null;
+            bundleAddToCarts: number | null;
+        };
+    };
+    previousPeriod: {
+        _sum: {
+            bundleViews: number | null;
+            bundlePurchases: number | null;
+            bundleRevenue: number | null;
+        };
+    };
+    totalRevenueAllTime: {
+        _sum: {
+            bundleRevenue: number | null;
+        };
+    };
+    totalBundles: number;
+    activeBundles: number;
 }

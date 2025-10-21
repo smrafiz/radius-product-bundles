@@ -9,6 +9,7 @@ import {
     DiscountConfig,
     DiscountType,
 } from "@/features/bundles";
+import { Bundle, BundleProduct } from "@prisma/client";
 
 export const getBundleStatusBadge = (
     status: string | BundleStatusBadge,
@@ -52,4 +53,19 @@ export const getDiscountProperty = <
 ): DiscountConfig[T] | null => {
     const config = DISCOUNT_TYPES[type];
     return config?.[property] ?? null;
+};
+
+/**
+ * Extract unique product IDs from bundles
+ */
+export const extractProductIds = (
+    bundles: (Bundle & { bundleProducts: BundleProduct[] })[],
+): string[] => {
+    return Array.from(
+        new Set(
+            bundles.flatMap((bundle) =>
+                bundle.bundleProducts.map((bp) => bp.productId),
+            ),
+        ),
+    );
 };
