@@ -21,7 +21,7 @@ export const bundlesQueries = (
     filters?: BundleFilters,
 ) => ({
     list: {
-        queryKey: [bundlesQueryKeys.list(), page, itemsPerPage, filters],
+        queryKey: [bundlesQueryKeys.list(page, itemsPerPage, filters)],
         queryFn: async () => {
             const token = await getSessionToken(app);
             const result = await getBundles(token, page, itemsPerPage, filters);

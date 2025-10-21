@@ -198,7 +198,7 @@ export async function duplicateBundleService(
 
     return {
         success: true,
-        bundle: newBundle,
+        data: newBundle,
         message: `Bundle duplicated as "${newName}"`,
     };
 }
@@ -228,7 +228,7 @@ export async function duplicateMultipleBundles(input: {
 
     // Duplicate each bundle
     const results = await Promise.all(
-        bundleIds.map((bundleId) => duplicateBundle({ bundleId, shop })),
+        bundleIds.map((bundleId) => duplicateBundleService({ bundleId, shop })),
     );
 
     return {

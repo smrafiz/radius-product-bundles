@@ -90,7 +90,7 @@ export interface DuplicateBundleInput {
 
 export interface DuplicateBundleResult {
     success: boolean;
-    bundle: any;
+    data: any;
     message: string;
 }
 
