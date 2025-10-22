@@ -120,3 +120,14 @@ export interface BundlesListResult {
     data: any[];
     pagination: PaginationResult;
 }
+
+export interface BulkUpdateBundleStatusInput {
+    bundleIds: string[];
+    shop: string;
+    status: BundleStatus;
+}
+
+export interface BulkUpdateBundleStatusResult {
+    success: boolean;
+    message: string;
+}

@@ -18,6 +18,8 @@ import {
 import {
     BulkDeleteBundlesInput,
     BulkDeleteBundlesServiceResult,
+    BulkUpdateBundleStatusInput,
+    BulkUpdateBundleStatusResult,
     BUNDLE_STATUSES,
     BundleStatus,
     CreateBundleWithValidationInput,
@@ -111,6 +113,59 @@ export async function toggleBundleStatus(
     // Business logic: Determine new status
     const newStatus: BundleStatus =
         currentStatus === "ACTIVE" ? "DRAFT" : "ACTIVE";
+
+    return await updateBundleStatusService({
+        bundleId,
+        shop,
+        status: newStatus,
+    });
+}
+
+/**
+ * Bulk update bundle status (ACTIVE ↔ DRAFT)
+ */
+export async function bulkUpdateBundleStatusService(
+    input: BulkUpdateBundleStatusInput,
+): Promise<BulkUpdateBundleStatusResult> {
+    const { bundleIds, shop, status } = input;
+
+    if (!BUNDLE_STATUSES[status]) {
+        throw new Error(`Invalid bundle status: ${status}`);
+    }
+
+    if (!bundleIds || bundleIds.length === 0) {
+        throw new Error("No bundle IDs provided");
+    }
+
+    if (bundleIds.length > 100) {
+        throw new Error("Cannot update more than 100 bundles at once");
+    }
+
+    const newStatus: BundleStatus =
+        status === "ACTIVE" ? "DRAFT" : "ACTIVE";
+
+    await prisma.$transaction(
+        async (tx) => {
+            // Step 1: Verify bundles exist and belong to shop
+            // ✅ Using your existing findBundlesByIds()
+            const existingBundles = await findBundlesByIds(bundleIds, shop, tx);
+
+            if (existingBundles.length === 0) {
+                throw new Error(
+                    "No bundles found or you don't have permission to update them"
+                );
+            }
+
+            const foundIds = existingBundles.map((b) => b.id);
+
+            // Step 2: Update all found bundles
+            // ✅ Using your existing updateBundlesStatusByIds()
+            await updateBundlesStatusByIds(tx, foundIds, status);
+        },
+        {
+            timeout: 15000, // 15 seconds for bulk operations
+        }
+    );
 
     return await updateBundleStatusService({
         bundleId,

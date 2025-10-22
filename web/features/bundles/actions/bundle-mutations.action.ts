@@ -4,6 +4,7 @@ import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify/verify";
 import {
+    bulkUpdateBundleStatusService,
     BundleStatus,
     deleteSingleBundleService,
     duplicateBundleService,
@@ -45,6 +46,51 @@ export async function updateBundleStatus(
         return {
             status: "error" as const,
             message: errorMessage || "Failed to update bundle status",
+            data: undefined,
+            errors: [errorMessage],
+        };
+    }
+}
+
+/**
+ * Toggle bundle status (active/draft)
+ */
+export async function bulkToggleBundleStatus(
+    sessionToken: string,
+    bundleIds: string[],
+    newStatus: "ACTIVE" | "DRAFT",
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const result = await bulkUpdateBundleStatusService({
+            bundleIds,
+            shop,
+            newStatus,
+        });
+
+        revalidatePath("/bundles");
+
+        return {
+            status: "success" as const,
+            message: `Bundle ${newStatus.toLowerCase()} successfully`,
+            data: {
+                id: result.id,
+                name: result.name,
+                status: result.status,
+            },
+        };
+    } catch (error) {
+        console.error("[bulkUpdateBundleStatus] Error:", error);
+
+        const errorMessage =
+            error instanceof Error ? error.message : String(error);
+
+        return {
+            status: "error",
+            message: errorMessage || "Failed to update bundle statuses",
             data: undefined,
             errors: [errorMessage],
         };

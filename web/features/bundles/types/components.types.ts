@@ -39,5 +39,4 @@ export interface BundleActionsGroupProps {
 
 export interface StatusPopoverProps {
     bundle: BundleListItem;
-    onStatusUpdate?: (status: BundleStatus) => Promise<void>;
 }

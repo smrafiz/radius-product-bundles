@@ -24,6 +24,7 @@ export function useBundleActions(bundle: BundleListItem | null) {
         (s) => s.removeBundleFromStore,
     );
     const refreshBundles = useBundleListingStore((s) => s.refreshBundles);
+    const pagination = useBundleListingStore((s) => s.pagination);
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
     );
@@ -53,7 +54,10 @@ export function useBundleActions(bundle: BundleListItem | null) {
 
                     if (result.status === "success") {
                         if (result.data?.id) {
-                            await refreshBundles();
+                            await refreshBundles(
+                                pagination.currentPage,
+                                pagination.itemsPerPage,
+                            );
                             await invalidateBundleCache(queryClient);
                             showToast(
                                 result.message ??
@@ -81,7 +85,10 @@ export function useBundleActions(bundle: BundleListItem | null) {
                     const result = await deleteBundle(token, bundle.id);
 
                     if (result.status === "success") {
-                        await refreshBundles();
+                        await refreshBundles(
+                            pagination.currentPage,
+                            pagination.itemsPerPage,
+                        );
                         await invalidateBundleCache(queryClient);
                         showToast(
                             result.message ?? "Bundle deleted successfully",
@@ -136,6 +143,9 @@ export function useBundleActions(bundle: BundleListItem | null) {
             removeBundleFromStore,
             refreshBundles,
             updateBundleInStore,
+            queryClient,
+            pagination.currentPage,
+            pagination.itemsPerPage,
         ],
     );
 

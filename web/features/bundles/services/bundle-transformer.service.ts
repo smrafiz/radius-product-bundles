@@ -119,6 +119,7 @@ export function transformBundleForDuplication(
         bundleProducts,
         productGroups,
         settings,
+        status,
         ...bundleData
     } = original;
 
@@ -156,6 +157,9 @@ export function transformBundleForDuplication(
         products: transformedProducts,
         productGroups: transformedProductGroups,
         settings: transformedSettings,
+        status: "DRAFT",
+        isPublished: false,
+        publishedAt: null,
     };
 
     // Remove null values

@@ -4,17 +4,13 @@ import {
     BundleActionsGroup,
     bundleCurrencyFormatter,
     BundleProductsPreview,
-    BundleStatus,
     BundleTableRowProps,
     formatBundleDiscount,
     getBundleProperty,
     StatusPopover,
-    updateBundleStatus,
     useBundleActions,
-    useBundleListingStore,
 } from "@/features/bundles";
 import { useShopSettings } from "@/shared";
-import { useAppBridge } from "@shopify/app-bridge-react";
 import { Box, IndexTable, Link, Text } from "@shopify/polaris";
 
 export function BundleTableRow({
@@ -22,33 +18,12 @@ export function BundleTableRow({
     index,
     isSelected,
 }: BundleTableRowProps) {
-    const app = useAppBridge();
     const { isLoading, currencyCode } = useShopSettings();
     const { actions } = useBundleActions(bundle);
 
     const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
     const formatDiscount = () =>
         formatBundleDiscount(bundle, currencyFormatter);
-
-    const updateBundleInStore = useBundleListingStore(
-        (s) => s.updateBundleInStore,
-    );
-
-    const handleStatusUpdate = async (status: BundleStatus) => {
-        try {
-            const token = await app.idToken();
-            const result = await updateBundleStatus(token, bundle.id, status);
-
-            if (result.status === "success") {
-                updateBundleInStore(bundle.id, { status: result.data.status });
-                console.log("Updated:", result.data);
-            } else {
-                console.error("Update failed:", result.message);
-            }
-        } catch (err) {
-            console.error("Error updating status:", err);
-        }
-    };
 
     return (
         <IndexTable.Row
@@ -120,10 +95,7 @@ export function BundleTableRow({
             {/* Bundle status */}
             <IndexTable.Cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <StatusPopover
-                        bundle={bundle}
-                        onStatusUpdate={handleStatusUpdate}
-                    />
+                    <StatusPopover bundle={bundle} />
                 </div>
             </IndexTable.Cell>
 

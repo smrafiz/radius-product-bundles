@@ -233,6 +233,8 @@ export const useBundleListingStore = create<BundleListingState>()(
                             ...get().pagination,
                             currentPage: page,
                             itemsPerPage: itemsPerPage,
+                            totalItems: result.pagination?.totalItems ?? 0,
+                            totalPages: result.pagination?.totalPages ?? 0,
                         },
                     });
                 } else {

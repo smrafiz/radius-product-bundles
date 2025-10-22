@@ -7,28 +7,30 @@ import {
     withLoader,
 } from "@/shared";
 import {
+    bulkToggleBundleStatus,
     BundleStatus,
     invalidateBundleCache,
+    updateBundleStatus,
     useBundleListingStore,
-    deleteBundle,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
-import {
-    bulkToggleBundleStatus,
-    deleteBundles,
-    toggleBundleStatus,
-} from "@/actions/bundle/mutate.actions";
+// import {
+//     bulkToggleBundleStatus,
+//     deleteBundles,
+//     toggleBundleStatus,
+// } from "@/actions/bundle/mutate.actions";
 
 export function useBundleTableBulkActions() {
     const queryClient = useQueryClient();
     const { refreshBundles } = useBundleListingStore();
     const { showError } = useGlobalBanner();
     const sessionToken = useSessionToken();
-    const { openModal, setLoading, closeModal } = useModalStore();
+    const { openModal, setLoading } = useModalStore();
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
     );
+    const pagination = useBundleListingStore((s) => s.pagination);
     const showToast = useBundleListingStore((s) => s.showToast);
 
     const handleToggleBundleStatus = (
@@ -52,7 +54,7 @@ export function useBundleTableBulkActions() {
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await toggleBundleStatus(
+                    const result = await updateBundleStatus(
                         sessionToken,
                         bundleId,
                         newStatus,
@@ -93,7 +95,6 @@ export function useBundleTableBulkActions() {
                         "ACTIVE",
                     );
                     if (result.status === "success") {
-                        await refreshBundles();
                         await invalidateBundleCache(queryClient);
                         showToast(
                             `${result.data.updatedCount} bundles activated`,
@@ -185,7 +186,6 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // Promoted actions (inline buttons above the table)
     const getPromotedBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
