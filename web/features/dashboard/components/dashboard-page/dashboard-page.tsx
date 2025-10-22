@@ -4,7 +4,7 @@ import {
     AIInsights,
     DashboardBundles,
     DashboardMetrics,
-    DashboardQuickActions,
+    DashboardQuickActions, DashboardSetUpGuide,
     useDashboardData,
     useDashboardStore,
 } from "@/features/dashboard";
@@ -32,51 +32,82 @@ export function DashboardPage() {
     useSyncBundles();
 
     return (
-        <Page
-            title="Dashboard"
-            subtitle="Welcome to Radius Product Bundles"
-            primaryAction={{
-                content: "Create Bundle",
-                icon: PlusIcon,
-                onAction: bundleData.create(),
-            }}
-            secondaryActions={[
-                {
-                    content: "View Analytics",
-                    icon: ChartVerticalIcon,
-                    onAction: analytics(),
-                },
-            ]}
+        <s-page
+            // title="Dashboard"
+            // subtitle="Welcome to Radius Product Bundles"
+            // primaryAction={{
+            //     content: "Create Bundle",
+            //     icon: PlusIcon,
+            //     onAction: bundleData.create(),
+            // }}
+            // secondaryActions={[
+            //     {
+            //         content: "View Analytics",
+            //         icon: ChartVerticalIcon,
+            //         onAction: analytics(),
+            //     },
+            // ]}
         >
-            <Layout>
+            <s-stack gap="large">
+
+                <s-stack direction='inline' alignItems="center" justifyContent="space-between">
+                    <s-heading>
+                        <div className='text-xl'>RadiusTheme Product Bundle</div>
+                    </s-heading>
+                    <s-stack direction="inline" gap="small-200">
+                        <s-button icon="view" variant="secondary" accessibilityLabel="View Analytics">View Analytics</s-button>
+                        <s-button icon="plus" variant="primary" accessibilityLabel="Create Bundle">Create Bundle</s-button>
+                    </s-stack>
+                </s-stack>
+
+                <s-stack gap="base">
+                    <s-banner heading="Order archived" tone="info" dismissible>
+                        This order was archived on March 7, 2017 at 3:12pm EDT.
+                    </s-banner>
+
+                    {/* Banner */}
+                    <GlobalBanner />
+
+                    {/*Setup Guide*/}
+                    <DashboardSetUpGuide />
+
+                    {/* Metrics overview */}
+                    <DashboardMetrics />
+
+                    {/* Quick actions */}
+                    <DashboardQuickActions />
+
+
+                </s-stack>
+
                 {/* Banner */}
-                <GlobalBanner />
+                {/*<GlobalBanner />*/}
 
                 {/* Metrics overview */}
-                <Layout.Section>
-                    <DashboardMetrics />
-                </Layout.Section>
+                {/*<Layout.Section>*/}
+                {/*    <DashboardMetrics />*/}
+                {/*</Layout.Section>*/}
 
                 {/* Recent bundles */}
-                <Layout.Section>
-                    <DashboardBundles />
-                </Layout.Section>
+                {/*<Layout.Section>*/}
+                {/*    <DashboardBundles />*/}
+                {/*</Layout.Section>*/}
 
                 {/* Quick actions */}
-                <Layout.Section>
-                    <DashboardQuickActions />
-                </Layout.Section>
+                {/*<Layout.Section>*/}
+                {/*    <DashboardQuickActions />*/}
+                {/*</Layout.Section>*/}
 
                 {/* AI insights */}
-                <Layout.Section>
-                    <AIInsights />
-                </Layout.Section>
-            </Layout>
+                {/*<Layout.Section>*/}
+                {/*    <AIInsights />*/}
+                {/*</Layout.Section>*/}
+            </s-stack>
 
             {/* Toast notifications */}
-            {toast.active && (
-                <Toast content={toast.message} onDismiss={hideToast} />
-            )}
-        </Page>
+            {/*{toast.active && (*/}
+            {/*    <Toast content={toast.message} onDismiss={hideToast} />*/}
+            {/*)}*/}
+        </s-page>
     );
 }

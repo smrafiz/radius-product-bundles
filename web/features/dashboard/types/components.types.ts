@@ -12,7 +12,9 @@ export interface DashboardQuickActionItem {
     id: string;
     title: string;
     description: string;
-    icon: IconSource;
+    // icon: IconSource;
+    icon: string;
+    tone: string;
     url: string;
     backgroundColor: string;
     iconColor: "success" | "info" | "critical" | "warning" | "emphasis";

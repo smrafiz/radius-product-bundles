@@ -24,14 +24,38 @@ export function DashboardMetrics() {
     );
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {cards.map((card) => (
-                <MetricCard
+        <>
+        {/*<div className="grid grid-cols-1 md:grid-cols-4 gap-4">*/}
+        {/*    {cards.map((card) => (*/}
+        {/*        <MetricCard*/}
+        {/*            key={card.title}*/}
+        {/*            loading={isMetricsFetching}*/}
+        {/*            {...card}*/}
+        {/*        />*/}
+        {/*    ))}*/}
+        {/*</div>*/}
+
+
+        <s-grid
+            gridTemplateColumns="repeat(auto-fit, minmax(180px, 1fr))"
+            gap="small"
+        >
+            {cards.map((card, index) => (
+                <s-grid-item
                     key={card.title}
-                    loading={isMetricsFetching}
-                    {...card}
-                />
+                    gap="base"
+                    gridColumn="auto"
+                >
+                    <s-section gap="small-300">
+                        <s-heading>{card.title}</s-heading>
+                        <s-stack direction="inline" gap="small-200">
+                            <s-text>{card.value}</s-text>
+                            <s-badge tone="success" icon="arrow-up">12%</s-badge>
+                        </s-stack>
+                    </s-section>
+                </s-grid-item>
             ))}
-        </div>
+        </s-grid>
+        </>
     );
 }

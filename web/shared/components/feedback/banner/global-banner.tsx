@@ -39,31 +39,57 @@ export function GlobalBanner() {
     }
 
     return (
-        <Layout.Section>
-            <BlockStack gap="200">
-                {messages.map((message) => (
-                    <Banner
-                        key={message.id}
-                        title={message.title}
-                        tone={getToneFromType(message.type)}
-                        action={
-                            message.action
-                                ? {
-                                      content: message.action.label,
-                                      onAction: message.action.onAction,
-                                  }
-                                : undefined
-                        }
-                        onDismiss={
-                            message.dismissible
-                                ? () => removeMessage(message.id)
-                                : undefined
-                        }
-                    >
-                        {message.content}
-                    </Banner>
-                ))}
-            </BlockStack>
-        </Layout.Section>
+        // <Layout.Section>
+        //     <BlockStack gap="200">
+        //         {messages.map((message) => (
+        //             <Banner
+        //                 key={message.id}
+        //                 title={message.title}
+        //                 tone={getToneFromType(message.type)}
+        //                 action={
+        //                     message.action
+        //                         ? {
+        //                               content: message.action.label,
+        //                               onAction: message.action.onAction,
+        //                           }
+        //                         : undefined
+        //                 }
+        //                 onDismiss={
+        //                     message.dismissible
+        //                         ? () => removeMessage(message.id)
+        //                         : undefined
+        //                 }
+        //             >
+        //                 {message.content}
+        //             </Banner>
+        //         ))}
+        //     </BlockStack>
+        // </Layout.Section>
+
+
+        <s-stack gap="base">
+            {messages.map((message) => (
+                <s-banner
+                    key={message.id}
+                    heading={message.title}
+                    tone={getToneFromType(message.type)}
+                    // action={
+                    //     message.action
+                    //         ? {
+                    //               content: message.action.label,
+                    //               onAction: message.action.onAction,
+                    //           }
+                    //         : undefined
+                    // }
+                    onDismiss={
+                        message.dismissible
+                            ? () => removeMessage(message.id)
+                            : undefined
+                    }
+                >
+                    {message.content}
+                </s-banner>
+            ))}
+        </s-stack>
     );
 }
