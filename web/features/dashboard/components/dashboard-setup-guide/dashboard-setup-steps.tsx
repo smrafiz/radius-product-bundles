@@ -49,8 +49,7 @@ export function DashboardSetupSteps({
 
                         <s-stack
                             direction="inline"
-                            gap="extra-tight"
-                            wrap={false}
+                            gap="base large-300"
                         >
                             <s-button
                                 commandFor="setup-guide-menu"
@@ -75,7 +74,7 @@ export function DashboardSetupSteps({
                                                 paddingTop: ".05rem",
                                             }}
                                         >
-                                            <s-icon type="x" tone="subdued" />
+                                            <s-icon type="x" tone="neutral" />
                                         </div>
                                         <span>Dismiss</span>
                                     </s-stack>
