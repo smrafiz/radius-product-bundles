@@ -125,7 +125,7 @@ export async function updateBundleById(
 }
 
 /**
- * Update bundle status by ID (standalone - manages own transaction)
+ * Update bundle status by ID (standalone)
  */
 export async function updateBundleStatusById(
     id: string,

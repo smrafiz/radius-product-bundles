@@ -1,33 +1,28 @@
 /**
  * Bundle Write Service - Business Logic Layer
- *
- * Handles bundle mutations with business rules.
- * NO direct database access - uses repository layer.
- * NO auth handling - used by action layer.
  */
 
-import {
-    createBundle,
-    createBundleProducts,
-    deleteBundlesWithRelations,
-    deleteBundleWithRelations,
-    findBundleByIdWithAllRelations,
-    generateUniqueBundleName,
-    updateBundleStatusById,
-} from "../repositories";
 import {
     BulkDeleteBundlesInput,
     BulkDeleteBundlesServiceResult,
     BulkUpdateBundleStatusInput,
     BulkUpdateBundleStatusResult,
     BUNDLE_STATUSES,
-    BundleStatus,
+    createBundle,
+    createBundleProducts,
     CreateBundleWithValidationInput,
     DeleteBundleInput,
     DeleteBundleServiceResult,
+    deleteBundlesWithRelations,
+    deleteBundleWithRelations,
     DuplicateBundleInput,
     DuplicateBundleResult,
+    findBundleByIdWithAllRelations,
+    findBundlesByIds,
+    generateUniqueBundleName,
     transformBundleForDuplication,
+    updateBundlesStatusByIds,
+    updateBundleStatusById,
     UpdateBundleStatusInput,
     UpdateBundleStatusResult,
 } from "@/features/bundles";
@@ -45,7 +40,7 @@ export async function createBundleWithValidation(
 ): Promise<any> {
     const { shop, data } = input;
 
-    // Business logic: Validate required fields
+    // Validate required fields
     if (!data.name) {
         throw new Error("Bundle name is required");
     }
@@ -83,12 +78,11 @@ export async function updateBundleStatusService(
 ): Promise<UpdateBundleStatusResult> {
     const { bundleId, shop, status } = input;
 
-    // Business logic: Validate status
+    // Validate status
     if (!BUNDLE_STATUSES[status]) {
         throw new Error("Invalid bundle status");
     }
 
-    // Update status (via repository)
     const updatedBundle = await updateBundleStatusById(bundleId, shop, status);
 
     if (!updatedBundle) {
@@ -103,74 +97,107 @@ export async function updateBundleStatusService(
 }
 
 /**
- * Toggle bundle status (ACTIVE ↔ DRAFT)
- */
-export async function toggleBundleStatus(
-    input: UpdateBundleStatusInput & { currentStatus: BundleStatus },
-): Promise<UpdateBundleStatusResult> {
-    const { bundleId, shop, currentStatus } = input;
-
-    // Business logic: Determine new status
-    const newStatus: BundleStatus =
-        currentStatus === "ACTIVE" ? "DRAFT" : "ACTIVE";
-
-    return await updateBundleStatusService({
-        bundleId,
-        shop,
-        status: newStatus,
-    });
-}
-
-/**
- * Bulk update bundle status (ACTIVE ↔ DRAFT)
+ * Update multiple bundle statuses
  */
 export async function bulkUpdateBundleStatusService(
     input: BulkUpdateBundleStatusInput,
 ): Promise<BulkUpdateBundleStatusResult> {
     const { bundleIds, shop, status } = input;
 
+    // Validate status
     if (!BUNDLE_STATUSES[status]) {
-        throw new Error(`Invalid bundle status: ${status}`);
+        return {
+            success: false,
+            message: `Invalid bundle status: ${status}`,
+        }
     }
 
+    // Validate input
     if (!bundleIds || bundleIds.length === 0) {
-        throw new Error("No bundle IDs provided");
+        return {
+            success: false,
+            message: "No bundle IDs provided",
+        }
     }
 
+    // Limit bulk operations
     if (bundleIds.length > 100) {
-        throw new Error("Cannot update more than 100 bundles at once");
+        return {
+            success: false,
+            message: "Cannot update more than 100 bundles at once",
+        }
     }
 
-    const newStatus: BundleStatus =
-        status === "ACTIVE" ? "DRAFT" : "ACTIVE";
-
-    await prisma.$transaction(
+    // Single atomic transaction for all updates
+    const result = await prisma.$transaction(
         async (tx) => {
-            // Step 1: Verify bundles exist and belong to shop
-            // ✅ Using your existing findBundlesByIds()
+            // Verify all bundles belong to the shop
             const existingBundles = await findBundlesByIds(bundleIds, shop, tx);
 
+            // Check if all bundles were found
             if (existingBundles.length === 0) {
-                throw new Error(
-                    "No bundles found or you don't have permission to update them"
-                );
+                return {
+                    updatedBundles: [],
+                    updatedCount: 0,
+                    failedCount: bundleIds.length,
+                };
             }
 
             const foundIds = existingBundles.map((b) => b.id);
+            const notFoundIds = bundleIds.filter((id) => !foundIds.includes(id));
 
-            // Step 2: Update all found bundles
-            // ✅ Using your existing updateBundlesStatusByIds()
+            // Update all found bundles
             await updateBundlesStatusByIds(tx, foundIds, status);
+
+            // Fetch updated bundles
+            const updatedBundles = await findBundlesByIds(foundIds, shop, tx)
+
+            return {
+                updatedBundles,
+                updatedCount: updatedBundles.length,
+                failedCount: notFoundIds.length,
+            };
         },
         {
             timeout: 15000, // 15 seconds for bulk operations
         }
     );
 
-    return await updateBundleStatusService({
-        bundleId,
-        shop,
-        status: newStatus,
+    // Generate message
+    const message =
+        result.failedCount > 0
+            ? `${result.updatedCount} bundle${result.updatedCount > 1 ? "s" : ""} updated to ${status.toLowerCase()} (${result.failedCount} failed)`
+            : `${result.updatedCount} bundle${result.updatedCount > 1 ? "s" : ""} updated to ${status.toLowerCase()}`;
+
+    return {
+        success: true,
+        message,
+    };
+}
+
+/**
+ * Bulk activate bundles (set to ACTIVE)
+ */
+export async function bulkActivateBundlesService(input: {
+    bundleIds: string[];
+    shop: string;
+}): Promise<BulkUpdateBundleStatusResult> {
+    return bulkUpdateBundleStatusService({
+        ...input,
+        status: "ACTIVE",
+    });
+}
+
+/**
+ * Bulk draft bundles (set to DRAFT)
+ */
+export async function bulkDraftBundlesService(input: {
+    bundleIds: string[];
+    shop: string;
+}): Promise<BulkUpdateBundleStatusResult> {
+    return bulkUpdateBundleStatusService({
+        ...input,
+        status: "DRAFT",
     });
 }
 
@@ -204,7 +231,7 @@ export async function deleteMultipleBundles(
 ): Promise<BulkDeleteBundlesServiceResult> {
     const { bundleIds, shop } = input;
 
-    // Business logic: Validate input
+    // Validate input
     if (!bundleIds || bundleIds.length === 0) {
         throw new Error("No bundle IDs provided");
     }
@@ -255,41 +282,5 @@ export async function duplicateBundleService(
         success: true,
         data: newBundle,
         message: `Bundle duplicated as "${newName}"`,
-    };
-}
-
-/**
- * Duplicate multiple bundles (bulk duplicate)
- */
-export async function duplicateMultipleBundles(input: {
-    bundleIds: string[];
-    shop: string;
-}): Promise<{
-    success: boolean;
-    bundles: any[];
-    duplicatedCount: number;
-    message: string;
-}> {
-    const { bundleIds, shop } = input;
-
-    // Validate input
-    if (!bundleIds || bundleIds.length === 0) {
-        throw new Error("No bundle IDs provided");
-    }
-
-    if (bundleIds.length > 50) {
-        throw new Error("Cannot duplicate more than 50 bundles at once");
-    }
-
-    // Duplicate each bundle
-    const results = await Promise.all(
-        bundleIds.map((bundleId) => duplicateBundleService({ bundleId, shop })),
-    );
-
-    return {
-        success: true,
-        bundles: results.map((r) => r.bundle),
-        duplicatedCount: results.length,
-        message: `${results.length} bundle(s) duplicated successfully`,
     };
 }

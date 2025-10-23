@@ -47,7 +47,7 @@ export interface BundleListingState {
     setItemsPerPage: (items: number) => void;
 
     // Toast actions
-    showToast: (message: string) => void;
+    showToast: (message: string | undefined) => void;
     hideToast: () => void;
 
     // Computed getters

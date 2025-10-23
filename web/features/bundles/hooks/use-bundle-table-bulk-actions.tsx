@@ -33,12 +33,17 @@ export function useBundleTableBulkActions() {
     const pagination = useBundleListingStore((s) => s.pagination);
     const showToast = useBundleListingStore((s) => s.showToast);
 
+    /**
+     * Toggle bundle status (ACTIVE ↔ DRAFT)
+     */
     const handleToggleBundleStatus = (
         bundleId: string,
         currentStatus: BundleStatus,
         bundleName: string,
     ) => {
-        if (!sessionToken) return;
+        if (!sessionToken) {
+            return;
+        }
 
         const newStatus: BundleStatus =
             currentStatus === "ACTIVE" ? "DRAFT" : "ACTIVE";
@@ -79,9 +84,13 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // 🔹 Bulk activate
+    /**
+     * Bulk activate bundles
+     */
     const handleBulkActivate = (bundleIds: string[]) => {
-        if (!sessionToken) return;
+        if (!sessionToken) {
+            return;
+        }
 
         openModal({
             type: "status",
@@ -97,7 +106,7 @@ export function useBundleTableBulkActions() {
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            `${result.data.updatedCount} bundles activated`,
+                            result.message || `${result.data.updatedCount} bundles activated`,
                         );
                     } else {
                         showError("Bulk activation failed", {
@@ -115,7 +124,9 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // 🔹 Bulk draft
+    /**
+     * Bulk draft bundles
+     */
     const handleBulkDraft = (bundleIds: string[]) => {
         if (!sessionToken) return;
 
@@ -132,10 +143,9 @@ export function useBundleTableBulkActions() {
                         "DRAFT",
                     );
                     if (result.status === "success") {
-                        await refreshBundles();
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            `${result.data.updatedCount} bundles set as draft`,
+                            result.message || `${result.data.updatedCount} bundles set as draft`,
                         );
                     } else {
                         showError("Bulk draft failed", {
