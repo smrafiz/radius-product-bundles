@@ -18,6 +18,8 @@ export function DashboardMetrics() {
         () =>
             DASHBOARD_METRICS.map((cfg) => ({
                 title: cfg.title,
+                icon: cfg.icon,
+                tone: cfg.tone,
                 value: formatByType(metrics?.[cfg.key], cfg.format),
             })),
         [metrics],
@@ -43,14 +45,13 @@ export function DashboardMetrics() {
             {cards.map((card, index) => (
                 <s-grid-item
                     key={card.title}
-                    gap="base"
                     gridColumn="auto"
                 >
-                    <s-section gap="small-300">
+                    <s-section>
                         <s-heading>{card.title}</s-heading>
                         <s-stack direction="inline" gap="small-200">
                             <s-text>{card.value}</s-text>
-                            <s-badge tone="success" icon="arrow-up">12%</s-badge>
+                            <s-badge tone={card.tone} icon={card.icon}>12%</s-badge>
                         </s-stack>
                     </s-section>
                 </s-grid-item>

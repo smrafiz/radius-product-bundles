@@ -8,7 +8,7 @@ interface SetupButtonProps {
     props?: Record<string, any>;
 }
 
-interface SetupItem {
+export interface SetupItem {
     id: number;
     title: string;
     description?: string;
@@ -52,17 +52,16 @@ export function DashboardSetUpGuide() {
 
     return (
         <DashboardSetupSteps
+            items={items as any}
             onDismiss={() => {
                 setShowGuide(false);
                 setItems(ITEMS);
             }}
             onStepComplete={onStepComplete}
-            items={items}
         />
     );
 }
 
-// ✅ Example data (no changes)
 const ITEMS: SetupItem[] = [
     {
         id: 0,

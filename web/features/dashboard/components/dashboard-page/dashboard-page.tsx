@@ -4,7 +4,10 @@ import {
     AIInsights,
     DashboardBundles,
     DashboardMetrics,
-    DashboardQuickActions, DashboardSetUpGuide,
+    DashboardQuickActions,
+    DashboardSetUpGuide,
+    DashboardVideo,
+    DashboardCalloutCards,
     useDashboardData,
     useDashboardStore,
 } from "@/features/dashboard";
@@ -49,7 +52,6 @@ export function DashboardPage() {
             // ]}
         >
             <s-stack gap="large">
-
                 <s-stack direction='inline' alignItems="center" justifyContent="space-between">
                     <s-heading>
                         <div className='text-xl'>RadiusTheme Product Bundle</div>
@@ -61,9 +63,6 @@ export function DashboardPage() {
                 </s-stack>
 
                 <s-stack gap="base">
-                    <s-banner heading="Order archived" tone="info" dismissible>
-                        This order was archived on March 7, 2017 at 3:12pm EDT.
-                    </s-banner>
 
                     {/* Banner */}
                     <GlobalBanner />
@@ -76,6 +75,12 @@ export function DashboardPage() {
 
                     {/* Quick actions */}
                     <DashboardQuickActions />
+
+                    {/* Video actions */}
+                    <DashboardVideo />
+
+                    {/* Action Cards */}
+                    <DashboardCalloutCards />
 
 
                 </s-stack>

@@ -9,3 +9,4 @@ export type * from "@/types/testing";
 // export type * from "@/types/product";
 export type * from "@/types/notification";
 export type * from "@/types/generated/admin.generated";
+export class MessageType {}

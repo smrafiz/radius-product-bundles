@@ -121,13 +121,11 @@ export function DashboardSetupSteps({
                                     <div style={{ maxHeight: "1rem" }}>
                                         <s-stack
                                             direction="inline"
-                                            wrap={false}
-                                            gap="extra-small"
+                                            gap="base"
                                         >
                                             <s-icon
                                                 type="check"
-                                                tone="subdued"
-                                                accessibilityLabel="Check icon to indicate completion of Setup Guide"
+                                                tone="success"
                                             />
                                             <s-text color="subdued">
                                                 Done
@@ -209,8 +207,8 @@ export function DashboardSetupSteps({
             {completedItemsLength === items.length ? (
                 <s-box
                     background="subdued"
-                    borderBlockStartWidth="small"
-                    borderColor="border-secondary"
+                    borderWidth="small"
+                    borderColor="base"
                     padding="base"
                 >
                     <s-stack direction="inline" justifyContent="end">
@@ -272,7 +270,7 @@ const SetupItem = ({
                         >
                             <div className={styles.completeButton}>
                                 {loading ? (
-                                    <s-spinner size="small" />
+                                    <s-spinner size="base" />
                                 ) : complete ? (
                                     <div
                                         style={{
