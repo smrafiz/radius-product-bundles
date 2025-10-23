@@ -4,6 +4,7 @@ import {
     BundleConfig,
     BundleStatus,
     BundleStatusBadge,
+    BundleStatusBadgeNew,
     BundleType,
     DISCOUNT_TYPES,
     DiscountConfig,
@@ -11,18 +12,35 @@ import {
 } from "@/features/bundles";
 import { Bundle, BundleProduct } from "@prisma/client";
 
+// export const getBundleStatusBadge = (
+//     status: string | BundleStatusBadge,
+// ): BundleStatusBadge => {
+//     const config = BUNDLE_STATUSES[status as BundleStatus] ?? {
+//         text: String(status),
+//         tone: "subdued",
+//     };
+//
+//     return {
+//         text: config.text,
+//         tone: config.tone,
+//         children: config.text,
+//     };
+// };
+
 export const getBundleStatusBadge = (
     status: string | BundleStatusBadge,
-): BundleStatusBadge => {
+): BundleStatusBadgeNew => {
+    const capitalizeWords = (str: string) =>
+        str.replace(/\b\w/g, char => char.toUpperCase());
+
     const config = BUNDLE_STATUSES[status as BundleStatus] ?? {
-        text: String(status),
-        tone: "subdued",
+        text: capitalizeWords(String(status)),
+        tone: "neutral",
     };
 
     return {
         text: config.text,
         tone: config.tone,
-        children: config.text,
     };
 };
 

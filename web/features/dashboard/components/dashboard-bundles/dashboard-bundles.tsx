@@ -22,19 +22,15 @@ export function DashboardBundles() {
     const recentBundles = bundles.slice(0, 5);
 
     return (
-        <Card>
-            <Box padding="400">
-                <BlockStack gap="400">
-                    {recentBundles.length > 0 ? (
-                        <>
-                            <DashboardBundlesHeader />
-                            <DashboardBundlesList bundles={recentBundles} />
-                        </>
-                    ) : (
-                        <DashboardBundlesEmpty error={error} />
-                    )}
-                </BlockStack>
-            </Box>
-        </Card>
+        <s-section padding="none">
+            {recentBundles.length > 0 ? (
+                <>
+                    <DashboardBundlesHeader />
+                    <DashboardBundlesList bundles={recentBundles} />
+                </>
+            ) : (
+                <DashboardBundlesEmpty error={error} />
+            )}
+        </s-section>
     );
 }

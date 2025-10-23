@@ -8,12 +8,9 @@ import {
     DashboardSetUpGuide,
     DashboardVideo,
     DashboardCalloutCards,
+    DashboardMediaCard,
     useDashboardData,
-    useDashboardStore,
 } from "@/features/dashboard";
-import { useShallow } from "zustand/react/shallow";
-import { Layout, Page, Toast } from "@shopify/polaris";
-import { ChartVerticalIcon, PlusIcon } from "@shopify/polaris-icons";
 import { GlobalBanner, useAppNavigation, useSyncBundles } from "@/shared";
 
 /**
@@ -21,12 +18,6 @@ import { GlobalBanner, useAppNavigation, useSyncBundles } from "@/shared";
  */
 export function DashboardPage() {
     const { bundleData, analytics } = useAppNavigation();
-    const { toast, hideToast } = useDashboardStore(
-        useShallow((state) => ({
-            toast: state.toast,
-            hideToast: state.hideToast,
-        })),
-    );
 
     // Load dashboard data
     useDashboardData();
@@ -35,30 +26,25 @@ export function DashboardPage() {
     useSyncBundles();
 
     return (
-        <s-page
-            // title="Dashboard"
-            // subtitle="Welcome to Radius Product Bundles"
-            // primaryAction={{
-            //     content: "Create Bundle",
-            //     icon: PlusIcon,
-            //     onAction: bundleData.create(),
-            // }}
-            // secondaryActions={[
-            //     {
-            //         content: "View Analytics",
-            //         icon: ChartVerticalIcon,
-            //         onAction: analytics(),
-            //     },
-            // ]}
-        >
-            <s-stack gap="large">
+        <s-page>
+            <s-stack gap="large" paddingBlockStart="large" paddingBlockEnd="large">
                 <s-stack direction='inline' alignItems="center" justifyContent="space-between">
                     <s-heading>
                         <div className='text-xl'>RadiusTheme Product Bundle</div>
                     </s-heading>
                     <s-stack direction="inline" gap="small-200">
-                        <s-button icon="view" variant="secondary" accessibilityLabel="View Analytics">View Analytics</s-button>
-                        <s-button icon="plus" variant="primary" accessibilityLabel="Create Bundle">Create Bundle</s-button>
+                        <s-button
+                            icon="view"
+                            variant="secondary"
+                            accessibilityLabel="View Analytics"
+                            onClick={analytics()}
+                        >View Analytics</s-button>
+                        <s-button
+                            icon="plus"
+                            variant="primary"
+                            accessibilityLabel="Create Bundle"
+                            onClick={bundleData.create()}
+                        >Create Bundle</s-button>
                     </s-stack>
                 </s-stack>
 
@@ -73,46 +59,26 @@ export function DashboardPage() {
                     {/* Metrics overview */}
                     <DashboardMetrics />
 
+                    {/* Recent bundles */}
+                    <DashboardBundles />
+
                     {/* Quick actions */}
                     <DashboardQuickActions />
 
                     {/* Video actions */}
                     <DashboardVideo />
 
-                    {/* Action Cards */}
+                    {/* Callout Cards */}
                     <DashboardCalloutCards />
 
+                    {/* Media Cards */}
+                    <DashboardMediaCard />
+
+                    {/* AI insights */}
+                    <AIInsights />
 
                 </s-stack>
-
-                {/* Banner */}
-                {/*<GlobalBanner />*/}
-
-                {/* Metrics overview */}
-                {/*<Layout.Section>*/}
-                {/*    <DashboardMetrics />*/}
-                {/*</Layout.Section>*/}
-
-                {/* Recent bundles */}
-                {/*<Layout.Section>*/}
-                {/*    <DashboardBundles />*/}
-                {/*</Layout.Section>*/}
-
-                {/* Quick actions */}
-                {/*<Layout.Section>*/}
-                {/*    <DashboardQuickActions />*/}
-                {/*</Layout.Section>*/}
-
-                {/* AI insights */}
-                {/*<Layout.Section>*/}
-                {/*    <AIInsights />*/}
-                {/*</Layout.Section>*/}
             </s-stack>
-
-            {/* Toast notifications */}
-            {/*{toast.active && (*/}
-            {/*    <Toast content={toast.message} onDismiss={hideToast} />*/}
-            {/*)}*/}
         </s-page>
     );
 }

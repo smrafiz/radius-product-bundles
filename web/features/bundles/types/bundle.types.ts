@@ -146,6 +146,11 @@ export interface BundleStatusBadge {
     children?: string;
 }
 
+export interface BundleStatusBadgeNew {
+    text: string;
+    tone: "success" | "warning" | "info" | "critical" | "neutral" | "caution" | "auto" | undefined;
+}
+
 /*
  * Bundle config types
  */
