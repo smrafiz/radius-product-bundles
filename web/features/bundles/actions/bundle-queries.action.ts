@@ -16,7 +16,7 @@ import {
     aggregateBundleMetrics,
     BundleFilters,
     getBundleDetails,
-    getBundlesList,
+    getBundlesListService,
 } from "@/features/bundles";
 import { handleSessionToken } from "@/lib/shopify/verify";
 
@@ -38,7 +38,7 @@ export async function getBundles(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await getBundlesList({
+        const result = await getBundlesListService({
             shop,
             sessionToken,
             pagination: { page, itemsPerPage },
@@ -47,7 +47,7 @@ export async function getBundles(
 
         return {
             status: "success" as const,
-            ...result
+            data: { ...result },
         };
     } catch (error) {
         console.error("[getBundles] Error:", error);

@@ -14,6 +14,7 @@ import {
     useBundleActions,
     useBundleListingStore,
     useBundlesData,
+    useBundleSelection,
     useBundleTableBulkActions,
 } from "@/features/bundles";
 import { useCallback } from "react";
@@ -22,6 +23,13 @@ export function BundleTable() {
     const breakpoints = useBreakpoints();
     const { bundles, pagination, filters, showToast } = useBundleListingStore();
     const { isFetching } = useBundlesData();
+    const {
+        selectedResources,
+        clearSelection,
+        selectedBundle,
+        allResourcesSelected,
+        handleSelectionChange,
+    } = useBundleSelection(bundles);
 
     // Check if any filters are active
     const hasActiveFilters =
@@ -34,26 +42,27 @@ export function BundleTable() {
     const totalBundles = pagination.totalItems;
 
     // Selection state
-    const resourceIDResolver = (bundle: any) => bundle.id;
-    const {
-        selectedResources,
-        allResourcesSelected,
-        handleSelectionChange,
-        clearSelection,
-    } = useIndexResourceState(bundles, { resourceIDResolver });
+    // const resourceIDResolver = (bundle: any) => bundle.id;
+    // const {
+    //     selectedResources,
+    //     allResourcesSelected,
+    //     handleSelectionChange,
+    //     clearSelection,
+    // } = useIndexResourceState(bundles, { resourceIDResolver });
 
     // Get selected bundle for single selection
-    const selectedBundle =
-        selectedResources.length === 1
-            ? bundles.find((bundle) => bundle.id === selectedResources[0])
-            : null;
+    // const selectedBundle =
+    //     selectedResources.length === 1
+    //         ? bundles.find((bundle) => bundle.id === selectedResources[0])
+    //         : null;
 
     const { actions: selectedBundleActions } = useBundleActions(
         selectedBundle || (bundles.length > 0 ? bundles[0] : null),
+        clearSelection,
     );
 
     const { getPromotedBulkActions, getBulkActions } =
-        useBundleTableBulkActions();
+        useBundleTableBulkActions(clearSelection);
 
     // Handle clear selection
     const handleClearSelection = useCallback(() => {

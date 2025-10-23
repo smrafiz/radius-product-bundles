@@ -16,13 +16,8 @@ import {
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
-// import {
-//     bulkToggleBundleStatus,
-//     deleteBundles,
-//     toggleBundleStatus,
-// } from "@/actions/bundle/mutate.actions";
 
-export function useBundleTableBulkActions() {
+export function useBundleTableBulkActions(clearSelection?: () => void) {
     const queryClient = useQueryClient();
     const { refreshBundles } = useBundleListingStore();
     const { showError } = useGlobalBanner();
@@ -31,7 +26,6 @@ export function useBundleTableBulkActions() {
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
     );
-    const pagination = useBundleListingStore((s) => s.pagination);
     const showToast = useBundleListingStore((s) => s.showToast);
 
     /**
@@ -183,6 +177,9 @@ export function useBundleTableBulkActions() {
                         showToast(
                             result.message || "Selected bundles have been deleted successfully",
                         );
+                        if (clearSelection) {
+                            clearSelection();
+                        }
                     } else {
                         showError("Bulk delete failed", {
                             content: result.message,
@@ -199,6 +196,9 @@ export function useBundleTableBulkActions() {
         });
     };
 
+    /**
+     * Get bulk actions for promoted rows
+     */
     const getPromotedBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
@@ -241,7 +241,9 @@ export function useBundleTableBulkActions() {
         return actions;
     };
 
-    // Dropdown bulk actions
+    /*
+     * Get bulk actions for non-promoted rows
+     */
     const getBulkActions = (
         selectedResources: string[],
         selectedBundle: any,

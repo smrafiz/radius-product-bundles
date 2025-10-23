@@ -4,8 +4,8 @@ import { BundleStatus, BundleType } from "./bundle.types";
  * Bundle list filters
  */
 export interface BundleFilters {
-    typeFilter?: string[] | undefined;
-    statusFilter?: string[] | undefined;
+    typeFilter?: BundleType[];
+    statusFilter?: BundleStatus[];
     selectedTab?: number | undefined;
     sortSelected?: string[] | undefined;
     search?: string;

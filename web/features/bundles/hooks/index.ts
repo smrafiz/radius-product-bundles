@@ -7,6 +7,8 @@ export { useInitialBundleState } from "./use-initial-bundle-state";
 export { useBundlesPage } from "./use-bundles-page";
 export { useBundlePreview } from "./use-bundle-preview";
 export { useBundlesData } from "./use-bundles-data";
+export { useBundleSelection } from "./use-bundle-selection";
+export { useBundleFilters } from "./use-bundle-filters";
 // export * from "./useBundleFormMethods";
 // export * from "./use-bundle-queries";
 // export * from "./use-bundle-form";

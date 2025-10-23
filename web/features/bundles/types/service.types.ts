@@ -117,7 +117,7 @@ export interface PaginationResult {
 }
 
 export interface BundlesListResult {
-    data: any[];
+    bundles: any[];
     pagination: PaginationResult;
 }
 

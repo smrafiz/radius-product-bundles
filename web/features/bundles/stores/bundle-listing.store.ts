@@ -26,6 +26,7 @@ export const useBundleListingStore = create<BundleListingState>()(
             active: false,
             message: "",
         },
+        queryValue: "",
 
         // Data actions
         setBundles: (bundles) => set({ bundles }),
@@ -75,6 +76,8 @@ export const useBundleListingStore = create<BundleListingState>()(
                 },
                 pagination: { ...state.pagination, currentPage: 1 },
             })),
+
+        setQueryValue: (value) => set({ queryValue: value }),
 
         // Pagination actions
         setCurrentPage: (currentPage) =>
@@ -233,8 +236,8 @@ export const useBundleListingStore = create<BundleListingState>()(
                             ...get().pagination,
                             currentPage: page,
                             itemsPerPage: itemsPerPage,
-                            totalItems: result.pagination?.totalItems ?? 0,
-                            totalPages: result.pagination?.totalPages ?? 0,
+                            totalItems: result.data?.pagination?.totalItems ?? 0,
+                            totalPages: result.data?.pagination?.totalPages ?? 0,
                         },
                     });
                 } else {

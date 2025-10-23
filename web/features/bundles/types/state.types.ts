@@ -2,6 +2,8 @@ import {
     BundleFilters,
     BundleListItem,
     BundleMetrics,
+    BundleStatus,
+    BundleType,
     Pagination,
     Toast,
 } from "@/features/bundles";
@@ -16,6 +18,7 @@ export interface BundleListingState {
         data: Partial<BundleListItem>,
     ) => void;
     removeBundleFromStore: (bundleId: string) => void;
+    queryValue: string;
 
     // UI State
     loading: boolean;
@@ -32,8 +35,8 @@ export interface BundleListingState {
 
     // Filter actions
     setSearch: (search: string) => void;
-    setStatusFilter: (filter: string[]) => void;
-    setTypeFilter: (filter: string[]) => void;
+    setStatusFilter: (filter: BundleStatus[]) => void;
+    setTypeFilter: (filter: BundleType[]) => void;
     setSelectedTab: (tab: number) => void;
     setSortSelected: (sort: string[]) => void;
     setPaginationMetadata: (metadata: {
@@ -41,13 +44,14 @@ export interface BundleListingState {
         totalPages: number;
     }) => void;
     clearFilters: () => void;
+    setQueryValue: (value: string) => void;
 
     // Pagination actions
     setCurrentPage: (page: number) => void;
     setItemsPerPage: (items: number) => void;
 
     // Toast actions
-    showToast: (message: string | undefined) => void;
+    showToast: (message: string) => void;
     hideToast: () => void;
 
     // Computed getters
