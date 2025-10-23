@@ -7,6 +7,7 @@ import {
     bulkActivateBundlesService,
     bulkDraftBundlesService,
     BundleStatus,
+    deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
     updateBundleStatusService,
@@ -127,6 +128,57 @@ export async function deleteBundle(
             status: "error" as const,
             message: errorMessage || "Failed to delete bundle",
             data: undefined,
+            errors: [errorMessage],
+        };
+    }
+}
+
+/**
+ * Delete multiple bundles
+ */
+export async function deleteBundles(
+    sessionToken: string,
+    bundleIds: string[]
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        if (!bundleIds || bundleIds.length === 0) {
+            return {
+                status: "error",
+                message: "No bundle IDs provided",
+                data: null,
+            };
+        }
+
+        const result = await deleteMultipleBundles({
+            bundleIds,
+            shop,
+        });
+
+        revalidatePath("/bundles");
+
+        if (bundleIds.length <= 10) {
+            bundleIds.forEach((bundleId) => {
+                revalidatePath(`/bundles/${bundleId}`);
+            });
+        }
+
+        return {
+            status: "success" as const,
+            ...result
+        };
+    } catch (error) {
+        console.error("[deleteMultipleBundles] Error:", error);
+        const errorMessage =
+            error instanceof Error ? error.message : String(error);
+
+        return {
+            status: "error",
+            message: errorMessage || "Failed to delete bundles",
+            data: null,
             errors: [errorMessage],
         };
     }

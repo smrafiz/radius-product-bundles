@@ -9,6 +9,7 @@ import {
 import {
     bulkToggleBundleStatus,
     BundleStatus,
+    deleteBundles,
     invalidateBundleCache,
     updateBundleStatus,
     useBundleListingStore,
@@ -163,7 +164,9 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // 🔹 Bulk delete
+    /*
+     * Bulk delete bundles
+     */
     const handleBulkDelete = (bundleIds: string[]) => {
         if (!sessionToken) return;
 
@@ -178,7 +181,7 @@ export function useBundleTableBulkActions() {
                         await refreshBundles();
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            "Selected bundles have been deleted successfully",
+                            result.message || "Selected bundles have been deleted successfully",
                         );
                     } else {
                         showError("Bulk delete failed", {
