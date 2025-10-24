@@ -10,6 +10,9 @@ import { useCallback, useState } from "react";
 import { Icon, InlineStack, Popover } from "@shopify/polaris";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 
+/**
+ * Bundle products preview
+ */
 export function BundleProductsPreview({ bundle }: { bundle: BundleListItem }) {
     const [popoverActive, setPopoverActive] = useState(false);
     const togglePopover = useCallback(

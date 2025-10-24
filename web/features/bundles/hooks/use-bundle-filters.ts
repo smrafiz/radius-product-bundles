@@ -5,7 +5,7 @@ import { useDebounce } from "@/shared";
 import { useBundleListingStore, BUNDLE_FILTERS } from "@/features/bundles";
 
 /**
- * Handles debounced search + syncing with store
+ * Handles debounced search and syncing with store
  */
 export function useBundleFilters() {
     const {
@@ -18,10 +18,7 @@ export function useBundleFilters() {
         clearFilters,
     } = useBundleListingStore();
 
-    // Local value stored in Zustand instead of useState
     const { queryValue, setQueryValue } = useBundleListingStore();
-
-    // Debounce value
     const debouncedQuery = useDebounce(queryValue, BUNDLE_FILTERS.search.debounceMs);
 
     // Sync debounced query to store

@@ -1,8 +1,11 @@
 "use server";
 
-import { ApiResponse } from "@/shared";
-import { revalidatePath } from "next/cache";
-import { handleSessionToken } from "@/lib/shopify/verify";
+/**
+ * Bundle Mutation Actions - Auth Layer
+ *
+ * Handles authentication and calls service layer.
+ */
+
 import {
     bulkActivateBundlesService,
     bulkDraftBundlesService,
@@ -12,6 +15,9 @@ import {
     duplicateBundleService,
     updateBundleStatusService,
 } from "@/features/bundles";
+import { ApiResponse } from "@/shared";
+import { revalidatePath } from "next/cache";
+import { handleSessionToken } from "@/lib/shopify/verify";
 
 /**
  * Update bundle status

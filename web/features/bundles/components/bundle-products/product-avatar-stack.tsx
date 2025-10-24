@@ -2,6 +2,9 @@ import Image from "next/image";
 import { Box } from "@shopify/polaris";
 import { ProductAvatarStackProps } from "@/features/bundles";
 
+/**
+ * Product avatar stack
+ */
 export function ProductAvatarStack({ products, remainingCount }: ProductAvatarStackProps) {
     return (
         <>

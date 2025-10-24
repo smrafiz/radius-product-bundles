@@ -5,6 +5,9 @@ import { useIndexResourceState } from "@shopify/polaris";
 import { useBundleListingStore } from "@/features/bundles";
 import { SelectionType } from "@shopify/polaris/build/ts/src/utilities/index-provider";
 
+/**
+ * Bundle selection
+ */
 export function useBundleSelection(bundles: any[]) {
     const showToast = useBundleListingStore((s) => s.showToast);
     const safeBundles = Array.isArray(bundles) ? bundles : [];
@@ -16,8 +19,6 @@ export function useBundleSelection(bundles: any[]) {
 
     const { selectedResources, allResourcesSelected, handleSelectionChange } =
         indexResourceState;
-
-    // Store clearSelection in a ref when it becomes available
     const clearSelectionRef = useRef<(() => void) | null>(null);
 
     // Capture clearSelection when it exists (only when items are selected)

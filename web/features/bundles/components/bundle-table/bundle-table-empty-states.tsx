@@ -1,20 +1,19 @@
 "use client";
 
-import {
-    BundleTableEmptyStatesProps,
-    useBundleTableBulkActions,
-} from "@/features/bundles";
-import { withLoader } from "@/shared";
+import { useAppNavigation } from "@/shared";
 import { PlusIcon } from "@shopify/polaris-icons";
+import { BundleTableEmptyStatesProps } from "@/features/bundles";
 import { Box, EmptySearchResult, EmptyState } from "@shopify/polaris";
 
+/**
+ * Bundle table empty states
+ */
 export function BundleTableEmptyStates({
     totalBundles,
     filteredBundlesCount,
 }: BundleTableEmptyStatesProps) {
-    const { handleCreateBundle } = useBundleTableBulkActions();
+    const { bundleData } = useAppNavigation();
 
-    // No bundles created yet
     if (totalBundles === 0) {
         return (
             <EmptyState
@@ -22,7 +21,7 @@ export function BundleTableEmptyStates({
                 action={{
                     content: "Create Bundle",
                     icon: PlusIcon,
-                    onAction: withLoader(handleCreateBundle),
+                    onAction: bundleData.create(),
                 }}
                 image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
             >

@@ -1,3 +1,7 @@
+/*
+ * Discount types constants
+ */
+
 import { formatCurrency } from "@/shared";
 import { DiscountConfig, DiscountType } from "@/features/bundles";
 

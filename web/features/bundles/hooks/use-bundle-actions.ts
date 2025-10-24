@@ -10,13 +10,20 @@ import {
     useBundleListingStore,
 } from "@/features/bundles";
 import { useMemo } from "react";
-import { withLoader } from "@/shared";
 import { useRouter } from "next/navigation";
+import { useAppNavigation } from "@/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-export function useBundleActions(bundle: BundleListItem | null, clearSelection?: () => void) {
+/**
+ * Get bundle actions
+ */
+export function useBundleActions(
+    bundle: BundleListItem | null,
+    clearSelection?: () => void,
+) {
     const app = useAppBridge();
+    const { bundleData } = useAppNavigation();
     const router = useRouter();
     const queryClient = useQueryClient();
     const showToast = useBundleListingStore((s) => s.showToast);
@@ -36,7 +43,7 @@ export function useBundleActions(bundle: BundleListItem | null, clearSelection?:
                     throw new Error("Bundle not found");
                 }
 
-                withLoader(() => router.push(`/bundles/${bundle.id}/edit`))();
+                bundleData.edit(bundle.id);
             },
 
             view: () => {
@@ -54,10 +61,6 @@ export function useBundleActions(bundle: BundleListItem | null, clearSelection?:
 
                     if (result.status === "success") {
                         if (result.data?.id) {
-                            // await refreshBundles(
-                            //     pagination.currentPage,
-                            //     pagination.itemsPerPage,
-                            // );
                             await invalidateBundleCache(queryClient);
                             if (clearSelection) {
                                 clearSelection();

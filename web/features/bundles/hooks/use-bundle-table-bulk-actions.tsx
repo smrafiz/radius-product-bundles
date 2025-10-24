@@ -17,9 +17,11 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
+/**
+ * Get bundle table bulk actions
+ */
 export function useBundleTableBulkActions(clearSelection?: () => void) {
     const queryClient = useQueryClient();
-    const { refreshBundles } = useBundleListingStore();
     const { showError } = useGlobalBanner();
     const sessionToken = useSessionToken();
     const { openModal, setLoading } = useModalStore();

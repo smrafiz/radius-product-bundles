@@ -1,6 +1,12 @@
+/*
+ * Bundle metrics constants
+ */
+
 import { formatCurrency, MetricCardProps } from "@/shared";
 
-
+/**
+ * Bundle listing metrics
+ */
 export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
     {
         title: "Active Bundles",

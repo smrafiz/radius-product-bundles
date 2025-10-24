@@ -1,3 +1,7 @@
+/*
+ * Bundle types constants
+ */
+
 import type { BundleConfig, BundleType } from "@/features/bundles";
 
 /**

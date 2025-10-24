@@ -10,14 +10,23 @@ import {
 } from "@/features/bundles";
 import { BundleFormData } from "@/lib/validation";
 
+/*
+ * Validation types
+ */
 export interface ValidationError {
     _errors: string[];
 }
 
+/*
+ * Validation types
+ */
 export interface ValidationErrors {
     [field: string]: ValidationError;
 }
 
+/*
+ * Validation result types
+ */
 export interface SchemaValidationResult {
     success: boolean;
     data?: BundleFormData;
@@ -29,17 +38,26 @@ export interface SchemaValidationResult {
     };
 }
 
+/*
+ * Business rules validation result types
+ */
 export interface BusinessRulesResult {
     success: boolean;
     message: string;
     errors: ValidationErrors | null;
 }
 
+/*
+ * Security validation result types
+ */
 export interface SecurityValidationResult {
     success: boolean;
     errors: ValidationErrors | null;
 }
 
+/*
+ * Combined validation result types
+ */
 export interface CombinedValidationResult {
     success?: boolean;
     status?: "error";
@@ -48,34 +66,52 @@ export interface CombinedValidationResult {
     data?: BundleFormData | null;
 }
 
+/*
+ * Bundle service types
+ */
 export interface UpdateBundleStatusInput {
     bundleId: string;
     shop: string;
     status: BundleStatus;
 }
 
+/*
+ * Update bundle status result types
+ */
 export interface UpdateBundleStatusResult {
     success: boolean;
     bundle: any;
     message?: string;
 }
 
+/*
+ * Delete bundle service types
+ */
 export interface DeleteBundleInput {
     bundleId: string;
     shop: string;
 }
 
+/*
+ * Delete bundle service result types
+ */
 export interface DeleteBundleServiceResult {
     success: boolean;
     bundle: DeleteBundleResult;
     message?: string;
 }
 
+/*
+ * Bulk delete bundles service types
+ */
 export interface BulkDeleteBundlesInput {
     bundleIds: string[];
     shop: string;
 }
 
+/*
+ * Bulk delete bundles service result types
+ */
 export interface BulkDeleteBundlesServiceResult {
     success: boolean;
     bundles: DeleteBundleResult[];
@@ -83,22 +119,34 @@ export interface BulkDeleteBundlesServiceResult {
     message?: string;
 }
 
+/*
+ * Duplicate bundle service types
+ */
 export interface DuplicateBundleInput {
     bundleId: string;
     shop: string;
 }
 
+/*
+ * Duplicate bundle service result types
+ */
 export interface DuplicateBundleResult {
     success: boolean;
     data: any;
     message: string;
 }
 
+/*
+ * Create bundle with validation input
+ */
 export interface CreateBundleWithValidationInput {
     shop: string;
     data: CreateBundleInput;
 }
 
+/*
+ * Get bundles input
+ */
 export interface GetBundlesInput {
     shop: string;
     sessionToken: string;
@@ -109,6 +157,9 @@ export interface GetBundlesInput {
     filters?: BundleFilters;
 }
 
+/*
+ * Pagination result types
+ */
 export interface PaginationResult {
     page: number;
     itemsPerPage: number;
@@ -116,17 +167,26 @@ export interface PaginationResult {
     totalPages: number;
 }
 
+/*
+ * Bundles list result types
+ */
 export interface BundlesListResult {
     bundles: any[];
     pagination: PaginationResult;
 }
 
+/*
+ * Bulk update bundle status
+ */
 export interface BulkUpdateBundleStatusInput {
     bundleIds: string[];
     shop: string;
     status: BundleStatus;
 }
 
+/*
+ * Bulk update bundle status result types
+ */
 export interface BulkUpdateBundleStatusResult {
     success: boolean;
     message: string;

@@ -1,3 +1,7 @@
+/*
+ * All Bundle types
+ */
+
 import type {
     Bundle as PrismaBundle,
     BundleStatus as PrismaBundleStatus,

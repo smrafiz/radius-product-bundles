@@ -7,6 +7,9 @@ import {
     SkeletonDisplayText,
 } from "@shopify/polaris";
 
+/**
+ * Bundle table skeleton
+ */
 export function BundleTableSkeleton() {
     return (
         <Card>

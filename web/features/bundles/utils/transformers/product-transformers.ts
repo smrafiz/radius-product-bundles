@@ -1,3 +1,7 @@
+/*
+ * Product transformers
+ */
+
 import { ProductGroup } from "@/features/bundles";
 
 /**

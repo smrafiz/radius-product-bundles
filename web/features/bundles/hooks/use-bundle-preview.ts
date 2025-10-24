@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import { groupProductsById, ProductPreviewGroup } from "@/features/bundles";
 
+/**
+ * Bundle preview
+ */
 export function useBundlePreview(products: ProductPreviewGroup[]) {
     return useMemo(() => {
         const grouped = groupProductsById(products);

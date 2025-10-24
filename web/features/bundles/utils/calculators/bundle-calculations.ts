@@ -1,3 +1,7 @@
+/*
+ * Bundle calculations
+ */
+
 import { Bundle } from "@prisma/client";
 
 /**

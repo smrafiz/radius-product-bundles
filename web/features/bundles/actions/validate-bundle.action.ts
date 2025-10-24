@@ -1,8 +1,10 @@
+"use server";
+
 /**
  * Bundle Validation Actions
+ *
  * Server actions wrapping the validation service
  */
-"use server";
 
 import {
     BundleFormData,
@@ -13,7 +15,6 @@ import { ApiResponse } from "@/shared";
 
 /**
  * Main validation action
- * Use this in your components/forms
  */
 export async function validateBundleAction(
     params: ValidateBundleActionParams

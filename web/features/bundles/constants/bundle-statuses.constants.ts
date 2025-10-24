@@ -1,3 +1,7 @@
+/*
+ * Bundle statuses constants
+ */
+
 import type { BundleStatus, BundleStatusBadge } from "@/features/bundles";
 
 /**

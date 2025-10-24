@@ -8,7 +8,7 @@ import prisma from "@/lib/db/prisma-connect";
 import { AnalyticsMetrics } from "@/features/bundles";
 
 /**
- * Aggregate metrics for dashboard
+ * Aggregate metrics for the dashboard
  *
  * Fetches current period, previous period, and totals in parallel.
  */

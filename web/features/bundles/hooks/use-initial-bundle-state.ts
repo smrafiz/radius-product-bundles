@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Use initial bundle state
+ */
 export function useInitialBundleState({
     hasData,
     isLoading,
