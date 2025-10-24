@@ -1,32 +1,34 @@
 "use client";
 
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useIndexResourceState } from "@shopify/polaris";
 import { useBundleListingStore } from "@/features/bundles";
 import { SelectionType } from "@shopify/polaris/build/ts/src/utilities/index-provider";
 
 export function useBundleSelection(bundles: any[]) {
     const showToast = useBundleListingStore((s) => s.showToast);
+    const safeBundles = Array.isArray(bundles) ? bundles : [];
 
     const resourceIDResolver = (bundle: any) => bundle.id;
-    const indexResourceState = useIndexResourceState(bundles, {
-        resourceIDResolver
+    const indexResourceState = useIndexResourceState(safeBundles, {
+        resourceIDResolver,
     });
 
-    const {
-        selectedResources,
-        allResourcesSelected,
-        handleSelectionChange,
-    } = indexResourceState;
+    const { selectedResources, allResourcesSelected, handleSelectionChange } =
+        indexResourceState;
 
     // Store clearSelection in a ref when it becomes available
     const clearSelectionRef = useRef<(() => void) | null>(null);
 
     // Capture clearSelection when it exists (only when items are selected)
     useEffect(() => {
-        if ("clearSelection" in indexResourceState &&
-            typeof (indexResourceState as any).clearSelection === "function") {
-            clearSelectionRef.current = (indexResourceState as any).clearSelection;
+        if (
+            "clearSelection" in indexResourceState &&
+            typeof (indexResourceState as any).clearSelection === "function"
+        ) {
+            clearSelectionRef.current = (
+                indexResourceState as any
+            ).clearSelection;
         }
     }, [indexResourceState, selectedResources.length]);
 
@@ -49,7 +51,7 @@ export function useBundleSelection(bundles: any[]) {
     // Get selected bundle for single selection
     const selectedBundle =
         selectedResources.length === 1
-            ? bundles.find((bundle) => bundle.id === selectedResources[0])
+            ? safeBundles.find((bundle) => bundle.id === selectedResources[0])
             : null;
 
     return {

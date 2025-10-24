@@ -172,7 +172,6 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                 try {
                     const result = await deleteBundles(sessionToken, bundleIds);
                     if (result.status === "success") {
-                        await refreshBundles();
                         await invalidateBundleCache(queryClient);
                         showToast(
                             result.message || "Selected bundles have been deleted successfully",

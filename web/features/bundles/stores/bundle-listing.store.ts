@@ -29,7 +29,9 @@ export const useBundleListingStore = create<BundleListingState>()(
         queryValue: "",
 
         // Data actions
-        setBundles: (bundles) => set({ bundles }),
+        setBundles: (bundles) => set({
+            bundles: Array.isArray(bundles) ? bundles : []
+        }),
         setMetrics: (metrics) => set({ metrics }),
         setLoading: (loading) => set({ loading }),
         setError: (error) => set({ error }),
@@ -126,8 +128,8 @@ export const useBundleListingStore = create<BundleListingState>()(
         // Computed getters
         getActiveBundlesCount: () => {
             const { bundles } = get();
-            return bundles.filter((bundle) => bundle.status === "ACTIVE")
-                .length;
+            const safeBundles = Array.isArray(bundles) ? bundles : [];
+            return safeBundles.filter((bundle) => bundle.status === "ACTIVE").length;
         },
 
         getTotalBundlesCount: () => {
@@ -165,7 +167,8 @@ export const useBundleListingStore = create<BundleListingState>()(
 
         getFilteredBundles: () => {
             const { bundles, filters } = get();
-            let filtered = [...bundles];
+            const safeBundles = Array.isArray(bundles) ? bundles : [];
+            let filtered = [...safeBundles];
 
             // Apply search filter
             if (filters.search) {
@@ -204,22 +207,26 @@ export const useBundleListingStore = create<BundleListingState>()(
 
         updateBundleInStore: (bundleId, data) =>
             set((state) => {
-                const index = state.bundles.findIndex((b) => b.id === bundleId);
+                const safeBundles = Array.isArray(state.bundles) ? state.bundles : [];
+                const index = safeBundles.findIndex((b) => b.id === bundleId);
                 if (index === -1) return state;
 
-                const updated = { ...state.bundles[index], ...data };
-                const bundles = [...state.bundles];
+                const updated = { ...safeBundles[index], ...data };
+                const bundles = [...safeBundles];
                 bundles[index] = updated;
 
                 return { bundles };
             }),
 
         removeBundleFromStore: (bundleId: string) =>
-            set((state) => ({
-                bundles: state.bundles.filter(
-                    (bundle) => bundle.id !== bundleId,
-                ),
-            })),
+            set((state) => {
+                const safeBundles = Array.isArray(state.bundles) ? state.bundles : [];
+                return {
+                    bundles: safeBundles.filter(
+                        (bundle) => bundle.id !== bundleId,
+                    ),
+                };
+            }),
 
         refreshBundles: async (page: number = 1, itemsPerPage: number = 10) => {
             try {
@@ -230,7 +237,7 @@ export const useBundleListingStore = create<BundleListingState>()(
 
                 if (result.status === "success") {
                     set({
-                        bundles: result.data ?? [],
+                        bundles: Array.isArray(result.data) ? result.data : [], // ✅
                         loading: false,
                         pagination: {
                             ...get().pagination,
@@ -241,12 +248,17 @@ export const useBundleListingStore = create<BundleListingState>()(
                         },
                     });
                 } else {
-                    set({ error: result.message, loading: false });
+                    set({
+                        error: result.message,
+                        loading: false,
+                        bundles: []
+                    });
                 }
             } catch (error: any) {
                 set({
                     error: error.message || "Failed to refresh bundles",
                     loading: false,
+                    bundles: []
                 });
             }
         },

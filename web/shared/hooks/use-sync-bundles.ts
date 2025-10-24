@@ -8,14 +8,15 @@ export function useSyncBundles() {
         (state) => state.bundles,
         useDashboardStore,
         (target, bundles) => {
-            const activeBundlesCount = bundles.filter(
+            const safeBundles = Array.isArray(bundles) ? bundles : [];
+            const activeBundlesCount = safeBundles.filter(
                 (bundle) => bundle.status === "ACTIVE",
             ).length;
-            const totalBundlesCount = bundles.length;
+            const totalBundlesCount = safeBundles.length;
 
             return {
                 ...target,
-                bundles,
+                bundles: safeBundles,
                 metrics: target.metrics
                     ? {
                           ...target.metrics,

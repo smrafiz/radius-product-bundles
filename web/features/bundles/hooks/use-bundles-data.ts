@@ -73,6 +73,7 @@ export const useBundlesData = () => {
         refetch: refetchBundles,
     } = useQuery({
         ...list,
+        placeholderData: (previousData) => previousData,
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false,
     });
@@ -90,7 +91,10 @@ export const useBundlesData = () => {
     // Update store when data changes
     useEffect(() => {
         if (bundlesResponse?.bundles && bundlesResponse?.pagination) {
-            setBundles(bundlesResponse.bundles);
+            // setBundles(bundlesResponse.bundles);
+            if (!bundlesFetching || bundlesResponse.bundles.length > 0) {
+                setBundles(bundlesResponse.bundles);
+            }
             setPaginationMetadata({
                 totalItems: bundlesResponse.pagination.totalItems,
                 totalPages: bundlesResponse.pagination.totalPages,

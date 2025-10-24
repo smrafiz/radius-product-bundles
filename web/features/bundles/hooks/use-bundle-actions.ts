@@ -54,12 +54,11 @@ export function useBundleActions(bundle: BundleListItem | null, clearSelection?:
 
                     if (result.status === "success") {
                         if (result.data?.id) {
-                            await refreshBundles(
-                                pagination.currentPage,
-                                pagination.itemsPerPage,
-                            );
+                            // await refreshBundles(
+                            //     pagination.currentPage,
+                            //     pagination.itemsPerPage,
+                            // );
                             await invalidateBundleCache(queryClient);
-                            console.log(clearSelection);
                             if (clearSelection) {
                                 clearSelection();
                             }
@@ -89,10 +88,6 @@ export function useBundleActions(bundle: BundleListItem | null, clearSelection?:
                     const result = await deleteBundle(token, bundle.id);
 
                     if (result.status === "success") {
-                        await refreshBundles(
-                            pagination.currentPage,
-                            pagination.itemsPerPage,
-                        );
                         await invalidateBundleCache(queryClient);
                         if (clearSelection) {
                             clearSelection();
