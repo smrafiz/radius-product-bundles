@@ -6,7 +6,6 @@ import {
     DashboardBundlesList,
     useDashboardStore,
 } from "@/features/dashboard";
-import { BlockStack, Box, Card } from "@shopify/polaris";
 import { BundleTableSkeleton } from "@/features/bundles";
 
 /**

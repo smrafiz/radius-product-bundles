@@ -2,13 +2,11 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Banner, BlockStack, Layout } from "@shopify/polaris";
-
 import { MessageType } from "@/types";
 import { useGlobalBannerStore } from "@/shared";
 
 const getToneFromType = (
-    type: MessageType,
+    type: MessageType
 ): "success" | "info" | "warning" | "critical" => {
     switch (type) {
         case "success":
@@ -24,9 +22,9 @@ const getToneFromType = (
 };
 
 export function GlobalBanner() {
+
     const pathname = usePathname();
-    const { messages, removeMessage, clearAllMessages } =
-        useGlobalBannerStore();
+    const { messages, removeMessage, clearAllMessages } = useGlobalBannerStore();
 
     useEffect(() => {
         return () => {
@@ -34,9 +32,7 @@ export function GlobalBanner() {
         };
     }, [pathname, clearAllMessages]);
 
-    if (messages.length === 0) {
-        return null;
-    }
+    if (messages.length === 0) return null;
 
     return (
         // <Layout.Section>
@@ -73,14 +69,6 @@ export function GlobalBanner() {
                     key={message.id}
                     heading={message.title}
                     tone={getToneFromType(message.type)}
-                    // action={
-                    //     message.action
-                    //         ? {
-                    //               content: message.action.label,
-                    //               onAction: message.action.onAction,
-                    //           }
-                    //         : undefined
-                    // }
                     onDismiss={
                         message.dismissible
                             ? () => removeMessage(message.id)
@@ -88,6 +76,16 @@ export function GlobalBanner() {
                     }
                 >
                     {message.content}
+
+                    {message.action && (
+                        <s-button
+                            slot="action"
+                            variant="primary"
+                            onClick={message.action.onAction}
+                        >
+                            {message.action.label}
+                        </s-button>
+                    )}
                 </s-banner>
             ))}
         </s-stack>
