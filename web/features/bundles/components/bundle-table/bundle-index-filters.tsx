@@ -11,81 +11,53 @@ import {
     BUNDLE_SORT_OPTIONS,
     BUNDLE_STATUS_FILTER_OPTIONS,
     BUNDLE_TYPE_FILTER_OPTIONS,
-    useBundleListingStore,
+    BundleStatus,
+    useBundleFilters,
 } from "@/features/bundles";
-import { useDebounce } from "@/shared";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import type { IndexFiltersProps } from "@shopify/polaris";
+import { BundleType } from "@prisma/client";
 
 export function BundleIndexFilters({ loading }: { loading?: boolean }) {
+    const { mode, setMode } = useSetIndexFiltersMode();
     const {
         filters,
+        queryValue,
+        setQueryValue,
         setSearch,
         setStatusFilter,
         setTypeFilter,
         setSelectedTab,
         setSortSelected,
         clearFilters,
-    } = useBundleListingStore();
+    } = useBundleFilters();
 
-    const { mode, setMode } = useSetIndexFiltersMode();
-
-    // Local state for immediate UI update
-    const [queryValue, setQueryValue] = useState(filters.search);
-
-    // Debounce the search query
-    const debouncedQuery = useDebounce(
-        queryValue,
-        BUNDLE_FILTERS.search.debounceMs,
-    );
-
-    // Update store when debounced value changes
-    useEffect(() => {
-        setSearch(debouncedQuery);
-    }, [debouncedQuery, setSearch]);
-
-    // Sync with store when cleared externally
-    useEffect(() => {
-        if (filters.search === "" && queryValue !== "") {
-            setQueryValue("");
-        }
-    }, [filters.search]);
-
-    // Tabs from config
     const tabs = BUNDLE_FILTERS.tabs.items.map((item, index) => ({
         content: item,
         index,
-        onAction: () => {},
         id: `${item}-${index}`,
         isLocked: true,
-        actions: [],
     }));
 
-    // Filter handlers
-    const handleQueryChange = useCallback((value: string) => {
-        setQueryValue(value);
-    }, []);
-
-    const handleQueryClear = useCallback(() => {
+    const handleQueryClear = () => {
         setQueryValue("");
         setSearch("");
-    }, [setSearch]);
+    };
 
     const handleCancel = useCallback(() => {
         setMode("DEFAULT" as IndexFiltersMode);
     }, [setMode]);
 
-    // Filter configuration
     const filterConfigs = [
         {
             key: BUNDLE_FILTERS.status.key,
             label: BUNDLE_FILTERS.status.label,
             filter: (
                 <ChoiceList
-                    title={BUNDLE_FILTERS.status.label}
                     titleHidden
+                    title={BUNDLE_FILTERS.status.label}
                     choices={BUNDLE_FILTERS.status.options}
-                    selected={filters.statusFilter}
+                    selected={filters.statusFilter as BundleStatus[]}
                     onChange={setStatusFilter}
                     allowMultiple
                 />
@@ -97,10 +69,10 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
             label: BUNDLE_FILTERS.type.label,
             filter: (
                 <ChoiceList
-                    title={BUNDLE_FILTERS.type.label}
                     titleHidden
+                    title={BUNDLE_FILTERS.type.label}
                     choices={BUNDLE_FILTERS.type.options}
-                    selected={filters.typeFilter}
+                    selected={filters.typeFilter as BundleType[]}
                     onChange={setTypeFilter}
                     allowMultiple
                 />
@@ -109,16 +81,12 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
         },
     ];
 
-    // Applied filters with proper labels from config
     const appliedFilters: IndexFiltersProps["appliedFilters"] = [];
 
-    if (filters.statusFilter.length > 0) {
-        const statusLabels = filters.statusFilter.map((val) => {
-            const option = BUNDLE_STATUS_FILTER_OPTIONS.find(
-                (opt) => opt.value === val,
-            );
-            return option ? option.label : val;
-        });
+    if (filters.statusFilter && filters.statusFilter.length > 0) {
+        const statusLabels = filters.statusFilter.map(
+            (val) => BUNDLE_STATUS_FILTER_OPTIONS.find((opt) => opt.value === val)?.label ?? val
+        );
         appliedFilters.push({
             key: "bundleStatus",
             label: `Status: ${statusLabels.join(", ")}`,
@@ -126,13 +94,10 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
         });
     }
 
-    if (filters.typeFilter.length > 0) {
-        const typeLabels = filters.typeFilter.map((val) => {
-            const option = BUNDLE_TYPE_FILTER_OPTIONS.find(
-                (opt) => opt.value === val,
-            );
-            return option ? option.label : val;
-        });
+    if (filters.typeFilter && filters.typeFilter.length > 0) {
+        const typeLabels = filters.typeFilter.map(
+            (val) => BUNDLE_TYPE_FILTER_OPTIONS.find((opt) => opt.value === val)?.label ?? val
+        );
         appliedFilters.push({
             key: "bundleType",
             label: `Type: ${typeLabels.join(", ")}`,
@@ -146,17 +111,12 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
             sortSelected={filters.sortSelected}
             queryValue={queryValue}
             queryPlaceholder={BUNDLE_FILTERS.search.placeholder}
-            onQueryChange={handleQueryChange}
+            onQueryChange={setQueryValue}
             onQueryClear={handleQueryClear}
             onSort={setSortSelected}
-            primaryAction={undefined}
-            cancelAction={{
-                onAction: handleCancel,
-                disabled: false,
-                loading: false,
-            }}
+            cancelAction={{ onAction: handleCancel }}
             tabs={tabs}
-            selected={filters.selectedTab}
+            selected={filters.selectedTab as number}
             onSelect={setSelectedTab}
             canCreateNewView={false}
             filters={filterConfigs}

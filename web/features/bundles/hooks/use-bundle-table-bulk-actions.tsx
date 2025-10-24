@@ -9,19 +9,15 @@ import {
 import {
     bulkToggleBundleStatus,
     BundleStatus,
+    deleteBundles,
     invalidateBundleCache,
     updateBundleStatus,
     useBundleListingStore,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
-// import {
-//     bulkToggleBundleStatus,
-//     deleteBundles,
-//     toggleBundleStatus,
-// } from "@/actions/bundle/mutate.actions";
 
-export function useBundleTableBulkActions() {
+export function useBundleTableBulkActions(clearSelection?: () => void) {
     const queryClient = useQueryClient();
     const { refreshBundles } = useBundleListingStore();
     const { showError } = useGlobalBanner();
@@ -30,15 +26,19 @@ export function useBundleTableBulkActions() {
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
     );
-    const pagination = useBundleListingStore((s) => s.pagination);
     const showToast = useBundleListingStore((s) => s.showToast);
 
+    /**
+     * Toggle bundle status (ACTIVE ↔ DRAFT)
+     */
     const handleToggleBundleStatus = (
         bundleId: string,
         currentStatus: BundleStatus,
         bundleName: string,
     ) => {
-        if (!sessionToken) return;
+        if (!sessionToken) {
+            return;
+        }
 
         const newStatus: BundleStatus =
             currentStatus === "ACTIVE" ? "DRAFT" : "ACTIVE";
@@ -79,9 +79,13 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // 🔹 Bulk activate
+    /**
+     * Bulk activate bundles
+     */
     const handleBulkActivate = (bundleIds: string[]) => {
-        if (!sessionToken) return;
+        if (!sessionToken) {
+            return;
+        }
 
         openModal({
             type: "status",
@@ -97,7 +101,7 @@ export function useBundleTableBulkActions() {
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            `${result.data.updatedCount} bundles activated`,
+                            result.message || `${result.data.updatedCount} bundles activated`,
                         );
                     } else {
                         showError("Bulk activation failed", {
@@ -115,7 +119,9 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // 🔹 Bulk draft
+    /**
+     * Bulk draft bundles
+     */
     const handleBulkDraft = (bundleIds: string[]) => {
         if (!sessionToken) return;
 
@@ -132,10 +138,9 @@ export function useBundleTableBulkActions() {
                         "DRAFT",
                     );
                     if (result.status === "success") {
-                        await refreshBundles();
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            `${result.data.updatedCount} bundles set as draft`,
+                            result.message || `${result.data.updatedCount} bundles set as draft`,
                         );
                     } else {
                         showError("Bulk draft failed", {
@@ -153,7 +158,9 @@ export function useBundleTableBulkActions() {
         });
     };
 
-    // 🔹 Bulk delete
+    /*
+     * Bulk delete bundles
+     */
     const handleBulkDelete = (bundleIds: string[]) => {
         if (!sessionToken) return;
 
@@ -165,11 +172,13 @@ export function useBundleTableBulkActions() {
                 try {
                     const result = await deleteBundles(sessionToken, bundleIds);
                     if (result.status === "success") {
-                        await refreshBundles();
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            "Selected bundles have been deleted successfully",
+                            result.message || "Selected bundles have been deleted successfully",
                         );
+                        if (clearSelection) {
+                            clearSelection();
+                        }
                     } else {
                         showError("Bulk delete failed", {
                             content: result.message,
@@ -186,6 +195,9 @@ export function useBundleTableBulkActions() {
         });
     };
 
+    /**
+     * Get bulk actions for promoted rows
+     */
     const getPromotedBulkActions = (
         selectedResources: string[],
         selectedBundle: any,
@@ -228,7 +240,9 @@ export function useBundleTableBulkActions() {
         return actions;
     };
 
-    // Dropdown bulk actions
+    /*
+     * Get bulk actions for non-promoted rows
+     */
     const getBulkActions = (
         selectedResources: string[],
         selectedBundle: any,

@@ -16,7 +16,7 @@ import { countBundlesByShop, findBundleByIdWithAllRelations, findBundlesByShop, 
 /**
  * Get bundles list with filters and pagination
  */
-export async function getBundlesList(
+export async function getBundlesListService(
     input: GetBundlesInput,
 ): Promise<BundlesListResult> {
     const { shop, sessionToken, pagination, filters } = input;
@@ -48,7 +48,7 @@ export async function getBundlesList(
     // Early return if no bundles
     if (!bundles.length) {
         return {
-            data: [],
+            bundles: [],
             pagination: paginationResult,
         };
     }
@@ -67,13 +67,13 @@ export async function getBundlesList(
     );
 
     return {
-        data: transformedBundles,
+        bundles: transformedBundles,
         pagination: paginationResult,
     };
 }
 
 /**
- * Get single bundle with details
+ * Get a single bundle with details
  */
 export async function getBundleDetails(input: {
     bundleId: string;

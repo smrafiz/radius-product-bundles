@@ -17,8 +17,11 @@ export const dashboardQueries = (app: ReturnType<typeof useAppBridge>) => ({
                 throw new Error(result.message);
             }
 
-            return result.data ?? [];
+            return result.data?.bundles ?? [];
         },
+        staleTime: 5 * 60 * 1000,
+        cacheTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
     },
     metrics: {
         queryKey: dashboardQueryKeys.metrics(),
@@ -32,5 +35,8 @@ export const dashboardQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
             return result.data ?? {};
         },
+        staleTime: 10 * 60 * 1000,
+        cacheTime: 15 * 60 * 1000,
+        refetchOnWindowFocus: false,
     },
 });

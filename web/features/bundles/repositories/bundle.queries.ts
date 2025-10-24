@@ -109,13 +109,17 @@ export async function findBundlesByProductId(
 }
 
 /**
- * Find multiple bundles by IDs
+ * Find multiple bundles of IDs
  */
 export async function findBundlesByIds(
     bundleIds: string[],
     shop: string,
     tx?: Prisma.TransactionClient
 ) {
+    if (!bundleIds.length) {
+        return [];
+    }
+
     const client = tx || prisma;
 
     return await client.bundle.findMany({

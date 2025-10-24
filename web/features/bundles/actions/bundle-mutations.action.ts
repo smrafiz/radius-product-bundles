@@ -4,8 +4,10 @@ import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify/verify";
 import {
-    bulkUpdateBundleStatusService,
+    bulkActivateBundlesService,
+    bulkDraftBundlesService,
     BundleStatus,
+    deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
     updateBundleStatusService,
@@ -34,7 +36,7 @@ export async function updateBundleStatus(
         revalidatePath(`/bundles/${bundleId}`);
 
         return {
-            status: "success",
+            status: "success" as const,
             message: result.message || "Bundle status updated successfully",
             data: result.bundle,
         };
@@ -58,29 +60,24 @@ export async function updateBundleStatus(
 export async function bulkToggleBundleStatus(
     sessionToken: string,
     bundleIds: string[],
-    newStatus: "ACTIVE" | "DRAFT",
+    currentStatus: "ACTIVE" | "DRAFT",
 ): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await bulkUpdateBundleStatusService({
-            bundleIds,
-            shop,
-            newStatus,
-        });
+        const result =
+            currentStatus === "ACTIVE"
+                ? await bulkActivateBundlesService({ bundleIds, shop })
+                : await bulkDraftBundlesService({ bundleIds, shop });
 
         revalidatePath("/bundles");
 
         return {
             status: "success" as const,
-            message: `Bundle ${newStatus.toLowerCase()} successfully`,
-            data: {
-                id: result.id,
-                name: result.name,
-                status: result.status,
-            },
+            message: result.message || `Bundles set to ${currentStatus.toLowerCase()}`,
+            data: result,
         };
     } catch (error) {
         console.error("[bulkUpdateBundleStatus] Error:", error);
@@ -131,6 +128,57 @@ export async function deleteBundle(
             status: "error" as const,
             message: errorMessage || "Failed to delete bundle",
             data: undefined,
+            errors: [errorMessage],
+        };
+    }
+}
+
+/**
+ * Delete multiple bundles
+ */
+export async function deleteBundles(
+    sessionToken: string,
+    bundleIds: string[]
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        if (!bundleIds || bundleIds.length === 0) {
+            return {
+                status: "error",
+                message: "No bundle IDs provided",
+                data: null,
+            };
+        }
+
+        const result = await deleteMultipleBundles({
+            bundleIds,
+            shop,
+        });
+
+        revalidatePath("/bundles");
+
+        if (bundleIds.length <= 10) {
+            bundleIds.forEach((bundleId) => {
+                revalidatePath(`/bundles/${bundleId}`);
+            });
+        }
+
+        return {
+            status: "success" as const,
+            ...result
+        };
+    } catch (error) {
+        console.error("[deleteMultipleBundles] Error:", error);
+        const errorMessage =
+            error instanceof Error ? error.message : String(error);
+
+        return {
+            status: "error",
+            message: errorMessage || "Failed to delete bundles",
+            data: null,
             errors: [errorMessage],
         };
     }

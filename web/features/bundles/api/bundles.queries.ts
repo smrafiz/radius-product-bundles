@@ -31,10 +31,13 @@ export const bundlesQueries = (
             }
 
             return {
-                bundles: result.data as BundleListItem[],
-                pagination: result.pagination,
+                bundles: result.data?.bundles as BundleListItem[],
+                pagination: result.data?.pagination,
             };
         },
+        staleTime: 5 * 60 * 1000,
+        cacheTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
     },
     metrics: {
         queryKey: bundlesQueryKeys.metrics(),
@@ -48,5 +51,8 @@ export const bundlesQueries = (
 
             return result.data as BundleMetricsData;
         },
+        staleTime: 10 * 60 * 1000,
+        cacheTime: 15 * 60 * 1000,
+        refetchOnWindowFocus: false,
     },
 });

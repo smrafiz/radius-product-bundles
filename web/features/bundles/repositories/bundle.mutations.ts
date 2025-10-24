@@ -125,7 +125,7 @@ export async function updateBundleById(
 }
 
 /**
- * Update bundle status by ID (standalone - manages own transaction)
+ * Update bundle status by ID (standalone)
  */
 export async function updateBundleStatusById(
     id: string,
@@ -400,7 +400,7 @@ export async function deleteBundleWithRelations(
             };
         },
         {
-            timeout: 10000, // 10 second timeout
+            timeout: 10000, // 10-second timeout
         },
     );
 }
@@ -414,26 +414,25 @@ export async function deleteBundlesWithRelations(
 ): Promise<DeleteBundleResult[]> {
     return await prisma.$transaction(
         async (tx) => {
-            // Step 1: Verify all bundles exist and are owned
+            // Verify all bundles exist and are owned
             const bundles = await verifyMultipleBundlesOwnershipTx(
                 tx,
                 bundleIds,
                 shop,
             );
 
-            // Step 2: Delete all related records in parallel
+            // Delete all related records in parallel
             await deleteAllBundleRelationsForMany(tx, bundleIds);
 
-            // Step 3: Delete all bundles
+            // Delete all bundles
             await tx.bundle.deleteMany({
                 where: { id: { in: bundleIds } },
             });
 
-            // Step 4: Return deleted bundles info
             return bundles;
         },
         {
-            timeout: 15000, // 15 second timeout for bulk operations
+            timeout: 15000, // 15-second timeout
         },
     );
 }

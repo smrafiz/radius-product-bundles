@@ -2,7 +2,9 @@
 
 import {
     BUNDLE_FILTERS,
+    BUNDLE_STATUSES,
     bundlesQueries,
+    BundleStatus,
     useBundleListingStore,
 } from "@/features/bundles";
 import { useEffect, useMemo } from "react";
@@ -22,24 +24,31 @@ export const useBundlesData = () => {
     } = useBundleListingStore();
 
     // Parse sort from filters
-    const [sortBy, sortDirection] = filters.sortSelected[0]?.split(" ") || [
-        "createdAt",
-        "desc",
-    ];
+    const sortValue = filters.sortSelected?.[0] || "createdAt desc";
+    const [sortBy, sortDirection] = sortValue.split(" ");
 
-    const effectiveStatusFilter = useMemo(() => {
-        const tabStatus = BUNDLE_FILTERS.tabs.statusMap[filters.selectedTab];
+    const VALID_STATUSES = Object.keys(BUNDLE_STATUSES) as BundleStatus[];
 
-        if (tabStatus === "ALL") {
+    const effectiveStatusFilter = useMemo((): BundleStatus[] => {
+        const tabStatus =
+            filters.selectedTab !== undefined
+                ? BUNDLE_FILTERS.tabs.statusMap[filters.selectedTab]
+                : undefined;
+
+        if (filters.statusFilter && filters.statusFilter.length > 0) {
+            return filters.statusFilter.filter(
+                (status): status is BundleStatus =>
+                    VALID_STATUSES.includes(status as BundleStatus)
+            );
+        }
+
+        if (!tabStatus || tabStatus === "ALL") {
             return [];
         }
 
-        if (filters.statusFilter.length > 0) {
-            return filters.statusFilter;
-        }
-
-        // Otherwise, use the status from the selected tab
-        return [tabStatus];
+        return VALID_STATUSES.includes(tabStatus as BundleStatus)
+            ? [tabStatus as BundleStatus]
+            : [];
     }, [filters.selectedTab, filters.statusFilter]);
 
     const { list, metrics } = bundlesQueries(
@@ -64,6 +73,7 @@ export const useBundlesData = () => {
         refetch: refetchBundles,
     } = useQuery({
         ...list,
+        placeholderData: (previousData) => previousData,
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false,
     });
@@ -81,7 +91,10 @@ export const useBundlesData = () => {
     // Update store when data changes
     useEffect(() => {
         if (bundlesResponse?.bundles && bundlesResponse?.pagination) {
-            setBundles(bundlesResponse.bundles);
+            // setBundles(bundlesResponse.bundles);
+            if (!bundlesFetching || bundlesResponse.bundles.length > 0) {
+                setBundles(bundlesResponse.bundles);
+            }
             setPaginationMetadata({
                 totalItems: bundlesResponse.pagination.totalItems,
                 totalPages: bundlesResponse.pagination.totalPages,

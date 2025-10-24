@@ -14,6 +14,7 @@ import {
     useBundleActions,
     useBundleListingStore,
     useBundlesData,
+    useBundleSelection,
     useBundleTableBulkActions,
 } from "@/features/bundles";
 import { useCallback } from "react";
@@ -22,6 +23,14 @@ export function BundleTable() {
     const breakpoints = useBreakpoints();
     const { bundles, pagination, filters, showToast } = useBundleListingStore();
     const { isFetching } = useBundlesData();
+    const safeBundles = Array.isArray(bundles) ? bundles : [];
+    const {
+        selectedResources,
+        clearSelection,
+        selectedBundle,
+        allResourcesSelected,
+        handleSelectionChange,
+    } = useBundleSelection(safeBundles);
 
     // Check if any filters are active
     const hasActiveFilters =
@@ -33,27 +42,13 @@ export function BundleTable() {
     // For empty state logic
     const totalBundles = pagination.totalItems;
 
-    // Selection state
-    const resourceIDResolver = (bundle: any) => bundle.id;
-    const {
-        selectedResources,
-        allResourcesSelected,
-        handleSelectionChange,
-        clearSelection,
-    } = useIndexResourceState(bundles, { resourceIDResolver });
-
-    // Get selected bundle for single selection
-    const selectedBundle =
-        selectedResources.length === 1
-            ? bundles.find((bundle) => bundle.id === selectedResources[0])
-            : null;
-
     const { actions: selectedBundleActions } = useBundleActions(
-        selectedBundle || (bundles.length > 0 ? bundles[0] : null),
+        selectedBundle || (safeBundles.length > 0 ? safeBundles[0] : null),
+        clearSelection,
     );
 
     const { getPromotedBulkActions, getBulkActions } =
-        useBundleTableBulkActions();
+        useBundleTableBulkActions(clearSelection);
 
     // Handle clear selection
     const handleClearSelection = useCallback(() => {
@@ -82,7 +77,7 @@ export function BundleTable() {
     );
 
     // Check for empty states
-    if (bundles.length === 0) {
+    if (safeBundles.length === 0) {
         return (
             <Card padding="0">
                 <BundleIndexFilters loading={isFetching} />
@@ -96,7 +91,7 @@ export function BundleTable() {
     }
 
     // Render table rows
-    const rowMarkup = bundles.map((bundle, index) => (
+    const rowMarkup = safeBundles.map((bundle, index) => (
         <BundleTableRow
             key={bundle.id}
             bundle={bundle}
@@ -111,7 +106,7 @@ export function BundleTable() {
             <IndexTable
                 condensed={breakpoints.smDown}
                 resourceName={{ singular: "bundle", plural: "bundles" }}
-                itemCount={bundles.length}
+                itemCount={safeBundles.length}
                 selectedItemsCount={
                     allResourcesSelected ? "All" : selectedResources.length
                 }

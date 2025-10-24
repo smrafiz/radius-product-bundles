@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-export function useBundleActions(bundle: BundleListItem | null) {
+export function useBundleActions(bundle: BundleListItem | null, clearSelection?: () => void) {
     const app = useAppBridge();
     const router = useRouter();
     const queryClient = useQueryClient();
@@ -54,11 +54,14 @@ export function useBundleActions(bundle: BundleListItem | null) {
 
                     if (result.status === "success") {
                         if (result.data?.id) {
-                            await refreshBundles(
-                                pagination.currentPage,
-                                pagination.itemsPerPage,
-                            );
+                            // await refreshBundles(
+                            //     pagination.currentPage,
+                            //     pagination.itemsPerPage,
+                            // );
                             await invalidateBundleCache(queryClient);
+                            if (clearSelection) {
+                                clearSelection();
+                            }
                             showToast(
                                 result.message ??
                                     "Bundle duplicated successfully",
@@ -85,11 +88,10 @@ export function useBundleActions(bundle: BundleListItem | null) {
                     const result = await deleteBundle(token, bundle.id);
 
                     if (result.status === "success") {
-                        await refreshBundles(
-                            pagination.currentPage,
-                            pagination.itemsPerPage,
-                        );
                         await invalidateBundleCache(queryClient);
+                        if (clearSelection) {
+                            clearSelection();
+                        }
                         showToast(
                             result.message ?? "Bundle deleted successfully",
                         );
