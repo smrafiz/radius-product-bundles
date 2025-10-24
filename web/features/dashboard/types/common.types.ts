@@ -1,5 +1,5 @@
 /**
- * Common dashboard utility types
+ * Common dashboard types
  */
 
 /**

@@ -18,6 +18,9 @@ import {
 import { DashboardBundlesListProps } from "@/features/dashboard";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 
+/*
+ * Dashboard bundles list
+ */
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();
 

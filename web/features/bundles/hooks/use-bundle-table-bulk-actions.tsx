@@ -64,7 +64,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                             status: result.data.status,
                         });
                         await invalidateBundleCache(queryClient);
-                        showToast(result.message);
+                        showToast(result.message || 'Bundle status updated successfully');
                     } else {
                         showError("Status update failed", {
                             content: result.message,

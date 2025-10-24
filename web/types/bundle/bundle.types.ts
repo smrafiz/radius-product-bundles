@@ -5,8 +5,8 @@ import type {
 } from "@prisma/client";
 import { BundleFormData } from "@/lib/validation";
 
-import { type DashboardMetrics } from "@/types";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
+import { DashboardMetrics } from "@/types/metrics";
 
 /*
  * Type aliases for Prisma enums

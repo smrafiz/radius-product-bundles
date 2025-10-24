@@ -12,6 +12,22 @@ export type BundleStatus = PrismaBundleStatus;
 export type BundleType = PrismaBundleType;
 export type DiscountType = PrismaDiscountType;
 
+/*
+ * Bundle types
+ */
+export interface Bundle {
+    id: string;
+    name: string;
+    type: PrismaBundleType;
+    status: PrismaBundleStatus;
+    views: number;
+    conversions: number;
+    revenue: number;
+    conversionRate: number;
+    productCount: number;
+    createdAt: string;
+}
+
 /**
  * Bundle for list display
  */

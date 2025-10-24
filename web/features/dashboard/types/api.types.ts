@@ -2,9 +2,9 @@
  * Dashboard API types
  */
 
-import type { BundleListItem } from "@/features/bundles/types";
-import type { DashboardMetricsRaw } from "./metrics.types";
-import type { ApiResponse } from "@/shared/types";
+import type { ApiResponse } from "@/shared";
+import type { BundleListItem } from "@/features/bundles";
+import { DashboardMetricsRaw } from "@/features/dashboard";
 
 /**
  * Dashboard data API response
@@ -21,7 +21,7 @@ export interface DashboardDataResponse {
 export type GetDashboardDataResponse = ApiResponse<DashboardDataResponse>;
 
 /**
- * Dashboard overview API response
+ * Dashboard overviews API response
  */
 export interface DashboardOverviewResponse {
     summary: DashboardSummary;

@@ -1,13 +1,19 @@
 /**
- * Dashboard component prop types
+ * Dashboard component types
  */
+import { Bundle } from "@/features/bundles";
 import { IconSource } from "@shopify/polaris";
-import { Bundle } from "@/types";
 
+/**
+ * Dashboard bundles list props
+ */
 export interface DashboardBundlesListProps {
     bundles: Bundle[];
 }
 
+/**
+ * Dashboard quick action item
+ */
 export interface DashboardQuickActionItem {
     id: string;
     title: string;
