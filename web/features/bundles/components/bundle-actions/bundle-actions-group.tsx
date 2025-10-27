@@ -2,9 +2,15 @@
 
 import { useModalStore } from "@/shared";
 import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
-import { BundleActionsGroupProps, BUNDLE_LISTING_ACTIONS } from "@/features/bundles";
+import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps } from "@/features/bundles";
 
-export function BundleActionsGroup({ bundle, onAction }: BundleActionsGroupProps) {
+/**
+ * Bundle actions group
+ */
+export function BundleActionsGroup({
+    bundle,
+    onAction,
+}: BundleActionsGroupProps) {
     const { openModal } = useModalStore();
 
     const handleActionClick = (actionKey: string) => {
@@ -12,9 +18,11 @@ export function BundleActionsGroup({ bundle, onAction }: BundleActionsGroupProps
             case "edit":
                 onAction.edit();
                 break;
+
             case "view":
                 onAction.view();
                 break;
+
             case "duplicate":
                 openModal({
                     type: "duplicate",
@@ -24,6 +32,7 @@ export function BundleActionsGroup({ bundle, onAction }: BundleActionsGroupProps
                     },
                 });
                 break;
+
             case "delete":
                 openModal({
                     type: "delete",

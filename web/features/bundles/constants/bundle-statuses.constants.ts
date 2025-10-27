@@ -1,8 +1,4 @@
-import type {
-    BundleStatus,
-    BundleStatusBadge,
-    BundleStatusBadgeNew,
-} from "@/features/bundles";
+import type { BundleStatus, BundleStatusBadgeNew } from "@/features/bundles";
 
 /**
  * Bundle status badge configurations

@@ -1,6 +1,13 @@
+/*
+ * Repository types
+ */
+
 import { Prisma } from "@prisma/client";
 import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
 
+/*
+ * Bundle repository types
+ */
 export interface CreateBundleInput {
     shop: string;
     name: string;
@@ -32,6 +39,9 @@ export interface CreateBundleInput {
     endDate?: Date | null;
 }
 
+/*
+ * Bundle update input
+ */
 export interface UpdateBundleInput {
     name?: string;
     description?: string | null;
@@ -45,6 +55,21 @@ export interface UpdateBundleInput {
     endDate?: Date | null;
 }
 
+/*
+ * Bundle product input
+ */
+export interface BundleProductInput {
+    productId: string;
+    variantId?: string | null;
+    quantity: number;
+    role?: "INCLUDED" | "OPTIONAL";
+    groupId?: string | null;
+    customPrice?: number | null;
+}
+
+/*
+ * Find by shop options
+ */
 export interface FindByShopOptions {
     search?: string;
     status?: BundleStatus[];
@@ -55,12 +80,18 @@ export interface FindByShopOptions {
     orderDirection?: "asc" | "desc";
 }
 
+/*
+ * Find by shop filters
+ */
 export interface FindByShopFilters {
     search?: string;
     status?: BundleStatus[];
     type?: BundleType[];
 }
 
+/*
+ * Bundle product group create input
+ */
 export interface BundleProductGroupCreateInput {
     name: string;
     description?: string | null;
@@ -69,12 +100,18 @@ export interface BundleProductGroupCreateInput {
     displayOrder?: number;
 }
 
+/*
+ * Bundle ownership check
+ */
 export interface BundleOwnershipCheck {
     id: string;
     name: string;
     shop: string;
 }
 
+/*
+ * Bundle analytics metrics
+ */
 export interface AnalyticsMetrics {
     currentPeriod: {
         _sum: {

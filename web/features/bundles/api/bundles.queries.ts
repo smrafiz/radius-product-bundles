@@ -12,7 +12,7 @@ import {
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 /**
- * Dashboard queries
+ * Bundles queries
  */
 export const bundlesQueries = (
     app: ReturnType<typeof useAppBridge>,
@@ -39,6 +39,7 @@ export const bundlesQueries = (
         cacheTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     },
+
     metrics: {
         queryKey: bundlesQueryKeys.metrics(),
         queryFn: async () => {

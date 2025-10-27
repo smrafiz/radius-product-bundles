@@ -1,13 +1,21 @@
 /**
- * Dashboard component prop types
+ * Dashboard component types
  */
-import { Bundle } from "@prisma/client";
-import { CalloutButtonProps, PolarisIconTypes } from "@/shared";
+import { Bundle } from "@/features/bundles";
+import { IconSource } from "@shopify/polaris";
+import { CalloutButtonProps } from "@/shared";
 
+
+/**
+ * Dashboard bundles list props
+ */
 export interface DashboardBundlesListProps {
     bundles: Bundle[];
 }
 
+/**
+ * Dashboard quick action item
+ */
 export interface DashboardQuickActionItem {
     id: string;
     title: string;
@@ -24,6 +32,6 @@ export interface DashboardQuickActionItem {
 export interface DashboardCalloutCardsItem {
     title: string;
     description: string;
-    icon: PolarisIconTypes;
+    icon: IconSource;
     primaryButton?: CalloutButtonProps | null;
 }

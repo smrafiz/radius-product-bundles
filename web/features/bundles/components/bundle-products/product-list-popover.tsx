@@ -9,6 +9,9 @@ import {
 } from "@shopify/polaris";
 import { ProductListPopoverProps } from "@/features/bundles";
 
+/**
+ * Product list popover
+ */
 export function ProductListPopover({ products }: ProductListPopoverProps) {
     return (
         <Box padding="200" minWidth="280px">

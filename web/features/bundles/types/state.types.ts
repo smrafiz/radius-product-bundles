@@ -1,3 +1,7 @@
+/*
+ * Bundle listing state types
+ */
+
 import {
     BundleFilters,
     BundleListItem,
@@ -8,6 +12,9 @@ import {
     Toast,
 } from "@/features/bundles";
 
+/*
+ * Bundle listing state types
+ */
 export interface BundleListingState {
     // Data
     bundles: BundleListItem[];

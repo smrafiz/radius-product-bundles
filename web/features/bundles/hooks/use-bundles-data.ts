@@ -11,6 +11,9 @@ import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
+/**
+ * Get bundles data
+ */
 export const useBundlesData = () => {
     const app = useAppBridge();
     const {

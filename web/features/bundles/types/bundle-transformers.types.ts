@@ -1,5 +1,12 @@
+/*
+ * Bundle transformers types
+ */
+
 import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
 
+/*
+ * Bundle transformers
+ */
 export interface TransformedProduct {
     id: string;
     title: string;
@@ -11,6 +18,9 @@ export interface TransformedProduct {
     displayOrder: number;
 }
 
+/*
+ * Bundle variant transformer
+ */
 export interface TransformedVariant {
     id: string;
     title: string;
@@ -18,6 +28,9 @@ export interface TransformedVariant {
     compareAtPrice: number;
 }
 
+/*
+ * Bundle transformer
+ */
 export interface TransformedBundleBase {
     id: string;
     name: string;
@@ -36,6 +49,9 @@ export interface TransformedBundleBase {
     products: TransformedProduct[];
 }
 
+/*
+ * Bundle transformer with description
+ */
 export interface TransformedBundle extends TransformedBundleBase {
     description: string | null;
     minOrderValue: number | null;
@@ -44,4 +60,7 @@ export interface TransformedBundle extends TransformedBundleBase {
     endDate: string | null;
 }
 
+/*
+ * Bundle listing transformer
+ */
 export type TransformedBundleListing = TransformedBundleBase[];

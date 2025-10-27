@@ -1,5 +1,8 @@
 import { useBundleStore, useBundleValidation } from "@/features/bundles";
 
+/**
+ * Step navigation
+ */
 export function useStepNavigation() {
     const {
         currentStep,

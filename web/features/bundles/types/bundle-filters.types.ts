@@ -1,3 +1,7 @@
+/*
+ * Bundle filters types
+ */
+
 import { BundleStatus, BundleType } from "./bundle.types";
 
 /**

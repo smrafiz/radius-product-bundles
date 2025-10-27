@@ -4,6 +4,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { Box, Button, ButtonGroup, Card } from "@shopify/polaris";
 import { ColorIcon, DiscountIcon, OrderIcon } from "@shopify/polaris-icons";
 
+/**
+ * Bundle navigation
+ */
 export function BundleNavigation() {
     const router = useRouter();
     const pathname = usePathname();

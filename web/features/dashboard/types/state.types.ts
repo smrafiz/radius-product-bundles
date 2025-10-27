@@ -1,8 +1,12 @@
-import { Bundle } from "@/types";
+/**
+ * Dashboard state types
+ */
+
+import { Bundle } from "@/features/bundles";
 import { DashboardMetricsData } from "@/features/dashboard";
 
 /**
- * Main dashboard store state
+ * Dashboard state
  */
 export interface DashboardState {
     bundles: Bundle[];

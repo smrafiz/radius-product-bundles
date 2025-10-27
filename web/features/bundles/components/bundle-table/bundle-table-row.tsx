@@ -13,6 +13,9 @@ import {
 import { useShopSettings } from "@/shared";
 import { Box, IndexTable, Link, Text } from "@shopify/polaris";
 
+/**
+ * Bundle table row
+ */
 export function BundleTableRow({
     bundle,
     index,

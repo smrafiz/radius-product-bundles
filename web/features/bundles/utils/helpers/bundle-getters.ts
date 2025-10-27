@@ -1,3 +1,7 @@
+/*
+ * Bundle getters
+ */
+
 import {
     BUNDLE_STATUSES,
     BUNDLE_TYPES,
@@ -27,6 +31,9 @@ import { Bundle, BundleProduct } from "@prisma/client";
 //     };
 // };
 
+/*
+ * Bundle status badge
+ */
 export const getBundleStatusBadge = (
     status: string | BundleStatusBadge,
 ): BundleStatusBadgeNew => {

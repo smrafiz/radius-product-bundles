@@ -20,10 +20,6 @@ import {
 } from "@/features/bundles";
 import { handleSessionToken } from "@/lib/shopify/verify";
 
-// ==========================================
-// Get Bundles
-// ==========================================
-
 /**
  * Get bundles for a shop
  */
@@ -62,10 +58,6 @@ export async function getBundles(
         };
     }
 }
-
-// ==========================================
-// Get Bundle Metrics
-// ==========================================
 
 /**
  * Get bundle metrics for a shop
@@ -107,10 +99,6 @@ export async function getBundleMetrics(
     }
 }
 
-// ==========================================
-// Get Single Bundle
-// ==========================================
-
 /**
  * Get a single bundle with details
  */
@@ -146,13 +134,3 @@ export async function getBundle(
         };
     }
 }
-
-// ==========================================
-// Get Active Bundles
-// ==========================================
-
-
-
-// ==========================================
-// Get Bundles by Status
-// ==========================================

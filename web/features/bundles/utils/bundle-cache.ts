@@ -1,7 +1,14 @@
+/*
+ * Bundle cache
+ */
+
 import { QueryClient } from "@tanstack/react-query";
 import { bundlesQueryKeys } from "@/features/bundles";
 import { dashboardQueryKeys } from "@/features/dashboard";
 
+/*
+ * Invalidate bundle cache
+ */
 export const invalidateBundleCache = async (queryClient: QueryClient) => {
     await queryClient.invalidateQueries({
         queryKey: bundlesQueryKeys.all,

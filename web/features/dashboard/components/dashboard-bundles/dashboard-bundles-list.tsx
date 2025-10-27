@@ -12,6 +12,9 @@ import {
     getBundleStatusBadge,
 } from "@/features/bundles";
 
+/*
+ * Dashboard bundles list
+ */
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();
     console.log(bundles);

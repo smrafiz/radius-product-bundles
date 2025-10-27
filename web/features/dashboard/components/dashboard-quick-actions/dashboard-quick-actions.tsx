@@ -3,6 +3,9 @@
 import { useAppNavigation } from "@/shared";
 import { getEnabledQuickActions } from "@/features/dashboard";
 
+/*
+ * Dashboard quick actions
+ */
 export const DashboardQuickActions = () => {
     const { goTo } = useAppNavigation();
     const actions = getEnabledQuickActions();

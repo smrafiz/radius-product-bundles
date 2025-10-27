@@ -1,12 +1,6 @@
 "use client";
 
 import {
-    Card,
-    IndexTable,
-    useBreakpoints,
-    useIndexResourceState,
-} from "@shopify/polaris";
-import {
     BundleIndexFilters,
     BundlePagination,
     BundleTableEmptyStates,
@@ -18,7 +12,11 @@ import {
     useBundleTableBulkActions,
 } from "@/features/bundles";
 import { useCallback } from "react";
+import { Card, IndexTable, useBreakpoints } from "@shopify/polaris";
 
+/**
+ * Bundle table
+ */
 export function BundleTable() {
     const breakpoints = useBreakpoints();
     const { bundles, pagination, filters, showToast } = useBundleListingStore();

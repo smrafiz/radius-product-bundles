@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
-import { MetricCard } from "@/shared/components";
 import {
     DASHBOARD_METRICS,
     formatByType,
     useDashboardData,
 } from "@/features/dashboard";
+import { useMemo } from "react";
+import { MetricCard } from "@/shared/components";
 
 /**
  * Dashboard Metrics Component

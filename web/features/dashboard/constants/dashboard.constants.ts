@@ -1,11 +1,13 @@
-import { ACTION_THEMES, ROUTES } from "@/shared/constants";
-
 import {
     DashboardMetricConfig,
     DashboardQuickActionItem,
     DashboardCalloutCardsItem,
 } from "@/features/dashboard/types";
+import { ACTION_THEMES, ROUTES } from "@/shared/constants";
 
+/*
+ * Dashboard Metrics
+ */
 export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
     {
         key: "totalRevenue",
@@ -40,6 +42,9 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
     },
 ];
 
+/*
+ * Dashboard Quick Actions
+ */
 export const DASHBOARD_QUICK_ACTIONS: DashboardQuickActionItem[] = [
     {
         id: "bundles",

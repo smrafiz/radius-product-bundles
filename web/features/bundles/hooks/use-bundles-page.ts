@@ -7,8 +7,11 @@ import {
     useInitialBundleState,
 } from "@/features/bundles";
 import { useDashboardData } from "@/features/dashboard";
-import { useAppNavigation, useSyncBundles, withLoader } from "@/shared";
+import { useAppNavigation, useSyncBundles } from "@/shared";
 
+/**
+ * Bundles page
+ */
 export function useBundlesPage() {
     useSyncBundles();
 

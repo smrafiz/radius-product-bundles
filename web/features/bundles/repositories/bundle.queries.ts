@@ -4,8 +4,6 @@
  * Read operations only.
  */
 
-import { Prisma } from "@prisma/client";
-import prisma from "@/lib/db/prisma-connect";
 import {
     INCLUDE_BUNDLE_DETAILS,
     INCLUDE_BUNDLE_PRODUCTS,
@@ -13,10 +11,11 @@ import {
     INCLUDE_BUNDLE_DASHBOARD,
 } from "./bundle.fragments";
 import {
-    BundleOwnershipCheck,
     FindByShopFilters,
     FindByShopOptions,
 } from "@/features/bundles";
+import { Prisma } from "@prisma/client";
+import prisma from "@/lib/db/prisma-connect";
 
 // ==========================================
 // FIND Operations

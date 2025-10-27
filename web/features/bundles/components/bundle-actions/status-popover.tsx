@@ -19,6 +19,9 @@ import { useModalStore } from "@/shared";
 import { useCallback, useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 
+/**
+ * Bundle status popover
+ */
 export function StatusPopover({ bundle }: StatusPopoverProps) {
     const [popoverActive, setPopoverActive] = useState(false);
 

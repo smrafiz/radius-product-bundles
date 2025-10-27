@@ -17,9 +17,11 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
+/**
+ * Get bundle table bulk actions
+ */
 export function useBundleTableBulkActions(clearSelection?: () => void) {
     const queryClient = useQueryClient();
-    const { refreshBundles } = useBundleListingStore();
     const { showError } = useGlobalBanner();
     const sessionToken = useSessionToken();
     const { openModal, setLoading } = useModalStore();
@@ -64,7 +66,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                             status: result.data.status,
                         });
                         await invalidateBundleCache(queryClient);
-                        showToast(result.message);
+                        showToast(result.message || 'Bundle status updated successfully');
                     } else {
                         showError("Status update failed", {
                             content: result.message,

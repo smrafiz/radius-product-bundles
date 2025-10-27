@@ -6,6 +6,7 @@ import {
     BundlesListResult,
     BundleStatus,
     extractProductIds,
+    getBundles,
     GetBundlesInput,
     PaginationResult,
     transformBundles,
@@ -14,7 +15,7 @@ import { fetchProductsFromShopify } from "@/lib/shopify";
 import { countBundlesByShop, findBundleByIdWithAllRelations, findBundlesByShop, } from "../repositories";
 
 /**
- * Get bundles list with filters and pagination
+ * Get bundle list with filters and pagination
  */
 export async function getBundlesListService(
     input: GetBundlesInput,
@@ -109,15 +110,10 @@ export async function getBundleDetails(input: {
  */
 export async function getBundlesByStatus(
     shop: string,
-    status: BundleStatus,
+    statusFilter: BundleStatus,
     sessionToken: string,
 ): Promise<any[]> {
-    return await getBundlesList({
-        shop,
-        sessionToken,
-        pagination: { page: 1, itemsPerPage: 100 },
-        filters: { status: [status] },
-    }).then((result) => result.data);
+    return await getBundles(sessionToken, 1, 100, {shop, statusFilter}).then((result) => result.data);
 }
 
 /**

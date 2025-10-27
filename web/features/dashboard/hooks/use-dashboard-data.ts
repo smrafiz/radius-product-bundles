@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { useGlobalBannerStore } from "@/shared";
 import { useQueries } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-
-import { useGlobalBannerStore } from "@/shared";
 import { dashboardQueries, useDashboardStore } from "@/features/dashboard";
 
+/*
+ * Hook: Dashboard data
+ */
 export const useDashboardData = () => {
     const app = useAppBridge();
     const { addMessage } = useGlobalBannerStore();

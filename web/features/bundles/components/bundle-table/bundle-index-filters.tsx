@@ -15,9 +15,12 @@ import {
     useBundleFilters,
 } from "@/features/bundles";
 import { useCallback } from "react";
-import type { IndexFiltersProps } from "@shopify/polaris";
 import { BundleType } from "@prisma/client";
+import type { IndexFiltersProps } from "@shopify/polaris";
 
+/**
+ * Bundle index filters
+ */
 export function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const { mode, setMode } = useSetIndexFiltersMode();
     const {
