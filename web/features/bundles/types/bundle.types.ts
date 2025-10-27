@@ -182,6 +182,7 @@ export type BundleConfig = {
     features?: string[];
     icon?: any;
     badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
+    comingSoon?: boolean | undefined;
 };
 
 /*
@@ -229,4 +230,9 @@ export interface Pagination {
     totalPages: number;
     currentPage: number;
     itemsPerPage: number;
+}
+
+export interface BundleHelpItem {
+    title: string;
+    bundles: string;
 }

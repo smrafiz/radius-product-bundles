@@ -39,7 +39,7 @@ export function useAppNavigation() {
         settings: () => goTo(ROUTES.SETTINGS),
 
         // Utilities
-        back: () => router.back(),
+        goBack: () => router.back(),
         refresh: () => router.refresh(),
     };
 }

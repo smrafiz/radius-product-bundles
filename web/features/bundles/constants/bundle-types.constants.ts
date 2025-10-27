@@ -15,7 +15,7 @@ export const BUNDLE_TYPES = {
         description: "Bundle products together at a fixed price with discount",
         features: ["Fixed bundle price", "Multiple products"],
         icon: "📦",
-        badge: { text: "New", tone: "success" },
+        badge: { text: "Popular", tone: "warning" },
     },
     BUY_X_GET_Y: {
         label: "Buy X Get Y",
