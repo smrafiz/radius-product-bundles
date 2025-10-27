@@ -4,8 +4,11 @@
 import {
     BundleListItem,
     BundleStatus,
+    BundleType,
     ProductGroup,
 } from "@/features/bundles";
+import { ReactNode } from "react";
+import { BundleFormData } from "@/lib/validation";
 
 /*
  * Bundle listing components
@@ -57,4 +60,30 @@ export interface BundleActionsGroupProps {
  */
 export interface StatusPopoverProps {
     bundle: BundleListItem;
+}
+
+/*
+ * Bundle creation components
+ */
+export interface BundleCreationFormProps {
+    bundleType: BundleType;
+    bundleName?: string;
+}
+
+/*
+ * Bundle form provider components
+ */
+export interface BundleFormProviderProps {
+    children: ReactNode;
+    bundleType: BundleType;
+    initialData?: Partial<BundleFormData>;
+}
+
+/*
+ * Step heading components
+ */
+export interface StepHeadingProps {
+    title: string;
+    description?: string;
+    gap?: "050" | "100" | "200" | "300" | "400" | "500";
 }

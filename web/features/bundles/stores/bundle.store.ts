@@ -2,15 +2,17 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
     BundleConfiguration,
-    BundleState,
+    DisplaySettings,
+} from "@/types/product/productSelection.types";
+import { ExtendedBundleFormData } from "@/types/bundle/bundle.types";
+import {
+    BundleListItem,
     BundleType,
     DiscountType,
-    DisplaySettings,
     ProductGroup,
     SelectedItem,
-    ExtendedBundleFormData,
-    BundleListItem,
-} from "@/types";
+} from "@/features/bundles";
+import { BundleState } from "@/types";
 
 const initialBundleData: Partial<ExtendedBundleFormData> = {
     name: "",
