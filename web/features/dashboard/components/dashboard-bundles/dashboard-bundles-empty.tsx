@@ -1,9 +1,6 @@
 "use client";
 
 import { useAppNavigation } from "@/shared";
-import { PlusIcon } from "@shopify/polaris-icons";
-import { EmptyState, Text } from "@shopify/polaris";
-
 /*
  * Dashboard bundles empty state
  */
@@ -11,26 +8,38 @@ export function DashboardBundlesEmpty({ error }: { error?: string | null }) {
     const { bundleData } = useAppNavigation();
 
     return (
-        <EmptyState
-            heading={
-                error ? "Unable to load bundles" : "No bundles created yet"
-            }
-            action={
-                error
-                    ? undefined
-                    : {
-                          content: "Create Bundle",
-                          icon: PlusIcon,
-                          onAction: bundleData.create(),
-                      }
-            }
-            image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
-        >
-            <Text as="p" variant="bodyMd" tone="subdued">
-                {error
-                    ? "Something went wrong while loading your bundles. Please try refreshing the page."
-                    : "Get started by creating your first bundle to manage product offers."}
-            </Text>
-        </EmptyState>
+        <s-section accessibilityLabel="Empty state section">
+            <s-grid gap="base" justifyItems="center" paddingBlock="large-400">
+                <s-box maxInlineSize="200px" maxBlockSize="200px">
+                    <s-image
+                        aspectRatio="1/0.5"
+                        src="https://cdn.shopify.com/static/images/polaris/patterns/callout.png"
+                        alt="A stylized graphic of four characters, each holding a puzzle piece"
+                    />
+                </s-box>
+                <s-grid justifyItems="center" maxInlineSize="450px" gap="base">
+                    <s-stack alignItems="center">
+                        <s-heading>
+                            {error
+                                ? "Unable to load bundles"
+                                : "No bundles created yet"}
+                        </s-heading>
+                        <s-paragraph>
+                            {error
+                                ? "Something went wrong while loading your bundles. Please try refreshing the page."
+                                : "Get started by creating your first bundle to manage product offers."}
+                        </s-paragraph>
+                    </s-stack>
+                    <s-button
+                        icon="plus"
+                        variant="primary"
+                        accessibilityLabel="Create Bundle"
+                        onClick={bundleData.create()}
+                    >
+                        Create Bundle
+                    </s-button>
+                </s-grid>
+            </s-grid>
+        </s-section>
     );
 }

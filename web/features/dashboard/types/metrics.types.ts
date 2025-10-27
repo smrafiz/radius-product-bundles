@@ -25,6 +25,7 @@ export interface DashboardMetricConfig {
     key: keyof DashboardMetricsData;
     title: string;
     format: MetricFormat;
+    svg_icon: string;
     icon: "arrow-up" | "arrow-down" | "work-list";
     tone: "success" | "info" | "critical" | "warning" | "auto" | "neutral" | "caution" | undefined;
     comparisonLabel?: string;

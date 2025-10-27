@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DashboardSetupSteps } from "./dashboard-setup-steps";
+import { useDashboardStore } from "@/features/dashboard";
 
 interface SetupButtonProps {
     content: string;
@@ -21,9 +22,30 @@ export interface SetupItem {
     secondaryButton?: SetupButtonProps;
 }
 
-export function DashboardSetUpGuide() {
+export function DashboardSetUpGuide({ lines = 6 }: { lines?: number }) {
+    const { loading } = useDashboardStore();
     const [showGuide, setShowGuide] = useState(true);
     const [items, setItems] = useState<SetupItem[]>(ITEMS);
+
+    if (loading) {
+        return (
+            <s-section padding="base">
+                <s-box>
+                    <div className="animate-pulse space-y-3">
+                        {Array.from({ length: lines }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-2 bg-[#ebebeb] rounded"
+                                style={{
+                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                }}
+                            />
+                        ))}
+                    </div>
+                </s-box>
+            </s-section>
+        );
+    }
 
     // Example of step complete handler, adjust for your use case
     const onStepComplete = async (id: number): Promise<void> => {

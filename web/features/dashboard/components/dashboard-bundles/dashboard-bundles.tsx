@@ -7,17 +7,16 @@ import {
     useDashboardStore,
 } from "@/features/dashboard";
 import { BundleTableSkeleton } from "@/features/bundles";
-
 /**
  * Dashboard Bundles Component
  */
 export function DashboardBundles() {
     const { loading, error, bundles } = useDashboardStore();
 
+
     if (loading) {
         return <BundleTableSkeleton />;
     }
-
     const recentBundles = bundles.slice(0, 5);
 
     return (

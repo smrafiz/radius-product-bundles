@@ -1,12 +1,13 @@
 "use client";
 
 import {
-    firstLetterCapital,
     formatCurrency,
     formatPercentage,
     useAppNavigation,
 } from "@/shared";
-import { DashboardBundlesListProps } from "@/features/dashboard";
+import {
+    DashboardBundlesListProps,
+} from "@/features/dashboard";
 import {
     formatBundleType,
     getBundleStatusBadge,

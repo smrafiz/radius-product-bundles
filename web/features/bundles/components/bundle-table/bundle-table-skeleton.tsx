@@ -10,18 +10,20 @@ import {
 /**
  * Bundle table skeleton
  */
-export function BundleTableSkeleton() {
+export function BundleTableSkeleton({ lines = 6 }: { lines?: number }) {
     return (
-        <s-section>
-            <s-stack padding="400">
-                {/*<SkeletonDisplayText size="small" maxWidth="20ch" />*/}
-                {/*<div className="mt-4 space-y-4 animate-pulse">*/}
-                {/*    {[1, 2, 3, 4, 5,6,7,8].map((row) => (*/}
-                {/*        <SkeletonBodyText key={row} lines={1} />*/}
-                {/*    ))}*/}
-                {/*</div>*/}
-                <s-spinner accessibilityLabel="Loading" size="large-100" />
-            </s-stack>
+        <s-section padding="base">
+            <div className="animate-pulse space-y-3 p-5">
+                {Array.from({ length: lines }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="h-2 bg-[#ebebeb] rounded"
+                        style={{
+                            width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                        }}
+                    />
+                ))}
+            </div>
         </s-section>
     );
 }

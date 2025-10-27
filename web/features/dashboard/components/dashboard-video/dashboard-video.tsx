@@ -1,7 +1,9 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
+import { useDashboardStore } from "@/features/dashboard";
 
-export function DashboardVideo() {
+export function DashboardVideo({ lines = 6 }: { lines?: number }) {
+    const { loading } = useDashboardStore();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const videoUrl = 'https://youtu.be/gsw2NYVrPfM';
 
@@ -57,6 +59,26 @@ export function DashboardVideo() {
             modal.removeEventListener('--hide', handleHide);
         };
     }, []);
+
+    if (loading) {
+        return (
+            <s-section padding="base">
+                <s-box>
+                    <div className="animate-pulse space-y-3">
+                        {Array.from({ length: lines }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-2 bg-[#ebebeb] rounded"
+                                style={{
+                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                }}
+                            />
+                        ))}
+                    </div>
+                </s-box>
+            </s-section>
+        );
+    }
 
     return (
         <s-section>

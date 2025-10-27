@@ -19,6 +19,7 @@ export function DashboardMetrics() {
             DASHBOARD_METRICS.map((cfg) => ({
                 title: cfg.title,
                 icon: cfg.icon,
+                svg_icon: cfg.svg_icon,
                 tone: cfg.tone,
                 value: formatByType(metrics?.[cfg.key], cfg.format),
             })),
@@ -48,10 +49,24 @@ export function DashboardMetrics() {
                     gridColumn="auto"
                 >
                     <s-section>
-                        <s-heading>{card.title}</s-heading>
-                        <s-stack direction="inline" gap="small-200">
-                            <s-text>{card.value}</s-text>
-                            <s-badge tone={card.tone} icon={card.icon}>12%</s-badge>
+                        <s-stack direction="inline" gap="base" alignItems={"center"}>
+                            {/*<s-icon type="home" />*/}
+                            <div style={{ width: 'var(--p-font-size-900)' }}>
+                                <s-image
+                                    src={`/assets/${card.svg_icon}.svg`}
+                                    alt="Four pixelated characters ready to build amazing Shopify apps"
+                                    aspectRatio="1/1"
+                                    inlineSize="auto"
+                                />
+                            </div>
+
+                            <s-stack gap="small-200">
+                                <s-heading>{card.title}</s-heading>
+                                <s-stack direction="inline" gap="small-200">
+                                    <s-text><div style={{ fontSize: 'var(--p-font-size-500)' }}>{card.value}</div></s-text>
+                                    <s-badge tone={card.tone} icon={card.icon}>12%</s-badge>
+                                </s-stack>
+                            </s-stack>
                         </s-stack>
                     </s-section>
                 </s-grid-item>
