@@ -168,7 +168,15 @@ export interface BundleStatusBadge {
 
 export interface BundleStatusBadgeNew {
     text: string;
-    tone: "success" | "warning" | "info" | "critical" | "neutral" | "caution" | "auto" | undefined;
+    tone:
+        | "success"
+        | "warning"
+        | "info"
+        | "critical"
+        | "neutral"
+        | "caution"
+        | "auto"
+        | undefined;
 }
 
 /*
@@ -180,7 +188,8 @@ export type BundleConfig = {
     slug: string;
     description?: string;
     features?: string[];
-    icon?: any;
+    bundleImage?: string;
+    modalImage?: string;
     badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
     comingSoon?: boolean | undefined;
 };

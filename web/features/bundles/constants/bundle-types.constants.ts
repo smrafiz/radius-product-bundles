@@ -14,7 +14,8 @@ export const BUNDLE_TYPES = {
         slug: "fixed-bundle",
         description: "Bundle products together at a fixed price with discount",
         features: ["Fixed bundle price", "Multiple products"],
-        icon: "📦",
+        bundleImage:"/assets/fixed-bundle.svg",
+        modalImage: "/assets/standard.png",
         badge: { text: "Popular", tone: "warning" },
     },
     BUY_X_GET_Y: {
@@ -24,7 +25,8 @@ export const BUNDLE_TYPES = {
         description:
             "Customer buys X items and gets Y items free or discounted",
         features: ["Buy 2 Get 1 Free", "Buy 3 Get 2nd 50% Off"],
-        icon: "📊",
+        bundleImage:"/assets/volume-discount.svg",
+        modalImage: "/assets/add_on.png",
         badge: { text: "New", tone: "success" },
     },
     BOGO: {
@@ -34,7 +36,8 @@ export const BUNDLE_TYPES = {
         description:
             "Classic buy one get one offer with various discount options",
         features: ["Buy 1 Get 1 Free", "Buy 1 Get 1 50% Off"],
-        icon: "🔀",
+        bundleImage:"/assets/bxgy.svg",
+        modalImage: "/assets/bogo.png",
         badge: { text: "New", tone: "success" },
     },
     VOLUME_DISCOUNT: {
@@ -43,7 +46,8 @@ export const BUNDLE_TYPES = {
         slug: "volume-discount",
         description: "Offer discounts based on quantity purchased",
         features: ["Buy 2 Save 10%", "Buy 5 Save 20%"],
-        icon: "🎁",
+        bundleImage:"/assets/volume-discount.svg",
+        modalImage: "/assets/add_on.png",
         badge: { text: "New", tone: "success" },
     },
     MIX_AND_MATCH: {
@@ -52,7 +56,8 @@ export const BUNDLE_TYPES = {
         slug: "mix-and-match",
         description: "Choose any combination from products",
         features: ["Pick any 3 for $50", "Mix different categories"],
-        icon: "🔄",
+        bundleImage:"/assets/bxgy.svg",
+        modalImage: "/assets/bogo.png",
         badge: { text: "New", tone: "success" },
     },
     FREQUENTLY_BOUGHT_TOGETHER: {
@@ -61,7 +66,8 @@ export const BUNDLE_TYPES = {
         slug: "frequently-bought-together",
         description: "Frequently Bought Together",
         features: ["Smart product suggestions", "AI-powered recommendations"],
-        icon: "🤝",
+        bundleImage:"/assets/fixed-bundle.svg",
+        modalImage: "/assets/standard.png",
         badge: { text: "AI", tone: "info" },
     },
 } as const satisfies Record<BundleType, BundleConfig>;
