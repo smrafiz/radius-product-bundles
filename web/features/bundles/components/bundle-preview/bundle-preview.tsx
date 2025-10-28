@@ -11,15 +11,17 @@ import {
     Select,
     Text,
 } from "@shopify/polaris";
-import type { BundleType } from "@/types";
-import { useBundleStore } from "@/stores";
+import {
+    BundleType,
+    getBundleProperty,
+    useBundleStore,
+} from "@/features/bundles";
 import {
     calculateBundlePrice,
     calculateDiscountAmount,
     calculateSavingsPercentage,
     formatPrice,
-    getBundleProperty,
-} from "@/utils/";
+} from "@/utils/bundle/bundleUtils";
 
 interface Props {
     bundleType: BundleType;

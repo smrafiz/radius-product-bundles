@@ -23,7 +23,7 @@ import { handleSessionToken } from "@/lib/shopify/verify";
 /**
  * Get bundles for a shop
  */
-export async function getBundles(
+export async function getBundlesAction(
     sessionToken: string,
     page: number = 1,
     itemsPerPage: number = 10,
@@ -62,7 +62,7 @@ export async function getBundles(
 /**
  * Get bundle metrics for a shop
  */
-export async function getBundleMetrics(
+export async function getBundleMetricsAction(
     sessionToken: string,
 ): Promise<ApiResponse> {
     try {
@@ -102,7 +102,7 @@ export async function getBundleMetrics(
 /**
  * Get a single bundle with details
  */
-export async function getBundle(
+export async function getBundleAction(
     sessionToken: string,
     bundleId: string,
 ): Promise<ApiResponse> {

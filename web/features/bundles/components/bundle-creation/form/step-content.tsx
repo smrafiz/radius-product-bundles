@@ -1,11 +1,12 @@
 "use client";
 
-import { ReviewStep } from "@/bundles/create/[bundleType]/_components/steps/review";
-import { DisplayStep } from "@/bundles/create/[bundleType]/_components/steps/display";
-import { ProductsStep } from "@/bundles/create/[bundleType]/_components/steps/products";
-import { ConfigurationStep } from "@/bundles/create/[bundleType]/_components/steps/configuration";
-
 import { useBundleStore } from "@/stores";
+import {
+    ConfigurationStep,
+    DisplayStep,
+    ProductsStep,
+    ReviewStep,
+} from "@/features/bundles";
 
 export function StepContent() {
     const { currentStep } = useBundleStore();

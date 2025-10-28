@@ -5,14 +5,14 @@ import {
     BundleFormData,
     BundleFormProvider,
     BundleType,
-    createBundle,
+    bundleTypeMap,
+    createBundleAction,
     useBundleStore,
 } from "@/features/bundles";
 import { use } from "react";
 import { useRouter } from "next/navigation";
 import { GlobalForm, useGlobalBanner } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { bundleTypeMap } from "@/utils/bundle/bundleUtils";
 
 export function CreateBundlePage({
     params,
@@ -38,7 +38,7 @@ export function CreateBundlePage({
 
         try {
             const token = await app.idToken();
-            const result = await createBundle(token, {
+            const result = await createBundleAction(token, {
                 ...data,
                 type: bundleType,
             });

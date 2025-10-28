@@ -1,9 +1,8 @@
 "use client";
 
 import { BlockStack, Card, Text, Banner, List } from "@shopify/polaris";
-import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
-import { BundleSummary } from "@/bundles/create/[bundleType]/_components/steps/review";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import { BundleSummary, StepHeading } from "@/features/bundles";
 
 export function ReviewStep() {
     const { formState } = useBundleFormMethods();

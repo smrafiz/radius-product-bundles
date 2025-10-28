@@ -1,9 +1,8 @@
 "use client";
 
 import { Card, InlineStack, Text, BlockStack, Divider } from "@shopify/polaris";
-import { useBundleStore } from "@/stores";
 import { useGroupedProducts } from "@/hooks";
-import { getDiscountProperty } from "@/utils";
+import { getDiscountProperty, useBundleStore } from "@/features/bundles";
 
 export function BundleSummary() {
     const bundleData = useBundleStore((state) => state.bundleData);

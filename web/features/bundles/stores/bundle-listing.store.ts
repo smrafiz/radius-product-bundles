@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { BundleListingState, getBundles } from "@/features/bundles";
+import { BundleListingState, getBundlesAction } from "@/features/bundles";
 
 export const useBundleListingStore = create<BundleListingState>()(
     (set, get) => ({
@@ -233,7 +233,7 @@ export const useBundleListingStore = create<BundleListingState>()(
                 set({ loading: true });
                 const app = useAppBridge();
                 const token = await app.idToken();
-                const result = await getBundles(token, page, itemsPerPage);
+                const result = await getBundlesAction(token, page, itemsPerPage);
 
                 if (result.status === "success") {
                     set({

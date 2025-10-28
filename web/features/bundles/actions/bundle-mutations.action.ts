@@ -10,19 +10,26 @@ import {
     bulkActivateBundlesService,
     bulkDraftBundlesService,
     BundleStatus,
+    CreateBundleActionInput,
+    createBundleService,
     deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
+    TransformedBundle,
     updateBundleStatusService,
 } from "@/features/bundles";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify/verify";
+import {
+    BundleFormData,
+    validateAndCheckBusinessRules,
+} from "@/lib/validation";
 
 /**
  * Update bundle status
  */
-export async function updateBundleStatus(
+export async function updateBundleStatusAction(
     sessionToken: string,
     bundleId: string,
     status: BundleStatus,
@@ -63,7 +70,7 @@ export async function updateBundleStatus(
 /**
  * Toggle bundle status (active/draft)
  */
-export async function bulkToggleBundleStatus(
+export async function bulkToggleBundleStatusAction(
     sessionToken: string,
     bundleIds: string[],
     currentStatus: "ACTIVE" | "DRAFT",
@@ -82,7 +89,9 @@ export async function bulkToggleBundleStatus(
 
         return {
             status: "success" as const,
-            message: result.message || `Bundles set to ${currentStatus.toLowerCase()}`,
+            message:
+                result.message ||
+                `Bundles set to ${currentStatus.toLowerCase()}`,
             data: result,
         };
     } catch (error) {
@@ -103,7 +112,7 @@ export async function bulkToggleBundleStatus(
 /**
  * Delete a bundle
  */
-export async function deleteBundle(
+export async function deleteBundleAction(
     sessionToken: string,
     bundleId: string,
 ): Promise<ApiResponse> {
@@ -142,9 +151,9 @@ export async function deleteBundle(
 /**
  * Delete multiple bundles
  */
-export async function deleteBundles(
+export async function deleteBundlesAction(
     sessionToken: string,
-    bundleIds: string[]
+    bundleIds: string[],
 ): Promise<ApiResponse> {
     try {
         const {
@@ -174,7 +183,7 @@ export async function deleteBundles(
 
         return {
             status: "success" as const,
-            ...result
+            ...result,
         };
     } catch (error) {
         console.error("[deleteMultipleBundles] Error:", error);
@@ -193,7 +202,7 @@ export async function deleteBundles(
 /**
  * Duplicate a single bundle
  */
-export async function duplicateBundle(
+export async function duplicateBundleAction(
     sessionToken: string,
     bundleId: string,
 ): Promise<ApiResponse> {
@@ -223,6 +232,60 @@ export async function duplicateBundle(
                     ? error.message
                     : "Failed to duplicate bundle",
             data: null,
+        };
+    }
+}
+
+/**
+ * Create a new bundle
+ */
+export async function createBundleAction(
+    sessionToken: string,
+    bundleData: CreateBundleActionInput,
+): Promise<ApiResponse<TransformedBundle>> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        console.log(`[createBundleAction] Creating bundle for shop: ${shop}`);
+
+        const validation = await validateAndCheckBusinessRules(
+            shop,
+            bundleData,
+        );
+
+        if (!validation.success) {
+            return {
+                status: "error",
+                message: "Validation failed",
+                errors: validation.errors,
+            };
+        }
+
+        const result = await createBundleService({
+            shop,
+            data: validation.data as BundleFormData,
+        });
+
+        revalidatePath("/bundles");
+        revalidatePath("/dashboard");
+
+        return {
+            status: "success",
+            message: result.message,
+            data: result.bundle,
+        };
+    } catch (error) {
+        console.error("[createBundleAction] Error:", error);
+
+        const errorMessage =
+            error instanceof Error ? error.message : "Failed to create bundle";
+
+        return {
+            status: "error",
+            message: errorMessage,
+            errors: [errorMessage],
         };
     }
 }

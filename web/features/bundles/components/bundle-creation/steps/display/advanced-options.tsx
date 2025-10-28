@@ -3,8 +3,8 @@
 import { Fragment } from "react";
 import { useBundleStore } from "@/stores";
 import { Knob } from "@/components/fields/Knob";
-import { ADVANCED_OPTIONS } from "@/lib/constants";
 import { BlockStack, Card, Divider, InlineStack, Text } from "@shopify/polaris";
+import { ADVANCED_OPTIONS } from "@/lib/constants/bundle";
 
 export function AdvancedOptions() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();

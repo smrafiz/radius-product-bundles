@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Banner,
     BlockStack,
@@ -6,11 +8,14 @@ import {
     InlineStack,
 } from "@shopify/polaris";
 import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
-import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
-import { ProductList } from "@/bundles/create/[bundleType]/_components/steps/products";
+import {
+    ProductList,
+    StepHeading,
+    useBundleStore,
+    useBundleValidation,
+} from "@/features/bundles";
+import { useProductPicker } from "@/hooks";
 
-import { useBundleStore } from "@/stores";
-import { useBundleValidation, useProductPicker } from "@/hooks";
 
 export function ProductsStep() {
     const { selectedItems, setSelectedItems, validationAttempted } =

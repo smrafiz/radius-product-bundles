@@ -1,6 +1,8 @@
+"use client";
+
 import { BlockStack, Card, RadioButton, Text } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
-import { WIDGET_LAYOUTS } from "@/lib/constants";
+import { WIDGET_LAYOUTS } from "@/lib/constants/bundle";
 
 export function WidgetLayout() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();

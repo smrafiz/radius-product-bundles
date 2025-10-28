@@ -1,11 +1,11 @@
 import { BlockStack } from "@shopify/polaris";
 import {
     AdvancedOptions,
+    StepHeading,
     WidgetAppearance,
     WidgetLayout,
     WidgetPosition,
-} from "@/bundles/create/[bundleType]/_components/steps/display";
-import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
+} from "@/features/bundles";
 
 export function DisplayStep() {
     return (

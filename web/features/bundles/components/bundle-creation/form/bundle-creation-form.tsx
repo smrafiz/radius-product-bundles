@@ -8,6 +8,7 @@ import {
     StepNavigation,
     useBundleFormMethods,
     useBundleStore,
+    StepContent,
 } from "@/features/bundles";
 import { useEffect, useState } from "react";
 import { GlobalBanner, withLoader } from "@/shared";
@@ -75,7 +76,7 @@ export function BundleCreationForm({
     return (
         <Page {...pageProps}>
             <Layout>
-                {/* Success banner - shows once, no autohide */}
+                {/* Success banner */}
                 <GlobalBanner />
 
                 {/* Horizontal Step Navigation */}
@@ -94,7 +95,7 @@ export function BundleCreationForm({
                         <Layout>
                             <Layout.Section>
                                 <Card>
-                                    {/*<StepContent />*/}
+                                    <StepContent />
                                 </Card>
                             </Layout.Section>
 

@@ -3,10 +3,10 @@
 import {
     BundleListItem,
     BundleStatus,
-    deleteBundle,
-    duplicateBundle,
+    deleteBundleAction,
+    duplicateBundleAction,
     invalidateBundleCache,
-    updateBundleStatus,
+    updateBundleStatusAction,
     useBundleListingStore,
 } from "@/features/bundles";
 import { useMemo } from "react";
@@ -57,7 +57,10 @@ export function useBundleActions(
 
                 try {
                     const token = await app.idToken();
-                    const result = await duplicateBundle(token, bundle.id);
+                    const result = await duplicateBundleAction(
+                        token,
+                        bundle.id,
+                    );
 
                     if (result.status === "success") {
                         if (result.data?.id) {
@@ -88,7 +91,7 @@ export function useBundleActions(
 
                 try {
                     const token = await app.idToken();
-                    const result = await deleteBundle(token, bundle.id);
+                    const result = await deleteBundleAction(token, bundle.id);
 
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
@@ -114,7 +117,7 @@ export function useBundleActions(
 
                 try {
                     const token = await app.idToken();
-                    const result = await updateBundleStatus(
+                    const result = await updateBundleStatusAction(
                         token,
                         bundle.id,
                         status,

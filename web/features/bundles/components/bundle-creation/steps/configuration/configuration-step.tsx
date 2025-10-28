@@ -1,10 +1,10 @@
-import { BlockStack } from "@shopify/polaris";
 import {
     BundleBehavior,
     BundleDetails,
     DiscountSettings,
-} from "@/bundles/create/[bundleType]/_components/steps/configuration";
-import { StepHeading } from "@/bundles/create/[bundleType]/_components/shared";
+    StepHeading,
+} from "@/features/bundles";
+import { BlockStack } from "@shopify/polaris";
 
 export function ConfigurationStep() {
     return (

@@ -1,6 +1,8 @@
+"use client";
+
 import { BlockStack, Card, Text, Select } from "@shopify/polaris";
-import { useBundleStore } from "@/stores";
-import { WIDGET_POSITIONS } from "@/lib/constants";
+import { useBundleStore } from "@/features/bundles";
+import { WIDGET_POSITIONS } from "@/lib/constants/bundle";
 
 export function WidgetPosition() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();

@@ -6,8 +6,8 @@ import {
     BundleListItem,
     BundleMetricsData,
     bundlesQueryKeys,
-    getBundleMetrics,
-    getBundles,
+    getBundleMetricsAction,
+    getBundlesAction,
 } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
@@ -24,7 +24,7 @@ export const bundlesQueries = (
         queryKey: bundlesQueryKeys.list(page, itemsPerPage, filters),
         queryFn: async () => {
             const token = await getSessionToken(app);
-            const result = await getBundles(token, page, itemsPerPage, filters);
+            const result = await getBundlesAction(token, page, itemsPerPage, filters);
 
             if (result.status === "error") {
                 throw new Error(result.message);
@@ -44,7 +44,7 @@ export const bundlesQueries = (
         queryKey: bundlesQueryKeys.metrics(),
         queryFn: async () => {
             const token = await getSessionToken(app);
-            const result = await getBundleMetrics(token);
+            const result = await getBundleMetricsAction(token);
 
             if (result.status === "error") {
                 throw new Error(result.message);

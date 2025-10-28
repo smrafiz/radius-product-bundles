@@ -11,7 +11,7 @@ export async function generateMetadata({
         bundleType: string;
     };
 }): Promise<Metadata> {
-    const { bundleType } = params;
+    const { bundleType } = await params;
 
     const bundleConfig = Object.values(BUNDLE_TYPES).find(
         (type) => type.slug === bundleType,

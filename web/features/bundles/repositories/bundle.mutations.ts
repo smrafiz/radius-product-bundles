@@ -106,6 +106,26 @@ export async function createBundleSettings(
     });
 }
 
+/*
+ * Create bundle product groups (within transaction)
+ */
+export async function createBundleProductGroups(
+    tx: any,
+    bundleId: string,
+    groups: any[],
+) {
+    return await tx.bundleProductGroup.createMany({
+        data: groups.map((g, index) => ({
+            bundleId,
+            name: g.name,
+            description: g.description || null,
+            minSelection: g.minSelection || 0,
+            maxSelection: g.maxSelection || null,
+            displayOrder: g.displayOrder ?? index,
+        })),
+    });
+}
+
 // ==========================================
 // UPDATE Operations
 // ==========================================

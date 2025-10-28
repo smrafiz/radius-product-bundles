@@ -1,3 +1,5 @@
+"use client";
+
 import {
     BlockStack,
     Card,
@@ -7,7 +9,7 @@ import {
     Box,
 } from "@shopify/polaris";
 import { useBundleStore } from "@/stores";
-import { COLOR_THEMES } from "@/lib/constants";
+import { COLOR_THEMES } from "@/lib/constants/bundle";
 
 type ColorTheme = (typeof COLOR_THEMES)[number]["value"];
 

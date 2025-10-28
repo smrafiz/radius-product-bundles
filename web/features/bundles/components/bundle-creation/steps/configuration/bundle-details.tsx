@@ -4,7 +4,7 @@
 import { BlockStack, Card, Text, TextField } from "@shopify/polaris";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 import { useBundleValidation } from "@/hooks/bundle/useBundleValidation";
-import { useBundleStore } from "@/stores";
+import { useBundleStore } from "@/features/bundles";
 
 export function BundleDetails() {
     const { watch, setValue } = useBundleFormMethods();

@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 import {
     Box,
@@ -11,11 +13,10 @@ import {
     BlockStack,
 } from "@shopify/polaris";
 import { DeleteIcon, DragHandleIcon, ImageIcon } from "@shopify/polaris-icons";
-import { useBundleStore } from "@/stores";
 import { useSortable } from "@dnd-kit/sortable";
 import { useProductPicker } from "@/hooks/product";
+import { ProductGroup, useBundleStore } from "@/features/bundles";
 
-import { ProductGroup } from "@/types";
 
 interface ProductItemProps {
     group: ProductGroup;

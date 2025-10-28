@@ -6,7 +6,7 @@ import {
     BundlesListResult,
     BundleStatus,
     extractProductIds,
-    getBundles,
+    getBundlesAction,
     GetBundlesInput,
     PaginationResult,
     transformBundles,
@@ -109,19 +109,17 @@ export async function getBundleDetails(input: {
  * Get bundles by status
  */
 export async function getBundlesByStatus(
-    shop: string,
-    statusFilter: BundleStatus,
+    statusFilter: BundleStatus[],
     sessionToken: string,
 ): Promise<any[]> {
-    return await getBundles(sessionToken, 1, 100, {shop, statusFilter}).then((result) => result.data);
+    return await getBundlesAction(sessionToken, 1, 100, { status: statusFilter }).then((result) => result.data);
 }
 
 /**
  * Get active bundles
  */
 export async function getActiveBundles(
-    shop: string,
     sessionToken: string,
 ): Promise<any[]> {
-    return await getBundlesByStatus(shop, "ACTIVE", sessionToken);
+    return await getBundlesByStatus(["ACTIVE"], sessionToken);
 }

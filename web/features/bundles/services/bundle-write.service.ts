@@ -9,8 +9,11 @@ import {
     BulkUpdateBundleStatusResult,
     BUNDLE_STATUSES,
     createBundle,
+    createBundleProductGroups,
     createBundleProducts,
-    CreateBundleWithValidationInput,
+    CreateBundleServiceInput,
+    CreateBundleServiceResponse,
+    createBundleSettings,
     DeleteBundleInput,
     DeleteBundleServiceResult,
     deleteBundlesWithRelations,
@@ -20,6 +23,7 @@ import {
     findBundleByIdWithAllRelations,
     findBundlesByIds,
     generateUniqueBundleName,
+    transformBundle,
     transformBundleForDuplication,
     updateBundlesStatusByIds,
     updateBundleStatusById,
@@ -33,37 +37,129 @@ import prisma from "@/lib/db/prisma-connect";
 // ==========================================
 
 /**
- * Create bundle with validation
+ * Create a bundle with validation
  */
-export async function createBundleWithValidation(
-    input: CreateBundleWithValidationInput,
-): Promise<any> {
+export async function createBundleService(
+    input: CreateBundleServiceInput,
+): Promise<CreateBundleServiceResponse> {
     const { shop, data } = input;
 
-    // Validate required fields
-    if (!data.name) {
-        throw new Error("Bundle name is required");
-    }
+    console.log(
+        `[createBundleService] Starting bundle creation for shop: ${shop}`,
+    );
+    try {
+        // Generate unique name
+        const uniqueName = await generateUniqueBundleName(shop, data.name);
 
-    if (!data.discountType || !data.discountValue) {
-        throw new Error("Discount information is required");
-    }
-
-    // Create bundle with products in transaction
-    return await prisma.$transaction(async (tx) => {
-        // Create bundle
-        const bundle = await createBundle(tx, {
-            ...data,
-            shop,
-        });
-
-        // Create bundle products if provided
-        if (data.products && data.products.length > 0) {
-            await createBundleProducts(tx, bundle.id, data.products);
+        if (uniqueName !== data.name) {
+            console.log(`[Service] Generated unique name: ${uniqueName}`);
         }
 
-        return bundle;
-    });
+        // Create the bundle and relations
+        const bundle = await prisma.$transaction(
+            async (tx) => {
+                // Create the bundle
+                const createdBundle = await createBundle(tx, {
+                    shop,
+                    name: uniqueName,
+                    description: data.description || null,
+                    type: data.type,
+                    status: "DRAFT",
+                    mainProductId: data.mainProductId || null,
+                    buyQuantity: data.buyQuantity || null,
+                    getQuantity: data.getQuantity || null,
+                    minimumItems: data.minimumItems || null,
+                    maximumItems: data.maximumItems || null,
+                    discountType: data.discountType,
+                    discountValue: data.discountValue,
+                    minOrderValue: data.minOrderValue || null,
+                    maxDiscountAmount: data.maxDiscountAmount || null,
+                    volumeTiers: data.volumeTiers || null,
+                    allowMixAndMatch: data.allowMixAndMatch || false,
+                    mixAndMatchPrice: data.mixAndMatchPrice || null,
+                    marketingCopy: data.marketingCopy || null,
+                    seoTitle: data.seoTitle || null,
+                    seoDescription: data.seoDescription || null,
+                    images: data.images || [],
+                    startDate: data.startDate || null,
+                    endDate: data.endDate || null,
+                });
+
+                console.log(`[Service] Bundle created: ${createdBundle.id}`);
+
+                // Create products
+                if (data.products && data.products.length > 0) {
+                    await createBundleProducts(
+                        tx,
+                        createdBundle.id,
+                        data.products.map((p) => ({
+                            productId: p.productId,
+                            variantId: p.variantId,
+                            quantity: p.quantity,
+                            role: p.role,
+                        })),
+                    );
+
+                    console.log(
+                        `[Service] Added ${data.products.length} products`,
+                    );
+                }
+
+                // Create product groups
+                if (data.productGroups && data.productGroups.length > 0) {
+                    await createBundleProductGroups(
+                        tx,
+                        createdBundle.id,
+                        data.productGroups,
+                    );
+
+                    console.log(
+                        `[Service] Added ${data.productGroups.length} groups`,
+                    );
+                }
+
+                // Create settings
+                if (data.settings) {
+                    await createBundleSettings(
+                        tx,
+                        createdBundle.id,
+                        data.settings,
+                    );
+                    console.log(`[Service] Added settings`);
+                }
+
+                // Fetch with relations
+                return await findBundleByIdWithAllRelations(
+                    createdBundle.id,
+                    shop,
+                    tx,
+                );
+            },
+            {
+                maxWait: 5000,
+                timeout: 10000,
+            },
+        );
+
+        if (!bundle) {
+            return {
+                success: false,
+                message: "Failed to create bundle",
+                bundle: null,
+            };
+        }
+
+        console.log(`[Service] Bundle creation completed: ${bundle.id}`);
+
+        return {
+            success: true,
+            message: "Bundle created successfully",
+            bundle: transformBundle(bundle),
+        };
+    } catch (error) {
+        console.error("[Service] Error:", error);
+        throw error;
+    }
 }
 
 // ==========================================
@@ -109,7 +205,7 @@ export async function bulkUpdateBundleStatusService(
         return {
             success: false,
             message: `Invalid bundle status: ${status}`,
-        }
+        };
     }
 
     // Validate input
@@ -117,7 +213,7 @@ export async function bulkUpdateBundleStatusService(
         return {
             success: false,
             message: "No bundle IDs provided",
-        }
+        };
     }
 
     // Limit bulk operations
@@ -125,7 +221,7 @@ export async function bulkUpdateBundleStatusService(
         return {
             success: false,
             message: "Cannot update more than 100 bundles at once",
-        }
+        };
     }
 
     // Single atomic transaction for all updates
@@ -144,13 +240,15 @@ export async function bulkUpdateBundleStatusService(
             }
 
             const foundIds = existingBundles.map((b) => b.id);
-            const notFoundIds = bundleIds.filter((id) => !foundIds.includes(id));
+            const notFoundIds = bundleIds.filter(
+                (id) => !foundIds.includes(id),
+            );
 
             // Update all found bundles
             await updateBundlesStatusByIds(tx, foundIds, status);
 
             // Fetch updated bundles
-            const updatedBundles = await findBundlesByIds(foundIds, shop, tx)
+            const updatedBundles = await findBundlesByIds(foundIds, shop, tx);
 
             return {
                 updatedBundles,
@@ -160,7 +258,7 @@ export async function bulkUpdateBundleStatusService(
         },
         {
             timeout: 15000, // 15 seconds for bulk operations
-        }
+        },
     );
 
     // Generate message

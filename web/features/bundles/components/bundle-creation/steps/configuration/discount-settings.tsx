@@ -3,21 +3,20 @@
 import {
     BlockStack,
     Card,
-    Text,
-    Select,
-    TextField,
     InlineStack,
+    Select,
+    Text,
+    TextField,
 } from "@shopify/polaris";
 import { useBundleValidation } from "@/hooks/bundle/useBundleValidation";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
-import { useShopSettings } from "@/hooks";
 import {
     DISCOUNT_TYPES,
     getDiscountProperty,
     useBundleStore,
 } from "@/features/bundles";
-import { getCurrencySymbol } from "@/shared";
+import { getCurrencySymbol, useShopSettings } from "@/shared";
 
 export function DiscountSettings() {
     const { watch, setValue } = useBundleFormMethods();

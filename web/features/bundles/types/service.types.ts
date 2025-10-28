@@ -7,6 +7,7 @@ import {
     BundleStatus,
     CreateBundleInput,
     DeleteBundleResult,
+    TransformedBundle,
 } from "@/features/bundles";
 import { BundleFormData } from "@/lib/validation";
 
@@ -191,3 +192,25 @@ export interface BulkUpdateBundleStatusResult {
     success: boolean;
     message: string;
 }
+
+/*
+ * Create bundle service types
+ */
+export interface CreateBundleServiceInput {
+    shop: string;
+    data: BundleFormData;
+}
+
+/*
+ * Create bundle service result types
+ */
+export interface CreateBundleServiceResponse {
+    success: boolean;
+    message: string;
+    bundle: TransformedBundle | null;
+}
+
+/*
+ * Create bundle action input
+ */
+export type CreateBundleActionInput = Omit<CreateBundleInput, 'shop'>;

@@ -1,7 +1,7 @@
 "use client";
 
 import { BlockStack, Card, RadioButton, Text } from "@shopify/polaris";
-import { useBundleStore } from "@/stores";
+import { useBundleStore } from "@/features/bundles";
 
 export function BundleBehavior() {
     const { configuration, updateConfiguration } = useBundleStore();
