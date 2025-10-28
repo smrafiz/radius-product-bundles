@@ -6,7 +6,9 @@ export interface MetricCardProps {
     value: string | number;
     growth?: number;
     subtitle?: string;
-    tone?: "success" | "caution" | "subdued";
+    svg_icon?: string;
+    icon?: "arrow-up" | "arrow-down" | "work-list";
+    tone?: "success" | "info" | "critical" | "warning" | "auto" | "neutral" | "caution" | undefined;
     loading?: boolean;
     action?: {
         label: string;

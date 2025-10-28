@@ -19,8 +19,8 @@ export default function Navigation() {
             <Link href="/automation" data-sprogress>
                 Automation
             </Link>
-            <Link href="/pricing-rules" data-sprogress>
-                Pricing Rules
+            <Link href="/pricing" data-sprogress>
+                Pricing
             </Link>
             <Link href="/templates" data-sprogress>
                 Templates

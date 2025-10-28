@@ -1,12 +1,5 @@
 "use client";
 
-import {
-    Box,
-    Card,
-    SkeletonBodyText,
-    SkeletonDisplayText,
-} from "@shopify/polaris";
-
 /**
  * Bundle table skeleton
  */

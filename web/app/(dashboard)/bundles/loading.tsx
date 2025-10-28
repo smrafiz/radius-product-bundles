@@ -1,80 +1,62 @@
 "use client";
 
-import {
-    Frame,
-    Page,
-    Layout,
-    Card,
-    SkeletonDisplayText,
-    SkeletonBodyText,
-    BlockStack,
-    Box,
-} from "@shopify/polaris";
-import { PlusIcon, ColorIcon } from "@shopify/polaris-icons";
-
-export default function BundlePageSkeleton() {
+export default function BundlePageSkeleton({ lines = 6 }: { lines?: number }) {
     return (
-        <Frame>
-            <Page
-                title="Bundle Management"
-                subtitle="Create and manage your product bundle offers"
-                primaryAction={{
-                    content: "Create Bundle",
-                    icon: PlusIcon,
-                    onAction: () => {},
-                    disabled: true,
-                }}
-                secondaryActions={[
-                    {
-                        content: "Bundle Studio",
-                        icon: ColorIcon,
-                        onAction: () => {},
-                        disabled: true,
-                    },
-                ]}
+        <s-page>
+            <s-stack
+                gap="large"
+                paddingBlockStart="large"
+                paddingBlockEnd="large"
             >
-                <Layout>
-                    {/* Metrics grid skeleton */}
-                    <Layout.Section>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <Card key={i}>
-                                    <Box padding="400">
-                                        <BlockStack gap="200">
-                                            <SkeletonDisplayText
-                                                size="small"
-                                                maxWidth="10ch"
-                                            />
-                                            <SkeletonDisplayText
-                                                size="large"
-                                                maxWidth="6ch"
-                                            />
-                                            <SkeletonBodyText lines={1} />
-                                        </BlockStack>
-                                    </Box>
-                                </Card>
-                            ))}
-                        </div>
-                    </Layout.Section>
+                <s-stack
+                    direction="inline"
+                    gap="base"
+                    alignItems="center"
+                    justifyContent="space-between"
+                >
+                    <s-stack>
+                        <s-heading>
+                            <div className="text-xl">Bundle Management</div>
+                        </s-heading>
+                        <s-text>
+                            Create and manage your product bundle offers
+                        </s-text>
+                    </s-stack>
 
-                    {/* Table skeleton */}
-                    <Layout.Section>
-                        <Card>
-                            <Box padding="400">
-                                <SkeletonDisplayText
-                                    size="small"
-                                    maxWidth="20ch"
-                                />
-                                <div className="mt-4 space-y-4">
-                                    {[1, 2, 3, 4, 5].map((row) => (
-                                        <SkeletonBodyText key={row} lines={1} />
-                                    ))}
-                                </div>
-                            </Box>
-                        </Card>
-                    </Layout.Section>
-                </Layout>
-            </Page>
-        </Frame>
+                    <s-stack direction="inline" gap="small-200">
+                        <s-button
+                            icon="view"
+                            variant="secondary"
+                            accessibilityLabel="Bundle Studio"
+                            onClick={() => {}}
+                        >
+                            Bundle Studio
+                        </s-button>
+                        <s-button
+                            icon="plus"
+                            variant="primary"
+                            accessibilityLabel="Create Bundle"
+                            onClick={() => {}}
+                        >
+                            Create Bundle
+                        </s-button>
+                    </s-stack>
+                </s-stack>
+
+                <s-section padding="base">
+                    <div className="animate-pulse space-y-3 p-5">
+                        {Array.from({ length: lines }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-2 bg-[#ebebeb] rounded"
+                                style={{
+                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                }}
+                            />
+                        ))}
+                    </div>
+                </s-section>
+            </s-stack>
+        </s-page>
     );
 }

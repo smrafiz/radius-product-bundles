@@ -22,7 +22,7 @@ export interface SetupItem {
     secondaryButton?: SetupButtonProps;
 }
 
-export function DashboardSetUpGuide({ lines = 6 }: { lines?: number }) {
+export function DashboardSetUpGuide({ lines = 13 }: { lines?: number }) {
     const { loading } = useDashboardStore();
     const [showGuide, setShowGuide] = useState(true);
     const [items, setItems] = useState<SetupItem[]>(ITEMS);

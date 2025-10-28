@@ -38,7 +38,7 @@ export function BundleTypeSelection() {
                             </s-grid-item>
                         ))}
                     </s-grid>
-                </s-stack>{" "}
+                </s-stack>
                 <s-stack>
                     <MediaCard />
                 </s-stack>
