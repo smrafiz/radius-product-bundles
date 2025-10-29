@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { DashboardPage } from "@/features/dashboard";
+import { PricingPage } from "@/features/pricing";
 
 export const metadata: Metadata = {
     title: "Pricing | Flexible Plans for Every Business",
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
  * Pricing Page
  */
 export default function Page() {
-    return <s-page>Pricing page</s-page>
+    return <PricingPage />
 }
