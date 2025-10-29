@@ -119,13 +119,14 @@ export const bundleSchema = z
                     productId: productGidSchema,
                     variantId: variantGidSchema,
                     quantity: z.number().int().min(1).max(1000),
-                    role: z.enum([
-                        "TRIGGER",
-                        "REWARD",
-                        "INCLUDED",
-                        "OPTIONAL",
-                        "GROUP_OPTION",
-                    ]),
+                    role: z
+                        .enum([
+                            "TRIGGER",
+                            "REWARD",
+                            "INCLUDED",
+                            "OPTIONAL",
+                            "GROUP_OPTION",
+                        ]),
                     groupId: z.string().optional(),
                     customPrice: z.number().min(0).optional(),
                     discountPercent: z.number().min(0).max(100).optional(),

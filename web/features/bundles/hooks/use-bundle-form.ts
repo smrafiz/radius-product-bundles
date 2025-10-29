@@ -3,13 +3,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BundleFormData, bundleSchema } from "@/lib/validation";
 import { useCallback, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createBundle, updateBundle } from "@/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { BundleType, useBundleStore } from "@/features/bundles";
-import { CreateBundlePayload } from "@/types";
+import {
+    BundleFormData,
+    bundleSchema,
+    BundleType,
+    createBundleAction,
+    CreateBundlePayload,
+    useBundleStore,
+} from "@/features/bundles";
+import { updateBundle } from "@/actions/bundle/mutate.actions";
 
 // Helper to convert BundleFormData to server action format
 const transformFormDataForServer = (
@@ -89,7 +94,7 @@ export function useBundleForm(bundleId?: string) {
                 data,
                 bundleData.type as BundleType,
             );
-            const result = await createBundle(token, transformedData);
+            const result = await createBundleAction(token, transformedData);
 
             if (result.status === "error") {
                 throw new Error(JSON.stringify(result));

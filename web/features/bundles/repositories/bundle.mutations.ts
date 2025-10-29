@@ -8,6 +8,7 @@ import {
     BundleStatus,
     CreateBundleInput,
     DeleteBundleResult,
+    findBundleByIdWithAllRelations,
     UpdateBundleInput,
     verifyBundleOwnership,
     verifyBundleOwnershipTx,
@@ -123,6 +124,59 @@ export async function createBundleProductGroups(
             maxSelection: g.maxSelection || null,
             displayOrder: g.displayOrder ?? index,
         })),
+    });
+}
+
+/**
+ * Create a bundle along with its products, product groups, and settings.
+ * Executes all operations inside a single transaction.
+ */
+export async function createBundleWithRelations(data: CreateBundleInput) {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        // Step 1: Create the bundle
+        const bundle = await createBundle(tx, {
+            shop: data.shop,
+            name: data.name,
+            description: data.description,
+            type: data.type,
+            status: data.status,
+            mainProductId: data.mainProductId,
+            buyQuantity: data.buyQuantity,
+            getQuantity: data.getQuantity,
+            minimumItems: data.minimumItems,
+            maximumItems: data.maximumItems,
+            discountType: data.discountType,
+            discountValue: data.discountValue,
+            minOrderValue: data.minOrderValue,
+            maxDiscountAmount: data.maxDiscountAmount,
+            volumeTiers: data.volumeTiers,
+            allowMixAndMatch: data.allowMixAndMatch,
+            mixAndMatchPrice: data.mixAndMatchPrice,
+            marketingCopy: data.marketingCopy,
+            seoTitle: data.seoTitle,
+            seoDescription: data.seoDescription,
+            images: data.images,
+            startDate: data.startDate,
+            endDate: data.endDate,
+        });
+
+        // Step 2: Create bundle products
+        if (data.products?.length) {
+            await createBundleProducts(tx, bundle.id, data.products);
+        }
+
+        // Step 3: Create bundle product groups
+        if (data.productGroups?.length) {
+            await createBundleProductGroups(tx, bundle.id, data.productGroups);
+        }
+
+        // Step 4: Create bundle settings
+        if (data.settings) {
+            await createBundleSettings(tx, bundle.id, data.settings);
+        }
+
+        // Step 5: Return the bundle with all relations
+        return await findBundleByIdWithAllRelations(bundle.id, data.shop, tx);
     });
 }
 

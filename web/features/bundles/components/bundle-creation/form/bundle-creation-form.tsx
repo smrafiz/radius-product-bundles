@@ -5,41 +5,26 @@ import {
     BundlePreview,
     getBundleProperty,
     HorizontalStepIndicator,
+    StepContent,
     StepNavigation,
     useBundleFormMethods,
     useBundleStore,
-    StepContent,
 } from "@/features/bundles";
-import { useEffect, useState } from "react";
-import { GlobalBanner, withLoader } from "@/shared";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Card, Layout, Page } from "@shopify/polaris";
-import { usePathname, useRouter } from "next/navigation";
+import { GlobalBanner, useAppNavigation } from "@/shared";
 
 export function BundleCreationForm({
     bundleType,
     bundleName,
 }: BundleCreationFormProps) {
-    const router = useRouter();
-    const pathname = usePathname();
-    const { setStep } = useBundleStore();
-
+    const { goBack } = useAppNavigation();
     const { bundleData, setBundleData } = useBundleStore();
     const { setValue } = useBundleFormMethods();
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [successMessage, setSuccessMessage] = useState<{
-        title: string;
-        content: string;
-    } | null>(null);
 
+    const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
-
-    const handleBack = () => {
-        if (isEditMode) {
-            router.push("/bundles");
-        } else {
-            router.push("/bundles/create");
-        }
-    };
 
     useEffect(() => {
         if (!bundleData.type) {
@@ -55,7 +40,7 @@ export function BundleCreationForm({
                 subtitle: "Update your bundle settings and preview changes",
                 backAction: {
                     content: "Back to Bundles",
-                    onAction: withLoader(() => handleBack()),
+                    onAction: goBack,
                 },
             };
         }
@@ -66,7 +51,7 @@ export function BundleCreationForm({
                 "Configure your bundle settings and preview the customer experience",
             backAction: {
                 content: "Bundle Selection",
-                onAction: withLoader(() => handleBack()),
+                onAction: goBack,
             },
         };
     };

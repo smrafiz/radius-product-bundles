@@ -1,9 +1,12 @@
 "use client";
 
+import {
+    BundleFormData,
+    useBundleStore,
+    useBundleValidation,
+} from "@/features/bundles";
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
-import { BundleFormData } from "@/lib/validation";
-import { useBundleStore, useBundleValidation } from "@/features/bundles";
 
 export function useBundleFormMethods() {
     const form = useFormContext<BundleFormData>();
@@ -40,7 +43,7 @@ export function useBundleFormMethods() {
 
     return {
         ...restForm,
-        formState, // Make sure formState is returned
+        formState,
         setValue,
         handleNextStep,
         canProceedToNextStep,

@@ -1,30 +1,25 @@
 "use client";
 
-import { useBundleStore } from "@/stores";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect, useRef } from "react";
-import { useFormContext } from "react-hook-form";
-import { BundleFormData } from "@/lib/validation";
-import { withLoader } from "@/shared";
+import { useBundleStore } from "@/features/bundles";
+import { GlobalFormProps, withLoader } from "@/shared";
+import { FieldValues, useFormContext } from "react-hook-form";
 
-interface Props {
-    children: ReactNode;
-    onSubmit?: (data: BundleFormData) => Promise<void> | void;
-    resetDirty: () => void;
-    discardPath?: string;
-}
-
-export function GlobalForm({
+/**
+ * A reusable global form wrapper compatible with any React Hook Form context.
+ * Handles save bar, discard confirmation, and Shopify loading states.
+ */
+export function GlobalForm<T extends FieldValues>({
     children,
     onSubmit,
     resetDirty,
     discardPath,
-}: Props) {
+}: GlobalFormProps<T>) {
     const formRef = useRef<HTMLFormElement>(null);
     const router = useRouter();
-    const form = useFormContext<BundleFormData>();
-
-    const isDirty = useBundleStore((s) => s.isDirty);
+    const form = useFormContext<T>();
+    const isDirty = useBundleStore((s) => s.isDirty); // optionally move this to a global store later
 
     useEffect(() => {
         const formElement = formRef.current;
@@ -55,13 +50,11 @@ export function GlobalForm({
         };
 
         const handleReset = () => {
-            if (form) {
-                form.reset();
-            }
+            form?.reset();
             resetDirty();
 
             if (discardPath) {
-                NProgress.start();
+                window.shopify.loading(true);
                 router.push(discardPath);
             }
         };
@@ -78,7 +71,6 @@ export function GlobalForm({
     useEffect(() => {
         const formElement = formRef.current;
         if (!formElement) return;
-
         formElement.dataset.dirty = isDirty ? "true" : "false";
     }, [isDirty]);
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { useBundleStore } from "@/stores";
 import {
     ConfigurationStep,
     DisplayStep,
     ProductsStep,
     ReviewStep,
+    useBundleStore,
 } from "@/features/bundles";
 
 export function StepContent() {

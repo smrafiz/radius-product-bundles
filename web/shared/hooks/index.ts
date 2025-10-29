@@ -7,3 +7,4 @@ export { useAppNavigation } from "./use-navigation";
 export { useSessionToken } from "./use-session-token";
 export { useShopSettings } from "./use-shop-settings";
 export { useGlobalBanner } from "./use-global-banner";
+export { useProductPicker } from "./use-product-picker";

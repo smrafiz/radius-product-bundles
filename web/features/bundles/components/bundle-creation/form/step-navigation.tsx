@@ -1,10 +1,13 @@
 "use client";
 
+import {
+    BundleFormData,
+    useBundleFormMethods,
+    useBundleStore,
+} from "@/features/bundles";
 import { usePathname } from "next/navigation";
 import { useFormContext } from "react-hook-form";
-import { BundleFormData } from "@/lib/validation";
 import { Button, InlineStack } from "@shopify/polaris";
-import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
 
 export function StepNavigation() {
     const { currentStep, totalSteps, prevStep, canGoPrevious } =

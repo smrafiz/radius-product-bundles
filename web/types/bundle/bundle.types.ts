@@ -49,42 +49,6 @@ export interface Bundle {
 }
 
 /*
- * Create bundle payload types
- */
-export interface CreateBundlePayload {
-    name: string;
-    type: PrismaBundleType;
-    products: {
-        productId: string;
-        variantId?: string;
-        quantity: number;
-    }[];
-    discountType: PrismaDiscountType;
-    discountValue?: number;
-    description?: string;
-    minOrderValue?: number;
-    maxDiscountAmount?: number;
-    startDate?: string;
-    endDate?: string;
-}
-
-/*
- * Update bundle payload types
- */
-export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
-    id: string;
-    status?: PrismaBundleStatus;
-}
-
-/*
- * Extended bundle form data types
- */
-export interface ExtendedBundleFormData extends BundleFormData {
-    id?: string;
-    type: PrismaBundleType;
-}
-
-/*
  * Bundle details types
  */
 export interface BundleWithDetails {

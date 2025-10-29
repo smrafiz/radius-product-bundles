@@ -9,22 +9,18 @@
 import {
     bulkActivateBundlesService,
     bulkDraftBundlesService,
+    bundleSchema,
     BundleStatus,
     CreateBundleActionInput,
     createBundleService,
     deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
-    TransformedBundle,
     updateBundleStatusService,
 } from "@/features/bundles";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify/verify";
-import {
-    BundleFormData,
-    validateAndCheckBusinessRules,
-} from "@/lib/validation";
 
 /**
  * Update bundle status
@@ -242,7 +238,7 @@ export async function duplicateBundleAction(
 export async function createBundleAction(
     sessionToken: string,
     bundleData: CreateBundleActionInput,
-): Promise<ApiResponse<TransformedBundle>> {
+): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
@@ -250,31 +246,60 @@ export async function createBundleAction(
 
         console.log(`[createBundleAction] Creating bundle for shop: ${shop}`);
 
-        const validation = await validateAndCheckBusinessRules(
-            shop,
-            bundleData,
-        );
+        // Schema Validation (Fail Fast)
+        const schemaValidation = bundleSchema.safeParse(bundleData);
 
-        if (!validation.success) {
+        if (!schemaValidation.success) {
+            console.log("[Action] Schema validation failed");
+
+            // Format Zod errors
+            const formattedErrors: Record<string, { _errors: string[] }> = {};
+
+            schemaValidation.error.issues.forEach((issue) => {
+                const path = issue.path.join(".");
+                if (!formattedErrors[path]) {
+                    formattedErrors[path] = { _errors: [] };
+                }
+                formattedErrors[path]._errors.push(issue.message);
+            });
+
             return {
                 status: "error",
-                message: "Validation failed",
-                errors: validation.errors,
+                message: "Invalid bundle data format",
+                errors: Object.values(formattedErrors).flatMap(
+                    (e) => e._errors,
+                ),
             };
         }
 
+        console.log("[Action] Schema validation passed");
+
+        // Call Service with Clean Data
         const result = await createBundleService({
             shop,
-            data: validation.data as BundleFormData,
+            data: schemaValidation.data,
         });
+
+        if (!result.success) {
+            return {
+                status: "error",
+                message: result.message,
+                errors: result.errors || [],
+            };
+        }
 
         revalidatePath("/bundles");
         revalidatePath("/dashboard");
 
         return {
             status: "success",
-            message: result.message,
-            data: result.bundle,
+            message: "Bundle created successfully",
+            data: {
+                id: result.bundle!.id,
+                name: result.bundle!.name,
+                status: result.bundle!.status,
+                createdAt: result.bundle!.createdAt,
+            },
         };
     } catch (error) {
         console.error("[createBundleAction] Error:", error);

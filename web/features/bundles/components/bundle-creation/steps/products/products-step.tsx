@@ -7,14 +7,14 @@ import {
     Card,
     InlineStack,
 } from "@shopify/polaris";
-import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
 import {
     ProductList,
     StepHeading,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
-import { useProductPicker } from "@/hooks";
+import { useProductPicker } from "@/shared";
+import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
 
 
 export function ProductsStep() {

@@ -8,7 +8,9 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
+import { z } from "zod";
 import { IconSource } from "@shopify/polaris";
+import { bundleSchema } from "@/features/bundles/schema/zod.schema";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
 // Re-export Prisma enums
@@ -70,22 +72,7 @@ export interface BundleWithDetails extends PrismaBundle {
 /**
  * Bundle creation/update payload
  */
-export interface BundleFormData {
-    name: string;
-    description?: string;
-    type: BundleType;
-    discountType: DiscountType;
-    discountValue: number;
-    minOrderValue?: number;
-    maxDiscountAmount?: number;
-    products: Array<{
-        productId: string;
-        variantId?: string;
-        quantity: number;
-    }>;
-    startDate?: Date;
-    endDate?: Date;
-}
+export type BundleFormData = z.infer<typeof bundleSchema>;
 
 /**
  * Bundle product
@@ -230,4 +217,65 @@ export interface Pagination {
 export interface BundleHelpItem {
     title: string;
     bundles: string;
+}
+
+export interface ValidationContext {
+    maxBundleProducts?: number;
+    maxBundlesPerShop?: number;
+    betaFeatures?: boolean;
+}
+
+export interface ValidationResult {
+    success: boolean;
+    errors: Record<string, { _errors: string[] }> | null;
+}
+
+/*
+ * Create bundle payload types
+ */
+export interface CreateBundlePayload {
+    name: string;
+    type: PrismaBundleType;
+    products: {
+        productId: string;
+        variantId?: string;
+        quantity: number;
+    }[];
+    discountType: PrismaDiscountType;
+    discountValue?: number;
+    description?: string;
+    minOrderValue?: number;
+    maxDiscountAmount?: number;
+    startDate?: string;
+    endDate?: string;
+}
+
+/*
+ * Update bundle payload types
+ */
+export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
+    id: string;
+    status?: PrismaBundleStatus;
+}
+
+/*
+ * Extended bundle form data types
+ */
+export interface ExtendedBundleFormData extends BundleFormData {
+    id?: string;
+    type: PrismaBundleType;
+}
+
+export interface DisplaySettings {
+    layout: "horizontal" | "vertical" | "grid";
+    position: "above_cart" | "below_cart" | "description" | "custom";
+    title: string;
+    colorTheme: "brand" | "success" | "warning" | "critical";
+    showPrices: boolean;
+    showSavings: boolean;
+    enableQuickSwap: boolean;
+}
+
+export interface BundleConfiguration {
+    discountApplication: "bundle" | "products" | "shipping";
 }

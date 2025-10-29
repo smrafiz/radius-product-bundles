@@ -14,8 +14,8 @@ import {
 } from "@shopify/polaris";
 import { DeleteIcon, DragHandleIcon, ImageIcon } from "@shopify/polaris-icons";
 import { useSortable } from "@dnd-kit/sortable";
-import { useProductPicker } from "@/hooks/product";
 import { ProductGroup, useBundleStore } from "@/features/bundles";
+import { useProductPicker } from "@/shared";
 
 
 interface ProductItemProps {

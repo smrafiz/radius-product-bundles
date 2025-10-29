@@ -28,11 +28,6 @@ export function CreateBundlePage({
 
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
 
-    console.log("=== CREATE PAGE DEBUG ===");
-    console.log("bundleType from params:", bundleType);
-    console.log("typeof bundleType:", typeof bundleType);
-    console.log("========================");
-
     const handleSubmit = async (data: BundleFormData) => {
         setSaving(true);
 
@@ -73,7 +68,7 @@ export function CreateBundlePage({
 
     return (
         <BundleFormProvider bundleType={bundleType}>
-            <GlobalForm
+            <GlobalForm<BundleFormData>
                 onSubmit={handleSubmit}
                 resetDirty={resetDirty}
                 discardPath="/bundles"

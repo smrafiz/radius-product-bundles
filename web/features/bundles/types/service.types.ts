@@ -4,12 +4,12 @@
 
 import {
     BundleFilters,
+    BundleFormData,
     BundleStatus,
     CreateBundleInput,
     DeleteBundleResult,
     TransformedBundle,
 } from "@/features/bundles";
-import { BundleFormData } from "@/lib/validation";
 
 /*
  * Validation types
@@ -208,9 +208,31 @@ export interface CreateBundleServiceResponse {
     success: boolean;
     message: string;
     bundle: TransformedBundle | null;
+    errors: Record<string, { _errors: string[] }> | null;
 }
 
 /*
  * Create bundle action input
  */
 export type CreateBundleActionInput = Omit<CreateBundleInput, 'shop'>;
+
+/*
+ * Security check result types
+ */
+export interface SecurityCheckResult {
+    passed: boolean;
+    reason?: string;
+}
+
+/*
+ * Abusive pattern result types
+ */
+export interface AbusivePatternResult {
+    isAbusive: boolean;
+    reason?: string;
+    details?: {
+        created: number;
+        deleted: number;
+        threshold: number;
+    };
+}

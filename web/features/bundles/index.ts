@@ -8,3 +8,5 @@ export * from "./services";
 export * from "./constants";
 export * from "./components";
 export * from "./repositories";
+export { bundleSchema } from "./schema/zod.schema";
+export * from "./validation/bundle-rules.validation";

@@ -1,11 +1,14 @@
 "use client";
 
-import { useBundleStore } from "@/stores";
+import {
+    BundleFormData,
+    BundleFormProviderProps,
+    bundleSchema,
+    useBundleStore,
+} from "@/features/bundles";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { BundleFormProviderProps } from "@/features/bundles";
-import { BundleFormData, bundleSchema } from "@/lib/validation";
 
 export function BundleFormProvider({
     children,

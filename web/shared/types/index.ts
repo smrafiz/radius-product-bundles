@@ -5,3 +5,4 @@ export * from "./common.types";
 export * from "./hooks.types";
 export * from "./metrics.types";
 export * from "./product.types";
+export * from "./components.types";

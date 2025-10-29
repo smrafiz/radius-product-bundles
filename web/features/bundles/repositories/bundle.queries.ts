@@ -85,6 +85,17 @@ export async function findBundleByName(
     });
 }
 
+/*
+ * Find a unique bundle by name
+ */
+export async function findUniqueByName(shop: string, name: string) {
+    return await prisma.bundle.findUnique({
+        where: {
+            shop_name: { shop, name },
+        },
+    });
+}
+
 /**
  * Find bundles by product ID
  */
@@ -221,4 +232,41 @@ export async function countRecentBundles(shop: string, minutesAgo: Date) {
             createdAt: { gte: minutesAgo },
         },
     });
+}
+
+/**
+ * Get bundle creation/deletion activity within a timeframe
+ */
+export async function getBundleActivity(
+    shop: string,
+    hoursToCheck: number = 24
+) {
+    const since = new Date(Date.now() - hoursToCheck * 60 * 60 * 1000);
+
+    // Count new bundles created in the given timeframe
+    const createdCount = await prisma.bundle.count({
+        where: {
+            shop,
+            createdAt: { gte: since },
+        },
+    });
+
+    // Count soft-deleted bundles (if `deletedAt` exists)
+    let deletedCount = 0;
+    try {
+        deletedCount = await prisma.bundle.count({
+            where: {
+                shop,
+                deletedAt: { gte: since },
+            },
+        });
+    } catch {
+        // ignore if schema doesn't have deletedAt
+    }
+
+    return {
+        created: createdCount,
+        deleted: deletedCount,
+        since,
+    };
 }

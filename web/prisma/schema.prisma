@@ -115,8 +115,9 @@ model Bundle {
     aiOptimized Boolean @default(false)
     aiScore     Float?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
 
     // Relations
     bundleProducts BundleProduct[]
@@ -126,6 +127,8 @@ model Bundle {
     automations    AutomationBundle[]
     analytics      BundleAnalytics[]
     pricingRules   PricingRuleBundle[]
+    Shop           Shop?                @relation(fields: [shopId], references: [id])
+    shopId         String?
 
     @@unique([shop, name])
     @@index([shop, status, type])
@@ -251,6 +254,8 @@ model ABTest {
     updatedAt       DateTime     @updatedAt
     controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id])
     results         TestResult[]
+    Shop            Shop?        @relation(fields: [shopId], references: [id])
+    shopId          String?
 
     @@index([shop, status])
     @@map("ab_tests")
@@ -291,6 +296,8 @@ model Automation {
     updatedAt     DateTime           @updatedAt
     bundles       AutomationBundle[]
     logs          AutomationLog[]
+    Shop          Shop?              @relation(fields: [shopId], references: [id])
+    shopId        String?
 
     @@index([shop, status])
     @@map("automations")
@@ -339,6 +346,8 @@ model PricingRule {
     createdAt         DateTime            @default(now())
     updatedAt         DateTime            @updatedAt
     bundles           PricingRuleBundle[]
+    Shop              Shop?               @relation(fields: [shopId], references: [id])
+    shopId            String?
 
     @@index([shop, priority])
     @@map("pricing_rules")
@@ -408,6 +417,8 @@ model AIInsight {
     testId      String?
     createdAt   DateTime      @default(now())
     expiresAt   DateTime?
+    Shop        Shop?         @relation(fields: [shopId], references: [id])
+    shopId      String?
 
     @@index([shop, type, confidence])
     @@map("ai_insights")
@@ -467,6 +478,8 @@ model Notification {
     actionUrl   String?
     createdAt   DateTime             @default(now())
     expiresAt   DateTime?
+    Shop        Shop?                @relation(fields: [shopId], references: [id])
+    shopId      String?
 
     @@index([shop, read, createdAt])
     @@map("notifications")
@@ -488,15 +501,41 @@ model AlertRule {
     lastTriggered   DateTime?
     createdAt       DateTime         @default(now())
     updatedAt       DateTime         @updatedAt
+    Shop            Shop?            @relation(fields: [shopId], references: [id])
+    shopId          String?
 
     @@index([shop, status])
     @@map("alert_rules")
 }
 
-// Stores information about an app.
+// Stores information about a shop.
+model Shop {
+    id          String     @id @default(cuid())
+    domain      String     @unique
+    status      ShopStatus @default(ACTIVE)
+    plan        String?
+    trialEndsAt DateTime?
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+
+    // Relations
+    bundles       Bundle[]
+    automations   Automation[]
+    abTests       ABTest[]
+    pricingRules  PricingRule[]
+    aiInsights    AIInsight[]
+    notifications Notification[]
+    alertRules    AlertRule[]
+    appSettings   AppSettings?   @relation("ShopAppSettings")
+
+    @@map("shops")
+}
+
+// Stores information about app settings.
 model AppSettings {
     id                   String       @id @default(cuid())
-    shop                 String       @unique
+    shopId               String       @unique
+    status               ShopStatus   @default(ACTIVE)
     defaultDiscountType  DiscountType @default(PERCENTAGE)
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
@@ -507,6 +546,8 @@ model AppSettings {
     aiRecommendations    Boolean      @default(true)
     createdAt            DateTime     @default(now())
     updatedAt            DateTime     @updatedAt
+
+    shop Shop @relation("ShopAppSettings", fields: [shopId], references: [id])
 
     @@map("app_settings")
 }
@@ -640,4 +681,11 @@ enum AlertFrequency {
     IMMEDIATE
     HOURLY
     DAILY
+}
+
+enum ShopStatus {
+    ACTIVE
+    SUSPENDED
+    TRIAL_EXPIRED
+    NOT_CONFIGURED
 }
