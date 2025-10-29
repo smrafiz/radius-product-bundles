@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { GlobalMessage, GlobalMessageState } from "@/shared";
 
-
 export const useGlobalBannerStore = create(
     immer<GlobalMessageState>((set, get) => ({
         messages: [],

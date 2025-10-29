@@ -41,11 +41,13 @@ export function GlobalBanner() {
                     key={message.id}
                     heading={message.title}
                     tone={getToneFromType(message.type)}
+                    dismissible={message.dismissible}
                     onDismiss={
                         message.dismissible
                             ? () => removeMessage(message.id)
                             : undefined
                     }
+
                 >
                     {message.content}
 

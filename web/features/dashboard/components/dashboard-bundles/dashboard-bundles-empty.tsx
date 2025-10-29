@@ -1,5 +1,4 @@
 "use client";
-
 import { useAppNavigation } from "@/shared";
 /*
  * Dashboard bundles empty state
@@ -12,8 +11,8 @@ export function DashboardBundlesEmpty({ error }: { error?: string | null }) {
             <s-grid gap="base" justifyItems="center" paddingBlock="large-400">
                 <s-box maxInlineSize="200px" maxBlockSize="200px">
                     <s-image
-                        aspectRatio="1/0.5"
-                        src="https://cdn.shopify.com/static/images/polaris/patterns/callout.png"
+                        aspectRatio="1/1"
+                        src="/assets/empty.png"
                         alt="A stylized graphic of four characters, each holding a puzzle piece"
                     />
                 </s-box>

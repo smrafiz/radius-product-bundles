@@ -11,6 +11,7 @@ export function PricingCardItem({
     primaryButton,
     frequency,
 }: PricingCardItemInfo) {
+
     return (
         <div
             style={{

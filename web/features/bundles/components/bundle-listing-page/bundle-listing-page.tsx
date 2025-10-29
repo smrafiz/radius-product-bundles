@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { GlobalBanner, MetricCard } from "@/shared";
-import { Toast } from "@shopify/polaris";
 import {
     BundleTable,
     BundleTableSkeleton,

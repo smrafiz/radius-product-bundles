@@ -2,7 +2,7 @@ import { PricingCardItemInfo } from "@/features/pricing";
 import { PricingFaqItemInfo} from "@/features/pricing";
 
 /*
- * Pricing Table Card
+ * Pricing Table Card Data
  */
 export const PRICING_CARD: PricingCardItemInfo[] = [
     {
@@ -60,7 +60,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
             "24/7 Customer Support",
         ],
         price:"$99",
-        frequency:"month",
+        frequency:"year",
         primaryButton: {
             content: "Select Plan",
             props: {
@@ -71,33 +71,34 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
     },
 ];
 
+
+/*
+ * Pricing Faq Card Data
+ */
+
 export const PRICING_FAQ_ITEM: PricingFaqItemInfo[] = [
     {
         id: "0",
         title: "How is my bundle sales volume calculated?",
         description:
             "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
-
     },
     {
         id: "1",
         title: "What is a rolling 30-day period?",
         description:
             "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
-
     },
     {
         id: "2",
         title: "Which plan should I be on?",
         description:
             "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
-
     },
     {
         id: "3",
         title: "Which plan should I be on?",
         description:
             "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
-
     },
 ];

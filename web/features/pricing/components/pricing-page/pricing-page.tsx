@@ -28,7 +28,7 @@ export function PricingPage() {
                     </s-stack>
                 </s-stack>
 
-                <s-stack gap="base">
+                <s-stack gap="large">
                     {/* Pricing Store */}
                     <PricingStore />
 

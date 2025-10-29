@@ -34,13 +34,13 @@ export function MediaCard() {
                 </s-grid>
 
                 {/* RIGHT SIDE: Info */}
-                <div className="relative sm:max-w-[100px] w-full">
+                <div className="relative sm:max-w-[100px] w-full bg-gray-300 p-2 rounded-lg">
                     <s-image
                         borderRadius="large"
                         aspectRatio="1/1"
                         objectFit="cover"
                         alt="Learn about bundling"
-                        src="https://cdn.shopify.com/static/images/polaris/patterns/4-pieces.png"
+                        src="/assets/empty.png"
                     />
                 </div>
             </div>
