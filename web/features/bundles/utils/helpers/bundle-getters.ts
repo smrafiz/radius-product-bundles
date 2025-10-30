@@ -4,7 +4,6 @@
 
 import {
     BUNDLE_STATUSES,
-    BUNDLE_TYPES,
     BundleConfig,
     BundleStatus,
     BundleStatusBadge,
@@ -15,6 +14,7 @@ import {
     DiscountType,
 } from "@/features/bundles";
 import { Bundle, BundleProduct } from "@prisma/client";
+import { BUNDLE_TYPES } from "@/features/bundles/constants";
 
 // export const getBundleStatusBadge = (
 //     status: string | BundleStatusBadge,
@@ -94,3 +94,14 @@ export const extractProductIds = (
         ),
     );
 };
+
+/**
+ * Map bundle type slug to ID
+ */
+export const bundleTypeMap = Object.values(BUNDLE_TYPES).reduce(
+    (acc, c) => {
+        acc[c.slug] = c.id;
+        return acc;
+    },
+    {} as Record<string, BundleType>
+);

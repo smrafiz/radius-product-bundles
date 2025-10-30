@@ -1,4 +1,4 @@
 export * from "./bundle-read.service";
 export * from "./bundle-write.service";
-export * from "./bundle-validation.service";
+export * from "./bundle-security.service";
 export * from "./bundle-transformer.service";

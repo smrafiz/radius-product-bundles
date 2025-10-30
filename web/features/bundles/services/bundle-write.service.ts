@@ -8,9 +8,12 @@ import {
     BulkUpdateBundleStatusInput,
     BulkUpdateBundleStatusResult,
     BUNDLE_STATUSES,
+    canCreateBundle,
+    checkNameConflict,
     createBundle,
-    createBundleProducts,
-    CreateBundleWithValidationInput,
+    CreateBundleServiceInput,
+    CreateBundleServiceResponse,
+    createBundleWithRelations,
     DeleteBundleInput,
     DeleteBundleServiceResult,
     deleteBundlesWithRelations,
@@ -20,50 +23,225 @@ import {
     findBundleByIdWithAllRelations,
     findBundlesByIds,
     generateUniqueBundleName,
+    performSecurityChecks,
+    transformBundle,
     transformBundleForDuplication,
     updateBundlesStatusByIds,
     updateBundleStatusById,
     UpdateBundleStatusInput,
     UpdateBundleStatusResult,
+    validateBusinessRules,
+    validateSecurity,
 } from "@/features/bundles";
 import prisma from "@/lib/db/prisma-connect";
+import { getShop } from "@/shared"; // ==========================================
 
 // ==========================================
 // CREATE Operations
 // ==========================================
 
 /**
- * Create bundle with validation
+ * Create a bundle with validation
  */
-export async function createBundleWithValidation(
-    input: CreateBundleWithValidationInput,
-): Promise<any> {
+export async function createBundleService(
+    input: CreateBundleServiceInput,
+): Promise<CreateBundleServiceResponse> {
     const { shop, data } = input;
 
-    // Validate required fields
-    if (!data.name) {
-        throw new Error("Bundle name is required");
-    }
+    console.log(
+        `[createBundleService] Starting bundle creation for shop: ${shop}`,
+    );
+    try {
+        const securityCheck = await performSecurityChecks(shop);
 
-    if (!data.discountType || !data.discountValue) {
-        throw new Error("Discount information is required");
-    }
+        if (!securityCheck.passed) {
+            console.log(
+                `[Service] Security check failed: ${securityCheck.reason}`,
+            );
 
-    // Create bundle with products in transaction
-    return await prisma.$transaction(async (tx) => {
-        // Create bundle
-        const bundle = await createBundle(tx, {
-            ...data,
-            shop,
-        });
-
-        // Create bundle products if provided
-        if (data.products && data.products.length > 0) {
-            await createBundleProducts(tx, bundle.id, data.products);
+            return {
+                success: false,
+                message: securityCheck.reason || "Security check failed",
+                errors: {
+                    security: {
+                        _errors: [
+                            securityCheck.reason || "Security check failed",
+                        ],
+                    },
+                },
+                bundle: null,
+            };
         }
 
-        return bundle;
-    });
+        const shopSettings = await getShop(shop);
+
+        if (shopSettings) {
+            console.log(
+                `[Service] Shop settings loaded: maxProducts=${shopSettings.maxBundleProducts}`,
+            );
+        } else {
+            console.log("[Service] No shop settings found, using defaults");
+        }
+
+        const securityValidation = validateSecurity(data);
+
+        if (!securityValidation.success) {
+            console.log("[Service] ✗ Security validation failed");
+
+            return {
+                success: false,
+                message: "Security validation failed",
+                errors: securityValidation.errors,
+                bundle: null,
+            };
+        }
+
+        const businessValidation = validateBusinessRules(data, {
+            maxBundleProducts: shopSettings?.maxBundleProducts,
+            maxBundlesPerShop: shopSettings?.maxBundlesPerShop,
+            betaFeatures: shopSettings?.betaFeatures,
+        });
+
+        if (!businessValidation.success) {
+            console.log("[Service] ✗ Business validation failed");
+            console.log(
+                `[Service] Errors: ${JSON.stringify(businessValidation.errors)}`,
+            );
+
+            return {
+                success: false,
+                message: "Business validation failed",
+                errors: businessValidation.errors,
+                bundle: null,
+            };
+        }
+
+        const quotaCheck = await canCreateBundle(shop);
+
+        if (!quotaCheck.allowed) {
+            console.log(
+                `[Service] ✗ Bundle limit reached: ${quotaCheck.current}/${quotaCheck.limit}`,
+            );
+
+            return {
+                success: false,
+                message: quotaCheck.reason || "Bundle limit reached",
+                errors: {
+                    general: {
+                        _errors: [quotaCheck.reason || "Bundle limit reached"],
+                    },
+                },
+                bundle: null,
+            };
+        }
+
+        const nameExists = await checkNameConflict(shop, data.name);
+
+        if (nameExists) {
+            console.log(`[Service] ✗ Bundle name already exists: ${data.name}`);
+
+            return {
+                success: false,
+                message: `A bundle with the name "${data.name}" already exists`,
+                errors: {
+                    name: {
+                        _errors: [
+                            `A bundle with the name "${data.name}" already exists`,
+                        ],
+                    },
+                },
+                bundle: null,
+            };
+        }
+
+        const bundle = await createBundleWithRelations({
+            shop,
+            ...data,
+            status: "DRAFT",
+        });
+
+        if (!bundle) {
+            console.error("[Service] ✗ Failed to create bundle");
+
+            return {
+                success: false,
+                message: "Failed to create bundle in database",
+                errors: {
+                    database: {
+                        _errors: ["Failed to create bundle"],
+                    },
+                },
+                bundle: null,
+            };
+        }
+
+        const transformedBundle = transformBundle(bundle);
+
+        return {
+            success: true,
+            message: "Bundle created successfully",
+            errors: null,
+            bundle: transformedBundle,
+        };
+    } catch (error) {
+        console.error("[Service] Unexpected error:", error);
+
+        // Handle specific error types
+        if (error instanceof Error) {
+            // Prisma unique constraint error
+            if (error.message.includes("Unique constraint")) {
+                return {
+                    success: false,
+                    message: "A bundle with this name already exists",
+                    errors: {
+                        name: {
+                            _errors: ["A bundle with this name already exists"],
+                        },
+                    },
+                    bundle: null,
+                };
+            }
+
+            // Transaction timeout
+            if (error.message.includes("timeout")) {
+                return {
+                    success: false,
+                    message:
+                        "Operation timed out. Please try again with fewer products.",
+                    errors: {
+                        timeout: {
+                            _errors: ["Operation timed out"],
+                        },
+                    },
+                    bundle: null,
+                };
+            }
+
+            // Generic error
+            return {
+                success: false,
+                message: error.message,
+                errors: {
+                    server: {
+                        _errors: [error.message],
+                    },
+                },
+                bundle: null,
+            };
+        }
+
+        // Unknown error
+        return {
+            success: false,
+            message: "An unexpected error occurred",
+            errors: {
+                server: {
+                    _errors: ["An unexpected error occurred"],
+                },
+            },
+            bundle: null,
+        };
+    }
 }
 
 // ==========================================
@@ -109,7 +287,7 @@ export async function bulkUpdateBundleStatusService(
         return {
             success: false,
             message: `Invalid bundle status: ${status}`,
-        }
+        };
     }
 
     // Validate input
@@ -117,7 +295,7 @@ export async function bulkUpdateBundleStatusService(
         return {
             success: false,
             message: "No bundle IDs provided",
-        }
+        };
     }
 
     // Limit bulk operations
@@ -125,7 +303,7 @@ export async function bulkUpdateBundleStatusService(
         return {
             success: false,
             message: "Cannot update more than 100 bundles at once",
-        }
+        };
     }
 
     // Single atomic transaction for all updates
@@ -144,13 +322,15 @@ export async function bulkUpdateBundleStatusService(
             }
 
             const foundIds = existingBundles.map((b) => b.id);
-            const notFoundIds = bundleIds.filter((id) => !foundIds.includes(id));
+            const notFoundIds = bundleIds.filter(
+                (id) => !foundIds.includes(id),
+            );
 
             // Update all found bundles
             await updateBundlesStatusByIds(tx, foundIds, status);
 
             // Fetch updated bundles
-            const updatedBundles = await findBundlesByIds(foundIds, shop, tx)
+            const updatedBundles = await findBundlesByIds(foundIds, shop, tx);
 
             return {
                 updatedBundles,
@@ -160,7 +340,7 @@ export async function bulkUpdateBundleStatusService(
         },
         {
             timeout: 15000, // 15 seconds for bulk operations
-        }
+        },
     );
 
     // Generate message
@@ -273,7 +453,7 @@ export async function duplicateBundleService(
 
     const newName = await generateUniqueBundleName(shop, original.name);
     const duplicateData = transformBundleForDuplication(original, newName);
-    const newBundle = await createBundleWithValidation({
+    const newBundle = await createBundleService({
         shop,
         data: duplicateData,
     });

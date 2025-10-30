@@ -19,9 +19,9 @@ web/
 │       └── session.action.ts
 ├── app
 │   ├── ab-testing
-│   │   └── page.tsx
+│   │   └── old.page.tsx
 │   ├── analytics
-│   │   └── page.tsx
+│   │   └── old.page.tsx
 │   ├── api
 │   │   ├── auth
 │   │   ├── proxy_route
@@ -33,16 +33,16 @@ web/
 │   │   ├── [id]
 │   │   ├── _components
 │   │   ├── create
-│   │   └── page.tsx
+│   │   └── old.page.tsx
 │   ├── customers
 │   ├── dashboard
 │   │   ├── _components
-│   │   └── page.tsx
+│   │   └── old.page.tsx
 │   ├── globals.css
 │   ├── install
 │   ├── integrations
 │   ├── layout.tsx
-│   ├── page.tsx
+│   ├── old.page.tsx
 │   ├── pricing-rules
 │   ├── settings
 │   └── templates

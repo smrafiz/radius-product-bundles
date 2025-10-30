@@ -1,86 +1,42 @@
-"use client";
+import { Metadata } from "next";
+import { BUNDLE_TYPES, BundleType, CreateBundlePage } from "@/features/bundles";
 
-import { use } from "react";
-import {
-    BundleCreationForm,
-    BundleFormProvider,
-} from "@/bundles/create/[bundleType]/_components/form";
-import { useBundleStore } from "@/stores";
-import { createBundle } from "@/actions";
-import { useAppBridge } from "@shopify/app-bridge-react";
-import type { BundleType } from "@/types";
-import { BundleFormData } from "@/lib/validation";
-import { GlobalForm } from "@/components";
-import { bundleTypeMap } from "@/utils";
-import { useRouter } from "next/navigation";
-import { useGlobalBanner } from "@/hooks";
+/**
+ * Generate metadata dynamically based on the bundle type
+ */
+export async function generateMetadata({
+    params,
+}: {
+    params: {
+        bundleType: string;
+    };
+}): Promise<Metadata> {
+    const { bundleType } = await params;
 
-export default function CreateBundlePage({
+    const bundleConfig = Object.values(BUNDLE_TYPES).find(
+        (type) => type.slug === bundleType,
+    );
+
+    if (!bundleConfig) {
+        return {
+            title: "Create Bundle",
+            description: "Create a new product bundle to increase sales.",
+        };
+    }
+
+    return {
+        title: `Create ${bundleConfig.label} | Bundle Builder`,
+        description: `Create a ${bundleConfig.label.toLowerCase()} to boost your sales. ${bundleConfig.description} Configure products, set pricing, and launch in minutes.`,
+    };
+}
+
+/**
+ * Create Bundle by Type Page
+ */
+export default function CreateBundleByTypePage({
     params,
 }: {
     params: Promise<{ bundleType: BundleType }>;
 }) {
-    const app = useAppBridge();
-    const { bundleType: bundleTypeParam } = use(params);
-    const router = useRouter();
-
-    const { setSaving, resetDirty } = useBundleStore();
-    const { showSuccess, showError } = useGlobalBanner();
-
-    const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
-
-    console.log("=== CREATE PAGE DEBUG ===");
-    console.log("bundleType from params:", bundleType);
-    console.log("typeof bundleType:", typeof bundleType);
-    console.log("========================");
-
-    const handleSubmit = async (data: BundleFormData) => {
-        setSaving(true);
-
-        try {
-            const token = await app.idToken();
-            const result = await createBundle(token, {
-                ...data,
-                type: bundleType,
-            });
-
-            if (result.status === "success") {
-                console.log("Bundle created successfully:", result);
-                // Store success message for one-time display
-                showSuccess("Bundle created successfully!", {
-                    content:
-                        "Your bundle has been created and is ready to go live.",
-                    autoHide: true,
-                    duration: 4000,
-                });
-
-                // Navigate without URL params
-                router.push(`/bundles/${result.data.id}/edit`);
-            } else {
-                console.error("Validation errors:", result.errors);
-                showError("Failed to create bundle", {
-                    content: "Please check your inputs and try again.",
-                });
-            }
-        } catch (error) {
-            console.error("Submit error:", error);
-            showError("Unexpected error occurred", {
-                content: "Please try again later.",
-            });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    return (
-        <BundleFormProvider bundleType={bundleType}>
-            <GlobalForm
-                onSubmit={handleSubmit}
-                resetDirty={resetDirty}
-                discardPath="/bundles"
-            >
-                <BundleCreationForm bundleType={bundleType} />
-            </GlobalForm>
-        </BundleFormProvider>
-    );
+    return <CreateBundlePage params={params} />;
 }

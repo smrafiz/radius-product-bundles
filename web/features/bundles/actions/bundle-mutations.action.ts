@@ -9,7 +9,10 @@
 import {
     bulkActivateBundlesService,
     bulkDraftBundlesService,
+    bundleSchema,
     BundleStatus,
+    CreateBundleActionInput,
+    createBundleService,
     deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
@@ -22,7 +25,7 @@ import { handleSessionToken } from "@/lib/shopify/verify";
 /**
  * Update bundle status
  */
-export async function updateBundleStatus(
+export async function updateBundleStatusAction(
     sessionToken: string,
     bundleId: string,
     status: BundleStatus,
@@ -63,7 +66,7 @@ export async function updateBundleStatus(
 /**
  * Toggle bundle status (active/draft)
  */
-export async function bulkToggleBundleStatus(
+export async function bulkToggleBundleStatusAction(
     sessionToken: string,
     bundleIds: string[],
     currentStatus: "ACTIVE" | "DRAFT",
@@ -82,7 +85,9 @@ export async function bulkToggleBundleStatus(
 
         return {
             status: "success" as const,
-            message: result.message || `Bundles set to ${currentStatus.toLowerCase()}`,
+            message:
+                result.message ||
+                `Bundles set to ${currentStatus.toLowerCase()}`,
             data: result,
         };
     } catch (error) {
@@ -103,7 +108,7 @@ export async function bulkToggleBundleStatus(
 /**
  * Delete a bundle
  */
-export async function deleteBundle(
+export async function deleteBundleAction(
     sessionToken: string,
     bundleId: string,
 ): Promise<ApiResponse> {
@@ -142,9 +147,9 @@ export async function deleteBundle(
 /**
  * Delete multiple bundles
  */
-export async function deleteBundles(
+export async function deleteBundlesAction(
     sessionToken: string,
-    bundleIds: string[]
+    bundleIds: string[],
 ): Promise<ApiResponse> {
     try {
         const {
@@ -174,7 +179,7 @@ export async function deleteBundles(
 
         return {
             status: "success" as const,
-            ...result
+            ...result,
         };
     } catch (error) {
         console.error("[deleteMultipleBundles] Error:", error);
@@ -193,7 +198,7 @@ export async function deleteBundles(
 /**
  * Duplicate a single bundle
  */
-export async function duplicateBundle(
+export async function duplicateBundleAction(
     sessionToken: string,
     bundleId: string,
 ): Promise<ApiResponse> {
@@ -223,6 +228,89 @@ export async function duplicateBundle(
                     ? error.message
                     : "Failed to duplicate bundle",
             data: null,
+        };
+    }
+}
+
+/**
+ * Create a new bundle
+ */
+export async function createBundleAction(
+    sessionToken: string,
+    bundleData: CreateBundleActionInput,
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        console.log(`[createBundleAction] Creating bundle for shop: ${shop}`);
+
+        // Schema Validation (Fail Fast)
+        const schemaValidation = bundleSchema.safeParse(bundleData);
+
+        if (!schemaValidation.success) {
+            console.log("[Action] Schema validation failed");
+
+            // Format Zod errors
+            const formattedErrors: Record<string, { _errors: string[] }> = {};
+
+            schemaValidation.error.issues.forEach((issue) => {
+                const path = issue.path.join(".");
+                if (!formattedErrors[path]) {
+                    formattedErrors[path] = { _errors: [] };
+                }
+                formattedErrors[path]._errors.push(issue.message);
+            });
+
+            return {
+                status: "error",
+                message: "Invalid bundle data format",
+                errors: Object.values(formattedErrors).flatMap(
+                    (e) => e._errors,
+                ),
+            };
+        }
+
+        console.log("[Action] Schema validation passed");
+
+        // Call Service with Clean Data
+        const result = await createBundleService({
+            shop,
+            data: schemaValidation.data,
+        });
+
+        if (!result.success) {
+            return {
+                status: "error",
+                message: result.message,
+                errors: result.errors || [],
+            };
+        }
+
+        revalidatePath("/bundles");
+        revalidatePath("/dashboard");
+
+        return {
+            status: "success",
+            message: "Bundle created successfully",
+            data: {
+                id: result.bundle!.id,
+                name: result.bundle!.name,
+                status: result.bundle!.status,
+                createdAt: result.bundle!.createdAt,
+            },
+        };
+    } catch (error) {
+        console.error("[createBundleAction] Error:", error);
+
+        const errorMessage =
+            error instanceof Error ? error.message : "Failed to create bundle";
+
+        return {
+            status: "error",
+            message: errorMessage,
+            errors: [errorMessage],
         };
     }
 }

@@ -7,11 +7,11 @@ import {
     withLoader,
 } from "@/shared";
 import {
-    bulkToggleBundleStatus,
+    bulkToggleBundleStatusAction,
     BundleStatus,
-    deleteBundles,
+    deleteBundlesAction,
     invalidateBundleCache,
-    updateBundleStatus,
+    updateBundleStatusAction,
     useBundleListingStore,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
@@ -56,7 +56,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await updateBundleStatus(
+                    const result = await updateBundleStatusAction(
                         sessionToken,
                         bundleId,
                         newStatus,
@@ -95,7 +95,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             bundle: { name: "selected bundles" } as any,
             onConfirm: async () => {
                 try {
-                    const result = await bulkToggleBundleStatus(
+                    const result = await bulkToggleBundleStatusAction(
                         sessionToken,
                         bundleIds,
                         "ACTIVE",
@@ -134,7 +134,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await bulkToggleBundleStatus(
+                    const result = await bulkToggleBundleStatusAction(
                         sessionToken,
                         bundleIds,
                         "DRAFT",
@@ -172,7 +172,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await deleteBundles(sessionToken, bundleIds);
+                    const result = await deleteBundlesAction(sessionToken, bundleIds);
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
                         showToast(

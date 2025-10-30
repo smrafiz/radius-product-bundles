@@ -26,6 +26,8 @@ model Session {
     createdAt        DateTime          @default(now())
     updatedAt        DateTime          @updatedAt
     onlineAccessInfo OnlineAccessInfo?
+
+    @@map("sessions")
 }
 
 // Stores information about an online access token.
@@ -38,6 +40,8 @@ model OnlineAccessInfo {
     updatedAt           DateTime        @updatedAt
     associatedUser      AssociatedUser?
     session             Session?        @relation(fields: [sessionId], references: [id])
+
+    @@map("online_access_infos")
 }
 
 // Stores information about an associated user.
@@ -55,6 +59,8 @@ model AssociatedUser {
     collaborator       Boolean
     emailVerified      Boolean
     onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
+
+    @@map("associated_users")
 }
 
 // Stores a bundle of products for a given shop.
@@ -109,8 +115,9 @@ model Bundle {
     aiOptimized Boolean @default(false)
     aiScore     Float?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
 
     // Relations
     bundleProducts BundleProduct[]
@@ -120,10 +127,13 @@ model Bundle {
     automations    AutomationBundle[]
     analytics      BundleAnalytics[]
     pricingRules   PricingRuleBundle[]
+    Shop           Shop?                @relation(fields: [shopId], references: [id])
+    shopId         String?
 
     @@unique([shop, name])
     @@index([shop, status, type])
     @@index([mainProductId])
+    @@map("bundles")
 }
 
 // Stores the products in a bundle.
@@ -157,6 +167,7 @@ model BundleProduct {
     @@unique([bundleId, productId, variantId, role])
     @@index([bundleId, role])
     @@index([productId])
+    @@map("bundle_products")
 }
 
 // Stores groups of products for Mix & Match
@@ -173,6 +184,7 @@ model BundleProductGroup {
     products BundleProduct[]
 
     @@index([bundleId])
+    @@map("bundle_product_groups")
 }
 
 // Stores settings for a bundle.
@@ -217,6 +229,7 @@ model BundleSettings {
     @@index([layout])
     @@index([theme])
     @@index([position])
+    @@map("bundle_settings")
 }
 
 // Stores information about an A/B test.
@@ -241,8 +254,11 @@ model ABTest {
     updatedAt       DateTime     @updatedAt
     controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id])
     results         TestResult[]
+    Shop            Shop?        @relation(fields: [shopId], references: [id])
+    shopId          String?
 
     @@index([shop, status])
+    @@map("ab_tests")
 }
 
 // Stores the results of an A/B test.
@@ -258,6 +274,7 @@ model TestResult {
     test        ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
     @@unique([testId, variant, date])
+    @@map("test_results")
 }
 
 // Stores information about an automation.
@@ -279,8 +296,11 @@ model Automation {
     updatedAt     DateTime           @updatedAt
     bundles       AutomationBundle[]
     logs          AutomationLog[]
+    Shop          Shop?              @relation(fields: [shopId], references: [id])
+    shopId        String?
 
     @@index([shop, status])
+    @@map("automations")
 }
 
 // Stores the bundles associated with an automation.
@@ -292,6 +312,7 @@ model AutomationBundle {
     bundle       Bundle     @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
     @@unique([automationId, bundleId])
+    @@map("automation_bundles")
 }
 
 // Stores the logs for an automation.
@@ -306,6 +327,7 @@ model AutomationLog {
     automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
 
     @@index([automationId, createdAt])
+    @@map("automation_logs")
 }
 
 // Stores information about a pricing rule.
@@ -324,8 +346,11 @@ model PricingRule {
     createdAt         DateTime            @default(now())
     updatedAt         DateTime            @updatedAt
     bundles           PricingRuleBundle[]
+    Shop              Shop?               @relation(fields: [shopId], references: [id])
+    shopId            String?
 
     @@index([shop, priority])
+    @@map("pricing_rules")
 }
 
 // Stores the bundles associated with a pricing rule.
@@ -337,6 +362,7 @@ model PricingRuleBundle {
     pricingRule   PricingRule @relation(fields: [pricingRuleId], references: [id], onDelete: Cascade)
 
     @@unique([pricingRuleId, bundleId])
+    @@map("pricing_rule_bundles")
 }
 
 // Stores analytics for bundles.
@@ -367,6 +393,7 @@ model BundleAnalytics {
 
     @@unique([bundleId, date, hour])
     @@index([bundleId, date])
+    @@map("bundle_analytics")
 }
 
 // Stores analytics for bundles.
@@ -390,8 +417,11 @@ model AIInsight {
     testId      String?
     createdAt   DateTime      @default(now())
     expiresAt   DateTime?
+    Shop        Shop?         @relation(fields: [shopId], references: [id])
+    shopId      String?
 
     @@index([shop, type, confidence])
+    @@map("ai_insights")
 }
 
 // Stores information about a template.
@@ -416,6 +446,7 @@ model Template {
     reviews         TemplateReview[]
 
     @@index([category, rating])
+    @@map("templates")
 }
 
 // Stores information about a template review.
@@ -430,6 +461,7 @@ model TemplateReview {
     template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
     @@unique([templateId, shop])
+    @@map("template_reviews")
 }
 
 // Stores information about a notification.
@@ -446,8 +478,11 @@ model Notification {
     actionUrl   String?
     createdAt   DateTime             @default(now())
     expiresAt   DateTime?
+    Shop        Shop?                @relation(fields: [shopId], references: [id])
+    shopId      String?
 
     @@index([shop, read, createdAt])
+    @@map("notifications")
 }
 
 // Stores information about an alert rule.
@@ -466,14 +501,41 @@ model AlertRule {
     lastTriggered   DateTime?
     createdAt       DateTime         @default(now())
     updatedAt       DateTime         @updatedAt
+    Shop            Shop?            @relation(fields: [shopId], references: [id])
+    shopId          String?
 
     @@index([shop, status])
+    @@map("alert_rules")
 }
 
-// Stores information about an app.
+// Stores information about a shop.
+model Shop {
+    id          String     @id @default(cuid())
+    domain      String     @unique
+    status      ShopStatus @default(ACTIVE)
+    plan        String?
+    trialEndsAt DateTime?
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+
+    // Relations
+    bundles       Bundle[]
+    automations   Automation[]
+    abTests       ABTest[]
+    pricingRules  PricingRule[]
+    aiInsights    AIInsight[]
+    notifications Notification[]
+    alertRules    AlertRule[]
+    appSettings   AppSettings?   @relation("ShopAppSettings")
+
+    @@map("shops")
+}
+
+// Stores information about app settings.
 model AppSettings {
     id                   String       @id @default(cuid())
-    shop                 String       @unique
+    shopId               String       @unique
+    status               ShopStatus   @default(ACTIVE)
     defaultDiscountType  DiscountType @default(PERCENTAGE)
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
@@ -484,6 +546,10 @@ model AppSettings {
     aiRecommendations    Boolean      @default(true)
     createdAt            DateTime     @default(now())
     updatedAt            DateTime     @updatedAt
+
+    shop Shop @relation("ShopAppSettings", fields: [shopId], references: [id])
+
+    @@map("app_settings")
 }
 
 enum BundleType {
@@ -615,4 +681,11 @@ enum AlertFrequency {
     IMMEDIATE
     HOURLY
     DAILY
+}
+
+enum ShopStatus {
+    ACTIVE
+    SUSPENDED
+    TRIAL_EXPIRED
+    NOT_CONFIGURED
 }

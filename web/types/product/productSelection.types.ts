@@ -24,17 +24,3 @@ export interface ProductGroup {
     variants?: SelectedItem[];
     originalTotalVariants?: number;
 }
-
-export interface DisplaySettings {
-    layout: "horizontal" | "vertical" | "grid";
-    position: "above_cart" | "below_cart" | "description" | "custom";
-    title: string;
-    colorTheme: "brand" | "success" | "warning" | "critical";
-    showPrices: boolean;
-    showSavings: boolean;
-    enableQuickSwap: boolean;
-}
-
-export interface BundleConfiguration {
-    discountApplication: "bundle" | "products" | "shipping";
-}

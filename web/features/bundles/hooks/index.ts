@@ -9,6 +9,8 @@ export { useBundlePreview } from "./use-bundle-preview";
 export { useBundlesData } from "./use-bundles-data";
 export { useBundleSelection } from "./use-bundle-selection";
 export { useBundleFilters } from "./use-bundle-filters";
+export { useBundleFormMethods } from "./use-bundle-form-methods";
+export { useStepIndicator } from "./use-step-indicator";
 // export * from "./useBundleFormMethods";
 // export * from "./use-bundle-queries";
 // export * from "./use-bundle-form";

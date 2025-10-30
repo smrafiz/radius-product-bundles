@@ -37,6 +37,14 @@ export interface CreateBundleInput {
     images?: string[];
     startDate?: Date | null;
     endDate?: Date | null;
+    productGroups?: Array<{
+        name: string;
+        description?: string | null;
+        minSelection?: number | null;
+        maxSelection?: number | null;
+        displayOrder?: number;
+    }>;
+    settings?: Prisma.JsonValue;
 }
 
 /*
