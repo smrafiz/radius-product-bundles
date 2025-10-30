@@ -246,26 +246,26 @@ export async function canCreateBundle(shop: string): Promise<{
     const shopSettings = await getShop(shop);
 
     // If no limit configured, allow creation
-    if (!shopSettings?.maxBundleProducts) {
+    if (!shopSettings?.appSettings?.maxBundleProducts) {
         return { allowed: true };
     }
 
     // Check the current bundle count
     const currentCount = await countBundlesByShop(shop);
 
-    if (currentCount >= shopSettings.maxBundleProducts) {
+    if (currentCount >= shopSettings?.appSettings?.maxBundleProducts) {
         return {
             allowed: false,
-            reason: `Shop has reached maximum bundle limit (${shopSettings.maxBundleProducts})`,
+            reason: `Shop has reached maximum bundle limit (${shopSettings?.appSettings?.maxBundleProducts})`,
             current: currentCount,
-            limit: shopSettings.maxBundleProducts,
+            limit: shopSettings?.appSettings?.maxBundleProducts,
         };
     }
 
     return {
         allowed: true,
         current: currentCount,
-        limit: shopSettings.maxBundleProducts,
+        limit: shopSettings?.appSettings?.maxBundleProducts,
     };
 }
 
@@ -284,7 +284,7 @@ export async function validateShopPermissions(
     const shopSettings = await getShop(shop);
 
     // Check if beta features are required
-    if (operation === "create" && !shopSettings?.betaFeatures) {
+    if (operation === "create" && !shopSettings?.appSettings?.betaFeatures) {
         // If bundle creation requires beta access (example)
         // Adjust based on your business rules
     }

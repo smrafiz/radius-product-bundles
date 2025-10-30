@@ -60,13 +60,16 @@ export interface BundleListItem {
         handle: string;
     }>;
 }
+import { Prisma } from "@prisma/client";
 
 /**
  * Full bundle with all details
  */
-export interface BundleWithDetails extends PrismaBundle {
+export interface BundleDetail extends Prisma.BundleGetPayload<{}> {
     conversionRate: number;
     productCount: number;
+    products: SelectedItem[];
+    settings: {};
 }
 
 /**
@@ -217,17 +220,6 @@ export interface Pagination {
 export interface BundleHelpItem {
     title: string;
     bundles: string;
-}
-
-export interface ValidationContext {
-    maxBundleProducts?: number;
-    maxBundlesPerShop?: number;
-    betaFeatures?: boolean;
-}
-
-export interface ValidationResult {
-    success: boolean;
-    errors: Record<string, { _errors: string[] }> | null;
 }
 
 /*

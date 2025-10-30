@@ -1,11 +1,11 @@
+import { getSessionToken } from "@/shared";
 import {
-    getSessionToken,
-} from "@/shared";
-import {
+    BundleDetail,
     BundleFilters,
     BundleListItem,
     BundleMetricsData,
     bundlesQueryKeys,
+    getBundleAction,
     getBundleMetricsAction,
     getBundlesAction,
 } from "@/features/bundles";
@@ -24,7 +24,12 @@ export const bundlesQueries = (
         queryKey: bundlesQueryKeys.list(page, itemsPerPage, filters),
         queryFn: async () => {
             const token = await getSessionToken(app);
-            const result = await getBundlesAction(token, page, itemsPerPage, filters);
+            const result = await getBundlesAction(
+                token,
+                page,
+                itemsPerPage,
+                filters,
+            );
 
             if (result.status === "error") {
                 throw new Error(result.message);
@@ -39,6 +44,24 @@ export const bundlesQueries = (
         cacheTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     },
+
+    detail: (bundleId: string) => ({
+        queryKey: bundlesQueryKeys.detail(bundleId),
+        queryFn: async () => {
+            const token = await getSessionToken(app);
+            const result = await getBundleAction(token, bundleId);
+
+            if (result.status === "error") {
+                throw new Error(result.message);
+            }
+
+            return result.data as BundleDetail;
+        },
+        enabled: !!bundleId,
+        staleTime: 5 * 60 * 1000,
+        cacheTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    }),
 
     metrics: {
         queryKey: bundlesQueryKeys.metrics(),
