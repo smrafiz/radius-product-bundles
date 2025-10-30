@@ -1,0 +1,9 @@
+"use client";
+
+export function SettingsTabItemTwo() {
+    return (
+        <s-stack>
+            <s-stack gap="none">Hello 3</s-stack>
+        </s-stack>
+    );
+}

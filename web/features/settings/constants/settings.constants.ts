@@ -1,32 +1,24 @@
-import { SettingsFaqItemInfo} from "@/features/settings";
+import { SettingsTabNavInfo} from "@/features/settings";
 
 /*
  * Pricing Faq Card Data
  */
 
-export const SETTINGS_FAQ_ITEM: SettingsFaqItemInfo[] = [
+export const SETTINGS_TAB_NAV: SettingsTabNavInfo[] = [
     {
-        id: "0",
-        title: "How is my bundle sales volume calculated?",
-        description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+        id: "general",
+        title: "General",
     },
     {
-        id: "1",
-        title: "What is a rolling 30-day period?",
-        description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+        id: "discount",
+        title: "Discount",
     },
     {
-        id: "2",
-        title: "Which plan should I be on?",
-        description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+        id: "subscription",
+        title: "Subscription",
     },
     {
-        id: "3",
-        title: "Which plan should I be on?",
-        description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+        id: "button_action",
+        title: "Button action",
     },
 ];

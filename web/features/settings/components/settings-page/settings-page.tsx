@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsFaq } from "@/features/settings";
+import { SettingsTab } from "@/features/settings";
 import { useAppNavigation } from "@/shared";
 
 /**
@@ -30,7 +30,7 @@ export function SettingsPage() {
 
                 <s-stack gap="large">
                     {/* Pricing Faq */}
-                    <SettingsFaq />
+                    <SettingsTab />
                 </s-stack>
             </s-stack>
         </s-page>

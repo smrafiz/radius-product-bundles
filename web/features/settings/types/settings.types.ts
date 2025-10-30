@@ -1,8 +1,7 @@
 /**
  * Settings faqs types
  */
-export interface SettingsFaqItemInfo {
+export interface SettingsTabNavInfo {
     id: string;
     title: string;
-    description: string;
 }

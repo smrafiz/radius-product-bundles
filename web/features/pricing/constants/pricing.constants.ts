@@ -19,9 +19,9 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         price:"$0",
         frequency:"month",
         primaryButton: {
-            content: "Select Plan",
+            content: "Currently subscribed",
             props: {
-                variant: "primary",
+                variant: "secondary",
                 external: true,
             },
         },
@@ -41,7 +41,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         price:"$49",
         frequency:"month",
         primaryButton: {
-            content: "Select Plan",
+            content: "Select this plan",
             props: {
                 variant: "primary",
                 external: true,
@@ -62,7 +62,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         price:"$99",
         frequency:"year",
         primaryButton: {
-            content: "Select Plan",
+            content: "Select this plan",
             props: {
                 variant: "primary",
                 external: true,
