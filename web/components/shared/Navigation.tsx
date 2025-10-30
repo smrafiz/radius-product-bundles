@@ -10,6 +10,9 @@ export default function Navigation() {
             <Link href="/bundles" data-sprogress>
                 Bundles
             </Link>
+            <Link href="/settings" data-sprogress>
+                Settings
+            </Link>
             <Link href="/analytics" data-sprogress>
                 Analytics
             </Link>
@@ -27,9 +30,6 @@ export default function Navigation() {
             </Link>
             <Link href="/integrations" data-sprogress>
                 Integrations
-            </Link>
-            <Link href="/settings" data-sprogress>
-                Settings
             </Link>
         </NavMenu>
     );
