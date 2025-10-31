@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import { SETTINGS_TAB_NAV } from "@/features/settings";
 import {
-    SettingsTabItem,
-    SettingsTabItemOne,
-    SettingsTabItemTwo,
-    SettingsTabItemThree
+    SettingsGeneral,
+    SettingsDiscount,
+    SettingsButtonAction,
+    SettingsSubscription,
+    SettingsStoreInformation,
 } from "@/features/settings";
 
 export const SettingsTab = () => {
@@ -17,13 +18,15 @@ export const SettingsTab = () => {
     const renderActiveComponent = () => {
         switch (activeTab) {
             case "general":
-                return <SettingsTabItem />;
+                return <SettingsGeneral />;
+            case "store_information":
+                return <SettingsStoreInformation />;
             case "discount":
-                return <SettingsTabItemOne />;
+                return <SettingsDiscount />;
             case "subscription":
-                return <SettingsTabItemTwo />;
+                return <SettingsSubscription />;
             case "button_action":
-                return <SettingsTabItemThree />;
+                return <SettingsButtonAction />;
             default:
                 return <s-text>No content found.</s-text>;
         }
@@ -33,35 +36,58 @@ export const SettingsTab = () => {
         <s-box>
             <s-grid gridTemplateColumns="250px 1fr" gap="base">
                 {/* Left: Tab list */}
-                <s-section>
-                    <s-stack gap="small-500">
-                        {SETTINGS_TAB_NAV.map((tab) => (
-                            <s-clickable
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                            >
-                                <div
-                                    className={`p-2 rounded-lg transition-colors ${
-                                        activeTab === tab.id
-                                            ? "bg-gray-100 font-semibold"
-                                            : "hover:bg-gray-100 hover!:rounded-lg font-normal"
-                                    }`}
+                <s-grid-item>
+                    <s-section>
+                        <s-stack gap="small-500">
+                            {SETTINGS_TAB_NAV.map((tab) => (
+                                <s-clickable
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
                                 >
-                                    {tab.title}
-                                </div>
-                            </s-clickable>
-                        ))}
-                    </s-stack>
-                </s-section>
+                                    <div
+                                        className={`p-2 rounded-lg transition-colors ${
+                                            activeTab === tab.id
+                                                ? "bg-gray-200 font-semibold"
+                                                : "hover:bg-gray-200 font-normal"
+                                        }`}
+                                    >
+                                        <s-stack direction="inline" gap="small-300">
+                                            <s-icon
+                                                size="base"
+                                                type={tab.icon}
+                                                tone={
+                                                    activeTab === tab.id
+                                                        ? "success"
+                                                        : undefined
+                                                }
+                                            />
+                                            <s-text
+                                                tone={
+                                                    activeTab === tab.id
+                                                        ? "success"
+                                                        : undefined
+                                                }
+                                            >
+                                                {tab.title}
+                                            </s-text>
+                                        </s-stack>
+                                    </div>
+                                </s-clickable>
+                            ))}
+                        </s-stack>
+                    </s-section>
+                </s-grid-item>
 
                 {/* Right: Active content */}
-                <s-section padding="base">
-                    {activeTabData ? (
-                        <s-stack>{renderActiveComponent()}</s-stack>
-                    ) : (
-                        <s-text>No content found.</s-text>
-                    )}
-                </s-section>
+                <s-grid-item>
+                    <s-section padding="base">
+                        {activeTabData ? (
+                            <s-stack>{renderActiveComponent()}</s-stack>
+                        ) : (
+                            <s-text>No content found.</s-text>
+                        )}
+                    </s-section>
+                </s-grid-item>
             </s-grid>
         </s-box>
     );

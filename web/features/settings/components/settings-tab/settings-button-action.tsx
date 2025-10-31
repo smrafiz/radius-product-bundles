@@ -1,6 +1,6 @@
 "use client";
 
-export function SettingsTabItemTwo() {
+export function SettingsButtonAction() {
     return (
         <s-stack>
             <s-stack gap="none">Hello 3</s-stack>
