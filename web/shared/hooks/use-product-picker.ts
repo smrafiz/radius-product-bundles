@@ -21,9 +21,16 @@ export function useProductPicker() {
 
             // Format existing selections
             const existingSelections = groupedItems.map((group) => {
-                const selectedVariantIds = [group.product, ...group.variants]
-                    .map((item) => item.variantId)
+                // Get all variant IDs from the main product
+                const productVariantIds = group.product.variantIds || [];
+
+                // Get all variant IDs from group.variants (if any)
+                const variantsVariantIds = group.variants
+                    .map((v) => v.variantId)
                     .filter(Boolean);
+
+                // Combine and remove any falsy values just in case
+                const selectedVariantIds = [...productVariantIds, ...variantsVariantIds];
 
                 return {
                     id: group.product.productId,

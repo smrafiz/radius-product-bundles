@@ -91,6 +91,7 @@ export interface BundleProduct {
  * Product selection item
  */
 export interface SelectedItem {
+    selectedVariant: any;
     id: string;
     productId: string;
     variantId?: string;

@@ -3,6 +3,7 @@
 import {
     GetProductsByIdsDocument,
     GetProductsByIdsQuery,
+    GetProductsByIdsQueryVariables,
 } from "@/lib/gql/graphql";
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +30,7 @@ interface ProductNode {
     } | null;
 }
 
-function isProductNode(node: any): node is ProductNode {
+const isProductNode = (node: any): node is ProductNode => {
     return (
         node?.__typename === "Product" &&
         typeof node?.id === "string" &&
@@ -52,48 +53,82 @@ export function useEditBundle(bundleId: string) {
     // Extract product IDs (deduplicated)
     const productIds = useMemo(() => {
         const products = bundleData?.products || [];
-        return Array.from(new Set(products.map((p: any) => p.productId)));
+        return Array.from(new Set(products.map((p: any) => p.id)));
     }, [bundleData?.products]);
+
+    // GraphQL variables for fetching products
+    const productsVariables = useMemo(
+        (): GetProductsByIdsQueryVariables => ({
+            ids: productIds,
+        }),
+        [productIds],
+    );
 
     // Fetch products via GraphQL
     const productsQuery = useGraphQL(
         GetProductsByIdsDocument,
-        { ids: productIds },
+        productsVariables,
         { enabled: productIds.length > 0 },
     ) as {
         data?: GetProductsByIdsQuery;
         loading: boolean;
+        error?: Error | null;
     };
 
     // Sync selected items to store once products are resolved
     useEffect(() => {
         const bundleProducts = bundleData?.products || [];
-        const nodes = productsQuery.data?.nodes || [];
+        const products = productsQuery.data?.nodes || [];
 
-        if (bundleProducts.length && nodes.length && !productsQuery.loading) {
-            const selectedItems: SelectedItem[] = bundleProducts.map(
-                (bp: any, i: number) => {
-                    const product = nodes.find(
-                        (n: any) => isProductNode(n) && n.id === bp.productId,
-                    ) as ProductNode | undefined;
-                    const variant = product?.variants?.nodes?.find(
-                        (v: { id: string }) => v.id === bp.variantId,
-                    );
+        if (bundleProducts && products && !productsQuery.loading) {
+            // Group variant IDs by product ID
+            const grouped = bundleProducts.reduce((acc: Record<string, any>, bp: any) => {
+                const productId = bp.id;
+                const variantId = bp.selectedVariant?.id;
 
-                    return {
-                        id: `${bp.productId}-${bp.variantId ?? "default"}-${i}`,
-                        productId: bp.productId,
-                        variantId: bp.variantId,
-                        quantity: bp.quantity || 1,
-                        title: product?.title || `Product ${i + 1}`,
-                        image:
-                            variant?.image?.url ||
-                            product?.featuredImage?.url ||
-                            "",
-                        type: bp.variantId ? "variant" : "product", // Explicit literal type
+                if (!productId) return acc;
+
+                if (!acc[productId]) {
+                    acc[productId] = {
+                        ...bp,
+                        variantIds: variantId ? [variantId] : [],
                     };
-                },
-            );
+                } else if (variantId && !acc[productId].variantIds.includes(variantId)) {
+                    acc[productId].variantIds.push(variantId);
+                }
+
+                return acc;
+            }, {});
+
+            const selectedItems = Object.values(grouped).map((bp: any, index: number) => {
+                const shopifyProduct = products.find((node: any) => node?.id === bp.id);
+                return {
+                    id: bp.id || `${bp.id}-group-${index}`,
+                    productId: bp.id,
+                    variantIds: bp.variantIds, // <-- always array
+                    quantity: bp.quantity || 1,
+                    type: "product" as const,
+                    title: shopifyProduct?.title || `Product ${index + 1}`,
+                    price:
+                        shopifyProduct?.variants?.nodes?.[0]?.price ||
+                        "0.00",
+                    image: shopifyProduct?.featuredImage?.url || "",
+                    sku: "",
+                    handle: shopifyProduct?.handle || "",
+                    vendor: shopifyProduct?.vendor || "",
+                    productType: shopifyProduct?.productType || "",
+                    totalVariants: shopifyProduct?.variants?.nodes?.length || 1,
+                    displayOrder: bp.displayOrder || 0,
+                    isRequired: bp.isRequired !== false,
+                    inventoryQuantity:
+                        shopifyProduct?.variants?.nodes?.[0]?.inventoryQuantity || 0,
+                    availableForSale:
+                        shopifyProduct?.variants?.nodes?.[0]?.availableForSale || false,
+                    compareAtPrice:
+                        shopifyProduct?.variants?.nodes?.[0]?.compareAtPrice || null,
+                };
+            });
+
             setSelectedItems(selectedItems);
         }
 

@@ -206,12 +206,12 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
     }
 
     // 2. Check for duplicate products
-    const productIds = data.products.map((p) => p.productId);
-    if (productIds.length !== new Set(productIds).size) {
-        errors.products = {
-            _errors: ["Duplicate products are not allowed"],
-        };
-    }
+    // const productIds = data.products.map((p) => p.productId);
+    // if (productIds.length !== new Set(productIds).size) {
+    //     errors.products = {
+    //         _errors: ["Duplicate products are not allowed"],
+    //     };
+    // }
 
     // 3. Validate image URLs (if present)
     if (data.images && data.images.length > 0) {
@@ -237,6 +237,8 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
             _errors: ["Bundle name is too long (max 200 characters)"],
         };
     }
+
+    console.log(errors);
 
     return {
         success: Object.keys(errors).length === 0,

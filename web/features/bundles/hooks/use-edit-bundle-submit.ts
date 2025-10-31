@@ -30,7 +30,7 @@ export function useEditBundleSubmit(bundleId: string) {
                 });
             } else {
                 showError("Failed to update bundle", {
-                    content: "Please check your inputs and try again.",
+                    content: result.message || "Please check your inputs and try again.",
                 });
             }
         } catch (err) {

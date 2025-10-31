@@ -9,6 +9,7 @@ import {
     getBundlesAction,
     GetBundlesInput,
     PaginationResult,
+    transformBundle,
     transformBundles,
 } from "@/features/bundles";
 import { fetchProductsFromShopify } from "@/lib/shopify";
@@ -99,10 +100,7 @@ export async function getBundleDetails(input: {
         productIds,
     );
 
-    // Transform single bundle
-    const transformed = transformBundles([bundle], productMap, variantMap);
-
-    return transformed[0];
+    return transformBundle(bundle, productMap, variantMap);
 }
 
 /**

@@ -27,7 +27,7 @@ export function ProductsStep() {
         setSelectedItems([]);
     };
 
-    // Get validation errors for this step - FIXED
+    // Get validation errors for this step
     const errors = getAllErrors();
     const hasProductError =
         validationAttempted &&
