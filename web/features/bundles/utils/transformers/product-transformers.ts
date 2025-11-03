@@ -2,7 +2,7 @@
  * Product transformers
  */
 
-import { ProductGroup } from "@/features/bundles";
+import { ProductGroup, SelectedItem } from "@/features/bundles";
 
 /**
  * Group products by ID
@@ -34,4 +34,38 @@ export function groupProductsById(products: any[]): ProductGroup[] {
     });
 
     return Object.values(groups);
+}
+
+export function createSelectedItem(
+    product: any,
+    options?: {
+        quantity?: number;
+        displayOrder?: number;
+        isRequired?: boolean;
+    }
+): SelectedItem {
+    const variants = product.variants || [];
+    const variantIds = variants.map((v: any) => v.id);
+    const defaultVariant = variants[0];
+
+    return {
+        id: `product-${product.id}`,
+        productId: product.id,
+        variantIds: variantIds,
+        quantity: options?.quantity || 1,
+        type: "product" as const,
+        title: product.title,
+        price: defaultVariant?.price || "0.00",
+        compareAtPrice: defaultVariant?.compareAtPrice || null,
+        image: product.images?.[0]?.originalSrc || product.featuredImage?.url || "",
+        sku: defaultVariant?.sku || "",
+        handle: product.handle,
+        vendor: product.vendor,
+        productType: product.productType,
+        totalVariants: product.totalVariants || variants.length,
+        displayOrder: options?.displayOrder || 0,
+        isRequired: options?.isRequired ?? true,
+        inventoryQuantity: defaultVariant?.inventoryQuantity || 0,
+        availableForSale: defaultVariant?.availableForSale !== false,
+    };
 }

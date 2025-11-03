@@ -344,6 +344,8 @@ export const useBundleStore = create(
             const state = get();
             const groups: Record<string, ProductGroup> = {};
 
+            console.log('state.selectedItems: ', state.selectedItems);
+
             state.selectedItems.forEach((item) => {
                 if (!groups[item.productId]) {
                     groups[item.productId] = {
@@ -383,7 +385,6 @@ export const useBundleStore = create(
             const items = state.selectedItems.filter(
                 (item) => item.productId === productId,
             );
-            console.log(state.selectedItems);
 
             const selectedCount = items.reduce(
                 (count, item) => count + (item.variantIds?.length || 0),

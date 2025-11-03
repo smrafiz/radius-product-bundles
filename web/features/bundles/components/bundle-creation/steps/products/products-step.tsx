@@ -13,7 +13,7 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
-import { useProductPicker } from "@/shared";
+import { GlobalBanner, useProductPicker } from "@/shared";
 import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
 
 
@@ -44,11 +44,6 @@ export function ProductsStep() {
                 title="Products"
                 description="Select products and variants to include in your bundle"
             />
-
-            {/* Validation Error Banner */}
-            {hasProductError && (
-                <Banner tone="critical">{productErrorMessage}</Banner>
-            )}
 
             <Card>
                 <BlockStack gap="400">

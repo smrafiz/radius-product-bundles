@@ -38,3 +38,25 @@ export interface Product {
         title: string;
     }>;
 }
+
+export interface ProductNode {
+    __typename: "Product";
+    id: string;
+    title: string;
+    handle: string;
+    vendor: string;
+    productType: string;
+    featuredImage?: { url: string } | null;
+    variants?: {
+        nodes: Array<{
+            id: string;
+            title?: string | null;
+            price?: string;
+            compareAtPrice?: string | null;
+            sku?: string | null;
+            availableForSale?: boolean;
+            inventoryQuantity?: number;
+            image?: { url: string } | null;
+        }>;
+    };
+}

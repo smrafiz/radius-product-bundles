@@ -91,14 +91,25 @@ export interface BundleProduct {
  * Product selection item
  */
 export interface SelectedItem {
-    selectedVariant: any;
     id: string;
     productId: string;
     variantId?: string;
+    variantIds: string[];
     title: string;
     type: "product" | "variant";
     quantity: number;
-    totalVariants?: number;
+    price: string;
+    compareAtPrice?: string | null;
+    image?: string;
+    handle: string;
+    vendor: string;
+    productType: string;
+    sku?: string;
+    totalVariants: number;
+    inventoryQuantity?: number;
+    availableForSale?: boolean;
+    displayOrder?: number;
+    isRequired?: boolean;
 }
 
 /**
