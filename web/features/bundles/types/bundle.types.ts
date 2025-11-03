@@ -3,11 +3,11 @@
  */
 
 import type {
-    Bundle as PrismaBundle,
     BundleStatus as PrismaBundleStatus,
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { IconSource } from "@shopify/polaris";
 import { bundleSchema } from "@/features/bundles/schema/zod.schema";
@@ -60,7 +60,6 @@ export interface BundleListItem {
         handle: string;
     }>;
 }
-import { Prisma } from "@prisma/client";
 
 /**
  * Full bundle with all details
@@ -109,6 +108,10 @@ export interface SelectedItem {
     inventoryQuantity?: number;
     availableForSale?: boolean;
     displayOrder?: number;
+    role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
+    groupId ?: string;
+    customPrice?: number | null;
+    discountPercent?: number |null;
     isRequired?: boolean;
 }
 
@@ -126,6 +129,7 @@ export interface ProductGroup {
     };
     variants: SelectedItem[];
     originalTotalVariants: number;
+    quantity: number;
 }
 
 export interface ProductPreviewGroup {

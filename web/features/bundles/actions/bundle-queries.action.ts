@@ -117,8 +117,6 @@ export async function getBundleAction(
             sessionToken,
         });
 
-        console.log(bundle);
-
         return {
             status: "success",
             data: bundle,

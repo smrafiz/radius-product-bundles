@@ -188,6 +188,8 @@ export function validateBusinessRules(
 export function validateSecurity(data: BundleFormData): ValidationResult {
     const errors: Record<string, { _errors: string[] }> = {};
 
+    console.log(data);
+
     // 1. Validate Shopify GIDs (belt-and-suspenders with Zod)
     for (const product of data.products) {
         if (!/^gid:\/\/shopify\/Product\/\d+$/.test(product.productId)) {

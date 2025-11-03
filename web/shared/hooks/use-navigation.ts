@@ -13,6 +13,7 @@ export function useAppNavigation() {
     // Generic navigation with loader
     const goTo = useCallback(
         (path: string) => {
+            console.log(path);
             return withLoader(() => router.push(path));
         },
         [router],

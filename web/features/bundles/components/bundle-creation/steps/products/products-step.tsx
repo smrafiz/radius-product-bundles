@@ -1,10 +1,10 @@
 "use client";
 
 import {
-    Banner,
     BlockStack,
     Button,
     Card,
+    InlineError,
     InlineStack,
 } from "@shopify/polaris";
 import {
@@ -13,19 +13,27 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
-import { GlobalBanner, useProductPicker } from "@/shared";
+import { useEffect } from "react";
+import { useProductPicker } from "@/shared";
+import { useFormContext } from "react-hook-form";
 import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
-
 
 export function ProductsStep() {
     const { selectedItems, setSelectedItems, validationAttempted } =
         useBundleStore();
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
+    const { clearErrors } = useFormContext();
 
     const handleClearAll = () => {
         setSelectedItems([]);
     };
+
+    useEffect(() => {
+        if (selectedItems.length > 0) {
+            clearErrors("products");
+        }
+    }, [selectedItems.length, clearErrors]);
 
     // Get validation errors for this step
     const errors = getAllErrors();
@@ -68,6 +76,12 @@ export function ProductsStep() {
                             </Button>
                         )}
                     </InlineStack>
+                    {productErrorMessage && (
+                        <InlineError
+                            message={productErrorMessage}
+                            fieldID="products"
+                        />
+                    )}
 
                     <ProductList />
                 </BlockStack>

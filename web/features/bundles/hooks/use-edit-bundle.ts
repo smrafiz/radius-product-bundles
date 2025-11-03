@@ -122,7 +122,6 @@ export function useEditBundle(bundleId: string) {
                 (bp: any, index: number) => {
                     const productNodes = (products || [])
                         .filter(isProductNode);
-                    console.log(products);
                     const shopifyProduct = productNodes.find(
                         (p) => p.id === bp.id
                     );
