@@ -1,13 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { SETTINGS_TAB_NAV } from "@/features/settings";
+import { SETTINGS_TAB_NAV,  } from "@/features/settings";
 import {
+    SettingsTools,
     SettingsGeneral,
     SettingsDiscount,
+    SettingsAdvanced,
+    SettingsOnlineShop,
     SettingsButtonAction,
-    SettingsSubscription,
+    SettingsSubscriptions,
+    SettingsNotifications,
     SettingsStoreInformation,
+    SettingsVariantSelectorType,
 } from "@/features/settings";
 
 export const SettingsTab = () => {
@@ -23,10 +28,20 @@ export const SettingsTab = () => {
                 return <SettingsStoreInformation />;
             case "discount":
                 return <SettingsDiscount />;
-            case "subscription":
-                return <SettingsSubscription />;
+            case "subscriptions":
+                return <SettingsSubscriptions />;
             case "button_action":
                 return <SettingsButtonAction />;
+            case "variant_selector":
+                return <SettingsVariantSelectorType />;
+            case "notifications":
+                return <SettingsNotifications />;
+            case "enable_online_shop":
+                return <SettingsOnlineShop />;
+            case "advanced":
+                return <SettingsAdvanced />;
+            case "tools":
+                return <SettingsTools />;
             default:
                 return <s-text>No content found.</s-text>;
         }

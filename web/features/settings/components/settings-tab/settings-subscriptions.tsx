@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-export function SettingsSubscription() {
+export function SettingsSubscriptions() {
     const [isSealIntegrationEnabled, setIsSealIntegrationEnabled] = useState<boolean>(true);
     return (
         <s-section heading="Subscriptions">

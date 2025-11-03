@@ -14,7 +14,7 @@ export function SettingsDiscount() {
     };
 
     const handleChoiceChange = (event: CallbackEvent<"s-choice-list">) => {
-        console.log('Values: ', event.currentTarget.values)
+        console.log("Values: ", event.currentTarget.values);
     };
 
     return (

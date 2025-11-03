@@ -1,7 +1,12 @@
 export { SettingsTab } from "./settings-tab/settings-tab";
 export { SettingsPage } from "./settings-page/settings-page";
+export { SettingsTools } from "./settings-tab/settings-tools";
 export { SettingsGeneral } from "./settings-tab/settings-general";
-export {SettingsDiscount} from "./settings-tab/settings-discount"
-export {SettingsButtonAction} from "./settings-tab/settings-button-action"
-export {SettingsSubscription} from "./settings-tab/settings-subscription"
-export {SettingsStoreInformation} from "./settings-tab/settings-store-information"
+export {SettingsAdvanced} from "./settings-tab/settings-advanced";
+export {SettingsDiscount} from "./settings-tab/settings-discount";
+export {SettingsOnlineShop} from "./settings-tab/settings-online-shop";
+export {SettingsButtonAction} from "./settings-tab/settings-button-action";
+export {SettingsNotifications} from "./settings-tab/settings-notifications";
+export {SettingsSubscriptions} from "./settings-tab/settings-subscriptions";
+export {SettingsVariantSelectorType} from "./settings-tab/variant-selector-type";
+export {SettingsStoreInformation} from "./settings-tab/settings-store-information";

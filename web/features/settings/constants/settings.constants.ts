@@ -21,8 +21,8 @@ export const SETTINGS_TAB_NAV: SettingsTabNavInfo[] = [
         icon: "discount",
     },
     {
-        id: "subscription",
-        title: "Subscription",
+        id: "subscriptions",
+        title: "Subscriptions",
         icon: "refresh",
     },
     {
@@ -34,6 +34,11 @@ export const SETTINGS_TAB_NAV: SettingsTabNavInfo[] = [
         id: "variant_selector",
         title: "Variant selector type",
         icon: "variant",
+    },
+    {
+        id: "notifications",
+        title: "Notifications",
+        icon: "notification",
     },
     {
         id: "integrations",
