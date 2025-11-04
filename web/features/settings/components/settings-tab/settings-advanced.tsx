@@ -15,8 +15,12 @@ export function SettingsAdvanced() {
         }
     };
     return (
-        <s-section heading="Advanced">
+        <s-section>
             <s-stack gap="large">
+                <s-heading>
+                    <div style={{ fontSize: "18px" }}>Advanced</div>
+                </s-heading>
+                <s-divider />
                 <s-stack gap="small-400">
                     <s-text-field
                         label="Free shipping method title"
@@ -42,7 +46,7 @@ export function SettingsAdvanced() {
                     <s-paragraph>
                         {
                             "Leave blank to use the default format. {{ amount }}, {{ amount_no_decimals }}, and {{ amount_with_comma_separator }} will be replaced with the price of your product, while {{ currency_symbol }} will be replaced with the currency symbol. You can use the same formatting as in Shopify stores."
-                        }<s-link href="javascript:void(0)">Read More</s-link>
+                        }<s-link target="_blank" href="https://help.shopify.com/en/manual/international/pricing/currency-formatting">Read More</s-link>
                     </s-paragraph>
                 </s-stack>
 

@@ -8,6 +8,7 @@ import {
     SettingsDiscount,
     SettingsAdvanced,
     SettingsOnlineShop,
+    SettingsBundleWidget,
     SettingsButtonAction,
     SettingsSubscriptions,
     SettingsNotifications,
@@ -24,6 +25,8 @@ export const SettingsTab = () => {
         switch (activeTab) {
             case "general":
                 return <SettingsGeneral />;
+            case "bundle_widget":
+                return <SettingsBundleWidget />;
             case "store_information":
                 return <SettingsStoreInformation />;
             case "discount":
@@ -95,7 +98,7 @@ export const SettingsTab = () => {
 
                 {/* Right: Active content */}
                 <s-grid-item>
-                    <s-section padding="base">
+                    <s-section>
                         {activeTabData ? (
                             <s-stack>{renderActiveComponent()}</s-stack>
                         ) : (

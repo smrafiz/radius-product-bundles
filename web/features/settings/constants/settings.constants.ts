@@ -11,6 +11,11 @@ export const SETTINGS_TAB_NAV: SettingsTabNavInfo[] = [
         icon: "settings",
     },
     {
+        id: "bundle_widget",
+        title: "Bundle widget",
+        icon: "store-online",
+    },
+    {
         id: "store_information",
         title: "Store Information",
         icon: "discount",

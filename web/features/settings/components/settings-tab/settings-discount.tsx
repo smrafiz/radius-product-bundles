@@ -18,8 +18,12 @@ export function SettingsDiscount() {
     };
 
     return (
-        <s-section heading="Discount">
+        <s-section>
             <s-stack gap="base">
+                <s-heading>
+                    <div style={{ fontSize: "18px" }}>Discount</div>
+                </s-heading>
+                <s-divider />
                 <s-paragraph>
                     Settings related to the discounts applied by the app.
                 </s-paragraph>
@@ -33,7 +37,12 @@ export function SettingsDiscount() {
                 />
 
                 <s-stack gap="small-400">
-                    <s-select label="Discount type" name="discountType">
+                    <s-select
+                        label="Discount type"
+                        name="discountType"
+                        details="To learn more about discount types, please read this
+                        article."
+                    >
                         <s-option value="discount_code">Discount Code</s-option>
                         <s-option value="draft_order">Draft Order</s-option>
                         <s-option value="shopify_functions_v1">
@@ -43,11 +52,6 @@ export function SettingsDiscount() {
                             Shopify Functions V2
                         </s-option>
                     </s-select>
-
-                    <s-paragraph>
-                        To learn more about discount types, please read this
-                        article.
-                    </s-paragraph>
                 </s-stack>
                 <s-choice-list
                     label="Discount combinations"
@@ -72,13 +76,11 @@ export function SettingsDiscount() {
                         label="Discount title"
                         name="title"
                         placeholder="Bundle Discount"
+                        details="Customers will see this in their cart and at checkout."
                         value={title}
                         onChange={handleChange}
                         maxLength={60}
                     />
-                    <s-text>
-                        Customers will see this in their cart and at checkout.
-                    </s-text>
                 </s-stack>
             </s-stack>
         </s-section>

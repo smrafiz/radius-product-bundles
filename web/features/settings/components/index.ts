@@ -6,6 +6,7 @@ export {SettingsAdvanced} from "./settings-tab/settings-advanced";
 export {SettingsDiscount} from "./settings-tab/settings-discount";
 export {SettingsOnlineShop} from "./settings-tab/settings-online-shop";
 export {SettingsButtonAction} from "./settings-tab/settings-button-action";
+export {SettingsBundleWidget} from "./settings-tab/settings-bundle-widget";
 export {SettingsNotifications} from "./settings-tab/settings-notifications";
 export {SettingsSubscriptions} from "./settings-tab/settings-subscriptions";
 export {SettingsVariantSelectorType} from "./settings-tab/variant-selector-type";

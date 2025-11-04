@@ -4,8 +4,12 @@ import React, { useState } from "react";
 export function SettingsSubscriptions() {
     const [isSealIntegrationEnabled, setIsSealIntegrationEnabled] = useState<boolean>(true);
     return (
-        <s-section heading="Subscriptions">
+        <s-section>
             <s-stack gap="base">
+                <s-heading>
+                    <div style={{ fontSize: "18px" }}>Subscriptions</div>
+                </s-heading>
+                <s-divider />
                 {/* First Checkbox */}
                 <s-checkbox
                     label="Seal Subscriptions app integration"

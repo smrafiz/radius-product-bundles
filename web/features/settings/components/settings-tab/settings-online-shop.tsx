@@ -14,8 +14,12 @@ export function SettingsOnlineShop() {
     };
 
     return (
-        <s-section heading="Enable in online shop">
+        <s-section>
             <s-stack gap="base">
+                <s-heading>
+                    <div style={{ fontSize: "18px" }}>Enable in online shop</div>
+                </s-heading>
+                <s-divider />
                 <s-stack gap="small-400">
                     <s-text-area
                         label="Disable automatic injection of widgets on specific urls"
