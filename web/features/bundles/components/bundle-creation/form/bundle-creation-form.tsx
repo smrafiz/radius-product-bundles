@@ -3,60 +3,25 @@
 import {
     BundleCreationFormProps,
     BundlePreview,
-    getBundleProperty,
     HorizontalStepIndicator,
     StepContent,
     StepNavigation,
-    useBundleFormMethods,
-    useBundleStore,
+    useBundleFormManager,
 } from "@/features/bundles";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { GlobalBanner } from "@/shared";
 import { Card, Layout, Page } from "@shopify/polaris";
-import { GlobalBanner, useAppNavigation } from "@/shared";
 
+/**
+ * Bundle creation form
+ */
 export function BundleCreationForm({
     bundleType,
     bundleName,
 }: BundleCreationFormProps) {
-    const { goBack } = useAppNavigation();
-    const { bundleData, setBundleData } = useBundleStore();
-    const { setValue } = useBundleFormMethods();
-
-    const pathname = usePathname();
-    const isEditMode = pathname.includes("/edit");
-
-    useEffect(() => {
-        if (!bundleData.type) {
-            setBundleData({ ...bundleData, type: bundleType });
-            setValue("type", bundleType);
-        }
-    }, [bundleType, bundleData, setBundleData, setValue]);
-
-    const getPageProps = () => {
-        if (isEditMode) {
-            return {
-                title: `Edit ${bundleName || getBundleProperty(bundleType, "label")}`,
-                subtitle: "Update your bundle settings and preview changes",
-                backAction: {
-                    content: "Back to Bundles",
-                    onAction: goBack,
-                },
-            };
-        }
-
-        return {
-            title: `Create ${getBundleProperty(bundleType, "label")}`,
-            subtitle:
-                "Configure your bundle settings and preview the customer experience",
-            backAction: {
-                content: "Bundle Selection",
-                onAction: goBack,
-            },
-        };
-    };
-
-    const pageProps = getPageProps();
+    const { pageProps } = useBundleFormManager({
+        bundleType,
+        bundleName,
+    });
 
     return (
         <Page {...pageProps}>

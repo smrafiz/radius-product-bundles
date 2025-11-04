@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * Use initial bundle state
+ * Use the initial bundle state
  */
 export function useInitialBundleState({
     hasData,

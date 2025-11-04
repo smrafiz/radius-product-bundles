@@ -2,13 +2,12 @@
  * Bundles component types
  */
 import {
+    BundleFormData,
     BundleListItem,
-    BundleStatus,
     BundleType,
     ProductGroup,
 } from "@/features/bundles";
 import { ReactNode } from "react";
-import { BundleFormData } from "@/lib/validation";
 
 /*
  * Bundle listing components

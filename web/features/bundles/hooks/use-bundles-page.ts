@@ -2,13 +2,10 @@
 
 import {
     BUNDLE_LISTING_METRICS,
-    invalidateBundleCache,
     useBundleListingStore,
     useBundlesData,
     useInitialBundleState,
 } from "@/features/bundles";
-import { useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useDashboardData } from "@/features/dashboard";
 import { useAppNavigation, useSyncBundles } from "@/shared";
 
@@ -16,17 +13,7 @@ import { useAppNavigation, useSyncBundles } from "@/shared";
  * Bundles page
  */
 export function useBundlesPage() {
-    const queryClient = useQueryClient();
-
     useSyncBundles();
-
-    useEffect(() => {
-        const invalidate = async () => {
-            await invalidateBundleCache(queryClient);
-        };
-
-        void invalidate();
-    }, [queryClient]);
 
     const { isLoading } = useBundlesData();
     const { metrics: liveMetrics, isMetricsFetching } = useDashboardData();

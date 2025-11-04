@@ -7,6 +7,7 @@ import {
 } from "@/features/bundles";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
+import { BundleProductRole } from "@prisma/client";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();
@@ -52,8 +53,12 @@ export function useBundleValidation() {
         }
 
         if (currentStep === 1) {
-            console.log(selectedItems);
-            const productsForForm = selectedItems.flatMap((item) => {
+            const productsForForm: Array<{
+                productId: string;
+                variantId: string;
+                quantity: number;
+                role: BundleProductRole;
+            }> = selectedItems.flatMap((item) => {
                 if (item.variantIds && Array.isArray(item.variantIds)) {
                     return item.variantIds.map((variantId) => ({
                         productId: item.productId.replace(/^product-/, ""),

@@ -58,3 +58,8 @@ export interface GlobalMessage {
     duration?: number;
     timestamp: number;
 }
+
+/**
+ * Validation errors
+ */
+export type ValidationErrors = Record<string, { _errors: string[] }>;
