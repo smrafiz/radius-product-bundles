@@ -53,12 +53,27 @@ export function useBundleValidation() {
 
         if (currentStep === 1) {
             console.log(selectedItems);
-            const productsForForm = selectedItems.map((item) => ({
-                productId: item.productId?.replace(/^product-/, "") || item.productId,
-                variantId: item.variantIds || [],
-                quantity: item.quantity || 1,
-                role: (item.role || "INCLUDED"),
-            }));
+            const productsForForm = selectedItems.flatMap((item) => {
+                if (item.variantIds && Array.isArray(item.variantIds)) {
+                    return item.variantIds.map((variantId) => ({
+                        productId: item.productId.replace(/^product-/, ""),
+                        variantId: variantId,
+                        quantity: item.quantity || 1,
+                        role: "INCLUDED",
+                    }));
+                }
+
+                if (item.variantId) {
+                    return [{
+                        productId: item.productId.replace(/^product-/, ""),
+                        variantId: item.variantId,
+                        quantity: item.quantity || 1,
+                        role: "INCLUDED",
+                    }];
+                }
+
+                return [];
+            });
 
             // Sync to form state
             setValue("products", productsForForm, {

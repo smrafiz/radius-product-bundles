@@ -2,14 +2,17 @@
 
 import {
     BundleFormData,
+    invalidateBundleCache,
     updateBundleAction,
     useBundleStore,
 } from "@/features/bundles";
 import { useGlobalBanner } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useEditBundleSubmit(bundleId: string) {
     const app = useAppBridge();
+    const queryClient = useQueryClient();
     const { resetDirty, setSaving, setStep } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
 
@@ -45,6 +48,7 @@ export function useEditBundleSubmit(bundleId: string) {
             }
 
             if (result.status === "success") {
+                await invalidateBundleCache(queryClient);
                 showSuccess("Bundle updated successfully!", {
                     content: "Your changes have been saved.",
                     autoHide: true,

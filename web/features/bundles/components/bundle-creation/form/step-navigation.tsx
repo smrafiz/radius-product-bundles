@@ -12,7 +12,7 @@ import { Button, InlineStack } from "@shopify/polaris";
 export function StepNavigation() {
     const { currentStep, totalSteps, prevStep, canGoPrevious } =
         useBundleStore();
-    const { handleNextStep, canProceedToNextStep } = useBundleFormMethods();
+    const { handleNextStep } = useBundleFormMethods();
     const { handleSubmit, getValues } = useFormContext<BundleFormData>();
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");

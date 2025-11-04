@@ -17,7 +17,7 @@ import {
 import { updateBundle } from "@/actions/bundle/mutate.actions";
 
 // Helper to convert BundleFormData to server action format
-const transformFormDataForServer = (
+    const transformFormDataForServer = (
     data: BundleFormData,
     bundleType?: BundleType,
 ): CreateBundlePayload => {
@@ -90,7 +90,7 @@ export function useBundleForm(bundleId?: string) {
     const createBundleMutation = useMutation({
         mutationFn: async (data: BundleFormData) => {
             const token = await app.idToken();
-            const transformedData = transformFormDataForServer(
+                const transformedData = transformFormDataForServer(
                 data,
                 bundleData.type as BundleType,
             );
@@ -146,7 +146,7 @@ export function useBundleForm(bundleId?: string) {
             }
 
             const token = await app.idToken();
-            const transformedData = transformFormDataForServer(
+                const transformedData = transformFormDataForServer(
                 data,
                 bundleData.type as BundleType,
             );
