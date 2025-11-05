@@ -1,25 +1,25 @@
 import { customAlphabet } from "nanoid";
 import { BundleType, SelectedItem } from "@/types";
-import { bundleTypeConfigs } from "@/config/bundleType.config";
+// import { bundleTypeConfigs } from "@/config/bundleType.config";
 
 /**
  * Get bundle type options for select
  */
-export const bundleTypeOptions = Object.values(bundleTypeConfigs).map((c) => ({
-    label: c.label,
-    value: c.id,
-}));
+// export const bundleTypeOptions = Object.values(bundleTypeConfigs).map((c) => ({
+//     label: c.label,
+//     value: c.id,
+// }));
 
 /**
  * Map bundle type slug to ID
  */
-export const bundleTypeMap = Object.values(bundleTypeConfigs).reduce(
-    (acc, c) => {
-        acc[c.slug] = c.id;
-        return acc;
-    },
-    {} as Record<string, BundleType>,
-);
+// export const bundleTypeMap = Object.values(bundleTypeConfigs).reduce(
+//     (acc, c) => {
+//         acc[c.slug] = c.id;
+//         return acc;
+//     },
+//     {} as Record<string, BundleType>,
+// );
 
 /**
  * Calculate total bundle price

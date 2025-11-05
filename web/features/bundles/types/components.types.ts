@@ -10,7 +10,7 @@ import {
 import { ReactNode } from "react";
 
 /*
- * Bundle listing components
+ * Bundle listing old.components
  */
 export interface ProductAvatarStackProps {
     products: ProductGroup[];
@@ -18,14 +18,14 @@ export interface ProductAvatarStackProps {
 }
 
 /*
- * Bundle detail components
+ * Bundle detail old.components
  */
 export interface ProductListPopoverProps {
     products: ProductGroup[];
 }
 
 /*
- * Bundle table components
+ * Bundle table old.components
  */
 export interface BundleTableEmptyStatesProps {
     totalBundles: number;
@@ -33,7 +33,7 @@ export interface BundleTableEmptyStatesProps {
 }
 
 /*
- * Bundle table row components
+ * Bundle table row old.components
  */
 export interface BundleTableRowProps {
     bundle: BundleListItem;
@@ -42,7 +42,7 @@ export interface BundleTableRowProps {
 }
 
 /*
- * Bundle table actions components
+ * Bundle table actions old.components
  */
 export interface BundleActionsGroupProps {
     bundle: BundleListItem;
@@ -55,14 +55,14 @@ export interface BundleActionsGroupProps {
 }
 
 /*
- * Bundle status popover components
+ * Bundle status popover old.components
  */
 export interface StatusPopoverProps {
     bundle: BundleListItem;
 }
 
 /*
- * Bundle creation components
+ * Bundle creation old.components
  */
 export interface BundleCreationFormProps {
     bundleType: BundleType;
@@ -70,7 +70,7 @@ export interface BundleCreationFormProps {
 }
 
 /*
- * Bundle form provider components
+ * Bundle form provider old.components
  */
 export interface BundleFormProviderProps {
     children: ReactNode;
@@ -79,7 +79,7 @@ export interface BundleFormProviderProps {
 }
 
 /*
- * Step heading components
+ * Step heading old.components
  */
 export interface StepHeadingProps {
     title: string;

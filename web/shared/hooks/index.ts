@@ -7,3 +7,5 @@ export { useAppNavigation } from "./use-navigation";
 export { useShopSettings } from "./use-shop-settings";
 export { useGlobalBanner } from "./use-global-banner";
 export { useProductPicker } from "./use-product-picker";
+export { useSessionProvider } from "./use-session-provider";
+export { useProtectedSession } from "./use-protected-session";

@@ -33,7 +33,7 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                     key={bundle.id}
                     id={bundle.id}
                     accessibilityLabel={`View details for ${bundle.name}`}
-                    onClick={bundleData.edit(bundle.id)}
+                    onClick={() => bundleData.edit(bundle.id)}
                     media={
                         <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
                             <Text

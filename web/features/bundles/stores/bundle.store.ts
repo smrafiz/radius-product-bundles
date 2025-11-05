@@ -316,7 +316,7 @@ export const useBundleStore = create(
                         overProductIndex,
                     );
 
-                    // Flatten back to selectedItems array maintaining the new order
+                    // Flatten back to the selectedItems array maintaining the new order
                     const reorderedItems: SelectedItem[] = [];
                     newGroupOrder.forEach((group) => {
                         reorderedItems.push(group.product);
@@ -352,6 +352,7 @@ export const useBundleStore = create(
                         product: item,
                         variants: [],
                         originalTotalVariants: item.totalVariants || 1,
+                        quantity: item.quantity || 1,
                     };
                 }
                 if (item.type === "variant") {

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { useShopSettingsStore } from "@/stores";
 import { GetShopInfoDocument } from "@/lib/gql/graphql";
-import { useGraphQL } from "@/hooks";
+import { useGraphQL, useShopSettingsStore } from "@/shared";
 
 interface UseShopSettingsOptions {
     enabled?: boolean;

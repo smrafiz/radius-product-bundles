@@ -52,10 +52,10 @@ web/
 │   │   └── ProtectedRoute.tsx
 │   ├── bundles
 │   ├── fields
-│   │   └── Knob.tsx
+│   │   └── knob.tsx
 │   ├── index.ts
 │   ├── layout
-│   │   ├── AppLayout.tsx
+│   │   ├── app-layout.tsx
 │   │   └── index.ts
 │   ├── modals
 │   │   ├── ConfirmationModal.tsx
@@ -64,7 +64,7 @@ web/
 │   └── shared
 │       ├── GlobalBanner.tsx
 │       ├── GlobalForm.tsx
-│       ├── GlobalLoader.tsx
+│       ├── global-loader.tsx
 │       ├── MetricCard.tsx
 │       ├── Navigation.tsx
 │       ├── ProductsPopover.tsx

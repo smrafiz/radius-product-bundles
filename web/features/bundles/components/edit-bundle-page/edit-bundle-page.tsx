@@ -8,15 +8,12 @@ import {
     useEditBundleTransform,
 } from "@/features/bundles";
 import { use } from "react";
-import { GlobalForm } from "@/shared";
+import { DashboardSkeleton, GlobalForm } from "@/shared";
 import { Banner, Card, Page, Text } from "@shopify/polaris";
-import { DashboardSkeleton } from "@/components/shared/Skeletons";
 
-interface EditBundlePageProps {
+export function EditBundlePage({ params }: {
     params: Promise<{ id: string }>;
-}
-
-export function EditBundlePage({ params }: EditBundlePageProps) {
+}) {
     const { id: bundleId } = use(params);
     const { bundleData, isLoading, isError, errorMessage } =
         useEditBundle(bundleId);
