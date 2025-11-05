@@ -383,7 +383,12 @@ export const useBundleStore = create(
             const items = state.selectedItems.filter(
                 (item) => item.productId === productId,
             );
-            const selectedCount = items.length;
+
+            const selectedCount = items.reduce(
+                (count, item) => count + (item.variantIds?.length || 0),
+                0
+            );
+
             const originalTotal = items[0]?.totalVariants || 1;
             return { selectedCount, originalTotal };
         },

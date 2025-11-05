@@ -236,3 +236,43 @@ export interface AbusivePatternResult {
         threshold: number;
     };
 }
+
+export interface ValidationContext {
+    maxBundleProducts?: number;
+    maxBundlesPerShop?: number;
+    betaFeatures?: boolean;
+}
+
+export interface ValidationResult {
+    success: boolean;
+    errors: Record<string, { _errors: string[] }> | null;
+}
+
+/*
+ * Bundle operation context types
+ */
+export interface BundleOperationContext {
+    appSettings?: ValidationContext | null;
+    shopSettings: {
+        appSettings: ValidationContext | null
+    };
+}
+
+/*
+ * Update bundle service types
+ */
+export interface UpdateBundleServiceInput {
+    shop: string;
+    bundleId: string;
+    data: BundleFormData;
+}
+
+/*
+ * Update bundle service response types
+ */
+export interface UpdateBundleServiceResponse {
+    success: boolean;
+    message: string;
+    errors?: Record<string, { _errors: string[] }> | null;
+    bundle?: TransformedBundle | null;
+}

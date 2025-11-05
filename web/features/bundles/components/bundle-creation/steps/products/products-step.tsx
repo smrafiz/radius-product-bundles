@@ -1,10 +1,10 @@
 "use client";
 
 import {
-    Banner,
     BlockStack,
     Button,
     Card,
+    InlineError,
     InlineStack,
 } from "@shopify/polaris";
 import {
@@ -13,21 +13,29 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useEffect } from "react";
 import { useProductPicker } from "@/shared";
+import { useFormContext } from "react-hook-form";
 import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
-
 
 export function ProductsStep() {
     const { selectedItems, setSelectedItems, validationAttempted } =
         useBundleStore();
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
+    const { clearErrors } = useFormContext();
 
     const handleClearAll = () => {
         setSelectedItems([]);
     };
 
-    // Get validation errors for this step - FIXED
+    useEffect(() => {
+        if (selectedItems.length > 0) {
+            clearErrors("products");
+        }
+    }, [selectedItems.length, clearErrors]);
+
+    // Get validation errors for this step
     const errors = getAllErrors();
     const hasProductError =
         validationAttempted &&
@@ -44,11 +52,6 @@ export function ProductsStep() {
                 title="Products"
                 description="Select products and variants to include in your bundle"
             />
-
-            {/* Validation Error Banner */}
-            {hasProductError && (
-                <Banner tone="critical">{productErrorMessage}</Banner>
-            )}
 
             <Card>
                 <BlockStack gap="400">
@@ -73,6 +76,12 @@ export function ProductsStep() {
                             </Button>
                         )}
                     </InlineStack>
+                    {productErrorMessage && (
+                        <InlineError
+                            message={productErrorMessage}
+                            fieldID="products"
+                        />
+                    )}
 
                     <ProductList />
                 </BlockStack>

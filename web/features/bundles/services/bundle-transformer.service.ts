@@ -48,7 +48,12 @@ export function transformBundleCore(
                     title: product.title,
                     handle: product.handle,
                     featuredImage: product.featuredImage,
-                    selectedVariant,
+                    selectedVariant: selectedVariant
+                        ? {
+                            ...selectedVariant,
+                            productId: product.id,
+                        }
+                        : null,
                     quantity: bp.quantity,
                     role: bp.role,
                     displayOrder: bp.displayOrder,
@@ -80,7 +85,6 @@ export function transformBundle(
     variantMap?: Map<string, any>,
 ): TransformedBundle {
     const core = transformBundleCore(bundle, productMap, variantMap);
-
     return {
         ...core,
         description: bundle.description,
@@ -89,11 +93,6 @@ export function transformBundle(
         startDate: bundle.startDate?.toISOString() || null,
         endDate: bundle.endDate?.toISOString() || null,
         updatedAt: bundle.updatedAt.toISOString(),
-        products: core.products.map((p, i) => ({
-            ...p,
-            id: bundle.bundleProducts[i].id,
-            isRequired: bundle.bundleProducts[i].isRequired,
-        })),
     };
 }
 

@@ -64,6 +64,63 @@ export interface UpdateBundleInput {
 }
 
 /*
+ * Bundle update input with relations
+ */
+export interface UpdateBundleInputWithRelations {
+    bundleId: string;
+    shop: string;
+    name: string;
+    description?: string | null;
+    type: BundleType;
+    status?: BundleStatus;
+    mainProductId?: string | null;
+    buyQuantity?: number | null;
+    getQuantity?: number | null;
+    minimumItems?: number | null;
+    maximumItems?: number | null;
+    discountType: DiscountType;
+    discountValue: number;
+    minOrderValue?: number | null;
+    maxDiscountAmount?: number | null;
+    volumeTiers?: any;
+    allowMixAndMatch?: boolean | null;
+    mixAndMatchPrice?: number | null;
+    marketingCopy?: string | null;
+    seoTitle?: string | null;
+    seoDescription?: string | null;
+    images?: any;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    products?: Array<{
+        productId: string;
+        variantId?: string | null;
+        quantity: number;
+        role?: string;
+        displayOrder?: number;
+    }>;
+    productGroups?: Array<{
+        name: string;
+        description?: string | null;
+        minSelection?: number;
+        maxSelection?: number | null;
+        displayOrder?: number;
+        products?: Array<{
+            productId: string;
+            variantId?: string | null;
+            quantity: number;
+        }>;
+    }>;
+    settings?: {
+        showBadge?: boolean;
+        badgeText?: string;
+        badgeColor?: string;
+        enableInventoryTracking?: boolean;
+        allowBackorders?: boolean;
+        [key: string]: any;
+    } | null;
+}
+
+/*
  * Bundle product input
  */
 export interface BundleProductInput {

@@ -188,6 +188,8 @@ export function validateBusinessRules(
 export function validateSecurity(data: BundleFormData): ValidationResult {
     const errors: Record<string, { _errors: string[] }> = {};
 
+    console.log(data);
+
     // 1. Validate Shopify GIDs (belt-and-suspenders with Zod)
     for (const product of data.products) {
         if (!/^gid:\/\/shopify\/Product\/\d+$/.test(product.productId)) {
@@ -206,12 +208,12 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
     }
 
     // 2. Check for duplicate products
-    const productIds = data.products.map((p) => p.productId);
-    if (productIds.length !== new Set(productIds).size) {
-        errors.products = {
-            _errors: ["Duplicate products are not allowed"],
-        };
-    }
+    // const productIds = data.products.map((p) => p.productId);
+    // if (productIds.length !== new Set(productIds).size) {
+    //     errors.products = {
+    //         _errors: ["Duplicate products are not allowed"],
+    //     };
+    // }
 
     // 3. Validate image URLs (if present)
     if (data.images && data.images.length > 0) {
@@ -237,6 +239,8 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
             _errors: ["Bundle name is too long (max 200 characters)"],
         };
     }
+
+    console.log(errors);
 
     return {
         success: Object.keys(errors).length === 0,

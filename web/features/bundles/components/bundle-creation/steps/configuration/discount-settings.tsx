@@ -8,13 +8,13 @@ import {
     Text,
     TextField,
 } from "@shopify/polaris";
-import { useBundleValidation } from "@/hooks/bundle/useBundleValidation";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 import {
     DISCOUNT_TYPES,
     getDiscountProperty,
     useBundleStore,
+    useBundleValidation,
 } from "@/features/bundles";
 import { getCurrencySymbol, useShopSettings } from "@/shared";
 

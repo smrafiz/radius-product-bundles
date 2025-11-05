@@ -127,9 +127,6 @@ export const bundleSchema = z
                             "OPTIONAL",
                             "GROUP_OPTION",
                         ]),
-                    groupId: z.string().optional(),
-                    customPrice: z.number().min(0).optional(),
-                    discountPercent: z.number().min(0).max(100).optional(),
                 }),
             )
             .min(1, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED)

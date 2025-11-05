@@ -2,11 +2,11 @@
 
 import { print } from "graphql";
 import { useCallback } from "react";
-import { queryKey } from "@/utils";
+import { queryKey } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { executeGraphQLQuery, executeGraphQLMutation } from "@/actions";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib/shopify";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface UseGraphQLReturn<TResult> {
     data?: TResult;

@@ -10,7 +10,7 @@ import { useFormContext } from "react-hook-form";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();
-    const { currentStep, validationAttempted } = useBundleStore();
+    const { currentStep, validationAttempted, getGroupedItems, selectedItems } = useBundleStore();
 
     if (!form) {
         throw new Error(
@@ -22,6 +22,7 @@ export function useBundleValidation() {
         formState: { errors },
         getValues,
         trigger,
+        setValue,
     } = form;
 
     // Get current step validation rules
@@ -45,21 +46,56 @@ export function useBundleValidation() {
     // Validate current step
     const validateCurrentStep = async () => {
         const fields = getStepFields(currentStep);
-        if (fields.length === 0) return true;
+
+        if (fields.length === 0) {
+            return true;
+        }
+
+        if (currentStep === 1) {
+            console.log(selectedItems);
+            const productsForForm = selectedItems.flatMap((item) => {
+                if (item.variantIds && Array.isArray(item.variantIds)) {
+                    return item.variantIds.map((variantId) => ({
+                        productId: item.productId.replace(/^product-/, ""),
+                        variantId: variantId,
+                        quantity: item.quantity || 1,
+                        role: "INCLUDED",
+                    }));
+                }
+
+                if (item.variantId) {
+                    return [{
+                        productId: item.productId.replace(/^product-/, ""),
+                        variantId: item.variantId,
+                        quantity: item.quantity || 1,
+                        role: "INCLUDED",
+                    }];
+                }
+
+                return [];
+            });
+
+            // Sync to form state
+            setValue("products", productsForForm, {
+                shouldValidate: false,
+                shouldDirty: true,
+                shouldTouch: true,
+            });
+        }
 
         return await trigger(fields);
     };
 
-    // Check if current step can proceed
+    // Check if the current step can proceed
     const canProceedToNextStep = useMemo(() => {
         const fields = getStepFields(currentStep);
 
         if (fields.length === 0) return true;
 
-        // For step 1 (products), just check if products exist
+        // For step 1 (products), check grouped items from store
         if (currentStep === 1) {
-            const products = getValues("products");
-            return Array.isArray(products) && products.length > 0;
+            const groupedItems = getGroupedItems();
+            return Array.isArray(groupedItems) && groupedItems.length > 0;
         }
 
         // For other steps, check field values
@@ -76,12 +112,14 @@ export function useBundleValidation() {
                 ].includes(discountType || "");
 
                 if (!requiresValue) return true;
-                return value !== undefined && value > 0;
+
+                const numericValue = Number(value);
+                return value !== undefined && !isNaN(numericValue) && numericValue > 0;
             }
 
             return value !== undefined && value !== "";
         });
-    }, [currentStep, getValues]);
+    }, [currentStep, getValues, getGroupedItems]);
 
     // Get field error message (only show if validation was attempted)
     const getFieldError = (
@@ -91,12 +129,12 @@ export function useBundleValidation() {
         return errors[fieldName]?.message;
     };
 
-    // Get all current errors (only if validation was attempted) - FIXED STRUCTURE
+    // Get all current errors (only if validation was attempted)
     const getAllErrors = () => {
         if (!validationAttempted) return [];
         return Object.entries(errors).map(([field, error]) => ({
             field,
-            path: field, // Add path property for compatibility
+            path: field,
             message: error?.message || "Invalid value",
         }));
     };

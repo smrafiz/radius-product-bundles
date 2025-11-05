@@ -539,6 +539,7 @@ model AppSettings {
     defaultDiscountType  DiscountType @default(PERCENTAGE)
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
+    maxBundlesPerShop    Int          @default(20)
     aiOptimizations      Boolean      @default(true)
     betaFeatures         Boolean      @default(false)
     emailNotifications   Boolean      @default(true)

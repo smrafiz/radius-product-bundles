@@ -1,6 +1,10 @@
 import { useCallback } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { SelectedItem, useBundleStore } from "@/features/bundles";
+import {
+    createSelectedItem,
+    SelectedItem,
+    useBundleStore,
+} from "@/features/bundles";
 
 export function useProductPicker() {
     const app = useAppBridge();
@@ -13,26 +17,31 @@ export function useProductPicker() {
     } = useBundleStore();
 
     const openProductPicker = useCallback(async () => {
-        if (!app) return;
+        if (!app) {
+            return;
+        }
 
         setLoading(true);
         try {
             const groupedItems = getGroupedItems();
 
-            // Format existing selections
-            const existingSelections = groupedItems.map((group) => {
-                const selectedVariantIds = [group.product, ...group.variants]
-                    .map((item) => item.variantId)
-                    .filter(Boolean);
+            const existingSelections = groupedItems
+                .map((group) => {
+                    const selectedVariantIds = [
+                        ...(group.product.variantIds || []),
+                        ...group.variants.map((v) => v.variantId).filter(Boolean),
+                    ].filter((id): id is string => typeof id === 'string' && id.length > 0);
 
-                return {
-                    id: group.product.productId,
-                    variants:
-                        selectedVariantIds.length > 0
+                    return {
+                        id: group.product.productId,
+                        variants: selectedVariantIds.length > 0
                             ? selectedVariantIds.map((id) => ({ id }))
                             : undefined,
-                };
-            });
+                    };
+                })
+                .filter((selection): selection is { id: string; variants: { id: string }[] | undefined } =>
+                    selection.id.length > 0
+                );
 
             const result = await app.resourcePicker({
                 type: "product",
@@ -40,59 +49,15 @@ export function useProductPicker() {
                 selectionIds: existingSelections,
             });
 
-            if (!result?.selection || result.selection.length === 0) {
+            if (!result || result.length === 0) {
                 return;
             }
 
-            const selected: SelectedItem[] = [];
+            const normalizedItems = result.map((p: any, index: number) =>
+                createSelectedItem(p, { displayOrder: index })
+            );
 
-            for (const p of result.selection) {
-                if (p.variants && p.variants.length > 1) {
-                    // Multi-variant product - add all selected variants
-                    p.variants.forEach((variant: any, index: number) => {
-                        selected.push({
-                            id: `variant-${variant.id}`,
-                            productId: p.id,
-                            variantId: variant.id,
-                            title:
-                                index === 0
-                                    ? p.title
-                                    : `${p.title} - ${variant.title}`,
-                            type: index === 0 ? "product" : "variant",
-                            quantity: 1,
-                            image:
-                                variant.image?.originalSrc ||
-                                p.images?.[0]?.originalSrc,
-                            price: variant.price || "0.00",
-                            sku: variant.sku || undefined,
-                            handle: p.handle,
-                            vendor: p.vendor,
-                            productType: p.productType,
-                            totalVariants: p.totalVariants || p.variants.length,
-                        });
-                    });
-                } else {
-                    // Single variant product
-                    const defaultVariant = p.variants?.[0];
-                    selected.push({
-                        id: `product-${p.id}`,
-                        productId: p.id,
-                        variantId: defaultVariant?.id || null,
-                        title: p.title,
-                        type: "product",
-                        quantity: 1,
-                        image: p.images?.[0]?.originalSrc,
-                        price: defaultVariant?.price || "0.00",
-                        sku: defaultVariant?.sku || undefined,
-                        handle: p.handle,
-                        vendor: p.vendor,
-                        productType: p.productType,
-                        totalVariants: p.totalVariants,
-                    });
-                }
-            }
-
-            setSelectedItems(selected);
+            setSelectedItems(normalizedItems);
         } catch (err) {
             console.error("Product picker error:", err);
             throw err;
@@ -106,26 +71,21 @@ export function useProductPicker() {
             if (!app) return;
 
             try {
-                // Get current position of this product in the list to maintain order
                 const currentPosition = selectedItems.findIndex(
                     (item) => item.productId === product.productId,
                 );
 
-                const currentVariants = selectedItems
-                    .filter(
-                        (item) =>
-                            item.productId === product.productId &&
-                            item.variantId,
-                    )
-                    .map((item) => ({ id: item.variantId }))
-                    .filter((v) => v.id);
+                const currentItem = selectedItems.find(
+                    (item) => item.productId === product.productId,
+                );
+                const currentVariantIds = currentItem?.variantIds || [];
 
                 const selectionIds = [
                     {
                         id: product.productId,
                         variants:
-                            currentVariants.length > 0
-                                ? currentVariants
+                            currentVariantIds.length > 0
+                                ? currentVariantIds.map((id) => ({ id }))
                                 : undefined,
                     },
                 ];
@@ -137,65 +97,18 @@ export function useProductPicker() {
                     selectionIds: selectionIds,
                 });
 
-                if (result?.selection?.[0]) {
-                    const selectedProduct = result.selection[0];
-                    const updatedVariants: SelectedItem[] = [];
+                if (result?.[0]) {
+                    const selectedProduct = result[0];
 
-                    if (
-                        selectedProduct.variants &&
-                        selectedProduct.variants.length > 1
-                    ) {
-                        selectedProduct.variants.forEach(
-                            (variant: any, index: number) => {
-                                updatedVariants.push({
-                                    id: `variant-${variant.id}`,
-                                    productId: selectedProduct.id,
-                                    variantId: variant.id,
-                                    title:
-                                        index === 0
-                                            ? selectedProduct.title
-                                            : `${selectedProduct.title} - ${variant.title}`,
-                                    type: index === 0 ? "product" : "variant",
-                                    quantity: 1,
-                                    image:
-                                        variant.image?.originalSrc ||
-                                        selectedProduct.images?.[0]
-                                            ?.originalSrc,
-                                    price: variant.price || "0.00",
-                                    sku: variant.sku || undefined,
-                                    handle: selectedProduct.handle,
-                                    vendor: selectedProduct.vendor,
-                                    productType: selectedProduct.productType,
-                                    totalVariants:
-                                        selectedProduct.totalVariants ||
-                                        selectedProduct.variantsCount ||
-                                        selectedProduct.variants.length,
-                                });
-                            },
-                        );
-                    } else {
-                        const defaultVariant = selectedProduct.variants?.[0];
-                        updatedVariants.push({
-                            id: `product-${selectedProduct.id}`,
-                            productId: selectedProduct.id,
-                            variantId: defaultVariant?.id || null,
-                            title: selectedProduct.title,
-                            type: "product",
-                            quantity: 1,
-                            image: selectedProduct.images?.[0]?.originalSrc,
-                            price: defaultVariant?.price || "0.00",
-                            sku: defaultVariant?.sku || undefined,
-                            handle: selectedProduct.handle,
-                            vendor: selectedProduct.vendor,
-                            productType: selectedProduct.productType,
-                            totalVariants: selectedProduct.totalVariants,
-                        });
-                    }
+                    const normalizedItem = createSelectedItem(selectedProduct, {
+                        quantity: currentItem?.quantity,
+                        displayOrder: currentItem?.displayOrder ?? currentPosition,
+                        isRequired: currentItem?.isRequired,
+                    });
 
-                    // Maintain position when updating variants
                     updateProductVariants(
                         product.productId,
-                        updatedVariants,
+                        [normalizedItem],
                         currentPosition,
                     );
                 }

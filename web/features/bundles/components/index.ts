@@ -6,3 +6,4 @@ export * from "./bundle-listing-page";
 export * from "./bundle-type-selection";
 export { BundlePreview } from "./bundle-preview/bundle-preview";
 export { CreateBundlePage } from "./create-bundle-page/create-bundle-page";
+export { EditBundlePage } from "./edit-bundle-page/edit-bundle-page";

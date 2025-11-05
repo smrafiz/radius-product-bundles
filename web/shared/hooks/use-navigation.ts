@@ -13,6 +13,7 @@ export function useAppNavigation() {
     // Generic navigation with loader
     const goTo = useCallback(
         (path: string) => {
+            console.log(path);
             return withLoader(() => router.push(path));
         },
         [router],
@@ -31,7 +32,7 @@ export function useAppNavigation() {
                         ? ROUTES.CREATE_BUNDLE_TYPE(type)
                         : ROUTES.BUNDLE_CREATE,
                 ),
-            edit: (id: string) => goTo(ROUTES.BUNDLE_EDIT(id)),
+            edit: (id: string) => goTo(ROUTES.BUNDLE_EDIT(id))(),
             studio: () => goTo(ROUTES.BUNDLE_STUDIO),
         },
 

@@ -3,11 +3,11 @@
  */
 
 import type {
-    Bundle as PrismaBundle,
     BundleStatus as PrismaBundleStatus,
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { IconSource } from "@shopify/polaris";
 import { bundleSchema } from "@/features/bundles/schema/zod.schema";
@@ -64,9 +64,11 @@ export interface BundleListItem {
 /**
  * Full bundle with all details
  */
-export interface BundleWithDetails extends PrismaBundle {
+export interface BundleDetail extends Prisma.BundleGetPayload<{}> {
     conversionRate: number;
     productCount: number;
+    products: SelectedItem[];
+    settings: {};
 }
 
 /**
@@ -91,10 +93,26 @@ export interface SelectedItem {
     id: string;
     productId: string;
     variantId?: string;
+    variantIds: string[];
     title: string;
     type: "product" | "variant";
     quantity: number;
-    totalVariants?: number;
+    price: string;
+    compareAtPrice?: string | null;
+    image?: string;
+    handle: string;
+    vendor: string;
+    productType: string;
+    sku?: string;
+    totalVariants: number;
+    inventoryQuantity?: number;
+    availableForSale?: boolean;
+    displayOrder?: number;
+    role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
+    groupId ?: string;
+    customPrice?: number | null;
+    discountPercent?: number |null;
+    isRequired?: boolean;
 }
 
 /**
@@ -111,6 +129,7 @@ export interface ProductGroup {
     };
     variants: SelectedItem[];
     originalTotalVariants: number;
+    quantity: number;
 }
 
 export interface ProductPreviewGroup {
@@ -231,17 +250,6 @@ export interface Pagination {
 export interface BundleHelpItem {
     title: string;
     bundles: string;
-}
-
-export interface ValidationContext {
-    maxBundleProducts?: number;
-    maxBundlesPerShop?: number;
-    betaFeatures?: boolean;
-}
-
-export interface ValidationResult {
-    success: boolean;
-    errors: Record<string, { _errors: string[] }> | null;
 }
 
 /*

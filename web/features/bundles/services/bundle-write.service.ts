@@ -9,8 +9,8 @@ import {
     BulkUpdateBundleStatusResult,
     BUNDLE_STATUSES,
     canCreateBundle,
+    checkBundleSecurity,
     checkNameConflict,
-    createBundle,
     CreateBundleServiceInput,
     CreateBundleServiceResponse,
     createBundleWithRelations,
@@ -20,21 +20,23 @@ import {
     deleteBundleWithRelations,
     DuplicateBundleInput,
     DuplicateBundleResult,
+    fetchOperationContext,
     findBundleByIdWithAllRelations,
     findBundlesByIds,
     generateUniqueBundleName,
-    performSecurityChecks,
+    handleBundleOperationError,
     transformBundle,
     transformBundleForDuplication,
+    UpdateBundleServiceInput,
+    UpdateBundleServiceResponse,
     updateBundlesStatusByIds,
     updateBundleStatusById,
     UpdateBundleStatusInput,
     UpdateBundleStatusResult,
-    validateBusinessRules,
-    validateSecurity,
+    updateBundleWithRelations,
+    validateBundleData,
 } from "@/features/bundles";
 import prisma from "@/lib/db/prisma-connect";
-import { getShop } from "@/shared"; // ==========================================
 
 // ==========================================
 // CREATE Operations
@@ -52,66 +54,29 @@ export async function createBundleService(
         `[createBundleService] Starting bundle creation for shop: ${shop}`,
     );
     try {
-        const securityCheck = await performSecurityChecks(shop);
+        // Perform security checks
+        const securityResult = await checkBundleSecurity(shop);
 
-        if (!securityCheck.passed) {
-            console.log(
-                `[Service] Security check failed: ${securityCheck.reason}`,
-            );
-
+        if (!securityResult.success) {
             return {
                 success: false,
-                message: securityCheck.reason || "Security check failed",
-                errors: {
-                    security: {
-                        _errors: [
-                            securityCheck.reason || "Security check failed",
-                        ],
-                    },
-                },
+                message: securityResult.message || "Security check failed",
+                errors: securityResult.errors || null,
                 bundle: null,
             };
         }
 
-        const shopSettings = await getShop(shop);
+        // Fetch shop settings for validation context
+        const context = await fetchOperationContext(shop);
 
-        if (shopSettings) {
-            console.log(
-                `[Service] Shop settings loaded: maxProducts=${shopSettings.maxBundleProducts}`,
-            );
-        } else {
-            console.log("[Service] No shop settings found, using defaults");
-        }
+        // Validate bundle data (security and business rules)
+        const validationResult = validateBundleData(data, context);
 
-        const securityValidation = validateSecurity(data);
-
-        if (!securityValidation.success) {
-            console.log("[Service] ✗ Security validation failed");
-
+        if (!validationResult.success) {
             return {
                 success: false,
-                message: "Security validation failed",
-                errors: securityValidation.errors,
-                bundle: null,
-            };
-        }
-
-        const businessValidation = validateBusinessRules(data, {
-            maxBundleProducts: shopSettings?.maxBundleProducts,
-            maxBundlesPerShop: shopSettings?.maxBundlesPerShop,
-            betaFeatures: shopSettings?.betaFeatures,
-        });
-
-        if (!businessValidation.success) {
-            console.log("[Service] ✗ Business validation failed");
-            console.log(
-                `[Service] Errors: ${JSON.stringify(businessValidation.errors)}`,
-            );
-
-            return {
-                success: false,
-                message: "Business validation failed",
-                errors: businessValidation.errors,
+                message: "Validation failed",
+                errors: validationResult.errors,
                 bundle: null,
             };
         }
@@ -184,63 +149,7 @@ export async function createBundleService(
             bundle: transformedBundle,
         };
     } catch (error) {
-        console.error("[Service] Unexpected error:", error);
-
-        // Handle specific error types
-        if (error instanceof Error) {
-            // Prisma unique constraint error
-            if (error.message.includes("Unique constraint")) {
-                return {
-                    success: false,
-                    message: "A bundle with this name already exists",
-                    errors: {
-                        name: {
-                            _errors: ["A bundle with this name already exists"],
-                        },
-                    },
-                    bundle: null,
-                };
-            }
-
-            // Transaction timeout
-            if (error.message.includes("timeout")) {
-                return {
-                    success: false,
-                    message:
-                        "Operation timed out. Please try again with fewer products.",
-                    errors: {
-                        timeout: {
-                            _errors: ["Operation timed out"],
-                        },
-                    },
-                    bundle: null,
-                };
-            }
-
-            // Generic error
-            return {
-                success: false,
-                message: error.message,
-                errors: {
-                    server: {
-                        _errors: [error.message],
-                    },
-                },
-                bundle: null,
-            };
-        }
-
-        // Unknown error
-        return {
-            success: false,
-            message: "An unexpected error occurred",
-            errors: {
-                server: {
-                    _errors: ["An unexpected error occurred"],
-                },
-            },
-            bundle: null,
-        };
+        return handleBundleOperationError(error);
     }
 }
 
@@ -379,6 +288,139 @@ export async function bulkDraftBundlesService(input: {
         ...input,
         status: "DRAFT",
     });
+}
+
+/*
+ * Update a bundle with validation
+ */
+export async function updateBundleService(
+    input: UpdateBundleServiceInput,
+): Promise<UpdateBundleServiceResponse> {
+    const { shop, bundleId, data } = input;
+
+    console.log(`[Update] Updating bundle: ${bundleId} for shop: ${shop}`);
+    console.log(`[Update] Bundle name: ${data.name}`);
+    console.log(`[Update] Bundle type: ${data.type}`);
+
+    try {
+        // Perform security checks
+        const securityResult = await checkBundleSecurity(shop);
+
+        if (!securityResult.success) {
+            return {
+                success: false,
+                message: securityResult.message || "Security check failed",
+                errors: securityResult.errors || null,
+                bundle: null,
+            };
+        }
+
+        // Verify bundle ownership
+        const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
+
+        if (!bundle) {
+            console.log(`[Update] ✗ Bundle not found or access denied`);
+
+            return {
+                success: false,
+                message:
+                    "Bundle not found or you don't have permission to edit it",
+                errors: {
+                    bundleId: {
+                        _errors: ["Bundle not found or access denied"],
+                    },
+                },
+                bundle: null,
+            };
+        }
+
+        console.log("[Update] ✓ Bundle ownership verified");
+
+        // Fetch shop settings for validation context
+        const context = await fetchOperationContext(shop);
+
+        // Validate bundle data (security and business rules)
+        const validationResult = validateBundleData(data, context);
+
+        if (!validationResult.success) {
+            return {
+                success: false,
+                message: "Validation failed",
+                errors: validationResult.errors,
+                bundle: null,
+            };
+        }
+
+        console.log("[Update] Step 5: Checking for name conflicts...");
+
+        // Check if the new name conflicts with an existing bundle
+        if (data.name !== bundle.name) {
+            const nameExists = await checkNameConflict(shop, data.name);
+
+            if (nameExists) {
+                console.log(
+                    `[Update] ✗ Bundle name already exists: ${data.name}`,
+                );
+
+                return {
+                    success: false,
+                    message: `A bundle with the name "${data.name}" already exists`,
+                    errors: {
+                        name: {
+                            _errors: [
+                                `A bundle with the name "${data.name}" already exists`,
+                            ],
+                        },
+                    },
+                    bundle: null,
+                };
+            }
+
+            console.log("[Update] ✓ Name is unique");
+        } else {
+            console.log("[Update] ✓ Name unchanged, skipping conflict check");
+        }
+
+        console.log("[Update] Step 6: Updating bundle in database...");
+        console.log(`[Update] Updating with ${data.products.length} products`);
+
+        // Update bundle with relations (via repository)
+        const updatedBundle = await updateBundleWithRelations({
+            bundleId,
+            shop,
+            ...data,
+        });
+
+        if (!updatedBundle) {
+            console.error("[Update] ✗ Failed to update bundle");
+
+            return {
+                success: false,
+                message: "Failed to update bundle in database",
+                errors: {
+                    database: {
+                        _errors: ["Failed to update bundle"],
+                    },
+                },
+                bundle: null,
+            };
+        }
+
+        console.log(
+            `[Update] ✓ Bundle updated successfully: ${updatedBundle.id}`,
+        );
+
+        const transformedBundle = transformBundle(updatedBundle);
+
+        return {
+            success: true,
+            message: "Bundle updated successfully",
+            errors: null,
+            bundle: transformedBundle,
+        };
+    } catch (error) {
+        return handleBundleOperationError(error);
+    }
 }
 
 // ==========================================

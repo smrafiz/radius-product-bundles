@@ -10,6 +10,7 @@ import {
     DeleteBundleResult,
     findBundleByIdWithAllRelations,
     UpdateBundleInput,
+    UpdateBundleInputWithRelations,
     verifyBundleOwnership,
     verifyBundleOwnershipTx,
     verifyMultipleBundlesOwnershipTx,
@@ -73,9 +74,9 @@ export async function createBundleProducts(
     bundleId: string,
     products: Array<{
         productId: string;
-        variantId?: string;
+        variantId?: string | null;
         quantity: number;
-        role?: BundleProductRole;
+        role?: string;
         displayOrder?: number;
     }>,
 ) {
@@ -83,9 +84,9 @@ export async function createBundleProducts(
         data: products.map((product, index) => ({
             bundleId,
             productId: product.productId,
-            variantId: product.variantId,
+            variantId: product.variantId || null,
             quantity: product.quantity,
-            role: product.role || ("INCLUDED" as BundleProductRole),
+            role: product.role as BundleProductRole || "INCLUDED",
             displayOrder: product.displayOrder ?? index,
         })),
     });
@@ -199,6 +200,56 @@ export async function updateBundleById(
 }
 
 /**
+ * Update an existing bundle with all its relations in a transaction
+ */
+export async function updateBundleWithRelations(data: UpdateBundleInputWithRelations) {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        await updateBundleById(tx, data.bundleId, {
+            name: data.name,
+            description: data.description,
+            type: data.type,
+            status: data.status,
+            discountType: data.discountType,
+            discountValue: data.discountValue,
+            minOrderValue: data.minOrderValue,
+            maxDiscountAmount: data.maxDiscountAmount,
+            startDate: data.startDate,
+            endDate: data.endDate,
+        });
+
+        // Delete all existing products
+        await deleteBundleProducts(tx, data.bundleId);
+
+        // Create new products (if any)
+        if (data.products?.length) {
+            await createBundleProducts(tx, data.bundleId, data.products);
+        }
+
+        await deleteBundleProductGroups(tx, data.bundleId);
+
+        if (data.productGroups?.length) {
+            await createBundleProductGroups(tx, data.bundleId, data.productGroups);
+        }
+
+        if (data.settings) {
+            const existingSettings = await tx.bundleSettings.findUnique({
+                where: { bundleId: data.bundleId },
+            });
+
+            if (existingSettings) {
+                await updateBundleSettings(tx, data.bundleId, data.settings);
+            } else {
+                await createBundleSettings(tx, data.bundleId, data.settings);
+            }
+        } else {
+            await deleteBundleSettings(tx, data.bundleId);
+        }
+
+        return await findBundleByIdWithAllRelations(data.bundleId, data.shop, tx);
+    });
+}
+
+/**
  * Update bundle status by ID (standalone)
  */
 export async function updateBundleStatusById(
@@ -233,6 +284,20 @@ export async function updateBundlesStatusByIds(
     return await tx.bundle.updateMany({
         where: { id: { in: bundleIds } },
         data: { status },
+    });
+}
+
+/*
+ * Update bundle settings (within transaction)
+ */
+export async function updateBundleSettings(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+    settings: any,
+) {
+    return await tx.bundleSettings.update({
+        where: { bundleId },
+        data: settings,
     });
 }
 
