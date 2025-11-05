@@ -1,97 +1,182 @@
 "use client";
 
-import { Fragment } from "react";
-import { CheckIcon } from "@shopify/polaris-icons";
 import { useStepIndicator } from "@/features/bundles";
-import { BlockStack, Card, Icon, Text } from "@shopify/polaris";
+import {
+    BundleFormData,
+    useBundleFormMethods,
+    useBundleStore,
+} from "@/features/bundles";
+import { usePathname } from "next/navigation";
+import { useFormContext } from "react-hook-form";
 
 export function HorizontalStepIndicator() {
     const {
         steps,
         getStepStatus,
-        getStepColor,
         getProgressLineColor,
         canNavigateToStep,
         navigateToStep,
     } = useStepIndicator();
 
+    const { currentStep, totalSteps, prevStep, canGoPrevious } =
+        useBundleStore();
+    const { handleNextStep } = useBundleFormMethods();
+    const { handleSubmit, getValues } = useFormContext<BundleFormData>();
+    const pathname = usePathname();
+    const isEditMode = pathname.includes("/edit");
+
+    const isLastStep = currentStep === totalSteps;
+    const canGoPrev = canGoPrevious();
+
+    // Handle form submission for the last step
+    const onSubmit = (data: BundleFormData) => {
+        console.log("=== FORM SUBMISSION DATA ===");
+        console.log("Form Data:", data);
+        console.log("Form Values (getValues):", getValues());
+        console.log("==========================");
+
+        // Trigger the GlobalForm submit by dispatching a form submit event
+        const form = document.querySelector(
+            'form[data-save-bar="true"]',
+        ) as HTMLFormElement;
+        if (form) {
+            form.requestSubmit();
+        }
+    };
+
+    const onError = (errors: any) => {
+        console.log("=== FORM VALIDATION ERRORS ===");
+        console.log("Errors:", errors);
+        console.log("==============================");
+    };
+
+    const handleFinalSubmit = () => {
+        handleSubmit(onSubmit, onError)();
+    };
+
+    const getNextButtonText = () => {
+        switch (currentStep) {
+            case 1:
+            case 2:
+            case 3:
+                return "Continue";
+            case 4:
+                return isEditMode ? "Update" : "Create";
+            default:
+                return "Continue";
+        }
+    };
+
+    const getPrevButtonText = () => "Back";
+
     return (
-        <Card>
-            <div className="flex items-center justify-between">
-                {steps.map((step, index) => (
-                    <Fragment key={step.number}>
-                        {/* Step Item */}
-                        <div
-                            className={`flex gap-[12px] items-center ${
-                                canNavigateToStep(step.number)
-                                    ? "cursor-pointer opacity-100"
-                                    : "cursor-default opacity-60"
-                            }`}
-                            onClick={() =>
-                                canNavigateToStep(step.number) &&
-                                navigateToStep(step.number)
-                            }
-                        >
-                            {/* Step Circle */}
-                            <div
-                                className={`flex items-center justify-center rounded-full w-10 h-10 ${
-                                    getStepStatus(step.number) === "completed"
-                                        ? getStepColor("completed")
-                                        : getStepColor(
-                                              getStepStatus(step.number),
-                                          )
-                                }`}
-                            >
-                                {getStepStatus(step.number) === "completed" ? (
-                                    <Icon source={CheckIcon} tone="subdued" />
-                                ) : (
-                                    <span
-                                        className={`flex items-center justify-center rounded-full w-6 h-6 ${
-                                            getStepStatus(step.number) ===
-                                            "current"
-                                                ? "bg-green-400 text-black"
-                                                : "bg-gray-200 text-gray-600"
-                                        } font-medium text-sm`}
-                                    >
-                                        {String(step.number).padStart(2, "0")}
-                                    </span>
-                                )}
-                            </div>
+        <s-section>
+            <s-stack
+                direction="inline"
+                gap="base"
+                justifyContent="space-between"
+            >
+                {/* Prev button */}
+                <s-stack>
+                    <s-button
+                        onClick={prevStep}
+                        disabled={!canGoPrev}
+                        variant="secondary"
+                    >
+                        {getPrevButtonText()}
+                    </s-button>
+                </s-stack>
 
-                            {/* Step Content */}
-                            <BlockStack gap="050">
-                                <Text
-                                    as="p"
-                                    variant="bodyMd"
-                                    fontWeight="medium"
-                                    tone={
-                                        getStepStatus(step.number) === "current"
-                                            ? "base"
-                                            : "subdued"
-                                    }
+                {/* Step Indicator */}
+                <s-grid gridTemplateColumns="1fr auto" alignItems="center">
+                    <s-stack direction="inline" gap="small" alignItems="center">
+                        {steps.map((step, index) => (
+                            <s-stack key={step.number}>
+                                <s-stack
+                                    direction="inline"
+                                    gap="small-200"
+                                    alignItems="center"
                                 >
-                                    {step.title}
-                                </Text>
-                                <Text as="p" variant="bodySm" tone="subdued">
-                                    {step.description}
-                                </Text>
-                            </BlockStack>
-                        </div>
+                                    <div
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                            canNavigateToStep(step.number) &&
+                                            navigateToStep(step.number)
+                                        }
+                                    >
+                                        <s-badge
+                                            size="large"
+                                            icon={
+                                                getStepStatus(step.number) ===
+                                                "completed"
+                                                    ? "check-circle"
+                                                    : getStepStatus(
+                                                            step.number,
+                                                        ) === "current"
+                                                      ? "edit"
+                                                      : "circle"
+                                            }
+                                            tone={
+                                                getStepStatus(step.number) ===
+                                                "completed"
+                                                    ? "success"
+                                                    : getStepStatus(
+                                                            step.number,
+                                                        ) === "current"
+                                                      ? "info"
+                                                      : ""
+                                            }
+                                        >
+                                            {step.title}
+                                        </s-badge>
+                                    </div>
 
-                        {/* Progress Line */}
-                        {index < steps.length - 1 && (
-                            <div
-                                className={`h-[3px] flex-1 max-w-[120px] min-w-[60px]`}
-                                style={{
-                                    backgroundColor: getProgressLineColor(
-                                        step.number,
-                                    ),
-                                }}
-                            />
-                        )}
-                    </Fragment>
-                ))}
-            </div>
-        </Card>
+                                    {index < steps.length - 1 && (
+                                        <s-box
+                                            inlineSize="24px"
+                                            borderWidth="base"
+                                            borderColor={
+                                                getStepStatus(step.number) ===
+                                                "completed"
+                                                    ? "strong"
+                                                    : "base"
+                                            }
+                                        />
+                                    )}
+                                </s-stack>
+
+                                {/* Progress Line */}
+                                {index < steps.length - 1 && (
+                                    <div
+                                        className={`h-[3px] flex-1 max-w-[120px] min-w-[60px]`}
+                                        style={{
+                                            backgroundColor:
+                                                getProgressLineColor(
+                                                    step.number,
+                                                ),
+                                        }}
+                                    />
+                                )}
+                            </s-stack>
+                        ))}
+                    </s-stack>
+                </s-grid>
+
+                {/* Next button */}
+                <s-stack>
+                    {!isLastStep && (
+                        <s-button onClick={handleNextStep} variant="primary">
+                            {getNextButtonText()}
+                        </s-button>
+                    )}
+
+                    {isLastStep && (
+                        <s-button onClick={handleFinalSubmit} variant="primary">
+                            {getNextButtonText()}
+                        </s-button>
+                    )}
+                </s-stack>
+            </s-stack>
+        </s-section>
     );
 }

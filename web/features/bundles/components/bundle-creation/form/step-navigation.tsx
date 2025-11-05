@@ -49,30 +49,17 @@ export function StepNavigation() {
     const getNextButtonText = () => {
         switch (currentStep) {
             case 1:
-                return "Continue to Configuration";
             case 2:
-                return "Continue to Display";
             case 3:
-                return "Continue to Review";
+                return "Continue";
             case 4:
-                return isEditMode ? "Update Bundle" : "Create Bundle";
+                return isEditMode ? "Update" : "Create";
             default:
                 return "Continue";
         }
     };
 
-    const getPrevButtonText = () => {
-        switch (currentStep) {
-            case 2:
-                return "Back to Products";
-            case 3:
-                return "Back to Configuration";
-            case 4:
-                return "Back to Display";
-            default:
-                return "Back";
-        }
-    };
+    const getPrevButtonText = () => "Back";
 
     return (
         <InlineStack align="space-between">

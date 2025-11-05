@@ -33,19 +33,16 @@ export function BundleCreationForm({
         }
     }, [bundleType, bundleData, setBundleData, setValue]);
 
-    const getPageProps = () => {
-        if (isEditMode) {
-            return {
-                title: `Edit ${bundleName || getBundleProperty(bundleType, "label")}`,
-                subtitle: "Update your bundle settings and preview changes",
-                backAction: {
-                    content: "Back to Bundles",
-                    onAction: goBack,
-                },
-            };
+    const pageProps = isEditMode
+        ? {
+            title: `Edit ${bundleName || getBundleProperty(bundleType, "label")}`,
+            subtitle: "Update your bundle settings and preview changes",
+            backAction: {
+                content: "Back to Bundles",
+                onAction: goBack,
+            },
         }
-
-        return {
+        : {
             title: `Create ${getBundleProperty(bundleType, "label")}`,
             subtitle:
                 "Configure your bundle settings and preview the customer experience",
@@ -54,43 +51,35 @@ export function BundleCreationForm({
                 onAction: goBack,
             },
         };
-    };
 
-    const pageProps = getPageProps();
+    //const pageProps = getPageProps();
 
     return (
-        <Page {...pageProps}>
-            <Layout>
-                {/* Success banner */}
+        <s-page {...pageProps}>
+
+            <s-stack gap="base">
+                {/* Banner */}
                 <GlobalBanner />
 
-                {/* Horizontal Step Navigation */}
-                <Layout.Section>
-                    <HorizontalStepIndicator />
-                </Layout.Section>
+                {/* Horizontal Step Indicator */}
+                <HorizontalStepIndicator />
 
                 {/* Navigation Buttons */}
-                <Layout.Section>
-                    <StepNavigation />
-                </Layout.Section>
+                {/*<StepNavigation />*/}
 
                 {/* Main Content Section */}
-                <Layout.Section>
-                    <div className="pb-6">
-                        <Layout>
-                            <Layout.Section>
-                                <Card>
-                                    <StepContent />
-                                </Card>
-                            </Layout.Section>
+                <s-box>
+                    <s-grid gridTemplateColumns="repeat(12, 1fr)" gap="base">
+                        <s-grid-item gridColumn="span 7" gridRow="span 1">
+                            <StepContent />
+                        </s-grid-item>
 
-                            <Layout.Section variant="oneThird">
-                                <BundlePreview bundleType={bundleType} />
-                            </Layout.Section>
-                        </Layout>
-                    </div>
-                </Layout.Section>
-            </Layout>
-        </Page>
+                        <s-grid-item gridColumn="span 5" gridRow="span 1">
+                            <BundlePreview bundleType={bundleType} />
+                        </s-grid-item>
+                    </s-grid>
+                </s-box>
+            </s-stack>
+        </s-page>
     );
 }
