@@ -1,41 +1,20 @@
 "use client";
 
 import {
-    GetProductsByIdsDocument,
-    GetProductsByIdsQuery,
-    GetProductsByIdsQueryVariables,
-} from "@/lib/gql/graphql";
-import { useEffect, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useGraphQL } from "@/hooks/data/useGraphQL";
-import { useAppBridge } from "@shopify/app-bridge-react";
-import {
     bundlesQueries,
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
-
-interface ProductNode {
-    __typename: "Product";
-    id: string;
-    title: string;
-    handle: string;
-    vendor: string;
-    productType: string;
-    featuredImage?: { url: string };
-    variants?: {
-        nodes: Array<{
-            id: string;
-            title?: string;
-            price?: string;
-            compareAtPrice?: string | null;
-            sku?: string;
-            availableForSale?: boolean;
-            inventoryQuantity?: number;
-            image?: { url: string };
-        }>;
-    };
-}
+import {
+    GetProductsByIdsDocument,
+    GetProductsByIdsQuery,
+    GetProductsByIdsQueryVariables,
+} from "@/lib/gql/graphql";
+import { ProductNode } from "@/shared";
+import { useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useGraphQL } from "@/hooks/data/useGraphQL";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
 const isProductNode = (node: any): node is ProductNode => {
     const hasId = typeof node.id === 'string' && node.id.includes('Product');

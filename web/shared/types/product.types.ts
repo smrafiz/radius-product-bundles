@@ -46,17 +46,17 @@ export interface ProductNode {
     handle: string;
     vendor: string;
     productType: string;
-    featuredImage?: { url: string } | null;
+    featuredImage?: { url: string };
     variants?: {
         nodes: Array<{
             id: string;
-            title?: string | null;
+            title?: string;
             price?: string;
             compareAtPrice?: string | null;
-            sku?: string | null;
+            sku?: string;
             availableForSale?: boolean;
             inventoryQuantity?: number;
-            image?: { url: string } | null;
+            image?: { url: string };
         }>;
     };
 }

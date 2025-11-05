@@ -1,4 +1,3 @@
-import { getSessionToken } from "@/shared";
 import {
     BundleDetail,
     BundleFilters,
@@ -23,7 +22,7 @@ export const bundlesQueries = (
     list: {
         queryKey: bundlesQueryKeys.list(page, itemsPerPage, filters),
         queryFn: async () => {
-            const token = await getSessionToken(app);
+            const token = await app.idToken();
             const result = await getBundlesAction(
                 token,
                 page,
@@ -48,7 +47,7 @@ export const bundlesQueries = (
     detail: (bundleId: string) => ({
         queryKey: bundlesQueryKeys.detail(bundleId),
         queryFn: async () => {
-            const token = await getSessionToken(app);
+            const token = await app.idToken();
             const result = await getBundleAction(token, bundleId);
 
             if (result.status === "error") {
@@ -66,7 +65,7 @@ export const bundlesQueries = (
     metrics: {
         queryKey: bundlesQueryKeys.metrics(),
         queryFn: async () => {
-            const token = await getSessionToken(app);
+            const token = await app.idToken();
             const result = await getBundleMetricsAction(token);
 
             if (result.status === "error") {

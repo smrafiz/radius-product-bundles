@@ -10,19 +10,13 @@ import {
     DeleteBundleResult,
     TransformedBundle,
 } from "@/features/bundles";
+import { ValidationErrors } from "@/shared";
 
 /*
  * Validation types
  */
 export interface ValidationError {
     _errors: string[];
-}
-
-/*
- * Validation types
- */
-export interface ValidationErrors {
-    [field: string]: ValidationError;
 }
 
 /*

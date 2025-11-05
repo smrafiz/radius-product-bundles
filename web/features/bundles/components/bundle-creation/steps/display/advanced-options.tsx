@@ -1,10 +1,9 @@
 "use client";
 
+import { Knob } from "@/shared";
 import { Fragment } from "react";
-import { useBundleStore } from "@/stores";
-import { Knob } from "@/components/fields/Knob";
+import { ADVANCED_OPTIONS, useBundleStore } from "@/features/bundles";
 import { BlockStack, Card, Divider, InlineStack, Text } from "@shopify/polaris";
-import { ADVANCED_OPTIONS } from "@/lib/constants/bundle";
 
 export function AdvancedOptions() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();

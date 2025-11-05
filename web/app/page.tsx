@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { DashboardSkeleton } from "@/shared";
 import { useRouter, useSearchParams } from "next/navigation";
-import { DashboardSkeleton } from "@/components/shared/Skeletons";
 
 /*
  * Root Page (redirects to dashboard)

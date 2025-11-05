@@ -1,4 +1,3 @@
-import { getSessionToken } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { dashboardQueryKeys } from "@/features/dashboard";
 import { getBundleMetricsAction, getBundlesAction } from "@/features/bundles";
@@ -10,7 +9,7 @@ export const dashboardQueries = (app: ReturnType<typeof useAppBridge>) => ({
     bundles: {
         queryKey: dashboardQueryKeys.bundles(),
         queryFn: async () => {
-            const token = await getSessionToken(app);
+            const token = await app.idToken();
             const result = await getBundlesAction(token);
 
             if (result.status === "error") {
@@ -26,7 +25,7 @@ export const dashboardQueries = (app: ReturnType<typeof useAppBridge>) => ({
     metrics: {
         queryKey: dashboardQueryKeys.metrics(),
         queryFn: async () => {
-            const token = await getSessionToken(app);
+            const token = await app.idToken();
             const result = await getBundleMetricsAction(token);
 
             if (result.status === "error") {

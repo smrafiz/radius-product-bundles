@@ -2,8 +2,7 @@ import "./globals.css";
 import "@/styles/main.css";
 import { Metadata } from "next";
 import { ReactNode } from "react";
-import { Providers } from "@/providers";
-import { AppLayout, GlobalLoader, ModalHost } from "@/components";
+import { AppLayoutWrapper, GlobalLoader, ModalHost, Providers } from "@/shared";
 
 export const metadata: Metadata = {
     title: "Radius Product Bundles App for Shopify",
@@ -31,7 +30,7 @@ export default async function RootLayout({
             <body>
                 <Providers>
                     <GlobalLoader />
-                    <AppLayout>{children}</AppLayout>
+                    <AppLayoutWrapper>{children}</AppLayoutWrapper>
                     <ModalHost />
                 </Providers>
             </body>

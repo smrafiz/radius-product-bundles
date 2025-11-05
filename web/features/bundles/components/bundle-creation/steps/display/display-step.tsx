@@ -1,4 +1,3 @@
-import { BlockStack } from "@shopify/polaris";
 import {
     AdvancedOptions,
     StepHeading,
@@ -6,6 +5,7 @@ import {
     WidgetLayout,
     WidgetPosition,
 } from "@/features/bundles";
+import { BlockStack } from "@shopify/polaris";
 
 export function DisplayStep() {
     return (

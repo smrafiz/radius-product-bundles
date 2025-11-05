@@ -13,7 +13,6 @@ export function useAppNavigation() {
     // Generic navigation with loader
     const goTo = useCallback(
         (path: string) => {
-            console.log(path);
             return withLoader(() => router.push(path));
         },
         [router],
@@ -40,7 +39,17 @@ export function useAppNavigation() {
         settings: () => goTo(ROUTES.SETTINGS),
 
         // Utilities
-        goBack: () => router.back(),
+        goBack: (custom?: string | (() => void)) => {
+            if (typeof custom === "function") {
+                return custom();
+            }
+
+            if (typeof custom === "string") {
+                return goTo(custom);
+            }
+
+            router.back();
+        },
         refresh: () => router.refresh(),
     };
 }

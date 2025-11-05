@@ -1,10 +1,10 @@
 "use client";
 
+import { useSessionStore } from "@/shared";
 import { ReactNode, useEffect, useState } from "react";
 import { DashboardSkeleton } from "@/components/shared/Skeletons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { useSessionStore } from "@/stores";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isInitialized, hasValidSession, shop, sessionToken } =
@@ -69,13 +69,10 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
                         if (data.success && data.session) {
                             console.log("✅ Session refreshed successfully");
 
-                            useSessionStore.getState().dispatch({
-                                type: "SESSION_VALIDATION_SUCCESS",
-                                payload: {
-                                    token: data.session.token,
-                                    shop: data.session.shop,
-                                },
-                            });
+                            useSessionStore.getState().sessionValidationSuccess(
+                                data.session.token,
+                                data.session.shop
+                            );
 
                             setIsRefreshing(false);
                             return;

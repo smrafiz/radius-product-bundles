@@ -25,6 +25,7 @@ export function groupProductsById(products: any[]): ProductGroup[] {
                 product: product,
                 variants: [],
                 originalTotalVariants: product.totalVariants || 1,
+                quantity: product.quantity || 1,
             };
         }
 

@@ -1,16 +1,16 @@
 "use client";
 
-import { ReactNode, useState } from "react";
 import {
     DehydratedState,
     HydrationBoundary,
     QueryClient,
     QueryClientProvider,
 } from "@tanstack/react-query";
+import { ReactNode, useState } from "react";
 import { DevtoolsPosition } from "@tanstack/query-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-export default function TanstackProvider({
+export function TanstackProvider({
     children,
     dehydratedState,
 }: {

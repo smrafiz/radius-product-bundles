@@ -37,6 +37,7 @@ import {
     validateBundleData,
 } from "@/features/bundles";
 import prisma from "@/lib/db/prisma-connect";
+import { formatValidationErrorsAsString } from "@/shared";
 
 // ==========================================
 // CREATE Operations
@@ -73,9 +74,10 @@ export async function createBundleService(
         const validationResult = validateBundleData(data, context);
 
         if (!validationResult.success) {
+            const errors = formatValidationErrorsAsString(validationResult.errors || {});
             return {
                 success: false,
-                message: "Validation failed",
+                message: errors || "Validation failed",
                 errors: validationResult.errors,
                 bundle: null,
             };
@@ -343,9 +345,10 @@ export async function updateBundleService(
         const validationResult = validateBundleData(data, context);
 
         if (!validationResult.success) {
+            const errors = formatValidationErrorsAsString(validationResult.errors || {});
             return {
                 success: false,
-                message: "Validation failed",
+                message: errors || "Validation failed",
                 errors: validationResult.errors,
                 bundle: null,
             };

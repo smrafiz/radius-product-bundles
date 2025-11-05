@@ -8,8 +8,7 @@ import {
     InlineStack,
     Box,
 } from "@shopify/polaris";
-import { useBundleStore } from "@/stores";
-import { COLOR_THEMES } from "@/lib/constants/bundle";
+import { COLOR_THEMES, useBundleStore } from "@/features/bundles";
 
 type ColorTheme = (typeof COLOR_THEMES)[number]["value"];
 

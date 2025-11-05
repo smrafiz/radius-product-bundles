@@ -3,35 +3,34 @@
 import {
     BundleCreationFormProps,
     BundlePreview,
-    getBundleProperty,
     HorizontalStepIndicator,
     StepContent,
     StepNavigation,
-    useBundleFormMethods,
-    useBundleStore,
+    useBundleFormManager,
 } from "@/features/bundles";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { Card, Layout, Page } from "@shopify/polaris";
 import { GlobalBanner, useAppNavigation } from "@/shared";
 
+/**
+ * Bundle creation form
+ */
 export function BundleCreationForm({
     bundleType,
     bundleName,
 }: BundleCreationFormProps) {
-    const { goBack } = useAppNavigation();
-    const { bundleData, setBundleData } = useBundleStore();
-    const { setValue } = useBundleFormMethods();
 
-    const pathname = usePathname();
-    const isEditMode = pathname.includes("/edit");
+    const { bundleData } = useAppNavigation();
+    // const { bundleData, setBundleData } = useBundleStore();
+    // const { setValue } = useBundleFormMethods();
 
-    useEffect(() => {
-        if (!bundleData.type) {
-            setBundleData({ ...bundleData, type: bundleType });
-            setValue("type", bundleType);
-        }
-    }, [bundleType, bundleData, setBundleData, setValue]);
+    // const pathname = usePathname();
+    // const isEditMode = pathname.includes("/edit");
+
+    // useEffect(() => {
+    //     if (!bundleData.type) {
+    //         setBundleData({ ...bundleData, type: bundleType });
+    //         setValue("type", bundleType);
+    //     }
+    // }, [bundleType, bundleData, setBundleData, setValue]);
 
     // const pageProps = isEditMode
     //     ? {
@@ -54,6 +53,11 @@ export function BundleCreationForm({
     //
     // const pageProps = getPageProps();
 
+    const { pageProps, isEditMode } = useBundleFormManager({
+        bundleType,
+        bundleName,
+    });
+
     return (
         <s-page>
             <s-stack
@@ -65,7 +69,7 @@ export function BundleCreationForm({
                     <s-stack direction="inline" gap="base">
                         <s-stack paddingBlockStart="small-500">
                             <s-button
-                                onClick={goBack}
+                                onClick={bundleData.list}
                                 icon="arrow-left"
                             ></s-button>
                         </s-stack>
@@ -74,7 +78,7 @@ export function BundleCreationForm({
                                 <div className="text-xl">{`Edit ${bundleName}`}</div>
                             </s-heading>
                             <s-badge tone="info">
-                                {getBundleProperty(bundleType, "label")}
+                                {/* {getBundleProperty(bundleType, "label")} */}
                             </s-badge>
                         </s-stack>
                     </s-stack>
@@ -82,13 +86,15 @@ export function BundleCreationForm({
                     <s-stack direction="inline" gap="base">
                         <s-stack paddingBlockStart="small-500">
                             <s-button
-                                onClick={goBack}
+                                onClick={bundleData.create()}
                                 icon="arrow-left"
                             ></s-button>
                         </s-stack>
                         <s-stack>
                             <s-heading>
-                                <div className="text-xl">{`Create ${getBundleProperty(bundleType, "label")}`}</div>
+                                <div className="text-xl">
+                                    {/* {`Create ${getBundleProperty(bundleType, "label")}`} */}
+                                </div>
                             </s-heading>
                         </s-stack>
                     </s-stack>

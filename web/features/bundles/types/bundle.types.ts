@@ -7,10 +7,10 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { IconSource } from "@shopify/polaris";
-import { bundleSchema } from "@/features/bundles/schema/zod.schema";
+import { bundleSchema } from "@/features/bundles";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
 // Re-export Prisma enums
@@ -69,6 +69,7 @@ export interface BundleDetail extends Prisma.BundleGetPayload<{}> {
     productCount: number;
     products: SelectedItem[];
     settings: {};
+    productGroups?: ProductGroup[];
 }
 
 /**
@@ -109,9 +110,9 @@ export interface SelectedItem {
     availableForSale?: boolean;
     displayOrder?: number;
     role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
-    groupId ?: string;
+    groupId?: string;
     customPrice?: number | null;
-    discountPercent?: number |null;
+    discountPercent?: number | null;
     isRequired?: boolean;
 }
 

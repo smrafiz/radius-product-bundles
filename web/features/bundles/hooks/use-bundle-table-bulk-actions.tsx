@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    useGlobalBanner,
-    useModalStore,
-    useSessionToken,
-    withLoader,
-} from "@/shared";
+import { useGlobalBanner, useModalStore, withLoader, } from "@/shared";
 import {
     bulkToggleBundleStatusAction,
     BundleStatus,
@@ -15,6 +10,7 @@ import {
     useBundleListingStore,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAppBridge } from "@shopify/app-bridge-react";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 /**
@@ -22,8 +18,8 @@ import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
  */
 export function useBundleTableBulkActions(clearSelection?: () => void) {
     const queryClient = useQueryClient();
+    const app = useAppBridge();
     const { showError } = useGlobalBanner();
-    const sessionToken = useSessionToken();
     const { openModal, setLoading } = useModalStore();
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
@@ -38,7 +34,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         currentStatus: BundleStatus,
         bundleName: string,
     ) => {
-        if (!sessionToken) {
+        if (!app) {
             return;
         }
 
@@ -56,6 +52,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             onConfirm: async () => {
                 setLoading(true);
                 try {
+                    const sessionToken = await app.idToken();
                     const result = await updateBundleStatusAction(
                         sessionToken,
                         bundleId,
@@ -66,7 +63,10 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                             status: result.data.status,
                         });
                         await invalidateBundleCache(queryClient);
-                        showToast(result.message || 'Bundle status updated successfully');
+                        showToast(
+                            result.message ||
+                                "Bundle status updated successfully",
+                        );
                     } else {
                         showError("Status update failed", {
                             content: result.message,
@@ -85,7 +85,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
      * Bulk activate bundles
      */
     const handleBulkActivate = (bundleIds: string[]) => {
-        if (!sessionToken) {
+        if (!app) {
             return;
         }
 
@@ -95,6 +95,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             bundle: { name: "selected bundles" } as any,
             onConfirm: async () => {
                 try {
+                    const sessionToken = await app.idToken();
                     const result = await bulkToggleBundleStatusAction(
                         sessionToken,
                         bundleIds,
@@ -103,7 +104,8 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            result.message || `${result.data.updatedCount} bundles activated`,
+                            result.message ||
+                                `${result.data.updatedCount} bundles activated`,
                         );
                     } else {
                         showError("Bulk activation failed", {
@@ -125,7 +127,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
      * Bulk draft bundles
      */
     const handleBulkDraft = (bundleIds: string[]) => {
-        if (!sessionToken) return;
+        if (!app) return;
 
         openModal({
             type: "status",
@@ -134,6 +136,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             onConfirm: async () => {
                 setLoading(true);
                 try {
+                    const sessionToken = await app.idToken();
                     const result = await bulkToggleBundleStatusAction(
                         sessionToken,
                         bundleIds,
@@ -142,7 +145,8 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            result.message || `${result.data.updatedCount} bundles set as draft`,
+                            result.message ||
+                                `${result.data.updatedCount} bundles set as draft`,
                         );
                     } else {
                         showError("Bulk draft failed", {
@@ -164,7 +168,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
      * Bulk delete bundles
      */
     const handleBulkDelete = (bundleIds: string[]) => {
-        if (!sessionToken) return;
+        if (!app) return;
 
         openModal({
             type: "delete",
@@ -172,11 +176,17 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             onConfirm: async () => {
                 setLoading(true);
                 try {
-                    const result = await deleteBundlesAction(sessionToken, bundleIds);
+                    const sessionToken = await app.idToken();
+                    const result = await deleteBundlesAction(
+                        sessionToken,
+                        bundleIds,
+                    );
+
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
                         showToast(
-                            result.message || "Selected bundles have been deleted successfully",
+                            result.message ||
+                                "Selected bundles have been deleted successfully",
                         );
                         if (clearSelection) {
                             clearSelection();
