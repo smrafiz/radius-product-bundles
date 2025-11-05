@@ -1,22 +1,12 @@
 "use client";
-
-import {
-    BlockStack,
-    Button,
-    Card,
-    InlineError,
-    InlineStack,
-} from "@shopify/polaris";
 import {
     ProductList,
-    StepHeading,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
 import { useEffect } from "react";
 import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
-import { DeleteIcon, PlusIcon } from "@shopify/polaris-icons";
 
 export function ProductsStep() {
     const { selectedItems, setSelectedItems, validationAttempted } =
@@ -47,45 +37,41 @@ export function ProductsStep() {
     )?.message;
 
     return (
-        <BlockStack gap="500">
-            <StepHeading
-                title="Products"
-                description="Select products and variants to include in your bundle"
-            />
-
-            <Card>
-                <BlockStack gap="400">
-                    <InlineStack align="space-between" blockAlign="center">
-                        <Button
-                            variant="primary"
-                            icon={PlusIcon}
-                            onClick={openProductPicker}
-                            loading={isLoading}
-                            tone={hasProductError ? "critical" : undefined}
+        <s-section>
+            <s-stack gap="base">
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <s-button
+                        variant="primary"
+                        icon="plus"
+                        onClick={openProductPicker}
+                        loading={isLoading}
+                        tone={hasProductError ? "critical" : undefined}
+                    >
+                        Add Products
+                    </s-button>
+                    {selectedItems.length > 0 && (
+                        <s-button
+                            variant="secondary"
+                            tone="critical"
+                            icon="delete"
+                            onClick={handleClearAll}
                         >
-                            Add Products
-                        </Button>
-                        {selectedItems.length > 0 && (
-                            <Button
-                                variant="plain"
-                                tone="critical"
-                                icon={DeleteIcon}
-                                onClick={handleClearAll}
-                            >
-                                Clear all
-                            </Button>
-                        )}
-                    </InlineStack>
-                    {productErrorMessage && (
-                        <InlineError
-                            message={productErrorMessage}
-                            fieldID="products"
-                        />
+                            Clear all
+                        </s-button>
                     )}
+                </s-stack>
+                {productErrorMessage && (
+                    <s-banner tone="critical" data-fieldid="products">
+                        {productErrorMessage}
+                    </s-banner>
+                )}
 
-                    <ProductList />
-                </BlockStack>
-            </Card>
-        </BlockStack>
+                <ProductList />
+            </s-stack>
+        </s-section>
     );
 }

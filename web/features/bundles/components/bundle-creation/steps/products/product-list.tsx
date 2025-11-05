@@ -17,22 +17,16 @@ export function ProductList() {
 
     if (groupedItems.length === 0) {
         return (
-            <Box
-                padding="800"
-                background="bg-surface-secondary"
-                borderRadius="200"
-            >
-                <InlineStack align="center">
-                    <BlockStack gap="200" inlineAlign="center">
-                        <Text as="h6" variant="headingSm" tone="subdued">
+            <s-box padding="base" background="subdued" border="base" borderRadius="base">
+                    <s-stack gap="small-200" alignItems="center">
+                        <s-heading>
                             No products selected
-                        </Text>
-                        <Text as="p" variant="bodySm" tone="subdued">
+                        </s-heading>
+                        <s-text>
                             Click "Add Products" to get started
-                        </Text>
-                    </BlockStack>
-                </InlineStack>
-            </Box>
+                        </s-text>
+                    </s-stack>
+            </s-box>
         );
     }
 
@@ -46,14 +40,14 @@ export function ProductList() {
                 items={groupedItems.map((item) => item.product.productId)}
                 strategy={verticalListSortingStrategy}
             >
-                <BlockStack gap="200">
+                <s-stack gap="small-200">
                     {groupedItems.map((group) => (
                         <ProductItem
                             key={group.product.productId}
                             group={group}
                         />
                     ))}
-                </BlockStack>
+                </s-stack>
             </SortableContext>
         </DndContext>
     );

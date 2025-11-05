@@ -1,17 +1,7 @@
 "use client";
 
-import { Fragment } from "react";
 import {
-    Badge,
-    BlockStack,
-    Box,
-    Button,
-    Card,
-    InlineStack,
-    Select,
-    Text,
-} from "@shopify/polaris";
-import {
+    BUNDLE_STATUSES,
     BundleType,
     getBundleProperty,
     useBundleStore,
@@ -31,68 +21,66 @@ export function BundlePreview({ bundleType }: Props) {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
     const renderSelectedProducts = () => {
-        if (selectedItems.length === 0) {
-            // Show placeholder when no products selected
-            return Array.from({ length: 3 }, (_, i) => (
-                <Fragment key={i}>
-                    <Box
-                        background="bg-surface"
-                        padding="300"
-                        borderRadius="100"
-                        minWidth="80px"
-                        minHeight="80px"
-                        style={{
-                            backgroundImage:
-                                "url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)",
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                        }}
-                    />
-                    {i < 2 && (
-                        <Text variant="headingMd" as="span">
-                            +
-                        </Text>
-                    )}
-                </Fragment>
-            ));
-        }
+        // if (selectedItems.length === 0) {
+        //     // Show placeholder when no products selected
+        //     return Array.from({ length: 3 }, (_, i) => (
+        //         <Fragment key={i}>
+        //             <Box
+        //                 background="bg-surface"
+        //                 padding="300"
+        //                 borderRadius="100"
+        //                 minWidth="80px"
+        //                 minHeight="80px"
+        //                 style={{
+        //                     backgroundImage:
+        //                         "url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)",
+        //                     backgroundSize: "cover",
+        //                     backgroundPosition: "center",
+        //                 }}
+        //             />
+        //             {i < 2 && (
+        //                 <Text variant="headingMd" as="span">
+        //                     +
+        //                 </Text>
+        //             )}
+        //         </Fragment>
+        //     ));
+        // }
 
         // Show actual selected products (limit to first 4 for space)
         return selectedItems.slice(0, 4).map((item, index) => (
-            <Fragment key={item.id}>
-                <BlockStack gap="100" inlineAlign="center">
-                    <Box
-                        background="bg-surface"
-                        padding="200"
-                        borderRadius="100"
-                        minWidth="80px"
-                        minHeight="80px"
-                    />
-                    <div
-                        style={{
-                            backgroundImage: item.image
-                                ? `url(${item.image})`
-                                : "url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)",
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                        }}
-                    ></div>
-                    <Text variant="caption" alignment="center" truncate>
-                        {item.title.length > 15
-                            ? `${item.title.substring(0, 15)}...`
+            <s-stack
+                key={index}
+                gap="base"
+                alignItems="center"
+                direction="inline"
+                background="subdued"
+                border="base"
+                borderRadius="base"
+                padding="small"
+            >
+                <s-stack>
+                    <s-box inlineSize="70px">
+                        <s-image
+                            src={item.image}
+                            alt={item.title}
+                            aspectRatio="70/70"
+                            inlineSize="auto"
+                        />
+                    </s-box>
+                </s-stack>
+                <s-stack>
+                    <s-heading>
+                        {item.title.length > 25
+                            ? `${item.title.substring(0, 25)}...`
                             : item.title}
-                    </Text>
-                    <Text variant="caption" tone="subdued" alignment="center">
+                    </s-heading>
+                    <s-text>
                         Qty: {item.quantity} ×{" "}
                         {formatPrice(parseFloat(item.price))}
-                    </Text>
-                </BlockStack>
-                {index < Math.min(selectedItems.length, 4) - 1 && (
-                    <Text variant="headingMd" as="span">
-                        +
-                    </Text>
-                )}
-            </Fragment>
+                    </s-text>
+                </s-stack>
+            </s-stack>
         ));
     };
 
@@ -136,168 +124,99 @@ export function BundlePreview({ bundleType }: Props) {
         calculatePreviewPricing();
 
     return (
-        <BlockStack gap="400">
-            <BlockStack gap="200">
-                <Text variant="headingMd" as="h2">
-                    Preview
-                </Text>
-                <InlineStack gap="200" blockAlign="center">
-                    <Text as="p" variant="bodySm" tone="subdued">
-                        The widget will match your store's look
-                    </Text>
-                    <Badge tone="info">
-                        {getBundleProperty(bundleType, "label")}
-                    </Badge>
-                </InlineStack>
-            </BlockStack>
+        <s-stack gap="base">
+            <s-section>
+                <s-select label="Status" value="DRAFT">
+                    {Object.entries(BUNDLE_STATUSES).map(([key, { text }]) => (
+                        <s-option key={key} value={key}>
+                            {text}
+                        </s-option>
+                    ))}
+                </s-select>
+            </s-section>
 
-            <Card>
-                <BlockStack gap="400">
-                    <Box
-                        background="bg-surface-secondary"
-                        padding="400"
-                        borderRadius="200"
-                    >
-                        <BlockStack gap="400">
-                            <Text variant="headingMd" as="h3">
-                                {displaySettings.title ||
-                                    bundleData.name ||
-                                    "Frequently Bought Together"}
-                            </Text>
+            <s-section>
+                <s-stack gap="base">
+                    <s-stack gap="base">
+                        <s-heading>
+                            {displaySettings.title ||
+                                bundleData.name ||
+                                "Frequently Bought Together"}
+                        </s-heading>
 
-                            {/* Product Images */}
-                            <InlineStack gap="200" align="center" wrap={false}>
-                                {renderSelectedProducts()}
-                            </InlineStack>
+                        {/* Product Images */}
+                        <s-stack gap="small-200">
+                            {renderSelectedProducts()}
+                        </s-stack>
 
-                            {/* Product quantity summary for multiple products */}
-                            {selectedItems.length > 4 && (
-                                <Text
-                                    variant="caption"
-                                    tone="subdued"
-                                    alignment="center"
+                        {/* Product quantity summary for multiple products */}
+                        {selectedItems.length > 4 && (
+                            <s-text>
+                                + {selectedItems.length - 4} more products
+                            </s-text>
+                        )}
+
+                        <s-divider />
+
+                        {/* Pricing */}
+                        <s-stack gap="small-200">
+                            {displaySettings.showPrices && (
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
                                 >
-                                    + {selectedItems.length - 4} more products
-                                </Text>
+                                    <s-stack
+                                        gap="small-200"
+                                        direction="inline"
+                                        justifyContent="space-between"
+                                    >
+                                        <s-heading>Original Price:</s-heading>
+                                        {discountAmount > 0 && (
+                                            <s-text>
+                                                <div>
+                                                    {formatPrice(originalPrice)}
+                                                </div>
+                                            </s-text>
+                                        )}
+                                    </s-stack>
+
+                                    <s-stack
+                                        gap="small-200"
+                                        direction="inline"
+                                        justifyContent="space-between"
+                                    >
+                                        <s-heading>Total Price:</s-heading>
+                                        <s-text>
+                                            {formatPrice(finalPrice)}
+                                        </s-text>
+                                    </s-stack>
+                                </s-stack>
                             )}
 
-                            {/* Product Selection Dropdowns */}
-                            {selectedItems.length > 0 &&
-                                selectedItems.some(
-                                    (item) =>
-                                        item.totalVariants &&
-                                        item.totalVariants > 1,
-                                ) &&
-                                displaySettings.enableQuickSwap && (
-                                    <InlineStack gap="200">
-                                        {selectedItems
-                                            .filter(
-                                                (item) =>
-                                                    item.totalVariants &&
-                                                    item.totalVariants > 1,
-                                            )
-                                            .slice(0, 2)
-                                            .map((item, index) => (
-                                                <Select
-                                                    key={index}
-                                                    label=""
-                                                    options={[
-                                                        {
-                                                            label: `${item.title.split(" - ")[0]} - Pick variant`,
-                                                            value: "pick",
-                                                        },
-                                                    ]}
-                                                    value="pick"
-                                                    onChange={() => {}}
-                                                />
-                                            ))}
-                                    </InlineStack>
+                            {displaySettings.showSavings &&
+                                discountAmount > 0 && (
+                                    <s-stack
+                                        gap="small-200"
+                                        direction="inline"
+                                        justifyContent="space-between"
+                                    >
+                                        <s-text tone="success">
+                                            You save:
+                                        </s-text>
+                                        <s-text tone="success">
+                                            {formatPrice(discountAmount)} (
+                                            {savingsPercentage}%)
+                                        </s-text>
+                                    </s-stack>
                                 )}
+                        </s-stack>
 
-                            {/* Pricing */}
-                            <BlockStack gap="100">
-                                {displaySettings.showPrices && (
-                                    <InlineStack align="space-between">
-                                        <Text variant="bodyMd">
-                                            Total Price:
-                                        </Text>
-                                        <InlineStack gap="200">
-                                            <Text
-                                                variant="bodyMd"
-                                                fontWeight="medium"
-                                            >
-                                                {formatPrice(finalPrice)}
-                                            </Text>
-                                            {discountAmount > 0 && (
-                                                <Text
-                                                    variant="bodyMd"
-                                                    tone="subdued"
-                                                    textDecorationLine="line-through"
-                                                >
-                                                    {formatPrice(originalPrice)}
-                                                </Text>
-                                            )}
-                                        </InlineStack>
-                                    </InlineStack>
-                                )}
-
-                                {displaySettings.showSavings &&
-                                    discountAmount > 0 && (
-                                        <InlineStack align="space-between">
-                                            <Text
-                                                variant="bodyMd"
-                                                tone="success"
-                                            >
-                                                You save:
-                                            </Text>
-                                            <Text
-                                                variant="bodyMd"
-                                                fontWeight="medium"
-                                                tone="success"
-                                            >
-                                                {formatPrice(discountAmount)} (
-                                                {savingsPercentage}%)
-                                            </Text>
-                                        </InlineStack>
-                                    )}
-                            </BlockStack>
-
-                            <Button fullWidth variant="primary">
-                                Add Bundle to Cart
-                            </Button>
-                        </BlockStack>
-                    </Box>
-
-                    {/* Preview Features */}
-                    <BlockStack gap="100">
-                        <Text variant="caption" tone="subdued">
-                            Features shown in preview:
-                        </Text>
-                        {displaySettings.enableQuickSwap && (
-                            <Text variant="caption" tone="subdued">
-                                • Product selection dropdowns
-                            </Text>
-                        )}
-                        {displaySettings.showPrices && (
-                            <Text variant="caption" tone="subdued">
-                                • Real-time price calculation
-                            </Text>
-                        )}
-                        {displaySettings.showSavings && (
-                            <Text variant="caption" tone="subdued">
-                                • Savings display
-                            </Text>
-                        )}
-                        <Text variant="caption" tone="subdued">
-                            • {displaySettings.layout} layout
-                        </Text>
-                        <Text variant="caption" tone="subdued">
-                            • Position:{" "}
-                            {displaySettings.position.replace("_", " ")}
-                        </Text>
-                    </BlockStack>
-                </BlockStack>
-            </Card>
-        </BlockStack>
+                        <s-button variant="primary">
+                            Add Bundle to Cart
+                        </s-button>
+                    </s-stack>
+                </s-stack>
+            </s-section>
+        </s-stack>
     );
 }

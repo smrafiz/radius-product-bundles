@@ -1,22 +1,9 @@
 "use client";
 
 import { ReactNode } from "react";
-import {
-    Box,
-    Button,
-    Card,
-    Icon,
-    InlineStack,
-    Text,
-    TextField,
-    Thumbnail,
-    BlockStack,
-} from "@shopify/polaris";
-import { DeleteIcon, DragHandleIcon, ImageIcon } from "@shopify/polaris-icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { ProductGroup, useBundleStore } from "@/features/bundles";
 import { useProductPicker } from "@/shared";
-
 
 interface ProductItemProps {
     group: ProductGroup;
@@ -85,91 +72,87 @@ export function ProductItem({ group }: ProductItemProps) {
 
     return (
         <SortableWrapper id={product.productId}>
-            <Card background="bg-surface-secondary" padding="300">
-                <Box padding="0">
-                    <InlineStack
-                        align="space-between"
-                        blockAlign="center"
-                        gap="400"
-                        wrap={false}
-                    >
-                        {/* Drag handle and image */}
-                        <InlineStack gap="300" blockAlign="center" wrap={false}>
-                            <div className="cursor-grab">
-                                <Icon source={DragHandleIcon} />
-                            </div>
-                            {product.image ? (
-                                <Thumbnail
-                                    source={product.image}
+            <s-box
+                paddingBlock="small"
+                paddingInlineStart="small-200"
+                paddingInlineEnd="small-300"
+                background="subdued"
+                border="base"
+                borderRadius="base"
+            >
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    gap="small"
+                >
+                    {/* Drag handle and image */}
+                    <s-stack direction="inline" gap="small" alignItems="center">
+                        <div className="cursor-grab">
+                            <s-icon type="drag-handle" />
+                        </div>
+                        {product.image ? (
+                            <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                <s-image
+                                    src={product.image}
                                     alt={product.title}
-                                    size="small"
+                                    aspectRatio="40/40"
+                                    inlineSize="auto"
                                 />
-                            ) : (
-                                <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center">
-                                    <Icon source={ImageIcon} tone="subdued" />
-                                </div>
-                            )}
-                        </InlineStack>
+                            </div>
+                        ) : (
+                            <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                <s-icon type="image" tone="neutral" />
+                            </div>
+                        )}
 
                         {/* Product info */}
-                        <div className="w-full">
-                            <BlockStack>
-                                <div className="w-full">
-                                    <Text
-                                        as="h3"
-                                        variant="bodyMd"
-                                        fontWeight="medium"
-                                    >
-                                        {product.title.replace(/ - .+$/, "")}
-                                    </Text>
-                                </div>
+                        <s-stack>
+                            <div className="w-[250px]">
+                                <s-heading>
+                                    {product.title.replace(/ - .+$/, "")}
+                                </s-heading>
 
                                 {isMultiVariant && (
-                                    <InlineStack align="start" gap="300">
-                                        <Text
-                                            as="p"
-                                            variant="bodySm"
-                                            tone="subdued"
-                                        >
+                                    <s-stack
+                                        direction="inline"
+                                        alignItems="center"
+                                        gap="small"
+                                    >
+                                        <s-text tone="caution">
                                             {selectedCount} of {originalTotal}{" "}
                                             variants selected
-                                        </Text>
-                                        <Button
-                                            variant="plain"
-                                            size="micro"
-                                            onClick={handleEditVariants}
-                                        >
-                                            Edit variants
-                                        </Button>
-                                    </InlineStack>
+                                        </s-text>
+                                        <s-link tone="neutral" onClick={handleEditVariants}>Edit variants</s-link>
+                                    </s-stack>
                                 )}
-                            </BlockStack>
-                        </div>
-
+                            </div>
+                        </s-stack>
+                    </s-stack>
+                    <s-stack direction="inline" gap="small">
                         {/* Quantity input */}
-                        <div className="max-w-[100px]">
-                            <TextField
-                                label="Quantity"
-                                labelHidden
+                        <div className="max-w-[80px]">
+                            <s-number-field
                                 value={(product.quantity || 1).toString()}
-                                onChange={handleQuantityChange}
-                                type="number"
-                                min="1"
-                                autoComplete="off"
-                                autoSize
+                                step={1}
+                                min={1}
+                                onChange={(event: Event) => {
+                                    const target = event.target as HTMLInputElement;
+                                    const value = target.value;
+                                    handleQuantityChange(value);
+                                }}
                             />
                         </div>
-
                         {/* Remove button */}
-                        <Button
-                            variant="plain"
-                            icon={DeleteIcon}
+                        <s-button
+                            variant="tertiary"
+                            icon="delete"
                             onClick={handleRemoveProduct}
                             accessibilityLabel={`Remove ${product.title}`}
                         />
-                    </InlineStack>
-                </Box>
-            </Card>
+                    </s-stack>
+                </s-stack>
+            </s-box>
         </SortableWrapper>
     );
 }
