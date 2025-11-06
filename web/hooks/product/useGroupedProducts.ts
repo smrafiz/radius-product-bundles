@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { SelectedItem, ProductGroup } from "@/types";
+import { ProductGroup, SelectedItem } from "@/features/bundles";
 
 /**
  * Hook to group selected items by productId.
