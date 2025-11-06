@@ -4,6 +4,7 @@ export { useDebounce } from "./use-debounce";
 export { useSyncStore } from "./use-sync-store";
 export { useSyncBundles } from "./use-sync-bundles";
 export { useAppNavigation } from "./use-navigation";
+export { useDragAndDrop } from "./use-drag-and-drop";
 export { useShopSettings } from "./use-shop-settings";
 export { useGlobalBanner } from "./use-global-banner";
 export { useProductPicker } from "./use-product-picker";

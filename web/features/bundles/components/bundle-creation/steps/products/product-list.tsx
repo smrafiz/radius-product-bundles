@@ -1,13 +1,13 @@
 "use client";
 
-import { BlockStack, Box, InlineStack, Text } from "@shopify/polaris";
-import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useDragAndDrop } from "@/hooks/ui";
+import { useDragAndDrop } from "@/shared";
+import { closestCenter, DndContext } from "@dnd-kit/core";
 import { ProductItem, useBundleStore } from "@/features/bundles";
+import { BlockStack, Box, InlineStack, Text } from "@shopify/polaris";
 
 export function ProductList() {
     const { getGroupedItems } = useBundleStore();
