@@ -4,7 +4,7 @@
  * Analytics and metrics queries.
  */
 
-import prisma from "@/lib/db/prisma-connect";
+import { prisma } from "@/shared";
 import { AnalyticsMetrics } from "@/features/bundles";
 
 /**

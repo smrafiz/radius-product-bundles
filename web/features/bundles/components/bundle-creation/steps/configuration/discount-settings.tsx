@@ -8,11 +8,10 @@ import {
     Text,
     TextField,
 } from "@shopify/polaris";
-import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
-
 import {
     DISCOUNT_TYPES,
     getDiscountProperty,
+    useBundleFormMethods,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";

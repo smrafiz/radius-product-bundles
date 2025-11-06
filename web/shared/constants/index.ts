@@ -1,4 +1,5 @@
 export * from "./ui.constants";
 export * from "./routes.constants";
-export * from "./currency.constant";
-export * from "./validation-messages.constant";
+export * from "./shopify.constants";
+export * from "./currency.constants";
+export * from "./validation-messages.constants";

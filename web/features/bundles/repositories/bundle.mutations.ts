@@ -15,8 +15,7 @@ import {
     verifyBundleOwnershipTx,
     verifyMultipleBundlesOwnershipTx,
 } from "@/features/bundles";
-import { generateBundleId } from "@/shared";
-import prisma from "@/lib/db/prisma-connect";
+import { prisma, generateBundleId } from "@/shared";
 import { BundleProductRole, Prisma } from "@prisma/client";
 
 // ==========================================

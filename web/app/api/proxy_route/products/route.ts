@@ -1,11 +1,11 @@
-import { bundleQueries } from "@/lib/queries";
-import { NextRequest, NextResponse } from "next/server";
-import { executeProxyGraphQL } from "@/lib/shopify/proxy-client";
-import { findOfflineSessionByShop } from "@/lib/db/session-storage";
 import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,
 } from "@/lib/gql/graphql";
+import { findOfflineSessionByShop } from "@/shared";
+import { executeProxyGraphQL } from "@/lib/shopify";
+import { NextRequest, NextResponse } from "next/server";
+import { findBundlesByProductId } from "@/features/bundles";
 
 async function getAccessTokenForShop(shop: string): Promise<string | null> {
     try {
@@ -35,14 +35,6 @@ async function fetchProductDetails(
     }
 
     return productsQuery.data.nodes || [];
-
-    // Option 2: Use the convenience wrapper
-    // const result = await queryProxyGraphQL<GetBundleProductsQuery>(
-    //     GetBundleProductsDocument,
-    //     { ids: productIds },
-    //     shop
-    // );
-    // return result?.nodes || [];
 }
 
 export async function GET(request: NextRequest) {
@@ -59,7 +51,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Step 1: Get bundles from Prisma
-        const bundles = await bundleQueries.findByProductId(productId, shop);
+        const bundles = await findBundlesByProductId(productId, shop);
 
         if (!bundles?.length) {
             return NextResponse.json({

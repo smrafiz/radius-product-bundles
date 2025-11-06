@@ -1,9 +1,12 @@
 // web/app/bundles/create/[bundleType]/_components/steps/configuration/BundleDetails.tsx
 "use client";
 
-import { useBundleStore, useBundleValidation } from "@/features/bundles";
+import {
+    useBundleFormMethods,
+    useBundleStore,
+    useBundleValidation,
+} from "@/features/bundles";
 import { BlockStack, Card, Text, TextField } from "@shopify/polaris";
-import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 export function BundleDetails() {
     const { watch, setValue } = useBundleFormMethods();

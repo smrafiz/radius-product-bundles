@@ -1,17 +1,15 @@
+import shopify from "@/lib/shopify/initialize-context";
 import {
     AppNotInstalledError,
     ExpiredTokenError,
     extractBearerToken,
+    findOfflineSessionByShop,
     isSessionExpired,
     normalizeShopDomain,
     ScopeMismatchError,
     SessionNotFoundError,
-} from "@/utils";
-import {
-    findOfflineSessionByShop,
     storeSession,
-} from "@/lib/db/session-storage";
-import shopify from "@/lib/shopify/initialize-context";
+} from "@/shared";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
 
 export {

@@ -1,11 +1,11 @@
-import { DeliveryMethod, Session } from "@shopify/shopify-api";
-import { setupGDPRWebHooks } from "./gdpr";
-import shopify from "./initialize-context";
-import { AppInstallations } from "../db/app-installations";
 import {
     handleProductUpdate,
     handleShopUpdate,
 } from "@/lib/shopify/webhook-handlers";
+import { setupGDPRWebHooks } from "./gdpr";
+import shopify from "./initialize-context";
+import { AppInstallations } from "@/shared";
+import { DeliveryMethod, Session } from "@shopify/shopify-api";
 
 let webhooksInitialized = false;
 

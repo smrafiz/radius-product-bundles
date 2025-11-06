@@ -1,5 +1,5 @@
+import { prisma } from "@/shared";
 import shopify from "./initialize-context";
-import prisma from "../db/prisma-connect";
 import { DeliveryMethod } from "@shopify/shopify-api";
 
 export function setupGDPRWebHooks(path: string) {
@@ -135,19 +135,47 @@ export function setupGDPRWebHooks(path: string) {
                         // Delete bundles
                         prisma.bundle.deleteMany({ where: { shop } }),
                         // Delete automations
-                        prisma.automation.deleteMany({ where: { shop } }),
+                        prisma.automation.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                         // Delete pricing rules
-                        prisma.pricingRule.deleteMany({ where: { shop } }),
+                        prisma.pricingRule.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                         // Delete AI insights
-                        prisma.aIInsight.deleteMany({ where: { shop } }),
+                        prisma.aIInsight.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                         // Delete notifications
-                        prisma.notification.deleteMany({ where: { shop } }),
+                        prisma.notification.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                         // Delete alert rules
-                        prisma.alertRule.deleteMany({ where: { shop } }),
+                        prisma.alertRule.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                         // Delete app settings
-                        prisma.appSettings.deleteMany({ where: { shop } }),
+                        prisma.appSettings.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                         // Delete A/B tests
-                        prisma.aBTest.deleteMany({ where: { shop } }),
+                        prisma.aBTest.deleteMany({ 
+                            where: { 
+                                shop: { equals: shop } 
+                            } 
+                        }),
                     ]);
 
                     console.log(`✅ All data removed for shop: ${shop}`);

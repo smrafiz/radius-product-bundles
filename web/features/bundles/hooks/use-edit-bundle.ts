@@ -10,10 +10,9 @@ import {
     GetProductsByIdsQuery,
     GetProductsByIdsQueryVariables,
 } from "@/lib/gql/graphql";
-import { ProductNode } from "@/shared";
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useGraphQL } from "@/hooks/data/useGraphQL";
+import { ProductNode, useGraphQL } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 const isProductNode = (node: any): node is ProductNode => {
