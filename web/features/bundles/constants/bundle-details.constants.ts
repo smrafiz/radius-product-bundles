@@ -6,17 +6,17 @@ export const WIDGET_LAYOUTS = [
     {
         label: "Horizontal Layout",
         value: "horizontal" as const,
-        description: "Products displayed side by side",
+        widgetLayout:"/assets/widget-horizontal-layout.png",
     },
     {
         label: "Vertical Layout",
         value: "vertical" as const,
-        description: "Products stacked vertically",
+        widgetLayout:"/assets/widget-vertical-layout.png",
     },
     {
         label: "Grid Layout",
         value: "grid" as const,
-        description: "Products in a responsive grid",
+        widgetLayout:"/assets/widget-grid-layout.png",
     },
 ];
 
@@ -58,7 +58,7 @@ export const BUNDLE_STEPS = [
     },
     {
         number: 2,
-        title: "Configuration",
+        title: "Discount",
         description: "Set up discount rules and behavior",
     },
     {

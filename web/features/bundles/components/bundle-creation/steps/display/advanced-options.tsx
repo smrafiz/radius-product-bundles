@@ -9,67 +9,33 @@ export function AdvancedOptions() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
     return (
-        <Card>
-            <BlockStack gap="400">
-                <Text as="p" variant="headingMd" fontWeight="medium">
+        <s-section>
+            <s-stack gap="base">
+                <s-heading>
                     Advanced Options
-                </Text>
-
-                <BlockStack gap="300">
+                </s-heading>
                     {ADVANCED_OPTIONS.map(
                         ({ key, title, description }, index) => {
                             const selected = displaySettings[key];
                             return (
-                                <Fragment key={key}>
-                                    <InlineStack
-                                        align="space-between"
-                                        blockAlign="center"
-                                        wrap={false}
-                                        gap="200"
-                                    >
-                                        <BlockStack gap="050">
-                                            <InlineStack
-                                                align="start"
-                                                gap="100"
-                                            >
-                                                <Text
-                                                    as="p"
-                                                    variant="bodyMd"
-                                                    fontWeight="medium"
-                                                >
-                                                    {title}
-                                                </Text>
-                                            </InlineStack>
-                                            <Text
-                                                as="p"
-                                                variant="bodySm"
-                                                tone="subdued"
-                                            >
-                                                {description}
-                                            </Text>
-                                        </BlockStack>
-
-                                        <Knob
-                                            selected={selected}
-                                            ariaLabel={title}
-                                            onClick={() =>
-                                                updateDisplaySettings(
-                                                    key,
-                                                    !selected,
-                                                )
-                                            }
-                                        />
-                                    </InlineStack>
-
+                                <s-stack key={key} gap="base">
+                                    <s-switch
+                                        label={title}
+                                        details={description}
+                                        checked={selected}
+                                        onChange={(event: Event) => {
+                                            const target = event.target as HTMLInputElement;
+                                            updateDisplaySettings(key, target.checked);
+                                        }}
+                                    />
                                     {index < ADVANCED_OPTIONS.length - 1 && (
-                                        <Divider />
+                                        <s-divider />
                                     )}
-                                </Fragment>
+                                </s-stack>
                             );
                         },
                     )}
-                </BlockStack>
-            </BlockStack>
-        </Card>
+            </s-stack>
+        </s-section>
     );
 }

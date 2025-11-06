@@ -1,13 +1,4 @@
 "use client";
-
-import {
-    BlockStack,
-    Card,
-    InlineStack,
-    Select,
-    Text,
-    TextField,
-} from "@shopify/polaris";
 import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 import {
@@ -97,75 +88,83 @@ export function DiscountSettings() {
         discountType !== "CUSTOM_PRICE" && discountType !== undefined;
 
     return (
-        <Card>
-            <BlockStack gap="400">
-                <Text as="p" variant="headingMd" fontWeight="medium">
-                    Discount Settings
-                </Text>
+        <s-section>
+            <s-stack gap="base">
+                <s-heading>Discount Settings</s-heading>
 
-                <Select
+                <s-select
                     label="Discount Type"
-                    options={[
-                        { label: "Select discount type", value: "" },
-                        ...Object.values(DISCOUNT_TYPES).map((config) => ({
-                            label: config.label,
-                            value: config.id,
-                        })),
-                    ]}
                     value={discountType || ""}
-                    onChange={handleDiscountTypeChange}
                     error={getFieldError("discountType")}
-                    requiredIndicator
-                />
+                    onChange={(event: Event) => {
+                        const target = event.target as HTMLSelectElement;
+                        handleDiscountTypeChange(target.value);
+                    }}
+                >
+                    <s-option value="">Select discount type</s-option>
+                    {Object.values(DISCOUNT_TYPES).map((config) => (
+                        <s-option key={config.id} value={config.id}>
+                            {config.label}
+                        </s-option>
+                    ))}
+                </s-select>
 
                 {showDiscountValue && (
-                    <TextField
+                    <s-number-field
                         label={getDiscountValueLabel()}
-                        type="number"
-                        autoComplete="off"
                         value={discountValue?.toString() || ""}
-                        onChange={handleDiscountValueChange}
-                        suffix={getSuffix()}
-                        placeholder="0"
+                        step={1}
                         min={0}
+                        placeholder="0"
+                        suffix={getSuffix()}
                         max={discountType === "PERCENTAGE" ? 100 : undefined}
+                        onChange={(event: Event) => {
+                            const target = event.target as HTMLInputElement;
+                            const value = target.value;
+                            handleDiscountValueChange(value);
+                        }}
                         error={getFieldError("discountValue")}
-                        requiredIndicator
                     />
                 )}
 
-                <InlineStack gap="400">
+                <s-stack gap="base">
                     <div style={{ flex: 1 }}>
-                        <TextField
+                        <s-number-field
                             label="Minimum Order Value (Optional)"
-                            type="number"
-                            autoComplete="off"
                             value={minOrderValue?.toString() || ""}
-                            onChange={handleMinOrderValueChange}
-                            prefix={getCurrency()}
-                            placeholder="0.00"
+                            step={1}
                             min={0}
+                            placeholder="0.00"
+                            prefix={getCurrency()}
+                            onChange={(event: Event) => {
+                                const target = event.target as HTMLInputElement;
+                                const value = target.value;
+                                handleMinOrderValueChange(value);
+                            }}
                             error={getFieldError("minOrderValue")}
                         />
                     </div>
 
                     {showMaxDiscountAmount && (
                         <div style={{ flex: 1 }}>
-                            <TextField
+                            <s-number-field
                                 label="Maximum Discount Amount (Optional)"
-                                type="number"
-                                autoComplete="off"
                                 value={maxDiscountAmount?.toString() || ""}
-                                onChange={handleMaxDiscountAmountChange}
-                                prefix={getCurrency()}
-                                placeholder="No limit"
+                                step={1}
                                 min={0}
+                                placeholder="No limit"
+                                prefix={getCurrency()}
+                                onChange={(event: Event) => {
+                                    const target = event.target as HTMLInputElement;
+                                    const value = target.value;
+                                    handleMaxDiscountAmountChange(value);
+                                }}
                                 error={getFieldError("maxDiscountAmount")}
                             />
                         </div>
                     )}
-                </InlineStack>
-            </BlockStack>
-        </Card>
+                </s-stack>
+            </s-stack>
+        </s-section>
     );
 }

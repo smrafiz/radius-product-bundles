@@ -21,6 +21,7 @@ export function useBundleFormManager({
 
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
+    let title;
 
     useEffect(() => {
         if (!bundleData.type) {
@@ -31,6 +32,7 @@ export function useBundleFormManager({
 
     const pageProps = useMemo(() => {
         if (isEditMode) {
+            title = `Edit ${bundleName}`;
             return {
                 title: `Edit ${bundleName || getBundleProperty(bundleType, "label")}`,
                 subtitle: "Update your bundle settings and preview changes",
@@ -39,6 +41,8 @@ export function useBundleFormManager({
                     onAction: navigationData.create(),
                 },
             };
+        } else {
+            title = `Create ${getBundleProperty(bundleType, "label")}`;
         }
 
         return {

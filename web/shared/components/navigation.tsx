@@ -13,23 +13,23 @@ export function Navigation() {
             <Link href="/analytics" data-sprogress>
                 Analytics
             </Link>
+            <Link href="/settings" data-sprogress>
+                Settings
+            </Link>
             <Link href="/ab-testing" data-sprogress>
                 A/B Testing
             </Link>
             <Link href="/automation" data-sprogress>
                 Automation
             </Link>
-            <Link href="/pricing-rules" data-sprogress>
-                Pricing Rules
+            <Link href="/pricing" data-sprogress>
+                Pricing
             </Link>
             <Link href="/templates" data-sprogress>
                 Templates
             </Link>
             <Link href="/integrations" data-sprogress>
                 Integrations
-            </Link>
-            <Link href="/settings" data-sprogress>
-                Settings
             </Link>
         </NavMenu>
     );

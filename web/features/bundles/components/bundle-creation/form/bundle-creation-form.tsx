@@ -78,7 +78,7 @@ export function BundleCreationForm({
                                 <div className="text-xl">{`Edit ${bundleName}`}</div>
                             </s-heading>
                             <s-badge tone="info">
-                                {/* {getBundleProperty(bundleType, "label")} */}
+                                 {/*{getBundleProperty(bundleType, "label")} */}
                             </s-badge>
                         </s-stack>
                     </s-stack>

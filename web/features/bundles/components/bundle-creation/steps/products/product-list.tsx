@@ -1,6 +1,4 @@
 "use client";
-
-import { BlockStack, Box, InlineStack, Text } from "@shopify/polaris";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
     SortableContext,

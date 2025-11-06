@@ -1,28 +1,38 @@
 "use client";
 
-import { BlockStack, Card, Text, Select } from "@shopify/polaris";
 import { useBundleStore, WIDGET_POSITIONS } from "@/features/bundles";
 
 export function WidgetPosition() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
-    return (
-        <Card>
-            <BlockStack gap="400">
-                <Text as="p" variant="headingMd" fontWeight="medium">
-                    Widget Position
-                </Text>
+    function handlePositionChange(value: string) {
+        updateDisplaySettings("position", value as any);
+    }
 
-                <Select
+    return (
+        <s-section>
+            <s-stack gap="base">
+                <s-heading>
+                    Widget Position
+                </s-heading>
+
+                <s-select
                     label="Display Position"
-                    options={WIDGET_POSITIONS}
+                    details="Choose where the bundle widget appears on product pages"
+                    required
                     value={displaySettings.position}
-                    onChange={(value) =>
-                        updateDisplaySettings("position", value as any)
-                    }
-                    helpText="Choose where the bundle widget appears on product pages"
-                />
-            </BlockStack>
-        </Card>
+                    onChange={(event: Event) => {
+                        const target = event.currentTarget as HTMLSelectElement;
+                        handlePositionChange(target.value);
+                    }}
+                >
+                    {WIDGET_POSITIONS.map((option) => (
+                        <s-option key={option.value} value={option.value}>
+                            {option.label}
+                        </s-option>
+                    ))}
+                </s-select>
+            </s-stack>
+        </s-section>
     );
 }

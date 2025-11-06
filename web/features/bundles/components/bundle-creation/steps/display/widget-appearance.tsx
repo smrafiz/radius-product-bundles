@@ -1,72 +1,27 @@
 "use client";
 
-import {
-    BlockStack,
-    Card,
-    Text,
-    TextField,
-    InlineStack,
-    Box,
-} from "@shopify/polaris";
-import { COLOR_THEMES, useBundleStore } from "@/features/bundles";
-
-type ColorTheme = (typeof COLOR_THEMES)[number]["value"];
+import { useBundleStore } from "@/features/bundles";
 
 export function WidgetAppearance() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
-    const handleColorThemeSelect = (theme: ColorTheme) => {
-        updateDisplaySettings("colorTheme", theme);
-    };
+    function handleTitleChange(event: Event) {
+        const target = event.currentTarget as HTMLInputElement;
+        updateDisplaySettings("title", target.value);
+    }
 
     return (
-        <Card>
-            <BlockStack gap="400">
-                <Text as="p" variant="headingMd" fontWeight="medium">
-                    Appearance
-                </Text>
+        <s-section>
+            <s-stack gap="base">
+                <s-heading>Appearance</s-heading>
 
-                <TextField
-                    autoComplete="off"
+                <s-text-field
                     label="Widget Title"
-                    value={displaySettings.title}
-                    onChange={(value) => updateDisplaySettings("title", value)}
-                    helpText="Title displayed above the bundle"
+                    value={displaySettings.title || ''}
+                    onChange={handleTitleChange}
+                    details="Title displayed above the bundle"
                 />
-
-                <BlockStack gap="200">
-                    <Text as="p" variant="bodyMd" fontWeight="medium">
-                        Color Theme
-                    </Text>
-                    <InlineStack gap="300">
-                        {COLOR_THEMES.map((theme) => (
-                            <div
-                                key={theme.value}
-                                onClick={() =>
-                                    handleColorThemeSelect(theme.value)
-                                }
-                                style={{
-                                    cursor: "pointer",
-                                    border:
-                                        displaySettings.colorTheme ===
-                                        theme.value
-                                            ? "3px solid var(--p-color-border-emphasis)"
-                                            : "1px solid transparent",
-                                    borderRadius: "8px",
-                                    padding: "2px",
-                                }}
-                            >
-                                <Box
-                                    background={theme.background}
-                                    borderRadius="100"
-                                    minWidth="40px"
-                                    minHeight="40px"
-                                />
-                            </div>
-                        ))}
-                    </InlineStack>
-                </BlockStack>
-            </BlockStack>
-        </Card>
+            </s-stack>
+        </s-section>
     );
 }

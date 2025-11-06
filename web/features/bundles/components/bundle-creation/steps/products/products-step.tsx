@@ -1,5 +1,6 @@
 "use client";
 import {
+    BundleDetails,
     ProductList,
     useBundleStore,
     useBundleValidation,
@@ -37,41 +38,48 @@ export function ProductsStep() {
     )?.message;
 
     return (
-        <s-section>
-            <s-stack gap="base">
-                <s-stack
-                    direction="inline"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    <s-button
-                        variant="primary"
-                        icon="plus"
-                        onClick={openProductPicker}
-                        loading={isLoading}
-                        tone={hasProductError ? "critical" : undefined}
-                    >
-                        Add Products
-                    </s-button>
-                    {selectedItems.length > 0 && (
-                        <s-button
-                            variant="secondary"
-                            tone="critical"
-                            icon="delete"
-                            onClick={handleClearAll}
-                        >
-                            Clear all
-                        </s-button>
-                    )}
-                </s-stack>
-                {productErrorMessage && (
-                    <s-banner tone="critical" data-fieldid="products">
-                        {productErrorMessage}
-                    </s-banner>
-                )}
+        <s-stack gap="base">
+            {/* Bundle details */}
+            <s-section>
+                <BundleDetails />
+            </s-section>
 
-                <ProductList />
-            </s-stack>
-        </s-section>
+            {/* Bundle product list */}
+            <s-section>
+                <s-stack gap="base">
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <s-button
+                            variant="primary"
+                            icon="plus"
+                            onClick={openProductPicker}
+                            loading={isLoading}
+                            tone={hasProductError ? "critical" : undefined}
+                        >
+                            Add Products
+                        </s-button>
+                        {selectedItems.length > 0 && (
+                            <s-button
+                                variant="secondary"
+                                tone="critical"
+                                icon="delete"
+                                onClick={handleClearAll}
+                            >
+                                Clear all
+                            </s-button>
+                        )}
+                    </s-stack>
+                    {productErrorMessage && (
+                        <s-banner tone="critical" data-fieldid="products">
+                            {productErrorMessage}
+                        </s-banner>
+                    )}
+                    <ProductList />
+                </s-stack>
+            </s-section>
+        </s-stack>
     );
 }

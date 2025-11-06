@@ -1,7 +1,7 @@
 "use client";
 
 import {
-    ConfigurationStep,
+    DiscountStep,
     DisplayStep,
     ProductsStep,
     ReviewStep,
@@ -16,7 +16,7 @@ export function StepContent() {
             case 1:
                 return <ProductsStep />;
             case 2:
-                return <ConfigurationStep />;
+                return <DiscountStep />;
             case 3:
                 return <DisplayStep />;
             case 4:

@@ -2,8 +2,8 @@
 
 import {
     BUNDLE_STATUSES,
+    BundlePreviewStatus,
     BundleType,
-    getBundleProperty,
     useBundleStore,
 } from "@/features/bundles";
 import {
@@ -13,11 +13,7 @@ import {
     formatPrice,
 } from "@/utils/bundle/bundleUtils";
 
-interface Props {
-    bundleType: BundleType;
-}
-
-export function BundlePreview({ bundleType }: Props) {
+export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
     const renderSelectedProducts = () => {
@@ -125,15 +121,9 @@ export function BundlePreview({ bundleType }: Props) {
 
     return (
         <s-stack gap="base">
-            <s-section>
-                <s-select label="Status" value="DRAFT">
-                    {Object.entries(BUNDLE_STATUSES).map(([key, { text }]) => (
-                        <s-option key={key} value={key}>
-                            {text}
-                        </s-option>
-                    ))}
-                </s-select>
-            </s-section>
+
+            {/* Bundle preview status */}
+            <BundlePreviewStatus />
 
             <s-section>
                 <s-stack gap="base">
