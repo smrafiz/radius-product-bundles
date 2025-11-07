@@ -3,9 +3,9 @@
 import { print } from "graphql";
 import { useCallback } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { queryKey, UseGraphQLOptions, UseGraphQLReturn } from "@/shared";
-import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib/shopify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**

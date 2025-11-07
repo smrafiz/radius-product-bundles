@@ -22,7 +22,7 @@ import {
 } from "@/features/bundles";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
-import { handleSessionToken } from "@/lib/shopify/verify";
+import { handleSessionToken } from "@/lib/shopify";
 
 /**
  * Update bundle status

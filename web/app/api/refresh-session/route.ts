@@ -1,7 +1,7 @@
 import {
     findOfflineSessionByShop,
     SessionNotFoundError,
-} from "@/lib/db/session-storage";
+} from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

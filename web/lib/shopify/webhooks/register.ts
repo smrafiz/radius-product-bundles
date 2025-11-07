@@ -1,11 +1,7 @@
-import {
-    handleProductUpdate,
-    handleShopUpdate,
-} from "@/lib/shopify/webhook-handlers";
-import { setupGDPRWebHooks } from "./gdpr";
-import shopify from "./initialize-context";
 import { AppInstallations } from "@/shared";
+import shopify from "@/lib/shopify/config/initialize-context";
 import { DeliveryMethod, Session } from "@shopify/shopify-api";
+import { handleShopUpdate, setupGDPRWebHooks } from "@/lib/shopify";
 
 let webhooksInitialized = false;
 

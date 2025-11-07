@@ -1,10 +1,10 @@
-import { verifyRequest } from "@/lib/shopify/verify";
+import { verifyRequest } from "@/lib/shopify";
 import { NextRequest, NextResponse } from "next/server";
 import {
     extractBearerToken,
     isSessionExpired,
     formatErrorResponse,
-} from "@/utils";
+} from "@/shared";
 
 export async function POST(request: NextRequest) {
     try {

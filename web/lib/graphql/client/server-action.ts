@@ -1,7 +1,7 @@
 "use server";
 
 import { GraphQLClient } from "graphql-request";
-import { handleSessionToken } from "@/lib/shopify/verify";
+import { handleSessionToken } from "@/lib/shopify";
 import { GraphQLRequest, GraphQLResponse } from "@/shared";
 
 export async function executeGraphQLQuery<T = any>(

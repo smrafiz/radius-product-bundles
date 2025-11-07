@@ -1,12 +1,22 @@
-import { Product, ProductVariant } from "@/shared";
-import { executeGraphQLQuery } from "@/lib/shopify";
-import { GetBundleProductsDocument, GetBundleProductsQuery } from "@/lib/gql/graphql";
+"use server";
 
-export async function fetchProductsFromShopify(sessionToken: string, allProductIds: string[]) {
+import {
+    GetBundleProductsDocument,
+    GetBundleProductsQuery,
+} from "@/lib/graphql/generated/graphql";
+import { executeGraphQLQuery } from "@/lib";
+import { Product, ProductVariant } from "@/shared";
+
+export async function fetchProductsFromShopify(
+    sessionToken: string,
+    allProductIds: string[],
+) {
     const productMap = new Map<string, Product>();
     const variantMap = new Map<string, ProductVariant>();
 
-    if (allProductIds.length === 0) return { productMap, variantMap };
+    if (allProductIds.length === 0) {
+        return { productMap, variantMap };
+    }
 
     const result = await executeGraphQLQuery<GetBundleProductsQuery>({
         query: GetBundleProductsDocument,
@@ -23,9 +33,9 @@ export async function fetchProductsFromShopify(sessionToken: string, allProductI
             title: prod.title,
             featuredImage: prod.featuredImage
                 ? {
-                    url: prod.featuredImage.url,
-                    altText: prod.featuredImage.altText ?? prod.title,
-                }
+                      url: prod.featuredImage.url,
+                      altText: prod.featuredImage.altText ?? prod.title,
+                  }
                 : undefined,
             handle: prod.handle,
             tags: prod.tags || [],
@@ -45,10 +55,10 @@ export async function fetchProductsFromShopify(sessionToken: string, allProductI
                 inventoryQuantity: var_.inventoryQuantity ?? 0,
                 selectedOptions: var_.selectedOptions ?? [],
                 inventoryItem: {
-                    tracked: var_.inventoryItem?.tracked ?? false
+                    tracked: var_.inventoryItem?.tracked ?? false,
                 },
                 ...(var_.sku && { sku: var_.sku }),
-                ...(var_.image && { image: var_.image })
+                ...(var_.image && { image: var_.image }),
             } as ProductVariant);
         });
     });

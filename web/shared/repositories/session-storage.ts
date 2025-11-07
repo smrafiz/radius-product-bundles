@@ -83,7 +83,7 @@ export async function loadSession(id: string) {
     if (session) {
         return generateShopifySessionFromDB(session);
     } else {
-        throw new SessionNotFoundError();
+        throw new NoSessionFoundError();
     }
 }
 
@@ -132,7 +132,7 @@ function generateShopifySessionFromDB(session: Session) {
     });
 }
 
-export class SessionNotFoundError extends Error {
+export class NoSessionFoundError extends Error {
     constructor() {
         super("Session not found");
         this.name = "SessionNotFoundError";
@@ -144,7 +144,7 @@ export async function findOfflineSessionByShop(shop: string) {
     const offlineSession = sessions.find((session) => !session.isOnline);
 
     if (!offlineSession) {
-        throw new SessionNotFoundError();
+        throw new NoSessionFoundError();
     }
 
     return offlineSession;

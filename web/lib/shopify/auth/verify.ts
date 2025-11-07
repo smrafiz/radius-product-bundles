@@ -1,23 +1,12 @@
-import shopify from "@/lib/shopify/initialize-context";
 import {
-    AppNotInstalledError,
-    ExpiredTokenError,
     extractBearerToken,
     findOfflineSessionByShop,
     isSessionExpired,
     normalizeShopDomain,
-    ScopeMismatchError,
-    SessionNotFoundError,
     storeSession,
 } from "@/shared";
+import shopify from "../config/initialize-context";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
-
-export {
-    AppNotInstalledError,
-    SessionNotFoundError,
-    ScopeMismatchError,
-    ExpiredTokenError,
-};
 
 /**
  * Verify the request and return the shop and session

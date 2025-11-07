@@ -140,3 +140,22 @@ export function handleTransactionError(error: unknown): ApiError {
         message: "Transaction failed. No changes were made.",
     };
 }
+
+/**
+ * Format error for API responses
+ */
+export function formatErrorResponse(
+    error: unknown,
+    defaultMessage: string = "An error occurred",
+) {
+    if (error instanceof Error) {
+        return {
+            error: error.message,
+            details: error.name,
+        };
+    }
+    return {
+        error: defaultMessage,
+        details: "Unknown error",
+    };
+}

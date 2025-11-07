@@ -9,7 +9,7 @@ import {
     GetProductsByIdsDocument,
     GetProductsByIdsQuery,
     GetProductsByIdsQueryVariables,
-} from "@/lib/gql/graphql";
+} from "@/lib/graphql/generated/graphql";
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductNode, useGraphQL } from "@/shared";

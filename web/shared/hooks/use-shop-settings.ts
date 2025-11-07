@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { GetShopInfoDocument } from "@/lib/gql/graphql";
 import { useGraphQL, useShopSettingsStore } from "@/shared";
+import { GetShopInfoDocument } from "@/lib/graphql/generated/graphql";
 
 export const useShopSettings = (options: { enabled?: boolean } = {}) => {
     const hasInitialized = useRef(false);

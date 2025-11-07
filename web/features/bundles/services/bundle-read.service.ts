@@ -12,11 +12,11 @@ import {
     transformBundle,
     transformBundles,
 } from "@/features/bundles";
-import { fetchProductsFromShopify } from "@/lib/shopify";
+import { fetchProductsFromShopify } from "@/lib";
 import { countBundlesByShop, findBundleByIdWithAllRelations, findBundlesByShop, } from "../repositories";
 
 /**
- * Get bundle list with filters and pagination
+ * Get the bundle list with filters and pagination
  */
 export async function getBundlesListService(
     input: GetBundlesInput,
