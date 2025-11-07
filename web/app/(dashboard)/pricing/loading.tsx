@@ -1,6 +1,27 @@
 "use client";
 
 export default function BundlePageSkeleton() {
+
+    const itemSkeleton = () => {
+        return (
+            <s-grid-item gridColumn="span 4" gridRow="span 1">
+                <s-section padding="base">
+                    <div className="animate-pulse space-y-3">
+                        {Array.from({ length: 14 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-2 bg-[#ebebeb] rounded"
+                                style={{
+                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                }}
+                            />
+                        ))}
+                    </div>
+                </s-section>
+            </s-grid-item>
+        )
+    }
+
     return (
         <s-page>
             <s-stack
@@ -21,8 +42,8 @@ export default function BundlePageSkeleton() {
                 </s-stack>
 
                 <s-section padding="base">
-                    <div className="animate-pulse space-y-3 p-5">
-                        {Array.from({ length: 3 }).map((_, i) => (
+                    <div className="animate-pulse space-y-3">
+                        {Array.from({ length: 4 }).map((_, i) => (
                             <div
                                 key={i}
                                 className="h-2 bg-[#ebebeb] rounded"
@@ -34,22 +55,14 @@ export default function BundlePageSkeleton() {
                     </div>
                 </s-section>
 
-                <s-section padding="base">
-                    <div className="animate-pulse space-y-3 p-5">
-                        {Array.from({ length: 8 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="h-2 bg-[#ebebeb] rounded"
-                                style={{
-                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
-                                }}
-                            />
-                        ))}
-                    </div>
-                </s-section>
+                <s-grid gridTemplateColumns="repeat(12, 1fr)" gap="base" paddingBlockStart="large">
+                    {itemSkeleton()}
+                    {itemSkeleton()}
+                    {itemSkeleton()}
+                </s-grid>
 
                 <s-section padding="base">
-                    <div className="animate-pulse space-y-3 p-5">
+                    <div className="animate-pulse space-y-3">
                         {Array.from({ length: 6 }).map((_, i) => (
                             <div
                                 key={i}

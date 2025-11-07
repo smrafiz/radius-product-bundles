@@ -21,6 +21,7 @@ export function WidgetAppearance() {
                     onChange={handleTitleChange}
                     details="Title displayed above the bundle"
                 />
+
             </s-stack>
         </s-section>
     );

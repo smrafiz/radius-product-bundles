@@ -79,6 +79,7 @@ export function BundleCreationForm({
                             </s-heading>
                             <s-badge tone="info">
                                  {/*{getBundleProperty(bundleType, "label")} */}
+                                Draft
                             </s-badge>
                         </s-stack>
                     </s-stack>
@@ -93,7 +94,7 @@ export function BundleCreationForm({
                         <s-stack>
                             <s-heading>
                                 <div className="text-xl">
-                                    {/* {`Create ${getBundleProperty(bundleType, "label")}`} */}
+                                     {/*{`Create ${getBundleProperty(bundleType, "label")}`} */}
                                 </div>
                             </s-heading>
                         </s-stack>

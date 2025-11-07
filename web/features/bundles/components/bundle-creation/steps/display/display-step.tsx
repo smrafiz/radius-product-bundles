@@ -4,15 +4,14 @@ import {
     WidgetLayout,
     WidgetPosition,
 } from "@/features/bundles";
-import { BlockStack } from "@shopify/polaris";
 
 export function DisplayStep() {
     return (
-        <BlockStack gap="500">
+        <s-stack gap="base">
             <WidgetLayout />
             <WidgetPosition />
             <WidgetAppearance />
             <AdvancedOptions />
-        </BlockStack>
+        </s-stack>
     );
 }

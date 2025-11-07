@@ -15,15 +15,25 @@ export function ProductList() {
 
     if (groupedItems.length === 0) {
         return (
-            <s-box padding="base" background="subdued" border="base" borderRadius="base">
-                    <s-stack gap="small-200" alignItems="center">
-                        <s-heading>
-                            No products selected
-                        </s-heading>
-                        <s-text>
-                            Click "Add Products" to get started
-                        </s-text>
+            <s-box
+                padding="base"
+                background="subdued"
+                border="base"
+                borderRadius="base"
+            >
+                <s-stack gap="large" alignItems="center">
+                    <div className="w-[150px] rounded-xl overflow-hidden bg-white">
+                        <s-image
+                            src="/assets/empty.png"
+                            alt="No products selected"
+                            aspectRatio="1.2/1"
+                        />
+                    </div>
+                    <s-stack alignItems="center">
+                        <s-heading>No products selected</s-heading>
+                        <s-text>Click "Add Products" to get started</s-text>
                     </s-stack>
+                </s-stack>
             </s-box>
         );
     }

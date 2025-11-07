@@ -117,14 +117,11 @@ export function HorizontalStepIndicator() {
                                                       : "circle"
                                             }
                                             tone={
-                                                getStepStatus(step.number) ===
-                                                "completed"
+                                                getStepStatus(step.number) === "completed"
                                                     ? "success"
-                                                    : getStepStatus(
-                                                            step.number,
-                                                        ) === "current"
-                                                      ? "info"
-                                                      : ""
+                                                    : getStepStatus(step.number) === "current"
+                                                        ? "info"
+                                                        : undefined
                                             }
                                         >
                                             {step.title}

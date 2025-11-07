@@ -3,20 +3,25 @@
 /**
  * Bundle table skeleton
  */
-export function BundleTableSkeleton({ lines = 6 }: { lines?: number }) {
+export function BundleTableSkeleton({ lines = 12 }: { lines?: number }) {
     return (
         <s-section padding="base">
-            <div className="animate-pulse space-y-3 p-5">
+            <s-stack gap="small">
                 {Array.from({ length: lines }).map((_, i) => (
                     <div
                         key={i}
-                        className="h-2 bg-[#ebebeb] rounded"
-                        style={{
-                            width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
-                        }}
-                    />
+                        className="h-2 bg-[#ebebeb] rounded overflow-hidden relative"
+                    >
+                        <div
+                            className="absolute inset-0 bg-gradient-to-r from-[#ebebeb] via-[#f5f5f5] to-[#ebebeb] animate-shimmer"
+                            style={{
+                                width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                animationDuration: `${1 + Math.random() * 1.5}s`,
+                            }}
+                        />
+                    </div>
                 ))}
-            </div>
+            </s-stack>
         </s-section>
     );
 }

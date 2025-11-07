@@ -12,7 +12,6 @@ export function BundleBehavior() {
                 </s-heading>
                 <s-stack gap="small-500">
                     <s-choice-list
-                        label="Product visibility"
                         name="visibility"
                         error={error}
                         onChange={(e) => {

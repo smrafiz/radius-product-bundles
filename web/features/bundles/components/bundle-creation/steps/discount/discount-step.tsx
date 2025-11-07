@@ -2,13 +2,12 @@ import {
     BundleBehavior,
     DiscountSettings,
 } from "@/features/bundles";
-import { BlockStack } from "@shopify/polaris";
 
 export function DiscountStep() {
     return (
-        <BlockStack gap="500">
+        <s-stack gap="base">
             <DiscountSettings />
             <BundleBehavior />
-        </BlockStack>
+        </s-stack>
     );
 }

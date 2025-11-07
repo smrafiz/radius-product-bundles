@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    BUNDLE_STATUSES,
     BundlePreviewStatus,
     BundleType,
     useBundleStore,
@@ -17,31 +16,6 @@ export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
     const renderSelectedProducts = () => {
-        // if (selectedItems.length === 0) {
-        //     // Show placeholder when no products selected
-        //     return Array.from({ length: 3 }, (_, i) => (
-        //         <Fragment key={i}>
-        //             <Box
-        //                 background="bg-surface"
-        //                 padding="300"
-        //                 borderRadius="100"
-        //                 minWidth="80px"
-        //                 minHeight="80px"
-        //                 style={{
-        //                     backgroundImage:
-        //                         "url(https://via.placeholder.com/80x80/F5F5F5/999?text=Product)",
-        //                     backgroundSize: "cover",
-        //                     backgroundPosition: "center",
-        //                 }}
-        //             />
-        //             {i < 2 && (
-        //                 <Text variant="headingMd" as="span">
-        //                     +
-        //                 </Text>
-        //             )}
-        //         </Fragment>
-        //     ));
-        // }
 
         // Show actual selected products (limit to first 4 for space)
         return selectedItems.slice(0, 4).map((item, index) => (
