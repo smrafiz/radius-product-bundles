@@ -1,3 +1,5 @@
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+
 export interface GraphQLRequest<TResult = any, TVariables = any> {
     query: string | TypedDocumentNode<TResult, TVariables>;
     variables?: TVariables;

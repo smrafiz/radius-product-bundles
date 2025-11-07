@@ -9,7 +9,7 @@ const config: CodegenConfig = {
             preset: "client",
             plugins: [],
         },
-        "./shared/types/admin.generated.d.ts": {
+        "./shared/types/generated/admin.generated.d.ts": {
             preset,
             presetConfig: {
                 apiType: ApiType.Admin,

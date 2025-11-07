@@ -1,9 +1,9 @@
 import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,
-} from "@/lib/gql/graphql";
+} from "@/lib/graphql/generated/graphql";
+import { executeProxyGraphQL } from "@/lib";
 import { findOfflineSessionByShop } from "@/shared";
-import { executeProxyGraphQL } from "@/lib/shopify";
 import { NextRequest, NextResponse } from "next/server";
 import { findBundlesByProductId } from "@/features/bundles";
 

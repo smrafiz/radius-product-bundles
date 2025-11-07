@@ -11,20 +11,6 @@ export interface GlobalFormProps<T extends FieldValues> {
     discardPath?: string;
 }
 
-/*
- * ConfirmationModal Props
- */
-export interface ConfirmationModalProps {
-    open: boolean;
-    title: string;
-    message: React.ReactNode;
-    loading?: boolean;
-    destructive?: boolean;
-    error?: string;
-    onClose: () => void;
-    onConfirm: () => void | Promise<void>;
-}
-
 export interface KnobProps {
     ariaLabel: string;
     selected: boolean;
