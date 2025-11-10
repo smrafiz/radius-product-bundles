@@ -3,22 +3,24 @@
 export function DashboardSkeleton() {
     const itemSkeleton = () => {
         return (
-            <s-stack gap="small">
-                {Array.from({ length: 8 }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="h-2 bg-[#ebebeb] rounded overflow-hidden relative"
-                    >
+            <div className="p-4">
+                <s-stack gap="base">
+                    {Array.from({ length: 8 }).map((_, i) => (
                         <div
-                            className="absolute inset-0 bg-gradient-to-r from-[#ebebeb] via-[#f5f5f5] to-[#ebebeb] animate-shimmer"
-                            style={{
-                                width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
-                                animationDuration: `${1 + Math.random() * 1.5}s`,
-                            }}
-                        />
-                    </div>
-                ))}
-            </s-stack>
+                            key={i}
+                            className="h-2 bg-[#f4f4f4] rounded overflow-hidden relative"
+                        >
+                            <div
+                                className="absolute inset-0 bg-gradient-to-r from-[#f4f4f4] via-[#f8f8f8] to-[#f4f4f4] animate-shimmer"
+                                style={{
+                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                    animationDuration: `${1 + Math.random() * 1.5}s`,
+                                }}
+                            />
+                        </div>
+                    ))}
+                </s-stack>
+            </div>
         );
     };
 
@@ -42,7 +44,7 @@ export function DashboardSkeleton() {
                     </s-grid-item>
                     <s-grid-item gridColumn="span 4" gridRow="span 1">
                         <s-section padding="base">
-                            <s-stack gap="small">
+                            <s-stack gap="base">
                                 {itemSkeleton()}
                                 {itemSkeleton()}
                             </s-stack>

@@ -29,41 +29,49 @@ export default function BundlePageSkeleton() {
                     >
                         {gridItems.map((_, index) => (
                             <s-grid-item key={index} gridColumn="auto">
-                                <s-box
-                                    background="base"
-                                    border="base"
-                                    borderRadius="base"
-                                >
-                                    <div className="animate-pulse space-y-3 p-5">
-                                        {skeletonLines.map((_, i) => (
-                                            <div
-                                                key={i}
-                                                className="h-2 bg-[#ebebeb] rounded"
-                                                style={{
-                                                    width: `${Math.floor(
-                                                        Math.random() * (100 - 60 + 1)
-                                                    ) + 60}%`,
-                                                }}
-                                            />
-                                        ))}
+                                <s-section padding="base">
+                                    <div className="p-4">
+                                        <s-stack gap="base">
+                                            {Array.from({ length: 8 }).map((_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="h-2 bg-[#f4f4f4] rounded overflow-hidden relative"
+                                                >
+                                                    <div
+                                                        className="absolute inset-0 bg-gradient-to-r from-[#f4f4f4] via-[#f8f8f8] to-[#f4f4f4] animate-shimmer"
+                                                        style={{
+                                                            width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                                            animationDuration: `${1 + Math.random() * 1.5}s`,
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </s-stack>
                                     </div>
-                                </s-box>
+                                </s-section>
                             </s-grid-item>
                         ))}
                     </s-grid>
                 </s-stack>
 
                 <s-section padding="base">
-                    <div className="animate-pulse space-y-3 p-5">
-                        {Array.from({ length: 6 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="h-2 bg-[#ebebeb] rounded"
-                                style={{
-                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
-                                }}
-                            />
-                        ))}
+                    <div className="p-4">
+                        <s-stack gap="base">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="h-2 bg-[#f4f4f4] rounded overflow-hidden relative"
+                                >
+                                    <div
+                                        className="absolute inset-0 bg-gradient-to-r from-[#f4f4f4] via-[#f8f8f8] to-[#f4f4f4] animate-shimmer"
+                                        style={{
+                                            width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                            animationDuration: `${1 + Math.random() * 1.5}s`,
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </s-stack>
                     </div>
                 </s-section>
 

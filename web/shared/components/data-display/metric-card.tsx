@@ -89,21 +89,22 @@ export function MetricCard({
 
                         {isLoading ? (
                             <s-section padding="base">
-                                <s-box>
-                                    <div className="animate-pulse space-y-1">
-                                        {Array.from({ length: 3 }).map(
-                                            (_, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="h-1 bg-[#ebebeb] rounded"
-                                                    style={{
-                                                        width: `${Math.floor(Math.random() * (100 - 80 + 1)) + 80}%`,
-                                                    }}
-                                                />
-                                            ),
-                                        )}
-                                    </div>
-                                </s-box>
+                                <s-stack gap="small-400">
+                                    {Array.from({ length: 3 }).map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className="h-1 bg-[#f4f4f4] rounded overflow-hidden relative"
+                                        >
+                                            <div
+                                                className="absolute inset-0 bg-gradient-to-r from-[#f4f4f4] via-[#f8f8f8] to-[#f4f4f4] animate-shimmer"
+                                                style={{
+                                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
+                                                    animationDuration: `${1 + Math.random() * 1.5}s`,
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
+                                </s-stack>
                             </s-section>
                         ) : (
                             <s-stack direction="inline" gap="small-200">

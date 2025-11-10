@@ -29,9 +29,28 @@ export interface DashboardQuickActionItem {
     permissions?: string[];
 }
 
+/**
+ * Dashboard callout card item
+ */
+
 export interface DashboardCalloutCardsItem {
     title: string;
     description: string;
-    icon: IconSource;
+    // icon: IconSource;
+    icon: "lightbulb" | "video" | "question-circle";
     primaryButton?: CalloutButtonProps | null;
+}
+
+/**
+ * Dashboard setup guide item
+ */
+
+export interface DashboardSetupConfig {
+    id: number;
+    title: string;
+    description: string;
+    image_url: string;
+    complete: boolean;
+    primaryButton?: CalloutButtonProps | null;
+    secondaryButton?: CalloutButtonProps | null;
 }
