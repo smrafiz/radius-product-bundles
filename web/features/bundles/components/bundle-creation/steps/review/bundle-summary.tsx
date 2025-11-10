@@ -5,7 +5,6 @@ import {
     SelectedProducts,
     useBundleStore,
 } from "@/features/bundles";
-import { BlockStack, Card, Divider, InlineStack, Text } from "@shopify/polaris";
 
 export function BundleSummary() {
     const { bundleData, getGroupedItems } = useBundleStore();
@@ -52,123 +51,129 @@ export function BundleSummary() {
     const total = subtotal - discount;
 
     return (
-        <Card>
-            <BlockStack gap="400">
-                <Text as="h2" variant="headingMd" fontWeight="medium">
-                    Bundle Summary
-                </Text>
+        <s-section>
+            <s-stack gap="base">
+                <s-heading>Bundle Summary</s-heading>
 
                 {/* Name */}
-                <InlineStack align="space-between">
-                    <Text as="p" variant="bodySm" tone="subdued">
-                        Name:
-                    </Text>
-                    <Text as="p" variant="bodySm">
-                        {bundleData.name || "Not set"}
-                    </Text>
-                </InlineStack>
+                <s-stack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    direction="inline"
+                >
+                    <s-text color="subdued">Name:</s-text>
+                    <s-text color="subdued">{bundleData.name || "Not set"}</s-text>
+                </s-stack>
 
                 {/* Description */}
-                <InlineStack align="space-between">
-                    <Text as="p" variant="bodySm" tone="subdued">
-                        Description:
-                    </Text>
-                    <Text as="p" variant="bodySm">
-                        {bundleData.description || "Not set"}
-                    </Text>
-                </InlineStack>
+                <s-stack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    direction="inline"
+                >
+                    <s-text color="subdued">Description:</s-text>
+                    <s-text color="subdued">{bundleData.description || "Not set"}</s-text>
+                </s-stack>
 
                 {/* Discount Info */}
-                <InlineStack align="space-between">
-                    <Text as="p" variant="bodySm" tone="subdued">
-                        Discount:
-                    </Text>
-                    <Text as="p" variant="bodySm">
-                        {formatDiscountValue()}
-                    </Text>
-                </InlineStack>
+                <s-stack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    direction="inline"
+                >
+                    <s-text color="subdued">Discount:</s-text>
+                    <s-text color="subdued">{formatDiscountValue()}</s-text>
+                </s-stack>
 
-                <Divider />
+                <s-divider />
 
                 <SelectedProducts />
 
-                <Divider />
+                <s-divider />
 
                 {/* Subtotal without discount */}
-                <InlineStack align="space-between">
-                    <Text as="p" tone="subdued">
-                        Subtotal
-                    </Text>
-                    <Text as="p">${subtotal.toFixed(2)}</Text>
-                </InlineStack>
+                <s-stack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    direction="inline"
+                >
+                    <s-text>Subtotal</s-text>
+                    <s-text>${subtotal.toFixed(2)}</s-text>
+                </s-stack>
 
                 {/* Discount */}
                 {discount > 0 && (
-                    <InlineStack align="space-between">
-                        <Text as="p" tone="subdued">
-                            Discount
-                        </Text>
-                        <Text as="p">- ${discount.toFixed(2)}</Text>
-                    </InlineStack>
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text>Discount</s-text>
+                        <s-text>- ${discount.toFixed(2)}</s-text>
+                    </s-stack>
                 )}
 
                 {/* Total with discount */}
-                <InlineStack align="space-between">
-                    <Text as="p" fontWeight="medium">
-                        Total
-                    </Text>
-                    <Text as="p" fontWeight="bold">
-                        ${total.toFixed(2)}
-                    </Text>
-                </InlineStack>
+                <s-stack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    direction="inline"
+                >
+                    <s-text type="strong">Total</s-text>
+                    <s-text type="strong">${total.toFixed(2)}</s-text>
+                </s-stack>
 
                 {/* Optional: min order, max discount, dates */}
                 {bundleData.minOrderValue !== undefined && (
-                    <InlineStack align="space-between">
-                        <Text as="p" variant="bodySm" tone="subdued">
-                            Min Order:
-                        </Text>
-                        <Text as="p" variant="bodySm">
-                            ${bundleData.minOrderValue}
-                        </Text>
-                    </InlineStack>
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text color="subdued">Min Order:</s-text>
+                        <s-text color="subdued">${bundleData.minOrderValue}</s-text>
+                    </s-stack>
                 )}
 
                 {bundleData.maxDiscountAmount !== undefined && (
-                    <InlineStack align="space-between">
-                        <Text as="p" variant="bodySm" tone="subdued">
-                            Max Discount:
-                        </Text>
-                        <Text as="p" variant="bodySm">
-                            ${bundleData.maxDiscountAmount}
-                        </Text>
-                    </InlineStack>
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text color="subdued">Max Discount:</s-text>
+                        <s-text color="subdued">${bundleData.maxDiscountAmount}</s-text>
+                    </s-stack>
                 )}
 
                 {bundleData.startDate && (
-                    <InlineStack align="space-between">
-                        <Text as="p" variant="bodySm" tone="subdued">
-                            Start Date:
-                        </Text>
-                        <Text as="p" variant="bodySm">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text color="subdued">Start Date:</s-text>
+                        <s-text color="subdued">
                             {new Date(
                                 bundleData.startDate,
                             ).toLocaleDateString()}
-                        </Text>
-                    </InlineStack>
+                        </s-text>
+                    </s-stack>
                 )}
 
                 {bundleData.endDate && (
-                    <InlineStack align="space-between">
-                        <Text as="p" variant="bodySm" tone="subdued">
-                            End Date:
-                        </Text>
-                        <Text as="p" variant="bodySm">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text color="subdued">End Date:</s-text>
+                        <s-text color="subdued">
                             {new Date(bundleData.endDate).toLocaleDateString()}
-                        </Text>
-                    </InlineStack>
+                        </s-text>
+                    </s-stack>
                 )}
-            </BlockStack>
-        </Card>
+            </s-stack>
+        </s-section>
     );
 }

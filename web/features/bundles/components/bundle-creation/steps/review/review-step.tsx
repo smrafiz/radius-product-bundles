@@ -2,7 +2,6 @@
 
 import {
     BundleSummary,
-    StepHeading,
     useBundleFormMethods,
 } from "@/features/bundles";
 import { Banner, BlockStack, List } from "@shopify/polaris";
@@ -23,38 +22,38 @@ export function ReviewStep() {
     const hasErrors = formErrors.length > 0;
 
     return (
-        <BlockStack gap="500">
-            <StepHeading
-                title="Review & Create"
-                description="Review your bundle configuration and create it"
-            />
-
+        <s-stack gap="base">
             {/* Show validation errors */}
             {hasErrors && (
-                <Banner
+                <s-banner
+                    heading="Please fix the following errors:"
                     tone="critical"
-                    title="Please fix the following errors:"
+                    dismissible
                 >
-                    <List type="bullet">
+                    <s-unordered-list>
                         {formErrors.map(({ field, message }, index) => (
-                            <List.Item key={index}>
-                                <strong>{field}:</strong> {message}
-                            </List.Item>
+                            <s-list-item key={index}>
+                                {field}: {message}
+                            </s-list-item>
                         ))}
-                    </List>
-                </Banner>
+                    </s-unordered-list>
+                </s-banner>
             )}
 
             {/* Show success message when valid */}
             {isValid && !hasErrors && (
-                <Banner tone="success" title="Bundle is ready to create">
+                <s-banner
+                    heading="Bundle is ready to create"
+                    tone="success"
+                    dismissible
+                >
                     All required fields are filled and validation passed. Click
                     "Create Bundle" to save your bundle.
-                </Banner>
+                </s-banner>
             )}
 
             {/* Bundle Summary */}
             <BundleSummary />
-        </BlockStack>
+        </s-stack>
     );
 }

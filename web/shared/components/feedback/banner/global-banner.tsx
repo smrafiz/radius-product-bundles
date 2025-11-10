@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { MessageType } from "@/types";
-import { useGlobalBannerStore } from "@/shared";
+import { MessageType, useGlobalBannerStore } from "@/shared";
 
 const getToneFromType = (
     type: MessageType
