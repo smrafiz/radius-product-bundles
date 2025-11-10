@@ -1,7 +1,10 @@
 "use client";
 
-import { useBundleStore, useBundleValidation } from "@/features/bundles";
-import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
+import {
+    useBundleFormMethods,
+    useBundleStore,
+    useBundleValidation,
+} from "@/features/bundles";
 
 export function BundleDetails() {
     const { watch, setValue } = useBundleFormMethods();
