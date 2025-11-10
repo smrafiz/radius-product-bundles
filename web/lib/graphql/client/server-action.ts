@@ -12,25 +12,29 @@ export async function executeGraphQLQuery<T = any>(
 
         if (!sessionToken) {
             return {
-                errors: [{
-                    message: "Session token is required",
-                    extensions: {
-                        code: "MISSING_SESSION_TOKEN",
-                        timestamp: new Date().toISOString()
-                    }
-                }]
+                errors: [
+                    {
+                        message: "Session token is required",
+                        extensions: {
+                            code: "MISSING_SESSION_TOKEN",
+                            timestamp: new Date().toISOString(),
+                        },
+                    },
+                ],
             } as GraphQLResponse<T>;
         }
 
         if (!query) {
             return {
-                errors: [{
-                    message: "GraphQL query is required",
-                    extensions: {
-                        code: "MISSING_QUERY",
-                        timestamp: new Date().toISOString()
-                    }
-                }]
+                errors: [
+                    {
+                        message: "GraphQL query is required",
+                        extensions: {
+                            code: "MISSING_QUERY",
+                            timestamp: new Date().toISOString(),
+                        },
+                    },
+                ],
             } as GraphQLResponse<T>;
         }
 
@@ -42,13 +46,15 @@ export async function executeGraphQLQuery<T = any>(
 
         if (!session?.accessToken) {
             return {
-                errors: [{
-                    message: "No access token found in session",
-                    extensions: {
-                        code: "MISSING_ACCESS_TOKEN",
-                        timestamp: new Date().toISOString()
-                    }
-                }]
+                errors: [
+                    {
+                        message: "No access token found in session",
+                        extensions: {
+                            code: "MISSING_ACCESS_TOKEN",
+                            timestamp: new Date().toISOString(),
+                        },
+                    },
+                ],
             } as GraphQLResponse<T>;
         }
 
@@ -56,13 +62,15 @@ export async function executeGraphQLQuery<T = any>(
 
         if (!accessToken) {
             return {
-                errors: [{
-                    message: "Access token is undefined",
-                    extensions: {
-                        code: "INVALID_ACCESS_TOKEN",
-                        timestamp: new Date().toISOString()
-                    }
-                }]
+                errors: [
+                    {
+                        message: "Access token is undefined",
+                        extensions: {
+                            code: "INVALID_ACCESS_TOKEN",
+                            timestamp: new Date().toISOString(),
+                        },
+                    },
+                ],
             } as GraphQLResponse<T>;
         }
 
@@ -90,9 +98,9 @@ export async function executeGraphQLQuery<T = any>(
                         ...err,
                         extensions: {
                             ...(err.extensions || {}),
-                            timestamp: new Date().toISOString()
-                        }
-                    }))
+                            timestamp: new Date().toISOString(),
+                        },
+                    })),
                 } as GraphQLResponse<T>;
             }
         }

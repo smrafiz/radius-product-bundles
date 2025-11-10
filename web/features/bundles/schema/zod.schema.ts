@@ -119,14 +119,13 @@ export const bundleSchema = z
                     productId: productGidSchema,
                     variantId: variantGidSchema,
                     quantity: z.number().int().min(1).max(1000),
-                    role: z
-                        .enum([
-                            "TRIGGER",
-                            "REWARD",
-                            "INCLUDED",
-                            "OPTIONAL",
-                            "GROUP_OPTION",
-                        ]),
+                    role: z.enum([
+                        "TRIGGER",
+                        "REWARD",
+                        "INCLUDED",
+                        "OPTIONAL",
+                        "GROUP_OPTION",
+                    ]),
                 }),
             )
             .min(1, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED)

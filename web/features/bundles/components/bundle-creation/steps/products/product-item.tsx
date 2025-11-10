@@ -17,7 +17,6 @@ import { useSortable } from "@dnd-kit/sortable";
 import { ProductGroup, useBundleStore } from "@/features/bundles";
 import { useProductPicker } from "@/shared";
 
-
 interface ProductItemProps {
     group: ProductGroup;
 }

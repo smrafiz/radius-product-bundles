@@ -1,6 +1,6 @@
 "use client";
 
-import { useGlobalBanner, useModalStore, withLoader, } from "@/shared";
+import { useGlobalBanner, useModalStore, withLoader } from "@/shared";
 import {
     bulkToggleBundleStatusAction,
     BundleStatus,

@@ -11,7 +11,8 @@ import { BundleProductRole } from "@prisma/client";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();
-    const { currentStep, validationAttempted, getGroupedItems, selectedItems } = useBundleStore();
+    const { currentStep, validationAttempted, getGroupedItems, selectedItems } =
+        useBundleStore();
 
     if (!form) {
         throw new Error(
@@ -69,12 +70,14 @@ export function useBundleValidation() {
                 }
 
                 if (item.variantId) {
-                    return [{
-                        productId: item.productId.replace(/^product-/, ""),
-                        variantId: item.variantId,
-                        quantity: item.quantity || 1,
-                        role: "INCLUDED",
-                    }];
+                    return [
+                        {
+                            productId: item.productId.replace(/^product-/, ""),
+                            variantId: item.variantId,
+                            quantity: item.quantity || 1,
+                            role: "INCLUDED",
+                        },
+                    ];
                 }
 
                 return [];
@@ -119,7 +122,11 @@ export function useBundleValidation() {
                 if (!requiresValue) return true;
 
                 const numericValue = Number(value);
-                return value !== undefined && !isNaN(numericValue) && numericValue > 0;
+                return (
+                    value !== undefined &&
+                    !isNaN(numericValue) &&
+                    numericValue > 0
+                );
             }
 
             return value !== undefined && value !== "";

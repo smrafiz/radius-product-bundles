@@ -387,7 +387,7 @@ export const useBundleStore = create(
 
             const selectedCount = items.reduce(
                 (count, item) => count + (item.variantIds?.length || 0),
-                0
+                0,
             );
 
             const originalTotal = items[0]?.totalVariants || 1;

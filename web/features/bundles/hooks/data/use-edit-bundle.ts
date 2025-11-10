@@ -16,10 +16,10 @@ import { ProductNode, useGraphQL } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 const isProductNode = (node: any): node is ProductNode => {
-    const hasId = typeof node.id === 'string' && node.id.includes('Product');
-    const hasTitle = typeof node.title === 'string';
-    const hasHandle = typeof node.handle === 'string';
-    const hasCorrectType = !node.__typename || node.__typename === 'Product';
+    const hasId = typeof node.id === "string" && node.id.includes("Product");
+    const hasTitle = typeof node.title === "string";
+    const hasHandle = typeof node.handle === "string";
+    const hasCorrectType = !node.__typename || node.__typename === "Product";
 
     return hasId && hasTitle && hasHandle && hasCorrectType;
 };
@@ -98,10 +98,9 @@ export function useEditBundle(bundleId: string) {
 
             const selectedItems: SelectedItem[] = Object.values(grouped).map(
                 (bp: any, index: number) => {
-                    const productNodes = (products || [])
-                        .filter(isProductNode);
+                    const productNodes = (products || []).filter(isProductNode);
                     const shopifyProduct = productNodes.find(
-                        (p) => p.id === bp.id
+                        (p) => p.id === bp.id,
                     );
                     const firstVariant = shopifyProduct?.variants?.nodes?.[0];
 

@@ -11,7 +11,7 @@ import { BundleOwnershipCheck } from "@/features/bundles";
  */
 export async function verifyBundleOwnership(
     bundleId: string,
-    shop: string
+    shop: string,
 ): Promise<BundleOwnershipCheck> {
     const bundle = await prisma.bundle.findUnique({
         where: { id: bundleId },
@@ -35,7 +35,7 @@ export async function verifyBundleOwnership(
 export async function verifyBundleOwnershipTx(
     tx: Prisma.TransactionClient,
     bundleId: string,
-    shop: string
+    shop: string,
 ): Promise<BundleOwnershipCheck> {
     const bundle = await tx.bundle.findUnique({
         where: { id: bundleId },
@@ -58,7 +58,7 @@ export async function verifyBundleOwnershipTx(
  */
 export async function verifyMultipleBundlesOwnership(
     bundleIds: string[],
-    shop: string
+    shop: string,
 ): Promise<BundleOwnershipCheck[]> {
     const bundles = await prisma.bundle.findMany({
         where: {
@@ -69,7 +69,9 @@ export async function verifyMultipleBundlesOwnership(
     });
 
     if (bundles.length !== bundleIds.length) {
-        throw new Error("Some bundles not found or you don't have permission to access them");
+        throw new Error(
+            "Some bundles not found or you don't have permission to access them",
+        );
     }
 
     return bundles;
@@ -81,7 +83,7 @@ export async function verifyMultipleBundlesOwnership(
 export async function verifyMultipleBundlesOwnershipTx(
     tx: Prisma.TransactionClient,
     bundleIds: string[],
-    shop: string
+    shop: string,
 ): Promise<BundleOwnershipCheck[]> {
     const bundles = await tx.bundle.findMany({
         where: {
@@ -92,7 +94,9 @@ export async function verifyMultipleBundlesOwnershipTx(
     });
 
     if (bundles.length !== bundleIds.length) {
-        throw new Error("Some bundles not found or you don't have permission to access them");
+        throw new Error(
+            "Some bundles not found or you don't have permission to access them",
+        );
     }
 
     return bundles;
@@ -107,7 +111,7 @@ export async function verifyMultipleBundlesOwnershipTx(
  */
 export async function isBundleOwnedByShop(
     bundleId: string,
-    shop: string
+    shop: string,
 ): Promise<boolean> {
     const bundle = await prisma.bundle.findFirst({
         where: { id: bundleId, shop },

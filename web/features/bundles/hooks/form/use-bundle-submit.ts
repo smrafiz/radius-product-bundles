@@ -37,12 +37,15 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             }
 
             // Token retry
-            if (result.status === "error" &&
+            if (
+                result.status === "error" &&
                 (result.message?.includes("token") ||
                     result.message?.includes("exp") ||
-                    result.message?.includes("session"))) {
-
-                console.warn('[Submit] Token expired, retrying with fresh token...');
+                    result.message?.includes("session"))
+            ) {
+                console.warn(
+                    "[Submit] Token expired, retrying with fresh token...",
+                );
 
                 const freshToken = await app.idToken();
 
@@ -73,7 +76,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             } else {
                 showError("Failed to save bundle", {
                     content:
-                        result.message || "Please check your inputs and try again.",
+                        result.message ||
+                        "Please check your inputs and try again.",
                 });
             }
         } catch (error) {

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { EditBundlePage, } from "@/features/bundles";
+import { EditBundlePage } from "@/features/bundles";
 
 /**
  * Generate metadata

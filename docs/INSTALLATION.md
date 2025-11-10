@@ -10,13 +10,13 @@ Complete guide to set up the Radius Product Bundles Shopify app on your local de
 
 Install the following before proceeding:
 
-| Software | Minimum Version | Installation |
-|----------|----------------|--------------|
-| **Node.js** | v20.0.0 or higher | [Download](https://nodejs.org/) |
-| **Bun** | v1.0.0 or higher | [Download](https://bun.sh/) or `curl -fsSL https://bun.sh/install \| bash` |
-| **pnpm** | v9.0.0 or higher | `npm install -g pnpm` or `corepack enable` |
-| **Shopify CLI** | v3.83.0 or higher | `npm install -g @shopify/cli@latest` |
-| **Git** | Latest | [Download](https://git-scm.com/) |
+| Software        | Minimum Version   | Installation                                                               |
+| --------------- | ----------------- | -------------------------------------------------------------------------- |
+| **Node.js**     | v20.0.0 or higher | [Download](https://nodejs.org/)                                            |
+| **Bun**         | v1.0.0 or higher  | [Download](https://bun.sh/) or `curl -fsSL https://bun.sh/install \| bash` |
+| **pnpm**        | v9.0.0 or higher  | `npm install -g pnpm` or `corepack enable`                                 |
+| **Shopify CLI** | v3.83.0 or higher | `npm install -g @shopify/cli@latest`                                       |
+| **Git**         | Latest            | [Download](https://git-scm.com/)                                           |
 
 ### Verify Installation
 
@@ -76,6 +76,7 @@ This single command installs dependencies for all workspace packages defined in 
 6. Copy the **Connection String** from the dashboard
 
 Your connection string looks like:
+
 ```
 postgresql://username:password@ep-xxx-xxx.region.aws.neon.tech/neondb?sslmode=require
 ```
@@ -173,40 +174,46 @@ bun run dev:app
 **First-time setup prompts:**
 
 1. **Log in to Shopify**
-   ```
-   ? Log in to your Shopify account:
-   > Yes
-   ```
-   Browser opens → Log in with Partner account
+
+    ```
+    ? Log in to your Shopify account:
+    > Yes
+    ```
+
+    Browser opens → Log in with Partner account
 
 2. **Select Partner Organization**
-   ```
-   ? Which Partners organization is this work for?
-   > Your Organization Name
-   ```
+
+    ```
+    ? Which Partners organization is this work for?
+    > Your Organization Name
+    ```
 
 3. **Create or Use App**
-   ```
-   ? Create this project as a new app on Shopify?
-   > Yes, create it as a new app
-   ```
 
-   OR if you created app manually in Partner Dashboard:
-   ```
-   > No, connect it to an existing app
-   ```
+    ```
+    ? Create this project as a new app on Shopify?
+    > Yes, create it as a new app
+    ```
+
+    OR if you created app manually in Partner Dashboard:
+
+    ```
+    > No, connect it to an existing app
+    ```
 
 4. **App Name** (if creating new)
-   ```
-   ? App name:
-   > Product Bundles
-   ```
+
+    ```
+    ? App name:
+    > Product Bundles
+    ```
 
 5. **Select Development Store**
-   ```
-   ? Which development store would you like to use?
-   > your-store.myshopify.com
-   ```
+    ```
+    ? Which development store would you like to use?
+    > your-store.myshopify.com
+    ```
 
 ### Step 2: Install App
 
@@ -231,12 +238,14 @@ bun run dev
 ```
 
 This command:
+
 - ✅ Starts Next.js app (port 3000)
 - ✅ Starts Shopify tunnel (Cloudflare)
 - ✅ Watches and builds widgets
 - ✅ Hot reloads on file changes
 
 **Access your app:**
+
 - **In Shopify Admin**: Apps → Product Bundles
 - **Direct URL**: Check terminal for tunnel URL (e.g., `https://xyz.trycloudflare.com`)
 

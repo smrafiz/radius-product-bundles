@@ -57,8 +57,10 @@ export async function checkRateLimit(
     shop: string,
     maxPerHour: number = 10,
 ): Promise<SecurityCheckResult> {
-    const recentBundleCount =
-        await countRecentBundles(shop, new Date(Date.now() - 60 * 60 * 1000));
+    const recentBundleCount = await countRecentBundles(
+        shop,
+        new Date(Date.now() - 60 * 60 * 1000),
+    );
 
     if (recentBundleCount >= maxPerHour) {
         console.warn(
@@ -94,8 +96,7 @@ export async function checkShopStatus(
 
         return {
             passed: false,
-            reason:
-                "Shop account is suspended. Please contact support for assistance.",
+            reason: "Shop account is suspended. Please contact support for assistance.",
         };
     }
 
@@ -168,10 +169,7 @@ export async function detectAbusiveBehavior(
     hoursToCheck: number = 24,
 ): Promise<AbusivePatternResult> {
     // Get activity for the specified period
-    const activity = await getBundleActivity(
-        shop,
-        hoursToCheck,
-    );
+    const activity = await getBundleActivity(shop, hoursToCheck);
 
     // Threshold for excessive creation
     const EXCESSIVE_CREATION_THRESHOLD = 50;

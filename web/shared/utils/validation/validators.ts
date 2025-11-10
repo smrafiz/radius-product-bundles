@@ -7,7 +7,9 @@ import { ValidationErrors } from "@/shared";
 /**
  * Format errors as a single concatenated string
  */
-export function formatValidationErrorsAsString(errors: ValidationErrors): string {
+export function formatValidationErrorsAsString(
+    errors: ValidationErrors,
+): string {
     if (!errors || Object.keys(errors).length === 0) {
         return "Validation failed";
     }
@@ -24,7 +26,9 @@ export function formatValidationErrorsAsString(errors: ValidationErrors): string
 /**
  * Format errors as an array of messages
  */
-export function formatValidationErrorsAsArray(errors: ValidationErrors): string[] {
+export function formatValidationErrorsAsArray(
+    errors: ValidationErrors,
+): string[] {
     if (!errors || Object.keys(errors).length === 0) {
         return ["Validation failed"];
     }
@@ -39,7 +43,9 @@ export function formatValidationErrorsAsArray(errors: ValidationErrors): string[
 /**
  * Format errors as bullet points
  */
-export function formatValidationErrorsAsBullets(errors: ValidationErrors): string {
+export function formatValidationErrorsAsBullets(
+    errors: ValidationErrors,
+): string {
     if (!errors || Object.keys(errors).length === 0) {
         return "Validation failed";
     }
@@ -101,7 +107,10 @@ function formatFieldName(field: string): string {
 
     // Capitalize the first letter of each word
     return words
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .map(
+            (word) =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+        )
         .join(" ");
 }
 
@@ -116,14 +125,20 @@ export function getValidationErrorCount(errors: ValidationErrors): number {
 /**
  * Check if specific field has error
  */
-export function hasFieldError(errors: ValidationErrors, field: string): boolean {
-    return (errors && errors[field] && errors[field]._errors.length > 0);
+export function hasFieldError(
+    errors: ValidationErrors,
+    field: string,
+): boolean {
+    return errors && errors[field] && errors[field]._errors.length > 0;
 }
 
 /**
  * Get error message for specific field
  */
-export function getFieldErrorMessage(errors: ValidationErrors, field: string): string | null {
+export function getFieldErrorMessage(
+    errors: ValidationErrors,
+    field: string,
+): string | null {
     if (!errors || !errors[field] || errors[field]._errors.length === 0) {
         return null;
     }

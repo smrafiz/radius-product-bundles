@@ -2,7 +2,7 @@ import fs from "fs";
 import "dotenv/config";
 import path from "path";
 import toml from "@iarna/toml";
-import setupCheck from "@/utils/shopify/setupCheck";
+import setupCheck from "./setupCheck";
 import type { AppConfig } from "@/_developer/types/toml";
 
 // Initialize config
@@ -10,12 +10,6 @@ const config: AppConfig = {} as AppConfig;
 
 try {
     setupCheck(); // Ensure all env vars are loaded
-
-    // let appUrl =
-    //     process.env.HOST ||
-    //     process.env.SHOPIFY_APP_URL ||
-    //     process.env.APP_URL ||
-    //     "https://www.app.example.com/";
 
     let appUrl = "https://www.app.example.com/";
 
@@ -33,7 +27,7 @@ try {
 
     // App Proxy Configuration
     config.app_proxy = {
-        url: `https://www.app.example.com/api/proxy_route`,
+        url: `https://www.app.example.com/api/proxy`,
         subpath: "bundles",
         prefix: "apps",
     };

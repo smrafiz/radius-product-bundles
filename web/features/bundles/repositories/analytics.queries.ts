@@ -15,7 +15,7 @@ import { AnalyticsMetrics } from "@/features/bundles";
 export async function aggregateBundleMetrics(
     shop: string,
     thirtyDaysAgo: Date,
-    sixtyDaysAgo: Date
+    sixtyDaysAgo: Date,
 ): Promise<AnalyticsMetrics> {
     const [
         currentPeriod,
@@ -84,7 +84,7 @@ export async function aggregateBundleMetrics(
 export async function getBundleAnalytics(
     bundleId: string,
     startDate: Date,
-    endDate?: Date
+    endDate?: Date,
 ) {
     const where: any = {
         bundleId,
@@ -106,7 +106,7 @@ export async function getBundleAnalytics(
  */
 export async function getBundleAnalyticsSummary(
     bundleId: string,
-    startDate: Date
+    startDate: Date,
 ) {
     return await prisma.bundleAnalytics.aggregate({
         where: {
@@ -132,7 +132,7 @@ export async function getBundleAnalyticsSummary(
 export async function getTopBundlesByRevenue(
     shop: string,
     limit: number = 10,
-    startDate?: Date
+    startDate?: Date,
 ) {
     const where: any = {
         bundle: { shop },
@@ -164,7 +164,7 @@ export async function getTopBundlesByRevenue(
 export async function getAnalyticsTrend(
     shop: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
 ) {
     return await prisma.bundleAnalytics.groupBy({
         by: ["date"],

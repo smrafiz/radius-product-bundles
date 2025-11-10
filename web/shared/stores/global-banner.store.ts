@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { GlobalMessage, GlobalMessageState } from "@/shared";
 
-
 export const useGlobalBannerStore = create(
     immer<GlobalMessageState>((set, get) => ({
         messages: [],
@@ -11,8 +10,8 @@ export const useGlobalBannerStore = create(
             const id = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             const newMessage: GlobalMessage = {
                 ...message,
-                title: message.title ?? '',
-                type: message.type ?? 'info',
+                title: message.title ?? "",
+                type: message.type ?? "info",
                 id,
                 timestamp: Date.now(),
                 dismissible: message.dismissible ?? true,
@@ -36,7 +35,9 @@ export const useGlobalBannerStore = create(
 
         removeMessage: (id) =>
             set((state) => {
-                state.messages = state.messages.filter((msg: GlobalMessage) => msg.id !== id);
+                state.messages = state.messages.filter(
+                    (msg: GlobalMessage) => msg.id !== id,
+                );
             }),
 
         clearAllMessages: () =>

@@ -40,9 +40,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         startDate: bundleData.startDate
             ? new Date(bundleData.startDate)
             : undefined,
-        endDate: bundleData.endDate
-            ? new Date(bundleData.endDate)
-            : undefined,
+        endDate: bundleData.endDate ? new Date(bundleData.endDate) : undefined,
 
         // Products
         products: bundleData.products.map((product) => ({

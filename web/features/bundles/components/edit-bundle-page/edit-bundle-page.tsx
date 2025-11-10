@@ -11,7 +11,9 @@ import { use } from "react";
 import { DashboardSkeleton, GlobalForm } from "@/shared";
 import { Banner, Card, Page, Text } from "@shopify/polaris";
 
-export function EditBundlePage({ params }: {
+export function EditBundlePage({
+    params,
+}: {
     params: Promise<{ id: string }>;
 }) {
     const { id: bundleId } = use(params);

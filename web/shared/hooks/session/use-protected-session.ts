@@ -52,13 +52,15 @@ export function useProtectedSession() {
                 const hostParam = searchParams.get("host");
 
                 if (!shopParam) {
-                    console.error("❌ Missing shop param, cannot refresh session");
+                    console.error(
+                        "❌ Missing shop param, cannot refresh session",
+                    );
                     setTimeout(() => router.push("/api/auth"), 0);
                     return;
                 }
 
                 console.info("🔄 Attempting session refresh...");
-                const response = await fetch("/api/refresh-session", {
+                const response = await fetch("/api/session/refresh", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ shop: shopParam, host: hostParam }),
@@ -109,5 +111,12 @@ export function useProtectedSession() {
     ]);
 
     const isAuthenticated = hasValidSession && !isSessionExpired();
-    return { isInitialized, isAuthenticated, sessionToken, isRefreshing, isThemeExtension, hasValidSession };
+    return {
+        isInitialized,
+        isAuthenticated,
+        sessionToken,
+        isRefreshing,
+        isThemeExtension,
+        hasValidSession,
+    };
 }

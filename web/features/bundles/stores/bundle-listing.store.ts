@@ -29,9 +29,10 @@ export const useBundleListingStore = create<BundleListingState>()(
         queryValue: "",
 
         // Data actions
-        setBundles: (bundles) => set({
-            bundles: Array.isArray(bundles) ? bundles : []
-        }),
+        setBundles: (bundles) =>
+            set({
+                bundles: Array.isArray(bundles) ? bundles : [],
+            }),
         setMetrics: (metrics) => set({ metrics }),
         setLoading: (loading) => set({ loading }),
         setError: (error) => set({ error }),
@@ -129,7 +130,8 @@ export const useBundleListingStore = create<BundleListingState>()(
         getActiveBundlesCount: () => {
             const { bundles } = get();
             const safeBundles = Array.isArray(bundles) ? bundles : [];
-            return safeBundles.filter((bundle) => bundle.status === "ACTIVE").length;
+            return safeBundles.filter((bundle) => bundle.status === "ACTIVE")
+                .length;
         },
 
         getTotalBundlesCount: () => {
@@ -150,7 +152,8 @@ export const useBundleListingStore = create<BundleListingState>()(
             const totalPages = pagination.totalPages || 1;
             const { currentPage, itemsPerPage, totalItems } = pagination;
 
-            const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+            const startIndex =
+                totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
             const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
             return {
@@ -174,21 +177,21 @@ export const useBundleListingStore = create<BundleListingState>()(
             if (filters.search) {
                 const searchLower = filters.search.toLowerCase();
                 filtered = filtered.filter((bundle) =>
-                    bundle.name.toLowerCase().includes(searchLower)
+                    bundle.name.toLowerCase().includes(searchLower),
                 );
             }
 
             // Apply status filter
             if (filters.statusFilter && filters.statusFilter.length > 0) {
                 filtered = filtered.filter((bundle) =>
-                    filters.statusFilter?.includes(bundle.status)
+                    filters.statusFilter?.includes(bundle.status),
                 );
             }
 
             // Apply type filter
             if (filters.typeFilter && filters.typeFilter.length > 0) {
                 filtered = filtered.filter((bundle) =>
-                    filters.typeFilter?.includes(bundle.type)
+                    filters.typeFilter?.includes(bundle.type),
                 );
             }
 
@@ -199,7 +202,8 @@ export const useBundleListingStore = create<BundleListingState>()(
             const { pagination } = get();
             const filteredBundles = get().getFilteredBundles();
 
-            const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
+            const startIndex =
+                (pagination.currentPage - 1) * pagination.itemsPerPage;
             const endIndex = startIndex + pagination.itemsPerPage;
 
             return filteredBundles.slice(startIndex, endIndex);
@@ -207,7 +211,9 @@ export const useBundleListingStore = create<BundleListingState>()(
 
         updateBundleInStore: (bundleId, data) =>
             set((state) => {
-                const safeBundles = Array.isArray(state.bundles) ? state.bundles : [];
+                const safeBundles = Array.isArray(state.bundles)
+                    ? state.bundles
+                    : [];
                 const index = safeBundles.findIndex((b) => b.id === bundleId);
                 if (index === -1) return state;
 
@@ -220,7 +226,9 @@ export const useBundleListingStore = create<BundleListingState>()(
 
         removeBundleFromStore: (bundleId: string) =>
             set((state) => {
-                const safeBundles = Array.isArray(state.bundles) ? state.bundles : [];
+                const safeBundles = Array.isArray(state.bundles)
+                    ? state.bundles
+                    : [];
                 return {
                     bundles: safeBundles.filter(
                         (bundle) => bundle.id !== bundleId,
@@ -233,7 +241,11 @@ export const useBundleListingStore = create<BundleListingState>()(
                 set({ loading: true });
                 const app = useAppBridge();
                 const token = await app.idToken();
-                const result = await getBundlesAction(token, page, itemsPerPage);
+                const result = await getBundlesAction(
+                    token,
+                    page,
+                    itemsPerPage,
+                );
 
                 if (result.status === "success") {
                     set({
@@ -243,22 +255,24 @@ export const useBundleListingStore = create<BundleListingState>()(
                             ...get().pagination,
                             currentPage: page,
                             itemsPerPage: itemsPerPage,
-                            totalItems: result.data?.pagination?.totalItems ?? 0,
-                            totalPages: result.data?.pagination?.totalPages ?? 0,
+                            totalItems:
+                                result.data?.pagination?.totalItems ?? 0,
+                            totalPages:
+                                result.data?.pagination?.totalPages ?? 0,
                         },
                     });
                 } else {
                     set({
                         error: result.message,
                         loading: false,
-                        bundles: []
+                        bundles: [],
                     });
                 }
             } catch (error: any) {
                 set({
                     error: error.message || "Failed to refresh bundles",
                     loading: false,
-                    bundles: []
+                    bundles: [],
                 });
             }
         },

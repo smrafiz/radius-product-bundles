@@ -29,7 +29,10 @@ export function handleBundleError(error: unknown): ApiError {
         }
 
         // Permission errors
-        if (error.message.includes("permission") || error.message.includes("unauthorized")) {
+        if (
+            error.message.includes("permission") ||
+            error.message.includes("unauthorized")
+        ) {
             return {
                 status: "error",
                 message: "You don't have permission to perform this action",
@@ -37,7 +40,10 @@ export function handleBundleError(error: unknown): ApiError {
         }
 
         // Validation errors
-        if (error.message.includes("validation") || error.message.includes("invalid")) {
+        if (
+            error.message.includes("validation") ||
+            error.message.includes("invalid")
+        ) {
             return {
                 status: "error",
                 message: error.message,
@@ -64,7 +70,7 @@ export function handleBundleError(error: unknown): ApiError {
  */
 export function handleApiError(
     error: unknown,
-    defaultMessage: string = "Operation failed"
+    defaultMessage: string = "Operation failed",
 ): ApiError {
     console.error("[handleApiError]", error);
 

@@ -3,7 +3,14 @@
 import { useMemo, useState } from "react";
 import { useBundleStore } from "@/features/bundles";
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
-import { BlockStack, Button, Card, Collapsible, InlineStack, Text, } from "@shopify/polaris";
+import {
+    BlockStack,
+    Button,
+    Card,
+    Collapsible,
+    InlineStack,
+    Text,
+} from "@shopify/polaris";
 
 /**
  * Selected Products Component
@@ -51,7 +58,11 @@ export function SelectedProducts() {
                         <Card key={group.product.productId} padding="300">
                             <BlockStack gap="300">
                                 {/* Product Header */}
-                                <InlineStack gap="300" blockAlign="center" wrap={false}>
+                                <InlineStack
+                                    gap="300"
+                                    blockAlign="center"
+                                    wrap={false}
+                                >
                                     {group.product.image && (
                                         <img
                                             src={group.product.image}
@@ -66,12 +77,24 @@ export function SelectedProducts() {
                                         />
                                     )}
                                     <BlockStack gap="100">
-                                        <Text as="p" variant="bodyMd" fontWeight="semibold">
+                                        <Text
+                                            as="p"
+                                            variant="bodyMd"
+                                            fontWeight="semibold"
+                                        >
                                             {group.product.title}
                                         </Text>
-                                        {(group.product.vendor || group.product.productType) && (
-                                            <Text tone="subdued" as="span" variant="bodySm">
-                                                {[group.product.vendor, group.product.productType]
+                                        {(group.product.vendor ||
+                                            group.product.productType) && (
+                                            <Text
+                                                tone="subdued"
+                                                as="span"
+                                                variant="bodySm"
+                                            >
+                                                {[
+                                                    group.product.vendor,
+                                                    group.product.productType,
+                                                ]
                                                     .filter(Boolean)
                                                     .join(" • ")}
                                             </Text>

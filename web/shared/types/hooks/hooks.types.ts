@@ -15,4 +15,7 @@ export interface UseGraphQLOptions {
     refetchOnWindowFocus?: boolean;
 }
 
-export type GlobalMessageOptions = Omit<GlobalMessage, "id" | "timestamp" | "type">;
+export type GlobalMessageOptions = Omit<
+    GlobalMessage,
+    "id" | "timestamp" | "type"
+>;

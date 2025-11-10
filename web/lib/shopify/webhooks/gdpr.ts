@@ -135,46 +135,46 @@ export function setupGDPRWebHooks(path: string) {
                         // Delete bundles
                         prisma.bundle.deleteMany({ where: { shop } }),
                         // Delete automations
-                        prisma.automation.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.automation.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                         // Delete pricing rules
-                        prisma.pricingRule.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.pricingRule.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                         // Delete AI insights
-                        prisma.aIInsight.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.aIInsight.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                         // Delete notifications
-                        prisma.notification.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.notification.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                         // Delete alert rules
-                        prisma.alertRule.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.alertRule.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                         // Delete app settings
-                        prisma.appSettings.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.appSettings.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                         // Delete A/B tests
-                        prisma.aBTest.deleteMany({ 
-                            where: { 
-                                shop: { equals: shop } 
-                            } 
+                        prisma.aBTest.deleteMany({
+                            where: {
+                                shop: { equals: shop },
+                            },
                         }),
                     ]);
 

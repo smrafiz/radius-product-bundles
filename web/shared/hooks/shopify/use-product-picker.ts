@@ -29,18 +29,29 @@ export function useProductPicker() {
                 .map((group) => {
                     const selectedVariantIds = [
                         ...(group.product.variantIds || []),
-                        ...group.variants.map((v) => v.variantId).filter(Boolean),
-                    ].filter((id): id is string => typeof id === 'string' && id.length > 0);
+                        ...group.variants
+                            .map((v) => v.variantId)
+                            .filter(Boolean),
+                    ].filter(
+                        (id): id is string =>
+                            typeof id === "string" && id.length > 0,
+                    );
 
                     return {
                         id: group.product.productId,
-                        variants: selectedVariantIds.length > 0
-                            ? selectedVariantIds.map((id) => ({ id }))
-                            : undefined,
+                        variants:
+                            selectedVariantIds.length > 0
+                                ? selectedVariantIds.map((id) => ({ id }))
+                                : undefined,
                     };
                 })
-                .filter((selection): selection is { id: string; variants: { id: string }[] | undefined } =>
-                    selection.id.length > 0
+                .filter(
+                    (
+                        selection,
+                    ): selection is {
+                        id: string;
+                        variants: { id: string }[] | undefined;
+                    } => selection.id.length > 0,
                 );
 
             const result = await app.resourcePicker({
@@ -54,7 +65,7 @@ export function useProductPicker() {
             }
 
             const normalizedItems = result.map((p: any, index: number) =>
-                createSelectedItem(p, { displayOrder: index })
+                createSelectedItem(p, { displayOrder: index }),
             );
 
             setSelectedItems(normalizedItems);
@@ -102,7 +113,8 @@ export function useProductPicker() {
 
                     const normalizedItem = createSelectedItem(selectedProduct, {
                         quantity: currentItem?.quantity,
-                        displayOrder: currentItem?.displayOrder ?? currentPosition,
+                        displayOrder:
+                            currentItem?.displayOrder ?? currentPosition,
                         isRequired: currentItem?.isRequired,
                     });
 

@@ -6,11 +6,7 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export function AppLayoutWrapper({
-    children,
-}: {
-    children: ReactNode;
-}) {
+export function AppLayoutWrapper({ children }: { children: ReactNode }) {
     return (
         <div className={`radius-app-wrapper ${inter.className}`}>
             <Frame>{children}</Frame>

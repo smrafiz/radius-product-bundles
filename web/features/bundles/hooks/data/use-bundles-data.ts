@@ -41,7 +41,7 @@ export const useBundlesData = () => {
         if (filters.statusFilter && filters.statusFilter.length > 0) {
             return filters.statusFilter.filter(
                 (status): status is BundleStatus =>
-                    VALID_STATUSES.includes(status as BundleStatus)
+                    VALID_STATUSES.includes(status as BundleStatus),
             );
         }
 

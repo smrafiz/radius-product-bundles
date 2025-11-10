@@ -39,7 +39,7 @@ export const withLoader = <T extends (...args: any[]) => void>(
  * Wrapper function for async operations with automatic loader cleanup
  */
 export const withAsyncLoader = <T extends (...args: any[]) => any>(
-    callback: T
+    callback: T,
 ): ((...args: Parameters<T>) => Promise<void>) => {
     return async (...args: Parameters<T>): Promise<void> => {
         if (isShopifyAvailable()) {
@@ -92,7 +92,7 @@ export const executeWithLoading = async <T>(
  * Session token request.
  */
 export async function getSessionToken(
-    app: ReturnType<typeof useAppBridge>
+    app: ReturnType<typeof useAppBridge>,
 ): Promise<string> {
     return await app.idToken();
 }

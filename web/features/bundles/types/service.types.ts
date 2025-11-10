@@ -208,7 +208,7 @@ export interface CreateBundleServiceResponse {
 /*
  * Create bundle action input
  */
-export type CreateBundleActionInput = Omit<CreateBundleInput, 'shop'>;
+export type CreateBundleActionInput = Omit<CreateBundleInput, "shop">;
 
 /*
  * Security check result types
@@ -248,7 +248,7 @@ export interface ValidationResult {
 export interface BundleOperationContext {
     appSettings?: ValidationContext | null;
     shopSettings: {
-        appSettings: ValidationContext | null
+        appSettings: ValidationContext | null;
     };
 }
 

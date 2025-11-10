@@ -3,7 +3,11 @@
 import { GlobalBanner, MetricCard } from "@/shared";
 import { ColorIcon, PlusIcon } from "@shopify/polaris-icons";
 import { Frame, Layout, Page, Toast } from "@shopify/polaris";
-import { BundleTable, BundleTableSkeleton, useBundlesPage } from "@/features/bundles";
+import {
+    BundleTable,
+    BundleTableSkeleton,
+    useBundlesPage,
+} from "@/features/bundles";
 
 /**
  * Bundle listing page

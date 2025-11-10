@@ -85,9 +85,7 @@ export function validateBusinessRules(
     if (data.type === "MIX_AND_MATCH") {
         if (!data.allowMixAndMatch) {
             errors.allowMixAndMatch = {
-                _errors: [
-                    "Mix and Match must be enabled for this bundle type",
-                ],
+                _errors: ["Mix and Match must be enabled for this bundle type"],
             };
         }
 

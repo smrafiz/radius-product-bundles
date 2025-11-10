@@ -19,7 +19,10 @@ export function useBundleFilters() {
     } = useBundleListingStore();
 
     const { queryValue, setQueryValue } = useBundleListingStore();
-    const debouncedQuery = useDebounce(queryValue, BUNDLE_FILTERS.search.debounceMs);
+    const debouncedQuery = useDebounce(
+        queryValue,
+        BUNDLE_FILTERS.search.debounceMs,
+    );
 
     // Sync debounced query to store
     useEffect(() => {

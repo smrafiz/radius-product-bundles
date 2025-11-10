@@ -47,10 +47,10 @@ export async function fetchOperationContext(
     console.log("[Shared] Fetching shop settings...");
 
     const shopData = await getShop(shop);
-    
+
     // Ensure we return an object that matches the expected type
     const shopSettings = {
-        appSettings: shopData?.appSettings || null
+        appSettings: shopData?.appSettings || null,
     };
 
     if (shopSettings.appSettings?.maxBundleProducts !== undefined) {

@@ -13,7 +13,11 @@ import {
     transformBundles,
 } from "@/features/bundles";
 import { fetchProductsFromShopify } from "@/lib";
-import { countBundlesByShop, findBundleByIdWithAllRelations, findBundlesByShop, } from "../repositories";
+import {
+    countBundlesByShop,
+    findBundleByIdWithAllRelations,
+    findBundlesByShop,
+} from "../repositories";
 
 /**
  * Get the bundle list with filters and pagination
@@ -110,14 +114,14 @@ export async function getBundlesByStatus(
     statusFilter: BundleStatus[],
     sessionToken: string,
 ): Promise<any[]> {
-    return await getBundlesAction(sessionToken, 1, 100, { status: statusFilter }).then((result) => result.data);
+    return await getBundlesAction(sessionToken, 1, 100, {
+        status: statusFilter,
+    }).then((result) => result.data);
 }
 
 /**
  * Get active bundles
  */
-export async function getActiveBundles(
-    sessionToken: string,
-): Promise<any[]> {
+export async function getActiveBundles(sessionToken: string): Promise<any[]> {
     return await getBundlesByStatus(["ACTIVE"], sessionToken);
 }
