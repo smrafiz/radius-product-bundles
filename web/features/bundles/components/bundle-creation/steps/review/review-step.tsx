@@ -40,18 +40,6 @@ export function ReviewStep() {
                 </s-banner>
             )}
 
-            {/* Show success message when valid */}
-            {isValid && !hasErrors && (
-                <s-banner
-                    heading="Bundle is ready to create"
-                    tone="success"
-                    dismissible
-                >
-                    All required fields are filled and validation passed. Click
-                    "Create Bundle" to save your bundle.
-                </s-banner>
-            )}
-
             {/* Bundle Summary */}
             <BundleSummary />
         </s-stack>

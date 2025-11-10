@@ -26,28 +26,16 @@ export function DashboardPage() {
     useSyncBundles();
 
     return (
-        <s-page>
-            <s-stack gap="large" paddingBlockStart="large" paddingBlockEnd="large">
-                <s-stack direction='inline' alignItems="center" justifyContent="space-between">
-                    <s-heading>
-                        <div className='text-xl'>RadiusTheme Product Bundle</div>
-                    </s-heading>
-                    <s-stack direction="inline" gap="small-200">
-                        <s-button
-                            icon="view"
-                            variant="secondary"
-                            accessibilityLabel="View Analytics"
-                            onClick={analytics()}
-                        >View Analytics</s-button>
-                        <s-button
-                            icon="plus"
-                            variant="primary"
-                            accessibilityLabel="Create Bundle"
-                            onClick={bundleData.create()}
-                        >Create Bundle</s-button>
-                    </s-stack>
-                </s-stack>
+        <s-page heading="Product Bundle">
+            {/* Header buttons */}
+            <s-button slot="secondary-actions" variant="secondary" onClick={analytics()}>
+                View Analytics
+            </s-button>
+            <s-button slot="primary-action" variant="primary" onClick={bundleData.create()}>
+                Create Bundle
+            </s-button>
 
+            <s-stack gap="large" paddingBlockStart="large" paddingBlockEnd="large">
                 <s-stack gap="base">
 
                     {/* Banner */}

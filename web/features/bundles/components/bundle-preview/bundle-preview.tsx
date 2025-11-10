@@ -99,7 +99,7 @@ export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
                 <s-stack gap="base">
                     <s-stack gap="base">
                         <s-heading>
-                            Bundle Preview
+                            Bundle preview
                         </s-heading>
 
                         {/* Product Images */}
@@ -170,7 +170,7 @@ export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
                         </s-stack>
 
                         <s-button variant="primary">
-                            Add Bundle to Cart
+                            Add bundle to cart
                         </s-button>
                     </s-stack>
                 </s-stack>

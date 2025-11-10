@@ -53,7 +53,7 @@ export function BundleSummary() {
     return (
         <s-section>
             <s-stack gap="base">
-                <s-heading>Bundle Summary</s-heading>
+                <s-heading>Bundle summary</s-heading>
 
                 {/* Name */}
                 <s-stack

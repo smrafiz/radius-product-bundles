@@ -11,7 +11,7 @@ export function BundleTypeSelection() {
     const { goBack } = useAppNavigation();
 
     return (
-        <s-page>
+        <s-page heading="Select Bundle Type">
             <s-stack gap="large" paddingBlockStart="large" paddingBlockEnd="large">
                 <s-stack direction="inline" gap="base">
                     <s-stack paddingBlockStart="small-500">

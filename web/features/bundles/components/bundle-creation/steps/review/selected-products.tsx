@@ -25,7 +25,7 @@ export function SelectedProducts() {
                 alignItems="center"
                 gap="small"
             >
-                <s-heading>Selected Products ({itemCount})</s-heading>
+                <s-heading>Selected products ({itemCount})</s-heading>
                 <s-stack>
                     <s-clickable
                         onClick={handleToggle}

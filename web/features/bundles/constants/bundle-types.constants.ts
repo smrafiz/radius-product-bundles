@@ -9,7 +9,7 @@ import type { BundleConfig, BundleType } from "@/features/bundles";
  */
 export const BUNDLE_TYPES = {
     FIXED_BUNDLE: {
-        label: "Fixed Bundle",
+        label: "Fixed bundle",
         id: "FIXED_BUNDLE",
         slug: "fixed-bundle",
         description: "Bundle products together at a fixed price with discount",
@@ -41,7 +41,7 @@ export const BUNDLE_TYPES = {
         badge: { text: "New", tone: "success" },
     },
     VOLUME_DISCOUNT: {
-        label: "Volume Discount",
+        label: "Volume discount",
         id: "VOLUME_DISCOUNT",
         slug: "volume-discount",
         description: "Offer discounts based on quantity purchased",
@@ -51,7 +51,7 @@ export const BUNDLE_TYPES = {
         badge: { text: "New", tone: "success" },
     },
     MIX_AND_MATCH: {
-        label: "Mix & Match",
+        label: "Mix & match",
         id: "MIX_AND_MATCH",
         slug: "mix-and-match",
         description: "Choose any combination from products",
@@ -61,7 +61,7 @@ export const BUNDLE_TYPES = {
         badge: { text: "New", tone: "success" },
     },
     FREQUENTLY_BOUGHT_TOGETHER: {
-        label: "Frequently Bought Together",
+        label: "Frequently bought together",
         id: "FREQUENTLY_BOUGHT_TOGETHER",
         slug: "frequently-bought-together",
         description: "Frequently Bought Together",

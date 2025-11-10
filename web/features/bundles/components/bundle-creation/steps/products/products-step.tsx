@@ -47,7 +47,7 @@ export function ProductsStep() {
             {/* Bundle product list */}
             <s-section>
                 <s-heading>
-                    Select Products
+                    Select products
                 </s-heading>
                 <s-stack gap="base">
                     <s-stack
@@ -62,7 +62,7 @@ export function ProductsStep() {
                             loading={isLoading}
                             tone={hasProductError ? "critical" : undefined}
                         >
-                            Add Products
+                            Add products
                         </s-button>
                         {selectedItems.length > 0 && (
                             <s-button

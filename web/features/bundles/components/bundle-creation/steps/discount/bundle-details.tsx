@@ -30,11 +30,11 @@ export function BundleDetails() {
     return (
         <s-stack gap="base">
             <s-heading>
-                Bundle Details
+                Bundle details
             </s-heading>
 
             <s-text-field
-                label="Bundle Name"
+                label="Bundle name"
                 value={name || ""}
                 onChange={(event: Event) => {
                     const target = event.target as HTMLInputElement;
