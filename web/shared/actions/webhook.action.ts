@@ -1,8 +1,7 @@
 "use server";
 
-import { handleSessionToken } from "@/lib/shopify/verify";
-import { registerWebhooks } from "@/lib/shopify/register-webhooks";
-import { findOfflineSessionByShop } from "@/lib/db/session-storage";
+import { findOfflineSessionByShop } from "@/shared";
+import { handleSessionToken, registerWebhooks } from "@/lib/shopify";
 
 /**
  * Register the webhooks using the stored offline session

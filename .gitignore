@@ -96,9 +96,10 @@ shopify.app.app-next-vercel.toml
 # 🧠 Generated GraphQL / Types / SDKs
 # ──────────────────────────────────────────────
 web/lib/gql/graphql.ts
+web/lib/graphql/generated/graphql.ts
 web/lib/shopify/graphql/generated.ts
 web/lib/__generated__/
-web/generated/
+web/lib/graphql/generated/
 lib/gql/graphql.ts
 lib/shopify/graphql/generated.ts
 lib/__generated__/

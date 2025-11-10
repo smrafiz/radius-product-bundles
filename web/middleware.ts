@@ -59,9 +59,9 @@ export const config = {
     matcher: [
         /*
          * Exceptions:
-         * /api/auth, /api/webhooks, /api/proxy_route, /api/gdpr, /_next,
+         * /api/auth, /api/webhooks, /api/proxy, /api/gdpr, /_next,
          * /_proxy, /_auth, /_static, /_vercel, /public, /extensions (/favicon.ico, etc)
          */
-        "/((?!api/auth|api/webhooks|api/proxy_route|api/gdpr|_next|_proxy|_auth|_static|_vercel|favicon.ico|extensions|[\\w-]+\\.\\w+).*)",
+        "/((?!api/auth|api/webhooks|api/proxy|api/gdpr|_next|_proxy|_auth|_static|_vercel|favicon.ico|extensions|[\\w-]+\\.\\w+).*)",
     ],
 };

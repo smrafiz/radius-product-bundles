@@ -1,4 +1,4 @@
-import prisma from "@/lib/db/prisma-connect";
+import { prisma } from "@/shared";
 
 export async function upsertShop(
     domain: string,

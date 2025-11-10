@@ -15,9 +15,10 @@ export function groupProductsById(products: any[]): ProductGroup[] {
             groups[product.id] = {
                 featuredImage: product.featuredImage
                     ? {
-                        url: product.featuredImage.url,
-                        altText: product.featuredImage.altText ?? product.title,
-                    }
+                          url: product.featuredImage.url,
+                          altText:
+                              product.featuredImage.altText ?? product.title,
+                      }
                     : undefined,
                 id: product.id,
                 title: product.title,
@@ -43,7 +44,7 @@ export function createSelectedItem(
         quantity?: number;
         displayOrder?: number;
         isRequired?: boolean;
-    }
+    },
 ): SelectedItem {
     const variants = product.variants || [];
     const variantIds = variants.map((v: any) => v.id);
@@ -58,7 +59,10 @@ export function createSelectedItem(
         title: product.title,
         price: defaultVariant?.price || "0.00",
         compareAtPrice: defaultVariant?.compareAtPrice || null,
-        image: product.images?.[0]?.originalSrc || product.featuredImage?.url || "",
+        image:
+            product.images?.[0]?.originalSrc ||
+            product.featuredImage?.url ||
+            "",
         sku: defaultVariant?.sku || "",
         handle: product.handle,
         vendor: product.vendor,

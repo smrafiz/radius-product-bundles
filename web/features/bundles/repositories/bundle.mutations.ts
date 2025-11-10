@@ -15,8 +15,7 @@ import {
     verifyBundleOwnershipTx,
     verifyMultipleBundlesOwnershipTx,
 } from "@/features/bundles";
-import { generateBundleId } from "@/shared";
-import prisma from "@/lib/db/prisma-connect";
+import { prisma, generateBundleId } from "@/shared";
 import { BundleProductRole, Prisma } from "@prisma/client";
 
 // ==========================================
@@ -86,7 +85,7 @@ export async function createBundleProducts(
             productId: product.productId,
             variantId: product.variantId || null,
             quantity: product.quantity,
-            role: product.role as BundleProductRole || "INCLUDED",
+            role: (product.role as BundleProductRole) || "INCLUDED",
             displayOrder: product.displayOrder ?? index,
         })),
     });
@@ -202,7 +201,9 @@ export async function updateBundleById(
 /**
  * Update an existing bundle with all its relations in a transaction
  */
-export async function updateBundleWithRelations(data: UpdateBundleInputWithRelations) {
+export async function updateBundleWithRelations(
+    data: UpdateBundleInputWithRelations,
+) {
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await updateBundleById(tx, data.bundleId, {
             name: data.name,
@@ -228,7 +229,11 @@ export async function updateBundleWithRelations(data: UpdateBundleInputWithRelat
         await deleteBundleProductGroups(tx, data.bundleId);
 
         if (data.productGroups?.length) {
-            await createBundleProductGroups(tx, data.bundleId, data.productGroups);
+            await createBundleProductGroups(
+                tx,
+                data.bundleId,
+                data.productGroups,
+            );
         }
 
         if (data.settings) {
@@ -245,7 +250,11 @@ export async function updateBundleWithRelations(data: UpdateBundleInputWithRelat
             await deleteBundleSettings(tx, data.bundleId);
         }
 
-        return await findBundleByIdWithAllRelations(data.bundleId, data.shop, tx);
+        return await findBundleByIdWithAllRelations(
+            data.bundleId,
+            data.shop,
+            tx,
+        );
     });
 }
 

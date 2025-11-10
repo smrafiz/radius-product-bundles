@@ -3,20 +3,17 @@
 import {
     BundlePreviewStatus,
     BundleType,
-    useBundleStore,
-} from "@/features/bundles";
-import {
     calculateBundlePrice,
     calculateDiscountAmount,
     calculateSavingsPercentage,
     formatPrice,
-} from "@/utils/bundle/bundleUtils";
+    useBundleStore,
+} from "@/features/bundles";
 
 export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
     const renderSelectedProducts = () => {
-
         // Show actual selected products (limit to first 4 for space)
         return selectedItems.slice(0, 4).map((item, index) => (
             <s-stack
@@ -95,7 +92,6 @@ export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
 
     return (
         <s-stack gap="base">
-
             {/* Bundle preview status */}
             <BundlePreviewStatus />
 

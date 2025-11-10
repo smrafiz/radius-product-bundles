@@ -1,7 +1,10 @@
+import {
+    createSessionConfig,
+    isValidShopifyToken,
+    storeSession,
+} from "@/shared";
 import { Session } from "@shopify/shopify-api";
 import { NextRequest, NextResponse } from "next/server";
-import { storeSession } from "@/lib/db/session-storage";
-import { isValidShopifyToken, createSessionConfig } from "@/utils";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);

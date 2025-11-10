@@ -87,7 +87,7 @@ export const useSessionStore = create<ShopifyStore>()((set, get) => ({
                 const token = await app.idToken();
 
                 if (token) {
-                    const response = await fetch("/api/validate-session", {
+                    const response = await fetch("/api/session/validate", {
                         method: "POST",
                         headers: {
                             Authorization: `Bearer ${token}`,

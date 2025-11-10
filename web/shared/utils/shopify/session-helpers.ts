@@ -1,0 +1,38 @@
+/**
+ * Generate a consistent session ID for offline sessions
+ */
+export function generateOfflineSessionId(shop: string): string {
+    return `offline_${shop}`;
+}
+
+/**
+ * Check if a session token is valid and not expired
+ */
+export function validateSessionToken(token: string | undefined): boolean {
+    if (!token) return false;
+
+    // Check if the token has a valid format
+    if (!token.startsWith("shpat_")) return false;
+
+    // Additional validation can be added here
+    return token.length > 20;
+}
+
+/**
+ * Create a session configuration object
+ */
+export function createSessionConfig(
+    shop: string,
+    accessToken: string,
+    scope: string,
+    state?: string,
+) {
+    return {
+        id: generateOfflineSessionId(shop),
+        shop,
+        accessToken,
+        scope,
+        isOnline: false,
+        state: state || "",
+    };
+}

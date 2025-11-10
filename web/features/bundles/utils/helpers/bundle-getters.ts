@@ -103,5 +103,5 @@ export const bundleTypeMap = Object.values(BUNDLE_TYPES).reduce(
         acc[c.slug] = c.id;
         return acc;
     },
-    {} as Record<string, BundleType>
+    {} as Record<string, BundleType>,
 );

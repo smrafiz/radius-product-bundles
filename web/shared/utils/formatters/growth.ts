@@ -1,5 +1,9 @@
 import { IconProps } from "@shopify/polaris";
-import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, } from "@shopify/polaris-icons";
+import {
+    ArrowDownIcon,
+    ArrowRightIcon,
+    ArrowUpIcon,
+} from "@shopify/polaris-icons";
 
 /**
  * Get the appropriate growth icon based on a numeric value.

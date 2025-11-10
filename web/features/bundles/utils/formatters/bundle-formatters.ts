@@ -54,3 +54,13 @@ export function formatBundleDiscount(
 
     return config.format(bundle.discountValue, formatter);
 }
+
+/**
+ * Format price for display
+ */
+export function formatPrice(price: number): string {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+    }).format(price);
+}

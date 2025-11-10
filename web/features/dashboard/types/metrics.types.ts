@@ -2,7 +2,12 @@
  * Dashboard metrics types
  */
 
-import { MetricCalculations, MetricFormat, MetricGrowth, MetricTotals, } from "@/shared";
+import {
+    MetricCalculations,
+    MetricFormat,
+    MetricGrowth,
+    MetricTotals,
+} from "@/shared";
 
 /**
  * Processed dashboard metrics

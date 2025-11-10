@@ -22,7 +22,9 @@ export function ProductListPopover({ products }: ProductListPopoverProps) {
                     const media = (
                         <Thumbnail
                             source={product.featuredImage?.url || ""}
-                            alt={product.featuredImage?.altText || product.title}
+                            alt={
+                                product.featuredImage?.altText || product.title
+                            }
                             size="small"
                         />
                     );

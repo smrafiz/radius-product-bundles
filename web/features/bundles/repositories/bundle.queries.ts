@@ -5,17 +5,14 @@
  */
 
 import {
-    INCLUDE_BUNDLE_DETAILS,
-    INCLUDE_BUNDLE_PRODUCTS,
-    INCLUDE_BUNDLE_FULL,
     INCLUDE_BUNDLE_DASHBOARD,
+    INCLUDE_BUNDLE_DETAILS,
+    INCLUDE_BUNDLE_FULL,
+    INCLUDE_BUNDLE_PRODUCTS,
 } from "./bundle.fragments";
-import {
-    FindByShopFilters,
-    FindByShopOptions,
-} from "@/features/bundles";
+import { prisma } from "@/shared";
 import { Prisma } from "@prisma/client";
-import prisma from "@/lib/db/prisma-connect";
+import { FindByShopFilters, FindByShopOptions } from "@/features/bundles";
 
 // ==========================================
 // FIND Operations
@@ -26,7 +23,7 @@ import prisma from "@/lib/db/prisma-connect";
  */
 export async function findBundleById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
     return await client.bundle.findUnique({
@@ -41,7 +38,7 @@ export async function findBundleById(
 export async function findBundleByIdWithProducts(
     id: string,
     shop: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
     return await client.bundle.findFirst({
@@ -56,7 +53,7 @@ export async function findBundleByIdWithProducts(
 export async function findBundleByIdWithAllRelations(
     id: string,
     shop: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
     return await client.bundle.findFirst({
@@ -72,7 +69,7 @@ export async function findBundleByName(
     shop: string,
     name: string,
     excludeId?: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
 
@@ -102,7 +99,7 @@ export async function findUniqueByName(shop: string, name: string) {
 export async function findBundlesByProductId(
     productId: string,
     shop: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
 
@@ -124,7 +121,7 @@ export async function findBundlesByProductId(
 export async function findBundlesByIds(
     bundleIds: string[],
     shop: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
 ) {
     if (!bundleIds.length) {
         return [];
@@ -146,7 +143,7 @@ export async function findBundlesByIds(
  */
 export async function findBundlesByShop(
     shop: string,
-    options?: FindByShopOptions
+    options?: FindByShopOptions,
 ) {
     const where: Prisma.BundleWhereInput = { shop };
 
@@ -174,7 +171,8 @@ export async function findBundlesByShop(
         take: options?.limit || 10,
         skip: options?.offset || 0,
         orderBy: {
-            [options?.orderBy || "createdAt"]: options?.orderDirection || "desc",
+            [options?.orderBy || "createdAt"]:
+                options?.orderDirection || "desc",
         },
     });
 }
@@ -188,7 +186,7 @@ export async function findBundlesByShop(
  */
 export async function countBundlesByShop(
     shop: string,
-    filters?: FindByShopFilters
+    filters?: FindByShopFilters,
 ) {
     const where: Prisma.BundleWhereInput = { shop };
 
@@ -239,7 +237,7 @@ export async function countRecentBundles(shop: string, minutesAgo: Date) {
  */
 export async function getBundleActivity(
     shop: string,
-    hoursToCheck: number = 24
+    hoursToCheck: number = 24,
 ) {
     const since = new Date(Date.now() - hoursToCheck * 60 * 60 * 1000);
 

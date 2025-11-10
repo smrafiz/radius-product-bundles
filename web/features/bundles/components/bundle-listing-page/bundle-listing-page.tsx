@@ -1,12 +1,12 @@
 "use client";
-import { useEffect } from "react";
 
-import { GlobalBanner, MetricCard } from "@/shared";
 import {
     BundleTable,
     BundleTableSkeleton,
     useBundlesPage,
 } from "@/features/bundles";
+import { useEffect } from "react";
+import { GlobalBanner, MetricCard } from "@/shared";
 
 /**
  * Bundle listing page

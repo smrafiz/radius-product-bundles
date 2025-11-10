@@ -22,7 +22,7 @@ import {
 } from "@/features/bundles";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
-import { handleSessionToken } from "@/lib/shopify/verify";
+import { handleSessionToken } from "@/lib/shopify";
 
 /**
  * Update bundle status
@@ -332,7 +332,9 @@ export async function updateBundleAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        console.log(`[updateBundleAction] Updating bundle: ${bundleId} for shop: ${shop}`);
+        console.log(
+            `[updateBundleAction] Updating bundle: ${bundleId} for shop: ${shop}`,
+        );
 
         if (!bundleId) {
             console.log("[updateBundleAction] Invalid bundle ID");
@@ -380,7 +382,9 @@ export async function updateBundleAction(
         });
 
         if (!result.success) {
-            console.log(`[updateBundleAction] Service failed: ${result.message}`);
+            console.log(
+                `[updateBundleAction] Service failed: ${result.message}`,
+            );
 
             return {
                 status: "error",
@@ -391,7 +395,9 @@ export async function updateBundleAction(
             };
         }
 
-        console.log(`[updateBundleAction] Bundle updated successfully: ${result.bundle!.id}`);
+        console.log(
+            `[updateBundleAction] Bundle updated successfully: ${result.bundle!.id}`,
+        );
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);

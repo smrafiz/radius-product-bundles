@@ -26,19 +26,19 @@
             "@/shared/*": ["./shared/*"],
             "@/lib/*": ["./lib/*"],
             "@/tests/*": ["./tests/*"],
-//            "@/config/*": ["./config/*"],
-//            "@/providers/*": ["./shared/providers/*"],
-            "@/actions/*": ["./actions/*"],
-//            "@/old.components/*": ["./shared/old.components/*"],
-//            "@/hooks/*": ["./shared/hooks/*"],
-//            "@/stores": ["./stores"],
-//            "@/stores/*": ["./shared/stores/*"],
-//            "@/types": ["./types"],
-//            "@/types/*": ["./shared/types/*"],
-//            "@/utils": ["./utils"],
-//            "@/utils/*": ["./shared/utils/*"],
-//            "@/bundles/*": ["./app/bundles/*"],
-//            "@/dashboard/*": ["./app/dashboard/*"]
+            //            "@/config/*": ["./config/*"],
+            //            "@/providers/*": ["./shared/providers/*"],
+            "@/actions/*": ["./actions/*"]
+            //            "@/old.components/*": ["./shared/old.components/*"],
+            //            "@/hooks/*": ["./shared/hooks/*"],
+            //            "@/stores": ["./stores"],
+            //            "@/stores/*": ["./shared/stores/*"],
+            //            "@/types": ["./types"],
+            //            "@/types/*": ["./shared/types/*"],
+            //            "@/utils": ["./utils"],
+            //            "@/utils/*": ["./shared/utils/*"],
+            //            "@/bundles/*": ["./app/bundles/*"],
+            //            "@/dashboard/*": ["./app/dashboard/*"]
         }
     },
     "include": [
@@ -46,7 +46,7 @@
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",
-        ".graphql.ts"
+        "./graphql.d.ts"
     ],
     "exclude": ["node_modules"]
 }

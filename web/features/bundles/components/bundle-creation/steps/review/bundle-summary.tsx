@@ -1,16 +1,15 @@
 "use client";
 
-import { Card, InlineStack, Text, BlockStack, Divider } from "@shopify/polaris";
-import { useGroupedProducts } from "@/hooks";
-import { getDiscountProperty, useBundleStore } from "@/features/bundles";
+import {
+    getDiscountProperty,
+    SelectedProducts,
+    useBundleStore,
+} from "@/features/bundles";
+import { BlockStack, Card, Divider, InlineStack, Text } from "@shopify/polaris";
 
 export function BundleSummary() {
-    const bundleData = useBundleStore((state) => state.bundleData);
-    const selectedItems = useBundleStore((state) => state.selectedItems);
-    const configuration = useBundleStore((state) => state.configuration);
-
-    // Group selected items
-    const groupedItems = useGroupedProducts(selectedItems);
+    const { bundleData, getGroupedItems } = useBundleStore();
+    const groupedItems = getGroupedItems();
 
     const formatDiscountValue = () => {
         if (!bundleData.discountValue) {
@@ -88,6 +87,10 @@ export function BundleSummary() {
                         {formatDiscountValue()}
                     </Text>
                 </InlineStack>
+
+                <Divider />
+
+                <SelectedProducts />
 
                 <Divider />
 

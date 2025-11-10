@@ -5,7 +5,10 @@ import { ProductAvatarStackProps } from "@/features/bundles";
 /**
  * Product avatar stack
  */
-export function ProductAvatarStack({ products, remainingCount }: ProductAvatarStackProps) {
+export function ProductAvatarStack({
+    products,
+    remainingCount,
+}: ProductAvatarStackProps) {
     return (
         <>
             {products.map((product, index) => {
@@ -21,7 +24,7 @@ export function ProductAvatarStack({ products, remainingCount }: ProductAvatarSt
                         >
                             <Image
                                 src={product.featuredImage?.url || ""}
-                                alt={product.featuredImage?.altText || ''}
+                                alt={product.featuredImage?.altText || ""}
                                 width={40}
                                 height={40}
                                 className="object-cover w-full h-full"

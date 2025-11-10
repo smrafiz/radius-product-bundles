@@ -50,9 +50,9 @@ export function transformBundleCore(
                     featuredImage: product.featuredImage,
                     selectedVariant: selectedVariant
                         ? {
-                            ...selectedVariant,
-                            productId: product.id,
-                        }
+                              ...selectedVariant,
+                              productId: product.id,
+                          }
                         : null,
                     quantity: bp.quantity,
                     role: bp.role,

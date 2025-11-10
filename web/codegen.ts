@@ -1,15 +1,15 @@
-import { ApiType, pluckConfig, preset } from "@shopify/api-codegen-preset";
 import { CodegenConfig } from "@graphql-codegen/cli";
+import { ApiType, preset } from "@shopify/api-codegen-preset";
 
 const config: CodegenConfig = {
     schema: "https://shopify.dev/admin-graphql-direct-proxy/2025-10",
-    documents: ["./lib/queries/shopify/**/*.graphql"],
+    documents: ["./lib/graphql/schema/**/*.graphql"],
     generates: {
-        "./lib/gql/": {
+        "./lib/graphql/generated/": {
             preset: "client",
             plugins: [],
         },
-        "./types/admin.generated.d.ts": {
+        "./shared/types/generated/admin.generated.d.ts": {
             preset,
             presetConfig: {
                 apiType: ApiType.Admin,

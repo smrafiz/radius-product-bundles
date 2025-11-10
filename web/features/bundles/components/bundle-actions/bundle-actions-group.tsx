@@ -2,7 +2,10 @@
 
 import { useModalStore } from "@/shared";
 import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
-import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps } from "@/features/bundles";
+import {
+    BUNDLE_LISTING_ACTIONS,
+    BundleActionsGroupProps,
+} from "@/features/bundles";
 
 /**
  * Bundle actions group

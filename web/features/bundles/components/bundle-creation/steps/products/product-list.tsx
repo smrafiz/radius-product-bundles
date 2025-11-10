@@ -1,10 +1,11 @@
 "use client";
-import { DndContext, closestCenter } from "@dnd-kit/core";
+
 import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useDragAndDrop } from "@/hooks/ui";
+import { useDragAndDrop } from "@/shared";
+import { closestCenter, DndContext } from "@dnd-kit/core";
 import { ProductItem, useBundleStore } from "@/features/bundles";
 
 export function ProductList() {

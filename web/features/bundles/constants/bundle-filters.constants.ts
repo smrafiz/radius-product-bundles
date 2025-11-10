@@ -13,7 +13,7 @@ export const BUNDLE_STATUS_FILTER_OPTIONS = Object.entries(BUNDLE_STATUSES).map(
     ([value, config]) => ({
         label: config.text,
         value,
-    })
+    }),
 );
 
 /**
@@ -23,7 +23,7 @@ export const BUNDLE_TYPE_FILTER_OPTIONS = Object.values(BUNDLE_TYPES).map(
     (config) => ({
         label: config.label,
         value: config.id,
-    })
+    }),
 );
 
 /**
@@ -64,10 +64,7 @@ export const BUNDLE_TAB_STRINGS = [
 /**
  * Map tab index to status filter value
  */
-export const TAB_STATUS_MAP = [
-    "ALL",
-    ...Object.keys(BUNDLE_STATUSES),
-] as const;
+export const TAB_STATUS_MAP = ["ALL", ...Object.keys(BUNDLE_STATUSES)] as const;
 
 /**
  * Search configuration

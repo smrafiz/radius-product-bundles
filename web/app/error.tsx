@@ -11,7 +11,9 @@ export default function Error({
     reset: () => void;
 }) {
     const addMessage = useGlobalBannerStore((state) => state.addMessage);
-    const clearAllMessages = useGlobalBannerStore((state) => state.clearAllMessages);
+    const clearAllMessages = useGlobalBannerStore(
+        (state) => state.clearAllMessages,
+    );
 
     useEffect(() => {
         clearAllMessages();

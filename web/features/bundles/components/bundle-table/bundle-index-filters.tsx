@@ -88,7 +88,9 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     if (filters.statusFilter && filters.statusFilter.length > 0) {
         const statusLabels = filters.statusFilter.map(
-            (val) => BUNDLE_STATUS_FILTER_OPTIONS.find((opt) => opt.value === val)?.label ?? val
+            (val) =>
+                BUNDLE_STATUS_FILTER_OPTIONS.find((opt) => opt.value === val)
+                    ?.label ?? val,
         );
         appliedFilters.push({
             key: "bundleStatus",
@@ -99,7 +101,9 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
     if (filters.typeFilter && filters.typeFilter.length > 0) {
         const typeLabels = filters.typeFilter.map(
-            (val) => BUNDLE_TYPE_FILTER_OPTIONS.find((opt) => opt.value === val)?.label ?? val
+            (val) =>
+                BUNDLE_TYPE_FILTER_OPTIONS.find((opt) => opt.value === val)
+                    ?.label ?? val,
         );
         appliedFilters.push({
             key: "bundleType",

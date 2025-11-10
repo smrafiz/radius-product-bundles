@@ -18,7 +18,7 @@ import {
     getBundleDetails,
     getBundlesListService,
 } from "@/features/bundles";
-import { handleSessionToken } from "@/lib/shopify/verify";
+import { handleSessionToken } from "@/lib/shopify";
 
 /**
  * Get bundles for a shop

@@ -1,6 +1,6 @@
 "use server";
 
-import { handleSessionToken } from "@/lib/shopify/verify";
+import { handleSessionToken } from "@/lib/shopify";
 
 /**
  * Store the session (and access token) in the database

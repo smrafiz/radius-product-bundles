@@ -1,6 +1,5 @@
 import { headers } from "next/headers";
-import shopify from "@/lib/shopify/initialize-context";
-import { addHandlers } from "@/lib/shopify/register-webhooks";
+import { shopify, addHandlers } from "@/lib";
 
 export async function POST(req: Request) {
     const headerList = await headers();

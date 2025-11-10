@@ -1,9 +1,9 @@
 "use client";
-import { useBundleFormMethods } from "@/hooks/bundle/useBundleFormMethods";
 
 import {
     DISCOUNT_TYPES,
     getDiscountProperty,
+    useBundleFormMethods,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
