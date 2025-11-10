@@ -11,9 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useAppNavigation, useGlobalBanner, withAsyncLoader } from "@/shared";
 
-type BundleSubmitMode = "create" | "edit";
-
-export function useBundleSubmit(mode: BundleSubmitMode, bundleId?: string) {
+export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const { setSaving, resetDirty, setStep } = useBundleStore();
