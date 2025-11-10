@@ -10,7 +10,5 @@ export * from "./overlays";
 export * from "./providers";
 export * from "./data-display";
 export { Knob } from "./fields/knob";
-export { CalloutCard } from "./callout-card";
-export { MediaCard } from "./media-card";
 export { Navigation } from "./navigation/navigation";
 export { ProtectedRoute } from "./auth/protected-route";

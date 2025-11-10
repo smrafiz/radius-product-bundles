@@ -68,7 +68,26 @@ export interface BundleDetail extends Prisma.BundleGetPayload<{}> {
     conversionRate: number;
     productCount: number;
     products: SelectedItem[];
-    settings: {};
+    settings: {
+        layout: "GRID" | "CAROUSEL" | "LIST" | "COMPACT" | "FLOATING";
+        theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
+        position: "PRODUCT_PAGE_TOP" | "PRODUCT_PAGE_BOTTOM" | "ABOVE_ADD_TO_CART" | "BELOW_ADD_TO_CART" | "SIDEBAR" | "FLOATING" | "POPUP";
+        showPrices: boolean;
+        showSavings: boolean;
+        showProductImages: boolean;
+        enableQuickAdd: boolean;
+        style?: {
+            primaryColor?: string;
+            font?: string;
+            borderRadius?: string;
+            buttonStyle?: string;
+        };
+        widget?: {
+            floating: boolean;
+            autoHide: boolean;
+            showOnMobile: boolean;
+        };
+    };
     productGroups?: ProductGroup[];
 }
 

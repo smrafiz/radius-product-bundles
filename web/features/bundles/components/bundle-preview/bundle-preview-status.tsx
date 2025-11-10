@@ -4,7 +4,7 @@ export function BundlePreviewStatus() {
     return(
         <s-section>
             <s-heading>Bundle Status</s-heading>
-            <s-select value="DRAFT">
+            <s-select label="Bundle Status" value="DRAFT" labelAccessibilityVisibility="exclusive">
                 {Object.entries(BUNDLE_STATUSES).map(([key, { text }]) => (
                     <s-option key={key} value={key}>
                         {text}

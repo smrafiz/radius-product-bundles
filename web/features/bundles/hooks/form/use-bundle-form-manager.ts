@@ -14,14 +14,13 @@ export function useBundleFormManager({
     bundleType,
     bundleName,
 }: UseBundleFormManagerOptions) {
-    const { goBack } = useAppNavigation();
     const { bundleData, setBundleData } = useBundleStore();
     const { bundleData: navigationData } = useAppNavigation();
     const { setValue } = useBundleFormMethods();
 
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
-    let title;
+    const label = useMemo(() => getBundleProperty(bundleType, "label"), [bundleType]);
 
     useEffect(() => {
         if (!bundleData.type) {
@@ -31,30 +30,14 @@ export function useBundleFormManager({
     }, [bundleType, bundleData, setBundleData, setValue]);
 
     const pageProps = useMemo(() => {
-        if (isEditMode) {
-            title = `Edit ${bundleName}`;
-            return {
-                title: `Edit ${bundleName || getBundleProperty(bundleType, "label")}`,
-                subtitle: "Update your bundle settings and preview changes",
-                backAction: {
-                    content: "Back to Bundles",
-                    onAction: navigationData.create(),
-                },
-            };
-        } else {
-            title = `Create ${getBundleProperty(bundleType, "label")}`;
-        }
-
         return {
-            title: `Create ${getBundleProperty(bundleType, "label")}`,
-            subtitle:
-                "Configure your bundle settings and preview the customer experience",
-            backAction: {
-                content: "Bundle Selection",
-                onAction: navigationData.create(),
-            },
+            title: isEditMode
+                ? `Edit ${bundleName || label}`
+                : `Create ${label}`,
+            badgeLabel: label,
+            onBack: isEditMode ? navigationData?.list : navigationData?.create,
         };
-    }, [isEditMode, bundleType, bundleName, goBack]);
+    }, [isEditMode, bundleName, label, navigationData]);
 
     return {
         pageProps,

@@ -1,13 +1,9 @@
 "use client";
 
 import { ReactNode } from "react";
+import { useProductPicker } from "@/shared";
 import { useSortable } from "@dnd-kit/sortable";
 import { ProductGroup, useBundleStore } from "@/features/bundles";
-import { useProductPicker } from "@/shared";
-
-interface ProductItemProps {
-    group: ProductGroup;
-}
 
 // Sortable wrapper component
 function SortableWrapper({
@@ -41,7 +37,9 @@ function SortableWrapper({
     );
 }
 
-export function ProductItem({ group }: ProductItemProps) {
+export function ProductItem({ group }: {
+    group: ProductGroup;
+}) {
     const {
         updateSelectedItemQuantity,
         removeProductAndAllVariants,
@@ -133,6 +131,8 @@ export function ProductItem({ group }: ProductItemProps) {
                         {/* Quantity input */}
                         <div className="max-w-[80px]">
                             <s-number-field
+                                label="Quantity"
+                                labelAccessibilityVisibility="exclusive"
                                 value={(product.quantity || 1).toString()}
                                 step={1}
                                 min={1}

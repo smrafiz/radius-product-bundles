@@ -30,7 +30,7 @@ export function useBundlesPage() {
         showTableSkeleton: showSkeleton,
         toast,
         onCreateBundle: bundleData.create(),
-        onBundleStudio: bundleData.list(),
+        onBundleStudio: bundleData.studio(),
         onDismissToast: hideToast,
     };
 }

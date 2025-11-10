@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    BundleTable,
-    BundleTableSkeleton,
-    useBundlesPage,
-} from "@/features/bundles";
+import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
 import { useEffect } from "react";
 import { GlobalBanner, MetricCard } from "@/shared";
 
@@ -25,7 +21,7 @@ export function BundleListingPage() {
     useEffect(() => {
         if (
             toast.active &&
-            typeof shopify !== 'undefined' &&
+            typeof shopify !== "undefined" &&
             shopify.toast?.show
         ) {
             shopify.toast.show(toast.message, {
@@ -36,45 +32,27 @@ export function BundleListingPage() {
     }, [toast.active, toast.message, onDismissToast]);
 
     return (
-        <s-page>
+        <s-page heading="Bundle Management">
+            {/* Header buttons */}
+            <s-button slot="primary-action" variant="primary" onClick={onCreateBundle}>
+                Create Bundle
+            </s-button>
+            <s-button slot="secondary-actions" variant="secondary" onClick={onBundleStudio}>
+                Bundle Studio
+            </s-button>
+
             <s-stack
                 gap="large"
                 paddingBlockStart="large"
                 paddingBlockEnd="large"
             >
-                <s-stack
-                    direction="inline"
-                    gap="base"
-                    alignItems="center"
-                    justifyContent="space-between"
-                >
-                    <s-stack>
-                        <s-heading>
-                            <div className="text-xl">Bundle Management</div>
-                        </s-heading>
-                        <s-text>
-                            Create and manage your product bundle offers
-                        </s-text>
-                    </s-stack>
-
-                    <s-stack direction="inline" gap="small-200">
-                        <s-button
-                            icon="view"
-                            variant="secondary"
-                            accessibilityLabel="Bundle Studio"
-                            onClick={onBundleStudio}
-                        >
-                            Bundle Studio
-                        </s-button>
-                        <s-button
-                            icon="plus"
-                            variant="primary"
-                            accessibilityLabel="Create Bundle"
-                            onClick={onCreateBundle}
-                        >
-                            Create Bundle
-                        </s-button>
-                    </s-stack>
+                <s-stack>
+                    <s-heading>
+                        <div className="text-xl text-center">Bundle Management</div>
+                    </s-heading>
+                    <s-text>
+                        <div className="text-center">Create and manage your product bundle offers</div>
+                    </s-text>
                 </s-stack>
 
                 <s-stack gap="base">

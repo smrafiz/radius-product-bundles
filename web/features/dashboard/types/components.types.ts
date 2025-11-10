@@ -49,7 +49,10 @@ export interface DashboardSetupConfig {
     id: number;
     title: string;
     description: string;
-    image_url: string;
+    image?: {
+        url: string;
+        alt?: string;
+    };
     complete: boolean;
     primaryButton?: CalloutButtonProps | null;
     secondaryButton?: CalloutButtonProps | null;

@@ -9,33 +9,62 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         name: bundleData.name,
         description: bundleData.description || "",
         type: bundleData.type,
-        mainProductId: bundleData.mainProductId,
+        mainProductId: bundleData.mainProductId || undefined,
 
         // Bundle mechanics
-        buyQuantity: bundleData.buyQuantity,
-        getQuantity: bundleData.getQuantity,
-        minimumItems: bundleData.minimumItems,
-        maximumItems: bundleData.maximumItems,
+        buyQuantity: bundleData.buyQuantity ?? undefined,
+        getQuantity: bundleData.getQuantity ?? undefined,
+        maximumItems: bundleData.maximumItems ?? undefined,
 
-        // Pricing
         discountType: bundleData.discountType,
         discountValue: bundleData.discountValue,
-        minOrderValue: bundleData.minOrderValue,
-        maxDiscountAmount: bundleData.maxDiscountAmount || undefined,
+        minOrderValue: bundleData.minOrderValue ?? undefined,
+        maxDiscountAmount: bundleData.maxDiscountAmount ?? undefined,
 
-        // Volume tiers
-        volumeTiers: bundleData.volumeTiers,
-
-        // Mix & Match
-        allowMixAndMatch: bundleData.allowMixAndMatch,
-        mixAndMatchPrice: bundleData.mixAndMatchPrice,
+        // Handle volumeTiers type conversion - ensure it's always an array of { quantity: number, discount: number } or undefined
+        volumeTiers: (() => {
+            try {
+                // Handle case where volumeTiers might be a JSON string, null, or already parsed
+                const tiers = bundleData.volumeTiers;
+                
+                // If it's falsy or not an array, return undefined
+                if (!tiers || !Array.isArray(tiers)) {
+                    return undefined;
+                }
+                
+                // Map and validate each tier
+                const result = tiers
+                    .map(tier => {
+                        // Handle both direct access and potential Prisma.JsonObject access
+                        const quantity = tier && typeof tier === 'object' && 'quantity' in tier
+                            ? Number(tier.quantity)
+                            : undefined;
+                        const discount = tier && typeof tier === 'object' && 'discount' in tier
+                            ? Number(tier.discount)
+                            : undefined;
+                        
+                        // Only include valid tiers with both quantity and discount as numbers
+                        return (quantity !== undefined && discount !== undefined && !isNaN(quantity) && !isNaN(discount))
+                            ? { quantity, discount }
+                            : null;
+                    })
+                    .filter((tier): tier is { quantity: number; discount: number } => tier !== null);
+                
+                // Return undefined if no valid tiers were found
+                return result.length > 0 ? result : undefined;
+                
+            } catch (error) {
+                console.error('Error processing volumeTiers:', error);
+                return undefined;
+            }
+        })(),
+        allowMixAndMatch: bundleData.allowMixAndMatch ?? undefined,
+        // Ensure mixAndMatchPrice is either a number or undefined (not null)
+        mixAndMatchPrice: bundleData.mixAndMatchPrice ?? undefined,
 
         // Marketing
-        marketingCopy: bundleData.marketingCopy,
-        seoTitle: bundleData.seoTitle,
-        seoDescription: bundleData.seoDescription,
+        marketingCopy: bundleData.marketingCopy ?? undefined,
         images: bundleData.images || [],
-
         // Dates
         startDate: bundleData.startDate
             ? new Date(bundleData.startDate)
@@ -45,7 +74,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         // Products
         products: bundleData.products.map((product) => ({
             productId: product.productId,
-            variantId: product.variantId,
+            variantId: product.variantId || '',
             quantity: product.quantity,
             role: product.role || "INCLUDED",
             groupId: product.groupId,
@@ -53,7 +82,13 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             discountPercent: product.discountPercent,
         })),
 
-        productGroups: bundleData.productGroups || [],
+        productGroups: (bundleData.productGroups || []).map(group => ({
+            name: group.title || `Group ${group.id}`,
+            minSelection: 1,
+            displayOrder: 0,
+            description: group.product?.title,
+            _originalId: group.id
+        })),
         settings: bundleData.settings || {
             layout: "GRID",
             theme: "STORE_DEFAULT",
@@ -62,6 +97,11 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             showSavings: true,
             showProductImages: true,
             enableQuickAdd: false,
+            widget: {
+                floating: false,
+                autoHide: false,
+                showOnMobile: true
+            }
         },
     };
 }

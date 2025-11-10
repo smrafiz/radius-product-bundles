@@ -99,9 +99,7 @@ export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
                 <s-stack gap="base">
                     <s-stack gap="base">
                         <s-heading>
-                            {displaySettings.title ||
-                                bundleData.name ||
-                                "Frequently Bought Together"}
+                            Bundle Preview
                         </s-heading>
 
                         {/* Product Images */}

@@ -123,12 +123,15 @@ export const DASHBOARD_CALLOUT_CARDS: DashboardCalloutCardsItem[] = [
 /*
  * Dashboard Setup Guide
  */
-export const DASHBOARD_SETUP_GUIDE: DashboardSetupConfig[] = [
+export const DASHBOARD_SETUP_ITEMS: DashboardSetupConfig[] = [
     {
         id: 0,
         title: "Enable app embed",
         description: "For your bundles to appear on your storefront, enable Bundles app embed and click Save on your theme.",
-        image_url: "https://cdn.shopify.com/shopifycloud/shopify/assets/admin/home/onboarding/shop_pay_task-70830ae12d3f01fed1da23e607dc58bc726325144c29f96c949baca598ee3ef6.svg",
+        image: {
+            url: "https://cdn.shopify.com/shopifycloud/shopify/assets/admin/home/onboarding/shop_pay_task-70830ae12d3f01fed1da23e607dc58bc726325144c29f96c949baca598ee3ef6.svg",
+            alt: 'Enable app embed',
+        },
         complete: true,
         primaryButton: {
             content: "Enable in theme editor",
@@ -142,7 +145,10 @@ export const DASHBOARD_SETUP_GUIDE: DashboardSetupConfig[] = [
         id: 1,
         title: "Create your first bundle campaign",
         description: "Pick a bundle type, customize it to fit your products and brand, and preview it live on your store.",
-        image_url: "https://cdn.shopify.com/shopifycloud/shopify/assets/admin/home/onboarding/detail-images/home-onboard-share-store-b265242552d9ed38399455a5e4472c147e421cb43d72a0db26d2943b55bdb307.svg",
+        image: {
+            url: "https://cdn.shopify.com/shopifycloud/shopify/assets/admin/home/onboarding/detail-images/home-onboard-share-store-b265242552d9ed38399455a5e4472c147e421cb43d72a0db26d2943b55bdb307.svg",
+            alt: 'Create your first bundle campaign',
+        },
         complete: false,
         primaryButton: {
             content: "Create a bundle campaign",
@@ -163,7 +169,10 @@ export const DASHBOARD_SETUP_GUIDE: DashboardSetupConfig[] = [
         id: 2,
         title: "Start tracking your bundle campaign performance",
         description: "You're all set! Click Finish setup and start monitoring how your bundles are performing.",
-        image_url: "https://cdn.shopify.com/b/shopify-guidance-dashboard-public/nqjyaxwdnkg722ml73r6dmci3cpn.svgz",
+        image: {
+            url: "https://cdn.shopify.com/b/shopify-guidance-dashboard-public/nqjyaxwdnkg722ml73r6dmci3cpn.svgz",
+            alt: 'Start tracking your bundle campaign performance',
+        },
         complete: false,
         primaryButton: {
             content: "Finish setup",

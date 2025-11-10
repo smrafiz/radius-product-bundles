@@ -16,30 +16,11 @@ export default function BundlePageSkeleton() {
                 >
                     <s-stack>
                         <s-heading>
-                            <div className="text-xl">Bundle Management</div>
+                            <div className="text-xl text-center">Bundle Management</div>
                         </s-heading>
                         <s-text>
-                            Create and manage your product bundle offers
+                            <div className="text-center">Create and manage your product bundle offers</div>
                         </s-text>
-                    </s-stack>
-
-                    <s-stack direction="inline" gap="small-200">
-                        <s-button
-                            icon="view"
-                            variant="secondary"
-                            accessibilityLabel="Bundle Studio"
-                            onClick={() => {}}
-                        >
-                            Bundle Studio
-                        </s-button>
-                        <s-button
-                            icon="plus"
-                            variant="primary"
-                            accessibilityLabel="Create Bundle"
-                            onClick={() => {}}
-                        >
-                            Create Bundle
-                        </s-button>
                     </s-stack>
                 </s-stack>
 
