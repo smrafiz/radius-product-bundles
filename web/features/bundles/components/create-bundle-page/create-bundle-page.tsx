@@ -8,15 +8,14 @@ import {
     bundleTypeMap,
     useBundleSubmit,
 } from "@/features/bundles";
-import { use } from "react";
 import { GlobalForm } from "@/shared";
 
 export function CreateBundlePage({
     params,
 }: {
-    params: Promise<{ bundleType: BundleType }>;
+    params: { bundleType: BundleType };
 }) {
-    const { bundleType: bundleTypeParam } = use(params);
+    const { bundleType: bundleTypeParam } = params;
 
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
     const { handleSubmit, resetDirty } = useBundleSubmit("create");

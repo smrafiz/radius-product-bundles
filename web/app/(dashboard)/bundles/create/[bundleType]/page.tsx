@@ -33,10 +33,11 @@ export async function generateMetadata({
 /**
  * Create Bundle by Type Page
  */
-export default function CreateBundleByTypePage({
-    params,
-}: {
-    params: Promise<{ bundleType: BundleType }>;
-}) {
+export default async function CreateBundleByTypePage(
+    props: {
+        params: Promise<{ bundleType: BundleType }>;
+    }
+) {
+    const params = await props.params;
     return <CreateBundlePage params={params} />;
 }

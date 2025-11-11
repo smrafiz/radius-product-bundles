@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
  *
  * Skip paths: static assets and API routes do not need CSP headers.
  */
-export async function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
 
     // Paths to skip for performance because headers are unnecessary
@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
 
     // Dev-only logs for debugging
     if (process.env.NODE_ENV === "development") {
-        console.log(`[Middleware][DEV] Detected shop: ${shop}`);
+        console.log(`[Proxy][DEV] Detected shop: ${shop}`);
     }
 
     // Skip adding headers for static assets or API routes
@@ -33,7 +33,6 @@ export async function middleware(request: NextRequest) {
 
     // Skip for theme extensions (detect by iframe context)
     const referer = request.headers.get("referer");
-    const userAgent = request.headers.get("user-agent");
     const secFetchDest = request.headers.get("sec-fetch-dest");
 
     // Theme extensions run in iframe context

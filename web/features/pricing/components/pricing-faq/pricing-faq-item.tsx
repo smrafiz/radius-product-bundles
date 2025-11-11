@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { PricingFaqItemInfo } from "@/features/pricing";
 
 interface PricingFaqItemProps extends PricingFaqItemInfo {

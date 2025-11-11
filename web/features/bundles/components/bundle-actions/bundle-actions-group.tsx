@@ -52,7 +52,7 @@ export function BundleActionsGroup({
         <>
             <ButtonGroup variant="segmented">
                 {BUNDLE_LISTING_ACTIONS.map((action, index) => (
-                    <Tooltip key={index} content={action.tooltip}>
+                    <Tooltip key={index} content={action.tooltip} dismissOnMouseOut>
                         <Button
                             icon={action.icon}
                             tone={action.tone}

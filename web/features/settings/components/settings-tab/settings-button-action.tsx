@@ -1,7 +1,6 @@
 "use client";
 
 import { CallbackEvent } from "@shopify/polaris-types";
-import React from "react";
 
 export function SettingsButtonAction() {
     const handleChange = (event: CallbackEvent<"s-choice-list">) => {

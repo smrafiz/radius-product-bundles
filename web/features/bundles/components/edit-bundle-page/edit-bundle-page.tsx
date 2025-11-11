@@ -7,16 +7,15 @@ import {
     useEditBundle,
     useEditBundleTransform,
 } from "@/features/bundles";
-import { use } from "react";
 import { DashboardSkeleton, GlobalForm } from "@/shared";
 import { Banner, Card, Page, Text } from "@shopify/polaris";
 
 export function EditBundlePage({
     params,
 }: {
-    params: Promise<{ id: string }>;
+    params: { id: string };
 }) {
-    const { id: bundleId } = use(params);
+    const { id: bundleId } = params;
     const { bundleData, isLoading, isError, errorMessage } =
         useEditBundle(bundleId);
 

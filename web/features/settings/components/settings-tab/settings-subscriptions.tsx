@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export function SettingsSubscriptions() {
     const [isSealIntegrationEnabled, setIsSealIntegrationEnabled] = useState<boolean>(true);

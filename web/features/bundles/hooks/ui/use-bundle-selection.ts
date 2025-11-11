@@ -39,7 +39,7 @@ export function useBundleSelection(bundles: any[]) {
             clearSelectionRef.current();
         } else {
             // Fallback if the ref is not set
-            handleSelectionChange(<SelectionType>"page", false);
+            handleSelectionChange("page" as SelectionType, false);
         }
     }, [handleSelectionChange]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useBundleStore } from "@/features/bundles";
 
 export function SelectedProducts() {

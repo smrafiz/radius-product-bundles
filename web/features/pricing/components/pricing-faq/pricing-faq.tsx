@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { PRICING_FAQ_ITEM, PricingFaqItem } from "@/features/pricing";
 
 export const PricingFaq = () => {

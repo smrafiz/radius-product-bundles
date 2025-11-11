@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useDashboardStore } from "@/features/dashboard";
 
 export function DashboardVideo({ lines = 6 }: { lines?: number }) {

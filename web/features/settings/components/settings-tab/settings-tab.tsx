@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { SETTINGS_TAB_NAV,  } from "@/features/settings";
 import {
     SettingsTools,

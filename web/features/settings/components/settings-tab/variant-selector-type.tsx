@@ -1,7 +1,7 @@
 "use client";
 
+import { useState } from "react";
 import { CallbackEvent } from "@shopify/polaris-types";
-import React, { useState } from "react";
 
 export function SettingsVariantSelectorType() {
     const [variantType, setVariantType] = useState<"dropdown" | "swatches">(

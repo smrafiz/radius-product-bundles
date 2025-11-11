@@ -14,10 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Edit Bundle Page
  */
-export default function EditBundleByIdPage({
-    params,
-}: {
-    params: Promise<{ id: string }>;
-}) {
+export default async function EditBundleByIdPage(
+    props: {
+        params: Promise<{ id: string }>;
+    }
+) {
+    const params = await props.params;
     return <EditBundlePage params={params} />;
 }

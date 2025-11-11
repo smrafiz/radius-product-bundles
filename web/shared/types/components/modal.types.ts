@@ -1,10 +1,12 @@
+import { ReactNode } from "react";
+
 /*
  * ConfirmationModal Props
  */
 export interface ConfirmationModalProps {
     open: boolean;
     title: string;
-    message: React.ReactNode;
+    message: ReactNode;
     loading?: boolean;
     destructive?: boolean;
     error?: string;

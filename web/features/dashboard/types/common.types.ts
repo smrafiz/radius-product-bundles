@@ -2,12 +2,14 @@
  * Common dashboard types
  */
 
+import { ComponentType } from "react";
+
 /**
  * Quick action definition
  */
 export interface QuickAction {
     id: string;
-    icon: React.ComponentType;
+    icon: ComponentType;
     label: string;
     description: string;
     onClick: () => void;

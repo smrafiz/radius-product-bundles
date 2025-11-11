@@ -2,6 +2,7 @@ import "./globals.css";
 import "@/styles/main.css";
 import { Metadata } from "next";
 import { ReactNode } from "react";
+import { Inter } from "next/font/google";
 import { AppLayoutWrapper, GlobalLoader, ModalHost, Providers } from "@/shared";
 
 export const metadata: Metadata = {
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
         "shopify-app-origins": process.env.NEXT_PUBLIC_HOST || "",
     },
 };
+
+const inter = Inter({ subsets: ["latin"] });
 
 /*
  * Root Layout
@@ -27,7 +30,7 @@ export default async function RootLayout({
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
                 <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
             </head>
-            <body>
+            <body className={inter.className} suppressHydrationWarning>
                 <Providers>
                     <GlobalLoader />
                     <AppLayoutWrapper>{children}</AppLayoutWrapper>

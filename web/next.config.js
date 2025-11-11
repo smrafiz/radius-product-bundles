@@ -18,6 +18,10 @@ const nextConfig = {
             },
         ],
     },
+    cacheComponents: true,
+    experimental: {
+        turbopackFileSystemCacheForDev: true,
+    },
     async headers() {
         return [
             {

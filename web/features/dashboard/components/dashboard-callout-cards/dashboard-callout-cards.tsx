@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import { CalloutCard } from "@/shared";
 import {
     DASHBOARD_CALLOUT_CARDS,
