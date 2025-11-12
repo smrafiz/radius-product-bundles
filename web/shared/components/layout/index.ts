@@ -1,1 +1,1 @@
-export { AppLayoutWrapper } from "./app-layout/app-layout";
+export { AppLayoutWrapper } from "./app-layout/app-layout-wrapper";

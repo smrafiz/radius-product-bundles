@@ -51,7 +51,7 @@ export function BundleTableRow({
             </IndexTable.Cell>
 
             {/* Bundled products */}
-            <IndexTable.Cell className="w-[150px]">
+            <IndexTable.Cell className="w-[150px] !whitespace-normal">
                 <div onClick={(e) => e.stopPropagation()}>
                     <Text variant="bodyMd" as="span">
                         <BundleProductsPreview bundle={bundle} />
@@ -60,7 +60,7 @@ export function BundleTableRow({
             </IndexTable.Cell>
 
             {/* Bundle type */}
-            <IndexTable.Cell>
+            <IndexTable.Cell className="w-[150px] !whitespace-normal">
                 <div
                     className="cursor-default"
                     onClick={(e) => e.stopPropagation()}
@@ -72,7 +72,7 @@ export function BundleTableRow({
             </IndexTable.Cell>
 
             {/* Bundle price */}
-            <IndexTable.Cell>
+            <IndexTable.Cell className="w-[120px] !whitespace-normal">
                 <div
                     className="cursor-default"
                     onClick={(e) => e.stopPropagation()}

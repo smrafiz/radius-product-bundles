@@ -2,12 +2,6 @@
  * Bundle actions constants
  */
 
-import {
-    DeleteIcon,
-    DuplicateIcon,
-    EditIcon,
-    ViewIcon,
-} from "@shopify/polaris-icons";
 import { BundleAction, BundleHelpItem } from "@/features/bundles";
 
 /**
@@ -16,22 +10,22 @@ import { BundleAction, BundleHelpItem } from "@/features/bundles";
 export const BUNDLE_LISTING_ACTIONS: BundleAction[] = [
     {
         key: "edit",
-        icon: EditIcon,
+        icon: "edit",
         tooltip: "Edit bundle",
     },
     {
         key: "view",
-        icon: ViewIcon,
+        icon: "view",
         tooltip: "View bundle",
     },
     {
         key: "duplicate",
-        icon: DuplicateIcon,
+        icon: "duplicate",
         tooltip: "Duplicate bundle",
     },
     {
         key: "delete",
-        icon: DeleteIcon,
+        icon: "delete",
         tooltip: "Delete bundle",
         tone: "critical",
     },

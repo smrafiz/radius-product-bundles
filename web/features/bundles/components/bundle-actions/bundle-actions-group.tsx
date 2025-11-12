@@ -1,11 +1,8 @@
 "use client";
 
+import { Fragment } from "react";
 import { useModalStore } from "@/shared";
-import { Button, ButtonGroup, Tooltip } from "@shopify/polaris";
-import {
-    BUNDLE_LISTING_ACTIONS,
-    BundleActionsGroupProps,
-} from "@/features/bundles";
+import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps, } from "@/features/bundles";
 
 /**
  * Bundle actions group
@@ -50,19 +47,33 @@ export function BundleActionsGroup({
 
     return (
         <>
-            <ButtonGroup variant="segmented">
-                {BUNDLE_LISTING_ACTIONS.map((action, index) => (
-                    <Tooltip key={index} content={action.tooltip} dismissOnMouseOut>
-                        <Button
+            {/* Tooltips */}
+            {BUNDLE_LISTING_ACTIONS.map((action) => {
+                const tooltipId = `${action.key}-${bundle.id}`;
+                return (
+                    <s-tooltip key={`tooltip-${action.key}`} id={tooltipId}>
+                        <s-text>{action.tooltip}</s-text>
+                    </s-tooltip>
+                );
+            })}
+
+            {/* Segmented button group */}
+            <s-button-group gap="none">
+                {BUNDLE_LISTING_ACTIONS.map((action) => {
+                    const tooltipId = `${action.key}-${bundle.id}`;
+                    return (
+                        <s-button
+                            key={action.key}
+                            slot="secondary-actions"
+                            interestFor={tooltipId}
+                            accessibilityLabel={action.tooltip}
                             icon={action.icon}
                             tone={action.tone}
-                            disabled={action.disabled}
                             onClick={() => handleActionClick(action.key)}
-                            accessibilityLabel={action.tooltip}
                         />
-                    </Tooltip>
-                ))}
-            </ButtonGroup>
+                    );
+                })}
+            </s-button-group>
         </>
     );
 }

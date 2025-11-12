@@ -1,13 +1,6 @@
 "use client";
 
-import {
-    ActionList,
-    Badge,
-    Icon,
-    InlineStack,
-    Link,
-    Popover,
-} from "@shopify/polaris";
+import { ActionList, Badge, Icon, InlineStack, Link, Popover, } from "@shopify/polaris";
 import {
     BUNDLE_STATUSES,
     BundleStatus,
@@ -27,6 +20,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
 
     const { openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
+    const popoverId = `bundle-status-popover-${bundle.id}`;
 
     const togglePopover = useCallback(
         () => setPopoverActive((active) => !active),
@@ -49,32 +43,42 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
 
     const badge = getBundleStatusBadge(bundle.status);
 
-    const activator = (
-        <Link onClick={togglePopover} monochrome removeUnderline>
-            <InlineStack align="center">
-                <Badge tone={badge.tone as any}>{badge.text}</Badge>
-                <Icon
-                    source={popoverActive ? ChevronUpIcon : ChevronDownIcon}
-                />
-            </InlineStack>
-        </Link>
-    );
-
     return (
-        <Popover
-            active={popoverActive}
-            activator={activator}
-            onClose={togglePopover}
-        >
-            <ActionList
-                items={Object.entries(BUNDLE_STATUSES).map(
-                    ([statusKey, status]) => ({
-                        content: status.text,
-                        onAction: () =>
-                            handleStatusClick(statusKey as BundleStatus),
-                    }),
-                )}
-            />
-        </Popover>
+        <>
+            {/* Clickable badge */}
+            <s-clickable commandFor={popoverId} type="reset">
+                <s-stack direction="inline" gap="none" alignItems="center">
+                    <s-badge tone={badge.tone}>{badge.text}</s-badge>
+                    <s-icon type="caret-down" />
+                </s-stack>
+            </s-clickable>
+
+            {/* Popover */}
+            <s-popover id={popoverId}>
+                <s-box padding="small">
+                    <s-stack gap="small">
+                        {Object.entries(BUNDLE_STATUSES).map(
+                            ([statusKey, status]) => (
+                                <div key={statusKey}>
+                                    <div
+                                        onClick={() =>
+                                            handleStatusClick(
+                                                statusKey as BundleStatus
+                                            )
+                                        }
+                                    >
+                                        <s-badge
+                                            tone={status.tone}
+                                        >
+                                            {status.text}
+                                        </s-badge>
+                                    </div>
+                                </div>
+                            )
+                        )}
+                    </s-stack>
+                </s-box>
+            </s-popover>
+        </>
     );
 }

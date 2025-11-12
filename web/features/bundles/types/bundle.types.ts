@@ -9,7 +9,6 @@ import type {
 } from "@prisma/client";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
-import { IconSource } from "@shopify/polaris";
 import { bundleSchema } from "@/features/bundles";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
@@ -177,9 +176,9 @@ export interface ProductPreviewGroup {
  */
 export interface BundleAction {
     key: string;
-    icon: IconSource;
+    icon: "edit" | "delete" | "duplicate" | "view";
     tooltip: string;
-    tone?: "success" | "critical";
+    tone?: "neutral" | "critical" | undefined;
     disabled?: boolean;
 }
 
