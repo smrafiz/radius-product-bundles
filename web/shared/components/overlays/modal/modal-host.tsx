@@ -1,19 +1,17 @@
 "use client";
 
-import { ConfirmationModal, useModalStore } from "@/shared";
-import { BUNDLE_STATUSES, BundleStatus } from "@/features/bundles";
+import { useModalStore } from "@/shared";
 
 export function ModalHost() {
     const { modal, closeModal, setLoading, setError } = useModalStore();
 
+    // Nothing open → render nothing
     if (!modal || modal.type === null) {
         return null;
     }
 
     const handleConfirm = async () => {
-        if (!modal.onConfirm) {
-            return;
-        }
+        if (!modal.onConfirm) return;
 
         try {
             setError(null);
@@ -21,82 +19,53 @@ export function ModalHost() {
             await modal.onConfirm();
             closeModal();
         } catch (error) {
-            const errorMessage =
-                error instanceof Error
-                    ? error.message
-                    : "An unexpected error occurred";
-            setError(errorMessage);
+            const message =
+                error instanceof Error ? error.message : "An unexpected error occurred";
+            setError(message);
         } finally {
             setLoading(false);
         }
     };
 
-    switch (modal.type) {
-        case "delete":
-            return (
-                <ConfirmationModal
-                    open
-                    title="Delete Bundle"
-                    message={
-                        <>
-                            Are you sure you want to delete{" "}
-                            <strong>{modal.bundle?.name}</strong>? This action
-                            cannot be undone.
-                        </>
-                    }
-                    destructive
-                    loading={modal.loading}
-                    onClose={closeModal}
-                    onConfirm={handleConfirm}
-                    error={modal.error}
-                />
-            );
+    // Modal ID matches the modal type
+    const modalId = modal.type;
 
-        case "duplicate":
-            return (
-                <ConfirmationModal
-                    open
-                    title="Duplicate Bundle"
-                    message={
-                        <>
-                            Duplicate <strong>{modal.bundle?.name}</strong>? A
-                            new draft will be created.
-                        </>
-                    }
-                    loading={modal.loading}
-                    onClose={closeModal}
-                    onConfirm={handleConfirm}
-                    error={modal.error}
-                />
-            );
+    return (
+        <>
+            {/* ✅ Web Component Modal */}
+            <s-modal id={modalId} heading={modal.title || "Confirm Action"}>
+                {modal.error && (
+                    <s-banner tone="critical">
+                        <s-text>{modal.error}</s-text>
+                    </s-banner>
+                )}
 
-        case "status":
-            return (
-                <ConfirmationModal
-                    open
-                    title="Confirm Status Change"
-                    message={
-                        <>
-                            Change status of{" "}
-                            <strong>{modal.bundle?.name}</strong> to{" "}
-                            <strong>
-                                {modal.newStatus
-                                    ? BUNDLE_STATUSES[
-                                          modal.newStatus as BundleStatus
-                                      ]?.text
-                                    : ""}
-                            </strong>
-                            ?
-                        </>
-                    }
-                    loading={modal.loading}
-                    onClose={closeModal}
-                    onConfirm={handleConfirm}
-                    error={modal.error}
-                />
-            );
+                <s-paragraph>
+                    {modal.message || "Are you sure you want to continue?"}
+                </s-paragraph>
 
-        default:
-            return null;
-    }
+                {/* Secondary Action (Close) */}
+                <s-button
+                    slot="secondary-actions"
+                    commandFor={modalId}
+                    command="--hide"
+                    onClick={closeModal}
+                >
+                    Cancel
+                </s-button>
+
+                {/* Primary Action (Confirm) */}
+                <s-button
+                    slot="primary-action"
+                    variant={modal.destructive ? "destructive" : "primary"}
+                    commandFor={modalId}
+                    command="--hide"
+                    onClick={handleConfirm}
+                    loading={modal.loading}
+                >
+                    {modal.loading ? "Processing..." : "Confirm"}
+                </s-button>
+            </s-modal>
+        </>
+    );
 }

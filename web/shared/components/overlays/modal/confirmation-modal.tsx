@@ -1,7 +1,7 @@
 "use client";
 
 import { ConfirmationModalProps } from "@/shared";
-import { Banner, BlockStack, Modal, Text } from "@shopify/polaris";
+import { Modal, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 
 export function ConfirmationModal({
     open,
@@ -13,33 +13,37 @@ export function ConfirmationModal({
     onClose,
     onConfirm,
 }: ConfirmationModalProps) {
+    const shopify = useAppBridge();
+
     return (
-        <Modal
-            open={open}
-            onClose={onClose}
-            title={title}
-            primaryAction={{
-                content: "Confirm",
-                destructive,
-                loading,
-                onAction: onConfirm,
-            }}
-            secondaryActions={[
-                { content: "Cancel", onAction: onClose, disabled: loading },
-            ]}
-        >
-            <Modal.Section>
-                <BlockStack gap="400">
+        <>
+            {/* The Modal component */}
+            <Modal id="confirmation-modal" open={open}>
+                {/* Title bar with actions */}
+                <TitleBar title={title}>
+                    <s-button
+                        variant={destructive ? "primary" : "secondary"}
+                        disabled={loading}
+                        onClick={onConfirm}
+                    >
+                        {loading ? "Processing..." : "Confirm"}
+                    </s-button>
+                    <s-button onClick={onClose} disabled={loading}>
+                        Cancel
+                    </s-button>
+                </TitleBar>
+
+                {/* Modal content */}
+                <s-box padding="base">
                     {error && (
-                        <Banner tone="critical" title="Error">
+                        <s-banner tone="critical" heading="Error">
                             {error}
-                        </Banner>
+                        </s-banner>
                     )}
-                    <Text as="p" variant="bodyMd">
-                        {message}
-                    </Text>
-                </BlockStack>
-            </Modal.Section>
-        </Modal>
+
+                    <s-paragraph>{message}</s-paragraph>
+                </s-box>
+            </Modal>
+        </>
     );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { ActionList, Badge, Icon, InlineStack, Link, Popover, } from "@shopify/polaris";
 import {
     BUNDLE_STATUSES,
     BundleStatus,
@@ -10,7 +9,6 @@ import {
 } from "@/features/bundles";
 import { useModalStore } from "@/shared";
 import { useCallback, useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 
 /**
  * Bundle status popover
@@ -18,9 +16,10 @@ import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 export function StatusPopover({ bundle }: StatusPopoverProps) {
     const [popoverActive, setPopoverActive] = useState(false);
 
-    const { openModal } = useModalStore();
+    const { modal, openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
     const popoverId = `bundle-status-popover-${bundle.id}`;
+    const modalId = modal.type || undefined;
 
     const togglePopover = useCallback(
         () => setPopoverActive((active) => !active),
@@ -59,22 +58,19 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                     <s-stack gap="small">
                         {Object.entries(BUNDLE_STATUSES).map(
                             ([statusKey, status]) => (
-                                <div key={statusKey}>
-                                    <div
-                                        onClick={() =>
-                                            handleStatusClick(
-                                                statusKey as BundleStatus
-                                            )
-                                        }
-                                    >
-                                        <s-badge
-                                            tone={status.tone}
-                                        >
-                                            {status.text}
-                                        </s-badge>
-                                    </div>
+                                <div
+                                    onClick={() =>
+                                        handleStatusClick(
+                                            statusKey as BundleStatus,
+                                        )
+                                    }
+                                    key={statusKey}
+                                >
+                                    <s-clickable commandFor={modalId}>
+                                        {status.text}
+                                    </s-clickable>
                                 </div>
-                            )
+                            ),
                         )}
                     </s-stack>
                 </s-box>

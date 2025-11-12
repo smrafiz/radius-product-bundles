@@ -11,7 +11,8 @@ export function BundleActionsGroup({
     bundle,
     onAction,
 }: BundleActionsGroupProps) {
-    const { openModal } = useModalStore();
+    const { modal, openModal } = useModalStore();
+    const modalId = modal.type;
 
     const handleActionClick = (actionKey: string) => {
         switch (actionKey) {
@@ -67,6 +68,7 @@ export function BundleActionsGroup({
                             slot="secondary-actions"
                             interestFor={tooltipId}
                             accessibilityLabel={action.tooltip}
+                            commandFor={modalId || undefined}
                             icon={action.icon}
                             tone={action.tone}
                             onClick={() => handleActionClick(action.key)}
