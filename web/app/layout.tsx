@@ -30,11 +30,16 @@ export default async function RootLayout({
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
                 <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
             </head>
-            <body className={`radius-app-wrapper ${inter.className}`} suppressHydrationWarning>
+            <body
+                className={`radius-app-wrapper ${inter.className}`}
+                suppressHydrationWarning
+            >
                 <Providers>
                     <GlobalLoader />
-                    <AppLayoutWrapper>{children}</AppLayoutWrapper>
-                    <ModalHost />
+                    <AppLayoutWrapper>
+                        {children}
+                        <ModalHost />
+                    </AppLayoutWrapper>
                 </Providers>
             </body>
         </html>

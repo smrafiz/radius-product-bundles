@@ -61,7 +61,7 @@ export function BundleActionsGroup({
             <s-button-group gap="none">
                 {BUNDLE_LISTING_ACTIONS.map((action) => {
                     const tooltipId = `${action.key}-${bundle.id}`;
-                    const modalId = `${action.key}-modal`;
+                    const isModalAction = action.key === "delete" || action.key === "duplicate";
 
                     return (
                         <s-button
@@ -69,10 +69,14 @@ export function BundleActionsGroup({
                             slot="secondary-actions"
                             interestFor={tooltipId}
                             accessibilityLabel={action.tooltip}
-                            commandFor="radius-bundles-app-modal"
-                            command="--show"
                             icon={action.icon}
                             tone={action.tone}
+                            {...(isModalAction
+                                ? {
+                                    commandFor: "radius-bundles-app-modal",
+                                    command: "--show",
+                                }
+                                : {})}
                             onClick={() => handleActionClick(action.key)}
                         />
                     );

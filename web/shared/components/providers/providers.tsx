@@ -1,11 +1,11 @@
 "use client";
 
-import { ReactNode, Suspense } from "react";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
 import { DehydratedState } from "@tanstack/react-query";
 import translations from "@shopify/polaris/locales/en.json";
-import { Navigation, ProtectedRoute, SessionProvider, TanstackProvider, } from "@/shared";
+import { ReactNode, Suspense, useEffect, useState } from "react";
+import { Navigation, ProtectedRoute, SessionProvider, TanstackProvider } from "@/shared";
 
 /**
  * Root Providers Component
@@ -17,6 +17,16 @@ export function Providers({
     children: ReactNode;
     dehydratedState?: DehydratedState | null;
 }) {
+    const [hasMounted, setHasMounted] = useState(false);
+
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
+
+    if (!hasMounted) {
+        return null;
+    }
+
     return (
         <AppProvider i18n={translations}>
             <Suspense fallback={null}>
