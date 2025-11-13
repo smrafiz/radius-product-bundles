@@ -41,6 +41,7 @@ export function BundleDetails() {
                     handleNameChange(target.value);
                 }}
                 placeholder="Enter bundle name"
+                details="Enter bundle name"
                 error={getFieldError("name")}
             />
 

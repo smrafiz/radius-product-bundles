@@ -1,6 +1,5 @@
 "use client";
 
-import { Fragment } from "react";
 import { useModalStore } from "@/shared";
 import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps, } from "@/features/bundles";
 
@@ -11,8 +10,7 @@ export function BundleActionsGroup({
     bundle,
     onAction,
 }: BundleActionsGroupProps) {
-    const { modal, openModal } = useModalStore();
-    const modalId = modal.type;
+    const { openModal } = useModalStore();
 
     const handleActionClick = (actionKey: string) => {
         switch (actionKey) {
@@ -35,6 +33,7 @@ export function BundleActionsGroup({
                 break;
 
             case "delete":
+                // Set modal data BEFORE it opens
                 openModal({
                     type: "delete",
                     bundle,
@@ -62,13 +61,16 @@ export function BundleActionsGroup({
             <s-button-group gap="none">
                 {BUNDLE_LISTING_ACTIONS.map((action) => {
                     const tooltipId = `${action.key}-${bundle.id}`;
+                    const modalId = `${action.key}-modal`;
+
                     return (
                         <s-button
                             key={action.key}
                             slot="secondary-actions"
                             interestFor={tooltipId}
                             accessibilityLabel={action.tooltip}
-                            commandFor={modalId || undefined}
+                            commandFor="app-modal"
+                            command="--show"
                             icon={action.icon}
                             tone={action.tone}
                             onClick={() => handleActionClick(action.key)}

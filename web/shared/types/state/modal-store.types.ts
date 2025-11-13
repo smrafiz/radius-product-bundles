@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { GlobalMessage, MessageType } from "@/shared";
 import { BundleListItem, BundleStatus } from "@/features/bundles";
 
@@ -22,7 +23,9 @@ export interface ModalState {
 export type ModalType = "delete" | "duplicate" | "status" | null;
 
 export interface ModalPayload {
+    title?: string;
     type: ModalType;
+    message?: string | ReactNode;
     bundle?: BundleListItem;
     newStatus?: BundleStatus;
     onConfirm?: () => Promise<void> | void;

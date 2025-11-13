@@ -19,25 +19,20 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
     const { modal, openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
     const popoverId = `bundle-status-popover-${bundle.id}`;
-    const modalId = modal.type || undefined;
-
-    const togglePopover = useCallback(
-        () => setPopoverActive((active) => !active),
-        [],
-    );
 
     const handleStatusClick = (status: BundleStatus) => {
-        if (status !== bundle.status) {
-            openModal({
-                type: "status",
-                bundle,
-                newStatus: status,
-                onConfirm: async () => {
-                    await actions.status(status);
-                },
-            });
+        if (!status || status === bundle.status) {
+            return;
         }
-        setPopoverActive(false);
+
+        openModal({
+            type: "status",
+            bundle,
+            newStatus: status,
+            onConfirm: async () => {
+                await actions.status(status);
+            },
+        });
     };
 
     const badge = getBundleStatusBadge(bundle.status);
@@ -57,20 +52,33 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                 <s-box padding="small">
                     <s-stack gap="small">
                         {Object.entries(BUNDLE_STATUSES).map(
-                            ([statusKey, status]) => (
-                                <div
-                                    onClick={() =>
-                                        handleStatusClick(
-                                            statusKey as BundleStatus,
-                                        )
-                                    }
-                                    key={statusKey}
-                                >
-                                    <s-clickable commandFor={modalId}>
-                                        {status.text}
-                                    </s-clickable>
-                                </div>
-                            ),
+                            ([statusKey, status]) => {
+                                const isCurrentStatus = statusKey === bundle.status;
+
+                                return (
+                                    <div
+                                        onClick={() =>
+                                            handleStatusClick(
+                                                statusKey as BundleStatus,
+                                            )
+                                        }
+                                        key={statusKey}
+                                    >
+                                        <s-clickable
+                                            commandFor={isCurrentStatus ? undefined : "app-modal"}
+                                            command={isCurrentStatus ? undefined : "--show"}
+                                        >
+                                            {isCurrentStatus ? (
+                                                <s-stack direction="inline">
+                                                    <s-text type="strong">{status.text}</s-text>
+                                                </s-stack>
+                                            ) : (
+                                                <s-text>{status.text}</s-text>
+                                            )}
+                                        </s-clickable>
+                                    </div>
+                                );
+                            }
                         )}
                     </s-stack>
                 </s-box>
