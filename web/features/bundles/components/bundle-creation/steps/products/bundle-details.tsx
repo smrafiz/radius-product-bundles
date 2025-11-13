@@ -29,21 +29,22 @@ export function BundleDetails() {
 
     return (
         <s-stack gap="base">
-            <s-heading>
-                Bundle details
-            </s-heading>
-
-            <s-text-field
-                label="Bundle name"
-                value={name || ""}
-                onChange={(event: Event) => {
-                    const target = event.target as HTMLInputElement;
-                    handleNameChange(target.value);
-                }}
-                placeholder="Enter bundle name"
-                details="Enter bundle name"
-                error={getFieldError("name")}
-            />
+            <s-heading>Bundle details</s-heading>
+            <s-stack>
+                <s-tooltip id="info-tooltip">This is info tooltip</s-tooltip>
+                <s-text-field
+                    label="Bundle name"
+                    value={name || ""}
+                    onChange={(event: Event) => {
+                        const target = event.target as HTMLInputElement;
+                        handleNameChange(target.value);
+                    }}
+                    placeholder="Enter bundle name"
+                    details="Used internally to identify the bundle."
+                    error={getFieldError("name")}
+                >
+                </s-text-field>
+            </s-stack>
 
             <s-text-area
                 label="Description (Optional)"

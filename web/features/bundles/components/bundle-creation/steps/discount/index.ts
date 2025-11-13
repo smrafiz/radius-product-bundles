@@ -1,4 +1,4 @@
-export { BundleDetails } from "./bundle-details";
+export { BundleDetails } from "../products/bundle-details";
 export { BundleBehavior } from "./bundle-behavior";
 export { DiscountSettings } from "./discount-settings";
 export { DiscountStep } from "./discount-step";

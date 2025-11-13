@@ -2,6 +2,7 @@
 import {
     BundleDetails,
     ProductList,
+    ProductBundle,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
@@ -83,6 +84,12 @@ export function ProductsStep() {
                     <ProductList />
                 </s-stack>
             </s-section>
+
+            <s-section>
+                <ProductBundle />
+            </s-section>
+
+
         </s-stack>
     );
 }

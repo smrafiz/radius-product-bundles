@@ -4,13 +4,17 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useDragAndDrop } from "@/shared";
+import { useDragAndDrop, useProductPicker } from "@/shared";
 import { closestCenter, DndContext } from "@dnd-kit/core";
-import { ProductItem, useBundleStore } from "@/features/bundles";
+import {
+    ProductItem,
+    useBundleStore,
+} from "@/features/bundles";
 
 export function ProductList() {
     const { getGroupedItems } = useBundleStore();
     const { sensors, handleDragEnd } = useDragAndDrop();
+    const { openProductPicker, isLoading } = useProductPicker();
 
     const groupedItems = getGroupedItems();
 
@@ -23,17 +27,15 @@ export function ProductList() {
                 borderRadius="base"
             >
                 <s-stack gap="large" alignItems="center">
-                    <div className="w-[150px] rounded-xl overflow-hidden bg-white">
-                        <s-image
-                            src="/assets/empty.png"
-                            alt="No products selected"
-                            aspectRatio="1.2/1"
-                        />
-                    </div>
-                    <s-stack alignItems="center">
-                        <s-heading>No products selected</s-heading>
-                        <s-text>Click "Add Products" to get started</s-text>
-                    </s-stack>
+                    <s-button
+                        variant="tertiary"
+                        icon="plus"
+                        onClick={openProductPicker}
+                        loading={isLoading}
+                    >
+                        Add products
+                    </s-button>
+
                 </s-stack>
             </s-box>
         );
