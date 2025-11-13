@@ -14,7 +14,7 @@ export function useBundlePreview(products: ProductPreviewGroup[]) {
             groupedProducts: grouped,
             displayProducts: display,
             remainingCount: Math.max(0, total - 3),
-            arrowClass: total === 2 ? "-left-7" : "-left-2",
+            arrowClass: total === 2 ? "-left-5" : "",
         };
     }, [products]);
 }

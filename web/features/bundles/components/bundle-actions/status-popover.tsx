@@ -8,23 +8,30 @@ import {
     useBundleActions,
 } from "@/features/bundles";
 import { useModalStore } from "@/shared";
-import { useCallback, useState } from "react";
 
 /**
  * Bundle status popover
  */
 export function StatusPopover({ bundle }: StatusPopoverProps) {
-    const [popoverActive, setPopoverActive] = useState(false);
-
-    const { modal, openModal } = useModalStore();
+    const { openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
     const popoverId = `bundle-status-popover-${bundle.id}`;
 
+    /**
+     * Handle status change
+     */
     const handleStatusClick = (status: BundleStatus) => {
         if (!status || status === bundle.status) {
             return;
         }
 
+        // Close popover first
+        const popoverBtn = document.querySelector(`[commandFor="${popoverId}"]`) as HTMLElement;
+        if (popoverBtn) {
+            popoverBtn.click();
+        }
+
+        // Open modal
         openModal({
             type: "status",
             bundle,
@@ -33,6 +40,14 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                 await actions.status(status);
             },
         });
+
+        // Show modal element
+        setTimeout(() => {
+            const modalElement = document.getElementById('radius-bundles-app-modal') as any;
+            if (modalElement?.showOverlay) {
+                modalElement.showOverlay();
+            }
+        }, 100);
     };
 
     const badge = getBundleStatusBadge(bundle.status);
@@ -57,17 +72,15 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
 
                                 return (
                                     <div
-                                        onClick={() =>
-                                            handleStatusClick(
-                                                statusKey as BundleStatus,
-                                            )
-                                        }
                                         key={statusKey}
+                                        onClick={() => {
+                                            if (!isCurrentStatus) {
+                                                handleStatusClick(statusKey as BundleStatus);
+                                            }
+                                        }}
+                                        style={{ cursor: isCurrentStatus ? 'default' : 'pointer' }}
                                     >
-                                        <s-clickable
-                                            commandFor={isCurrentStatus ? undefined : "app-modal"}
-                                            command={isCurrentStatus ? undefined : "--show"}
-                                        >
+                                        <s-clickable>
                                             {isCurrentStatus ? (
                                                 <s-stack direction="inline">
                                                     <s-text type="strong">{status.text}</s-text>

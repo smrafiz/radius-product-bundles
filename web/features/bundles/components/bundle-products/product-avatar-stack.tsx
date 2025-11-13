@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { Box } from "@shopify/polaris";
 import { ProductAvatarStackProps } from "@/features/bundles";
 
 /**
@@ -16,31 +14,25 @@ export function ProductAvatarStack({
                     index === 1 ? "-left-5" : index === 2 ? "-left-10" : "";
 
                 return (
-                    <Box key={`${product.id}-${index}`} position="relative">
-                        <div
-                            className={`${
-                                index === 2 ? "absolute" : "relative"
-                            } w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${offset}`}
-                        >
-                            <Image
-                                src={product.featuredImage?.url || ""}
-                                alt={product.featuredImage?.altText || ""}
-                                width={40}
-                                height={40}
-                                className="object-cover w-full h-full"
-                                style={{
-                                    maxWidth: "100%",
-                                    height: "auto",
-                                    maxWidth: "100%",
-                                    height: "auto"
-                                }} />
-                        </div>
-                        {index === 2 && remainingCount > 0 && (
-                            <div className="absolute w-10 h-10 inset-0 bg-white/90 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 border border-[var(--p-color-border)]">
-                                +{remainingCount}
+                    <div key={`${product.id}-${index}`} className="relative">
+                            <div
+                                className={`${
+                                    index === 2 ? "absolute -top-5" : "relative"
+                                } w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${offset}`}
+                            >
+                                <s-image
+                                    src={product.featuredImage?.url || ""}
+                                    alt={product.featuredImage?.altText || ""}
+                                    aspectRatio="1/1"
+                                    objectFit="cover"
+                                />
                             </div>
-                        )}
-                    </Box>
+                            {index === 2 && remainingCount > 0 && (
+                                <div className="absolute w-10 h-10 -top-5 inset-0 bg-white/90 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 border border-[var(--p-color-border)]">
+                                    +{remainingCount}
+                                </div>
+                            )}
+                    </div>
                 );
             })}
         </>

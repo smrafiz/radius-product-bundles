@@ -69,7 +69,7 @@ export function BundleActionsGroup({
                             slot="secondary-actions"
                             interestFor={tooltipId}
                             accessibilityLabel={action.tooltip}
-                            commandFor="app-modal"
+                            commandFor="radius-bundles-app-modal"
                             command="--show"
                             icon={action.icon}
                             tone={action.tone}

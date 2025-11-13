@@ -2,7 +2,6 @@
 
 import {
     BundlePreviewStatus,
-    BundleType,
     calculateBundlePrice,
     calculateDiscountAmount,
     calculateSavingsPercentage,
@@ -10,7 +9,7 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 
-export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
+export function BundlePreview() {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
     const renderSelectedProducts = () => {
@@ -98,9 +97,7 @@ export function BundlePreview({ bundleType }: { bundleType: BundleType }) {
             <s-section>
                 <s-stack gap="base">
                     <s-stack gap="base">
-                        <s-heading>
-                            Bundle preview
-                        </s-heading>
+                        <s-heading>Bundle preview</s-heading>
 
                         {/* Product Images */}
                         <s-stack gap="small-200">

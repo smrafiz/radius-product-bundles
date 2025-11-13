@@ -63,8 +63,6 @@ export function useBundleActions(
                         bundle.id,
                     );
 
-                    console.log(result);
-
                     if (result.status === "success") {
                         if (result.data?.bundle?.id) {
                             await invalidateBundleCache(queryClient);
