@@ -311,6 +311,7 @@ export interface DisplaySettings {
     layout: "horizontal" | "vertical" | "grid";
     position: "above_cart" | "below_cart" | "description" | "custom";
     title: string;
+    cartTitle: string;
     colorTheme: "brand" | "success" | "warning" | "critical";
     showPrices: boolean;
     showSavings: boolean;

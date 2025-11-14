@@ -9,15 +9,25 @@ export function WidgetPosition() {
         updateDisplaySettings("position", value as any);
     }
 
+    function handleTitleChange(event: Event) {
+        const target = event.currentTarget as HTMLInputElement;
+        updateDisplaySettings("title", target.value);
+    }
+
+    function handleAddToCartTitleChange(event: Event) {
+        const target = event.currentTarget as HTMLInputElement;
+        updateDisplaySettings("cartTitle", target.value);
+    }
+
     return (
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    Widget Position
+                    Product page
                 </s-heading>
 
                 <s-select
-                    label="Display Position"
+                    label="Display position"
                     details="Choose where the bundle widget appears on product pages"
                     required
                     value={displaySettings.position}
@@ -32,6 +42,20 @@ export function WidgetPosition() {
                         </s-option>
                     ))}
                 </s-select>
+
+                <s-text-field
+                    label="Offer title"
+                    value={displaySettings.title || ''}
+                    onChange={handleTitleChange}
+                />
+
+                <s-text-field
+                    required
+                    label="'Add to cart' button text"
+                    value={displaySettings.cartTitle || ''}
+                    onChange={handleAddToCartTitleChange}
+                />
+
             </s-stack>
         </s-section>
     );

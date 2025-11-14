@@ -2,7 +2,7 @@
 
 import { ADVANCED_OPTIONS, useBundleStore } from "@/features/bundles";
 
-export function AdvancedOptions() {
+export function WidgetAdvancedOptions() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
     return (

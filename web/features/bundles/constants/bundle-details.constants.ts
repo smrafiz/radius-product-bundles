@@ -21,10 +21,10 @@ export const WIDGET_LAYOUTS = [
 ];
 
 export const WIDGET_POSITIONS = [
-    { label: "Above Add to Cart", value: "above_cart" as const },
-    { label: "Below Add to Cart", value: "below_cart" as const },
-    { label: "In Product Description", value: "description" as const },
-    { label: "Custom Position", value: "custom" as const },
+    { label: "Above add to cart", value: "above_cart" as const },
+    { label: "Below add to cart", value: "below_cart" as const },
+    { label: "In product description", value: "description" as const },
+    { label: "Custom position", value: "custom" as const },
 ];
 
 export const COLOR_THEMES = [
@@ -63,7 +63,7 @@ export const BUNDLE_STEPS = [
     },
     {
         number: 3,
-        title: "Display",
+        title: "Appearance",
         description: "Customize appearance and layout",
     },
     {

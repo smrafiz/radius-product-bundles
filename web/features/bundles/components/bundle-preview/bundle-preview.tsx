@@ -97,7 +97,7 @@ export function BundlePreview() {
             <s-section>
                 <s-stack gap="base">
                     <s-stack gap="base">
-                        <s-heading>Bundle preview</s-heading>
+                        <s-heading>Frequently bought together</s-heading>
 
                         {/* Product Images */}
                         <s-stack gap="small-200">

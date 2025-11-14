@@ -1,17 +1,17 @@
 import {
-    AdvancedOptions,
+    WidgetAdvancedOptions,
     WidgetAppearance,
     WidgetLayout,
     WidgetPosition,
 } from "@/features/bundles";
 
-export function DisplayStep() {
+export function AppearanceStep() {
     return (
         <s-stack gap="base">
             <WidgetLayout />
             <WidgetPosition />
             <WidgetAppearance />
-            <AdvancedOptions />
+            <WidgetAdvancedOptions />
         </s-stack>
     );
 }

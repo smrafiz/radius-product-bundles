@@ -28,7 +28,8 @@ const initialBundleData: Partial<ExtendedBundleFormData> = {
 const initialDisplaySettings: DisplaySettings = {
     layout: "horizontal",
     position: "above_cart",
-    title: "Frequently Bought Together",
+    title: "Frequently bought together",
+    cartTitle: "Add bundle to cart",
     colorTheme: "brand",
     showPrices: true,
     showSavings: true,

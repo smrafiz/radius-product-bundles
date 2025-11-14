@@ -2,7 +2,7 @@
 
 import {
     DiscountStep,
-    DisplayStep,
+    AppearanceStep,
     ProductsStep,
     ReviewStep,
     useBundleStore,
@@ -18,7 +18,7 @@ export function StepContent() {
             case 2:
                 return <DiscountStep />;
             case 3:
-                return <DisplayStep />;
+                return <AppearanceStep />;
             case 4:
                 return <ReviewStep />;
             default:
