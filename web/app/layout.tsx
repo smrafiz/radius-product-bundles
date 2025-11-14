@@ -26,7 +26,7 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <head>
-                {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+                <meta name="shopify-api-key" content="%SHOPIFY_API_KEY%" />
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
                 <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
             </head>
