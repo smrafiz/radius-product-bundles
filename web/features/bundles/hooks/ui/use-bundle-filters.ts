@@ -2,17 +2,13 @@
 
 import { useEffect } from "react";
 import { useDebounce } from "@/shared";
-import { useBundleListingStore, BUNDLE_FILTERS } from "@/features/bundles";
+import { BUNDLE_FILTERS, useBundleListingStore } from "@/features/bundles";
 
-/**
- * Handles debounced search and syncing with store
- */
 export function useBundleFilters() {
     const {
         filters,
         setSearch,
         setStatusFilter,
-        setTypeFilter,
         setSelectedTab,
         setSortSelected,
         clearFilters,
@@ -24,17 +20,10 @@ export function useBundleFilters() {
         BUNDLE_FILTERS.search.debounceMs,
     );
 
-    // Sync debounced query to store
+    // Sync debounced search to store
     useEffect(() => {
         setSearch(debouncedQuery);
     }, [debouncedQuery, setSearch]);
-
-    // Sync reset when store clears search
-    useEffect(() => {
-        if (filters.search === "" && queryValue !== "") {
-            setQueryValue("");
-        }
-    }, [filters.search]);
 
     return {
         filters,
@@ -42,7 +31,6 @@ export function useBundleFilters() {
         setQueryValue,
         setSearch,
         setStatusFilter,
-        setTypeFilter,
         setSelectedTab,
         setSortSelected,
         clearFilters,

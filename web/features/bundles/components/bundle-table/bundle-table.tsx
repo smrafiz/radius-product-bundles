@@ -34,7 +34,6 @@ export function BundleTable() {
     const hasActiveFilters =
         filters.search !== "" ||
         (filters.statusFilter as string[]).length > 0 ||
-        (filters.typeFilter as string[]).length > 0 ||
         (filters.selectedTab as number) > 0;
 
     // For empty state logic

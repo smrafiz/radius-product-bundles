@@ -206,3 +206,19 @@
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite linear;
 }
+
+.fade-wrapper {
+	overflow: hidden;
+	transition: opacity 0.25s ease, height 0.25s ease;
+}
+
+.fade-hidden {
+	opacity: 0;
+	height: 0;
+	pointer-events: none;
+}
+
+.fade-visible {
+	opacity: 1;
+	height: auto;
+}

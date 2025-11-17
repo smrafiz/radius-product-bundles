@@ -12,9 +12,8 @@ export const useBundleListingStore = create<BundleListingState>()(
         filters: {
             search: "",
             statusFilter: [],
-            typeFilter: [],
             selectedTab: 0,
-            sortSelected: ["createdAt desc"],
+            sortSelected: "createdAt desc",
         },
         pagination: {
             currentPage: 1,
@@ -41,33 +40,23 @@ export const useBundleListingStore = create<BundleListingState>()(
         setSearch: (search) =>
             set((state) => ({
                 filters: { ...state.filters, search },
-                pagination: { ...state.pagination, currentPage: 1 }, // Reset to first page
+                pagination: { ...state.pagination, currentPage: 1 },
             })),
-
         setStatusFilter: (statusFilter) =>
             set((state) => ({
                 filters: { ...state.filters, statusFilter },
                 pagination: { ...state.pagination, currentPage: 1 },
             })),
-
-        setTypeFilter: (typeFilter) =>
-            set((state) => ({
-                filters: { ...state.filters, typeFilter },
-                pagination: { ...state.pagination, currentPage: 1 },
-            })),
-
         setSelectedTab: (selectedTab) =>
             set((state) => ({
                 filters: { ...state.filters, selectedTab },
                 pagination: { ...state.pagination, currentPage: 1 },
             })),
-
         setSortSelected: (sortSelected) =>
             set((state) => ({
                 filters: { ...state.filters, sortSelected },
                 pagination: { ...state.pagination, currentPage: 1 },
             })),
-
         clearFilters: () =>
             set((state) => ({
                 filters: {
@@ -76,10 +65,11 @@ export const useBundleListingStore = create<BundleListingState>()(
                     statusFilter: [],
                     typeFilter: [],
                     selectedTab: 0,
+                    sortSelected: "createdAt desc",
                 },
+                queryValue: "",
                 pagination: { ...state.pagination, currentPage: 1 },
             })),
-
         setQueryValue: (value) => set({ queryValue: value }),
 
         // Pagination actions
@@ -185,13 +175,6 @@ export const useBundleListingStore = create<BundleListingState>()(
             if (filters.statusFilter && filters.statusFilter.length > 0) {
                 filtered = filtered.filter((bundle) =>
                     filters.statusFilter?.includes(bundle.status),
-                );
-            }
-
-            // Apply type filter
-            if (filters.typeFilter && filters.typeFilter.length > 0) {
-                filtered = filtered.filter((bundle) =>
-                    filters.typeFilter?.includes(bundle.type),
                 );
             }
 

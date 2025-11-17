@@ -11,7 +11,7 @@ export interface BundleFilters {
     typeFilter?: BundleType[];
     statusFilter?: BundleStatus[];
     selectedTab?: number | undefined;
-    sortSelected?: string[] | undefined;
+    sortSelected?: string | undefined;
     search?: string;
     status?: BundleStatus[];
     type?: BundleType[];

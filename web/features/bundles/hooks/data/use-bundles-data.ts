@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 /**
- * Get bundles data
+ * Get the bundles-data
  */
 export const useBundlesData = () => {
     const app = useAppBridge();
@@ -26,18 +26,24 @@ export const useBundlesData = () => {
         setPaginationMetadata,
     } = useBundleListingStore();
 
-    // Parse sort from filters
-    const sortValue = filters.sortSelected?.[0] || "createdAt desc";
-    const [sortBy, sortDirection] = sortValue.split(" ");
+    const sortValue = filters.sortSelected || "createdAt desc";
+    const [sortBy, sortDirection] = sortValue.trim().split(" ");
+
+    const validSortDirection = (sortDirection?.toLowerCase() === "asc" ? "asc" : "desc") as "asc" | "desc";
+    const validSortBy = sortBy || "createdAt";
 
     const VALID_STATUSES = Object.keys(BUNDLE_STATUSES) as BundleStatus[];
 
+    /**
+     * Calculate effective status filter from tab and filter selections
+     */
     const effectiveStatusFilter = useMemo((): BundleStatus[] => {
         const tabStatus =
             filters.selectedTab !== undefined
                 ? BUNDLE_FILTERS.tabs.statusMap[filters.selectedTab]
                 : undefined;
 
+        // If explicit status filters are set, use those
         if (filters.statusFilter && filters.statusFilter.length > 0) {
             return filters.statusFilter.filter(
                 (status): status is BundleStatus =>
@@ -45,6 +51,7 @@ export const useBundlesData = () => {
             );
         }
 
+        // Otherwise use tab status
         if (!tabStatus || tabStatus === "ALL") {
             return [];
         }
@@ -54,6 +61,9 @@ export const useBundlesData = () => {
             : [];
     }, [filters.selectedTab, filters.statusFilter]);
 
+    /**
+     * Get queries with current filters
+     */
     const { list, metrics } = bundlesQueries(
         app,
         pagination.currentPage,
@@ -61,13 +71,14 @@ export const useBundlesData = () => {
         {
             search: filters.search,
             status: effectiveStatusFilter,
-            type: filters.typeFilter,
-            sortBy,
-            sortDirection: sortDirection as "asc" | "desc",
+            sortBy: validSortBy,
+            sortDirection: validSortDirection,
         },
     );
 
-    // Use React Query hooks with pagination and filters from store
+    /**
+     * Fetch bundles list
+     */
     const {
         data: bundlesResponse,
         isLoading: bundlesLoading,
@@ -81,6 +92,9 @@ export const useBundlesData = () => {
         refetchOnWindowFocus: false,
     });
 
+    /**
+     * Fetch metrics
+     */
     const {
         data: metricsData,
         isLoading: metricsLoading,
@@ -91,10 +105,12 @@ export const useBundlesData = () => {
         refetchOnWindowFocus: false,
     });
 
-    // Update store when data changes
+    /**
+     * Update store when data changes
+     */
     useEffect(() => {
         if (bundlesResponse?.bundles && bundlesResponse?.pagination) {
-            // setBundles(bundlesResponse.bundles);
+            // Only update if we have data or not currently fetching
             if (!bundlesFetching || bundlesResponse.bundles.length > 0) {
                 setBundles(bundlesResponse.bundles);
             }
@@ -103,14 +119,18 @@ export const useBundlesData = () => {
                 totalPages: bundlesResponse.pagination.totalPages,
             });
         }
-    }, [bundlesResponse, setBundles, setPaginationMetadata]);
+    }, [bundlesResponse, bundlesFetching, setBundles, setPaginationMetadata]);
 
-    // Handle loading states - include fetching for pagination/filter changes
+    /**
+     * Handle loading states - include fetching for pagination/filter changes
+     */
     useEffect(() => {
         setLoading(bundlesLoading || metricsLoading || bundlesFetching);
     }, [bundlesLoading, metricsLoading, bundlesFetching, setLoading]);
 
-    // Handle errors
+    /**
+     * Handle errors
+     */
     useEffect(() => {
         const error = bundlesError || metricsError;
         if (error) {

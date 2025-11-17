@@ -147,7 +147,7 @@ export async function findBundlesByShop(
 ) {
     const where: Prisma.BundleWhereInput = { shop };
 
-    // Apply search filter
+    // Search filter
     if (options?.search) {
         where.name = {
             contains: options.search,
@@ -155,15 +155,27 @@ export async function findBundlesByShop(
         };
     }
 
-    // Apply status filter
-    if (options?.status && options.status.length > 0) {
+    // Status filter
+    if (options?.status?.length) {
         where.status = { in: options.status };
     }
 
-    // Apply type filter
-    if (options?.type && options.type.length > 0) {
-        where.type = { in: options.type };
-    }
+    // Safe dynamic sort
+    const ALLOWED_SORT_FIELDS = [
+        "id",
+        "name",
+        "createdAt",
+        "updatedAt",
+        "status",
+        "type",
+        "views",
+        "revenue",
+    ];
+    const sortField = ALLOWED_SORT_FIELDS.includes(options?.orderBy || "")
+        ? options!.orderBy!
+        : "createdAt";
+
+    const sortDirection = options?.orderDirection === "asc" ? "asc" : "desc";
 
     return await prisma.bundle.findMany({
         where,
@@ -171,8 +183,7 @@ export async function findBundlesByShop(
         take: options?.limit || 10,
         skip: options?.offset || 0,
         orderBy: {
-            [options?.orderBy || "createdAt"]:
-                options?.orderDirection || "desc",
+            [sortField]: sortDirection,
         },
     });
 }
