@@ -66,7 +66,7 @@ export function BundleCreationForm({
                             {/* Right column */}
                             <div className="md:col-span-5">
                                 <div className="sticky top-0">
-                                    <BundlePreview bundleType={bundleType} />
+                                    <BundlePreview />
                                 </div>
                             </div>
                         </div>

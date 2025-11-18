@@ -31,9 +31,9 @@ export function useBundleValidation() {
     const getStepFields = (step: number): (keyof BundleFormData)[] => {
         switch (step) {
             case 1:
-                return ["products"];
+                return ["name", "products"];
             case 2:
-                return ["name", "discountType", "discountValue"];
+                return ["discountType", "discountValue"];
             case 3:
                 return []; // Display step has no form validation
             case 4:
@@ -98,12 +98,19 @@ export function useBundleValidation() {
     const canProceedToNextStep = useMemo(() => {
         const fields = getStepFields(currentStep);
 
-        if (fields.length === 0) return true;
+        if (fields.length === 0) {
+            return true;
+        }
 
-        // For step 1 (products), check grouped items from store
+        // For step 1
         if (currentStep === 1) {
+            const name = getValues("name");
             const groupedItems = getGroupedItems();
-            return Array.isArray(groupedItems) && groupedItems.length > 0;
+
+            const hasValidName = name && name.trim().length > 0;
+            const hasProducts = Array.isArray(groupedItems) && groupedItems.length > 0;
+
+            return hasValidName && hasProducts;
         }
 
         // For other steps, check field values

@@ -35,10 +35,20 @@ export function useBundleFormMethods() {
         setValidationAttempted(true);
 
         const isValid = await validateCurrentStep();
-        if (isValid) {
-            nextStep();
-            setValidationAttempted(false);
+
+        if (!isValid) {
+            if (typeof shopify !== "undefined" && shopify.toast?.show) {
+                shopify.toast.show("Please fill in all required fields", {
+                    duration: 3000,
+                    isError: true,
+                });
+            }
+
+            return;
         }
+
+        nextStep();
+        setValidationAttempted(false);
     }, [validateCurrentStep, nextStep, setValidationAttempted]);
 
     return {

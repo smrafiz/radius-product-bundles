@@ -5,14 +5,21 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useEffect } from "react";
 
 export function BundleDetails() {
-    const { watch, setValue } = useBundleFormMethods();
+    const { watch, setValue, trigger } = useBundleFormMethods();
     const { getFieldError } = useBundleValidation();
-    const { markDirty } = useBundleStore();
+    const { markDirty, validationAttempted } = useBundleStore();
 
     const name = watch("name");
     const description = watch("description");
+
+    useEffect(() => {
+        if (validationAttempted && !name) {
+            void trigger("name");
+        }
+    }, [validationAttempted, name, trigger]);
 
     const handleNameChange = (value: string) => {
         setValue("name", value, { shouldValidate: true, shouldDirty: true });

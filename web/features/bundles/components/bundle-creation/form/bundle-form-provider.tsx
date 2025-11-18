@@ -6,9 +6,10 @@ import {
     bundleSchema,
     useBundleStore,
 } from "@/features/bundles";
+import type { z } from "zod";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
 export function BundleFormProvider({
     children,
@@ -21,15 +22,17 @@ export function BundleFormProvider({
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
 
-    const form = useForm<BundleFormData>({
-        resolver: zodResolver(bundleSchema),
+    const form = useForm<z.infer<typeof bundleSchema>>({
+        resolver: zodResolver(bundleSchema) as Resolver<
+            z.infer<typeof bundleSchema>
+        >,
         defaultValues: {
             name: initialData?.name || "",
             description: initialData?.description || "",
             type: bundleType,
             products: initialData?.products || [],
-            discountType: initialData?.discountType || undefined,
-            discountValue: initialData?.discountValue || undefined,
+            discountType: initialData?.discountType,
+            discountValue: initialData?.discountValue ?? 0,
             minOrderValue: initialData?.minOrderValue || undefined,
             maxDiscountAmount: initialData?.maxDiscountAmount || undefined,
             startDate: initialData?.startDate || undefined,

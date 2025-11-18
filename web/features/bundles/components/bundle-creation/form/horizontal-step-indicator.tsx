@@ -1,10 +1,10 @@
 "use client";
 
-import { useStepIndicator } from "@/features/bundles";
 import {
     BundleFormData,
     useBundleFormMethods,
     useBundleStore,
+    useStepIndicator,
 } from "@/features/bundles";
 import { usePathname } from "next/navigation";
 import { useFormContext } from "react-hook-form";
@@ -67,7 +67,7 @@ export function HorizontalStepIndicator() {
         }
     };
 
-    const getPrevButtonText = () => "Back";
+    const getPrevButtonText = () => "Previous";
 
     return (
         <s-section>
@@ -83,6 +83,7 @@ export function HorizontalStepIndicator() {
                         disabled={!canGoPrev}
                         variant="secondary"
                     >
+                        <s-icon type="arrow-left" size="small" />
                         {getPrevButtonText()}
                     </s-button>
                 </s-stack>
@@ -164,17 +165,15 @@ export function HorizontalStepIndicator() {
 
                 {/* Next button */}
                 <s-stack>
-                    {!isLastStep && (
-                        <s-button onClick={handleNextStep} variant="primary">
-                            {getNextButtonText()}
-                        </s-button>
-                    )}
-
-                    {isLastStep && (
-                        <s-button onClick={handleFinalSubmit} variant="primary">
-                            {getNextButtonText()}
-                        </s-button>
-                    )}
+                    <s-button
+                        onClick={
+                            isLastStep ? handleFinalSubmit : handleNextStep
+                        }
+                        variant="primary"
+                    >
+                        {getNextButtonText()}
+                        <s-icon type="arrow-right" size="small" />
+                    </s-button>
                 </s-stack>
             </s-stack>
         </s-section>
