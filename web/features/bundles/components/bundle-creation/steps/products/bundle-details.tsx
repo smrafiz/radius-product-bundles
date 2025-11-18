@@ -42,8 +42,7 @@ export function BundleDetails() {
                     placeholder="Enter bundle name"
                     details="Used internally to identify the bundle."
                     error={getFieldError("name")}
-                >
-                </s-text-field>
+                ></s-text-field>
             </s-stack>
 
             <s-text-area

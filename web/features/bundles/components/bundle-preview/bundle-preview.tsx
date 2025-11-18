@@ -13,7 +13,6 @@ export function BundlePreview() {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
     const renderSelectedProducts = () => {
-        // Show actual selected products (limit to first 4 for space)
         return selectedItems.slice(0, 4).map((item, index) => (
             <s-stack
                 key={index}
@@ -26,14 +25,14 @@ export function BundlePreview() {
                 padding="small"
             >
                 <s-stack>
-                    <s-box inlineSize="70px">
+                    <div className="w-20 h-20 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
                         <s-image
                             src={item.image}
                             alt={item.title}
-                            aspectRatio="70/70"
+                            aspectRatio="80/80"
                             inlineSize="auto"
                         />
-                    </s-box>
+                    </div>
                 </s-stack>
                 <s-stack>
                     <s-heading>
@@ -98,13 +97,9 @@ export function BundlePreview() {
                 <s-stack gap="base">
                     <s-stack gap="base">
                         <s-heading>Frequently bought together</s-heading>
-
-                        {/* Product Images */}
                         <s-stack gap="small-200">
                             {renderSelectedProducts()}
                         </s-stack>
-
-                        {/* Product quantity summary for multiple products */}
                         {selectedItems.length > 4 && (
                             <s-text>
                                 + {selectedItems.length - 4} more products
@@ -155,10 +150,8 @@ export function BundlePreview() {
                                         direction="inline"
                                         justifyContent="space-between"
                                     >
-                                        <s-text tone="success">
-                                            You save:
-                                        </s-text>
-                                        <s-text tone="success">
+                                        <s-text>You save:</s-text>
+                                        <s-text>
                                             {formatPrice(discountAmount)} (
                                             {savingsPercentage}%)
                                         </s-text>

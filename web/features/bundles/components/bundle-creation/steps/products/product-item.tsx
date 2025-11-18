@@ -37,9 +37,7 @@ function SortableWrapper({
     );
 }
 
-export function ProductItem({ group }: {
-    group: ProductGroup;
-}) {
+export function ProductItem({ group }: { group: ProductGroup }) {
     const {
         updateSelectedItemQuantity,
         removeProductAndAllVariants,
@@ -121,7 +119,12 @@ export function ProductItem({ group }: {
                                             {selectedCount} of {originalTotal}{" "}
                                             variants selected
                                         </s-text>
-                                        <s-link tone="neutral" onClick={handleEditVariants}>Edit variants</s-link>
+                                        <s-link
+                                            tone="neutral"
+                                            onClick={handleEditVariants}
+                                        >
+                                            Edit variants
+                                        </s-link>
                                     </s-stack>
                                 )}
                             </div>
@@ -137,7 +140,8 @@ export function ProductItem({ group }: {
                                 step={1}
                                 min={1}
                                 onChange={(event: Event) => {
-                                    const target = event.target as HTMLInputElement;
+                                    const target =
+                                        event.target as HTMLInputElement;
                                     const value = target.value;
                                     handleQuantityChange(value);
                                 }}

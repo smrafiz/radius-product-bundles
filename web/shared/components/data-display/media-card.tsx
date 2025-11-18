@@ -12,15 +12,18 @@ export function MediaCard() {
                 <s-grid alignItems="center">
                     <s-stack gap="small">
                         <s-heading>
-                            Fast Bundle setup session: boost your success with expert guidance!
+                            Fast Bundle setup session: boost your success with
+                            expert guidance!
                         </s-heading>
                         <s-text>
-                            Maximize your success on Shopify with a free 30-minute setup session
-                            for Fast Bundle. Book now and save valuable time while unlocking
-                            powerful product bundling strategies. Our experienced experts will
-                            guide you through the process, answer all your questions, and ensure
-                            a seamless onboarding experience. Don’t miss out on this opportunity
-                            to take your business to the next level!
+                            Maximize your success on Shopify with a free
+                            30-minute setup session for Fast Bundle. Book now
+                            and save valuable time while unlocking powerful
+                            product bundling strategies. Our experienced experts
+                            will guide you through the process, answer all your
+                            questions, and ensure a seamless onboarding
+                            experience. Don’t miss out on this opportunity to
+                            take your business to the next level!
                         </s-text>
                         <s-button
                             variant="secondary"

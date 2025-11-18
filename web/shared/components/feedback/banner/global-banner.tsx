@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { MessageType, useGlobalBannerStore } from "@/shared";
 
 const getToneFromType = (
-    type: MessageType
+    type: MessageType,
 ): "success" | "info" | "warning" | "critical" => {
     switch (type) {
         case "success":
@@ -21,9 +21,9 @@ const getToneFromType = (
 };
 
 export function GlobalBanner() {
-
     const pathname = usePathname();
-    const { messages, removeMessage, clearAllMessages } = useGlobalBannerStore();
+    const { messages, removeMessage, clearAllMessages } =
+        useGlobalBannerStore();
 
     useEffect(() => {
         return () => {
@@ -46,7 +46,6 @@ export function GlobalBanner() {
                             ? () => removeMessage(message.id)
                             : undefined
                     }
-
                 >
                     {message.content}
 

@@ -1,11 +1,12 @@
 "use client";
 
 export function SettingsGeneral() {
-
     return (
         <s-section>
             <s-stack gap="base">
-                <s-heading><div style={{fontSize:"18px"}}>General</div></s-heading>
+                <s-heading>
+                    <div style={{ fontSize: "18px" }}>General</div>
+                </s-heading>
                 <s-divider />
                 <s-paragraph>
                     Configure the general behavior of the app, including

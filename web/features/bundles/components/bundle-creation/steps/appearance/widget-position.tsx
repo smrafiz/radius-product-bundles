@@ -22,9 +22,7 @@ export function WidgetPosition() {
     return (
         <s-section>
             <s-stack gap="base">
-                <s-heading>
-                    Product page
-                </s-heading>
+                <s-heading>Product page</s-heading>
 
                 <s-select
                     label="Display position"
@@ -45,17 +43,16 @@ export function WidgetPosition() {
 
                 <s-text-field
                     label="Offer title"
-                    value={displaySettings.title || ''}
+                    value={displaySettings.title || ""}
                     onChange={handleTitleChange}
                 />
 
                 <s-text-field
                     required
                     label="'Add to cart' button text"
-                    value={displaySettings.cartTitle || ''}
+                    value={displaySettings.cartTitle || ""}
                     onChange={handleAddToCartTitleChange}
                 />
-
             </s-stack>
         </s-section>
     );

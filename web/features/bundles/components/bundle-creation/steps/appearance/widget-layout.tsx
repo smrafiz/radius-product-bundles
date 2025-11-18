@@ -20,7 +20,7 @@ export function WidgetLayout() {
                                 <s-grid-item key={value} gridColumn="auto">
                                     <s-stack gap="small">
                                         <div
-                                            className={`flex items-center justify-between border-2 rounded-xl w-full h-[120px] p-2.5 transition duration-200 cursor-pointer ${ displaySettings.layout === value ? "border-blue-600 bg-[var(--p-color-bg-surface-secondary)]" : "border-gray-50 bg-[var(--p-color-bg-surface-secondary)] hover:border-blue-600" }`}
+                                            className={`flex items-center justify-between border-2 rounded-xl w-full h-[120px] p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[var(--p-color-bg-surface-secondary)]" : "border-gray-50 bg-[var(--p-color-bg-surface-secondary)] hover:border-blue-600"}`}
                                             onClick={() =>
                                                 updateDisplaySettings(
                                                     "layout",

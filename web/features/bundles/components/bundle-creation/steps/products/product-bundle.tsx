@@ -5,6 +5,7 @@ import { CallbackEvent } from "@shopify/polaris-types";
 
 export function ProductBundle() {
     const [show, setShow] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("Bundle Product #5");
 
     const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -19,12 +20,15 @@ export function ProductBundle() {
         }
     };
 
-    const handleDropzoneChange = (event: Event) => {
+    const handleDropzoneChange = async (event: Event) => {
+        setIsLoading(true);
         const input = event.currentTarget as HTMLInputElement;
         const files = input.files ? Array.from(input.files) : [];
         if (files.length > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 400));
             setMediaFiles((prev) => [...prev, ...files]);
         }
+        setIsLoading(false);
     };
 
     const deleteSelectedImages = () => {
@@ -32,10 +36,6 @@ export function ProductBundle() {
             prev.filter((_, i) => !selectedIndexes.includes(i)),
         );
         setSelectedIndexes([]);
-    };
-
-    const removeImage = (index: number) => {
-        setMediaFiles((prev) => prev.filter((_, i) => i !== index));
     };
 
     const toggleCheckbox = (index: number) => {
@@ -60,9 +60,11 @@ export function ProductBundle() {
             >
                 <s-switch
                     id="event-switch"
-                    label={show
-                        ? "This bundle creates a product with its own product page."
-                        : "This bundle creates no product and has no product page."}
+                    label={
+                        show
+                            ? "This bundle creates a product with its own product page."
+                            : "This bundle creates no product and has no product page."
+                    }
                     accessibilityLabel="Toggle product creation"
                     checked={show}
                     onInput={(event: Event) => {
@@ -116,89 +118,123 @@ export function ProductBundle() {
                             )}
                         </s-stack>
 
-                        <s-stack
-                            direction={
-                                mediaFiles.length > 0 ? "inline" : "block"
-                            }
-                            gap="base"
-                        >
-                            {/* List Images */}
-                            {mediaFiles.length > 0 && (
-                                <s-stack gap="small" direction="inline">
-                                    {mediaFiles.map((file, index) => {
-                                        const isHovered = hoverIndex === index;
-                                        const isSelected =
-                                            selectedIndexes.includes(index);
+                        <div className="relative">
+                            <s-stack
+                                direction={
+                                    mediaFiles.length > 0 ? "inline" : "block"
+                                }
+                                gap="base"
+                            >
+                                {/* List Images */}
+                                {mediaFiles.length > 0 && (
+                                    <s-stack gap="small" direction="inline">
+                                        {mediaFiles.map((file, index) => {
+                                            const isHovered =
+                                                hoverIndex === index;
+                                            const isSelected =
+                                                selectedIndexes.includes(index);
 
-                                        return (
-                                            <div className="relative inline-block"
-                                                key={index}
-                                                onMouseEnter={() =>
-                                                    setHoverIndex(index)
-                                                }
-                                                onMouseLeave={() =>
-                                                    setHoverIndex(null)
-                                                }
-                                            >
-                                                {/* Image */}
-                                                <div className={`w-22 h-22 object-cover rounded-lg border  ${isSelected ? "border-[var(--p-color-bg-fill-success)]" : ""}`}>
-                                                    <s-image
-                                                        src={URL.createObjectURL(
-                                                            file,
-                                                        )}
-                                                        alt={file.name}
-                                                        aspectRatio="1/1"
-                                                        inlineSize="fill"
-                                                        objectFit="cover"
-                                                        borderRadius="base"
-                                                    />
-                                                </div>
-
-                                                {/* Hover Checkbox */}
-                                                {(isHovered || isSelected) && (
-                                                    <div className="absolute top-1.5 right-1.5 bg-white rounded-md p-0.5"
+                                            return (
+                                                <div
+                                                    className="relative inline-block"
+                                                    key={index}
+                                                    onMouseEnter={() =>
+                                                        setHoverIndex(index)
+                                                    }
+                                                    onMouseLeave={() =>
+                                                        setHoverIndex(null)
+                                                    }
+                                                >
+                                                    {/* Image */}
+                                                    <div
+                                                        className={`w-22 h-22 object-cover rounded-lg border  
+                                                    ${isHovered || isSelected ? "border-[var(--p-color-bg-fill-success)]" : ""}`}
                                                     >
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={isSelected}
-                                                            onChange={() =>
-                                                                toggleCheckbox(
-                                                                    index,
-                                                                )
-                                                            }
-                                                            style={{
-                                                                cursor: "pointer",
-                                                            }}
+                                                        <s-image
+                                                            src={URL.createObjectURL(
+                                                                file,
+                                                            )}
+                                                            alt={file.name}
+                                                            aspectRatio="1/1"
+                                                            inlineSize="fill"
+                                                            objectFit="cover"
+                                                            borderRadius="base"
                                                         />
                                                     </div>
-                                                )}
 
-                                            </div>
-                                        );
-                                    })}
-                                </s-stack>
+                                                    {/* Hover Checkbox */}
+                                                    {(isHovered ||
+                                                        isSelected) && (
+                                                        <div className="absolute z-10 top-1.5 right-1.5 ">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={
+                                                                    isSelected
+                                                                }
+                                                                onChange={() =>
+                                                                    toggleCheckbox(
+                                                                        index,
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    cursor: "pointer",
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {/* Hover Checkbox */}
+                                                    {(isHovered ||
+                                                        isSelected) && (
+                                                        <div
+                                                            className={`${isHovered || isSelected ? "bg-[rgba(255,255,255,0.3)]" : ""} w-full h-full rounded-lg absolute left-0 top-0 z-0`}
+                                                        ></div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </s-stack>
+                                )}
+
+                                {/* Upload Zone */}
+                                <div style={{ position: "relative" }}>
+                                    <s-drop-zone
+                                        accessibilityLabel="Upload image"
+                                        multiple
+                                        onChange={handleDropzoneChange}
+                                    />
+                                </div>
+                            </s-stack>
+                            {isLoading && (
+                                <div
+                                    className="absolute inset-0 flex items-center justify-center
+                                        bg-white/90 rounded-lg z-10"
+                                >
+                                    <s-spinner size="base" />
+                                </div>
                             )}
-
-                            {/* Upload Zone */}
-                            <s-drop-zone
-                                accessibilityLabel="Upload image of type jpg, png, or gif"
-                                multiple
-                                onChange={handleDropzoneChange}
-                            />
-                        </s-stack>
+                        </div>
                     </s-stack>
 
-                    <s-divider />
-
                     <s-stack gap="base">
-                        <s-heading>Other product details</s-heading>
-                        <s-text>
-                            To add more details like category, type, tags, or
-                            advanced media types (such as gifs and videos), go
-                            to the product page in your Shopify admin and fill
-                            in the remaining fields.
-                        </s-text>
-                        <s-button disabled>Edit product on Shopify</s-button>
+                        <s-box
+                            padding="base"
+                            background="subdued"
+                            borderRadius="base"
+                        >
+                            <s-stack gap="base">
+                                <s-text>
+                                    To add more details like category, type,
+                                    tags, or advanced media types (such as gifs
+                                    and videos), go to the product page in your
+                                    Shopify admin and fill in the remaining
+                                    fields.
+                                </s-text>
+                                <s-button disabled>
+                                    Edit product on Shopify
+                                </s-button>
+                            </s-stack>
+                        </s-box>
                         <s-banner>
                             Save the bundle before editing the associated
                             Shopify product.

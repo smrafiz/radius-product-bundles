@@ -1,7 +1,10 @@
 "use client";
 
 import { useModalStore } from "@/shared";
-import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps, } from "@/features/bundles";
+import {
+    BUNDLE_LISTING_ACTIONS,
+    BundleActionsGroupProps,
+} from "@/features/bundles";
 
 /**
  * Bundle actions group
@@ -61,7 +64,8 @@ export function BundleActionsGroup({
             <s-button-group gap="none">
                 {BUNDLE_LISTING_ACTIONS.map((action) => {
                     const tooltipId = `${action.key}-${bundle.id}`;
-                    const isModalAction = action.key === "delete" || action.key === "duplicate";
+                    const isModalAction =
+                        action.key === "delete" || action.key === "duplicate";
 
                     return (
                         <s-button
@@ -73,9 +77,9 @@ export function BundleActionsGroup({
                             tone={action.tone}
                             {...(isModalAction
                                 ? {
-                                    commandFor: "radius-bundles-app-modal",
-                                    command: "--show",
-                                }
+                                      commandFor: "radius-bundles-app-modal",
+                                      command: "--show",
+                                  }
                                 : {})}
                             onClick={() => handleActionClick(action.key)}
                         />

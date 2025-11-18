@@ -1,30 +1,35 @@
-'use client';
-import { useRef, useEffect } from 'react';
+"use client";
+import { useRef, useEffect } from "react";
 import { useDashboardStore } from "@/features/dashboard";
 
-export function DashboardVideo({ lines = 6 }: { lines?: number }) {
+export function DashboardVideo() {
     const { loading } = useDashboardStore();
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const videoUrl = 'https://youtu.be/gsw2NYVrPfM';
+    const videoUrl = "https://youtu.be/gsw2NYVrPfM";
 
     // Detect YouTube vs direct video
-    const isYouTube: boolean = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
+    const isYouTube: boolean =
+        videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
     const embedUrl: string = isYouTube
         ? videoUrl
-            .replace('youtu.be/', 'www.youtube.com/embed/')
-            .replace('watch?v=', 'embed/') + '?autoplay=1&mute=1'
+              .replace("youtu.be/", "www.youtube.com/embed/")
+              .replace("watch?v=", "embed/") + "?autoplay=1&mute=1"
         : videoUrl;
 
     // --- Handle modal open/close events ---
     useEffect(() => {
-        const modal = document.getElementById('video-modal') as HTMLElement | null;
+        const modal = document.getElementById(
+            "video-modal",
+        ) as HTMLElement | null;
         if (!modal) return;
 
         const handleShow = (): void => {
             // YouTube autoplay
-            const iframe = modal.querySelector('iframe') as HTMLIFrameElement | null;
+            const iframe = modal.querySelector(
+                "iframe",
+            ) as HTMLIFrameElement | null;
             if (iframe && iframe.src) {
-                iframe.src = iframe.src.includes('?')
+                iframe.src = iframe.src.includes("?")
                     ? `${iframe.src}&autoplay=1`
                     : `${iframe.src}?autoplay=1`;
             }
@@ -32,16 +37,20 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
             // MP4 autoplay
             if (videoRef.current) {
                 videoRef.current.play().catch(() => {
-                    console.warn('Autoplay blocked by browser');
+                    console.warn("Autoplay blocked by browser");
                 });
             }
         };
 
         const handleHide = (): void => {
             // Stop YouTube playback
-            const iframe = modal.querySelector('iframe') as HTMLIFrameElement | null;
+            const iframe = modal.querySelector(
+                "iframe",
+            ) as HTMLIFrameElement | null;
             if (iframe && iframe.src) {
-                iframe.src = iframe.src.replace('&autoplay=1', '').replace('?autoplay=1', '');
+                iframe.src = iframe.src
+                    .replace("&autoplay=1", "")
+                    .replace("?autoplay=1", "");
             }
 
             // Stop MP4 video
@@ -51,12 +60,12 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
             }
         };
 
-        modal.addEventListener('--show', handleShow);
-        modal.addEventListener('--hide', handleHide);
+        modal.addEventListener("--show", handleShow);
+        modal.addEventListener("--hide", handleHide);
 
         return () => {
-            modal.removeEventListener('--show', handleShow);
-            modal.removeEventListener('--hide', handleHide);
+            modal.removeEventListener("--show", handleShow);
+            modal.removeEventListener("--hide", handleHide);
         };
     }, []);
 
@@ -65,7 +74,7 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
             <s-section padding="base">
                 <s-box>
                     <div className="animate-pulse space-y-3">
-                        {Array.from({ length: lines }).map((_, i) => (
+                        {Array.from({ length: 6 }).map((_, i) => (
                             <div
                                 key={i}
                                 className="h-2 bg-[#ebebeb] rounded"
@@ -85,19 +94,19 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
             <div className="flex flex-col sm:flex-row gap-4 items-center">
                 {/* LEFT SIDE: Thumbnail */}
                 <div className="relative sm:max-w-[300px] w-full">
-                    <div style={{ position: 'relative', cursor: 'pointer' }}>
+                    <div style={{ position: "relative", cursor: "pointer" }}>
                         {isYouTube ? (
                             <img
-                                src={`https://img.youtube.com/vi/${videoUrl.split('/').pop()}/hqdefault.jpg`}
+                                src={`https://img.youtube.com/vi/${videoUrl.split("/").pop()}/hqdefault.jpg`}
                                 alt="Video thumbnail"
-                                style={{ width: '100%', borderRadius: '8px' }}
+                                style={{ width: "100%", borderRadius: "8px" }}
                             />
                         ) : (
                             <video
                                 style={{
-                                    width: '100%',
-                                    objectFit: 'cover',
-                                    borderRadius: '8px',
+                                    width: "100%",
+                                    objectFit: "cover",
+                                    borderRadius: "8px",
                                 }}
                                 muted
                                 src={videoUrl}
@@ -106,13 +115,17 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
 
                         <div
                             style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
                             }}
                         >
-                            <s-button variant="secondary" commandFor="video-modal" command="--show">
+                            <s-button
+                                variant="secondary"
+                                commandFor="video-modal"
+                                command="--show"
+                            >
                                 <s-icon type="play" />
                             </s-button>
                         </div>
@@ -124,8 +137,9 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
                     <s-stack gap="small">
                         <s-heading>See it in action</s-heading>
                         <s-text>
-                            Bundles are a great way to increase average order value, move
-                            slow-moving inventory, and offer more value to your customers.
+                            Bundles are a great way to increase average order
+                            value, move slow-moving inventory, and offer more
+                            value to your customers.
                         </s-text>
                         <s-button
                             variant="secondary"
@@ -149,7 +163,7 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
                         title="YouTube video player"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
-                        style={{ borderRadius: '8px' }}
+                        style={{ borderRadius: "8px" }}
                     ></iframe>
                 ) : (
                     <video
@@ -157,7 +171,7 @@ export function DashboardVideo({ lines = 6 }: { lines?: number }) {
                         controls
                         muted
                         autoPlay
-                        style={{ width: '100%', borderRadius: '8px' }}
+                        style={{ width: "100%", borderRadius: "8px" }}
                     >
                         <source src={videoUrl} type="video/mp4" />
                         Your browser does not support the video tag.

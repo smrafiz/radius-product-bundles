@@ -10,7 +10,7 @@ export function ModalHost() {
     const { modal, closeModal, setLoading, setError } = useModalStore();
 
     const handleConfirm = async () => {
-        if (!modal || modal.type === null || !('onConfirm' in modal)) {
+        if (!modal || modal.type === null || !("onConfirm" in modal)) {
             return;
         }
 
@@ -20,7 +20,9 @@ export function ModalHost() {
 
             await modal.onConfirm?.();
 
-            const modalElement = document.getElementById('radius-bundles-app-modal') as any;
+            const modalElement = document.getElementById(
+                "radius-bundles-app-modal",
+            ) as any;
             if (modalElement?.hideOverlay) {
                 modalElement.hideOverlay();
             }
@@ -43,7 +45,7 @@ export function ModalHost() {
     const hasActiveModal = modal && modal.type !== null;
 
     const renderMessage = (message: ReactNode) => {
-        if (typeof message !== 'string') {
+        if (typeof message !== "string") {
             return message;
         }
 
@@ -56,12 +58,14 @@ export function ModalHost() {
 
             const isStrong = parts[index - 1] === "<strong>";
             return isStrong ? (
-                <s-text key={index} type="strong">{part}</s-text>
+                <s-text key={index} type="strong">
+                    {part}
+                </s-text>
             ) : (
                 <s-text key={index}>{part}</s-text>
             );
         });
-    }
+    };
 
     // Always render the modal
     return (

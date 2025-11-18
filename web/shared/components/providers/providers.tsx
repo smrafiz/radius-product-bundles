@@ -5,7 +5,12 @@ import "@shopify/polaris/build/esm/styles.css";
 import { DehydratedState } from "@tanstack/react-query";
 import translations from "@shopify/polaris/locales/en.json";
 import { ReactNode, Suspense, useEffect, useState } from "react";
-import { Navigation, ProtectedRoute, SessionProvider, TanstackProvider } from "@/shared";
+import {
+    Navigation,
+    ProtectedRoute,
+    SessionProvider,
+    TanstackProvider,
+} from "@/shared";
 
 /**
  * Root Providers Component

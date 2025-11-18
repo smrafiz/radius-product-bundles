@@ -1,9 +1,6 @@
 "use client";
 
-import {
-    BundleSummary,
-    useBundleFormMethods,
-} from "@/features/bundles";
+import { BundleSummary, useBundleFormMethods } from "@/features/bundles";
 import { Banner, BlockStack, List } from "@shopify/polaris";
 
 export function ReviewStep() {

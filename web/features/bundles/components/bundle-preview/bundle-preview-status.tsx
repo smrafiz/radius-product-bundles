@@ -1,10 +1,14 @@
-import { BUNDLE_STATUSES} from "@/features/bundles";
+import { BUNDLE_STATUSES } from "@/features/bundles";
 
 export function BundlePreviewStatus() {
-    return(
+    return (
         <s-section>
             <s-heading>Bundle status</s-heading>
-            <s-select label="Bundle status" value="DRAFT" labelAccessibilityVisibility="exclusive">
+            <s-select
+                label="Bundle status"
+                value="DRAFT"
+                labelAccessibilityVisibility="exclusive"
+            >
                 {Object.entries(BUNDLE_STATUSES).map(([key, { text }]) => (
                     <s-option key={key} value={key}>
                         {text}

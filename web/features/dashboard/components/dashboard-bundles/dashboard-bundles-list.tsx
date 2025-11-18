@@ -1,17 +1,8 @@
 "use client";
 
-import {
-    formatCurrency,
-    formatPercentage,
-    useAppNavigation,
-} from "@/shared";
-import {
-    DashboardBundlesListProps,
-} from "@/features/dashboard";
-import {
-    formatBundleType,
-    getBundleStatusBadge,
-} from "@/features/bundles";
+import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
+import { DashboardBundlesListProps } from "@/features/dashboard";
+import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 
 /*
  * Dashboard bundles list
@@ -90,9 +81,16 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
             </s-table-header-row>
             <s-table-body>
                 {bundles.map((bundle, index) => (
-                    <s-table-row key={bundle.id} clickDelegate="mountain-view-checkbox">
+                    <s-table-row
+                        key={bundle.id}
+                        clickDelegate="mountain-view-checkbox"
+                    >
                         <s-table-cell>
-                            <s-stack direction="inline" gap="small" alignItems="center">
+                            <s-stack
+                                direction="inline"
+                                gap="small"
+                                alignItems="center"
+                            >
                                 <s-clickable
                                     accessibilityLabel={bundle.name}
                                     border="base"
@@ -102,24 +100,36 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                                     blockSize="40px"
                                     onClick={() => bundleData.edit(bundle.id)}
                                 >
-                                    <s-image
-                                        objectFit="cover"
-                                        src=""
-                                    ></s-image>
+                                    <s-image objectFit="cover" src=""></s-image>
                                 </s-clickable>
-
                             </s-stack>
                         </s-table-cell>
-                        <s-table-cell><s-link onClick={() => bundleData.edit(bundle.id)}>{bundle.name}</s-link></s-table-cell>
-                        <s-table-cell>{formatBundleType(bundle.type)}</s-table-cell>
+                        <s-table-cell>
+                            <s-link onClick={() => bundleData.edit(bundle.id)}>
+                                {bundle.name}
+                            </s-link>
+                        </s-table-cell>
+                        <s-table-cell>
+                            {formatBundleType(bundle.type)}
+                        </s-table-cell>
                         <s-table-cell>{bundle.views}</s-table-cell>
-                        <s-table-cell>{formatPercentage(bundle.conversionRate)}</s-table-cell>
-                        <s-table-cell>{formatCurrency(bundle.revenue)}</s-table-cell>
+                        <s-table-cell>
+                            {formatPercentage(bundle.conversionRate)}
+                        </s-table-cell>
+                        <s-table-cell>
+                            {formatCurrency(bundle.revenue)}
+                        </s-table-cell>
                         <s-table-cell>
                             {(() => {
-                                const badgeProps = getBundleStatusBadge(bundle.status);
+                                const badgeProps = getBundleStatusBadge(
+                                    bundle.status,
+                                );
                                 return (
-                                    <s-badge color="base" icon="enabled" {...badgeProps}>
+                                    <s-badge
+                                        color="base"
+                                        icon="enabled"
+                                        {...badgeProps}
+                                    >
                                         {badgeProps.text}
                                     </s-badge>
                                 );

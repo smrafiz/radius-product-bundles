@@ -8,7 +8,15 @@ export interface MetricCardProps {
     subtitle?: string;
     svg_icon?: string;
     icon?: "arrow-up" | "arrow-down" | "work-list";
-    tone?: "success" | "info" | "critical" | "warning" | "auto" | "neutral" | "caution" | undefined;
+    tone?:
+        | "success"
+        | "info"
+        | "critical"
+        | "warning"
+        | "auto"
+        | "neutral"
+        | "caution"
+        | undefined;
     loading?: boolean;
     action?: {
         label: string;

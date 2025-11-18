@@ -38,7 +38,7 @@ export const getBundleStatusBadge = (
     status: string | BundleStatusBadge,
 ): BundleStatusBadgeNew => {
     const capitalizeWords = (str: string) =>
-        str.replace(/\b\w/g, char => char.toUpperCase());
+        str.replace(/\b\w/g, (char) => char.toUpperCase());
 
     const config = BUNDLE_STATUSES[status as BundleStatus] ?? {
         text: capitalizeWords(String(status)),

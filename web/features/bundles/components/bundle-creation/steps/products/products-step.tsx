@@ -47,9 +47,7 @@ export function ProductsStep() {
 
             {/* Bundle product list */}
             <s-section>
-                <s-heading>
-                    Select products
-                </s-heading>
+                <s-heading>Select products</s-heading>
                 <s-stack gap="base">
                     <s-stack
                         direction="inline"
@@ -88,8 +86,6 @@ export function ProductsStep() {
             <s-section>
                 <ProductBundle />
             </s-section>
-
-
         </s-stack>
     );
 }

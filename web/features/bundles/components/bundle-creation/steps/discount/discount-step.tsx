@@ -1,7 +1,4 @@
-import {
-    BundleBehavior,
-    DiscountSettings,
-} from "@/features/bundles";
+import { BundleBehavior, DiscountSettings } from "@/features/bundles";
 
 export function DiscountStep() {
     return (

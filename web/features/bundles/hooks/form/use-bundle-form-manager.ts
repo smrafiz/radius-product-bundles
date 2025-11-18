@@ -20,7 +20,10 @@ export function useBundleFormManager({
 
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
-    const label = useMemo(() => getBundleProperty(bundleType, "label"), [bundleType]);
+    const label = useMemo(
+        () => getBundleProperty(bundleType, "label"),
+        [bundleType],
+    );
 
     useEffect(() => {
         if (!bundleData.type) {

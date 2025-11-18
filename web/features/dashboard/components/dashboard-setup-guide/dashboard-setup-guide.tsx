@@ -15,7 +15,9 @@ import { SkeletonLines } from "@/shared";
 export function DashboardSetUpGuide() {
     const { loading } = useDashboardStore();
     const [showGuide, setShowGuide] = useState(true);
-    const [items, setItems] = useState<DashboardSetupConfig[]>(DASHBOARD_SETUP_ITEMS);
+    const [items, setItems] = useState<DashboardSetupConfig[]>(
+        DASHBOARD_SETUP_ITEMS,
+    );
 
     /**
      * Handle step completion

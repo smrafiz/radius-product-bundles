@@ -5,7 +5,7 @@ import { PRICING_FAQ_ITEM, PricingFaqItem } from "@/features/pricing";
 
 export const PricingFaq = () => {
     const [expandedId, setExpandedId] = useState<string | number | null>(
-        PRICING_FAQ_ITEM.length > 0 ? PRICING_FAQ_ITEM[0].id : null
+        PRICING_FAQ_ITEM.length > 0 ? PRICING_FAQ_ITEM[0].id : null,
     );
 
     const handleToggle = (id: string | number) => {
@@ -17,7 +17,8 @@ export const PricingFaq = () => {
             <s-stack padding="base">
                 <s-heading>Frequently Asked Questions</s-heading>
                 <s-text>
-                    Find answers to the most common questions about our pricing and billing model below.
+                    Find answers to the most common questions about our pricing
+                    and billing model below.
                 </s-text>
             </s-stack>
 

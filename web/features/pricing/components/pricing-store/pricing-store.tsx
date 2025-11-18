@@ -1,5 +1,5 @@
 "use client";
-export function PricingStore () {
+export function PricingStore() {
     return (
         <s-stack paddingBlockEnd="large">
             <s-section>
@@ -14,11 +14,12 @@ export function PricingStore () {
                         alignItems="center"
                     >
                         <s-grid gap="small-200">
-                            <s-heading>
-                                Development Store Detected!
-                            </s-heading>
+                            <s-heading>Development Store Detected!</s-heading>
                             <s-paragraph>
-                                You can use all BundleSuite features (unlimited bundles, analytics, etc.) completely free on your development store. Choose your paid plan only when you go live!
+                                You can use all BundleSuite features (unlimited
+                                bundles, analytics, etc.) completely free on
+                                your development store. Choose your paid plan
+                                only when you go live!
                             </s-paragraph>
                         </s-grid>
                     </s-grid>

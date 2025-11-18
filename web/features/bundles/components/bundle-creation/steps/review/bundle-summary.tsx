@@ -62,7 +62,9 @@ export function BundleSummary() {
                     direction="inline"
                 >
                     <s-text color="subdued">Name:</s-text>
-                    <s-text color="subdued">{bundleData.name || "Not set"}</s-text>
+                    <s-text color="subdued">
+                        {bundleData.name || "Not set"}
+                    </s-text>
                 </s-stack>
 
                 {/* Description */}
@@ -72,7 +74,9 @@ export function BundleSummary() {
                     direction="inline"
                 >
                     <s-text color="subdued">Description:</s-text>
-                    <s-text color="subdued">{bundleData.description || "Not set"}</s-text>
+                    <s-text color="subdued">
+                        {bundleData.description || "Not set"}
+                    </s-text>
                 </s-stack>
 
                 {/* Discount Info */}
@@ -131,7 +135,9 @@ export function BundleSummary() {
                         direction="inline"
                     >
                         <s-text color="subdued">Min Order:</s-text>
-                        <s-text color="subdued">${bundleData.minOrderValue}</s-text>
+                        <s-text color="subdued">
+                            ${bundleData.minOrderValue}
+                        </s-text>
                     </s-stack>
                 )}
 
@@ -142,7 +148,9 @@ export function BundleSummary() {
                         direction="inline"
                     >
                         <s-text color="subdued">Max Discount:</s-text>
-                        <s-text color="subdued">${bundleData.maxDiscountAmount}</s-text>
+                        <s-text color="subdued">
+                            ${bundleData.maxDiscountAmount}
+                        </s-text>
                     </s-stack>
                 )}
 

@@ -1,4 +1,4 @@
-import { SettingsTabNavInfo} from "@/features/settings";
+import { SettingsTabNavInfo } from "@/features/settings";
 
 /*
  * Settings

@@ -17,7 +17,9 @@ export function SettingsOnlineShop() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Enable in online shop</div>
+                    <div style={{ fontSize: "18px" }}>
+                        Enable in online shop
+                    </div>
                 </s-heading>
                 <s-divider />
                 <s-stack gap="small-400">
@@ -29,7 +31,11 @@ export function SettingsOnlineShop() {
                         maxLength={999}
                     />
                     <s-text>
-                        Enter specific urls or parts of urls where you want to prevent the app from injecting the widgets automatically. The widgets will remain hidden on all URLs that contain the parts of URLs you specify here. Separate urls with commas or new lines.
+                        Enter specific urls or parts of urls where you want to
+                        prevent the app from injecting the widgets
+                        automatically. The widgets will remain hidden on all
+                        URLs that contain the parts of URLs you specify here.
+                        Separate urls with commas or new lines.
                     </s-text>
                 </s-stack>
 
@@ -41,8 +47,6 @@ export function SettingsOnlineShop() {
                     label="Enable in online shop"
                     details="Uncheck to stop showing bundle widgets, savings popups and stop applying discounts in online shop. Bundler can still be used in Shopify POS."
                 />
-
-
             </s-stack>
         </s-section>
     );

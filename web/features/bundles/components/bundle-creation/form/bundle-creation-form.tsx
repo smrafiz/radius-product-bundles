@@ -12,8 +12,14 @@ import { GlobalBanner } from "@/shared";
 /**
  * Bundle Creation Form
  */
-export function BundleCreationForm({ bundleType, bundleName }: BundleCreationFormProps) {
-    const { pageProps, isEditMode } = useBundleFormManager({ bundleType, bundleName });
+export function BundleCreationForm({
+    bundleType,
+    bundleName,
+}: BundleCreationFormProps) {
+    const { pageProps, isEditMode } = useBundleFormManager({
+        bundleType,
+        bundleName,
+    });
 
     return (
         <s-page>
@@ -37,7 +43,11 @@ export function BundleCreationForm({ bundleType, bundleName }: BundleCreationFor
                             <div className="text-xl">{pageProps.title}</div>
                         </s-heading>
 
-                        {isEditMode && <s-badge tone="neutral">{pageProps.badgeLabel}</s-badge>}
+                        {isEditMode && (
+                            <s-badge tone="neutral">
+                                {pageProps.badgeLabel}
+                            </s-badge>
+                        )}
                     </s-stack>
                 </s-stack>
 
@@ -46,19 +56,21 @@ export function BundleCreationForm({ bundleType, bundleName }: BundleCreationFor
                     <GlobalBanner />
                     <HorizontalStepIndicator />
 
-                    <s-box>
-                        <s-grid
-                            gridTemplateColumns="repeat(12, 1fr)"
-                            gap="base"
-                        >
-                            <s-grid-item gridColumn="span 7">
+                    <div className="relative">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            {/* Left column */}
+                            <div className="md:col-span-7">
                                 <StepContent />
-                            </s-grid-item>
-                            <s-grid-item gridColumn="span 5">
-                                <BundlePreview bundleType={bundleType} />
-                            </s-grid-item>
-                        </s-grid>
-                    </s-box>
+                            </div>
+
+                            {/* Right column */}
+                            <div className="md:col-span-5">
+                                <div className="sticky top-0">
+                                    <BundlePreview bundleType={bundleType} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </s-stack>
             </s-stack>
         </s-page>

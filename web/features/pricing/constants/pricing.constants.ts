@@ -1,5 +1,5 @@
 import { PricingCardItemInfo } from "@/features/pricing";
-import { PricingFaqItemInfo} from "@/features/pricing";
+import { PricingFaqItemInfo } from "@/features/pricing";
 
 /*
  * Pricing Table Card Data
@@ -16,8 +16,8 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
             "Another really cool feature",
             "24/7 Customer Support",
         ],
-        price:"$0",
-        frequency:"month",
+        price: "$0",
+        frequency: "month",
         primaryButton: {
             content: "Currently subscribed",
             props: {
@@ -29,7 +29,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
     {
         id: "1",
         title: "Starter Plan",
-        featuredText:"Most Popular",
+        featuredText: "Most Popular",
         description:
             "For stores that are growing and need a reliable solution to scale with them",
         features: [
@@ -38,8 +38,8 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
             "Another really cool feature",
             "24/7 Customer Support",
         ],
-        price:"$49",
-        frequency:"month",
+        price: "$49",
+        frequency: "month",
         primaryButton: {
             content: "Select this plan",
             props: {
@@ -59,8 +59,8 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
             "Another really cool feature",
             "24/7 Customer Support",
         ],
-        price:"$99",
-        frequency:"year",
+        price: "$99",
+        frequency: "year",
         primaryButton: {
             content: "Select this plan",
             props: {
@@ -70,7 +70,6 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         },
     },
 ];
-
 
 /*
  * Pricing Faq Card Data

@@ -1,8 +1,12 @@
 "use client";
 
+import {
+    BundleTable,
+    BundleTableSkeleton,
+    useBundlesPage,
+} from "@/features/bundles";
 import { useEffect } from "react";
 import { GlobalBanner, MetricCard } from "@/shared";
-import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
 
 /**
  * Bundle listing page
@@ -34,10 +38,18 @@ export function BundleListingPage() {
     return (
         <s-page heading="Bundle Management">
             {/* Header buttons */}
-            <s-button slot="primary-action" variant="primary" onClick={onCreateBundle}>
+            <s-button
+                slot="primary-action"
+                variant="primary"
+                onClick={onCreateBundle}
+            >
                 Create Bundle
             </s-button>
-            <s-button slot="secondary-actions" variant="secondary" onClick={onBundleStudio}>
+            <s-button
+                slot="secondary-actions"
+                variant="secondary"
+                onClick={onBundleStudio}
+            >
                 Bundle Studio
             </s-button>
 
@@ -48,10 +60,14 @@ export function BundleListingPage() {
             >
                 <s-stack>
                     <s-heading>
-                        <div className="text-xl text-center">Bundle Management</div>
+                        <div className="text-xl text-center">
+                            Bundle Management
+                        </div>
                     </s-heading>
                     <s-text>
-                        <div className="text-center">Create and manage your product bundle offers</div>
+                        <div className="text-center">
+                            Create and manage your product bundle offers
+                        </div>
                     </s-text>
                 </s-stack>
 

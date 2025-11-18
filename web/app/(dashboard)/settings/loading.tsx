@@ -1,6 +1,5 @@
 "use client";
 
-
 import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
 
 /**

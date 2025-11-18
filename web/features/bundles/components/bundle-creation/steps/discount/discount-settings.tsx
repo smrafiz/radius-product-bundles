@@ -155,7 +155,8 @@ export function DiscountSettings() {
                                 placeholder="No limit"
                                 prefix={getCurrency()}
                                 onChange={(event: Event) => {
-                                    const target = event.target as HTMLInputElement;
+                                    const target =
+                                        event.target as HTMLInputElement;
                                     const value = target.value;
                                     handleMaxDiscountAmountChange(value);
                                 }}

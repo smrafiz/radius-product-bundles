@@ -8,14 +8,14 @@ export interface CalloutButtonProps {
         external?: boolean;
     };
     tone?:
-    | "success"
-    | "info"
-    | "critical"
-    | "warning"
-    | "auto"
-    | "neutral"
-    | "caution"
-    | undefined;
+        | "success"
+        | "info"
+        | "critical"
+        | "warning"
+        | "auto"
+        | "neutral"
+        | "caution"
+        | undefined;
 }
 
 export interface CalloutCardProps {

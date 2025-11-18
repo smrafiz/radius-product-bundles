@@ -32,7 +32,15 @@ export interface DashboardMetricConfig {
     format: MetricFormat;
     svg_icon: string;
     icon: "arrow-up" | "arrow-down" | "work-list";
-    tone: "success" | "info" | "critical" | "warning" | "auto" | "neutral" | "caution" | undefined;
+    tone:
+        | "success"
+        | "info"
+        | "critical"
+        | "warning"
+        | "auto"
+        | "neutral"
+        | "caution"
+        | undefined;
     comparisonLabel?: string;
     action?: { label: string; url: string };
 }

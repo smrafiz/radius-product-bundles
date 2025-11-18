@@ -5,7 +5,9 @@ export function SettingsBundleWidget() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Bundle Widget Settings</div>
+                    <div style={{ fontSize: "18px" }}>
+                        Bundle Widget Settings
+                    </div>
                 </s-heading>
                 <s-divider />
                 <s-heading>DISPLAY</s-heading>

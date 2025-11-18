@@ -1,6 +1,11 @@
 "use client";
 
-import { PageHeaderSkeleton, PageSkeleton, SkeletonCard, SkeletonLines, } from "@/shared";
+import {
+    PageHeaderSkeleton,
+    PageSkeleton,
+    SkeletonCard,
+    SkeletonLines,
+} from "@/shared";
 
 /**
  * Pricing & plans page skeleton

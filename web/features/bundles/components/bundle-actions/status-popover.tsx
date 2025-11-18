@@ -26,7 +26,9 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
         }
 
         // Close popover first
-        const popoverBtn = document.querySelector(`[commandFor="${popoverId}"]`) as HTMLElement;
+        const popoverBtn = document.querySelector(
+            `[commandFor="${popoverId}"]`,
+        ) as HTMLElement;
         if (popoverBtn) {
             popoverBtn.click();
         }
@@ -43,7 +45,9 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
 
         // Show modal element
         setTimeout(() => {
-            const modalElement = document.getElementById('radius-bundles-app-modal') as any;
+            const modalElement = document.getElementById(
+                "radius-bundles-app-modal",
+            ) as any;
             if (modalElement?.showOverlay) {
                 modalElement.showOverlay();
             }
@@ -68,22 +72,31 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                     <s-stack gap="small">
                         {Object.entries(BUNDLE_STATUSES).map(
                             ([statusKey, status]) => {
-                                const isCurrentStatus = statusKey === bundle.status;
+                                const isCurrentStatus =
+                                    statusKey === bundle.status;
 
                                 return (
                                     <div
                                         key={statusKey}
                                         onClick={() => {
                                             if (!isCurrentStatus) {
-                                                handleStatusClick(statusKey as BundleStatus);
+                                                handleStatusClick(
+                                                    statusKey as BundleStatus,
+                                                );
                                             }
                                         }}
-                                        style={{ cursor: isCurrentStatus ? 'default' : 'pointer' }}
+                                        style={{
+                                            cursor: isCurrentStatus
+                                                ? "default"
+                                                : "pointer",
+                                        }}
                                     >
                                         <s-clickable>
                                             {isCurrentStatus ? (
                                                 <s-stack direction="inline">
-                                                    <s-text type="strong">{status.text}</s-text>
+                                                    <s-text type="strong">
+                                                        {status.text}
+                                                    </s-text>
                                                 </s-stack>
                                             ) : (
                                                 <s-text>{status.text}</s-text>
@@ -91,7 +104,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                         </s-clickable>
                                     </div>
                                 );
-                            }
+                            },
                         )}
                     </s-stack>
                 </s-box>

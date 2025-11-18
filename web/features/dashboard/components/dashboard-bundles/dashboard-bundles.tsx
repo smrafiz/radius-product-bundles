@@ -13,7 +13,6 @@ import { BundleTableSkeleton } from "@/features/bundles";
 export function DashboardBundles() {
     const { loading, error, bundles } = useDashboardStore();
 
-
     if (loading) {
         return <BundleTableSkeleton />;
     }

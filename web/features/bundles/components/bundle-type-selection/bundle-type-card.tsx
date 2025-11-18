@@ -21,11 +21,17 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
         }
     };
     return (
-        <div style={{position:"relative"}}>
+        <div style={{ position: "relative" }}>
             <s-box background="base" border="base" borderRadius="base">
                 <s-stack gap="base">
                     {/* Badge Section */}
-                    <div style={{position:"absolute", right:"16px", top:"16px"}}>
+                    <div
+                        style={{
+                            position: "absolute",
+                            right: "16px",
+                            top: "16px",
+                        }}
+                    >
                         {bundleType.badge && (
                             <s-badge tone={bundleType.badge.tone}>
                                 {bundleType.badge.text}
@@ -75,7 +81,9 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                 disabled={bundleType.comingSoon}
                                 accessibilityLabel="Select App"
                             >
-                                {bundleType.comingSoon ? "Coming Soon" : "Select"}
+                                {bundleType.comingSoon
+                                    ? "Coming Soon"
+                                    : "Select"}
                             </s-button>
                         </s-stack>
                         <s-button commandFor={`modal-${bundleType.id}`}>
@@ -95,7 +103,9 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                         />
                                     </s-stack>
                                 )}
-                                <s-paragraph>{bundleType.description}</s-paragraph>
+                                <s-paragraph>
+                                    {bundleType.description}
+                                </s-paragraph>
                                 {bundleType.features &&
                                     bundleType.features.length > 0 && (
                                         <s-unordered-list>

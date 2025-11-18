@@ -19,23 +19,21 @@ export function SelectedProducts() {
     return (
         <s-stack>
             {/* Header */}
-            <s-stack
-                direction="inline"
-                justifyContent="space-between"
-                alignItems="center"
-                gap="small"
+            <div
+                onClick={handleToggle}
+                style={{ cursor: "pointer", zIndex: 30 }}
             >
-                <s-heading>Selected products ({itemCount})</s-heading>
-                <s-stack>
-                    <s-clickable
-                        onClick={handleToggle}
-                        aria-expanded={open}
-                        aria-label={open ? "Collapse products" : "Expand products"}
-                    >
-                        <s-icon type={open ? "chevron-up" : "chevron-down"} />
-                    </s-clickable>
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    gap="small"
+                    aria-expanded={open}
+                >
+                    <s-heading>Selected products ({itemCount})</s-heading>
+                    <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
-            </s-stack>
+            </div>
 
             {/* Collapsible Body */}
             <div

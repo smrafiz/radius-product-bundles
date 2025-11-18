@@ -1,6 +1,11 @@
 "use client";
 
-import { BundleListItem, ProductAvatarStack, ProductListPopover, useBundlePreview, } from "@/features/bundles";
+import {
+    BundleListItem,
+    ProductAvatarStack,
+    ProductListPopover,
+    useBundlePreview,
+} from "@/features/bundles";
 import { useState } from "react";
 
 /**

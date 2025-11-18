@@ -18,7 +18,10 @@ export function PricingPage() {
             >
                 <s-stack direction="inline" gap="base">
                     <s-stack paddingBlockStart="small-500">
-                        <s-button onClick={() => goBack()} icon="arrow-left"></s-button>
+                        <s-button
+                            onClick={() => goBack()}
+                            icon="arrow-left"
+                        ></s-button>
                     </s-stack>
                     <s-stack>
                         <s-heading>

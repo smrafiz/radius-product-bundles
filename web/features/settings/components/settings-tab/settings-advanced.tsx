@@ -46,7 +46,13 @@ export function SettingsAdvanced() {
                     <s-paragraph>
                         {
                             "Leave blank to use the default format. {{ amount }}, {{ amount_no_decimals }}, and {{ amount_with_comma_separator }} will be replaced with the price of your product, while {{ currency_symbol }} will be replaced with the currency symbol. You can use the same formatting as in Shopify stores."
-                        }<s-link target="_blank" href="https://help.shopify.com/en/manual/international/pricing/currency-formatting">Read More</s-link>
+                        }
+                        <s-link
+                            target="_blank"
+                            href="https://help.shopify.com/en/manual/international/pricing/currency-formatting"
+                        >
+                            Read More
+                        </s-link>
                     </s-paragraph>
                 </s-stack>
 
@@ -71,7 +77,6 @@ export function SettingsAdvanced() {
                     label="Hide dynamic checkout buttons in cart"
                     details="If your customers check out using the dynamic checkout buttons on the cart page, then the bundle discounts won't get applied. You can turn this option on and Bundler will hide these buttons on the cart page when the customer qualifies for the bundle discount."
                 />
-
             </s-stack>
         </s-section>
     );

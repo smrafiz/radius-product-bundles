@@ -6,17 +6,17 @@ export const WIDGET_LAYOUTS = [
     {
         label: "Horizontal Layout",
         value: "horizontal" as const,
-        widgetLayout:"/assets/widget-horizontal-layout.png",
+        widgetLayout: "/assets/widget-horizontal-layout.png",
     },
     {
         label: "Vertical Layout",
         value: "vertical" as const,
-        widgetLayout:"/assets/widget-vertical-layout.png",
+        widgetLayout: "/assets/widget-vertical-layout.png",
     },
     {
         label: "Grid Layout",
         value: "grid" as const,
-        widgetLayout:"/assets/widget-grid-layout.png",
+        widgetLayout: "/assets/widget-grid-layout.png",
     },
 ];
 

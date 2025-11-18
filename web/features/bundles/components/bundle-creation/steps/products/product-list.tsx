@@ -6,10 +6,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useDragAndDrop, useProductPicker } from "@/shared";
 import { closestCenter, DndContext } from "@dnd-kit/core";
-import {
-    ProductItem,
-    useBundleStore,
-} from "@/features/bundles";
+import { ProductItem, useBundleStore } from "@/features/bundles";
 
 export function ProductList() {
     const { getGroupedItems } = useBundleStore();
@@ -35,7 +32,6 @@ export function ProductList() {
                     >
                         Add products
                     </s-button>
-
                 </s-stack>
             </s-box>
         );

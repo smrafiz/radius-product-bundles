@@ -24,12 +24,8 @@ export function BundleSelectionHelp() {
                     {BUNDLE_HELP_ITEMS.map((item, index) => (
                         <s-grid-item key={index} gridColumn="auto">
                             <s-stack gap="small-500">
-                                <s-heading>
-                                    {item.title}
-                                </s-heading>
-                                <s-text>
-                                    {item.bundles}
-                                </s-text>
+                                <s-heading>{item.title}</s-heading>
+                                <s-text>{item.bundles}</s-text>
                             </s-stack>
                         </s-grid-item>
                     ))}

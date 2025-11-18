@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SETTINGS_TAB_NAV,  } from "@/features/settings";
+import { SETTINGS_TAB_NAV } from "@/features/settings";
 import {
     SettingsTools,
     SettingsGeneral,
@@ -69,7 +69,10 @@ export const SettingsTab = () => {
                                                 : "hover:bg-gray-200 font-normal"
                                         }`}
                                     >
-                                        <s-stack direction="inline" gap="small-300">
+                                        <s-stack
+                                            direction="inline"
+                                            gap="small-300"
+                                        >
                                             <s-icon
                                                 size="base"
                                                 type={tab.icon}

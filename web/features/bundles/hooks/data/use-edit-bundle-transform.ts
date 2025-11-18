@@ -26,35 +26,48 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             try {
                 // Handle case where volumeTiers might be a JSON string, null, or already parsed
                 const tiers = bundleData.volumeTiers;
-                
+
                 // If it's falsy or not an array, return undefined
                 if (!tiers || !Array.isArray(tiers)) {
                     return undefined;
                 }
-                
+
                 // Map and validate each tier
                 const result = tiers
-                    .map(tier => {
+                    .map((tier) => {
                         // Handle both direct access and potential Prisma.JsonObject access
-                        const quantity = tier && typeof tier === 'object' && 'quantity' in tier
-                            ? Number(tier.quantity)
-                            : undefined;
-                        const discount = tier && typeof tier === 'object' && 'discount' in tier
-                            ? Number(tier.discount)
-                            : undefined;
-                        
+                        const quantity =
+                            tier &&
+                            typeof tier === "object" &&
+                            "quantity" in tier
+                                ? Number(tier.quantity)
+                                : undefined;
+                        const discount =
+                            tier &&
+                            typeof tier === "object" &&
+                            "discount" in tier
+                                ? Number(tier.discount)
+                                : undefined;
+
                         // Only include valid tiers with both quantity and discount as numbers
-                        return (quantity !== undefined && discount !== undefined && !isNaN(quantity) && !isNaN(discount))
+                        return quantity !== undefined &&
+                            discount !== undefined &&
+                            !isNaN(quantity) &&
+                            !isNaN(discount)
                             ? { quantity, discount }
                             : null;
                     })
-                    .filter((tier): tier is { quantity: number; discount: number } => tier !== null);
-                
+                    .filter(
+                        (
+                            tier,
+                        ): tier is { quantity: number; discount: number } =>
+                            tier !== null,
+                    );
+
                 // Return undefined if no valid tiers were found
                 return result.length > 0 ? result : undefined;
-                
             } catch (error) {
-                console.error('Error processing volumeTiers:', error);
+                console.error("Error processing volumeTiers:", error);
                 return undefined;
             }
         })(),
@@ -74,7 +87,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         // Products
         products: bundleData.products.map((product) => ({
             productId: product.productId,
-            variantId: product.variantId || '',
+            variantId: product.variantId || "",
             quantity: product.quantity,
             role: product.role || "INCLUDED",
             groupId: product.groupId,
@@ -82,12 +95,12 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             discountPercent: product.discountPercent,
         })),
 
-        productGroups: (bundleData.productGroups || []).map(group => ({
+        productGroups: (bundleData.productGroups || []).map((group) => ({
             name: group.title || `Group ${group.id}`,
             minSelection: 1,
             displayOrder: 0,
             description: group.product?.title,
-            _originalId: group.id
+            _originalId: group.id,
         })),
         settings: bundleData.settings || {
             layout: "GRID",
@@ -100,8 +113,8 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             widget: {
                 floating: false,
                 autoHide: false,
-                showOnMobile: true
-            }
+                showOnMobile: true,
+            },
         },
     };
 }
