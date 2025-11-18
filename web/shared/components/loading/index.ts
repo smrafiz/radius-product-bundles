@@ -1,2 +1,3 @@
+export * from "./spinner";
+export * from "./progress";
 export * from "./skeleton";
-export { GlobalLoader } from "./global-loader";
