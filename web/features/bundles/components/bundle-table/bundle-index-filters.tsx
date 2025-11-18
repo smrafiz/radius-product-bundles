@@ -3,14 +3,10 @@
 import { LoadingSpinner } from "@/shared";
 import { BUNDLE_FILTERS, useBundleFilters } from "@/features/bundles";
 
-interface BundleIndexFiltersProps {
-    loading?: boolean;
-}
-
 /**
  * Bundle index filters component
  */
-export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
+export function BundleIndexFilters({ loading }: { loading?: boolean }) {
     const {
         filters,
         queryValue,
@@ -54,19 +50,31 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                         </div>
 
                         {/* Status Tabs */}
-                        <div className={`fade-wrapper ${showSearch ? "fade-hidden" : "fade-visible"}`}>
+                        <div
+                            className={`fade-wrapper ${showSearch ? "fade-hidden" : "fade-visible"}`}
+                        >
                             <s-stack direction="inline" gap="small-400">
-                                {BUNDLE_FILTERS.tabs.items.map((item, index) => (
-                                    <s-button
-                                        key={`${item}-${index}`}
-                                        tone="neutral"
-                                        variant={filters.selectedTab === index ? "secondary" : "tertiary"}
-                                        onClick={() => handleTabClick(index)}
-                                        aria-selected={filters.selectedTab === index}
-                                    >
-                                        {item}
-                                    </s-button>
-                                ))}
+                                {BUNDLE_FILTERS.tabs.items.map(
+                                    (item, index) => (
+                                        <s-button
+                                            key={`${item}-${index}`}
+                                            tone="neutral"
+                                            variant={
+                                                filters.selectedTab === index
+                                                    ? "secondary"
+                                                    : "tertiary"
+                                            }
+                                            onClick={() =>
+                                                handleTabClick(index)
+                                            }
+                                            aria-selected={
+                                                filters.selectedTab === index
+                                            }
+                                        >
+                                            {item}
+                                        </s-button>
+                                    ),
+                                )}
                             </s-stack>
                         </div>
                     </s-grid-item>
@@ -76,7 +84,9 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                         <s-grid-item>
                             <s-button
                                 icon="filter"
-                                variant={hasStatusFilter ? "primary" : "secondary"}
+                                variant={
+                                    hasStatusFilter ? "primary" : "secondary"
+                                }
                                 accessibilityLabel="Filter by status"
                                 interestFor="status-filter-tooltip"
                                 commandFor="status-filter-popover"
@@ -96,7 +106,9 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                         <s-stack direction="inline" gap="small-200">
                             {!showSearch && loading && <LoadingSpinner />}
                             <s-button
-                                variant={hasSearchQuery ? "primary" : "secondary"}
+                                variant={
+                                    hasSearchQuery ? "primary" : "secondary"
+                                }
                                 icon={!showSearch ? "search" : "x"}
                                 onClick={toggleFilters}
                                 aria-expanded={showSearch}
@@ -106,7 +118,13 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                             />
                         </s-stack>
                         <s-tooltip id="search-close-tooltip">
-                            <s-text>{showSearch ? "Close search" : hasSearchQuery ? "Search active" : "Search bundles"}</s-text>
+                            <s-text>
+                                {showSearch
+                                    ? "Close search"
+                                    : hasSearchQuery
+                                      ? "Search active"
+                                      : "Search bundles"}
+                            </s-text>
                         </s-tooltip>
                     </s-grid-item>
 
@@ -133,15 +151,20 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                                     name="status-filter"
                                     onChange={handleStatusFilterChange}
                                 >
-                                    {BUNDLE_FILTERS.tabs.items.map((item, index) => (
-                                        <s-choice
-                                            key={`status-${index}`}
-                                            value={item.toLowerCase()}
-                                            selected={filters.selectedTab === index}
-                                        >
-                                            {item}
-                                        </s-choice>
-                                    ))}
+                                    {BUNDLE_FILTERS.tabs.items.map(
+                                        (item, index) => (
+                                            <s-choice
+                                                key={`status-${index}`}
+                                                value={item.toLowerCase()}
+                                                selected={
+                                                    filters.selectedTab ===
+                                                    index
+                                                }
+                                            >
+                                                {item}
+                                            </s-choice>
+                                        ),
+                                    )}
                                 </s-choice-list>
                             </s-box>
                         </form>
@@ -161,7 +184,9 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                                         <s-choice
                                             key={option.field}
                                             value={option.field}
-                                            selected={sortField === option.field}
+                                            selected={
+                                                sortField === option.field
+                                            }
                                         >
                                             {option.label}
                                         </s-choice>
@@ -176,14 +201,26 @@ export function BundleIndexFilters({ loading }: BundleIndexFiltersProps) {
                                 <s-stack gap="small-400">
                                     {sortDirections.map((option) => {
                                         const value = `${option.field} ${option.direction}`;
-                                        const isSelected = filters.sortSelected === value;
-                                        const iconName = option.direction === "asc" ? "arrow-up" : "arrow-down";
+                                        const isSelected =
+                                            filters.sortSelected === value;
+                                        const iconName =
+                                            option.direction === "asc"
+                                                ? "arrow-up"
+                                                : "arrow-down";
 
                                         return (
                                             <s-button
                                                 key={value}
-                                                variant={isSelected ? "secondary" : "tertiary"}
-                                                onClick={() => handleSortDirectionClick(value)}
+                                                variant={
+                                                    isSelected
+                                                        ? "secondary"
+                                                        : "tertiary"
+                                                }
+                                                onClick={() =>
+                                                    handleSortDirectionClick(
+                                                        value,
+                                                    )
+                                                }
                                                 icon={iconName}
                                                 type="reset"
                                             >
