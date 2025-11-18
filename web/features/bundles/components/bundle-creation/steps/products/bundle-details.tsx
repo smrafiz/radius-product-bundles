@@ -1,38 +1,18 @@
 "use client";
 
 import {
-    useBundleFormMethods,
-    useBundleStore,
+    useBundleField,
     useBundleValidation,
 } from "@/features/bundles";
-import { useEffect } from "react";
 
+/**
+ * Bundle details input component for name and description
+ */
 export function BundleDetails() {
-    const { watch, setValue, trigger } = useBundleFormMethods();
     const { getFieldError } = useBundleValidation();
-    const { markDirty, validationAttempted } = useBundleStore();
 
-    const name = watch("name");
-    const description = watch("description");
-
-    useEffect(() => {
-        if (validationAttempted && !name) {
-            void trigger("name");
-        }
-    }, [validationAttempted, name, trigger]);
-
-    const handleNameChange = (value: string) => {
-        setValue("name", value, { shouldValidate: true, shouldDirty: true });
-        markDirty();
-    };
-
-    const handleDescriptionChange = (value: string) => {
-        setValue("description", value, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-        markDirty();
-    };
+    const nameField = useBundleField<string>("name");
+    const descriptionField = useBundleField<string>("description");
 
     return (
         <s-stack gap="base">
@@ -41,23 +21,24 @@ export function BundleDetails() {
                 <s-tooltip id="info-tooltip">This is info tooltip</s-tooltip>
                 <s-text-field
                     label="Bundle name"
-                    value={name || ""}
+                    value={nameField.value || ""}
                     onChange={(event: Event) => {
                         const target = event.target as HTMLInputElement;
-                        handleNameChange(target.value);
+                        nameField.handleChange(target.value);
                     }}
                     placeholder="Enter bundle name"
                     details="Used internally to identify the bundle."
                     error={getFieldError("name")}
-                ></s-text-field>
+                    required
+                />
             </s-stack>
 
             <s-text-area
                 label="Description (Optional)"
-                value={description || ""}
+                value={descriptionField.value || ""}
                 onChange={(event: Event) => {
                     const target = event.target as HTMLTextAreaElement;
-                    handleDescriptionChange(target.value);
+                    descriptionField.handleChange(target.value);
                 }}
                 rows={3}
                 placeholder="Describe your bundle offer"
