@@ -171,18 +171,33 @@ export function ProductBundle() {
                                             </div>
                                         );
                                     })}
+
                                     {/* Upload Zone */}
+                                    {mediaFiles.length > 0 && (
+                                        <div style={{ position: "relative" }}>
+                                            <s-drop-zone
+                                                accessibilityLabel="Upload image of type jpg, png, or gif"
+                                                accept="image/*"
+                                                multiple
+                                                onChange={handleDropzoneChange}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Upload Zone */}
+                                {!mediaFiles.length && (
                                     <div style={{ position: "relative" }}>
                                         <s-drop-zone
-                                            accessibilityLabel="Upload image"
+                                            label="Upload image"
+                                            accessibilityLabel="Upload image of type jpg, png, or gif"
+                                            labelAccessibilityVisibility="exclusive"
                                             accept="image/*"
                                             multiple
                                             onChange={handleDropzoneChange}
                                         />
                                     </div>
-                                </div>
-
-
+                                )}
                             </s-stack>
 
                             {isLoading && (
