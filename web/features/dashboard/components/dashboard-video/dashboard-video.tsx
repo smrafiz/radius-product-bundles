@@ -1,22 +1,21 @@
 "use client";
 import { useRef, useEffect } from "react";
 import { useDashboardStore } from "@/features/dashboard";
+import { SkeletonLines } from "@/shared";
 
-export function DashboardVideo() {
+export function DashboardVideo({ lines = 8 }: { lines?: number }) {
     const { loading } = useDashboardStore();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const videoUrl = "https://youtu.be/gsw2NYVrPfM";
 
-    // Detect YouTube vs direct video
     const isYouTube: boolean =
         videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
     const embedUrl: string = isYouTube
         ? videoUrl
               .replace("youtu.be/", "www.youtube.com/embed/")
-              .replace("watch?v=", "embed/") + "?autoplay=1&mute=1"
+              .replace("watch?v=", "embed/") //+ "?autoplay=1&mute=1"
         : videoUrl;
 
-    // --- Handle modal open/close events ---
     useEffect(() => {
         const modal = document.getElementById(
             "video-modal",
@@ -74,15 +73,7 @@ export function DashboardVideo() {
             <s-section padding="base">
                 <s-box>
                     <div className="animate-pulse space-y-3">
-                        {Array.from({ length: 6 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="h-2 bg-[#ebebeb] rounded"
-                                style={{
-                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
-                                }}
-                            />
-                        ))}
+                        <SkeletonLines lines={lines} random={true} />
                     </div>
                 </s-box>
             </s-section>
@@ -94,32 +85,23 @@ export function DashboardVideo() {
             <div className="flex flex-col sm:flex-row gap-4 items-center">
                 {/* LEFT SIDE: Thumbnail */}
                 <div className="relative sm:max-w-[300px] w-full">
-                    <div style={{ position: "relative", cursor: "pointer" }}>
+                    <div className="relative cursor-pointer">
                         {isYouTube ? (
                             <img
                                 src={`https://img.youtube.com/vi/${videoUrl.split("/").pop()}/hqdefault.jpg`}
                                 alt="Video thumbnail"
-                                style={{ width: "100%", borderRadius: "8px" }}
+                                className="w-full rounded-[8px]"
                             />
                         ) : (
                             <video
-                                style={{
-                                    width: "100%",
-                                    objectFit: "cover",
-                                    borderRadius: "8px",
-                                }}
+                                className="w-full object-cover rounded-[8px]"
                                 muted
                                 src={videoUrl}
                             />
                         )}
 
                         <div
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                transform: "translate(-50%, -50%)",
-                            }}
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                         >
                             <s-button
                                 variant="secondary"
@@ -163,7 +145,7 @@ export function DashboardVideo() {
                         title="YouTube video player"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
-                        style={{ borderRadius: "8px" }}
+                        className="rounded-[8px]"
                     ></iframe>
                 ) : (
                     <video
@@ -171,7 +153,7 @@ export function DashboardVideo() {
                         controls
                         muted
                         autoPlay
-                        style={{ width: "100%", borderRadius: "8px" }}
+                        className="w-full rounded-[8px]"
                     >
                         <source src={videoUrl} type="video/mp4" />
                         Your browser does not support the video tag.

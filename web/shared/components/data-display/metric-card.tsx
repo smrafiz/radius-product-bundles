@@ -20,7 +20,7 @@ export function MetricCard({
         <s-section>
             <s-stack>
                 <s-stack direction="inline" gap="base" alignItems="center">
-                    <div style={{ width: "var(--p-font-size-1000)" }}>
+                    <div className="w-[var(--p-font-size-1000)]">
                         <s-image
                             src={`/assets/${svg_icon}.svg`}
                             alt={title}
@@ -38,11 +38,7 @@ export function MetricCard({
                         ) : (
                             <s-stack direction="inline" gap="small-200">
                                 <s-text tone="info">
-                                    <div
-                                        style={{
-                                            fontSize: "var(--p-font-size-450)",
-                                        }}
-                                    >
+                                    <div className="text-[var(--p-font-size-450)]">
                                         {value}
                                     </div>
                                 </s-text>

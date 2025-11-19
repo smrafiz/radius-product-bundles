@@ -100,7 +100,7 @@ export function DiscountSettings() {
                 )}
 
                 <s-stack gap="base">
-                    <div style={{ flex: 1 }}>
+                    <div className="flex-1">
                         <s-number-field
                             label="Minimum Order Value (Optional)"
                             value={minOrderValueField.value?.toString() || ""}
@@ -118,7 +118,7 @@ export function DiscountSettings() {
                     </div>
 
                     {showMaxDiscountAmount && (
-                        <div style={{ flex: 1 }}>
+                        <div className="flex-1">
                             <s-number-field
                                 label="Maximum Discount Amount (Optional)"
                                 value={maxDiscountAmountField.value?.toString() || ""}

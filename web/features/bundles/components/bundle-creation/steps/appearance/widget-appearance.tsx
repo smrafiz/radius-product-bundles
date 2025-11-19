@@ -17,10 +17,7 @@ export function WidgetAppearance() {
         <s-section>
             <s-stack>
                 {/* Header */}
-                <div
-                    onClick={handleToggle}
-                    style={{ cursor: "pointer", zIndex: 30 }}
-                >
+                <div className="cursor-pointer z-30" onClick={handleToggle}>
                     <s-stack
                         direction="inline"
                         justifyContent="space-between"
@@ -34,12 +31,9 @@ export function WidgetAppearance() {
                 </div>
                 {/* Collapsible Body */}
                 <div
-                    style={{
-                        overflow: "hidden",
-                        transition: "max-height 0.3s ease, opacity 0.3s ease",
-                        maxHeight: open ? "1000px" : "0",
-                        opacity: open ? 1 : 0,
-                    }}
+                    className={`overflow-hidden transition-all duration-300 ease-in-out
+                         ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}
+                    `}
                 >
                     <s-stack gap="base" paddingBlockStart="base">
                         <s-stack
@@ -253,8 +247,6 @@ export function WidgetAppearance() {
                                 </s-grid-item>
                             </s-grid>
                         </s-stack>
-
-
                     </s-stack>
                 </div>
             </s-stack>

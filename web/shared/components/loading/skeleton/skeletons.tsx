@@ -39,11 +39,7 @@ export function SkeletonLine({
             className={`${height} bg-[var(--p-color-bg-surface-active)] rounded overflow-hidden relative`}
         >
             <div
-                className="absolute inset-0 bg-gradient-to-r from-bg-[var(--p-color-bg-surface-active)] via-[var(--p-color-bg-surface-secondary)] to-bg-[var(--p-color-bg-surface-active)] animate-shimmer"
-                style={{
-                    width: `${finalWidth}%`,
-                    animationDuration: `${finalDuration}s`,
-                }}
+                className={`absolute inset-0 bg-gradient-to-r from-bg-[var(--p-color-bg-surface-active)] via-[var(--p-color-bg-surface-secondary)] to-bg-[var(--p-color-bg-surface-active)] animate-shimmer [width:${finalWidth}%] [animation-duration:${finalDuration}s]`}
             />
         </div>
     );
@@ -241,7 +237,7 @@ export function MetricCardSkeleton({ title, icon }: MetricCardSkeletonProps) {
             <s-stack>
                 <s-stack direction="inline" gap="base" alignItems="center">
                     {icon && (
-                        <div style={{ width: "var(--p-font-size-1000)" }}>
+                        <div className="w-[var(--p-font-size-1000)]">
                             <s-image
                                 src={`/assets/${icon}.svg`}
                                 alt={title || "Loading"}

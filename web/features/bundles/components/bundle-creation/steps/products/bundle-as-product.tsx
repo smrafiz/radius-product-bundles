@@ -91,7 +91,7 @@ export function BundleAsProduct() {
                     />
 
                     {/* Media Section */}
-                    <s-stack>
+                    <s-stack gap="small-300">
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"
@@ -105,37 +105,21 @@ export function BundleAsProduct() {
                                 direction={
                                     mediaFiles.length > 0 ? "inline" : "block"
                                 }
-                                gap="small-300"
                             >
-                                <div
-                                    style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "repeat(6,1fr)",
-                                        gridTemplateRows: "repeat(auto,1fr)",
-                                        gap: "var(--p-space-150)",
-                                    }}
-                                >
+                                <div className="grid grid-cols-6 auto-rows-fr gap-[var(--p-space-150)]">
                                     {mediaFiles.map((file, index) => {
                                         const isHovered = itemIndex === index;
                                         const isFirst = index === 0;
 
                                         return (
                                             <div
-                                                className="relative"
+                                                className={`relative ${isFirst ? "[grid-area:1/1/span_2/span_2]" : ""}`}
                                                 key={index}
                                                 onMouseEnter={() =>
                                                     setItemIndex(index)
                                                 }
                                                 onMouseLeave={() =>
                                                     setItemIndex(null)
-                                                }
-                                                style={
-                                                    isFirst
-                                                        ? {
-                                                              gridArea:
-                                                                  "1 / 1 / span 2 / span 2",
-                                                          }
-                                                        : undefined
                                                 }
                                             >
                                                 {/* Fixed square image */}
@@ -150,7 +134,7 @@ export function BundleAsProduct() {
                                                         aspectRatio="1/1"
                                                         inlineSize="fill"
                                                         objectFit="cover"
-                                                        borderRadius="base"
+                                                        borderRadius="small"
                                                     />
                                                 </div>
 
@@ -189,29 +173,25 @@ export function BundleAsProduct() {
 
                                     {/* Upload Zone */}
                                     {mediaFiles.length > 0 && (
-                                        <div style={{ position: "relative" }}>
-                                            <s-drop-zone
-                                                accessibilityLabel="Upload image of type jpg, png, or gif"
-                                                accept="image/*"
-                                                multiple
-                                                onChange={handleDropzoneChange}
-                                            />
-                                        </div>
+                                        <s-drop-zone
+                                            accessibilityLabel="Upload image of type jpg, png, or gif"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={handleDropzoneChange}
+                                        />
                                     )}
                                 </div>
 
                                 {/* Upload Zone */}
                                 {!mediaFiles.length && (
-                                    <div style={{ position: "relative" }}>
-                                        <s-drop-zone
-                                            label="Upload image"
-                                            accessibilityLabel="Upload image of type jpg, png, or gif"
-                                            labelAccessibilityVisibility="exclusive"
-                                            accept="image/*"
-                                            multiple
-                                            onChange={handleDropzoneChange}
-                                        />
-                                    </div>
+                                    <s-drop-zone
+                                        label="Upload image"
+                                        accessibilityLabel="Upload image of type jpg, png, or gif"
+                                        labelAccessibilityVisibility="exclusive"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleDropzoneChange}
+                                    />
                                 )}
                             </s-stack>
 

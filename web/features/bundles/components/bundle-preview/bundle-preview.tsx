@@ -37,7 +37,7 @@ export function BundlePreview() {
                 <s-stack>
                     <s-heading>
                         {item.title.length > 25
-                            ? `${item.title.substring(0, 25)}...`
+                            ? `${item.title.slice(0, 25)}...`
                             : item.title}
                     </s-heading>
                     <s-text>
@@ -90,6 +90,7 @@ export function BundlePreview() {
 
     return (
         <s-stack gap="base">
+
             {/* Bundle preview status */}
             <BundlePreviewStatus />
 

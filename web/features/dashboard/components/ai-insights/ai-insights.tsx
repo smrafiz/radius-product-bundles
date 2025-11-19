@@ -1,5 +1,6 @@
 "use client";
 import { useDashboardStore } from "@/features/dashboard";
+import { SkeletonLines } from "@/shared";
 
 /**
  * AI Insights Component
@@ -24,15 +25,7 @@ export function AIInsights({ lines = 4 }: { lines?: number }) {
                 </s-grid>
                 <s-box>
                     <div className="animate-pulse space-y-3">
-                        {Array.from({ length: lines }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="h-2 bg-[#ebebeb] rounded"
-                                style={{
-                                    width: `${Math.floor(Math.random() * (100 - 60 + 1)) + 60}%`,
-                                }}
-                            />
-                        ))}
+                        <SkeletonLines lines={lines} random={true} />
                     </div>
                 </s-box>
             </s-section>

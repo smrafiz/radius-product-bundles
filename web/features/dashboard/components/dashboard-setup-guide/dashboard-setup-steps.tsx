@@ -64,13 +64,7 @@ export function DashboardSetupSteps({
                                         gap="small"
                                         alignItems="center"
                                     >
-                                        <div
-                                            style={{
-                                                height: "1rem",
-                                                width: "1rem",
-                                                paddingTop: ".05rem",
-                                            }}
-                                        >
+                                        <div className="w-4 h-4 pt-[0.05rem]">
                                             <s-icon type="x" tone="neutral" />
                                         </div>
                                         <span>Dismiss</span>
@@ -106,7 +100,7 @@ export function DashboardSetupSteps({
                         running.
                     </s-text>
 
-                    <div style={{ marginTop: ".8rem" }}>
+                    <div className="mt-[.8rem]">
                         <s-stack
                             direction="inline"
                             alignItems="center"
@@ -115,7 +109,7 @@ export function DashboardSetupSteps({
                         >
                             <div className="flex gap-4 w-full items-center">
                                 {completedItemsLength === items.length ? (
-                                    <div style={{ maxHeight: "1rem" }}>
+                                    <div className="max-h-4">
                                         <s-stack direction="inline" gap="base">
                                             <s-icon
                                                 type="check"
@@ -135,33 +129,14 @@ export function DashboardSetupSteps({
                                 )}
 
                                 {completedItemsLength !== items.length ? (
-                                    <div style={{ width: "100%" }}>
-                                        <div
-                                            style={{
-                                                width: "100%",
-                                                height: "8px",
-                                                backgroundColor:
-                                                    "var(--p-color-border-secondary)",
-                                                borderRadius: "4px",
-                                                overflow: "hidden",
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    width: `${
-                                                        (items.filter(
-                                                            (i) => i.complete,
-                                                        ).length /
-                                                            items.length) *
-                                                        100
-                                                    }%`,
-                                                    height: "100%",
-                                                    backgroundColor:
-                                                        "var(--p-color-bg-inverse)",
-                                                    borderRadius: "4px",
-                                                    transition:
-                                                        "width 0.3s ease-in-out",
-                                                }}
+                                    <div className="w-full">
+                                        <div className="w-full h-2 bg-[var(--p-color-border-secondary)] rounded-md overflow-hidden">
+                                            <div className="h-full bg-[var(--p-color-bg-inverse)] rounded-[4px] transition-all duration-300 ease-in-out"
+                                                 style={{
+                                                     width: `${
+                                                         (items.filter((i) => i.complete).length / items.length) * 100
+                                                     }%`,
+                                                 }}
                                             />
                                         </div>
                                     </div>
@@ -172,16 +147,10 @@ export function DashboardSetupSteps({
                 </s-stack>
             </s-box>
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateRows: isGuideOpen ? "1fr" : "0fr",
-                    transition: "grid-template-rows 0.1s ease-out",
-                    paddingBlockStart: isGuideOpen ? "20px" : "0px",
-                }}
+            <div className={`grid transition-all duration-100 ease-out ${isGuideOpen ? "[grid-template-rows:1fr] pt-[20px]" : "[grid-template-rows:0fr] pt-0"} `}
                 id={accessId}
             >
-                <div style={{ overflow: "hidden" }}>
+                <div className="overflow-hidden">
                     <s-box padding="small-300">
                         <s-stack direction="block" gap="small-400">
                             {items.map((item) => (
@@ -267,17 +236,7 @@ const SetupItem = ({
                                     <s-spinner size="base" />
                                 ) : complete ? (
                                     <div
-                                        style={{
-                                            width: "1.25rem",
-                                            height: "1.25rem",
-                                            borderRadius: "100%",
-                                            background: "#303030",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            fill: "#fff",
-                                            color: "#fff",
-                                        }}
+                                        className="w-5 h-5 rounded-full bg-[#303030] flex justify-center items-center fill-white text-white"
                                     >
                                         {checkSvg}
                                     </div>
@@ -290,12 +249,8 @@ const SetupItem = ({
 
                     <s-grid-item>
                         <div
-                            className={styles.itemContent}
+                            className={`${styles.itemContent} pt-[2px] ${expanded ? "cursor-default" : "cursor-pointer"}`}
                             onClick={expanded ? undefined : setExpanded}
-                            style={{
-                                cursor: expanded ? "default" : "pointer",
-                                paddingBlockStart: "2px",
-                            }}
                         >
                             <s-stack direction="block" id={String(id)}>
                                 {expanded ? (
@@ -305,16 +260,9 @@ const SetupItem = ({
                                 )}
 
                                 <div
-                                    style={{
-                                        display: "grid",
-                                        gridTemplateRows: expanded
-                                            ? "1fr"
-                                            : "0fr",
-                                        transition:
-                                            "grid-template-rows 0.1s ease-out",
-                                    }}
+                                    className={`grid transition-all duration-100 ease-out ${expanded ? "[grid-template-rows:1fr]" : "[grid-template-rows:0fr]"} `}
                                 >
-                                    <div style={{ overflow: "hidden" }}>
+                                    <div className="overflow-hidden">
                                         <s-box
                                             paddingBlockStart="small"
                                             paddingBlockEnd="small"
@@ -360,10 +308,9 @@ const SetupItem = ({
 
                             {image && expanded ? (
                                 <img
-                                    className={styles.itemImage}
+                                    className={`${styles.itemImage} max-h-[7.75rem]`}
                                     src={image.url}
                                     alt={image.alt}
-                                    style={{ maxHeight: "7.75rem" }}
                                 />
                             ) : null}
                         </div>
@@ -374,7 +321,6 @@ const SetupItem = ({
     );
 };
 
-// ✅ Static SVGs (no logic change)
 const outlineSvg = (
     <svg
         width="24"
@@ -388,7 +334,7 @@ const outlineSvg = (
             clipRule="evenodd"
             d="M21.9147 13.3062L19.9315 13.0475C19.9761 12.7056 19.9993 12.3561 19.9993 12.0001C19.9993 11.6442 19.9761 11.2946 19.9315 10.9527L21.9147 10.694C21.9705 11.1215 21.9993 11.5575 21.9993 12.0001C21.9993 12.4428 21.9705 12.8787 21.9147 13.3062ZM21.2405 8.17224L19.393 8.93835C19.1238 8.28906 18.7709 7.68206 18.3474 7.13093L19.9333 5.91228C20.4621 6.6004 20.9033 7.35927 21.2405 8.17224ZM18.0871 4.06613L16.8685 5.65197C16.3173 5.22845 15.7103 4.87563 15.061 4.60638L15.8271 2.75893C16.6401 3.09605 17.399 3.53734 18.0871 4.06613ZM13.3054 2.08464L13.0467 4.06784C12.7048 4.02324 12.3552 4.00012 11.9993 4.00012C11.6433 4.00012 11.2938 4.02324 10.9519 4.06784L10.6932 2.08464C11.1206 2.02889 11.5566 2.00012 11.9993 2.00012C12.4419 2.00012 12.8779 2.02889 13.3054 2.08464ZM8.17139 2.75893L8.9375 4.60638C8.2882 4.87563 7.6812 5.22845 7.13008 5.65197L5.91143 4.06613C6.59954 3.53734 7.35841 3.09606 8.17139 2.75893ZM4.06527 5.91228L5.65111 7.13093C5.22759 7.68206 4.87478 8.28906 4.60552 8.93835L2.75807 8.17225C3.0952 7.35927 3.53648 6.6004 4.06527 5.91228ZM2.08379 10.694C2.02803 11.1215 1.99927 11.5575 1.99927 12.0001C1.99927 12.4428 2.02803 12.8787 2.08379 13.3062L4.06699 13.0475C4.02239 12.7056 3.99927 12.3561 3.99927 12.0001C3.99927 11.6442 4.02239 11.2946 4.06699 10.9527L2.08379 10.694ZM2.75807 15.828L4.60553 15.0619C4.87478 15.7112 5.22759 16.3182 5.65111 16.8693L4.06527 18.088C3.53648 17.3998 3.0952 16.641 2.75807 15.828ZM5.91143 19.9341L7.13008 18.3483C7.68121 18.7718 8.28821 19.1246 8.9375 19.3939L8.17139 21.2413C7.35841 20.9042 6.59955 20.4629 5.91143 19.9341ZM10.6932 21.9156L10.9519 19.9324C11.2938 19.977 11.6433 20.0001 11.9993 20.0001C12.3552 20.0001 12.7048 19.977 13.0467 19.9324L13.3054 21.9156C12.8779 21.9714 12.4419 22.0001 11.9993 22.0001C11.5566 22.0001 11.1206 21.9714 10.6932 21.9156ZM15.8271 21.2413L15.061 19.3939C15.7103 19.1246 16.3173 18.7718 16.8685 18.3483L18.0871 19.9341C17.399 20.4629 16.6401 20.9042 15.8271 21.2413ZM19.9333 18.088L18.3474 16.8693C18.7709 16.3182 19.1238 15.7112 19.393 15.0619L21.2405 15.828C20.9033 16.641 20.4621 17.3998 19.9333 18.088Z"
             fill="#8C9196"
-            style={{ display: "none" }}
+            className="hidden"
         ></path>
         <path
             fillRule="evenodd"
@@ -401,7 +347,7 @@ const outlineSvg = (
             cy="12"
             r="12"
             fill="#DBDDDF"
-            style={{ display: "none" }}
+            className="hidden"
         ></circle>
         <circle
             cx="12"
@@ -410,7 +356,7 @@ const outlineSvg = (
             fill="#F6F6F7"
             stroke="#999EA4"
             strokeWidth="2"
-            style={{ display: "none" }}
+            className="hidden"
         ></circle>
     </svg>
 );

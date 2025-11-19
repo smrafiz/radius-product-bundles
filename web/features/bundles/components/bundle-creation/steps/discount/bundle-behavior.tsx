@@ -1,20 +1,13 @@
 "use client";
-import { useState } from "react";
 
 export function BundleBehavior() {
-    const [error, setError] = useState("Please select at least one option");
-
     return (
         <s-section>
             <s-stack gap="base">
                 <s-heading>Bundle Behavior</s-heading>
                 <s-stack gap="small-500">
                     <s-choice-list
-                        name="visibility"
-                        // error={error}
-                        // onChange={(e) => {
-                        //     setError(e.currentTarget.values.length > 0 ? '' : 'Please select at least one option');
-                        // }}
+                        name="bundleBehavior"
                     >
                         <s-choice
                             selected
