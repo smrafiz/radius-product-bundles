@@ -1,4 +1,16 @@
 /**
+ * Shuffle array for randomized pattern selection
+ */
+export function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+/**
  * Chunk array into smaller arrays
  */
 export function chunk<T>(array: T[], size: number): T[][] {
@@ -45,7 +57,7 @@ export function sortBy<T>(
     key: keyof T | ((item: T) => any),
     direction: "asc" | "desc" = "asc",
 ): T[] {
-    const sorted = [...array].sort((a, b) => {
+    return [...array].sort((a, b) => {
         const aVal = typeof key === "function" ? key(a) : a[key];
         const bVal = typeof key === "function" ? key(b) : b[key];
 
@@ -53,6 +65,4 @@ export function sortBy<T>(
         if (aVal > bVal) return direction === "asc" ? 1 : -1;
         return 0;
     });
-
-    return sorted;
 }

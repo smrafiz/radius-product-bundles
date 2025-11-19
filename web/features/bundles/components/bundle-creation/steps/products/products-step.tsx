@@ -1,7 +1,7 @@
 "use client";
 import {
     BundleDetails,
-    ProductBundle,
+    BundleAsProduct,
     ProductList,
     useBundleStore,
     useBundleValidation,
@@ -48,31 +48,41 @@ export function ProductsStep() {
 
             {/* Bundle product list */}
             <s-section>
-                <s-heading>Select products</s-heading>
+                {/*<s-heading>Select products</s-heading>*/}
                 <s-stack gap="base">
                     <s-stack
                         direction="inline"
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-button
-                            variant="primary"
-                            icon="plus"
-                            onClick={openProductPicker}
-                            loading={isLoading}
-                            tone={hasProductError ? "critical" : undefined}
-                        >
-                            Add products
-                        </s-button>
+                        <s-heading>Select products</s-heading>
                         {selectedItems.length > 0 && (
-                            <s-button
-                                variant="secondary"
-                                tone="critical"
-                                icon="delete"
-                                onClick={handleClearAll}
+                            <s-stack
+                                direction="inline"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                gap="small-300"
                             >
-                                Clear all
-                            </s-button>
+                                <s-button
+                                    variant="primary"
+                                    icon="plus"
+                                    onClick={openProductPicker}
+                                    loading={isLoading}
+                                    tone={
+                                        hasProductError ? "critical" : undefined
+                                    }
+                                >
+                                    Add products
+                                </s-button>
+                                <s-button
+                                    variant="secondary"
+                                    tone="critical"
+                                    icon="delete"
+                                    onClick={handleClearAll}
+                                >
+                                    Clear all
+                                </s-button>
+                            </s-stack>
                         )}
                     </s-stack>
                     {productErrorMessage && (
@@ -82,7 +92,8 @@ export function ProductsStep() {
                     )}
                     {showProductHint && (
                         <s-banner tone="info">
-                            Add at least one more product to create a bundle. ({selectedItems.length}/2 minimum)
+                            Add at least one more product to create a bundle. (
+                            {selectedItems.length}/2 minimum)
                         </s-banner>
                     )}
                     <ProductList />
@@ -90,7 +101,7 @@ export function ProductsStep() {
             </s-section>
 
             <s-section>
-                <ProductBundle />
+                <BundleAsProduct />
             </s-section>
         </s-stack>
     );

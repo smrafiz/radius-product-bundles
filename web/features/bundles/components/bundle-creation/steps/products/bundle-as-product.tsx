@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CallbackEvent } from "@shopify/polaris-types";
 
-export function ProductBundle() {
+export function BundleAsProduct() {
     const [show, setShow] = useState<boolean>(true);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("Bundle Product #5");
@@ -14,7 +14,7 @@ export function ProductBundle() {
     const handleTitleChange = (event: CallbackEvent<"s-text-field">) => {
         const target = event.target as HTMLInputElement;
         if (target.name === "title") {
-            const newValue = target.value.slice(0, 220);
+            const newValue = target.value.slice(0, 120);
             setTitle(newValue);
         }
     };
@@ -32,30 +32,45 @@ export function ProductBundle() {
 
     return (
         <s-stack gap="base">
-            <s-heading>Bundle as product</s-heading>
-
             <s-stack
                 direction="inline"
                 justifyContent="space-between"
                 alignItems="center"
-                background="subdued"
-                padding="small"
-                borderRadius="large"
             >
-                <s-switch
-                    id="event-switch"
-                    label={
-                        show
-                            ? "This bundle creates a product with its own product page."
-                            : "This bundle creates no product and has no product page."
-                    }
-                    accessibilityLabel="Toggle product creation"
-                    checked={show}
-                    onInput={(event: Event) => {
-                        const target = event.target as HTMLInputElement;
-                        setShow(target.checked);
-                    }}
-                />
+                <s-heading>Bundle as product</s-heading>
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    gap="small-300"
+                >
+                    <s-tooltip id="bundle-as-product-tooltip">
+                        <s-text>
+                            This bundle will create a product with its own
+                            product page.
+                        </s-text>
+                    </s-tooltip>
+                    <s-icon
+                        tone="neutral"
+                        type="info"
+                        interestFor="bundle-as-product-tooltip"
+                    />
+                    <s-switch
+                        id="event-switch"
+                        label={
+                            show
+                                ? "This bundle creates a product with its own product page."
+                                : "This bundle creates no product and has no product page."
+                        }
+                        accessibilityLabel="This bundle creates a product with its own product page"
+                        labelAccessibilityVisibility="exclusive"
+                        checked={show}
+                        onInput={(event: Event) => {
+                            const target = event.target as HTMLInputElement;
+                            setShow(target.checked);
+                        }}
+                    />
+                </s-stack>
             </s-stack>
 
             {show && (
@@ -66,7 +81,7 @@ export function ProductBundle() {
                         placeholder="Bundle product #5"
                         value={title}
                         onChange={handleTitleChange}
-                        maxLength={220}
+                        maxLength={120}
                     />
 
                     <s-text-area
@@ -76,7 +91,7 @@ export function ProductBundle() {
                     />
 
                     {/* Media Section */}
-                    <s-stack gap="small">
+                    <s-stack>
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"
@@ -90,7 +105,7 @@ export function ProductBundle() {
                                 direction={
                                     mediaFiles.length > 0 ? "inline" : "block"
                                 }
-                                gap="base"
+                                gap="small-300"
                             >
                                 <div
                                     style={{

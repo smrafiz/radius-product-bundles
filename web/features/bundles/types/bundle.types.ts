@@ -224,6 +224,7 @@ export type BundleConfig = {
     modalImage?: string;
     badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
     comingSoon?: boolean | undefined;
+    namePatterns: readonly string[];
 };
 
 /*

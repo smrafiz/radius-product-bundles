@@ -26,7 +26,7 @@ export function BundleDetails() {
                         nameField.handleChange(target.value);
                     }}
                     placeholder="Enter bundle name"
-                    details="Used internally to identify the bundle."
+                    details="Unique identifier for your bundle."
                     error={getFieldError("name")}
                     required
                 ></s-text-field>
