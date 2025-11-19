@@ -17,12 +17,12 @@ export const RangeSlider: React.FC = () => {
                     const percentage = (values[0] / 30) * 100;
 
                     return (
-                        <div
+                        <div className="range-slider-value"
                             {...props}
                             style={{
                                 ...props.style,
                                 height: "4px",
-                                width: "100%",
+                                width: "90%",
                                 borderRadius: "30px",
                                 backgroundImage: `
                                     linear-gradient(
@@ -39,7 +39,7 @@ export const RangeSlider: React.FC = () => {
                                     )
                                 `,
                                 backgroundSize: "100% 100%, 4px 100%",
-                                backgroundRepeat: "no-repeat, repeat-x",
+                                backgroundRepeat: "repeat, repeat-x",
                             }}
                         >
                             {children}
@@ -47,11 +47,12 @@ export const RangeSlider: React.FC = () => {
                     );
                 }}
                 renderThumb={({ props }) => (
-                    <div
+                    <div className="webkit-slider-thumb"
                         {...props}
                         key={props.key}
                         style={{
                             ...props.style,
+                            position:"relative",
                             height: "16px",
                             width: "16px",
                             borderRadius: "50%",
@@ -61,7 +62,7 @@ export const RangeSlider: React.FC = () => {
                 )}
             />
 
-            <div>{values[0]}px</div>
+            <div className="absolute right-0">{values[0]}px</div>
         </div>
     );
 };

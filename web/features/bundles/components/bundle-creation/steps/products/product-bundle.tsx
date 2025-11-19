@@ -9,8 +9,7 @@ export function ProductBundle() {
     const [title, setTitle] = useState<string>("Bundle Product #5");
 
     const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-    const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
-    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+    const [itemIndex, setItemIndex] = useState<number | null>(null);
 
     const handleTitleChange = (event: CallbackEvent<"s-text-field">) => {
         const target = event.target as HTMLInputElement;
@@ -29,21 +28,6 @@ export function ProductBundle() {
             setMediaFiles((prev) => [...prev, ...files]);
         }
         setIsLoading(false);
-    };
-
-    const deleteSelectedImages = () => {
-        setMediaFiles((prev) =>
-            prev.filter((_, i) => !selectedIndexes.includes(i)),
-        );
-        setSelectedIndexes([]);
-    };
-
-    const toggleCheckbox = (index: number) => {
-        setSelectedIndexes((prev) =>
-            prev.includes(index)
-                ? prev.filter((i) => i !== index)
-                : [...prev, index],
-        );
     };
 
     return (
@@ -97,25 +81,8 @@ export function ProductBundle() {
                             direction="inline"
                             justifyContent="space-between"
                         >
-                            <s-heading>
-                                {selectedIndexes.length >= 1
-                                    ? `${selectedIndexes.length} media selected`
-                                    : "Media"}
-                            </s-heading>
-
-                            {/* DYNAMIC LINK TEXT */}
-                            {selectedIndexes.length > 0 ? (
-                                <s-link
-                                    tone="critical"
-                                    onClick={deleteSelectedImages}
-                                >
-                                    Delete image
-                                </s-link>
-                            ) : (
-                                <s-link>
-                                    Add media from included products
-                                </s-link>
-                            )}
+                            <s-heading>Media</s-heading>
+                            <s-link>Add media from included products</s-link>
                         </s-stack>
 
                         <div className="relative">
@@ -125,86 +92,99 @@ export function ProductBundle() {
                                 }
                                 gap="base"
                             >
-                                {/* List Images */}
-                                {mediaFiles.length > 0 && (
-                                    <s-stack gap="small" direction="inline">
-                                        {mediaFiles.map((file, index) => {
-                                            const isHovered =
-                                                hoverIndex === index;
-                                            const isSelected =
-                                                selectedIndexes.includes(index);
+                                <div
+                                    style={{
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(6,1fr)",
+                                        gridTemplateRows: "repeat(auto,1fr)",
+                                        gap: "var(--p-space-150)",
+                                    }}
+                                >
+                                    {mediaFiles.map((file, index) => {
+                                        const isHovered = itemIndex === index;
+                                        const isFirst = index === 0;
 
-                                            return (
+                                        return (
+                                            <div
+                                                className="relative"
+                                                key={index}
+                                                onMouseEnter={() =>
+                                                    setItemIndex(index)
+                                                }
+                                                onMouseLeave={() =>
+                                                    setItemIndex(null)
+                                                }
+                                                style={
+                                                    isFirst
+                                                        ? {
+                                                              gridArea:
+                                                                  "1 / 1 / span 2 / span 2",
+                                                          }
+                                                        : undefined
+                                                }
+                                            >
+                                                {/* Fixed square image */}
                                                 <div
-                                                    className="relative inline-block"
-                                                    key={index}
-                                                    onMouseEnter={() =>
-                                                        setHoverIndex(index)
-                                                    }
-                                                    onMouseLeave={() =>
-                                                        setHoverIndex(null)
-                                                    }
+                                                    className={`w-full h-full rounded-lg border overflow-hidden ${isHovered ? "border-[var(--p-color-bg-fill-success)]" : ""}`}
                                                 >
-                                                    {/* Image */}
-                                                    <div
-                                                        className={`w-22 h-22 object-cover rounded-lg border  
-                                                    ${isHovered || isSelected ? "border-[var(--p-color-bg-fill-success)]" : ""}`}
-                                                    >
-                                                        <s-image
-                                                            src={URL.createObjectURL(
-                                                                file,
-                                                            )}
-                                                            alt={file.name}
-                                                            aspectRatio="1/1"
-                                                            inlineSize="fill"
-                                                            objectFit="cover"
-                                                            borderRadius="base"
+                                                    <s-image
+                                                        src={URL.createObjectURL(
+                                                            file,
+                                                        )}
+                                                        alt={file.name}
+                                                        aspectRatio="1/1"
+                                                        inlineSize="fill"
+                                                        objectFit="cover"
+                                                        borderRadius="base"
+                                                    />
+                                                </div>
+
+                                                {/* Delete icon */}
+                                                {isHovered && (
+                                                    <div className="absolute z-10 top-1.5 right-1.5">
+                                                        <s-button
+                                                            icon="delete"
+                                                            accessibilityLabel="Delete image"
+                                                            variant="primary"
+                                                            tone="critical"
+                                                            onClick={() => {
+                                                                setMediaFiles(
+                                                                    (prev) =>
+                                                                        prev.filter(
+                                                                            (
+                                                                                _,
+                                                                                i,
+                                                                            ) =>
+                                                                                i !==
+                                                                                index,
+                                                                        ),
+                                                                );
+                                                            }}
                                                         />
                                                     </div>
+                                                )}
 
-                                                    {/* Hover Checkbox */}
-                                                    {(isHovered ||
-                                                        isSelected) && (
-                                                        <div className="absolute z-10 top-1.5 right-1.5 ">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={
-                                                                    isSelected
-                                                                }
-                                                                onChange={() =>
-                                                                    toggleCheckbox(
-                                                                        index,
-                                                                    )
-                                                                }
-                                                                style={{
-                                                                    cursor: "pointer",
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    )}
-
-                                                    {/* Hover Checkbox */}
-                                                    {(isHovered ||
-                                                        isSelected) && (
-                                                        <div
-                                                            className={`${isHovered || isSelected ? "bg-[rgba(255,255,255,0.3)]" : ""} w-full h-full rounded-lg absolute left-0 top-0 z-0`}
-                                                        ></div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </s-stack>
-                                )}
-
-                                {/* Upload Zone */}
-                                <div style={{ position: "relative" }}>
-                                    <s-drop-zone
-                                        accessibilityLabel="Upload image"
-                                        multiple
-                                        onChange={handleDropzoneChange}
-                                    />
+                                                {/* Hover overlay */}
+                                                {isHovered && (
+                                                    <div className="bg-[rgba(255,255,255,0.3)] w-full h-full rounded-lg absolute left-0 top-0"></div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                    {/* Upload Zone */}
+                                    <div style={{ position: "relative" }}>
+                                        <s-drop-zone
+                                            accessibilityLabel="Upload image"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={handleDropzoneChange}
+                                        />
+                                    </div>
                                 </div>
+
+
                             </s-stack>
+
                             {isLoading && (
                                 <div
                                     className="absolute inset-0 flex items-center justify-center

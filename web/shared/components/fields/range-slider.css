@@ -3,27 +3,39 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
+    margin-top: 10px;
 }
 
-.range-slider-container > div:first-child {
+.range-slider-container .range-slider-value {
     font-size: 14px;
-    --pc-range-slider-input: 10;
-    --pc-range-slider-output: 20;
-    --pc-range-slider-track-height: 0.25rem;
-    --pc-range-slider-thumb-size: 1rem;
-    --pc-track-dashed-border-radius: var(--p-border-radius-100);
     --pc-track-dashed-color: var(--p-color-border);
-    background-image: linear-gradient(
-        to right,
-        var(--pc-track-dashed-color),
-        var(--pc-track-dashed-color) 50%,
-        transparent 50%,
-        transparent 100%
-    );
-    background-size: var(--pc-range-slider-track-height)
-        var(--pc-range-slider-track-height);
-    border-radius: var(--pc-track-dashed-border-radius);
-    border-right: var(--pc-track-dashed-border-radius)
-        var(--pc-track-dashed-color) solid;
     height: var(--pc-range-slider-track-height);
+    background-image: linear-gradient(to right, var(--pc-track-dashed-color), var(--pc-track-dashed-color) rgba(227, 227, 227, 1) 50%, transparent 50%, transparent 100%);
+    background-size: var(--pc-range-slider-track-height) var(--pc-range-slider-track-height);
+    border-radius: var(--pc-track-dashed-border-radius);
+    border-right: var(--pc-track-dashed-border-radius) var(--pc-track-dashed-color) solid;
+}
+
+.range-slider-value .webkit-slider-thumb {
+    width: var(--pc-range-slider-thumb-size);
+    height: var(--pc-range-slider-thumb-size);
+    border: var(--p-border-width-025) solid transparent;
+    border-radius: var(--p-border-radius-full);
+    background: linear-gradient(var(--p-color-bg-fill-brand), var(--p-color-bg-fill-brand));
+    box-shadow: 0 0 0 0 var(--p-color-border-focus);
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-transition-property: border-color, transform;
+    transition-property: border-color, transform;
+    transition-duration: var(--p-motion-duration-200);
+    transition-timing-function: var(--p-motion-ease);
+    margin-top: calc((var(--pc-range-slider-thumb-size) - var(--pc-range-slider-track-height)) * -1 / 2);
+}
+.range-slider-value .webkit-slider-thumb:focus  {
+    border-color: var(--p-color-bg-surface);
+    box-shadow: 0 0 0 var(--p-border-width-050) var(--p-color-border-focus);
+}
+.range-slider-value .webkit-slider-thumb:active  {
+    transform: scale(1.5);
 }

@@ -75,6 +75,7 @@ export function WidgetAppearance() {
                                     >
                                         <s-color-field
                                             label="Background"
+                                            name="buttonBgColor"
                                             placeholder="Select a color"
                                             value="#303030"
                                         />
@@ -85,6 +86,7 @@ export function WidgetAppearance() {
                                     >
                                         <s-color-field
                                             label="Text"
+                                            name="buttonColor"
                                             placeholder="Select a color"
                                             value="#ffffff"
                                         />
@@ -100,7 +102,7 @@ export function WidgetAppearance() {
                         <s-divider />
 
                         <s-stack gap="base">
-                            <s-heading>Color</s-heading>
+                            <s-heading>Product</s-heading>
                             <s-grid
                                 gridTemplateColumns="repeat(12, 1fr)"
                                 gap="base"
@@ -111,6 +113,7 @@ export function WidgetAppearance() {
                                 >
                                     <s-color-field
                                         label="Background"
+                                        name="productBgColor"
                                         placeholder="Select a color"
                                         value="#f7f7f7"
                                     />
@@ -121,6 +124,7 @@ export function WidgetAppearance() {
                                 >
                                     <s-color-field
                                         label="Text"
+                                        name="productColor"
                                         placeholder="Select a color"
                                         value="#303030"
                                     />
@@ -131,6 +135,7 @@ export function WidgetAppearance() {
                                 >
                                     <s-color-field
                                         label="Review stars"
+                                        name="productStarColor"
                                         placeholder="Select a color"
                                         value="#ffce07"
                                     />
@@ -139,7 +144,6 @@ export function WidgetAppearance() {
                         </s-stack>
 
                         <s-stack gap="base">
-                            <s-heading>Border</s-heading>
                             <s-stack
                                 direction="inline"
                                 justifyContent="space-between"
@@ -162,6 +166,7 @@ export function WidgetAppearance() {
                             <s-stack gap="base">
                                 <s-color-field
                                     label="Border color"
+                                    name="productBorderColor"
                                     placeholder="Select a color"
                                     value="#e3e3e3"
                                 />
@@ -172,10 +177,8 @@ export function WidgetAppearance() {
                             </s-stack>
                         )}
 
-                        <s-divider />
-
                         <s-stack gap="base">
-                            <s-heading>Alignment</s-heading>
+                            <s-text>Alignment</s-text>
                             <s-stack
                                 direction="inline"
                                 justifyContent="space-between"
@@ -217,6 +220,41 @@ export function WidgetAppearance() {
                                 </s-button>
                             </s-stack>
                         </s-stack>
+
+                        <s-divider />
+
+                        <s-stack gap="base">
+                            <s-heading>Widget</s-heading>
+                            <s-grid
+                                gridTemplateColumns="repeat(12, 1fr)"
+                                gap="base"
+                            >
+                                <s-grid-item
+                                    gridColumn="span 6"
+                                    gridRow="span 2"
+                                >
+                                    <s-color-field
+                                        label="Background"
+                                        name="widgetBgColor"
+                                        placeholder="Select a color"
+                                        value="#ffffff"
+                                    />
+                                </s-grid-item>
+                                <s-grid-item
+                                    gridColumn="span 6"
+                                    gridRow="span 2"
+                                >
+                                    <s-color-field
+                                        label="Text"
+                                        name="widgetColor"
+                                        placeholder="Select a color"
+                                        value="#303030"
+                                    />
+                                </s-grid-item>
+                            </s-grid>
+                        </s-stack>
+
+
                     </s-stack>
                 </div>
             </s-stack>
