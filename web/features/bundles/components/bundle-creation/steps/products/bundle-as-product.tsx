@@ -100,7 +100,7 @@ export function BundleAsProduct() {
                     />
 
                     {/* Media Section */}
-                    <s-stack gap="small-300">
+                    <s-stack gap="small">
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"
