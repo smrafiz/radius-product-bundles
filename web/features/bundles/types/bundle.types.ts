@@ -329,3 +329,35 @@ export interface DisplaySettings {
 export interface BundleConfiguration {
     discountApplication: "bundle" | "products" | "shipping";
 }
+
+/*
+ * Bundle media grid types
+ */
+export interface MediaGridProps {
+    mediaFiles: File[];
+    hoveredIndex: number | null;
+    isUploading: boolean;
+    onHoverStart: (index: number) => void;
+    onHoverEnd: () => void;
+    onRemove: (index: number) => void;
+    onUpload: (files: File[]) => void;
+}
+
+/**
+ * Individual media grid item with hover effects
+ */
+export interface MediaGridItemProps {
+    file: File;
+    index: number;
+    isHovered: boolean;
+    isFirst: boolean;
+    onHoverStart: (index: number) => void;
+    onHoverEnd: () => void;
+    onRemove: (index: number) => void;
+}
+
+export interface CreateBundleProductInput {
+    bundleName: string;
+    bundleDescription?: string;
+    bundleType?: string;
+}

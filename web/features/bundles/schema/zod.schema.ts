@@ -105,6 +105,15 @@ export const bundleSchema = z
             "FREQUENTLY_BOUGHT_TOGETHER",
         ]),
 
+        createProduct: z.boolean().default(true).optional(),
+        productTitle: z.string().max(120).optional(),
+        productDescription: z.string().max(5000).optional(),
+        images: z.array(
+            z.string().regex(/^https?:\/\/.+\..+$/, {
+                message: "Must be a valid URL starting with https://"
+            })
+        ).max(10).optional(),
+
         mainProductId: productGidSchema.optional(),
 
         // Bundle mechanics
@@ -157,7 +166,6 @@ export const bundleSchema = z
         marketingCopy: z.string().max(1000).transform(sanitizeHtml).optional(),
         seoTitle: z.string().max(60).transform(sanitizeHtml).optional(),
         seoDescription: z.string().max(160).transform(sanitizeHtml).optional(),
-        images: z.array(z.string().url()).max(5).optional(),
 
         // Scheduling
         startDate: z.date().optional(),

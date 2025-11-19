@@ -1,15 +1,18 @@
 "use client";
 
 import {
+    BundleType,
     useBundleField,
+    useBundleFormManager,
     useBundleValidation,
 } from "@/features/bundles";
 
 /**
  * Bundle details input component for name and description
  */
-export function BundleDetails() {
+export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
     const { getFieldError } = useBundleValidation();
+    const { isGeneratingName } = useBundleFormManager({ bundleType, bundleName: "" });
 
     const nameField = useBundleField<string>("name");
     const descriptionField = useBundleField<string>("description");
@@ -25,9 +28,10 @@ export function BundleDetails() {
                         const target = event.target as HTMLInputElement;
                         nameField.handleChange(target.value);
                     }}
-                    placeholder="Enter bundle name"
+                    placeholder={isGeneratingName ? "Generating unique name..." : "Enter bundle name"}
                     details="Unique identifier for your bundle."
                     error={getFieldError("name")}
+                    disabled={isGeneratingName}
                     required
                 ></s-text-field>
             </s-stack>

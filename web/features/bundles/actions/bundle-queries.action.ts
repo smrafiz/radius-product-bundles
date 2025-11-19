@@ -15,6 +15,7 @@ import {
 import {
     aggregateBundleMetrics,
     BundleFilters,
+    generateUniqueBundleNameService,
     getBundleDetails,
     getBundlesListService,
 } from "@/features/bundles";
@@ -130,6 +131,41 @@ export async function getBundleAction(
                 error instanceof Error
                     ? error.message
                     : "Failed to fetch bundle",
+            data: null,
+        };
+    }
+}
+
+/**
+ * Generate a unique bundle name based on bundle type
+ */
+export async function generateUniqueBundleNameAction(
+    sessionToken: string,
+    bundleType: string,
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const uniqueName = await generateUniqueBundleNameService(
+            shop,
+            bundleType,
+        );
+
+        return {
+            status: "success",
+            data: uniqueName,
+        };
+    } catch (error) {
+        console.error("[generateUniqueBundleName] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to generate unique name",
             data: null,
         };
     }

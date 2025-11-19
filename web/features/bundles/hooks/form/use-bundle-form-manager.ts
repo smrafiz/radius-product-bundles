@@ -2,6 +2,7 @@
 
 import {
     getBundleProperty,
+    useAutoGenerateName,
     UseBundleFormManagerOptions,
     useBundleFormMethods,
     useBundleStore,
@@ -16,7 +17,7 @@ export function useBundleFormManager({
 }: UseBundleFormManagerOptions) {
     const { bundleData, setBundleData } = useBundleStore();
     const { bundleData: navigationData } = useAppNavigation();
-    const { setValue } = useBundleFormMethods();
+    const { setValue, watch } = useBundleFormMethods();
 
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
@@ -25,12 +26,28 @@ export function useBundleFormManager({
         [bundleType],
     );
 
+    const { generatedName, isGenerating } = useAutoGenerateName(
+        bundleType,
+        isEditMode,
+    );
+
+    const currentName = watch("name");
+
     useEffect(() => {
         if (!bundleData.type) {
             setBundleData({ ...bundleData, type: bundleType });
             setValue("type", bundleType);
         }
     }, [bundleType, bundleData, setBundleData, setValue]);
+
+    useEffect(() => {
+        if (!isEditMode && generatedName && !currentName) {
+            setValue("name", generatedName, {
+                shouldValidate: false,
+                shouldDirty: true,
+            });
+        }
+    }, [generatedName, isEditMode, currentName, setValue]);
 
     const pageProps = useMemo(() => {
         return {
@@ -46,5 +63,6 @@ export function useBundleFormManager({
         pageProps,
         isEditMode,
         bundleData,
+        isGeneratingName: isGenerating,
     };
 }

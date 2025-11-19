@@ -5,12 +5,13 @@ import {
     ProductList,
     useBundleStore,
     useBundleValidation,
+    BundleType,
 } from "@/features/bundles";
 import { useEffect } from "react";
 import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
 
-export function ProductsStep() {
+export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const { selectedItems, setSelectedItems, validationAttempted } =
         useBundleStore();
     const { getAllErrors } = useBundleValidation();
@@ -43,7 +44,7 @@ export function ProductsStep() {
         <s-stack gap="base">
             {/* Bundle details */}
             <s-section>
-                <BundleDetails />
+                <BundleDetails bundleType={bundleType} />
             </s-section>
 
             {/* Bundle product list */}

@@ -243,19 +243,3 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
         errors: Object.keys(errors).length > 0 ? errors : null,
     };
 }
-
-/*
- * Check if the bundle name is unique
- * Returns true if a conflict exists, false otherwise
- */
-export async function checkNameConflict(
-    shop: string,
-    name: string,
-    excludeId?: string,
-): Promise<boolean> {
-    const existingBundle = excludeId
-        ? await findBundleByName(shop, name, excludeId)
-        : await findUniqueByName(shop, name);
-
-    return !!existingBundle;
-}

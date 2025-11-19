@@ -1,37 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import { CallbackEvent } from "@shopify/polaris-types";
+import {
+    MediaGrid,
+    useBundleProduct,
+    useBundleValidation,
+} from "@/features/bundles";
 
+/**
+ * Bundle as product configuration component
+ */
 export function BundleAsProduct() {
-    const [show, setShow] = useState<boolean>(true);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [title, setTitle] = useState<string>("Bundle Product #5");
-
-    const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-    const [itemIndex, setItemIndex] = useState<number | null>(null);
-
-    const handleTitleChange = (event: CallbackEvent<"s-text-field">) => {
-        const target = event.target as HTMLInputElement;
-        if (target.name === "title") {
-            const newValue = target.value.slice(0, 120);
-            setTitle(newValue);
-        }
-    };
-
-    const handleDropzoneChange = async (event: Event) => {
-        setIsLoading(true);
-        const input = event.currentTarget as HTMLInputElement;
-        const files = input.files ? Array.from(input.files) : [];
-        if (files.length > 0) {
-            await new Promise((resolve) => setTimeout(resolve, 400));
-            setMediaFiles((prev) => [...prev, ...files]);
-        }
-        setIsLoading(false);
-    };
+    const { getFieldError } = useBundleValidation();
+    const {
+        isEnabled,
+        bundleName,
+        productDescription,
+        mediaFiles,
+        isUploading,
+        hoveredIndex,
+        toggleEnabled,
+        handleTitleChange,
+        handleDescriptionChange,
+        handleMediaUpload,
+        removeMediaFile,
+        setHoveredItem,
+    } = useBundleProduct();
 
     return (
         <s-stack gap="base">
+            {/* Header with toggle */}
             <s-stack
                 direction="inline"
                 justifyContent="space-between"
@@ -56,38 +53,50 @@ export function BundleAsProduct() {
                         interestFor="bundle-as-product-tooltip"
                     />
                     <s-switch
-                        id="event-switch"
-                        label={
-                            show
-                                ? "This bundle creates a product with its own product page."
-                                : "This bundle creates no product and has no product page."
-                        }
-                        accessibilityLabel="This bundle creates a product with its own product page"
+                        id="bundle-product-switch"
+                        name="createProduct"
+                        label="This bundle creates a product with its own product page."
+                        accessibilityLabel="Create product for bundle"
                         labelAccessibilityVisibility="exclusive"
-                        checked={show}
+                        checked={isEnabled}
                         onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            setShow(target.checked);
+                            toggleEnabled(target.checked);
                         }}
                     />
                 </s-stack>
             </s-stack>
 
-            {show && (
+            {/* Product configuration - shown when enabled */}
+            {isEnabled && (
                 <s-stack gap="base">
+                    {/* Title field */}
                     <s-text-field
                         label="Title"
-                        name="title"
-                        placeholder="Bundle product #5"
-                        value={title}
-                        onChange={handleTitleChange}
+                        name="productTitle"
+                        placeholder="Bundle Product #5"
+                        value={bundleName || ""}
+                        onChange={(event: Event) => {
+                            const target = event.target as HTMLInputElement;
+                            handleTitleChange(target.value);
+                        }}
                         maxLength={120}
+                        error={getFieldError("productTitle")}
+                        details="Used as the title of the product page."
                     />
 
+                    {/* Description field */}
                     <s-text-area
                         label="Product description"
-                        value=""
+                        name="productDescription"
+                        value={productDescription || ""}
+                        placeholder="Describe this bundle product..."
+                        onChange={(event: Event) => {
+                            const target = event.target as HTMLTextAreaElement;
+                            handleDescriptionChange(target.value);
+                        }}
                         rows={3}
+                        error={getFieldError("productDescription")}
                     />
 
                     {/* Media Section */}
@@ -95,117 +104,25 @@ export function BundleAsProduct() {
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"
+                            alignItems="center"
                         >
                             <s-heading>Media</s-heading>
-                            <s-link>Add media from included products</s-link>
+                            <s-button variant="secondary">
+                                Add media from included products
+                            </s-button>
                         </s-stack>
-
-                        <div className="relative">
-                            <s-stack
-                                direction={
-                                    mediaFiles.length > 0 ? "inline" : "block"
-                                }
-                            >
-                                <div className="grid grid-cols-6 auto-rows-fr gap-[var(--p-space-150)]">
-                                    {mediaFiles.map((file, index) => {
-                                        const isHovered = itemIndex === index;
-                                        const isFirst = index === 0;
-
-                                        return (
-                                            <div
-                                                className={`relative ${isFirst ? "[grid-area:1/1/span_2/span_2]" : ""}`}
-                                                key={index}
-                                                onMouseEnter={() =>
-                                                    setItemIndex(index)
-                                                }
-                                                onMouseLeave={() =>
-                                                    setItemIndex(null)
-                                                }
-                                            >
-                                                {/* Fixed square image */}
-                                                <div
-                                                    className={`w-full h-full rounded-lg border overflow-hidden ${isHovered ? "border-[var(--p-color-bg-fill-success)]" : ""}`}
-                                                >
-                                                    <s-image
-                                                        src={URL.createObjectURL(
-                                                            file,
-                                                        )}
-                                                        alt={file.name}
-                                                        aspectRatio="1/1"
-                                                        inlineSize="fill"
-                                                        objectFit="cover"
-                                                        borderRadius="small"
-                                                    />
-                                                </div>
-
-                                                {/* Delete icon */}
-                                                {isHovered && (
-                                                    <div className="absolute z-10 top-1.5 right-1.5">
-                                                        <s-button
-                                                            icon="delete"
-                                                            accessibilityLabel="Delete image"
-                                                            variant="secondary"
-                                                            tone="critical"
-                                                            onClick={() => {
-                                                                setMediaFiles(
-                                                                    (prev) =>
-                                                                        prev.filter(
-                                                                            (
-                                                                                _,
-                                                                                i,
-                                                                            ) =>
-                                                                                i !==
-                                                                                index,
-                                                                        ),
-                                                                );
-                                                            }}
-                                                        />
-                                                    </div>
-                                                )}
-
-                                                {/* Hover overlay */}
-                                                {isHovered && (
-                                                    <div className="bg-[rgba(255,255,255,0.3)] w-full h-full rounded-lg absolute left-0 top-0"></div>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-
-                                    {/* Upload Zone */}
-                                    {mediaFiles.length > 0 && (
-                                        <s-drop-zone
-                                            accessibilityLabel="Upload image of type jpg, png, or gif"
-                                            accept="image/*"
-                                            multiple
-                                            onChange={handleDropzoneChange}
-                                        />
-                                    )}
-                                </div>
-
-                                {/* Upload Zone */}
-                                {!mediaFiles.length && (
-                                    <s-drop-zone
-                                        label="Upload image"
-                                        accessibilityLabel="Upload image of type jpg, png, or gif"
-                                        labelAccessibilityVisibility="exclusive"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleDropzoneChange}
-                                    />
-                                )}
-                            </s-stack>
-
-                            {isLoading && (
-                                <div
-                                    className="absolute inset-0 flex items-center justify-center
-                                        bg-white/90 rounded-lg z-10"
-                                >
-                                    <s-spinner size="base" />
-                                </div>
-                            )}
-                        </div>
+                        <MediaGrid
+                            mediaFiles={mediaFiles}
+                            hoveredIndex={hoveredIndex}
+                            isUploading={isUploading}
+                            onHoverStart={setHoveredItem}
+                            onHoverEnd={() => setHoveredItem(null)}
+                            onRemove={removeMediaFile}
+                            onUpload={handleMediaUpload}
+                        />
                     </s-stack>
 
+                    {/* Info and warning banners */}
                     <s-stack gap="base">
                         <s-box
                             padding="base"
@@ -225,7 +142,8 @@ export function BundleAsProduct() {
                                 </s-button>
                             </s-stack>
                         </s-box>
-                        <s-banner>
+
+                        <s-banner tone="warning">
                             Save the bundle before editing the associated
                             Shopify product.
                         </s-banner>

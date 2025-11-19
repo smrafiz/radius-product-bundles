@@ -93,6 +93,44 @@ export async function findUniqueByName(shop: string, name: string) {
     });
 }
 
+/*
+ * Check if a bundle name exists (for name conflict detection)
+ */
+export async function checkNameConflict(
+    shop: string,
+    name: string,
+    excludeId?: string,
+): Promise<boolean> {
+    const existingBundle = excludeId
+        ? await findBundleByName(shop, name, excludeId)
+        : await findUniqueByName(shop, name);
+
+    return !!existingBundle;
+}
+
+/**
+ * Find all bundles with names starting with a pattern
+ */
+export async function findBundlesByNamePattern(
+    shop: string,
+    namePattern: string,
+    tx?: Prisma.TransactionClient,
+): Promise<Array<{ name: string }>> {
+    const client = tx || prisma;
+
+    return await client.bundle.findMany({
+        where: {
+            shop,
+            name: {
+                startsWith: namePattern,
+            },
+        },
+        select: { name: true },
+        orderBy: { createdAt: "desc" },
+        take: 100,
+    });
+}
+
 /**
  * Find bundles by product ID
  */

@@ -2,10 +2,11 @@
 
 import {
     BundleFormData,
-    invalidateBundleCache,
     createBundleAction,
+    invalidateBundleCache,
     updateBundleAction,
     useBundleStore,
+    useCreateBundleProduct,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -17,6 +18,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const { setSaving, resetDirty, setStep } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
+    const { createProduct, isCreating: isCreatingProduct } =
+        useCreateBundleProduct();
 
     const handleSubmit = withAsyncLoader(async (data: BundleFormData) => {
         try {
@@ -24,7 +27,34 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             let token = await app.idToken();
             let result;
 
+            console.log(data);
+
             if (mode === "create") {
+                if (mode === "create" && data.createProduct && data.productTitle) {
+                    console.log("Creating Shopify product...");
+
+                    const productData = await createProduct(
+                        data.productTitle,
+                        data.productDescription,
+                        data.type,
+                    );
+
+                    console.log(productData);
+
+                    if (!productData) {
+                        showError("Failed to create product", {
+                            content:
+                                "Could not create Shopify product. Please try again.",
+                        });
+                        return;
+                    }
+
+                    console.log("Product created:", productData);
+
+                    // Add mainProductId to bundle data
+                    data.mainProductId = productData.mainProductId;
+                }
+
                 result = await createBundleAction(token, data);
             } else if (mode === "edit" && bundleId) {
                 result = await updateBundleAction(token, bundleId, data);
@@ -91,5 +121,5 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         }
     });
 
-    return { handleSubmit, resetDirty };
+    return { handleSubmit, resetDirty, isCreatingProduct };
 }

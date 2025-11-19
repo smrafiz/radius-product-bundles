@@ -1,9 +1,14 @@
 "use server";
 
+import { print } from "graphql";
 import { GraphQLClient } from "graphql-request";
 import { handleSessionToken } from "@/lib/shopify";
 import { GraphQLRequest, GraphQLResponse } from "@/shared";
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
+/**
+ * Execute GraphQL query against Shopify Admin API
+ */
 export async function executeGraphQLQuery<T = any>(
     request: GraphQLRequest,
 ): Promise<GraphQLResponse<T>> {
@@ -82,7 +87,14 @@ export async function executeGraphQLQuery<T = any>(
             },
         });
 
-        const result = await client.request<T>(query, variables);
+        // Handle both string queries and TypedDocumentNode from codegen
+        const queryString =
+            typeof query === "string"
+                ? query
+                : (query as TypedDocumentNode)?.loc?.source?.body ||
+                print(query as any);
+
+        const result = await client.request<T>(queryString, variables);
 
         return {
             data: result,
@@ -124,6 +136,10 @@ export async function executeGraphQLQuery<T = any>(
     }
 }
 
+/**
+ * Execute GraphQL mutation against Shopify Admin API
+ * (Mutations use the same protocol as queries in GraphQL)
+ */
 export async function executeGraphQLMutation<T = any>(
     request: GraphQLRequest,
 ): Promise<GraphQLResponse<T>> {

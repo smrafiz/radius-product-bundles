@@ -1,6 +1,9 @@
 export { useBundleField } from "./use-bundle-field";
 export { useBundleSubmit } from "./use-bundle-submit";
+export { useBundleProduct } from "./use-bundle-product";
 export { useBundleValidation } from "./use-bundle-validation";
+export { useAutoGenerateName } from "./use-auto-generate-name";
 export { useBundleFormManager } from "./use-bundle-form-manager";
 export { useBundleFormMethods } from "./use-bundle-form-methods";
 export { useInitialBundleState } from "./use-initial-bundle-state";
+export { useCreateBundleProduct } from "./use-create-bundle-product";

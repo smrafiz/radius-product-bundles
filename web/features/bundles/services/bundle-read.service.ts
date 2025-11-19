@@ -3,21 +3,28 @@
  */
 
 import {
+    countBundlesByShop,
+    findBundleByIdWithAllRelations,
+    findBundlesByShop,
+} from "../repositories";
+import {
+    BUNDLE_NAME_PATTERNS,
     BundlesListResult,
     BundleStatus,
+    checkNameConflict,
+    extractNumberFromName,
     extractProductIds,
+    findBundlesByNamePattern,
+    generateFallbackName,
+    generateNumberedName,
     getBundlesAction,
     GetBundlesInput,
     PaginationResult,
     transformBundle,
     transformBundles,
 } from "@/features/bundles";
+import { shuffleArray } from "@/shared";
 import { fetchProductsFromShopify } from "@/lib";
-import {
-    countBundlesByShop,
-    findBundleByIdWithAllRelations,
-    findBundlesByShop,
-} from "../repositories";
 
 /**
  * Get the bundle list with filters and pagination
@@ -124,4 +131,77 @@ export async function getBundlesByStatus(
  */
 export async function getActiveBundles(sessionToken: string): Promise<any[]> {
     return await getBundlesByStatus(["ACTIVE"], sessionToken);
+}
+
+/**
+ * Generate unique bundle name based on the bundle type
+ */
+export async function generateUniqueBundleNameService(
+    shop: string,
+    bundleType: string,
+): Promise<string> {
+    const patterns = BUNDLE_NAME_PATTERNS[bundleType as keyof typeof BUNDLE_NAME_PATTERNS] || [
+        "Bundle",
+        "Product Pack",
+        "Special Offer",
+    ];
+    const shuffledPatterns = shuffleArray([...patterns]);
+
+    for (const basePattern of shuffledPatterns) {
+        const exists = await checkNameConflict(shop, basePattern);
+
+        if (!exists) {
+            return basePattern;
+        }
+
+        const uniqueName = await findNextAvailableNumberedName(
+            shop,
+            basePattern,
+        );
+
+        if (uniqueName) {
+            return uniqueName;
+        }
+    }
+
+    return generateFallbackName(shuffledPatterns[0]);
+}
+
+/**
+ * Find the next available numbered name
+ */
+async function findNextAvailableNumberedName(
+    shop: string,
+    baseName: string,
+): Promise<string | null> {
+    const existingBundles = await findBundlesByNamePattern(shop, baseName);
+
+    if (existingBundles.length === 0) {
+        return baseName;
+    }
+
+    const numbers = existingBundles
+        .map((bundle) => extractNumberFromName(bundle.name))
+        .filter((num) => num > 0);
+
+    const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 1;
+
+    const nextNumber = maxNumber + 1;
+    const newName = generateNumberedName(baseName, nextNumber);
+    const exists = await checkNameConflict(shop, newName);
+
+    if (!exists) {
+        return newName;
+    }
+
+    for (let i = nextNumber + 1; i < nextNumber + 50; i++) {
+        const candidateName = generateNumberedName(baseName, i);
+        const candidateExists = await checkNameConflict(shop, candidateName);
+
+        if (!candidateExists) {
+            return candidateName;
+        }
+    }
+
+    return null;
 }

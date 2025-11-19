@@ -6,15 +6,16 @@ import {
     ProductsStep,
     ReviewStep,
     useBundleStore,
+    BundleType,
 } from "@/features/bundles";
 
-export function StepContent() {
+export function StepContent({ bundleType }: { bundleType: BundleType }) {
     const { currentStep } = useBundleStore();
 
     const renderCurrentStep = () => {
         switch (currentStep) {
             case 1:
-                return <ProductsStep />;
+                return <ProductsStep bundleType={bundleType} />;
             case 2:
                 return <DiscountStep />;
             case 3:
@@ -22,7 +23,7 @@ export function StepContent() {
             case 4:
                 return <ReviewStep />;
             default:
-                return <ProductsStep />;
+                return <ProductsStep bundleType={bundleType} />;
         }
     };
 
