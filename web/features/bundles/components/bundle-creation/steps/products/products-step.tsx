@@ -1,8 +1,8 @@
 "use client";
 import {
     BundleDetails,
-    ProductList,
     ProductBundle,
+    ProductList,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
@@ -22,7 +22,7 @@ export function ProductsStep() {
     };
 
     useEffect(() => {
-        if (selectedItems.length > 0) {
+        if (selectedItems.length >= 2) {
             clearErrors("products");
         }
     }, [selectedItems.length, clearErrors]);
@@ -37,6 +37,7 @@ export function ProductsStep() {
     const productErrorMessage = errors.find(
         (error) => error.field === "products" || error.path === "products",
     )?.message;
+    const showProductHint = selectedItems.length === 1 && !hasProductError;
 
     return (
         <s-stack gap="base">
@@ -77,6 +78,11 @@ export function ProductsStep() {
                     {productErrorMessage && (
                         <s-banner tone="critical" data-fieldid="products">
                             {productErrorMessage}
+                        </s-banner>
+                    )}
+                    {showProductHint && (
+                        <s-banner tone="info">
+                            Add at least one more product to create a bundle. ({selectedItems.length}/2 minimum)
                         </s-banner>
                     )}
                     <ProductList />

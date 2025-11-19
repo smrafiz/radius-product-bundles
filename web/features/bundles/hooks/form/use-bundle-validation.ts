@@ -108,9 +108,9 @@ export function useBundleValidation() {
             const groupedItems = getGroupedItems();
 
             const hasValidName = name && name.trim().length > 0;
-            const hasProducts = Array.isArray(groupedItems) && groupedItems.length > 0;
+            const hasMinimumProducts = Array.isArray(groupedItems) && groupedItems.length >= 2;
 
-            return hasValidName && hasProducts;
+            return hasValidName && hasMinimumProducts;
         }
 
         // For other steps, check field values

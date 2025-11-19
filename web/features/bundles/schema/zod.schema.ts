@@ -128,7 +128,7 @@ export const bundleSchema = z
                     ]),
                 }),
             )
-            .min(1, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED)
+            .min(2, VALIDATION_MESSAGES.NO_PRODUCTS_SELECTED)
             .max(20, "Cannot have more than 20 products in a bundle"),
 
         discountType: z.enum([

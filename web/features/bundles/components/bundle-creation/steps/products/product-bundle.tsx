@@ -145,7 +145,7 @@ export function ProductBundle() {
                                                         <s-button
                                                             icon="delete"
                                                             accessibilityLabel="Delete image"
-                                                            variant="primary"
+                                                            variant="secondary"
                                                             tone="critical"
                                                             onClick={() => {
                                                                 setMediaFiles(

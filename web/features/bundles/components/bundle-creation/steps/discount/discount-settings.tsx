@@ -2,90 +2,62 @@
 
 import {
     DISCOUNT_TYPES,
+    DiscountType,
     getDiscountProperty,
-    useBundleFormMethods,
+    useBundleField,
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
 import { getCurrencySymbol, useShopSettings } from "@/shared";
 
+/**
+ * Discount settings configuration component
+ */
 export function DiscountSettings() {
-    const { watch, setValue } = useBundleFormMethods();
     const { getFieldError } = useBundleValidation();
     const { markDirty } = useBundleStore();
 
-    const discountType = watch("discountType");
-    const discountValue = watch("discountValue");
-    const minOrderValue = watch("minOrderValue");
-    const maxDiscountAmount = watch("maxDiscountAmount");
+    // Use the hook for each field
+    const discountTypeField = useBundleField<string>("discountType");
+    const discountValueField = useBundleField<number | undefined>("discountValue");
+    const minOrderValueField = useBundleField<number | undefined>("minOrderValue");
+    const maxDiscountAmountField = useBundleField<number | undefined>("maxDiscountAmount");
 
     const { isLoading, currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
 
     const handleDiscountTypeChange = (value: string) => {
-        setValue("discountType", value as any, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-        markDirty();
+        discountTypeField.handleChange(value as any);
 
         if (value === "CUSTOM_PRICE") {
-            setValue("maxDiscountAmount", undefined, {
-                shouldValidate: true,
-                shouldDirty: true,
-            });
+            maxDiscountAmountField.handleChange(undefined);
         }
-    };
 
-    const handleDiscountValueChange = (value: string) => {
-        const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("discountValue", numValue, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-        markDirty();
-    };
-
-    const handleMinOrderValueChange = (value: string) => {
-        const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("minOrderValue", numValue, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-        markDirty();
-    };
-
-    const handleMaxDiscountAmountChange = (value: string) => {
-        const numValue = value === "" ? undefined : parseFloat(value);
-        setValue("maxDiscountAmount", numValue, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
         markDirty();
     };
 
     const getDiscountValueLabel = () => {
-        return getDiscountProperty(discountType, "label") || "Discount Value";
+        return getDiscountProperty(discountTypeField.value as DiscountType, "label") || "Discount Value";
     };
 
     const getCurrency = () => {
-        if (isLoading && !currencyCode) {
-            return "•";
-        }
+        if (isLoading && !currencyCode) return "•";
         return currencySymbol;
     };
 
     const getSuffix = () => {
-        return discountType === "PERCENTAGE" ? "%" : getCurrency();
+        return discountTypeField.value === "PERCENTAGE" ? "%" : getCurrency();
     };
 
     const showDiscountValue = [
         "PERCENTAGE",
         "FIXED_AMOUNT",
         "CUSTOM_PRICE",
-    ].includes(discountType || "");
+    ].includes(discountTypeField.value || "");
+
     const showMaxDiscountAmount =
-        discountType !== "CUSTOM_PRICE" && discountType !== undefined;
+        discountTypeField.value !== "CUSTOM_PRICE" &&
+        discountTypeField.value !== undefined;
 
     return (
         <s-section>
@@ -94,7 +66,7 @@ export function DiscountSettings() {
 
                 <s-select
                     label="Discount Type"
-                    value={discountType || ""}
+                    value={discountTypeField.value || ""}
                     error={getFieldError("discountType")}
                     onChange={(event: Event) => {
                         const target = event.target as HTMLSelectElement;
@@ -112,16 +84,16 @@ export function DiscountSettings() {
                 {showDiscountValue && (
                     <s-number-field
                         label={getDiscountValueLabel()}
-                        value={discountValue?.toString() || ""}
+                        value={discountValueField.value?.toString() || ""}
                         step={1}
                         min={0}
                         placeholder="0"
                         suffix={getSuffix()}
-                        max={discountType === "PERCENTAGE" ? 100 : undefined}
+                        max={discountTypeField.value === "PERCENTAGE" ? 100 : undefined}
                         onChange={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            const value = target.value;
-                            handleDiscountValueChange(value);
+                            const numValue = target.value === "" ? undefined : parseFloat(target.value);
+                            discountValueField.handleChange(numValue);
                         }}
                         error={getFieldError("discountValue")}
                     />
@@ -131,15 +103,15 @@ export function DiscountSettings() {
                     <div style={{ flex: 1 }}>
                         <s-number-field
                             label="Minimum Order Value (Optional)"
-                            value={minOrderValue?.toString() || ""}
+                            value={minOrderValueField.value?.toString() || ""}
                             step={1}
                             min={0}
                             placeholder="0.00"
                             prefix={getCurrency()}
                             onChange={(event: Event) => {
                                 const target = event.target as HTMLInputElement;
-                                const value = target.value;
-                                handleMinOrderValueChange(value);
+                                const numValue = target.value === "" ? undefined : parseFloat(target.value);
+                                minOrderValueField.handleChange(numValue);
                             }}
                             error={getFieldError("minOrderValue")}
                         />
@@ -149,16 +121,15 @@ export function DiscountSettings() {
                         <div style={{ flex: 1 }}>
                             <s-number-field
                                 label="Maximum Discount Amount (Optional)"
-                                value={maxDiscountAmount?.toString() || ""}
+                                value={maxDiscountAmountField.value?.toString() || ""}
                                 step={1}
                                 min={0}
                                 placeholder="No limit"
                                 prefix={getCurrency()}
                                 onChange={(event: Event) => {
-                                    const target =
-                                        event.target as HTMLInputElement;
-                                    const value = target.value;
-                                    handleMaxDiscountAmountChange(value);
+                                    const target = event.target as HTMLInputElement;
+                                    const numValue = target.value === "" ? undefined : parseFloat(target.value);
+                                    maxDiscountAmountField.handleChange(numValue);
                                 }}
                                 error={getFieldError("maxDiscountAmount")}
                             />
