@@ -1,38 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import type { BundleConfig } from "@/features/bundles";
 import { useAppNavigation, withLoader } from "@/shared";
+import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
 
-export function BundleTypeCard({
-    bundleType,
-    selectedType,
-    setSelectedType,
-}: {
-    bundleType: BundleConfig;
-    selectedType: string | null;
-    setSelectedType: (value: string | null) => void;
-}) {
+export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
     const { bundleData } = useAppNavigation();
 
-    const [isSelecting, setIsSelecting] = useState(false);
+    const { selectingBundleId, setSelectingBundleId } =
+        useBundleSelectionStore();
 
-    const isOtherCardSelected =
-        selectedType !== null && selectedType !== bundleType.id;
+    const isThisCardSelecting = selectingBundleId === bundleType.id;
+    const isAnotherCardSelecting =
+        selectingBundleId !== null && !isThisCardSelecting;
 
     const handleSelect = async () => {
-        setIsSelecting(true);
-        setSelectedType(bundleType.id);
+        setSelectingBundleId(bundleType.id);
 
         try {
             const navigate = bundleData.create(bundleType.slug);
             navigate();
         } catch (error) {
             console.error("Navigation error:", error);
-            setIsSelecting(false);
-            setSelectedType(null);
+            setSelectingBundleId(null);
         }
     };
+
     return (
         <div className="relative">
             <s-box background="base" border="base" borderRadius="base">
@@ -71,11 +63,10 @@ export function BundleTypeCard({
                             <s-button
                                 variant="secondary"
                                 onClick={withLoader(handleSelect)}
-                                loading={isSelecting}
+                                loading={isThisCardSelecting}
                                 disabled={
-                                    isSelecting ||
                                     bundleType.comingSoon ||
-                                    isOtherCardSelected
+                                    isAnotherCardSelecting
                                 }
                                 accessibilityLabel="Select App"
                             >
