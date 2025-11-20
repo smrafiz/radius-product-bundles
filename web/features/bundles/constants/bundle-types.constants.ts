@@ -156,6 +156,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/standard.png",
         badge: { text: "Popular", tone: "warning" },
         namePatterns: BUNDLE_NAME_PATTERNS.FIXED_BUNDLE,
+        comingSoon: false,
     },
     BUY_X_GET_Y: {
         label: "Buy X Get Y",
@@ -168,6 +169,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/add_on.png",
         badge: { text: "New", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.BUY_X_GET_Y,
+        comingSoon: false,
     },
     BOGO: {
         label: "BOGO",
@@ -180,6 +182,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/bogo.png",
         badge: { text: "New", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.BOGO,
+        comingSoon: false,
     },
     VOLUME_DISCOUNT: {
         label: "Volume discount",
@@ -191,6 +194,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/add_on.png",
         badge: { text: "New", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.VOLUME_DISCOUNT,
+        comingSoon: false,
     },
     MIX_AND_MATCH: {
         label: "Mix & match",
@@ -202,6 +206,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/bogo.png",
         badge: { text: "New", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.MIX_AND_MATCH,
+        comingSoon: false,
     },
     FREQUENTLY_BOUGHT_TOGETHER: {
         label: "Frequently bought together",
@@ -213,5 +218,6 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/standard.png",
         badge: { text: "AI", tone: "info" },
         namePatterns: BUNDLE_NAME_PATTERNS.FREQUENTLY_BOUGHT_TOGETHER,
+        comingSoon: false,
     },
 } as const satisfies Record<BundleType, BundleConfig>;

@@ -19,9 +19,8 @@ export function SelectedProducts() {
     return (
         <s-stack>
             {/* Header */}
-            <div
+            <div className="cursor-pointer z-30"
                 onClick={handleToggle}
-                style={{ cursor: "pointer", zIndex: 30 }}
             >
                 <s-stack
                     direction="inline"
@@ -36,14 +35,7 @@ export function SelectedProducts() {
             </div>
 
             {/* Collapsible Body */}
-            <div
-                style={{
-                    overflow: "hidden",
-                    transition: "max-height 0.3s ease, opacity 0.3s ease",
-                    maxHeight: open ? "1000px" : "0",
-                    opacity: open ? 1 : 0,
-                }}
-            >
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}`}>
                 <s-stack gap="small" paddingBlock="base">
                     {groupedItems.map((group) => (
                         <s-box

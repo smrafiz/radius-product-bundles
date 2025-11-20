@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { MediaCard } from "@/shared";
 import {
     BUNDLE_TYPES,
@@ -9,6 +10,8 @@ import { useAppNavigation } from "@/shared";
 
 export function BundleTypeSelection() {
     const { goBack } = useAppNavigation();
+
+    const [selectedType, setSelectedType] = useState<string | null>(null);
 
     return (
         <s-page heading="Select Bundle Type">
@@ -22,6 +25,7 @@ export function BundleTypeSelection() {
                         <s-button
                             onClick={() => goBack()}
                             icon="arrow-left"
+                            accessibilityLabel="Back"
                         ></s-button>
                     </s-stack>
                     <s-stack>
@@ -41,7 +45,11 @@ export function BundleTypeSelection() {
                     >
                         {Object.values(BUNDLE_TYPES).map((bundleType) => (
                             <s-grid-item key={bundleType.id} gridColumn="auto">
-                                <BundleTypeCard bundleType={bundleType} />
+                                <BundleTypeCard
+                                    bundleType={bundleType}
+                                    selectedType={selectedType}
+                                    setSelectedType={setSelectedType}
+                                />
                             </s-grid-item>
                         ))}
                     </s-grid>

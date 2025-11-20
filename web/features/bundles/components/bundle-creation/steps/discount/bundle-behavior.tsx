@@ -3,9 +3,8 @@
 export function BundleBehavior() {
     return (
         <s-section>
-            <s-stack gap="base">
+            <s-stack gap="small">
                 <s-heading>Bundle Behavior</s-heading>
-                <s-stack gap="small-500">
                     <s-choice-list
                         name="bundleBehavior"
                     >
@@ -26,7 +25,6 @@ export function BundleBehavior() {
                             Free shipping on bundle
                         </s-choice>
                     </s-choice-list>
-                </s-stack>
             </s-stack>
         </s-section>
     );

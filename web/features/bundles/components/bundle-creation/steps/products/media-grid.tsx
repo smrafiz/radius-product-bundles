@@ -26,14 +26,7 @@ export function MediaGrid({
                 direction={mediaFiles.length > 0 ? "inline" : "block"}
                 gap="none"
             >
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(6, 1fr)",
-                        gridTemplateRows: "repeat(auto, 1fr)",
-                        gap: "var(--p-space-150)",
-                    }}
-                >
+                <div className="grid grid-cols-6 auto-rows-fr gap-[var(--p-space-150)]">
                     {mediaFiles.map((file, index) => (
                         <MediaGridItem
                             key={`${file.name}-${index}`}
@@ -49,7 +42,7 @@ export function MediaGrid({
 
                     {/* Additional upload zone */}
                     {mediaFiles.length > 0 && (
-                        <div style={{ position: "relative" }}>
+                        <div className="realative">
                             <s-drop-zone
                                 accessibilityLabel="Upload additional images"
                                 accept="image/*"
@@ -62,7 +55,7 @@ export function MediaGrid({
 
                 {/* Initial upload zone */}
                 {mediaFiles.length === 0 && (
-                    <div style={{ position: "relative" }}>
+                    <div className="realative">
                         <s-drop-zone
                             label="Upload image"
                             accessibilityLabel="Upload image of type jpg, png, or gif"
@@ -99,16 +92,9 @@ function MediaGridItem({
 }: MediaGridItemProps) {
     return (
         <div
-            className="relative"
+            className={`relative ${isFirst ? "[grid-area:1/1/span_2/span_2]" : ""}`}
             onMouseEnter={() => onHoverStart(index)}
             onMouseLeave={onHoverEnd}
-            style={
-                isFirst
-                    ? {
-                          gridArea: "1 / 1 / span 2 / span 2",
-                      }
-                    : undefined
-            }
         >
             {/* Image */}
             <div
@@ -124,7 +110,7 @@ function MediaGridItem({
                     aspectRatio="1/1"
                     inlineSize="fill"
                     objectFit="cover"
-                    borderRadius="base"
+                    borderRadius="small"
                 />
             </div>
 

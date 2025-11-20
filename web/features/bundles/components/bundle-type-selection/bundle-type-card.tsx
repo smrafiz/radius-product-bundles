@@ -4,13 +4,25 @@ import { useState } from "react";
 import type { BundleConfig } from "@/features/bundles";
 import { useAppNavigation, withLoader } from "@/shared";
 
-export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
+export function BundleTypeCard({
+    bundleType,
+    selectedType,
+    setSelectedType,
+}: {
+    bundleType: BundleConfig;
+    selectedType: string | null;
+    setSelectedType: (value: string | null) => void;
+}) {
     const { bundleData } = useAppNavigation();
 
     const [isSelecting, setIsSelecting] = useState(false);
 
+    const isOtherCardSelected =
+        selectedType !== null && selectedType !== bundleType.id;
+
     const handleSelect = async () => {
         setIsSelecting(true);
+        setSelectedType(bundleType.id);
 
         try {
             const navigate = bundleData.create(bundleType.slug);
@@ -18,20 +30,14 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
         } catch (error) {
             console.error("Navigation error:", error);
             setIsSelecting(false);
+            setSelectedType(null);
         }
     };
     return (
-        <div style={{ position: "relative" }}>
+        <div className="relative">
             <s-box background="base" border="base" borderRadius="base">
                 <s-stack gap="base">
-                    {/* Badge Section */}
-                    <div
-                        style={{
-                            position: "absolute",
-                            right: "16px",
-                            top: "16px",
-                        }}
-                    >
+                    <div className="absolute right-4 top-4">
                         {bundleType.badge && (
                             <s-badge tone={bundleType.badge.tone}>
                                 {bundleType.badge.text}
@@ -39,21 +45,9 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         )}
                     </div>
 
-                    {/* Image Section */}
                     {bundleType.bundleImage && (
                         <s-box>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    background:
-                                        "var(--p-color-bg-surface-secondary)",
-                                    borderRadius: " 7px 7px 0 0",
-                                    minHeight: "145px",
-                                    width: "100%",
-                                }}
-                            >
+                            <div className="flex items-center justify-center bg-[var(--p-color-bg-surface-secondary)] rounded-t-[7px] min-h-[145px] w-full">
                                 <img
                                     src={bundleType.bundleImage}
                                     alt={bundleType.label}
@@ -78,7 +72,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                 variant="secondary"
                                 onClick={withLoader(handleSelect)}
                                 loading={isSelecting}
-                                disabled={bundleType.comingSoon}
+                                disabled={
+                                    isSelecting ||
+                                    bundleType.comingSoon ||
+                                    isOtherCardSelected
+                                }
                                 accessibilityLabel="Select App"
                             >
                                 {bundleType.comingSoon
