@@ -26,6 +26,8 @@ export function BundleAsProduct() {
         setHoveredItem,
     } = useBundleProduct();
 
+    console.log({productDescription, mediaFiles});
+
     return (
         <s-stack gap="base">
             {/* Header with toggle */}

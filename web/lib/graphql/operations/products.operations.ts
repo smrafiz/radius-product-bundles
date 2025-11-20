@@ -24,17 +24,19 @@ export async function fetchProductsFromShopify(
         sessionToken,
     });
 
-    if (!result.data?.nodes) return { productMap, variantMap };
+    if (!result.data?.nodes) {
+        return { productMap, variantMap };
+    }
 
     result.data.nodes.filter(Boolean).forEach((product) => {
         const prod = product as Product;
         productMap.set(prod.id, {
             id: prod.id,
             title: prod.title,
-            featuredImage: prod.featuredImage
+            featuredImage: prod.featuredMedia
                 ? {
-                      url: prod.featuredImage.url,
-                      altText: prod.featuredImage.altText ?? prod.title,
+                      url: prod.featuredMedia.image.url,
+                      altText: prod.featuredMedia.image.altText ?? prod.title,
                   }
                 : undefined,
             handle: prod.handle,

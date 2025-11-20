@@ -43,6 +43,8 @@ export function transformBundleCore(
                     return null;
                 }
 
+                console.log(product);
+
                 return {
                     id: product.id,
                     title: product.title,

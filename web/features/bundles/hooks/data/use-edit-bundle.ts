@@ -113,7 +113,7 @@ export function useEditBundle(bundleId: string) {
                         title: shopifyProduct?.title || `Product ${index + 1}`,
                         price: firstVariant?.price || "0.00",
                         compareAtPrice: firstVariant?.compareAtPrice || null,
-                        image: shopifyProduct?.featuredImage?.url || "",
+                        image: shopifyProduct?.featuredMedia?.image?.url || "",
                         sku: firstVariant?.sku || "",
                         handle: shopifyProduct?.handle || "",
                         vendor: shopifyProduct?.vendor || "",

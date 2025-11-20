@@ -35,7 +35,7 @@ query GetCollections($first: Int!, $after: String, $query: String) {
 }
 
 query GetCollectionByHandle($handle: String!) {
-    collectionByHandle(handle: $handle) {
+    collectionByIdentifier(identifier: { handle: $handle }) {
         ...CollectionDetailsFields
         products(first: 50) {
             edges {

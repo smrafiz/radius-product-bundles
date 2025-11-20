@@ -42,6 +42,27 @@ query GetProductById($id: ID!) {
         productType
         tags
         totalInventory
+        descriptionHtml
+        featuredMedia {
+            ... on MediaImage {
+                id
+                image {
+                    ...ImageFields
+                }
+            }
+        }
+        media(first: 10) {
+            edges {
+                node {
+                    ... on MediaImage {
+                        id
+                        image {
+                            ...ImageFields
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -59,9 +80,13 @@ query GetBundleProducts($ids: [ID!]!) {
             id
             title
             handle
-            featuredImage {
-                url
-                altText
+            featuredMedia {
+                ... on MediaImage {
+                    id
+                    image {
+                        ...ImageFields
+                    }
+                }
             }
             variants(first: 50) {
                 nodes {

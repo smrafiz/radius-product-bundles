@@ -1,3 +1,3 @@
 export * from "./bundle-queries.action";
 export * from "./bundle-mutations.action";
-export * from "./product-creation.action";
+export * from "./product-mutations.action";

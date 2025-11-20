@@ -55,7 +55,7 @@ export const getBundleStatusBadge = (
  * Get bundle configuration properties
  */
 export const getBundleProperty = <
-    T extends keyof Pick<BundleConfig, "label" | "icon" | "slug">,
+    T extends keyof Pick<BundleConfig, "label" | "slug">,
 >(
     type: BundleType,
     property: T,

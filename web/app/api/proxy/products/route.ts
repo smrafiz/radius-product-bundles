@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
                             price: price,
                             compareAtPrice: compareAtPrice,
                             featuredImage:
-                                shopifyProduct?.featuredImage?.url || null,
+                                shopifyProduct?.featuredMedia?.image?.url || null,
                             handle: shopifyProduct?.handle || "",
                         };
                     }) || [];

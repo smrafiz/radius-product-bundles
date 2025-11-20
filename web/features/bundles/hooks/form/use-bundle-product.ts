@@ -12,7 +12,7 @@ export function useBundleProduct() {
 
     const bundleName = watch("name");
     const createProduct = watch("createProduct");
-    const productDescription = watch("productDescription")
+    const productDescription = watch("productDescription");
 
     const [isEnabled, setIsEnabled] = useState<boolean>(
         createProduct !== undefined ? createProduct : true
@@ -21,6 +21,7 @@ export function useBundleProduct() {
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+    // Initialize createProduct field on mount
     useEffect(() => {
         if (createProduct === undefined) {
             setValue("createProduct", true, {
@@ -28,9 +29,8 @@ export function useBundleProduct() {
                 shouldDirty: false,
             });
         }
-    }, []);
+    }, [createProduct, setValue]);
 
-    // Sync product title with bundle name when enabled
     useEffect(() => {
         if (isEnabled && bundleName) {
             setValue("productTitle", bundleName, {
@@ -40,7 +40,6 @@ export function useBundleProduct() {
         }
     }, [bundleName, isEnabled, setValue]);
 
-    // Clear fields when disabled
     useEffect(() => {
         if (!isEnabled) {
             setValue("productTitle", "", { shouldValidate: false });
@@ -52,34 +51,43 @@ export function useBundleProduct() {
     /**
      * Toggle bundle as a product
      */
-    const toggleEnabled = useCallback((checked: boolean) => {
-        setIsEnabled(checked);
-        setValue("createProduct", checked, {
-            shouldValidate: false,
-            shouldDirty: true,
-        });
-    }, [setValue]);
+    const toggleEnabled = useCallback(
+        (checked: boolean) => {
+            setIsEnabled(checked);
+            setValue("createProduct", checked, {
+                shouldValidate: false,
+                shouldDirty: true,
+            });
+        },
+        [setValue]
+    );
 
     /**
-     * Handle title change
+     * Handle title change (manual override)
      */
-    const handleTitleChange = useCallback((value: string) => {
-        const truncated = value.slice(0, 120);
-        setValue("productTitle", truncated, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-    }, [setValue]);
+    const handleTitleChange = useCallback(
+        (value: string) => {
+            const truncated = value.slice(0, 120);
+            setValue("productTitle", truncated, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        },
+        [setValue]
+    );
 
     /**
      * Handle description change
      */
-    const handleDescriptionChange = useCallback((value: string) => {
-        setValue("productDescription", value, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-    }, [setValue]);
+    const handleDescriptionChange = useCallback(
+        (value: string) => {
+            setValue("productDescription", value, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        },
+        [setValue]
+    );
 
     /**
      * Handle media file upload
@@ -91,7 +99,6 @@ export function useBundleProduct() {
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 400));
-
             setMediaFiles((prev) => [...prev, ...files]);
         } catch (error) {
             console.error("Failed to upload media:", error);
@@ -117,7 +124,7 @@ export function useBundleProduct() {
     return {
         isEnabled,
         bundleName,
-        productDescription,
+        productDescription: productDescription || "",
         mediaFiles,
         isUploading,
         hoveredIndex,

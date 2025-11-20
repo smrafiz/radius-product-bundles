@@ -9,8 +9,13 @@ fragment ProductFields on Product {
     totalInventory
     createdAt
     updatedAt
-    featuredImage {
-        ...ImageFields
+    featuredMedia {
+        ... on MediaImage {
+            id
+            image {
+                ...ImageFields
+            }
+        }
     }
     variants(first: 100) {
         nodes {
@@ -31,10 +36,15 @@ fragment ProductCardFields on Product {
     title
     handle
     vendor
-    featuredImage {
-        ...ImageFields
+    featuredMedia {
+        ... on MediaImage {
+            id
+            image {
+                ...ImageFields
+            }
+        }
     }
-    priceRange {
+    priceRangeV2 {
         minVariantPrice {
             ...MoneyFields
         }
@@ -56,9 +66,6 @@ fragment VariantFields on ProductVariant {
     selectedOptions {
         name
         value
-    }
-    image {
-        ...ImageFields
     }
     inventoryItem {
         tracked

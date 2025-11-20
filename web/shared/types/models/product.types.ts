@@ -28,6 +28,9 @@ export interface Product {
     tags: string[];
     totalInventory?: number;
     status?: string;
+    featuredMedia?: {
+        image: { url: string; altText?: string };
+    };
     featuredImage?: {
         url: string;
         altText?: string;
@@ -39,6 +42,15 @@ export interface Product {
     }>;
 }
 
+export interface MediaImage {
+    __typename: 'MediaImage';
+    id: string;
+    image: {
+        url: string;
+        altText?: string;
+    };
+}
+
 export interface ProductNode {
     __typename: "Product";
     id: string;
@@ -46,7 +58,7 @@ export interface ProductNode {
     handle: string;
     vendor: string;
     productType: string;
-    featuredImage?: { url: string };
+    featuredMedia?: MediaImage;
     variants?: {
         nodes: Array<{
             id: string;

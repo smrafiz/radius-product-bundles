@@ -25,3 +25,27 @@ mutation ProductCreate(
         }
     }
 }
+
+mutation ProductUpdate(
+    $id: ID!
+    $title: String
+    $descriptionHtml: String
+) {
+    productUpdate(
+        product: {
+            id: $id
+            title: $title
+            descriptionHtml: $descriptionHtml
+        }
+    ) {
+        product {
+            id
+            title
+            descriptionHtml
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
