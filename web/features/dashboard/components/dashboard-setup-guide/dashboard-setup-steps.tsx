@@ -47,7 +47,7 @@ export function DashboardSetupSteps({
                     >
                         <s-heading>Setup Guide</s-heading>
 
-                        <s-stack direction="inline" gap="base large-300">
+                        <s-stack direction="inline" gap="base">
                             <s-button
                                 commandFor="setup-guide-menu"
                                 variant="tertiary"
@@ -65,8 +65,9 @@ export function DashboardSetupSteps({
                                         alignItems="center"
                                     >
                                         <div className="w-4 h-4 pt-[0.05rem]">
-                                            <s-icon type="x" tone="neutral" />
+
                                         </div>
+                                        <s-icon type="x" tone="neutral" />
                                         <span>Dismiss</span>
                                     </s-stack>
                                 </s-button>
@@ -110,11 +111,13 @@ export function DashboardSetupSteps({
                             <div className="flex gap-4 w-full items-center">
                                 {completedItemsLength === items.length ? (
                                     <div className="max-h-4">
-                                        <s-stack direction="inline" gap="base">
-                                            <s-icon
-                                                type="check"
-                                                tone="success"
-                                            />
+                                        <s-stack direction="inline" gap="small-200">
+                                            <div>
+                                                <s-icon
+                                                    type="check"
+                                                    tone="success"
+                                                />
+                                            </div>
                                             <s-text color="subdued">
                                                 Done
                                             </s-text>

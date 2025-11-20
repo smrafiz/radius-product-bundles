@@ -1,10 +1,5 @@
 import { create } from "zustand";
-
-type BundleSelectionStore = {
-    selectingBundleId: string | null;
-    setSelectingBundleId: (id: string | null) => void;
-    isAnyBundleSelecting: () => boolean;
-};
+import { BundleSelectionStore } from "@/features/bundles";
 
 export const useBundleSelectionStore = create<BundleSelectionStore>()(
     (set, get) => ({

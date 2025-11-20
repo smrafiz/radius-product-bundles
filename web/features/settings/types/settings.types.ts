@@ -1,5 +1,5 @@
 /**
- * Settings faqs types
+ * Settings tab nav types
  */
 export interface SettingsTabNavInfo {
     id: string;

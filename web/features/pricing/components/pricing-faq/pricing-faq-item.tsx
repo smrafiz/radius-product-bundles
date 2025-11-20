@@ -30,14 +30,8 @@ export function PricingFaqItem({
                 </s-box>
             </s-clickable>
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateRows: expanded ? "1fr" : "0fr",
-                    transition: "grid-template-rows 0.25s ease",
-                }}
-            >
-                <div style={{ overflow: "hidden" }}>
+            <div className={`grid transition-all duration-250 ease ${expanded ? "[grid-template-rows:1fr]" : "[grid-template-rows:0fr]"}`}>
+                <div className="overflow-hidden">
                     <s-box padding="base">{description}</s-box>
                 </div>
             </div>

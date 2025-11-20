@@ -38,7 +38,7 @@ export function MetricCard({
                         ) : (
                             <s-stack direction="inline" gap="small-200">
                                 <s-text tone="info">
-                                    <div className="text-[var(--p-font-size-450)]">
+                                    <div className="text-[20px]">
                                         {value}
                                     </div>
                                 </s-text>

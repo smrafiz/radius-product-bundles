@@ -12,22 +12,9 @@ export function PricingCardItem({
     frequency,
 }: PricingCardItemInfo) {
     return (
-        <div
-            style={{
-                boxShadow: featuredText ? "0px 0px 15px 4px #CDFEE1" : "none",
-                borderRadius: ".75rem",
-                position: "relative",
-                zIndex: "0",
-            }}
-        >
+        <div className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `} >
             {featuredText ? (
-                <div
-                    style={{
-                        position: "absolute",
-                        top: "-15px",
-                        right: "6px",
-                        zIndex: "100",
-                    }}
+                <div className="absolute top-[-15px] right-1.5 z-50"
                 >
                     <s-badge tone="success">{featuredText}</s-badge>
                 </div>
@@ -35,9 +22,9 @@ export function PricingCardItem({
             <s-section padding="base">
                 <s-stack direction="block" gap="large">
                     <s-stack direction="block" gap="base" alignItems="start">
-                        <h1 style={{ fontSize: "20px", fontWeight: "bold" }}>
-                            {title}
-                        </h1>
+                        <s-heading>
+                            <div className="text-xl font-bold">{title}</div>
+                        </s-heading>
                         {description ? (
                             <s-paragraph color="subdued">
                                 {description}
@@ -50,9 +37,9 @@ export function PricingCardItem({
                         gap="small-400"
                         alignItems="baseline"
                     >
-                        <h2 style={{ fontSize: "28px", fontWeight: "bold" }}>
-                            {price}
-                        </h2>
+                        <s-text>
+                            <div className="text-3xl font-bold">{price}</div>
+                        </s-text>
                         <s-text>/ {frequency}</s-text>
                     </s-stack>
 

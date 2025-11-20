@@ -22,7 +22,6 @@ export const PricingFaq = () => {
                 </s-text>
             </s-stack>
 
-            {/* Map through all FAQ items */}
             {PRICING_FAQ_ITEM.map((item) => (
                 <PricingFaqItem
                     key={item.id}
