@@ -5,6 +5,7 @@ import {
     createBundleAction,
     invalidateBundleCache,
     updateBundleAction,
+    updateBundleProductAction,
     useBundleStore,
     useCreateBundleProduct,
 } from "@/features/bundles";
@@ -27,10 +28,12 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             let token = await app.idToken();
             let result;
 
-            console.log(data);
-
             if (mode === "create") {
-                if (mode === "create" && data.createProduct && data.productTitle) {
+                if (
+                    mode === "create" &&
+                    data.createProduct &&
+                    data.productTitle
+                ) {
                     console.log("Creating Shopify product...");
 
                     const productData = await createProduct(
@@ -38,8 +41,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         data.productDescription,
                         data.type,
                     );
-
-                    console.log(productData);
 
                     if (!productData) {
                         showError("Failed to create product", {
@@ -54,7 +55,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     // Add mainProductId to bundle data
                     data.mainProductId = productData.mainProductId;
                 }
+            }
 
+            if (mode === "create") {
                 result = await createBundleAction(token, data);
             } else if (mode === "edit" && bundleId) {
                 result = await updateBundleAction(token, bundleId, data);
@@ -84,6 +87,37 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     mode === "create"
                         ? await createBundleAction(freshToken, data)
                         : await updateBundleAction(freshToken, bundleId!, data);
+            }
+
+            // Update Shopify product (edit mode only)
+            if (
+                mode === "edit" &&
+                result.status === "success" &&
+                data.mainProductId &&
+                (data.productTitle || data.productDescription)
+            ) {
+                console.log("Updating Shopify product...");
+
+                const productResult = await updateBundleProductAction(
+                    token,
+                    data.mainProductId,
+                    data.productTitle,
+                    data.productDescription,
+                );
+
+                if (!productResult.success) {
+                    console.error(
+                        "Failed to update product:",
+                        productResult.error,
+                    );
+                    // Don't fail the whole operation
+                    showError("Product update failed", {
+                        content:
+                            productResult.error ||
+                            "Bundle saved but product update failed.",
+                        autoHide: true,
+                    });
+                }
             }
 
             // Handle success

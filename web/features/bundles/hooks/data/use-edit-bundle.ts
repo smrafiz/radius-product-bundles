@@ -26,7 +26,7 @@ const isProductNode = (node: any): node is ProductNode => {
 
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
-    const { setSelectedItems } = useBundleStore();
+    const { setBundleData, setSelectedItems } = useBundleStore();
 
     // Bundle detail query
     const {

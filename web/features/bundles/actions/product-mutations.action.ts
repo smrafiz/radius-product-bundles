@@ -13,13 +13,13 @@ import {
 } from "@/features/bundles";
 import { ApiResponse } from "@/shared";
 import {
-    GetProductByIdDocument,
-    GetProductByIdQuery,
     ProductCreateDocument,
     ProductCreateMutation,
     ProductCreateMutationVariables,
+    ProductUpdateDocument,
+    ProductUpdateMutation,
 } from "@/lib/graphql/generated/graphql";
-import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
+import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
 
 /**
@@ -117,41 +117,51 @@ export async function createBundleProductAction(
 }
 
 /**
- * Fetch product data for bundle edit mode
+ * Update Shopify product from the bundle edit page
  */
-export async function fetchProductById(
+export async function updateBundleProductAction(
     sessionToken: string,
     productId: string,
+    title?: string,
+    description?: string,
 ) {
-    const result = await executeGraphQLQuery<GetProductByIdQuery>({
-        query: GetProductByIdDocument,
-        variables: { id: productId },
+    const variables = {
+        id: productId,
+        title,
+        descriptionHtml: description ?? undefined,
+    };
+
+    const result = await executeGraphQLMutation<ProductUpdateMutation>({
+        query: ProductUpdateDocument,
+        variables,
         sessionToken,
     });
 
-    if (!result.data?.product) {
-        return null;
+    if (result.errors && result.errors.length > 0) {
+        console.error("Product update errors:", result.errors);
+        return { success: false, error: result.errors[0].message };
     }
 
-    const product = result.data.product;
+    if (
+        result.data?.productUpdate?.userErrors &&
+        result.data.productUpdate.userErrors.length > 0
+    ) {
+        console.error(
+            "Product update user errors:",
+            result.data.productUpdate.userErrors,
+        );
+        return {
+            success: false,
+            error: result.data.productUpdate.userErrors[0].message,
+        };
+    }
+
+    if (!result.data?.productUpdate?.product) {
+        return { success: false, error: "Failed to update product" };
+    }
 
     return {
-        id: product.id,
-        title: product.title,
-        descriptionHtml: product.descriptionHtml || "",
-        handle: product.handle,
-        // images:
-        //     product.images?.edges?.map((edge) => ({
-        //         id: edge.node.id,
-        //         url: edge.node.url,
-        //         altText: edge.node.altText || "",
-        //     })) || [],
-        // featuredImage: product.featuredImage
-        //     ? {
-        //         id: product.featuredImage.id,
-        //         url: product.featuredImage.url,
-        //         altText: product.featuredImage.altText || "",
-        //     }
-        //     : null,
+        success: true,
+        product: result.data.productUpdate.product,
     };
 }

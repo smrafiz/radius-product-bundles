@@ -9,6 +9,7 @@ import {
 } from "@/features/bundles";
 import { useEffect } from "react";
 import { useProductPicker } from "@/shared";
+import { usePathname } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 
 export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
@@ -17,6 +18,8 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
     const { clearErrors } = useFormContext();
+    const pathname = usePathname();
+    const mode = pathname.includes("/edit") ? "edit" : "create";
 
     const handleClearAll = () => {
         setSelectedItems([]);
@@ -102,7 +105,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
             </s-section>
 
             <s-section>
-                <BundleAsProduct />
+                <BundleAsProduct mode={mode} />
             </s-section>
         </s-stack>
     );

@@ -5,7 +5,6 @@ import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
 
 export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
     const { bundleData } = useAppNavigation();
-
     const { selectingBundleId, setSelectingBundleId } =
         useBundleSelectionStore();
 

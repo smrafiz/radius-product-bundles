@@ -13,9 +13,7 @@ export function transformBundleToProductVariables(
 ) {
     return {
         title: bundleName,
-        descriptionHtml: bundleDescription
-            ? `<p>${bundleDescription}</p>`
-            : undefined,
+        descriptionHtml: bundleDescription ?? undefined,
         vendor: "Bundle",
         productType: bundleType || "Bundle",
         tags: ["bundle", bundleType?.toLowerCase() || ""].filter(Boolean),

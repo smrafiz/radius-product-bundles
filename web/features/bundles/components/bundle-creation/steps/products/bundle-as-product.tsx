@@ -9,24 +9,28 @@ import {
 /**
  * Bundle as product configuration component
  */
-export function BundleAsProduct() {
+export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
     const { getFieldError } = useBundleValidation();
     const {
         isEnabled,
         bundleName,
+        productTitle,
         productDescription,
         mediaFiles,
         isUploading,
+        isLoadingProduct,
         hoveredIndex,
+        mainProductId,
         toggleEnabled,
         handleTitleChange,
         handleDescriptionChange,
         handleMediaUpload,
         removeMediaFile,
         setHoveredItem,
-    } = useBundleProduct();
+        getProductEditUrl,
+    } = useBundleProduct(mode);
 
-    console.log({productDescription, mediaFiles});
+    const productEditUrl = getProductEditUrl();
 
     return (
         <s-stack gap="base">
@@ -69,31 +73,43 @@ export function BundleAsProduct() {
                 </s-stack>
             </s-stack>
 
-            {/* Product configuration - shown when enabled */}
-            {isEnabled && (
+            {/* Loading state */}
+            {isLoadingProduct && (
+                <s-stack alignItems="center" gap="base">
+                    <s-spinner size="base" />
+                    <s-text tone="neutral">Loading product data...</s-text>
+                </s-stack>
+            )}
+
+            {/* Product configuration */}
+            {isEnabled && !isLoadingProduct && (
                 <s-stack gap="base">
                     {/* Title field */}
                     <s-text-field
                         label="Title"
                         name="productTitle"
                         placeholder="Bundle Product #5"
-                        value={bundleName || ""}
+                        value={productTitle || ""}
                         onChange={(event: Event) => {
                             const target = event.target as HTMLInputElement;
                             handleTitleChange(target.value);
                         }}
                         maxLength={120}
                         error={getFieldError("productTitle")}
-                        details="Used as the title of the product page."
+                        details={
+                            mode === "create"
+                                ? "Automatically synced with bundle name"
+                                : "Edit to update the Shopify product title"
+                        }
                     />
 
                     {/* Description field */}
                     <s-text-area
                         label="Product description"
                         name="productDescription"
-                        value={productDescription || ""}
+                        value={productDescription}
                         placeholder="Describe this bundle product..."
-                        onChange={(event: Event) => {
+                        onInput={(event: Event) => {
                             const target = event.target as HTMLTextAreaElement;
                             handleDescriptionChange(target.value);
                         }}
@@ -101,7 +117,7 @@ export function BundleAsProduct() {
                         error={getFieldError("productDescription")}
                     />
 
-                    {/* Media Section */}
+                    {/* Media section */}
                     <s-stack gap="small">
                         <s-stack
                             direction="inline"
@@ -113,6 +129,7 @@ export function BundleAsProduct() {
                                 Add media from included products
                             </s-button>
                         </s-stack>
+
                         <MediaGrid
                             mediaFiles={mediaFiles}
                             hoveredIndex={hoveredIndex}
@@ -124,7 +141,7 @@ export function BundleAsProduct() {
                         />
                     </s-stack>
 
-                    {/* Info and warning banners */}
+                    {/* Info and link to Shopify */}
                     <s-stack gap="base">
                         <s-box
                             padding="base"
@@ -139,16 +156,32 @@ export function BundleAsProduct() {
                                     Shopify admin and fill in the remaining
                                     fields.
                                 </s-text>
-                                <s-button disabled>
+                                <s-button
+                                    disabled={!productEditUrl}
+                                    onClick={() => {
+                                        if (productEditUrl) {
+                                            window.open(productEditUrl, "_blank");
+                                        }
+                                    }}
+                                >
                                     Edit product on Shopify
                                 </s-button>
                             </s-stack>
                         </s-box>
 
-                        <s-banner tone="warning">
-                            Save the bundle before editing the associated
-                            Shopify product.
-                        </s-banner>
+                        {mode === "create" && (
+                            <s-banner tone="warning">
+                                Save the bundle before editing the associated
+                                Shopify product.
+                            </s-banner>
+                        )}
+
+                        {mode === "edit" && mainProductId && (
+                            <s-banner tone="info">
+                                Changes to title and description will update the
+                                Shopify product when you save the bundle.
+                            </s-banner>
+                        )}
                     </s-stack>
                 </s-stack>
             )}

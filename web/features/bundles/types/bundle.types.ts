@@ -313,6 +313,10 @@ export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
 export interface ExtendedBundleFormData extends BundleFormData {
     id?: string;
     type: PrismaBundleType;
+    createProduct?: boolean;
+    productTitle?: string;
+    productDescription?: string;
+    mainProductId?: string;
 }
 
 export interface DisplaySettings {

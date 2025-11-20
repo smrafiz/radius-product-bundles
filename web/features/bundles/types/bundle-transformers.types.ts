@@ -53,11 +53,16 @@ export interface TransformedBundleBase {
  * Bundle transformer with description
  */
 export interface TransformedBundle extends TransformedBundleBase {
-    description: string | null;
-    minOrderValue: number | null;
-    maxDiscountAmount: number | null;
-    startDate: string | null;
-    endDate: string | null;
+    description?: string | undefined;
+    mainProductId?: string | undefined;
+    createProduct: boolean;
+    productTitle?: string;
+    productDescription?: string;
+    minOrderValue?: number | undefined;
+    maxDiscountAmount?: number | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    updatedAt: string;
 }
 
 /*

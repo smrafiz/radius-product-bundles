@@ -43,8 +43,6 @@ export function transformBundleCore(
                     return null;
                 }
 
-                console.log(product);
-
                 return {
                     id: product.id,
                     title: product.title,
@@ -52,9 +50,9 @@ export function transformBundleCore(
                     featuredImage: product.featuredImage,
                     selectedVariant: selectedVariant
                         ? {
-                              ...selectedVariant,
-                              productId: product.id,
-                          }
+                            ...selectedVariant,
+                            productId: product.id,
+                        }
                         : null,
                     quantity: bp.quantity,
                     role: bp.role,
@@ -80,6 +78,7 @@ export function transformBundles(
 
 /**
  * Single bundle transformation
+ * Converts null values to undefined for form compatibility
  */
 export function transformBundle(
     bundle: Bundle & { bundleProducts: BundleProduct[] },
@@ -89,11 +88,15 @@ export function transformBundle(
     const core = transformBundleCore(bundle, productMap, variantMap);
     return {
         ...core,
-        description: bundle.description,
-        minOrderValue: bundle.minOrderValue,
-        maxDiscountAmount: bundle.maxDiscountAmount,
-        startDate: bundle.startDate?.toISOString() || null,
-        endDate: bundle.endDate?.toISOString() || null,
+        description: bundle.description ?? undefined,
+        mainProductId: bundle.mainProductId ?? undefined,
+        createProduct: !!bundle.mainProductId,
+        productTitle: bundle.name,
+        productDescription: bundle.description || "",
+        minOrderValue: bundle.minOrderValue ?? undefined,
+        maxDiscountAmount: bundle.maxDiscountAmount ?? undefined,
+        startDate: bundle.startDate?.toISOString() ?? undefined,
+        endDate: bundle.endDate?.toISOString() ?? undefined,
         updatedAt: bundle.updatedAt.toISOString(),
     };
 }
@@ -134,21 +137,21 @@ export function transformBundleForDuplication(
 
     const transformedSettings = settings
         ? (() => {
-              const {
-                  id,
-                  bundleId,
-                  createdAt,
-                  updatedAt,
-                  widget,
-                  style,
-                  animations,
-                  mobileSettings,
-                  variant,
-                  misc,
-                  ...s
-              } = settings;
-              return s;
-          })()
+            const {
+                id,
+                bundleId,
+                createdAt,
+                updatedAt,
+                widget,
+                style,
+                animations,
+                mobileSettings,
+                variant,
+                misc,
+                ...s
+            } = settings;
+            return s;
+        })()
         : undefined;
 
     // Combine all data

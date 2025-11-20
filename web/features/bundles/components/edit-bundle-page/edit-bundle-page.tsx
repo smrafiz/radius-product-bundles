@@ -3,6 +3,7 @@
 import {
     BundleCreationForm,
     BundleFormProvider,
+    useBundleDataSync,
     useBundleSubmit,
     useEditBundle,
     useEditBundleTransform,
@@ -17,6 +18,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
 
     const { handleSubmit, resetDirty } = useBundleSubmit("edit", bundleId);
     const initialData = useEditBundleTransform(bundleData);
+    useBundleDataSync(bundleData);
 
     if (isLoading) {
         return <DashboardSkeleton />;

@@ -23,6 +23,10 @@ const initialBundleData: Partial<ExtendedBundleFormData> = {
     maxDiscountAmount: undefined,
     startDate: undefined,
     endDate: undefined,
+    createProduct: false,
+    productTitle: "",
+    productDescription: "",
+    mainProductId: undefined,
 };
 
 const initialDisplaySettings: DisplaySettings = {
