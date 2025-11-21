@@ -51,6 +51,7 @@ export const useBundleStore = create(
         totalSteps: 4,
         bundleData: initialBundleData,
         selectedItems: [],
+        mediaFiles: [],
         displaySettings: initialDisplaySettings,
         configuration: initialConfiguration,
         isLoading: false,
@@ -368,6 +369,12 @@ export const useBundleStore = create(
             return Object.values(groups);
         },
 
+        setMediaFiles: (files: File[]) => {
+            set((state) => {
+                state.mediaFiles = files;
+            });
+        },
+
         getTotalProducts: () => {
             const state = get();
             const productIds = new Set(
@@ -432,6 +439,7 @@ export const useBundleStore = create(
                 state.currentStep = 1;
                 state.bundleData = { ...initialBundleData };
                 state.selectedItems = [];
+                state.mediaFiles = [];
                 state.displaySettings = { ...initialDisplaySettings };
                 state.configuration = { ...initialConfiguration };
                 state.isLoading = false;

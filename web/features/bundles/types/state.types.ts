@@ -125,6 +125,10 @@ export interface BundleState {
     ) => void;
     reorderItems: (activeId: string, overId: string) => void;
 
+    // Media files
+    mediaFiles?: File[];
+    setMediaFiles: (files: File[]) => void;
+
     // Computed values
     getGroupedItems: () => ProductGroup[];
     getTotalProducts: () => number;

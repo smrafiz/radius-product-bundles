@@ -16,7 +16,7 @@ import { useAppNavigation, useGlobalBanner, withAsyncLoader } from "@/shared";
 export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
-    const { setSaving, resetDirty, setStep } = useBundleStore();
+    const { setSaving, resetDirty, setStep, mediaFiles } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { createProduct, isCreating: isCreatingProduct } =
@@ -35,11 +35,13 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     data.productTitle
                 ) {
                     console.log("Creating Shopify product...");
+                    console.log("Media files:", mediaFiles);
 
                     const productData = await createProduct(
                         data.productTitle,
                         data.productDescription,
                         data.type,
+                        mediaFiles
                     );
 
                     if (!productData) {
@@ -97,23 +99,25 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 (data.productTitle || data.productDescription)
             ) {
                 console.log("Updating Shopify product...");
+                console.log("Media files:", mediaFiles);
 
                 const productResult = await updateBundleProductAction(
                     token,
-                    data.mainProductId,
-                    data.productTitle,
-                    data.productDescription,
+                    {
+                        productId: data.mainProductId,
+                        title: data.productTitle,
+                        description: data.productDescription,
+                    }
                 );
 
-                if (!productResult.success) {
+                if (productResult.status === "error") {
                     console.error(
                         "Failed to update product:",
-                        productResult.error,
+                        productResult.message,
                     );
-                    // Don't fail the whole operation
                     showError("Product update failed", {
                         content:
-                            productResult.error ||
+                            productResult.message ||
                             "Bundle saved but product update failed.",
                         autoHide: true,
                     });

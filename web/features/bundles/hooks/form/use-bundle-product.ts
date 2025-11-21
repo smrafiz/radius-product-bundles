@@ -14,7 +14,7 @@ import { useAppBridge } from "@shopify/app-bridge-react";
  */
 export function useBundleProduct(mode: "create" | "edit") {
     const { watch, setValue } = useBundleFormMethods();
-    const { bundleData } = useBundleStore();
+    const { bundleData, mediaFiles: storeMediaFiles, setMediaFiles } = useBundleStore();
     const app = useAppBridge();
 
     const bundleName = watch("name");
@@ -22,11 +22,11 @@ export function useBundleProduct(mode: "create" | "edit") {
     const productTitle = watch("productTitle");
     const productDescription = watch("productDescription");
     const mainProductId = bundleData.mainProductId;
+    const mediaFiles = storeMediaFiles || [];
 
     const [isEnabled, setIsEnabled] = useState<boolean>(
         createProduct !== undefined ? createProduct : true,
     );
-    const [mediaFiles, setMediaFiles] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
@@ -148,27 +148,34 @@ export function useBundleProduct(mode: "create" | "edit") {
     /**
      * Handle media file upload
      */
-    const handleMediaUpload = useCallback(async (files: File[]) => {
-        if (files.length === 0) return;
+    const handleMediaUpload = useCallback(
+        async (files: File[]) => {
+            if (files.length === 0) return;
 
-        setIsUploading(true);
+            setIsUploading(true);
 
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 400));
-            setMediaFiles((prev) => [...prev, ...files]);
-        } catch (error) {
-            console.error("Failed to upload media:", error);
-        } finally {
-            setIsUploading(false);
-        }
-    }, []);
+            try {
+                await new Promise((resolve) => setTimeout(resolve, 400));
+                setMediaFiles([...mediaFiles, ...files]);
+                console.log(`Added ${files.length} files. Total: ${mediaFiles.length + files.length}`);
+            } catch (error) {
+                console.error("Failed to upload media:", error);
+            } finally {
+                setIsUploading(false);
+            }
+        },
+        [mediaFiles, setMediaFiles]
+    );
 
     /**
      * Remove media file
      */
-    const removeMediaFile = useCallback((index: number) => {
-        setMediaFiles((prev) => prev.filter((_, i) => i !== index));
-    }, []);
+    const removeMediaFile = useCallback(
+        (index: number) => {
+            setMediaFiles(mediaFiles.filter((_, i) => i !== index));
+        },
+        [mediaFiles, setMediaFiles]
+    );
 
     /**
      * Set hovered media item
@@ -181,7 +188,9 @@ export function useBundleProduct(mode: "create" | "edit") {
      * Get Shopify product edit URL
      */
     const getProductEditUrl = useCallback(() => {
-        if (!mainProductId) return null;
+        if (!mainProductId) {
+            return null;
+        }
 
         const match = mainProductId.match(/\/Product\/(\d+)$/);
         const numericId = match ? match[1] : null;

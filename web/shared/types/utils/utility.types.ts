@@ -35,3 +35,13 @@ export type AsyncFunction<T = any> = (...args: any[]) => Promise<T>;
  * Generic callback type
  */
 export type Callback<T = void> = (data: T) => void;
+
+/**
+ * Serializable file data
+ */
+export interface SerializableFile {
+    name: string;
+    type: string;
+    size: number;
+    data: string;
+}

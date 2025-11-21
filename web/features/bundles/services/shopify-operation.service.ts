@@ -73,3 +73,45 @@ export function formatProductForStorage(product: any): {
         productHandle: product.handle,
     };
 }
+
+/**
+ * Upload file to staged URL
+ */
+export async function uploadFileToStaged(
+    file: File,
+    stagedTarget: any,
+): Promise<string> {
+    const formData = new FormData();
+
+    // Add parameters from a staged target
+    stagedTarget.parameters.forEach((param: any) => {
+        formData.append(param.name, param.value);
+    });
+
+    // Add the file
+    formData.append("file", file);
+
+    // Upload to staged URL
+    const response = await fetch(stagedTarget.url, {
+        method: "POST",
+        body: formData,
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to upload file: ${response.statusText}`);
+    }
+
+    return stagedTarget.resourceUrl;
+}
+
+/**
+ * Prepare media input for product creation
+ */
+export function prepareMediaInput(
+    resourceUrls: string[],
+): Array<{ originalSource: string; mediaContentType: string }> {
+    return resourceUrls.map((url) => ({
+        originalSource: url,
+        mediaContentType: "IMAGE",
+    }));
+}

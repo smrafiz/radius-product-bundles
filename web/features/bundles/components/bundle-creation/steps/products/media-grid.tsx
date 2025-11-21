@@ -58,6 +58,7 @@ export function MediaGrid({
                     <div className="realative">
                         <s-drop-zone
                             label="Upload image"
+                            name="image"
                             accessibilityLabel="Upload image of type jpg, png, or gif"
                             labelAccessibilityVisibility="exclusive"
                             accept="image/*"

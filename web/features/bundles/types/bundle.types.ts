@@ -9,6 +9,7 @@ import type {
 } from "@prisma/client";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
@@ -364,4 +365,12 @@ export interface CreateBundleProductInput {
     bundleName: string;
     bundleDescription?: string;
     bundleType?: string;
+    mediaFiles?: SerializableFile[];
+}
+
+export interface UpdateProductInput {
+    productId: string;
+    title?: string;
+    description?: string;
+    mediaFiles?: SerializableFile[];
 }

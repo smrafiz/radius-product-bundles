@@ -30,6 +30,7 @@ mutation ProductUpdate(
     $id: ID!
     $title: String
     $descriptionHtml: String
+    $media: [CreateMediaInput!]
 ) {
     productUpdate(
         product: {
@@ -37,11 +38,24 @@ mutation ProductUpdate(
             title: $title
             descriptionHtml: $descriptionHtml
         }
+        media: $media
     ) {
         product {
             id
             title
             descriptionHtml
+            media(first: 20) {
+                edges {
+                    node {
+                        ... on MediaImage {
+                            id
+                            image {
+                                ...ImageFields
+                            }
+                        }
+                    }
+                }
+            }
         }
         userErrors {
             field

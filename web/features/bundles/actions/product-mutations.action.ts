@@ -9,18 +9,22 @@ import {
     CreateBundleProductInput,
     formatProductForStorage,
     transformBundleToProductVariables,
+    UpdateProductInput,
+    uploadFileToStaged,
     validateProductInput,
 } from "@/features/bundles";
-import { ApiResponse } from "@/shared";
 import {
     ProductCreateDocument,
     ProductCreateMutation,
     ProductCreateMutationVariables,
     ProductUpdateDocument,
     ProductUpdateMutation,
+    StagedUploadsCreateDocument,
+    StagedUploadsCreateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
+import { ApiResponse, serializableToFile } from "@/shared";
 
 /**
  * Create a Shopify product for a bundle
@@ -81,21 +85,55 @@ export async function createBundleProductAction(
             };
         }
 
-        // Check if product was created
+        // Check if the product was created
         if (!result.data?.productCreate?.product) {
             return {
                 status: "error",
-                message: "Failed to create product - no product returned",
+                message: "Failed to create product",
                 data: null,
             };
         }
 
-        // Format product data for database storage
-        const productData = formatProductForStorage(
-            result.data.productCreate.product,
-        );
+        const product = result.data.productCreate.product;
+        const productData = formatProductForStorage(product);
 
         console.log("Product created successfully:", productData);
+
+        // Upload and attach media if files provided
+        if (input.mediaFiles && input.mediaFiles.length > 0) {
+            console.log(`Uploading ${input.mediaFiles.length} media files...`);
+
+            // ✅ Convert serializable files back to File objects
+            const files = input.mediaFiles.map(serializableToFile);
+
+            // Stage and upload files
+            const resourceUrls = await stageAndUploadFiles(sessionToken, files);
+
+            if (resourceUrls.length > 0) {
+                console.log(`✅ Staged ${resourceUrls.length} files, attaching to product...`);
+
+                // Update product with media using productUpdate
+                const media = resourceUrls.map((url) => ({
+                    originalSource: url,
+                    mediaContentType: "IMAGE" as const,
+                }));
+
+                const updateResult = await executeGraphQLMutation<ProductUpdateMutation>({
+                    query: ProductUpdateDocument,
+                    variables: {
+                        id: (product as any).id,
+                        media,
+                    },
+                    sessionToken,
+                });
+
+                if (updateResult.errors || updateResult.data?.productUpdate?.userErrors?.length) {
+                    console.error("Failed to attach media to product");
+                } else {
+                    console.log("✅ Media attached successfully");
+                }
+            }
+        }
 
         return {
             status: "success",
@@ -121,47 +159,203 @@ export async function createBundleProductAction(
  */
 export async function updateBundleProductAction(
     sessionToken: string,
-    productId: string,
-    title?: string,
-    description?: string,
-) {
-    const variables = {
-        id: productId,
-        title,
-        descriptionHtml: description ?? undefined,
-    };
+    input: UpdateProductInput,
+): Promise<ApiResponse> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
 
-    const result = await executeGraphQLMutation<ProductUpdateMutation>({
-        query: ProductUpdateDocument,
-        variables,
-        sessionToken,
-    });
+        // Prepare media if files provided
+        let media = undefined;
+        if (input.mediaFiles && input.mediaFiles.length > 0) {
+            console.log(`Processing ${input.mediaFiles.length} media files...`);
 
-    if (result.errors && result.errors.length > 0) {
-        console.error("Product update errors:", result.errors);
-        return { success: false, error: result.errors[0].message };
-    }
+            const files = input.mediaFiles.map(serializableToFile);
+            console.log("Files converted from serializable format");
 
-    if (
-        result.data?.productUpdate?.userErrors &&
-        result.data.productUpdate.userErrors.length > 0
-    ) {
-        console.error(
-            "Product update user errors:",
-            result.data.productUpdate.userErrors,
-        );
+            const resourceUrls = await stageAndUploadFiles(sessionToken, files);
+            console.log(`Staged ${resourceUrls.length} files`);
+
+            if (resourceUrls.length > 0) {
+                media = resourceUrls.map((url) => ({
+                    originalSource: url,
+                    mediaContentType: "IMAGE" as const,
+                }));
+                console.log("Media prepared for GraphQL:", media);
+            }
+        }
+
+        const variables = {
+            id: input.productId,
+            title: input.title,
+            descriptionHtml: input.description ?? undefined,
+            media,
+        };
+
+        // Execute GraphQL mutation
+        const result = await executeGraphQLMutation<ProductUpdateMutation>({
+            query: ProductUpdateDocument,
+            variables,
+            sessionToken,
+        });
+
+        // Check for GraphQL errors
+        if (result.errors && result.errors.length > 0) {
+            return {
+                status: "error",
+                message: result.errors.map((e) => e.message).join(", "),
+                data: null,
+            };
+        }
+
+        // Check for user errors
+        if (
+            result.data?.productUpdate?.userErrors &&
+            result.data.productUpdate.userErrors.length > 0
+        ) {
+            return {
+                status: "error",
+                message: result.data.productUpdate.userErrors
+                    .map((e) => e.message)
+                    .join(", "),
+                data: null,
+            };
+        }
+
+        // Check if the product was updated
+        if (!result.data?.productUpdate?.product) {
+            return {
+                status: "error",
+                message: "Failed to update product",
+                data: null,
+            };
+        }
+
         return {
-            success: false,
-            error: result.data.productUpdate.userErrors[0].message,
+            status: "success",
+            message: "Product updated successfully",
+            data: {
+                id: result.data.productUpdate.product.id,
+                title: result.data.productUpdate.product.title,
+            },
+        };
+    } catch (error) {
+        console.error("[updateProduct] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to update product",
+            data: null,
         };
     }
+}
 
-    if (!result.data?.productUpdate?.product) {
-        return { success: false, error: "Failed to update product" };
+/**
+ * Helper: Stage and upload files, return resource URLs
+ */
+async function stageAndUploadFiles(
+    sessionToken: string,
+    files: File[],
+): Promise<string[]> {
+    console.log(`[stageAndUploadFiles] Processing ${files.length} files...`);
+
+    // Prepare file metadata for staging
+    const fileMetadata = files.map((file) => ({
+        filename: file.name,
+        mimeType: file.type,
+        fileSize: file.size,
+    }));
+
+    console.log("File metadata:", fileMetadata);
+
+    // Create staged uploads
+    const stagedResult = await createStagedUploadsAction(
+        sessionToken,
+        fileMetadata,
+    );
+
+    if (!stagedResult.success || !stagedResult.stagedTargets) {
+        console.error("Failed to stage uploads:", stagedResult.error);
+        return [];
     }
 
-    return {
-        success: true,
-        product: result.data.productUpdate.product,
-    };
+    console.log(`✅ Staged ${stagedResult.stagedTargets.length} uploads`);
+
+    // Upload files to staged URLs
+    const resourceUrls: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const stagedTarget = stagedResult.stagedTargets[i];
+
+        try {
+            console.log(`Uploading file ${i + 1}/${files.length}: ${file.name}`);
+            const resourceUrl = await uploadFileToStaged(file, stagedTarget);
+            resourceUrls.push(resourceUrl);
+            console.log(`✅ Uploaded: ${file.name}`);
+        } catch (error) {
+            console.error(`❌ Failed to upload file ${file.name}:`, error);
+        }
+    }
+
+    console.log(`✅ All uploads complete. ${resourceUrls.length} successful.`);
+    return resourceUrls;
+}
+
+/**
+ * Helper: Create staged uploads for files
+ */
+export async function createStagedUploadsAction(
+    sessionToken: string,
+    files: Array<{ filename: string; mimeType: string; fileSize: number }>,
+) {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const input = files.map((file) => ({
+            filename: file.filename,
+            mimeType: file.mimeType,
+            resource: "IMAGE" as const,
+            fileSize: file.fileSize.toString(),
+        }));
+
+        const result = await executeGraphQLMutation<StagedUploadsCreateMutation>({
+            query: StagedUploadsCreateDocument,
+            variables: { input },
+            sessionToken,
+        });
+
+        if (result.errors && result.errors.length > 0) {
+            return {
+                success: false,
+                error: result.errors[0].message,
+            };
+        }
+
+        if (
+            result.data?.stagedUploadsCreate?.userErrors &&
+            result.data.stagedUploadsCreate.userErrors.length > 0
+        ) {
+            return {
+                success: false,
+                error: result.data.stagedUploadsCreate.userErrors[0].message,
+            };
+        }
+
+        return {
+            success: true,
+            stagedTargets: result.data?.stagedUploadsCreate?.stagedTargets || [],
+        };
+    } catch (error) {
+        console.error("[createStagedUploads] Error:", error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Failed to stage uploads",
+        };
+    }
 }

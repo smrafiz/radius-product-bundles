@@ -16,6 +16,7 @@ export function useCreateBundleProduct() {
         bundleName: string,
         bundleDescription?: string,
         bundleType?: string,
+        mediaFiles?: File[],
     ) => {
         setIsCreating(true);
         setError(null);
@@ -27,6 +28,7 @@ export function useCreateBundleProduct() {
                 bundleName,
                 bundleDescription,
                 bundleType,
+                mediaFiles
             });
 
             if (result.status === "error") {

@@ -19,11 +19,13 @@ export function GlobalForm<T extends FieldValues>({
     const formRef = useRef<HTMLFormElement>(null);
     const router = useRouter();
     const form = useFormContext<T>();
-    const isDirty = useBundleStore((s) => s.isDirty); // optionally move this to a global store later
+    const isDirty = useBundleStore((s) => s.isDirty);
 
     useEffect(() => {
         const formElement = formRef.current;
-        if (!formElement) return;
+        if (!formElement) {
+            return;
+        }
 
         formElement.dataset.saveBar = "true";
         formElement.dataset.discardConfirmation = "true";

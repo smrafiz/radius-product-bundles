@@ -16,7 +16,6 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
     const { getFieldError } = useBundleValidation();
     const {
         isEnabled,
-        bundleName,
         productTitle,
         productDescription,
         mediaFiles,
