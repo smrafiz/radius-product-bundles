@@ -5,7 +5,7 @@ export function SettingsStoreInformation() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Store Information</div>
+                    <div className="text-lg">Store information</div>
                 </s-heading>
                 <s-divider />
                 <s-paragraph>

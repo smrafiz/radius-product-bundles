@@ -1,72 +1,40 @@
 "use client";
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useDashboardStore } from "@/features/dashboard";
 import { SkeletonLines } from "@/shared";
+import ReactPlayer from "react-player";
+
+function getYouTubeId(url: string) {
+    try {
+        const u = new URL(url);
+        if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
+        if (u.hostname.includes("youtube.com")) return  u.searchParams.get("v") || null;
+        return null;
+    } catch {
+        const m = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+        return m ? m[1] : null;
+    }
+}
 
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
     const { loading } = useDashboardStore();
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const videoUrl = "https://youtu.be/gsw2NYVrPfM";
+    //const videoRef = useRef<HTMLVideoElement | null>(null);
+    const videoUrl = "https://www.youtube.com/watch?v=wDchsz8nmbo";
 
     const isYouTube: boolean =
         videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
-    const embedUrl: string = isYouTube
-        ? videoUrl
-              .replace("youtu.be/", "www.youtube.com/embed/")
-              .replace("watch?v=", "embed/") //+ "?autoplay=1&mute=1"
-        : videoUrl;
+    const ytId = getYouTubeId(videoUrl);
 
-    useEffect(() => {
-        const modal = document.getElementById(
-            "video-modal",
-        ) as HTMLElement | null;
-        if (!modal) return;
+    // const embedUrl: string = isYouTube
+    //     ? `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1`
+    //     : videoUrl;
 
-        const handleShow = (): void => {
-            // YouTube autoplay
-            const iframe = modal.querySelector(
-                "iframe",
-            ) as HTMLIFrameElement | null;
-            if (iframe && iframe.src) {
-                iframe.src = iframe.src.includes("?")
-                    ? `${iframe.src}&autoplay=1`
-                    : `${iframe.src}?autoplay=1`;
-            }
-
-            // MP4 autoplay
-            if (videoRef.current) {
-                videoRef.current.play().catch(() => {
-                    console.warn("Autoplay blocked by browser");
-                });
-            }
-        };
-
-        const handleHide = (): void => {
-            // Stop YouTube playback
-            const iframe = modal.querySelector(
-                "iframe",
-            ) as HTMLIFrameElement | null;
-            if (iframe && iframe.src) {
-                iframe.src = iframe.src
-                    .replace("&autoplay=1", "")
-                    .replace("?autoplay=1", "");
-            }
-
-            // Stop MP4 video
-            if (videoRef.current) {
-                videoRef.current.pause();
-                videoRef.current.currentTime = 0;
-            }
-        };
-
-        modal.addEventListener("--show", handleShow);
-        modal.addEventListener("--hide", handleHide);
-
-        return () => {
-            modal.removeEventListener("--show", handleShow);
-            modal.removeEventListener("--hide", handleHide);
-        };
-    }, []);
+    // useEffect(() => {
+    //     // This effect attempted to manipulate iframe src directly using --show/--hide.
+    //     // We will not rely on this approach; playback will be controlled in the Modal component
+    //     // by proper event listeners. Keep effect minimal for MP4 fallback if you want.
+    //     return () => {};
+    // }, []);
 
     if (loading) {
         return (
@@ -88,7 +56,7 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
                     <div className="relative cursor-pointer">
                         {isYouTube ? (
                             <img
-                                src={`https://img.youtube.com/vi/${videoUrl.split("/").pop()}/hqdefault.jpg`}
+                                src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
                                 alt="Video thumbnail"
                                 className="w-full rounded-[8px]"
                             />
@@ -100,9 +68,7 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
                             />
                         )}
 
-                        <div
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                        >
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                             <s-button
                                 variant="secondary"
                                 commandFor="video-modal"
@@ -119,9 +85,8 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
                     <s-stack gap="small">
                         <s-heading>See it in action</s-heading>
                         <s-text>
-                            Bundles are a great way to increase average order
-                            value, move slow-moving inventory, and offer more
-                            value to your customers.
+                            Bundles are a great way to increase average order value, move slow-moving
+                            inventory, and offer more value to your customers.
                         </s-text>
                         <s-button
                             variant="secondary"
@@ -136,39 +101,59 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
             </div>
 
             {/* Modal */}
-            <s-modal id="video-modal" heading="Video Tutorial">
-                {isYouTube ? (
-                    <iframe
-                        width="100%"
-                        height="400"
-                        src={embedUrl}
-                        title="YouTube video player"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="rounded-[8px]"
-                    ></iframe>
-                ) : (
-                    <video
-                        ref={videoRef}
-                        controls
-                        muted
-                        autoPlay
-                        className="w-full rounded-[8px]"
-                    >
-                        <source src={videoUrl} type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                )}
-
-                <s-button
-                    slot="primary-action"
-                    variant="primary"
-                    commandFor="video-modal"
-                    command="--hide"
-                >
-                    Close
-                </s-button>
-            </s-modal>
+            <Modal videoUrl={videoUrl} />
         </s-section>
+    );
+}
+
+export default function Modal({ videoUrl }: { videoUrl: string }) {
+    const modalRef = useRef<HTMLElement | null>(null);
+    const [playing, setPlaying] = useState(false);
+
+    useEffect(() => {
+        const modal = modalRef.current;
+        if (!modal) return;
+
+        const handleAfterShow = () => {
+            console.log("aftershow → mount complete");
+            setTimeout(() => {
+                console.log("PLAYING TRUE");
+                setPlaying(true);
+            }, 50);
+        };
+
+        const handleHide = () => {
+            console.log("hide → stopping");
+            setPlaying(false);
+        };
+
+        modal.addEventListener("aftershow", handleAfterShow);
+        modal.addEventListener("hide", handleHide);
+
+        return () => {
+            modal.removeEventListener("aftershow", handleAfterShow);
+            modal.removeEventListener("hide", handleHide);
+        };
+    }, []);
+
+    return (
+        <s-modal id="video-modal" ref={modalRef as any} heading="Video Tutorial">
+            <ReactPlayer
+                src={videoUrl}
+                playing={playing}
+                controls
+                width="100%"
+                height="400px"
+            />
+
+            <s-button
+                slot="primary-action"
+                variant="primary"
+                commandFor="video-modal"
+                command="--hide"
+            >
+                Close
+            </s-button>
+        </s-modal>
     );
 }

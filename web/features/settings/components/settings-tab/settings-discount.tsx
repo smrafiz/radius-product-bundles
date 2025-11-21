@@ -21,20 +21,24 @@ export function SettingsDiscount() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Discount</div>
+                    <div className="text-lg">Discount</div>
                 </s-heading>
                 <s-divider />
-                <s-paragraph>
-                    Settings related to the discounts applied by the app.
-                </s-paragraph>
-                <s-checkbox
-                    label="Disable discount"
-                    details="Enabling this option will display the bundle interface but not apply any discounts. Note: This option disables completely the discount functionality."
-                />
-                <s-checkbox
-                    label="Track orders without discount"
-                    details="By default, the app tracks only orders with discounts. Enabling this allows the app to track any order containing bundles."
-                />
+
+                <s-choice-list label="Settings related to the discounts applied by the app." name="settings-related" multiple>
+                    <s-choice value="disabled-discount">
+                        Disable discount
+                        <s-text slot="details">
+                            Enabling this option will display the bundle interface but not apply any discounts. Note: This option disables completely the discount functionality.
+                        </s-text>
+                    </s-choice>
+                    <s-choice value="track-order-discount">
+                        Track orders without discount
+                        <s-text slot="details">
+                            By default, the app tracks only orders with discounts. Enabling this allows the app to track any order containing bundles.
+                        </s-text>
+                    </s-choice>
+                </s-choice-list>
 
                 <s-stack gap="small-400">
                     <s-select

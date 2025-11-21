@@ -6,7 +6,7 @@ export function SettingsBundleWidget() {
             <s-stack gap="base">
                 <s-heading>
                     <div className="text-lg">
-                        Bundle Widget Settings
+                        Bundle widget
                     </div>
                 </s-heading>
                 <s-divider />

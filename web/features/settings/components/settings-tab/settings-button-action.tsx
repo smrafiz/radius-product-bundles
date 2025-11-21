@@ -11,15 +11,14 @@ export function SettingsButtonAction() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Button Action</div>
+                    <div className="text-lg">Button action</div>
                 </s-heading>
+
                 <s-divider />
-                <s-paragraph>
-                    Manage what page the customer is taken to after clicking the
-                    bundle button.
-                </s-paragraph>
 
                 <s-choice-list
+                    label="Manage what page the customer is taken to after clicking the
+                    bundle button."
                     name="button_action"
                     onChange={handleChange}
                     details="Please contact support in order to activate this option."

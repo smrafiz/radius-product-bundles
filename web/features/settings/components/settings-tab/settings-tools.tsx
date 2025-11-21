@@ -5,7 +5,7 @@ export function SettingsTools() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Tools</div>
+                    <div className="text-lg">Tools</div>
                 </s-heading>
                 <s-divider />
                 <s-box padding="small-100">

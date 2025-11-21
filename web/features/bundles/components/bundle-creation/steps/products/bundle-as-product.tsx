@@ -2,6 +2,7 @@
 
 import {
     MediaGrid,
+    EditorWysiwyg,
     useBundleProduct,
     useBundleValidation,
 } from "@/features/bundles";
@@ -9,6 +10,8 @@ import {
 /**
  * Bundle as product configuration component
  */
+
+
 export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
     const { getFieldError } = useBundleValidation();
     const {
@@ -116,6 +119,8 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         rows={3}
                         error={getFieldError("productDescription")}
                     />
+
+                    <EditorWysiwyg />
 
                     {/* Media section */}
                     <s-stack gap="small">

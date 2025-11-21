@@ -18,7 +18,7 @@ export function SettingsAdvanced() {
         <s-section>
             <s-stack gap="large">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Advanced</div>
+                    <div className="text-lg">Advanced</div>
                 </s-heading>
                 <s-divider />
                 <s-stack gap="small-400">
@@ -39,7 +39,7 @@ export function SettingsAdvanced() {
                 <s-stack gap="small-400">
                     <s-text-field
                         label="Currency format"
-                        name="Currency format"
+                        name="currency-format"
                         placeholder=""
                         onChange={handleChange}
                     />
@@ -69,14 +69,20 @@ export function SettingsAdvanced() {
                     </s-text>
                 </s-stack>
 
-                <s-checkbox
-                    label="Redirect dynamic checkout buttons on product page to the checkout"
-                    details="By default, Bundler can't apply the discount if the customer uses the wallet buttons (e.g. PayPal Express, ShopPay, etc.). Turning this on will allow Bundler to apply discounts, but will redirect the customer to the standard Shopify Checkout."
-                />
-                <s-checkbox
-                    label="Hide dynamic checkout buttons in cart"
-                    details="If your customers check out using the dynamic checkout buttons on the cart page, then the bundle discounts won't get applied. You can turn this option on and Bundler will hide these buttons on the cart page when the customer qualifies for the bundle discount."
-                />
+                <s-choice-list name="automatically" multiple>
+                    <s-choice value="redirect-dynamic-checkout">
+                        Redirect dynamic checkout buttons on product page to the checkout
+                        <s-text slot="details">
+                            By default, Bundler can't apply the discount if the customer uses the wallet buttons (e.g. PayPal Express, ShopPay, etc.). Turning this on will allow Bundler to apply discounts, but will redirect the customer to the standard Shopify Checkout.
+                        </s-text>
+                    </s-choice>
+                    <s-choice value="hide-dynamic-checkout">
+                        Hide dynamic checkout buttons in cart
+                        <s-text slot="details">
+                            If your customers check out using the dynamic checkout buttons on the cart page, then the bundle discounts won't get applied. You can turn this option on and Bundler will hide these buttons on the cart page when the customer qualifies for the bundle discount.
+                        </s-text>
+                    </s-choice>
+                </s-choice-list>
             </s-stack>
         </s-section>
     );

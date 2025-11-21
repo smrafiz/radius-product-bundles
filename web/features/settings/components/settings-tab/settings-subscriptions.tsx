@@ -8,10 +8,11 @@ export function SettingsSubscriptions() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>Subscriptions</div>
+                    <div className="text-lg">Subscriptions</div>
                 </s-heading>
+
                 <s-divider />
-                {/* First Checkbox */}
+
                 <s-checkbox
                     label="Seal Subscriptions app integration"
                     checked={isSealIntegrationEnabled}
@@ -21,7 +22,6 @@ export function SettingsSubscriptions() {
                     details="Enable this integration to show subscription widgets on products in bundle widgets. You must also have the Seal Subscriptions app installed."
                 />
 
-                {/* Conditionally show second checkbox */}
                 {isSealIntegrationEnabled && (
                     <s-checkbox
                         label="Enable subscription widgets in volume discounts"

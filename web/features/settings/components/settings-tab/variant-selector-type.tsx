@@ -21,11 +21,13 @@ export function SettingsVariantSelectorType() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div style={{ fontSize: "18px" }}>
-                        Variant Selector Type
+                    <div className="text-lg">
+                        Variant selector type
                     </div>
                 </s-heading>
+
                 <s-divider />
+
                 <s-paragraph>
                     Select the type of variant selector shown to customers in
                     the bundle.
@@ -48,7 +50,6 @@ export function SettingsVariantSelectorType() {
 
                 {variantType === "swatches" && (
                     <s-stack
-                        paddingBlockStart="small"
                         paddingInlineStart="large"
                         gap="small"
                     >
