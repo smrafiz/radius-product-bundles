@@ -99,42 +99,6 @@ export async function createBundleProductAction(
 
         console.log("Product created successfully:", productData);
 
-        // Upload and attach media if files provided
-        if (input.mediaFiles && input.mediaFiles.length > 0) {
-            console.log(`Uploading ${input.mediaFiles.length} media files...`);
-
-            // ✅ Convert serializable files back to File objects
-            const files = input.mediaFiles.map(serializableToFile);
-
-            // Stage and upload files
-            const resourceUrls = await stageAndUploadFiles(sessionToken, files);
-
-            if (resourceUrls.length > 0) {
-                console.log(`✅ Staged ${resourceUrls.length} files, attaching to product...`);
-
-                // Update product with media using productUpdate
-                const media = resourceUrls.map((url) => ({
-                    originalSource: url,
-                    mediaContentType: "IMAGE" as const,
-                }));
-
-                const updateResult = await executeGraphQLMutation<ProductUpdateMutation>({
-                    query: ProductUpdateDocument,
-                    variables: {
-                        id: (product as any).id,
-                        media,
-                    },
-                    sessionToken,
-                });
-
-                if (updateResult.errors || updateResult.data?.productUpdate?.userErrors?.length) {
-                    console.error("Failed to attach media to product");
-                } else {
-                    console.log("✅ Media attached successfully");
-                }
-            }
-        }
-
         return {
             status: "success",
             message: "Product created successfully",
@@ -162,35 +126,12 @@ export async function updateBundleProductAction(
     input: UpdateProductInput,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
-
-        // Prepare media if files provided
-        let media = undefined;
-        if (input.mediaFiles && input.mediaFiles.length > 0) {
-            console.log(`Processing ${input.mediaFiles.length} media files...`);
-
-            const files = input.mediaFiles.map(serializableToFile);
-            console.log("Files converted from serializable format");
-
-            const resourceUrls = await stageAndUploadFiles(sessionToken, files);
-            console.log(`Staged ${resourceUrls.length} files`);
-
-            if (resourceUrls.length > 0) {
-                media = resourceUrls.map((url) => ({
-                    originalSource: url,
-                    mediaContentType: "IMAGE" as const,
-                }));
-                console.log("Media prepared for GraphQL:", media);
-            }
-        }
+        await handleSessionToken(sessionToken);
 
         const variables = {
             id: input.productId,
             title: input.title,
             descriptionHtml: input.description ?? undefined,
-            media,
         };
 
         // Execute GraphQL mutation
@@ -292,7 +233,9 @@ async function stageAndUploadFiles(
         const stagedTarget = stagedResult.stagedTargets[i];
 
         try {
-            console.log(`Uploading file ${i + 1}/${files.length}: ${file.name}`);
+            console.log(
+                `Uploading file ${i + 1}/${files.length}: ${file.name}`,
+            );
             const resourceUrl = await uploadFileToStaged(file, stagedTarget);
             resourceUrls.push(resourceUrl);
             console.log(`✅ Uploaded: ${file.name}`);
@@ -306,16 +249,14 @@ async function stageAndUploadFiles(
 }
 
 /**
- * Helper: Create staged uploads for files
+ * Create staged uploads for files
  */
 export async function createStagedUploadsAction(
     sessionToken: string,
     files: Array<{ filename: string; mimeType: string; fileSize: number }>,
 ) {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        await handleSessionToken(sessionToken);
 
         const input = files.map((file) => ({
             filename: file.filename,
@@ -324,6 +265,8 @@ export async function createStagedUploadsAction(
             fileSize: file.fileSize.toString(),
         }));
 
+        console.log("[createStagedUploads] Input:", input);
+
         const result = await executeGraphQLMutation<StagedUploadsCreateMutation>({
             query: StagedUploadsCreateDocument,
             variables: { input },
@@ -331,9 +274,11 @@ export async function createStagedUploadsAction(
         });
 
         if (result.errors && result.errors.length > 0) {
+            console.error("[createStagedUploads] Errors:", result.errors);
             return {
                 success: false,
                 error: result.errors[0].message,
+                stagedTargets: null,
             };
         }
 
@@ -341,11 +286,15 @@ export async function createStagedUploadsAction(
             result.data?.stagedUploadsCreate?.userErrors &&
             result.data.stagedUploadsCreate.userErrors.length > 0
         ) {
+            console.error("[createStagedUploads] User errors:", result.data.stagedUploadsCreate.userErrors);
             return {
                 success: false,
                 error: result.data.stagedUploadsCreate.userErrors[0].message,
+                stagedTargets: null,
             };
         }
+
+        console.log("[createStagedUploads] Success, targets:", result.data?.stagedUploadsCreate?.stagedTargets?.length);
 
         return {
             success: true,
@@ -356,6 +305,75 @@ export async function createStagedUploadsAction(
         return {
             success: false,
             error: error instanceof Error ? error.message : "Failed to stage uploads",
+            stagedTargets: null,
+        };
+    }
+}
+
+/**
+ * Attach already-uploaded media to a product
+ */
+export async function attachMediaToProductAction(
+    sessionToken: string,
+    productId: string,
+    resourceUrls: string[],
+    altText?: string,
+): Promise<ApiResponse> {
+    try {
+        await handleSessionToken(sessionToken);
+
+        console.log("[attachMediaToProduct] Product:", productId);
+        console.log("[attachMediaToProduct] URLs:", resourceUrls);
+
+        const media = resourceUrls.map((url) => ({
+            originalSource: url,
+            mediaContentType: "IMAGE" as const,
+            alt: altText || "Bundle product image",
+        }));
+
+        const result = await executeGraphQLMutation<ProductUpdateMutation>({
+            query: ProductUpdateDocument,
+            variables: {
+                id: productId,
+                media,
+            },
+            sessionToken,
+        });
+
+        if (result.errors && result.errors.length > 0) {
+            console.error("[attachMediaToProduct] Errors:", result.errors);
+            return {
+                status: "error",
+                message: result.errors[0].message,
+                data: null,
+            };
+        }
+
+        if (
+            result.data?.productUpdate?.userErrors &&
+            result.data.productUpdate.userErrors.length > 0
+        ) {
+            console.error("[attachMediaToProduct] User errors:", result.data.productUpdate.userErrors);
+            return {
+                status: "error",
+                message: result.data.productUpdate.userErrors[0].message,
+                data: null,
+            };
+        }
+
+        console.log("[attachMediaToProduct] ✅ Success");
+
+        return {
+            status: "success",
+            message: "Media attached successfully",
+            data: result.data?.productUpdate?.product,
+        };
+    } catch (error) {
+        console.error("[attachMediaToProduct] Error:", error);
+        return {
+            status: "error",
+            message: error instanceof Error ? error.message : "Failed to attach media",
+            data: null,
         };
     }
 }

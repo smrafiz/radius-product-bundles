@@ -1,4 +1,5 @@
 export { useBundleField } from "./use-bundle-field";
+export { useMediaUpload } from "./use-media-upload";
 export { useBundleSubmit } from "./use-bundle-submit";
 export { useBundleProduct } from "./use-bundle-product";
 export { useBundleValidation } from "./use-bundle-validation";

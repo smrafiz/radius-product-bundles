@@ -10,6 +10,16 @@ import { NextRequest, NextResponse } from "next/server";
 export default function proxy(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
 
+    // Paths to skip completely - don't even detect shop
+    const skipCompletely = [
+        "/api/upload",  // File upload - must not read body
+    ];
+
+    // Skip completely for the upload route
+    if (skipCompletely.some((p) => pathname.startsWith(p))) {
+        return NextResponse.next();
+    }
+
     // Paths to skip for performance because headers are unnecessary
     const skipPaths = [
         "/api/",
@@ -58,9 +68,9 @@ export const config = {
     matcher: [
         /*
          * Exceptions:
-         * /api/auth, /api/webhooks, /api/proxy, /api/gdpr, /_next,
+         * /api/auth, /api/webhooks, /api/proxy, /api/gdpr, /api/upload, /_next,
          * /_proxy, /_auth, /_static, /_vercel, /public, /extensions (/favicon.ico, etc)
          */
-        "/((?!api/auth|api/webhooks|api/proxy|api/gdpr|_next|_proxy|_auth|_static|_vercel|favicon.ico|extensions|[\\w-]+\\.\\w+).*)",
+        "/((?!api/auth|api/webhooks|api/proxy|api/gdpr|api/upload|_next|_proxy|_auth|_static|_vercel|favicon.ico|extensions|[\\w-]+\\.\\w+).*)",
     ],
 };

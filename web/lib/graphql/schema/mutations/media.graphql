@@ -14,3 +14,28 @@ mutation StagedUploadsCreate($input: [StagedUploadInput!]!) {
         }
     }
 }
+
+mutation ProductCreateMedia($productId: ID!, $media: [CreateMediaInput!]!) {
+    productCreateMedia(productId: $productId, media: $media) {
+        media {
+            alt
+            mediaContentType
+            status
+            ... on MediaImage {
+                id
+                image {
+                    url
+                    altText
+                }
+            }
+        }
+        mediaUserErrors {
+            code
+            field
+            message
+        }
+        product {
+            id
+        }
+    }
+}

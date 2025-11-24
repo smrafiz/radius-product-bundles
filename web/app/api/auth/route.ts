@@ -1,5 +1,5 @@
+import { generateOAuthState } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
-import { generateOAuthState } from "@/utils";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);

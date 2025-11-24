@@ -1,6 +1,12 @@
 "use client";
 
 import {
+    filesToSerializable,
+    useAppNavigation,
+    useGlobalBanner,
+    withAsyncLoader,
+} from "@/shared";
+import {
     BundleFormData,
     createBundleAction,
     invalidateBundleCache,
@@ -8,10 +14,10 @@ import {
     updateBundleProductAction,
     useBundleStore,
     useCreateBundleProduct,
+    useMediaUpload,
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useAppNavigation, useGlobalBanner, withAsyncLoader } from "@/shared";
 
 export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
@@ -21,6 +27,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const { bundleData } = useAppNavigation();
     const { createProduct, isCreating: isCreatingProduct } =
         useCreateBundleProduct();
+    const { uploadAndAttachMedia } = useMediaUpload();
 
     const handleSubmit = withAsyncLoader(async (data: BundleFormData) => {
         try {
@@ -41,10 +48,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         data.productTitle,
                         data.productDescription,
                         data.type,
-                        mediaFiles
                     );
 
-                    if (!productData) {
+                    if (productData.status === "error" || !productData.data) {
                         showError("Failed to create product", {
                             content:
                                 "Could not create Shopify product. Please try again.",
@@ -56,6 +62,22 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                     // Add mainProductId to bundle data
                     data.mainProductId = productData.mainProductId;
+
+                    if (mediaFiles && mediaFiles.length > 0) {
+                        console.log(`Uploading ${mediaFiles.length} media files...`);
+
+                        const mediaResult = await uploadAndAttachMedia(
+                            productData.data.mainProductId,
+                            mediaFiles,
+                            data.productTitle,
+                        );
+
+                        if (!mediaResult.success) {
+                            console.error("Media upload failed:", mediaResult.error);
+                        } else {
+                            console.log("✅ Media uploaded successfully");
+                        }
+                    }
                 }
             }
 
@@ -98,29 +120,40 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 data.mainProductId &&
                 (data.productTitle || data.productDescription)
             ) {
-                console.log("Updating Shopify product...");
-                console.log("Media files:", mediaFiles);
+                if (data.productTitle || data.productDescription) {
+                    console.log("Updating Shopify product...");
 
-                const productResult = await updateBundleProductAction(
-                    token,
-                    {
-                        productId: data.mainProductId,
-                        title: data.productTitle,
-                        description: data.productDescription,
-                    }
-                );
-
-                if (productResult.status === "error") {
-                    console.error(
-                        "Failed to update product:",
-                        productResult.message,
+                    const productResult = await updateBundleProductAction(
+                        token,
+                        {
+                            productId: data.mainProductId,
+                            title: data.productTitle,
+                            description: data.productDescription,
+                        },
                     );
-                    showError("Product update failed", {
-                        content:
-                            productResult.message ||
-                            "Bundle saved but product update failed.",
-                        autoHide: true,
-                    });
+
+                    if (productResult.status === "error") {
+                        console.error("Failed to update product:", productResult.message);
+                    } else {
+                        console.log("✅ Product updated");
+                    }
+                }
+
+                // Upload media
+                if (mediaFiles && mediaFiles.length > 0) {
+                    console.log(`Uploading ${mediaFiles.length} media files...`);
+
+                    const mediaResult = await uploadAndAttachMedia(
+                        data.mainProductId,
+                        mediaFiles,
+                        data.productTitle,
+                    );
+
+                    if (!mediaResult.success) {
+                        console.error("Media upload failed:", mediaResult.error);
+                    } else {
+                        console.log("✅ Media uploaded");
+                    }
                 }
             }
 
