@@ -50,9 +50,9 @@ export function transformBundleCore(
                     featuredImage: product.featuredImage,
                     selectedVariant: selectedVariant
                         ? {
-                            ...selectedVariant,
-                            productId: product.id,
-                        }
+                              ...selectedVariant,
+                              productId: product.id,
+                          }
                         : null,
                     quantity: bp.quantity,
                     role: bp.role,
@@ -137,21 +137,21 @@ export function transformBundleForDuplication(
 
     const transformedSettings = settings
         ? (() => {
-            const {
-                id,
-                bundleId,
-                createdAt,
-                updatedAt,
-                widget,
-                style,
-                animations,
-                mobileSettings,
-                variant,
-                misc,
-                ...s
-            } = settings;
-            return s;
-        })()
+              const {
+                  id,
+                  bundleId,
+                  createdAt,
+                  updatedAt,
+                  widget,
+                  style,
+                  animations,
+                  mobileSettings,
+                  variant,
+                  misc,
+                  ...s
+              } = settings;
+              return s;
+          })()
         : undefined;
 
     // Combine all data

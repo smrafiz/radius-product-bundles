@@ -19,7 +19,9 @@ export async function uploadFileToStagedUrl(
         formData.append("params", JSON.stringify(stagedTarget.parameters));
     }
 
-    console.log(`[Upload] ${file.name} to ${stagedTarget.url.substring(0, 60)}...`);
+    console.log(
+        `[Upload] ${file.name} to ${stagedTarget.url.substring(0, 60)}...`,
+    );
     console.log(`[Upload] Params:`, stagedTarget.parameters);
 
     const response = await fetch("/api/upload", {
@@ -30,7 +32,9 @@ export async function uploadFileToStagedUrl(
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error(`[Upload] Failed:`, errorData);
-        throw new Error(errorData.error || `Failed to upload file: ${response.status}`);
+        throw new Error(
+            errorData.error || `Failed to upload file: ${response.status}`,
+        );
     }
 
     console.log(`[Upload] ✅ Success: ${file.name}`);

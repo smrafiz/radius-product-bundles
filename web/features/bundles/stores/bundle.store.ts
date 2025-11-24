@@ -54,6 +54,7 @@ export const useBundleStore = create(
         selectedItems: [],
         mediaFiles: [],
         existingMedia: [],
+        removedMediaIds: [],
         displaySettings: initialDisplaySettings,
         configuration: initialConfiguration,
         isLoading: false,
@@ -391,8 +392,25 @@ export const useBundleStore = create(
 
         removeExistingMedia: (id: string) => {
             set((state) => {
-                state.existingMedia = state.existingMedia.filter((m) => m.id !== id);
+                // Add to the removed list for deletion on save
+                if (!state.removedMediaIds.includes(id)) {
+                    state.removedMediaIds.push(id);
+                }
+                // Remove from display
+                state.existingMedia = state.existingMedia.filter(
+                    (m) => m.id !== id,
+                );
             });
+        },
+
+        clearRemovedMediaIds: () => {
+            set((state) => {
+                state.removedMediaIds = [];
+            });
+        },
+
+        getRemovedMediaIds: () => {
+            return get().removedMediaIds;
         },
 
         getTotalProducts: () => {
@@ -461,6 +479,7 @@ export const useBundleStore = create(
                 state.selectedItems = [];
                 state.mediaFiles = [];
                 state.existingMedia = [];
+                state.removedMediaIds = [];
                 state.displaySettings = { ...initialDisplaySettings };
                 state.configuration = { ...initialConfiguration };
                 state.isLoading = false;

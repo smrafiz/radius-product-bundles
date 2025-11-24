@@ -21,9 +21,7 @@ export function SettingsVariantSelectorType() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">
-                        Variant selector type
-                    </div>
+                    <div className="text-lg">Variant selector type</div>
                 </s-heading>
 
                 <s-divider />
@@ -49,10 +47,7 @@ export function SettingsVariantSelectorType() {
                 </s-choice-list>
 
                 {variantType === "swatches" && (
-                    <s-stack
-                        paddingInlineStart="large"
-                        gap="small"
-                    >
+                    <s-stack paddingInlineStart="large" gap="small">
                         <s-paragraph>
                             Option values with a color show as color swatches,
                             with an image as image swatches, and without either

@@ -60,7 +60,7 @@ export function BundleCreationForm({
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                             {/* Left column */}
                             <div className="md:col-span-7">
-                                <StepContent bundleType={bundleType}/>
+                                <StepContent bundleType={bundleType} />
                             </div>
 
                             {/* Right column */}

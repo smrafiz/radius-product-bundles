@@ -30,7 +30,9 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
             <s-stack gap="base" padding="small">
                 <s-grid
                     gap="small-200"
-                    gridTemplateColumns={!showSearch ? "1fr auto auto" : "1fr auto auto auto"}
+                    gridTemplateColumns={
+                        !showSearch ? "1fr auto auto" : "1fr auto auto auto"
+                    }
                     alignItems="center"
                 >
                     <s-grid-item>

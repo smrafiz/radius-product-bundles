@@ -153,7 +153,10 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                                     disabled={!productEditUrl}
                                     onClick={() => {
                                         if (productEditUrl) {
-                                            window.open(productEditUrl, "_blank");
+                                            window.open(
+                                                productEditUrl,
+                                                "_blank",
+                                            );
                                         }
                                     }}
                                 >

@@ -90,7 +90,6 @@ export function BundlePreview() {
 
     return (
         <s-stack gap="base">
-
             {/* Bundle preview status */}
             <BundlePreviewStatus />
 

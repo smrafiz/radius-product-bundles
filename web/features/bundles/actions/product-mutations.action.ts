@@ -267,11 +267,12 @@ export async function createStagedUploadsAction(
 
         console.log("[createStagedUploads] Input:", input);
 
-        const result = await executeGraphQLMutation<StagedUploadsCreateMutation>({
-            query: StagedUploadsCreateDocument,
-            variables: { input },
-            sessionToken,
-        });
+        const result =
+            await executeGraphQLMutation<StagedUploadsCreateMutation>({
+                query: StagedUploadsCreateDocument,
+                variables: { input },
+                sessionToken,
+            });
 
         if (result.errors && result.errors.length > 0) {
             console.error("[createStagedUploads] Errors:", result.errors);
@@ -286,7 +287,10 @@ export async function createStagedUploadsAction(
             result.data?.stagedUploadsCreate?.userErrors &&
             result.data.stagedUploadsCreate.userErrors.length > 0
         ) {
-            console.error("[createStagedUploads] User errors:", result.data.stagedUploadsCreate.userErrors);
+            console.error(
+                "[createStagedUploads] User errors:",
+                result.data.stagedUploadsCreate.userErrors,
+            );
             return {
                 success: false,
                 error: result.data.stagedUploadsCreate.userErrors[0].message,
@@ -294,17 +298,24 @@ export async function createStagedUploadsAction(
             };
         }
 
-        console.log("[createStagedUploads] Success, targets:", result.data?.stagedUploadsCreate?.stagedTargets?.length);
+        console.log(
+            "[createStagedUploads] Success, targets:",
+            result.data?.stagedUploadsCreate?.stagedTargets?.length,
+        );
 
         return {
             success: true,
-            stagedTargets: result.data?.stagedUploadsCreate?.stagedTargets || [],
+            stagedTargets:
+                result.data?.stagedUploadsCreate?.stagedTargets || [],
         };
     } catch (error) {
         console.error("[createStagedUploads] Error:", error);
         return {
             success: false,
-            error: error instanceof Error ? error.message : "Failed to stage uploads",
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to stage uploads",
             stagedTargets: null,
         };
     }
@@ -353,7 +364,10 @@ export async function attachMediaToProductAction(
             result.data?.productUpdate?.userErrors &&
             result.data.productUpdate.userErrors.length > 0
         ) {
-            console.error("[attachMediaToProduct] User errors:", result.data.productUpdate.userErrors);
+            console.error(
+                "[attachMediaToProduct] User errors:",
+                result.data.productUpdate.userErrors,
+            );
             return {
                 status: "error",
                 message: result.data.productUpdate.userErrors[0].message,
@@ -372,7 +386,10 @@ export async function attachMediaToProductAction(
         console.error("[attachMediaToProduct] Error:", error);
         return {
             status: "error",
-            message: error instanceof Error ? error.message : "Failed to attach media",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to attach media",
             data: null,
         };
     }

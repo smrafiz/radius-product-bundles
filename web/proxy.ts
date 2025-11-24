@@ -12,7 +12,7 @@ export default function proxy(request: NextRequest) {
 
     // Paths to skip completely - don't even detect shop
     const skipCompletely = [
-        "/api/upload",  // File upload - must not read body
+        "/api/upload", // File upload - must not read body
     ];
 
     // Skip completely for the upload route

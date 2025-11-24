@@ -31,12 +31,42 @@ export const BUNDLE_TYPE_FILTER_OPTIONS = Object.values(BUNDLE_TYPES).map(
 export const BUNDLE_SORT_OPTIONS = [
     { label: "Name", field: "name", direction: "asc", directionLabel: "A-Z" },
     { label: "Name", field: "name", direction: "desc", directionLabel: "Z-A" },
-    { label: "Revenue", field: "revenue", direction: "asc", directionLabel: "Low to High" },
-    { label: "Revenue", field: "revenue", direction: "desc", directionLabel: "High to Low" },
-    { label: "Views", field: "views", direction: "asc", directionLabel: "Low to High" },
-    { label: "Views", field: "views", direction: "desc", directionLabel: "High to Low" },
-    { label: "Created", field: "createdAt", direction: "asc", directionLabel: "Oldest first" },
-    { label: "Created", field: "createdAt", direction: "desc", directionLabel: "Newest first" },
+    {
+        label: "Revenue",
+        field: "revenue",
+        direction: "asc",
+        directionLabel: "Low to High",
+    },
+    {
+        label: "Revenue",
+        field: "revenue",
+        direction: "desc",
+        directionLabel: "High to Low",
+    },
+    {
+        label: "Views",
+        field: "views",
+        direction: "asc",
+        directionLabel: "Low to High",
+    },
+    {
+        label: "Views",
+        field: "views",
+        direction: "desc",
+        directionLabel: "High to Low",
+    },
+    {
+        label: "Created",
+        field: "createdAt",
+        direction: "asc",
+        directionLabel: "Oldest first",
+    },
+    {
+        label: "Created",
+        field: "createdAt",
+        direction: "desc",
+        directionLabel: "Newest first",
+    },
 ] as const;
 
 /**

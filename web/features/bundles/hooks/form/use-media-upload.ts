@@ -43,10 +43,15 @@ export function useMediaUpload() {
 
             if (!stagedResult.success || !stagedResult.stagedTargets) {
                 console.error("Failed to get staged URLs:", stagedResult.error);
-                return { success: false, error: stagedResult.error || "Failed to stage uploads" };
+                return {
+                    success: false,
+                    error: stagedResult.error || "Failed to stage uploads",
+                };
             }
 
-            console.log(`✅ Got ${stagedResult.stagedTargets.length} staged URLs`);
+            console.log(
+                `✅ Got ${stagedResult.stagedTargets.length} staged URLs`,
+            );
 
             console.log(stagedResult);
 
@@ -54,18 +59,21 @@ export function useMediaUpload() {
             console.log("Uploading files to Shopify...");
             const resourceUrls = await uploadFilesToShopify(
                 files,
-                stagedResult.stagedTargets.map(target => ({
+                stagedResult.stagedTargets.map((target) => ({
                     url: target.url,
                     resourceUrl: target.resourceUrl,
-                    parameters: target.parameters.map(param => ({
+                    parameters: target.parameters.map((param) => ({
                         name: param.name,
-                        value: param.value
-                    }))
+                        value: param.value,
+                    })),
                 })),
             );
 
             if (resourceUrls.length === 0) {
-                return { success: false, error: "No files were uploaded successfully" };
+                return {
+                    success: false,
+                    error: "No files were uploaded successfully",
+                };
             }
 
             console.log(`✅ Uploaded ${resourceUrls.length} files`);

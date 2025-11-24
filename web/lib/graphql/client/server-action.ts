@@ -92,7 +92,7 @@ export async function executeGraphQLQuery<T = any>(
             typeof query === "string"
                 ? query
                 : (query as TypedDocumentNode)?.loc?.source?.body ||
-                print(query as any);
+                  print(query as any);
 
         const result = await client.request<T>(queryString, variables);
 

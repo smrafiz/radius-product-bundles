@@ -30,7 +30,9 @@ export function PricingFaqItem({
                 </s-box>
             </s-clickable>
 
-            <div className={`grid transition-all duration-250 ease ${expanded ? "[grid-template-rows:1fr]" : "[grid-template-rows:0fr]"}`}>
+            <div
+                className={`grid transition-all duration-250 ease ${expanded ? "[grid-template-rows:1fr]" : "[grid-template-rows:0fr]"}`}
+            >
                 <div className="overflow-hidden">
                     <s-box padding="base">{description}</s-box>
                 </div>

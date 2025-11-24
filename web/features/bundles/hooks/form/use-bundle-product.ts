@@ -55,7 +55,7 @@ export function useBundleProduct(mode: "create" | "edit") {
                     const sessionToken = await app.idToken();
                     const product = await fetchProductByIdAction(
                         sessionToken,
-                        mainProductId
+                        mainProductId,
                     );
 
                     if (product) {
@@ -65,10 +65,14 @@ export function useBundleProduct(mode: "create" | "edit") {
                             shouldDirty: false,
                         });
 
-                        setValue("productDescription", product.descriptionHtml, {
-                            shouldValidate: false,
-                            shouldDirty: false,
-                        });
+                        setValue(
+                            "productDescription",
+                            product.descriptionHtml,
+                            {
+                                shouldValidate: false,
+                                shouldDirty: false,
+                            },
+                        );
 
                         // Set existing media from Shopify
                         if (product.media && product.media.length > 0) {
@@ -175,7 +179,7 @@ export function useBundleProduct(mode: "create" | "edit") {
 
                 const totalFiles = (currentFiles?.length || 0) + files.length;
                 console.log(
-                    `Added ${files.length} new files. Total pending: ${totalFiles}`
+                    `Added ${files.length} new files. Total pending: ${totalFiles}`,
                 );
             } catch (error) {
                 console.error("Failed to add media:", error);
@@ -183,7 +187,7 @@ export function useBundleProduct(mode: "create" | "edit") {
                 setIsUploading(false);
             }
         },
-        [setMediaFiles]
+        [setMediaFiles],
     );
 
     /**
@@ -193,7 +197,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         (index: number) => {
             setMediaFiles((mediaFiles || []).filter((_, i) => i !== index));
         },
-        [mediaFiles, setMediaFiles]
+        [mediaFiles, setMediaFiles],
     );
 
     /**
@@ -203,7 +207,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         (id: string) => {
             removeExistingMedia(id);
         },
-        [removeExistingMedia]
+        [removeExistingMedia],
     );
 
     /**

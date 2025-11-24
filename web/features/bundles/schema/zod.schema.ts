@@ -108,11 +108,14 @@ export const bundleSchema = z
         createProduct: z.boolean().default(true).optional(),
         productTitle: z.string().max(120).optional(),
         productDescription: z.string().max(5000).optional(),
-        images: z.array(
-            z.string().regex(/^https?:\/\/.+\..+$/, {
-                message: "Must be a valid URL starting with https://"
-            })
-        ).max(10).optional(),
+        images: z
+            .array(
+                z.string().regex(/^https?:\/\/.+\..+$/, {
+                    message: "Must be a valid URL starting with https://",
+                }),
+            )
+            .max(10)
+            .optional(),
 
         mainProductId: productGidSchema.optional(),
 

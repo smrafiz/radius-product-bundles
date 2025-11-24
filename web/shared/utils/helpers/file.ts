@@ -7,7 +7,9 @@ import { SerializableFile } from "@/shared";
 /**
  * Convert File to base64 serializable format
  */
-export async function fileToSerializable(file: File): Promise<SerializableFile> {
+export async function fileToSerializable(
+    file: File,
+): Promise<SerializableFile> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -17,11 +19,11 @@ export async function fileToSerializable(file: File): Promise<SerializableFile> 
                 name: file.name,
                 type: file.type,
                 size: file.size,
-                data: base64.split(',')[1], // Remove data:image/png;base64, prefix
+                data: base64.split(",")[1], // Remove data:image/png;base64, prefix
             });
         };
 
-        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.onerror = () => reject(new Error("Failed to read file"));
         reader.readAsDataURL(file);
     });
 }
@@ -29,7 +31,9 @@ export async function fileToSerializable(file: File): Promise<SerializableFile> 
 /**
  * Convert multiple Files to serializable format
  */
-export async function filesToSerializable(files: File[]): Promise<SerializableFile[]> {
+export async function filesToSerializable(
+    files: File[],
+): Promise<SerializableFile[]> {
     return Promise.all(files.map(fileToSerializable));
 }
 
@@ -53,6 +57,8 @@ export function serializableToFile(serializable: SerializableFile): File {
 /**
  * Convert multiple serializable files back to Files
  */
-export function serializablesToFiles(serializables: SerializableFile[]): File[] {
+export function serializablesToFiles(
+    serializables: SerializableFile[],
+): File[] {
     return serializables.map(serializableToFile);
 }

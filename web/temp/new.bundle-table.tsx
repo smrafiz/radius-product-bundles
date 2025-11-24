@@ -58,13 +58,13 @@ export function NewBundleTable() {
     const promotedBulkActions =
         selectedResources.length > 0
             ? [
-                ...getPromotedBulkActions(
-                    selectedResources,
-                    selectedBundle,
-                    selectedBundleActions,
-                ),
-                { content: "Cancel", onAction: handleClearSelection },
-            ]
+                  ...getPromotedBulkActions(
+                      selectedResources,
+                      selectedBundle,
+                      selectedBundleActions,
+                  ),
+                  { content: "Cancel", onAction: handleClearSelection },
+              ]
             : [];
 
     const bulkActions = getBulkActions(
@@ -131,7 +131,9 @@ export function NewBundleTable() {
                                             <s-button
                                                 key={index}
                                                 variant="tertiary"
-                                                onClick={() => action.onAction?.()}
+                                                onClick={() =>
+                                                    action.onAction?.()
+                                                }
                                                 fullWidth
                                             >
                                                 {action.content}
@@ -153,20 +155,20 @@ export function NewBundleTable() {
 
             <s-table variant="table">
                 {/* Header Row */}
-                    {bulkActionsMarkup ? (
-                        <s-table-header-row>
-                            <s-table-header listSlot="labeled" slot="first-column">
-                                <s-checkbox
-                                    checked={allResourcesSelected}
-                                    onChange={toggleAllSelection}
-                                />
-                            </s-table-header>
+                {bulkActionsMarkup ? (
+                    <s-table-header-row>
+                        <s-table-header listSlot="labeled" slot="first-column">
+                            <s-checkbox
+                                checked={allResourcesSelected}
+                                onChange={toggleAllSelection}
+                            />
+                        </s-table-header>
                         <s-table-header listSlot="labeled">
                             {bulkActionsMarkup}
                         </s-table-header>
-                        </s-table-header-row>
-                    ) : (
-                        <s-table-header-row>
+                    </s-table-header-row>
+                ) : (
+                    <s-table-header-row>
                         <s-table-header listSlot="labeled" slot="first-column">
                             <s-checkbox
                                 checked={allResourcesSelected}
@@ -174,25 +176,23 @@ export function NewBundleTable() {
                             />
                         </s-table-header>
                         <s-table-header listSlot="primary">
-                        Bundle Name
+                            Bundle Name
                         </s-table-header>
                         <s-table-header listSlot="labeled">
-                        Bundled Products
+                            Bundled Products
+                        </s-table-header>
+                        <s-table-header listSlot="labeled">Type</s-table-header>
+                        <s-table-header listSlot="labeled">
+                            Discount
                         </s-table-header>
                         <s-table-header listSlot="labeled">
-                        Type
+                            Status
                         </s-table-header>
                         <s-table-header listSlot="labeled">
-                        Discount
+                            Actions
                         </s-table-header>
-                        <s-table-header listSlot="labeled">
-                        Status
-                        </s-table-header>
-                        <s-table-header listSlot="labeled">
-                        Actions
-                        </s-table-header>
-                        </s-table-header-row>
-                    )}
+                    </s-table-header-row>
+                )}
 
                 {/* Table Body */}
                 <s-table-body>

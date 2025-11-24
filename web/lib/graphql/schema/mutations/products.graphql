@@ -33,11 +33,7 @@ mutation ProductUpdate(
     $media: [CreateMediaInput!]
 ) {
     productUpdate(
-        product: {
-            id: $id
-            title: $title
-            descriptionHtml: $descriptionHtml
-        }
+        product: { id: $id, title: $title, descriptionHtml: $descriptionHtml }
         media: $media
     ) {
         product {

@@ -140,11 +140,9 @@ export async function generateUniqueBundleNameService(
     shop: string,
     bundleType: string,
 ): Promise<string> {
-    const patterns = BUNDLE_NAME_PATTERNS[bundleType as keyof typeof BUNDLE_NAME_PATTERNS] || [
-        "Bundle",
-        "Product Pack",
-        "Special Offer",
-    ];
+    const patterns = BUNDLE_NAME_PATTERNS[
+        bundleType as keyof typeof BUNDLE_NAME_PATTERNS
+    ] || ["Bundle", "Product Pack", "Special Offer"];
     const shuffledPatterns = shuffleArray([...patterns]);
 
     for (const basePattern of shuffledPatterns) {

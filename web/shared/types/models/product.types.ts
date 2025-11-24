@@ -43,7 +43,7 @@ export interface Product {
 }
 
 export interface MediaImage {
-    __typename: 'MediaImage';
+    __typename: "MediaImage";
     id: string;
     image: {
         url: string;

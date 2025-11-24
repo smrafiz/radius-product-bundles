@@ -12,7 +12,10 @@ import {
  */
 export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
     const { getFieldError } = useBundleValidation();
-    const { isGeneratingName } = useBundleFormManager({ bundleType, bundleName: "" });
+    const { isGeneratingName } = useBundleFormManager({
+        bundleType,
+        bundleName: "",
+    });
 
     const nameField = useBundleField<string>("name");
     const descriptionField = useBundleField<string>("description");
@@ -28,7 +31,11 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                         const target = event.target as HTMLInputElement;
                         nameField.handleChange(target.value);
                     }}
-                    placeholder={isGeneratingName ? "Generating unique name..." : "Enter bundle name"}
+                    placeholder={
+                        isGeneratingName
+                            ? "Generating unique name..."
+                            : "Enter bundle name"
+                    }
                     details="Unique identifier for your bundle."
                     error={getFieldError("name")}
                     disabled={isGeneratingName}

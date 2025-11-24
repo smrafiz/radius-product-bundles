@@ -19,9 +19,15 @@ export function DiscountSettings() {
 
     // Use the hook for each field
     const discountTypeField = useBundleField<string>("discountType");
-    const discountValueField = useBundleField<number | undefined>("discountValue");
-    const minOrderValueField = useBundleField<number | undefined>("minOrderValue");
-    const maxDiscountAmountField = useBundleField<number | undefined>("maxDiscountAmount");
+    const discountValueField = useBundleField<number | undefined>(
+        "discountValue",
+    );
+    const minOrderValueField = useBundleField<number | undefined>(
+        "minOrderValue",
+    );
+    const maxDiscountAmountField = useBundleField<number | undefined>(
+        "maxDiscountAmount",
+    );
 
     const { isLoading, currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
@@ -37,7 +43,12 @@ export function DiscountSettings() {
     };
 
     const getDiscountValueLabel = () => {
-        return getDiscountProperty(discountTypeField.value as DiscountType, "label") || "Discount Value";
+        return (
+            getDiscountProperty(
+                discountTypeField.value as DiscountType,
+                "label",
+            ) || "Discount Value"
+        );
     };
 
     const getCurrency = () => {
@@ -89,10 +100,17 @@ export function DiscountSettings() {
                         min={0}
                         placeholder="0"
                         suffix={getSuffix()}
-                        max={discountTypeField.value === "PERCENTAGE" ? 100 : undefined}
+                        max={
+                            discountTypeField.value === "PERCENTAGE"
+                                ? 100
+                                : undefined
+                        }
                         onChange={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            const numValue = target.value === "" ? undefined : parseFloat(target.value);
+                            const numValue =
+                                target.value === ""
+                                    ? undefined
+                                    : parseFloat(target.value);
                             discountValueField.handleChange(numValue);
                         }}
                         error={getFieldError("discountValue")}
@@ -110,7 +128,10 @@ export function DiscountSettings() {
                             prefix={getCurrency()}
                             onChange={(event: Event) => {
                                 const target = event.target as HTMLInputElement;
-                                const numValue = target.value === "" ? undefined : parseFloat(target.value);
+                                const numValue =
+                                    target.value === ""
+                                        ? undefined
+                                        : parseFloat(target.value);
                                 minOrderValueField.handleChange(numValue);
                             }}
                             error={getFieldError("minOrderValue")}
@@ -121,15 +142,24 @@ export function DiscountSettings() {
                         <div className="flex-1">
                             <s-number-field
                                 label="Maximum Discount Amount (Optional)"
-                                value={maxDiscountAmountField.value?.toString() || ""}
+                                value={
+                                    maxDiscountAmountField.value?.toString() ||
+                                    ""
+                                }
                                 step={1}
                                 min={0}
                                 placeholder="No limit"
                                 prefix={getCurrency()}
                                 onChange={(event: Event) => {
-                                    const target = event.target as HTMLInputElement;
-                                    const numValue = target.value === "" ? undefined : parseFloat(target.value);
-                                    maxDiscountAmountField.handleChange(numValue);
+                                    const target =
+                                        event.target as HTMLInputElement;
+                                    const numValue =
+                                        target.value === ""
+                                            ? undefined
+                                            : parseFloat(target.value);
+                                    maxDiscountAmountField.handleChange(
+                                        numValue,
+                                    );
                                 }}
                                 error={getFieldError("maxDiscountAmount")}
                             />

@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 export function PricingStore() {
-
     const [close, setClose] = React.useState(true);
     const [loading, setLoading] = React.useState(false);
 

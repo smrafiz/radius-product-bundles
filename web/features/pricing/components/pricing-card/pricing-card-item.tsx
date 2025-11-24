@@ -12,10 +12,11 @@ export function PricingCardItem({
     frequency,
 }: PricingCardItemInfo) {
     return (
-        <div className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `} >
+        <div
+            className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `}
+        >
             {featuredText ? (
-                <div className="absolute top-[-15px] right-1.5 z-50"
-                >
+                <div className="absolute top-[-15px] right-1.5 z-50">
                     <s-badge tone="success">{featuredText}</s-badge>
                 </div>
             ) : null}

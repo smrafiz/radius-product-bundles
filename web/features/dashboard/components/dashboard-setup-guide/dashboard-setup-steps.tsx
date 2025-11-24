@@ -64,9 +64,7 @@ export function DashboardSetupSteps({
                                         gap="small"
                                         alignItems="center"
                                     >
-                                        <div className="w-4 h-4 pt-[0.05rem]">
-
-                                        </div>
+                                        <div className="w-4 h-4 pt-[0.05rem]"></div>
                                         <s-icon type="x" tone="neutral" />
                                         <span>Dismiss</span>
                                     </s-stack>
@@ -111,7 +109,10 @@ export function DashboardSetupSteps({
                             <div className="flex gap-4 w-full items-center">
                                 {completedItemsLength === items.length ? (
                                     <div className="max-h-4">
-                                        <s-stack direction="inline" gap="small-200">
+                                        <s-stack
+                                            direction="inline"
+                                            gap="small-200"
+                                        >
                                             <div>
                                                 <s-icon
                                                     type="check"
@@ -134,12 +135,17 @@ export function DashboardSetupSteps({
                                 {completedItemsLength !== items.length ? (
                                     <div className="w-full">
                                         <div className="w-full h-2 bg-[var(--p-color-border-secondary)] rounded-md overflow-hidden">
-                                            <div className="h-full bg-[var(--p-color-bg-inverse)] rounded-[4px] transition-all duration-300 ease-in-out"
-                                                 style={{
-                                                     width: `${
-                                                         (items.filter((i) => i.complete).length / items.length) * 100
-                                                     }%`,
-                                                 }}
+                                            <div
+                                                className="h-full bg-[var(--p-color-bg-inverse)] rounded-[4px] transition-all duration-300 ease-in-out"
+                                                style={{
+                                                    width: `${
+                                                        (items.filter(
+                                                            (i) => i.complete,
+                                                        ).length /
+                                                            items.length) *
+                                                        100
+                                                    }%`,
+                                                }}
                                             />
                                         </div>
                                     </div>
@@ -150,7 +156,8 @@ export function DashboardSetupSteps({
                 </s-stack>
             </s-box>
 
-            <div className={`grid transition-all duration-100 ease-out ${isGuideOpen ? "[grid-template-rows:1fr] pt-[20px]" : "[grid-template-rows:0fr] pt-0"} `}
+            <div
+                className={`grid transition-all duration-100 ease-out ${isGuideOpen ? "[grid-template-rows:1fr] pt-[20px]" : "[grid-template-rows:0fr] pt-0"} `}
                 id={accessId}
             >
                 <div className="overflow-hidden">
@@ -238,9 +245,7 @@ const SetupItem = ({
                                 {loading ? (
                                     <s-spinner size="base" />
                                 ) : complete ? (
-                                    <div
-                                        className="w-5 h-5 rounded-full bg-[#303030] flex justify-center items-center fill-white text-white"
-                                    >
+                                    <div className="w-5 h-5 rounded-full bg-[#303030] flex justify-center items-center fill-white text-white">
                                         {checkSvg}
                                     </div>
                                 ) : (

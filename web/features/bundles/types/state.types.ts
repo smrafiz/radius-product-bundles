@@ -125,13 +125,19 @@ export interface BundleState {
     ) => void;
     reorderItems: (activeId: string, overId: string) => void;
 
-    // Media files
+    // Media files - new uploads
     mediaFiles?: File[];
     setMediaFiles: (files: File[]) => void;
+
+    // Existing media - already on Shopify
     existingMedia: ExistingMedia[];
     setExistingMedia: (files: ExistingMedia[]) => void;
     clearExistingMedia: (file: File) => void;
     removeExistingMedia: (id: string) => void;
+
+    removedMediaIds: string[];
+    clearRemovedMediaIds: () => void;
+    getRemovedMediaIds: () => string[];
 
     // Computed values
     getGroupedItems: () => ProductGroup[];

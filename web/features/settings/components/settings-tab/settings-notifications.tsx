@@ -29,7 +29,9 @@ export function SettingsNotifications() {
                     <s-choice value="new-order-notification" selected>
                         New order notifications
                     </s-choice>
-                    <s-choice value="low-stock-alerts">Low stock alerts</s-choice>
+                    <s-choice value="low-stock-alerts">
+                        Low stock alerts
+                    </s-choice>
                     <s-choice value="customer-review-notification">
                         Customer review notifications
                     </s-choice>

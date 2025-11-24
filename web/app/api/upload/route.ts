@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         if (!file || !uploadUrl) {
             return NextResponse.json(
                 { error: "Missing file or uploadUrl" },
-                { status: 400, headers: corsHeaders }
+                { status: 400, headers: corsHeaders },
             );
         }
 
@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
         const fileBuffer = Buffer.from(fileArrayBuffer);
 
         // Check if the URL has signed parameters (PUT method for images)
-        const isPutMethod = uploadUrl.includes("X-Goog-Algorithm") &&
+        const isPutMethod =
+            uploadUrl.includes("X-Goog-Algorithm") &&
             uploadUrl.includes("X-Goog-Signature");
 
         let response: Response;
@@ -48,7 +49,10 @@ export async function POST(request: NextRequest) {
             console.log("[Upload API] Using POST method with FormData...");
 
             const params = paramsJson
-                ? JSON.parse(paramsJson) as Array<{ name: string; value: string }>
+                ? (JSON.parse(paramsJson) as Array<{
+                      name: string;
+                      value: string;
+                  }>)
                 : [];
 
             const shopifyFormData = new FormData();
@@ -77,11 +81,18 @@ export async function POST(request: NextRequest) {
                 errorText = "Could not read error response";
             }
 
-            console.error("[Upload API] Error:", response.status, errorText.substring(0, 500));
+            console.error(
+                "[Upload API] Error:",
+                response.status,
+                errorText.substring(0, 500),
+            );
 
             return NextResponse.json(
-                { error: `Upload failed: ${response.status}`, details: errorText.substring(0, 200) },
-                { status: 502, headers: corsHeaders }
+                {
+                    error: `Upload failed: ${response.status}`,
+                    details: errorText.substring(0, 200),
+                },
+                { status: 502, headers: corsHeaders },
             );
         }
 
@@ -91,7 +102,7 @@ export async function POST(request: NextRequest) {
         console.error("[Upload API] Error:", error);
         return NextResponse.json(
             { error: error instanceof Error ? error.message : "Upload failed" },
-            { status: 500, headers: corsHeaders }
+            { status: 500, headers: corsHeaders },
         );
     }
 }

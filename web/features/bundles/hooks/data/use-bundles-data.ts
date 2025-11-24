@@ -29,7 +29,9 @@ export const useBundlesData = () => {
     const sortValue = filters.sortSelected || "createdAt desc";
     const [sortBy, sortDirection] = sortValue.trim().split(" ");
 
-    const validSortDirection = (sortDirection?.toLowerCase() === "asc" ? "asc" : "desc") as "asc" | "desc";
+    const validSortDirection = (
+        sortDirection?.toLowerCase() === "asc" ? "asc" : "desc"
+    ) as "asc" | "desc";
     const validSortBy = sortBy || "createdAt";
 
     const VALID_STATUSES = Object.keys(BUNDLE_STATUSES) as BundleStatus[];

@@ -54,7 +54,8 @@ export function NewuseBundleSelection(bundles: any[]) {
                     if (Array.isArray(selection)) {
                         setSelectedResources(selection);
                         setAllResourcesSelected(
-                            selection.length === safeBundles.length && safeBundles.length > 0
+                            selection.length === safeBundles.length &&
+                                safeBundles.length > 0,
                         );
                     }
                     break;
@@ -64,7 +65,8 @@ export function NewuseBundleSelection(bundles: any[]) {
                     if (Array.isArray(selection)) {
                         setSelectedResources(selection);
                         setAllResourcesSelected(
-                            selection.length === safeBundles.length && safeBundles.length > 0
+                            selection.length === safeBundles.length &&
+                                safeBundles.length > 0,
                         );
                     }
                     break;
@@ -110,7 +112,8 @@ export function NewuseBundleSelection(bundles: any[]) {
 
                 // Update "all selected" state
                 setAllResourcesSelected(
-                    newSelection.length === safeBundles.length && safeBundles.length > 0
+                    newSelection.length === safeBundles.length &&
+                        safeBundles.length > 0,
                 );
 
                 return newSelection;
@@ -123,7 +126,10 @@ export function NewuseBundleSelection(bundles: any[]) {
      * Toggle all items selection
      */
     const toggleAllSelection = useCallback(() => {
-        if (allResourcesSelected || selectedResources.length === safeBundles.length) {
+        if (
+            allResourcesSelected ||
+            selectedResources.length === safeBundles.length
+        ) {
             setSelectedResources([]);
             setAllResourcesSelected(false);
         } else {

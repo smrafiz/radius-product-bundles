@@ -23,11 +23,11 @@ interface BundleTableRowProps {
  * Bundle table row with web components
  */
 export function NewBundleTableRow({
-                                   bundle,
-                                   index,
-                                   isSelected,
-                                   onToggleSelection,
-                               }: BundleTableRowProps) {
+    bundle,
+    index,
+    isSelected,
+    onToggleSelection,
+}: BundleTableRowProps) {
     const { isLoading, currencyCode } = useShopSettings();
     const { actions } = useBundleActions(bundle);
 
@@ -106,12 +106,9 @@ export function NewBundleTableRow({
             <s-table-cell>
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    style={{ display: 'flex', justifyContent: 'center' }}
+                    style={{ display: "flex", justifyContent: "center" }}
                 >
-                    <BundleActionsGroup
-                        bundle={bundle}
-                        onAction={actions}
-                    />
+                    <BundleActionsGroup bundle={bundle} onAction={actions} />
                 </div>
             </s-table-cell>
         </s-table-row>

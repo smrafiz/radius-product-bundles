@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDebounce } from "@/shared";
-import { BUNDLE_FILTERS, BUNDLE_SORT_OPTIONS, useBundleListingStore } from "@/features/bundles";
+import {
+    BUNDLE_FILTERS,
+    BUNDLE_SORT_OPTIONS,
+    useBundleListingStore,
+} from "@/features/bundles";
 
 /**
  * Hook for bundle filters
@@ -20,7 +24,10 @@ export function useBundleFilters() {
     } = useBundleListingStore();
 
     // Debounced search
-    const debouncedQuery = useDebounce(queryValue, BUNDLE_FILTERS.search.debounceMs);
+    const debouncedQuery = useDebounce(
+        queryValue,
+        BUNDLE_FILTERS.search.debounceMs,
+    );
 
     // UI state
     const [showSearch, setShowSearch] = useState(false);
@@ -37,7 +44,8 @@ export function useBundleFilters() {
     useEffect(() => {
         if (showSearch && searchContainerRef.current) {
             const timer = setTimeout(() => {
-                const searchField = searchContainerRef.current?.querySelector("s-search-field");
+                const searchField =
+                    searchContainerRef.current?.querySelector("s-search-field");
                 if (searchField) {
                     const input =
                         searchField.shadowRoot?.querySelector("input") ||
@@ -117,9 +125,12 @@ export function useBundleFilters() {
      * Get unique sort fields and directions
      */
     const sortFields = useMemo(
-        () => Array.from(
-            new Map(BUNDLE_SORT_OPTIONS.map((opt) => [opt.field, opt])).values(),
-        ),
+        () =>
+            Array.from(
+                new Map(
+                    BUNDLE_SORT_OPTIONS.map((opt) => [opt.field, opt]),
+                ).values(),
+            ),
         [],
     );
 
@@ -141,9 +152,13 @@ export function useBundleFilters() {
             const newField = formData.get("sort-field") as string;
             if (!newField) return;
 
-            const firstOption = BUNDLE_SORT_OPTIONS.find((opt) => opt.field === newField);
+            const firstOption = BUNDLE_SORT_OPTIONS.find(
+                (opt) => opt.field === newField,
+            );
             if (firstOption) {
-                setSortSelected(`${firstOption.field} ${firstOption.direction}`);
+                setSortSelected(
+                    `${firstOption.field} ${firstOption.direction}`,
+                );
             }
         },
         [setSortSelected],

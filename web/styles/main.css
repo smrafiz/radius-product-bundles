@@ -189,15 +189,15 @@
 }
 
 .fade-wrapper {
-	&.fade-hidden {
-		opacity: 0;
-		height: 0;
-		pointer-events: none;
-	}
+    &.fade-hidden {
+        opacity: 0;
+        height: 0;
+        pointer-events: none;
+    }
 
-	&.fade-visible {
-		opacity: 1;
-		height: auto;
-		transition: opacity 200ms ease-in-out;
-	}
+    &.fade-visible {
+        opacity: 1;
+        height: auto;
+        transition: opacity 200ms ease-in-out;
+    }
 }

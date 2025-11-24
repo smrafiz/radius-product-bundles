@@ -29,19 +29,28 @@ export async function fetchProductByIdAction(
     }
 
     const product = result.data.product;
-    const media = product.media?.edges?.map((edge) => {
-        const node = edge.node;
-        console.log(node);
-        if (node.__typename === 'MediaImage' && node.image) {
-            const image = node.image as { url: string; altText?: string };
-            return {
-                id: node.id,
-                url: image.url,
-                alt: image.altText || product.title,
-            };
-        }
-        return null;
-    }).filter((item): item is { id: string; url: string; alt: string } => item !== null) || [];
+    const media =
+        product.media?.edges
+            ?.map((edge) => {
+                const node = edge.node;
+                console.log(node);
+                if (node.__typename === "MediaImage" && node.image) {
+                    const image = node.image as {
+                        url: string;
+                        altText?: string;
+                    };
+                    return {
+                        id: node.id,
+                        url: image.url,
+                        alt: image.altText || product.title,
+                    };
+                }
+                return null;
+            })
+            .filter(
+                (item): item is { id: string; url: string; alt: string } =>
+                    item !== null,
+            ) || [];
 
     return {
         id: product.id,

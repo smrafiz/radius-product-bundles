@@ -12,4 +12,4 @@ export * from "./data-display";
 export { Knob } from "./fields/knob";
 export { Navigation } from "./navigation/navigation";
 export { ProtectedRoute } from "./auth/protected-route";
-export {EditorWysiwyg} from  "./fields/editor/editor-wysiwyg"
+export { EditorWysiwyg } from "./fields/editor/editor-wysiwyg";

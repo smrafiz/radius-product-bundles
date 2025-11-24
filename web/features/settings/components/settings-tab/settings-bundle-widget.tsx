@@ -5,9 +5,7 @@ export function SettingsBundleWidget() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">
-                        Bundle widget
-                    </div>
+                    <div className="text-lg">Bundle widget</div>
                 </s-heading>
                 <s-divider />
 
@@ -15,13 +13,16 @@ export function SettingsBundleWidget() {
                     <s-choice value="show-bundle" selected>
                         Show bundles on product pages
                         <s-text slot="details">
-                            Uncheck if you don't want to show bundle widget on product pages automatically.
+                            Uncheck if you don't want to show bundle widget on
+                            product pages automatically.
                         </s-text>
                     </s-choice>
                     <s-choice value="show-multiple-bundle">
-                        Show multiple bundles on product pages (won't affect volume discounts)
+                        Show multiple bundles on product pages (won't affect
+                        volume discounts)
                         <s-text slot="details">
-                            Check if you want to display all bundles relevant to the current product on product pages.
+                            Check if you want to display all bundles relevant to
+                            the current product on product pages.
                         </s-text>
                     </s-choice>
                 </s-choice-list>
@@ -48,13 +49,17 @@ export function SettingsBundleWidget() {
                     <s-choice value="use-compare-price">
                         Use compare at price as base price in bundle widget
                         <s-text slot="details">
-                            Compare at price can only be used for display purposes in bundle widget. It won't be used when calculating the actual discount at checkout.
+                            Compare at price can only be used for display
+                            purposes in bundle widget. It won't be used when
+                            calculating the actual discount at checkout.
                         </s-text>
                     </s-choice>
                     <s-choice value="show-unit-price">
                         Show unit price
                         <s-text slot="details">
-                            Unit price will be displayed for products which have the unit price configured. Unit prices are available only for Shopify stores from France or Germany.
+                            Unit price will be displayed for products which have
+                            the unit price configured. Unit prices are available
+                            only for Shopify stores from France or Germany.
                         </s-text>
                     </s-choice>
                 </s-choice-list>
@@ -68,27 +73,36 @@ export function SettingsBundleWidget() {
                     <s-choice value="enable-product-links">
                         Enable product links in bundle widgets
                         <s-text slot="details">
-                            Uncheck if you don't want to have links in the widgets which lead to the individual product pages.
+                            Uncheck if you don't want to have links in the
+                            widgets which lead to the individual product pages.
                         </s-text>
                     </s-choice>
                 </s-choice-list>
 
                 <s-divider />
 
-                <s-choice-list label="WIDGET DISPLAY" name="widget-display" multiple>
+                <s-choice-list
+                    label="WIDGET DISPLAY"
+                    name="widget-display"
+                    multiple
+                >
                     <s-choice value="animate-cart-button" selected>
                         Animate add to cart button
                         <s-text slot="details">
-                            Add to cart button in widgets will bounce to attract attention.
+                            Add to cart button in widgets will bounce to attract
+                            attention.
                         </s-text>
                     </s-choice>
                     <s-choice value="product-out-stock">
-                        Show if product is out of stock and hide unavailable variants in dropdowns
+                        Show if product is out of stock and hide unavailable
+                        variants in dropdowns
                     </s-choice>
                     <s-choice value="disable-cart-button" selected>
-                        Disable add to cart button on bundles with 1 or more unavailable products
+                        Disable add to cart button on bundles with 1 or more
+                        unavailable products
                         <s-text slot="details">
-                            Add to cart button will be disabled if one or more products in the bundle are unavailable for purchase.
+                            Add to cart button will be disabled if one or more
+                            products in the bundle are unavailable for purchase.
                         </s-text>
                     </s-choice>
                 </s-choice-list>
@@ -102,11 +116,17 @@ export function SettingsBundleWidget() {
 
                 <s-divider />
 
-                <s-choice-list label="QUANTITY FIELD" name="quantity-field" multiple>
+                <s-choice-list
+                    label="QUANTITY FIELD"
+                    name="quantity-field"
+                    multiple
+                >
                     <s-choice value="animate-cart-button" selected>
                         Show quantity field before add to cart button
                         <s-text slot="details">
-                            Turn this on if you want to show the quantity input field before the add to cart button in the bundle widgets.
+                            Turn this on if you want to show the quantity input
+                            field before the add to cart button in the bundle
+                            widgets.
                         </s-text>
                     </s-choice>
                 </s-choice-list>
@@ -125,32 +145,45 @@ export function SettingsBundleWidget() {
 
                 <s-divider />
 
-                <s-choice-list label="STYLE OPTIONS" name="style-options" multiple>
+                <s-choice-list
+                    label="STYLE OPTIONS"
+                    name="style-options"
+                    multiple
+                >
                     <s-choice value="use-retina-image">
                         Use retina images
                         <s-text slot="details">
-                            Product images will be served in higher resolution, suitable for retina displays, but your Google Pagespeed score might get downgraded for that.
+                            Product images will be served in higher resolution,
+                            suitable for retina displays, but your Google
+                            Pagespeed score might get downgraded for that.
                         </s-text>
                     </s-choice>
                     <s-choice value="product-box-size" selected>
                         Make product boxes same size
                         <s-text slot="details">
-                            The height of product boxes in the row will be the same.
+                            The height of product boxes in the row will be the
+                            same.
                         </s-text>
                     </s-choice>
                     <s-choice value="align-image" selected>
                         Align images at the top of the product card
                     </s-choice>
                     <s-choice value="list-product-name" selected>
-                        List each product name in a new line for variant level bundles with a custom bundle image
+                        List each product name in a new line for variant level
+                        bundles with a custom bundle image
                         <s-text slot="details">
-                            This setting only applies to variant level bundles which have a custom bundle image set. If you turn it on, each product name in the bundle will be listed in it's own line.
+                            This setting only applies to variant level bundles
+                            which have a custom bundle image set. If you turn it
+                            on, each product name in the bundle will be listed
+                            in it's own line.
                         </s-text>
                     </s-choice>
                     <s-choice value="show-variant-product" selected>
-                        Show only variant name on products in variant level bundles
+                        Show only variant name on products in variant level
+                        bundles
                         <s-text slot="details">
-                            Display only variant name and hide the product name on your bundle widget for variant level bundles.
+                            Display only variant name and hide the product name
+                            on your bundle widget for variant level bundles.
                         </s-text>
                     </s-choice>
                 </s-choice-list>

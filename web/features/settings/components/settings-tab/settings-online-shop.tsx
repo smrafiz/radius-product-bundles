@@ -17,9 +17,7 @@ export function SettingsOnlineShop() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">
-                        Enable in online shop
-                    </div>
+                    <div className="text-lg">Enable in online shop</div>
                 </s-heading>
 
                 <s-divider />
@@ -42,16 +40,20 @@ export function SettingsOnlineShop() {
                 </s-stack>
 
                 <s-choice-list name="automatically" multiple>
-                    <s-choice value="automatically-inject">Automatically
-                        Automatically inject widgets into HTML
+                    <s-choice value="automatically-inject">
+                        Automatically Automatically inject widgets into HTML
                         <s-text slot="details">
-                            Uncheck to stop showing bundle widgets on places where you didn't manually put in the bundler target elements.
+                            Uncheck to stop showing bundle widgets on places
+                            where you didn't manually put in the bundler target
+                            elements.
                         </s-text>
                     </s-choice>
                     <s-choice value="enable-online-shop">
                         Enable in online shop
                         <s-text slot="details">
-                            Uncheck to stop showing bundle widgets, savings popups and stop applying discounts in online shop. Bundler can still be used in Shopify POS.
+                            Uncheck to stop showing bundle widgets, savings
+                            popups and stop applying discounts in online shop.
+                            Bundler can still be used in Shopify POS.
                         </s-text>
                     </s-choice>
                 </s-choice-list>

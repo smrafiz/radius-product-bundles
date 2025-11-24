@@ -8,7 +8,8 @@ function getYouTubeId(url: string) {
     try {
         const u = new URL(url);
         if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
-        if (u.hostname.includes("youtube.com")) return  u.searchParams.get("v") || null;
+        if (u.hostname.includes("youtube.com"))
+            return u.searchParams.get("v") || null;
         return null;
     } catch {
         const m = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
@@ -73,8 +74,9 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
                     <s-stack gap="small">
                         <s-heading>See it in action</s-heading>
                         <s-text>
-                            Bundles are a great way to increase average order value, move slow-moving
-                            inventory, and offer more value to your customers.
+                            Bundles are a great way to increase average order
+                            value, move slow-moving inventory, and offer more
+                            value to your customers.
                         </s-text>
                         <s-button
                             variant="secondary"
@@ -125,7 +127,11 @@ export default function Modal({ videoUrl }: { videoUrl: string }) {
     }, []);
 
     return (
-        <s-modal id="video-modal" ref={modalRef as any} heading="Video Tutorial">
+        <s-modal
+            id="video-modal"
+            ref={modalRef as any}
+            heading="Video Tutorial"
+        >
             <ReactPlayer
                 src={videoUrl}
                 playing={playing}

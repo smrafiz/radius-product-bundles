@@ -1,12 +1,6 @@
 "use client";
 
 import {
-    filesToSerializable,
-    useAppNavigation,
-    useGlobalBanner,
-    withAsyncLoader,
-} from "@/shared";
-import {
     BundleFormData,
     createBundleAction,
     invalidateBundleCache,
@@ -18,16 +12,69 @@ import {
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { smartDeleteProductMediaAction } from "@/shared/actions";
+import { useAppNavigation, useGlobalBanner, withAsyncLoader } from "@/shared";
 
 export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
-    const { setSaving, resetDirty, setStep, mediaFiles, setMediaFiles } = useBundleStore();
+    const {
+        setSaving,
+        resetDirty,
+        setStep,
+        mediaFiles,
+        setMediaFiles,
+        removedMediaIds,
+        clearRemovedMediaIds,
+    } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { createProduct, isCreating: isCreatingProduct } =
         useCreateBundleProduct();
     const { uploadAndAttachMedia } = useMediaUpload();
+
+    /**
+     * Smart delete removed media from the Shopify product
+     */
+    const deleteRemovedMedia = async (
+        token: string,
+        productId: string,
+        mediaIds: string[],
+    ): Promise<boolean> => {
+        if (mediaIds.length === 0) {
+            return true;
+        }
+
+        console.log(
+            `Smart deleting ${mediaIds.length} media items from product...`,
+        );
+
+        const deleteResult = await smartDeleteProductMediaAction(
+            token,
+            productId,
+            mediaIds,
+        );
+
+        if (deleteResult.status === "error") {
+            console.error("Media deletion failed:", deleteResult.message);
+            return false;
+        }
+
+        if (deleteResult.data) {
+            const { deletedMediaIds, removedMediaIds, sharedCount } =
+                deleteResult.data;
+            console.log(
+                `✅ Media processed: ${deletedMediaIds.length} deleted, ${removedMediaIds.length} unlinked`,
+            );
+            if (sharedCount > 0) {
+                console.log(
+                    `   ↳ ${sharedCount} file(s) shared with other products`,
+                );
+            }
+        }
+
+        return true;
+    };
 
     const handleSubmit = withAsyncLoader(async (data: BundleFormData) => {
         try {
@@ -51,7 +98,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                     if (!productData || !productData.mainProductId) {
                         showError("Failed to create product", {
-                            content: "Could not create Shopify product. Please try again.",
+                            content:
+                                "Could not create Shopify product. Please try again.",
                         });
                         return;
                     }
@@ -61,10 +109,14 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     // Add mainProductId to bundle data
                     data.mainProductId = productData.mainProductId;
 
-                    const newFiles = (mediaFiles || []).filter((f): f is File => f instanceof File);
+                    const newFiles = (mediaFiles || []).filter(
+                        (f): f is File => f instanceof File,
+                    );
 
                     if (newFiles.length > 0) {
-                        console.log(`Uploading ${newFiles.length} media files...`);
+                        console.log(
+                            `Uploading ${newFiles.length} media files...`,
+                        );
 
                         const mediaResult = await uploadAndAttachMedia(
                             productData.mainProductId,
@@ -73,7 +125,10 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         );
 
                         if (!mediaResult.success) {
-                            console.error("Media upload failed:", mediaResult.error);
+                            console.error(
+                                "Media upload failed:",
+                                mediaResult.error,
+                            );
                         } else {
                             console.log("✅ Media uploaded successfully");
                             setMediaFiles([]);
@@ -134,17 +189,37 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     );
 
                     if (productResult.status === "error") {
-                        console.error("Failed to update product:", productResult.message);
+                        console.error(
+                            "Failed to update product:",
+                            productResult.message,
+                        );
                     } else {
                         console.log("✅ Product updated");
                     }
                 }
 
+                // Delete removed media FIRST (before uploading new)
+                if (removedMediaIds.length > 0) {
+                    const deleteSuccess = await deleteRemovedMedia(
+                        token,
+                        data.mainProductId,
+                        removedMediaIds,
+                    );
+
+                    if (deleteSuccess) {
+                        clearRemovedMediaIds();
+                    }
+                }
+
                 // Upload media (only new files)
                 if (mediaFiles && mediaFiles.length > 0 && data.mainProductId) {
-                    const newFiles = mediaFiles.filter((f): f is File => f instanceof File);
+                    const newFiles = mediaFiles.filter(
+                        (f): f is File => f instanceof File,
+                    );
                     if (newFiles.length > 0) {
-                        console.log(`Uploading ${newFiles.length} new media files...`);
+                        console.log(
+                            `Uploading ${newFiles.length} new media files...`,
+                        );
 
                         const mediaResult = await uploadAndAttachMedia(
                             data.mainProductId,
@@ -153,7 +228,10 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         );
 
                         if (!mediaResult.success) {
-                            console.error("Media upload failed:", mediaResult.error);
+                            console.error(
+                                "Media upload failed:",
+                                mediaResult.error,
+                            );
                         } else {
                             console.log("✅ Media uploaded");
                             setMediaFiles([]);
