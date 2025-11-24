@@ -3,18 +3,31 @@ import React from 'react';
 import Editor from 'react-simple-wysiwyg';
 import { useBundleProduct } from "@/features/bundles";
 
-export function EditorWysiwyg () {
+export function EditorWysiwyg ({ mode }: { mode: "create" | "edit" }) {
 
-    //const {handleDescriptionChange} = useBundleProduct(mode);
+    const {
+        handleDescriptionChange,
+        productDescription,
+    } = useBundleProduct(mode);
 
-    const [value, setValue] = React.useState('');
-    const onChangeHandler = () => {
-        setValue(e.target.value);
-    }
+    // const [value, setValue] = React.useState('');
+    // const onChangeHandler = (e) => {
+    //     setValue(e.target.value);
+    // }
 
     return (
         <>
-            <Editor value={value} onChange={onChangeHandler} />
+            <Editor
+                //value={value}
+                name="productDescription"
+                value={productDescription}
+                placeholder="Describe this bundle product..."
+                // onChange={(event: Event) => {
+                //     const target = event.target as HTMLTextAreaElement;
+                //     handleDescriptionChange(target.value);
+                // }}
+                //onChange={onChangeHandler}
+            />
         </>
     );
 }

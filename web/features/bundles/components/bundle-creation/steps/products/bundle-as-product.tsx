@@ -2,11 +2,11 @@
 
 import {
     MediaGrid,
-    EditorWysiwyg,
     useBundleProduct,
     useBundleValidation,
 } from "@/features/bundles";
-
+import Editor from "react-simple-wysiwyg";
+import React from "react";
 /**
  * Bundle as product configuration component
  */
@@ -101,25 +101,34 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         details={
                             mode === "create"
                                 ? "Automatically synced with bundle name"
-                                : "Edit to update the Shopify product title"
+                                : "Edit to update the shopify product title"
                         }
                     />
 
                     {/* Description field */}
-                    <s-text-area
-                        label="Product description"
+                    {/*<s-text-area*/}
+                    {/*    label="Product description"*/}
+                    {/*    name="productDescription"*/}
+                    {/*    value={productDescription}*/}
+                    {/*    placeholder="Describe this bundle product..."*/}
+                    {/*    onInput={(event: Event) => {*/}
+                    {/*        const target = event.target as HTMLTextAreaElement;*/}
+                    {/*        handleDescriptionChange(target.value);*/}
+                    {/*    }}*/}
+                    {/*    rows={3}*/}
+                    {/*    error={getFieldError("productDescription")}*/}
+                    {/*/>*/}
+
+                    <Editor
                         name="productDescription"
                         value={productDescription}
                         placeholder="Describe this bundle product..."
-                        onInput={(event: Event) => {
+                        onChange={(event: Event) => {
                             const target = event.target as HTMLTextAreaElement;
                             handleDescriptionChange(target.value);
-                        }}
-                        rows={3}
-                        error={getFieldError("productDescription")}
+                        }
+                    }
                     />
-
-                    <EditorWysiwyg />
 
                     {/* Media section */}
                     <s-stack gap="small">
