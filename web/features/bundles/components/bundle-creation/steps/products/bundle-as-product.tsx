@@ -5,14 +5,12 @@ import {
     useBundleProduct,
     useBundleValidation,
 } from "@/features/bundles";
-// import Editor from "react-simple-wysiwyg";
 import React from "react";
 import { EditorWysiwyg } from "@/shared/components/fields/editor/editor-wysiwyg";
+
 /**
  * Bundle as product configuration component
  */
-
-
 export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
     const { getFieldError } = useBundleValidation();
     const {
@@ -20,6 +18,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         productTitle,
         productDescription,
         mediaFiles,
+        existingMedia,
         isUploading,
         isLoadingProduct,
         hoveredIndex,
@@ -28,7 +27,8 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         handleTitleChange,
         handleDescriptionChange,
         handleMediaUpload,
-        removeMediaFile,
+        removeNewMediaFile,
+        handleRemoveExistingMedia,
         setHoveredItem,
         getProductEditUrl,
     } = useBundleProduct(mode);
@@ -106,31 +106,6 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         }
                     />
 
-                    {/* Description field */}
-                    {/*<s-text-area*/}
-                    {/*    label="Product description"*/}
-                    {/*    name="productDescription"*/}
-                    {/*    value={productDescription}*/}
-                    {/*    placeholder="Describe this bundle product..."*/}
-                    {/*    onInput={(event: Event) => {*/}
-                    {/*        const target = event.target as HTMLTextAreaElement;*/}
-                    {/*        handleDescriptionChange(target.value);*/}
-                    {/*    }}*/}
-                    {/*    rows={3}*/}
-                    {/*    error={getFieldError("productDescription")}*/}
-                    {/*/>*/}
-
-                    {/*<Editor*/}
-                    {/*    name="productDescription"*/}
-                    {/*    value={productDescription}*/}
-                    {/*    placeholder="Describe this bundle product..."*/}
-                    {/*    onChange={(event: Event) => {*/}
-                    {/*        const target = event.target as HTMLTextAreaElement;*/}
-                    {/*        handleDescriptionChange(target.value);*/}
-                    {/*    }*/}
-                    {/*}*/}
-                    {/*/>*/}
-
                     <EditorWysiwyg mode={mode} />
 
                     {/* Media section */}
@@ -147,12 +122,14 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         </s-stack>
 
                         <MediaGrid
-                            mediaFiles={mediaFiles}
+                            mediaFiles={mediaFiles || []}
+                            existingMedia={existingMedia}
                             hoveredIndex={hoveredIndex}
                             isUploading={isUploading}
                             onHoverStart={setHoveredItem}
                             onHoverEnd={() => setHoveredItem(null)}
-                            onRemove={removeMediaFile}
+                            onRemoveNew={removeNewMediaFile}
+                            onRemoveExisting={handleRemoveExistingMedia}
                             onUpload={handleMediaUpload}
                         />
                     </s-stack>

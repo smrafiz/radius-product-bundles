@@ -14,7 +14,7 @@ import { executeGraphQLQuery } from "@/lib";
 /**
  * Fetch product data for bundle edit mode
  */
-export async function fetchProductById(
+export async function fetchProductByIdAction(
     sessionToken: string,
     productId: string,
 ) {
@@ -29,24 +29,25 @@ export async function fetchProductById(
     }
 
     const product = result.data.product;
+    const media = product.media?.edges?.map((edge) => {
+        const node = edge.node;
+        console.log(node);
+        if (node.__typename === 'MediaImage' && node.image) {
+            const image = node.image as { url: string; altText?: string };
+            return {
+                id: node.id,
+                url: image.url,
+                alt: image.altText || product.title,
+            };
+        }
+        return null;
+    }).filter((item): item is { id: string; url: string; alt: string } => item !== null) || [];
 
     return {
         id: product.id,
         title: product.title,
         descriptionHtml: product.descriptionHtml || "",
         handle: product.handle,
-        // images:
-        //     product.images?.edges?.map((edge) => ({
-        //         id: edge.node.id,
-        //         url: edge.node.url,
-        //         altText: edge.node.altText || "",
-        //     })) || [],
-        // featuredImage: product.featuredImage
-        //     ? {
-        //         id: product.featuredImage.id,
-        //         url: product.featuredImage.url,
-        //         altText: product.featuredImage.altText || "",
-        //     }
-        //     : null,
+        media,
     };
 }

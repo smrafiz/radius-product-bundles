@@ -340,11 +340,13 @@ export interface BundleConfiguration {
  */
 export interface MediaGridProps {
     mediaFiles: File[];
+    existingMedia: ExistingMedia[];
     hoveredIndex: number | null;
     isUploading: boolean;
     onHoverStart: (index: number) => void;
     onHoverEnd: () => void;
-    onRemove: (index: number) => void;
+    onRemoveNew: (index: number) => void;
+    onRemoveExisting: (id: string) => void;
     onUpload: (files: File[]) => void;
 }
 
@@ -352,13 +354,14 @@ export interface MediaGridProps {
  * Individual media grid item with hover effects
  */
 export interface MediaGridItemProps {
-    file: File;
+    src: string;
+    alt: string;
     index: number;
     isHovered: boolean;
     isFirst: boolean;
     onHoverStart: (index: number) => void;
     onHoverEnd: () => void;
-    onRemove: (index: number) => void;
+    onRemove: () => void;
 }
 
 export interface CreateBundleProductInput {
@@ -373,4 +376,10 @@ export interface UpdateProductInput {
     title?: string;
     description?: string;
     mediaFiles?: SerializableFile[];
+}
+
+export interface ExistingMedia {
+    id: string;
+    url: string;
+    alt?: string;
 }

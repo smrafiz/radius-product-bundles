@@ -3,87 +3,11 @@
 import { MediaGridItemProps, MediaGridProps } from "@/features/bundles";
 
 /**
- * Media grid component for product images
+ * Unified media item component for both existing and new media
  */
-export function MediaGrid({
-    mediaFiles,
-    hoveredIndex,
-    isUploading,
-    onHoverStart,
-    onHoverEnd,
-    onRemove,
-    onUpload,
-}: MediaGridProps) {
-    const handleDropzoneChange = (event: Event) => {
-        const input = event.currentTarget as HTMLInputElement;
-        const files = input.files ? Array.from(input.files) : [];
-        onUpload(files);
-    };
-
-    return (
-        <div className="relative">
-            <s-stack
-                direction={mediaFiles.length > 0 ? "inline" : "block"}
-                gap="none"
-            >
-                <div className="grid grid-cols-6 auto-rows-fr gap-[var(--p-space-150)]">
-                    {mediaFiles.map((file, index) => (
-                        <MediaGridItem
-                            key={`${file.name}-${index}`}
-                            file={file}
-                            index={index}
-                            isHovered={hoveredIndex === index}
-                            isFirst={index === 0}
-                            onHoverStart={onHoverStart}
-                            onHoverEnd={onHoverEnd}
-                            onRemove={onRemove}
-                        />
-                    ))}
-
-                    {/* Additional upload zone */}
-                    {mediaFiles.length > 0 && (
-                        <div className="realative">
-                            <s-drop-zone
-                                accessibilityLabel="Upload additional images"
-                                accept="image/*"
-                                multiple
-                                onChange={handleDropzoneChange}
-                            />
-                        </div>
-                    )}
-                </div>
-
-                {/* Initial upload zone */}
-                {mediaFiles.length === 0 && (
-                    <div className="realative">
-                        <s-drop-zone
-                            label="Upload image"
-                            name="image"
-                            accessibilityLabel="Upload image of type jpg, png, or gif"
-                            labelAccessibilityVisibility="exclusive"
-                            accept="image/*"
-                            multiple
-                            onChange={handleDropzoneChange}
-                        />
-                    </div>
-                )}
-            </s-stack>
-
-            {/* Loading overlay */}
-            {isUploading && (
-                <div
-                    className="absolute inset-0 flex items-center justify-center
-                        bg-white/90 rounded-lg z-10"
-                >
-                    <s-spinner size="base" />
-                </div>
-            )}
-        </div>
-    );
-}
-
-function MediaGridItem({
-    file,
+function MediaItem({
+    src,
+    alt,
     index,
     isHovered,
     isFirst,
@@ -106,8 +30,8 @@ function MediaGridItem({
                 }`}
             >
                 <s-image
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
+                    src={src}
+                    alt={alt}
                     aspectRatio="1/1"
                     inlineSize="fill"
                     objectFit="cover"
@@ -120,10 +44,10 @@ function MediaGridItem({
                 <div className="absolute z-10 top-1.5 right-1.5">
                     <s-button
                         icon="delete"
-                        accessibilityLabel="Delete image"
+                        accessibilityLabel="Remove image"
                         variant="secondary"
                         tone="critical"
-                        onClick={() => onRemove(index)}
+                        onClick={onRemove}
                     />
                 </div>
             )}
@@ -131,6 +55,116 @@ function MediaGridItem({
             {/* Hover overlay */}
             {isHovered && (
                 <div className="bg-[rgba(255,255,255,0.3)] w-full h-full rounded-lg absolute left-0 top-0" />
+            )}
+        </div>
+    );
+}
+
+/**
+ * Media grid component for product images
+ */
+export function MediaGrid({
+    mediaFiles,
+    existingMedia,
+    hoveredIndex,
+    isUploading,
+    onHoverStart,
+    onHoverEnd,
+    onRemoveNew,
+    onRemoveExisting,
+    onUpload,
+}: MediaGridProps) {
+    /**
+     * Handles file selection from the drop zone
+     */
+    const handleDropzoneChange = (event: Event) => {
+        const input = event.currentTarget as HTMLInputElement;
+        const files = input.files ? Array.from(input.files) : [];
+        onUpload(files);
+    };
+
+    const totalMedia = existingMedia.length + mediaFiles.length;
+    const getGridClass = () => {
+        if (totalMedia === 1) {
+            return "grid grid-cols-3 auto-rows-[80px] gap-[var(--p-space-150)]";
+        }
+        return "grid grid-cols-6 auto-rows-[80px] gap-[var(--p-space-150)]";
+    };
+
+    return (
+        <div className="relative">
+            <s-stack direction={totalMedia > 0 ? "inline" : "block"} gap="none">
+                <div className={getGridClass()}>
+                    {/* Existing media items */}
+                    {existingMedia.map((media, index) => (
+                        <MediaItem
+                            key={media.id}
+                            src={media.url}
+                            alt={media.alt || "Product image"}
+                            index={index}
+                            isHovered={hoveredIndex === index}
+                            isFirst={index === 0}
+                            onHoverStart={onHoverStart}
+                            onHoverEnd={onHoverEnd}
+                            onRemove={() => onRemoveExisting(media.id)}
+                        />
+                    ))}
+
+                    {/* New media items (pending upload) */}
+                    {mediaFiles.map((file, index) => {
+                        const displayIndex = existingMedia.length + index;
+                        return (
+                            <MediaItem
+                                key={`new-${file.name}-${index}`}
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                index={displayIndex}
+                                isHovered={hoveredIndex === displayIndex}
+                                isFirst={displayIndex === 0}
+                                onHoverStart={onHoverStart}
+                                onHoverEnd={onHoverEnd}
+                                onRemove={() => onRemoveNew(index)}
+                            />
+                        );
+                    })}
+
+                    {/* Additional upload zone */}
+                    {totalMedia > 0 && (
+                        <div className="relative">
+                            <s-drop-zone
+                                accessibilityLabel="Upload additional images"
+                                accept="image/*"
+                                multiple
+                                onChange={handleDropzoneChange}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* Initial upload zone */}
+                {totalMedia === 0 && (
+                    <div className="relative">
+                        <s-drop-zone
+                            label="Upload image"
+                            name="image"
+                            accessibilityLabel="Upload image of type jpg, png, or gif"
+                            labelAccessibilityVisibility="exclusive"
+                            accept="image/*"
+                            multiple
+                            onChange={handleDropzoneChange}
+                        />
+                    </div>
+                )}
+            </s-stack>
+
+            {/* Loading overlay */}
+            {isUploading && (
+                <div
+                    className="absolute inset-0 flex items-center justify-center
+                        bg-white/90 rounded-lg z-10"
+                >
+                    <s-spinner size="base" />
+                </div>
             )}
         </div>
     );

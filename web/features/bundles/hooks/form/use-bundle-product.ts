@@ -1,7 +1,7 @@
 "use client";
 
 import {
-    fetchProductById,
+    fetchProductByIdAction,
     useBundleFormMethods,
     useBundleStore,
 } from "@/features/bundles";
@@ -14,7 +14,14 @@ import { useAppBridge } from "@shopify/app-bridge-react";
  */
 export function useBundleProduct(mode: "create" | "edit") {
     const { watch, setValue } = useBundleFormMethods();
-    const { bundleData, mediaFiles: storeMediaFiles, setMediaFiles } = useBundleStore();
+    const {
+        bundleData,
+        mediaFiles,
+        existingMedia,
+        setMediaFiles,
+        setExistingMedia,
+        removeExistingMedia,
+    } = useBundleStore();
     const app = useAppBridge();
 
     const bundleName = watch("name");
@@ -22,7 +29,6 @@ export function useBundleProduct(mode: "create" | "edit") {
     const productTitle = watch("productTitle");
     const productDescription = watch("productDescription");
     const mainProductId = bundleData.mainProductId;
-    const mediaFiles = storeMediaFiles || [];
 
     const [isEnabled, setIsEnabled] = useState<boolean>(
         createProduct !== undefined ? createProduct : true,
@@ -47,7 +53,7 @@ export function useBundleProduct(mode: "create" | "edit") {
                 setIsLoadingProduct(true);
                 try {
                     const sessionToken = await app.idToken();
-                    const product = await fetchProductById(
+                    const product = await fetchProductByIdAction(
                         sessionToken,
                         mainProductId
                     );
@@ -63,6 +69,11 @@ export function useBundleProduct(mode: "create" | "edit") {
                             shouldValidate: false,
                             shouldDirty: false,
                         });
+
+                        // Set existing media from Shopify
+                        if (product.media && product.media.length > 0) {
+                            setExistingMedia(product.media);
+                        }
                     }
                 } catch (error) {
                     console.error("Failed to fetch product:", error);
@@ -73,7 +84,7 @@ export function useBundleProduct(mode: "create" | "edit") {
 
             void loadProduct();
         }
-    }, [mode, mainProductId, isEnabled, app, setValue]);
+    }, [mode, mainProductId, isEnabled, app, setValue, setExistingMedia]);
 
     // Initialize createProduct field on mount
     useEffect(() => {
@@ -101,8 +112,9 @@ export function useBundleProduct(mode: "create" | "edit") {
             setValue("productTitle", "", { shouldValidate: false });
             setValue("productDescription", "", { shouldValidate: false });
             setMediaFiles([]);
+            setExistingMedia([]);
         }
-    }, [isEnabled, setValue]);
+    }, [isEnabled, setValue, setMediaFiles, setExistingMedia]);
 
     /**
      * Toggle bundle as a product
@@ -146,7 +158,7 @@ export function useBundleProduct(mode: "create" | "edit") {
     );
 
     /**
-     * Handle media file upload
+     * Handle new media file upload (adds to pending files)
      */
     const handleMediaUpload = useCallback(
         async (files: File[]) => {
@@ -155,26 +167,43 @@ export function useBundleProduct(mode: "create" | "edit") {
             setIsUploading(true);
 
             try {
-                await new Promise((resolve) => setTimeout(resolve, 400));
-                setMediaFiles([...mediaFiles, ...files]);
-                console.log(`Added ${files.length} files. Total: ${mediaFiles.length + files.length}`);
+                await new Promise((resolve) => setTimeout(resolve, 300));
+
+                // Get fresh state directly from the store to avoid stale closure
+                const currentFiles = useBundleStore.getState().mediaFiles;
+                setMediaFiles([...(currentFiles || []), ...files]);
+
+                const totalFiles = (currentFiles?.length || 0) + files.length;
+                console.log(
+                    `Added ${files.length} new files. Total pending: ${totalFiles}`
+                );
             } catch (error) {
-                console.error("Failed to upload media:", error);
+                console.error("Failed to add media:", error);
             } finally {
                 setIsUploading(false);
             }
+        },
+        [setMediaFiles]
+    );
+
+    /**
+     * Remove a new (pending) media file
+     */
+    const removeNewMediaFile = useCallback(
+        (index: number) => {
+            setMediaFiles((mediaFiles || []).filter((_, i) => i !== index));
         },
         [mediaFiles, setMediaFiles]
     );
 
     /**
-     * Remove media file
+     * Remove an existing media (from Shopify)
      */
-    const removeMediaFile = useCallback(
-        (index: number) => {
-            setMediaFiles(mediaFiles.filter((_, i) => i !== index));
+    const handleRemoveExistingMedia = useCallback(
+        (id: string) => {
+            removeExistingMedia(id);
         },
-        [mediaFiles, setMediaFiles]
+        [removeExistingMedia]
     );
 
     /**
@@ -200,7 +229,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         }
 
         return `https://${shopDomain}/admin/products/${numericId}`;
-    }, [mainProductId]);
+    }, [mainProductId, shopDomain]);
 
     return {
         isEnabled,
@@ -208,6 +237,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         productTitle: productTitle || bundleName,
         productDescription: productDescription || "",
         mediaFiles,
+        existingMedia,
         isUploading,
         isLoadingProduct,
         hoveredIndex,
@@ -216,7 +246,8 @@ export function useBundleProduct(mode: "create" | "edit") {
         handleTitleChange,
         handleDescriptionChange,
         handleMediaUpload,
-        removeMediaFile,
+        removeNewMediaFile,
+        handleRemoveExistingMedia,
         setHoveredItem,
         getProductEditUrl,
     };

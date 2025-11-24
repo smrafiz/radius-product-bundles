@@ -8,8 +8,8 @@ import {
     BundleListItem,
     BundleMetrics,
     BundleStatus,
-    BundleType,
     DisplaySettings,
+    ExistingMedia,
     ExtendedBundleFormData,
     Pagination,
     ProductGroup,
@@ -128,6 +128,10 @@ export interface BundleState {
     // Media files
     mediaFiles?: File[];
     setMediaFiles: (files: File[]) => void;
+    existingMedia: ExistingMedia[];
+    setExistingMedia: (files: ExistingMedia[]) => void;
+    clearExistingMedia: (file: File) => void;
+    removeExistingMedia: (id: string) => void;
 
     // Computed values
     getGroupedItems: () => ProductGroup[];

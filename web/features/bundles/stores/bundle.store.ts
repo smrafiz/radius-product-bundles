@@ -7,6 +7,7 @@ import {
     BundleType,
     DiscountType,
     DisplaySettings,
+    ExistingMedia,
     ExtendedBundleFormData,
     ProductGroup,
     SelectedItem,
@@ -52,6 +53,7 @@ export const useBundleStore = create(
         bundleData: initialBundleData,
         selectedItems: [],
         mediaFiles: [],
+        existingMedia: [],
         displaySettings: initialDisplaySettings,
         configuration: initialConfiguration,
         isLoading: false,
@@ -375,6 +377,24 @@ export const useBundleStore = create(
             });
         },
 
+        setExistingMedia: (media: ExistingMedia[]) => {
+            set((state) => {
+                state.existingMedia = media;
+            });
+        },
+
+        clearExistingMedia: () => {
+            set((state) => {
+                state.existingMedia = [];
+            });
+        },
+
+        removeExistingMedia: (id: string) => {
+            set((state) => {
+                state.existingMedia = state.existingMedia.filter((m) => m.id !== id);
+            });
+        },
+
         getTotalProducts: () => {
             const state = get();
             const productIds = new Set(
@@ -440,6 +460,7 @@ export const useBundleStore = create(
                 state.bundleData = { ...initialBundleData };
                 state.selectedItems = [];
                 state.mediaFiles = [];
+                state.existingMedia = [];
                 state.displaySettings = { ...initialDisplaySettings };
                 state.configuration = { ...initialConfiguration };
                 state.isLoading = false;

@@ -22,7 +22,7 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
-    const { setSaving, resetDirty, setStep, mediaFiles } = useBundleStore();
+    const { setSaving, resetDirty, setStep, mediaFiles, setMediaFiles } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { createProduct, isCreating: isCreatingProduct } =
@@ -42,7 +42,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     data.productTitle
                 ) {
                     console.log("Creating Shopify product...");
-                    console.log("Media files:", mediaFiles);
 
                     const productData = await createProduct(
                         data.productTitle,
@@ -50,10 +49,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         data.type,
                     );
 
-                    if (productData.status === "error" || !productData.data) {
+                    if (!productData || !productData.mainProductId) {
                         showError("Failed to create product", {
-                            content:
-                                "Could not create Shopify product. Please try again.",
+                            content: "Could not create Shopify product. Please try again.",
                         });
                         return;
                     }
@@ -63,12 +61,14 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     // Add mainProductId to bundle data
                     data.mainProductId = productData.mainProductId;
 
-                    if (mediaFiles && mediaFiles.length > 0) {
-                        console.log(`Uploading ${mediaFiles.length} media files...`);
+                    const newFiles = (mediaFiles || []).filter((f): f is File => f instanceof File);
+
+                    if (newFiles.length > 0) {
+                        console.log(`Uploading ${newFiles.length} media files...`);
 
                         const mediaResult = await uploadAndAttachMedia(
-                            productData.data.mainProductId,
-                            mediaFiles,
+                            productData.mainProductId,
+                            newFiles,
                             data.productTitle,
                         );
 
@@ -76,6 +76,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             console.error("Media upload failed:", mediaResult.error);
                         } else {
                             console.log("✅ Media uploaded successfully");
+                            setMediaFiles([]);
                         }
                     }
                 }
@@ -139,20 +140,24 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     }
                 }
 
-                // Upload media
-                if (mediaFiles && mediaFiles.length > 0) {
-                    console.log(`Uploading ${mediaFiles.length} media files...`);
+                // Upload media (only new files)
+                if (mediaFiles && mediaFiles.length > 0 && data.mainProductId) {
+                    const newFiles = mediaFiles.filter((f): f is File => f instanceof File);
+                    if (newFiles.length > 0) {
+                        console.log(`Uploading ${newFiles.length} new media files...`);
 
-                    const mediaResult = await uploadAndAttachMedia(
-                        data.mainProductId,
-                        mediaFiles,
-                        data.productTitle,
-                    );
+                        const mediaResult = await uploadAndAttachMedia(
+                            data.mainProductId,
+                            newFiles,
+                            data.productTitle,
+                        );
 
-                    if (!mediaResult.success) {
-                        console.error("Media upload failed:", mediaResult.error);
-                    } else {
-                        console.log("✅ Media uploaded");
+                        if (!mediaResult.success) {
+                            console.error("Media upload failed:", mediaResult.error);
+                        } else {
+                            console.log("✅ Media uploaded");
+                            setMediaFiles([]);
+                        }
                     }
                 }
             }

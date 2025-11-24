@@ -43,18 +43,11 @@ query GetProductById($id: ID!) {
         tags
         totalInventory
         descriptionHtml
-        featuredMedia {
-            ... on MediaImage {
-                id
-                image {
-                    ...ImageFields
-                }
-            }
-        }
-        media(first: 10) {
+        media(first: 20) {
             edges {
                 node {
                     ... on MediaImage {
+                        __typename
                         id
                         image {
                             ...ImageFields
