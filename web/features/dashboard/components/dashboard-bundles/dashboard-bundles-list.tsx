@@ -4,9 +4,6 @@ import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
 import { DashboardBundlesListProps } from "@/features/dashboard";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 
-/*
- * Dashboard bundles list
- */
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();
 
@@ -80,7 +77,7 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                 <s-table-header listSlot="primary">Status</s-table-header>
             </s-table-header-row>
             <s-table-body>
-                {bundles.map((bundle, index) => (
+                {bundles.map((bundle) => (
                     <s-table-row
                         key={bundle.id}
                         clickDelegate="mountain-view-checkbox"

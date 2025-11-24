@@ -6,9 +6,14 @@ import { RangeSlider } from "@/shared/components/fields/range-slider";
 export function WidgetAppearance() {
     const [show, setShow] = useState<boolean>(true);
     const [showBorder, setShowBorder] = useState<boolean>(true);
+    const [showBorderWidget, setShowBorderWidget] = useState<boolean>(true);
     const [activeAlign, setActiveAlign] = useState<"left" | "center" | "right">(
         "left",
     );
+
+    const [radius, setRadius] = useState(8);
+    const [radiusProduct, setRadiusProduct] = useState(12);
+    const [radiusWidget, setRadiusWidget] = useState(12);
 
     const [open, setOpen] = useState(false);
     const handleToggle = () => setOpen((prev) => !prev);
@@ -16,7 +21,7 @@ export function WidgetAppearance() {
     return (
         <s-section>
             <s-stack>
-                {/* Header */}
+                {/* Add to cart */}
                 <div className="cursor-pointer z-30" onClick={handleToggle}>
                     <s-stack
                         direction="inline"
@@ -29,7 +34,7 @@ export function WidgetAppearance() {
                         <s-icon type={open ? "chevron-up" : "chevron-down"} />
                     </s-stack>
                 </div>
-                {/* Collapsible Body */}
+
                 <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out
                          ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}
@@ -52,7 +57,7 @@ export function WidgetAppearance() {
                                 onInput={(event: Event) => {
                                     const target =
                                         event.target as HTMLInputElement;
-                                    setShow(target.checked);
+                                        setShow(target.checked);
                                 }}
                             />
                         </s-stack>
@@ -88,12 +93,14 @@ export function WidgetAppearance() {
                                 </s-grid>
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
-                                    <RangeSlider />
+                                    <RangeSlider values={radius} onChange={(val) => setRadius(val)} />
                                 </s-stack>
                             </s-stack>
                         )}
 
                         <s-divider />
+
+                        {/* Product */}
 
                         <s-stack gap="base">
                             <s-heading>Product</s-heading>
@@ -144,14 +151,14 @@ export function WidgetAppearance() {
                                 alignItems="center"
                             >
                                 <s-switch
-                                    id="widget-add-border"
+                                    id="product-add-border"
                                     label="Add border"
                                     accessibilityLabel="Add border"
                                     checked={showBorder}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        setShowBorder(target.checked);
+                                            setShowBorder(target.checked);
                                     }}
                                 />
                             </s-stack>
@@ -166,7 +173,7 @@ export function WidgetAppearance() {
                                 />
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
-                                    <RangeSlider />
+                                    <RangeSlider values={radiusProduct} onChange={(val) => setRadiusProduct(val)} />
                                 </s-stack>
                             </s-stack>
                         )}
@@ -217,6 +224,8 @@ export function WidgetAppearance() {
 
                         <s-divider />
 
+                        {/* Widget */}
+
                         <s-stack gap="base">
                             <s-heading>Widget</s-heading>
                             <s-grid
@@ -246,6 +255,40 @@ export function WidgetAppearance() {
                                     />
                                 </s-grid-item>
                             </s-grid>
+
+                            <s-stack gap="base">
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                >
+                                    <s-switch
+                                        id="widget-add-border"
+                                        label="Add border"
+                                        accessibilityLabel="Add border"
+                                        checked={showBorder}
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            setShowBorderWidget(target.checked);
+                                        }}
+                                    />
+                                </s-stack>
+                            </s-stack>
+                            {showBorderWidget && (
+                                <s-stack gap="base" paddingBlockEnd="base">
+                                    <s-color-field
+                                        label="Border color"
+                                        name="widgetBorderColor"
+                                        placeholder="Select a color"
+                                        value="#e3e3e3"
+                                    />
+                                    <s-stack>
+                                        <s-text>Corner radius</s-text>
+                                        <RangeSlider values={radiusWidget} onChange={(val) => setRadiusWidget(val)} />
+                                    </s-stack>
+                                </s-stack>
+                            )}
                         </s-stack>
                     </s-stack>
                 </div>

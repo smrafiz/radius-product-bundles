@@ -157,7 +157,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                                         }
                                     }}
                                 >
-                                    Edit product on Shopify
+                                    Edit product on shopify
                                 </s-button>
                             </s-stack>
                         </s-box>

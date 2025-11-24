@@ -27,10 +27,7 @@ export function DashboardSkeleton() {
                     <s-section padding="base">
                         <s-stack gap="base">
                             <div className="p-3">
-                                <SkeletonLines lines={8} startIndex={4} />
-                            </div>
-                            <div className="p-3">
-                                <SkeletonLines lines={8} startIndex={6} />
+                                <SkeletonLines lines={18} startIndex={4} />
                             </div>
                         </s-stack>
                     </s-section>

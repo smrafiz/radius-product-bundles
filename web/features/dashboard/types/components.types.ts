@@ -2,7 +2,6 @@
  * Dashboard component types
  */
 import { Bundle } from "@/features/bundles";
-import { IconSource } from "@shopify/polaris";
 import { CalloutButtonProps } from "@/shared";
 
 /**

@@ -2,8 +2,25 @@ import * as React from "react";
 import { Range } from "react-range";
 import "./range-slider.css";
 
-export const RangeSlider: React.FC = () => {
-    const [values, setValues] = React.useState([8]);
+interface RangeSliderProps {
+    values?: number;
+    onChange?: (value: number) => void;
+}
+
+export const RangeSlider: React.FC<RangeSliderProps> = ({
+    values = 8,
+    onChange,
+}) => {
+    const [internalValue, setInternalValue] = React.useState([values]);
+
+    React.useEffect(() => {
+        setInternalValue([values]);
+    }, [values]);
+
+    const handleChange = (vals: number[]) => {
+        setInternalValue(vals);
+        onChange?.(vals[0]);
+    };
 
     return (
         <div className="range-slider-container">
@@ -11,13 +28,14 @@ export const RangeSlider: React.FC = () => {
                 step={1}
                 min={0}
                 max={30}
-                values={values}
-                onChange={(vals) => setValues(vals)}
+                values={internalValue}
+                onChange={handleChange}
                 renderTrack={({ props, children }) => {
-                    const percentage = (values[0] / 30) * 100;
+                    const percentage = (internalValue[0] / 30) * 100;
 
                     return (
-                        <div className="range-slider-value"
+                        <div
+                            className="range-slider-value"
                             {...props}
                             style={{
                                 ...props.style,
@@ -47,12 +65,12 @@ export const RangeSlider: React.FC = () => {
                     );
                 }}
                 renderThumb={({ props }) => (
-                    <div className="webkit-slider-thumb"
+                    <div
                         {...props}
                         key={props.key}
                         style={{
                             ...props.style,
-                            position:"relative",
+                            position: "relative",
                             height: "16px",
                             width: "16px",
                             borderRadius: "50%",
@@ -62,7 +80,7 @@ export const RangeSlider: React.FC = () => {
                 )}
             />
 
-            <div className="absolute right-0">{values[0]}px</div>
+            <div className="absolute right-0">{internalValue[0]}px</div>
         </div>
     );
 };

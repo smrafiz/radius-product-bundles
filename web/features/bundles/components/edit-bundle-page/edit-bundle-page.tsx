@@ -9,7 +9,6 @@ import {
     useEditBundleTransform,
 } from "@/features/bundles";
 import { DashboardSkeleton, GlobalForm } from "@/shared";
-import { Banner, Card, Page, Text } from "@shopify/polaris";
 
 export function EditBundlePage({ params }: { params: { id: string } }) {
     const { id: bundleId } = params;
@@ -26,17 +25,13 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
 
     if (isError || !bundleData) {
         return (
-            <Page title="Error">
-                <Card>
-                    <div className="p-5">
-                        <Banner tone="critical" title="Error loading bundle">
-                            <Text as="p" variant="bodyMd">
-                                {errorMessage}
-                            </Text>
-                        </Banner>
-                    </div>
-                </Card>
-            </Page>
+            <s-page heading="Error">
+                <s-stack paddingBlockStart="large" paddingBlockEnd="large">
+                    <s-banner tone="critical" heading="Error loading bundle">
+                        {errorMessage}
+                    </s-banner>
+                </s-stack>
+            </s-page>
         );
     }
 

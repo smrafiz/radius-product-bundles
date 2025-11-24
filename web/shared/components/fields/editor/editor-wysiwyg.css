@@ -11,6 +11,7 @@
 
 .rt-wysiwyg-editor .rsw-ce {
     padding: 16px;
+    height: 150px;
 }
 
 .rt-wysiwyg-editor .rsw-ce:focus {

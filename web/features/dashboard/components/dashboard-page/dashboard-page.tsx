@@ -19,10 +19,8 @@ import { GlobalBanner, useAppNavigation, useSyncBundles } from "@/shared";
 export function DashboardPage() {
     const { bundleData, analytics } = useAppNavigation();
 
-    // Load dashboard data
     useDashboardData();
 
-    // Sync bundles from the store
     useSyncBundles();
 
     return (

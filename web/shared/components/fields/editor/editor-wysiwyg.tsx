@@ -2,6 +2,7 @@
 import React from "react";
 import Editor from "react-simple-wysiwyg";
 import { useBundleProduct } from "@/features/bundles";
+
 import { ContentEditableEvent } from "react-simple-wysiwyg";
 import "./editor-wysiwyg.css";
 
@@ -20,7 +21,6 @@ export function EditorWysiwyg({ mode }: { mode: "create" | "edit" }) {
                     onChange={(event: ContentEditableEvent) => {
                         handleDescriptionChange(event.target.value);
                     }}
-
                 />
             </s-stack>
         </div>
