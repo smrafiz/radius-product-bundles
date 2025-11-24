@@ -36,7 +36,7 @@ export function SelectedProducts() {
 
             {/* Collapsible Body */}
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}`}>
-                <s-stack gap="small" paddingBlock="base">
+                <s-stack gap="small" paddingBlockStart="small">
                     {groupedItems.map((group) => (
                         <s-box
                             key={group.product.productId}

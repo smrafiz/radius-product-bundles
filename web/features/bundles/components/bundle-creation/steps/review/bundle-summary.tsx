@@ -29,7 +29,6 @@ export function BundleSummary() {
         );
     };
 
-    // Calculate subtotal (sum of all products and variants)
     const subtotal = groupedItems.reduce((sum, group) => {
         const productPrice = parseFloat(group.product.price ?? "0");
         const variantSum = group.variants.reduce(
@@ -39,7 +38,6 @@ export function BundleSummary() {
         return sum + productPrice + variantSum;
     }, 0);
 
-    // Calculate discount
     const discount =
         bundleData.discountType === "PERCENTAGE" && bundleData.discountValue
             ? (subtotal * bundleData.discountValue) / 100
@@ -51,50 +49,47 @@ export function BundleSummary() {
     const total = subtotal - discount;
 
     return (
-        <s-section>
-            <s-stack gap="base">
-                <s-heading>Bundle summary</s-heading>
-
-                {/* Name */}
+        <s-stack gap="base">
+            <s-section>
                 <s-stack
                     alignItems="center"
-                    justifyContent="space-between"
                     direction="inline"
+                    gap="small-300"
                 >
-                    <s-text color="subdued">Name:</s-text>
+                    <s-heading>Products:</s-heading>
                     <s-text color="subdued">
                         {bundleData.name || "Not set"}
                     </s-text>
                 </s-stack>
+            </s-section>
 
-                {/* Description */}
-                <s-stack
-                    alignItems="center"
-                    justifyContent="space-between"
-                    direction="inline"
+            <s-section>
+                <s-heading>Description</s-heading>
+                <div className="block"
                 >
-                    <s-text color="subdued">Description:</s-text>
-                    <s-text color="subdued">
+                    <s-paragraph color="subdued">
                         {bundleData.description || "Not set"}
-                    </s-text>
-                </s-stack>
+                    </s-paragraph>
+                </div>
+            </s-section>
 
-                {/* Discount Info */}
+            <s-section>
                 <s-stack
                     alignItems="center"
                     justifyContent="space-between"
                     direction="inline"
                 >
-                    <s-text color="subdued">Discount:</s-text>
+                    <s-heading>Discount</s-heading>
                     <s-text color="subdued">{formatDiscountValue()}</s-text>
                 </s-stack>
+            </s-section>
 
-                <s-divider />
-
+            <s-section>
                 <SelectedProducts />
+            </s-section>
 
-                <s-divider />
-
+            <s-section>
+                <s-stack gap="small">
                 {/* Subtotal without discount */}
                 <s-stack
                     alignItems="center"
@@ -181,7 +176,8 @@ export function BundleSummary() {
                         </s-text>
                     </s-stack>
                 )}
-            </s-stack>
-        </s-section>
+                </s-stack>
+            </s-section>
+        </s-stack>
     );
 }

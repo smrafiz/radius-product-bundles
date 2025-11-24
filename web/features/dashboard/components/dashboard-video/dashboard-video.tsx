@@ -18,23 +18,11 @@ function getYouTubeId(url: string) {
 
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
     const { loading } = useDashboardStore();
-    //const videoRef = useRef<HTMLVideoElement | null>(null);
     const videoUrl = "https://www.youtube.com/watch?v=wDchsz8nmbo";
 
     const isYouTube: boolean =
         videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
     const ytId = getYouTubeId(videoUrl);
-
-    // const embedUrl: string = isYouTube
-    //     ? `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1`
-    //     : videoUrl;
-
-    // useEffect(() => {
-    //     // This effect attempted to manipulate iframe src directly using --show/--hide.
-    //     // We will not rely on this approach; playback will be controlled in the Modal component
-    //     // by proper event listeners. Keep effect minimal for MP4 fallback if you want.
-    //     return () => {};
-    // }, []);
 
     if (loading) {
         return (

@@ -5,8 +5,9 @@ import {
     useBundleProduct,
     useBundleValidation,
 } from "@/features/bundles";
-import Editor from "react-simple-wysiwyg";
+// import Editor from "react-simple-wysiwyg";
 import React from "react";
+import { EditorWysiwyg } from "@/shared/components/fields/editor/editor-wysiwyg";
 /**
  * Bundle as product configuration component
  */
@@ -119,16 +120,18 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     {/*    error={getFieldError("productDescription")}*/}
                     {/*/>*/}
 
-                    <Editor
-                        name="productDescription"
-                        value={productDescription}
-                        placeholder="Describe this bundle product..."
-                        onChange={(event: Event) => {
-                            const target = event.target as HTMLTextAreaElement;
-                            handleDescriptionChange(target.value);
-                        }
-                    }
-                    />
+                    {/*<Editor*/}
+                    {/*    name="productDescription"*/}
+                    {/*    value={productDescription}*/}
+                    {/*    placeholder="Describe this bundle product..."*/}
+                    {/*    onChange={(event: Event) => {*/}
+                    {/*        const target = event.target as HTMLTextAreaElement;*/}
+                    {/*        handleDescriptionChange(target.value);*/}
+                    {/*    }*/}
+                    {/*}*/}
+                    {/*/>*/}
+
+                    <EditorWysiwyg mode={mode} />
 
                     {/* Media section */}
                     <s-stack gap="small">

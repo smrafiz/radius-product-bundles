@@ -1,0 +1,28 @@
+
+/* simple editor style */
+
+.rt-wysiwyg-editor .rsw-editor {
+    border: 1px solid rgba(138, 138, 138, .6);
+}
+
+.rt-wysiwyg-editor .rsw-toolbar {
+    background-color: #f7f7f7;
+}
+
+.rt-wysiwyg-editor .rsw-ce {
+    padding: 16px;
+}
+
+.rt-wysiwyg-editor .rsw-ce:focus {
+    border-color: var(--p-color-border-focus);
+    box-shadow: 0 0 0 var(--p-border-width-050) var(--p-color-border-focus);
+}
+
+
+.rt-wysiwyg-editor .rsw-editor:hover {
+    background-color: rgba(250, 250, 250, 1);
+    border: 1px solid rgba(138, 138, 138, 1);
+}
+.rt-wysiwyg-editor .rsw-editor:focus  {
+    border-color: var(--p-color-bg-surface);
+}
