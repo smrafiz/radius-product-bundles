@@ -1,0 +1,11 @@
+query filesCheckOrphaned($fileQuery: String!) {
+    files(first: 1, query: $fileQuery) {
+        edges {
+            node {
+                ... on MediaImage {
+                    id
+                }
+            }
+        }
+    }
+}

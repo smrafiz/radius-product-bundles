@@ -3,27 +3,22 @@
 /**
  * Media Mutation Actions
  * Handles Shopify product media operations via GraphQL
- *
- * Strategy: Try delete first, fallback to unlink if delete fails
- * This is safe because Shopify won't delete files that have references
  */
 
-import { ApiResponse } from "@/shared";
 import {
     FileDeleteDocument,
     FileDeleteMutation,
+    FilesCheckOrphanedDocument,
+    FilesCheckOrphanedQuery,
     FileUpdateRemoveRefsDocument,
     FileUpdateRemoveRefsMutation,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
+import { ApiResponse } from "@/shared";
 
 /**
  * Delete files completely from Shopify
- *
- * @param sessionToken - Shopify session token
- * @param fileIds - Array of file GIDs to delete
- * @returns ApiResponse with deleted and failed file IDs
  */
 export async function deleteFilesAction(
     sessionToken: string,
@@ -40,8 +35,6 @@ export async function deleteFilesAction(
 
         await handleSessionToken(sessionToken);
 
-        console.log("[deleteFiles] File IDs:", fileIds);
-
         const result = await executeGraphQLMutation<FileDeleteMutation>({
             query: FileDeleteDocument,
             variables: { fileIds },
@@ -49,27 +42,14 @@ export async function deleteFilesAction(
         });
 
         if (result.errors && result.errors.length > 0) {
-            console.error("[deleteFiles] GraphQL errors:", result.errors);
             return {
                 status: "error",
                 message: result.errors.map((e) => e.message).join(", "),
             };
         }
 
-        const userErrors = result.data?.fileDelete?.userErrors;
-        if (userErrors && userErrors.length > 0) {
-            console.warn("[deleteFiles] User errors:", userErrors);
-        }
-
         const deletedIds = result.data?.fileDelete?.deletedFileIds || [];
         const failedIds = fileIds.filter((id) => !deletedIds.includes(id));
-
-        console.log(
-            "[deleteFiles] ✅ Deleted:",
-            deletedIds.length,
-            "Failed:",
-            failedIds.length,
-        );
 
         return {
             status: "success",
@@ -90,11 +70,6 @@ export async function deleteFilesAction(
 
 /**
  * Remove files from a product's media gallery without deleting them
- *
- * @param sessionToken - Shopify session token
- * @param productId - The product GID to remove files from
- * @param fileIds - Array of file GIDs to remove from the product
- * @returns ApiResponse with updated file IDs
  */
 export async function removeFilesFromProductAction(
     sessionToken: string,
@@ -118,9 +93,6 @@ export async function removeFilesFromProductAction(
         }
 
         await handleSessionToken(sessionToken);
-
-        console.log("[removeFilesFromProduct] Product:", productId);
-        console.log("[removeFilesFromProduct] File IDs:", fileIds);
 
         const files = fileIds.map((fileId) => ({
             id: fileId,
@@ -147,7 +119,6 @@ export async function removeFilesFromProductAction(
 
         const userErrors = result.data?.fileUpdate?.userErrors;
         if (userErrors && userErrors.length > 0) {
-            console.error("[removeFilesFromProduct] User errors:", userErrors);
             return {
                 status: "error",
                 message: userErrors.map((e) => e.message).join(", "),
@@ -156,11 +127,6 @@ export async function removeFilesFromProductAction(
 
         const updatedFiles = result.data?.fileUpdate?.files || [];
         const updatedIds = updatedFiles.map((f) => f.id);
-        console.log(
-            "[removeFilesFromProduct] ✅ Removed:",
-            updatedIds.length,
-            "files",
-        );
 
         return {
             status: "success",
@@ -180,16 +146,7 @@ export async function removeFilesFromProductAction(
 }
 
 /**
- * Smart delete - tries to delete, falls back to unlink if delete fails
- *
- * Strategy:
- * 1. Try fileDelete for all files
- * 2. For files that failed (have other references), use fileUpdate to unlink
- *
- * @param sessionToken - Shopify session token
- * @param productId - The product GID we're removing media from
- * @param mediaIds - Array of media GIDs to remove
- * @returns ApiResponse with results
+ * Smart-delete - UNLINK FIRST, then check and cleanup
  */
 export async function smartDeleteProductMediaAction(
     sessionToken: string,
@@ -215,70 +172,100 @@ export async function smartDeleteProductMediaAction(
             };
         }
 
-        if (!productId) {
+        await handleSessionToken(sessionToken);
+
+        // Unlink ALL files from this product
+        const unlinkResult = await removeFilesFromProductAction(
+            sessionToken,
+            productId,
+            mediaIds,
+        );
+
+        if (unlinkResult.status === "error" || !unlinkResult.data) {
             return {
                 status: "error",
-                message: "Product ID is required",
-            };
-        }
-
-        console.log("[smartDelete] Processing:", mediaIds.length, "files");
-
-        // Step 1: Try to delete all files
-        const deleteResult = await deleteFilesAction(sessionToken, mediaIds);
-
-        if (deleteResult.status === "error" || !deleteResult.data) {
-            console.warn("[smartDelete] Delete failed, falling back to unlink");
-            const unlinkResult = await removeFilesFromProductAction(
-                sessionToken,
-                productId,
-                mediaIds,
-            );
-
-            return {
-                status: unlinkResult.status,
                 message: unlinkResult.message,
-                data: unlinkResult.data
-                    ? {
-                          deletedMediaIds: [],
-                          removedMediaIds: unlinkResult.data.updatedFileIds,
-                          sharedCount: mediaIds.length,
-                      }
-                    : undefined,
             };
         }
 
-        const { deletedFileIds, failedFileIds } = deleteResult.data;
-        const removedMediaIds: string[] = [];
+        const removedMediaIds = unlinkResult.data.updatedFileIds;
 
-        // Step 2: Unlink files that failed to delete
-        if (failedFileIds.length > 0) {
-            console.log(
-                `[smartDelete] ${failedFileIds.length} files have references, unlinking...`,
+        // Smart polling for each file
+        const deletedMediaIds: string[] = [];
+        const stillUsedFiles: string[] = [];
+
+        // Check all files in PARALLEL
+        const results = await Promise.all(
+            mediaIds.map(async (mediaId) => {
+                const result = await checkFileOrphanedWithRetry(
+                    mediaId,
+                    sessionToken,
+                    {
+                        maxAttempts: 5,
+                        initialDelay: 500,
+                        maxDelay: 1200,
+                        backoffMultiplier: 1,
+                    },
+                );
+
+                return { mediaId, ...result };
+            }),
+        );
+
+        // Separate orphaned files from used files
+        const orphanedFiles = results
+            .filter((r) => r.orphaned)
+            .map((r) => r.mediaId);
+        const usedFiles = results
+            .filter((r) => !r.orphaned)
+            .map((r) => r.mediaId);
+
+        // Delete all orphaned files in PARALLEL
+        if (orphanedFiles.length > 0) {
+            const deleteResults = await Promise.all(
+                orphanedFiles.map(async (mediaId) => {
+                    const deleteResult = await deleteFilesAction(sessionToken, [
+                        mediaId,
+                    ]);
+
+                    if (
+                        deleteResult.status === "success" &&
+                        deleteResult.data?.deletedFileIds.includes(mediaId)
+                    ) {
+                        return mediaId;
+                    }
+                    return null;
+                }),
             );
 
-            const unlinkResult = await removeFilesFromProductAction(
-                sessionToken,
-                productId,
-                failedFileIds,
+            // Add successfully deleted IDs
+            deletedMediaIds.push(
+                ...deleteResults.filter((id): id is string => id !== null),
             );
-
-            if (unlinkResult.status === "success" && unlinkResult.data) {
-                removedMediaIds.push(...unlinkResult.data.updatedFileIds);
-            }
         }
 
-        console.log(
-            `[smartDelete] ✅ Deleted: ${deletedFileIds.length}, Unlinked: ${removedMediaIds.length}`,
-        );
+        // Files that are still used
+        stillUsedFiles.push(...usedFiles);
+        if (usedFiles.length > 0) {
+            console.log(
+                `  [smartDelete] Keeping ${usedFiles.length} file(s) (still used)`,
+            );
+        }
+
+        const sharedCount = stillUsedFiles.length;
+
+        const message =
+            sharedCount > 0
+                ? `✅ Removed ${removedMediaIds.length} file(s): ${deletedMediaIds.length} deleted, ${sharedCount} kept (used elsewhere)`
+                : `✅ Removed ${removedMediaIds.length} file(s): ${deletedMediaIds.length} deleted`;
 
         return {
             status: "success",
-            message: `Processed: ${deletedFileIds.length} deleted, ${removedMediaIds.length} unlinked`,
+            message,
             data: {
-                deletedMediaIds: deletedFileIds,
+                deletedMediaIds,
                 removedMediaIds,
-                sharedCount: failedFileIds.length,
+                sharedCount,
             },
         };
     } catch (error) {
@@ -294,12 +281,7 @@ export async function smartDeleteProductMediaAction(
 }
 
 /**
- * Delete product media - main function for bundle media removal
- *
- * @param sessionToken - Shopify session token
- * @param productId - The product GID
- * @param mediaIds - Array of media GIDs to delete
- * @returns ApiResponse with deleted media IDs
+ * Delete product media
  */
 export async function deleteProductMediaAction(
     sessionToken: string,
@@ -332,60 +314,73 @@ export async function deleteProductMediaAction(
 }
 
 /**
- * Batch delete product media for large batches
- *
- * @param sessionToken - Shopify session token
- * @param productId - The product GID
- * @param mediaIds - Array of media GIDs to delete
- * @param batchSize - Max items per request (default: 50)
- * @returns ApiResponse with all deleted media IDs
+ * Check if a file is orphaned with smart polling
  */
-export async function batchDeleteProductMediaAction(
+async function checkFileOrphanedWithRetry(
+    mediaId: string,
     sessionToken: string,
-    productId: string,
-    mediaIds: string[],
-    batchSize: number = 50,
-): Promise<ApiResponse<{ deletedMediaIds: string[] }>> {
-    if (!mediaIds || mediaIds.length === 0) {
-        return {
-            status: "success",
-            message: "No media to delete",
-            data: { deletedMediaIds: [] },
-        };
-    }
+    options: {
+        maxAttempts?: number;
+        initialDelay?: number;
+        maxDelay?: number;
+        backoffMultiplier?: number;
+    } = {},
+): Promise<{ orphaned: boolean; attempts: number; totalTime: number }> {
+    const {
+        maxAttempts = 10,
+        initialDelay = 500,
+        maxDelay = 2000,
+        backoffMultiplier = 1.3,
+    } = options;
 
-    if (mediaIds.length <= batchSize) {
-        return deleteProductMediaAction(sessionToken, productId, mediaIds);
-    }
+    const startTime = Date.now();
+    let currentDelay = initialDelay;
 
-    const allDeletedIds: string[] = [];
-    const errors: string[] = [];
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        if (attempt > 1) {
+            console.log(
+                `  [retry] Attempt ${attempt}/${maxAttempts} after ${currentDelay}ms...`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, currentDelay));
 
-    for (let i = 0; i < mediaIds.length; i += batchSize) {
-        const chunk = mediaIds.slice(i, i + batchSize);
-        const result = await deleteProductMediaAction(
-            sessionToken,
-            productId,
-            chunk,
-        );
+            currentDelay = Math.min(currentDelay * backoffMultiplier, maxDelay);
+        } else {
+            console.log(
+                `  [retry] Attempt ${attempt}/${maxAttempts} (immediate)...`,
+            );
+        }
 
-        if (result.status === "success" && result.data) {
-            allDeletedIds.push(...result.data.deletedMediaIds);
-        } else if (result.message) {
-            errors.push(result.message);
+        try {
+            const numericId = mediaId.split("/").pop();
+
+            const checkResult =
+                await executeGraphQLMutation<FilesCheckOrphanedQuery>({
+                    query: FilesCheckOrphanedDocument,
+                    variables: {
+                        fileQuery: `id:${numericId} AND used_in:none`,
+                    },
+                    sessionToken,
+                });
+
+            const edges = checkResult.data?.files?.edges || [];
+
+            if (edges.length > 0) {
+                const totalTime = Date.now() - startTime;
+                console.log(
+                    `  [retry] ✅ Found orphaned after ${attempt} attempt(s) in ${totalTime}ms`,
+                );
+                return { orphaned: true, attempts: attempt, totalTime };
+            }
+
+            console.log(`  [retry] Not orphaned yet, will retry...`);
+        } catch (error) {
+            console.error(`  [retry] Error on attempt ${attempt}:`, error);
         }
     }
 
-    if (errors.length > 0 && allDeletedIds.length === 0) {
-        return {
-            status: "error",
-            message: errors.join("; "),
-        };
-    }
-
-    return {
-        status: "success",
-        message: `Deleted ${allDeletedIds.length} of ${mediaIds.length} media items`,
-        data: { deletedMediaIds: allDeletedIds },
-    };
+    const totalTime = Date.now() - startTime;
+    console.log(
+        `  [retry] ⚠️  Max attempts reached in ${totalTime}ms, assuming still used`,
+    );
+    return { orphaned: false, attempts: maxAttempts, totalTime };
 }

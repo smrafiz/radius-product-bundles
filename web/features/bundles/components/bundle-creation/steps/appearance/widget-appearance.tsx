@@ -57,7 +57,7 @@ export function WidgetAppearance() {
                                 onInput={(event: Event) => {
                                     const target =
                                         event.target as HTMLInputElement;
-                                        setShow(target.checked);
+                                    setShow(target.checked);
                                 }}
                             />
                         </s-stack>
@@ -93,7 +93,10 @@ export function WidgetAppearance() {
                                 </s-grid>
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
-                                    <RangeSlider values={radius} onChange={(val) => setRadius(val)} />
+                                    <RangeSlider
+                                        values={radius}
+                                        onChange={(val) => setRadius(val)}
+                                    />
                                 </s-stack>
                             </s-stack>
                         )}
@@ -158,7 +161,7 @@ export function WidgetAppearance() {
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                            setShowBorder(target.checked);
+                                        setShowBorder(target.checked);
                                     }}
                                 />
                             </s-stack>
@@ -173,7 +176,12 @@ export function WidgetAppearance() {
                                 />
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
-                                    <RangeSlider values={radiusProduct} onChange={(val) => setRadiusProduct(val)} />
+                                    <RangeSlider
+                                        values={radiusProduct}
+                                        onChange={(val) =>
+                                            setRadiusProduct(val)
+                                        }
+                                    />
                                 </s-stack>
                             </s-stack>
                         )}
@@ -285,7 +293,12 @@ export function WidgetAppearance() {
                                     />
                                     <s-stack>
                                         <s-text>Corner radius</s-text>
-                                        <RangeSlider values={radiusWidget} onChange={(val) => setRadiusWidget(val)} />
+                                        <RangeSlider
+                                            values={radiusWidget}
+                                            onChange={(val) =>
+                                                setRadiusWidget(val)
+                                            }
+                                        />
                                     </s-stack>
                                 </s-stack>
                             )}
