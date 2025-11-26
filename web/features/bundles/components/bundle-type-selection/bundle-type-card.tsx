@@ -1,12 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAppNavigation, withLoader } from "@/shared";
 import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
 
 export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
     const { bundleData } = useAppNavigation();
-    const { selectingBundleId, setSelectingBundleId } =
+    const { selectingBundleId, setSelectingBundleId, reset } =
         useBundleSelectionStore();
+
+    useEffect(() => reset(), []);
 
     const isThisCardSelecting = selectingBundleId === bundleType.id;
     const isAnotherCardSelecting =

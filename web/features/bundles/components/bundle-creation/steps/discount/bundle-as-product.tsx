@@ -136,50 +136,44 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     </s-stack>
 
                     {/* Info and link to Shopify */}
-                    <s-stack gap="base">
-                        <s-box
-                            padding="base"
-                            background="subdued"
-                            borderRadius="base"
-                        >
-                            <s-stack gap="base">
-                                <s-text>
-                                    To add more details like category, type,
-                                    tags, or advanced media types (such as gifs
-                                    and videos), go to the product page in your
-                                    Shopify admin and fill in the remaining
-                                    fields.
-                                </s-text>
-                                <s-button
-                                    disabled={!productEditUrl}
-                                    onClick={() => {
-                                        if (productEditUrl) {
-                                            window.open(
-                                                productEditUrl,
-                                                "_blank",
-                                            );
-                                        }
-                                    }}
-                                >
-                                    Edit product on shopify
-                                </s-button>
-                            </s-stack>
-                        </s-box>
-
-                        {mode === "create" && (
-                            <s-banner tone="warning">
-                                Save the bundle before editing the associated
-                                Shopify product.
-                            </s-banner>
-                        )}
-
-                        {mode === "edit" && mainProductId && (
+                    {mode === "edit" && mainProductId && (
+                        <s-stack gap="base">
                             <s-banner tone="info">
-                                Changes to title and description will update the
-                                Shopify product when you save the bundle.
+                                Any changes to the title, description, or media
+                                images will automatically update the Shopify
+                                product when you save the bundle.
                             </s-banner>
-                        )}
-                    </s-stack>
+                            <s-box
+                                padding="base"
+                                background="subdued"
+                                borderRadius="base"
+                            >
+                                <s-stack gap="base">
+                                    <s-text>
+                                        To add additional information—such as
+                                        product category, type, tags, or
+                                        advanced media formats (GIFs,
+                                        videos)—open the product in your Shopify
+                                        admin and complete the rest of the
+                                        fields.
+                                    </s-text>
+                                    <s-button
+                                        disabled={!productEditUrl}
+                                        onClick={() => {
+                                            if (productEditUrl) {
+                                                window.open(
+                                                    productEditUrl,
+                                                    "_blank",
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Edit product on shopify
+                                    </s-button>
+                                </s-stack>
+                            </s-box>
+                        </s-stack>
+                    )}
                 </s-stack>
             )}
         </s-stack>

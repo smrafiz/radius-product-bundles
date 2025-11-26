@@ -17,7 +17,15 @@ mutation ProductCreate(
         }
     ) {
         product {
-            ...ProductFields
+            id
+            title
+            handle
+            variants(first: 1) {
+                nodes {
+                    id
+                    price
+                }
+            }
         }
         userErrors {
             field
@@ -52,6 +60,27 @@ mutation ProductUpdate(
                     }
                 }
             }
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
+
+mutation ProductVariantsBulkUpdate(
+    $productId: ID!
+    $variants: [ProductVariantsBulkInput!]!
+) {
+    productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+        product {
+            id
+            title
+        }
+        productVariants {
+            id
+            price
+            compareAtPrice
         }
         userErrors {
             field

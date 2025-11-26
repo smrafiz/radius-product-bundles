@@ -173,4 +173,5 @@ export type BundleSelectionStore = {
     selectingBundleId: string | null;
     setSelectingBundleId: (id: string | null) => void;
     isAnyBundleSelecting: () => boolean;
+    reset: () => void;
 };

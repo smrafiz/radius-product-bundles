@@ -12,5 +12,7 @@ export const useBundleSelectionStore = create<BundleSelectionStore>()(
         isAnyBundleSelecting: () => {
             return get().selectingBundleId !== null;
         },
+
+        reset: () => set({ selectingBundleId: null }),
     }),
 );

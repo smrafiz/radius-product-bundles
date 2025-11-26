@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { createBundleProductAction } from "@/features/bundles";
-import { SerializableFile } from "@/shared";
 
 /**
  * Hook for creating a Shopify product when the bundle is submitted
@@ -17,6 +16,8 @@ export function useCreateBundleProduct() {
         bundleName: string,
         bundleDescription?: string,
         bundleType?: string,
+        bundlePrice?: number,
+        originalPrice?: number,
     ) => {
         setIsCreating(true);
         setError(null);
@@ -28,6 +29,8 @@ export function useCreateBundleProduct() {
                 bundleName,
                 bundleDescription,
                 bundleType,
+                bundlePrice,
+                originalPrice,
             });
 
             if (result.status === "error") {

@@ -62,15 +62,22 @@ export function extractProductId(gid: string): string {
 /**
  * Format product for storage in the database
  */
-export function formatProductForStorage(product: any): {
+export function formatProductForStorage(product: {
+    id: string;
+    title: string;
+    handle: string;
+    variants?: { nodes?: Array<{ id: string; price: string }> };
+}): {
     mainProductId: string;
     productTitle: string;
     productHandle: string;
+    mainVariantId: string | null;
 } {
     return {
         mainProductId: product.id,
         productTitle: product.title,
         productHandle: product.handle,
+        mainVariantId: product.variants?.nodes?.[0]?.id ?? null,
     };
 }
 

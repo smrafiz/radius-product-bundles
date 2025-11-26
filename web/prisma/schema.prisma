@@ -74,6 +74,7 @@ model Bundle {
 
     // Main product for anchor-based bundles
     mainProductId String?
+    mainVariantId String?
     isPublished   Boolean   @default(false)
     publishedAt   DateTime?
 

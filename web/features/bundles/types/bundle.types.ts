@@ -318,6 +318,7 @@ export interface ExtendedBundleFormData extends BundleFormData {
     productTitle?: string;
     productDescription?: string;
     mainProductId?: string;
+    mainVariantId?: string;
 }
 
 export interface DisplaySettings {
@@ -369,13 +370,18 @@ export interface CreateBundleProductInput {
     bundleDescription?: string;
     bundleType?: string;
     mediaFiles?: SerializableFile[];
+    bundlePrice?: number;
+    originalPrice?: number;
 }
 
 export interface UpdateProductInput {
     productId: string;
+    variantId?: string;
     title?: string;
     description?: string;
     mediaFiles?: SerializableFile[];
+    bundlePrice?: number;
+    originalPrice?: number;
 }
 
 export interface ExistingMedia {

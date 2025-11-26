@@ -13,18 +13,20 @@ import {
     uploadFileToStaged,
     validateProductInput,
 } from "@/features/bundles";
+import { ApiResponse } from "@/shared";
 import {
     ProductCreateDocument,
     ProductCreateMutation,
     ProductCreateMutationVariables,
     ProductUpdateDocument,
     ProductUpdateMutation,
+    ProductVariantsBulkUpdateDocument,
+    ProductVariantsBulkUpdateMutation,
     StagedUploadsCreateDocument,
     StagedUploadsCreateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
-import { ApiResponse, serializableToFile } from "@/shared";
 
 /**
  * Create a Shopify product for a bundle
@@ -34,9 +36,7 @@ export async function createBundleProductAction(
     input: CreateBundleProductInput,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        await handleSessionToken(sessionToken);
 
         // Transform bundle data to GraphQL variables
         const variables = transformBundleToProductVariables(
@@ -95,6 +95,29 @@ export async function createBundleProductAction(
         }
 
         const product = result.data.productCreate.product;
+
+        if (input.bundlePrice !== undefined && input.bundlePrice > 0) {
+            const defaultVariant = product.variants?.nodes?.[0];
+
+            if (defaultVariant) {
+                const priceUpdateResult = await updateVariantPriceAction(
+                    sessionToken,
+                    product.id,
+                    defaultVariant.id,
+                    input.bundlePrice,
+                    input.originalPrice,
+                );
+
+                if (priceUpdateResult.status === "error") {
+                    console.warn(
+                        "[createBundleProduct] Price update failed:",
+                        priceUpdateResult.message,
+                    );
+                    // Continue anyway - product was created
+                }
+            }
+        }
+
         const productData = formatProductForStorage(product);
 
         console.log("Product created successfully:", productData);
@@ -113,6 +136,79 @@ export async function createBundleProductAction(
                 error instanceof Error
                     ? error.message
                     : "Failed to create product",
+            data: null,
+        };
+    }
+}
+
+/**
+ * Update variant price for bundle product
+ */
+export async function updateVariantPriceAction(
+    sessionToken: string,
+    productId: string,
+    variantId: string,
+    price: number,
+    compareAtPrice?: number,
+): Promise<ApiResponse> {
+    try {
+        await handleSessionToken(sessionToken);
+
+        const variants = [
+            {
+                id: variantId,
+                price: price.toFixed(2),
+                ...(compareAtPrice && compareAtPrice > price
+                    ? { compareAtPrice: compareAtPrice.toFixed(2) }
+                    : {}),
+            },
+        ];
+
+        const result =
+            await executeGraphQLMutation<ProductVariantsBulkUpdateMutation>({
+                query: ProductVariantsBulkUpdateDocument,
+                variables: {
+                    productId,
+                    variants,
+                },
+                sessionToken,
+            });
+
+        if (result.errors && result.errors.length > 0) {
+            return {
+                status: "error",
+                message: result.errors.map((e) => e.message).join(", "),
+                data: null,
+            };
+        }
+
+        if (
+            result.data?.productVariantsBulkUpdate?.userErrors &&
+            result.data.productVariantsBulkUpdate.userErrors.length > 0
+        ) {
+            return {
+                status: "error",
+                message: result.data.productVariantsBulkUpdate.userErrors
+                    .map((e) => e.message)
+                    .join(", "),
+                data: null,
+            };
+        }
+
+        return {
+            status: "success",
+            message: "Variant price updated successfully",
+            data: result.data?.productVariantsBulkUpdate?.productVariants,
+        };
+    } catch (error) {
+        console.error("[updateVariantPrice] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to update variant price",
             data: null,
         };
     }
@@ -171,6 +267,27 @@ export async function updateBundleProductAction(
                 message: "Failed to update product",
                 data: null,
             };
+        }
+
+        console.log("Product updated successfully:", input);
+
+        // Update variant price if provided
+        if (input.bundlePrice !== undefined && input.bundlePrice > 0 && input.variantId) {
+            const priceUpdateResult = await updateVariantPriceAction(
+                sessionToken,
+                input.productId,
+                input.variantId,
+                input.bundlePrice,
+                input.originalPrice,
+            );
+
+            if (priceUpdateResult.status === "error") {
+                console.warn(
+                    "[updateBundleProduct] Price update failed:",
+                    priceUpdateResult.message,
+                );
+                // Continue anyway - product was updated
+            }
         }
 
         return {
