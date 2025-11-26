@@ -9,7 +9,7 @@ export function PricingStore() {
         setTimeout(() => {
             setClose(false);
             setLoading(false);
-        }, 600);
+        }, 1000);
     };
 
     return (

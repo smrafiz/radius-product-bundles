@@ -18,7 +18,7 @@ export function PricingCardItem({
     const handleClick = async () => {
         setLoading(true);
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         } finally {
             setLoading(false);
         }
@@ -37,6 +37,7 @@ export function PricingCardItem({
                         <s-heading>
                             <div className="text-xl font-bold">{title}</div>
                         </s-heading>
+                        <s-divider />
                         {description ? (
                             <s-paragraph color="subdued">
                                 {description}

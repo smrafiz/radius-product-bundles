@@ -81,26 +81,26 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
 export const PRICING_FAQ_ITEM: PricingFaqItemInfo[] = [
     {
         id: "0",
-        title: "How is my bundle sales volume calculated?",
+        title: "What’s the best plan for high-priced bundles?",
         description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+            "For businesses with high Average Order Value (AOV), tailored payment is key. We're here to help you grow with customized plans designed to fit your unique needs. Contact us to discuss how we can best support your business.",
     },
     {
         id: "1",
-        title: "What is a rolling 30-day period?",
+        title: "Can I use the app for free?",
         description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+            "You can test the app for free within the 7-day trial on all plans. Moreover, development stores and test stores can access the app for free without approving any charges.",
     },
     {
         id: "2",
-        title: "Which plan should I be on?",
+        title: "Does the subscription fee automatically adjust based on my bundle sales?",
         description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+            "The subscription fee remains constant unless you explicitly approve changes. If you anticipate a decrease in sales, you can downgrade your plan accordingly. Conversely, if your sales exceed your plan's limit, you'll receive an email notification and can approve the upgrade.",
     },
     {
         id: "3",
-        title: "Which plan should I be on?",
+        title: "What if I want to change or cancel my plan?",
         description:
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi tempore, saepe minima nesciunt impedit quaerat repellat eveniet, dignissimos quis quo sed maxime aspernatur qui, quod consectetur optio veritatis iusto eligendi?",
+            "You can thoroughly test the app during the 7-day trial and cancel without any charges. After that, downgrades are prorated, but cancellations are not. Contact support to explore refund options.",
     },
 ];

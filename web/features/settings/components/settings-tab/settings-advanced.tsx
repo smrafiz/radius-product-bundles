@@ -16,6 +16,7 @@ export function SettingsAdvanced() {
             setTextValue(newValue);
         }
     };
+
     return (
         <s-section>
             <s-stack gap="large">
