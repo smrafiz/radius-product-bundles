@@ -12,9 +12,11 @@ import {
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { smartDeleteProductMediaAction } from "@/shared/actions";
-import { useAppNavigation, useGlobalBanner, withAsyncLoader } from "@/shared";
+import { mediaMutations, useAppNavigation, useGlobalBanner, withAsyncLoader, } from "@/shared";
 
+/**
+ * Hook for bundle form submission
+ */
 export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
@@ -33,48 +35,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         useCreateBundleProduct();
     const { uploadAndAttachMedia } = useMediaUpload();
 
-    /**
-     * Smart delete removed media from the Shopify product
-     */
-    const deleteRemovedMedia = async (
-        token: string,
-        productId: string,
-        mediaIds: string[],
-    ): Promise<boolean> => {
-        if (mediaIds.length === 0) {
-            return true;
-        }
-
-        console.log(
-            `Smart deleting ${mediaIds.length} media items from product...`,
-        );
-
-        const deleteResult = await smartDeleteProductMediaAction(
-            token,
-            productId,
-            mediaIds,
-        );
-
-        if (deleteResult.status === "error") {
-            console.error("Media deletion failed:", deleteResult.message);
-            return false;
-        }
-
-        if (deleteResult.data) {
-            const { deletedMediaIds, removedMediaIds, sharedCount } =
-                deleteResult.data;
-            console.log(
-                `✅ Media processed: ${deletedMediaIds.length} deleted, ${removedMediaIds.length} unlinked`,
-            );
-            if (sharedCount > 0) {
-                console.log(
-                    `   ↳ ${sharedCount} file(s) shared with other products`,
-                );
-            }
-        }
-
-        return true;
-    };
+    const deleteMedia = mediaMutations(app).smartDelete();
 
     const handleSubmit = withAsyncLoader(async (data: BundleFormData) => {
         try {
@@ -198,16 +159,27 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     }
                 }
 
-                // Delete removed media FIRST (before uploading new)
+                // Delete removed media using TanStack Query mutation
                 if (removedMediaIds.length > 0) {
-                    const deleteSuccess = await deleteRemovedMedia(
-                        token,
-                        data.mainProductId,
-                        removedMediaIds,
-                    );
+                    try {
+                        const deleteResult = await deleteMedia.mutateAsync({
+                            productId: data.mainProductId,
+                            mediaIds: removedMediaIds,
+                        });
 
-                    if (deleteSuccess) {
+                        console.log(
+                            `✅ Media processed: ${deleteResult.deletedMediaIds.length} deleted`,
+                        );
+
+                        if (deleteResult.sharedCount > 0) {
+                            console.log(
+                                `   ↳ ${deleteResult.sharedCount} file(s) shared with other products`,
+                            );
+                        }
+
                         clearRemovedMediaIds();
+                    } catch (error) {
+                        console.error("Media deletion failed:", error);
                     }
                 }
 
@@ -275,5 +247,10 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         }
     });
 
-    return { handleSubmit, resetDirty, isCreatingProduct };
+    return {
+        handleSubmit,
+        resetDirty,
+        isCreatingProduct,
+        isDeletingMedia: deleteMedia.isPending,
+    };
 }

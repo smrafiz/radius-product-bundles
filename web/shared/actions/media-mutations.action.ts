@@ -5,6 +5,7 @@
  * Handles Shopify product media operations via GraphQL
  */
 
+import { ApiResponse } from "@/shared";
 import {
     FileDeleteDocument,
     FileDeleteMutation,
@@ -15,7 +16,6 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
-import { ApiResponse } from "@/shared";
 
 /**
  * Delete files completely from Shopify
@@ -278,39 +278,6 @@ export async function smartDeleteProductMediaAction(
                     : "Failed to process media",
         };
     }
-}
-
-/**
- * Delete product media
- */
-export async function deleteProductMediaAction(
-    sessionToken: string,
-    productId: string,
-    mediaIds: string[],
-): Promise<ApiResponse<{ deletedMediaIds: string[] }>> {
-    const result = await smartDeleteProductMediaAction(
-        sessionToken,
-        productId,
-        mediaIds,
-    );
-
-    if (result.status === "success" && result.data) {
-        return {
-            status: "success",
-            message: result.message,
-            data: {
-                deletedMediaIds: [
-                    ...result.data.deletedMediaIds,
-                    ...result.data.removedMediaIds,
-                ],
-            },
-        };
-    }
-
-    return {
-        status: result.status,
-        message: result.message,
-    };
 }
 
 /**
