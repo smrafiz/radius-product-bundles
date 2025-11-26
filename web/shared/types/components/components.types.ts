@@ -34,9 +34,3 @@ export interface GlobalFormProps<T extends FieldValues> {
     resetDirty: () => void;
     discardPath?: string;
 }
-
-export interface KnobProps {
-    ariaLabel: string;
-    selected: boolean;
-    onClick: () => void;
-}

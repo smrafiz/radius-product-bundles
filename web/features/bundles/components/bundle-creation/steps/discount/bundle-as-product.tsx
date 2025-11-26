@@ -1,12 +1,8 @@
 "use client";
 
-import {
-    MediaGrid,
-    useBundleProduct,
-    useBundleValidation,
-} from "@/features/bundles";
 import React from "react";
-import { EditorWysiwyg } from "@/shared/components/fields/editor/editor-wysiwyg";
+import { EditorWysiwyg } from "@/shared";
+import { MediaGrid, useBundleProduct, useBundleValidation, } from "@/features/bundles";
 
 /**
  * Bundle as product configuration component
@@ -16,7 +12,6 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
     const {
         isEnabled,
         productTitle,
-        productDescription,
         mediaFiles,
         existingMedia,
         isUploading,
@@ -25,7 +20,6 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         mainProductId,
         toggleEnabled,
         handleTitleChange,
-        handleDescriptionChange,
         handleMediaUpload,
         removeNewMediaFile,
         handleRemoveExistingMedia,
@@ -50,17 +44,23 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     alignItems="center"
                     gap="small-300"
                 >
+                    {/* Tooltip */}
                     <s-tooltip id="bundle-as-product-tooltip">
                         <s-text>
-                            This bundle will create a product with its own
-                            product page.
+                            {isEnabled
+                                ? "This bundle will create a product with its own product page."
+                                : "This bundle will NOT create a standalone product."}
                         </s-text>
                     </s-tooltip>
+
+                    {/* Info icon */}
                     <s-icon
                         tone="neutral"
                         type="info"
                         interestFor="bundle-as-product-tooltip"
                     />
+
+                    {/* Switch */}
                     <s-switch
                         id="bundle-product-switch"
                         name="createProduct"
@@ -106,16 +106,17 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         }
                     />
 
+                    {/* Description field */}
                     <EditorWysiwyg mode={mode} />
 
                     {/* Media section */}
-                    <s-stack gap="small">
+                    <s-stack gap="small-200">
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"
                             alignItems="center"
                         >
-                            <s-heading>Media</s-heading>
+                            <s-text>Media</s-text>
                             <s-button variant="secondary">
                                 Add media from included products
                             </s-button>

@@ -1,4 +1,5 @@
 export * from "./forms";
+export * from "./fields";
 export * from "./layout";
 export * from "./layout";
 export * from "./loading";
@@ -9,7 +10,5 @@ export * from "./feedback";
 export * from "./overlays";
 export * from "./providers";
 export * from "./data-display";
-export { Knob } from "./fields/knob";
 export { Navigation } from "./navigation/navigation";
 export { ProtectedRoute } from "./auth/protected-route";
-export { EditorWysiwyg } from "./fields/editor/editor-wysiwyg";

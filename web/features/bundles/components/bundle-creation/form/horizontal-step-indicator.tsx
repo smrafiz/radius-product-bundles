@@ -18,7 +18,7 @@ export function HorizontalStepIndicator() {
         navigateToStep,
     } = useStepIndicator();
 
-    const { currentStep, totalSteps, prevStep, canGoPrevious } =
+    const { currentStep, totalSteps, prevStep, canGoPrevious, isSaving } =
         useBundleStore();
     const { handleNextStep } = useBundleFormMethods();
     const { handleSubmit, getValues } = useFormContext<BundleFormData>();
@@ -54,6 +54,16 @@ export function HorizontalStepIndicator() {
         handleSubmit(onSubmit, onError)();
     };
 
+    const handleStepClick = (stepNumber: number) => {
+        if (isSaving) {
+            return;
+        }
+
+        if (canNavigateToStep(stepNumber)) {
+            navigateToStep(stepNumber);
+        }
+    };
+
     const getNextButtonText = () => {
         switch (currentStep) {
             case 1:
@@ -80,7 +90,7 @@ export function HorizontalStepIndicator() {
                 <s-stack>
                     <s-button
                         onClick={prevStep}
-                        disabled={!canGoPrev}
+                        disabled={!canGoPrev || (isLastStep && isSaving)}
                         variant="secondary"
                     >
                         <s-icon type="arrow-left" size="small" />
@@ -100,10 +110,7 @@ export function HorizontalStepIndicator() {
                                 >
                                     <div
                                         className="cursor-pointer"
-                                        onClick={() =>
-                                            canNavigateToStep(step.number) &&
-                                            navigateToStep(step.number)
-                                        }
+                                        onClick={() => handleStepClick(step.number)}
                                     >
                                         <s-badge
                                             size="large"
@@ -169,6 +176,7 @@ export function HorizontalStepIndicator() {
                         onClick={
                             isLastStep ? handleFinalSubmit : handleNextStep
                         }
+                        loading={isLastStep && isSaving}
                         variant="primary"
                     >
                         {getNextButtonText()}

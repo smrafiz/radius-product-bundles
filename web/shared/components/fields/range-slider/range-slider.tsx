@@ -1,19 +1,20 @@
-import * as React from "react";
-import { Range } from "react-range";
+"use client";
+
 import "./range-slider.css";
 
-interface RangeSliderProps {
+import { Range } from "react-range";
+import { FC, useEffect, useState } from "react";
+
+/*
+ * Range slider component
+ */
+export const RangeSlider: FC<{
     values?: number;
     onChange?: (value: number) => void;
-}
+}> = ({ values = 8, onChange }) => {
+    const [internalValue, setInternalValue] = useState([values]);
 
-export const RangeSlider: React.FC<RangeSliderProps> = ({
-    values = 8,
-    onChange,
-}) => {
-    const [internalValue, setInternalValue] = React.useState([values]);
-
-    React.useEffect(() => {
+    useEffect(() => {
         setInternalValue([values]);
     }, [values]);
 

@@ -1,15 +1,14 @@
 "use client";
+
 import {
     BundleDetails,
-    BundleAsProduct,
+    BundleType,
     ProductList,
     useBundleStore,
     useBundleValidation,
-    BundleType,
 } from "@/features/bundles";
 import { useEffect } from "react";
 import { useProductPicker } from "@/shared";
-import { usePathname } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 
 export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
@@ -18,8 +17,6 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
     const { clearErrors } = useFormContext();
-    const pathname = usePathname();
-    const mode = pathname.includes("/edit") ? "edit" : "create";
 
     const handleClearAll = () => {
         setSelectedItems([]);
@@ -102,10 +99,6 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                     )}
                     <ProductList />
                 </s-stack>
-            </s-section>
-
-            <s-section>
-                <BundleAsProduct mode={mode} />
             </s-section>
         </s-stack>
     );

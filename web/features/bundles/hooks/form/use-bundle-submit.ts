@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
     BundleFormData,
     createBundleAction,
@@ -12,14 +13,21 @@ import {
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { mediaMutations, useAppNavigation, useGlobalBanner, withAsyncLoader, } from "@/shared";
+import {
+    mediaMutations,
+    useAppNavigation,
+    useGlobalBanner,
+    withAsyncLoader,
+} from "@/shared";
 
 /**
  * Hook for bundle form submission
+ * Handles create/edit operations with media management
  */
 export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         setSaving,
         resetDirty,
@@ -35,10 +43,12 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         useCreateBundleProduct();
     const { uploadAndAttachMedia } = useMediaUpload();
 
+    // TanStack Query mutation for smart delete
     const deleteMedia = mediaMutations(app).smartDelete();
 
     const handleSubmit = withAsyncLoader(async (data: BundleFormData) => {
         try {
+            setIsSubmitting(true);
             setSaving(true);
             let token = await app.idToken();
             let result;
@@ -180,6 +190,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         clearRemovedMediaIds();
                     } catch (error) {
                         console.error("Media deletion failed:", error);
+                        // Continue with save - don't block on media deletion failure
                     }
                 }
 
@@ -242,6 +253,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 content: "Please try again later.",
             });
         } finally {
+            setIsSubmitting(false);
             setSaving(false);
             setStep(1);
         }
@@ -250,6 +262,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     return {
         handleSubmit,
         resetDirty,
+        isSubmitting,
         isCreatingProduct,
         isDeletingMedia: deleteMedia.isPending,
     };

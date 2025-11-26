@@ -1,12 +1,8 @@
 "use client";
 
-import {
-    fetchProductByIdAction,
-    useBundleFormMethods,
-    useBundleStore,
-} from "@/features/bundles";
-import { useCallback, useEffect, useState } from "react";
+import { fetchProductByIdAction, useBundleFormMethods, useBundleStore, } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Hook for managing bundle product creation state
@@ -18,6 +14,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         bundleData,
         mediaFiles,
         existingMedia,
+        removedMediaIds,
         setMediaFiles,
         setExistingMedia,
         removeExistingMedia,
@@ -38,6 +35,9 @@ export function useBundleProduct(mode: "create" | "edit") {
     const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
     const [shopDomain, setShopDomain] = useState<string>("");
 
+    // ✅ Track if product data has been loaded to prevent re-fetching
+    const hasLoadedProductRef = useRef<boolean>(false);
+
     // Get shop domain from App Bridge config
     useEffect(() => {
         const config = app.config;
@@ -46,8 +46,13 @@ export function useBundleProduct(mode: "create" | "edit") {
         }
     }, [app]);
 
-    // Fetch product data in edit mode
+    // Fetch product data in edit mode - ONLY ONCE
     useEffect(() => {
+        // ✅ Skip if already loaded
+        if (hasLoadedProductRef.current) {
+            return;
+        }
+
         if (mode === "edit" && mainProductId && isEnabled) {
             const loadProduct = async () => {
                 setIsLoadingProduct(true);
@@ -78,6 +83,9 @@ export function useBundleProduct(mode: "create" | "edit") {
                         if (product.media && product.media.length > 0) {
                             setExistingMedia(product.media);
                         }
+
+                        // Mark as loaded to prevent refetch
+                        hasLoadedProductRef.current = true;
                     }
                 } catch (error) {
                     console.error("Failed to fetch product:", error);
@@ -117,6 +125,8 @@ export function useBundleProduct(mode: "create" | "edit") {
             setValue("productDescription", "", { shouldValidate: false });
             setMediaFiles([]);
             setExistingMedia([]);
+            // ✅ Reset loaded flag when disabled so it can reload when re-enabled
+            hasLoadedProductRef.current = false;
         }
     }, [isEnabled, setValue, setMediaFiles, setExistingMedia]);
 
@@ -235,13 +245,18 @@ export function useBundleProduct(mode: "create" | "edit") {
         return `https://${shopDomain}/admin/products/${numericId}`;
     }, [mainProductId, shopDomain]);
 
+    // Filter out removed media before returning
+    const visibleExistingMedia = existingMedia.filter(
+        (media) => !removedMediaIds.includes(media.id),
+    );
+
     return {
         isEnabled,
         bundleName,
         productTitle: productTitle || bundleName,
         productDescription: productDescription || "",
         mediaFiles,
-        existingMedia,
+        existingMedia: visibleExistingMedia,
         isUploading,
         isLoadingProduct,
         hoveredIndex,

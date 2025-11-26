@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
 
-import { RangeSlider } from "@/shared/components/fields/range-slider";
+import { useState } from "react";
+import { RangeSlider } from "@/shared";
 
 export function WidgetAppearance() {
     const [show, setShow] = useState<boolean>(true);
@@ -10,7 +10,6 @@ export function WidgetAppearance() {
     const [activeAlign, setActiveAlign] = useState<"left" | "center" | "right">(
         "left",
     );
-
     const [radius, setRadius] = useState(8);
     const [radiusProduct, setRadiusProduct] = useState(12);
     const [radiusWidget, setRadiusWidget] = useState(12);
