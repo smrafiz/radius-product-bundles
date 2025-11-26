@@ -32,7 +32,6 @@ export function SettingsPage() {
                 </s-stack>
 
                 <s-stack gap="large">
-                    {/* Pricing Faq */}
                     <SettingsTab />
                 </s-stack>
             </s-stack>

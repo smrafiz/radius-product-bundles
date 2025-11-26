@@ -19,7 +19,7 @@ export function SettingsVariantSelectorType() {
 
     return (
         <s-section>
-            <s-stack gap="base">
+            <s-stack gap="small">
                 <s-heading>
                     <div className="text-lg">Variant selector type</div>
                 </s-heading>
@@ -30,6 +30,10 @@ export function SettingsVariantSelectorType() {
                     Select the type of variant selector shown to customers in
                     the bundle.
                 </s-paragraph>
+
+                <s-banner>
+                    Changes to the variant selector type will apply to all bundles in your store.
+                </s-banner>
 
                 <s-choice-list name="button_action" onChange={handleChange}>
                     <s-choice
@@ -53,7 +57,24 @@ export function SettingsVariantSelectorType() {
                             with an image as image swatches, and without either
                             as text.
                         </s-paragraph>
-                        <s-button icon="variant">Set swatches</s-button>
+                        <>
+                            <s-button commandFor="modal" icon="variant">Set swatches</s-button>
+                            <s-modal id="modal" heading="Swatch editor">
+                                <s-paragraph>Displaying more details here.</s-paragraph>
+
+                                <s-button slot="secondary-actions" commandFor="modal" command="--hide">
+                                    Close
+                                </s-button>
+                                <s-button
+                                    slot="primary-action"
+                                    variant="primary"
+                                    commandFor="modal"
+                                    command="--hide"
+                                >
+                                    Apply changes
+                                </s-button>
+                            </s-modal>
+                        </>
                     </s-stack>
                 )}
             </s-stack>

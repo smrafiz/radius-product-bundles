@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { PricingCardItemInfo } from "@/features/pricing";
 
 export function PricingCardItem({
@@ -11,10 +12,20 @@ export function PricingCardItem({
     primaryButton,
     frequency,
 }: PricingCardItemInfo) {
+
+    const [loading, setLoading] = useState(false);
+
+    const handleClick = async () => {
+        setLoading(true);
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div
-            className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `}
-        >
+        <div className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `}>
             {featuredText ? (
                 <div className="absolute top-[-15px] right-1.5 z-50">
                     <s-badge tone="success">{featuredText}</s-badge>
@@ -63,8 +74,13 @@ export function PricingCardItem({
                     </s-stack>
 
                     <s-stack alignItems="end">
-                        <s-button {...primaryButton.props}>
-                            {primaryButton.content}
+                        <s-button
+                            {...primaryButton.props}
+                            loading={loading}
+                            disabled={loading}
+                            onClick={handleClick}
+                        >
+                            {loading ? "Please wait..." : primaryButton.content}
                         </s-button>
                     </s-stack>
                 </s-stack>

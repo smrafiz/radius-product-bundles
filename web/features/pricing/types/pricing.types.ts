@@ -10,6 +10,7 @@ export interface PricingCardItemInfo {
     frequency: string;
     primaryButton: {
         content: string;
+        loading?: boolean;
         props: {
             variant: "primary" | "secondary";
             external?: boolean;

@@ -20,7 +20,6 @@ export function WidgetAppearance() {
     return (
         <s-section>
             <s-stack>
-                {/* Add to cart */}
                 <div className="cursor-pointer z-30" onClick={handleToggle}>
                     <s-stack
                         direction="inline"
@@ -40,6 +39,7 @@ export function WidgetAppearance() {
                     `}
                 >
                     <s-stack gap="base" paddingBlockStart="base">
+                        {/* Add to cart */}
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"

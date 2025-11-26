@@ -20,6 +20,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         frequency: "month",
         primaryButton: {
             content: "Currently subscribed",
+            loading: false,
             props: {
                 variant: "secondary",
                 external: true,
@@ -42,6 +43,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         frequency: "month",
         primaryButton: {
             content: "Select this plan",
+            loading: false,
             props: {
                 variant: "primary",
                 external: true,
@@ -63,6 +65,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         frequency: "year",
         primaryButton: {
             content: "Select this plan",
+            loading: false,
             props: {
                 variant: "primary",
                 external: true,

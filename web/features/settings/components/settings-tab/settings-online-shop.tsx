@@ -29,14 +29,12 @@ export function SettingsOnlineShop() {
                         rows={2}
                         onChange={handleChange}
                         maxLength={999}
-                    />
-                    <s-text>
-                        Enter specific urls or parts of urls where you want to
+                        details="Enter specific urls or parts of urls where you want to
                         prevent the app from injecting the widgets
                         automatically. The widgets will remain hidden on all
                         URLs that contain the parts of URLs you specify here.
-                        Separate urls with commas or new lines.
-                    </s-text>
+                        Separate urls with commas or new lines."
+                    />
                 </s-stack>
 
                 <s-choice-list name="automatically" multiple>

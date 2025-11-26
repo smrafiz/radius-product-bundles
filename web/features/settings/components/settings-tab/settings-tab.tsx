@@ -46,7 +46,7 @@ export const SettingsTab = () => {
             case "tools":
                 return <SettingsTools />;
             default:
-                return <s-text>No content found.</s-text>;
+                return <s-text>No settings found.</s-text>;
         }
     };
 
@@ -66,7 +66,7 @@ export const SettingsTab = () => {
                                         className={`p-2 rounded-lg transition-colors ${
                                             activeTab === tab.id
                                                 ? "bg-gray-200 font-semibold"
-                                                : "hover:bg-gray-200 font-normal"
+                                                : "hover:bg-gray-100 font-normal"
                                         }`}
                                     >
                                         <s-stack

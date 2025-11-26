@@ -4,7 +4,7 @@
     align-items: center;
     gap: 1rem;
     position: relative;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .range-slider-container .range-slider-value {
@@ -37,16 +37,9 @@
     box-shadow: 0 0 0 0 var(--p-color-border-focus);
     -webkit-appearance: none;
     appearance: none;
-    -webkit-transition-property: border-color, transform;
-    transition-property: border-color, transform;
-    transition-duration: var(--p-motion-duration-200);
-    transition-timing-function: var(--p-motion-ease);
     margin-top: calc(
-        (
-                var(--pc-range-slider-thumb-size) -
-                    var(--pc-range-slider-track-height)
-            ) *
-            -1 / 2
+            (var(--pc-range-slider-thumb-size) - var(--pc-range-slider-track-height))
+            * -0.5
     );
 }
 .range-slider-value .webkit-slider-thumb:focus {

@@ -5,13 +5,15 @@ import { CallbackEvent } from "@shopify/polaris-types";
 
 export function SettingsAdvanced() {
     const handleChange = (event: CallbackEvent<"s-text-field">) => {};
-    const [title, setTitle] = useState<string>("");
+    const [textValue, setTextValue] = useState<string>("");
+
+    const MAX_LENGTH = 9999;
 
     const handleChangeArea = (event: CallbackEvent<"s-text-area">) => {
         const { name, value } = event.target as HTMLInputElement;
         if (name === "title") {
-            const newValue = value.slice(0, 999);
-            setTitle(newValue);
+            const newValue = value.slice(0, MAX_LENGTH);
+            setTextValue(newValue);
         }
     };
     return (
@@ -25,44 +27,41 @@ export function SettingsAdvanced() {
                     <s-text-field
                         label="Free shipping method title"
                         value=""
-                        placeholder=""
                         onChange={handleChange}
-                    />
-                    <s-paragraph>
-                        The title for the free shipping method will be used when
+                        details="The title for the free shipping method will be used when
                         applying the free shipping discount with Shopify draft
                         orders. If left blank, the bundle name will be used
-                        instead.
-                    </s-paragraph>
+                        instead."
+                    />
                 </s-stack>
 
                 <s-stack gap="small-400">
                     <s-text-field
                         label="Currency format"
                         name="currency-format"
-                        placeholder=""
                         onChange={handleChange}
                     />
-                    <s-paragraph>
+                    <div className="text-[12px] text-[#616161]">
                         {
-                            "Leave blank to use the default format. {{ amount }}, {{ amount_no_decimals }}, and {{ amount_with_comma_separator }} will be replaced with the price of your product, while {{ currency_symbol }} will be replaced with the currency symbol. You can use the same formatting as in Shopify stores."
+                            "Leave blank to use the default format. {{ amount }}, {{ amount_no_decimals }}, and {{ amount_with_comma_separator }} will be replaced with the price of your product, while {{ currency_symbol }} will be replaced with the currency symbol. You can use the same formatting as in Shopify stores. "
                         }
                         <s-link
                             target="_blank"
+                            tone="neutral"
                             href="https://help.shopify.com/en/manual/international/pricing/currency-formatting"
                         >
                             Read More
                         </s-link>
-                    </s-paragraph>
+                    </div>
                 </s-stack>
 
                 <s-stack gap="small-400">
                     <s-text-area
                         label="Custom CSS"
-                        value={title}
+                        value={textValue}
                         rows={2}
                         onChange={handleChangeArea}
-                        maxLength={999}
+                        maxLength={MAX_LENGTH}
                     />
                     <s-text>
                         Only use this if you have a good knowledge of CSS.
