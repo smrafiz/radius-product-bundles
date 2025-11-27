@@ -35,6 +35,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         removedMediaIds,
         clearRemovedMediaIds,
         selectedItems,
+        bundleData: storeBundleData,
     } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
@@ -190,13 +191,13 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     if (data.productTitle || data.productDescription) {
                         console.log("Updating Shopify product...");
 
-                        console.log('updateBundleProductAction', data);
+                        const variantId = storeBundleData.mainVariantId || data.mainVariantId;
 
                         const productResult = await updateBundleProductAction(
                             token,
                             {
                                 productId: data.mainProductId,
-                                variantId: data.mainVariantId,
+                                variantId,
                                 title: data.productTitle,
                                 description: data.productDescription,
                                 bundlePrice,

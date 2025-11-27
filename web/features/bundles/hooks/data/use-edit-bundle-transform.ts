@@ -10,6 +10,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         description: bundleData.description || "",
         type: bundleData.type,
         mainProductId: bundleData.mainProductId || undefined,
+        mainVariantId: bundleData.mainVariantId || undefined,
 
         // Bundle mechanics
         buyQuantity: bundleData.buyQuantity ?? undefined,

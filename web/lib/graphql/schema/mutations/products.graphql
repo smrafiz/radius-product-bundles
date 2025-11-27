@@ -48,6 +48,12 @@ mutation ProductUpdate(
             id
             title
             descriptionHtml
+            variants(first: 1) {
+                nodes {
+                    id
+                    price
+                }
+            }
             media(first: 20) {
                 edges {
                     node {

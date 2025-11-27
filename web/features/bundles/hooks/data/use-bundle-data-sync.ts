@@ -20,6 +20,7 @@ export function useBundleDataSync(bundleData: any | undefined) {
 
                 // Main product
                 mainProductId: bundleData.mainProductId,
+                mainVariantId: bundleData.mainVariantId,
                 createProduct: !!bundleData.mainProductId,
                 productTitle: bundleData.name,
                 productDescription: bundleData.description || "",

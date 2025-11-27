@@ -28,6 +28,7 @@ const initialBundleData: Partial<ExtendedBundleFormData> = {
     productTitle: "",
     productDescription: "",
     mainProductId: undefined,
+    mainVariantId: undefined,
 };
 
 const initialDisplaySettings: DisplaySettings = {

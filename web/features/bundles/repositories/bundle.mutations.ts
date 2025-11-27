@@ -40,6 +40,7 @@ export async function createBundle(
             type: data.type,
             status: data.status || "DRAFT",
             mainProductId: data.mainProductId,
+            mainVariantId: data.mainVariantId,
             buyQuantity: data.buyQuantity,
             getQuantity: data.getQuantity,
             minimumItems: data.minimumItems,
@@ -134,31 +135,7 @@ export async function createBundleProductGroups(
 export async function createBundleWithRelations(data: CreateBundleInput) {
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // Step 1: Create the bundle
-        const bundle = await createBundle(tx, {
-            shop: data.shop,
-            name: data.name,
-            description: data.description,
-            type: data.type,
-            status: data.status,
-            mainProductId: data.mainProductId,
-            buyQuantity: data.buyQuantity,
-            getQuantity: data.getQuantity,
-            minimumItems: data.minimumItems,
-            maximumItems: data.maximumItems,
-            discountType: data.discountType,
-            discountValue: data.discountValue,
-            minOrderValue: data.minOrderValue,
-            maxDiscountAmount: data.maxDiscountAmount,
-            volumeTiers: data.volumeTiers,
-            allowMixAndMatch: data.allowMixAndMatch,
-            mixAndMatchPrice: data.mixAndMatchPrice,
-            marketingCopy: data.marketingCopy,
-            seoTitle: data.seoTitle,
-            seoDescription: data.seoDescription,
-            images: data.images,
-            startDate: data.startDate,
-            endDate: data.endDate,
-        });
+        const bundle = await createBundle(tx, data);
 
         // Step 2: Create bundle products
         if (data.products?.length) {

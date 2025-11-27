@@ -55,6 +55,7 @@ export interface TransformedBundleBase {
 export interface TransformedBundle extends TransformedBundleBase {
     description?: string | undefined;
     mainProductId?: string | undefined;
+    mainVariantId?: string | undefined;
     createProduct: boolean;
     productTitle?: string;
     productDescription?: string;

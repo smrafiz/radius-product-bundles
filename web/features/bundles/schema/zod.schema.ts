@@ -118,6 +118,7 @@ export const bundleSchema = z
             .optional(),
 
         mainProductId: productGidSchema.optional(),
+        mainVariantId: variantGidSchema.optional(),
 
         // Bundle mechanics
         buyQuantity: z.number().int().min(1).optional(),

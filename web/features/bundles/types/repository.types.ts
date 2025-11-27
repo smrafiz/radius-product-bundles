@@ -20,6 +20,7 @@ export interface CreateBundleInput {
     type: BundleType;
     status?: BundleStatus;
     mainProductId?: string | null;
+    mainVariantId?: string | null;
     buyQuantity?: number | null;
     getQuantity?: number | null;
     minimumItems?: number | null;

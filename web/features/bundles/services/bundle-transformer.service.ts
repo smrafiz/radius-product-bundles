@@ -90,6 +90,7 @@ export function transformBundle(
         ...core,
         description: bundle.description ?? undefined,
         mainProductId: bundle.mainProductId ?? undefined,
+        mainVariantId: bundle.mainVariantId ?? undefined,
         createProduct: !!bundle.mainProductId,
         productTitle: bundle.name,
         productDescription: bundle.description || "",
