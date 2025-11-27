@@ -110,8 +110,14 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                         </s-unordered-list>
                                     )}
                                 <s-stack>
-                                    <s-button variant="primary">
-                                        Create the bundle
+                                    <s-button
+                                        variant="primary"
+                                        onClick={withLoader(handleSelect)}
+                                        loading={isThisCardSelecting}
+                                    >
+                                        {bundleType.comingSoon
+                                            ? "Coming Soon"
+                                            : "Create the bundle"}
                                     </s-button>
                                 </s-stack>
                             </s-stack>

@@ -52,9 +52,13 @@ export const SettingsTab = () => {
 
     return (
         <s-box>
-            <s-grid gridTemplateColumns="250px 1fr" gap="base">
+            {/*<s-grid*/}
+            {/*    gridTemplateColumns="250px 1fr"*/}
+            {/*    gap="base"*/}
+            {/*>*/}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* Left: Tab list */}
-                <s-grid-item>
+                <div className="md:col-span-4">
                     <s-section>
                         <s-stack gap="small-500">
                             {SETTINGS_TAB_NAV.map((tab) => (
@@ -97,10 +101,9 @@ export const SettingsTab = () => {
                             ))}
                         </s-stack>
                     </s-section>
-                </s-grid-item>
-
+                </div>
                 {/* Right: Active content */}
-                <s-grid-item>
+                <div className="md:col-span-8">
                     <s-section>
                         {activeTabData ? (
                             <s-stack>{renderActiveComponent()}</s-stack>
@@ -108,8 +111,8 @@ export const SettingsTab = () => {
                             <s-text>No content found.</s-text>
                         )}
                     </s-section>
-                </s-grid-item>
-            </s-grid>
+                </div>
+            </div>
         </s-box>
     );
 };
