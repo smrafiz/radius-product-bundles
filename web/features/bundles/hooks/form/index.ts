@@ -7,4 +7,5 @@ export { useAutoGenerateName } from "./use-auto-generate-name";
 export { useBundleFormManager } from "./use-bundle-form-manager";
 export { useBundleFormMethods } from "./use-bundle-form-methods";
 export { useInitialBundleState } from "./use-initial-bundle-state";
+export { useProductMediaPicker } from "./use-product-media-picker";
 export { useCreateBundleProduct } from "./use-create-bundle-product";

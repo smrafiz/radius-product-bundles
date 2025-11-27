@@ -25,7 +25,7 @@ function MediaItem({
             <div
                 className={`w-full h-full rounded-lg border overflow-hidden transition-colors ${
                     isHovered
-                        ? "border-[var(--p-color-bg-fill-success)]"
+                        ? "border-[var(--p-color-border-focus)]"
                         : "border-[var(--p-color-border)]"
                 }`}
             >

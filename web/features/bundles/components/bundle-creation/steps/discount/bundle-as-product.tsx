@@ -2,7 +2,13 @@
 
 import React from "react";
 import { EditorWysiwyg } from "@/shared";
-import { MediaGrid, useBundleProduct, useBundleValidation, } from "@/features/bundles";
+import {
+    MediaGrid,
+    ProductMediaPicker,
+    useBundleProduct,
+    useBundleValidation,
+    useProductMediaPicker,
+} from "@/features/bundles";
 
 /**
  * Bundle as product configuration component
@@ -26,6 +32,11 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         setHoveredItem,
         getProductEditUrl,
     } = useBundleProduct(mode);
+
+    const {
+        isLoading: isAddingFromProducts,
+        addImages,
+    } = useProductMediaPicker();
 
     const productEditUrl = getProductEditUrl();
 
@@ -159,7 +170,11 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                             alignItems="center"
                         >
                             <s-text>Media</s-text>
-                            <s-button variant="secondary">
+                            <s-button
+                                variant="secondary"
+                                commandFor="product-media-picker-modal"
+                                command="--show"
+                            >
                                 Add media from included products
                             </s-button>
                         </s-stack>
@@ -168,7 +183,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                             mediaFiles={mediaFiles || []}
                             existingMedia={existingMedia}
                             hoveredIndex={hoveredIndex}
-                            isUploading={isUploading}
+                            isUploading={isUploading || isAddingFromProducts}
                             onHoverStart={setHoveredItem}
                             onHoverEnd={() => setHoveredItem(null)}
                             onRemoveNew={removeNewMediaFile}
@@ -176,6 +191,8 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                             onUpload={handleMediaUpload}
                         />
                     </s-stack>
+
+                    <ProductMediaPicker action={addImages} />
                 </s-stack>
             )}
         </s-stack>
