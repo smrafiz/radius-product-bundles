@@ -61,6 +61,7 @@ export function SelectedProducts() {
                                                 aspectRatio="40/40"
                                                 inlineSize="auto"
                                                 loading="lazy"
+                                                objectFit="cover"
                                             />
                                         </div>
                                     )}

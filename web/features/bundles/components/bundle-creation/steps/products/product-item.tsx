@@ -94,6 +94,7 @@ export function ProductItem({ group }: { group: ProductGroup }) {
                                     alt={product.title}
                                     aspectRatio="40/40"
                                     inlineSize="auto"
+                                    objectFit="cover"
                                 />
                             </div>
                         ) : (

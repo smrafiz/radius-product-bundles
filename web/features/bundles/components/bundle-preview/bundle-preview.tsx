@@ -31,6 +31,7 @@ export function BundlePreview() {
                             alt={item.title}
                             aspectRatio="80/80"
                             inlineSize="auto"
+                            objectFit="cover"
                         />
                     </div>
                 </s-stack>
