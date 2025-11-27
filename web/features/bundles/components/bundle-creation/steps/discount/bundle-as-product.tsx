@@ -44,7 +44,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     alignItems="center"
                     gap="small-300"
                 >
-                    {/* Tooltip */}
+                    {/* Tooltips */}
                     <s-tooltip id="bundle-as-product-tooltip">
                         <s-text>
                             {isEnabled
@@ -53,12 +53,47 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         </s-text>
                     </s-tooltip>
 
-                    {/* Info icon */}
-                    <s-icon
-                        tone="neutral"
-                        type="info"
-                        interestFor="bundle-as-product-tooltip"
-                    />
+                    <s-tooltip id="edit-on-shopify-tooltip">
+                        <s-text>
+                            To add additional information—such as product
+                            category, type, tags, or advanced media formats
+                            (GIFs, videos)—open the product in your Shopify
+                            admin and complete the rest of the fields.
+                        </s-text>
+                    </s-tooltip>
+
+                    {mode === "create" || !mainProductId ? (
+                        <s-icon
+                            tone="neutral"
+                            type="info"
+                            interestFor="bundle-as-product-tooltip"
+                        />
+                    ) : (
+                        <>
+                            {isEnabled ? (
+                                <s-button
+                                    interestFor="edit-on-shopify-tooltip"
+                                    disabled={!productEditUrl}
+                                    onClick={() => {
+                                        if (productEditUrl) {
+                                            window.open(
+                                                productEditUrl,
+                                                "_blank",
+                                            );
+                                        }
+                                    }}
+                                >
+                                    Edit product on Shopify
+                                </s-button>
+                            ) : (
+                                <s-icon
+                                    tone="neutral"
+                                    type="info"
+                                    interestFor="bundle-as-product-tooltip"
+                                />
+                            )}
+                        </>
+                    )}
 
                     {/* Switch */}
                     <s-switch
@@ -87,6 +122,13 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
             {/* Product configuration */}
             {isEnabled && !isLoadingProduct && (
                 <s-stack gap="base">
+                    {mode === "edit" && mainProductId && (
+                        <s-banner tone="info">
+                            Any changes to the title, description, or media
+                            images will automatically update the Shopify product
+                            when you save the bundle.
+                        </s-banner>
+                    )}
                     {/* Title field */}
                     <s-text-field
                         label="Title"
@@ -134,46 +176,6 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                             onUpload={handleMediaUpload}
                         />
                     </s-stack>
-
-                    {/* Info and link to Shopify */}
-                    {mode === "edit" && mainProductId && (
-                        <s-stack gap="base">
-                            <s-banner tone="info">
-                                Any changes to the title, description, or media
-                                images will automatically update the Shopify
-                                product when you save the bundle.
-                            </s-banner>
-                            <s-box
-                                padding="base"
-                                background="subdued"
-                                borderRadius="base"
-                            >
-                                <s-stack gap="base">
-                                    <s-text>
-                                        To add additional information—such as
-                                        product category, type, tags, or
-                                        advanced media formats (GIFs,
-                                        videos)—open the product in your Shopify
-                                        admin and complete the rest of the
-                                        fields.
-                                    </s-text>
-                                    <s-button
-                                        disabled={!productEditUrl}
-                                        onClick={() => {
-                                            if (productEditUrl) {
-                                                window.open(
-                                                    productEditUrl,
-                                                    "_blank",
-                                                );
-                                            }
-                                        }}
-                                    >
-                                        Edit product on shopify
-                                    </s-button>
-                                </s-stack>
-                            </s-box>
-                        </s-stack>
-                    )}
                 </s-stack>
             )}
         </s-stack>
