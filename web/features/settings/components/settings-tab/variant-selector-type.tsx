@@ -35,7 +35,7 @@ export function SettingsVariantSelectorType() {
                     Changes to the variant selector type will apply to all bundles in your store.
                 </s-banner>
 
-                <s-choice-list name="button_action" onChange={handleChange}>
+                <s-choice-list labelAccessibilityVisibility="exclusive" label="Variant type" name="button_action" onChange={handleChange}>
                     <s-choice
                         value="dropdown"
                         selected={variantType === "dropdown"}

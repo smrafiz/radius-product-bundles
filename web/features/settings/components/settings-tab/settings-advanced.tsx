@@ -69,7 +69,7 @@ export function SettingsAdvanced() {
                     </s-text>
                 </s-stack>
 
-                <s-choice-list name="automatically" multiple>
+                <s-choice-list labelAccessibilityVisibility="exclusive" label="Redirect dynamic" name="redirectdynamic" multiple>
                     <s-choice value="redirect-dynamic-checkout">
                         Redirect dynamic checkout buttons on product page to the
                         checkout

@@ -92,6 +92,7 @@ export function HorizontalStepIndicator() {
                         onClick={prevStep}
                         disabled={!canGoPrev || (isLastStep && isSaving)}
                         variant="secondary"
+                        accessibilityLabel="Back"
                     >
                         <s-icon type="arrow-left" size="small" />
                         {getPrevButtonText()}
@@ -178,6 +179,7 @@ export function HorizontalStepIndicator() {
                         }
                         loading={isLastStep && isSaving}
                         variant="primary"
+                        accessibilityLabel="Next"
                     >
                         {getNextButtonText()}
                         <s-icon type="arrow-right" size="small" />

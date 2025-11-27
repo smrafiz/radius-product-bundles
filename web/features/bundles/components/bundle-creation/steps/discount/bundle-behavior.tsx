@@ -3,8 +3,7 @@
 export function BundleBehavior() {
     return (
         <s-stack gap="small">
-            <s-heading>Bundle Behavior</s-heading>
-            <s-choice-list name="bundleBehavior">
+            <s-choice-list name="bundleBehavior" label="Bundle Behavior" >
                 <s-choice selected value="bundle-discount" id="bundle-discount">
                     Apply discount to entire bundle
                 </s-choice>

@@ -21,6 +21,7 @@ export function PricingPage() {
                         <s-button
                             onClick={() => goBack()}
                             icon="arrow-left"
+                            accessibilityLabel="Back"
                         ></s-button>
                     </s-stack>
                     <s-stack>

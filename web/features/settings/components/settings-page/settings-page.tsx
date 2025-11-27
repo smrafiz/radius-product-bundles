@@ -37,6 +37,7 @@ export function SettingsPage() {
                             <s-button
                                 onClick={() => goBack()}
                                 icon="arrow-left"
+                                accessibilityLabel="Back"
                             ></s-button>
                         </s-stack>
                         <s-stack>

@@ -37,9 +37,9 @@ export function SettingsOnlineShop() {
                     />
                 </s-stack>
 
-                <s-choice-list name="automatically" multiple>
+                <s-choice-list labelAccessibilityVisibility="exclusive" label="Automatically" name="automatically" multiple>
                     <s-choice value="automatically-inject">
-                        Automatically Automatically inject widgets into HTML
+                        Automatically inject widgets into HTML
                         <s-text slot="details">
                             Uncheck to stop showing bundle widgets on places
                             where you didn't manually put in the bundler target
