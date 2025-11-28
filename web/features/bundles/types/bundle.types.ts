@@ -341,13 +341,15 @@ export interface BundleConfiguration {
  */
 export interface MediaGridProps {
     mediaFiles: File[];
-    existingMedia: ExistingMedia[];
+    existingMedia: { id: string; url: string; alt?: string }[];
+    selectedProductMediaUrls: string[];
     hoveredIndex: number | null;
     isUploading: boolean;
     onHoverStart: (index: number) => void;
     onHoverEnd: () => void;
     onRemoveNew: (index: number) => void;
     onRemoveExisting: (id: string) => void;
+    onRemoveProductMedia: (url: string) => void;
     onUpload: (files: File[]) => void;
 }
 

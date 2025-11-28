@@ -12,6 +12,7 @@ import {
     ProductGroup,
     SelectedItem,
 } from "@/features/bundles";
+import { getImageBasePath } from "@/shared";
 
 const initialBundleData: Partial<ExtendedBundleFormData> = {
     name: "",
@@ -56,6 +57,7 @@ export const useBundleStore = create(
         mediaFiles: [],
         existingMedia: [],
         removedMediaIds: [],
+        selectedProductMediaUrls: [],
         displaySettings: initialDisplaySettings,
         configuration: initialConfiguration,
         isLoading: false,
@@ -410,6 +412,51 @@ export const useBundleStore = create(
             });
         },
 
+        setSelectedProductMediaUrls: (urls: string[]) => {
+            set((state) => {
+                state.selectedProductMediaUrls = urls;
+            });
+        },
+
+        addSelectedProductMediaUrls: (urls: string[]) => {
+            set((state) => {
+                // Collect all existing image paths
+                const existingPaths = new Set<string>();
+
+                state.existingMedia.forEach((m) => {
+                    existingPaths.add(getImageBasePath(m.url));
+                });
+
+                (state.selectedProductMediaUrls || []).forEach((url) => {
+                    existingPaths.add(getImageBasePath(url));
+                });
+
+                // Only add URLs that don't already exist
+                const newUrls = urls.filter((url) => !existingPaths.has(getImageBasePath(url)));
+
+                if (newUrls.length > 0) {
+                    state.selectedProductMediaUrls = [
+                        ...(state.selectedProductMediaUrls || []),
+                        ...newUrls,
+                    ];
+                }
+            });
+        },
+
+        removeSelectedProductMediaUrl: (url: string) => {
+            set((state) => {
+                const pathToRemove = getImageBasePath(url);
+                state.selectedProductMediaUrls = (state.selectedProductMediaUrls || [])
+                    .filter((u) => getImageBasePath(u) !== pathToRemove);
+            });
+        },
+
+        clearSelectedProductMediaUrls: () => {
+            set((state) => {
+                state.selectedProductMediaUrls = [];
+            });
+        },
+
         getRemovedMediaIds: () => {
             return get().removedMediaIds;
         },
@@ -481,6 +528,7 @@ export const useBundleStore = create(
                 state.mediaFiles = [];
                 state.existingMedia = [];
                 state.removedMediaIds = [];
+                state.selectedProductMediaUrls = [];
                 state.displaySettings = { ...initialDisplaySettings };
                 state.configuration = { ...initialConfiguration };
                 state.isLoading = false;

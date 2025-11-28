@@ -15,9 +15,11 @@ export function useBundleProduct(mode: "create" | "edit") {
         mediaFiles,
         existingMedia,
         removedMediaIds,
+        selectedProductMediaUrls,
         setMediaFiles,
         setExistingMedia,
         removeExistingMedia,
+        removeSelectedProductMediaUrl,
     } = useBundleStore();
     const app = useAppBridge();
 
@@ -257,6 +259,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         productDescription: productDescription || "",
         mediaFiles,
         existingMedia: visibleExistingMedia,
+        selectedProductMediaUrls: selectedProductMediaUrls || [],
         isUploading,
         isLoadingProduct,
         hoveredIndex,
@@ -267,6 +270,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         handleMediaUpload,
         removeNewMediaFile,
         handleRemoveExistingMedia,
+        removeSelectedProductMediaUrl,
         setHoveredItem,
         getProductEditUrl,
     };

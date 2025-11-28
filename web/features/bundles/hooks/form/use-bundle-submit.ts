@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+    attachMediaToProductAction,
     BundleFormData,
     calculateBundlePrice,
     calculateDiscountAmount,
@@ -35,6 +36,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         removedMediaIds,
         clearRemovedMediaIds,
         selectedItems,
+        selectedProductMediaUrls,
+        clearSelectedProductMediaUrls,
         bundleData: storeBundleData,
     } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
@@ -43,7 +46,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         useCreateBundleProduct();
     const { uploadAndAttachMedia } = useMediaUpload();
 
-    // TanStack Query mutation for smart delete
     const deleteMedia = mediaMutations(app).smartDelete();
 
     /**
@@ -113,6 +115,49 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         // Add mainProductId to bundle data
                         data.mainProductId = productData.mainProductId;
                         data.mainVariantId = productData.mainVariantId;
+
+                        if (selectedProductMediaUrls && selectedProductMediaUrls.length > 0) {
+                            // Get existing image paths from the product
+                            const existingPaths = new Set(
+                                (useBundleStore.getState().existingMedia || []).map((m) => {
+                                    try {
+                                        return new URL(m.url).pathname;
+                                    } catch {
+                                        return m.url;
+                                    }
+                                })
+                            );
+
+                            // Filter out URLs that already exist
+                            const urlsToAttach = selectedProductMediaUrls.filter((url) => {
+                                try {
+                                    return !existingPaths.has(new URL(url).pathname);
+                                } catch {
+                                    return !existingPaths.has(url);
+                                }
+                            });
+
+                            if (urlsToAttach.length > 0) {
+                                console.log(`Attaching ${urlsToAttach.length} new media URLs (skipped ${selectedProductMediaUrls.length - urlsToAttach.length} existing)...`);
+
+                                const attachResult = await attachMediaToProductAction(
+                                    token,
+                                    productData.mainProductId,
+                                    urlsToAttach,
+                                    productData.productTitle,
+                                );
+
+                                if (attachResult.status === "error") {
+                                    console.error("Failed to attach media:", attachResult.message);
+                                } else {
+                                    console.log("✅ Media attached");
+                                }
+                            } else {
+                                console.log("All selected media already exists on product, skipping attach");
+                            }
+
+                            clearSelectedProductMediaUrls();
+                        }
 
                         const newFiles = (mediaFiles || []).filter(
                             (f): f is File => f instanceof File,
@@ -215,7 +260,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         }
                     }
 
-                    // Delete removed media using TanStack Query mutation
                     if (removedMediaIds.length > 0) {
                         try {
                             const deleteResult = await deleteMedia.mutateAsync({
@@ -238,6 +282,49 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             console.error("Media deletion failed:", error);
                             // Continue with save - don't block on media deletion failure
                         }
+                    }
+
+                    if (selectedProductMediaUrls && selectedProductMediaUrls.length > 0) {
+                        // Get existing image paths from the product
+                        const existingPaths = new Set(
+                            (useBundleStore.getState().existingMedia || []).map((m) => {
+                                try {
+                                    return new URL(m.url).pathname;
+                                } catch {
+                                    return m.url;
+                                }
+                            })
+                        );
+
+                        // Filter out URLs that already exist
+                        const urlsToAttach = selectedProductMediaUrls.filter((url) => {
+                            try {
+                                return !existingPaths.has(new URL(url).pathname);
+                            } catch {
+                                return !existingPaths.has(url);
+                            }
+                        });
+
+                        if (urlsToAttach.length > 0) {
+                            console.log(`Attaching ${urlsToAttach.length} new media URLs (skipped ${selectedProductMediaUrls.length - urlsToAttach.length} existing)...`);
+
+                            const attachResult = await attachMediaToProductAction(
+                                token,
+                                data.mainProductId,
+                                urlsToAttach,
+                                data.productTitle,
+                            );
+
+                            if (attachResult.status === "error") {
+                                console.error("Failed to attach media:", attachResult.message);
+                            } else {
+                                console.log("✅ Media attached");
+                            }
+                        } else {
+                            console.log("All selected media already exists on product, skipping attach");
+                        }
+
+                        clearSelectedProductMediaUrls();
                     }
 
                     // Upload media (only new files)

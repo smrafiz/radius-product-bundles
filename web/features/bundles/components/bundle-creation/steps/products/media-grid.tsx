@@ -25,7 +25,7 @@ function MediaItem({
             <div
                 className={`w-full h-full rounded-lg border overflow-hidden transition-colors ${
                     isHovered
-                        ? "border-[var(--p-color-border-focus)]"
+                        ? "border-2 border-[var(--p-color-border-focus)]"
                         : "border-[var(--p-color-border)]"
                 }`}
             >
@@ -66,12 +66,14 @@ function MediaItem({
 export function MediaGrid({
     mediaFiles,
     existingMedia,
+    selectedProductMediaUrls,
     hoveredIndex,
     isUploading,
     onHoverStart,
     onHoverEnd,
     onRemoveNew,
     onRemoveExisting,
+    onRemoveProductMedia,
     onUpload,
 }: MediaGridProps) {
     /**
@@ -83,7 +85,10 @@ export function MediaGrid({
         onUpload(files);
     };
 
-    const totalMedia = existingMedia.length + mediaFiles.length;
+    const totalMedia =
+        existingMedia.length +
+        selectedProductMediaUrls.length +
+        mediaFiles.length;
     const getGridClass = () => {
         if (totalMedia === 1) {
             return "grid grid-cols-3 auto-rows-[80px] gap-[var(--p-space-150)]";
@@ -91,39 +96,62 @@ export function MediaGrid({
         return "grid grid-cols-6 auto-rows-[80px] gap-[var(--p-space-150)]";
     };
 
+    let currentIndex = 0;
+
     return (
         <div className="relative">
             <s-stack direction={totalMedia > 0 ? "inline" : "block"} gap="none">
                 <div className={getGridClass()}>
                     {/* Existing media items */}
-                    {existingMedia.map((media, index) => (
-                        <MediaItem
-                            key={media.id}
-                            src={media.url}
-                            alt={media.alt || "Product image"}
-                            index={index}
-                            isHovered={hoveredIndex === index}
-                            isFirst={index === 0}
-                            onHoverStart={onHoverStart}
-                            onHoverEnd={onHoverEnd}
-                            onRemove={() => onRemoveExisting(media.id)}
-                        />
-                    ))}
-
-                    {/* New media items (pending upload) */}
-                    {mediaFiles.map((file, index) => {
-                        const displayIndex = existingMedia.length + index;
+                    {existingMedia.map((media) => {
+                        const index = currentIndex++;
                         return (
                             <MediaItem
-                                key={`new-${file.name}-${index}`}
-                                src={URL.createObjectURL(file)}
-                                alt={file.name}
-                                index={displayIndex}
-                                isHovered={hoveredIndex === displayIndex}
-                                isFirst={displayIndex === 0}
+                                key={media.id}
+                                src={media.url}
+                                alt={media.alt || "Product image"}
+                                index={index}
+                                isHovered={hoveredIndex === index}
+                                isFirst={index === 0}
                                 onHoverStart={onHoverStart}
                                 onHoverEnd={onHoverEnd}
-                                onRemove={() => onRemoveNew(index)}
+                                onRemove={() => onRemoveExisting(media.id)}
+                            />
+                        );
+                    })}
+
+                    {/* Selected product media (existing Shopify URLs to attach) */}
+                    {selectedProductMediaUrls.map((url) => {
+                        const index = currentIndex++;
+                        return (
+                            <MediaItem
+                                key={`product-${url}`}
+                                src={url}
+                                alt="Product image"
+                                index={index}
+                                isHovered={hoveredIndex === index}
+                                isFirst={index === 0}
+                                onHoverStart={onHoverStart}
+                                onHoverEnd={onHoverEnd}
+                                onRemove={() => onRemoveProductMedia(url)}
+                            />
+                        );
+                    })}
+
+                    {/* New media items (pending upload) */}
+                    {mediaFiles.map((file, fileIndex) => {
+                        const index = currentIndex++;
+                        return (
+                            <MediaItem
+                                key={`new-${file.name}-${fileIndex}`}
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                index={index}
+                                isHovered={hoveredIndex === index}
+                                isFirst={index === 0}
+                                onHoverStart={onHoverStart}
+                                onHoverEnd={onHoverEnd}
+                                onRemove={() => onRemoveNew(fileIndex)}
                             />
                         );
                     })}

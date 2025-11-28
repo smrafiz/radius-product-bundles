@@ -128,6 +128,11 @@ export interface BundleState {
     // Media files - new uploads
     mediaFiles?: File[];
     setMediaFiles: (files: File[]) => void;
+    selectedProductMediaUrls?: string[];
+    setSelectedProductMediaUrls: (urls: string[]) => void;
+    addSelectedProductMediaUrls: (urls: string[]) => void;
+    removeSelectedProductMediaUrl: (url: string) => void;
+    clearSelectedProductMediaUrls: () => void;
 
     // Existing media - already on Shopify
     existingMedia: ExistingMedia[];

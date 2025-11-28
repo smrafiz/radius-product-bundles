@@ -20,6 +20,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         productTitle,
         mediaFiles,
         existingMedia,
+        selectedProductMediaUrls,
         isUploading,
         isLoadingProduct,
         hoveredIndex,
@@ -29,6 +30,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         handleMediaUpload,
         removeNewMediaFile,
         handleRemoveExistingMedia,
+        removeSelectedProductMediaUrl,
         setHoveredItem,
         getProductEditUrl,
     } = useBundleProduct(mode);
@@ -182,12 +184,14 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         <MediaGrid
                             mediaFiles={mediaFiles || []}
                             existingMedia={existingMedia}
+                            selectedProductMediaUrls={selectedProductMediaUrls}
                             hoveredIndex={hoveredIndex}
                             isUploading={isUploading || isAddingFromProducts}
                             onHoverStart={setHoveredItem}
                             onHoverEnd={() => setHoveredItem(null)}
                             onRemoveNew={removeNewMediaFile}
                             onRemoveExisting={handleRemoveExistingMedia}
+                            onRemoveProductMedia={removeSelectedProductMediaUrl}
                             onUpload={handleMediaUpload}
                         />
                     </s-stack>

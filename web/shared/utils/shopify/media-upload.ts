@@ -70,3 +70,15 @@ export async function uploadFilesToShopify(
 
     return resourceUrls;
 }
+
+/**
+ * Extract base URL path for comparison (removes query params)
+ */
+export const getImageBasePath = (url: string): string => {
+    try {
+        const u = new URL(url);
+        return u.pathname;
+    } catch {
+        return url;
+    }
+};
