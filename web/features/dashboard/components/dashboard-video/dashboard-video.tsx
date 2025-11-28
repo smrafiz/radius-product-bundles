@@ -104,24 +104,19 @@ export default function Modal({ videoUrl }: { videoUrl: string }) {
         const modal = modalRef.current;
         if (!modal) return;
 
-        const handleAfterShow = () => {
-            console.log("aftershow → mount complete");
-            setTimeout(() => {
-                console.log("PLAYING TRUE");
-                setPlaying(true);
-            }, 50);
+        const handleShow = () => {
+            setTimeout(() => setPlaying(true), 50);
         };
 
         const handleHide = () => {
-            console.log("hide → stopping");
             setPlaying(false);
         };
 
-        modal.addEventListener("aftershow", handleAfterShow);
+        modal.addEventListener("show", handleShow);
         modal.addEventListener("hide", handleHide);
 
         return () => {
-            modal.removeEventListener("aftershow", handleAfterShow);
+            modal.removeEventListener("show", handleShow);
             modal.removeEventListener("hide", handleHide);
         };
     }, []);
@@ -135,7 +130,9 @@ export default function Modal({ videoUrl }: { videoUrl: string }) {
             <ReactPlayer
                 src={videoUrl}
                 playing={playing}
+                muted={true}
                 controls
+                playsInline
                 width="100%"
                 height="400px"
             />

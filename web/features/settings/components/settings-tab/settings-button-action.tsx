@@ -11,7 +11,7 @@ export function SettingsButtonAction() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Button action</div>
+                    <div className="text-base">Button action</div>
                 </s-heading>
 
                 <s-divider />

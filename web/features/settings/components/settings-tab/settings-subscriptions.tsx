@@ -8,7 +8,7 @@ export function SettingsSubscriptions() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Subscriptions</div>
+                    <div className="text-base">Subscriptions</div>
                 </s-heading>
 
                 <s-divider />

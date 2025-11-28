@@ -9,7 +9,19 @@ import { SettingsTab, useSettingStore } from "@/features/settings";
  */
 export function SettingsPage() {
     const { goBack } = useAppNavigation();
-    const { toast, loading, hideToast, handleApply } = useSettingStore();
+    const { toast, loading, setLoading, hideToast, showToast } = useSettingStore();
+
+    const handleApply = async () => {
+        setLoading(true);
+        try {
+            await new Promise((res) => setTimeout(res, 800));
+            showToast("Settings applied successfully!");
+        } catch (err) {
+            showToast("Failed to apply settings!");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (
@@ -42,9 +54,9 @@ export function SettingsPage() {
                         </s-stack>
                         <s-stack>
                             <s-heading>
-                                <div className="text-xl">Settings</div>
+                                <div className="text-lg">Settings</div>
                             </s-heading>
-                            <s-text>Choose the right plan for your business</s-text>
+                            <s-text color="subdued">Choose the right plan for your business</s-text>
                         </s-stack>
                     </s-stack>
                     <s-button

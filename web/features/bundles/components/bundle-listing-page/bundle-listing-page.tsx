@@ -59,16 +59,12 @@ export function BundleListingPage() {
                 paddingBlockEnd="large"
             >
                 <s-stack>
-                    <s-heading>
-                        <div className="text-xl text-center">
-                            Bundle Management
-                        </div>
-                    </s-heading>
-                    <s-text>
-                        <div className="text-center">
+                    <div className="text-center">
+                        <s-heading><div className="text-base text-center">Bundle Management</div></s-heading>
+                        <s-text color="subdued">
                             Create and manage your product bundle offers
-                        </div>
-                    </s-text>
+                        </s-text>
+                    </div>
                 </s-stack>
 
                 <s-stack gap="base">

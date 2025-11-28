@@ -5,7 +5,7 @@ export function SettingsGeneral() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">General</div>
+                    <div className="text-base">General</div>
                 </s-heading>
                 <s-divider />
                 <s-paragraph>

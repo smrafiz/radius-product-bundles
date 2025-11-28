@@ -5,7 +5,7 @@ export function SettingsBundleWidget() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Bundle widget</div>
+                    <div className="text-base">Bundle widget</div>
                 </s-heading>
                 <s-divider />
 

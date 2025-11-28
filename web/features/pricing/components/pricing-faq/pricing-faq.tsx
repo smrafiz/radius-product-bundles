@@ -15,8 +15,8 @@ export const PricingFaq = () => {
     return (
         <s-section padding="none">
             <s-stack padding="base">
-                <div className="text-xl font-bold">FAQ</div>
-                <s-text>
+                <div className="text-base font-semibold">FAQ</div>
+                <s-text color="subdued">
                     Find answers to the most common questions about our pricing
                     and billing model below.
                 </s-text>

@@ -5,7 +5,7 @@ export function SettingsStoreInformation() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Store information</div>
+                    <div className="text-base">Store information</div>
                 </s-heading>
                 <s-divider />
                 <s-paragraph>

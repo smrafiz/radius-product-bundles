@@ -5,7 +5,7 @@ export function SettingsTools() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Tools</div>
+                    <div className="text-base">Tools</div>
                 </s-heading>
                 <s-divider />
                 <s-box padding="small-100">

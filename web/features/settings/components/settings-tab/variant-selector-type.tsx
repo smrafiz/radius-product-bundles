@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CallbackEvent } from "@shopify/polaris-types";
 
 export function SettingsVariantSelectorType() {
+    const [loading, setLoading] = useState(false);
     const [variantType, setVariantType] = useState<"dropdown" | "swatches">(
         "dropdown",
     );
@@ -17,11 +18,25 @@ export function SettingsVariantSelectorType() {
         }
     };
 
+    const handleApply = async () => {
+        setLoading(true);
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 800));
+        } finally {
+            setLoading(false);
+            document
+                .querySelector('#modal')
+                ?.dispatchEvent(new CustomEvent('--hide', { bubbles: true }));
+        }
+    };
+
+
     return (
         <s-section>
             <s-stack gap="small">
                 <s-heading>
-                    <div className="text-lg">Variant selector type</div>
+                    <div className="text-base">Variant selector type</div>
                 </s-heading>
 
                 <s-divider />
@@ -68,10 +83,11 @@ export function SettingsVariantSelectorType() {
                                 <s-button
                                     slot="primary-action"
                                     variant="primary"
-                                    commandFor="modal"
-                                    command="--hide"
+                                    loading={loading}
+                                    disabled={loading}
+                                    onClick={handleApply}
                                 >
-                                    Apply changes
+                                    {loading ? "Applying..." : "Apply changes"}
                                 </s-button>
                             </s-modal>
                         </>

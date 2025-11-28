@@ -17,7 +17,7 @@ export function SettingsOnlineShop() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Enable in online shop</div>
+                    <div className="text-base">Enable in online shop</div>
                 </s-heading>
 
                 <s-divider />

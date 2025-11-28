@@ -21,7 +21,7 @@ export function SettingsDiscount() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Discount</div>
+                    <div className="text-base">Discount</div>
                 </s-heading>
                 <s-divider />
 

@@ -4,11 +4,11 @@ import { useState } from "react";
 import { CallbackEvent } from "@shopify/polaris-types";
 
 export function SettingsAdvanced() {
+
     const handleChange = (event: CallbackEvent<"s-text-field">) => {};
+
     const [textValue, setTextValue] = useState<string>("");
-
     const MAX_LENGTH = 9999;
-
     const handleChangeArea = (event: CallbackEvent<"s-text-area">) => {
         const { name, value } = event.target as HTMLInputElement;
         if (name === "title") {
@@ -21,7 +21,7 @@ export function SettingsAdvanced() {
         <s-section>
             <s-stack gap="large">
                 <s-heading>
-                    <div className="text-lg">Advanced</div>
+                    <div className="text-base">Advanced</div>
                 </s-heading>
                 <s-divider />
                 <s-stack gap="small-400">

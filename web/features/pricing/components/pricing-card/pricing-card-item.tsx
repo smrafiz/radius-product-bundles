@@ -35,7 +35,7 @@ export function PricingCardItem({
                 <s-stack direction="block" gap="large">
                     <s-stack direction="block" gap="base" alignItems="start">
                         <s-heading>
-                            <div className="text-xl font-bold">{title}</div>
+                            <div className="text-base font-semibold">{title}</div>
                         </s-heading>
                         <s-divider />
                         {description ? (
@@ -51,7 +51,7 @@ export function PricingCardItem({
                         alignItems="baseline"
                     >
                         <s-text>
-                            <div className="text-3xl font-bold">{price}</div>
+                            <div className="text-2xl font-semibold">{price}</div>
                         </s-text>
                         <s-text>/ {frequency}</s-text>
                     </s-stack>

@@ -5,7 +5,7 @@ export function SettingsNotifications() {
         <s-section>
             <s-stack gap="base">
                 <s-heading>
-                    <div className="text-lg">Notifications</div>
+                    <div className="text-base">Notifications</div>
                 </s-heading>
 
                 <s-divider />

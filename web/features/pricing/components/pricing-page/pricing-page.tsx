@@ -26,9 +26,9 @@ export function PricingPage() {
                     </s-stack>
                     <s-stack>
                         <s-heading>
-                            <div className="text-xl">Pricing & plans</div>
+                            <div className="text-lg">Pricing & plans</div>
                         </s-heading>
-                        <s-text>Choose the right plan for your business</s-text>
+                        <s-text color="subdued">Choose the right plan for your business</s-text>
                     </s-stack>
                 </s-stack>
 

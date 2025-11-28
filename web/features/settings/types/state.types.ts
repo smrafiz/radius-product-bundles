@@ -11,6 +11,4 @@ export interface SettingState {
     setError: (error: string | null) => void;
     showToast: (message: string) => void;
     hideToast: () => void;
-
-    handleApply: () => Promise<void>;
 }

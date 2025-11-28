@@ -76,7 +76,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                     statusKey === bundle.status;
 
                                 return (
-                                    <div
+                                    <div className={isCurrentStatus ? "cursor-default" : "cursor-pointer"}
                                         key={statusKey}
                                         onClick={() => {
                                             if (!isCurrentStatus) {
@@ -84,11 +84,6 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                                     statusKey as BundleStatus,
                                                 );
                                             }
-                                        }}
-                                        style={{
-                                            cursor: isCurrentStatus
-                                                ? "default"
-                                                : "pointer",
                                         }}
                                     >
                                         <s-clickable>
