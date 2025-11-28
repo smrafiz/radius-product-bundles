@@ -1,12 +1,11 @@
 "use client";
 
-import { fetchProductByIdAction, PendingMediaItem, useBundleFormMethods, useBundleStore } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchProductByIdAction, useBundleFormMethods, useBundleStore } from "@/features/bundles";
 
 /**
  * Hook for managing bundle product creation state
- * Handles product fields, media upload, and toggle state
  */
 export function useBundleProduct(mode: "create" | "edit") {
     const { watch, setValue } = useBundleFormMethods();
@@ -29,9 +28,14 @@ export function useBundleProduct(mode: "create" | "edit") {
     const productDescription = watch("productDescription");
     const mainProductId = bundleData.mainProductId;
 
-    const [isEnabled, setIsEnabled] = useState<boolean>(
-        createProduct !== undefined ? createProduct : true,
-    );
+    const [isEnabled, setIsEnabled] = useState<boolean>(() => {
+        if (mode === "create") {
+            return createProduct ?? true;
+        }
+
+        return createProduct ?? !!mainProductId;
+    });
+
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
@@ -39,6 +43,13 @@ export function useBundleProduct(mode: "create" | "edit") {
 
     // Track if product data has been loaded to prevent re-fetching
     const hasLoadedProductRef = useRef<boolean>(false);
+
+    // Sync isEnabled with form value when it changes
+    useEffect(() => {
+        if (createProduct !== undefined) {
+            setIsEnabled(createProduct);
+        }
+    }, [createProduct]);
 
     // Get shop domain from App Bridge config
     useEffect(() => {
@@ -48,7 +59,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         }
     }, [app]);
 
-    // Fetch product data in edit mode - ONLY ONCE
+    // Fetch product data in edit mode
     useEffect(() => {
         if (hasLoadedProductRef.current) {
             return;
@@ -99,12 +110,14 @@ export function useBundleProduct(mode: "create" | "edit") {
     // Initialize createProduct field on mount
     useEffect(() => {
         if (createProduct === undefined) {
-            setValue("createProduct", true, {
+            const defaultValue = mode === "create" ? true : !!mainProductId;
+            setValue("createProduct", defaultValue, {
                 shouldValidate: false,
                 shouldDirty: false,
             });
+            setIsEnabled(defaultValue);
         }
-    }, [createProduct, setValue]);
+    }, [createProduct, setValue, mode, mainProductId]);
 
     // Auto-sync title in creation mode only
     useEffect(() => {
@@ -180,7 +193,9 @@ export function useBundleProduct(mode: "create" | "edit") {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 300));
                 addPendingFiles(files);
-                console.log(`Added ${files.length} new files to pending media.`);
+                console.log(
+                    `Added ${files.length} new files to pending media.`,
+                );
             } catch (error) {
                 console.error("Failed to add media:", error);
             } finally {

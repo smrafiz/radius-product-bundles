@@ -5,10 +5,9 @@ import { useBundleStore } from "@/features/bundles";
 
 /**
  * Hook to sync query data to Zustand store
- * Call this in your edit page after fetching bundle data
  */
 export function useBundleDataSync(bundleData: any | undefined) {
-    const { setBundleData, setSelectedItems } = useBundleStore();
+    const { setBundleData } = useBundleStore();
 
     useEffect(() => {
         if (bundleData) {
@@ -57,5 +56,5 @@ export function useBundleDataSync(bundleData: any | undefined) {
                 images: bundleData.images || [],
             });
         }
-    }, [bundleData, setBundleData, setSelectedItems]);
+    }, [bundleData, setBundleData]);
 }
