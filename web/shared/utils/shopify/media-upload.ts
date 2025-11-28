@@ -82,3 +82,10 @@ export const getImageBasePath = (url: string): string => {
         return url;
     }
 };
+
+/**
+ * Generate unique ID for pending media
+ */
+export const generateMediaId = (): string => {
+    return `media-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+};

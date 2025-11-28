@@ -9,6 +9,7 @@ import {
     createBundleAction,
     ExtendedBundleFormData,
     invalidateBundleCache,
+    PendingMediaItem,
     updateBundleAction,
     updateBundleProductAction,
     useBundleStore,
@@ -17,7 +18,7 @@ import {
 } from "@/features/bundles";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { mediaMutations, useAppNavigation, useGlobalBanner, withAsyncLoader, } from "@/shared";
+import { mediaMutations, useAppNavigation, useGlobalBanner, withAsyncLoader } from "@/shared";
 
 /**
  * Hook for bundle form submission
@@ -31,20 +32,18 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         setSaving,
         resetDirty,
         setStep,
-        mediaFiles,
-        setMediaFiles,
+        pendingMedia,
+        clearPendingMedia,
         removedMediaIds,
         clearRemovedMediaIds,
         selectedItems,
-        selectedProductMediaUrls,
-        clearSelectedProductMediaUrls,
         bundleData: storeBundleData,
     } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { createProduct, isCreating: isCreatingProduct } =
         useCreateBundleProduct();
-    const { uploadAndAttachMedia } = useMediaUpload();
+    const { uploadFilesOnly } = useMediaUpload();
 
     const deleteMedia = mediaMutations(app).smartDelete();
 
@@ -54,7 +53,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const calculateBundlePricing = (data: BundleFormData) => {
         const originalPrice = calculateBundlePrice(selectedItems);
 
-        // Handle CUSTOM_PRICE - use discountValue directly as the final price
         if (data.discountType === "CUSTOM_PRICE" && data.discountValue) {
             return {
                 bundlePrice: data.discountValue,
@@ -62,7 +60,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             };
         }
 
-        // Calculate discount for other types
         const discountAmount = calculateDiscountAmount(
             originalPrice,
             data.discountType || "PERCENTAGE",
@@ -76,6 +73,74 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         };
     };
 
+    /**
+     * Process pending media in order - upload files first, then attach all in order
+     */
+    const processMediaForProduct = async (
+        token: string,
+        productId: string,
+        productTitle?: string,
+    ) => {
+        if (pendingMedia.length === 0) {
+            return;
+        }
+
+        console.log(`Processing ${pendingMedia.length} pending media items in order...`);
+
+        // Step 1: Upload all files first to get their resource URLs
+        const filesToUpload = pendingMedia
+            .filter((item): item is PendingMediaItem & { type: 'file' } => item.type === 'file')
+            .map((item) => item.file);
+
+        let uploadedFileUrls: string[] = [];
+
+        if (filesToUpload.length > 0) {
+            console.log(`Uploading ${filesToUpload.length} files...`);
+            const uploadResult = await uploadFilesOnly(filesToUpload);
+
+            if (!uploadResult.success) {
+                console.error("File upload failed:", uploadResult.error);
+            } else {
+                uploadedFileUrls = uploadResult.resourceUrls;
+                console.log(`✅ Uploaded ${uploadedFileUrls.length} files`);
+            }
+        }
+
+        // Step 2: Build ordered list of ALL URLs to attach
+        let fileIndex = 0;
+        const orderedUrls: string[] = [];
+
+        for (const item of pendingMedia) {
+            if (item.type === 'url') {
+                orderedUrls.push(item.url);
+            } else if (item.type === 'file' && fileIndex < uploadedFileUrls.length) {
+                orderedUrls.push(uploadedFileUrls[fileIndex]);
+                fileIndex++;
+            }
+        }
+
+        // Step 3: Attach all media in order with single API call
+        if (orderedUrls.length > 0) {
+            console.log(`Attaching ${orderedUrls.length} media items in order...`);
+
+            const attachResult = await attachMediaToProductAction(
+                token,
+                productId,
+                orderedUrls,
+                productTitle,
+            );
+
+            if (attachResult.status === "error") {
+                console.error("Failed to attach media:", attachResult.message);
+            } else {
+                console.log("✅ All media attached in order");
+            }
+        }
+
+        // Clear pending media
+        clearPendingMedia();
+    };
+
     const handleSubmit = withAsyncLoader(
         async (data: ExtendedBundleFormData) => {
             try {
@@ -84,109 +149,40 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 let token = await app.idToken();
                 let result;
 
-                if (mode === "create") {
-                    if (
-                        mode === "create" &&
-                        data.createProduct &&
-                        data.productTitle
-                    ) {
-                        console.log("Creating Shopify product...");
+                // CREATE MODE: Create product first if enabled
+                if (mode === "create" && data.createProduct && data.productTitle) {
+                    console.log("Creating Shopify product...");
 
-                        const { bundlePrice, originalPrice } =
-                            calculateBundlePricing(data);
-                        const productData = await createProduct(
-                            data.productTitle,
-                            data.productDescription,
-                            data.type,
-                            bundlePrice,
-                            originalPrice,
-                        );
+                    const { bundlePrice, originalPrice } = calculateBundlePricing(data);
+                    const productData = await createProduct(
+                        data.productTitle,
+                        data.productDescription,
+                        data.type,
+                        bundlePrice,
+                        originalPrice,
+                    );
 
-                        if (!productData || !productData.mainProductId) {
-                            showError("Failed to create product", {
-                                content:
-                                    "Could not create Shopify product. Please try again.",
-                            });
-                            return;
-                        }
-
-                        console.log("Product created:", productData);
-
-                        // Add mainProductId to bundle data
-                        data.mainProductId = productData.mainProductId;
-                        data.mainVariantId = productData.mainVariantId;
-
-                        if (selectedProductMediaUrls && selectedProductMediaUrls.length > 0) {
-                            // Get existing image paths from the product
-                            const existingPaths = new Set(
-                                (useBundleStore.getState().existingMedia || []).map((m) => {
-                                    try {
-                                        return new URL(m.url).pathname;
-                                    } catch {
-                                        return m.url;
-                                    }
-                                })
-                            );
-
-                            // Filter out URLs that already exist
-                            const urlsToAttach = selectedProductMediaUrls.filter((url) => {
-                                try {
-                                    return !existingPaths.has(new URL(url).pathname);
-                                } catch {
-                                    return !existingPaths.has(url);
-                                }
-                            });
-
-                            if (urlsToAttach.length > 0) {
-                                console.log(`Attaching ${urlsToAttach.length} new media URLs (skipped ${selectedProductMediaUrls.length - urlsToAttach.length} existing)...`);
-
-                                const attachResult = await attachMediaToProductAction(
-                                    token,
-                                    productData.mainProductId,
-                                    urlsToAttach,
-                                    productData.productTitle,
-                                );
-
-                                if (attachResult.status === "error") {
-                                    console.error("Failed to attach media:", attachResult.message);
-                                } else {
-                                    console.log("✅ Media attached");
-                                }
-                            } else {
-                                console.log("All selected media already exists on product, skipping attach");
-                            }
-
-                            clearSelectedProductMediaUrls();
-                        }
-
-                        const newFiles = (mediaFiles || []).filter(
-                            (f): f is File => f instanceof File,
-                        );
-
-                        if (newFiles.length > 0) {
-                            console.log(
-                                `Uploading ${newFiles.length} media files...`,
-                            );
-
-                            const mediaResult = await uploadAndAttachMedia(
-                                productData.mainProductId,
-                                newFiles,
-                                data.productTitle,
-                            );
-
-                            if (!mediaResult.success) {
-                                console.error(
-                                    "Media upload failed:",
-                                    mediaResult.error,
-                                );
-                            } else {
-                                console.log("✅ Media uploaded successfully");
-                                setMediaFiles([]);
-                            }
-                        }
+                    if (!productData || !productData.mainProductId) {
+                        showError("Failed to create product", {
+                            content: "Could not create Shopify product. Please try again.",
+                        });
+                        return;
                     }
+
+                    console.log("Product created:", productData);
+
+                    data.mainProductId = productData.mainProductId;
+                    data.mainVariantId = productData.mainVariantId;
+
+                    // Process pending media in order
+                    await processMediaForProduct(
+                        token,
+                        productData.mainProductId,
+                        data.productTitle,
+                    );
                 }
 
+                // Create or update bundle
                 if (mode === "create") {
                     result = await createBundleAction(token, data);
                 } else if (mode === "edit" && bundleId) {
@@ -195,7 +191,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     showError("Unexpected error", {
                         content: "Invalid mode or missing bundleId for edit.",
                     });
-
                     return;
                 }
 
@@ -206,32 +201,22 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         result.message?.includes("exp") ||
                         result.message?.includes("session"))
                 ) {
-                    console.warn(
-                        "[Submit] Token expired, retrying with fresh token...",
-                    );
-
+                    console.warn("[Submit] Token expired, retrying with fresh token...");
                     const freshToken = await app.idToken();
-
-                    // Retry the request
                     result =
                         mode === "create"
                             ? await createBundleAction(freshToken, data)
-                            : await updateBundleAction(
-                                  freshToken,
-                                  bundleId!,
-                                  data,
-                              );
+                            : await updateBundleAction(freshToken, bundleId!, data);
                 }
 
-                // Update Shopify product (edit mode only)
+                // EDIT MODE: Update Shopify product
                 if (
                     mode === "edit" &&
                     result.status === "success" &&
                     data.mainProductId &&
                     (data.productTitle || data.productDescription)
                 ) {
-                    const { bundlePrice, originalPrice } =
-                        calculateBundlePricing(data);
+                    const { bundlePrice, originalPrice } = calculateBundlePricing(data);
 
                     if (data.productTitle || data.productDescription) {
                         console.log("Updating Shopify product...");
@@ -251,15 +236,13 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         );
 
                         if (productResult.status === "error") {
-                            console.error(
-                                "Failed to update product:",
-                                productResult.message,
-                            );
+                            console.error("Failed to update product:", productResult.message);
                         } else {
                             console.log("✅ Product updated");
                         }
                     }
 
+                    // Delete removed media
                     if (removedMediaIds.length > 0) {
                         try {
                             const deleteResult = await deleteMedia.mutateAsync({
@@ -280,84 +263,15 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             clearRemovedMediaIds();
                         } catch (error) {
                             console.error("Media deletion failed:", error);
-                            // Continue with save - don't block on media deletion failure
                         }
                     }
 
-                    if (selectedProductMediaUrls && selectedProductMediaUrls.length > 0) {
-                        // Get existing image paths from the product
-                        const existingPaths = new Set(
-                            (useBundleStore.getState().existingMedia || []).map((m) => {
-                                try {
-                                    return new URL(m.url).pathname;
-                                } catch {
-                                    return m.url;
-                                }
-                            })
-                        );
-
-                        // Filter out URLs that already exist
-                        const urlsToAttach = selectedProductMediaUrls.filter((url) => {
-                            try {
-                                return !existingPaths.has(new URL(url).pathname);
-                            } catch {
-                                return !existingPaths.has(url);
-                            }
-                        });
-
-                        if (urlsToAttach.length > 0) {
-                            console.log(`Attaching ${urlsToAttach.length} new media URLs (skipped ${selectedProductMediaUrls.length - urlsToAttach.length} existing)...`);
-
-                            const attachResult = await attachMediaToProductAction(
-                                token,
-                                data.mainProductId,
-                                urlsToAttach,
-                                data.productTitle,
-                            );
-
-                            if (attachResult.status === "error") {
-                                console.error("Failed to attach media:", attachResult.message);
-                            } else {
-                                console.log("✅ Media attached");
-                            }
-                        } else {
-                            console.log("All selected media already exists on product, skipping attach");
-                        }
-
-                        clearSelectedProductMediaUrls();
-                    }
-
-                    // Upload media (only new files)
-                    if (
-                        mediaFiles &&
-                        mediaFiles.length > 0 &&
-                        data.mainProductId
-                    ) {
-                        const newFiles = mediaFiles.filter(
-                            (f): f is File => f instanceof File,
-                        );
-                        if (newFiles.length > 0) {
-                            console.log(
-                                `Uploading ${newFiles.length} new media files...`,
-                            );
-
-                            const mediaResult = await uploadAndAttachMedia(
-                                data.mainProductId,
-                                newFiles,
-                                data.productTitle,
-                            );
-
-                            if (!mediaResult.success) {
-                                console.error(
-                                    "Media upload failed:",
-                                    mediaResult.error,
-                                );
-                            } else {
-                                console.log("✅ Media uploaded");
-                                setMediaFiles([]);
-                            }
-                        }
-                    }
+                    // Process pending media in order
+                    await processMediaForProduct(
+                        token,
+                        data.mainProductId,
+                        data.productTitle,
+                    );
                 }
 
                 // Handle success
@@ -369,7 +283,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             content: "Your bundle has been created.",
                             autoHide: true,
                         });
-                        // Navigate to edit page
                         bundleData.edit(result.data.id);
                     } else {
                         showSuccess("Bundle updated successfully!", {
@@ -379,9 +292,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     }
                 } else {
                     showError("Failed to save bundle", {
-                        content:
-                            result.message ||
-                            "Please check your inputs and try again.",
+                        content: result.message || "Please check your inputs and try again.",
                     });
                 }
             } catch (error) {

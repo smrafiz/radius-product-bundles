@@ -12,6 +12,7 @@ import {
     ExistingMedia,
     ExtendedBundleFormData,
     Pagination,
+    PendingMediaItem,
     ProductGroup,
     SelectedItem,
     Toast,
@@ -126,13 +127,18 @@ export interface BundleState {
     reorderItems: (activeId: string, overId: string) => void;
 
     // Media files - new uploads
-    mediaFiles?: File[];
-    setMediaFiles: (files: File[]) => void;
-    selectedProductMediaUrls?: string[];
-    setSelectedProductMediaUrls: (urls: string[]) => void;
-    addSelectedProductMediaUrls: (urls: string[]) => void;
-    removeSelectedProductMediaUrl: (url: string) => void;
-    clearSelectedProductMediaUrls: () => void;
+    // mediaFiles?: File[];
+    // setMediaFiles: (files: File[]) => void;
+    // selectedProductMediaUrls?: string[];
+    // setSelectedProductMediaUrls: (urls: string[]) => void;
+    // addSelectedProductMediaUrls: (urls: string[]) => void;
+    // removeSelectedProductMediaUrl: (url: string) => void;
+    // clearSelectedProductMediaUrls: () => void;
+    pendingMedia: PendingMediaItem[];
+    addPendingFiles: (files: File[]) => void;
+    addPendingUrls: (urls: string[]) => void;
+    removePendingMedia: (id: string) => void;
+    clearPendingMedia: () => void;
 
     // Existing media - already on Shopify
     existingMedia: ExistingMedia[];

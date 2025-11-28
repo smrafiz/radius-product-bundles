@@ -1,9 +1,9 @@
 "use client";
 
-import { MediaGridItemProps, MediaGridProps } from "@/features/bundles";
+import { MediaGridItemProps, MediaGridProps, PendingMediaItem } from "@/features/bundles";
 
 /**
- * Unified media item component for both existing and new media
+ * Unified media item component
  */
 function MediaItem({
     src,
@@ -21,11 +21,10 @@ function MediaItem({
             onMouseEnter={() => onHoverStart(index)}
             onMouseLeave={onHoverEnd}
         >
-            {/* Image */}
             <div
                 className={`w-full h-full rounded-lg border overflow-hidden transition-colors ${
                     isHovered
-                        ? "border-2 border-[var(--p-color-border-focus)]"
+                        ? "border-[var(--p-color-border-focus)]"
                         : "border-[var(--p-color-border)]"
                 }`}
             >
@@ -39,7 +38,6 @@ function MediaItem({
                 />
             </div>
 
-            {/* Delete button */}
             {isHovered && (
                 <div className="absolute z-10 top-1.5 right-1.5">
                     <s-button
@@ -52,7 +50,6 @@ function MediaItem({
                 </div>
             )}
 
-            {/* Hover overlay */}
             {isHovered && (
                 <div className="bg-[rgba(255,255,255,0.3)] w-full h-full rounded-lg absolute left-0 top-0" />
             )}
@@ -61,34 +58,37 @@ function MediaItem({
 }
 
 /**
+ * Get image source from pending media item
+ */
+function getPendingMediaSrc(item: PendingMediaItem): string {
+    if (item.type === "file") {
+        return URL.createObjectURL(item.file);
+    }
+    return item.url;
+}
+
+/**
  * Media grid component for product images
  */
 export function MediaGrid({
-    mediaFiles,
     existingMedia,
-    selectedProductMediaUrls,
+    pendingMedia,
     hoveredIndex,
     isUploading,
     onHoverStart,
     onHoverEnd,
-    onRemoveNew,
     onRemoveExisting,
-    onRemoveProductMedia,
+    onRemovePending,
     onUpload,
 }: MediaGridProps) {
-    /**
-     * Handles file selection from the drop zone
-     */
     const handleDropzoneChange = (event: Event) => {
         const input = event.currentTarget as HTMLInputElement;
         const files = input.files ? Array.from(input.files) : [];
         onUpload(files);
     };
 
-    const totalMedia =
-        existingMedia.length +
-        selectedProductMediaUrls.length +
-        mediaFiles.length;
+    const totalMedia = existingMedia.length + pendingMedia.length;
+
     const getGridClass = () => {
         if (totalMedia === 1) {
             return "grid grid-cols-3 auto-rows-[80px] gap-[var(--p-space-150)]";
@@ -102,7 +102,7 @@ export function MediaGrid({
         <div className="relative">
             <s-stack direction={totalMedia > 0 ? "inline" : "block"} gap="none">
                 <div className={getGridClass()}>
-                    {/* Existing media items */}
+                    {/* Existing media (already on Shopify) */}
                     {existingMedia.map((media) => {
                         const index = currentIndex++;
                         return (
@@ -120,43 +120,29 @@ export function MediaGrid({
                         );
                     })}
 
-                    {/* Selected product media (existing Shopify URLs to attach) */}
-                    {selectedProductMediaUrls.map((url) => {
+                    {/* Pending media (files + URLs in order added) */}
+                    {pendingMedia.map((item) => {
                         const index = currentIndex++;
                         return (
                             <MediaItem
-                                key={`product-${url}`}
-                                src={url}
-                                alt="Product image"
+                                key={item.id}
+                                src={getPendingMediaSrc(item)}
+                                alt={
+                                    item.type === "file"
+                                        ? item.file.name
+                                        : "Product image"
+                                }
                                 index={index}
                                 isHovered={hoveredIndex === index}
                                 isFirst={index === 0}
                                 onHoverStart={onHoverStart}
                                 onHoverEnd={onHoverEnd}
-                                onRemove={() => onRemoveProductMedia(url)}
+                                onRemove={() => onRemovePending(item.id)}
                             />
                         );
                     })}
 
-                    {/* New media items (pending upload) */}
-                    {mediaFiles.map((file, fileIndex) => {
-                        const index = currentIndex++;
-                        return (
-                            <MediaItem
-                                key={`new-${file.name}-${fileIndex}`}
-                                src={URL.createObjectURL(file)}
-                                alt={file.name}
-                                index={index}
-                                isHovered={hoveredIndex === index}
-                                isFirst={index === 0}
-                                onHoverStart={onHoverStart}
-                                onHoverEnd={onHoverEnd}
-                                onRemove={() => onRemoveNew(fileIndex)}
-                            />
-                        );
-                    })}
-
-                    {/* Additional upload zone */}
+                    {/* Upload zone */}
                     {totalMedia > 0 && (
                         <div className="relative">
                             <s-drop-zone
@@ -169,7 +155,6 @@ export function MediaGrid({
                     )}
                 </div>
 
-                {/* Initial upload zone */}
                 {totalMedia === 0 && (
                     <div className="relative">
                         <s-drop-zone
@@ -185,12 +170,8 @@ export function MediaGrid({
                 )}
             </s-stack>
 
-            {/* Loading overlay */}
             {isUploading && (
-                <div
-                    className="absolute inset-0 flex items-center justify-center
-                        bg-white/90 rounded-lg z-10"
-                >
+                <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-lg z-10">
                     <s-spinner size="base" />
                 </div>
             )}

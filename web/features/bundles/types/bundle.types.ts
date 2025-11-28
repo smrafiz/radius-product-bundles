@@ -340,16 +340,14 @@ export interface BundleConfiguration {
  * Bundle media grid types
  */
 export interface MediaGridProps {
-    mediaFiles: File[];
     existingMedia: { id: string; url: string; alt?: string }[];
-    selectedProductMediaUrls: string[];
+    pendingMedia: PendingMediaItem[];
     hoveredIndex: number | null;
     isUploading: boolean;
     onHoverStart: (index: number) => void;
     onHoverEnd: () => void;
-    onRemoveNew: (index: number) => void;
     onRemoveExisting: (id: string) => void;
-    onRemoveProductMedia: (url: string) => void;
+    onRemovePending: (id: string) => void;
     onUpload: (files: File[]) => void;
 }
 
@@ -391,3 +389,10 @@ export interface ExistingMedia {
     url: string;
     alt?: string;
 }
+
+/**
+ * Pending media item - can be a file to upload or URL to attach
+ */
+export type PendingMediaItem =
+    | { type: 'file'; file: File; id: string }
+    | { type: 'url'; url: string; id: string };

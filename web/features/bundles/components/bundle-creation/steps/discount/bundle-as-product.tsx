@@ -18,9 +18,9 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
     const {
         isEnabled,
         productTitle,
-        mediaFiles,
+        pendingMedia,
+        removePendingMedia,
         existingMedia,
-        selectedProductMediaUrls,
         isUploading,
         isLoadingProduct,
         hoveredIndex,
@@ -28,17 +28,13 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         toggleEnabled,
         handleTitleChange,
         handleMediaUpload,
-        removeNewMediaFile,
         handleRemoveExistingMedia,
-        removeSelectedProductMediaUrl,
         setHoveredItem,
         getProductEditUrl,
     } = useBundleProduct(mode);
 
-    const {
-        isLoading: isAddingFromProducts,
-        addImages,
-    } = useProductMediaPicker();
+    const { isLoading: isAddingFromProducts, addImages } =
+        useProductMediaPicker();
 
     const productEditUrl = getProductEditUrl();
 
@@ -96,7 +92,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                                         }
                                     }}
                                 >
-                                    Edit product on Shopify
+                                    Edit product
                                 </s-button>
                             ) : (
                                 <s-icon
@@ -182,16 +178,14 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         </s-stack>
 
                         <MediaGrid
-                            mediaFiles={mediaFiles || []}
                             existingMedia={existingMedia}
-                            selectedProductMediaUrls={selectedProductMediaUrls}
+                            pendingMedia={pendingMedia}
                             hoveredIndex={hoveredIndex}
                             isUploading={isUploading || isAddingFromProducts}
                             onHoverStart={setHoveredItem}
                             onHoverEnd={() => setHoveredItem(null)}
-                            onRemoveNew={removeNewMediaFile}
                             onRemoveExisting={handleRemoveExistingMedia}
-                            onRemoveProductMedia={removeSelectedProductMediaUrl}
+                            onRemovePending={removePendingMedia}
                             onUpload={handleMediaUpload}
                         />
                     </s-stack>

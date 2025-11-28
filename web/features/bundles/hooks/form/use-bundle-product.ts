@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchProductByIdAction, useBundleFormMethods, useBundleStore, } from "@/features/bundles";
+import { fetchProductByIdAction, PendingMediaItem, useBundleFormMethods, useBundleStore } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -12,14 +12,14 @@ export function useBundleProduct(mode: "create" | "edit") {
     const { watch, setValue } = useBundleFormMethods();
     const {
         bundleData,
-        mediaFiles,
+        pendingMedia,
         existingMedia,
         removedMediaIds,
-        selectedProductMediaUrls,
-        setMediaFiles,
+        addPendingFiles,
         setExistingMedia,
         removeExistingMedia,
-        removeSelectedProductMediaUrl,
+        removePendingMedia,
+        clearPendingMedia,
     } = useBundleStore();
     const app = useAppBridge();
 
@@ -37,7 +37,7 @@ export function useBundleProduct(mode: "create" | "edit") {
     const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
     const [shopDomain, setShopDomain] = useState<string>("");
 
-    // ✅ Track if product data has been loaded to prevent re-fetching
+    // Track if product data has been loaded to prevent re-fetching
     const hasLoadedProductRef = useRef<boolean>(false);
 
     // Get shop domain from App Bridge config
@@ -50,7 +50,6 @@ export function useBundleProduct(mode: "create" | "edit") {
 
     // Fetch product data in edit mode - ONLY ONCE
     useEffect(() => {
-        // ✅ Skip if already loaded
         if (hasLoadedProductRef.current) {
             return;
         }
@@ -66,7 +65,6 @@ export function useBundleProduct(mode: "create" | "edit") {
                     );
 
                     if (product) {
-                        // Set title
                         setValue("productTitle", product.title, {
                             shouldValidate: false,
                             shouldDirty: false,
@@ -81,12 +79,10 @@ export function useBundleProduct(mode: "create" | "edit") {
                             },
                         );
 
-                        // Set existing media from Shopify
                         if (product.media && product.media.length > 0) {
                             setExistingMedia(product.media);
                         }
 
-                        // Mark as loaded to prevent refetch
                         hasLoadedProductRef.current = true;
                     }
                 } catch (error) {
@@ -125,12 +121,11 @@ export function useBundleProduct(mode: "create" | "edit") {
         if (!isEnabled) {
             setValue("productTitle", "", { shouldValidate: false });
             setValue("productDescription", "", { shouldValidate: false });
-            setMediaFiles([]);
+            clearPendingMedia();
             setExistingMedia([]);
-            // ✅ Reset loaded flag when disabled so it can reload when re-enabled
             hasLoadedProductRef.current = false;
         }
-    }, [isEnabled, setValue, setMediaFiles, setExistingMedia]);
+    }, [isEnabled, setValue, clearPendingMedia, setExistingMedia]);
 
     /**
      * Toggle bundle as a product
@@ -174,7 +169,7 @@ export function useBundleProduct(mode: "create" | "edit") {
     );
 
     /**
-     * Handle new media file upload (adds to pending files)
+     * Handle new media file upload (adds to pending media)
      */
     const handleMediaUpload = useCallback(
         async (files: File[]) => {
@@ -184,32 +179,15 @@ export function useBundleProduct(mode: "create" | "edit") {
 
             try {
                 await new Promise((resolve) => setTimeout(resolve, 300));
-
-                // Get fresh state directly from the store to avoid stale closure
-                const currentFiles = useBundleStore.getState().mediaFiles;
-                setMediaFiles([...(currentFiles || []), ...files]);
-
-                const totalFiles = (currentFiles?.length || 0) + files.length;
-                console.log(
-                    `Added ${files.length} new files. Total pending: ${totalFiles}`,
-                );
+                addPendingFiles(files);
+                console.log(`Added ${files.length} new files to pending media.`);
             } catch (error) {
                 console.error("Failed to add media:", error);
             } finally {
                 setIsUploading(false);
             }
         },
-        [setMediaFiles],
-    );
-
-    /**
-     * Remove a new (pending) media file
-     */
-    const removeNewMediaFile = useCallback(
-        (index: number) => {
-            setMediaFiles((mediaFiles || []).filter((_, i) => i !== index));
-        },
-        [mediaFiles, setMediaFiles],
+        [addPendingFiles],
     );
 
     /**
@@ -257,9 +235,8 @@ export function useBundleProduct(mode: "create" | "edit") {
         bundleName,
         productTitle: productTitle || bundleName,
         productDescription: productDescription || "",
-        mediaFiles,
+        pendingMedia,
         existingMedia: visibleExistingMedia,
-        selectedProductMediaUrls: selectedProductMediaUrls || [],
         isUploading,
         isLoadingProduct,
         hoveredIndex,
@@ -268,9 +245,8 @@ export function useBundleProduct(mode: "create" | "edit") {
         handleTitleChange,
         handleDescriptionChange,
         handleMediaUpload,
-        removeNewMediaFile,
         handleRemoveExistingMedia,
-        removeSelectedProductMediaUrl,
+        removePendingMedia,
         setHoveredItem,
         getProductEditUrl,
     };

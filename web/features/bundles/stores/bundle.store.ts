@@ -8,11 +8,11 @@ import {
     DiscountType,
     DisplaySettings,
     ExistingMedia,
-    ExtendedBundleFormData,
+    ExtendedBundleFormData, PendingMediaItem,
     ProductGroup,
     SelectedItem,
 } from "@/features/bundles";
-import { getImageBasePath } from "@/shared";
+import { generateMediaId, getImageBasePath } from "@/shared";
 
 const initialBundleData: Partial<ExtendedBundleFormData> = {
     name: "",
@@ -54,7 +54,8 @@ export const useBundleStore = create(
         totalSteps: 4,
         bundleData: initialBundleData,
         selectedItems: [],
-        mediaFiles: [],
+        // mediaFiles: [],
+        pendingMedia: [],
         existingMedia: [],
         removedMediaIds: [],
         selectedProductMediaUrls: [],
@@ -375,11 +376,11 @@ export const useBundleStore = create(
             return Object.values(groups);
         },
 
-        setMediaFiles: (files: File[]) => {
-            set((state) => {
-                state.mediaFiles = files;
-            });
-        },
+        // setMediaFiles: (files: File[]) => {
+        //     set((state) => {
+        //         state.mediaFiles = files;
+        //     });
+        // },
 
         setExistingMedia: (media: ExistingMedia[]) => {
             set((state) => {
@@ -412,48 +413,99 @@ export const useBundleStore = create(
             });
         },
 
-        setSelectedProductMediaUrls: (urls: string[]) => {
+        // setSelectedProductMediaUrls: (urls: string[]) => {
+        //     set((state) => {
+        //         state.selectedProductMediaUrls = urls;
+        //     });
+        // },
+
+        // addSelectedProductMediaUrls: (urls: string[]) => {
+        //     set((state) => {
+        //         // Collect all existing image paths
+        //         const existingPaths = new Set<string>();
+        //
+        //         state.existingMedia.forEach((m) => {
+        //             existingPaths.add(getImageBasePath(m.url));
+        //         });
+        //
+        //         (state.selectedProductMediaUrls || []).forEach((url) => {
+        //             existingPaths.add(getImageBasePath(url));
+        //         });
+        //
+        //         // Only add URLs that don't already exist
+        //         const newUrls = urls.filter((url) => !existingPaths.has(getImageBasePath(url)));
+        //
+        //         if (newUrls.length > 0) {
+        //             state.selectedProductMediaUrls = [
+        //                 ...(state.selectedProductMediaUrls || []),
+        //                 ...newUrls,
+        //             ];
+        //         }
+        //     });
+        // },
+
+        // removeSelectedProductMediaUrl: (url: string) => {
+        //     set((state) => {
+        //         const pathToRemove = getImageBasePath(url);
+        //         state.selectedProductMediaUrls = (state.selectedProductMediaUrls || [])
+        //             .filter((u) => getImageBasePath(u) !== pathToRemove);
+        //     });
+        // },
+        //
+        // clearSelectedProductMediaUrls: () => {
+        //     set((state) => {
+        //         state.selectedProductMediaUrls = [];
+        //     });
+        // },
+
+        addPendingFiles: (files: File[]) => {
             set((state) => {
-                state.selectedProductMediaUrls = urls;
+                const newItems: PendingMediaItem[] = files.map((file) => ({
+                    type: 'file' as const,
+                    file,
+                    id: generateMediaId(),
+                }));
+                state.pendingMedia.push(...newItems);
             });
         },
 
-        addSelectedProductMediaUrls: (urls: string[]) => {
+        addPendingUrls: (urls: string[]) => {
             set((state) => {
-                // Collect all existing image paths
+                // Get existing paths (from existingMedia and already pending URLs)
                 const existingPaths = new Set<string>();
 
                 state.existingMedia.forEach((m) => {
                     existingPaths.add(getImageBasePath(m.url));
                 });
 
-                (state.selectedProductMediaUrls || []).forEach((url) => {
-                    existingPaths.add(getImageBasePath(url));
+                state.pendingMedia.forEach((item) => {
+                    if (item.type === 'url') {
+                        existingPaths.add(getImageBasePath(item.url));
+                    }
                 });
 
                 // Only add URLs that don't already exist
                 const newUrls = urls.filter((url) => !existingPaths.has(getImageBasePath(url)));
 
-                if (newUrls.length > 0) {
-                    state.selectedProductMediaUrls = [
-                        ...(state.selectedProductMediaUrls || []),
-                        ...newUrls,
-                    ];
-                }
+                const newItems: PendingMediaItem[] = newUrls.map((url) => ({
+                    type: 'url' as const,
+                    url,
+                    id: generateMediaId(),
+                }));
+
+                state.pendingMedia.push(...newItems);
             });
         },
 
-        removeSelectedProductMediaUrl: (url: string) => {
+        removePendingMedia: (id: string) => {
             set((state) => {
-                const pathToRemove = getImageBasePath(url);
-                state.selectedProductMediaUrls = (state.selectedProductMediaUrls || [])
-                    .filter((u) => getImageBasePath(u) !== pathToRemove);
+                state.pendingMedia = state.pendingMedia.filter((item) => item.id !== id);
             });
         },
 
-        clearSelectedProductMediaUrls: () => {
+        clearPendingMedia: () => {
             set((state) => {
-                state.selectedProductMediaUrls = [];
+                state.pendingMedia = [];
             });
         },
 
@@ -525,10 +577,11 @@ export const useBundleStore = create(
                 state.currentStep = 1;
                 state.bundleData = { ...initialBundleData };
                 state.selectedItems = [];
-                state.mediaFiles = [];
+                // state.mediaFiles = [];
+                state.pendingMedia = [];
                 state.existingMedia = [];
                 state.removedMediaIds = [];
-                state.selectedProductMediaUrls = [];
+                // state.selectedProductMediaUrls = [];
                 state.displaySettings = { ...initialDisplaySettings };
                 state.configuration = { ...initialConfiguration };
                 state.isLoading = false;
