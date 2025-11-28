@@ -20,13 +20,19 @@ export interface ModalState {
     setError: (error: string | null) => void;
 }
 
-export type ModalType = "delete" | "duplicate" | "status" | null;
+export type ModalType =
+    | "delete"
+    | "duplicate"
+    | "status"
+    | "delete-product"
+    | null;
 
 export interface ModalPayload {
     title?: string;
     type: ModalType;
     message?: string | ReactNode;
     bundle?: BundleListItem;
+    productTitle?: string;
     newStatus?: BundleStatus;
     onConfirm?: () => Promise<void> | void;
     onError?: (error: string) => void;

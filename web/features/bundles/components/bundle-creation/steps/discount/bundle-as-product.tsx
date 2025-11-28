@@ -25,7 +25,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         isLoadingProduct,
         hoveredIndex,
         mainProductId,
-        toggleEnabled,
+        handleToggle,
         handleTitleChange,
         handleMediaUpload,
         handleRemoveExistingMedia,
@@ -92,7 +92,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                                         }
                                     }}
                                 >
-                                    Edit product
+                                    Edit Shopify product
                                 </s-button>
                             ) : (
                                 <s-icon
@@ -114,7 +114,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         checked={isEnabled}
                         onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            toggleEnabled(target.checked);
+                            handleToggle(target.checked);
                         }}
                     />
                 </s-stack>

@@ -99,7 +99,7 @@ export function ModalHost() {
                 loading={hasActiveModal && modal.loading}
                 disabled={hasActiveModal && modal.loading}
             >
-                Confirm
+                {destructive ? "Delete" : "Confirm"}
             </s-button>
         </s-modal>
     );

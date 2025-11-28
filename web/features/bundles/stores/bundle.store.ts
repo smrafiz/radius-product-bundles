@@ -64,6 +64,7 @@ export const useBundleStore = create(
         isLoading: false,
         isSaving: false,
         validationAttempted: false,
+        pendingProductDeletion: false,
         isDirty: false,
 
         markDirty: () =>
@@ -376,11 +377,11 @@ export const useBundleStore = create(
             return Object.values(groups);
         },
 
-        // setMediaFiles: (files: File[]) => {
-        //     set((state) => {
-        //         state.mediaFiles = files;
-        //     });
-        // },
+        setPendingProductDeletion: (pending: boolean) => {
+            set((state) => {
+                state.pendingProductDeletion = pending;
+            });
+        },
 
         setExistingMedia: (media: ExistingMedia[]) => {
             set((state) => {
@@ -412,51 +413,6 @@ export const useBundleStore = create(
                 state.removedMediaIds = [];
             });
         },
-
-        // setSelectedProductMediaUrls: (urls: string[]) => {
-        //     set((state) => {
-        //         state.selectedProductMediaUrls = urls;
-        //     });
-        // },
-
-        // addSelectedProductMediaUrls: (urls: string[]) => {
-        //     set((state) => {
-        //         // Collect all existing image paths
-        //         const existingPaths = new Set<string>();
-        //
-        //         state.existingMedia.forEach((m) => {
-        //             existingPaths.add(getImageBasePath(m.url));
-        //         });
-        //
-        //         (state.selectedProductMediaUrls || []).forEach((url) => {
-        //             existingPaths.add(getImageBasePath(url));
-        //         });
-        //
-        //         // Only add URLs that don't already exist
-        //         const newUrls = urls.filter((url) => !existingPaths.has(getImageBasePath(url)));
-        //
-        //         if (newUrls.length > 0) {
-        //             state.selectedProductMediaUrls = [
-        //                 ...(state.selectedProductMediaUrls || []),
-        //                 ...newUrls,
-        //             ];
-        //         }
-        //     });
-        // },
-
-        // removeSelectedProductMediaUrl: (url: string) => {
-        //     set((state) => {
-        //         const pathToRemove = getImageBasePath(url);
-        //         state.selectedProductMediaUrls = (state.selectedProductMediaUrls || [])
-        //             .filter((u) => getImageBasePath(u) !== pathToRemove);
-        //     });
-        // },
-        //
-        // clearSelectedProductMediaUrls: () => {
-        //     set((state) => {
-        //         state.selectedProductMediaUrls = [];
-        //     });
-        // },
 
         addPendingFiles: (files: File[]) => {
             set((state) => {
@@ -587,6 +543,7 @@ export const useBundleStore = create(
                 state.isLoading = false;
                 state.isSaving = false;
                 state.validationAttempted = false;
+                state.pendingProductDeletion = false;
                 state.isDirty = false;
             });
         },

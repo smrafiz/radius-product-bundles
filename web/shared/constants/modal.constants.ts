@@ -46,6 +46,15 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }) => {
                 destructive: false,
             };
 
+        case "delete-product":
+            return {
+                heading: modal.title || "Delete bundle product?",
+                message:
+                    modal.message ||
+                    `Turning off this switch will permanently delete <strong>${modal.productTitle || "this product"}</strong> from your store when you save. This action cannot be undone.`,
+                destructive: true,
+            };
+
         default:
             return {
                 heading: "Confirm Action",

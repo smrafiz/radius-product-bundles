@@ -1,8 +1,9 @@
 "use client";
 
+import { useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchProductByIdAction, useBundleFormMethods, useBundleStore } from "@/features/bundles";
+import { fetchProductByIdAction, useBundleFormMethods, useBundleStore, } from "@/features/bundles";
 
 /**
  * Hook for managing bundle product creation state
@@ -19,7 +20,9 @@ export function useBundleProduct(mode: "create" | "edit") {
         removeExistingMedia,
         removePendingMedia,
         clearPendingMedia,
+        setPendingProductDeletion,
     } = useBundleStore();
+    const { openModal } = useModalStore();
     const app = useAppBridge();
 
     const bundleName = watch("name");
@@ -155,6 +158,39 @@ export function useBundleProduct(mode: "create" | "edit") {
     );
 
     /**
+     * Handle switch toggle - show confirmation if turning OFF with an existing product
+     */
+    const handleToggle = useCallback(
+        (checked: boolean) => {
+            console.log(mainProductId);
+            if (!checked && mainProductId) {
+                openModal({
+                    type: "delete-product",
+                    productTitle: productTitle || bundleName,
+                    onConfirm: async () => {
+                        setPendingProductDeletion(true);
+                        toggleEnabled(false);
+                    },
+                });
+
+                const modalElement = document.getElementById(
+                    "radius-bundles-app-modal",
+                ) as HTMLElement & { showOverlay?: () => void };
+
+                if (modalElement?.showOverlay) {
+                    modalElement.showOverlay();
+                }
+
+                return;
+            }
+
+            toggleEnabled(checked);
+            setPendingProductDeletion(false);
+        },
+        [mainProductId, productTitle, bundleName, openModal, setPendingProductDeletion, toggleEnabled],
+    );
+
+    /**
      * Handle title change (manual override)
      */
     const handleTitleChange = useCallback(
@@ -256,6 +292,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         isLoadingProduct,
         hoveredIndex,
         mainProductId,
+        handleToggle,
         toggleEnabled,
         handleTitleChange,
         handleDescriptionChange,

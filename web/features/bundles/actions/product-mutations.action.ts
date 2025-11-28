@@ -18,6 +18,8 @@ import {
     ProductCreateDocument,
     ProductCreateMutation,
     ProductCreateMutationVariables,
+    ProductDeleteDocument,
+    ProductDeleteMutation,
     ProductUpdateDocument,
     ProductUpdateMutation,
     ProductVariantsBulkUpdateDocument,
@@ -507,6 +509,70 @@ export async function attachMediaToProductAction(
                 error instanceof Error
                     ? error.message
                     : "Failed to attach media",
+            data: null,
+        };
+    }
+}
+
+/**
+ * Delete a Shopify product
+ */
+export async function deleteBundleProductAction(
+    sessionToken: string,
+    productId: string,
+): Promise<ApiResponse> {
+    try {
+        await handleSessionToken(sessionToken);
+
+        console.log("[deleteBundleProduct] Deleting product:", productId);
+
+        const result = await executeGraphQLMutation<ProductDeleteMutation>({
+            query: ProductDeleteDocument,
+            variables: {
+                productId,
+            },
+            sessionToken,
+        });
+
+        if (result.errors && result.errors.length > 0) {
+            console.error("[deleteBundleProduct] Errors:", result.errors);
+            return {
+                status: "error",
+                message: result.errors[0].message,
+                data: null,
+            };
+        }
+
+        if (
+            result.data?.productDelete?.userErrors &&
+            result.data.productDelete.userErrors.length > 0
+        ) {
+            console.error(
+                "[deleteBundleProduct] User errors:",
+                result.data.productDelete.userErrors,
+            );
+            return {
+                status: "error",
+                message: result.data.productDelete.userErrors[0].message,
+                data: null,
+            };
+        }
+
+        console.log("[deleteBundleProduct] ✅ Product deleted");
+
+        return {
+            status: "success",
+            message: "Product deleted successfully",
+            data: { deletedProductId: result.data?.productDelete?.deletedProductId },
+        };
+    } catch (error) {
+        console.error("[deleteBundleProduct] Error:", error);
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to delete product",
             data: null,
         };
     }

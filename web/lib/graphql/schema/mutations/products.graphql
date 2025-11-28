@@ -94,3 +94,13 @@ mutation ProductVariantsBulkUpdate(
         }
     }
 }
+
+mutation ProductDelete($productId: ID!) {
+    productDelete(input: { id: $productId }) {
+        deletedProductId
+        userErrors {
+            field
+            message
+        }
+    }
+}

@@ -126,14 +126,7 @@ export interface BundleState {
     ) => void;
     reorderItems: (activeId: string, overId: string) => void;
 
-    // Media files - new uploads
-    // mediaFiles?: File[];
-    // setMediaFiles: (files: File[]) => void;
-    // selectedProductMediaUrls?: string[];
-    // setSelectedProductMediaUrls: (urls: string[]) => void;
-    // addSelectedProductMediaUrls: (urls: string[]) => void;
-    // removeSelectedProductMediaUrl: (url: string) => void;
-    // clearSelectedProductMediaUrls: () => void;
+    // Pending media - not yet on Shopify
     pendingMedia: PendingMediaItem[];
     addPendingFiles: (files: File[]) => void;
     addPendingUrls: (urls: string[]) => void;
@@ -158,6 +151,10 @@ export interface BundleState {
         selectedCount: number;
         originalTotal: number;
     };
+
+    // Product deletion
+    pendingProductDeletion: boolean;
+    setPendingProductDeletion: (pending: boolean) => void;
 
     // Display settings
     updateDisplaySettings: <K extends keyof DisplaySettings>(
