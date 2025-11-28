@@ -1,33 +1,53 @@
 "use client";
 
 import {
+    DISCOUNT_TYPES,
     getDiscountProperty,
     SelectedProducts,
+    useBundleField,
     useBundleStore,
 } from "@/features/bundles";
+import { getCurrencySymbol, useShopSettings } from "@/shared";
 
 export function BundleSummary() {
     const { bundleData, getGroupedItems } = useBundleStore();
     const groupedItems = getGroupedItems();
 
-    const formatDiscountValue = () => {
-        if (!bundleData.discountValue) {
-            return "0";
-        }
+    const discountTypeField = useBundleField<string>("discountType");
+    const discountValueField = useBundleField<number | undefined>(
+        "discountValue",
+    );
 
-        if (!bundleData.discountType) {
-            return `${bundleData.discountValue}`;
-        }
+    const { isLoading, currencyCode } = useShopSettings();
+    const currencySymbol = getCurrencySymbol(currencyCode);
 
-        const formatFunction = getDiscountProperty(
-            bundleData.discountType,
-            "format",
-        );
-        return (
-            formatFunction?.(bundleData.discountValue) ||
-            `${bundleData.discountValue}`
-        );
+    const getCurrency = () => {
+        if (isLoading && !currencyCode) return "•";
+        return currencySymbol;
     };
+
+    const getSuffix = () => {
+        return discountTypeField.value === "PERCENTAGE" ? "%" : getCurrency();
+    };
+
+    // const formatDiscountValue = () => {
+    //     if (!bundleData.discountValue) {
+    //         return "0";
+    //     }
+    //
+    //     if (!bundleData.discountType) {
+    //         return `${bundleData.discountValue}`;
+    //     }
+    //
+    //     const formatFunction = getDiscountProperty(
+    //         bundleData.discountType,
+    //         "format",
+    //     );
+    //     return (
+    //         formatFunction?.(bundleData.discountValue) ||
+    //         `${bundleData.discountValue}`
+    //     );
+    // };
 
     const subtotal = groupedItems.reduce((sum, group) => {
         const productPrice = parseFloat(group.product.price ?? "0");
@@ -51,31 +71,53 @@ export function BundleSummary() {
     return (
         <s-stack gap="base">
             <s-section>
-                <s-stack alignItems="center" direction="inline" gap="small-300">
-                    <s-heading>Products:</s-heading>
-                    <s-text color="subdued">
-                        {bundleData.name || "Not set"}
-                    </s-text>
+                <s-stack gap="small">
+                    <s-stack>
+                        <s-heading>Title</s-heading>
+                        <s-text color="subdued">
+                            {bundleData.name || "Not set"}
+                        </s-text>
+                    </s-stack>
+
+                    <s-stack>
+                        <s-heading>Description</s-heading>
+                        <div className="block">
+                            <s-paragraph color="subdued">
+                                {bundleData.description || "Not set"}
+                            </s-paragraph>
+                        </div>
+                    </s-stack>
+
                 </s-stack>
             </s-section>
 
             <s-section>
-                <s-heading>Description</s-heading>
-                <div className="block">
-                    <s-paragraph color="subdued">
-                        {bundleData.description || "Not set"}
-                    </s-paragraph>
-                </div>
-            </s-section>
-
-            <s-section>
-                <s-stack
-                    alignItems="center"
-                    justifyContent="space-between"
-                    direction="inline"
-                >
-                    <s-heading>Discount</s-heading>
-                    <s-text color="subdued">{formatDiscountValue()}</s-text>
+                <s-stack gap="small-300">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                        gap="small-300"
+                    >
+                        <s-heading>Discount type</s-heading>
+                        <s-text color="subdued">
+                            {bundleData.discountType
+                                ? DISCOUNT_TYPES[bundleData.discountType].label
+                                : "Not set"}
+                        </s-text>
+                    </s-stack>
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                        gap="small-300"
+                    >
+                        <s-heading>Discount percentage</s-heading>
+                        <s-text color="subdued">
+                            {discountValueField.value?.toString() || ""}
+                            {getSuffix()}
+                        </s-text>
+                    </s-stack>
                 </s-stack>
             </s-section>
 

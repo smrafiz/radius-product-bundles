@@ -5,7 +5,7 @@ import { useBundleStore } from "@/features/bundles";
 
 export function SelectedProducts() {
     const { getGroupedItems } = useBundleStore();
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     const groupedItems = getGroupedItems();
     const itemCount = useMemo(() => groupedItems.length, [groupedItems.length]);
