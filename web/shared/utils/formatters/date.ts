@@ -73,3 +73,16 @@ export function getLastNDaysRange(days: number): { start: Date; end: Date } {
         end: new Date(),
     };
 }
+
+export function formatDateLong(dateStr: string) {
+    if (!dateStr) return "";
+
+    const date = new Date(dateStr);
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const monthShort = date.toLocaleString("en-US", { month: "short" });
+    const year = date.getFullYear();
+
+    return `${monthShort} ${day}, ${year}`;
+}
+
