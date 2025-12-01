@@ -29,7 +29,7 @@
     ],
     "dependencies": {
         "@iarna/toml": "^2.2.5",
-        "prettier": "^3.7.1"
+        "prettier": "^3.7.3"
     },
     "private": true,
     "devDependencies": {

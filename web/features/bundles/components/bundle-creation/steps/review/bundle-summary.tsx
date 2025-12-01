@@ -31,8 +31,6 @@ export function BundleSummary() {
             currencyFormatter,
         );
 
-    console.log(discountValueField);
-
     const subtotal = groupedItems.reduce((sum, group) => {
         const productPrice = parseFloat(group.product.price ?? "0");
         const variantSum = group.variants.reduce(

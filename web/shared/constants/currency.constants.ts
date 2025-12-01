@@ -26,6 +26,7 @@ export const CURRENCY_SYMBOLS: Record<string, string> = {
     TWD: "NT$",
     AED: "د.إ",
     SAR: "﷼",
+    KWD: "د.ك",
 };
 
 export const CURRENCY_LOCALES: Record<string, string> = {

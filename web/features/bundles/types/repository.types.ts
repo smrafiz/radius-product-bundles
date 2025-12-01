@@ -62,6 +62,8 @@ export interface UpdateBundleInput {
     maxDiscountAmount?: number | null;
     startDate?: Date | null;
     endDate?: Date | null;
+    mainProductId?: string | null;
+    mainVariantId?: string | null;
 }
 
 /*
@@ -75,6 +77,7 @@ export interface UpdateBundleInputWithRelations {
     type: BundleType;
     status?: BundleStatus;
     mainProductId?: string | null;
+    mainVariantId?: string | null;
     buyQuantity?: number | null;
     getQuantity?: number | null;
     minimumItems?: number | null;

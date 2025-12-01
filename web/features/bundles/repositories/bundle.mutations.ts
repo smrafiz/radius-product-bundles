@@ -193,6 +193,8 @@ export async function updateBundleWithRelations(
             maxDiscountAmount: data.maxDiscountAmount,
             startDate: data.startDate,
             endDate: data.endDate,
+            mainProductId: data.mainProductId ?? null,
+            mainVariantId: data.mainVariantId ?? null,
         });
 
         // Delete all existing products

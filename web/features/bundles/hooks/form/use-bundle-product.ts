@@ -162,7 +162,6 @@ export function useBundleProduct(mode: "create" | "edit") {
      */
     const handleToggle = useCallback(
         (checked: boolean) => {
-            console.log(mainProductId);
             if (!checked && mainProductId) {
                 openModal({
                     type: "delete-product",
@@ -182,6 +181,13 @@ export function useBundleProduct(mode: "create" | "edit") {
                 }
 
                 return;
+            }
+
+            if (checked && !productTitle && bundleName) {
+                setValue("productTitle", bundleName, {
+                    shouldValidate: false,
+                    shouldDirty: true,
+                });
             }
 
             toggleEnabled(checked);

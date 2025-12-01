@@ -256,12 +256,15 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     const needsProductCreation =
                         data.createProduct &&
                         !currentMainProductId &&
-                        data.productTitle;
+                        (data.productTitle || data.name);
 
                     if (needsProductCreation) {
                         console.log("Creating product for existing bundle...");
-
-                        const productData = await createShopifyProduct(token, data);
+                        const titleToUse = data.productTitle || data.name;
+                        const productData = await createShopifyProduct(token, {
+                            ...data,
+                            productTitle: titleToUse,
+                        });
 
                         if (!productData) {
                             showError("Failed to create product", {
