@@ -1,5 +1,9 @@
 import { formatCurrency, getCurrencySymbol } from "@/shared";
-import { BundleListItem, DISCOUNT_TYPES } from "@/features/bundles";
+import {
+    BundleListItem,
+    DISCOUNT_TYPES,
+    DiscountType,
+} from "@/features/bundles";
 
 /*
  * Format bundle type
@@ -54,6 +58,30 @@ export function formatBundleDiscount(
 
     return config.format(bundle.discountValue, formatter);
 }
+
+/*
+ * Format bundle discount from value
+ */
+export function formatDiscountFromValues(
+    discountType?: DiscountType,
+    discountValue?: number,
+    currencyFormatter?: (value: number) => string,
+    currencyCode?: string,
+    locale?: string
+): string {
+    if (!discountType || !(discountType in DISCOUNT_TYPES)) {
+        return "No Discount";
+    }
+
+    const config = DISCOUNT_TYPES[discountType];
+
+    const formatter =
+        currencyFormatter ||
+        ((value: number) => formatCurrency(value, currencyCode, locale));
+
+    return config.format(discountValue ?? 0, formatter, false);
+}
+
 
 /**
  * Format price for display

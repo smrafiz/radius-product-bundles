@@ -1,17 +1,21 @@
 "use client";
 
 import {
+    bundleCurrencyFormatter,
     DISCOUNT_TYPES,
-    getDiscountProperty,
+    DiscountType,
+    formatDiscountFromValues,
     SelectedProducts,
     useBundleField,
     useBundleStore,
 } from "@/features/bundles";
-import { getCurrencySymbol, useShopSettings } from "@/shared";
+import { useShopSettings } from "@/shared";
 
 export function BundleSummary() {
     const { bundleData, getGroupedItems } = useBundleStore();
     const groupedItems = getGroupedItems();
+    const nameField = useBundleField<string>("name");
+    const descriptionField = useBundleField<string>("description");
 
     const discountTypeField = useBundleField<string>("discountType");
     const discountValueField = useBundleField<number | undefined>(
@@ -19,35 +23,15 @@ export function BundleSummary() {
     );
 
     const { isLoading, currencyCode } = useShopSettings();
-    const currencySymbol = getCurrencySymbol(currencyCode);
+    const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
+    const formatDiscount = () =>
+        formatDiscountFromValues(
+            discountTypeField.value as DiscountType,
+            discountValueField.value,
+            currencyFormatter,
+        );
 
-    const getCurrency = () => {
-        if (isLoading && !currencyCode) return "•";
-        return currencySymbol;
-    };
-
-    const getSuffix = () => {
-        return discountTypeField.value === "PERCENTAGE" ? "%" : getCurrency();
-    };
-
-    // const formatDiscountValue = () => {
-    //     if (!bundleData.discountValue) {
-    //         return "0";
-    //     }
-    //
-    //     if (!bundleData.discountType) {
-    //         return `${bundleData.discountValue}`;
-    //     }
-    //
-    //     const formatFunction = getDiscountProperty(
-    //         bundleData.discountType,
-    //         "format",
-    //     );
-    //     return (
-    //         formatFunction?.(bundleData.discountValue) ||
-    //         `${bundleData.discountValue}`
-    //     );
-    // };
+    console.log(discountValueField);
 
     const subtotal = groupedItems.reduce((sum, group) => {
         const productPrice = parseFloat(group.product.price ?? "0");
@@ -75,7 +59,7 @@ export function BundleSummary() {
                     <s-stack>
                         <s-heading>Title</s-heading>
                         <s-text color="subdued">
-                            {bundleData.name || "Not set"}
+                            {nameField.value || "Not set"}
                         </s-text>
                     </s-stack>
 
@@ -83,11 +67,10 @@ export function BundleSummary() {
                         <s-heading>Description</s-heading>
                         <div className="block">
                             <s-paragraph color="subdued">
-                                {bundleData.description || "Not set"}
+                                {descriptionField.value || "Not set"}
                             </s-paragraph>
                         </div>
                     </s-stack>
-
                 </s-stack>
             </s-section>
 
@@ -101,8 +84,10 @@ export function BundleSummary() {
                     >
                         <s-heading>Discount type</s-heading>
                         <s-text color="subdued">
-                            {bundleData.discountType
-                                ? DISCOUNT_TYPES[bundleData.discountType].label
+                            {discountTypeField.value
+                                ? DISCOUNT_TYPES[
+                                      discountTypeField.value as keyof typeof DISCOUNT_TYPES
+                                  ]?.label
                                 : "Not set"}
                         </s-text>
                     </s-stack>
@@ -114,8 +99,7 @@ export function BundleSummary() {
                     >
                         <s-heading>Discount percentage</s-heading>
                         <s-text color="subdued">
-                            {discountValueField.value?.toString() || ""}
-                            {getSuffix()}
+                            {isLoading ? "•" : formatDiscount()}
                         </s-text>
                     </s-stack>
                 </s-stack>

@@ -95,9 +95,11 @@ export function BundlePreview() {
             <BundlePreviewStatus />
 
             <s-section>
+
                 <s-stack gap="base">
+                    <s-heading>Frequently bought together</s-heading>
+                    {selectedItems.length > 0 ? (
                     <s-stack gap="base">
-                        <s-heading>Frequently bought together</s-heading>
                         <s-stack gap="small-200">
                             {renderSelectedProducts()}
                         </s-stack>
@@ -164,6 +166,18 @@ export function BundlePreview() {
                             Add bundle to cart
                         </s-button>
                     </s-stack>
+
+                    ) : <div className="min-h-96 flex flex-col items-center justify-center gap-3">
+                        <div className="w-[var(--p-font-size-1000)]">
+                            <s-image
+                                src="/assets/not-found.svg"
+                                alt="Four pixelated characters ready to build amazing Shopify apps"
+                                aspectRatio="1/1"
+                                inlineSize="auto"
+                            />
+                        </div>
+                        <s-text color="subdued">Please choose product to see the bundle preview</s-text>
+                    </div>}
                 </s-stack>
             </s-section>
         </s-stack>
