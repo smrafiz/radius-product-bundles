@@ -12,6 +12,7 @@ export function BundleBehavior() {
         freeShipping,
         selectedProducts,
         uniqueProducts,
+        isDiscountDisabled,
         toggleProduct,
         toggleAll,
         handleConfirm,
@@ -32,6 +33,7 @@ export function BundleBehavior() {
                     name="discountApplication"
                     label="Discount Application"
                     labelAccessibilityVisibility="exclusive"
+                    disabled={isDiscountDisabled}
                     onChange={(e: Event) => {
                         const target = e.currentTarget as HTMLInputElement & { values: string[] };
                         const value = target.values?.[0];
@@ -55,7 +57,7 @@ export function BundleBehavior() {
                 </s-choice-list>
 
                 {/* Product selection button - only when "Specific products" is selected */}
-                {discountApplication === "products" && (
+                {discountApplication === "products" && !isDiscountDisabled && (
                     <s-stack direction="inline" alignItems="center" gap="small-200">
                         {discountedProductIds.size > 0 && (
                             <s-text color="subdued">{getSummary()}</s-text>

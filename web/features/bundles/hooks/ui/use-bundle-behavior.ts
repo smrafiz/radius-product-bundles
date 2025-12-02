@@ -21,19 +21,40 @@ export function useBundleBehavior() {
     const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
 
     /**
+     * Check if the discount is disabled (NO_DISCOUNT selected)
+     */
+    const isDiscountDisabled = bundleData.discountType === "NO_DISCOUNT";
+
+    /**
      * Sync state with bundleData on mount/changes
      */
     useEffect(() => {
         if (bundleData.discountApplication) {
             setDiscountApplication(bundleData.discountApplication);
         }
+
         if (bundleData.discountedProductIds) {
             setDiscountedProductIds(new Set(bundleData.discountedProductIds));
         }
+
         if (bundleData.freeShipping !== undefined) {
             setFreeShipping(bundleData.freeShipping);
         }
     }, [bundleData.discountApplication, bundleData.discountedProductIds, bundleData.freeShipping]);
+
+    /**
+     * Reset to "bundle" when NO_DISCOUNT is selected
+     */
+    useEffect(() => {
+        if (isDiscountDisabled && discountApplication === "products") {
+            setDiscountApplication("bundle");
+            setDiscountedProductIds(new Set());
+            setBundleData({
+                discountApplication: "bundle",
+                discountedProductIds: [],
+            });
+        }
+    }, [isDiscountDisabled, discountApplication, setBundleData]);
 
     /**
      * Get unique products for the modal
@@ -108,6 +129,10 @@ export function useBundleBehavior() {
      * Handle radio change
      */
     const handleRadioChange = useCallback((value: string) => {
+        if (isDiscountDisabled) {
+            return;
+        }
+
         const newValue = value as DiscountApplication;
         setDiscountApplication(newValue);
 
@@ -118,7 +143,7 @@ export function useBundleBehavior() {
                 discountedProductIds: [],
             });
         }
-    }, [setBundleData]);
+    }, [isDiscountDisabled, setBundleData]);
 
     /**
      * Handle free shipping toggle
@@ -153,6 +178,7 @@ export function useBundleBehavior() {
         freeShipping,
         selectedProducts,
         uniqueProducts,
+        isDiscountDisabled,
 
         // Handlers
         toggleProduct,

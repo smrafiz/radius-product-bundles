@@ -17,7 +17,7 @@ import { getCurrencySymbol, useShopSettings } from "@/shared";
  */
 export function useDiscountSettings() {
     const { getFieldError } = useBundleValidation();
-    const { markDirty, bundleData } = useBundleStore();
+    const { markDirty, bundleData, setBundleData } = useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
 
     // Form fields
@@ -28,10 +28,10 @@ export function useDiscountSettings() {
 
     // Derived values
     const currencySymbol = getCurrencySymbol(currencyCode);
-    const bundleType = bundleData.type;
+    const bundleType = bundleData?.type;
 
     /**
-     * Get filtered discount types based on the bundle type
+     * Get filtered discount types based on bundle type
      */
     const availableDiscountTypes = useMemo(() => {
         return bundleType
@@ -45,9 +45,12 @@ export function useDiscountSettings() {
     useEffect(() => {
         if (!discountTypeField.value) {
             discountTypeField.handleChange("PERCENTAGE");
+            setBundleData({ discountType: "PERCENTAGE" });
         }
+
         if (!discountValueField.value) {
             discountValueField.handleChange(10);
+            setBundleData({ discountValue: 10 });
         }
     }, []);
 
@@ -56,13 +59,15 @@ export function useDiscountSettings() {
      */
     const handleDiscountTypeChange = useCallback((value: string) => {
         discountTypeField.handleChange(value as DiscountType);
+        setBundleData({ discountType: value as DiscountType });
 
         if (value === "CUSTOM_PRICE") {
             maxDiscountAmountField.handleChange(undefined);
+            setBundleData({ maxDiscountAmount: undefined });
         }
 
         markDirty();
-    }, [discountTypeField, maxDiscountAmountField, markDirty]);
+    }, [discountTypeField, maxDiscountAmountField, markDirty, setBundleData]);
 
     /**
      * Handle discount value change
@@ -70,7 +75,8 @@ export function useDiscountSettings() {
     const handleDiscountValueChange = useCallback((value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
         discountValueField.handleChange(numValue);
-    }, [discountValueField]);
+        setBundleData({ discountValue: numValue });
+    }, [discountValueField, setBundleData]);
 
     /**
      * Handle min order value change
@@ -78,7 +84,8 @@ export function useDiscountSettings() {
     const handleMinOrderValueChange = useCallback((value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
         minOrderValueField.handleChange(numValue);
-    }, [minOrderValueField]);
+        setBundleData({ minOrderValue: numValue });
+    }, [minOrderValueField, setBundleData]);
 
     /**
      * Handle max discount amount change
@@ -86,7 +93,8 @@ export function useDiscountSettings() {
     const handleMaxDiscountAmountChange = useCallback((value: string) => {
         const numValue = value === "" ? undefined : parseFloat(value);
         maxDiscountAmountField.handleChange(numValue);
-    }, [maxDiscountAmountField]);
+        setBundleData({ maxDiscountAmount: numValue });
+    }, [maxDiscountAmountField, setBundleData]);
 
     /**
      * Get label for discount value field
