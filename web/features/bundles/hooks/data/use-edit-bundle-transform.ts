@@ -22,6 +22,10 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         minOrderValue: bundleData.minOrderValue ?? undefined,
         maxDiscountAmount: bundleData.maxDiscountAmount ?? undefined,
 
+        discountApplication: bundleData.discountApplication || "bundle",
+        discountedProductIds: bundleData.discountedProductIds || [],
+        freeShipping: bundleData.freeShipping ?? false,
+
         // Handle volumeTiers type conversion - ensure it's always an array of { quantity: number, discount: number } or undefined
         volumeTiers: (() => {
             try {

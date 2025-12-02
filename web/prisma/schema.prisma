@@ -97,6 +97,11 @@ model Bundle {
     allowMixAndMatch Boolean @default(false)
     mixAndMatchPrice Float? // "Pick any 3 for $50"
 
+    // Bundle behavior
+    discountApplication  String?  @default("bundle")
+    discountedProductIds String[] @default([])
+    freeShipping         Boolean  @default(false)
+
     // Marketing Assets
     images         String[]
     marketingCopy  String?

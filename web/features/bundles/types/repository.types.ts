@@ -32,6 +32,9 @@ export interface CreateBundleInput {
     volumeTiers?: Prisma.JsonValue;
     allowMixAndMatch?: boolean;
     mixAndMatchPrice?: number | null;
+    discountApplication?: string | null;
+    discountedProductIds?: string[];
+    freeShipping?: boolean;
     marketingCopy?: string | null;
     seoTitle?: string | null;
     seoDescription?: string | null;
@@ -62,6 +65,9 @@ export interface UpdateBundleInput {
     maxDiscountAmount?: number | null;
     startDate?: Date | null;
     endDate?: Date | null;
+    discountApplication?: string;
+    discountedProductIds?: string[];
+    freeShipping?: boolean;
     mainProductId?: string | null;
     mainVariantId?: string | null;
 }
@@ -89,6 +95,9 @@ export interface UpdateBundleInputWithRelations {
     volumeTiers?: any;
     allowMixAndMatch?: boolean | null;
     mixAndMatchPrice?: number | null;
+    discountApplication?: string;
+    discountedProductIds?: string[];
+    freeShipping?: boolean;
     marketingCopy?: string | null;
     seoTitle?: string | null;
     seoDescription?: string | null;

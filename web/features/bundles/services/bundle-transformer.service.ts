@@ -99,6 +99,9 @@ export function transformBundle(
         startDate: bundle.startDate?.toISOString() ?? undefined,
         endDate: bundle.endDate?.toISOString() ?? undefined,
         updatedAt: bundle.updatedAt.toISOString(),
+        discountApplication: bundle.discountApplication ?? "bundle",
+        discountedProductIds: bundle.discountedProductIds ?? [],
+        freeShipping: bundle.freeShipping ?? false,
     };
 }
 

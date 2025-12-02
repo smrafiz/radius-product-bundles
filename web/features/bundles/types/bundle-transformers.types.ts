@@ -64,6 +64,9 @@ export interface TransformedBundle extends TransformedBundleBase {
     startDate?: string | undefined;
     endDate?: string | undefined;
     updatedAt: string;
+    discountApplication?: string;
+    discountedProductIds?: string[];
+    freeShipping?: boolean;
 }
 
 /*

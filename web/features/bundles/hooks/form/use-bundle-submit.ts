@@ -177,6 +177,16 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         };
     };
 
+    /**
+     * Merge bundle behavior fields from store into form data
+     */
+    const mergeBundleBehavior = (data: ExtendedBundleFormData) => {
+        const storeData = useBundleStore.getState().bundleData;
+        data.discountApplication = storeData.discountApplication ?? "bundle";
+        data.discountedProductIds = storeData.discountedProductIds ?? [];
+        data.freeShipping = storeData.freeShipping ?? false;
+    };
+
     const handleSubmit = withAsyncLoader(
         async (data: ExtendedBundleFormData) => {
             try {
@@ -187,6 +197,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                 // CREATE MODE
                 if (mode === "create") {
+                    mergeBundleBehavior(data);
+
                     if (data.createProduct && data.productTitle) {
                         const productData = await createShopifyProduct(token, data);
 
@@ -205,15 +217,14 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 }
                 // EDIT MODE
                 else if (mode === "edit" && bundleId) {
-                    // Get fresh store data (form data may be stale)
                     const freshStoreData = useBundleStore.getState().bundleData;
 
-                    // Use store's mainProductId as source of truth
+                    mergeBundleBehavior(data);
+
                     let currentMainProductId = freshStoreData.mainProductId;
                     let currentMainVariantId = freshStoreData.mainVariantId;
-
-                    // Track if we deleted the product in this save
                     let productWasDeleted = false;
+                    let needsProductCreation: undefined | false | string = false;
 
                     // Delete product if switch was turned OFF
                     if (pendingProductDeletion && currentMainProductId) {
@@ -253,7 +264,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                     // Check if we need to CREATE a new product
                     // (switch ON but no product exists)
-                    const needsProductCreation =
+                    needsProductCreation =
                         data.createProduct &&
                         !currentMainProductId &&
                         (data.productTitle || data.name);
@@ -279,11 +290,42 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         data.mainProductId = productData.mainProductId;
                         data.mainVariantId = productData.mainVariantId;
 
+                        console.log("🔍 Product created with:", {
+                            mainProductId: productData.mainProductId,
+                            mainVariantId: productData.mainVariantId,
+                        });
+
                         // Update store
                         setBundleData({
                             mainProductId: productData.mainProductId,
                             mainVariantId: productData.mainVariantId,
                         });
+
+                        if (currentMainProductId && currentMainVariantId) {
+                            const { bundlePrice, originalPrice } = calculateBundlePricing(data);
+                            console.log("🔍 Updating price after creation:", { bundlePrice, originalPrice });
+
+                            const priceResult = await updateBundleProductAction(token, {
+                                productId: currentMainProductId,
+                                variantId: currentMainVariantId,
+                                title: titleToUse,
+                                description: data.productDescription,
+                                bundlePrice,
+                                originalPrice,
+                            });
+
+                            if (priceResult.status === "error") {
+                                console.error("Failed to update price:", priceResult.message);
+                            } else {
+                                console.log("✅ Price updated after creation");
+                            }
+                        }
+                    }
+
+                    // ✅ Preserve mainProductId/mainVariantId if not deleted/created
+                    if (!productWasDeleted && !needsProductCreation) {
+                        data.mainProductId = currentMainProductId;
+                        data.mainVariantId = currentMainVariantId;
                     }
 
                     // Update bundle in database
@@ -305,31 +347,30 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     if (
                         result.status === "success" &&
                         currentMainProductId &&
+                        currentMainVariantId &&
                         !needsProductCreation &&
                         !productWasDeleted
                     ) {
                         const { bundlePrice, originalPrice } = calculateBundlePricing(data);
 
-                        if (data.productTitle || data.productDescription) {
-                            console.log("Updating Shopify product...");
+                        console.log("Updating Shopify product...");
 
-                            const productResult = await updateBundleProductAction(
-                                token,
-                                {
-                                    productId: currentMainProductId,
-                                    variantId: currentMainVariantId,
-                                    title: data.productTitle,
-                                    description: data.productDescription,
-                                    bundlePrice,
-                                    originalPrice,
-                                },
-                            );
+                        const productResult = await updateBundleProductAction(
+                            token,
+                            {
+                                productId: currentMainProductId,
+                                variantId: currentMainVariantId,
+                                title: data.productTitle,
+                                description: data.productDescription,
+                                bundlePrice,
+                                originalPrice,
+                            },
+                        );
 
-                            if (productResult.status === "error") {
-                                console.error("Failed to update product:", productResult.message);
-                            } else {
-                                console.log("✅ Product updated");
-                            }
+                        if (productResult.status === "error") {
+                            console.error("Failed to update product:", productResult.message);
+                        } else {
+                            console.log("✅ Product updated");
                         }
 
                         // Delete removed media

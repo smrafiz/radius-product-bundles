@@ -52,6 +52,9 @@ export async function createBundle(
             volumeTiers: data.volumeTiers ?? Prisma.JsonNull,
             allowMixAndMatch: data.allowMixAndMatch,
             mixAndMatchPrice: data.mixAndMatchPrice,
+            discountApplication: data.discountApplication ?? "bundle",
+            discountedProductIds: data.discountedProductIds ?? [],
+            freeShipping: data.freeShipping ?? false,
             marketingCopy: data.marketingCopy,
             seoTitle: data.seoTitle,
             seoDescription: data.seoDescription,
@@ -195,6 +198,9 @@ export async function updateBundleWithRelations(
             endDate: data.endDate,
             mainProductId: data.mainProductId ?? null,
             mainVariantId: data.mainVariantId ?? null,
+            discountApplication: data.discountApplication || "bundle",
+            discountedProductIds: data.discountedProductIds ?? [],
+            freeShipping: data.freeShipping ?? false,
         });
 
         // Delete all existing products

@@ -73,11 +73,13 @@ export function formatProductForStorage(product: {
     productHandle: string;
     mainVariantId: string | null;
 } {
+    const variantId = product.variants?.nodes?.[0]?.id ?? null;
+
     return {
         mainProductId: product.id,
         productTitle: product.title,
         productHandle: product.handle,
-        mainVariantId: product.variants?.nodes?.[0]?.id ?? null,
+        mainVariantId: variantId,
     };
 }
 
