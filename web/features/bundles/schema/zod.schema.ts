@@ -148,7 +148,6 @@ export const bundleSchema = z
             "PERCENTAGE",
             "FIXED_AMOUNT",
             "CUSTOM_PRICE",
-            "FREE_SHIPPING",
             "NO_DISCOUNT",
             "BUY_X_GET_Y",
             "QUANTITY_BREAKS",
@@ -165,6 +164,11 @@ export const bundleSchema = z
         allowMixAndMatch: z.boolean().default(false),
         mixAndMatchPrice: z.number().min(0).optional(),
         productGroups: z.array(productGroupSchema).optional(),
+
+        // Bundle behavior
+        discountApplication: z.enum(["bundle", "products"]).default("bundle").optional(),
+        discountedProductIds: z.array(z.string()).optional(),
+        freeShipping: z.boolean().default(false).optional(),
 
         // Marketing
         marketingCopy: z.string().max(1000).transform(sanitizeHtml).optional(),

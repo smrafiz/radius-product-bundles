@@ -10,7 +10,7 @@ import {
 import { ReactNode } from "react";
 
 /*
- * Bundle listing old.components
+ * Bundle listing components
  */
 export interface ProductAvatarStackProps {
     products: ProductGroup[];
@@ -18,14 +18,14 @@ export interface ProductAvatarStackProps {
 }
 
 /*
- * Bundle detail old.components
+ * Bundle detail components
  */
 export interface ProductListPopoverProps {
     products: ProductGroup[];
 }
 
 /*
- * Bundle table old.components
+ * Bundle table components
  */
 export interface BundleTableEmptyStatesProps {
     totalBundles: number;
@@ -33,7 +33,7 @@ export interface BundleTableEmptyStatesProps {
 }
 
 /*
- * Bundle table row old.components
+ * Bundle table row components
  */
 export interface BundleTableRowProps {
     bundle: BundleListItem;
@@ -42,7 +42,7 @@ export interface BundleTableRowProps {
 }
 
 /*
- * Bundle table actions old.components
+ * Bundle table actions components
  */
 export interface BundleActionsGroupProps {
     bundle: BundleListItem;
@@ -55,14 +55,14 @@ export interface BundleActionsGroupProps {
 }
 
 /*
- * Bundle status popover old.components
+ * Bundle status popover components
  */
 export interface StatusPopoverProps {
     bundle: BundleListItem;
 }
 
 /*
- * Bundle creation old.components
+ * Bundle creation components
  */
 export interface BundleCreationFormProps {
     bundleType: BundleType;
@@ -70,7 +70,7 @@ export interface BundleCreationFormProps {
 }
 
 /*
- * Bundle form provider old.components
+ * Bundle form provider components
  */
 export interface BundleFormProviderProps {
     children: ReactNode;
@@ -79,10 +79,15 @@ export interface BundleFormProviderProps {
 }
 
 /*
- * Step heading old.components
+ * Step heading components
  */
 export interface StepHeadingProps {
     title: string;
     description?: string;
     gap?: "050" | "100" | "200" | "300" | "400" | "500";
 }
+
+/*
+ * Discount application types
+ */
+export type DiscountApplication = "bundle" | "products";

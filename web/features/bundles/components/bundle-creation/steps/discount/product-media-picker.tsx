@@ -157,7 +157,7 @@ export function ProductMediaPicker({
                 command="--hide"
                 disabled={selectedImages.size === 0}
             >
-                Add
+                Add Media
             </s-button>
         </s-modal>
     );

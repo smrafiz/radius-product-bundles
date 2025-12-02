@@ -319,6 +319,9 @@ export interface ExtendedBundleFormData extends BundleFormData {
     productDescription?: string;
     mainProductId?: string;
     mainVariantId?: string;
+    discountApplication?: "bundle" | "products";
+    discountedProductIds?: string[];
+    freeShipping?: boolean;
 }
 
 export interface DisplaySettings {

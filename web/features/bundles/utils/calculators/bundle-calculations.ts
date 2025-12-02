@@ -3,6 +3,7 @@
  */
 
 import { Bundle } from "@prisma/client";
+import { SelectedItem } from "@/features/bundles";
 
 /**
  * Calculate bundle statistics
@@ -44,9 +45,6 @@ export function calculateDiscountAmount(
         case "FIXED_AMOUNT":
             discount = discountValue;
             break;
-        case "FREE_SHIPPING":
-            discount = 0; // Shipping discount is handled separately
-            break;
         default:
             discount = 0;
     }
@@ -56,7 +54,7 @@ export function calculateDiscountAmount(
         discount = maxDiscountAmount;
     }
 
-    // Discount cannot exceed bundle price
+    // Discount cannot exceed the bundle price
     return Math.min(discount, bundlePrice);
 }
 

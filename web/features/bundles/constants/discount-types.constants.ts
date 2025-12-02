@@ -3,7 +3,27 @@
  */
 
 import { formatCurrency } from "@/shared";
-import { DiscountConfig, DiscountType } from "@/features/bundles";
+import { BundleType, DiscountConfig, DiscountType } from "@/features/bundles";
+
+/**
+ * Discount types allowed per bundle type
+ */
+export const DISCOUNT_TYPES_BY_BUNDLE: Record<BundleType, DiscountType[]> = {
+    FIXED_BUNDLE: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
+    FREQUENTLY_BOUGHT_TOGETHER: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
+    BUY_X_GET_Y: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
+    BOGO: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
+    VOLUME_DISCOUNT: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
+    MIX_AND_MATCH: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
+};
+
+/**
+ * Get allowed discount types for a bundle type
+ */
+export function getDiscountTypesForBundle(bundleType: BundleType): DiscountConfig[] {
+    const allowedTypes = DISCOUNT_TYPES_BY_BUNDLE[bundleType] || Object.keys(DISCOUNT_TYPES) as DiscountType[];
+    return allowedTypes.map((type) => DISCOUNT_TYPES[type]);
+}
 
 /**
  * Discount type configurations
@@ -49,15 +69,6 @@ export const DISCOUNT_TYPES = {
                 ? `Custom Price ${formatter(value)}`
                 : `${formatter(value)} (Custom Price)`;
         },
-    },
-    FREE_SHIPPING: {
-        label: "Free Shipping",
-        id: "FREE_SHIPPING",
-        slug: "free-shipping",
-        description: "Free shipping on bundle purchase",
-        symbol: "",
-        suffix: "",
-        format: (value, formatCurrency, includeLabel = true) => "Free shipping",
     },
     NO_DISCOUNT: {
         label: "No Discount",

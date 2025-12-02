@@ -79,7 +79,7 @@
         "prettier": "^3.7.3",
         "prisma": "^6.19.0",
         "tailwindcss": "^4.1.17",
-        "ts-jest": "^29.4.5",
+        "ts-jest": "^29.4.6",
         "typescript": "^5.9.3"
     },
     "author": "S.M. Rafiz",

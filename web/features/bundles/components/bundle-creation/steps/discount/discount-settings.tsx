@@ -4,6 +4,7 @@ import {
     DISCOUNT_TYPES,
     DiscountType,
     getDiscountProperty,
+    getDiscountTypesForBundle,
     useBundleField,
     useBundleStore,
     useBundleValidation,
@@ -15,7 +16,10 @@ import { getCurrencySymbol, useShopSettings } from "@/shared";
  */
 export function DiscountSettings() {
     const { getFieldError } = useBundleValidation();
-    const { markDirty } = useBundleStore();
+    const { markDirty, bundleData } = useBundleStore();
+
+    // Get bundle type for filtering discount options
+    const bundleType = bundleData.type;
 
     // Use the hook for each field
     const discountTypeField = useBundleField<string>("discountType");
@@ -31,6 +35,11 @@ export function DiscountSettings() {
 
     const { isLoading, currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
+
+    // Get filtered discount types based on the bundle type
+    const availableDiscountTypes = bundleType
+        ? getDiscountTypesForBundle(bundleType)
+        : Object.values(DISCOUNT_TYPES);
 
     const handleDiscountTypeChange = (value: string) => {
         discountTypeField.handleChange(value as any);
@@ -84,7 +93,7 @@ export function DiscountSettings() {
                 }}
             >
                 <s-option value="">Select discount type</s-option>
-                {Object.values(DISCOUNT_TYPES).map((config) => (
+                {availableDiscountTypes.map((config) => (
                     <s-option key={config.id} value={config.id}>
                         {config.label}
                     </s-option>
