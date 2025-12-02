@@ -131,7 +131,7 @@ export function BundleBehavior() {
                                                 onInput={(e: Event) => e.stopPropagation()}
                                             />
 
-                                            {product.image && (
+                                            {product.image ? (
                                                 <div className="w-12 h-12 rounded-lg border overflow-hidden flex-shrink-0 border-[var(--p-color-border)]">
                                                     <s-image
                                                         src={product.image}
@@ -141,6 +141,10 @@ export function BundleBehavior() {
                                                         objectFit="cover"
                                                         borderRadius="small"
                                                     />
+                                                </div>
+                                            ) : (
+                                                <div className="w-12 h-12 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                                    <s-icon type="image" tone="neutral" />
                                                 </div>
                                             )}
 
