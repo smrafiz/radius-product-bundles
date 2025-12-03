@@ -53,7 +53,7 @@ export function SelectedProducts() {
                             >
                                 {/* Product Info */}
                                 <s-stack gap="base" direction="inline">
-                                    {group.product.image && (
+                                    {group.product.image ? (
                                         <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
                                             <s-image
                                                 src={group.product.image}
@@ -64,23 +64,19 @@ export function SelectedProducts() {
                                                 objectFit="cover"
                                             />
                                         </div>
+                                    ) : (
+                                        <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                            <s-icon
+                                                type="image"
+                                                tone="neutral"
+                                            />
+                                        </div>
                                     )}
 
-                                    <s-stack>
+                                    <s-stack direction="inline" gap="small" alignItems="center">
                                         <s-heading>
                                             {group.product.title}
                                         </s-heading>
-                                        {(group.product.vendor ||
-                                            group.product.productType) && (
-                                            <s-text color="subdued">
-                                                {[
-                                                    group.product.vendor,
-                                                    group.product.productType,
-                                                ]
-                                                    .filter(Boolean)
-                                                    .join(" • ")}
-                                            </s-text>
-                                        )}
                                     </s-stack>
                                 </s-stack>
 

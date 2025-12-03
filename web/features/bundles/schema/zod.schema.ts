@@ -43,27 +43,18 @@ const productGroupSchema = z.object({
 // Bundle settings schema
 const bundleSettingsSchema = z
     .object({
-        layout: z
-            .enum(["GRID", "CAROUSEL", "LIST", "COMPACT", "FLOATING"])
-            .default("GRID"),
+        layout: z.enum(["GRID", "CAROUSEL", "LIST", "COMPACT"]).default("GRID"),
         theme: z
             .enum(["LIGHT", "DARK", "STORE_DEFAULT", "CUSTOM"])
             .default("STORE_DEFAULT"),
         position: z
-            .enum([
-                "PRODUCT_PAGE_TOP",
-                "PRODUCT_PAGE_BOTTOM",
-                "ABOVE_ADD_TO_CART",
-                "BELOW_ADD_TO_CART",
-                "SIDEBAR",
-                "FLOATING",
-                "POPUP",
-            ])
+            .enum(["ABOVE_ADD_TO_CART", "BELOW_ADD_TO_CART"])
             .default("ABOVE_ADD_TO_CART"),
+        title: z.string().max(100).default("Bundle Offers"),
+        cartButtonText: z.string().max(50).default("Add bundle to cart"),
         showPrices: z.boolean().default(true),
         showSavings: z.boolean().default(true),
-        showProductImages: z.boolean().default(true),
-        enableQuickAdd: z.boolean().default(false),
+        enableHyperLink: z.boolean().default(false),
         style: z
             .object({
                 primaryColor: z.string().optional(),
@@ -74,8 +65,6 @@ const bundleSettingsSchema = z
             .optional(),
         widget: z
             .object({
-                floating: z.boolean().optional(),
-                autoHide: z.boolean().optional(),
                 showOnMobile: z.boolean().optional(),
             })
             .optional(),
@@ -166,7 +155,10 @@ export const bundleSchema = z
         productGroups: z.array(productGroupSchema).optional(),
 
         // Bundle behavior
-        discountApplication: z.enum(["bundle", "products"]).default("bundle").optional(),
+        discountApplication: z
+            .enum(["bundle", "products"])
+            .default("bundle")
+            .optional(),
         discountedProductIds: z.array(z.string()).optional(),
         freeShipping: z.boolean().default(false).optional(),
 

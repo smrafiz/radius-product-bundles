@@ -1,51 +1,18 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
-    BundleConfiguration,
     BundleListItem,
     BundleState,
-    BundleType,
     DiscountType,
-    DisplaySettings,
     ExistingMedia,
-    ExtendedBundleFormData, PendingMediaItem,
+    initialBundleData,
+    initialConfiguration,
+    initialDisplaySettings,
+    PendingMediaItem,
     ProductGroup,
     SelectedItem,
 } from "@/features/bundles";
 import { generateMediaId, getImageBasePath } from "@/shared";
-
-const initialBundleData: Partial<ExtendedBundleFormData> = {
-    name: "",
-    type: undefined as BundleType | undefined,
-    products: [],
-    discountType: undefined as DiscountType | undefined,
-    discountValue: undefined,
-    description: "",
-    minOrderValue: undefined,
-    maxDiscountAmount: undefined,
-    startDate: undefined,
-    endDate: undefined,
-    createProduct: false,
-    productTitle: "",
-    productDescription: "",
-    mainProductId: undefined,
-    mainVariantId: undefined,
-};
-
-const initialDisplaySettings: DisplaySettings = {
-    layout: "horizontal",
-    position: "above_cart",
-    title: "Frequently bought together",
-    cartTitle: "Add bundle to cart",
-    colorTheme: "brand",
-    showPrices: true,
-    showSavings: true,
-    enableQuickSwap: false,
-};
-
-const initialConfiguration: BundleConfiguration = {
-    discountApplication: "bundle",
-};
 
 export const useBundleStore = create(
     immer<BundleState>((set, get) => ({
@@ -54,7 +21,6 @@ export const useBundleStore = create(
         totalSteps: 4,
         bundleData: initialBundleData,
         selectedItems: [],
-        // mediaFiles: [],
         pendingMedia: [],
         existingMedia: [],
         removedMediaIds: [],
@@ -498,6 +464,12 @@ export const useBundleStore = create(
 
             const originalTotal = items[0]?.totalVariants || 1;
             return { selectedCount, originalTotal };
+        },
+
+        setDisplaySettings: (settings) => {
+            set((state) => {
+                state.displaySettings = { ...initialDisplaySettings, ...settings };
+            });
         },
 
         // Display settings actions

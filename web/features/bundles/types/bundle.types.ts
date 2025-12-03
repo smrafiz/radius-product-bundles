@@ -7,8 +7,8 @@ import type {
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
 } from "@prisma/client";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { z } from "zod";
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
@@ -68,33 +68,7 @@ export interface BundleDetail extends Prisma.BundleGetPayload<{}> {
     conversionRate: number;
     productCount: number;
     products: SelectedItem[];
-    settings: {
-        layout: "GRID" | "CAROUSEL" | "LIST" | "COMPACT" | "FLOATING";
-        theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
-        position:
-            | "PRODUCT_PAGE_TOP"
-            | "PRODUCT_PAGE_BOTTOM"
-            | "ABOVE_ADD_TO_CART"
-            | "BELOW_ADD_TO_CART"
-            | "SIDEBAR"
-            | "FLOATING"
-            | "POPUP";
-        showPrices: boolean;
-        showSavings: boolean;
-        showProductImages: boolean;
-        enableQuickAdd: boolean;
-        style?: {
-            primaryColor?: string;
-            font?: string;
-            borderRadius?: string;
-            buttonStyle?: string;
-        };
-        widget?: {
-            floating: boolean;
-            autoHide: boolean;
-            showOnMobile: boolean;
-        };
-    };
+    settings: DisplaySettings;
     productGroups?: ProductGroup[];
 }
 
@@ -322,17 +296,28 @@ export interface ExtendedBundleFormData extends BundleFormData {
     discountApplication?: "bundle" | "products";
     discountedProductIds?: string[];
     freeShipping?: boolean;
+    displaySettings?: DisplaySettings;
 }
 
 export interface DisplaySettings {
-    layout: "horizontal" | "vertical" | "grid";
-    position: "above_cart" | "below_cart" | "description" | "custom";
+    layout: "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
+    theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
+    position: "ABOVE_ADD_TO_CART" | "BELOW_ADD_TO_CART";
     title: string;
-    cartTitle: string;
-    colorTheme: "brand" | "success" | "warning" | "critical";
+    cartButtonText: string;
+    // colorTheme: "brand" | "success" | "warning" | "critical";
     showPrices: boolean;
     showSavings: boolean;
-    enableQuickSwap: boolean;
+    enableHyperLink: boolean;
+    style?: {
+        primaryColor?: string;
+        font?: string;
+        borderRadius?: string;
+        buttonStyle?: string;
+    };
+    widget?: {
+        showOnMobile: boolean;
+    };
 }
 
 export interface BundleConfiguration {
@@ -397,5 +382,5 @@ export interface ExistingMedia {
  * Pending media item - can be a file to upload or URL to attach
  */
 export type PendingMediaItem =
-    | { type: 'file'; file: File; id: string }
-    | { type: 'url'; url: string; id: string };
+    | { type: "file"; file: File; id: string }
+    | { type: "url"; url: string; id: string };

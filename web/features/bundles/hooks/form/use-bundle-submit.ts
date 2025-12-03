@@ -8,7 +8,8 @@ import {
     calculateDiscountAmount,
     createBundleAction,
     deleteBundleProductAction,
-    ExtendedBundleFormData,
+    DisplaySettings,
+    ExtendedBundleFormData, initialDisplaySettings,
     invalidateBundleCache,
     PendingMediaItem,
     updateBundleAction,
@@ -187,6 +188,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         data.freeShipping = storeData.freeShipping ?? false;
     };
 
+    /*
+     * Submit bundle form data to database
+     */
     const handleSubmit = withAsyncLoader(
         async (data: ExtendedBundleFormData) => {
             try {
@@ -197,6 +201,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                 // CREATE MODE
                 if (mode === "create") {
+                    const freshStoreData = useBundleStore.getState();
+                    data.settings = freshStoreData.displaySettings;
+
                     mergeBundleBehavior(data);
 
                     if (data.createProduct && data.productTitle) {
@@ -217,7 +224,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 }
                 // EDIT MODE
                 else if (mode === "edit" && bundleId) {
-                    const freshStoreData = useBundleStore.getState().bundleData;
+                    const storeState = useBundleStore.getState();
+                    const freshStoreData = storeState.bundleData;
+                    data.settings = storeState.displaySettings;
 
                     mergeBundleBehavior(data);
 

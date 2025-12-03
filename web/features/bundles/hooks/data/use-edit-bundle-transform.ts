@@ -1,4 +1,4 @@
-import { BundleDetail } from "@/features/bundles";
+import { BundleDetail, initialDisplaySettings } from "@/features/bundles";
 
 export function useEditBundleTransform(bundleData?: BundleDetail) {
     if (!bundleData) {
@@ -107,19 +107,6 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             description: group.product?.title,
             _originalId: group.id,
         })),
-        settings: bundleData.settings || {
-            layout: "GRID",
-            theme: "STORE_DEFAULT",
-            position: "ABOVE_ADD_TO_CART",
-            showPrices: true,
-            showSavings: true,
-            showProductImages: true,
-            enableQuickAdd: false,
-            widget: {
-                floating: false,
-                autoHide: false,
-                showOnMobile: true,
-            },
-        },
+        displaySettings: bundleData.settings || initialDisplaySettings,
     };
 }

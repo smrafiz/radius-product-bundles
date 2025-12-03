@@ -8,6 +8,8 @@ import {
     BundleListItem,
     BundleMetrics,
     BundleStatus,
+    BundleType,
+    DiscountType,
     DisplaySettings,
     ExistingMedia,
     ExtendedBundleFormData,
@@ -157,6 +159,7 @@ export interface BundleState {
     setPendingProductDeletion: (pending: boolean) => void;
 
     // Display settings
+    setDisplaySettings: (settings: Partial<DisplaySettings>) => void;
     updateDisplaySettings: <K extends keyof DisplaySettings>(
         key: K,
         value: DisplaySettings[K],
@@ -182,4 +185,47 @@ export type BundleSelectionStore = {
     setSelectingBundleId: (id: string | null) => void;
     isAnyBundleSelecting: () => boolean;
     reset: () => void;
+};
+
+export const initialDisplaySettings: DisplaySettings = {
+    layout: "GRID",
+    position: "ABOVE_ADD_TO_CART",
+    theme: "STORE_DEFAULT",
+    title: "Bundle Offers",
+    cartButtonText: "Add bundle to cart",
+    // colorTheme: "brand",
+    showPrices: true,
+    showSavings: true,
+    enableHyperLink: false,
+    widget: {
+        showOnMobile: true,
+    },
+    style: {
+        primaryColor: "",
+        font: "",
+        borderRadius: "",
+        buttonStyle: "",
+    },
+};
+
+export const initialBundleData: Partial<ExtendedBundleFormData> = {
+    name: "",
+    type: undefined as BundleType | undefined,
+    products: [],
+    discountType: undefined as DiscountType | undefined,
+    discountValue: undefined,
+    description: "",
+    minOrderValue: undefined,
+    maxDiscountAmount: undefined,
+    startDate: undefined,
+    endDate: undefined,
+    createProduct: false,
+    productTitle: "",
+    productDescription: "",
+    mainProductId: undefined,
+    mainVariantId: undefined,
+};
+
+export const initialConfiguration: BundleConfiguration = {
+    discountApplication: "bundle",
 };

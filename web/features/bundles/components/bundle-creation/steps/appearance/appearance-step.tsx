@@ -1,5 +1,5 @@
 import {
-    WidgetAdvancedOptions,
+    WidgetDisplaySettings,
     WidgetAppearance,
     WidgetLayout,
     WidgetPosition,
@@ -11,7 +11,7 @@ export function AppearanceStep() {
             <WidgetLayout />
             <WidgetPosition />
             <WidgetAppearance />
-            <WidgetAdvancedOptions />
+            <WidgetDisplaySettings />
         </s-stack>
     );
 }

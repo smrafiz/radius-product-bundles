@@ -67,6 +67,7 @@ export interface TransformedBundle extends TransformedBundleBase {
     discountApplication?: string;
     discountedProductIds?: string[];
     freeShipping?: boolean;
+    settings?: string;
 }
 
 /*

@@ -81,7 +81,7 @@ export function transformBundles(
  * Converts null values to undefined for form compatibility
  */
 export function transformBundle(
-    bundle: Bundle & { bundleProducts: BundleProduct[] },
+    bundle: Bundle & { bundleProducts: BundleProduct[], settings?: any },
     productMap?: Map<string, any>,
     variantMap?: Map<string, any>,
 ): TransformedBundle {
@@ -102,6 +102,7 @@ export function transformBundle(
         discountApplication: bundle.discountApplication ?? "bundle",
         discountedProductIds: bundle.discountedProductIds ?? [],
         freeShipping: bundle.freeShipping ?? false,
+        settings: bundle.settings ?? undefined,
     };
 }
 

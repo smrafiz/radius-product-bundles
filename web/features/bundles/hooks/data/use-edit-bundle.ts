@@ -2,6 +2,7 @@
 
 import {
     bundlesQueries,
+    DisplaySettings,
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
@@ -26,7 +27,7 @@ const isProductNode = (node: any): node is ProductNode => {
 
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
-    const { setBundleData, setSelectedItems } = useBundleStore();
+    const { setDisplaySettings, setSelectedItems } = useBundleStore();
 
     // Bundle detail query
     const {
@@ -60,6 +61,13 @@ export function useEditBundle(bundleId: string) {
         loading: boolean;
         error?: Error | null;
     };
+
+    // Sync display settings to store
+    useEffect(() => {
+        if (bundleData?.settings) {
+            setDisplaySettings(bundleData.settings as DisplaySettings);
+        }
+    }, [bundleData?.settings, setDisplaySettings]);
 
     // Sync selected items to store once products are resolved
     useEffect(() => {

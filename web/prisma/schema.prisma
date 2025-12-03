@@ -203,6 +203,10 @@ model BundleSettings {
     theme    WidgetTheme    @default(STORE_DEFAULT)
     position WidgetPosition @default(ABOVE_ADD_TO_CART)
 
+    // Display text
+    title          String?
+    cartButtonText String?
+
     // Widget behavior
     widget Json? // { floating: true, autoHide: false, showOnMobile: true }
 
@@ -210,10 +214,9 @@ model BundleSettings {
     style Json? // { primaryColor: "#FF0000", font: "Roboto", borderRadius: "8px" }
 
     // Display options
-    showPrices        Boolean @default(true)
-    showSavings       Boolean @default(true)
-    showProductImages Boolean @default(true)
-    enableQuickAdd    Boolean @default(false)
+    showPrices      Boolean @default(true)
+    showSavings     Boolean @default(true)
+    enableHyperLink Boolean @default(false)
 
     // Animation & UX
     animations Json? // { fadeIn: true, slideDirection: "left" }
@@ -598,7 +601,6 @@ enum WidgetLayout {
     CAROUSEL
     LIST
     COMPACT
-    FLOATING
 }
 
 enum WidgetTheme {
@@ -609,13 +611,8 @@ enum WidgetTheme {
 }
 
 enum WidgetPosition {
-    PRODUCT_PAGE_TOP
-    PRODUCT_PAGE_BOTTOM
     ABOVE_ADD_TO_CART
     BELOW_ADD_TO_CART
-    SIDEBAR
-    FLOATING
-    POPUP
 }
 
 enum TestType {

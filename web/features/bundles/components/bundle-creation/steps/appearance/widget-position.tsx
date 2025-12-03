@@ -1,37 +1,47 @@
 "use client";
 
-import { useBundleStore, WIDGET_POSITIONS } from "@/features/bundles";
+import React from "react";
+import {
+    DisplaySettings,
+    useBundleStore,
+    WIDGET_POSITIONS,
+} from "@/features/bundles";
 
 export function WidgetPosition() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
 
-    function handlePositionChange(value: string) {
-        updateDisplaySettings("position", value as any);
-    }
-
-    function handleTitleChange(event: Event) {
-        const target = event.currentTarget as HTMLInputElement;
-        updateDisplaySettings("title", target.value);
-    }
-
-    function handleAddToCartTitleChange(event: Event) {
-        const target = event.currentTarget as HTMLInputElement;
-        updateDisplaySettings("cartTitle", target.value);
-    }
-
     return (
         <s-section>
             <s-stack gap="base">
-                <s-heading>Product page</s-heading>
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <s-heading>Product page</s-heading>
+                    <s-tooltip id="product-page-display-tooltip">
+                        <s-text>
+                            Choose where the bundle widget appears on product
+                            pages
+                        </s-text>
+                    </s-tooltip>
+                    <s-icon
+                        tone="neutral"
+                        type="info"
+                        interestFor="product-page-display-tooltip"
+                    />
+                </s-stack>
 
                 <s-select
                     label="Display position"
-                    details="Choose where the bundle widget appears on product pages"
                     required
                     value={displaySettings.position}
                     onChange={(event: Event) => {
                         const target = event.currentTarget as HTMLSelectElement;
-                        handlePositionChange(target.value);
+                        updateDisplaySettings(
+                            "position",
+                            target.value as DisplaySettings["position"],
+                        );
                     }}
                 >
                     {WIDGET_POSITIONS.map((option) => (
@@ -44,14 +54,20 @@ export function WidgetPosition() {
                 <s-text-field
                     label="Offer title"
                     value={displaySettings.title || ""}
-                    onChange={handleTitleChange}
+                    onChange={(event: Event) => {
+                        const target = event.currentTarget as HTMLInputElement;
+                        updateDisplaySettings("title", target.value);
+                    }}
                 />
 
                 <s-text-field
                     required
                     label="'Add to cart' button text"
-                    value={displaySettings.cartTitle || ""}
-                    onChange={handleAddToCartTitleChange}
+                    value={displaySettings.cartButtonText || ""}
+                    onChange={(event: Event) => {
+                        const target = event.currentTarget as HTMLInputElement;
+                        updateDisplaySettings("cartButtonText", target.value);
+                    }}
                 />
             </s-stack>
         </s-section>

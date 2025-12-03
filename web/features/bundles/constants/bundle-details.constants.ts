@@ -4,27 +4,30 @@
 
 export const WIDGET_LAYOUTS = [
     {
-        label: "Horizontal Layout",
-        value: "horizontal" as const,
+        label: "Grid",
+        value: "GRID" as const,
+        widgetLayout: "/assets/widget-grid-layout.png",
+    },
+    {
+        label: "List",
+        value: "LIST" as const,
         widgetLayout: "/assets/widget-horizontal-layout.png",
     },
     {
-        label: "Vertical Layout",
-        value: "vertical" as const,
+        label: "Slider",
+        value: "CAROUSEL" as const,
         widgetLayout: "/assets/widget-vertical-layout.png",
     },
     {
-        label: "Grid Layout",
-        value: "grid" as const,
-        widgetLayout: "/assets/widget-grid-layout.png",
+        label: "Compact",
+        value: "COMPACT" as const,
+        widgetLayout: "/assets/widget-vertical-layout.png",
     },
 ];
 
 export const WIDGET_POSITIONS = [
-    { label: "Above add to cart", value: "above_cart" as const },
-    { label: "Below add to cart", value: "below_cart" as const },
-    { label: "In product description", value: "description" as const },
-    { label: "Custom position", value: "custom" as const },
+    { label: "Above add to cart", value: "ABOVE_ADD_TO_CART" as const },
+    { label: "Below add to cart", value: "BELOW_ADD_TO_CART" as const },
 ];
 
 export const COLOR_THEMES = [
@@ -85,9 +88,9 @@ export const ADVANCED_OPTIONS = [
         description: "Show how much customers save by purchasing the bundle",
     },
     {
-        key: "enableQuickSwap" as const,
-        title: "Enable quick product swap",
+        key: "enableHyperLink" as const,
+        title: "Enable product page link",
         description:
-            "Allow customers to quickly swap products within the bundle",
+            "Add linked titles to the individual product pages of the bundle",
     },
 ];
