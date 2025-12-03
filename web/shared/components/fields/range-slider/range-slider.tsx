@@ -10,8 +10,8 @@ import { FC, useEffect, useState } from "react";
  */
 export const RangeSlider: FC<{
     values?: number;
-    onChange?: (value: number) => void;
-}> = ({ values = 8, onChange }) => {
+    action?: (value: number) => void;
+}> = ({ values = 8, action }) => {
     const [internalValue, setInternalValue] = useState([values]);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ export const RangeSlider: FC<{
 
     const handleChange = (vals: number[]) => {
         setInternalValue(vals);
-        onChange?.(vals[0]);
+        action?.(vals[0]);
     };
 
     return (

@@ -57,10 +57,24 @@ const bundleSettingsSchema = z
         enableHyperLink: z.boolean().default(false),
         style: z
             .object({
-                primaryColor: z.string().optional(),
-                font: z.string().optional(),
-                borderRadius: z.string().optional(),
-                buttonStyle: z.string().optional(),
+                // Button styling
+                buttonBgColor: z.string().optional(),
+                buttonTextColor: z.string().optional(),
+                buttonRadius: z.number().optional(),
+                buttonStyleEnabled: z.boolean().optional(),
+                // Product styling
+                productBgColor: z.string().optional(),
+                productTextColor: z.string().optional(),
+                productStarColor: z.string().optional(),
+                productBorderEnabled: z.boolean().optional(),
+                productBorderColor: z.string().optional(),
+                productRadius: z.number().optional(),
+                // Widget styling
+                widgetBgColor: z.string().optional(),
+                widgetTextColor: z.string().optional(),
+                widgetBorderEnabled: z.boolean().optional(),
+                widgetBorderColor: z.string().optional(),
+                widgetRadius: z.number().optional(),
             })
             .optional(),
         widget: z

@@ -310,10 +310,24 @@ export interface DisplaySettings {
     showSavings: boolean;
     enableHyperLink: boolean;
     style?: {
-        primaryColor?: string;
-        font?: string;
-        borderRadius?: string;
-        buttonStyle?: string;
+        // Add to Cart button
+        buttonBgColor?: string;
+        buttonTextColor?: string;
+        buttonRadius?: number;
+        buttonStyleEnabled?: boolean;
+        // Product
+        productBgColor?: string;
+        productTextColor?: string;
+        productStarColor?: string;
+        productBorderEnabled?: boolean;
+        productBorderColor?: string;
+        productRadius?: number;
+        // Widget
+        widgetBgColor?: string;
+        widgetTextColor?: string;
+        widgetBorderEnabled?: boolean;
+        widgetBorderColor?: string;
+        widgetRadius?: number;
     };
     widget?: {
         showOnMobile: boolean;
