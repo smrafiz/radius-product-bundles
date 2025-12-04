@@ -519,13 +519,14 @@ model AlertRule {
 
 // Stores information about a shop.
 model Shop {
-    id          String     @id @default(cuid())
-    domain      String     @unique
-    status      ShopStatus @default(ACTIVE)
-    plan        String?
-    trialEndsAt DateTime?
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
+    id                 String     @id @default(cuid())
+    domain             String     @unique
+    status             ShopStatus @default(ACTIVE)
+    plan               String?
+    trialEndsAt        DateTime?
+    metafieldSetupDone Boolean    @default(false)
+    createdAt          DateTime   @default(now())
+    updatedAt          DateTime   @updatedAt
 
     // Relations
     bundles       Bundle[]

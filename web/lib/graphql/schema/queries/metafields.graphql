@@ -1,0 +1,37 @@
+query GetProductBundleMetafield($productId: ID!) {
+    product(id: $productId) {
+        id
+        metafield(namespace: "radius_bundles", key: "bundle_ids") {
+            id
+            value
+        }
+    }
+}
+
+query GetProductsBundleMetafields($productIds: [ID!]!) {
+    nodes(ids: $productIds) {
+        ... on Product {
+            id
+            metafield(namespace: "radius_bundles", key: "bundle_ids") {
+                id
+                value
+            }
+        }
+    }
+}
+
+query CheckMetafieldDefinition {
+    metafieldDefinitions(
+        first: 1
+        ownerType: PRODUCT
+        namespace: "radius_bundles"
+        key: "bundle_ids"
+    ) {
+        edges {
+            node {
+                id
+                name
+            }
+        }
+    }
+}

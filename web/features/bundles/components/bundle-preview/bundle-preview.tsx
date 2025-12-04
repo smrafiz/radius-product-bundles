@@ -25,7 +25,7 @@ export function BundlePreview() {
                 padding="small"
             >
                 <s-stack>
-                    <div className="w-20 h-20 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                    <div className="w-20 h-20 bg-[var(--p-color-bg-surface)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
                         <s-image
                             src={item.image}
                             alt={item.title}

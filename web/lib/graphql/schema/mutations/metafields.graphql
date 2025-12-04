@@ -1,0 +1,30 @@
+mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+    metafieldsSet(metafields: $metafields) {
+        metafields {
+            id
+            namespace
+            key
+            value
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
+
+mutation MetafieldDefinitionCreate($definition: MetafieldDefinitionInput!) {
+    metafieldDefinitionCreate(definition: $definition) {
+        createdDefinition {
+            id
+            name
+            namespace
+            key
+        }
+        userErrors {
+            field
+            message
+            code
+        }
+    }
+}

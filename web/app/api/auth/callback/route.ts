@@ -2,7 +2,9 @@ import {
     createSessionConfig,
     isValidShopifyToken,
     storeSession,
+    upsertShop,
 } from "@/shared";
+import { runAppSetup } from "@/lib/shopify";
 import { Session } from "@shopify/shopify-api";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -63,6 +65,16 @@ export async function GET(request: NextRequest) {
 
         // Store session in the database
         await storeSession(session);
+
+        // Ensure shop record exists in the database
+        await upsertShop(shop);
+
+        // Run app setup (creates metafield definitions, etc.)
+        const setupResult = await runAppSetup(tokenData.access_token, shop);
+        if (!setupResult.success) {
+            console.warn("[OAuth] App setup warning:", setupResult.error);
+            // Continue anyway - don't block installation for setup issues
+        }
 
         // Build redirect URL with proper parameters
         const baseUrl = returnTo || "/dashboard";
