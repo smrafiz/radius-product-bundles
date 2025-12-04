@@ -3,6 +3,7 @@
 import type { BundleStatus } from "@/features/bundles";
 import { BUNDLE_STATUSES, getAvailableStatuses, useBundleStore, } from "@/features/bundles";
 import { formatDateLong } from "@/shared";
+import React from "react";
 
 /**
  * Bundle status selector with optional date scheduling.
@@ -100,7 +101,23 @@ export function BundlePreviewStatus() {
     return (
         <s-section>
             <s-stack gap="base">
-                <s-heading>Bundle status</s-heading>
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <s-heading>Bundle status</s-heading>
+                    <s-tooltip id="widget-layout-tooltip">
+                        <s-text>
+                            Shows the current state of this bundle and how it appears in your store.
+                        </s-text>
+                    </s-tooltip>
+                    <s-icon
+                        tone="neutral"
+                        type="info"
+                        interestFor="widget-layout-tooltip"
+                    />
+                </s-stack>
 
                 <s-select
                     label="Bundle status"
