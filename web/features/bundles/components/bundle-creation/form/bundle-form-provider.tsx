@@ -1,16 +1,16 @@
 "use client";
 
-import {
-    BundleFormData,
-    BundleFormProviderProps,
-    bundleSchema,
-    useBundleStore,
-} from "@/features/bundles";
+import { BundleFormData, BundleFormProviderProps, bundleSchema, useBundleStore, } from "@/features/bundles";
 import type { z } from "zod";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
+/**
+ * Provides form context for bundle creation and editing.
+ *
+ * Manages form state, validation, and synchronization with the bundle store.
+ */
 export function BundleFormProvider({
     children,
     bundleType,
@@ -30,6 +30,7 @@ export function BundleFormProvider({
             name: initialData?.name || "",
             description: initialData?.description || "",
             type: bundleType,
+            status: initialData?.status || "DRAFT",
             products: initialData?.products || [],
             discountType: initialData?.discountType,
             discountValue: initialData?.discountValue ?? 0,

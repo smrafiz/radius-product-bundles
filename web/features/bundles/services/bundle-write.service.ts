@@ -125,7 +125,7 @@ export async function createBundleService(
         const bundle = await createBundleWithRelations({
             shop,
             ...data,
-            status: "DRAFT",
+            status: data.status || "DRAFT",
         });
 
         if (!bundle) {

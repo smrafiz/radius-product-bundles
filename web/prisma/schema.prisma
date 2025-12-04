@@ -563,6 +563,9 @@ model AppSettings {
     @@map("app_settings")
 }
 
+/**
+ * Enumerations
+ */
 enum BundleType {
     FIXED_BUNDLE
     BUY_X_GET_Y

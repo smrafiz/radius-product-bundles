@@ -1,5 +1,10 @@
-import { BundleDetail, initialDisplaySettings } from "@/features/bundles";
+import { BundleDetail, BundleStatus, initialDisplaySettings, } from "@/features/bundles";
 
+/**
+ * Transforms bundle data from the database format to the form format.
+ *
+ * Used when loading an existing bundle for editing.
+ */
 export function useEditBundleTransform(bundleData?: BundleDetail) {
     if (!bundleData) {
         return undefined;
@@ -9,6 +14,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         name: bundleData.name,
         description: bundleData.description || "",
         type: bundleData.type,
+        status: bundleData.status as BundleStatus,
         mainProductId: bundleData.mainProductId || undefined,
         mainVariantId: bundleData.mainVariantId || undefined,
 
@@ -83,7 +89,8 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         // Marketing
         marketingCopy: bundleData.marketingCopy ?? undefined,
         images: bundleData.images || [],
-        // Dates
+
+        // Scheduling dates
         startDate: bundleData.startDate
             ? new Date(bundleData.startDate)
             : undefined,

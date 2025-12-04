@@ -5,6 +5,7 @@
 import {
     BUNDLE_STATUSES,
     BundleConfig,
+    BundleConfiguration,
     BundleStatus,
     BundleStatusBadge,
     BundleStatusBadgeNew,
@@ -12,24 +13,11 @@ import {
     DISCOUNT_TYPES,
     DiscountConfig,
     DiscountType,
+    DisplaySettings,
+    ExtendedBundleFormData,
 } from "@/features/bundles";
 import { Bundle, BundleProduct } from "@prisma/client";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
-
-// export const getBundleStatusBadge = (
-//     status: string | BundleStatusBadge,
-// ): BundleStatusBadge => {
-//     const config = BUNDLE_STATUSES[status as BundleStatus] ?? {
-//         text: String(status),
-//         tone: "subdued",
-//     };
-//
-//     return {
-//         text: config.text,
-//         tone: config.tone,
-//         children: config.text,
-//     };
-// };
 
 /*
  * Bundle status badge
@@ -105,3 +93,75 @@ export const bundleTypeMap = Object.values(BUNDLE_TYPES).reduce(
     },
     {} as Record<string, BundleType>,
 );
+
+export const initialDisplaySettings: DisplaySettings = {
+    layout: "GRID",
+    position: "ABOVE_ADD_TO_CART",
+    theme: "STORE_DEFAULT",
+    title: "Bundle Offers",
+    cartButtonText: "Add bundle to cart",
+    // colorTheme: "brand",
+    showPrices: true,
+    showSavings: true,
+    enableHyperLink: false,
+    widget: {
+        showOnMobile: true,
+    },
+    style: {
+        buttonBgColor: "#303030",
+        buttonTextColor: "#ffffff",
+        buttonRadius: 8,
+        buttonStyleEnabled: true,
+        productBgColor: "#f7f7f7",
+        productTextColor: "#303030",
+        productStarColor: "#ffce07",
+        productBorderEnabled: true,
+        productBorderColor: "#e3e3e3",
+        productRadius: 12,
+        widgetBgColor: "#ffffff",
+        widgetTextColor: "#303030",
+        widgetBorderEnabled: true,
+        widgetBorderColor: "#e3e3e3",
+        widgetRadius: 12,
+    },
+};
+
+export const initialBundleData: Partial<ExtendedBundleFormData> = {
+    name: "",
+    type: undefined as BundleType | undefined,
+    status: "DRAFT" as BundleStatus,
+    products: [],
+    discountType: undefined as DiscountType | undefined,
+    discountValue: undefined,
+    description: "",
+    minOrderValue: undefined,
+    maxDiscountAmount: undefined,
+    startDate: undefined,
+    endDate: undefined,
+    createProduct: false,
+    productTitle: "",
+    productDescription: "",
+    mainProductId: undefined,
+    mainVariantId: undefined,
+};
+
+export const initialConfiguration: BundleConfiguration = {
+    discountApplication: "bundle",
+};
+
+/**
+ * Maps bundle status to appropriate Shopify product status.
+ */
+export const getBundleProductStatus = (bundleStatus: BundleStatus): 'ACTIVE' | 'DRAFT' | 'ARCHIVED' => {
+    switch (bundleStatus) {
+        case 'ACTIVE':
+            return 'ACTIVE';
+        case 'ARCHIVED':
+            return 'ARCHIVED';
+        case 'DRAFT':
+        case 'SCHEDULED':
+        case 'PAUSED':
+        default:
+            return 'DRAFT';
+    }
+}

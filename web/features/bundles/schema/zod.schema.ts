@@ -2,7 +2,10 @@ import { z } from "zod";
 import DOMPurify from "isomorphic-dompurify";
 import { VALIDATION_MESSAGES } from "@/shared/constants";
 
-// Sanitization transformer
+/**
+ * Sanitizes HTML content by removing all tags and attributes.
+ * Used to prevent XSS attacks in user-provided text fields.
+ */
 const sanitizeHtml = (value: string) => {
     return DOMPurify.sanitize(value, {
         ALLOWED_TAGS: [],
@@ -10,7 +13,10 @@ const sanitizeHtml = (value: string) => {
     }).trim();
 };
 
-// Shopify GID validation
+/**
+ * Validates the Shopify Product GID format.
+ * Example: gid://shopify/Product/123456789
+ */
 const productGidSchema = z
     .string()
     .regex(
@@ -18,6 +24,10 @@ const productGidSchema = z
         "Invalid Shopify Product GID format",
     );
 
+/**
+ * Validates the Shopify ProductVariant GID format.
+ * Example: gid://shopify/ProductVariant/123456789
+ */
 const variantGidSchema = z
     .string()
     .regex(
@@ -25,13 +35,19 @@ const variantGidSchema = z
         "Invalid Shopify ProductVariant GID format",
     );
 
-// Volume tier schema
+/**
+ * Schema for volume discount tiers.
+ * Used in VOLUME_DISCOUNT bundle type.
+ */
 const volumeTierSchema = z.object({
     quantity: z.number().int().min(1),
     discount: z.number().min(0).max(100), // Percentage
 });
 
-// Product group schema for Mix & Match
+/**
+ * Schema for product groups in Mix & Match bundles.
+ * Allows customers to select products from different groups.
+ */
 const productGroupSchema = z.object({
     name: z.string().min(1, "Group name is required"),
     description: z.string().optional(),
@@ -40,7 +56,10 @@ const productGroupSchema = z.object({
     displayOrder: z.number().int().default(0),
 });
 
-// Bundle settings schema
+/**
+ * Schema for bundle widget display settings.
+ * Controls the appearance and behavior of the bundle on the storefront.
+ */
 const bundleSettingsSchema = z
     .object({
         layout: z.enum(["GRID", "CAROUSEL", "LIST", "COMPACT"]).default("GRID"),
@@ -85,6 +104,10 @@ const bundleSettingsSchema = z
     })
     .optional();
 
+/**
+ * Main bundle validation schema.
+ * Validates all bundle data for create and update operations.
+ */
 export const bundleSchema = z
     .object({
         name: z
@@ -107,6 +130,11 @@ export const bundleSchema = z
             "MIX_AND_MATCH",
             "FREQUENTLY_BOUGHT_TOGETHER",
         ]),
+
+        status: z
+            .enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED", "SCHEDULED"])
+            .default("DRAFT")
+            .optional(),
 
         createProduct: z.boolean().default(true).optional(),
         productTitle: z.string().max(120).optional(),
@@ -238,5 +266,18 @@ export const bundleSchema = z
         {
             message: "End date must be after start date",
             path: ["endDate"],
+        },
+    )
+    .refine(
+        (data) => {
+            // SCHEDULED status requires both start and end dates
+            if (data.status === "SCHEDULED") {
+                return data.startDate != null && data.endDate != null;
+            }
+            return true;
+        },
+        {
+            message: "Scheduled bundles require both start and end dates",
+            path: ["startDate"],
         },
     );

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    BUNDLE_STATUSES,
     bundleCurrencyFormatter,
     DISCOUNT_TYPES,
     DiscountType,
@@ -9,8 +10,11 @@ import {
     useBundleField,
     useBundleStore,
 } from "@/features/bundles";
-import { useShopSettings } from "@/shared";
+import { formatDateLong, useShopSettings } from "@/shared";
 
+/**
+ * Displays a summary of the bundle configuration in the review step.
+ */
 export function BundleSummary() {
     const { bundleData, getGroupedItems } = useBundleStore();
     const groupedItems = getGroupedItems();
@@ -24,6 +28,10 @@ export function BundleSummary() {
 
     const { isLoading, currencyCode } = useShopSettings();
     const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
+
+    /**
+     * Formats the discount display text.
+     */
     const formatDiscount = () =>
         formatDiscountFromValues(
             discountTypeField.value as DiscountType,
@@ -31,6 +39,35 @@ export function BundleSummary() {
             currencyFormatter,
         );
 
+    /**
+     * Converts a date value to a Date object.
+     */
+    const toDate = (value: Date | string | undefined): Date | undefined => {
+        if (!value) {
+            return undefined;
+        }
+
+        if (value instanceof Date) {
+            return value;
+        }
+
+        return new Date(value);
+    };
+
+    /**
+     * Formats a date for display.
+     */
+    const formatDate = (date: Date | string | undefined): string => {
+        const dateObj = toDate(date);
+        if (!dateObj) {
+            return "Not set";
+        }
+
+        const dateStr = dateObj.toISOString().split("T")[0];
+        return formatDateLong(dateStr);
+    };
+
+    // Calculate pricing
     const subtotal = groupedItems.reduce((sum, group) => {
         const productPrice = parseFloat(group.product.price ?? "0");
         const variantSum = group.variants.reduce(
@@ -50,8 +87,14 @@ export function BundleSummary() {
 
     const total = subtotal - discount;
 
+    // Get status badge info
+    const statusInfo = bundleData.status
+        ? BUNDLE_STATUSES[bundleData.status]
+        : BUNDLE_STATUSES.DRAFT;
+
     return (
         <s-stack gap="base">
+            {/* Bundle Details Section */}
             <s-section>
                 <s-stack gap="small">
                     <s-stack>
@@ -72,6 +115,7 @@ export function BundleSummary() {
                 </s-stack>
             </s-section>
 
+            {/* Discount Section */}
             <s-section>
                 <s-stack gap="small-300">
                     <s-stack
@@ -95,7 +139,7 @@ export function BundleSummary() {
                         direction="inline"
                         gap="small-300"
                     >
-                        <s-heading>Discount percentage</s-heading>
+                        <s-heading>Discount value</s-heading>
                         <s-text color="subdued">
                             {isLoading ? "•" : formatDiscount()}
                         </s-text>
@@ -103,10 +147,54 @@ export function BundleSummary() {
                 </s-stack>
             </s-section>
 
+            {/* Status Section */}
+            <s-section>
+                <s-stack gap="small">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-heading>Status</s-heading>
+                        <s-badge tone={statusInfo.tone}>
+                            {statusInfo.text}
+                        </s-badge>
+                    </s-stack>
+
+                    {bundleData.status === "SCHEDULED" && (
+                        <s-stack gap="small-200">
+                            <s-stack
+                                alignItems="center"
+                                justifyContent="space-between"
+                                direction="inline"
+                            >
+                                <s-text color="subdued">Start Date</s-text>
+                                <s-text>
+                                    {formatDate(bundleData.startDate)}
+                                </s-text>
+                            </s-stack>
+                            <s-stack
+                                alignItems="center"
+                                justifyContent="space-between"
+                                direction="inline"
+                            >
+                                <s-text color="subdued">End Date</s-text>
+                                <s-text>
+                                    {formatDate(bundleData.endDate)}
+                                </s-text>
+                            </s-stack>
+                        </s-stack>
+                    )}
+                </s-stack>
+            </s-section>
+
+
+            {/* Products Section */}
             <s-section>
                 <SelectedProducts />
             </s-section>
 
+            {/* Pricing Section */}
             <s-section>
                 <s-stack gap="small">
                     {/* Subtotal without discount */}
@@ -141,14 +229,14 @@ export function BundleSummary() {
                         <s-text type="strong">${total.toFixed(2)}</s-text>
                     </s-stack>
 
-                    {/* Optional: min order, max discount, dates */}
+                    {/* Optional: min order, max discount */}
                     {bundleData.minOrderValue !== undefined && (
                         <s-stack
                             alignItems="center"
                             justifyContent="space-between"
                             direction="inline"
                         >
-                            <s-text color="subdued">Min Order:</s-text>
+                            <s-text color="subdued">Min Order</s-text>
                             <s-text color="subdued">
                                 ${bundleData.minOrderValue}
                             </s-text>
@@ -161,39 +249,9 @@ export function BundleSummary() {
                             justifyContent="space-between"
                             direction="inline"
                         >
-                            <s-text color="subdued">Max Discount:</s-text>
+                            <s-text color="subdued">Max Discount</s-text>
                             <s-text color="subdued">
                                 ${bundleData.maxDiscountAmount}
-                            </s-text>
-                        </s-stack>
-                    )}
-
-                    {bundleData.startDate && (
-                        <s-stack
-                            alignItems="center"
-                            justifyContent="space-between"
-                            direction="inline"
-                        >
-                            <s-text color="subdued">Start Date:</s-text>
-                            <s-text color="subdued">
-                                {new Date(
-                                    bundleData.startDate,
-                                ).toLocaleDateString()}
-                            </s-text>
-                        </s-stack>
-                    )}
-
-                    {bundleData.endDate && (
-                        <s-stack
-                            alignItems="center"
-                            justifyContent="space-between"
-                            direction="inline"
-                        >
-                            <s-text color="subdued">End Date:</s-text>
-                            <s-text color="subdued">
-                                {new Date(
-                                    bundleData.endDate,
-                                ).toLocaleDateString()}
                             </s-text>
                         </s-stack>
                     )}
