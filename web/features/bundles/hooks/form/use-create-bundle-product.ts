@@ -2,22 +2,27 @@
 
 import { useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { createBundleProductAction } from "@/features/bundles";
+import { BundleStatus, createBundleProductAction } from "@/features/bundles";
 
 /**
- * Hook for creating a Shopify product when the bundle is submitted
+ * Hook for creating a Shopify product when the bundle is submitted.
+ * Product status is synced with bundle status.
  */
 export function useCreateBundleProduct() {
     const [isCreating, setIsCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const app = useAppBridge();
 
+    /**
+     * Creates a Shopify product for the bundle.
+     */
     const createProduct = async (
         bundleName: string,
         bundleDescription?: string,
         bundleType?: string,
         bundlePrice?: number,
         originalPrice?: number,
+        bundleStatus?: BundleStatus,
     ) => {
         setIsCreating(true);
         setError(null);
@@ -29,6 +34,7 @@ export function useCreateBundleProduct() {
                 bundleName,
                 bundleDescription,
                 bundleType,
+                bundleStatus,
                 bundlePrice,
                 originalPrice,
             });

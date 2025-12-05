@@ -20,6 +20,7 @@ mutation ProductCreate(
             id
             title
             handle
+            status
             variants(first: 1) {
                 nodes {
                     id
@@ -38,16 +39,18 @@ mutation ProductUpdate(
     $id: ID!
     $title: String
     $descriptionHtml: String
+    $status: ProductStatus
     $media: [CreateMediaInput!]
 ) {
     productUpdate(
-        product: { id: $id, title: $title, descriptionHtml: $descriptionHtml }
+        product: { id: $id, title: $title, descriptionHtml: $descriptionHtml, status: $status }
         media: $media
     ) {
         product {
             id
             title
             descriptionHtml
+            status
             variants(first: 1) {
                 nodes {
                     id

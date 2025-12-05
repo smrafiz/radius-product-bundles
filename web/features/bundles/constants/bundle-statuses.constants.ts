@@ -20,10 +20,3 @@ export const CREATE_STATUSES: BundleStatus[] = ["DRAFT", "ACTIVE", "SCHEDULED"];
  * Statuses available when editing an existing bundle
  */
 export const EDIT_STATUSES: BundleStatus[] = ["DRAFT", "ACTIVE", "SCHEDULED", "PAUSED", "ARCHIVED"];
-
-/**
- * Get available statuses based on mode
- */
-export function getAvailableStatuses(mode: "create" | "edit"): BundleStatus[] {
-    return mode === "create" ? CREATE_STATUSES : EDIT_STATUSES;
-}

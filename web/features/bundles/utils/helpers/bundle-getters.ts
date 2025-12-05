@@ -10,10 +10,12 @@ import {
     BundleStatusBadge,
     BundleStatusBadgeNew,
     BundleType,
+    CREATE_STATUSES,
     DISCOUNT_TYPES,
     DiscountConfig,
     DiscountType,
     DisplaySettings,
+    EDIT_STATUSES,
     ExtendedBundleFormData,
 } from "@/features/bundles";
 import { Bundle, BundleProduct } from "@prisma/client";
@@ -150,18 +152,25 @@ export const initialConfiguration: BundleConfiguration = {
 };
 
 /**
+ * Get available statuses based on mode
+ */
+export function getAvailableStatuses(mode: "create" | "edit"): BundleStatus[] {
+    return mode === "create" ? CREATE_STATUSES : EDIT_STATUSES;
+}
+
+/**
  * Maps bundle status to appropriate Shopify product status.
  */
-export const getBundleProductStatus = (bundleStatus: BundleStatus): 'ACTIVE' | 'DRAFT' | 'ARCHIVED' => {
+export function getShopifyProductStatus(bundleStatus: BundleStatus): "ACTIVE" | "DRAFT" | "ARCHIVED" {
     switch (bundleStatus) {
-        case 'ACTIVE':
-            return 'ACTIVE';
-        case 'ARCHIVED':
-            return 'ARCHIVED';
-        case 'DRAFT':
-        case 'SCHEDULED':
-        case 'PAUSED':
+        case "ACTIVE":
+            return "ACTIVE";
+        case "ARCHIVED":
+            return "ARCHIVED";
+        case "DRAFT":
+        case "SCHEDULED":
+        case "PAUSED":
         default:
-            return 'DRAFT';
+            return "DRAFT";
     }
 }

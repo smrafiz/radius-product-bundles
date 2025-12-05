@@ -3,26 +3,35 @@
  * Handles Shopify product creation for bundles
  */
 
+import { BundleStatus, getShopifyProductStatus } from "@/features/bundles";
+
 /**
- * Transform bundle data to Shopify product mutation variables
+ * Transform bundle data to Shopify product mutation variables.
+ * Sets product status based on bundle status.
  */
 export function transformBundleToProductVariables(
     bundleName: string,
     bundleDescription?: string,
     bundleType?: string,
+    bundleStatus?: BundleStatus,
 ) {
+    // Map bundle status to Shopify product status
+    const productStatus: "ACTIVE" | "DRAFT" | "ARCHIVED" = bundleStatus
+        ? getShopifyProductStatus(bundleStatus)
+        : "DRAFT";
+
     return {
         title: bundleName,
         descriptionHtml: bundleDescription ?? undefined,
         vendor: "Bundle",
         productType: bundleType || "Bundle",
         tags: ["bundle", bundleType?.toLowerCase() || ""].filter(Boolean),
-        status: "ACTIVE" as const,
+        status: productStatus,
     };
 }
 
 /**
- * Validate product creation input
+ * Validate product creation input.
  */
 export function validateProductInput(input: {
     title: string;
@@ -52,7 +61,7 @@ export function validateProductInput(input: {
 }
 
 /**
- * Extract product ID from Shopify GID
+ * Extract product ID from Shopify GID.
  */
 export function extractProductId(gid: string): string {
     const match = gid.match(/\/Product\/(\d+)$/);
@@ -60,7 +69,7 @@ export function extractProductId(gid: string): string {
 }
 
 /**
- * Format product for storage in the database
+ * Format product for storage in the database.
  */
 export function formatProductForStorage(product: {
     id: string;
@@ -84,7 +93,7 @@ export function formatProductForStorage(product: {
 }
 
 /**
- * Upload file to staged URL
+ * Upload file to staged URL.
  */
 export async function uploadFileToStaged(
     file: File,
@@ -114,7 +123,7 @@ export async function uploadFileToStaged(
 }
 
 /**
- * Prepare media input for product creation
+ * Prepare media input for product creation.
  */
 export function prepareMediaInput(
     resourceUrls: string[],

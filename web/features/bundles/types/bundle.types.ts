@@ -368,20 +368,28 @@ export interface MediaGridItemProps {
     onRemove: () => void;
 }
 
+/**
+ * Input for creating a Shopify product for a bundle
+ */
 export interface CreateBundleProductInput {
     bundleName: string;
     bundleDescription?: string;
     bundleType?: string;
+    bundleStatus?: PrismaBundleStatus;
     mediaFiles?: SerializableFile[];
     bundlePrice?: number;
     originalPrice?: number;
 }
 
+/**
+ * Input for updating a Shopify bundle product
+ */
 export interface UpdateProductInput {
     productId: string;
     variantId?: string;
     title?: string;
     description?: string;
+    status?: PrismaBundleStatus;
     mediaFiles?: SerializableFile[];
     bundlePrice?: number;
     originalPrice?: number;

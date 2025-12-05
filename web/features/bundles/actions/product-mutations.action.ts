@@ -2,15 +2,16 @@
 
 /**
  * Product Creation Actions - Auth Layer
- * Handles Shopify product creation via GraphQL
+ * Handles Shopify product creation and updates via GraphQL.
+ * Syncs product status with bundle status.
  */
 
 import {
     CreateBundleProductInput,
     formatProductForStorage,
+    getShopifyProductStatus,
     transformBundleToProductVariables,
     UpdateProductInput,
-    uploadFileToStaged,
     validateProductInput,
 } from "@/features/bundles";
 import { ApiResponse } from "@/shared";
@@ -31,7 +32,8 @@ import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
 
 /**
- * Create a Shopify product for a bundle
+ * Create a Shopify product for a bundle.
+ * Product status is synced with bundle status.
  */
 export async function createBundleProductAction(
     sessionToken: string,
@@ -40,11 +42,12 @@ export async function createBundleProductAction(
     try {
         await handleSessionToken(sessionToken);
 
-        // Transform bundle data to GraphQL variables
+        // Transform bundle data to GraphQL variables (includes status mapping)
         const variables = transformBundleToProductVariables(
             input.bundleName,
             input.bundleDescription,
             input.bundleType,
+            input.bundleStatus,
         );
 
         // Validate input
@@ -56,6 +59,10 @@ export async function createBundleProductAction(
                 data: null,
             };
         }
+
+        console.log(
+            `[createBundleProduct] Creating product with status: ${variables.status}`,
+        );
 
         // Execute GraphQL mutation using codegen document
         const result = await executeGraphQLMutation<ProductCreateMutation>({
@@ -144,7 +151,7 @@ export async function createBundleProductAction(
 }
 
 /**
- * Update variant price for bundle product
+ * Update variant price for bundle product.
  */
 export async function updateVariantPriceAction(
     sessionToken: string,
@@ -217,7 +224,8 @@ export async function updateVariantPriceAction(
 }
 
 /**
- * Update Shopify product from the bundle edit page
+ * Update Shopify product from the bundle edit page.
+ * Syncs product status with bundle status.
  */
 export async function updateBundleProductAction(
     sessionToken: string,
@@ -226,11 +234,21 @@ export async function updateBundleProductAction(
     try {
         await handleSessionToken(sessionToken);
 
+        // Map bundle status to Shopify product status if provided
+        const productStatus = input.status
+            ? getShopifyProductStatus(input.status)
+            : undefined;
+
         const variables = {
             id: input.productId,
             title: input.title,
             descriptionHtml: input.description ?? undefined,
+            status: productStatus,
         };
+
+        console.log(
+            `[updateBundleProduct] Updating product with status: ${productStatus}`,
+        );
 
         // Execute GraphQL mutation
         const result = await executeGraphQLMutation<ProductUpdateMutation>({
@@ -274,7 +292,11 @@ export async function updateBundleProductAction(
         console.log("Product updated successfully:", input);
 
         // Update variant price if provided
-        if (input.bundlePrice !== undefined && input.bundlePrice > 0 && input.variantId) {
+        if (
+            input.bundlePrice !== undefined &&
+            input.bundlePrice > 0 &&
+            input.variantId
+        ) {
             const priceUpdateResult = await updateVariantPriceAction(
                 sessionToken,
                 input.productId,
@@ -298,6 +320,7 @@ export async function updateBundleProductAction(
             data: {
                 id: result.data.productUpdate.product.id,
                 title: result.data.productUpdate.product.title,
+                status: result.data.productUpdate.product.status,
             },
         };
     } catch (error) {
@@ -315,60 +338,81 @@ export async function updateBundleProductAction(
 }
 
 /**
- * Helper: Stage and upload files, return resource URLs
+ * Update only the status of a Shopify product.
+ * Used when bundle status changes without other updates.
  */
-async function stageAndUploadFiles(
+export async function updateBundleProductStatusAction(
     sessionToken: string,
-    files: File[],
-): Promise<string[]> {
-    console.log(`[stageAndUploadFiles] Processing ${files.length} files...`);
+    productId: string,
+    bundleStatus: string,
+): Promise<ApiResponse> {
+    try {
+        await handleSessionToken(sessionToken);
 
-    // Prepare file metadata for staging
-    const fileMetadata = files.map((file) => ({
-        filename: file.name,
-        mimeType: file.type,
-        fileSize: file.size,
-    }));
+        const productStatus = getShopifyProductStatus(bundleStatus as any);
 
-    console.log("File metadata:", fileMetadata);
+        console.log(
+            `[updateBundleProductStatus] Setting product ${productId} to ${productStatus}`,
+        );
 
-    // Create staged uploads
-    const stagedResult = await createStagedUploadsAction(
-        sessionToken,
-        fileMetadata,
-    );
+        const result = await executeGraphQLMutation<ProductUpdateMutation>({
+            query: ProductUpdateDocument,
+            variables: {
+                id: productId,
+                status: productStatus,
+            },
+            sessionToken,
+        });
 
-    if (!stagedResult.success || !stagedResult.stagedTargets) {
-        console.error("Failed to stage uploads:", stagedResult.error);
-        return [];
-    }
-
-    console.log(`✅ Staged ${stagedResult.stagedTargets.length} uploads`);
-
-    // Upload files to staged URLs
-    const resourceUrls: string[] = [];
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const stagedTarget = stagedResult.stagedTargets[i];
-
-        try {
-            console.log(
-                `Uploading file ${i + 1}/${files.length}: ${file.name}`,
-            );
-            const resourceUrl = await uploadFileToStaged(file, stagedTarget);
-            resourceUrls.push(resourceUrl);
-            console.log(`✅ Uploaded: ${file.name}`);
-        } catch (error) {
-            console.error(`❌ Failed to upload file ${file.name}:`, error);
+        if (result.errors && result.errors.length > 0) {
+            return {
+                status: "error",
+                message: result.errors.map((e) => e.message).join(", "),
+                data: null,
+            };
         }
-    }
 
-    console.log(`✅ All uploads complete. ${resourceUrls.length} successful.`);
-    return resourceUrls;
+        if (
+            result.data?.productUpdate?.userErrors &&
+            result.data.productUpdate.userErrors.length > 0
+        ) {
+            return {
+                status: "error",
+                message: result.data.productUpdate.userErrors
+                    .map((e) => e.message)
+                    .join(", "),
+                data: null,
+            };
+        }
+
+        console.log(
+            `[updateBundleProductStatus] ✅ Product status updated to ${productStatus}`,
+        );
+
+        return {
+            status: "success",
+            message: "Product status updated successfully",
+            data: {
+                id: result.data?.productUpdate?.product?.id,
+                status: result.data?.productUpdate?.product?.status,
+            },
+        };
+    } catch (error) {
+        console.error("[updateBundleProductStatus] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to update product status",
+            data: null,
+        };
+    }
 }
 
 /**
- * Create staged uploads for files
+ * Create staged uploads for files.
  */
 export async function createStagedUploadsAction(
     sessionToken: string,
@@ -441,7 +485,7 @@ export async function createStagedUploadsAction(
 }
 
 /**
- * Attach already-uploaded media to a product
+ * Attach already-uploaded media to a product.
  */
 export async function attachMediaToProductAction(
     sessionToken: string,
@@ -515,7 +559,7 @@ export async function attachMediaToProductAction(
 }
 
 /**
- * Delete a Shopify product
+ * Delete a Shopify product.
  */
 export async function deleteBundleProductAction(
     sessionToken: string,
@@ -563,7 +607,9 @@ export async function deleteBundleProductAction(
         return {
             status: "success",
             message: "Product deleted successfully",
-            data: { deletedProductId: result.data?.productDelete?.deletedProductId },
+            data: {
+                deletedProductId: result.data?.productDelete?.deletedProductId,
+            },
         };
     } catch (error) {
         console.error("[deleteBundleProduct] Error:", error);

@@ -3,6 +3,7 @@
 import {
     attachMediaToProductAction,
     BundleFormData,
+    BundleStatus,
     calculateBundlePrice,
     calculateDiscountAmount,
     createBundleAction,
@@ -168,6 +169,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             data.type,
             bundlePrice,
             originalPrice,
+            data.status as BundleStatus,
         );
 
         if (!productData || !productData.mainProductId) {
@@ -204,7 +206,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
      */
     const mergeStatusAndScheduling = (data: ExtendedBundleFormData) => {
         const storeData = useBundleStore.getState().bundleData;
-        data.status = storeData.status ?? "DRAFT";
+        data.status = (storeData.status ?? "DRAFT") as BundleStatus;
         data.startDate = storeData.startDate;
         data.endDate = storeData.endDate;
     };
@@ -423,6 +425,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                 variantId: currentMainVariantId,
                                 title: data.productTitle,
                                 description: data.productDescription,
+                                status: data.status as BundleStatus,
                                 bundlePrice,
                                 originalPrice,
                             },
