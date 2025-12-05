@@ -201,3 +201,6 @@
         transition: opacity 200ms ease-in-out;
     }
 }
+
+
+@import "./widget/bundle.css";

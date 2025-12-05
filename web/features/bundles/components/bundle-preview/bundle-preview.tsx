@@ -12,6 +12,8 @@ import {
 export function BundlePreview() {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
 
+    const styleData = displaySettings.style || {};
+
     const renderSelectedProducts = () => {
         return selectedItems.slice(0, 4).map((item, index) => (
             <s-stack
@@ -95,9 +97,8 @@ export function BundlePreview() {
             <BundlePreviewStatus />
 
             <s-section>
-
                 <s-stack gap="base">
-                    <s-heading>Frequently bought together</s-heading>
+                    <s-heading>{displaySettings.title || ""}</s-heading>
                     {selectedItems.length > 0 ? (
                     <s-stack gap="base">
                         <s-stack gap="small-200">
@@ -162,9 +163,20 @@ export function BundlePreview() {
                                 )}
                         </s-stack>
 
-                        <s-button variant="primary">
-                            Add bundle to cart
-                        </s-button>
+                        <div className="rtpb-summary-button flex justify-center">
+                            <button
+                                aria-expanded="false"
+                                aria-label={displaySettings.cartButtonText || ""}
+                                className="rtpb-button"
+                                style={{
+                                    backgroundColor: styleData.buttonBgColor || "#303030",
+                                    color: styleData.buttonTextColor || "#fff",
+                                    borderRadius: styleData.buttonRadius || "6px",
+                                }}
+                            >
+                                {displaySettings.cartButtonText || ""}
+                            </button>
+                        </div>
                     </s-stack>
 
                     ) : <div className="min-h-96 flex flex-col items-center justify-center gap-3">

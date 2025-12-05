@@ -5,7 +5,6 @@ import {
     BundleTableSkeleton,
     useBundlesPage,
 } from "@/features/bundles";
-import { useEffect } from "react";
 import { GlobalBanner, MetricCard } from "@/shared";
 
 /**
@@ -16,32 +15,23 @@ export function BundleListingPage() {
         metrics,
         showTableSkeleton,
         isMetricsLoading,
-        toast,
         onCreateBundle,
         onBundleStudio,
-        onDismissToast,
+        isButtonLoading,
+        setIsButtonLoading
     } = useBundlesPage();
-
-    useEffect(() => {
-        if (
-            toast.active &&
-            typeof shopify !== "undefined" &&
-            shopify.toast?.show
-        ) {
-            shopify.toast.show(toast.message, {
-                duration: 5000,
-                onDismiss: onDismissToast,
-            });
-        }
-    }, [toast.active, toast.message, onDismissToast]);
 
     return (
         <s-page heading="Bundle Management">
-            {/* Header buttons */}
             <s-button
                 slot="primary-action"
                 variant="primary"
-                onClick={onCreateBundle}
+                onClick={() => {
+                    setIsButtonLoading(true);
+                    onCreateBundle();
+                }}
+                disabled={isButtonLoading}
+                loading={isButtonLoading}
             >
                 Create Bundle
             </s-button>

@@ -1,0 +1,11 @@
+/* rtpb button summary */
+.rtpb-summary-button {
+    .rtpb-button {
+        background-color: #303030;
+        color: #fff;
+        border-radius: 6px;
+        height: 42px;
+        padding: 6px 18px;
+        line-height: 28px;
+    }
+}

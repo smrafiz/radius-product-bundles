@@ -101,7 +101,7 @@ export function WidgetAppearance() {
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
                                     <RangeSlider
-                                        values={style.buttonRadius ?? 8}
+                                        values={style.buttonRadius ?? 6}
                                         action={(val) => updateStyle("buttonRadius", val)}
                                     />
                                 </s-stack>

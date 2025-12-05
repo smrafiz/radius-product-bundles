@@ -8,12 +8,15 @@ import {
 } from "@/features/bundles";
 import { useDashboardData } from "@/features/dashboard";
 import { useAppNavigation, useSyncBundles } from "@/shared";
+import { useEffect, useState } from "react";
 
 /**
  * Bundles page
  */
 export function useBundlesPage() {
     useSyncBundles();
+
+    const [isButtonLoading, setIsButtonLoading] = useState(false);
 
     const { isLoading } = useBundlesData();
     const { metrics: liveMetrics, isMetricsFetching } = useDashboardData();
@@ -24,13 +27,29 @@ export function useBundlesPage() {
         isLoading,
     });
 
+    useEffect(() => {
+        if (
+            toast.active &&
+            typeof shopify !== "undefined" &&
+            shopify.toast?.show
+        ) {
+            shopify.toast.show(toast.message, {
+                duration: 5000,
+                onDismiss: hideToast,
+            });
+        }
+    }, [toast.active, toast.message, hideToast]);
+
     return {
         metrics: BUNDLE_LISTING_METRICS(liveMetrics),
         isMetricsLoading: isMetricsFetching,
         showTableSkeleton: showSkeleton,
         toast,
+        isLoading,
         onCreateBundle: bundleData.create(),
         onBundleStudio: bundleData.studio(),
         onDismissToast: hideToast,
+        isButtonLoading,
+        setIsButtonLoading,
     };
 }
