@@ -43,7 +43,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
             <GlobalForm
                 onSubmit={handleSubmit}
                 resetDirty={resetDirty}
-                discardPath={`/bundles/${bundleId}`}
+                discardPath={`/bundles/${bundleId}/edit`}
             >
                 <BundleCreationForm
                     bundleType={bundleData.type}

@@ -1,5 +1,6 @@
 "use client";
 
+import { triggerSaveBar } from "@/shared";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DiscountApplication, useBundleStore } from "@/features/bundles";
 
@@ -7,7 +8,7 @@ import { DiscountApplication, useBundleStore } from "@/features/bundles";
  * Hook for managing bundle behavior state and actions
  */
 export function useBundleBehavior() {
-    const { selectedItems, bundleData, setBundleData } = useBundleStore();
+    const { selectedItems, bundleData, setBundleData, markDirty } = useBundleStore();
 
     const [discountApplication, setDiscountApplication] = useState<DiscountApplication>(
         bundleData.discountApplication || "bundle"
@@ -113,7 +114,9 @@ export function useBundleBehavior() {
             });
         }
         setSelectedProducts(new Set());
-    }, [selectedProducts, setBundleData]);
+        markDirty();
+        triggerSaveBar();
+    }, [selectedProducts, setBundleData, markDirty]);
 
     /**
      * Reset on modal close
@@ -143,7 +146,9 @@ export function useBundleBehavior() {
                 discountedProductIds: [],
             });
         }
-    }, [isDiscountDisabled, setBundleData]);
+        markDirty();
+        triggerSaveBar();
+    }, [isDiscountDisabled, setBundleData, markDirty]);
 
     /**
      * Handle free shipping toggle
@@ -151,7 +156,9 @@ export function useBundleBehavior() {
     const handleFreeShippingChange = useCallback((checked: boolean) => {
         setFreeShipping(checked);
         setBundleData({ freeShipping: checked });
-    }, [setBundleData]);
+        markDirty();
+        triggerSaveBar();
+    }, [setBundleData, markDirty]);
 
     /**
      * Initialize selection before opening modal

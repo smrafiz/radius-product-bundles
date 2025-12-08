@@ -1,9 +1,9 @@
 "use client";
 
-import { useModalStore } from "@/shared";
+import { triggerSaveBar, useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchProductByIdAction, useBundleFormMethods, useBundleStore, } from "@/features/bundles";
+import { fetchProductByIdAction, useBundleFormMethods, useBundleStore } from "@/features/bundles";
 
 /**
  * Hook for managing bundle product creation state
@@ -21,6 +21,7 @@ export function useBundleProduct(mode: "create" | "edit") {
         removePendingMedia,
         clearPendingMedia,
         setPendingProductDeletion,
+        markDirty,
     } = useBundleStore();
     const { openModal } = useModalStore();
     const app = useAppBridge();
@@ -153,8 +154,10 @@ export function useBundleProduct(mode: "create" | "edit") {
                 shouldValidate: false,
                 shouldDirty: true,
             });
+            markDirty();
+            triggerSaveBar();
         },
-        [setValue],
+        [setValue, markDirty],
     );
 
     /**
@@ -193,7 +196,7 @@ export function useBundleProduct(mode: "create" | "edit") {
             toggleEnabled(checked);
             setPendingProductDeletion(false);
         },
-        [mainProductId, productTitle, bundleName, openModal, setPendingProductDeletion, toggleEnabled],
+        [mainProductId, productTitle, bundleName, openModal, setPendingProductDeletion, toggleEnabled, setValue],
     );
 
     /**
@@ -206,8 +209,10 @@ export function useBundleProduct(mode: "create" | "edit") {
                 shouldValidate: true,
                 shouldDirty: true,
             });
+            markDirty();
+            triggerSaveBar();
         },
-        [setValue],
+        [setValue, markDirty],
     );
 
     /**
@@ -219,8 +224,10 @@ export function useBundleProduct(mode: "create" | "edit") {
                 shouldValidate: true,
                 shouldDirty: true,
             });
+            markDirty();
+            triggerSaveBar();
         },
-        [setValue],
+        [setValue, markDirty],
     );
 
     /**
@@ -238,6 +245,7 @@ export function useBundleProduct(mode: "create" | "edit") {
                 console.log(
                     `Added ${files.length} new files to pending media.`,
                 );
+                // Note: addPendingFiles in store already calls triggerSaveBar
             } catch (error) {
                 console.error("Failed to add media:", error);
             } finally {
@@ -253,6 +261,7 @@ export function useBundleProduct(mode: "create" | "edit") {
     const handleRemoveExistingMedia = useCallback(
         (id: string) => {
             removeExistingMedia(id);
+            // Note: removeExistingMedia in store already calls triggerSaveBar
         },
         [removeExistingMedia],
     );

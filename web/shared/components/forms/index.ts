@@ -1,1 +1,1 @@
-export { GlobalForm } from "./global-form";
+export * from "./global-form";

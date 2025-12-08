@@ -1,13 +1,12 @@
 "use client";
 
 import {
-    BundleFormData,
     useBundleFormMethods,
     useBundleStore,
     useStepIndicator,
 } from "@/features/bundles";
+import { submitForm } from "@/shared";
 import { usePathname } from "next/navigation";
-import { useFormContext } from "react-hook-form";
 
 export function HorizontalStepIndicator() {
     const {
@@ -21,37 +20,17 @@ export function HorizontalStepIndicator() {
     const { currentStep, totalSteps, prevStep, canGoPrevious, isSaving } =
         useBundleStore();
     const { handleNextStep } = useBundleFormMethods();
-    const { handleSubmit, getValues } = useFormContext<BundleFormData>();
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
 
     const isLastStep = currentStep === totalSteps;
     const canGoPrev = canGoPrevious();
 
-    // Handle form submission for the last step
-    const onSubmit = (data: BundleFormData) => {
-        console.log("=== FORM SUBMISSION DATA ===");
-        console.log("Form Data:", data);
-        console.log("Form Values (getValues):", getValues());
-        console.log("==========================");
-
-        // Trigger the GlobalForm submit by dispatching a form submit event
-        const form = document.querySelector(
-            'form[data-save-bar="true"]',
-        ) as HTMLFormElement;
-        if (form) {
-            form.requestSubmit();
-        }
-    };
-
-    const onError = (errors: any) => {
-        console.log("=== FORM VALIDATION ERRORS ===");
-        console.log("Errors:", errors);
-        console.log("==============================");
-    };
-
+    /**
+     * Handle final form submission.
+     */
     const handleFinalSubmit = () => {
-        handleSubmit(onSubmit, onError)();
+        submitForm();
     };
 
     const handleStepClick = (stepNumber: number) => {
@@ -71,7 +50,7 @@ export function HorizontalStepIndicator() {
             case 3:
                 return "Continue";
             case 4:
-                return isEditMode ? "Update" : "Create";
+                return isEditMode ? "Update" : "Publish";
             default:
                 return "Continue";
         }
@@ -111,7 +90,9 @@ export function HorizontalStepIndicator() {
                                 >
                                     <div
                                         className="cursor-pointer"
-                                        onClick={() => handleStepClick(step.number)}
+                                        onClick={() =>
+                                            handleStepClick(step.number)
+                                        }
                                     >
                                         <s-badge
                                             size="large"

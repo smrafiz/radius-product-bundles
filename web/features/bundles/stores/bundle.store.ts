@@ -13,6 +13,26 @@ import {
     SelectedItem,
 } from "@/features/bundles";
 import { generateMediaId, getImageBasePath } from "@/shared";
+import { TRIGGER_SAVE_BAR } from "@/shared/components/forms/global-form";
+
+// Flag to prevent save bar during initialization
+let isInitializing = false;
+
+/**
+ * Sets initialization mode to prevent save bar triggers.
+ */
+export const setStoreInitializing = (value: boolean) => {
+    isInitializing = value;
+};
+
+/**
+ * Triggers the save bar by dispatching a custom event.
+ */
+const callTriggerSaveBar = () => {
+    if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent(TRIGGER_SAVE_BAR));
+    }
+};
 
 export const useBundleStore = create(
     immer<BundleState>((set, get) => ({
@@ -109,7 +129,6 @@ export const useBundleStore = create(
                     ...data,
                 };
             });
-            get().resetDirty();
         },
 
         updateBundleField: (key, value) => {
@@ -146,10 +165,10 @@ export const useBundleStore = create(
                     (state.bundleData as any)[key] = value;
                 }
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
-        // ... rest of the methods remain the same
         setSelectedItems: (items) => {
             set((state) => {
                 state.selectedItems = items;
@@ -161,7 +180,8 @@ export const useBundleStore = create(
                     role: "INCLUDED",
                 }));
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         addSelectedItems: (items) => {
@@ -180,7 +200,8 @@ export const useBundleStore = create(
                     role: "INCLUDED",
                 }));
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         removeSelectedItem: (itemId) => {
@@ -197,7 +218,8 @@ export const useBundleStore = create(
                     role: "INCLUDED",
                 }));
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         removeProductAndAllVariants: (productId) => {
@@ -214,7 +236,8 @@ export const useBundleStore = create(
                     role: "INCLUDED",
                 }));
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         updateSelectedItemQuantity: (itemId, quantity) => {
@@ -239,7 +262,8 @@ export const useBundleStore = create(
                     );
                 }
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         updateProductVariants: (productId, variants, position) => {
@@ -264,7 +288,8 @@ export const useBundleStore = create(
                     role: "INCLUDED",
                 }));
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         reorderItems: (activeId, overId) => {
@@ -316,7 +341,8 @@ export const useBundleStore = create(
                     );
                 }
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         // Computed values
@@ -372,6 +398,8 @@ export const useBundleStore = create(
                     (m) => m.id !== id,
                 );
             });
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         clearRemovedMediaIds: () => {
@@ -389,6 +417,8 @@ export const useBundleStore = create(
                 }));
                 state.pendingMedia.push(...newItems);
             });
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         addPendingUrls: (urls: string[]) => {
@@ -417,12 +447,16 @@ export const useBundleStore = create(
 
                 state.pendingMedia.push(...newItems);
             });
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         removePendingMedia: (id: string) => {
             set((state) => {
                 state.pendingMedia = state.pendingMedia.filter((item) => item.id !== id);
             });
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         clearPendingMedia: () => {
@@ -477,7 +511,8 @@ export const useBundleStore = create(
             set((state) => {
                 state.displaySettings[key] = value;
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         // Configuration actions
@@ -485,7 +520,8 @@ export const useBundleStore = create(
             set((state) => {
                 state.configuration[key] = value;
             });
-            get().resetDirty();
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         // Loading states

@@ -10,7 +10,7 @@ import { removeNulls } from "@/shared";
 import type { Bundle, BundleProduct } from "@prisma/client";
 
 /**
- * Core bundle transformation
+ * Core bundle transformation.
  */
 export function transformBundleCore(
     bundle: Bundle & { bundleProducts: BundleProduct[] },
@@ -50,9 +50,9 @@ export function transformBundleCore(
                     featuredImage: product.featuredImage,
                     selectedVariant: selectedVariant
                         ? {
-                              ...selectedVariant,
-                              productId: product.id,
-                          }
+                            ...selectedVariant,
+                            productId: product.id,
+                        }
                         : null,
                     quantity: bp.quantity,
                     role: bp.role,
@@ -64,7 +64,7 @@ export function transformBundleCore(
 }
 
 /**
- * Listing transformation
+ * Listing transformation.
  */
 export function transformBundles(
     bundles: (Bundle & { bundleProducts: BundleProduct[] })[],
@@ -77,8 +77,7 @@ export function transformBundles(
 }
 
 /**
- * Single bundle transformation
- * Converts null values to undefined for form compatibility
+ * Single bundle transformation.
  */
 export function transformBundle(
     bundle: Bundle & { bundleProducts: BundleProduct[], settings?: any },
@@ -107,7 +106,7 @@ export function transformBundle(
 }
 
 /**
- * Transform bundle for duplication
+ * Transform bundle for duplication.
  */
 export function transformBundleForDuplication(
     original: any,
@@ -129,6 +128,8 @@ export function transformBundleForDuplication(
         productGroups,
         settings,
         status,
+        startDate,
+        endDate,
         ...bundleData
     } = original;
 
@@ -142,21 +143,21 @@ export function transformBundleForDuplication(
 
     const transformedSettings = settings
         ? (() => {
-              const {
-                  id,
-                  bundleId,
-                  createdAt,
-                  updatedAt,
-                  widget,
-                  style,
-                  animations,
-                  mobileSettings,
-                  variant,
-                  misc,
-                  ...s
-              } = settings;
-              return s;
-          })()
+            const {
+                id,
+                bundleId,
+                createdAt,
+                updatedAt,
+                widget,
+                style,
+                animations,
+                mobileSettings,
+                variant,
+                misc,
+                ...s
+            } = settings;
+            return s;
+        })()
         : undefined;
 
     // Combine all data
@@ -167,6 +168,8 @@ export function transformBundleForDuplication(
         productGroups: transformedProductGroups,
         settings: transformedSettings,
         status: "DRAFT",
+        startDate: undefined,
+        endDate: undefined,
         isPublished: false,
         publishedAt: null,
     };
