@@ -2,6 +2,28 @@
  * Bundle details constants
  */
 
+/*
+ * Maps form fields to their corresponding step numbers.
+ */
+export const BUNDLE_STEP_FIELD_MAP: Record<string, number> = {
+    // Step 1: Products
+    name: 1,
+    products: 1,
+
+    // Step 2: Discount/Configuration
+    discountType: 2,
+    discountValue: 2,
+    minOrderValue: 2,
+    maxDiscountAmount: 2,
+    discountApplication: 2,
+    freeShipping: 2,
+
+    // Step 3: Display/Bundle as Product
+    createProduct: 3,
+    productTitle: 3,
+    productDescription: 3,
+};
+
 export const WIDGET_LAYOUTS = [
     {
         label: "Grid",

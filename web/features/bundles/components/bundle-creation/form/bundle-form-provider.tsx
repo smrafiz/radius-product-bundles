@@ -8,9 +8,9 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 import type { z } from "zod";
-import { blockSaveBar } from "@/shared";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
 /**
@@ -21,8 +21,13 @@ export function BundleFormProvider({
     bundleType,
     initialData,
 }: BundleFormProviderProps) {
-    const { selectedItems, setBundleData, resetBundle, setStep } =
-        useBundleStore();
+    const {
+        selectedItems,
+        setBundleData,
+        resetBundle,
+        setStep,
+        setValidationAttempted,
+    } = useBundleStore();
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
@@ -66,7 +71,6 @@ export function BundleFormProvider({
     // Initialize store based on the mode
     useEffect(() => {
         if (!isInitialized.current) {
-            // Block ALL save bar triggers during initialization
             setStoreInitializing(true);
             blockSaveBar(true);
 
@@ -84,7 +88,6 @@ export function BundleFormProvider({
 
             isInitialized.current = true;
 
-            // Unblock after all effects have run
             setTimeout(() => {
                 setStoreInitializing(false);
                 blockSaveBar(false);
@@ -92,12 +95,31 @@ export function BundleFormProvider({
         }
     }, []);
 
+    // Listen for validation errors and navigate to the correct step
+    useEffect(() => {
+        const handleValidationError = (event: Event) => {
+            const customEvent = event as CustomEvent;
+            const { step } = customEvent.detail || {};
+
+            if (step && step >= 1 && step <= 4) {
+                setStep(step);
+                setValidationAttempted(true);
+            }
+        };
+
+        window.addEventListener(VALIDATION_ERROR, handleValidationError);
+
+        return () => {
+            window.removeEventListener(VALIDATION_ERROR, handleValidationError);
+        };
+    }, [setStep, setValidationAttempted]);
+
     // Set the bundle type in form
     useEffect(() => {
         setValue("type", bundleType, { shouldValidate: true });
     }, [bundleType, setValue]);
 
-    // Sync selectedItems with form products (without triggering save bar)
+    // Sync selectedItems with form products
     useEffect(() => {
         if (isInitialized.current) {
             const products = selectedItems.map((item) => ({

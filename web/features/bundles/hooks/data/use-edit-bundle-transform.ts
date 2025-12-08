@@ -1,4 +1,9 @@
-import { BundleDetail, BundleStatus, initialDisplaySettings, } from "@/features/bundles";
+import {
+    BundleDetail,
+    BundleStatus,
+    DiscountApplication,
+    initialDisplaySettings,
+} from "@/features/bundles";
 
 /**
  * Transforms bundle data from the database format to the form format.
@@ -9,6 +14,12 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
     if (!bundleData) {
         return undefined;
     }
+
+    const discountApplication: DiscountApplication =
+        bundleData.discountApplication === "bundle" ||
+        bundleData.discountApplication === "products"
+            ? bundleData.discountApplication
+            : "bundle";
 
     return {
         name: bundleData.name,
@@ -28,7 +39,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         minOrderValue: bundleData.minOrderValue ?? undefined,
         maxDiscountAmount: bundleData.maxDiscountAmount ?? undefined,
 
-        discountApplication: bundleData.discountApplication || "bundle",
+        discountApplication: discountApplication,
         discountedProductIds: bundleData.discountedProductIds || [],
         freeShipping: bundleData.freeShipping ?? false,
 

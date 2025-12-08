@@ -29,8 +29,18 @@ export interface CalloutCardProps {
  * GlobalForm Props
  */
 export interface GlobalFormProps<T extends FieldValues> {
-    children: ReactNode;
-    onSubmit?: (data: T) => Promise<void> | void;
-    resetDirty: () => void;
-    discardPath?: string;
+    children: React.ReactNode;
+    onSubmit: (data: T) => Promise<void>;
+    resetDirty?: () => void;
+    /** Unique form identifier for multiple forms */
+    formId?: string;
+    /** Maps field names to step numbers (for multi-step forms) */
+    stepFieldMap?: Record<string, number>;
+    /** Custom validation error handler */
+    onValidationError?: (error: {
+        step?: number;
+        field: string;
+        errors: FieldErrors<T>;
+        message: string;
+    }) => void;
 }

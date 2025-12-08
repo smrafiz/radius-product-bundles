@@ -4,7 +4,6 @@ import { VALIDATION_MESSAGES } from "@/shared/constants";
 
 /**
  * Sanitizes HTML content by removing all tags and attributes.
- * Used to prevent XSS attacks in user-provided text fields.
  */
 const sanitizeHtml = (value: string) => {
     return DOMPurify.sanitize(value, {
@@ -15,7 +14,6 @@ const sanitizeHtml = (value: string) => {
 
 /**
  * Validates the Shopify Product GID format.
- * Example: gid://shopify/Product/123456789
  */
 const productGidSchema = z
     .string()
@@ -26,7 +24,6 @@ const productGidSchema = z
 
 /**
  * Validates the Shopify ProductVariant GID format.
- * Example: gid://shopify/ProductVariant/123456789
  */
 const variantGidSchema = z
     .string()
@@ -37,16 +34,14 @@ const variantGidSchema = z
 
 /**
  * Schema for volume discount tiers.
- * Used in VOLUME_DISCOUNT bundle type.
  */
 const volumeTierSchema = z.object({
     quantity: z.number().int().min(1),
-    discount: z.number().min(0).max(100), // Percentage
+    discount: z.number().min(0).max(100),
 });
 
 /**
  * Schema for product groups in Mix & Match bundles.
- * Allows customers to select products from different groups.
  */
 const productGroupSchema = z.object({
     name: z.string().min(1, "Group name is required"),
@@ -58,7 +53,6 @@ const productGroupSchema = z.object({
 
 /**
  * Schema for bundle widget display settings.
- * Controls the appearance and behavior of the bundle on the storefront.
  */
 const bundleSettingsSchema = z
     .object({
@@ -76,19 +70,16 @@ const bundleSettingsSchema = z
         enableHyperLink: z.boolean().default(false),
         style: z
             .object({
-                // Button styling
                 buttonBgColor: z.string().optional(),
                 buttonTextColor: z.string().optional(),
                 buttonRadius: z.number().optional(),
                 buttonStyleEnabled: z.boolean().optional(),
-                // Product styling
                 productBgColor: z.string().optional(),
                 productTextColor: z.string().optional(),
                 productStarColor: z.string().optional(),
                 productBorderEnabled: z.boolean().optional(),
                 productBorderColor: z.string().optional(),
                 productRadius: z.number().optional(),
-                // Widget styling
                 widgetBgColor: z.string().optional(),
                 widgetTextColor: z.string().optional(),
                 widgetBorderEnabled: z.boolean().optional(),
@@ -106,7 +97,6 @@ const bundleSettingsSchema = z
 
 /**
  * Main bundle validation schema.
- * Validates all bundle data for create and update operations.
  */
 export const bundleSchema = z
     .object({
@@ -151,7 +141,6 @@ export const bundleSchema = z
         mainProductId: productGidSchema.optional(),
         mainVariantId: variantGidSchema.optional(),
 
-        // Bundle mechanics
         buyQuantity: z.number().int().min(1).optional(),
         getQuantity: z.number().int().min(1).optional(),
         minimumItems: z.number().int().min(1).optional(),
@@ -188,15 +177,12 @@ export const bundleSchema = z
         minOrderValue: z.number().min(0).optional(),
         maxDiscountAmount: z.number().min(0).optional(),
 
-        // Volume discount tiers
         volumeTiers: z.array(volumeTierSchema).optional(),
 
-        // Mix & Match
         allowMixAndMatch: z.boolean().default(false),
         mixAndMatchPrice: z.number().min(0).optional(),
         productGroups: z.array(productGroupSchema).optional(),
 
-        // Bundle behavior
         discountApplication: z
             .enum(["bundle", "products"])
             .default("bundle")
@@ -204,21 +190,62 @@ export const bundleSchema = z
         discountedProductIds: z.array(z.string()).optional(),
         freeShipping: z.boolean().default(false).optional(),
 
-        // Marketing
         marketingCopy: z.string().max(1000).transform(sanitizeHtml).optional(),
         seoTitle: z.string().max(60).transform(sanitizeHtml).optional(),
         seoDescription: z.string().max(160).transform(sanitizeHtml).optional(),
 
-        // Scheduling
         startDate: z.date().optional(),
         endDate: z.date().optional(),
 
-        // Settings
         settings: bundleSettingsSchema,
     })
+    // Discount value validations based on discount type
+    .superRefine((data, ctx) => {
+        const { discountType, discountValue } = data;
+
+        // Percentage cannot exceed 100%
+        if (discountType === "PERCENTAGE") {
+            if (discountValue > 100) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "Percentage discount cannot exceed 100%",
+                    path: ["discountValue"],
+                });
+            }
+            if (discountValue <= 0) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "Percentage discount must be greater than 0",
+                    path: ["discountValue"],
+                });
+            }
+        }
+
+        // Fixed amount must be positive
+        if (discountType === "FIXED_AMOUNT") {
+            if (discountValue <= 0) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "Fixed amount must be greater than 0",
+                    path: ["discountValue"],
+                });
+            }
+        }
+
+        // Custom price must be positive
+        if (discountType === "CUSTOM_PRICE") {
+            if (discountValue <= 0) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "Custom price must be greater than 0",
+                    path: ["discountValue"],
+                });
+            }
+        }
+    })
+    // Bundle-type-specific validations
     .refine(
         (data) => {
-            // Bundle-type-specific validations
             if (data.type === "BUY_X_GET_Y" || data.type === "BOGO") {
                 return data.buyQuantity != null && data.getQuantity != null;
             }
@@ -270,7 +297,6 @@ export const bundleSchema = z
     )
     .refine(
         (data) => {
-            // SCHEDULED status requires both start and end dates
             if (data.status === "SCHEDULED") {
                 return data.startDate != null && data.endDate != null;
             }
