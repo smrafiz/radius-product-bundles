@@ -171,28 +171,27 @@ export function WidgetAppearance() {
                                 />
                             </s-stack>
                         </s-stack>
-
-                        {(style.productBorderEnabled ?? true) && (
-                            <s-stack gap="base">
-                                <s-color-field
-                                    label="Border color"
-                                    name="productBorderColor"
-                                    placeholder="Select a color"
-                                    value={style.productBorderColor || "#e3e3e3"}
-                                    onInput={(event: Event) => {
-                                        const target = event.target as HTMLInputElement;
-                                        updateStyle("productBorderColor", target.value);
-                                    }}
+                        <s-stack gap="base">
+                            {(style.productBorderEnabled ?? true) && (
+                            <s-color-field
+                                label="Border color"
+                                name="productBorderColor"
+                                placeholder="Select a color"
+                                value={style.productBorderColor || "#e3e3e3"}
+                                onInput={(event: Event) => {
+                                    const target = event.target as HTMLInputElement;
+                                    updateStyle("productBorderColor", target.value);
+                                }}
+                            />
+                            )}
+                            <s-stack>
+                                <s-text>Corner radius</s-text>
+                                <RangeSlider
+                                    values={style.productRadius ?? 8}
+                                    action={(val) => updateStyle("productRadius", val)}
                                 />
-                                <s-stack>
-                                    <s-text>Corner radius</s-text>
-                                    <RangeSlider
-                                        values={style.productRadius ?? 12}
-                                        action={(val) => updateStyle("productRadius", val)}
-                                    />
-                                </s-stack>
                             </s-stack>
-                        )}
+                        </s-stack>
 
                         <s-divider />
 
@@ -245,27 +244,27 @@ export function WidgetAppearance() {
                                 </s-stack>
                             </s-stack>
 
-                            {(style.widgetBorderEnabled ?? true) && (
-                                <s-stack gap="base" paddingBlockEnd="base">
-                                    <s-color-field
-                                        label="Border color"
-                                        name="widgetBorderColor"
-                                        placeholder="Select a color"
-                                        value={style.widgetBorderColor || "#e3e3e3"}
-                                        onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("widgetBorderColor", target.value);
-                                        }}
+                            <s-stack gap="base" paddingBlockEnd="base">
+                                {(style.widgetBorderEnabled ?? true) && (
+                                <s-color-field
+                                    label="Border color"
+                                    name="widgetBorderColor"
+                                    placeholder="Select a color"
+                                    value={style.widgetBorderColor || "#e3e3e3"}
+                                    onInput={(event: Event) => {
+                                        const target = event.target as HTMLInputElement;
+                                        updateStyle("widgetBorderColor", target.value);
+                                    }}
+                                />
+                                )}
+                                <s-stack>
+                                    <s-text>Corner radius</s-text>
+                                    <RangeSlider
+                                        values={style.widgetRadius ?? 12}
+                                        action={(val) => updateStyle("widgetRadius", val)}
                                     />
-                                    <s-stack>
-                                        <s-text>Corner radius</s-text>
-                                        <RangeSlider
-                                            values={style.widgetRadius ?? 12}
-                                            action={(val) => updateStyle("widgetRadius", val)}
-                                        />
-                                    </s-stack>
                                 </s-stack>
-                            )}
+                            </s-stack>
                         </s-stack>
                     </s-stack>
                 </div>

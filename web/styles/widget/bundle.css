@@ -1,4 +1,22 @@
 /* rtpb button summary */
+.rtbp-widget-layout-one {
+    background-color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 16px;
+}
+.rtbp-widget-product-layout-one {
+    background-color: #f7f7f7;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    .rtpb-product-title {
+        font-weight: bolder;
+    }
+}
 .rtpb-summary-button {
     .rtpb-button {
         background-color: #303030;
@@ -7,5 +25,9 @@
         height: 42px;
         padding: 6px 18px;
         line-height: 28px;
+        cursor: pointer;
+        &:hover {
+            opacity: 0.7;
+        }
     }
 }

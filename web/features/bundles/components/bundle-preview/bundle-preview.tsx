@@ -9,56 +9,60 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 
+import { useState } from "react";
+
 export function BundlePreview() {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
-
     const styleData = displaySettings.style || {};
 
+    const [showAll, setShowAll] = useState(false);
+
+    const visibleItems = showAll ? selectedItems : selectedItems.slice(0, 4);
+
     const renderSelectedProducts = () => {
-        return selectedItems.slice(0, 4).map((item, index) => (
-            <s-stack
+        return visibleItems.map((item, index) => (
+            <div
+                className="rtbp-widget-product-layout-one"
                 key={index}
-                gap="base"
-                alignItems="center"
-                direction="inline"
-                background="subdued"
-                border="base"
-                borderRadius="base"
-                padding="small"
+                style={{
+                    backgroundColor: styleData.productBgColor || "#f7f7f7",
+                    borderRadius: styleData.productRadius || "8px",
+                    color: styleData.productTextColor || "#303030",
+                    ...(styleData.productBorderEnabled ?? true
+                        ? {
+                            borderStyle: "solid",
+                            borderWidth: "1px",
+                            borderColor: styleData.productBorderColor || "#e3e3e3",
+                        }
+                        : {}),
+                }}
             >
-                <s-stack>
+                <div>
                     <div className="w-20 h-20 bg-[var(--p-color-bg-surface)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
-                        <s-image
+                        <img
                             src={item.image}
                             alt={item.title}
-                            aspectRatio="80/80"
-                            inlineSize="auto"
-                            objectFit="cover"
+                            className="w-full h-full object-cover"
                         />
                     </div>
-                </s-stack>
-                <s-stack>
-                    <s-heading>
+                </div>
+
+                <div>
+                    <div className="rtpb-product-title">
                         {item.title.length > 25
                             ? `${item.title.slice(0, 25)}...`
                             : item.title}
-                    </s-heading>
-                    <s-text>
-                        Qty: {item.quantity} ×{" "}
-                        {formatPrice(parseFloat(item.price))}
-                    </s-text>
-                </s-stack>
-            </s-stack>
+                    </div>
+                    <div className="rtpb-product-price">
+                        Qty: {item.quantity} × {formatPrice(parseFloat(item.price))}
+                    </div>
+                </div>
+            </div>
         ));
     };
 
     const calculatePreviewPricing = () => {
-        if (
-            selectedItems.length === 0 ||
-            !bundleData.discountType ||
-            !bundleData.discountValue
-        ) {
-            // Show placeholder values when no products selected or discount configured
+        if (!selectedItems.length || !bundleData.discountType || !bundleData.discountValue) {
             return {
                 originalPrice: 300,
                 discountAmount: 30,
@@ -72,13 +76,10 @@ export function BundlePreview() {
             originalPrice,
             bundleData.discountType,
             bundleData.discountValue,
-            bundleData.maxDiscountAmount,
+            bundleData.maxDiscountAmount
         );
         const finalPrice = Math.max(0, originalPrice - discountAmount);
-        const savingsPercentage = calculateSavingsPercentage(
-            originalPrice,
-            finalPrice,
-        );
+        const savingsPercentage = calculateSavingsPercentage(originalPrice, finalPrice);
 
         return {
             originalPrice,
@@ -92,106 +93,109 @@ export function BundlePreview() {
         calculatePreviewPricing();
 
     return (
-        <s-stack gap="base">
-            {/* Bundle preview status */}
+        <div className="flex flex-col gap-4">
             <BundlePreviewStatus />
 
-            <s-section>
-                <s-stack gap="base">
-                    <s-heading>{displaySettings.title || ""}</s-heading>
+            <div
+                className="rtbp-widget-layout-one"
+                style={{
+                    backgroundColor: styleData.widgetBgColor || "#ffffff",
+                    borderRadius: styleData.widgetRadius || "12px",
+                    color: styleData.widgetTextColor || "#303030",
+                    ...(styleData.widgetBorderEnabled ?? true
+                        ? {
+                            borderStyle: "solid",
+                            borderWidth: "1px",
+                            borderColor: styleData.widgetBorderColor || "#e3e3e3",
+                        }
+                        : {}),
+                }}
+            >
+                <div className="flex flex-col gap-4">
+                    <div className="font-semibold">{displaySettings.title || ""}</div>
+
                     {selectedItems.length > 0 ? (
-                    <s-stack gap="base">
-                        <s-stack gap="small-200">
-                            {renderSelectedProducts()}
-                        </s-stack>
-                        {selectedItems.length > 4 && (
-                            <s-text>
-                                + {selectedItems.length - 4} more products
-                            </s-text>
-                        )}
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-2">
+                                {renderSelectedProducts()}
+                            </div>
 
-                        <s-divider />
-
-                        {/* Pricing */}
-                        <s-stack gap="small-200">
-                            {displaySettings.showPrices && (
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
+                            {selectedItems.length > 4 && (
+                                <button
+                                    className="text-[12px] underline cursor-pointer"
+                                    onClick={() => setShowAll(!showAll)}
                                 >
-                                    <s-stack
-                                        gap="small-200"
-                                        direction="inline"
-                                        justifyContent="space-between"
-                                    >
-                                        <s-heading>Original Price:</s-heading>
-                                        {discountAmount > 0 && (
-                                            <s-text>
-                                                <div>
-                                                    {formatPrice(originalPrice)}
-                                                </div>
-                                            </s-text>
-                                        )}
-                                    </s-stack>
-
-                                    <s-stack
-                                        gap="small-200"
-                                        direction="inline"
-                                        justifyContent="space-between"
-                                    >
-                                        <s-heading>Total Price:</s-heading>
-                                        <s-text>
-                                            {formatPrice(finalPrice)}
-                                        </s-text>
-                                    </s-stack>
-                                </s-stack>
+                                    {showAll
+                                        ? "Show less"
+                                        : `+ ${selectedItems.length - 4} more products`}
+                                </button>
                             )}
 
-                            {displaySettings.showSavings &&
-                                discountAmount > 0 && (
-                                    <s-stack
-                                        gap="small-200"
-                                        direction="inline"
-                                        justifyContent="space-between"
-                                    >
-                                        <s-text>You save:</s-text>
-                                        <s-text>
-                                            {formatPrice(discountAmount)} (
-                                            {savingsPercentage}%)
-                                        </s-text>
-                                    </s-stack>
+                            <s-divider />
+
+                            {/* Pricing */}
+                            <div className="flex flex-col gap-2">
+                                {displaySettings.showPrices && (
+                                    <div className="flex justify-between">
+                                        <div className="gap-2 flex items-center justify-between">
+                                            <span className="font-semibold">Original Price:</span>
+                                            {discountAmount > 0 && (
+                                                <span>{formatPrice(originalPrice)}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="gap-2 flex items-center justify-between">
+                                            <span className="font-semibold">Total Price:</span>
+                                            <span>{formatPrice(finalPrice)}</span>
+                                        </div>
+                                    </div>
                                 )}
-                        </s-stack>
 
-                        <div className="rtpb-summary-button flex justify-center">
-                            <button
-                                aria-expanded="false"
-                                aria-label={displaySettings.cartButtonText || ""}
-                                className="rtpb-button"
-                                style={{
-                                    backgroundColor: styleData.buttonBgColor || "#303030",
-                                    color: styleData.buttonTextColor || "#fff",
-                                    borderRadius: styleData.buttonRadius || "6px",
-                                }}
-                            >
-                                {displaySettings.cartButtonText || ""}
-                            </button>
-                        </div>
-                    </s-stack>
+                                {displaySettings.showSavings && discountAmount > 0 && (
+                                    <div className="gap-2 flex items-center justify-between">
+                                        <span className="font-semibold">You save:</span>
+                                        <span>
+                                            {formatPrice(discountAmount)} ({savingsPercentage}%)
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
 
-                    ) : <div className="min-h-96 flex flex-col items-center justify-center gap-3">
-                        <div className="w-[var(--p-font-size-1000)]">
-                            <s-image
-                                src="/assets/not-found.svg"
-                                alt="Four pixelated characters ready to build amazing Shopify apps"
-                                aspectRatio="1/1"
-                                inlineSize="auto"
-                            />
+                            <div className="rtpb-summary-button flex justify-center">
+                                <button
+                                    aria-expanded="false"
+                                    aria-label={displaySettings.cartButtonText || ""}
+                                    className="rtpb-button"
+                                    style={
+                                        styleData.buttonStyleEnabled ?? true
+                                            ? {
+                                                backgroundColor:
+                                                    styleData.buttonBgColor || "#303030",
+                                                color: styleData.buttonTextColor || "#fff",
+                                                borderRadius:
+                                                    styleData.buttonRadius || "6px",
+                                            }
+                                            : undefined
+                                    }
+                                >
+                                    {displaySettings.cartButtonText || ""}
+                                </button>
+                            </div>
                         </div>
-                        <s-text color="subdued">Please choose product to see the bundle preview</s-text>
-                    </div>}
-                </s-stack>
-            </s-section>
-        </s-stack>
+                    ) : (
+                        <div className="min-h-96 flex flex-col items-center justify-center gap-3">
+                            <div className="w-[var(--p-font-size-1000)]">
+                                <img
+                                    src="/assets/not-found.svg"
+                                    alt="No products selected"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <span>Please choose product to see the bundle preview</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
     );
 }
