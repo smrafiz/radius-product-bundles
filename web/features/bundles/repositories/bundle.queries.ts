@@ -10,8 +10,8 @@ import {
     INCLUDE_BUNDLE_FULL,
     INCLUDE_BUNDLE_PRODUCTS,
 } from "./bundle.fragments";
-import { prisma } from "@/shared";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client";
+import { prisma } from "@/shared/repositories/prisma-connect";
 import { FindByShopFilters, FindByShopOptions } from "@/features/bundles";
 
 // ==========================================
@@ -26,7 +26,7 @@ export async function findBundleById(
     tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
-    return await client.bundle.findUnique({
+    return client.bundle.findUnique({
         where: { id },
         include: INCLUDE_BUNDLE_DETAILS,
     });
@@ -41,7 +41,7 @@ export async function findBundleByIdWithProducts(
     tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
-    return await client.bundle.findFirst({
+    return client.bundle.findFirst({
         where: { id, shop },
         include: INCLUDE_BUNDLE_PRODUCTS,
     });
@@ -56,7 +56,7 @@ export async function findBundleByIdWithAllRelations(
     tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
-    return await client.bundle.findFirst({
+    return client.bundle.findFirst({
         where: { id, shop },
         include: INCLUDE_BUNDLE_FULL,
     });
@@ -73,7 +73,7 @@ export async function findBundleByName(
 ) {
     const client = tx || prisma;
 
-    return await client.bundle.findFirst({
+    return client.bundle.findFirst({
         where: {
             shop,
             name,
@@ -86,7 +86,7 @@ export async function findBundleByName(
  * Find a unique bundle by name
  */
 export async function findUniqueByName(shop: string, name: string) {
-    return await prisma.bundle.findUnique({
+    return prisma.bundle.findUnique({
         where: {
             shop_name: { shop, name },
         },
@@ -118,7 +118,7 @@ export async function findBundlesByNamePattern(
 ): Promise<Array<{ name: string }>> {
     const client = tx || prisma;
 
-    return await client.bundle.findMany({
+    return client.bundle.findMany({
         where: {
             shop,
             name: {
@@ -141,7 +141,7 @@ export async function findBundlesByProductId(
 ) {
     const client = tx || prisma;
 
-    return await client.bundle.findMany({
+    return client.bundle.findMany({
         where: {
             shop,
             status: "ACTIVE",
@@ -167,7 +167,7 @@ export async function findBundlesByIds(
 
     const client = tx || prisma;
 
-    return await client.bundle.findMany({
+    return client.bundle.findMany({
         where: {
             id: { in: bundleIds },
             shop,
@@ -215,7 +215,7 @@ export async function findBundlesByShop(
 
     const sortDirection = options?.orderDirection === "asc" ? "asc" : "desc";
 
-    return await prisma.bundle.findMany({
+    return prisma.bundle.findMany({
         where,
         include: INCLUDE_BUNDLE_DASHBOARD,
         take: options?.limit || 10,
@@ -254,14 +254,14 @@ export async function countBundlesByShop(
         where.type = { in: filters.type };
     }
 
-    return await prisma.bundle.count({ where });
+    return prisma.bundle.count({ where });
 }
 
 /**
  * Count active bundles by shop
  */
 export async function countActiveBundlesByShop(shop: string) {
-    return await prisma.bundle.count({
+    return prisma.bundle.count({
         where: {
             shop,
             status: "ACTIVE",
@@ -273,7 +273,7 @@ export async function countActiveBundlesByShop(shop: string) {
  * Count recent bundles (created within N minutes)
  */
 export async function countRecentBundles(shop: string, minutesAgo: Date) {
-    return await prisma.bundle.count({
+    return prisma.bundle.count({
         where: {
             shop,
             createdAt: { gte: minutesAgo },

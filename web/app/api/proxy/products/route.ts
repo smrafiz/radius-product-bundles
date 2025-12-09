@@ -2,10 +2,10 @@ import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,
 } from "@/lib/graphql/generated/graphql";
-import { executeProxyGraphQL } from "@/lib";
-import { findOfflineSessionByShop } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
-import { findBundlesByProductId } from "@/features/bundles";
+import { findOfflineSessionByShop } from "@/shared/repositories";
+import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
+import { findBundlesByProductId } from "@/features/bundles/repositories";
 
 async function getAccessTokenForShop(shop: string): Promise<string | null> {
     try {

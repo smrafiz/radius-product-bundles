@@ -8,12 +8,14 @@
 
 import {
     CreateBundleProductInput,
-    formatProductForStorage,
     getShopifyProductStatus,
-    transformBundleToProductVariables,
     UpdateProductInput,
-    validateProductInput,
 } from "@/features/bundles";
+import {
+    formatProductForStorage,
+    transformBundleToProductVariables,
+    validateProductInput,
+} from "@/features/bundles/services";
 import { ApiResponse } from "@/shared";
 import {
     ProductCreateDocument,

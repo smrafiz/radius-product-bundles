@@ -1,23 +1,24 @@
-import { PrismaClient } from "@prisma/client";
+/**
+ * Mock Prisma Client for testing.
+ * Provides a deep mock of the PrismaClient for unit tests.
+ */
+
+import { PrismaClient } from "@/prisma/generated/client";
 import { mockDeep, mockReset, DeepMockProxy } from "jest-mock-extended";
 
-/**
- * Mock Prisma Client for testing
- */
 export const prismaMock =
     mockDeep<PrismaClient>() as unknown as DeepMockProxy<PrismaClient>;
 
 /**
- * Reset Prisma mock before each test
+ * Resets all Prisma mock implementations.
+ * Call this in beforeEach to ensure clean test state.
  */
-export function resetPrismaMock() {
+export function resetPrismaMock(): void {
     mockReset(prismaMock);
 }
 
-/**
- * Mock Prisma module
- */
-jest.mock("@/lib/db/prisma", () => ({
+jest.mock("@/shared/repositories/prisma-connect", () => ({
     __esModule: true,
     default: prismaMock,
+    prisma: prismaMock,
 }));

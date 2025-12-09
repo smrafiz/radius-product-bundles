@@ -2,9 +2,9 @@
  * Bundle Validation Queries - Data Access Layer
  */
 
-import { prisma } from "@/shared";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client";
 import { BundleOwnershipCheck } from "@/features/bundles";
+import { prisma } from "@/shared/repositories/prisma-connect";
 
 /**
  * Verify bundle ownership (standalone)

@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    createStagedUploadsAction,
     attachMediaToProductAction,
-} from "@/features/bundles";
+    createStagedUploadsAction,
+} from "@/features/bundles/actions";
 import { uploadFilesToShopify } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
@@ -18,7 +18,11 @@ export function useMediaUpload() {
      */
     const uploadFilesOnly = async (
         files: File[],
-    ): Promise<{ success: boolean; resourceUrls: string[]; error?: string }> => {
+    ): Promise<{
+        success: boolean;
+        resourceUrls: string[];
+        error?: string;
+    }> => {
         if (files.length === 0) {
             return { success: true, resourceUrls: [] };
         }
@@ -48,7 +52,9 @@ export function useMediaUpload() {
                 };
             }
 
-            console.log(`✅ Got ${stagedResult.stagedTargets.length} staged URLs`);
+            console.log(
+                `✅ Got ${stagedResult.stagedTargets.length} staged URLs`,
+            );
 
             // Upload files to staged URLs
             console.log("Uploading files to Shopify...");

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { generateUniqueBundleNameAction } from "@/features/bundles";
+import { generateUniqueBundleNameAction } from "@/features/bundles/actions";
 
 /**
  * Hook to auto-generate a unique bundle name based on the bundle type

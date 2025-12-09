@@ -1,4 +1,9 @@
-import { Bundle, BundleType, BundleStatus, DiscountType } from "@prisma/client";
+import {
+    Bundle,
+    BundleType,
+    BundleStatus,
+    DiscountType,
+} from "@/prisma/generated/client";
 
 /**
  * Create a mock bundle with default values

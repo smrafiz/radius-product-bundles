@@ -2,13 +2,15 @@
 
 import { useGlobalBanner, useModalStore, withLoader } from "@/shared";
 import {
-    bulkToggleBundleStatusAction,
     BundleStatus,
-    deleteBundlesAction,
     invalidateBundleCache,
-    updateBundleStatusAction,
     useBundleListingStore,
 } from "@/features/bundles";
+import {
+    bulkToggleBundleStatusAction,
+    deleteBundlesAction,
+    updateBundleStatusAction,
+} from "@/features/bundles/actions";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";

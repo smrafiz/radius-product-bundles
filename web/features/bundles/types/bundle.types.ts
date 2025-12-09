@@ -6,8 +6,8 @@ import type {
     BundleStatus as PrismaBundleStatus,
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
-} from "@prisma/client";
-import { Prisma } from "@prisma/client";
+    Prisma,
+} from "@/prisma/generated/client";
 import { z } from "zod";
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
@@ -114,6 +114,15 @@ export interface SelectedItem {
     customPrice?: number | null;
     discountPercent?: number | null;
     isRequired?: boolean;
+    selectedVariant?: {
+        id: string;
+        title: string;
+        price: string;
+        compareAtPrice?: string | null;
+        availableForSale: boolean;
+        inventoryQuantity: number;
+        productId: string;
+    };
 }
 
 /**

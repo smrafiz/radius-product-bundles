@@ -1,7 +1,7 @@
 import type {
     TestType as PrismaTestType,
     TestStatus as PrismaTestStatus,
-} from "@prisma/client";
+} from "@/prisma/generated/client";
 
 export type TestType = PrismaTestType;
 export type TestStatus = PrismaTestStatus;

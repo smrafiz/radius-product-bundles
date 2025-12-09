@@ -1,12 +1,12 @@
 import {
     BundleFormData,
     BundleOperationContext,
-    performSecurityChecks,
     validateBusinessRules,
     validateSecurity,
     ValidationResult,
 } from "@/features/bundles";
-import { getShop } from "@/shared";
+import { getShop } from "@/shared/repositories";
+import { performSecurityChecks } from "@/features/bundles/services";
 
 /**
  * Perform security checks (rate limit, abuse, shop status)

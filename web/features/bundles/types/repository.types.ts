@@ -2,7 +2,7 @@
  * Repository types
  */
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client";
 import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
 
 /*

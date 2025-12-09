@@ -8,35 +8,40 @@ import {
     BulkUpdateBundleStatusInput,
     BulkUpdateBundleStatusResult,
     BUNDLE_STATUSES,
-    canCreateBundle,
-    checkBundleSecurity,
-    checkNameConflict,
     CreateBundleServiceInput,
     CreateBundleServiceResponse,
-    createBundleWithRelations,
     DeleteBundleInput,
     DeleteBundleServiceResult,
-    deleteBundlesWithRelations,
-    deleteBundleWithRelations,
     DuplicateBundleInput,
     DuplicateBundleResult,
+    UpdateBundleServiceInput,
+    UpdateBundleServiceResponse,
+    UpdateBundleStatusInput,
+    UpdateBundleStatusResult,
+} from "@/features/bundles";
+import {
+    canCreateBundle,
+    checkBundleSecurity,
     fetchOperationContext,
-    findBundleByIdWithAllRelations,
-    findBundlesByIds,
-    generateUniqueBundleName,
     handleBundleOperationError,
     transformBundle,
     transformBundleForDuplication,
-    UpdateBundleServiceInput,
-    UpdateBundleServiceResponse,
+    validateBundleData,
+} from "@/features/bundles/services";
+import {
+    checkNameConflict,
+    createBundleWithRelations,
+    deleteBundlesWithRelations,
+    deleteBundleWithRelations,
+    findBundleByIdWithAllRelations,
+    findBundlesByIds,
+    generateUniqueBundleName,
     updateBundlesStatusByIds,
     updateBundleStatusById,
-    UpdateBundleStatusInput,
-    UpdateBundleStatusResult,
     updateBundleWithRelations,
-    validateBundleData,
-} from "@/features/bundles";
-import { formatValidationErrorsAsString, prisma } from "@/shared";
+} from "@/features/bundles/repositories";
+import { formatValidationErrorsAsString } from "@/shared";
+import { prisma } from "@/shared/repositories/prisma-connect";
 
 // ==========================================
 // CREATE Operations

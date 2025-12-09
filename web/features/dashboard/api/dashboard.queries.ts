@@ -1,6 +1,6 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { dashboardQueryKeys } from "@/features/dashboard";
-import { getBundleMetricsAction, getBundlesAction } from "@/features/bundles";
+import { getBundleMetricsAction, getBundlesAction, } from "@/features/bundles/actions";
 
 /**
  * Dashboard queries

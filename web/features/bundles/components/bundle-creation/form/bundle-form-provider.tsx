@@ -71,6 +71,7 @@ export function BundleFormProvider({
     // Initialize store based on the mode
     useEffect(() => {
         if (!isInitialized.current) {
+
             setStoreInitializing(true);
             blockSaveBar(true);
 
@@ -121,13 +122,40 @@ export function BundleFormProvider({
 
     // Sync selectedItems with form products
     useEffect(() => {
-        if (isInitialized.current) {
-            const products = selectedItems.map((item) => ({
-                productId: item.productId,
-                variantId: item.variantId || "",
-                quantity: item.quantity,
-                role: "INCLUDED" as const,
-            }));
+        // Skip if not initialized or no items
+        if (!isInitialized.current || selectedItems.length === 0) {
+            return;
+        }
+
+        const products = selectedItems.flatMap((item) => {
+            if (
+                item.variantIds &&
+                Array.isArray(item.variantIds) &&
+                item.variantIds.length > 0
+            ) {
+                return item.variantIds.map((variantId) => ({
+                    productId: item.productId,
+                    variantId: variantId,
+                    quantity: item.quantity || 1,
+                    role: "INCLUDED" as const,
+                }));
+            }
+
+            if (item.variantId) {
+                return [
+                    {
+                        productId: item.productId,
+                        variantId: item.variantId,
+                        quantity: item.quantity || 1,
+                        role: "INCLUDED" as const,
+                    },
+                ];
+            }
+
+            return [];
+        });
+
+        if (products.length > 0) {
             setValue("products", products, { shouldDirty: false });
         }
     }, [selectedItems, setValue]);

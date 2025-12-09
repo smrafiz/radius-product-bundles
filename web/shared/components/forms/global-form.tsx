@@ -200,7 +200,7 @@ export function GlobalForm<T extends FieldValues>({
             const eventFormId = customEvent.detail?.formId || DEFAULT_FORM_ID;
 
             if (eventFormId === formId) {
-                handleSave();
+                void handleSave();
             }
         };
 

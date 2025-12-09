@@ -7,7 +7,7 @@ import {
     TransformedBundleListing,
 } from "@/features/bundles";
 import { removeNulls } from "@/shared";
-import type { Bundle, BundleProduct } from "@prisma/client";
+import type { Bundle, BundleProduct } from "@/prisma/generated/client";
 
 /**
  * Core bundle transformation.

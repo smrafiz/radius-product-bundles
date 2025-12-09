@@ -7,7 +7,7 @@ import {
 } from "@/features/bundles";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { BundleProductRole } from "@prisma/client";
+import { BundleProductRole } from "@/prisma/generated/client";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();

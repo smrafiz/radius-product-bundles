@@ -4,12 +4,14 @@
 
 import {
     AbusivePatternResult,
+    SecurityCheckResult,
+} from "@/features/bundles";
+import {
     countBundlesByShop,
     countRecentBundles,
     getBundleActivity,
-    SecurityCheckResult,
-} from "@/features/bundles";
-import { getShop, getShopStatus } from "@/shared";
+} from "@/features/bundles/repositories";
+import { getShop, getShopStatus } from "@/shared/repositories";
 
 /**
  * Perform all security checks for bundle operations

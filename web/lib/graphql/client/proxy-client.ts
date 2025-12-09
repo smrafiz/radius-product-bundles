@@ -1,7 +1,8 @@
 import { print } from "graphql";
 import { GraphQLClient } from "graphql-request";
+import { ProxyGraphQLResponse } from "@/shared";
+import { findOfflineSessionByShop } from "@/shared/repositories";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import { findOfflineSessionByShop, ProxyGraphQLResponse } from "@/shared";
 
 /**
  * Server-side GraphQL executor for proxy routes

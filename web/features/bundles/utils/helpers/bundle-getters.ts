@@ -18,8 +18,8 @@ import {
     EDIT_STATUSES,
     ExtendedBundleFormData,
 } from "@/features/bundles";
-import { Bundle, BundleProduct } from "@prisma/client";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
+import { Bundle, BundleProduct } from "@/prisma/generated/client";
 
 /*
  * Bundle status badge

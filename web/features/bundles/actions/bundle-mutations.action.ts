@@ -8,28 +8,21 @@
  */
 
 import {
-    addBundleIdToProducts,
-    removeBundleIdFromProducts,
-    syncBundleProductMetafields,
-} from "@/lib";
-import {
     bulkActivateBundlesService,
     bulkDraftBundlesService,
-    BundleFormData,
-    bundleSchema,
-    BundleStatus,
-    CreateBundleActionInput,
     createBundleService,
     deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
-    findBundleByIdWithAllRelations,
     updateBundleService,
     updateBundleStatusService,
-} from "@/features/bundles";
+} from "@/features/bundles/services";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { ensureMetafieldDefinition, handleSessionToken } from "@/lib/shopify";
+import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
+import { addBundleIdToProducts, removeBundleIdFromProducts, syncBundleProductMetafields, } from "@/lib";
+import { BundleFormData, bundleSchema, BundleStatus, CreateBundleActionInput, } from "@/features/bundles";
 
 /**
  * Update bundle status
@@ -128,7 +121,8 @@ export async function deleteBundleAction(
 
         // Get bundle products before deletion for metafield cleanup
         const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
-        const productIds = bundle?.bundleProducts?.map((bp) => bp.productId) || [];
+        const productIds =
+            bundle?.bundleProducts?.map((bp) => bp.productId) || [];
 
         const result = await deleteSingleBundleService({
             bundleId,
@@ -144,7 +138,10 @@ export async function deleteBundleAction(
             );
 
             if (!metafieldResult.success) {
-                console.warn("[deleteBundle] Metafield cleanup warning:", metafieldResult.error);
+                console.warn(
+                    "[deleteBundle] Metafield cleanup warning:",
+                    metafieldResult.error,
+                );
             }
         }
 
@@ -217,7 +214,10 @@ export async function deleteBundlesAction(
                 );
 
                 if (!metafieldResult.success) {
-                    console.warn(`[deleteBundles] Metafield cleanup warning for ${bundleId}:`, metafieldResult.error);
+                    console.warn(
+                        `[deleteBundles] Metafield cleanup warning for ${bundleId}:`,
+                        metafieldResult.error,
+                    );
                 }
             }
         }
@@ -268,7 +268,8 @@ export async function duplicateBundleAction(
         // Add metafields for duplicated bundle's products
         if (result.success && result.data?.bundle?.id) {
             const newBundleId = result.data.bundle.id;
-            const productIds = result.data.bundle.products?.map((p: any) => p.productId) || [];
+            const productIds =
+                result.data.bundle.products?.map((p: any) => p.productId) || [];
 
             if (productIds.length > 0) {
                 const metafieldResult = await addBundleIdToProducts(
@@ -278,7 +279,10 @@ export async function duplicateBundleAction(
                 );
 
                 if (!metafieldResult.success) {
-                    console.warn("[duplicateBundle] Metafield warning:", metafieldResult.error);
+                    console.warn(
+                        "[duplicateBundle] Metafield warning:",
+                        metafieldResult.error,
+                    );
                 }
             }
         }
@@ -362,11 +366,15 @@ export async function createBundleAction(
         }
 
         // Add bundle ID to product metafields
-        const productIds = schemaValidation.data.products.map((p) => p.productId);
+        const productIds = schemaValidation.data.products.map(
+            (p) => p.productId,
+        );
         if (productIds.length > 0 && result.bundle?.id) {
             await ensureMetafieldDefinition(sessionToken);
 
-            console.log(`[Action] Adding metafields to ${productIds.length} products`);
+            console.log(
+                `[Action] Adding metafields to ${productIds.length} products`,
+            );
 
             const metafieldResult = await addBundleIdToProducts(
                 sessionToken,
@@ -375,7 +383,10 @@ export async function createBundleAction(
             );
 
             if (!metafieldResult.success) {
-                console.warn("[createBundleAction] Metafield warning:", metafieldResult.error);
+                console.warn(
+                    "[createBundleAction] Metafield warning:",
+                    metafieldResult.error,
+                );
                 // Don't fail the whole operation, just log warning
             }
         }
@@ -436,7 +447,14 @@ export async function updateBundleAction(
 
         console.log(`[updateBundleAction] Bundle ID validated: ${bundleId}`);
 
-        const schemaValidation = bundleSchema.safeParse(bundleData);
+        const sanitizedData = {
+            ...bundleData,
+            settings: sanitizeSettings(bundleData.settings),
+        };
+
+        const schemaValidation = bundleSchema.safeParse(sanitizedData);
+
+        console.log(schemaValidation);
 
         if (!schemaValidation.success) {
             console.log("[updateBundleAction] Schema validation failed");
@@ -464,8 +482,12 @@ export async function updateBundleAction(
         console.log("[updateBundleAction] Schema validation passed");
 
         // Get old product IDs before update for metafield sync
-        const existingBundle = await findBundleByIdWithAllRelations(bundleId, shop);
-        const oldProductIds = existingBundle?.bundleProducts?.map((bp) => bp.productId) || [];
+        const existingBundle = await findBundleByIdWithAllRelations(
+            bundleId,
+            shop,
+        );
+        const oldProductIds =
+            existingBundle?.bundleProducts?.map((bp) => bp.productId) || [];
 
         const result = await updateBundleService({
             shop,
@@ -492,7 +514,9 @@ export async function updateBundleAction(
         );
 
         // Sync metafields for changed products
-        const newProductIds = schemaValidation.data.products.map((p) => p.productId);
+        const newProductIds = schemaValidation.data.products.map(
+            (p) => p.productId,
+        );
         const metafieldResult = await syncBundleProductMetafields(
             sessionToken,
             bundleId,
@@ -501,7 +525,10 @@ export async function updateBundleAction(
         );
 
         if (!metafieldResult.success) {
-            console.warn("[updateBundleAction] Metafield sync warning:", metafieldResult.error);
+            console.warn(
+                "[updateBundleAction] Metafield sync warning:",
+                metafieldResult.error,
+            );
         }
 
         revalidatePath("/bundles");
@@ -537,4 +564,20 @@ export async function updateBundleAction(
             errors: [errorMessage],
         };
     }
+}
+
+/**
+ * Sanitizes settings by converting null values to undefined.
+ *
+ * @param settings - Raw settings object from form
+ * @returns Sanitized settings object
+ */
+function sanitizeSettings(settings: any) {
+    if (!settings) return undefined;
+
+    return {
+        ...settings,
+        style: settings.style ?? undefined,
+        widget: settings.widget ?? undefined,
+    };
 }

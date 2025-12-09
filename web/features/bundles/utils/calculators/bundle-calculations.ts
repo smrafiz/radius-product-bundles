@@ -2,8 +2,8 @@
  * Bundle calculations
  */
 
-import { Bundle } from "@prisma/client";
 import { SelectedItem } from "@/features/bundles";
+import { Bundle } from "@/prisma/generated/client";
 
 /**
  * Calculate bundle statistics

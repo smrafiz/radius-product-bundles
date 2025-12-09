@@ -4,8 +4,8 @@
  * Analytics and metrics queries.
  */
 
-import { prisma } from "@/shared";
 import { AnalyticsMetrics } from "@/features/bundles";
+import { prisma } from "@/shared/repositories/prisma-connect";
 
 /**
  * Aggregate metrics for the dashboard

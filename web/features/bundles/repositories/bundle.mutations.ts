@@ -8,15 +8,18 @@ import {
     BundleStatus,
     CreateBundleInput,
     DeleteBundleResult,
-    findBundleByIdWithAllRelations,
     UpdateBundleInput,
     UpdateBundleInputWithRelations,
+} from "@/features/bundles";
+import {
+    findBundleByIdWithAllRelations,
     verifyBundleOwnership,
     verifyBundleOwnershipTx,
     verifyMultipleBundlesOwnershipTx,
-} from "@/features/bundles";
-import { prisma, generateBundleId } from "@/shared";
-import { BundleProductRole, Prisma } from "@prisma/client";
+} from "@/features/bundles/repositories";
+import { generateBundleId } from "@/shared";
+import { prisma } from "@/shared/repositories/prisma-connect";
+import { BundleProductRole, Prisma } from "@/prisma/generated/client";
 
 // ==========================================
 // CREATE Operations
@@ -31,7 +34,7 @@ export async function createBundle(
 ) {
     const id = generateBundleId();
 
-    return await tx.bundle.create({
+    return tx.bundle.create({
         data: {
             id,
             shop: data.shop,
@@ -83,7 +86,7 @@ export async function createBundleProducts(
         displayOrder?: number;
     }>,
 ) {
-    return await tx.bundleProduct.createMany({
+    return tx.bundleProduct.createMany({
         data: products.map((product, index) => ({
             bundleId,
             productId: product.productId,
@@ -103,7 +106,7 @@ export async function createBundleSettings(
     bundleId: string,
     settings: any,
 ) {
-    return await tx.bundleSettings.create({
+    return tx.bundleSettings.create({
         data: {
             bundleId,
             ...settings,
@@ -136,7 +139,7 @@ export async function createBundleProductGroups(
  * Executes all operations inside a single transaction.
  */
 export async function createBundleWithRelations(data: CreateBundleInput) {
-    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // Step 1: Create the bundle
         const bundle = await createBundle(tx, data);
 
@@ -172,7 +175,7 @@ export async function updateBundleById(
     id: string,
     data: UpdateBundleInput,
 ) {
-    return await tx.bundle.update({
+    return tx.bundle.update({
         where: { id },
         data,
     });
@@ -184,7 +187,7 @@ export async function updateBundleById(
 export async function updateBundleWithRelations(
     data: UpdateBundleInputWithRelations,
 ) {
-    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await updateBundleById(tx, data.bundleId, {
             name: data.name,
             description: data.description,
@@ -255,7 +258,7 @@ export async function updateBundleStatusById(
     await verifyBundleOwnership(id, shop);
 
     // Update status
-    return await prisma.bundle.update({
+    return prisma.bundle.update({
         where: { id },
         data: { status },
         select: {
@@ -275,7 +278,7 @@ export async function updateBundlesStatusByIds(
     bundleIds: string[],
     status: BundleStatus,
 ) {
-    return await tx.bundle.updateMany({
+    return tx.bundle.updateMany({
         where: { id: { in: bundleIds } },
         data: { status },
     });
@@ -289,7 +292,7 @@ export async function updateBundleSettings(
     bundleId: string,
     settings: any,
 ) {
-    return await tx.bundleSettings.update({
+    return tx.bundleSettings.update({
         where: { bundleId },
         data: settings,
     });
@@ -307,7 +310,7 @@ export async function updateBundleMetrics(
         revenue?: number;
     },
 ) {
-    return await tx.bundle.update({
+    return tx.bundle.update({
         where: { id: bundleId },
         data: metrics,
     });
@@ -317,7 +320,7 @@ export async function updateBundleMetrics(
  * Increment bundle views (atomic operation)
  */
 export async function incrementBundleViews(bundleId: string) {
-    return await prisma.bundle.update({
+    return prisma.bundle.update({
         where: { id: bundleId },
         data: {
             views: { increment: 1 },
@@ -332,7 +335,7 @@ export async function incrementBundleConversions(
     bundleId: string,
     revenue: number,
 ) {
-    return await prisma.bundle.update({
+    return prisma.bundle.update({
         where: { id: bundleId },
         data: {
             conversions: { increment: 1 },
@@ -352,7 +355,7 @@ export async function deleteBundleById(
     tx: Prisma.TransactionClient,
     id: string,
 ) {
-    return await tx.bundle.delete({
+    return tx.bundle.delete({
         where: { id },
     });
 }

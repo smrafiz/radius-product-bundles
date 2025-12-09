@@ -1,4 +1,4 @@
-import { prisma } from "@/shared";
+import prisma from "@/shared/repositories/prisma-connect";
 
 /**
  * Creates or updates a shop record
@@ -7,7 +7,7 @@ export async function upsertShop(
     domain: string,
     data?: Partial<{ plan: string; trialEndsAt: Date }>,
 ) {
-    return await prisma.shop.upsert({
+    return prisma.shop.upsert({
         where: { domain },
         create: { domain, ...data },
         update: { ...data },
@@ -18,7 +18,7 @@ export async function upsertShop(
  * Gets a shop with app settings
  */
 export async function getShop(domain: string) {
-    return await prisma.shop.findUnique({
+    return prisma.shop.findUnique({
         where: { domain },
         include: { appSettings: true },
     });

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { BundleStatus } from "@/features/bundles";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { BundleStatus, createBundleProductAction } from "@/features/bundles";
+import { createBundleProductAction } from "@/features/bundles/actions";
 
 /**
  * Hook for creating a Shopify product when the bundle is submitted.

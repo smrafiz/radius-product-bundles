@@ -4,10 +4,12 @@ import {
     BundleListItem,
     BundleMetricsData,
     bundlesQueryKeys,
+} from "@/features/bundles";
+import {
     getBundleAction,
     getBundleMetricsAction,
     getBundlesAction,
-} from "@/features/bundles";
+} from "@/features/bundles/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 /**

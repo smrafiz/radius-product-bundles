@@ -1,12 +1,7 @@
-import {
-    extractBearerToken,
-    findOfflineSessionByShop,
-    isSessionExpired,
-    normalizeShopDomain,
-    storeSession,
-} from "@/shared";
 import shopify from "../config/initialize-context";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
+import { findOfflineSessionByShop, storeSession } from "@/shared/repositories";
+import { extractBearerToken, isSessionExpired, normalizeShopDomain, } from "@/shared";
 
 /**
  * Verify the request and return the shop and session

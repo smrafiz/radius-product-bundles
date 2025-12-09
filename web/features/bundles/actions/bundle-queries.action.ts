@@ -7,19 +7,14 @@
  */
 
 import {
-    ApiResponse,
-    getSixtyDaysAgo,
-    getThirtyDaysAgo,
-    transformBundleMetrics,
-} from "@/shared";
-import {
-    aggregateBundleMetrics,
-    BundleFilters,
     generateUniqueBundleNameService,
     getBundleDetails,
     getBundlesListService,
-} from "@/features/bundles";
+} from "@/features/bundles/services";
+import { BundleFilters } from "@/features/bundles";
 import { handleSessionToken } from "@/lib/shopify";
+import { aggregateBundleMetrics } from "@/features/bundles/repositories";
+import { ApiResponse, getSixtyDaysAgo, getThirtyDaysAgo, transformBundleMetrics, } from "@/shared";
 
 /**
  * Get bundles for a shop

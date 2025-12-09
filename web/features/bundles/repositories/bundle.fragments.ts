@@ -4,7 +4,7 @@
  * Reusable query parts for Prisma queries.
  */
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client";
 
 // ==========================================
 // SELECT Fragments (Field Selection)

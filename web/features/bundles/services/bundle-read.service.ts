@@ -3,28 +3,27 @@
  */
 
 import {
+    checkNameConflict,
     countBundlesByShop,
     findBundleByIdWithAllRelations,
+    findBundlesByNamePattern,
     findBundlesByShop,
 } from "../repositories";
 import {
     BUNDLE_NAME_PATTERNS,
     BundlesListResult,
     BundleStatus,
-    checkNameConflict,
     extractNumberFromName,
     extractProductIds,
-    findBundlesByNamePattern,
     generateFallbackName,
     generateNumberedName,
-    getBundlesAction,
     GetBundlesInput,
     PaginationResult,
-    transformBundle,
-    transformBundles,
 } from "@/features/bundles";
 import { shuffleArray } from "@/shared";
 import { fetchProductsFromShopify } from "@/lib";
+import { getBundlesAction } from "@/features/bundles/actions";
+import { transformBundle, transformBundles } from "@/features/bundles/services";
 
 /**
  * Get the bundle list with filters and pagination

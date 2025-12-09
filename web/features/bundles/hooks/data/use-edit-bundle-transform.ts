@@ -109,13 +109,10 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
 
         // Products
         products: bundleData.products.map((product) => ({
-            productId: product.productId,
-            variantId: product.variantId || "",
+            productId: product.id,
+            variantId: product.selectedVariant?.id || "",
             quantity: product.quantity,
             role: product.role || "INCLUDED",
-            groupId: product.groupId,
-            customPrice: product.customPrice,
-            discountPercent: product.discountPercent,
         })),
 
         productGroups: (bundleData.productGroups || []).map((group) => ({

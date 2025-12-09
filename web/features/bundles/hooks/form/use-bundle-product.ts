@@ -3,7 +3,8 @@
 import { triggerSaveBar, useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchProductByIdAction, useBundleFormMethods, useBundleStore } from "@/features/bundles";
+import { fetchProductByIdAction } from "@/features/bundles/actions";
+import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
 
 /**
  * Hook for managing bundle product creation state
