@@ -28,6 +28,10 @@ export function useBundlesPage() {
     });
 
     useEffect(() => {
+        return () => setIsButtonLoading(false);
+    }, []);
+
+    useEffect(() => {
         if (
             toast.active &&
             typeof shopify !== "undefined" &&

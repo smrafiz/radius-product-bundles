@@ -12,8 +12,7 @@ import {
     ProductGroup,
     SelectedItem,
 } from "@/features/bundles";
-import { generateMediaId, getImageBasePath } from "@/shared";
-import { TRIGGER_SAVE_BAR } from "@/shared/components/forms/global-form";
+import { generateMediaId, getImageBasePath, TRIGGER_SAVE_BAR } from "@/shared";
 
 // Flag to prevent save bar during initialization
 let isInitializing = false;
@@ -411,7 +410,7 @@ export const useBundleStore = create(
         addPendingFiles: (files: File[]) => {
             set((state) => {
                 const newItems: PendingMediaItem[] = files.map((file) => ({
-                    type: 'file' as const,
+                    type: "file" as const,
                     file,
                     id: generateMediaId(),
                 }));
@@ -431,16 +430,18 @@ export const useBundleStore = create(
                 });
 
                 state.pendingMedia.forEach((item) => {
-                    if (item.type === 'url') {
+                    if (item.type === "url") {
                         existingPaths.add(getImageBasePath(item.url));
                     }
                 });
 
                 // Only add URLs that don't already exist
-                const newUrls = urls.filter((url) => !existingPaths.has(getImageBasePath(url)));
+                const newUrls = urls.filter(
+                    (url) => !existingPaths.has(getImageBasePath(url)),
+                );
 
                 const newItems: PendingMediaItem[] = newUrls.map((url) => ({
-                    type: 'url' as const,
+                    type: "url" as const,
                     url,
                     id: generateMediaId(),
                 }));
@@ -453,7 +454,9 @@ export const useBundleStore = create(
 
         removePendingMedia: (id: string) => {
             set((state) => {
-                state.pendingMedia = state.pendingMedia.filter((item) => item.id !== id);
+                state.pendingMedia = state.pendingMedia.filter(
+                    (item) => item.id !== id,
+                );
             });
             get().markDirty();
             callTriggerSaveBar();
@@ -502,7 +505,10 @@ export const useBundleStore = create(
 
         setDisplaySettings: (settings) => {
             set((state) => {
-                state.displaySettings = { ...initialDisplaySettings, ...settings };
+                state.displaySettings = {
+                    ...initialDisplaySettings,
+                    ...settings,
+                };
             });
         },
 

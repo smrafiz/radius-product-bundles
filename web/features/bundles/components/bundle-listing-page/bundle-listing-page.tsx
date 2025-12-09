@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    BundleTable,
-    BundleTableSkeleton,
-    useBundlesPage,
-} from "@/features/bundles";
+import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
 import { GlobalBanner, MetricCard } from "@/shared";
 
 /**
@@ -18,14 +14,13 @@ export function BundleListingPage() {
         onCreateBundle,
         onBundleStudio,
         isButtonLoading,
-        setIsButtonLoading
+        setIsButtonLoading,
     } = useBundlesPage();
 
     return (
         <s-page heading="Bundle Management">
             <s-button
                 slot="primary-action"
-                variant="primary"
                 onClick={() => {
                     setIsButtonLoading(true);
                     onCreateBundle();
@@ -37,8 +32,7 @@ export function BundleListingPage() {
             </s-button>
             <s-button
                 slot="secondary-actions"
-                variant="secondary"
-                onClick={onBundleStudio}
+                onClick={() => onBundleStudio()}
             >
                 Bundle Studio
             </s-button>
@@ -50,7 +44,11 @@ export function BundleListingPage() {
             >
                 <s-stack>
                     <div className="text-center">
-                        <s-heading><div className="text-base text-center">Bundle Management</div></s-heading>
+                        <s-heading>
+                            <div className="text-base text-center">
+                                Bundle Management
+                            </div>
+                        </s-heading>
                         <s-text color="subdued">
                             Create and manage your product bundle offers
                         </s-text>
