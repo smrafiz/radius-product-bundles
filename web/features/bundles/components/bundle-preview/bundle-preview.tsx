@@ -28,12 +28,13 @@ export function BundlePreview() {
                     backgroundColor: styleData.productBgColor || "#f7f7f7",
                     borderRadius: styleData.productRadius || "8px",
                     color: styleData.productTextColor || "#303030",
-                    ...(styleData.productBorderEnabled ?? true
+                    ...((styleData.productBorderEnabled ?? true)
                         ? {
-                            borderStyle: "solid",
-                            borderWidth: "1px",
-                            borderColor: styleData.productBorderColor || "#e3e3e3",
-                        }
+                              borderStyle: "solid",
+                              borderWidth: "1px",
+                              borderColor:
+                                  styleData.productBorderColor || "#e3e3e3",
+                          }
                         : {}),
                 }}
             >
@@ -54,7 +55,8 @@ export function BundlePreview() {
                             : item.title}
                     </div>
                     <div className="rtpb-product-price">
-                        Qty: {item.quantity} × {formatPrice(parseFloat(item.price))}
+                        Qty: {item.quantity} ×{" "}
+                        {formatPrice(parseFloat(item.price))}
                     </div>
                 </div>
             </div>
@@ -62,7 +64,11 @@ export function BundlePreview() {
     };
 
     const calculatePreviewPricing = () => {
-        if (!selectedItems.length || !bundleData.discountType || !bundleData.discountValue) {
+        if (
+            !selectedItems.length ||
+            !bundleData.discountType ||
+            !bundleData.discountValue
+        ) {
             return {
                 originalPrice: 300,
                 discountAmount: 30,
@@ -76,10 +82,13 @@ export function BundlePreview() {
             originalPrice,
             bundleData.discountType,
             bundleData.discountValue,
-            bundleData.maxDiscountAmount
+            bundleData.maxDiscountAmount,
         );
         const finalPrice = Math.max(0, originalPrice - discountAmount);
-        const savingsPercentage = calculateSavingsPercentage(originalPrice, finalPrice);
+        const savingsPercentage = calculateSavingsPercentage(
+            originalPrice,
+            finalPrice,
+        );
 
         return {
             originalPrice,
@@ -102,17 +111,20 @@ export function BundlePreview() {
                     backgroundColor: styleData.widgetBgColor || "#ffffff",
                     borderRadius: styleData.widgetRadius || "12px",
                     color: styleData.widgetTextColor || "#303030",
-                    ...(styleData.widgetBorderEnabled ?? true
+                    ...((styleData.widgetBorderEnabled ?? true)
                         ? {
-                            borderStyle: "solid",
-                            borderWidth: "1px",
-                            borderColor: styleData.widgetBorderColor || "#e3e3e3",
-                        }
+                              borderStyle: "solid",
+                              borderWidth: "1px",
+                              borderColor:
+                                  styleData.widgetBorderColor || "#e3e3e3",
+                          }
                         : {}),
                 }}
             >
                 <div className="flex flex-col gap-4">
-                    <div className="font-semibold">{displaySettings.title || ""}</div>
+                    <div className="font-semibold">
+                        {displaySettings.title || ""}
+                    </div>
 
                     {selectedItems.length > 0 ? (
                         <div className="flex flex-col gap-4">
@@ -138,43 +150,61 @@ export function BundlePreview() {
                                 {displaySettings.showPrices && (
                                     <div className="flex justify-between">
                                         <div className="gap-2 flex items-center justify-between">
-                                            <span className="font-semibold">Original Price:</span>
+                                            <span className="font-semibold">
+                                                Original Price:
+                                            </span>
                                             {discountAmount > 0 && (
-                                                <span>{formatPrice(originalPrice)}</span>
+                                                <span>
+                                                    {formatPrice(originalPrice)}
+                                                </span>
                                             )}
                                         </div>
 
                                         <div className="gap-2 flex items-center justify-between">
-                                            <span className="font-semibold">Total Price:</span>
-                                            <span>{formatPrice(finalPrice)}</span>
+                                            <span className="font-semibold">
+                                                Total Price:
+                                            </span>
+                                            <span>
+                                                {formatPrice(finalPrice)}
+                                            </span>
                                         </div>
                                     </div>
                                 )}
 
-                                {displaySettings.showSavings && discountAmount > 0 && (
-                                    <div className="gap-2 flex items-center justify-between">
-                                        <span className="font-semibold">You save:</span>
-                                        <span>
-                                            {formatPrice(discountAmount)} ({savingsPercentage}%)
-                                        </span>
-                                    </div>
-                                )}
+                                {displaySettings.showSavings &&
+                                    discountAmount > 0 && (
+                                        <div className="gap-2 flex items-center justify-between">
+                                            <span className="font-semibold">
+                                                You save:
+                                            </span>
+                                            <span>
+                                                {formatPrice(discountAmount)} (
+                                                {savingsPercentage}%)
+                                            </span>
+                                        </div>
+                                    )}
                             </div>
 
                             <div className="rtpb-summary-button flex justify-center">
                                 <button
                                     aria-expanded="false"
-                                    aria-label={displaySettings.cartButtonText || ""}
+                                    aria-label={
+                                        displaySettings.cartButtonText || ""
+                                    }
                                     className="rtpb-button"
                                     style={
-                                        styleData.buttonStyleEnabled ?? true
+                                        (styleData.buttonStyleEnabled ?? true)
                                             ? {
-                                                backgroundColor:
-                                                    styleData.buttonBgColor || "#303030",
-                                                color: styleData.buttonTextColor || "#fff",
-                                                borderRadius:
-                                                    styleData.buttonRadius || "6px",
-                                            }
+                                                  backgroundColor:
+                                                      styleData.buttonBgColor ||
+                                                      "#303030",
+                                                  color:
+                                                      styleData.buttonTextColor ||
+                                                      "#fff",
+                                                  borderRadius:
+                                                      styleData.buttonRadius ||
+                                                      "6px",
+                                              }
                                             : undefined
                                     }
                                 >
@@ -191,7 +221,9 @@ export function BundlePreview() {
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <span>Please choose product to see the bundle preview</span>
+                            <span>
+                                Please choose product to see the bundle preview
+                            </span>
                         </div>
                     )}
                 </div>

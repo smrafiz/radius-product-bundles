@@ -10,18 +10,32 @@ import { BundleType, DiscountConfig, DiscountType } from "@/features/bundles";
  */
 export const DISCOUNT_TYPES_BY_BUNDLE: Record<BundleType, DiscountType[]> = {
     FIXED_BUNDLE: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
-    FREQUENTLY_BOUGHT_TOGETHER: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
+    FREQUENTLY_BOUGHT_TOGETHER: [
+        "PERCENTAGE",
+        "FIXED_AMOUNT",
+        "CUSTOM_PRICE",
+        "NO_DISCOUNT",
+    ],
     BUY_X_GET_Y: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
     BOGO: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
     VOLUME_DISCOUNT: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
-    MIX_AND_MATCH: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
+    MIX_AND_MATCH: [
+        "PERCENTAGE",
+        "FIXED_AMOUNT",
+        "CUSTOM_PRICE",
+        "NO_DISCOUNT",
+    ],
 };
 
 /**
  * Get allowed discount types for a bundle type
  */
-export function getDiscountTypesForBundle(bundleType: BundleType): DiscountConfig[] {
-    const allowedTypes = DISCOUNT_TYPES_BY_BUNDLE[bundleType] || Object.keys(DISCOUNT_TYPES) as DiscountType[];
+export function getDiscountTypesForBundle(
+    bundleType: BundleType,
+): DiscountConfig[] {
+    const allowedTypes =
+        DISCOUNT_TYPES_BY_BUNDLE[bundleType] ||
+        (Object.keys(DISCOUNT_TYPES) as DiscountType[]);
     return allowedTypes.map((type) => DISCOUNT_TYPES[type]);
 }
 

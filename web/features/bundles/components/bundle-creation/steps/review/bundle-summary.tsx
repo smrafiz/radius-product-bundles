@@ -188,7 +188,6 @@ export function BundleSummary() {
                 </s-stack>
             </s-section>
 
-
             {/* Products Section */}
             <s-section>
                 <SelectedProducts />

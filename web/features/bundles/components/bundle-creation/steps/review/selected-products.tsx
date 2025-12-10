@@ -73,7 +73,11 @@ export function SelectedProducts() {
                                         </div>
                                     )}
 
-                                    <s-stack direction="inline" gap="small" alignItems="center">
+                                    <s-stack
+                                        direction="inline"
+                                        gap="small"
+                                        alignItems="center"
+                                    >
                                         <s-heading>
                                             {group.product.title}
                                         </s-heading>

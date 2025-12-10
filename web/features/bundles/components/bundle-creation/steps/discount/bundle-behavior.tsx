@@ -35,7 +35,9 @@ export function BundleBehavior() {
                     labelAccessibilityVisibility="exclusive"
                     disabled={isDiscountDisabled}
                     onChange={(e: Event) => {
-                        const target = e.currentTarget as HTMLInputElement & { values: string[] };
+                        const target = e.currentTarget as HTMLInputElement & {
+                            values: string[];
+                        };
                         const value = target.values?.[0];
                         if (value) {
                             handleRadioChange(value);
@@ -58,7 +60,11 @@ export function BundleBehavior() {
 
                 {/* Product selection button - only when "Specific products" is selected */}
                 {discountApplication === "products" && !isDiscountDisabled && (
-                    <s-stack direction="inline" alignItems="center" gap="small-200">
+                    <s-stack
+                        direction="inline"
+                        alignItems="center"
+                        gap="small-200"
+                    >
                         {discountedProductIds.size > 0 && (
                             <s-text color="subdued">{getSummary()}</s-text>
                         )}
@@ -68,7 +74,9 @@ export function BundleBehavior() {
                             command="--show"
                             onClick={handleOpenModal}
                         >
-                            {discountedProductIds.size > 0 ? "Edit selection" : "Select products"}
+                            {discountedProductIds.size > 0
+                                ? "Edit selection"
+                                : "Select products"}
                         </s-button>
                     </s-stack>
                 )}
@@ -113,13 +121,17 @@ export function BundleBehavior() {
                     {uniqueProducts.length > 0 ? (
                         <s-stack gap="small-200">
                             {uniqueProducts.map((product) => {
-                                const isSelected = selectedProducts.has(product.productId);
+                                const isSelected = selectedProducts.has(
+                                    product.productId,
+                                );
 
                                 return (
                                     <div
                                         key={product.productId}
                                         className="cursor-pointer"
-                                        onClick={() => toggleProduct(product.productId)}
+                                        onClick={() =>
+                                            toggleProduct(product.productId)
+                                        }
                                     >
                                         <div
                                             className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
@@ -130,7 +142,9 @@ export function BundleBehavior() {
                                         >
                                             <s-checkbox
                                                 checked={isSelected}
-                                                onInput={(e: Event) => e.stopPropagation()}
+                                                onInput={(e: Event) =>
+                                                    e.stopPropagation()
+                                                }
                                             />
 
                                             {product.image ? (
@@ -146,7 +160,10 @@ export function BundleBehavior() {
                                                 </div>
                                             ) : (
                                                 <div className="w-12 h-12 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
-                                                    <s-icon type="image" tone="neutral" />
+                                                    <s-icon
+                                                        type="image"
+                                                        tone="neutral"
+                                                    />
                                                 </div>
                                             )}
 

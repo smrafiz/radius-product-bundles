@@ -1,7 +1,11 @@
 "use client";
 
 import type { BundleStatus } from "@/features/bundles";
-import { BUNDLE_STATUSES, getAvailableStatuses, useBundleStore, } from "@/features/bundles";
+import {
+    BUNDLE_STATUSES,
+    getAvailableStatuses,
+    useBundleStore,
+} from "@/features/bundles";
 import { formatDateLong } from "@/shared";
 import React from "react";
 
@@ -109,7 +113,8 @@ export function BundlePreviewStatus() {
                     <s-heading>Bundle status</s-heading>
                     <s-tooltip id="widget-layout-tooltip">
                         <s-text>
-                            Shows the current state of this bundle and how it appears in your store.
+                            Shows the current state of this bundle and how it
+                            appears in your store.
                         </s-text>
                     </s-tooltip>
                     <s-icon
@@ -146,7 +151,10 @@ export function BundlePreviewStatus() {
                             gap="small-300"
                             alignItems="center"
                         >
-                            <s-button commandFor="date-popover" variant="secondary">
+                            <s-button
+                                commandFor="date-popover"
+                                variant="secondary"
+                            >
                                 {bundleData.startDate && bundleData.endDate ? (
                                     <s-stack
                                         direction="inline"
@@ -154,7 +162,9 @@ export function BundlePreviewStatus() {
                                         gap="small-300"
                                     >
                                         <s-icon type="calendar" />
-                                        {formatDisplayDate(bundleData.startDate)}
+                                        {formatDisplayDate(
+                                            bundleData.startDate,
+                                        )}
                                         <s-icon type="arrow-right" />
                                         <s-icon type="calendar" />
                                         {formatDisplayDate(bundleData.endDate)}

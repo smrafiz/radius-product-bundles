@@ -64,36 +64,62 @@ export function WidgetAppearance() {
                                 accessibilityLabel="Toggle add to cart"
                                 checked={style.buttonStyleEnabled ?? true}
                                 onInput={(event: Event) => {
-                                    const target = event.target as HTMLInputElement;
-                                    updateStyle("buttonStyleEnabled", target.checked);
+                                    const target =
+                                        event.target as HTMLInputElement;
+                                    updateStyle(
+                                        "buttonStyleEnabled",
+                                        target.checked,
+                                    );
                                 }}
                             />
                         </s-stack>
 
                         {(style.buttonStyleEnabled ?? true) && (
                             <s-stack gap="base">
-                                <s-grid gridTemplateColumns="repeat(12, 1fr)" gap="base">
-                                    <s-grid-item gridColumn="span 6" gridRow="span 2">
+                                <s-grid
+                                    gridTemplateColumns="repeat(12, 1fr)"
+                                    gap="base"
+                                >
+                                    <s-grid-item
+                                        gridColumn="span 6"
+                                        gridRow="span 2"
+                                    >
                                         <s-color-field
                                             label="Background"
                                             name="buttonBgColor"
                                             placeholder="Select a color"
-                                            value={style.buttonBgColor || "#303030"}
+                                            value={
+                                                style.buttonBgColor || "#303030"
+                                            }
                                             onInput={(event: Event) => {
-                                                const target = event.target as HTMLInputElement;
-                                                updateStyle("buttonBgColor", target.value);
+                                                const target =
+                                                    event.target as HTMLInputElement;
+                                                updateStyle(
+                                                    "buttonBgColor",
+                                                    target.value,
+                                                );
                                             }}
                                         />
                                     </s-grid-item>
-                                    <s-grid-item gridColumn="span 6" gridRow="span 2">
+                                    <s-grid-item
+                                        gridColumn="span 6"
+                                        gridRow="span 2"
+                                    >
                                         <s-color-field
                                             label="Text"
                                             name="buttonTextColor"
                                             placeholder="Select a color"
-                                            value={style.buttonTextColor || "#ffffff"}
+                                            value={
+                                                style.buttonTextColor ||
+                                                "#ffffff"
+                                            }
                                             onInput={(event: Event) => {
-                                                const target = event.target as HTMLInputElement;
-                                                updateStyle("buttonTextColor", target.value);
+                                                const target =
+                                                    event.target as HTMLInputElement;
+                                                updateStyle(
+                                                    "buttonTextColor",
+                                                    target.value,
+                                                );
                                             }}
                                         />
                                     </s-grid-item>
@@ -102,7 +128,9 @@ export function WidgetAppearance() {
                                     <s-text>Corner radius</s-text>
                                     <RangeSlider
                                         values={style.buttonRadius ?? 6}
-                                        action={(val) => updateStyle("buttonRadius", val)}
+                                        action={(val) =>
+                                            updateStyle("buttonRadius", val)
+                                        }
                                     />
                                 </s-stack>
                             </s-stack>
@@ -113,40 +141,70 @@ export function WidgetAppearance() {
                         {/* Product styling */}
                         <s-stack gap="base">
                             <s-heading>Product</s-heading>
-                            <s-grid gridTemplateColumns="repeat(12, 1fr)" gap="base">
-                                <s-grid-item gridColumn="span 4" gridRow="span 3">
+                            <s-grid
+                                gridTemplateColumns="repeat(12, 1fr)"
+                                gap="base"
+                            >
+                                <s-grid-item
+                                    gridColumn="span 4"
+                                    gridRow="span 3"
+                                >
                                     <s-color-field
                                         label="Background"
                                         name="productBgColor"
                                         placeholder="Select a color"
-                                        value={style.productBgColor || "#f7f7f7"}
+                                        value={
+                                            style.productBgColor || "#f7f7f7"
+                                        }
                                         onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("productBgColor", target.value);
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "productBgColor",
+                                                target.value,
+                                            );
                                         }}
                                     />
                                 </s-grid-item>
-                                <s-grid-item gridColumn="span 4" gridRow="span 3">
+                                <s-grid-item
+                                    gridColumn="span 4"
+                                    gridRow="span 3"
+                                >
                                     <s-color-field
                                         label="Text"
                                         name="productTextColor"
                                         placeholder="Select a color"
-                                        value={style.productTextColor || "#303030"}
+                                        value={
+                                            style.productTextColor || "#303030"
+                                        }
                                         onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("productTextColor", target.value);
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "productTextColor",
+                                                target.value,
+                                            );
                                         }}
                                     />
                                 </s-grid-item>
-                                <s-grid-item gridColumn="span 4" gridRow="span 3">
+                                <s-grid-item
+                                    gridColumn="span 4"
+                                    gridRow="span 3"
+                                >
                                     <s-color-field
                                         label="Review stars"
                                         name="productStarColor"
                                         placeholder="Select a color"
-                                        value={style.productStarColor || "#ffce07"}
+                                        value={
+                                            style.productStarColor || "#ffce07"
+                                        }
                                         onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("productStarColor", target.value);
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "productStarColor",
+                                                target.value,
+                                            );
                                         }}
                                     />
                                 </s-grid-item>
@@ -165,30 +223,42 @@ export function WidgetAppearance() {
                                     accessibilityLabel="Add border"
                                     checked={style.productBorderEnabled ?? true}
                                     onInput={(event: Event) => {
-                                        const target = event.target as HTMLInputElement;
-                                        updateStyle("productBorderEnabled", target.checked);
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "productBorderEnabled",
+                                            target.checked,
+                                        );
                                     }}
                                 />
                             </s-stack>
                         </s-stack>
                         <s-stack gap="base">
                             {(style.productBorderEnabled ?? true) && (
-                            <s-color-field
-                                label="Border color"
-                                name="productBorderColor"
-                                placeholder="Select a color"
-                                value={style.productBorderColor || "#e3e3e3"}
-                                onInput={(event: Event) => {
-                                    const target = event.target as HTMLInputElement;
-                                    updateStyle("productBorderColor", target.value);
-                                }}
-                            />
+                                <s-color-field
+                                    label="Border color"
+                                    name="productBorderColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.productBorderColor || "#e3e3e3"
+                                    }
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "productBorderColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
                             )}
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RangeSlider
                                     values={style.productRadius ?? 8}
-                                    action={(val) => updateStyle("productRadius", val)}
+                                    action={(val) =>
+                                        updateStyle("productRadius", val)
+                                    }
                                 />
                             </s-stack>
                         </s-stack>
@@ -198,28 +268,47 @@ export function WidgetAppearance() {
                         {/* Widget styling */}
                         <s-stack gap="base">
                             <s-heading>Widget</s-heading>
-                            <s-grid gridTemplateColumns="repeat(12, 1fr)" gap="base">
-                                <s-grid-item gridColumn="span 6" gridRow="span 2">
+                            <s-grid
+                                gridTemplateColumns="repeat(12, 1fr)"
+                                gap="base"
+                            >
+                                <s-grid-item
+                                    gridColumn="span 6"
+                                    gridRow="span 2"
+                                >
                                     <s-color-field
                                         label="Background"
                                         name="widgetBgColor"
                                         placeholder="Select a color"
                                         value={style.widgetBgColor || "#ffffff"}
                                         onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("widgetBgColor", target.value);
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "widgetBgColor",
+                                                target.value,
+                                            );
                                         }}
                                     />
                                 </s-grid-item>
-                                <s-grid-item gridColumn="span 6" gridRow="span 2">
+                                <s-grid-item
+                                    gridColumn="span 6"
+                                    gridRow="span 2"
+                                >
                                     <s-color-field
                                         label="Text"
                                         name="widgetTextColor"
                                         placeholder="Select a color"
-                                        value={style.widgetTextColor || "#303030"}
+                                        value={
+                                            style.widgetTextColor || "#303030"
+                                        }
                                         onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("widgetTextColor", target.value);
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "widgetTextColor",
+                                                target.value,
+                                            );
                                         }}
                                     />
                                 </s-grid-item>
@@ -235,10 +324,16 @@ export function WidgetAppearance() {
                                         id="widget-add-border"
                                         label="Add border"
                                         accessibilityLabel="Add border"
-                                        checked={style.widgetBorderEnabled ?? true}
+                                        checked={
+                                            style.widgetBorderEnabled ?? true
+                                        }
                                         onInput={(event: Event) => {
-                                            const target = event.target as HTMLInputElement;
-                                            updateStyle("widgetBorderEnabled", target.checked);
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "widgetBorderEnabled",
+                                                target.checked,
+                                            );
                                         }}
                                     />
                                 </s-stack>
@@ -246,22 +341,30 @@ export function WidgetAppearance() {
 
                             <s-stack gap="base" paddingBlockEnd="base">
                                 {(style.widgetBorderEnabled ?? true) && (
-                                <s-color-field
-                                    label="Border color"
-                                    name="widgetBorderColor"
-                                    placeholder="Select a color"
-                                    value={style.widgetBorderColor || "#e3e3e3"}
-                                    onInput={(event: Event) => {
-                                        const target = event.target as HTMLInputElement;
-                                        updateStyle("widgetBorderColor", target.value);
-                                    }}
-                                />
+                                    <s-color-field
+                                        label="Border color"
+                                        name="widgetBorderColor"
+                                        placeholder="Select a color"
+                                        value={
+                                            style.widgetBorderColor || "#e3e3e3"
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "widgetBorderColor",
+                                                target.value,
+                                            );
+                                        }}
+                                    />
                                 )}
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
                                     <RangeSlider
                                         values={style.widgetRadius ?? 12}
-                                        action={(val) => updateStyle("widgetRadius", val)}
+                                        action={(val) =>
+                                            updateStyle("widgetRadius", val)
+                                        }
                                     />
                                 </s-stack>
                             </s-stack>

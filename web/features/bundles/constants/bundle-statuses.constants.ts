@@ -19,4 +19,10 @@ export const CREATE_STATUSES: BundleStatus[] = ["DRAFT", "ACTIVE", "SCHEDULED"];
 /**
  * Statuses available when editing an existing bundle
  */
-export const EDIT_STATUSES: BundleStatus[] = ["DRAFT", "ACTIVE", "SCHEDULED", "PAUSED", "ARCHIVED"];
+export const EDIT_STATUSES: BundleStatus[] = [
+    "DRAFT",
+    "ACTIVE",
+    "SCHEDULED",
+    "PAUSED",
+    "ARCHIVED",
+];

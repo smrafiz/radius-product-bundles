@@ -9,7 +9,8 @@ import { SettingsTab, useSettingStore } from "@/features/settings";
  */
 export function SettingsPage() {
     const { goBack } = useAppNavigation();
-    const { toast, loading, setLoading, hideToast, showToast } = useSettingStore();
+    const { toast, loading, setLoading, hideToast, showToast } =
+        useSettingStore();
 
     const handleApply = async () => {
         setLoading(true);
@@ -43,7 +44,12 @@ export function SettingsPage() {
                 paddingBlockStart="large"
                 paddingBlockEnd="large"
             >
-                <s-stack direction="inline" gap="base" justifyContent="space-between" alignItems="center">
+                <s-stack
+                    direction="inline"
+                    gap="base"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
                     <s-stack direction="inline" gap="base">
                         <s-stack paddingBlockStart="small-500">
                             <s-button
@@ -56,7 +62,9 @@ export function SettingsPage() {
                             <s-heading>
                                 <div className="text-lg">Settings</div>
                             </s-heading>
-                            <s-text color="subdued">Choose the right plan for your business</s-text>
+                            <s-text color="subdued">
+                                Choose the right plan for your business
+                            </s-text>
                         </s-stack>
                     </s-stack>
                     <s-button

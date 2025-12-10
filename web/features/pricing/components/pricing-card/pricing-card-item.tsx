@@ -12,7 +12,6 @@ export function PricingCardItem({
     primaryButton,
     frequency,
 }: PricingCardItemInfo) {
-
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -25,7 +24,9 @@ export function PricingCardItem({
     };
 
     return (
-        <div className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `}>
+        <div
+            className={`relative z-0 rounded-[0.75rem] ${featuredText ? "shadow-[0_0_15px_4px_#CDFEE1]" : "shadow-none"} `}
+        >
             {featuredText ? (
                 <div className="absolute top-[-15px] right-1.5 z-50">
                     <s-badge tone="success">{featuredText}</s-badge>
@@ -35,7 +36,9 @@ export function PricingCardItem({
                 <s-stack direction="block" gap="large">
                     <s-stack direction="block" gap="base" alignItems="start">
                         <s-heading>
-                            <div className="text-base font-semibold">{title}</div>
+                            <div className="text-base font-semibold">
+                                {title}
+                            </div>
                         </s-heading>
                         <s-divider />
                         {description ? (
@@ -51,7 +54,9 @@ export function PricingCardItem({
                         alignItems="baseline"
                     >
                         <s-text>
-                            <div className="text-2xl font-semibold">{price}</div>
+                            <div className="text-2xl font-semibold">
+                                {price}
+                            </div>
                         </s-text>
                         <s-text>/ {frequency}</s-text>
                     </s-stack>

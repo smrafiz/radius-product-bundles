@@ -53,11 +53,7 @@ export function DiscountSettings() {
                     min={0}
                     placeholder="0"
                     suffix={getSuffix()}
-                    max={
-                        discountType === "PERCENTAGE"
-                            ? 100
-                            : undefined
-                    }
+                    max={discountType === "PERCENTAGE" ? 100 : undefined}
                     onChange={(event: Event) => {
                         const target = event.target as HTMLInputElement;
                         handleDiscountValueChange(target.value);
@@ -87,9 +83,7 @@ export function DiscountSettings() {
                     <div className="flex-1">
                         <s-number-field
                             label="Maximum Discount Amount (Optional)"
-                            value={
-                                maxDiscountAmount?.toString() || ""
-                            }
+                            value={maxDiscountAmount?.toString() || ""}
                             step={1}
                             min={0}
                             placeholder="No limit"

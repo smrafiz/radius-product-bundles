@@ -1,49 +1,50 @@
 /* simple editor style */
 
 .rt-wysiwyg-editor .rsw-editor {
-	border: 0;
-	border-radius: var(--p-border-radius-200);
-	box-shadow: inset 0 0 0 0.04125rem #8a8a8a;
+    border: 0;
+    border-radius: var(--p-border-radius-200);
+    box-shadow: inset 0 0 0 0.04125rem #8a8a8a;
 }
 
 .rt-wysiwyg-editor .rsw-toolbar {
-	background: var(--p-color-bg-surface-secondary);
-	padding: 5px var(--p-space-200);
-	border-bottom: 0;
-	margin: 2px;
-	border-top-left-radius: var(--p-border-radius-200);
-	border-top-right-radius: var(--p-border-radius-200);
+    background: var(--p-color-bg-surface-secondary);
+    padding: 5px var(--p-space-200);
+    border-bottom: 0;
+    margin: 2px;
+    border-top-left-radius: var(--p-border-radius-200);
+    border-top-right-radius: var(--p-border-radius-200);
 }
 
 .rt-wysiwyg-editor .rsw-ce {
-	padding: 0.75rem;
-	height: 150px;
-	border: 0;
+    padding: 0.75rem;
+    height: 150px;
+    border: 0;
 }
 
 .rt-wysiwyg-editor .rsw-ce:focus {
-	outline: none;
+    outline: none;
 }
 
 .rt-wysiwyg-editor .rsw-editor:hover {
-	border: 0;
-	box-shadow: inset 0 0 0 0.0625rem #616161;
+    border: 0;
+    box-shadow: inset 0 0 0 0.0625rem #616161;
 }
 
 .rt-wysiwyg-editor.is-focused .rsw-editor,
 .rt-wysiwyg-editor .rsw-editor:focus {
-	outline: var(--p-border-width-050) solid var(--p-color-border-focus);
-	outline-offset: var(--p-space-050);
-	border-color: transparent;
-	box-shadow: 0 0 0 var(--p-border-width-025) var(--p-color-input-border-active);
+    outline: var(--p-border-width-050) solid var(--p-color-border-focus);
+    outline-offset: var(--p-space-050);
+    border-color: transparent;
+    box-shadow: 0 0 0 var(--p-border-width-025)
+        var(--p-color-input-border-active);
 }
 
 .rt-wysiwyg-editor .rsw-ce ul {
-	list-style: disc;
-	padding-left: 2em;
+    list-style: disc;
+    padding-left: 2em;
 }
 
 .rt-wysiwyg-editor .rsw-ce ol {
-	list-style: decimal;
-	padding-left: 2em;
+    list-style: decimal;
+    padding-left: 2em;
 }

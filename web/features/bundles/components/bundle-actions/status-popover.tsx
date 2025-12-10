@@ -76,7 +76,12 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                     statusKey === bundle.status;
 
                                 return (
-                                    <div className={isCurrentStatus ? "cursor-default" : "cursor-pointer"}
+                                    <div
+                                        className={
+                                            isCurrentStatus
+                                                ? "cursor-default"
+                                                : "cursor-pointer"
+                                        }
                                         key={statusKey}
                                         onClick={() => {
                                             if (!isCurrentStatus) {

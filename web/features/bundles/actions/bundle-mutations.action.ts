@@ -21,8 +21,17 @@ import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { ensureMetafieldDefinition, handleSessionToken } from "@/lib/shopify";
 import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
-import { addBundleIdToProducts, removeBundleIdFromProducts, syncBundleProductMetafields, } from "@/lib";
-import { BundleFormData, bundleSchema, BundleStatus, CreateBundleActionInput, } from "@/features/bundles";
+import {
+    addBundleIdToProducts,
+    removeBundleIdFromProducts,
+    syncBundleProductMetafields,
+} from "@/lib";
+import {
+    BundleFormData,
+    bundleSchema,
+    BundleStatus,
+    CreateBundleActionInput,
+} from "@/features/bundles";
 
 /**
  * Update bundle status

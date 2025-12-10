@@ -22,7 +22,12 @@ import {
 } from "@/features/bundles/actions";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { mediaMutations, useAppNavigation, useGlobalBanner, withAsyncLoader, } from "@/shared";
+import {
+    mediaMutations,
+    useAppNavigation,
+    useGlobalBanner,
+    withAsyncLoader,
+} from "@/shared";
 
 /**
  * Hook for bundle form submission.

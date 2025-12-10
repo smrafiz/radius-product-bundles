@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import {SettingState} from "@/features/settings";
+import { SettingState } from "@/features/settings";
 
 /*
  * Settings store
@@ -21,5 +21,4 @@ export const useSettingStore = create<SettingState>((set) => ({
 
     showToast: (message) => set({ toast: { active: true, message } }),
     hideToast: () => set({ toast: { active: false, message: "" } }),
-
 }));

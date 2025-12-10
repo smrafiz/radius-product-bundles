@@ -2,10 +2,7 @@
  * Security checks that require database access
  */
 
-import {
-    AbusivePatternResult,
-    SecurityCheckResult,
-} from "@/features/bundles";
+import { AbusivePatternResult, SecurityCheckResult } from "@/features/bundles";
 import {
     countBundlesByShop,
     countRecentBundles,

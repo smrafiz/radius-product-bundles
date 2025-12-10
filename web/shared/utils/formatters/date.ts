@@ -85,4 +85,3 @@ export function formatDateLong(dateStr: string) {
 
     return `${monthShort} ${day}, ${year}`;
 }
-

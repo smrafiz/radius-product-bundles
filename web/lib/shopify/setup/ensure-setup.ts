@@ -24,10 +24,12 @@ const METAFIELD_KEY = "bundle_ids";
  * Checks database first, only calls Shopify API if needed
  */
 export async function ensureMetafieldDefinition(
-    sessionToken: string
+    sessionToken: string,
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        const { session: { shop } } = await handleSessionToken(sessionToken);
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
 
         // Check the database flag first
         if (await isMetafieldSetupDone(shop)) {
@@ -35,11 +37,12 @@ export async function ensureMetafieldDefinition(
         }
 
         // Flag not set - check Shopify API
-        const checkResult = await executeGraphQLQuery<CheckMetafieldDefinitionQuery>({
-            query: CheckMetafieldDefinitionDocument,
-            variables: {},
-            sessionToken,
-        });
+        const checkResult =
+            await executeGraphQLQuery<CheckMetafieldDefinitionQuery>({
+                query: CheckMetafieldDefinitionDocument,
+                variables: {},
+                sessionToken,
+            });
 
         if (checkResult.data?.metafieldDefinitions?.edges?.length) {
             // Definition exists
@@ -48,27 +51,31 @@ export async function ensureMetafieldDefinition(
         }
 
         // Create the metafield definition
-        const createResult = await executeGraphQLMutation<MetafieldDefinitionCreateMutation>({
-            query: MetafieldDefinitionCreateDocument,
-            variables: {
-                definition: {
-                    name: "Bundle IDs",
-                    namespace: METAFIELD_NAMESPACE,
-                    key: METAFIELD_KEY,
-                    type: "list.single_line_text_field",
-                    ownerType: "PRODUCT",
-                    description: "List of bundle IDs that include this product",
-                    pin: false,
+        const createResult =
+            await executeGraphQLMutation<MetafieldDefinitionCreateMutation>({
+                query: MetafieldDefinitionCreateDocument,
+                variables: {
+                    definition: {
+                        name: "Bundle IDs",
+                        namespace: METAFIELD_NAMESPACE,
+                        key: METAFIELD_KEY,
+                        type: "list.single_line_text_field",
+                        ownerType: "PRODUCT",
+                        description:
+                            "List of bundle IDs that include this product",
+                        pin: false,
+                    },
                 },
-            },
-            sessionToken,
-        });
+                sessionToken,
+            });
 
-        const userErrors = createResult.data?.metafieldDefinitionCreate?.userErrors || [];
+        const userErrors =
+            createResult.data?.metafieldDefinitionCreate?.userErrors || [];
 
         if (userErrors.length > 0) {
             const alreadyExists = userErrors.some(
-                (e) => e.code === "TAKEN" || e.message?.includes("already exists")
+                (e) =>
+                    e.code === "TAKEN" || e.message?.includes("already exists"),
             );
 
             if (alreadyExists) {
@@ -76,7 +83,10 @@ export async function ensureMetafieldDefinition(
                 return { success: true };
             }
 
-            return { success: false, error: userErrors[0].message ?? "Unknown error" };
+            return {
+                success: false,
+                error: userErrors[0].message ?? "Unknown error",
+            };
         }
 
         // Success - save flag

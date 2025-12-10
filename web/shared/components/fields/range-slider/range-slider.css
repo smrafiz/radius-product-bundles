@@ -38,8 +38,11 @@
     -webkit-appearance: none;
     appearance: none;
     margin-top: calc(
-            (var(--pc-range-slider-thumb-size) - var(--pc-range-slider-track-height))
-            * -0.5
+        (
+                var(--pc-range-slider-thumb-size) -
+                    var(--pc-range-slider-track-height)
+            ) *
+            -0.5
     );
 }
 .range-slider-value .webkit-slider-thumb:focus {

@@ -36,32 +36,34 @@ export function WidgetLayout() {
                             ({ label, widgetLayout, value }) => {
                                 const tooltipId = `layout-tooltip-${value}`;
 
-                                return (<s-grid-item key={value} gridColumn="auto">
-                                    <s-stack gap="small">
-                                        <s-tooltip id={tooltipId}>
-                                            <s-text>{label}</s-text>
-                                        </s-tooltip>
-                                        <div
-                                            className={`flex items-center justify-between border-2 rounded-xl w-full h-[100px] p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[var(--p-color-bg-surface-secondary)]" : "border-gray-50 bg-[var(--p-color-bg-surface-secondary)] hover:border-blue-600"}`}
-                                            onClick={() =>
-                                                updateDisplaySettings(
-                                                    "layout",
-                                                    value,
-                                                )
-                                            }
-                                        >
-                                            <s-link
-                                                accessibilityLabel={label}
-                                                interestFor={tooltipId}
+                                return (
+                                    <s-grid-item key={value} gridColumn="auto">
+                                        <s-stack gap="small">
+                                            <s-tooltip id={tooltipId}>
+                                                <s-text>{label}</s-text>
+                                            </s-tooltip>
+                                            <div
+                                                className={`flex items-center justify-between border-2 rounded-xl w-full h-[100px] p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[var(--p-color-bg-surface-secondary)]" : "border-gray-50 bg-[var(--p-color-bg-surface-secondary)] hover:border-blue-600"}`}
+                                                onClick={() =>
+                                                    updateDisplaySettings(
+                                                        "layout",
+                                                        value,
+                                                    )
+                                                }
                                             >
-                                                <s-image
-                                                    src={widgetLayout}
-                                                    alt={label}
-                                                />
-                                            </s-link>
-                                        </div>
-                                    </s-stack>
-                                </s-grid-item>);
+                                                <s-link
+                                                    accessibilityLabel={label}
+                                                    interestFor={tooltipId}
+                                                >
+                                                    <s-image
+                                                        src={widgetLayout}
+                                                        alt={label}
+                                                    />
+                                                </s-link>
+                                            </div>
+                                        </s-stack>
+                                    </s-grid-item>
+                                );
                             },
                         )}
                     </s-grid>

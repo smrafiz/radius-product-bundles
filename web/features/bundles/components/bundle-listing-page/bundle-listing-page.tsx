@@ -1,6 +1,10 @@
 "use client";
 
-import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
+import {
+    BundleTable,
+    BundleTableSkeleton,
+    useBundlesPage,
+} from "@/features/bundles";
 import { GlobalBanner, MetricCard } from "@/shared";
 
 /**
@@ -21,6 +25,7 @@ export function BundleListingPage() {
         <s-page heading="Bundle Management">
             <s-button
                 slot="primary-action"
+                variant="primary"
                 onClick={() => {
                     setIsButtonLoading(true);
                     onCreateBundle();
@@ -32,6 +37,7 @@ export function BundleListingPage() {
             </s-button>
             <s-button
                 slot="secondary-actions"
+                variant="secondary"
                 onClick={() => onBundleStudio()}
             >
                 Bundle Studio

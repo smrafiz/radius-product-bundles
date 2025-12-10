@@ -161,7 +161,9 @@ export function getAvailableStatuses(mode: "create" | "edit"): BundleStatus[] {
 /**
  * Maps bundle status to appropriate Shopify product status.
  */
-export function getShopifyProductStatus(bundleStatus: BundleStatus): "ACTIVE" | "DRAFT" | "ARCHIVED" {
+export function getShopifyProductStatus(
+    bundleStatus: BundleStatus,
+): "ACTIVE" | "DRAFT" | "ARCHIVED" {
     switch (bundleStatus) {
         case "ACTIVE":
             return "ACTIVE";

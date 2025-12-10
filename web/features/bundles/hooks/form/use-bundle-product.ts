@@ -197,7 +197,15 @@ export function useBundleProduct(mode: "create" | "edit") {
             toggleEnabled(checked);
             setPendingProductDeletion(false);
         },
-        [mainProductId, productTitle, bundleName, openModal, setPendingProductDeletion, toggleEnabled, setValue],
+        [
+            mainProductId,
+            productTitle,
+            bundleName,
+            openModal,
+            setPendingProductDeletion,
+            toggleEnabled,
+            setValue,
+        ],
     );
 
     /**

@@ -22,15 +22,14 @@ export function SettingsVariantSelectorType() {
         setLoading(true);
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 800));
+            await new Promise((resolve) => setTimeout(resolve, 800));
         } finally {
             setLoading(false);
             document
-                .querySelector('#modal')
-                ?.dispatchEvent(new CustomEvent('--hide', { bubbles: true }));
+                .querySelector("#modal")
+                ?.dispatchEvent(new CustomEvent("--hide", { bubbles: true }));
         }
     };
-
 
     return (
         <s-section>
@@ -47,10 +46,16 @@ export function SettingsVariantSelectorType() {
                 </s-paragraph>
 
                 <s-banner>
-                    Changes to the variant selector type will apply to all bundles in your store.
+                    Changes to the variant selector type will apply to all
+                    bundles in your store.
                 </s-banner>
 
-                <s-choice-list labelAccessibilityVisibility="exclusive" label="Variant type" name="button_action" onChange={handleChange}>
+                <s-choice-list
+                    labelAccessibilityVisibility="exclusive"
+                    label="Variant type"
+                    name="button_action"
+                    onChange={handleChange}
+                >
                     <s-choice
                         value="dropdown"
                         selected={variantType === "dropdown"}
@@ -73,11 +78,19 @@ export function SettingsVariantSelectorType() {
                             as text.
                         </s-paragraph>
                         <>
-                            <s-button commandFor="modal" icon="variant">Set swatches</s-button>
+                            <s-button commandFor="modal" icon="variant">
+                                Set swatches
+                            </s-button>
                             <s-modal id="modal" heading="Swatch editor">
-                                <s-paragraph>Displaying more details here.</s-paragraph>
+                                <s-paragraph>
+                                    Displaying more details here.
+                                </s-paragraph>
 
-                                <s-button slot="secondary-actions" commandFor="modal" command="--hide">
+                                <s-button
+                                    slot="secondary-actions"
+                                    commandFor="modal"
+                                    command="--hide"
+                                >
                                     Close
                                 </s-button>
                                 <s-button

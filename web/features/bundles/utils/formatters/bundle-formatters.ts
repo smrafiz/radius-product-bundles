@@ -67,7 +67,7 @@ export function formatDiscountFromValues(
     discountValue?: number,
     currencyFormatter?: (value: number) => string,
     currencyCode?: string,
-    locale?: string
+    locale?: string,
 ): string {
     if (!discountType || !(discountType in DISCOUNT_TYPES)) {
         return "No Discount";
@@ -81,7 +81,6 @@ export function formatDiscountFromValues(
 
     return config.format(discountValue ?? 0, formatter, false);
 }
-
 
 /**
  * Format price for display

@@ -1,6 +1,10 @@
 "use client";
 
-import { MediaGridItemProps, MediaGridProps, PendingMediaItem } from "@/features/bundles";
+import {
+    MediaGridItemProps,
+    MediaGridProps,
+    PendingMediaItem,
+} from "@/features/bundles";
 
 /**
  * Unified media item component

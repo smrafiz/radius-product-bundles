@@ -30,14 +30,15 @@ interface MetafieldResult {
  */
 export async function getProductBundleIds(
     sessionToken: string,
-    productId: string
+    productId: string,
 ): Promise<string[]> {
     try {
-        const result = await executeGraphQLQuery<GetProductBundleMetafieldQuery>({
-            query: GetProductBundleMetafieldDocument,
-            variables: { productId },
-            sessionToken,
-        });
+        const result =
+            await executeGraphQLQuery<GetProductBundleMetafieldQuery>({
+                query: GetProductBundleMetafieldDocument,
+                variables: { productId },
+                sessionToken,
+            });
 
         if (result.errors?.length) {
             console.error("[Metafield] Query error:", result.errors);
@@ -57,7 +58,7 @@ export async function getProductBundleIds(
  */
 export async function getProductsBundleIds(
     sessionToken: string,
-    productIds: string[]
+    productIds: string[],
 ): Promise<Map<string, string[]>> {
     const result = new Map<string, string[]>();
 
@@ -66,11 +67,12 @@ export async function getProductsBundleIds(
     }
 
     try {
-        const response = await executeGraphQLQuery<GetProductsBundleMetafieldsQuery>({
-            query: GetProductsBundleMetafieldsDocument,
-            variables: { productIds },
-            sessionToken,
-        });
+        const response =
+            await executeGraphQLQuery<GetProductsBundleMetafieldsQuery>({
+                query: GetProductsBundleMetafieldsDocument,
+                variables: { productIds },
+                sessionToken,
+            });
 
         if (response.errors?.length) {
             console.error("[Metafield] Batch query error:", response.errors);
@@ -99,17 +101,22 @@ export async function getProductsBundleIds(
 export async function addBundleIdToProducts(
     sessionToken: string,
     bundleId: string,
-    productIds: string[]
+    productIds: string[],
 ): Promise<MetafieldResult> {
     if (productIds.length === 0) {
         return { success: true };
     }
 
-    console.log(`[Metafield] Adding bundle ${bundleId} to ${productIds.length} products`);
+    console.log(
+        `[Metafield] Adding bundle ${bundleId} to ${productIds.length} products`,
+    );
 
     try {
         // Get existing metafields for all products
-        const existingMetafields = await getProductsBundleIds(sessionToken, productIds);
+        const existingMetafields = await getProductsBundleIds(
+            sessionToken,
+            productIds,
+        );
 
         // Prepare batch update
         const metafieldsToSet = productIds.map((productId) => {
@@ -152,7 +159,9 @@ export async function addBundleIdToProducts(
             }
         }
 
-        console.log(`[Metafield] Added bundle ${bundleId} to ${productIds.length} products`);
+        console.log(
+            `[Metafield] Added bundle ${bundleId} to ${productIds.length} products`,
+        );
         return { success: true };
     } catch (error) {
         console.error("[Metafield] Error adding bundle to products:", error);
@@ -169,24 +178,31 @@ export async function addBundleIdToProducts(
 export async function removeBundleIdFromProducts(
     sessionToken: string,
     bundleId: string,
-    productIds: string[]
+    productIds: string[],
 ): Promise<MetafieldResult> {
     if (productIds.length === 0) {
         return { success: true };
     }
 
-    console.log(`[Metafield] Removing bundle ${bundleId} from ${productIds.length} products`);
+    console.log(
+        `[Metafield] Removing bundle ${bundleId} from ${productIds.length} products`,
+    );
 
     try {
         // Get existing metafields for all products
-        const existingMetafields = await getProductsBundleIds(sessionToken, productIds);
+        const existingMetafields = await getProductsBundleIds(
+            sessionToken,
+            productIds,
+        );
 
         // Prepare batch update
         const metafieldsToSet = productIds.map((productId) => {
             const existingBundleIds = existingMetafields.get(productId) || [];
 
             // Remove bundle ID
-            const updatedBundleIds = existingBundleIds.filter(id => id !== bundleId);
+            const updatedBundleIds = existingBundleIds.filter(
+                (id) => id !== bundleId,
+            );
 
             return {
                 ownerId: productId,
@@ -220,10 +236,15 @@ export async function removeBundleIdFromProducts(
             }
         }
 
-        console.log(`[Metafield] Removed bundle ${bundleId} from ${productIds.length} products`);
+        console.log(
+            `[Metafield] Removed bundle ${bundleId} from ${productIds.length} products`,
+        );
         return { success: true };
     } catch (error) {
-        console.error("[Metafield] Error removing bundle from products:", error);
+        console.error(
+            "[Metafield] Error removing bundle from products:",
+            error,
+        );
         return {
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
@@ -239,11 +260,15 @@ export async function syncBundleProductMetafields(
     sessionToken: string,
     bundleId: string,
     oldProductIds: string[],
-    newProductIds: string[]
+    newProductIds: string[],
 ): Promise<MetafieldResult> {
     // Find added and removed products
-    const addedProducts = newProductIds.filter(id => !oldProductIds.includes(id));
-    const removedProducts = oldProductIds.filter(id => !newProductIds.includes(id));
+    const addedProducts = newProductIds.filter(
+        (id) => !oldProductIds.includes(id),
+    );
+    const removedProducts = oldProductIds.filter(
+        (id) => !newProductIds.includes(id),
+    );
 
     console.log(`[Metafield] Syncing bundle ${bundleId}:`, {
         added: addedProducts.length,
@@ -252,7 +277,11 @@ export async function syncBundleProductMetafields(
 
     // Add bundle ID to new products
     if (addedProducts.length > 0) {
-        const addResult = await addBundleIdToProducts(sessionToken, bundleId, addedProducts);
+        const addResult = await addBundleIdToProducts(
+            sessionToken,
+            bundleId,
+            addedProducts,
+        );
         if (!addResult.success) {
             return addResult;
         }
@@ -260,7 +289,11 @@ export async function syncBundleProductMetafields(
 
     // Remove bundle ID from removed products
     if (removedProducts.length > 0) {
-        const removeResult = await removeBundleIdFromProducts(sessionToken, bundleId, removedProducts);
+        const removeResult = await removeBundleIdFromProducts(
+            sessionToken,
+            bundleId,
+            removedProducts,
+        );
         if (!removeResult.success) {
             return removeResult;
         }

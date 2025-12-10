@@ -66,7 +66,8 @@ export const RangeSlider: FC<{
                     );
                 }}
                 renderThumb={({ props }) => (
-                    <div className="webkit-slider-thumb"
+                    <div
+                        className="webkit-slider-thumb"
                         {...props}
                         key={props.key}
                         style={{

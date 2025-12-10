@@ -71,7 +71,6 @@ export function BundleFormProvider({
     // Initialize store based on the mode
     useEffect(() => {
         if (!isInitialized.current) {
-
             setStoreInitializing(true);
             blockSaveBar(true);
 

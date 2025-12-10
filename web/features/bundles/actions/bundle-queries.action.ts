@@ -14,7 +14,12 @@ import {
 import { BundleFilters } from "@/features/bundles";
 import { handleSessionToken } from "@/lib/shopify";
 import { aggregateBundleMetrics } from "@/features/bundles/repositories";
-import { ApiResponse, getSixtyDaysAgo, getThirtyDaysAgo, transformBundleMetrics, } from "@/shared";
+import {
+    ApiResponse,
+    getSixtyDaysAgo,
+    getThirtyDaysAgo,
+    transformBundleMetrics,
+} from "@/shared";
 
 /**
  * Get bundles for a shop

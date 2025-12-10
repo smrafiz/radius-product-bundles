@@ -4,7 +4,6 @@ import { useState } from "react";
 import { CallbackEvent } from "@shopify/polaris-types";
 
 export function SettingsAdvanced() {
-
     const handleChange = (event: CallbackEvent<"s-text-field">) => {};
 
     const [textValue, setTextValue] = useState<string>("");
@@ -69,7 +68,12 @@ export function SettingsAdvanced() {
                     </s-text>
                 </s-stack>
 
-                <s-choice-list labelAccessibilityVisibility="exclusive" label="Redirect dynamic" name="redirectdynamic" multiple>
+                <s-choice-list
+                    labelAccessibilityVisibility="exclusive"
+                    label="Redirect dynamic"
+                    name="redirectdynamic"
+                    multiple
+                >
                     <s-choice value="redirect-dynamic-checkout">
                         Redirect dynamic checkout buttons on product page to the
                         checkout
