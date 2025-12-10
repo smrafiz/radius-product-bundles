@@ -10,7 +10,11 @@ exclude:
 projects:
     web:
         schema: "https://shopify.dev/admin-graphql-direct-proxy/2025-10"
-        documents: ["web/**/*.{graphql,js,ts,jsx,tsx}"]
+        documents:
+          [
+            "web/**/*.{graphql,js,ts,jsx,tsx}",
+            "extensions/**/*.{graphql,js,ts,jsx,tsx}",
+          ]
         exclude:
             [
                 "**/node_modules/**",

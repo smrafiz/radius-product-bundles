@@ -18,7 +18,7 @@ interface Bundle {
     id: string;
     name: string;
     description?: string;
-    discountType?: "PERCENTAGE" | "FIXED";
+    discountType?: "PERCENTAGE" | "FIXED_AMOUNT";
     discountValue?: number;
     products: BundleProduct[];
     settings?: {
@@ -35,6 +35,12 @@ interface BundleResponse {
     count: number;
 }
 
+interface CartAddItem {
+    id: string;
+    quantity: number;
+    properties?: Record<string, string>;
+}
+
 export class ProductBundleWidget {
     private container: HTMLElement;
     private productId: string;
@@ -48,8 +54,6 @@ export class ProductBundleWidget {
         this.productId = container.dataset.productId!;
         this.shop = container.dataset.shop!;
         this.layout = (container.dataset.layout as "grid" | "list") || "grid";
-        // this.showSavings = container.dataset.showSavings === "true";
-        // this.showImages = container.dataset.showImages === "true";
         this.showSavings = true;
         this.showImages = true;
 
@@ -127,19 +131,18 @@ export class ProductBundleWidget {
     }
 
     private render(bundle: Bundle): void {
-        const layout = bundle.settings?.layout || this.layout;
         const showSavings = bundle.settings?.showSavings ?? this.showSavings;
         const showImages =
             bundle.settings?.showProductImages ?? this.showImages;
 
         // Calculate pricing
         const originalTotal = bundle.products.reduce(
-            (sum, product) => sum + product.price,
+            (sum, product) => sum + product.price * product.quantity,
             0,
         );
         const discountAmount =
             bundle.discountType === "PERCENTAGE"
-                ? (originalTotal * bundle.discountValue!) / 100
+                ? (originalTotal * (bundle.discountValue || 0)) / 100
                 : bundle.discountValue || 0;
         const bundleTotal = originalTotal - discountAmount;
 
@@ -156,7 +159,7 @@ export class ProductBundleWidget {
                 ${bundle.products
                     .sort((a, b) => a.displayOrder - b.displayOrder)
                     .map(
-                        (product, index, array) => `
+                        (product) => `
                         <div class="bundle-product-item">
                             ${
                                 showImages && product.featuredImage
@@ -204,6 +207,8 @@ export class ProductBundleWidget {
             <button class="bundle-add-to-cart bundle-add-to-cart--primary" data-bundle-id="${bundle.id}">
                 Add Bundle to Cart
             </button>
+            
+            <div class="bundle-message bundle-message--hidden"></div>
         </div>
     `;
 
@@ -218,75 +223,147 @@ export class ProductBundleWidget {
         }
     }
 
-    private renderProduct(product: BundleProduct, showImages: boolean): string {
-        const isOptional = product.role === "OPTIONAL";
-        const hasComparePrice =
-            product.compareAtPrice > 0 &&
-            product.compareAtPrice > product.price;
+    /**
+     * Adds bundle products to cart and sets discount attribute.
+     */
+    private async handleAddToCart(bundle: Bundle): Promise<void> {
+        const button = this.container.querySelector(
+            ".bundle-add-to-cart",
+        ) as HTMLButtonElement;
+        const messageEl = this.container.querySelector(
+            ".bundle-message",
+        ) as HTMLElement;
 
-        return `
-            <div class="bundle-product ${isOptional ? "bundle-product--optional" : ""}" data-product-id="${product.id}">
-                ${
-                    showImages && product.featuredImage
-                        ? `<div class="bundle-product__image">
-                         <img src="${product.featuredImage}" alt="${this.escapeHtml(product.title)}" loading="lazy" />
-                       </div>`
-                        : ""
-                }
-                <div class="bundle-product__info">
-                    <h4 class="bundle-product__title">${this.escapeHtml(product.title)}</h4>
-                    <div class="bundle-product__pricing">
-                        <span class="bundle-product__price">$${product.price.toFixed(2)}</span>
-                        ${
-                            hasComparePrice
-                                ? `<span class="bundle-product__compare-price">$${product.compareAtPrice.toFixed(2)}</span>`
-                                : ""
-                        }
-                    </div>
-                    ${
-                        isOptional
-                            ? `<span class="bundle-product__badge">Optional</span>`
-                            : ""
-                    }
-                </div>
-            </div>
-        `;
+        if (!button) return;
+
+        // Show loading state
+        const originalText = button.textContent || "Add Bundle to Cart";
+        button.textContent = "Adding...";
+        button.disabled = true;
+
+        try {
+            // Step 1: Build cart items from bundle products
+            const cartItems: CartAddItem[] = bundle.products
+                .filter(
+                    (product) =>
+                        product.role === "INCLUDED" ||
+                        product.role === "OPTIONAL",
+                )
+                .filter((product) => product.variantId) // Must have variant ID
+                .map((product) => ({
+                    id: this.extractNumericId(product.variantId),
+                    quantity: product.quantity,
+                    properties: {
+                        _bundle_id: bundle.id,
+                        _bundle_name: bundle.name,
+                    },
+                }));
+
+            if (cartItems.length === 0) {
+                throw new Error("No valid products to add to cart");
+            }
+
+            // Step 2: Add products to cart
+            const addResponse = await fetch("/cart/add.js", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items: cartItems }),
+            });
+
+            if (!addResponse.ok) {
+                const errorData = await addResponse.json().catch(() => ({}));
+                throw new Error(
+                    errorData.description ||
+                        `Failed to add to cart: ${addResponse.status}`,
+                );
+            }
+
+            // Step 3: Set bundle discount attribute for Shopify Function
+            const discountConfig = {
+                bundleId: bundle.id,
+                discountType: bundle.discountType || "PERCENTAGE",
+                discountValue: bundle.discountValue || 0,
+            };
+
+            const updateResponse = await fetch("/cart/update.js", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    attributes: {
+                        _bundleDiscount: JSON.stringify(discountConfig),
+                    },
+                }),
+            });
+
+            if (!updateResponse.ok) {
+                console.warn("Failed to set bundle discount attribute");
+            }
+
+            // Step 4: Show success message
+            this.showMessage(messageEl, "Bundle added to cart!", "success");
+
+            // Step 5: Dispatch event for theme integration
+            this.container.dispatchEvent(
+                new CustomEvent("bundle:addedToCart", {
+                    detail: {
+                        bundle,
+                        cartItems,
+                        discountConfig,
+                    },
+                    bubbles: true,
+                }),
+            );
+
+            // Step 6: Optional - redirect to cart or open cart drawer
+            // Uncomment one of these if needed:
+            // window.location.href = "/cart";
+            // document.dispatchEvent(new CustomEvent("cart:open"));
+        } catch (error) {
+            console.error("Add to cart error:", error);
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : "Failed to add bundle to cart";
+            this.showMessage(messageEl, errorMessage, "error");
+        } finally {
+            // Reset button state
+            button.textContent = originalText;
+            button.disabled = false;
+        }
     }
 
-    private handleAddToCart(bundle: Bundle): void {
-        // Get all products to add to cart
-        const cartItems = bundle.products
-            .filter(
-                (product) =>
-                    product.role === "INCLUDED" || product.role === "OPTIONAL",
-            )
-            .map((product) => ({
-                id: product.variantId,
-                quantity: product.quantity,
-                properties: {
-                    _bundle_id: bundle.id,
-                    _bundle_name: bundle.name,
-                },
-            }));
+    /**
+     * Extracts numeric ID from Shopify GID.
+     * Converts "gid://shopify/ProductVariant/12345" to "12345"
+     */
+    private extractNumericId(gid: string): string {
+        if (!gid) return "";
 
-        // Dispatch custom event for cart integration
-        this.container.dispatchEvent(
-            new CustomEvent("bundle:addToCart", {
-                detail: {
-                    bundle,
-                    cartItems,
-                    totalItems: cartItems.length,
-                },
-                bubbles: true,
-            }),
-        );
+        // If already numeric, return as-is
+        if (/^\d+$/.test(gid)) return gid;
 
-        // Log for debugging (remove in production if not needed)
-        console.log("Adding bundle to cart:", {
-            bundleId: bundle.id,
-            bundleName: bundle.name,
-            items: cartItems,
-        });
+        // Extract from GID format
+        const match = gid.match(/\/(\d+)$/);
+        return match ? match[1] : gid;
+    }
+
+    /**
+     * Shows a temporary message to the user.
+     */
+    private showMessage(
+        element: HTMLElement | null,
+        message: string,
+        type: "success" | "error",
+    ): void {
+        if (!element) return;
+
+        element.textContent = message;
+        element.className = `bundle-message bundle-message--${type}`;
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            element.className = "bundle-message bundle-message--hidden";
+        }, 3000);
     }
 
     private escapeHtml(text: string): string {
