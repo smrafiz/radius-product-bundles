@@ -13,7 +13,6 @@ export function MetricCard({
     tone,
     loading = false,
 }: MetricCardProps) {
-
     const isLoading =
         loading || value === undefined || value === null || value === "";
 

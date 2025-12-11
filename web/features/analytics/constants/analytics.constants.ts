@@ -1,6 +1,4 @@
-import {
-    AnalyticsMetricConfig,
-} from "@/features/analytics";
+import { AnalyticsMetricConfig } from "@/features/analytics";
 
 /*
  * Analytics Metrics

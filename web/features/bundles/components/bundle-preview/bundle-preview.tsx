@@ -29,7 +29,7 @@ export function BundlePreview() {
                     borderRadius: styleData.productRadius || "12px",
                     color: styleData.productTextColor || "#303030",
                     flexDirection: styleData.productAlign || "row",
-                    ...(styleData.productBorderEnabled ?? true
+                    ...((styleData.productBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",
                               borderWidth: "1px",
@@ -194,12 +194,16 @@ export function BundlePreview() {
                                     style={
                                         (styleData.buttonStyleEnabled ?? true)
                                             ? {
-                                                backgroundColor:
-                                                    styleData.buttonBgColor || "#303030",
-                                                color: styleData.buttonTextColor || "#fff",
-                                                borderRadius:
-                                                    styleData.buttonRadius || "8px",
-                                            }
+                                                  backgroundColor:
+                                                      styleData.buttonBgColor ||
+                                                      "#303030",
+                                                  color:
+                                                      styleData.buttonTextColor ||
+                                                      "#fff",
+                                                  borderRadius:
+                                                      styleData.buttonRadius ||
+                                                      "8px",
+                                              }
                                             : undefined
                                     }
                                 >

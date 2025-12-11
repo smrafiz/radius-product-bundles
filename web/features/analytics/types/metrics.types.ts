@@ -1,10 +1,9 @@
 /**
  * Analytics metrics types
  */
+import { Bundle } from "@/features/bundles";
+import { MetricFormat } from "@/shared";
 
-import {
-    MetricFormat,
-} from "@/shared";
 
 /**
  * Processed analytics metrics
@@ -39,4 +38,3 @@ export interface AnalyticsMetricConfig {
         | "caution"
         | undefined;
 }
-

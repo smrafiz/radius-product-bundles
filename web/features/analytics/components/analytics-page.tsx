@@ -1,4 +1,9 @@
-import { AnalyticsMetrics, AnalyticsDate } from "@/features/analytics";
+import {
+    AnalyticsMetrics,
+    AnalyticsDate,
+    AnalyticsBundles,
+    AnalyticsChart,
+} from "@/features/analytics";
 
 export function AnalyticsPage() {
     return (
@@ -8,9 +13,25 @@ export function AnalyticsPage() {
                 paddingBlockStart="large"
                 paddingBlockEnd="large"
             >
+                <s-stack>
+                    <div className="text-center">
+                        <s-heading>
+                            <div className="text-base text-center">
+                                Bundle Analytics & Customer Insights
+                            </div>
+                        </s-heading>
+                        <s-text color="subdued">
+                            Comprehensive insights into your bundle performance
+                            and customer behavior.
+                        </s-text>
+                    </div>
+                </s-stack>
+
                 <s-stack gap="base">
                     <AnalyticsDate />
                     <AnalyticsMetrics />
+                    <AnalyticsChart />
+                    <AnalyticsBundles />
                 </s-stack>
             </s-stack>
         </s-page>

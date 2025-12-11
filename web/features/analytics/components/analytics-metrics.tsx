@@ -1,18 +1,12 @@
 "use client";
 
-import {
-    ANALYTICS_METRICS,
-} from "@/features/analytics";
+import { ANALYTICS_METRICS } from "@/features/analytics";
 
-import {
-    formatByType,
-    useDashboardData,
-} from "@/features/dashboard";
+import { formatByType, useDashboardData } from "@/features/dashboard";
 import { useMemo } from "react";
-import { AnalyticsMetricCard } from './analytics-metrics-card'
+import { AnalyticsMetricCard } from "./analytics-metrics-card";
 
 export function AnalyticsMetrics() {
-
     const { metrics, isMetricsFetching } = useDashboardData();
 
     const cards = useMemo(
@@ -32,7 +26,7 @@ export function AnalyticsMetrics() {
             gridTemplateColumns="repeat(auto-fit, minmax(180px, 1fr))"
             gap="small"
         >
-            {cards.map((_card, index) =>(
+            {cards.map((_card, index) => (
                 <s-grid-item key={_card.title} gridColumn="auto">
                     <AnalyticsMetricCard
                         key={_card.title}
@@ -40,7 +34,7 @@ export function AnalyticsMetrics() {
                         {..._card}
                     />
                 </s-grid-item>
-                ))}
+            ))}
         </s-grid>
     );
 }
