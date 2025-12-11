@@ -1,4 +1,4 @@
-import { AppInstallations } from "@/shared";
+import { AppInstallations } from "@/shared/repositories";
 import shopify from "@/lib/shopify/config/initialize-context";
 import { DeliveryMethod, Session } from "@shopify/shopify-api";
 import { handleShopUpdate, setupGDPRWebHooks } from "@/lib/shopify";

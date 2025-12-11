@@ -1,6 +1,6 @@
 "use server";
 
-import { findOfflineSessionByShop } from "@/shared";
+import { findOfflineSessionByShop } from "@/shared/repositories";
 import { handleSessionToken, registerWebhooks } from "@/lib/shopify";
 
 /**

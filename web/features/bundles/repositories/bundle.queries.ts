@@ -8,7 +8,7 @@ import {
     INCLUDE_BUNDLE_DASHBOARD,
     INCLUDE_BUNDLE_DETAILS,
     INCLUDE_BUNDLE_FULL,
-    INCLUDE_BUNDLE_PRODUCTS,
+    INCLUDE_BUNDLE_PRODUCTS, INCLUDE_SETTINGS,
 } from "./bundle.fragments";
 import { Prisma } from "@/prisma/generated/client";
 import { prisma } from "@/shared/repositories/prisma-connect";
@@ -149,7 +149,10 @@ export async function findBundlesByProductId(
                 some: { productId },
             },
         },
-        include: INCLUDE_BUNDLE_PRODUCTS,
+        include: {
+            ...INCLUDE_BUNDLE_PRODUCTS,
+            ...INCLUDE_SETTINGS,
+        },
     });
 }
 

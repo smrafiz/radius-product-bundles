@@ -17,7 +17,7 @@ export function useStepNavigation() {
     const { canProceedToNextStep } = useBundleValidation();
 
     const goToNextStep = () => {
-        if (canProceedToNextStep() && canGoNext()) {
+        if (canProceedToNextStep && canGoNext()) {
             nextStep();
         }
     };
@@ -48,7 +48,7 @@ export function useStepNavigation() {
 
         // Can only go forward if current step is valid
         if (step === currentStep + 1) {
-            return canProceedToNextStep() && canGoNext();
+            return canProceedToNextStep && canGoNext();
         }
 
         // Can't jump forward more than one step
@@ -64,7 +64,7 @@ export function useStepNavigation() {
         isCurrentStep,
         isStepCompleted,
         canNavigateToStep,
-        canGoNext: canGoNext() && canProceedToNextStep(),
+        canGoNext: canGoNext() && canProceedToNextStep,
         canGoPrevious: canGoPrevious(),
     };
 }

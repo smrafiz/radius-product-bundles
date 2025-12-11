@@ -1,5 +1,6 @@
-import { findOfflineSessionByShop, SessionNotFoundError } from "@/shared";
+import { SessionNotFoundError } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
+import { findOfflineSessionByShop } from "@/shared/repositories";
 
 export async function POST(request: NextRequest) {
     try {

@@ -1,3 +1,4 @@
+import { Product } from "@/shared";
 import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,
@@ -80,25 +81,25 @@ export async function GET(request: NextRequest) {
                         ...(bundle.bundleProducts?.map((bp) => bp.productId) ||
                             []),
                     ]),
-                ).filter(Boolean);
+                ).filter((id): id is string => id !== null);
 
                 // Fetch product details from Shopify
                 const shopifyProducts = await fetchProductDetails(
                     productIds,
                     shop,
-                    accessToken,
                 );
 
                 const productMap = new Map();
-                shopifyProducts?.forEach((product) => {
-                    if (product) {
+                shopifyProducts?.forEach((item) => {
+                    const product = item as Product;
+                    if (product && product.id) {
                         console.log(
                             "Adding to map:",
                             product.id,
                             "->",
                             product.title,
                         );
-                        productMap.set(product.id, product); // KEY: This uses the full gid://shopify/Product/xxx
+                        productMap.set(product.id, product);
                     }
                 });
 
@@ -176,8 +177,8 @@ export async function GET(request: NextRequest) {
                               position: bundle.settings.position,
                               showPrices: bundle.settings.showPrices,
                               showSavings: bundle.settings.showSavings,
-                              showProductImages:
-                                  bundle.settings.showProductImages,
+                              enableHyperLink:
+                                  bundle.settings.enableHyperLink,
                           }
                         : null,
                 };

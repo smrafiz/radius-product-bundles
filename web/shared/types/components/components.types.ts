@@ -1,5 +1,4 @@
-import { ReactNode } from "react";
-import { FieldValues } from "react-hook-form";
+import { FieldErrors, FieldValues } from "react-hook-form";
 
 export interface CalloutButtonProps {
     content: string;

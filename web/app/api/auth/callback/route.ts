@@ -1,12 +1,11 @@
 import {
     createSessionConfig,
     isValidShopifyToken,
-    storeSession,
-    upsertShop,
 } from "@/shared";
 import { runAppSetup } from "@/lib/shopify";
 import { Session } from "@shopify/shopify-api";
 import { NextRequest, NextResponse } from "next/server";
+import { storeSession, upsertShop } from "@/shared/repositories";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
