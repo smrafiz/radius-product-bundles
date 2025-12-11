@@ -42,7 +42,7 @@ async function executeGraphQLWithToken<T = any>(
     accessToken: string,
     shop: string,
 ): Promise<{ data?: T; errors?: any[] }> {
-    const endpoint = `https://${shop}/admin/api/2025-01/graphql.json`;
+    const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
     const query = typeof document === "string" ? document : print(document);
 
     const response = await fetch(endpoint, {

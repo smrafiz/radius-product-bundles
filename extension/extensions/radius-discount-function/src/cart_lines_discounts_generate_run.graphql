@@ -1,11 +1,14 @@
 query Input {
     cart {
-        attribute(key: "_bundleDiscount") {
+        attribute(key: "_bundleDiscounts") {
             value
         }
         lines {
             id
             quantity
+            attribute(key: "_bundle_id") {
+                value
+            }
             cost {
                 subtotalAmount {
                     amount

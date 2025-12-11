@@ -1,11 +1,8 @@
-import {
-    createSessionConfig,
-    isValidShopifyToken,
-} from "@/shared";
-import { runAppSetup } from "@/lib/shopify";
 import { Session } from "@shopify/shopify-api";
 import { NextRequest, NextResponse } from "next/server";
+import { runAppSetup, registerWebhooks } from "@/lib/shopify";
 import { storeSession, upsertShop } from "@/shared/repositories";
+import { createSessionConfig, isValidShopifyToken } from "@/shared";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -68,11 +65,19 @@ export async function GET(request: NextRequest) {
         // Ensure shop record exists in the database
         await upsertShop(shop);
 
+        // Register webhooks (APP_UNINSTALLED, etc.)
+        try {
+            await registerWebhooks(session);
+            console.log("[OAuth] Webhooks registered successfully for", shop);
+        } catch (webhookError) {
+            console.error("[OAuth] Webhook registration failed:", webhookError);
+            // Continue anyway - don't block installation
+        }
+
         // Run app setup (creates metafield definitions, etc.)
         const setupResult = await runAppSetup(tokenData.access_token, shop);
         if (!setupResult.success) {
             console.warn("[OAuth] App setup warning:", setupResult.error);
-            // Continue anyway - don't block installation for setup issues
         }
 
         // Build redirect URL with proper parameters

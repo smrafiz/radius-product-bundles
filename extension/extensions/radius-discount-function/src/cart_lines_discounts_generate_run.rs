@@ -22,6 +22,7 @@ struct BundleConfig {
     bundle_id: String,
     discount_type: String,
     discount_value: f64,
+    required_line_count: Option<usize>,
 }
 
 #[shopify_function]
@@ -40,7 +41,7 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    // Get bundle attribute
+    // Get bundle discounts attribute from cart
     let bundle_attr = match input.cart().attribute() {
         Some(attr) => attr,
         None => return Ok(no_discount),
@@ -51,58 +52,101 @@ fn cart_lines_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    // Parse bundle config from JSON
-    let config: BundleConfig = match serde_json::from_str(attr_value) {
+    // Parse array of bundle configs from JSON
+    let configs: Vec<BundleConfig> = match serde_json::from_str(attr_value) {
         Ok(c) => c,
         Err(_) => return Ok(no_discount),
     };
 
-    // Build targets from all cart lines
-    let targets: Vec<ProductDiscountCandidateTarget> = input
-        .cart()
-        .lines()
-        .iter()
-        .map(|line| {
-            ProductDiscountCandidateTarget::CartLine(CartLineTarget {
-                id: line.id().clone(),
-                quantity: None,
-            })
-        })
-        .collect();
-
-    if targets.is_empty() {
+    if configs.is_empty() {
         return Ok(no_discount);
     }
 
-    // Build discount value based on type
-    let value = match config.discount_type.as_str() {
-        "PERCENTAGE" => ProductDiscountCandidateValue::Percentage(Percentage {
-            value: Decimal(config.discount_value),
-        }),
-        "FIXED_AMOUNT" => ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
-            amount: Decimal(config.discount_value),
-            applies_to_each_item: None,
-        }),
-        _ => return Ok(no_discount),
-    };
+    // Collect discount candidates for all valid bundles
+    let mut candidates: Vec<ProductDiscountCandidate> = vec![];
 
-    // Build message
-    let message = match config.discount_type.as_str() {
-        "PERCENTAGE" => format!("Bundle: {}% off", config.discount_value),
-        "FIXED_AMOUNT" => format!("Bundle: ${} off", config.discount_value),
-        _ => "Bundle discount".to_string(),
-    };
+    for config in configs {
+        // Find all cart lines that belong to this bundle
+        let bundle_lines: Vec<_> = input
+            .cart()
+            .lines()
+            .iter()
+            .filter(|line| {
+                match line.attribute() {
+                    Some(attr) => {
+                        match attr.value() {
+                            Some(line_bundle_id) => *line_bundle_id == config.bundle_id,
+                            None => false,
+                        }
+                    }
+                    None => false,
+                }
+            })
+            .collect();
+
+        // Validate bundle completeness
+        if let Some(required_count) = config.required_line_count {
+            if bundle_lines.len() < required_count {
+                // Bundle is incomplete - skip this bundle
+                continue;
+            }
+        }
+
+        // Skip if no matching lines
+        if bundle_lines.is_empty() {
+            continue;
+        }
+
+        // Build targets from bundle lines
+        let targets: Vec<ProductDiscountCandidateTarget> = bundle_lines
+            .iter()
+            .map(|line| {
+                ProductDiscountCandidateTarget::CartLine(CartLineTarget {
+                    id: line.id().clone(),
+                    quantity: None,
+                })
+            })
+            .collect();
+
+        // Build discount value based on type
+        let value = match config.discount_type.as_str() {
+            "PERCENTAGE" => ProductDiscountCandidateValue::Percentage(Percentage {
+                value: Decimal(config.discount_value),
+            }),
+            "FIXED_AMOUNT" => ProductDiscountCandidateValue::FixedAmount(
+                ProductDiscountCandidateFixedAmount {
+                    amount: Decimal(config.discount_value),
+                    applies_to_each_item: None,
+                },
+            ),
+            _ => continue,
+        };
+
+        // Build message
+        let message = match config.discount_type.as_str() {
+            "PERCENTAGE" => format!("Bundle: {}% off", config.discount_value),
+            "FIXED_AMOUNT" => format!("Bundle: ${} off", config.discount_value),
+            _ => "Bundle discount".to_string(),
+        };
+
+        candidates.push(ProductDiscountCandidate {
+            targets,
+            message: Some(message),
+            value,
+            associated_discount_code: None,
+        });
+    }
+
+    // No valid bundles found
+    if candidates.is_empty() {
+        return Ok(no_discount);
+    }
 
     Ok(CartLinesDiscountsGenerateRunResult {
         operations: vec![CartOperation::ProductDiscountsAdd(
             ProductDiscountsAddOperation {
-                selection_strategy: ProductDiscountSelectionStrategy::First,
-                candidates: vec![ProductDiscountCandidate {
-                    targets,
-                    message: Some(message),
-                    value,
-                    associated_discount_code: None,
-                }],
+                selection_strategy: ProductDiscountSelectionStrategy::All,
+                candidates,
             },
         )],
     })

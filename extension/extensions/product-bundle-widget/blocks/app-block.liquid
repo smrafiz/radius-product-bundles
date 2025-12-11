@@ -1,22 +1,32 @@
-<div
-        class="bundle-widget-container"
-        {{ block.shopify_attributes }}
-        data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
-        data-shop="{{ shop.permanent_domain }}"
-        data-layout="{{ block.settings.layout }}"
-        data-show-savings="{{ block.settings.show_savings }}"
-        data-show-images="{{ block.settings.show_product_images }}"
->
-    <div id="bundle-widget-{{ block.id }}" class="bundle-widget-content" data-block-widget={{ block.id }}>
-        <div class="bundle-loading">
-            <div class="bundle-spinner"></div>
-            <p>{{ block.settings.loading_text | default: "Loading bundles..." }}</p>
-        </div>
-    </div>
-</div>
+{% comment %}
+  Check if this product has any bundles associated via metafield.
+  Only render the widget if the product belongs to at least one bundle.
+{% endcomment %}
 
-{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-{{ 'bundle-widget.js' | asset_url | script_tag }}
+{% assign bundle_ids = product.metafields.radius_bundles.bundle_ids.value %}
+
+{% if bundle_ids != blank and bundle_ids.size > 0 %}
+	<div
+			class="bundle-widget-container"
+			{{ block.shopify_attributes }}
+			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
+			data-shop="{{ shop.permanent_domain }}"
+			data-layout="{{ block.settings.layout }}"
+			data-show-savings="{{ block.settings.show_savings }}"
+			data-show-images="{{ block.settings.show_product_images }}"
+			data-bundle-ids="{{ bundle_ids | json | escape }}"
+	>
+		<div id="bundle-widget-{{ block.id }}" class="bundle-widget-content" data-block-widget="{{ block.id }}">
+			<div class="bundle-loading">
+				<div class="bundle-spinner"></div>
+				<p>{{ block.settings.loading_text | default: "Loading bundles..." }}</p>
+			</div>
+		</div>
+	</div>
+
+	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+	{{ 'bundle-widget.js' | asset_url | script_tag }}
+{% endif %}
 
 {% schema %}
 {
@@ -28,6 +38,34 @@
 			"id": "heading",
 			"label": "Heading",
 			"default": "Bundle Offers"
+		},
+		{
+			"type": "select",
+			"id": "layout",
+			"label": "Layout",
+			"options": [
+				{ "value": "grid", "label": "Grid" },
+				{ "value": "list", "label": "List" }
+			],
+			"default": "grid"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_savings",
+			"label": "Show savings",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_product_images",
+			"label": "Show product images",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "loading_text",
+			"label": "Loading text",
+			"default": "Loading bundles..."
 		}
 	]
 }

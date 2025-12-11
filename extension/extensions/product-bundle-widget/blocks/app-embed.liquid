@@ -1,0 +1,225 @@
+{% comment %}
+  Radius Bundles App Embed
+  - Injects analytics tracking on all pages
+  - Shows bundle savings banner on cart page
+{% endcomment %}
+
+<!-- Bundle Analytics -->
+<script>
+    window.RadiusBundles = window.RadiusBundles || {};
+    window.RadiusBundles.config = {
+        shop: "{{ shop.permanent_domain }}",
+        customerId: "{{ customer.id | default: '' }}",
+        pageType: "{{ request.page_type }}",
+        template: "{{ template.name }}"
+    };
+
+    (function() {
+        // Track page views
+        function trackPageView() {
+            const data = {
+                event: 'page_view',
+                shop: window.RadiusBundles.config.shop,
+                customerId: window.RadiusBundles.config.customerId,
+                pageType: window.RadiusBundles.config.pageType,
+                url: window.location.href,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to your analytics endpoint
+            // fetch('/apps/bundles/analytics', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data)
+            // });
+
+            console.log('[RadiusBundles] Page view:', data);
+        }
+
+        // Track bundle interactions
+        function trackBundleEvent(eventName, bundleData) {
+            const data = {
+                event: eventName,
+                shop: window.RadiusBundles.config.shop,
+                customerId: window.RadiusBundles.config.customerId,
+                bundle: bundleData,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to your analytics endpoint
+            // fetch('/apps/bundles/analytics', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data)
+            // });
+
+            console.log('[RadiusBundles] Bundle event:', data);
+        }
+
+        // Expose tracking function globally
+        window.RadiusBundles.track = trackBundleEvent;
+
+        // Track page view on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', trackPageView);
+        } else {
+            trackPageView();
+        }
+
+        // Listen for bundle add to cart events
+        document.addEventListener('bundle:addedToCart', function(e) {
+            trackBundleEvent('bundle_added_to_cart', e.detail);
+        });
+    })();
+</script>
+
+<!-- Cart Page: Bundle Savings Banner -->
+{% if request.page_type == 'cart' %}
+    <div id="bundle-savings-container" style="display: none;">
+        <div class="bundle-savings-summary">
+            <span class="bundle-savings-icon">🎉</span>
+            <span class="bundle-savings-text"></span>
+        </div>
+    </div>
+
+    <style>
+		.bundle-savings-summary {
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			border: 1px solid #4caf50;
+			border-radius: 8px;
+			padding: 12px 16px;
+			margin: 16px auto;
+			max-width: 1200px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.bundle-savings-icon {
+			font-size: 1.2em;
+		}
+
+		.bundle-savings-text {
+			color: #2e7d32;
+			font-weight: 500;
+			flex: 1;
+		}
+    </style>
+
+    <script>
+        (function() {
+            async function updateBundleSavings() {
+                try {
+                    const response = await fetch('/cart.js');
+                    const cart = await response.json();
+
+                    const container = document.getElementById('bundle-savings-container');
+                    const textEl = container?.querySelector('.bundle-savings-text');
+
+                    if (!container || !textEl) return;
+
+                    const bundleDiscountsRaw = cart.attributes?._bundleDiscounts;
+                    if (!bundleDiscountsRaw) {
+                        container.style.display = 'none';
+                        return;
+                    }
+
+                    const bundles = JSON.parse(bundleDiscountsRaw);
+                    if (!bundles || bundles.length === 0) {
+                        container.style.display = 'none';
+                        return;
+                    }
+
+                    const messages = bundles.map(bundle => {
+                        const name = bundle.bundleName || 'this bundle';
+                        if (bundle.discountType === 'PERCENTAGE') {
+                            return `You're saving ${bundle.discountValue}% with ${name}!`;
+                        } else {
+                            return `You're saving $${bundle.discountValue} with ${name}!`;
+                        }
+                    });
+
+                    textEl.textContent = messages.join(' ');
+                    container.style.display = 'block';
+
+                    // Move banner to a better position
+                    const cartForm = document.querySelector('form[action="/cart"]')
+                        || document.querySelector('.cart-form')
+                        || document.querySelector('.cart');
+
+                    if (cartForm && container.parentNode !== cartForm) {
+                        cartForm.insertBefore(container, cartForm.firstChild);
+                    }
+
+                } catch (error) {
+                    console.error('Bundle savings error:', error);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateBundleSavings);
+            } else {
+                updateBundleSavings();
+            }
+
+            // Re-check when cart updates
+            document.addEventListener('cart:updated', updateBundleSavings);
+
+            // Also poll for AJAX cart updates
+            let lastCartToken = null;
+            setInterval(async () => {
+                try {
+                    const response = await fetch('/cart.js');
+                    const cart = await response.json();
+                    if (cart.token !== lastCartToken) {
+                        lastCartToken = cart.token;
+                        await updateBundleSavings();
+                    }
+                } catch {}
+            }, 2000);
+        })();
+    </script>
+{% endif %}
+
+{% schema %}
+{
+	"name": "Radius Bundles",
+	"target": "head",
+	"javascript": "app-embed.js",
+	"stylesheet": "app-embed.css",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Analytics"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_analytics",
+			"label": "Enable analytics tracking",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Cart Savings Banner"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_savings_banner",
+			"label": "Show savings banner on cart page",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "banner_background",
+			"label": "Banner background color",
+			"default": "#e8f5e9"
+		},
+		{
+			"type": "color",
+			"id": "banner_text_color",
+			"label": "Banner text color",
+			"default": "#2e7d32"
+		}
+	]
+}
+{% endschema %}

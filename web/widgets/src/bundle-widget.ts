@@ -104,6 +104,7 @@ export class ProductBundleWidget {
             }
 
             const data: BundleResponse = await response.json();
+            console.log(url);
 
             if (!data.success || !data.bundles?.length) {
                 return null;
@@ -236,7 +237,6 @@ export class ProductBundleWidget {
 
         if (!button) return;
 
-        // Show loading state
         const originalText = button.textContent || "Add Bundle to Cart";
         button.textContent = "Adding...";
         button.disabled = true;
@@ -249,7 +249,7 @@ export class ProductBundleWidget {
                         product.role === "INCLUDED" ||
                         product.role === "OPTIONAL",
                 )
-                .filter((product) => product.variantId) // Must have variant ID
+                .filter((product) => product.variantId)
                 .map((product) => ({
                     id: this.extractNumericId(product.variantId),
                     quantity: product.quantity,
@@ -278,19 +278,54 @@ export class ProductBundleWidget {
                 );
             }
 
-            // Step 3: Set bundle discount attribute for Shopify Function
-            const discountConfig = {
+            // Step 3: Get existing bundle discounts from cart
+            const cartResponse = await fetch("/cart.js");
+            const cart = await cartResponse.json();
+
+            let existingDiscounts: Array<{
+                bundleId: string;
+                discountType: string;
+                discountValue: number;
+                requiredLineCount: number;
+            }> = [];
+
+            if (cart.attributes?._bundleDiscounts) {
+                try {
+                    existingDiscounts = JSON.parse(
+                        cart.attributes._bundleDiscounts,
+                    );
+                } catch {
+                    existingDiscounts = [];
+                }
+            }
+
+            // Step 4: Add new bundle config (avoid duplicates)
+            const requiredProducts = bundle.products.filter(
+                (p) => p.role === "INCLUDED" || p.isRequired,
+            );
+
+            const newDiscount = {
                 bundleId: bundle.id,
                 discountType: bundle.discountType || "PERCENTAGE",
                 discountValue: bundle.discountValue || 0,
+                requiredLineCount: requiredProducts.length,
             };
 
+            const bundleExists = existingDiscounts.some(
+                (d) => d.bundleId === bundle.id,
+            );
+
+            if (!bundleExists) {
+                existingDiscounts.push(newDiscount);
+            }
+
+            // Step 5: Save updated bundle discounts array
             const updateResponse = await fetch("/cart/update.js", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     attributes: {
-                        _bundleDiscount: JSON.stringify(discountConfig),
+                        _bundleDiscounts: JSON.stringify(existingDiscounts),
                     },
                 }),
             });
@@ -299,25 +334,20 @@ export class ProductBundleWidget {
                 console.warn("Failed to set bundle discount attribute");
             }
 
-            // Step 4: Show success message
+            // Step 6: Show success message
             this.showMessage(messageEl, "Bundle added to cart!", "success");
 
-            // Step 5: Dispatch event for theme integration
+            // Step 7: Dispatch event for theme integration
             this.container.dispatchEvent(
                 new CustomEvent("bundle:addedToCart", {
                     detail: {
                         bundle,
                         cartItems,
-                        discountConfig,
+                        discountConfig: newDiscount,
                     },
                     bubbles: true,
                 }),
             );
-
-            // Step 6: Optional - redirect to cart or open cart drawer
-            // Uncomment one of these if needed:
-            // window.location.href = "/cart";
-            // document.dispatchEvent(new CustomEvent("cart:open"));
         } catch (error) {
             console.error("Add to cart error:", error);
             const errorMessage =
@@ -326,7 +356,6 @@ export class ProductBundleWidget {
                     : "Failed to add bundle to cart";
             this.showMessage(messageEl, errorMessage, "error");
         } finally {
-            // Reset button state
             button.textContent = originalText;
             button.disabled = false;
         }
