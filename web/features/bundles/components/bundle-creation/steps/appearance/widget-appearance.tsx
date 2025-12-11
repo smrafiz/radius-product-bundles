@@ -127,10 +127,8 @@ export function WidgetAppearance() {
                                 <s-stack>
                                     <s-text>Corner radius</s-text>
                                     <RangeSlider
-                                        values={style.buttonRadius ?? 6}
-                                        action={(val) =>
-                                            updateStyle("buttonRadius", val)
-                                        }
+                                        values={style.buttonRadius ?? 8}
+                                        action={(val) => updateStyle("buttonRadius", val)}
                                     />
                                 </s-stack>
                             </s-stack>
@@ -255,12 +253,32 @@ export function WidgetAppearance() {
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RangeSlider
-                                    values={style.productRadius ?? 8}
-                                    action={(val) =>
-                                        updateStyle("productRadius", val)
-                                    }
+                                    values={style.productRadius ?? 12}
+                                    action={(val) => updateStyle("productRadius", val)}
                                 />
                             </s-stack>
+
+                            <s-stack paddingBlockStart="small">
+                                <s-button-group gap="none">
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() => updateStyle("productAlign", "row")}
+                                    >Left</s-button>
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() => updateStyle("productAlign", "column")}
+                                    >Top</s-button>
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() => updateStyle("productAlign", "row-reverse")}
+                                    >Right</s-button>
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() => updateStyle("productAlign", "column-reverse")}
+                                    >Bottom</s-button>
+                                </s-button-group>
+                            </s-stack>
+
                         </s-stack>
 
                         <s-divider />

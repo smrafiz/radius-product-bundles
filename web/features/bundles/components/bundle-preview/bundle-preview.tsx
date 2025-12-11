@@ -26,9 +26,10 @@ export function BundlePreview() {
                 key={index}
                 style={{
                     backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: styleData.productRadius || "8px",
+                    borderRadius: styleData.productRadius || "12px",
                     color: styleData.productTextColor || "#303030",
-                    ...((styleData.productBorderEnabled ?? true)
+                    flexDirection: styleData.productAlign || "row",
+                    ...(styleData.productBorderEnabled ?? true
                         ? {
                               borderStyle: "solid",
                               borderWidth: "1px",
@@ -143,8 +144,6 @@ export function BundlePreview() {
                                 </button>
                             )}
 
-                            <s-divider />
-
                             {/* Pricing */}
                             <div className="flex flex-col gap-2">
                                 {displaySettings.showPrices && (
@@ -195,16 +194,12 @@ export function BundlePreview() {
                                     style={
                                         (styleData.buttonStyleEnabled ?? true)
                                             ? {
-                                                  backgroundColor:
-                                                      styleData.buttonBgColor ||
-                                                      "#303030",
-                                                  color:
-                                                      styleData.buttonTextColor ||
-                                                      "#fff",
-                                                  borderRadius:
-                                                      styleData.buttonRadius ||
-                                                      "6px",
-                                              }
+                                                backgroundColor:
+                                                    styleData.buttonBgColor || "#303030",
+                                                color: styleData.buttonTextColor || "#fff",
+                                                borderRadius:
+                                                    styleData.buttonRadius || "8px",
+                                            }
                                             : undefined
                                     }
                                 >

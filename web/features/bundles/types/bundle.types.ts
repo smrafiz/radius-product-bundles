@@ -332,6 +332,7 @@ export interface DisplaySettings {
         productBorderEnabled?: boolean;
         productBorderColor?: string;
         productRadius?: number;
+        productAlign?: "row" | "column" | "row-reverse" | "column-reverse";
         // Widget
         widgetBgColor?: string;
         widgetTextColor?: string;

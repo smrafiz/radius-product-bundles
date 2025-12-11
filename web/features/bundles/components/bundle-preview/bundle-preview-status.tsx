@@ -45,7 +45,6 @@ export function BundlePreviewStatus() {
         }
 
         const [start, end] = value.split("--");
-        // Convert string to Date for zod schema compatibility
         updateBundleField("startDate", start ? new Date(start) : undefined);
         updateBundleField("endDate", end ? new Date(end) : undefined);
     };

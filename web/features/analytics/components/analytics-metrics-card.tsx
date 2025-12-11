@@ -5,7 +5,7 @@ import { MetricCardProps, SkeletonLine } from "@/shared";
 /**
  * Metric card component with integrated loading state
  */
-export function MetricCard({
+export function AnalyticsMetricCard({
     title,
     value,
     svg_icon,
@@ -13,7 +13,6 @@ export function MetricCard({
     tone,
     loading = false,
 }: MetricCardProps) {
-
     const isLoading =
         loading || value === undefined || value === null || value === "";
 
@@ -41,7 +40,6 @@ export function MetricCard({
                                 <s-text tone="info">
                                     <div className="text-[20px]">{value}</div>
                                 </s-text>
-
                                 {tone && icon && (
                                     <s-badge tone={tone} icon={icon}>
                                         12%

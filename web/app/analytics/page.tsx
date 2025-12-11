@@ -1,14 +1,10 @@
-import { Page } from "@shopify/polaris";
-
-export default function AnalyticsPage() {
-    return (
-        <Page
-            title="Analytics"
-            subtitle="Deep insights into your bundle performance"
-        >
-            <div className="flex items-center justify-center p-8">
-                <p>Advanced analytics coming soon...</p>
-            </div>
-        </Page>
-    );
+import { Metadata } from "next";
+import { AnalyticsPage } from "@/features/analytics";
+export const metadata: Metadata = {
+    title: "Analytics | Bundle Performance Dashboard",
+    description:
+        "Analyze your bundle performance with detailed insights. View revenue, conversions, active bundles, and real-time metrics to optimize your product bundle strategy.",
+};
+export default function Page() {
+    return <AnalyticsPage />
 }
