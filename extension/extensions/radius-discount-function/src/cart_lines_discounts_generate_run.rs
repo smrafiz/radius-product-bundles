@@ -20,6 +20,7 @@ use shopify_function::Result;
 #[serde(rename_all = "camelCase")]
 struct BundleConfig {
     bundle_id: String,
+    bundle_name: Option<String>,
     discount_type: String,
     discount_value: f64,
     required_line_count: Option<usize>,
@@ -87,12 +88,10 @@ fn cart_lines_discounts_generate_run(
         // Validate bundle completeness
         if let Some(required_count) = config.required_line_count {
             if bundle_lines.len() < required_count {
-                // Bundle is incomplete - skip this bundle
                 continue;
             }
         }
 
-        // Skip if no matching lines
         if bundle_lines.is_empty() {
             continue;
         }
@@ -122,11 +121,12 @@ fn cart_lines_discounts_generate_run(
             _ => continue,
         };
 
-        // Build message
+        // Build message with bundle name and discount details
+        let bundle_name = config.bundle_name.unwrap_or_else(|| "Bundle".to_string());
         let message = match config.discount_type.as_str() {
-            "PERCENTAGE" => format!("Bundle: {}% off", config.discount_value),
-            "FIXED_AMOUNT" => format!("Bundle: ${} off", config.discount_value),
-            _ => "Bundle discount".to_string(),
+            "PERCENTAGE" => format!("{} bundle: {}% off", bundle_name, config.discount_value),
+            "FIXED_AMOUNT" => format!("{} bundle discount", bundle_name),
+            _ => format!("{} discount", bundle_name),
         };
 
         candidates.push(ProductDiscountCandidate {
@@ -137,7 +137,6 @@ fn cart_lines_discounts_generate_run(
         });
     }
 
-    // No valid bundles found
     if candidates.is_empty() {
         return Ok(no_discount);
     }

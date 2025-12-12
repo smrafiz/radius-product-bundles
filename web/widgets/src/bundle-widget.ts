@@ -284,6 +284,7 @@ export class ProductBundleWidget {
 
             let existingDiscounts: Array<{
                 bundleId: string;
+                bundleName?: string;
                 discountType: string;
                 discountValue: number;
                 requiredLineCount: number;
@@ -306,6 +307,7 @@ export class ProductBundleWidget {
 
             const newDiscount = {
                 bundleId: bundle.id,
+                bundleName: bundle.name,
                 discountType: bundle.discountType || "PERCENTAGE",
                 discountValue: bundle.discountValue || 0,
                 requiredLineCount: requiredProducts.length,
