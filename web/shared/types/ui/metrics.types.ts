@@ -6,7 +6,6 @@ export interface MetricCardProps {
     value: string | number;
     growth?: number;
     subtitle?: string;
-    svg_icon?: string;
     icon?: "arrow-up" | "arrow-down" | "work-list";
     tone?:
         | "success"

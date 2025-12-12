@@ -158,68 +158,104 @@ export function AnalyticsDate() {
                         <s-stack gap="base" direction="inline">
                             <s-stack gap="small-200">
                                 <s-button
-                                    variant={activePreset === "today" ? "primary" : "secondary"}
+                                    variant={activePreset === "today" ? "secondary" : "tertiary"}
                                     onClick={todayDays}
                                 >
                                     Today
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "yesterday" ? "primary" : "secondary"}
+                                    variant={activePreset === "yesterday" ? "secondary" : "tertiary"}
                                     onClick={yesTerDays}
                                 >
                                     Yesterday
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "last7" ? "primary" : "secondary"}
+                                    variant={activePreset === "last7" ? "secondary" : "tertiary"}
                                     onClick={last7Days}
                                 >
                                     Last 7 days
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "last30" ? "primary" : "secondary"}
+                                    variant={activePreset === "last30" ? "secondary" : "tertiary"}
                                     onClick={last30Days}
                                 >
                                     Last 30 days
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "month" ? "primary" : "secondary"}
+                                    variant={activePreset === "month" ? "secondary" : "tertiary"}
                                     onClick={thisMonth}
                                 >
                                     This month
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "last90" ? "primary" : "secondary"}
+                                    variant={activePreset === "last90" ? "secondary" : "tertiary"}
                                     onClick={last90Days}
                                 >
                                     Last 90 days
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "year" ? "primary" : "secondary"}
+                                    variant={activePreset === "year" ? "secondary" : "tertiary"}
                                     onClick={last360Days}
                                 >
                                     Last Year
                                 </s-button>
                             </s-stack>
 
-                            <s-stack>
+                            <s-stack direction="inline" gap="large">
+                                {/* LEFT CALENDAR (Start) */}
                                 <s-date-picker
                                     type="range"
-                                    view={view}
+                                    view={value.split("--")[0].slice(0, 7)}  // Start month
                                     value={value}
                                     onChange={(event) => {
                                         const v = event.currentTarget.value;
                                         setValue(v);
+
+                                        // Update main view (based on start date)
                                         setView(v.split("--")[0].slice(0, 7));
                                     }}
                                 />
 
+                                {/* RIGHT CALENDAR (End) */}
+                                <s-date-picker
+                                    type="range"
+                                    view={value.split("--")[1].slice(0, 7)}  // End month
+                                    value={value}
+                                    onChange={(event) => {
+                                        const v = event.currentTarget.value;
+                                        setValue(v);
+
+                                        // Update main view (based on start date)
+                                        setView(v.split("--")[0].slice(0, 7));
+                                    }}
+                                />
                             </s-stack>
+                        </s-stack>
+
+                        {/* Apply / Cancel Buttons */}
+                        <s-stack direction="inline" justifyContent="end" gap="small">
+                            <s-button
+                                variant="secondary"
+                                onClick={() => {
+                                    setValue(getLast7Days());
+                                    const popover = document.getElementById("date-popover");
+                                    if (popover) {
+                                        const popoverButton = document.querySelector('[commandfor="date-popover"]') as HTMLElement;
+                                        popoverButton?.click();
+                                    }
+                                }}
+                            >
+                                Cancel
+                            </s-button>
+                            <s-button variant="primary" onClick={() => console.log("Apply", value)}>
+                                Apply
+                            </s-button>
                         </s-stack>
                     </s-stack>
                 </s-box>

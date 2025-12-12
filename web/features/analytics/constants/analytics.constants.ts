@@ -10,7 +10,6 @@ export const ANALYTICS_METRICS: AnalyticsMetricConfig[] = [
         format: "currency",
         tone: "success",
         icon: "arrow-up",
-        svg_icon: "analytics-graph",
     },
     {
         key: "revenueGrowth",
@@ -18,7 +17,6 @@ export const ANALYTICS_METRICS: AnalyticsMetricConfig[] = [
         format: "percentage",
         tone: "warning",
         icon: "arrow-up",
-        svg_icon: "analytics-funnel",
     },
     {
         key: "conversionGrowth",
@@ -26,7 +24,6 @@ export const ANALYTICS_METRICS: AnalyticsMetricConfig[] = [
         format: "number",
         tone: "info",
         icon: "arrow-down",
-        svg_icon: "analytics-svg-repo",
     },
     {
         key: "avgConversionRate",
@@ -34,6 +31,5 @@ export const ANALYTICS_METRICS: AnalyticsMetricConfig[] = [
         format: "number",
         tone: "info",
         icon: "arrow-down",
-        svg_icon: "analytics-svg-repo",
     },
 ];

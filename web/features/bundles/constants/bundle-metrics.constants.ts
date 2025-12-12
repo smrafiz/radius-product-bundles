@@ -12,13 +12,11 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
         title: "Active Bundles",
         value: (metrics?.activeBundles ?? "").toString(),
         comparisonLabel: "Total created",
-        svg_icon: "analytics-graph",
     },
     {
         title: "Total Bundles",
         value: (metrics?.totalBundles ?? "").toString(),
         comparisonLabel: "Total created",
-        svg_icon: "analytics-funnel",
     },
     {
         title: "Total Views",
@@ -28,7 +26,6 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
                 : "",
         tone: "info",
         icon: "arrow-down",
-        svg_icon: "analytics-svg-repo",
     },
     {
         title: "Total Revenue",
@@ -38,6 +35,5 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
                 : "",
         tone: "info",
         icon: "arrow-down",
-        svg_icon: "analytics-svg-repo",
     },
 ];

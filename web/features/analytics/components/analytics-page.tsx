@@ -1,8 +1,6 @@
 import {
     AnalyticsMetrics,
-    AnalyticsDate,
-    AnalyticsBundles,
-    AnalyticsChart,
+    AnalyticsTabs,
 } from "@/features/analytics";
 
 export function AnalyticsPage() {
@@ -28,10 +26,8 @@ export function AnalyticsPage() {
                 </s-stack>
 
                 <s-stack gap="base">
-                    <AnalyticsDate />
                     <AnalyticsMetrics />
-                    <AnalyticsChart />
-                    <AnalyticsBundles />
+                    <AnalyticsTabs />
                 </s-stack>
             </s-stack>
         </s-page>

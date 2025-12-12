@@ -8,7 +8,6 @@ import { MetricCardProps, SkeletonLine } from "@/shared";
 export function AnalyticsMetricCard({
     title,
     value,
-    svg_icon,
     icon,
     tone,
     loading = false,
@@ -20,14 +19,6 @@ export function AnalyticsMetricCard({
         <s-section>
             <s-stack>
                 <s-stack direction="inline" gap="base" alignItems="center">
-                    <div className="w-[var(--p-font-size-1000)]">
-                        <s-image
-                            src={`/assets/${svg_icon}.svg`}
-                            alt={title}
-                            aspectRatio="1/1"
-                            inlineSize="auto"
-                        />
-                    </div>
                     <s-stack gap="small-400">
                         <s-heading>{title}</s-heading>
 

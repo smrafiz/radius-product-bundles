@@ -26,7 +26,6 @@ export interface AnalyticsMetricConfig {
     key: keyof AnalyticsMetricsData;
     title: string;
     format: MetricFormat;
-    svg_icon: string;
     icon: "arrow-up" | "arrow-down" | "work-list";
     tone:
         | "success"

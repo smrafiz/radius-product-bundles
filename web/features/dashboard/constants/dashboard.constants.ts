@@ -16,7 +16,6 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
         format: "currency",
         tone: "success",
         icon: "arrow-up",
-        svg_icon: "analytics-graph",
     },
     {
         key: "avgConversionRate",
@@ -24,7 +23,6 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
         format: "percentage",
         tone: "warning",
         icon: "arrow-up",
-        svg_icon: "analytics-funnel",
     },
     {
         key: "totalViews",
@@ -32,7 +30,6 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
         format: "number",
         tone: "info",
         icon: "arrow-down",
-        svg_icon: "analytics-svg-repo",
         comparisonLabel: "Last 30 days",
         action: { label: "View details", url: ROUTES.ANALYTICS },
     },

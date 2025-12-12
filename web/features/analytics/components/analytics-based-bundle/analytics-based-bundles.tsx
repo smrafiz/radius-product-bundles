@@ -9,7 +9,7 @@ import { BundleTableSkeleton } from "@/features/bundles";
 /**
  * Dashboard Bundles Component
  */
-export function AnalyticsBundles() {
+export function AnalyticsBasedBundles() {
     const { loading, error, bundles } = useDashboardStore();
 
     if (loading) {

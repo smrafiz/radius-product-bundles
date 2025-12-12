@@ -14,7 +14,6 @@ export function AnalyticsMetrics() {
             ANALYTICS_METRICS.map((cfg) => ({
                 title: cfg.title,
                 icon: cfg.icon,
-                svg_icon: cfg.svg_icon,
                 tone: cfg.tone,
                 value: formatByType(metrics?.[cfg.key], cfg.format),
             })),
@@ -24,7 +23,7 @@ export function AnalyticsMetrics() {
     return (
         <s-grid
             gridTemplateColumns="repeat(auto-fit, minmax(180px, 1fr))"
-            gap="small"
+            gap="base"
         >
             {cards.map((_card, index) => (
                 <s-grid-item key={_card.title} gridColumn="auto">

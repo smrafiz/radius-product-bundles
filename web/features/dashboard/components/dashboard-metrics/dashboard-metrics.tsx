@@ -19,7 +19,6 @@ export function DashboardMetrics() {
             DASHBOARD_METRICS.map((cfg) => ({
                 title: cfg.title,
                 icon: cfg.icon,
-                svg_icon: cfg.svg_icon,
                 tone: cfg.tone,
                 value: formatByType(metrics?.[cfg.key], cfg.format),
             })),
