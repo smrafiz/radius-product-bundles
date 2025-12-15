@@ -60,10 +60,19 @@
                 // Build savings messages
                 const messages = bundles.map(bundle => {
                     const name = bundle.bundleName || 'this bundle';
-                    if (bundle.discountType === 'PERCENTAGE') {
-                        return `You're saving ${bundle.discountValue}% with ${name}!`;
-                    } else {
-                        return `You're saving $${bundle.discountValue} with ${name}!`;
+                    switch (bundle.discountType) {
+                        case 'PERCENTAGE':
+                            messages.push(`You're saving ${bundle.discountValue}% with ${name}!`);
+                            break;
+                        case 'FIXED_AMOUNT':
+                            messages.push(`You're saving $${bundle.discountValue.toFixed(2)} with ${name}!`);
+                            break;
+                        case 'CUSTOM_PRICE':
+                            messages.push(`Special bundle price: $${bundle.discountValue.toFixed(2)} for ${name}`);
+                            break;
+                        case 'NO_DISCOUNT':
+                            // No message
+                            break;
                     }
                 });
 

@@ -168,6 +168,8 @@ export async function GET(request: NextRequest) {
                     type: bundle.type,
                     discountType: bundle.discountType,
                     discountValue: bundle.discountValue,
+                    minOrderValue: bundle.minOrderValue || 0,
+                    maxDiscountAmount: bundle.maxDiscountAmount || 0,
                     status: bundle.status,
                     products: transformedProducts,
                     settings: bundle.settings
@@ -177,8 +179,7 @@ export async function GET(request: NextRequest) {
                               position: bundle.settings.position,
                               showPrices: bundle.settings.showPrices,
                               showSavings: bundle.settings.showSavings,
-                              enableHyperLink:
-                                  bundle.settings.enableHyperLink,
+                              enableHyperLink: bundle.settings.enableHyperLink,
                           }
                         : null,
                 };

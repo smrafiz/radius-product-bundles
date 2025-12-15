@@ -18,8 +18,14 @@ interface Bundle {
     id: string;
     name: string;
     description?: string;
-    discountType?: "PERCENTAGE" | "FIXED_AMOUNT";
+    discountType?:
+        | "PERCENTAGE"
+        | "FIXED_AMOUNT"
+        | "CUSTOM_PRICE"
+        | "NO_DISCOUNT";
     discountValue?: number;
+    minOrderValue?: number;
+    maxDiscountAmount?: number;
     products: BundleProduct[];
     settings?: {
         layout?: "grid" | "list";
@@ -141,14 +147,36 @@ export class ProductBundleWidget {
             (sum, product) => sum + product.price * product.quantity,
             0,
         );
-        const discountAmount =
-            bundle.discountType === "PERCENTAGE"
-                ? (originalTotal * (bundle.discountValue || 0)) / 100
-                : bundle.discountValue || 0;
-        const bundleTotal = originalTotal - discountAmount;
+
+        let discountAmount: number;
+        let bundleTotal: number;
+
+        switch (bundle.discountType) {
+            case "PERCENTAGE":
+                discountAmount =
+                    (originalTotal * (bundle.discountValue || 0)) / 100;
+                bundleTotal = originalTotal - discountAmount;
+                break;
+            case "FIXED_AMOUNT":
+                discountAmount = bundle.discountValue || 0;
+                bundleTotal = originalTotal - discountAmount;
+                break;
+            case "CUSTOM_PRICE":
+                bundleTotal = bundle.discountValue || 0;
+                discountAmount = originalTotal - bundleTotal;
+                break;
+            case "NO_DISCOUNT":
+            default:
+                discountAmount = 0;
+                bundleTotal = originalTotal;
+                break;
+        }
 
         const content = this.container.querySelector(".bundle-widget-content");
-        if (!content) return;
+
+        if (!content) {
+            return;
+        }
 
         content.innerHTML = `
         <div class="bundle-widget bundle-widget--fbt">
@@ -191,13 +219,13 @@ export class ProductBundleWidget {
                 </div>
                 
                 ${
-                    showSavings && bundle.discountValue
+                    discountAmount > 0
                         ? `
                     <div class="bundle-savings-row">
                         <span class="bundle-savings-label">You save:</span>
                         <span class="bundle-savings-amount">
-                            $${discountAmount.toFixed(2)} 
-                            (${bundle.discountValue}${bundle.discountType === "PERCENTAGE" ? "%" : ""})
+                            $${discountAmount.toFixed(2)}
+                            ${bundle.discountType === "PERCENTAGE" ? `(${bundle.discountValue}%)` : ""}
                         </span>
                     </div>
                 `
@@ -311,15 +339,15 @@ export class ProductBundleWidget {
                 discountType: bundle.discountType || "PERCENTAGE",
                 discountValue: bundle.discountValue || 0,
                 requiredLineCount: requiredProducts.length,
+                minOrderValue: bundle.minOrderValue || 0,
+                maxDiscountAmount: bundle.maxDiscountAmount || 0,
             };
 
-            const bundleExists = existingDiscounts.some(
-                (d) => d.bundleId === bundle.id,
+            // Remove existing entry for this bundle (if any) and add updated one
+            existingDiscounts = existingDiscounts.filter(
+                (d) => d.bundleId !== bundle.id,
             );
-
-            if (!bundleExists) {
-                existingDiscounts.push(newDiscount);
-            }
+            existingDiscounts.push(newDiscount);
 
             // Step 5: Save updated bundle discounts array
             const updateResponse = await fetch("/cart/update.js", {
@@ -350,6 +378,48 @@ export class ProductBundleWidget {
                     bubbles: true,
                 }),
             );
+
+            // Step 8: Trigger theme cart update (Dawn theme support)
+            document.dispatchEvent(new CustomEvent("cart:refresh"));
+
+            // Update cart count in header manually (fallback for all themes)
+            try {
+                const updatedCart = await fetch("/cart.js").then((r) =>
+                    r.json(),
+                );
+
+                // Find cart icon link
+                const cartLink = document.querySelector("#cart-icon-bubble");
+
+                if (cartLink && updatedCart.item_count > 0) {
+                    let bubble = cartLink.querySelector(".cart-count-bubble");
+
+                    // Create bubble if it doesn't exist
+                    if (!bubble) {
+                        bubble = document.createElement("div");
+                        bubble.className = "cart-count-bubble";
+                        bubble.innerHTML = `
+                <span aria-hidden="true">${updatedCart.item_count}</span>
+                <span class="visually-hidden">${updatedCart.item_count} items</span>
+            `;
+                        cartLink.appendChild(bubble);
+                    } else {
+                        // Update existing bubble
+                        const countSpan = bubble.querySelector(
+                            '[aria-hidden="true"]',
+                        );
+                        const srSpan = bubble.querySelector(".visually-hidden");
+                        if (countSpan)
+                            countSpan.textContent =
+                                updatedCart.item_count.toString();
+                        if (srSpan)
+                            srSpan.textContent = `${updatedCart.item_count} items`;
+                        (bubble as HTMLElement).style.display = "flex";
+                    }
+                }
+            } catch (e) {
+                console.warn("[RadiusBundles] Could not update cart count:", e);
+            }
         } catch (error) {
             console.error("Add to cart error:", error);
             const errorMessage =

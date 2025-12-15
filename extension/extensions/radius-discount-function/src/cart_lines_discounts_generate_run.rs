@@ -24,6 +24,8 @@ struct BundleConfig {
     discount_type: String,
     discount_value: f64,
     required_line_count: Option<usize>,
+    min_order_value: Option<f64>,
+    max_discount_amount: Option<f64>,
 }
 
 #[shopify_function]
@@ -63,10 +65,25 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
+    // Calculate total cart value for minimum order check
+    let cart_total: f64 = input
+        .cart()
+        .lines()
+        .iter()
+        .map(|line| line.cost().subtotal_amount().amount().0)
+        .sum();
+
     // Collect discount candidates for all valid bundles
     let mut candidates: Vec<ProductDiscountCandidate> = vec![];
 
     for config in configs {
+        // Check minimum order value
+        if let Some(min_order) = config.min_order_value {
+            if min_order > 0.0 && cart_total < min_order {
+                continue; // Skip - cart total below minimum
+            }
+        }
+
         // Find all cart lines that belong to this bundle
         let bundle_lines: Vec<_> = input
             .cart()
@@ -96,6 +113,12 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
+        // Calculate bundle total for discount calculations
+        let bundle_total: f64 = bundle_lines
+            .iter()
+            .map(|line| line.cost().subtotal_amount().amount().0)
+            .sum();
+
         // Build targets from bundle lines
         let targets: Vec<ProductDiscountCandidateTarget> = bundle_lines
             .iter()
@@ -108,17 +131,61 @@ fn cart_lines_discounts_generate_run(
             .collect();
 
         // Build discount value based on type
-        let value = match config.discount_type.as_str() {
-            "PERCENTAGE" => ProductDiscountCandidateValue::Percentage(Percentage {
-                value: Decimal(config.discount_value),
-            }),
-            "FIXED_AMOUNT" => ProductDiscountCandidateValue::FixedAmount(
-                ProductDiscountCandidateFixedAmount {
-                    amount: Decimal(config.discount_value),
-                    applies_to_each_item: None,
-                },
+        let (discount_amount, value) = match config.discount_type.as_str() {
+            "PERCENTAGE" => {
+                let calculated = bundle_total * config.discount_value / 100.0;
+                (
+                    calculated,
+                    ProductDiscountCandidateValue::Percentage(Percentage {
+                        value: Decimal(config.discount_value),
+                    }),
+                )
+            }
+            "FIXED_AMOUNT" => (
+                config.discount_value,
+                ProductDiscountCandidateValue::FixedAmount(
+                    ProductDiscountCandidateFixedAmount {
+                        amount: Decimal(config.discount_value),
+                        applies_to_each_item: None,
+                    },
+                ),
             ),
+            "CUSTOM_PRICE" => {
+                let discount_needed = bundle_total - config.discount_value;
+
+                if discount_needed <= 0.0 {
+                    continue;
+                }
+
+                (
+                    discount_needed,
+                    ProductDiscountCandidateValue::FixedAmount(
+                        ProductDiscountCandidateFixedAmount {
+                            amount: Decimal(discount_needed),
+                            applies_to_each_item: None,
+                        },
+                    ),
+                )
+            }
+            "NO_DISCOUNT" => continue,
             _ => continue,
+        };
+
+        // Apply maximum discount cap
+        let final_value = if let Some(max_discount) = config.max_discount_amount {
+            if max_discount > 0.0 && discount_amount > max_discount {
+                // Cap the discount at maximum
+                ProductDiscountCandidateValue::FixedAmount(
+                    ProductDiscountCandidateFixedAmount {
+                        amount: Decimal(max_discount),
+                        applies_to_each_item: None,
+                    },
+                )
+            } else {
+                value
+            }
+        } else {
+            value
         };
 
         // Build message with bundle name and discount details
@@ -126,13 +193,14 @@ fn cart_lines_discounts_generate_run(
         let message = match config.discount_type.as_str() {
             "PERCENTAGE" => format!("{} bundle: {}% off", bundle_name, config.discount_value),
             "FIXED_AMOUNT" => format!("{} bundle discount", bundle_name),
+            "CUSTOM_PRICE" => format!("{}: Special price", bundle_name),
             _ => format!("{} discount", bundle_name),
         };
 
         candidates.push(ProductDiscountCandidate {
             targets,
             message: Some(message),
-            value,
+            value: final_value,
             associated_discount_code: None,
         });
     }

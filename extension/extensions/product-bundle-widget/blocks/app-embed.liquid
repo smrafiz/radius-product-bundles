@@ -60,17 +60,14 @@
                 console.log('[RadiusBundles] Bundle event:', data);
             }
 
-            // Expose tracking function globally
             window.RadiusBundles.track = trackBundleEvent;
 
-            // Track page view on load
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', trackPageView);
             } else {
                 trackPageView();
             }
 
-            // Listen for bundle add to cart events
             document.addEventListener('bundle:addedToCart', function(e) {
                 trackBundleEvent('bundle_added_to_cart', e.detail);
             });
@@ -89,21 +86,35 @@
 				padding: 12px 16px;
 				margin: 16px 0;
 				display: flex;
-				align-items: center;
+				align-items: flex-start;
 				gap: 10px;
 			}
 			.radius-savings-banner__icon {
 				font-size: 1.4em;
+				line-height: 1.4;
 			}
-			.radius-savings-banner__text {
+			.radius-savings-banner__content {
 				color: {{ block.settings.banner_text_color }};
 				font-weight: 600;
 				flex: 1;
 			}
+			.radius-savings-banner__list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.radius-savings-banner__list li {
+				padding: 2px 0;
+			}
+			.radius-savings-banner__list li::before {
+				content: "✓ ";
+				color: {{ block.settings.banner_border_color }};
+				font-weight: bold;
+			}
         </style>
         <div class="radius-savings-banner">
             <span class="radius-savings-banner__icon">🎉</span>
-            <span class="radius-savings-banner__text"></span>
+            <div class="radius-savings-banner__content"></div>
         </div>
     </div>
 
@@ -118,9 +129,9 @@
                     const cart = await response.json();
 
                     const container = document.getElementById('radius-bundle-savings');
-                    const textEl = container?.querySelector('.radius-savings-banner__text');
+                    const contentEl = container?.querySelector('.radius-savings-banner__content');
 
-                    if (!container || !textEl) return;
+                    if (!container || !contentEl) return;
 
                     const bundleDiscountsRaw = cart.attributes?._bundleDiscounts;
                     if (!bundleDiscountsRaw) {
@@ -159,20 +170,36 @@
                         // Only show message if bundle is complete
                         if (itemCount >= required && required > 0) {
                             const name = bundle.bundleName || 'this bundle';
-                            if (bundle.discountType === 'PERCENTAGE') {
-                                messages.push(`You're saving ${bundle.discountValue}% with ${name}!`);
-                            } else {
-                                messages.push(`You're saving $${bundle.discountValue.toFixed(2)} with ${name}!`);
+                            switch (bundle.discountType) {
+                                case 'PERCENTAGE':
+                                    messages.push(`You're saving ${bundle.discountValue}% with ${name}`);
+                                    break;
+                                case 'FIXED_AMOUNT':
+                                    messages.push(`You're saving $${bundle.discountValue.toFixed(2)} with ${name}`);
+                                    break;
+                                case 'CUSTOM_PRICE':
+                                    messages.push(`Special bundle price: $${bundle.discountValue.toFixed(2)} for ${name}`);
+                                    break;
+                                case 'NO_DISCOUNT':
+                                    // No message for bundles without discount
+                                    break;
+                                default:
+                                    messages.push(`Bundle discount applied: ${name}`);
                             }
                         }
                     });
 
                     if (messages.length > 0) {
-                        textEl.textContent = messages.join(' ');
+                        // Single bundle: plain text, Multiple bundles: list
+                        if (messages.length === 1) {
+                            contentEl.innerHTML = messages[0];
+                        } else {
+                            const listItems = messages.map(msg => `<li>${msg}</li>`).join('');
+                            contentEl.innerHTML = `<ul class="radius-savings-banner__list">${listItems}</ul>`;
+                        }
                         container.style.display = 'block';
 
-                        // Find the MAIN cart form (not the notification form)
-                        // Dawn theme uses form#cart as the main cart form
+                        // Move to top of main cart form
                         const mainCartForm = document.querySelector('form#cart')
                             || document.querySelector('.cart__contents')
                             || document.querySelector('cart-items form')
@@ -200,7 +227,7 @@
             // Listen for cart update events
             document.addEventListener('cart:updated', updateSavingsBanner);
 
-            // Poll for cart changes (fallback for themes without events)
+            // Poll for cart changes
             let lastCartToken = null;
             let lastItemCount = null;
             setInterval(async () => {
