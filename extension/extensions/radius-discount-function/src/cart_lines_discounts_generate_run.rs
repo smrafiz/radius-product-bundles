@@ -26,6 +26,8 @@ struct BundleConfig {
     required_line_count: Option<usize>,
     min_order_value: Option<f64>,
     max_discount_amount: Option<f64>,
+    discount_application: Option<String>,
+    discounted_product_ids: Option<Vec<String>>,
 }
 
 #[shopify_function]
@@ -80,7 +82,7 @@ fn cart_lines_discounts_generate_run(
         // Check minimum order value
         if let Some(min_order) = config.min_order_value {
             if min_order > 0.0 && cart_total < min_order {
-                continue; // Skip - cart total below minimum
+                continue;
             }
         }
 
@@ -113,15 +115,25 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
-        // Calculate bundle total for discount calculations
-        let bundle_total: f64 = bundle_lines
-            .iter()
-            .map(|line| line.cost().subtotal_amount().amount().0)
-            .sum();
+        // Check if we should apply discount to specific products only
+        let apply_to_specific = config.discount_application.as_deref() == Some("products");
+        let discounted_ids = config.discounted_product_ids.clone().unwrap_or_default();
 
-        // Build targets from bundle lines
+        // Build targets - filter if specific products mode
         let targets: Vec<ProductDiscountCandidateTarget> = bundle_lines
             .iter()
+            .filter(|line| {
+                if apply_to_specific && !discounted_ids.is_empty() {
+                    // Get product ID from line attribute
+                    if let Some(product_attr) = line.product_id() {
+                        if let Some(product_id) = product_attr.value() {
+                            return discounted_ids.contains(&product_id.to_string());
+                        }
+                    }
+                    return false;
+                }
+                true
+            })
             .map(|line| {
                 ProductDiscountCandidateTarget::CartLine(CartLineTarget {
                     id: line.id().clone(),
@@ -129,6 +141,28 @@ fn cart_lines_discounts_generate_run(
                 })
             })
             .collect();
+
+        // Skip if no targets after filtering
+        if targets.is_empty() {
+            continue;
+        }
+
+        // Calculate bundle total for discounted items only
+        let bundle_total: f64 = bundle_lines
+            .iter()
+            .filter(|line| {
+                if apply_to_specific && !discounted_ids.is_empty() {
+                    if let Some(product_attr) = line.product_id() {
+                        if let Some(product_id) = product_attr.value() {
+                            return discounted_ids.contains(&product_id.to_string());
+                        }
+                    }
+                    return false;
+                }
+                true
+            })
+            .map(|line| line.cost().subtotal_amount().amount().0)
+            .sum();
 
         // Build discount value based on type
         let (discount_amount, value) = match config.discount_type.as_str() {
@@ -174,7 +208,6 @@ fn cart_lines_discounts_generate_run(
         // Apply maximum discount cap
         let final_value = if let Some(max_discount) = config.max_discount_amount {
             if max_discount > 0.0 && discount_amount > max_discount {
-                // Cap the discount at maximum
                 ProductDiscountCandidateValue::FixedAmount(
                     ProductDiscountCandidateFixedAmount {
                         amount: Decimal(max_discount),
@@ -188,7 +221,7 @@ fn cart_lines_discounts_generate_run(
             value
         };
 
-        // Build message with bundle name and discount details
+        // Build message
         let bundle_name = config.bundle_name.unwrap_or_else(|| "Bundle".to_string());
         let message = match config.discount_type.as_str() {
             "PERCENTAGE" => format!("{} bundle: {}% off", bundle_name, config.discount_value),

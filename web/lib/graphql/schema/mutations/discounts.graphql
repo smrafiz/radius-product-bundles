@@ -2,6 +2,38 @@ mutation CreateBundleAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
     discountAutomaticAppCreate(automaticAppDiscount: $discount) {
         automaticAppDiscount {
             discountId
+            title
+            status
+        }
+        userErrors {
+            field
+            message
+            code
+        }
+    }
+}
+
+mutation CreateBundleDiscounts(
+    $productDiscount: DiscountAutomaticAppInput!
+    $shippingDiscount: DiscountAutomaticAppInput!
+) {
+    productDiscount: discountAutomaticAppCreate(automaticAppDiscount: $productDiscount) {
+        automaticAppDiscount {
+            discountId
+            title
+            status
+        }
+        userErrors {
+            field
+            message
+            code
+        }
+    }
+    shippingDiscount: discountAutomaticAppCreate(automaticAppDiscount: $shippingDiscount) {
+        automaticAppDiscount {
+            discountId
+            title
+            status
         }
         userErrors {
             field
@@ -22,6 +54,23 @@ query CheckBundleDiscountExists($query: String!) {
                         status
                     }
                 }
+            }
+        }
+    }
+}
+
+query CheckBundleDiscountsExist($productQuery: String!, $shippingQuery: String!) {
+    productDiscount: discountNodes(first: 1, query: $productQuery) {
+        edges {
+            node {
+                id
+            }
+        }
+    }
+    shippingDiscount: discountNodes(first: 1, query: $shippingQuery) {
+        edges {
+            node {
+                id
             }
         }
     }

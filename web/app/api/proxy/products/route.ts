@@ -170,6 +170,9 @@ export async function GET(request: NextRequest) {
                     discountValue: bundle.discountValue,
                     minOrderValue: bundle.minOrderValue || 0,
                     maxDiscountAmount: bundle.maxDiscountAmount || 0,
+                    discountApplication: bundle.discountApplication || "bundle",
+                    discountedProductIds: bundle.discountedProductIds || [],
+                    freeShipping: bundle.freeShipping || false,
                     status: bundle.status,
                     products: transformedProducts,
                     settings: bundle.settings

@@ -5,7 +5,7 @@
  *
  * Handles one-time setup tasks during app installation.
  * - Creates metafield definitions for bundle-product relationships.
- * - Creates automatic discount for bundle discount function.
+ * - Creates automatic discounts for bundle functions (Product + Shipping).
  */
 
 import { print } from "graphql";
@@ -14,16 +14,17 @@ import {
     CheckMetafieldDefinitionQuery,
     MetafieldDefinitionCreateDocument,
     MetafieldDefinitionCreateMutation,
-    CreateBundleAutomaticDiscountDocument,
-    CreateBundleAutomaticDiscountMutation,
-    CheckBundleDiscountExistsDocument,
-    CheckBundleDiscountExistsQuery,
+    CreateBundleDiscountsDocument,
+    CreateBundleDiscountsMutation,
+    CheckBundleDiscountsExistDocument,
+    CheckBundleDiscountsExistQuery,
 } from "@/lib/graphql/generated/graphql";
 
 const METAFIELD_NAMESPACE = "radius_bundles";
 const METAFIELD_KEY = "bundle_ids";
 
-const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+const BUNDLE_PRODUCT_DISCOUNT_TITLE = "Radius Bundle Discounts";
+const BUNDLE_SHIPPING_DISCOUNT_TITLE = "Radius Bundle Free Shipping";
 const BUNDLE_DISCOUNT_FUNCTION_HANDLE = "radius-discount-function";
 
 interface SetupResult {
@@ -33,7 +34,7 @@ interface SetupResult {
 }
 
 /**
- * Execute a GraphQL request with a direct access token.
+ * Executes a GraphQL request with a direct access token.
  * Used during OAuth callback before the session is established.
  */
 async function executeGraphQLWithToken<T = any>(
@@ -116,7 +117,6 @@ export async function createBundleMetafieldDefinition(
             createResult.data?.metafieldDefinitionCreate?.userErrors || [];
 
         if (userErrors.length > 0) {
-            // Check if it's an "already exists" error (race condition)
             const alreadyExists = userErrors.some(
                 (e) =>
                     e.code === "TAKEN" || e.message?.includes("already exists"),
@@ -165,60 +165,66 @@ export async function createBundleMetafieldDefinition(
 }
 
 /**
- * Checks if the bundle automatic discount already exists.
+ * Checks which bundle discounts already exist.
  */
-async function checkBundleDiscountExists(
+async function checkBundleDiscountsExist(
     accessToken: string,
     shop: string,
-): Promise<boolean> {
+): Promise<{ productExists: boolean; shippingExists: boolean }> {
     try {
         const result =
-            await executeGraphQLWithToken<CheckBundleDiscountExistsQuery>(
-                CheckBundleDiscountExistsDocument,
+            await executeGraphQLWithToken<CheckBundleDiscountsExistQuery>(
+                CheckBundleDiscountsExistDocument,
                 {
-                    query: `title:${BUNDLE_DISCOUNT_TITLE}`,
+                    productQuery: `title:"${BUNDLE_PRODUCT_DISCOUNT_TITLE}"`,
+                    shippingQuery: `title:"${BUNDLE_SHIPPING_DISCOUNT_TITLE}"`,
                 },
                 accessToken,
                 shop,
             );
 
-        const edges = result.data?.discountNodes?.edges || [];
-        return edges.length > 0;
+        return {
+            productExists:
+                (result.data?.productDiscount?.edges?.length ?? 0) > 0,
+            shippingExists:
+                (result.data?.shippingDiscount?.edges?.length ?? 0) > 0,
+        };
     } catch (error) {
-        console.error("[Setup] Error checking discount exists:", error);
-        return false;
+        console.error("[Setup] Error checking discounts exist:", error);
+        return { productExists: false, shippingExists: false };
     }
 }
 
 /**
- * Creates the automatic discount that triggers the bundle discount function.
- * This discount is required for the Shopify Function to run.
+ * Creates both automatic discounts (Product + Shipping) in a single API call.
+ * These discounts are required for the Shopify Functions to run.
  */
-export async function createBundleAutomaticDiscount(
+export async function createBundleAutomaticDiscounts(
     accessToken: string,
     shop: string,
 ): Promise<SetupResult> {
     try {
-        // Check if discount already exists
-        const exists = await checkBundleDiscountExists(accessToken, shop);
+        // Check which discounts already exist
+        const { productExists, shippingExists } =
+            await checkBundleDiscountsExist(accessToken, shop);
 
-        if (exists) {
+        if (productExists && shippingExists) {
             console.log(
-                `[Setup] Bundle automatic discount already exists for ${shop}`,
+                `[Setup] Both bundle discounts already exist for ${shop}`,
             );
             return {
                 success: true,
-                message: "Bundle discount already exists",
+                message: "Bundle discounts already exist",
             };
         }
 
-        // Create the automatic discount
+        // Create both discounts in a single mutation
         const result =
-            await executeGraphQLWithToken<CreateBundleAutomaticDiscountMutation>(
-                CreateBundleAutomaticDiscountDocument,
+            await executeGraphQLWithToken<CreateBundleDiscountsMutation>(
+                CreateBundleDiscountsDocument,
                 {
-                    discount: {
-                        title: BUNDLE_DISCOUNT_TITLE,
+                    productDiscount: {
+                        title: BUNDLE_PRODUCT_DISCOUNT_TITLE,
                         functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
                         discountClasses: ["PRODUCT"],
                         startsAt: new Date().toISOString(),
@@ -228,61 +234,64 @@ export async function createBundleAutomaticDiscount(
                             shippingDiscounts: true,
                         },
                     },
+                    shippingDiscount: {
+                        title: BUNDLE_SHIPPING_DISCOUNT_TITLE,
+                        functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
+                        discountClasses: ["SHIPPING"],
+                        startsAt: new Date().toISOString(),
+                        combinesWith: {
+                            productDiscounts: true,
+                            orderDiscounts: false,
+                            shippingDiscounts: false,
+                        },
+                    },
                 },
                 accessToken,
                 shop,
             );
 
-        const userErrors =
-            result.data?.discountAutomaticAppCreate?.userErrors || [];
+        // Check product discount errors
+        const productErrors = result.data?.productDiscount?.userErrors || [];
+        const shippingErrors = result.data?.shippingDiscount?.userErrors || [];
 
-        if (userErrors.length > 0) {
-            // Check for "already exists" type errors
-            const alreadyExists = userErrors.some(
-                (e) =>
-                    e.code === "TAKEN" ||
-                    e.message?.includes("already exists") ||
-                    e.message?.includes("already been taken"),
-            );
+        const allErrors = [...productErrors, ...shippingErrors];
+        const realErrors = allErrors.filter(
+            (e) =>
+                e.code !== "TAKEN" &&
+                !e.message?.includes("already exists") &&
+                !e.message?.includes("already been taken"),
+        );
 
-            if (alreadyExists) {
-                console.log(
-                    `[Setup] Bundle discount already exists (race condition) for ${shop}`,
-                );
-                return {
-                    success: true,
-                    message: "Bundle discount already exists",
-                };
-            }
-
+        if (realErrors.length > 0) {
             console.error(
-                "[Setup] Failed to create bundle discount:",
-                userErrors,
+                "[Setup] Failed to create bundle discounts:",
+                realErrors,
             );
             return {
                 success: false,
-                message: "Failed to create bundle discount",
-                error: userErrors[0].message ?? undefined,
+                message: "Failed to create bundle discounts",
+                error: realErrors[0].message ?? undefined,
             };
         }
 
-        const discountId =
-            result.data?.discountAutomaticAppCreate?.automaticAppDiscount
-                ?.discountId;
+        const productId =
+            result.data?.productDiscount?.automaticAppDiscount?.discountId;
+        const shippingId =
+            result.data?.shippingDiscount?.automaticAppDiscount?.discountId;
+
         console.log(
-            `[Setup] Created bundle automatic discount for ${shop}:`,
-            discountId,
+            `[Setup] Created bundle discounts for ${shop}: Product=${productId}, Shipping=${shippingId}`,
         );
 
         return {
             success: true,
-            message: "Bundle discount created successfully",
+            message: "Bundle discounts created successfully",
         };
     } catch (error) {
-        console.error("[Setup] Error creating bundle discount:", error);
+        console.error("[Setup] Error creating bundle discounts:", error);
         return {
             success: false,
-            message: "Error creating bundle discount",
+            message: "Error creating bundle discounts",
             error: error instanceof Error ? error.message : "Unknown error",
         };
     }
@@ -308,20 +317,18 @@ export async function runAppSetup(
         console.warn(
             `[Setup] Metafield setup warning: ${metafieldResult.error}`,
         );
-        // Don't fail the entire setup for metafield issues
     }
 
-    // Task 2: Create the bundle automatic discount
-    const discountResult = await createBundleAutomaticDiscount(
+    // Task 2: Create both bundle automatic discounts (Product + Shipping)
+    const discountResult = await createBundleAutomaticDiscounts(
         accessToken,
         shop,
     );
 
     if (!discountResult.success) {
         console.warn(
-            `[Setup] Bundle discount setup warning: ${discountResult.error}`,
+            `[Setup] Bundle discounts setup warning: ${discountResult.error}`,
         );
-        // Don't fail the entire setup - function may still work if created manually
     }
 
     return {

@@ -26,6 +26,9 @@ interface Bundle {
     discountValue?: number;
     minOrderValue?: number;
     maxDiscountAmount?: number;
+    discountApplication?: "bundle" | "product";
+    discountedProductIds?: string[];
+    freeShipping?: boolean;
     products: BundleProduct[];
     settings?: {
         layout?: "grid" | "list";
@@ -284,6 +287,7 @@ export class ProductBundleWidget {
                     properties: {
                         _bundle_id: bundle.id,
                         _bundle_name: bundle.name,
+                        _product_id: product.id,
                     },
                 }));
 
@@ -341,6 +345,9 @@ export class ProductBundleWidget {
                 requiredLineCount: requiredProducts.length,
                 minOrderValue: bundle.minOrderValue || 0,
                 maxDiscountAmount: bundle.maxDiscountAmount || 0,
+                discountApplication: bundle.discountApplication || "bundle",
+                discountedProductIds: bundle.discountedProductIds || [],
+                freeShipping: bundle.freeShipping || false,
             };
 
             // Remove existing entry for this bundle (if any) and add updated one

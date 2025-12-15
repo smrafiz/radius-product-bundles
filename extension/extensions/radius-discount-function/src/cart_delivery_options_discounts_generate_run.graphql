@@ -1,5 +1,8 @@
 query Input {
     cart {
+        attribute(key: "_bundleDiscounts") {
+            value
+        }
         deliveryGroups {
             id
         }
