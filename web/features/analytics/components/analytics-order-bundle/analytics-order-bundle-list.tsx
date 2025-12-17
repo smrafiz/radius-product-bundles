@@ -1,15 +1,21 @@
 "use client";
 
 import { useState } from "react";
+
+import { DashboardBundlesEmpty } from "@/features/dashboard";
+
+import { useBundlesData, useBundleFilters } from "@/features/bundles";
+
 import { ANALYTICS_ORDER_BUNDLE } from "@/features/analytics";
 
 export const AnalyticsOrderBundlesList = () => {
-    const [searchTerm, setSearchTerm] = useState("");
+    const { queryValue, handleSearchInput } = useBundleFilters();
+    const { isFetching } = useBundlesData();
     const [currentPage, setCurrentPage] = useState(1);
 
     // ===== FILTER =====
     const filteredData = ANALYTICS_ORDER_BUNDLE.filter((bundle) =>
-        bundle.item.toLowerCase().includes(searchTerm.toLowerCase()),
+        bundle.item.toLowerCase().includes(queryValue.toLowerCase()),
     );
 
     // ===== PAGINATION =====
@@ -28,7 +34,6 @@ export const AnalyticsOrderBundlesList = () => {
 
     return (
         <s-stack>
-            {/* ===== TABLE ===== */}
             <s-table>
                 <s-grid
                     slot="filters"
@@ -39,11 +44,8 @@ export const AnalyticsOrderBundlesList = () => {
                         label="Search"
                         labelAccessibilityVisibility="exclusive"
                         placeholder="Search items"
-                        value={searchTerm}
-                        onInput={(e: any) => {
-                            setSearchTerm(e.target.value);
-                            setCurrentPage(1);
-                        }}
+                        value={queryValue}
+                        onInput={handleSearchInput}
                     />
                 </s-grid>
 
@@ -56,23 +58,29 @@ export const AnalyticsOrderBundlesList = () => {
                 </s-table-header-row>
 
                 <s-table-body>
-                    {currentData.map((bundle, index) => (
-                        <s-table-row key={index}>
-                            <s-table-cell>#{bundle.order}</s-table-cell>
-                            <s-table-cell>{bundle.order_date}</s-table-cell>
-                            <s-table-cell>{bundle.item}</s-table-cell>
-                            <s-table-cell>{bundle.bundle_total}</s-table-cell>
-                            <s-table-cell>{bundle.order_total}</s-table-cell>
-                        </s-table-row>
-                    ))}
+                    {!isFetching &&
+                        currentData.length > 0 &&
+                        currentData.map((bundle, index) => (
+                            <s-table-row key={index}>
+                                <s-table-cell>#{bundle.order}</s-table-cell>
+                                <s-table-cell>{bundle.order_date}</s-table-cell>
+                                <s-table-cell>{bundle.item}</s-table-cell>
+                                <s-table-cell>
+                                    {bundle.bundle_total}
+                                </s-table-cell>
+                                <s-table-cell>
+                                    {bundle.order_total}
+                                </s-table-cell>
+                            </s-table-row>
+                        ))}
                 </s-table-body>
             </s-table>
-
             {/* ===== PAGINATION CONTROLS ===== */}
             <s-stack
                 direction="inline"
                 gap="small"
-                justifyContent="space-between"
+                justifyContent="center"
+                alignItems="center"
                 padding="base"
             >
                 <s-button

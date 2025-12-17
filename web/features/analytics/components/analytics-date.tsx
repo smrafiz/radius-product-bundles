@@ -151,7 +151,7 @@ export function AnalyticsDate() {
                                 value={formatDisplayDate(end)}
                             />
                         </div>
-                        <s-stack gap="base" direction="inline">
+                        <s-stack gap="large" direction="inline">
                             <s-stack gap="small-200">
                                 <s-button
                                     variant={activePreset === "today" ? "secondary" : "tertiary"}
@@ -202,7 +202,6 @@ export function AnalyticsDate() {
                                     Last Year
                                 </s-button>
                             </s-stack>
-
                             <s-stack direction="inline" gap="large">
                                 {/* LEFT CALENDAR (Start) */}
                                 <s-date-picker
@@ -217,16 +216,16 @@ export function AnalyticsDate() {
                                 />
 
                                 {/* RIGHT CALENDAR (End) */}
-                                <s-date-picker
-                                    type="range"
-                                    view={value.split("--")[1].slice(0, 7)}
-                                    value={value}
-                                    onChange={(event) => {
-                                        const v = event.currentTarget.value;
-                                        setValue(v);
-                                        setView(v.split("--")[0].slice(0, 7));
-                                    }}
-                                />
+                                {/*<s-date-picker*/}
+                                {/*    type="range"*/}
+                                {/*    view={value.split("--")[1].slice(0, 7)}*/}
+                                {/*    value={value}*/}
+                                {/*    onChange={(event) => {*/}
+                                {/*        const v = event.currentTarget.value;*/}
+                                {/*        setValue(v);*/}
+                                {/*        setView(v.split("--")[0].slice(0, 7));*/}
+                                {/*    }}*/}
+                                {/*/>*/}
                             </s-stack>
                         </s-stack>
 
@@ -243,9 +242,12 @@ export function AnalyticsDate() {
                                     }
                                 }}
                             >
-                                Cancel{view}
+                                Cancel
                             </s-button>
-                            <s-button variant="primary" onClick={() => console.log("Apply", value)}>
+                            <s-button
+                                variant="primary"
+                                onClick={() => console.log("Apply", value)}
+                            >
                                 Apply
                             </s-button>
                         </s-stack>

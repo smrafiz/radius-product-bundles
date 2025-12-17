@@ -11,14 +11,22 @@ import {
 } from "recharts";
 
 const data = [
-    { name: "Dec 05, 2025", uv: 0 },
-    { name: "Dec 08, 2025", uv: 2 },
-    { name: "Dec 10, 2025", uv: 5 },
-    { name: "Dec 11, 2025", uv: 8 },
-    { name: "Dec 14, 2025", uv: 5 },
-    { name: "Dec 15, 2025", uv: 6 },
-    { name: "Dec 16, 2025", uv: 3 },
-    { name: "Dec 18, 2025", uv: 1 },
+    { name: "Dec 01, 2025", uv: 0 },
+    { name: "Dec 02, 2025", uv: 2 },
+    { name: "Dec 03, 2025", uv: 5 },
+    { name: "Dec 04, 2025", uv: 8 },
+    { name: "Dec 05, 2025", uv: 5 },
+    { name: "Dec 06, 2025", uv: 6 },
+    { name: "Dec 07, 2025", uv: 3 },
+    { name: "Dec 08, 2025", uv: 1 },
+    { name: "Dec 09, 2025", uv: 4 },
+    { name: "Dec 10, 2025", uv: 6 },
+    { name: "Dec 11, 2025", uv: 4 },
+    { name: "Dec 12, 2025", uv: 1 },
+    { name: "Dec 13, 2025", uv: 3 },
+    { name: "Dec 14, 2025", uv: 6 },
+    { name: "Dec 15, 2025", uv: 9 },
+    { name: "Dec 16, 2025", uv: 1 },
 ];
 
 export function AnalyticsChart() {
@@ -71,7 +79,7 @@ export function AnalyticsChart() {
                         width="auto"
                     />
                 </div>
-                <Legend align="center" verticalAlign="bottom" color="red" />
+                <Legend align="center" verticalAlign="bottom" />
             </LineChart>
         </s-section>
     );

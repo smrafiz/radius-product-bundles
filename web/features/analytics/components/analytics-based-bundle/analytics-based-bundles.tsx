@@ -1,19 +1,15 @@
 "use client";
 
-import {
-    DashboardBundlesEmpty,
-    useDashboardStore,
-} from "@/features/dashboard";
+import { useDashboardStore, DashboardBundlesEmpty } from "@/features/dashboard";
 
-import {
-    AnalyticsBasedBundlesList,
-} from "@/features/analytics";
+import { AnalyticsBasedBundlesList } from "@/features/analytics";
 import { BundleTableSkeleton } from "@/features/bundles";
 /**
  * Dashboard Bundles Component
  */
 export function AnalyticsBasedBundles() {
-    const { loading } = useDashboardStore();
+
+    const { bundles, loading, error } = useDashboardStore();
 
     if (loading) {
         return <BundleTableSkeleton />;
@@ -21,7 +17,11 @@ export function AnalyticsBasedBundles() {
 
     return (
         <s-section padding="none">
-            <AnalyticsBasedBundlesList />
+            {bundles.length > 0 ? (
+                <AnalyticsBasedBundlesList bundles={bundles} />
+            ) : (
+                <DashboardBundlesEmpty error={error} />
+            )}
         </s-section>
     );
 }

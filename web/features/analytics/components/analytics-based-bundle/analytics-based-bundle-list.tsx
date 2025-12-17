@@ -1,20 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { ANALYTICS_BASED_BUNDLE } from "@/features/analytics";
+import { useState, useEffect } from "react";
 
-import { getBundleStatusBadge } from "@/features/bundles";
+import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
+import { DashboardBundlesListProps } from "@/features/dashboard";
+import { useBundleFilters, getBundleStatusBadge } from "@/features/bundles";
 
-export const AnalyticsBasedBundlesList = () => {
-    const [searchTerm, setSearchTerm] = useState("");
+export const AnalyticsBasedBundlesList = ({
+    bundles,
+}: DashboardBundlesListProps) => {
+    const { queryValue, handleSearchInput } = useBundleFilters();
+    const { bundleData } = useAppNavigation();
+
     const [currentPage, setCurrentPage] = useState(1);
 
-    // ===== FILTER =====
-    const filteredData = ANALYTICS_BASED_BUNDLE.filter((bundle) =>
-        bundle.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    const filteredData = bundles.filter((bundle) =>
+        bundle.name.toLowerCase().includes(queryValue.toLowerCase()),
     );
 
-    // ===== PAGINATION =====
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage]);
+
     const itemsPerPage = 5;
     const totalPages = Math.max(
         1,
@@ -30,24 +39,16 @@ export const AnalyticsBasedBundlesList = () => {
 
     return (
         <s-stack>
-            {/* ===== TABLE ===== */}
             <s-table>
-                <s-grid
-                    slot="filters"
-                    gap="small-200"
-                    gridTemplateColumns="1fr auto"
-                >
+                <s-stack padding="small-300" slot="filters">
                     <s-search-field
                         label="Search"
                         labelAccessibilityVisibility="exclusive"
                         placeholder="Search items"
-                        value={searchTerm}
-                        onInput={(e: any) => {
-                            setSearchTerm(e.target.value);
-                            setCurrentPage(1);
-                        }}
+                        value={queryValue}
+                        onInput={handleSearchInput}
                     />
-                </s-grid>
+                </s-stack>
 
                 <s-table-header-row>
                     <s-table-header listSlot="primary">Items</s-table-header>
@@ -67,84 +68,88 @@ export const AnalyticsBasedBundlesList = () => {
                                     gap="small"
                                     alignItems="center"
                                 >
-                                    {" "}
                                     <s-clickable
-                                        href=""
-                                        accessibilityLabel="Mountain View puzzle thumbnail"
+                                        accessibilityLabel={bundle.name}
                                         border="base"
                                         borderRadius="base"
                                         overflow="hidden"
                                         inlineSize="40px"
                                         blockSize="40px"
+                                        onClick={() =>
+                                            bundleData.edit(bundle.id)
+                                        }
                                     >
-                                        {" "}
                                         <s-image
                                             objectFit="cover"
-                                            src="https://picsum.photos/id/29/80/80"
-                                        />{" "}
-                                    </s-clickable>{" "}
-                                </s-stack>{" "}
+                                            src=""
+                                        ></s-image>
+                                    </s-clickable>
+                                </s-stack>
                             </s-table-cell>
+
                             <s-table-cell>{bundle.name}</s-table-cell>
                             <s-table-cell>{bundle.views}</s-table-cell>
-                            <s-table-cell>{bundle.sales_value}</s-table-cell>
-                            <s-table-cell>{bundle.sales_number}</s-table-cell>
                             <s-table-cell>
-                                <s-badge tone={bundle.tone}>
-                                    {bundle.status}
-                                </s-badge>
+                                {formatPercentage(bundle.conversionRate)}
                             </s-table-cell>
-                            {/*<s-table-cell>*/}
-                            {/*    {(() => {*/}
-                            {/*        const badgeProps = getBundleStatusBadge(*/}
-                            {/*            bundle.status,*/}
-                            {/*        );*/}
-
-                            {/*        return (*/}
-                            {/*            <s-badge*/}
-                            {/*                color="base"*/}
-                            {/*                icon="enabled"*/}
-                            {/*                {...badgeProps}*/}
-                            {/*            >*/}
-                            {/*                {badgeProps.text}*/}
-                            {/*            </s-badge>*/}
-                            {/*        );*/}
-                            {/*    })()}*/}
-                            {/*</s-table-cell>*/}
+                            <s-table-cell>
+                                {formatCurrency(bundle.revenue)}
+                            </s-table-cell>
+                            <s-table-cell>
+                                {(() => {
+                                    const badgeProps = getBundleStatusBadge(
+                                        bundle.status,
+                                    );
+                                    return (
+                                        <s-badge
+                                            color="base"
+                                            icon="enabled"
+                                            {...badgeProps}
+                                        >
+                                            {badgeProps.text}
+                                        </s-badge>
+                                    );
+                                })()}
+                            </s-table-cell>
                         </s-table-row>
                     ))}
                 </s-table-body>
             </s-table>
 
             {/* ===== PAGINATION CONTROLS ===== */}
-            <s-stack
-                direction="inline"
-                gap="small"
-                justifyContent="space-between"
-                padding="base"
-            >
-                <s-button
-                    variant="secondary"
-                    disabled={!hasPreviousPage}
-                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            {filteredData.length > 0 && (
+                <s-stack
+                    direction="inline"
+                    gap="small"
+                    justifyContent="center"
+                    alignItems="center"
+                    padding="base"
                 >
-                    Previous
-                </s-button>
+                    <s-button
+                        variant="secondary"
+                        disabled={!hasPreviousPage}
+                        onClick={() =>
+                            setCurrentPage((p) => Math.max(p - 1, 1))
+                        }
+                    >
+                        Previous
+                    </s-button>
 
-                <s-text>
-                    Page {currentPage} of {totalPages}
-                </s-text>
+                    <s-text>
+                        Page {currentPage} of {totalPages}
+                    </s-text>
 
-                <s-button
-                    variant="secondary"
-                    disabled={!hasNextPage}
-                    onClick={() =>
-                        setCurrentPage((p) => Math.min(p + 1, totalPages))
-                    }
-                >
-                    Next
-                </s-button>
-            </s-stack>
+                    <s-button
+                        variant="secondary"
+                        disabled={!hasNextPage}
+                        onClick={() =>
+                            setCurrentPage((p) => Math.min(p + 1, totalPages))
+                        }
+                    >
+                        Next
+                    </s-button>
+                </s-stack>
+            )}
         </s-stack>
     );
 };
