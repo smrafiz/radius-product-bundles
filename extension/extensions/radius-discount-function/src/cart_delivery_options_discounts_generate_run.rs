@@ -18,6 +18,7 @@ use shopify_function::Result;
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct BundleConfig {
+	#[allow(dead_code)]
     bundle_id: String,
     bundle_name: Option<String>,
     free_shipping: Option<bool>,

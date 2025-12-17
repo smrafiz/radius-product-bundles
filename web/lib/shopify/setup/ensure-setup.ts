@@ -3,7 +3,10 @@
 /**
  * Ensure Setup Service
  *
- * Lazily ensures app setup is complete.
+ * Lazily ensures app setup is complete when the app loads.
+ * This provides a safety net in case installation-time setup fails.
+ *
+ * Uses database flags to avoid unnecessary API calls on subsequent loads.
  */
 
 import {
@@ -15,10 +18,10 @@ import {
     CheckMetafieldDefinitionQuery,
     MetafieldDefinitionCreateDocument,
     MetafieldDefinitionCreateMutation,
-    CreateBundleDiscountsDocument,
-    CreateBundleDiscountsMutation,
-    CheckBundleDiscountsExistDocument,
-    CheckBundleDiscountsExistQuery,
+    CreateBundleAutomaticDiscountDocument,
+    CreateBundleAutomaticDiscountMutation,
+    CheckBundleDiscountExistsDocument,
+    CheckBundleDiscountExistsQuery,
 } from "@/lib/graphql/generated/graphql";
 import { handleSessionToken } from "@/lib/shopify";
 import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
@@ -26,13 +29,23 @@ import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 const METAFIELD_NAMESPACE = "radius_bundles";
 const METAFIELD_KEY = "bundle_ids";
 
-const BUNDLE_PRODUCT_DISCOUNT_TITLE = "Radius Bundle Discounts";
-const BUNDLE_SHIPPING_DISCOUNT_TITLE = "Radius Bundle Free Shipping";
+/**
+ * Title for the single automatic discount.
+ * This discount handles both PRODUCT and SHIPPING classes.
+ */
+const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+
+/**
+ * Function handle defined in shopify.extension.toml.
+ */
 const BUNDLE_DISCOUNT_FUNCTION_HANDLE = "radius-discount-function";
 
 /**
  * Ensures metafield definition exists.
- * Checks database first, only calls Shopify API if needed.
+ * Checks database flag first to avoid unnecessary API calls.
+ *
+ * @param sessionToken - Session token for authentication.
+ * @returns Result indicating success or failure.
  */
 export async function ensureMetafieldDefinition(
     sessionToken: string,
@@ -42,7 +55,7 @@ export async function ensureMetafieldDefinition(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        // Check the database flag first
+        // Check the database flag first (fast path)
         if (await isMetafieldSetupDone(shop)) {
             return { success: true };
         }
@@ -56,6 +69,7 @@ export async function ensureMetafieldDefinition(
             });
 
         if (checkResult.data?.metafieldDefinitions?.edges?.length) {
+            // Definition exists - update database flag
             await markMetafieldSetupDone(shop);
             return { success: true };
         }
@@ -103,7 +117,7 @@ export async function ensureMetafieldDefinition(
         await markMetafieldSetupDone(shop);
         return { success: true };
     } catch (error) {
-        console.error("[EnsureSetup] Error:", error);
+        console.error("[EnsureSetup] Error ensuring metafield:", error);
         return {
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
@@ -112,70 +126,65 @@ export async function ensureMetafieldDefinition(
 }
 
 /**
- * Ensures both bundle automatic discounts exist (Product + Shipping).
- * Creates missing ones in a single API call.
+ * Ensures the bundle automatic discount exists.
+ * Creates it if missing.
+ *
+ * Per Shopify's Discount Function API documentation:
+ * "A single Function processes one discount (either code-based or automatic),
+ * but can apply savings across three discount classes: product, order, and shipping."
+ *
+ * @param sessionToken - Session token for authentication.
+ * @returns Result indicating success or failure.
  */
-export async function ensureBundleDiscounts(
+export async function ensureBundleDiscount(
     sessionToken: string,
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        // Check which discounts exist
+        // Check if discount already exists
         const checkResult =
-            await executeGraphQLQuery<CheckBundleDiscountsExistQuery>({
-                query: CheckBundleDiscountsExistDocument,
+            await executeGraphQLQuery<CheckBundleDiscountExistsQuery>({
+                query: CheckBundleDiscountExistsDocument,
                 variables: {
-                    productQuery: `title:"${BUNDLE_PRODUCT_DISCOUNT_TITLE}"`,
-                    shippingQuery: `title:"${BUNDLE_SHIPPING_DISCOUNT_TITLE}"`,
+                    query: `title:"${BUNDLE_DISCOUNT_TITLE}"`,
                 },
                 sessionToken,
             });
 
-        const productExists =
-            (checkResult.data?.productDiscount?.edges?.length ?? 0) > 0;
-        const shippingExists =
-            (checkResult.data?.shippingDiscount?.edges?.length ?? 0) > 0;
+        const existingDiscount =
+            checkResult.data?.discountNodes?.edges?.[0]?.node;
 
-        if (productExists && shippingExists) {
+        if (existingDiscount) {
+            // Discount already exists
             return { success: true };
         }
 
-        // Create both discounts
+        // Create single discount with both PRODUCT and SHIPPING classes
         const createResult =
-            await executeGraphQLMutation<CreateBundleDiscountsMutation>({
-                query: CreateBundleDiscountsDocument,
-                variables: {
-                    productDiscount: {
-                        title: BUNDLE_PRODUCT_DISCOUNT_TITLE,
-                        functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
-                        discountClasses: ["PRODUCT"],
-                        startsAt: new Date().toISOString(),
-                        combinesWith: {
-                            productDiscounts: false,
-                            orderDiscounts: false,
-                            shippingDiscounts: true,
+            await executeGraphQLMutation<CreateBundleAutomaticDiscountMutation>(
+                {
+                    query: CreateBundleAutomaticDiscountDocument,
+                    variables: {
+                        discount: {
+                            title: BUNDLE_DISCOUNT_TITLE,
+                            functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
+                            discountClasses: ["PRODUCT", "SHIPPING"],
+                            startsAt: new Date().toISOString(),
+                            combinesWith: {
+                                productDiscounts: false,
+                                orderDiscounts: false,
+                                shippingDiscounts: false,
+                            },
                         },
                     },
-                    shippingDiscount: {
-                        title: BUNDLE_SHIPPING_DISCOUNT_TITLE,
-                        functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
-                        discountClasses: ["SHIPPING"],
-                        startsAt: new Date().toISOString(),
-                        combinesWith: {
-                            productDiscounts: true,
-                            orderDiscounts: false,
-                            shippingDiscounts: false,
-                        },
-                    },
+                    sessionToken,
                 },
-                sessionToken,
-            });
+            );
 
-        const productErrors =
-            createResult.data?.productDiscount?.userErrors || [];
-        const shippingErrors =
-            createResult.data?.shippingDiscount?.userErrors || [];
+        const userErrors =
+            createResult.data?.discountAutomaticAppCreate?.userErrors || [];
 
-        const realErrors = [...productErrors, ...shippingErrors].filter(
+        // Filter out "already exists" errors (race condition handling)
+        const realErrors = userErrors.filter(
             (e) =>
                 e.code !== "TAKEN" &&
                 !e.message?.includes("already exists") &&
@@ -189,10 +198,10 @@ export async function ensureBundleDiscounts(
             };
         }
 
-        console.log("[EnsureSetup] Created bundle discounts");
+        console.log("[EnsureSetup] Created bundle discount");
         return { success: true };
     } catch (error) {
-        console.error("[EnsureSetup] Error ensuring bundle discounts:", error);
+        console.error("[EnsureSetup] Error ensuring bundle discount:", error);
         return {
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
@@ -203,6 +212,9 @@ export async function ensureBundleDiscounts(
 /**
  * Ensures all app setup is complete.
  * Call this on app load to guarantee everything is ready.
+ *
+ * @param sessionToken - Session token for authentication.
+ * @returns Result with overall success and any errors encountered.
  */
 export async function ensureAppSetup(
     sessionToken: string,
@@ -215,8 +227,8 @@ export async function ensureAppSetup(
         errors.push(`Metafield: ${metafieldResult.error}`);
     }
 
-    // Ensure bundle discounts (Product + Shipping)
-    const discountResult = await ensureBundleDiscounts(sessionToken);
+    // Ensure bundle discount (single discount for both product and shipping)
+    const discountResult = await ensureBundleDiscount(sessionToken);
     if (!discountResult.success && discountResult.error) {
         errors.push(`Discount: ${discountResult.error}`);
     }

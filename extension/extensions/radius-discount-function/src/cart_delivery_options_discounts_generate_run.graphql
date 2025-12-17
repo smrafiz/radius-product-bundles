@@ -1,6 +1,6 @@
 query Input {
     cart {
-        attribute(key: "_bundleDiscounts") {
+        attribute(key: "_radiusDiscounts") {
             value
         }
         deliveryGroups {

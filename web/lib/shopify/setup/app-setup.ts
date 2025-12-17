@@ -5,26 +5,39 @@
  *
  * Handles one-time setup tasks during app installation.
  * - Creates metafield definitions for bundle-product relationships.
- * - Creates automatic discounts for bundle functions (Product + Shipping).
+ * - Creates a single automatic discount that handles both product and shipping discounts.
+ *
+ * Based on Shopify's unified Discount Function API:
+ * "A single Function processes one discount (either code-based or automatic),
+ * but can apply savings across three discount classes: product, order, and shipping."
+ *
+ * @see https://shopify.dev/docs/api/functions/latest/discount
  */
 
-import { print } from "graphql";
 import {
     CheckMetafieldDefinitionDocument,
     CheckMetafieldDefinitionQuery,
     MetafieldDefinitionCreateDocument,
     MetafieldDefinitionCreateMutation,
-    CreateBundleDiscountsDocument,
-    CreateBundleDiscountsMutation,
-    CheckBundleDiscountsExistDocument,
-    CheckBundleDiscountsExistQuery,
+    CreateBundleAutomaticDiscountDocument,
+    CreateBundleAutomaticDiscountMutation,
+    CheckBundleDiscountExistsDocument,
+    CheckBundleDiscountExistsQuery,
 } from "@/lib/graphql/generated/graphql";
+import { print, DocumentNode } from "graphql";
 
 const METAFIELD_NAMESPACE = "radius_bundles";
 const METAFIELD_KEY = "bundle_ids";
 
-const BUNDLE_PRODUCT_DISCOUNT_TITLE = "Radius Bundle Discounts";
-const BUNDLE_SHIPPING_DISCOUNT_TITLE = "Radius Bundle Free Shipping";
+/**
+ * Title for the single automatic discount.
+ * This discount handles both PRODUCT and SHIPPING classes.
+ */
+const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+
+/**
+ * Function handle defined in shopify.extension.toml.
+ */
 const BUNDLE_DISCOUNT_FUNCTION_HANDLE = "radius-discount-function";
 
 interface SetupResult {
@@ -36,15 +49,21 @@ interface SetupResult {
 /**
  * Executes a GraphQL request with a direct access token.
  * Used during OAuth callback before the session is established.
+ *
+ * @param document - GraphQL document to execute.
+ * @param variables - Variables for the GraphQL operation.
+ * @param accessToken - Shopify access token.
+ * @param shop - Shop domain.
+ * @returns GraphQL response with data and/or errors.
  */
-async function executeGraphQLWithToken<T = any>(
-    document: any,
-    variables: Record<string, any>,
+async function executeGraphQLWithToken<T = unknown>(
+    document: string | DocumentNode,
+    variables: Record<string, unknown>,
     accessToken: string,
     shop: string,
-): Promise<{ data?: T; errors?: any[] }> {
+): Promise<{ data?: T; errors?: Array<{ message: string }> }> {
     const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
-    const query = typeof document === "string" ? document : print(document);
+    const query = typeof document === 'string' ? document : print(document);
 
     const response = await fetch(endpoint, {
         method: "POST",
@@ -65,6 +84,10 @@ async function executeGraphQLWithToken<T = any>(
 /**
  * Creates the bundle_ids metafield definition for products.
  * This allows the metafield to be visible in Shopify admin.
+ *
+ * @param accessToken - Shopify access token.
+ * @param shop - Shop domain.
+ * @returns Result indicating success or failure.
  */
 export async function createBundleMetafieldDefinition(
     accessToken: string,
@@ -165,82 +188,65 @@ export async function createBundleMetafieldDefinition(
 }
 
 /**
- * Checks which bundle discounts already exist.
+ * Creates a single automatic discount that handles both product and shipping discounts.
+ *
+ * Per Shopify's Discount Function API documentation:
+ * "A single Function processes one discount (either code-based or automatic),
+ * but can apply savings across three discount classes: product, order, and shipping."
+ *
+ * The function extension has two targets that share this single discount:
+ * - cart.lines.discounts.generate.run → handles PRODUCT discounts
+ * - cart.delivery-options.discounts.generate.run → handles SHIPPING discounts
+ *
+ * Shopify automatically invokes both targets when the discount has multiple classes.
+ * Each target receives discount.discountClasses in its input to know which classes apply.
+ *
+ * @param accessToken - Shopify access token.
+ * @param shop - Shop domain.
+ * @returns Result indicating success or failure.
  */
-async function checkBundleDiscountsExist(
+export async function createBundleAutomaticDiscount(
     accessToken: string,
     shop: string,
-): Promise<{ productExists: boolean; shippingExists: boolean }> {
+): Promise<SetupResult> {
     try {
-        const result =
-            await executeGraphQLWithToken<CheckBundleDiscountsExistQuery>(
-                CheckBundleDiscountsExistDocument,
+        // Check if discount already exists
+        const checkResult =
+            await executeGraphQLWithToken<CheckBundleDiscountExistsQuery>(
+                CheckBundleDiscountExistsDocument,
                 {
-                    productQuery: `title:"${BUNDLE_PRODUCT_DISCOUNT_TITLE}"`,
-                    shippingQuery: `title:"${BUNDLE_SHIPPING_DISCOUNT_TITLE}"`,
+                    query: `title:"${BUNDLE_DISCOUNT_TITLE}"`,
                 },
                 accessToken,
                 shop,
             );
 
-        return {
-            productExists:
-                (result.data?.productDiscount?.edges?.length ?? 0) > 0,
-            shippingExists:
-                (result.data?.shippingDiscount?.edges?.length ?? 0) > 0,
-        };
-    } catch (error) {
-        console.error("[Setup] Error checking discounts exist:", error);
-        return { productExists: false, shippingExists: false };
-    }
-}
+        const existingDiscount =
+            checkResult.data?.discountNodes?.edges?.[0]?.node;
 
-/**
- * Creates both automatic discounts (Product + Shipping) in a single API call.
- * These discounts are required for the Shopify Functions to run.
- */
-export async function createBundleAutomaticDiscounts(
-    accessToken: string,
-    shop: string,
-): Promise<SetupResult> {
-    try {
-        // Check which discounts already exist
-        const { productExists, shippingExists } =
-            await checkBundleDiscountsExist(accessToken, shop);
-
-        if (productExists && shippingExists) {
+        if (existingDiscount) {
             console.log(
-                `[Setup] Both bundle discounts already exist for ${shop}`,
+                `[Setup] Bundle discount already exists for ${shop}:`,
+                existingDiscount.id,
             );
             return {
                 success: true,
-                message: "Bundle discounts already exist",
+                message: "Bundle discount already exists",
             };
         }
 
-        // Create both discounts in a single mutation
+        // Create single discount with both PRODUCT and SHIPPING classes
         const result =
-            await executeGraphQLWithToken<CreateBundleDiscountsMutation>(
-                CreateBundleDiscountsDocument,
+            await executeGraphQLWithToken<CreateBundleAutomaticDiscountMutation>(
+                CreateBundleAutomaticDiscountDocument,
                 {
-                    productDiscount: {
-                        title: BUNDLE_PRODUCT_DISCOUNT_TITLE,
+                    discount: {
+                        title: BUNDLE_DISCOUNT_TITLE,
                         functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
-                        discountClasses: ["PRODUCT"],
+                        discountClasses: ["PRODUCT", "SHIPPING"],
                         startsAt: new Date().toISOString(),
                         combinesWith: {
                             productDiscounts: false,
-                            orderDiscounts: false,
-                            shippingDiscounts: true,
-                        },
-                    },
-                    shippingDiscount: {
-                        title: BUNDLE_SHIPPING_DISCOUNT_TITLE,
-                        functionHandle: BUNDLE_DISCOUNT_FUNCTION_HANDLE,
-                        discountClasses: ["SHIPPING"],
-                        startsAt: new Date().toISOString(),
-                        combinesWith: {
-                            productDiscounts: true,
                             orderDiscounts: false,
                             shippingDiscounts: false,
                         },
@@ -250,12 +256,11 @@ export async function createBundleAutomaticDiscounts(
                 shop,
             );
 
-        // Check product discount errors
-        const productErrors = result.data?.productDiscount?.userErrors || [];
-        const shippingErrors = result.data?.shippingDiscount?.userErrors || [];
+        const userErrors =
+            result.data?.discountAutomaticAppCreate?.userErrors || [];
 
-        const allErrors = [...productErrors, ...shippingErrors];
-        const realErrors = allErrors.filter(
+        // Filter out "already exists" errors (race condition handling)
+        const realErrors = userErrors.filter(
             (e) =>
                 e.code !== "TAKEN" &&
                 !e.message?.includes("already exists") &&
@@ -264,34 +269,33 @@ export async function createBundleAutomaticDiscounts(
 
         if (realErrors.length > 0) {
             console.error(
-                "[Setup] Failed to create bundle discounts:",
+                "[Setup] Failed to create bundle discount:",
                 realErrors,
             );
             return {
                 success: false,
-                message: "Failed to create bundle discounts",
+                message: "Failed to create bundle discount",
                 error: realErrors[0].message ?? undefined,
             };
         }
 
-        const productId =
-            result.data?.productDiscount?.automaticAppDiscount?.discountId;
-        const shippingId =
-            result.data?.shippingDiscount?.automaticAppDiscount?.discountId;
+        const discountId =
+            result.data?.discountAutomaticAppCreate?.automaticAppDiscount
+                ?.discountId;
 
         console.log(
-            `[Setup] Created bundle discounts for ${shop}: Product=${productId}, Shipping=${shippingId}`,
+            `[Setup] Created bundle discount for ${shop}: ${discountId}`,
         );
 
         return {
             success: true,
-            message: "Bundle discounts created successfully",
+            message: "Bundle discount created successfully",
         };
     } catch (error) {
-        console.error("[Setup] Error creating bundle discounts:", error);
+        console.error("[Setup] Error creating bundle discount:", error);
         return {
             success: false,
-            message: "Error creating bundle discounts",
+            message: "Error creating bundle discount",
             error: error instanceof Error ? error.message : "Unknown error",
         };
     }
@@ -300,6 +304,10 @@ export async function createBundleAutomaticDiscounts(
 /**
  * Runs all app setup tasks.
  * Called during app installation/authentication.
+ *
+ * @param accessToken - Shopify access token.
+ * @param shop - Shop domain.
+ * @returns Result indicating overall success and any warnings.
  */
 export async function runAppSetup(
     accessToken: string,
@@ -319,15 +327,15 @@ export async function runAppSetup(
         );
     }
 
-    // Task 2: Create both bundle automatic discounts (Product + Shipping)
-    const discountResult = await createBundleAutomaticDiscounts(
+    // Task 2: Create bundle automatic discount (handles both product and shipping)
+    const discountResult = await createBundleAutomaticDiscount(
         accessToken,
         shop,
     );
 
     if (!discountResult.success) {
         console.warn(
-            `[Setup] Bundle discounts setup warning: ${discountResult.error}`,
+            `[Setup] Bundle discount setup warning: ${discountResult.error}`,
         );
     }
 

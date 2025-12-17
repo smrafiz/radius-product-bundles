@@ -1,0 +1,15 @@
+query CheckBundleDiscountExists($query: String!) {
+    discountNodes(first: 1, query: $query) {
+        edges {
+            node {
+                id
+                discount {
+                    ... on DiscountAutomaticApp {
+                        title
+                        status
+                    }
+                }
+            }
+        }
+    }
+}

@@ -320,12 +320,13 @@ export class ProductBundleWidget {
                 discountType: string;
                 discountValue: number;
                 requiredLineCount: number;
+                freeShipping?: boolean;
             }> = [];
 
-            if (cart.attributes?._bundleDiscounts) {
+            if (cart.attributes?._radiusDiscounts) {
                 try {
                     existingDiscounts = JSON.parse(
-                        cart.attributes._bundleDiscounts,
+                        cart.attributes._radiusDiscounts,
                     );
                 } catch {
                     existingDiscounts = [];
@@ -362,7 +363,7 @@ export class ProductBundleWidget {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     attributes: {
-                        _bundleDiscounts: JSON.stringify(existingDiscounts),
+                        _radiusDiscounts: JSON.stringify(existingDiscounts),
                     },
                 }),
             });
