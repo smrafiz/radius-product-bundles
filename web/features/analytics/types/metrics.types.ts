@@ -1,7 +1,6 @@
 /**
  * Analytics metrics types
  */
-import { Bundle } from "@/features/bundles";
 import { MetricFormat } from "@/shared";
 
 
@@ -36,4 +35,6 @@ export interface AnalyticsMetricConfig {
         | "neutral"
         | "caution"
         | undefined;
+    comparisonLabel?: string;
+    action?: { label: string; url: string };
 }

@@ -18,13 +18,14 @@ export function AnalyticsTabs() {
                 <s-button-group gap="none">
                     <s-button
                         slot="secondary-actions"
-                        variant="primary"
+                        variant={activeTab === "tab1" ? 'primary' : 'secondary'}
                         onClick={() => setActiveTab("tab1")}
                     >
                         Based bundle
                     </s-button>
                     <s-button
                         slot="secondary-actions"
+                        variant={activeTab === "tab2" ? 'primary' : 'secondary'}
                         onClick={() => setActiveTab("tab2")}
                     >Order bundle</s-button>
                 </s-button-group>

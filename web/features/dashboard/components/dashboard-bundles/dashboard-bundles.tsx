@@ -16,6 +16,7 @@ export function DashboardBundles() {
     if (loading) {
         return <BundleTableSkeleton />;
     }
+
     const recentBundles = bundles.slice(0, 5);
 
     return (

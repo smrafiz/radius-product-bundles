@@ -116,10 +116,6 @@ export function AnalyticsDate() {
 
         return new Date(value);
     };
-
-    /**
-     * Formats date for human-readable display.
-     */
     const formatDisplayDate = (date: Date | string | undefined): string => {
         const dateObj = toDate(date);
         if (!dateObj) return "";
@@ -211,13 +207,11 @@ export function AnalyticsDate() {
                                 {/* LEFT CALENDAR (Start) */}
                                 <s-date-picker
                                     type="range"
-                                    view={value.split("--")[0].slice(0, 7)}  // Start month
+                                    view={value.split("--")[0].slice(0, 7)}
                                     value={value}
                                     onChange={(event) => {
                                         const v = event.currentTarget.value;
                                         setValue(v);
-
-                                        // Update main view (based on start date)
                                         setView(v.split("--")[0].slice(0, 7));
                                     }}
                                 />
@@ -225,13 +219,11 @@ export function AnalyticsDate() {
                                 {/* RIGHT CALENDAR (End) */}
                                 <s-date-picker
                                     type="range"
-                                    view={value.split("--")[1].slice(0, 7)}  // End month
+                                    view={value.split("--")[1].slice(0, 7)}
                                     value={value}
                                     onChange={(event) => {
                                         const v = event.currentTarget.value;
                                         setValue(v);
-
-                                        // Update main view (based on start date)
                                         setView(v.split("--")[0].slice(0, 7));
                                     }}
                                 />
@@ -251,7 +243,7 @@ export function AnalyticsDate() {
                                     }
                                 }}
                             >
-                                Cancel
+                                Cancel{view}
                             </s-button>
                             <s-button variant="primary" onClick={() => console.log("Apply", value)}>
                                 Apply
