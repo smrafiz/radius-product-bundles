@@ -24,6 +24,7 @@ import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories"
 import {
     addBundleIdToProducts,
     removeBundleIdFromProducts,
+    syncActiveBundlesToMetafield,
     syncBundleProductMetafields,
 } from "@/lib";
 import {
@@ -137,6 +138,7 @@ export async function deleteBundleAction(
             bundleId,
             shop,
         });
+        await syncActiveBundlesToMetafield(sessionToken, shop);
 
         // Remove bundle ID from product metafields
         if (productIds.length > 0) {
@@ -212,6 +214,7 @@ export async function deleteBundlesAction(
             bundleIds,
             shop,
         });
+        await syncActiveBundlesToMetafield(sessionToken, shop);
 
         // Remove bundle IDs from product metafields
         for (const [bundleId, productIds] of bundleProductMap) {
@@ -363,6 +366,7 @@ export async function createBundleAction(
             shop,
             data: schemaValidation.data,
         });
+        await syncActiveBundlesToMetafield(sessionToken, shop);
 
         if (!result.success) {
             return {
@@ -463,8 +467,6 @@ export async function updateBundleAction(
 
         const schemaValidation = bundleSchema.safeParse(sanitizedData);
 
-        console.log(schemaValidation);
-
         if (!schemaValidation.success) {
             console.log("[updateBundleAction] Schema validation failed");
 
@@ -503,6 +505,18 @@ export async function updateBundleAction(
             bundleId,
             data: schemaValidation.data,
         });
+        const syncResult = await syncActiveBundlesToMetafield(
+            sessionToken,
+            shop,
+        );
+        console.log("[updateBundleAction...] Sync result:", syncResult);
+
+        if (!syncResult.success) {
+            console.error(
+                "[updateBundleAction] Sync failed:",
+                syncResult.error,
+            );
+        }
 
         if (!result.success) {
             console.log(

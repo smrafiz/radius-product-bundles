@@ -28,3 +28,27 @@ mutation MetafieldDefinitionCreate($definition: MetafieldDefinitionInput!) {
         }
     }
 }
+
+mutation SetActiveBundlesMetafield($ownerId: ID!, $value: String!) {
+    metafieldsSet(
+        metafields: [
+            {
+                ownerId: $ownerId
+                namespace: "radius_bundles"
+                key: "active_bundles"
+                type: "json"
+                value: $value
+            }
+        ]
+    ) {
+        metafields {
+            id
+            namespace
+            key
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}

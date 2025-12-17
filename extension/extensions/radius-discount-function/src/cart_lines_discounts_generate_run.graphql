@@ -30,5 +30,8 @@ query Input {
     }
     discount {
         discountClasses
+        metafield(namespace: "radius_bundles", key: "active_bundles") {
+            value
+        }
     }
 }

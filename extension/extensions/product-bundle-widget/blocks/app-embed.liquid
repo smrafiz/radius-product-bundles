@@ -1,6 +1,8 @@
 {% comment %}
   Radius Bundles App Embed
-  Shows bundle savings banner on cart page
+  - Analytics tracking
+  - Cart cleanup (removes orphaned bundle configs)
+  - Cart savings banner
 {% endcomment %}
 
 <!-- Bundle Analytics -->
@@ -75,6 +77,203 @@
     </script>
 {% endif %}
 
+<!-- Cart Cleanup: Remove orphaned bundle configs -->
+<script>
+    (function() {
+        window.RadiusBundles = window.RadiusBundles || {};
+
+        let cleanupDebounceTimer = null;
+        let isCleanupRunning = false;
+        const CLEANUP_DEBOUNCE_MS = 500;
+
+        /**
+         * Fetches current cart data from Shopify.
+         */
+        async function fetchCart() {
+            const response = await fetch('/cart.js');
+            return response.json();
+        }
+
+        /**
+         * Extracts bundle IDs from cart line items.
+         */
+        function getCartBundleIds(items) {
+            const bundleIds = [];
+            items.forEach(item => {
+                if (item.properties && item.properties._bundle_id) {
+                    bundleIds.push(item.properties._bundle_id);
+                }
+            });
+            return bundleIds;
+        }
+
+        /**
+         * Updates the _radiusDiscounts cart attribute.
+         */
+        async function updateRadiusDiscounts(configs) {
+            const value = configs.length > 0 ? JSON.stringify(configs) : '';
+
+            await fetch('/cart/update.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    attributes: {
+                        _radiusDiscounts: value
+                    }
+                })
+            });
+        }
+
+        /**
+         * Main cleanup function - removes bundle configs for bundles
+         * that no longer have all required items in cart.
+         */
+        async function cleanupOrphanedBundles() {
+            if (isCleanupRunning) return;
+            isCleanupRunning = true;
+
+            try {
+                const cart = await fetchCart();
+
+                // No bundle discounts attribute - nothing to clean
+                if (!cart.attributes || !cart.attributes._radiusDiscounts) {
+                    isCleanupRunning = false;
+                    return;
+                }
+
+                let bundleConfigs;
+                try {
+                    bundleConfigs = JSON.parse(cart.attributes._radiusDiscounts);
+                } catch {
+                    // Invalid JSON - clear it completely
+                    await updateRadiusDiscounts([]);
+                    console.log('[RadiusBundles] Cleared invalid _radiusDiscounts');
+                    isCleanupRunning = false;
+                    return;
+                }
+
+                if (!Array.isArray(bundleConfigs) || bundleConfigs.length === 0) {
+                    isCleanupRunning = false;
+                    return;
+                }
+
+                // Count items per bundle in cart
+                const bundleItemCounts = {};
+                cart.items.forEach(item => {
+                    if (item.properties && item.properties._bundle_id) {
+                        const bundleId = item.properties._bundle_id;
+                        bundleItemCounts[bundleId] = (bundleItemCounts[bundleId] || 0) + 1;
+                    }
+                });
+
+                // Filter to only bundles that still have enough items
+                const validConfigs = bundleConfigs.filter(config => {
+                    const itemCount = bundleItemCounts[config.bundleId] || 0;
+                    const requiredCount = config.requiredLineCount || 1;
+                    return itemCount >= requiredCount;
+                });
+
+                // Update if any configs were removed
+                if (validConfigs.length !== bundleConfigs.length) {
+                    const removedCount = bundleConfigs.length - validConfigs.length;
+                    await updateRadiusDiscounts(validConfigs);
+                    console.log('[RadiusBundles] Cleaned up', removedCount, 'orphaned bundle(s)');
+
+                    // Dispatch event for other scripts to react
+                    document.dispatchEvent(new CustomEvent('radiusBundles:cleanup', {
+                        detail: {
+                            removed: removedCount,
+                            remaining: validConfigs.length
+                        }
+                    }));
+                }
+
+            } catch (error) {
+                console.error('[RadiusBundles] Cart cleanup error:', error);
+            } finally {
+                isCleanupRunning = false;
+            }
+        }
+
+        /**
+         * Debounced cleanup to avoid multiple rapid calls.
+         */
+        function debouncedCleanup() {
+            if (cleanupDebounceTimer) {
+                clearTimeout(cleanupDebounceTimer);
+            }
+            cleanupDebounceTimer = setTimeout(cleanupOrphanedBundles, CLEANUP_DEBOUNCE_MS);
+        }
+
+        /**
+         * Intercepts fetch calls to detect cart modifications.
+         */
+        function interceptCartAPIs() {
+            const originalFetch = window.fetch;
+
+            window.fetch = function(input, init) {
+                const result = originalFetch.apply(this, arguments);
+
+                // Check if this is a cart modification
+                const url = typeof input === 'string' ? input : (input.url || '');
+                const method = (init && init.method) || 'GET';
+
+                if (method === 'POST' && isCartModificationEndpoint(url)) {
+                    // Wait for the request to complete, then cleanup
+                    result.then(() => {
+                        debouncedCleanup();
+                    }).catch(() => {});
+                }
+
+                return result;
+            };
+        }
+
+        /**
+         * Checks if URL is a cart modification endpoint.
+         */
+        function isCartModificationEndpoint(url) {
+            return url.includes('/cart/change') ||
+                url.includes('/cart/update') ||
+                url.includes('/cart/clear');
+        }
+
+        /**
+         * Sets up event listeners for cart changes.
+         */
+        function setupEventListeners() {
+            // Listen for theme cart events
+            document.addEventListener('cart:refresh', debouncedCleanup);
+            document.addEventListener('cart:updated', debouncedCleanup);
+
+            // Listen for cleanup trigger event
+            document.addEventListener('radiusBundles:triggerCleanup', debouncedCleanup);
+        }
+
+        /**
+         * Initializes the cart cleanup system.
+         */
+        function init() {
+            interceptCartAPIs();
+            setupEventListeners();
+
+            // Initial cleanup on page load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', cleanupOrphanedBundles);
+            } else {
+                cleanupOrphanedBundles();
+            }
+        }
+
+        // Expose cleanup function globally
+        window.RadiusBundles.cleanupCart = cleanupOrphanedBundles;
+        window.RadiusBundles.triggerCleanup = debouncedCleanup;
+
+        // Initialize
+        init();
+    })();
+</script>
+
 <!-- Cart Page: Bundle Savings Banner -->
 {% if request.page_type == 'cart' and block.settings.show_savings_banner %}
     <div id="radius-bundle-savings" style="display: none;">
@@ -110,6 +309,11 @@
 				content: "✓ ";
 				color: {{ block.settings.banner_border_color }};
 				font-weight: bold;
+			}
+			.radius-savings-banner--free-shipping {
+				color: {{ block.settings.banner_border_color }};
+				font-size: 0.9em;
+				margin-top: 4px;
 			}
         </style>
         <div class="radius-savings-banner">
@@ -163,6 +367,8 @@
 
                     // Build messages for complete bundles only
                     const messages = [];
+                    let hasFreeShipping = false;
+
                     bundles.forEach(bundle => {
                         const itemCount = bundleItemCounts[bundle.bundleId] || 0;
                         const required = bundle.requiredLineCount || 0;
@@ -170,6 +376,12 @@
                         // Only show message if bundle is complete
                         if (itemCount >= required && required > 0) {
                             const name = bundle.bundleName || 'this bundle';
+
+                            // Check for free shipping
+                            if (bundle.freeShipping) {
+                                hasFreeShipping = true;
+                            }
+
                             switch (bundle.discountType) {
                                 case 'PERCENTAGE':
                                     messages.push(`You're saving ${bundle.discountValue}% with ${name}`);
@@ -181,7 +393,10 @@
                                     messages.push(`Special bundle price: $${bundle.discountValue.toFixed(2)} for ${name}`);
                                     break;
                                 case 'NO_DISCOUNT':
-                                    // No message for bundles without discount
+                                    // No discount message, but might still have free shipping
+                                    if (bundle.freeShipping) {
+                                        messages.push(`${name} qualifies for free shipping!`);
+                                    }
                                     break;
                                 default:
                                     messages.push(`Bundle discount applied: ${name}`);
@@ -190,13 +405,22 @@
                     });
 
                     if (messages.length > 0) {
-                        // Single bundle: plain text, Multiple bundles: list
+                        // Build HTML content
+                        let html = '';
+
                         if (messages.length === 1) {
-                            contentEl.innerHTML = messages[0];
+                            html = messages[0];
                         } else {
                             const listItems = messages.map(msg => `<li>${msg}</li>`).join('');
-                            contentEl.innerHTML = `<ul class="radius-savings-banner__list">${listItems}</ul>`;
+                            html = `<ul class="radius-savings-banner__list">${listItems}</ul>`;
                         }
+
+                        // Add free shipping notice if applicable
+                        if (hasFreeShipping && !messages.some(m => m.includes('free shipping'))) {
+                            html += '<div class="radius-savings-banner--free-shipping">🚚 Free shipping included!</div>';
+                        }
+
+                        contentEl.innerHTML = html;
                         container.style.display = 'block';
 
                         // Move to top of main cart form
@@ -226,6 +450,9 @@
 
             // Listen for cart update events
             document.addEventListener('cart:updated', updateSavingsBanner);
+
+            // Listen for cleanup events (banner should update after cleanup)
+            document.addEventListener('radiusBundles:cleanup', updateSavingsBanner);
 
             // Poll for cart changes
             let lastCartToken = null;

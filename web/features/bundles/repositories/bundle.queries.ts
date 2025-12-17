@@ -273,6 +273,29 @@ export async function countActiveBundlesByShop(shop: string) {
 }
 
 /**
+ * Finds all active bundles for a shop.
+ */
+export async function findActiveBundlesByShop(shop: string) {
+    return prisma.bundle.findMany({
+        where: {
+            shop,
+            status: "ACTIVE",
+        },
+        select: {
+            id: true,
+            status: true,
+            discountType: true,
+            discountValue: true,
+            freeShipping: true,
+            minOrderValue: true,
+            maxDiscountAmount: true,
+            discountApplication: true,
+            discountedProductIds: true,
+        },
+    });
+}
+
+/**
  * Count recent bundles (created within N minutes)
  */
 export async function countRecentBundles(shop: string, minutesAgo: Date) {

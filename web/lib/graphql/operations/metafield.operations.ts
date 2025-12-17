@@ -6,23 +6,50 @@
  * Manages bundle ID metafields on products for storefront display.
  */
 
-import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 import {
+    GetBundleDiscountIdDocument,
+    GetBundleDiscountIdQuery,
     GetProductBundleMetafieldDocument,
     GetProductBundleMetafieldQuery,
     GetProductsBundleMetafieldsDocument,
     GetProductsBundleMetafieldsQuery,
+    GetShopIdDocument,
+    GetShopIdQuery,
     MetafieldsSetDocument,
     MetafieldsSetMutation,
+    UpdateBundleDiscountMetafieldDocument,
+    UpdateBundleDiscountMetafieldMutation,
 } from "@/lib/graphql/generated/graphql";
+import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
+import { findActiveBundlesByShop } from "@/features/bundles/repositories";
 
 const METAFIELD_NAMESPACE = "radius_bundles";
 const METAFIELD_KEY = "bundle_ids";
 const METAFIELD_TYPE = "list.single_line_text_field";
 
+// Shop metafield for active bundles (discount validation)
+const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+const ACTIVE_BUNDLES_KEY = "active_bundles";
+const JSON_TYPE = "json";
+
 interface MetafieldResult {
     success: boolean;
     error?: string;
+}
+
+interface SyncResult extends MetafieldResult {
+    bundleCount?: number;
+}
+
+interface MetafieldBundleConfig {
+    status: string;
+    discountType: string;
+    discountValue: number;
+    freeShipping: boolean;
+    minOrderValue: number;
+    maxDiscountAmount: number;
+    discountApplication: string;
+    discountedProductIds: string[];
 }
 
 /**
@@ -300,4 +327,144 @@ export async function syncBundleProductMetafields(
     }
 
     return { success: true };
+}
+
+/**
+ * Fetches the shop's GID for metafield ownership.
+ */
+async function getShopId(sessionToken: string): Promise<string | null> {
+    try {
+        const result = await executeGraphQLQuery<GetShopIdQuery>({
+            query: GetShopIdDocument,
+            variables: {},
+            sessionToken,
+        });
+
+        return result.data?.shop?.id || null;
+    } catch (error) {
+        console.error("[Metafield] Failed to get shop ID:", error);
+        return null;
+    }
+}
+
+/**
+ * Builds the metafield value from active bundles.
+ */
+function buildActiveBundlesMetafieldValue(
+    bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
+): string {
+    const bundleMap: Record<string, MetafieldBundleConfig> = {};
+
+    for (const bundle of bundles) {
+        bundleMap[bundle.id] = {
+            status: bundle.status,
+            discountType: bundle.discountType || "PERCENTAGE",
+            discountValue: bundle.discountValue || 0,
+            freeShipping: bundle.freeShipping || false,
+            minOrderValue: bundle.minOrderValue || 0,
+            maxDiscountAmount: bundle.maxDiscountAmount || 0,
+            discountApplication: bundle.discountApplication || "bundle",
+            discountedProductIds: bundle.discountedProductIds || [],
+        };
+    }
+
+    return JSON.stringify(bundleMap);
+}
+
+/**
+ * Gets the discount node ID for the bundle discount.
+ */
+async function getBundleDiscountId(
+    sessionToken: string,
+): Promise<string | null> {
+    try {
+        const result = await executeGraphQLQuery<GetBundleDiscountIdQuery>({
+            query: GetBundleDiscountIdDocument,
+            variables: {
+                query: `title:"${BUNDLE_DISCOUNT_TITLE}"`,
+            },
+            sessionToken,
+        });
+
+        return result.data?.discountNodes?.edges?.[0]?.node?.id || null;
+    } catch (error) {
+        console.error("[Metafield] Failed to get discount ID:", error);
+        return null;
+    }
+}
+
+/**
+ * Syncs all active bundles to the discount's metafield.
+ */
+export async function syncActiveBundlesToMetafield(
+    sessionToken: string,
+    shop: string,
+): Promise<SyncResult> {
+    try {
+        // Get discount ID (this is the ownerId for the metafield)
+        const discountId = await getBundleDiscountId(sessionToken);
+
+        if (!discountId) {
+            console.error("[Metafield] Bundle discount not found");
+            return {
+                success: false,
+                error: "Bundle discount not found. Please reinstall the app.",
+            };
+        }
+
+        // Fetch all active bundles from database
+        const activeBundles = await findActiveBundlesByShop(shop);
+
+        // Build metafield value
+        const metafieldValue = buildActiveBundlesMetafieldValue(activeBundles);
+
+        // Use metafieldsSet - this handles both create AND update
+        const result = await executeGraphQLMutation<MetafieldsSetMutation>({
+            query: MetafieldsSetDocument,
+            variables: {
+                metafields: [
+                    {
+                        ownerId: discountId,
+                        namespace: METAFIELD_NAMESPACE,
+                        key: ACTIVE_BUNDLES_KEY,
+                        type: JSON_TYPE,
+                        value: metafieldValue,
+                    },
+                ],
+            },
+            sessionToken,
+        });
+
+        if (result.errors?.length) {
+            console.error("[Metafield] Sync error:", result.errors);
+            return {
+                success: false,
+                error: result.errors[0].message,
+            };
+        }
+
+        const userErrors = result.data?.metafieldsSet?.userErrors || [];
+        if (userErrors.length > 0) {
+            console.error("[Metafield] Sync user errors:", userErrors);
+            return {
+                success: false,
+                error: userErrors[0].message ?? "Unknown error",
+            };
+        }
+
+        console.log(
+            `[Metafield] Synced ${activeBundles.length} active bundles to discount metafield for ${shop}`,
+        );
+
+        return {
+            success: true,
+            bundleCount: activeBundles.length,
+        };
+    } catch (error) {
+        console.error("[Metafield] Error syncing active bundles:", error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+        };
+    }
 }

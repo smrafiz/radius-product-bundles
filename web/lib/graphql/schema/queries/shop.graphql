@@ -1,3 +1,9 @@
+query GetShopId {
+    shop {
+        id
+    }
+}
+
 query GetShopInfo {
     shop {
         currencyCode
