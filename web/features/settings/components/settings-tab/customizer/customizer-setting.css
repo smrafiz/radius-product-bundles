@@ -1,0 +1,18 @@
+.rtbp-full-content {
+    display: flex;
+    height: calc(100vh - 24px);
+    width: 100%;
+    margin: 0;
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.rtbp-full-content .rtbp-left-setting {
+    max-width: 400px;
+}
+.rtbp-full-content .rtbp-right-review {
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+    min-width: 350px;
+}

@@ -4,13 +4,9 @@ import { useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
 
-/**
- * Widget Appearance Settings Component
- * Manages visual styling for buttons, products, and widget container
- */
-export function WidgetAppearance() {
+export function CustomizerOptions() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style || {};
+    const style = displaySettings.style ?? {};
     const [open, setOpen] = useState(true);
 
     /**
@@ -411,7 +407,9 @@ export function WidgetAppearance() {
                                             updateStyle("widgetRadius", val)
                                         }
                                     />
+
                                 </s-stack>
+
                             </s-stack>
                         </s-stack>
                     </s-stack>

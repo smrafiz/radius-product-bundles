@@ -12,7 +12,7 @@ import {
     SettingsButtonAction,
     SettingsSubscriptions,
     SettingsNotifications,
-    SettingsStoreInformation,
+    SettingsCustomizer,
     SettingsVariantSelectorType,
 } from "@/features/settings";
 
@@ -27,8 +27,8 @@ export const SettingsTab = () => {
                 return <SettingsGeneral />;
             case "bundle_widget":
                 return <SettingsBundleWidget />;
-            case "store_information":
-                return <SettingsStoreInformation />;
+            case "customizer":
+                return <SettingsCustomizer />;
             case "discount":
                 return <SettingsDiscount />;
             case "subscriptions":
@@ -52,10 +52,6 @@ export const SettingsTab = () => {
 
     return (
         <s-box>
-            {/*<s-grid*/}
-            {/*    gridTemplateColumns="250px 1fr"*/}
-            {/*    gap="base"*/}
-            {/*>*/}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* Left: Tab list */}
                 <div className="md:col-span-4">

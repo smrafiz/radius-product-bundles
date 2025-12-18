@@ -150,6 +150,7 @@ export function PageHeaderSkeleton({
                     <s-button
                         onClick={() => goBack("/dashboard")}
                         icon="arrow-left"
+                        accessibilityLabel="Back"
                     ></s-button>
                 </s-stack>
             )}

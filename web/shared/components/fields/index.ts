@@ -1,2 +1,2 @@
 export { EditorWysiwyg } from "./editor/editor-wysiwyg";
-export { RangeSlider } from "./range-slider/range-slider";
+export { RtpbRangeSlider } from "./range-slider/rtpb-range-slider";

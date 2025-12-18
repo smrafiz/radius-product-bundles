@@ -7,7 +7,7 @@ export interface SettingsTabNavInfo {
     icon:
         | "settings"
         | "store-online"
-        | "store"
+        | "edit"
         | "discount"
         | "refresh"
         | "button"

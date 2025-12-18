@@ -16,9 +16,9 @@ export const SETTINGS_TAB_NAV: SettingsTabNavInfo[] = [
         icon: "store-online",
     },
     {
-        id: "store_information",
-        title: "Store Information",
-        icon: "store",
+        id: "customizer",
+        title: "Customizer",
+        icon: "edit",
     },
     {
         id: "discount",

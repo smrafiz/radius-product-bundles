@@ -5,10 +5,7 @@ import "./range-slider.css";
 import { Range } from "react-range";
 import { FC, useEffect, useState } from "react";
 
-/*
- * Range slider component
- */
-export const RangeSlider: FC<{
+export const RtpbRangeSlider: FC<{
     values?: number;
     action?: (value: number) => void;
 }> = ({ values = 8, action }) => {
