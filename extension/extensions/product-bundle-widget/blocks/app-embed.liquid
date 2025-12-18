@@ -5,6 +5,9 @@
   - Cart savings banner
 {% endcomment %}
 
+{% comment %} Get active bundles from shop metafield (source of truth) {% endcomment %}
+{% assign active_bundles_raw = shop.metafields.radius_bundles.active_bundles.value %}
+
 <!-- Bundle Analytics -->
 {% if block.settings.enable_analytics %}
     <script>
@@ -13,7 +16,7 @@
             shop: "{{ shop.permanent_domain }}",
             customerId: "{{ customer.id | default: '' }}",
             pageType: "{{ request.page_type }}",
-            template: "{{ template.name }}"
+            template: "{{ template.name }}",
         };
 
         (function() {
@@ -22,12 +25,12 @@
              */
             function trackPageView() {
                 const data = {
-                    event: 'page_view',
+                    event: "page_view",
                     shop: window.RadiusBundles.config.shop,
                     customerId: window.RadiusBundles.config.customerId,
                     pageType: window.RadiusBundles.config.pageType,
                     url: window.location.href,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
                 };
 
                 // TODO: Send to your analytics endpoint
@@ -37,7 +40,7 @@
                 //     body: JSON.stringify(data)
                 // });
 
-                console.log('[RadiusBundles] Page view:', data);
+                console.log("[RadiusBundles] Page view:", data);
             }
 
             /**
@@ -49,7 +52,7 @@
                     shop: window.RadiusBundles.config.shop,
                     customerId: window.RadiusBundles.config.customerId,
                     bundle: bundleData,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
                 };
 
                 // TODO: Send to your analytics endpoint
@@ -59,19 +62,19 @@
                 //     body: JSON.stringify(data)
                 // });
 
-                console.log('[RadiusBundles] Bundle event:', data);
+                console.log("[RadiusBundles] Bundle event:", data);
             }
 
             window.RadiusBundles.track = trackBundleEvent;
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', trackPageView);
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", trackPageView);
             } else {
                 trackPageView();
             }
 
-            document.addEventListener('bundle:addedToCart', function(e) {
-                trackBundleEvent('bundle_added_to_cart', e.detail);
+            document.addEventListener("bundle:addedToCart", function(e) {
+                trackBundleEvent("bundle_added_to_cart", e.detail);
             });
         })();
     </script>
@@ -82,6 +85,42 @@
     (function() {
         window.RadiusBundles = window.RadiusBundles || {};
 
+        // Active bundles from shop metafield
+        var activeBundlesFromMetafield = null;
+        try {
+            {% if active_bundles_raw %}
+            activeBundlesFromMetafield = {{ active_bundles_raw | json }};
+            {% else %}
+            activeBundlesFromMetafield = null;
+            {% endif %}
+        } catch (e) {
+            activeBundlesFromMetafield = null;
+        }
+
+        window.RadiusBundles.activeBundles = activeBundlesFromMetafield;
+
+        /**
+         * Checks if a bundle is active using metafield data.
+         */
+        function isBundleActive(bundleId) {
+            if (!activeBundlesFromMetafield) {
+                return true;
+            }
+            var bundleConfig = activeBundlesFromMetafield[bundleId];
+            return bundleConfig && bundleConfig.status === "ACTIVE";
+        }
+
+        /**
+         * Gets the latest bundle settings from metafield.
+         */
+        function getBundleSettings(bundleId) {
+            if (!activeBundlesFromMetafield) return null;
+            return activeBundlesFromMetafield[bundleId] || null;
+        }
+
+        window.RadiusBundles.isBundleActive = isBundleActive;
+        window.RadiusBundles.getBundleSettings = getBundleSettings;
+
         let cleanupDebounceTimer = null;
         let isCleanupRunning = false;
         const CLEANUP_DEBOUNCE_MS = 500;
@@ -90,52 +129,40 @@
          * Fetches current cart data from Shopify.
          */
         async function fetchCart() {
-            const response = await fetch('/cart.js');
+            const response = await fetch("/cart.js");
             return response.json();
-        }
-
-        /**
-         * Extracts bundle IDs from cart line items.
-         */
-        function getCartBundleIds(items) {
-            const bundleIds = [];
-            items.forEach(item => {
-                if (item.properties && item.properties._bundle_id) {
-                    bundleIds.push(item.properties._bundle_id);
-                }
-            });
-            return bundleIds;
         }
 
         /**
          * Updates the _radiusDiscounts cart attribute.
          */
         async function updateRadiusDiscounts(configs) {
-            const value = configs.length > 0 ? JSON.stringify(configs) : '';
+            const value = configs.length > 0 ? JSON.stringify(configs) : "";
 
-            await fetch('/cart/update.js', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch("/cart/update.js", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     attributes: {
-                        _radiusDiscounts: value
-                    }
-                })
+                        _radiusDiscounts: value,
+                    },
+                }),
             });
         }
 
         /**
-         * Main cleanup function - removes bundle configs for bundles
-         * that no longer have all required items in cart.
+         * Main cleanup & sync function:
+         * 1. Removes bundles that no longer have all required items in cart
+         * 2. Removes bundles that are no longer active
+         * 3. Updates discount values from metafield (source of truth)
          */
-        async function cleanupOrphanedBundles() {
+        async function cleanupAndSyncBundles() {
             if (isCleanupRunning) return;
             isCleanupRunning = true;
 
             try {
                 const cart = await fetchCart();
 
-                // No bundle discounts attribute - nothing to clean
                 if (!cart.attributes || !cart.attributes._radiusDiscounts) {
                     isCleanupRunning = false;
                     return;
@@ -145,7 +172,6 @@
                 try {
                     bundleConfigs = JSON.parse(cart.attributes._radiusDiscounts);
                 } catch {
-                    // Invalid JSON - clear it completely
                     await updateRadiusDiscounts([]);
                     console.log('[RadiusBundles] Cleared invalid _radiusDiscounts');
                     isCleanupRunning = false;
@@ -166,30 +192,80 @@
                     }
                 });
 
-                // Filter to only bundles that still have enough items
-                const validConfigs = bundleConfigs.filter(config => {
+                let hasChanges = false;
+                const validConfigs = [];
+
+                for (const config of bundleConfigs) {
                     const itemCount = bundleItemCounts[config.bundleId] || 0;
                     const requiredCount = config.requiredLineCount || 1;
-                    return itemCount >= requiredCount;
-                });
+                    const hasEnoughItems = itemCount >= requiredCount;
+                    const isActive = isBundleActive(config.bundleId);
 
-                // Update if any configs were removed
-                if (validConfigs.length !== bundleConfigs.length) {
+                    // Skip inactive or incomplete bundles
+                    if (!hasEnoughItems || !isActive) {
+                        hasChanges = true;
+                        if (!isActive) {
+                            console.log('[RadiusBundles] Bundle', config.bundleId, 'is no longer active');
+                        }
+                        continue;
+                    }
+
+                    // Get latest settings from metafield
+                    const latestSettings = getBundleSettings(config.bundleId);
+
+                    if (latestSettings) {
+                        // Check if any values changed
+                        const discountTypeChanged = config.discountType !== latestSettings.discountType;
+                        const discountValueChanged = config.discountValue !== latestSettings.discountValue;
+                        const freeShippingChanged = config.freeShipping !== latestSettings.freeShipping;
+                        const minOrderChanged = config.minOrderValue !== latestSettings.minOrderValue;
+                        const maxDiscountChanged = config.maxDiscountAmount !== latestSettings.maxDiscountAmount;
+
+                        if (discountTypeChanged || discountValueChanged || freeShippingChanged || minOrderChanged || maxDiscountChanged) {
+                            hasChanges = true;
+                            console.log('[RadiusBundles] Bundle', config.bundleId, 'settings updated from metafield');
+                        }
+
+                        // Use metafield values (source of truth) merged with cart config
+                        validConfigs.push({
+                            ...config,
+                            discountType: latestSettings.discountType,
+                            discountValue: latestSettings.discountValue,
+                            freeShipping: latestSettings.freeShipping,
+                            minOrderValue: latestSettings.minOrderValue,
+                            maxDiscountAmount: latestSettings.maxDiscountAmount,
+                            discountApplication: latestSettings.discountApplication,
+                            discountedProductIds: latestSettings.discountedProductIds,
+                        });
+                    } else {
+                        // No metafield data - keep original config
+                        validConfigs.push(config);
+                    }
+                }
+
+                // Update if any changes
+                if (hasChanges || validConfigs.length !== bundleConfigs.length) {
                     const removedCount = bundleConfigs.length - validConfigs.length;
                     await updateRadiusDiscounts(validConfigs);
-                    console.log('[RadiusBundles] Cleaned up', removedCount, 'orphaned bundle(s)');
 
-                    // Dispatch event for other scripts to react
+                    if (removedCount > 0) {
+                        console.log('[RadiusBundles] Removed', removedCount, 'bundle(s)');
+                    }
+                    if (hasChanges) {
+                        console.log('[RadiusBundles] Synced bundle settings from metafield');
+                    }
+
                     document.dispatchEvent(new CustomEvent('radiusBundles:cleanup', {
                         detail: {
                             removed: removedCount,
-                            remaining: validConfigs.length
+                            remaining: validConfigs.length,
+                            synced: hasChanges
                         }
                     }));
                 }
 
             } catch (error) {
-                console.error('[RadiusBundles] Cart cleanup error:', error);
+                console.error('[RadiusBundles] Cart cleanup/sync error:', error);
             } finally {
                 isCleanupRunning = false;
             }
@@ -202,7 +278,16 @@
             if (cleanupDebounceTimer) {
                 clearTimeout(cleanupDebounceTimer);
             }
-            cleanupDebounceTimer = setTimeout(cleanupOrphanedBundles, CLEANUP_DEBOUNCE_MS);
+            cleanupDebounceTimer = setTimeout(cleanupAndSyncBundles, CLEANUP_DEBOUNCE_MS);
+        }
+
+        /**
+         * Checks if URL is a cart modification endpoint.
+         */
+        function isCartModificationEndpoint(url) {
+            return url.includes("/cart/change") ||
+                url.includes("/cart/update") ||
+                url.includes("/cart/clear");
         }
 
         /**
@@ -214,15 +299,14 @@
             window.fetch = function(input, init) {
                 const result = originalFetch.apply(this, arguments);
 
-                // Check if this is a cart modification
-                const url = typeof input === 'string' ? input : (input.url || '');
-                const method = (init && init.method) || 'GET';
+                const url = typeof input === "string" ? input : (input.url || "");
+                const method = (init && init.method) || "GET";
 
-                if (method === 'POST' && isCartModificationEndpoint(url)) {
-                    // Wait for the request to complete, then cleanup
+                if (method === "POST" && isCartModificationEndpoint(url)) {
                     result.then(() => {
                         debouncedCleanup();
-                    }).catch(() => {});
+                    }).catch(() => {
+                    });
                 }
 
                 return result;
@@ -230,24 +314,12 @@
         }
 
         /**
-         * Checks if URL is a cart modification endpoint.
-         */
-        function isCartModificationEndpoint(url) {
-            return url.includes('/cart/change') ||
-                url.includes('/cart/update') ||
-                url.includes('/cart/clear');
-        }
-
-        /**
          * Sets up event listeners for cart changes.
          */
         function setupEventListeners() {
-            // Listen for theme cart events
-            document.addEventListener('cart:refresh', debouncedCleanup);
-            document.addEventListener('cart:updated', debouncedCleanup);
-
-            // Listen for cleanup trigger event
-            document.addEventListener('radiusBundles:triggerCleanup', debouncedCleanup);
+            document.addEventListener("cart:refresh", debouncedCleanup);
+            document.addEventListener("cart:updated", debouncedCleanup);
+            document.addEventListener("radiusBundles:triggerCleanup", debouncedCleanup);
         }
 
         /**
@@ -258,18 +330,18 @@
             setupEventListeners();
 
             // Initial cleanup on page load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', cleanupOrphanedBundles);
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", () => {
+                    setTimeout(cleanupAndSyncBundles, 500);
+                });
             } else {
-                cleanupOrphanedBundles();
+                setTimeout(cleanupAndSyncBundles, 500);
             }
         }
 
-        // Expose cleanup function globally
-        window.RadiusBundles.cleanupCart = cleanupOrphanedBundles;
+        window.RadiusBundles.cleanupCart = cleanupAndSyncBundles;
         window.RadiusBundles.triggerCleanup = debouncedCleanup;
 
-        // Initialize
         init();
     })();
 </script>
@@ -280,7 +352,7 @@
         <style>
 			.radius-savings-banner {
 				background: {{ block.settings.banner_background }};
-				border: 1px solid {{ block.settings.banner_border_color }};
+				border: 1px solid{{ block.settings.banner_border_color }};
 				border-radius: 8px;
 				padding: 12px 16px;
 				margin: 16px 0;
@@ -288,28 +360,34 @@
 				align-items: flex-start;
 				gap: 10px;
 			}
+
 			.radius-savings-banner__icon {
 				font-size: 1.4em;
 				line-height: 1.4;
 			}
+
 			.radius-savings-banner__content {
 				color: {{ block.settings.banner_text_color }};
 				font-weight: 600;
 				flex: 1;
 			}
+
 			.radius-savings-banner__list {
 				list-style: none;
 				margin: 0;
 				padding: 0;
 			}
+
 			.radius-savings-banner__list li {
 				padding: 2px 0;
 			}
+
 			.radius-savings-banner__list li::before {
 				content: "✓ ";
 				color: {{ block.settings.banner_border_color }};
 				font-weight: bold;
 			}
+
 			.radius-savings-banner--free-shipping {
 				color: {{ block.settings.banner_border_color }};
 				font-size: 0.9em;
@@ -324,22 +402,26 @@
 
     <script>
         (function() {
+            const isBundleActive = window.RadiusBundles?.isBundleActive || function() {
+                return true;
+            };
+
             /**
              * Updates the bundle savings banner based on cart state.
              */
             async function updateSavingsBanner() {
                 try {
-                    const response = await fetch('/cart.js');
+                    const response = await fetch("/cart.js");
                     const cart = await response.json();
 
-                    const container = document.getElementById('radius-bundle-savings');
-                    const contentEl = container?.querySelector('.radius-savings-banner__content');
+                    const container = document.getElementById("radius-bundle-savings");
+                    const contentEl = container?.querySelector(".radius-savings-banner__content");
 
                     if (!container || !contentEl) return;
 
                     const bundleDiscountsRaw = cart.attributes?._radiusDiscounts;
                     if (!bundleDiscountsRaw) {
-                        container.style.display = 'none';
+                        container.style.display = "none";
                         return;
                     }
 
@@ -347,12 +429,12 @@
                     try {
                         bundles = JSON.parse(bundleDiscountsRaw);
                     } catch {
-                        container.style.display = 'none';
+                        container.style.display = "none";
                         return;
                     }
 
                     if (!bundles || bundles.length === 0) {
-                        container.style.display = 'none';
+                        container.style.display = "none";
                         return;
                     }
 
@@ -365,7 +447,7 @@
                         }
                     });
 
-                    // Build messages for complete bundles only
+                    // Build messages for complete AND active bundles only
                     const messages = [];
                     let hasFreeShipping = false;
 
@@ -373,27 +455,25 @@
                         const itemCount = bundleItemCounts[bundle.bundleId] || 0;
                         const required = bundle.requiredLineCount || 0;
 
-                        // Only show message if bundle is complete
-                        if (itemCount >= required && required > 0) {
-                            const name = bundle.bundleName || 'this bundle';
+                        // Only show if bundle is complete AND active
+                        if (itemCount >= required && required > 0 && isBundleActive(bundle.bundleId)) {
+                            const name = bundle.bundleName || "this bundle";
 
-                            // Check for free shipping
                             if (bundle.freeShipping) {
                                 hasFreeShipping = true;
                             }
 
                             switch (bundle.discountType) {
-                                case 'PERCENTAGE':
+                                case "PERCENTAGE":
                                     messages.push(`You're saving ${bundle.discountValue}% with ${name}`);
                                     break;
-                                case 'FIXED_AMOUNT':
+                                case "FIXED_AMOUNT":
                                     messages.push(`You're saving $${bundle.discountValue.toFixed(2)} with ${name}`);
                                     break;
-                                case 'CUSTOM_PRICE':
+                                case "CUSTOM_PRICE":
                                     messages.push(`Special bundle price: $${bundle.discountValue.toFixed(2)} for ${name}`);
                                     break;
-                                case 'NO_DISCOUNT':
-                                    // No discount message, but might still have free shipping
+                                case "NO_DISCOUNT":
                                     if (bundle.freeShipping) {
                                         messages.push(`${name} qualifies for free shipping!`);
                                     }
@@ -405,68 +485,64 @@
                     });
 
                     if (messages.length > 0) {
-                        // Build HTML content
-                        let html = '';
+                        let html = "";
 
                         if (messages.length === 1) {
                             html = messages[0];
                         } else {
-                            const listItems = messages.map(msg => `<li>${msg}</li>`).join('');
+                            const listItems = messages.map(msg => `<li>${msg}</li>`).join("");
                             html = `<ul class="radius-savings-banner__list">${listItems}</ul>`;
                         }
 
-                        // Add free shipping notice if applicable
-                        if (hasFreeShipping && !messages.some(m => m.includes('free shipping'))) {
-                            html += '<div class="radius-savings-banner--free-shipping">🚚 Free shipping included!</div>';
+                        if (hasFreeShipping && !messages.some(m => m.includes("free shipping"))) {
+                            html += "<div class=\"radius-savings-banner--free-shipping\">🚚 Free shipping included!</div>";
                         }
 
                         contentEl.innerHTML = html;
-                        container.style.display = 'block';
+                        container.style.display = "block";
 
-                        // Move to top of main cart form
-                        const mainCartForm = document.querySelector('form#cart')
-                            || document.querySelector('.cart__contents')
-                            || document.querySelector('cart-items form')
-                            || document.querySelector('#MainContent form[action="/cart"]');
+                        const mainCartForm = document.querySelector("form#cart")
+                            || document.querySelector(".cart__contents")
+                            || document.querySelector(".cart-items form")
+                            || document.querySelector("#MainContent form[action=\"/cart\"]");
 
                         if (mainCartForm && container.parentNode !== mainCartForm) {
                             mainCartForm.insertBefore(container, mainCartForm.firstChild);
                         }
                     } else {
-                        container.style.display = 'none';
+                        container.style.display = "none";
                     }
 
                 } catch (error) {
-                    console.error('[RadiusBundles] Savings banner error:', error);
+                    console.error("[RadiusBundles] Savings banner error:", error);
                 }
             }
 
             // Run on page load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', updateSavingsBanner);
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", updateSavingsBanner);
             } else {
                 updateSavingsBanner();
             }
 
-            // Listen for cart update events
-            document.addEventListener('cart:updated', updateSavingsBanner);
-
-            // Listen for cleanup events (banner should update after cleanup)
-            document.addEventListener('radiusBundles:cleanup', updateSavingsBanner);
+            // Listen for events
+            document.addEventListener("cart:updated", updateSavingsBanner);
+            document.addEventListener("radiusBundles:cleanup", updateSavingsBanner);
 
             // Poll for cart changes
             let lastCartToken = null;
             let lastItemCount = null;
             setInterval(async () => {
                 try {
-                    const res = await fetch('/cart.js');
+                    const res = await fetch("/cart.js");
                     const cart = await res.json();
                     if (cart.token !== lastCartToken || cart.item_count !== lastItemCount) {
                         lastCartToken = cart.token;
                         lastItemCount = cart.item_count;
                         updateSavingsBanner();
                     }
-                } catch {}
+                } catch {
+                }
             }, 1500);
         })();
     </script>
