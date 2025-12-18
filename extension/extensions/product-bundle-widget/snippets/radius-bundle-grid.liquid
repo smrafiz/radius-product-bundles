@@ -1,0 +1,95 @@
+{% comment %}
+  Radius Bundle - Grid Template
+
+  Displays bundle products in a responsive grid layout.
+{% endcomment %}
+
+{% assign discount_type = bundle_config.discountType %}
+{% assign discount_value = bundle_config.discountValue %}
+{% assign free_shipping = bundle_config.freeShipping %}
+{% assign grid_columns = block.settings.grid_columns | default: 3 %}
+
+<div class="radius-bundle__inner">
+    {% comment %} Header with Title Skeleton {% endcomment %}
+    <div class="radius-bundle__header">
+        <div class="radius-bundle__title-wrapper">
+            <div class="radius-bundle__title-skeleton" data-bundle-title-skeleton>
+                <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+            </div>
+            <h3 class="radius-bundle__title radius-bundle__title--hidden" data-bundle-title>
+                {{ block.settings.heading | default: 'Bundle Deal' }}
+            </h3>
+        </div>
+
+        {% if show_savings %}
+            <div class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge>
+                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if show_description and block.settings.description != blank %}
+        <p class="radius-bundle__description">{{ block.settings.description }}</p>
+    {% endif %}
+
+    {% comment %} Products Grid Container {% endcomment %}
+    <div
+            class="radius-bundle__products radius-bundle__products--grid"
+            data-bundle-products
+            style="--grid-columns: {{ grid_columns }}"
+    >
+        <div class="radius-bundle__loading" data-bundle-loading>
+            <div class="radius-bundle__skeleton radius-bundle__skeleton--grid" style="--grid-columns: {{ grid_columns }}">
+                {% for i in (1..grid_columns) %}
+                    <div class="radius-bundle__skeleton-card">
+                        <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
+                        <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+                        <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+                        <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% comment %} Pricing Section {% endcomment %}
+    <div class="radius-bundle__pricing" data-bundle-pricing>
+        <div class="radius-bundle__pricing-row">
+            <span class="radius-bundle__pricing-label">Regular Price:</span>
+            <span class="radius-bundle__price-original" data-original-price>
+                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
+            </span>
+        </div>
+        <div class="radius-bundle__pricing-row radius-bundle__pricing-row--highlight">
+            <span class="radius-bundle__pricing-label">Bundle Price:</span>
+            <span class="radius-bundle__price-discounted" data-bundle-price>
+                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
+            </span>
+        </div>
+        {% if show_savings %}
+            <div class="radius-bundle__savings" data-bundle-savings style="display: none;">
+                <span class="radius-bundle__savings-label">You Save:</span>
+                <span class="radius-bundle__savings-amount" data-savings-amount></span>
+            </div>
+        {% endif %}
+        {% if free_shipping %}
+            <div class="radius-bundle__free-shipping">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1"/>
+                    <circle cx="7" cy="18" r="2"/>
+                    <circle cx="17" cy="18" r="2"/>
+                </svg>
+                <span>Free Shipping Included</span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% comment %} Add to Cart Button {% endcomment %}
+    {% render 'radius-bundle-add-to-cart',
+            bundle_id: bundle_id,
+            button_text: button_text
+    %}
+
+    {% comment %} Message Container {% endcomment %}
+    <div class="radius-bundle__message" data-bundle-message></div>
+</div>

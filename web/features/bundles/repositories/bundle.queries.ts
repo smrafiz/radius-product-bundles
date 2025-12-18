@@ -281,12 +281,11 @@ export async function countActiveBundlesByShop(shop: string) {
  */
 export async function findActiveBundlesByShop(shop: string) {
     return prisma.bundle.findMany({
-        where: {
-            shop,
-            status: "ACTIVE",
-        },
+        where: { shop, status: "ACTIVE" },
         select: {
             id: true,
+            name: true,
+            description: true,
             status: true,
             discountType: true,
             discountValue: true,
@@ -295,6 +294,8 @@ export async function findActiveBundlesByShop(shop: string) {
             maxDiscountAmount: true,
             discountApplication: true,
             discountedProductIds: true,
+            // Include settings
+            settings: true,
         },
     });
 }

@@ -60,9 +60,6 @@ const bundleSettingsSchema = z
         theme: z
             .enum(["LIGHT", "DARK", "STORE_DEFAULT", "CUSTOM"])
             .default("STORE_DEFAULT"),
-        position: z
-            .enum(["ABOVE_ADD_TO_CART", "BELOW_ADD_TO_CART"])
-            .default("ABOVE_ADD_TO_CART"),
         title: z.string().max(100).default("Bundle Offers"),
         cartButtonText: z.string().max(50).default("Add bundle to cart"),
         showPrices: z.boolean().default(true),

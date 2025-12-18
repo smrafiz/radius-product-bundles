@@ -20,7 +20,11 @@ import {
     GetShopIdDocument,
     GetShopIdQuery,
 } from "@/lib/graphql/generated/graphql";
-import { findActiveBundlesByShop } from "@/features/bundles/repositories";
+import {
+    findActiveBundlesByShop,
+    findAppSettingsByShop,
+} from "@/features/bundles/repositories";
+import { buildGlobalSettingsMetafieldValue } from "@/lib/graphql/operations/settings-metafield.operations";
 
 const METAFIELD_NAMESPACE = "radius_bundles";
 const METAFIELD_KEY = "bundle_ids";
@@ -487,6 +491,142 @@ export async function syncActiveBundlesToMetafield(
         };
     } catch (error) {
         console.error("[Metafield] Error syncing active bundles:", error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+        };
+    }
+}
+
+/**
+ * Syncs global settings to shop metafield.
+ */
+export async function syncGlobalSettingsToMetafield(
+    sessionToken: string,
+    shop: string,
+): Promise<SyncResult> {
+    try {
+        const shopId = await getShopId(sessionToken);
+        if (!shopId) {
+            return { success: false, error: "Shop ID not found" };
+        }
+
+        // Fetch global settings from database
+        const globalSettings = await findAppSettingsByShop(shop);
+
+        if (!globalSettings) {
+            return { success: true, message: "No global settings to sync" };
+        }
+
+        const metafieldValue = buildGlobalSettingsMetafieldValue(globalSettings);
+
+        const result = await executeGraphQLMutation<MetafieldsSetMutation>({
+            query: MetafieldsSetDocument,
+            variables: {
+                metafields: [
+                    {
+                        ownerId: shopId,
+                        namespace: METAFIELD_NAMESPACE,
+                        key: "global_settings",
+                        type: "json",
+                        value: metafieldValue,
+                    },
+                ],
+            },
+            sessionToken,
+        });
+
+        if (result.data?.metafieldsSet?.userErrors?.length) {
+            return {
+                success: false,
+                error: result.data.metafieldsSet.userErrors[0].message,
+            };
+        }
+
+        console.log(`[Metafield] Synced global settings for ${shop}`);
+        return { success: true };
+
+    } catch (error) {
+        console.error("[Metafield] Error syncing global settings:", error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+        };
+    }
+}
+
+/**
+ * Syncs all data (global settings + active bundles) in one mutation.
+ */
+export async function syncAllSettingsToMetafields(
+    sessionToken: string,
+    shop: string,
+): Promise<SyncResult> {
+    try {
+        const [discountId, shopId] = await Promise.all([
+            getBundleDiscountId(sessionToken),
+            getShopId(sessionToken),
+        ]);
+
+        if (!discountId || !shopId) {
+            return { success: false, error: "Could not get discount or shop ID" };
+        }
+
+        // Fetch all data in parallel
+        const [globalSettings, activeBundles] = await Promise.all([
+            findAppSettingsByShop(shop),
+            findActiveBundlesByShop(shop),
+        ]);
+
+        const globalSettingsValue = buildGlobalSettingsMetafieldValue(globalSettings);
+        const activeBundlesValue = buildActiveBundlesMetafieldValue(activeBundles);
+
+        // Single mutation for all metafields
+        const result = await executeGraphQLMutation<MetafieldsSetMutation>({
+            query: MetafieldsSetDocument,
+            variables: {
+                metafields: [
+                    // Global settings (shop)
+                    {
+                        ownerId: shopId,
+                        namespace: METAFIELD_NAMESPACE,
+                        key: "global_settings",
+                        type: "json",
+                        value: globalSettingsValue,
+                    },
+                    // Active bundles (shop - for Liquid)
+                    {
+                        ownerId: shopId,
+                        namespace: METAFIELD_NAMESPACE,
+                        key: "active_bundles",
+                        type: "json",
+                        value: activeBundlesValue,
+                    },
+                    // Active bundles (discount - for Rust)
+                    {
+                        ownerId: discountId,
+                        namespace: METAFIELD_NAMESPACE,
+                        key: "active_bundles",
+                        type: "json",
+                        value: activeBundlesValue,
+                    },
+                ],
+            },
+            sessionToken,
+        });
+
+        if (result.data?.metafieldsSet?.userErrors?.length) {
+            return {
+                success: false,
+                error: result.data.metafieldsSet.userErrors[0].message,
+            };
+        }
+
+        console.log(`[Metafield] Synced all settings for ${shop}`);
+        return { success: true, bundleCount: activeBundles.length };
+
+    } catch (error) {
+        console.error("[Metafield] Error syncing all settings:", error);
         return {
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",

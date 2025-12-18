@@ -24,15 +24,10 @@ import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories"
 import {
     addBundleIdToProducts,
     removeBundleIdFromProducts,
-    syncActiveBundlesToMetafield,
+    syncAllSettingsToMetafields,
     syncBundleProductMetafields,
 } from "@/lib";
-import {
-    BundleFormData,
-    bundleSchema,
-    BundleStatus,
-    CreateBundleActionInput,
-} from "@/features/bundles";
+import { BundleFormData, bundleSchema, BundleStatus, CreateBundleActionInput, } from "@/features/bundles";
 
 /**
  * Update bundle status
@@ -138,7 +133,8 @@ export async function deleteBundleAction(
             bundleId,
             shop,
         });
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        // await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncAllSettingsToMetafields(sessionToken, shop);
 
         // Remove bundle ID from product metafields
         if (productIds.length > 0) {
@@ -214,7 +210,8 @@ export async function deleteBundlesAction(
             bundleIds,
             shop,
         });
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        // await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncAllSettingsToMetafields(sessionToken, shop);
 
         // Remove bundle IDs from product metafields
         for (const [bundleId, productIds] of bundleProductMap) {
@@ -366,7 +363,8 @@ export async function createBundleAction(
             shop,
             data: schemaValidation.data,
         });
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        // await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncAllSettingsToMetafields(sessionToken, shop);
 
         if (!result.success) {
             return {
@@ -505,18 +503,7 @@ export async function updateBundleAction(
             bundleId,
             data: schemaValidation.data,
         });
-        const syncResult = await syncActiveBundlesToMetafield(
-            sessionToken,
-            shop,
-        );
-        console.log("[updateBundleAction...] Sync result:", syncResult);
-
-        if (!syncResult.success) {
-            console.error(
-                "[updateBundleAction] Sync failed:",
-                syncResult.error,
-            );
-        }
+        await syncAllSettingsToMetafields(sessionToken, shop);
 
         if (!result.success) {
             console.log(

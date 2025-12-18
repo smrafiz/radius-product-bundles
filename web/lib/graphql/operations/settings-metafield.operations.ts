@@ -9,6 +9,7 @@ import {
 } from "@/features/settings";
 import { AppSettings } from "@/prisma/generated/client";
 import { BundleWithSettings } from "@/features/bundles";
+import { findActiveBundlesByShop } from "@/features/bundles/repositories";
 
 interface MetafieldGlobalSettings {
     styles: GlobalStyleSettings;
@@ -40,7 +41,6 @@ interface MetafieldBundleConfig {
     description: string;
     settings: {
         layout: string;
-        position: string;
         title: string | null;
         buttonText: string | null;
         showPrices: boolean;
@@ -163,18 +163,17 @@ export function buildGlobalSettingsMetafieldValue(
 }
 
 /**
- * Builds active bundles metafield value with settings.
+ * Builds the metafield value from active bundles.
+ * Includes display settings for storefront rendering.
  */
-export function buildActiveBundlesMetafieldValue(
-    bundles: BundleWithSettings[],
+function buildActiveBundlesMetafieldValue(
+    bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
 ): string {
     const bundleMap: Record<string, MetafieldBundleConfig> = {};
 
     for (const bundle of bundles) {
-        const settings = bundle.settings;
-
         bundleMap[bundle.id] = {
-            // Discount config
+            // Discount settings (for Rust function)
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
             discountValue: bundle.discountValue || 0,
@@ -184,25 +183,19 @@ export function buildActiveBundlesMetafieldValue(
             discountApplication: bundle.discountApplication || "bundle",
             discountedProductIds: bundle.discountedProductIds || [],
 
-            // Display config
+            // Display settings (for Liquid/storefront)
             name: bundle.name,
             description: bundle.description || "",
             settings: {
-                layout: settings?.layout || "LIST",
-                title: settings?.title || null,
-                buttonText: settings?.buttonText || null,
-                showPrices: settings?.showPrices ?? true,
-                showSavings: settings?.showSavings ?? true,
-                showImages: settings?.showImages ?? true,
-                showDescription: settings?.showDescription ?? false,
-                showFreeShipping: settings?.showFreeShipping ?? true,
-                enableProductLink: settings?.enableProductLink ?? false,
-                styleOverrides:
-                    (settings?.styleOverrides as StyleOverrides) || null,
-                widgetBehavior:
-                    (settings?.widgetBehavior as WidgetBehavior) || null,
-                responsive:
-                    (settings?.responsive as ResponsiveSettings) || null,
+                layout: bundle.settings?.layout || "list",
+                showPrices: bundle.settings?.showPrices ?? true,
+                showSavings: bundle.settings?.showSavings ?? true,
+                showImages: bundle.settings?.showProductImages ?? true,
+                buttonText: bundle.settings?.buttonText || "Add Bundle to Cart",
+                // Widget styling from DB
+                primaryColor: bundle.settings?.primaryColor || "#333333",
+                backgroundColor: bundle.settings?.backgroundColor || "#ffffff",
+                borderRadius: bundle.settings?.borderRadius || 12,
             },
         };
     }

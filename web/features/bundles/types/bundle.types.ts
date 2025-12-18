@@ -312,7 +312,6 @@ export interface ExtendedBundleFormData extends BundleFormData {
 export interface DisplaySettings {
     layout: "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
     theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
-    position: "ABOVE_ADD_TO_CART" | "BELOW_ADD_TO_CART";
     title: string;
     cartButtonText: string;
     // colorTheme: "brand" | "success" | "warning" | "critical";
