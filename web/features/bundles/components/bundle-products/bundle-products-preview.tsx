@@ -6,7 +6,6 @@ import {
     ProductListPopover,
     useBundlePreview,
 } from "@/features/bundles";
-import { useState } from "react";
 
 /**
  * Bundle products preview

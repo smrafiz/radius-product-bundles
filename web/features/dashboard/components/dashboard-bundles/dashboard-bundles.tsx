@@ -7,6 +7,7 @@ import {
     useDashboardStore,
 } from "@/features/dashboard";
 import { BundleTableSkeleton } from "@/features/bundles";
+
 /**
  * Dashboard Bundles Component
  */

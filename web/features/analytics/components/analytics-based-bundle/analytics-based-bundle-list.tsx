@@ -2,28 +2,73 @@
 
 import { useState, useEffect } from "react";
 
-import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
+import { formatCurrency, formatPercentage } from "@/shared";
 import { DashboardBundlesListProps } from "@/features/dashboard";
-import { useBundleFilters, getBundleStatusBadge } from "@/features/bundles";
+import {
+    useBundleFilters,
+    getBundleStatusBadge,
+    ProductAvatarStack,
+    useBundlePreview,
+    BundleListItem,
+} from "@/features/bundles";
+
+type BundleTableRowProps = {
+    bundle: BundleListItem;
+};
+
+const BundleTableRow = ({ bundle }: BundleTableRowProps) => {
+
+    const products = Array.isArray(bundle.products) ? bundle.products : [];
+    const { displayProducts, remainingCount } = useBundlePreview(products);
+
+    return (
+        <s-table-row>
+            <s-table-cell>
+                <s-stack direction="inline" gap="small" alignItems="center">
+                    <ProductAvatarStack
+                        products={displayProducts}
+                        remainingCount={remainingCount}
+                    />
+                </s-stack>
+            </s-table-cell>
+
+            <s-table-cell>{bundle.name}</s-table-cell>
+            <s-table-cell>{bundle.views}</s-table-cell>
+            <s-table-cell>
+                {formatPercentage(bundle.conversionRate)}
+            </s-table-cell>
+            <s-table-cell>{formatCurrency(bundle.revenue)}</s-table-cell>
+            <s-table-cell>
+                {(() => {
+                    const badgeProps = getBundleStatusBadge(bundle.status);
+                    return (
+                        <s-badge color="base" icon="enabled" {...badgeProps}>
+                            {badgeProps.text}
+                        </s-badge>
+                    );
+                })()}
+            </s-table-cell>
+        </s-table-row>
+    );
+};
 
 export const AnalyticsBasedBundlesList = ({
     bundles,
 }: DashboardBundlesListProps) => {
     const { queryValue, handleSearchInput } = useBundleFilters();
-    const { bundleData } = useAppNavigation();
-
     const [currentPage, setCurrentPage] = useState(1);
 
+    /* ===== FILTER ===== */
     const filteredData = bundles.filter((bundle) =>
         bundle.name.toLowerCase().includes(queryValue.toLowerCase()),
     );
 
+    /* Reset page on search */
     useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(totalPages);
-        }
-    }, [currentPage]);
+        setCurrentPage(1);
+    }, [queryValue]);
 
+    /* ===== PAGINATION ===== */
     const itemsPerPage = 5;
     const totalPages = Math.max(
         1,
@@ -39,6 +84,7 @@ export const AnalyticsBasedBundlesList = ({
 
     return (
         <s-stack>
+            {/* ================= TABLE ================= */}
             <s-table>
                 <s-stack padding="small-300" slot="filters">
                     <s-search-field
@@ -60,63 +106,13 @@ export const AnalyticsBasedBundlesList = ({
                 </s-table-header-row>
 
                 <s-table-body>
-                    {currentData.map((bundle, index) => (
-                        <s-table-row key={index}>
-                            <s-table-cell>
-                                <s-stack
-                                    direction="inline"
-                                    gap="small"
-                                    alignItems="center"
-                                >
-                                    <s-clickable
-                                        accessibilityLabel={bundle.name}
-                                        border="base"
-                                        borderRadius="base"
-                                        overflow="hidden"
-                                        inlineSize="40px"
-                                        blockSize="40px"
-                                        onClick={() =>
-                                            bundleData.edit(bundle.id)
-                                        }
-                                    >
-                                        <s-image
-                                            objectFit="cover"
-                                            src=""
-                                        ></s-image>
-                                    </s-clickable>
-                                </s-stack>
-                            </s-table-cell>
-
-                            <s-table-cell>{bundle.name}</s-table-cell>
-                            <s-table-cell>{bundle.views}</s-table-cell>
-                            <s-table-cell>
-                                {formatPercentage(bundle.conversionRate)}
-                            </s-table-cell>
-                            <s-table-cell>
-                                {formatCurrency(bundle.revenue)}
-                            </s-table-cell>
-                            <s-table-cell>
-                                {(() => {
-                                    const badgeProps = getBundleStatusBadge(
-                                        bundle.status,
-                                    );
-                                    return (
-                                        <s-badge
-                                            color="base"
-                                            icon="enabled"
-                                            {...badgeProps}
-                                        >
-                                            {badgeProps.text}
-                                        </s-badge>
-                                    );
-                                })()}
-                            </s-table-cell>
-                        </s-table-row>
+                    {currentData.map((bundle) => (
+                        <BundleTableRow key={bundle.id} bundle={bundle} />
                     ))}
                 </s-table-body>
             </s-table>
 
-            {/* ===== PAGINATION CONTROLS ===== */}
+            {/* ================= PAGINATION ================= */}
             {filteredData.length > 0 && (
                 <s-stack
                     direction="inline"
