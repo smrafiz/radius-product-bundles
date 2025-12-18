@@ -198,30 +198,29 @@ model BundleSettings {
     bundleId String @unique
 
     // Layout settings
-    layout   WidgetLayout   @default(GRID)
-    theme    WidgetTheme    @default(STORE_DEFAULT)
-    position WidgetPosition @default(ABOVE_ADD_TO_CART)
+    layout WidgetLayout @default(GRID)
+    theme  WidgetTheme  @default(STORE_DEFAULT)
 
     // Display text
     title          String?
     cartButtonText String?
 
-    // Widget behavior
-    widget Json? // { floating: true, autoHide: false, showOnMobile: true }
-
-    // Visual styling
-    style Json? // { primaryColor: "#FF0000", font: "Roboto", borderRadius: "8px" }
-
     // Display options
-    showPrices      Boolean @default(true)
-    showSavings     Boolean @default(true)
-    enableHyperLink Boolean @default(false)
+    showPrices       Boolean @default(true)
+    showSavings      Boolean @default(true)
+    showImages       Boolean @default(true)
+    showComparePrice Boolean @default(true)
+    showFreeShipping Boolean @default(true)
+    enableHyperLink  Boolean @default(false)
 
-    // Animation & UX
-    animations Json? // { fadeIn: true, slideDirection: "left" }
+    // Style overrides (only set if different from global)
+    styleOverrides Json?
+
+    // Widget behavior
+    widget Json?
 
     // Responsive settings
-    mobileSettings Json? // { hideOnMobile: false, stackVertically: true }
+    responsive Json? // { hideOnMobile: false, stackVertically: true }
 
     // A/B testing
     variant String? // For A/B testing different layouts
@@ -236,7 +235,6 @@ model BundleSettings {
 
     @@index([layout])
     @@index([theme])
-    @@index([position])
     @@map("bundle_settings")
 }
 
@@ -542,20 +540,35 @@ model Shop {
 
 // Stores information about app settings.
 model AppSettings {
-    id                   String       @id @default(cuid())
-    shopId               String       @unique
-    status               ShopStatus   @default(ACTIVE)
+    id     String @id @default(cuid())
+    shopId String @unique
+
+    // App status
+    status ShopStatus @default(ACTIVE)
+
+    // Default bundle settings
     defaultDiscountType  DiscountType @default(PERCENTAGE)
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
     maxBundlesPerShop    Int          @default(20)
-    aiOptimizations      Boolean      @default(true)
-    betaFeatures         Boolean      @default(false)
-    emailNotifications   Boolean      @default(true)
-    weeklyDigest         Boolean      @default(true)
-    aiRecommendations    Boolean      @default(true)
-    createdAt            DateTime     @default(now())
-    updatedAt            DateTime     @updatedAt
+
+    // Feature flags
+    aiOptimizations   Boolean @default(true)
+    aiRecommendations Boolean @default(true)
+    betaFeatures      Boolean @default(false)
+
+    // Notifications
+    emailNotifications Boolean @default(true)
+    weeklyDigest       Boolean @default(true)
+
+    // Global style customizer (JSON)
+    globalStyles Json?
+
+    // Global labels (i18n ready)
+    labels Json? // GlobalLabels
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     shop Shop @relation("ShopAppSettings", fields: [shopId], references: [id])
 
@@ -611,11 +624,6 @@ enum WidgetTheme {
     DARK
     STORE_DEFAULT
     CUSTOM
-}
-
-enum WidgetPosition {
-    ABOVE_ADD_TO_CART
-    BELOW_ADD_TO_CART
 }
 
 enum TestType {

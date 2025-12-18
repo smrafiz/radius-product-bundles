@@ -214,3 +214,7 @@ export interface AnalyticsMetrics {
     totalBundles: number;
     activeBundles: number;
 }
+
+export type BundleWithSettings = Prisma.BundleGetPayload<{
+    include: { settings: true };
+}>;

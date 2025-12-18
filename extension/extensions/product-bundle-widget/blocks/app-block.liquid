@@ -34,38 +34,30 @@
 	"target": "section",
 	"settings": [
 		{
-			"type": "text",
-			"id": "heading",
-			"label": "Heading",
-			"default": "Bundle Offers"
+			"type": "paragraph",
+			"content": "Bundle appearance is configured in the Radius Bundles app. Drag this block to position it on your product page."
+		},
+		{
+			"type": "header",
+			"content": "Overrides (Optional)"
 		},
 		{
 			"type": "select",
-			"id": "layout",
+			"id": "layout_override",
 			"label": "Layout",
 			"options": [
+				{ "value": "", "label": "Use app setting" },
+				{ "value": "list", "label": "List" },
 				{ "value": "grid", "label": "Grid" },
-				{ "value": "list", "label": "List" }
+				{ "value": "slider", "label": "Slider" }
 			],
-			"default": "grid"
+			"default": ""
 		},
 		{
 			"type": "checkbox",
-			"id": "show_savings",
-			"label": "Show savings",
-			"default": true
-		},
-		{
-			"type": "checkbox",
-			"id": "show_product_images",
-			"label": "Show product images",
-			"default": true
-		},
-		{
-			"type": "text",
-			"id": "loading_text",
-			"label": "Loading text",
-			"default": "Loading bundles..."
+			"id": "hide_on_mobile",
+			"label": "Hide on mobile",
+			"default": false
 		}
 	]
 }

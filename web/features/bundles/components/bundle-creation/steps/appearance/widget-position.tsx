@@ -4,7 +4,6 @@ import React from "react";
 import {
     DisplaySettings,
     useBundleStore,
-    WIDGET_POSITIONS,
 } from "@/features/bundles";
 
 export function WidgetPosition() {
@@ -31,25 +30,6 @@ export function WidgetPosition() {
                         interestFor="product-page-display-tooltip"
                     />
                 </s-stack>
-
-                <s-select
-                    label="Display position"
-                    required
-                    value={displaySettings.position}
-                    onChange={(event: Event) => {
-                        const target = event.currentTarget as HTMLSelectElement;
-                        updateDisplaySettings(
-                            "position",
-                            target.value as DisplaySettings["position"],
-                        );
-                    }}
-                >
-                    {WIDGET_POSITIONS.map((option) => (
-                        <s-option key={option.value} value={option.value}>
-                            {option.label}
-                        </s-option>
-                    ))}
-                </s-select>
 
                 <s-text-field
                     label="Offer title"

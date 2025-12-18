@@ -47,11 +47,6 @@ export const WIDGET_LAYOUTS = [
     },
 ];
 
-export const WIDGET_POSITIONS = [
-    { label: "Above add to cart", value: "ABOVE_ADD_TO_CART" as const },
-    { label: "Below add to cart", value: "BELOW_ADD_TO_CART" as const },
-];
-
 export const COLOR_THEMES = [
     {
         label: "Brand",
