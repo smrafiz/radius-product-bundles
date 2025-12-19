@@ -1,0 +1,209 @@
+[96mapp/api/proxy/products/route.ts[0m:[93m182[0m:[93m57[0m - [91merror[0m[90m TS2339: [0mProperty 'position' does not exist on type '{ id: string; variant: string | null; title: string | null; style: JsonValue; createdAt: Date; updatedAt: Date; bundleId: string; layout: WidgetLayout; ... 10 more ...; misc: JsonValue; }'.
+
+[7m182[0m                               position: bundle.settings.position,
+[7m   [0m [91m                                                        ~~~~~~~~[0m
+
+[96mfeatures/analytics/components/analytics-based-bundle/analytics-based-bundle-list.tsx[0m:[93m110[0m:[93m57[0m - [91merror[0m[90m TS2739: [0mType 'Bundle' is missing the following properties from type 'BundleListItem': revenueAllTime, discountType, discountValue, products
+
+[7m110[0m                         <BundleTableRow key={bundle.id} bundle={bundle} />
+[7m   [0m [91m                                                        ~~~~~~[0m
+
+  [96mfeatures/analytics/components/analytics-based-bundle/analytics-based-bundle-list.tsx[0m:[93m16[0m:[93m5[0m
+    [7m16[0m     bundle: BundleListItem;
+    [7m  [0m [96m    ~~~~~~[0m
+    The expected type comes from property 'bundle' which is declared here on type 'IntrinsicAttributes & BundleTableRowProps'
+
+[96mfeatures/bundles/repositories/bundle.mutations.ts[0m:[93m233[0m:[93m63[0m - [91merror[0m[90m TS2559: [0mType '{ [key: string]: any; showBadge?: boolean | undefined; badgeText?: string | undefined; badgeColor?: string | undefined; enableInventoryTracking?: boolean | undefined; allowBackorders?: boolean | undefined; }' has no properties in common with type 'BundleSettingsUpdateInput'.
+
+[7m233[0m                 await updateBundleSettings(tx, data.bundleId, data.settings);
+[7m   [0m [91m                                                              ~~~~~~~~~~~~~[0m
+
+[96mlib/graphql/operations/metafield.operations.ts[0m:[93m518[0m:[93m37[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'message' does not exist in type 'SyncResult'.
+
+[7m518[0m             return { success: true, message: "No global settings to sync" };
+[7m   [0m [91m                                    ~~~~~~~[0m
+
+[96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m193[0m:[93m46[0m - [91merror[0m[90m TS2339: [0mProperty 'showProductImages' does not exist on type '{ id: string; variant: string | null; title: string | null; style: JsonValue; createdAt: Date; updatedAt: Date; bundleId: string; layout: WidgetLayout; ... 10 more ...; misc: JsonValue; }'.
+
+[7m193[0m                 showImages: bundle.settings?.showProductImages ?? true,
+[7m   [0m [91m                                             ~~~~~~~~~~~~~~~~~[0m
+
+[96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m194[0m:[93m46[0m - [91merror[0m[90m TS2339: [0mProperty 'buttonText' does not exist on type '{ id: string; variant: string | null; title: string | null; style: JsonValue; createdAt: Date; updatedAt: Date; bundleId: string; layout: WidgetLayout; ... 10 more ...; misc: JsonValue; }'.
+
+[7m194[0m                 buttonText: bundle.settings?.buttonText || "Add Bundle to Cart",
+[7m   [0m [91m                                             ~~~~~~~~~~[0m
+
+[96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m196[0m:[93m17[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'primaryColor' does not exist in type '{ layout: string; title: string | null; buttonText: string | null; showPrices: boolean; showSavings: boolean; showImages: boolean; showDescription: boolean; showFreeShipping: boolean; enableProductLink: boolean; styleOverrides: StyleOverrides | null; widgetBehavior: WidgetBehavior | null; responsive: ResponsiveSetti...'.
+
+[7m196[0m                 primaryColor: bundle.settings?.primaryColor || "#333333",
+[7m   [0m [91m                ~~~~~~~~~~~~[0m
+
+  [96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m42[0m:[93m5[0m
+    [7m42[0m     settings: {
+    [7m  [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'settings' which is declared here on type 'MetafieldBundleConfig'
+
+[96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m196[0m:[93m48[0m - [91merror[0m[90m TS2339: [0mProperty 'primaryColor' does not exist on type '{ id: string; variant: string | null; title: string | null; style: JsonValue; createdAt: Date; updatedAt: Date; bundleId: string; layout: WidgetLayout; ... 10 more ...; misc: JsonValue; }'.
+
+[7m196[0m                 primaryColor: bundle.settings?.primaryColor || "#333333",
+[7m   [0m [91m                                               ~~~~~~~~~~~~[0m
+
+[96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m197[0m:[93m51[0m - [91merror[0m[90m TS2339: [0mProperty 'backgroundColor' does not exist on type '{ id: string; variant: string | null; title: string | null; style: JsonValue; createdAt: Date; updatedAt: Date; bundleId: string; layout: WidgetLayout; ... 10 more ...; misc: JsonValue; }'.
+
+[7m197[0m                 backgroundColor: bundle.settings?.backgroundColor || "#ffffff",
+[7m   [0m [91m                                                  ~~~~~~~~~~~~~~~[0m
+
+[96mlib/graphql/operations/settings-metafield.operations.ts[0m:[93m198[0m:[93m48[0m - [91merror[0m[90m TS2339: [0mProperty 'borderRadius' does not exist on type '{ id: string; variant: string | null; title: string | null; style: JsonValue; createdAt: Date; updatedAt: Date; bundleId: string; layout: WidgetLayout; ... 10 more ...; misc: JsonValue; }'.
+
+[7m198[0m                 borderRadius: bundle.settings?.borderRadius || 12,
+[7m   [0m [91m                                               ~~~~~~~~~~~~[0m
+
+[96mlib/shopify/webhooks/gdpr.ts[0m:[93m170[0m:[93m41[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'equals' does not exist in type '(Without<ShopScalarRelationFilter, ShopWhereInput> & ShopWhereInput) | (Without<ShopWhereInput, ShopScalarRelationFilter> & ShopScalarRelationFilter)'.
+
+[7m170[0m                                 shop: { equals: shop },
+[7m   [0m [91m                                        ~~~~~~[0m
+
+[96mtemp/new.bundle-pagination.tsx[0m:[93m30[0m:[93m13[0m - [91merror[0m[90m TS2322: [0mType '{ children: Element; padding: "base"; style: { display: string; alignItems: string; justifyContent: string; backgroundColor: string; borderTop: string; }; }' is not assignable to type 'ReactProps$R & ReactBaseElementPropsWithChildren<Box>'.
+  Property 'style' does not exist on type 'ReactProps$R & ReactBaseElementPropsWithChildren<Box>'.
+
+[7m30[0m             style={{
+[7m  [0m [91m            ~~~~~[0m
+
+[96mtemp/new.bundle-pagination.tsx[0m:[93m47[0m:[93m25[0m - [91merror[0m[90m TS2322: [0mType '{ children: string; variant: string; fontWeight: string; }' is not assignable to type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+  Property 'variant' does not exist on type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+
+[7m47[0m                 <s-text variant="bodyMd" fontWeight="medium">
+[7m  [0m [91m                        ~~~~~~~[0m
+
+[96mtemp/new.bundle-table-row.tsx[0m:[93m59[0m:[93m21[0m - [91merror[0m[90m TS2322: [0mType '{ children: Element; removeUnderline: true; onClick: (e: Event) => void; }' is not assignable to type 'ReactProps$w & ReactBaseElementPropsWithChildren<Link>'.
+  Property 'removeUnderline' does not exist on type 'ReactProps$w & ReactBaseElementPropsWithChildren<Link>'.
+
+[7m59[0m                     removeUnderline
+[7m  [0m [91m                    ~~~~~~~~~~~~~~~[0m
+
+[96mtemp/new.bundle-table-row.tsx[0m:[93m65[0m:[93m29[0m - [91merror[0m[90m TS2322: [0mType '{ children: any; variant: string; fontWeight: string; }' is not assignable to type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+  Property 'variant' does not exist on type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+
+[7m65[0m                     <s-text variant="bodyMd" fontWeight="medium">
+[7m  [0m [91m                            ~~~~~~~[0m
+
+[96mtemp/new.bundle-table-row.tsx[0m:[93m74[0m:[93m29[0m - [91merror[0m[90m TS2322: [0mType '{ children: Element; variant: string; }' is not assignable to type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+  Property 'variant' does not exist on type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+
+[7m74[0m                     <s-text variant="bodyMd">
+[7m  [0m [91m                            ~~~~~~~[0m
+
+[96mtemp/new.bundle-table-row.tsx[0m:[93m83[0m:[93m29[0m - [91merror[0m[90m TS2322: [0mType '{ children: string | null; variant: string; fontWeight: string; }' is not assignable to type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+  Property 'variant' does not exist on type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+
+[7m83[0m                     <s-text variant="bodyMd" fontWeight="medium">
+[7m  [0m [91m                            ~~~~~~~[0m
+
+[96mtemp/new.bundle-table-row.tsx[0m:[93m92[0m:[93m66[0m - [91merror[0m[90m TS2322: [0mType '"subdued"' is not assignable to type '"info" | "success" | "warning" | "critical" | "neutral" | "caution" | "auto" | undefined'.
+
+[7m92[0m                     <s-text variant="bodyMd" fontWeight="medium" tone="subdued">
+[7m  [0m [91m                                                                 ~~~~[0m
+
+  [96m../node_modules/.pnpm/@shopify+polaris-types@1.0.1/node_modules/@shopify/polaris-types/dist/polaris.d.ts[0m:[93m5301[0m:[93m5[0m
+    [7m5301[0m     tone: Extract<TextProps$1['tone'], 'auto' | 'info' | 'success' | 'warning' | 'critical' | 'neutral' | 'caution'>;
+    [7m    [0m [96m    ~~~~[0m
+    The expected type comes from property 'tone' which is declared here on type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'
+
+[96mtemp/new.bundle-table.tsx[0m:[93m29[0m:[93m9[0m - [91merror[0m[90m TS2339: [0mProperty 'toggleSelection' does not exist on type '{ selectedResources: string[]; allResourcesSelected: boolean; handleSelectionChange: (selectionType: SelectionType, isSelecting: boolean, selection?: string | Range | undefined, _position?: number | undefined) => void; clearSelection: () => void; handleClearSelection: () => void; selectedBundle: any; }'.
+
+[7m29[0m         toggleSelection,
+[7m  [0m [91m        ~~~~~~~~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m30[0m:[93m9[0m - [91merror[0m[90m TS2339: [0mProperty 'toggleAllSelection' does not exist on type '{ selectedResources: string[]; allResourcesSelected: boolean; handleSelectionChange: (selectionType: SelectionType, isSelecting: boolean, selection?: string | Range | undefined, _position?: number | undefined) => void; clearSelection: () => void; handleClearSelection: () => void; selectedBundle: any; }'.
+
+[7m30[0m         toggleAllSelection,
+[7m  [0m [91m        ~~~~~~~~~~~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m79[0m:[93m13[0m - [91merror[0m[90m TS2339: [0mProperty 's-card' does not exist on type 'JSX.IntrinsicElements'.
+
+[7m79[0m             <s-card>
+[7m  [0m [91m            ~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m86[0m:[93m13[0m - [91merror[0m[90m TS2339: [0mProperty 's-card' does not exist on type 'JSX.IntrinsicElements'.
+
+[7m86[0m             </s-card>
+[7m  [0m [91m            ~~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m94[0m:[93m13[0m - [91merror[0m[90m TS2322: [0mType '{ children: Element; padding: "base"; style: { backgroundColor: string; borderBottom: string; }; }' is not assignable to type 'ReactProps$R & ReactBaseElementPropsWithChildren<Box>'.
+  Property 'style' does not exist on type 'ReactProps$R & ReactBaseElementPropsWithChildren<Box>'.
+
+[7m94[0m             style={{
+[7m  [0m [91m            ~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m100[0m:[93m25[0m - [91merror[0m[90m TS2322: [0mType '{ children: string; variant: string; fontWeight: string; }' is not assignable to type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+  Property 'variant' does not exist on type 'ReactProps$6 & ReactBaseElementPropsWithChildren<Text>'.
+
+[7m100[0m                 <s-text variant="bodyMd" fontWeight="medium">
+[7m   [0m [91m                        ~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m111[0m:[93m29[0m - [91merror[0m[90m TS2322: [0mType '{ children: string; key: number; variant: "primary" | "secondary"; size: string; onClick: () => void; }' is not assignable to type 'ReactProps$Q & ReactBaseElementPropsWithChildren<Button>'.
+  Property 'size' does not exist on type 'ReactProps$Q & ReactBaseElementPropsWithChildren<Button>'.
+
+[7m111[0m                             size="small"
+[7m   [0m [91m                            ~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m122[0m:[93m33[0m - [91merror[0m[90m TS2322: [0mType '{ children: string; variant: "secondary"; size: string; commandFor: string; }' is not assignable to type 'ReactProps$Q & ReactBaseElementPropsWithChildren<Button>'.
+  Property 'size' does not exist on type 'ReactProps$Q & ReactBaseElementPropsWithChildren<Button>'.
+
+[7m122[0m                                 size="small"
+[7m   [0m [91m                                ~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m137[0m:[93m49[0m - [91merror[0m[90m TS2322: [0mType '{ children: string; key: number; variant: "tertiary"; onClick: () => void; fullWidth: true; }' is not assignable to type 'ReactProps$Q & ReactBaseElementPropsWithChildren<Button>'.
+  Property 'fullWidth' does not exist on type 'ReactProps$Q & ReactBaseElementPropsWithChildren<Button>'.
+
+[7m137[0m                                                 fullWidth
+[7m   [0m [91m                                                ~~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m153[0m:[93m9[0m - [91merror[0m[90m TS2339: [0mProperty 's-card' does not exist on type 'JSX.IntrinsicElements'.
+
+[7m153[0m         <s-card>
+[7m   [0m [91m        ~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m156[0m:[93m22[0m - [91merror[0m[90m TS2322: [0mType '"table"' is not assignable to type '"list" | "auto" | undefined'.
+
+[7m156[0m             <s-table variant="table">
+[7m   [0m [91m                     ~~~~~~~[0m
+
+  [96m../node_modules/.pnpm/@shopify+polaris-types@1.0.1/node_modules/@shopify/polaris-types/dist/polaris.d.ts[0m:[93m5094[0m:[93m5[0m
+    [7m5094[0m     variant: Extract<TableProps$1['variant'], 'list' | 'auto'>;
+    [7m    [0m [96m    ~~~~~~~[0m
+    The expected type comes from property 'variant' which is declared here on type 'Omit<ReactProps$c, "filters"> & ReactBaseElementPropsWithChildren<Table>'
+
+[96mtemp/new.bundle-table.tsx[0m:[93m205[0m:[93m29[0m - [91merror[0m[90m TS2322: [0mType '{ key: string; bundle: BundleListItem; index: number; isSelected: boolean; onToggleSelection: any; }' is not assignable to type 'IntrinsicAttributes & BundleTableRowProps'.
+  Property 'onToggleSelection' does not exist on type 'IntrinsicAttributes & BundleTableRowProps'.
+
+[7m205[0m                             onToggleSelection={toggleSelection}
+[7m   [0m [91m                            ~~~~~~~~~~~~~~~~~[0m
+
+[96mtemp/new.bundle-table.tsx[0m:[93m212[0m:[93m9[0m - [91merror[0m[90m TS2339: [0mProperty 's-card' does not exist on type 'JSX.IntrinsicElements'.
+
+[7m212[0m         </s-card>
+[7m   [0m [91m        ~~~~~~~~~[0m
+
+[96mtests/fixtures/bundles.fixture.ts[0m:[93m12[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ type: BundleType; id: string; name: string; shop: string; description: string | null; status: BundleStatus; mainProductId: string | null; ... 31 more ...; shopId?: string | ... 1 more ... | undefined; }' is not assignable to type '{ type: BundleType; id: string; name: string; shop: string; description: string | null; status: BundleStatus; mainProductId: string | null; mainVariantId: string | null; ... 30 more ...; shopId: string | null; }'.
+  Types of property 'discountedProductIds' are incompatible.
+    Type 'string[] | undefined' is not assignable to type 'string[]'.
+      Type 'undefined' is not assignable to type 'string[]'.
+
+[7m12[0m     return {
+[7m  [0m [91m    ~~~~~~[0m
+
+
+Found 32 errors in 10 files.
+
+Errors  Files
+     1  app/api/proxy/products/route.ts[90m:182[0m
+     1  features/analytics/components/analytics-based-bundle/analytics-based-bundle-list.tsx[90m:110[0m
+     1  features/bundles/repositories/bundle.mutations.ts[90m:233[0m
+     1  lib/graphql/operations/metafield.operations.ts[90m:518[0m
+     6  lib/graphql/operations/settings-metafield.operations.ts[90m:193[0m
+     1  lib/shopify/webhooks/gdpr.ts[90m:170[0m
+     2  temp/new.bundle-pagination.tsx[90m:30[0m
+     5  temp/new.bundle-table-row.tsx[90m:59[0m
+    13  temp/new.bundle-table.tsx[90m:29[0m
+     1  tests/fixtures/bundles.fixture.ts[90m:12[0m
