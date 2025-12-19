@@ -28,7 +28,6 @@ export function BundlePreview() {
                     backgroundColor: styleData.productBgColor || "#f7f7f7",
                     borderRadius: styleData.productRadius || "12px",
                     color: styleData.productTextColor || "#303030",
-                    flexDirection: styleData.productAlign || "row",
                     ...((styleData.productBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",

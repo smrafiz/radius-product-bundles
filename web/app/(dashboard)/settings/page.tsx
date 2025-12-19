@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 /*
- * Pricing Page
+ * Settings Page
  */
 export default function Page() {
     return <SettingsPage />;

@@ -8,6 +8,7 @@ export const ROUTES = {
     BUNDLES: "/bundles",
     ANALYTICS: "/analytics",
     SETTINGS: "/settings",
+    CUSTOMIZER: "/settings/customizer",
 
     // Bundle operations
     BUNDLE_CREATE: "/bundles/create",

@@ -202,4 +202,50 @@
     }
 }
 
+/* customizer modal style*/
+
+.rtbp-full-content {
+    display: flex;
+    height: calc(100vh - 24px);
+    width: 100%;
+    margin: 0;
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.rtbp-full-content .rtbp-left-setting {
+    max-width: 400px;
+}
+
+.rtbp-full-content .rtbp-right-review {
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+    min-width: 350px;
+}
+
+.s-modal dialog.modal {
+    inline-size: 100% !important;
+}
+
+s-modal {
+    --s-modal-max-width: 100%;
+    --s-modal-padding: 0;
+    --s-modal-background: #fff;
+}
+#modal {
+    --s-modal-max-width: 100%;
+}
+s-modal::part(modal) {
+    padding: 0;
+    background: red;
+}
+
+@media (min-width: 48rem), (pointer: fine) {
+    .size-large, .size-large-100 {
+        inline-size: 1480px !important;
+    }
+}
+
 @import "./widget/bundle.css";

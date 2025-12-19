@@ -260,52 +260,6 @@ export function WidgetAppearance() {
                                     }
                                 />
                             </s-stack>
-
-                            <s-stack paddingBlockStart="small">
-                                <s-button-group gap="none">
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("productAlign", "row")
-                                        }
-                                    >
-                                        Left
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle(
-                                                "productAlign",
-                                                "column",
-                                            )
-                                        }
-                                    >
-                                        Top
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle(
-                                                "productAlign",
-                                                "row-reverse",
-                                            )
-                                        }
-                                    >
-                                        Right
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle(
-                                                "productAlign",
-                                                "column-reverse",
-                                            )
-                                        }
-                                    >
-                                        Bottom
-                                    </s-button>
-                                </s-button-group>
-                            </s-stack>
                         </s-stack>
 
                         <s-divider />

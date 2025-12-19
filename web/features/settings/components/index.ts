@@ -1,14 +1,14 @@
+export * from "./settings-tab/customizer";
 export { SettingsTab } from "./settings-tab/settings-tab";
 export { SettingsPage } from "./settings-page/settings-page";
 export { SettingsTools } from "./settings-tab/settings-tools";
 export { SettingsGeneral } from "./settings-tab/settings-general";
 export { SettingsAdvanced } from "./settings-tab/settings-advanced";
 export { SettingsDiscount } from "./settings-tab/settings-discount";
+export { SettingsCustomizer } from "./settings-tab/settings-customizer";
 export { SettingsOnlineShop } from "./settings-tab/settings-online-shop";
-export { CustomizerModal } from "./settings-tab/customizer/customizer-modal";
 export { SettingsButtonAction } from "./settings-tab/settings-button-action";
 export { SettingsBundleWidget } from "./settings-tab/settings-bundle-widget";
 export { SettingsNotifications } from "./settings-tab/settings-notifications";
 export { SettingsSubscriptions } from "./settings-tab/settings-subscriptions";
-export { SettingsCustomizer } from "./settings-tab/settings-customizer";
 export { SettingsVariantSelectorType } from "./settings-tab/variant-selector-type";
