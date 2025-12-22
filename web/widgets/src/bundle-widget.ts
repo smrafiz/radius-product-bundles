@@ -198,6 +198,8 @@ class RadiusBundleWidget {
             this.updatePricing(bundle);
             this.updateTitle(bundle);
 
+            console.log(bundle);
+
             // Update badge with full bundle data (includes name)
             this.updateBadge(bundle);
             this.hideLoading();

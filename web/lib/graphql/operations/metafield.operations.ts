@@ -403,8 +403,7 @@ function buildActiveBundlesMetafieldValue(
             discountedProductIds: bundle.discountedProductIds || [],
 
             // Bundle info (for Liquid display)
-            name: bundle.name,
-            description: bundle.description || "",
+            title: bundle.settings?.title ?? bundle.name,
             productCount: productIds.length,
             productIds: productIds,
 
