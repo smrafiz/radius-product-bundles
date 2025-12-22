@@ -7,31 +7,38 @@
  * Manages active bundles metafield on discount AND shop for validation.
  */
 
-import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 import {
+    executeGraphQLMutation,
+    executeGraphQLQuery,
+    fetchProductsFromShopify,
+} from "@/lib";
+import {
+    GetBundleDiscountIdDocument,
+    GetBundleDiscountIdQuery,
     GetProductBundleMetafieldDocument,
     GetProductBundleMetafieldQuery,
     GetProductsBundleMetafieldsDocument,
     GetProductsBundleMetafieldsQuery,
-    MetafieldsSetDocument,
-    MetafieldsSetMutation,
-    GetBundleDiscountIdDocument,
-    GetBundleDiscountIdQuery,
     GetShopIdDocument,
     GetShopIdQuery,
+    MetafieldsSetDocument,
+    MetafieldsSetMutation,
 } from "@/lib/graphql/generated/graphql";
 import {
     findActiveBundlesByShop,
     findAppSettingsByShop,
 } from "@/features/bundles/repositories";
-import { buildGlobalSettingsMetafieldValue } from "@/lib/graphql/operations/settings-metafield.operations";
+import {
+    METAFIELD_KEYS,
+    METAFIELD_NAMESPACE,
+} from "@/shared/constants/metafields.constants";
+import { buildGlobalSettingsMetafieldValue } from "@/lib/graphql/operations";
 
-const METAFIELD_NAMESPACE = "radius_bundles";
-const METAFIELD_KEY = "bundle_ids";
+const METAFIELD_KEY = METAFIELD_KEYS["BUNDLE_IDS"];
 const METAFIELD_TYPE = "list.single_line_text_field";
 
 // Active bundles metafield constants
-const ACTIVE_BUNDLES_KEY = "active_bundles";
+const ACTIVE_BUNDLES_KEY = METAFIELD_KEYS["ACTIVE_BUNDLES"];
 const JSON_TYPE = "json";
 const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
 
@@ -377,10 +384,15 @@ async function getShopId(sessionToken: string): Promise<string | null> {
 function buildActiveBundlesMetafieldValue(
     bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
 ): string {
-    const bundleMap: Record<string, MetafieldBundleConfig> = {};
+    const bundleMap: Record<string, any> = {};
 
     for (const bundle of bundles) {
+        // Extract product IDs from bundle
+        const productIds =
+            bundle.bundleProducts?.map((bp) => bp.productId) || [];
+
         bundleMap[bundle.id] = {
+            // Discount config (for Rust function)
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
             discountValue: bundle.discountValue || 0,
@@ -389,6 +401,19 @@ function buildActiveBundlesMetafieldValue(
             maxDiscountAmount: bundle.maxDiscountAmount || 0,
             discountApplication: bundle.discountApplication || "bundle",
             discountedProductIds: bundle.discountedProductIds || [],
+
+            // Bundle info (for Liquid display)
+            name: bundle.name,
+            description: bundle.description || "",
+            productCount: productIds.length,
+            productIds: productIds,
+
+            // Settings (for Liquid)
+            layout: bundle.settings?.layout || "list",
+            buttonText: bundle.settings?.cartButtonText || "Add Bundle to Cart",
+            showSavings: bundle.settings?.showSavings ?? true,
+            showImages: bundle.settings?.showImages ?? true,
+            showFreeShipping: bundle.settings?.showFreeShipping ?? false,
         };
     }
 
@@ -397,13 +422,6 @@ function buildActiveBundlesMetafieldValue(
 
 /**
  * Syncs all active bundles to BOTH discount metafield AND shop metafield.
- *
- * - Discount metafield: Used by Rust function for checkout validation
- * - Shop metafield: Used by Liquid/storefront for cart banner validation
- *
- * @param sessionToken - Session token for authentication.
- * @param shop - Shop domain.
- * @returns Result indicating success or failure.
  */
 export async function syncActiveBundlesToMetafield(
     sessionToken: string,
@@ -499,77 +517,25 @@ export async function syncActiveBundlesToMetafield(
 }
 
 /**
- * Syncs global settings to shop metafield.
- */
-export async function syncGlobalSettingsToMetafield(
-    sessionToken: string,
-    shop: string,
-): Promise<SyncResult> {
-    try {
-        const shopId = await getShopId(sessionToken);
-        if (!shopId) {
-            return { success: false, error: "Shop ID not found" };
-        }
-
-        // Fetch global settings from database
-        const globalSettings = await findAppSettingsByShop(shop);
-
-        if (!globalSettings) {
-            return { success: true, message: "No global settings to sync" };
-        }
-
-        const metafieldValue = buildGlobalSettingsMetafieldValue(globalSettings);
-
-        const result = await executeGraphQLMutation<MetafieldsSetMutation>({
-            query: MetafieldsSetDocument,
-            variables: {
-                metafields: [
-                    {
-                        ownerId: shopId,
-                        namespace: METAFIELD_NAMESPACE,
-                        key: "global_settings",
-                        type: "json",
-                        value: metafieldValue,
-                    },
-                ],
-            },
-            sessionToken,
-        });
-
-        if (result.data?.metafieldsSet?.userErrors?.length) {
-            return {
-                success: false,
-                error: result.data.metafieldsSet.userErrors[0].message,
-            };
-        }
-
-        console.log(`[Metafield] Synced global settings for ${shop}`);
-        return { success: true };
-
-    } catch (error) {
-        console.error("[Metafield] Error syncing global settings:", error);
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        };
-    }
-}
-
-/**
- * Syncs all data (global settings + active bundles) in one mutation.
+ * Syncs all data (global settings + active bundles) to shop and discount metafields.
  */
 export async function syncAllSettingsToMetafields(
     sessionToken: string,
     shop: string,
 ): Promise<SyncResult> {
     try {
+        console.log("[Metafield] 🔄 Starting full sync for:", shop);
+
         const [discountId, shopId] = await Promise.all([
             getBundleDiscountId(sessionToken),
             getShopId(sessionToken),
         ]);
 
         if (!discountId || !shopId) {
-            return { success: false, error: "Could not get discount or shop ID" };
+            return {
+                success: false,
+                error: "Could not get discount or shop ID",
+            };
         }
 
         // Fetch all data in parallel
@@ -578,10 +544,12 @@ export async function syncAllSettingsToMetafields(
             findActiveBundlesByShop(shop),
         ]);
 
-        const globalSettingsValue = buildGlobalSettingsMetafieldValue(globalSettings);
-        const activeBundlesValue = buildActiveBundlesMetafieldValue(activeBundles);
+        const globalSettingsValue =
+            buildGlobalSettingsMetafieldValue(globalSettings);
+        const activeBundlesValue =
+            buildActiveBundlesMetafieldValue(activeBundles);
 
-        // Single mutation for all metafields
+        // Update shop and discount metafields
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({
             query: MetafieldsSetDocument,
             variables: {
@@ -590,7 +558,7 @@ export async function syncAllSettingsToMetafields(
                     {
                         ownerId: shopId,
                         namespace: METAFIELD_NAMESPACE,
-                        key: "global_settings",
+                        key: METAFIELD_KEYS["GLOBAL_SETTINGS"],
                         type: "json",
                         value: globalSettingsValue,
                     },
@@ -598,7 +566,7 @@ export async function syncAllSettingsToMetafields(
                     {
                         ownerId: shopId,
                         namespace: METAFIELD_NAMESPACE,
-                        key: "active_bundles",
+                        key: METAFIELD_KEYS["ACTIVE_BUNDLES"],
                         type: "json",
                         value: activeBundlesValue,
                     },
@@ -606,7 +574,7 @@ export async function syncAllSettingsToMetafields(
                     {
                         ownerId: discountId,
                         namespace: METAFIELD_NAMESPACE,
-                        key: "active_bundles",
+                        key: METAFIELD_KEYS["ACTIVE_BUNDLES"],
                         type: "json",
                         value: activeBundlesValue,
                     },
@@ -622,9 +590,14 @@ export async function syncAllSettingsToMetafields(
             };
         }
 
-        console.log(`[Metafield] Synced all settings for ${shop}`);
-        return { success: true, bundleCount: activeBundles.length };
+        console.log("[Metafield] ✓ Shop and discount metafields synced");
 
+        // ✅ Product bundle_ids are managed separately via
+        // addBundleIdToProducts/removeBundleIdFromProducts
+        // when bundles are created/updated
+
+        console.log(`[Metafield] ✅ Full sync complete for ${shop}`);
+        return { success: true, bundleCount: activeBundles.length };
     } catch (error) {
         console.error("[Metafield] Error syncing all settings:", error);
         return {

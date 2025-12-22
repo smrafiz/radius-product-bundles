@@ -5,8 +5,6 @@
  *
  * Lazily ensures app setup is complete when the app loads.
  * This provides a safety net in case installation-time setup fails.
- *
- * Uses database flags to avoid unnecessary API calls on subsequent loads.
  */
 
 import {
@@ -25,27 +23,13 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { handleSessionToken } from "@/lib/shopify";
 import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
+import { METAFIELD_DEFINITIONS } from "@/shared/constants/metafields.constants";
 
-const METAFIELD_NAMESPACE = "radius_bundles";
-const METAFIELD_KEY = "bundle_ids";
-
-/**
- * Title for the single automatic discount.
- * This discount handles both PRODUCT and SHIPPING classes.
- */
 const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
-
-/**
- * Function handle defined in shopify.extension.toml.
- */
 const BUNDLE_DISCOUNT_FUNCTION_HANDLE = "radius-discount-function";
 
 /**
- * Ensures metafield definition exists.
- * Checks database flag first to avoid unnecessary API calls.
- *
- * @param sessionToken - Session token for authentication.
- * @returns Result indicating success or failure.
+ * Ensures metafield definitions exist.
  */
 export async function ensureMetafieldDefinition(
     sessionToken: string,
@@ -74,46 +58,45 @@ export async function ensureMetafieldDefinition(
             return { success: true };
         }
 
-        // Create the metafield definition
-        const createResult =
-            await executeGraphQLMutation<MetafieldDefinitionCreateMutation>({
-                query: MetafieldDefinitionCreateDocument,
-                variables: {
-                    definition: {
-                        name: "Bundle IDs",
-                        namespace: METAFIELD_NAMESPACE,
-                        key: METAFIELD_KEY,
-                        type: "list.single_line_text_field",
-                        ownerType: "PRODUCT",
-                        description:
-                            "List of bundle IDs that include this product",
-                        pin: false,
+        // Create missing metafield definitions
+        // This is a fallback - normally done during app setup
+        console.log("[EnsureSetup] Creating missing metafield definitions...");
+
+        for (const definition of METAFIELD_DEFINITIONS) {
+            const createResult =
+                await executeGraphQLMutation<MetafieldDefinitionCreateMutation>(
+                    {
+                        query: MetafieldDefinitionCreateDocument,
+                        variables: { definition },
+                        sessionToken,
                     },
-                },
-                sessionToken,
-            });
+                );
 
-        const userErrors =
-            createResult.data?.metafieldDefinitionCreate?.userErrors || [];
+            const userErrors =
+                createResult.data?.metafieldDefinitionCreate?.userErrors || [];
 
-        if (userErrors.length > 0) {
-            const alreadyExists = userErrors.some(
-                (e) =>
-                    e.code === "TAKEN" || e.message?.includes("already exists"),
-            );
+            if (userErrors.length > 0) {
+                const alreadyExists = userErrors.some(
+                    (e) =>
+                        e.code === "TAKEN" ||
+                        e.message?.includes("already exists"),
+                );
 
-            if (alreadyExists) {
-                await markMetafieldSetupDone(shop);
-                return { success: true };
+                if (!alreadyExists) {
+                    console.error(
+                        `[EnsureSetup] Failed to create ${definition.key}:`,
+                        userErrors[0]?.message,
+                    );
+                }
+            } else {
+                console.log(`[EnsureSetup] ✓ Created ${definition.key}`);
             }
 
-            return {
-                success: false,
-                error: userErrors[0].message ?? "Unknown error",
-            };
+            // Rate limiting
+            await new Promise((resolve) => setTimeout(resolve, 200));
         }
 
-        console.log("[EnsureSetup] Created metafield definition for", shop);
+        console.log("[EnsureSetup] Created metafield definitions for", shop);
         await markMetafieldSetupDone(shop);
         return { success: true };
     } catch (error) {
@@ -128,13 +111,6 @@ export async function ensureMetafieldDefinition(
 /**
  * Ensures the bundle automatic discount exists.
  * Creates it if missing.
- *
- * Per Shopify's Discount Function API documentation:
- * "A single Function processes one discount (either code-based or automatic),
- * but can apply savings across three discount classes: product, order, and shipping."
- *
- * @param sessionToken - Session token for authentication.
- * @returns Result indicating success or failure.
  */
 export async function ensureBundleDiscount(
     sessionToken: string,
@@ -221,7 +197,7 @@ export async function ensureAppSetup(
 ): Promise<{ success: boolean; errors: string[] }> {
     const errors: string[] = [];
 
-    // Ensure metafield definition
+    // Ensure metafield definitions
     const metafieldResult = await ensureMetafieldDefinition(sessionToken);
     if (!metafieldResult.success && metafieldResult.error) {
         errors.push(`Metafield: ${metafieldResult.error}`);

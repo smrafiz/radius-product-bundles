@@ -282,19 +282,8 @@ export async function countActiveBundlesByShop(shop: string) {
 export async function findActiveBundlesByShop(shop: string) {
     return prisma.bundle.findMany({
         where: { shop, status: "ACTIVE" },
-        select: {
-            id: true,
-            name: true,
-            description: true,
-            status: true,
-            discountType: true,
-            discountValue: true,
-            freeShipping: true,
-            minOrderValue: true,
-            maxDiscountAmount: true,
-            discountApplication: true,
-            discountedProductIds: true,
-            // Include settings
+        include: {
+            bundleProducts: true,
             settings: true,
         },
     });

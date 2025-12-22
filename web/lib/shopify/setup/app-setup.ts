@@ -15,19 +15,15 @@
  */
 
 import {
-    CheckMetafieldDefinitionDocument,
-    CheckMetafieldDefinitionQuery,
-    MetafieldDefinitionCreateDocument,
-    MetafieldDefinitionCreateMutation,
-    CreateBundleAutomaticDiscountDocument,
-    CreateBundleAutomaticDiscountMutation,
     CheckBundleDiscountExistsDocument,
     CheckBundleDiscountExistsQuery,
+    CreateBundleAutomaticDiscountDocument,
+    CreateBundleAutomaticDiscountMutation,
+    MetafieldDefinitionCreateDocument,
+    MetafieldDefinitionCreateMutation,
 } from "@/lib/graphql/generated/graphql";
-import { print, DocumentNode } from "graphql";
-
-const METAFIELD_NAMESPACE = "radius_bundles";
-const METAFIELD_KEY = "bundle_ids";
+import { DocumentNode, print } from "graphql";
+import { METAFIELD_DEFINITIONS } from "@/shared/constants/metafields.constants";
 
 /**
  * Title for the single automatic discount.
@@ -63,7 +59,7 @@ async function executeGraphQLWithToken<T = unknown>(
     shop: string,
 ): Promise<{ data?: T; errors?: Array<{ message: string }> }> {
     const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
-    const query = typeof document === 'string' ? document : print(document);
+    const query = typeof document === "string" ? document : print(document);
 
     const response = await fetch(endpoint, {
         method: "POST",
@@ -82,106 +78,86 @@ async function executeGraphQLWithToken<T = unknown>(
 }
 
 /**
- * Creates the bundle_ids metafield definition for products.
- * This allows the metafield to be visible in Shopify admin.
- *
- * @param accessToken - Shopify access token.
- * @param shop - Shop domain.
- * @returns Result indicating success or failure.
+ * Creates all required metafield definitions
  */
-export async function createBundleMetafieldDefinition(
+export async function createMetafieldDefinitions(
     accessToken: string,
     shop: string,
 ): Promise<SetupResult> {
     try {
-        // First check if definition already exists
-        const checkResult =
-            await executeGraphQLWithToken<CheckMetafieldDefinitionQuery>(
-                CheckMetafieldDefinitionDocument,
-                {},
-                accessToken,
-                shop,
-            );
+        const results: { key: string; success: boolean }[] = [];
 
-        const existingDefinitions =
-            checkResult.data?.metafieldDefinitions?.edges || [];
-
-        if (existingDefinitions.length > 0) {
-            console.log(
-                `[Setup] Metafield definition already exists for ${shop}`,
-            );
-            return {
-                success: true,
-                message: "Metafield definition already exists",
-            };
-        }
-
-        // Create the metafield definition
-        const createResult =
-            await executeGraphQLWithToken<MetafieldDefinitionCreateMutation>(
-                MetafieldDefinitionCreateDocument,
-                {
-                    definition: {
-                        name: "Bundle IDs",
-                        namespace: METAFIELD_NAMESPACE,
-                        key: METAFIELD_KEY,
-                        type: "list.single_line_text_field",
-                        ownerType: "PRODUCT",
-                        description:
-                            "List of bundle IDs that include this product",
-                        pin: false,
-                    },
-                },
-                accessToken,
-                shop,
-            );
-
-        const userErrors =
-            createResult.data?.metafieldDefinitionCreate?.userErrors || [];
-
-        if (userErrors.length > 0) {
-            const alreadyExists = userErrors.some(
-                (e) =>
-                    e.code === "TAKEN" || e.message?.includes("already exists"),
-            );
-
-            if (alreadyExists) {
-                console.log(
-                    `[Setup] Metafield definition already exists (race condition) for ${shop}`,
-                );
-                return {
-                    success: true,
-                    message: "Metafield definition already exists",
-                };
-            }
-
-            console.error(
-                "[Setup] Failed to create metafield definition:",
-                userErrors,
-            );
-            return {
-                success: false,
-                message: "Failed to create metafield definition",
-                error: userErrors[0].message ?? undefined,
-            };
-        }
-
-        const createdDef =
-            createResult.data?.metafieldDefinitionCreate?.createdDefinition;
         console.log(
-            `[Setup] Created metafield definition for ${shop}:`,
-            createdDef?.id,
+            `[Setup] Creating ${METAFIELD_DEFINITIONS.length} metafield definitions...`,
         );
 
+        for (const definition of METAFIELD_DEFINITIONS) {
+            console.log(
+                `[Setup] Processing: ${definition.ownerType} - ${definition.namespace}.${definition.key}`,
+            );
+
+            const createResult =
+                await executeGraphQLWithToken<MetafieldDefinitionCreateMutation>(
+                    MetafieldDefinitionCreateDocument,
+                    { definition },
+                    accessToken,
+                    shop,
+                );
+
+            const userErrors =
+                createResult.data?.metafieldDefinitionCreate?.userErrors || [];
+
+            if (userErrors.length > 0) {
+                const alreadyExists = userErrors.some(
+                    (e) =>
+                        e.code === "TAKEN" ||
+                        e.message?.includes("already exists") ||
+                        e.message?.includes("taken"),
+                );
+
+                if (alreadyExists) {
+                    console.log(`[Setup] ✓ ${definition.key} already exists`);
+                    results.push({ key: definition.key, success: true });
+                    continue;
+                }
+
+                console.error(
+                    `[Setup] ✗ Failed to create ${definition.key}:`,
+                    userErrors[0]?.message,
+                );
+                results.push({ key: definition.key, success: false });
+                continue;
+            }
+
+            console.log(`[Setup] ✓ Created ${definition.key}`);
+            results.push({ key: definition.key, success: true });
+
+            // Rate limiting: small delay between requests
+            await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+
+        const successCount = results.filter((r) => r.success).length;
+        const failedCount = results.length - successCount;
+
+        if (failedCount > 0) {
+            console.warn(
+                `[Setup] Metafield setup: ${successCount} succeeded, ${failedCount} failed`,
+            );
+        } else {
+            console.log(
+                `[Setup] ✓ All ${successCount} metafield definitions ready`,
+            );
+        }
+
         return {
-            success: true,
-            message: "Metafield definition created successfully",
+            success: successCount > 0, // Success if at least one was created/exists
+            message: `Metafield setup: ${successCount}/${results.length} definitions ready`,
         };
     } catch (error) {
-        console.error("[Setup] Error creating metafield definition:", error);
+        console.error("[Setup] Error creating metafield definitions:", error);
         return {
             success: false,
-            message: "Error during setup",
+            message: "Error during metafield setup",
             error: error instanceof Error ? error.message : "Unknown error",
         };
     }
@@ -189,21 +165,6 @@ export async function createBundleMetafieldDefinition(
 
 /**
  * Creates a single automatic discount that handles both product and shipping discounts.
- *
- * Per Shopify's Discount Function API documentation:
- * "A single Function processes one discount (either code-based or automatic),
- * but can apply savings across three discount classes: product, order, and shipping."
- *
- * The function extension has two targets that share this single discount:
- * - cart.lines.discounts.generate.run → handles PRODUCT discounts
- * - cart.delivery-options.discounts.generate.run → handles SHIPPING discounts
- *
- * Shopify automatically invokes both targets when the discount has multiple classes.
- * Each target receives discount.discountClasses in its input to know which classes apply.
- *
- * @param accessToken - Shopify access token.
- * @param shop - Shop domain.
- * @returns Result indicating success or failure.
  */
 export async function createBundleAutomaticDiscount(
     accessToken: string,
@@ -225,10 +186,7 @@ export async function createBundleAutomaticDiscount(
             checkResult.data?.discountNodes?.edges?.[0]?.node;
 
         if (existingDiscount) {
-            console.log(
-                `[Setup] Bundle discount already exists for ${shop}:`,
-                existingDiscount.id,
-            );
+            console.log(`[Setup] ✓ Bundle discount already exists for ${shop}`);
             return {
                 success: true,
                 message: "Bundle discount already exists",
@@ -269,8 +227,8 @@ export async function createBundleAutomaticDiscount(
 
         if (realErrors.length > 0) {
             console.error(
-                "[Setup] Failed to create bundle discount:",
-                realErrors,
+                "[Setup] ✗ Failed to create bundle discount:",
+                realErrors[0]?.message,
             );
             return {
                 success: false,
@@ -283,9 +241,7 @@ export async function createBundleAutomaticDiscount(
             result.data?.discountAutomaticAppCreate?.automaticAppDiscount
                 ?.discountId;
 
-        console.log(
-            `[Setup] Created bundle discount for ${shop}: ${discountId}`,
-        );
+        console.log(`[Setup] ✓ Created bundle discount: ${discountId}`);
 
         return {
             success: true,
@@ -313,17 +269,14 @@ export async function runAppSetup(
     accessToken: string,
     shop: string,
 ): Promise<SetupResult> {
-    console.log(`[Setup] Running app setup for ${shop}`);
+    console.log(`[Setup] 🚀 Running app setup for ${shop}`);
 
-    // Task 1: Create metafield definition
-    const metafieldResult = await createBundleMetafieldDefinition(
-        accessToken,
-        shop,
-    );
+    // Task 1: Create ALL metafield definitions
+    const metafieldResult = await createMetafieldDefinitions(accessToken, shop);
 
     if (!metafieldResult.success) {
         console.warn(
-            `[Setup] Metafield setup warning: ${metafieldResult.error}`,
+            `[Setup] ⚠️  Metafield setup warning: ${metafieldResult.error}`,
         );
     }
 
@@ -335,9 +288,11 @@ export async function runAppSetup(
 
     if (!discountResult.success) {
         console.warn(
-            `[Setup] Bundle discount setup warning: ${discountResult.error}`,
+            `[Setup] ⚠️  Bundle discount setup warning: ${discountResult.error}`,
         );
     }
+
+    console.log(`[Setup] ✅ App setup completed for ${shop}`);
 
     return {
         success: true,

@@ -9,6 +9,7 @@ mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
         userErrors {
             field
             message
+            code
         }
     }
 }
