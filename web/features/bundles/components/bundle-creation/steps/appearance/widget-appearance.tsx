@@ -368,6 +368,38 @@ export function WidgetAppearance() {
                                 </s-stack>
                             </s-stack>
                         </s-stack>
+
+                        <s-divider />
+
+                        {/* Image styling */}
+                        <s-stack gap="base">
+                            <s-heading>Image</s-heading>
+                            <s-stack gap="base" paddingBlockEnd="base">
+                                <s-color-field
+                                    label="Border color"
+                                    name="imageBorderColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.imageBorderColor || "#e3e3e3"
+                                    }
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "imageBorderColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
+                                <s-text>Corner radius</s-text>
+                                <RtpbRangeSlider
+                                    values={style.imageRadius ?? 6}
+                                    action={(val) =>
+                                        updateStyle("imageRadius", val)
+                                    }
+                                />
+                            </s-stack>
+                        </s-stack>
                     </s-stack>
                 </div>
             </s-stack>

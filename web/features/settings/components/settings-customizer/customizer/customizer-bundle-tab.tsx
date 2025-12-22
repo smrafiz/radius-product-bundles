@@ -1,20 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import type { ComponentType } from "react";
+
 import { BUNDLE_TYPES } from "@/features/bundles";
+import {
+    BundlePreviewFixed,
+    BundlePreviewBuyGet,
+    BundlePreviewBogo,
+} from "@/features/settings";
 
-export function CustomizerBundleType() {
+export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
+    FIXED_BUNDLE: BundlePreviewFixed,
+    BUY_X_GET_Y: BundlePreviewBuyGet,
+    BOGO: BundlePreviewBogo,
+};
+
+export function CustomizerBundleTab() {
     const types = Object.values(BUNDLE_TYPES);
-
-    // Default active tab
     const [activeId, setActiveId] = useState(types[0]?.id);
 
-    const activeType = types.find((t) => t.id === activeId);
+    const ActiveComponent =
+        activeId && BUNDLE_PREVIEW_MAP[activeId];
+
+    const PreviewComponent = BUNDLE_PREVIEW_MAP[activeId];
 
     return (
-        <div className="flex border border-[#e3e3e3] rounded-xl overflow-hidden min-h-[300px]">
+        <div className="md:flex border border-[#e3e3e3] rounded-xl overflow-hidden min-h-[300px]">
             {/* LEFT: Tabs */}
-            <div className="w-[260px] border-r border-[#e3e3e3] bg-[#fafafa]">
+            <div className="md:w-[260px] border-r border-[#e3e3e3] bg-white">
                 <s-stack gap="none">
                     {types.map((type) => {
                         const isActive = type.id === activeId;
@@ -26,8 +40,8 @@ export function CustomizerBundleType() {
                                 className={`text-left px-4 py-3 border-l-4 transition
                                     ${
                                     isActive
-                                        ? "border-[#303030] bg-white font-semibold"
-                                        : "border-transparent hover:bg-[#f1f1f1]"
+                                        ? "border-[#303030] bg-[#f7f7f7] font-semibold"
+                                        : "border-transparent hover:bg-[#f7f7f7]"
                                 }
                                 `}
                             >
@@ -39,23 +53,13 @@ export function CustomizerBundleType() {
             </div>
 
             {/* RIGHT: Content */}
-            <div className="flex-1 p-6">
-                {activeType ? (
+            <div className="flex-1 p-6 bg-[#fafafa]">
+                {ActiveComponent ? (
                     <s-stack gap="base">
-                        <s-heading>{activeType.label}</s-heading>
-
-                        <s-text>
-                            {activeType.description ??
-                                "Configure settings for this bundle type."}
-                        </s-text>
-
-                        {/* Replace with real content */}
-                        <div className="border border-dashed border-[#d4d4d4] rounded-lg p-4">
-                            Content for <b>{activeType.label}</b>
-                        </div>
+                        {PreviewComponent && <PreviewComponent />}
                     </s-stack>
                 ) : (
-                    <s-text>Select a bundle type</s-text>
+                    <s-text>No preview available</s-text>
                 )}
             </div>
         </div>

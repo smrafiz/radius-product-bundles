@@ -124,6 +124,8 @@ export const initialDisplaySettings: DisplaySettings = {
         widgetBorderEnabled: true,
         widgetBorderColor: "#e3e3e3",
         widgetRadius: 12,
+        imageRadius: 6,
+        imageBorderColor:"#e3e3e3",
     },
 };
 

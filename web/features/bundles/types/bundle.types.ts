@@ -337,6 +337,9 @@ export interface DisplaySettings {
         widgetBorderEnabled?: boolean;
         widgetBorderColor?: string;
         widgetRadius?: number;
+        //image
+        imageRadius?: number;
+        imageBorderColor?: string;
     };
     widget?: {
         showOnMobile: boolean;

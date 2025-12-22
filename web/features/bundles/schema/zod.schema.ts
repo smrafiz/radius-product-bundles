@@ -82,6 +82,8 @@ const bundleSettingsSchema = z
                 widgetBorderEnabled: z.boolean().optional(),
                 widgetBorderColor: z.string().optional(),
                 widgetRadius: z.number().optional(),
+                imageRadius: z.number().optional(),
+                imageBorderColor: z.string().optional(),
             })
             .optional(),
         widget: z

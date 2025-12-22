@@ -22,7 +22,7 @@ export function BundlePreview() {
     const renderSelectedProducts = () => {
         return visibleItems.map((item, index) => (
             <div
-                className="rtbp-widget-product-layout-one"
+                className="rtpb-widget-product-layout-one"
                 key={index}
                 style={{
                     backgroundColor: styleData.productBgColor || "#f7f7f7",
@@ -39,7 +39,16 @@ export function BundlePreview() {
                 }}
             >
                 <div>
-                    <div className="w-20 h-20 bg-[var(--p-color-bg-surface)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                    <div
+                        className="w-20 h-20 bg-[var(--p-color-bg-surface)] flex items-center justify-center overflow-hidden"
+                        style={{
+                            borderRadius: styleData.imageRadius || "6px",
+                            borderStyle: "solid",
+                            borderWidth: "1px",
+                            borderColor:
+                                styleData.imageBorderColor || "#e3e3e3",
+                        }}
+                    >
                         <img
                             src={item.image}
                             alt={item.title}
@@ -106,7 +115,7 @@ export function BundlePreview() {
             <BundlePreviewStatus />
 
             <div
-                className="rtbp-widget-layout-one"
+                className="rtpb-widget-layout-one"
                 style={{
                     backgroundColor: styleData.widgetBgColor || "#ffffff",
                     borderRadius: styleData.widgetRadius || "12px",

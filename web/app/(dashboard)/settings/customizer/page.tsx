@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import {
-    CustomizerOptions,
-    CustomizerBundlePreview,
+    CustomizerBundleTab,
     CustomizerHeader,
+    BundleOptionsType,
 } from "@/features/settings";
 export const metadata: Metadata = {
-    title: "Settings | Manage Your Bundle Preferences",
+    title: "Customizer | Manage Your Bundle Customization",
     description:
         "Customize your bundle app experience. Configure general settings, analytics preferences, and store integrations to optimize your workflow and performance tracking.",
 };
@@ -15,15 +15,17 @@ export const metadata: Metadata = {
  */
 export default function Page() {
     return (
-        <div className="rtbp-full-modal-editor">
-            <div className="rtbp-full-content">
-                <div className="rtbp-left-setting">
-                    <CustomizerOptions />
+        <div className="rtpb-full-modal-editor">
+            <div className="rtpb-full-content flex flex-wrap gap-6">
+                {/* Left option */}
+                <div className="rtpb-left-setting lg:w-[380px]">
+                    <BundleOptionsType />
                 </div>
-                <div className="rtbp-right-review">
+                {/* Right review */}
+                <div className="rtpb-right-review">
                     <s-stack gap="base">
                         <CustomizerHeader />
-                        <CustomizerBundlePreview />
+                        <CustomizerBundleTab />
                     </s-stack>
                 </div>
             </div>
