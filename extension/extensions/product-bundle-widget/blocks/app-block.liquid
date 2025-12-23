@@ -175,6 +175,21 @@
 									free_shipping_text: free_shipping_text,
 									block: block
 							%}
+						{% when 'compact' %}
+							{% render 'radius-bundle-compact',
+									bundle_id: bundle_id,
+									name: bundle.title,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_free_shipping: show_free_shipping,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_text: free_shipping_text,
+									block: block
+							%}
 						{% else %}
 							{% render 'radius-bundle-list',
 									bundle_id: bundle_id,

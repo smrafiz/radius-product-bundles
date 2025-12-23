@@ -48,12 +48,9 @@
 		{% endif %}
 	</div>
 
-	{% comment %} Compact Button {% endcomment %}
-	<button
-			class="radius-bundle__button radius-bundle__button--compact"
-			data-bundle-add-to-cart
-			aria-label="{{ button_text }}"
-	>
-		{{ button_text }}
-	</button>
+	{% comment %} Add to Cart Button {% endcomment %}
+	{% render 'radius-bundle-add-to-cart',
+			bundle_id: bundle_id,
+			button_text: button_text
+	%}
 </div>
