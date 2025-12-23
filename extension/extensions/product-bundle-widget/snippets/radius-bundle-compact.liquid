@@ -1,0 +1,59 @@
+{% comment %}
+  Radius Bundle - Compact Template
+{% endcomment %}
+
+<div class="radius-bundle__inner radius-bundle__inner--compact">
+	{% comment %} Header {% endcomment %}
+	<div class="radius-bundle__header radius-bundle__header--compact">
+		<h3 class="radius-bundle__title radius-bundle__title--compact" data-bundle-title>
+			{{ name }}
+		</h3>
+
+		{% if show_savings %}
+			<div class="radius-bundle__badge radius-bundle__badge--skeleton radius-bundle__badge--compact" data-bundle-badge>
+				<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
+			</div>
+		{% endif %}
+	</div>
+
+	{% comment %} Compact Products List {% endcomment %}
+	<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
+		{% for i in (1..product_count) %}
+			<div class="radius-bundle__product radius-bundle__product--compact radius-bundle__product--skeleton">
+				{% if show_images %}
+					<div class="radius-bundle__product-image radius-bundle__product-image--compact radius-bundle__skeleton-box"></div>
+				{% endif %}
+				<div class="radius-bundle__product-info radius-bundle__product-info--compact">
+					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{% comment %} Compact Pricing {% endcomment %}
+	<div class="radius-bundle__pricing radius-bundle__pricing--compact" data-bundle-pricing>
+		<div class="radius-bundle__pricing-row radius-bundle__pricing-row--compact">
+			<span class="radius-bundle__pricing-label">{{ bundle_price_label }}</span>
+			<span class="radius-bundle__price-discounted radius-bundle__price-discounted--compact" data-bundle-price>
+                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
+            </span>
+		</div>
+		{% if show_savings %}
+			<div class="radius-bundle__savings radius-bundle__savings--compact" data-savings style="display: none;">
+                <span class="radius-bundle__savings-amount" data-savings-amount>
+                    <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
+                </span>
+			</div>
+		{% endif %}
+	</div>
+
+	{% comment %} Compact Button {% endcomment %}
+	<button
+			class="radius-bundle__button radius-bundle__button--compact"
+			data-bundle-add-to-cart
+			aria-label="{{ button_text }}"
+	>
+		{{ button_text }}
+	</button>
+</div>

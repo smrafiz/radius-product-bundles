@@ -1,14 +1,10 @@
 import "./bundle-widget.scss";
 
 /**
- * Radius Bundle Widget - TypeScript
+ * Radius Bundle Widget - Optimized
  *
- * Handles bundle widget functionality with pre-loaded config from Liquid.
- * - Uses pre-loaded bundle config from data attributes for instant rendering
- * - Fetches product data from API (products not stored in metafields)
- * - Handles add to cart
- * - Handles slider navigation
- * - Updates pricing display
+ * Shows title and badge immediately from Liquid data.
+ * Only fetches product details via API.
  */
 
 interface BundleProduct {
@@ -25,25 +21,30 @@ interface BundleProduct {
     handle: string;
 }
 
-interface BundleConfig {
+interface BundleStructure {
     id: string;
     status: string;
-    discountType:
-        | "PERCENTAGE"
-        | "FIXED_AMOUNT"
-        | "CUSTOM_PRICE"
-        | "NO_DISCOUNT";
+    name: string;
+    discountType: "PERCENTAGE" | "FIXED_AMOUNT" | "CUSTOM_PRICE" | "NO_DISCOUNT";
     discountValue: number;
     freeShipping: boolean;
     minOrderValue: number;
     maxDiscountAmount: number;
     discountApplication: "bundle" | "products";
     discountedProductIds: string[];
+    productCount: number;
+    productIds: string[];
+    layout: string;
+    labels: {
+        buttonText: string;
+        regularPriceLabel: string;
+        bundlePriceLabel: string;
+        youSaveLabel: string;
+        freeShippingText: string;
+    };
 }
 
-interface Bundle extends BundleConfig {
-    name: string;
-    description?: string;
+interface Bundle extends BundleStructure {
     products: BundleProduct[];
 }
 
@@ -51,6 +52,20 @@ interface BundleResponse {
     success: boolean;
     bundles: Bundle[];
     count: number;
+}
+
+interface ProductDetailsResponse {
+    success: boolean;
+    products: Array<{
+        id: string;
+        title: string;
+        price: number;
+        compareAtPrice: number;
+        image: string | null;
+        handle: string;
+        variantId: string;
+        available: boolean;
+    }>;
 }
 
 interface CartAddItem {
@@ -83,23 +98,17 @@ declare global {
 
 /**
  * Radius Bundle Widget Class
- * Manages a single bundle widget instance.
  */
 class RadiusBundleWidget {
     private container: HTMLElement;
-    private bundleId: string;
-    private productId: string;
-    private shop: string;
-    private bundleConfig: BundleConfig | null = null;
+    private readonly bundleId: string;
+    private readonly productId: string;
+    private readonly shop: string;
+    private bundleStructure: BundleStructure | null = null;
     private bundle: Bundle | null = null;
-    private showImages: boolean = true;
-    private showSavings: boolean = true;
+    private readonly showImages: boolean = true;
+    private readonly showSavings: boolean = true;
 
-    /**
-     * Creates a new RadiusBundleWidget instance.
-     *
-     * @param container - The bundle container element
-     */
     constructor(container: HTMLElement) {
         this.container = container;
         this.bundleId = container.dataset.bundleId || "";
@@ -110,61 +119,54 @@ class RadiusBundleWidget {
         this.shop =
             container.closest("[data-shop]")?.getAttribute("data-shop") || "";
 
-        // Parse pre-loaded config from Liquid
         this.showImages = container.dataset.showImages !== "false";
         this.showSavings = container.dataset.showSavings !== "false";
 
-        const configJson = container.dataset.bundleConfig;
-        if (configJson) {
+        // ⭐ Parse structure from Liquid
+        const structureJson = container.dataset.bundleStructure;
+        if (structureJson) {
             try {
-                this.bundleConfig = JSON.parse(configJson);
+                this.bundleStructure = JSON.parse(structureJson);
             } catch (e) {
-                console.warn(
-                    "[RadiusBundle] Failed to parse bundle config:",
-                    e,
-                );
+                console.warn("[RadiusBundle] Failed to parse bundle structure:", e);
             }
         }
 
         this.init();
     }
 
-    /**
-     * Initializes the widget.
-     */
     private async init(): Promise<void> {
         if (!this.bundleId || !this.productId || !this.shop) {
             console.warn("[RadiusBundle] Missing required data attributes");
             return;
         }
 
-        // Immediately update badge if we have config (no API call needed)
-        if (this.bundleConfig) {
-            this.updateBadgeFromConfig(this.bundleConfig);
+        // ⭐ PHASE 1: Show badge immediately (no API needed)
+        if (this.bundleStructure) {
+            this.updateBadgeFromStructure(this.bundleStructure);
         }
 
-        // Fetch products from API (products aren't in metafields)
-        await this.loadBundle();
+        // ⭐ PHASE 2: Fetch product details only
+        await this.loadProductDetails();
         this.bindEvents();
     }
 
     /**
-     * Updates badge immediately from pre-loaded config.
+     * ⭐ Shows badge immediately from structure.
      */
-    private updateBadgeFromConfig(config: BundleConfig): void {
+    private updateBadgeFromStructure(structure: BundleStructure): void {
         const badgeEl = this.container.querySelector("[data-bundle-badge]");
-
         if (!badgeEl) return;
 
         let badgeText = "";
 
-        if (config.discountValue && config.discountValue > 0) {
-            switch (config.discountType) {
+        if (structure.discountValue && structure.discountValue > 0) {
+            switch (structure.discountType) {
                 case "PERCENTAGE":
-                    badgeText = `Save ${config.discountValue}%`;
+                    badgeText = `Save ${structure.discountValue}%`;
                     break;
                 case "FIXED_AMOUNT":
-                    badgeText = `Save ${this.formatMoney(config.discountValue)}`;
+                    badgeText = `Save ${this.formatMoney(structure.discountValue)}`;
                     break;
                 case "CUSTOM_PRICE":
                     badgeText = "Special Price";
@@ -172,9 +174,8 @@ class RadiusBundleWidget {
             }
         }
 
-        if (badgeText) {
-            badgeEl.innerHTML = badgeText;
-            badgeEl.classList.remove("radius-bundle__badge--skeleton");
+        if (badgeText && this.showSavings) {
+            badgeEl.textContent = badgeText;
             badgeEl.classList.add("radius-bundle__badge--visible");
         } else {
             (badgeEl as HTMLElement).style.display = "none";
@@ -182,27 +183,47 @@ class RadiusBundleWidget {
     }
 
     /**
-     * Fetches bundle data and renders products.
+     * ⭐ Fetches ONLY product details (optimized API call).
      */
-    private async loadBundle(): Promise<void> {
+    private async loadProductDetails(): Promise<void> {
         try {
-            const bundle = await this.fetchBundle();
+            if (!this.bundleStructure?.productIds?.length) {
+                console.warn("[RadiusBundle] No product IDs, using legacy fetch");
+                await this.loadBundleLegacy();
+                return;
+            }
 
-            if (!bundle) {
+            console.log(`[RadiusBundle] Fetching ${this.bundleStructure.productIds.length} products`);
+
+            // ⭐ Optimized: Fetch products by IDs only
+            const productIds = this.bundleStructure.productIds.join(",");
+            const url = `/apps/bundles/products?shop=${encodeURIComponent(this.shop)}&ids=${encodeURIComponent(productIds)}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+
+            const data: ProductDetailsResponse = await response.json();
+
+            if (!data.success || !data.products) {
+                throw new Error("No products returned");
+            }
+
+            // ⭐ Build bundle from structure + product details
+            this.bundle = {
+                ...this.bundleStructure,
+                products: this.matchProductsToStructure(data.products),
+            } as Bundle;
+
+            if (!this.bundle) {
                 this.showError("Bundle not available");
                 return;
             }
 
-            this.bundle = bundle;
-            this.renderProducts(bundle);
-            this.updatePricing(bundle);
-            this.updateTitle(bundle);
-
-            console.log(bundle);
-
-            // Update badge with full bundle data (includes name)
-            this.updateBadge(bundle);
-            this.hideLoading();
+            this.renderProducts(this.bundle);
+            this.updatePricing(this.bundle);
         } catch (error) {
             console.error("[RadiusBundle] Load error:", error);
             this.showError("Failed to load bundle");
@@ -210,43 +231,74 @@ class RadiusBundleWidget {
     }
 
     /**
-     * Fetches bundle data from API.
+     * ⭐ Matches fetched products to structure.
      */
-    private async fetchBundle(): Promise<Bundle | null> {
+    private matchProductsToStructure(
+        products: ProductDetailsResponse["products"],
+    ): BundleProduct[] {
+        if (!this.bundleStructure?.productIds) return [];
+
+        const productMap = new Map(products.map((p) => [p.id, p]));
+
+        return this.bundleStructure.productIds.map((productId, index) => {
+            const product = productMap.get(productId);
+
+            return {
+                id: productId,
+                variantId: product?.variantId || "",
+                quantity: 1,
+                role: "INCLUDED" as const,
+                displayOrder: index,
+                isRequired: true,
+                title: product?.title || "Loading...",
+                price: product?.price || 0,
+                compareAtPrice: product?.compareAtPrice || 0,
+                featuredImage: product?.image || null,
+                handle: product?.handle || "",
+            };
+        });
+    }
+
+    /**
+     * Fallback: Legacy bundle fetch.
+     */
+    private async loadBundleLegacy(): Promise<void> {
         try {
             const url = `/apps/bundles/products?productId=${encodeURIComponent(this.productId)}&shop=${encodeURIComponent(this.shop)}&bundleId=${encodeURIComponent(this.bundleId)}`;
             const response = await fetch(url);
 
             if (!response.ok) {
-                console.error(
-                    `[RadiusBundle] Fetch failed: ${response.status}`,
-                );
-                return null;
+                throw new Error(`API error: ${response.status}`);
             }
 
             const data: BundleResponse = await response.json();
 
             if (!data.success || !data.bundles?.length) {
-                return null;
+                throw new Error("No bundles returned");
             }
 
-            return (
+            this.bundle =
                 data.bundles.find((b) => b.id === this.bundleId) ||
-                data.bundles[0]
-            );
+                data.bundles[0];
+
+            if (!this.bundle) {
+                this.showError("Bundle not available");
+                return;
+            }
+
+            this.renderProducts(this.bundle);
+            this.updatePricing(this.bundle);
         } catch (error) {
-            console.error("[RadiusBundle] Fetch error:", error);
-            return null;
+            console.error("[RadiusBundle] Legacy fetch error:", error);
+            this.showError("Failed to load bundle");
         }
     }
 
     /**
-     * Renders products into the container.
+     * Renders products (replacing skeleton).
      */
     private renderProducts(bundle: Bundle): void {
-        const productsContainer = this.container.querySelector(
-            "[data-bundle-products]",
-        );
+        const productsContainer = this.container.querySelector("[data-bundle-products]");
         if (!productsContainer) return;
 
         const layout = this.getLayout();
@@ -260,14 +312,14 @@ class RadiusBundleWidget {
             const isLast = index === sortedProducts.length - 1;
             html += this.renderProductCard(product, layout);
 
-            if (layout === "slider" && !isLast) {
+            if (layout === "carousel" && !isLast) {
                 html += '<div class="radius-bundle__slider-plus">+</div>';
             }
         });
 
         productsContainer.innerHTML = html;
 
-        if (layout === "slider") {
+        if (layout === "carousel") {
             this.initSliderDots(sortedProducts.length);
         }
     }
@@ -280,14 +332,47 @@ class RadiusBundleWidget {
             this.showImages && product.featuredImage
                 ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" loading="lazy" />`
                 : this.showImages
-                  ? `<div class="radius-bundle__product-placeholder">📦</div>`
-                  : "";
+                    ? `<div class="radius-bundle__product-placeholder">📦</div>`
+                    : "";
+
+        // ⭐ Calculate discounted price based on bundle discount
+        const structure = this.bundleStructure;
+        let discountedPrice = product.price;
+
+        if (structure && structure.discountValue > 0) {
+            switch (structure.discountType) {
+                case "PERCENTAGE":
+                    discountedPrice = product.price * (1 - structure.discountValue / 100);
+                    break;
+                case "FIXED_AMOUNT":
+                    // For fixed amount, distribute proportionally across products
+                    const totalPrice = this.bundle?.products.reduce((sum, p) => sum + p.price, 0) || product.price;
+                    const proportion = product.price / totalPrice;
+                    const productDiscount = structure.discountValue * proportion;
+                    discountedPrice = Math.max(0, product.price - productDiscount);
+                    break;
+                case "CUSTOM_PRICE":
+                    // For custom price, distribute proportionally
+                    const totalRegular = this.bundle?.products.reduce((sum, p) => sum + p.price, 0) || product.price;
+                    const priceRatio = product.price / totalRegular;
+                    discountedPrice = structure.discountValue * priceRatio;
+                    break;
+                default:
+                    discountedPrice = product.price;
+            }
+        }
+
+        // Round to nearest cent
+        discountedPrice = Math.round(discountedPrice);
 
         const priceHtml =
             product.compareAtPrice > product.price
-                ? `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>
-                   <span class="radius-bundle__product-price-compare">${this.formatMoney(product.compareAtPrice)}</span>`
-                : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
+                ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
+               <span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>`
+                : discountedPrice < product.price
+                    ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
+                   <span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>`
+                    : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
 
         const imageWrapper = this.showImages
             ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
@@ -295,46 +380,46 @@ class RadiusBundleWidget {
 
         if (layout === "list") {
             return `
-                <div class="radius-bundle__product radius-bundle__product--list" data-product-id="${product.id}" data-variant-id="${product.variantId}">
-                    ${imageWrapper}
-                    <div class="radius-bundle__product-info">
-                        <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
-                        <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
-                    </div>
-                    <div class="radius-bundle__product-price">
-                        ${priceHtml}
-                    </div>
-                </div>
-            `;
-        }
-
-        if (layout === "grid") {
-            return `
-                <div class="radius-bundle__product radius-bundle__product--grid" data-product-id="${product.id}" data-variant-id="${product.variantId}">
-                    ${imageWrapper}
+            <div class="radius-bundle__product radius-bundle__product--list" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+                ${imageWrapper}
+                <div class="radius-bundle__product-info">
                     <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
-                    <div class="radius-bundle__product-price">
-                        ${priceHtml}
-                    </div>
                     <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
                 </div>
-            `;
-        }
-
-        // Slider layout
-        return `
-            <div class="radius-bundle__product radius-bundle__product--slider" data-product-id="${product.id}" data-variant-id="${product.variantId}">
-                ${imageWrapper}
-                <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
                 <div class="radius-bundle__product-price">
                     ${priceHtml}
                 </div>
             </div>
         `;
+        }
+
+        if (layout === "grid") {
+            return `
+            <div class="radius-bundle__product radius-bundle__product--grid" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+                ${imageWrapper}
+                <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
+                <div class="radius-bundle__product-price">
+                    ${priceHtml}
+                </div>
+                <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
+            </div>
+        `;
+        }
+
+        // Slider layout
+        return `
+        <div class="radius-bundle__product radius-bundle__product--slider" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+            ${imageWrapper}
+            <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
+            <div class="radius-bundle__product-price">
+                ${priceHtml}
+            </div>
+        </div>
+    `;
     }
 
     /**
-     * Updates the pricing display.
+     * Updates pricing display.
      */
     private updatePricing(bundle: Bundle): void {
         const originalTotal = bundle.products.reduce(
@@ -345,23 +430,19 @@ class RadiusBundleWidget {
         let discountAmount: number;
         let bundleTotal: number;
 
-        // Use pre-loaded config or bundle data
-        const discountType =
-            this.bundleConfig?.discountType || bundle.discountType;
-        const discountValue =
-            this.bundleConfig?.discountValue ?? bundle.discountValue ?? 0;
+        const structure = this.bundleStructure || bundle;
 
-        switch (discountType) {
+        switch (structure.discountType) {
             case "PERCENTAGE":
-                discountAmount = originalTotal * (discountValue / 100);
+                discountAmount = originalTotal * (structure.discountValue / 100);
                 bundleTotal = originalTotal - discountAmount;
                 break;
             case "FIXED_AMOUNT":
-                discountAmount = discountValue;
+                discountAmount = structure.discountValue;
                 bundleTotal = originalTotal - discountAmount;
                 break;
             case "CUSTOM_PRICE":
-                bundleTotal = discountValue;
+                bundleTotal = structure.discountValue;
                 discountAmount = originalTotal - bundleTotal;
                 break;
             default:
@@ -369,99 +450,25 @@ class RadiusBundleWidget {
                 bundleTotal = originalTotal;
         }
 
-        // Ensure non-negative
         bundleTotal = Math.max(0, bundleTotal);
         discountAmount = Math.max(0, discountAmount);
 
-        // Update DOM elements
-        const originalPriceEl = this.container.querySelector(
-            "[data-original-price]",
-        );
-        const bundlePriceEl = this.container.querySelector(
-            "[data-bundle-price]",
-        );
-        const savingsEl = this.container.querySelector("[data-bundle-savings]");
-        const savingsAmountEl = this.container.querySelector(
-            "[data-savings-amount]",
-        );
+        const regularPriceEl = this.container.querySelector("[data-regular-price]");
+        const bundlePriceEl = this.container.querySelector("[data-bundle-price]");
+        const savingsEl = this.container.querySelector("[data-savings]");
+        const savingsAmountEl = this.container.querySelector("[data-savings-amount]");
 
-        if (originalPriceEl) {
-            originalPriceEl.textContent = this.formatMoney(originalTotal);
+        if (regularPriceEl) {
+            regularPriceEl.textContent = this.formatMoney(originalTotal);
         }
 
         if (bundlePriceEl) {
             bundlePriceEl.textContent = this.formatMoney(bundleTotal);
         }
 
-        if (
-            savingsEl &&
-            savingsAmountEl &&
-            discountAmount > 0 &&
-            this.showSavings
-        ) {
+        if (savingsEl && savingsAmountEl && discountAmount > 0 && this.showSavings) {
             savingsAmountEl.textContent = this.formatMoney(discountAmount);
             (savingsEl as HTMLElement).style.display = "flex";
-        }
-    }
-
-    /**
-     * Updates the bundle title and hides the skeleton.
-     */
-    private updateTitle(bundle: Bundle): void {
-        const titleEl = this.container.querySelector("[data-bundle-title]");
-        const titleSkeleton = this.container.querySelector(
-            "[data-bundle-title-skeleton]",
-        );
-
-        if (titleEl && bundle.name) {
-            titleEl.textContent = bundle.name;
-            titleEl.classList.remove("radius-bundle__title--hidden");
-            titleEl.classList.add("radius-bundle__title--visible");
-        }
-
-        if (titleSkeleton) {
-            titleSkeleton.classList.add(
-                "radius-bundle__title-skeleton--hidden",
-            );
-        }
-    }
-
-    /**
-     * Updates the savings badge from full bundle data.
-     */
-    private updateBadge(bundle: Bundle): void {
-        const badgeEl = this.container.querySelector("[data-bundle-badge]");
-
-        if (!badgeEl) return;
-
-        // Use pre-loaded config or bundle data
-        const discountType =
-            this.bundleConfig?.discountType || bundle.discountType;
-        const discountValue =
-            this.bundleConfig?.discountValue ?? bundle.discountValue ?? 0;
-
-        let badgeText = "";
-
-        if (discountValue > 0) {
-            switch (discountType) {
-                case "PERCENTAGE":
-                    badgeText = `Save ${discountValue}%`;
-                    break;
-                case "FIXED_AMOUNT":
-                    badgeText = `Save ${this.formatMoney(discountValue)}`;
-                    break;
-                case "CUSTOM_PRICE":
-                    badgeText = "Special Price";
-                    break;
-            }
-        }
-
-        if (badgeText && this.showSavings) {
-            badgeEl.innerHTML = badgeText;
-            badgeEl.classList.remove("radius-bundle__badge--skeleton");
-            badgeEl.classList.add("radius-bundle__badge--visible");
-        } else {
-            (badgeEl as HTMLElement).style.display = "none";
         }
     }
 
@@ -469,13 +476,9 @@ class RadiusBundleWidget {
      * Binds event listeners.
      */
     private bindEvents(): void {
-        const addToCartBtn = this.container.querySelector(
-            "[data-bundle-add-to-cart]",
-        );
+        const addToCartBtn = this.container.querySelector("[data-bundle-add-to-cart]");
         if (addToCartBtn) {
-            addToCartBtn.addEventListener("click", () =>
-                this.handleAddToCart(),
-            );
+            addToCartBtn.addEventListener("click", () => this.handleAddToCart());
         }
 
         const prevBtn = this.container.querySelector("[data-slider-prev]");
@@ -490,17 +493,17 @@ class RadiusBundleWidget {
     }
 
     /**
-     * Handles add to cart functionality.
+     * Handles add to cart.
      */
     private async handleAddToCart(): Promise<void> {
         if (!this.bundle) return;
 
-        const button = this.container.querySelector(
-            "[data-bundle-add-to-cart]",
-        ) as HTMLButtonElement;
+        const button = this.container.querySelector("[data-bundle-add-to-cart]") as HTMLButtonElement;
         const messageEl = this.container.querySelector("[data-bundle-message]");
 
-        if (!button) return;
+        if (!button) {
+            return;
+        }
 
         button.classList.add("is-loading");
         button.disabled = true;
@@ -520,7 +523,11 @@ class RadiusBundleWidget {
                 }));
 
             if (cartItems.length === 0) {
-                throw new Error("No valid products to add to cart");
+                this.showMessage(
+                    messageEl,
+                    "No valid products to add to cart",
+                    "error",
+                );
             }
 
             const addResponse = await fetch("/cart/add.js", {
@@ -531,9 +538,11 @@ class RadiusBundleWidget {
 
             if (!addResponse.ok) {
                 const errorData = await addResponse.json().catch(() => ({}));
-                throw new Error(
+                this.showMessage(
+                    messageEl,
                     errorData.description ||
                         `Failed to add to cart: ${addResponse.status}`,
+                    "error",
                 );
             }
 
@@ -542,37 +551,28 @@ class RadiusBundleWidget {
             let existingDiscounts: DiscountConfig[] = [];
             if (cart.attributes?._radiusDiscounts) {
                 try {
-                    existingDiscounts = JSON.parse(
-                        cart.attributes._radiusDiscounts,
-                    );
+                    existingDiscounts = JSON.parse(cart.attributes._radiusDiscounts);
                 } catch {
                     existingDiscounts = [];
                 }
             }
 
-            const requiredProducts = this.bundle.products.filter(
-                (p) => p.role === "INCLUDED" || p.isRequired,
-            );
-
-            // Use pre-loaded config for discount info
-            const config = this.bundleConfig || this.bundle;
+            const structure = this.bundleStructure || this.bundle;
 
             const newDiscount: DiscountConfig = {
                 bundleId: this.bundle.id,
                 bundleName: this.bundle.name,
-                discountType: config.discountType || "PERCENTAGE",
-                discountValue: config.discountValue || 0,
-                requiredLineCount: requiredProducts.length,
-                minOrderValue: config.minOrderValue || 0,
-                maxDiscountAmount: config.maxDiscountAmount || 0,
-                discountApplication: config.discountApplication || "bundle",
-                discountedProductIds: config.discountedProductIds || [],
-                freeShipping: config.freeShipping || false,
+                discountType: structure.discountType || "PERCENTAGE",
+                discountValue: structure.discountValue || 0,
+                requiredLineCount: this.bundle.products.filter(p => p.role === "INCLUDED").length,
+                minOrderValue: structure.minOrderValue || 0,
+                maxDiscountAmount: structure.maxDiscountAmount || 0,
+                discountApplication: structure.discountApplication || "bundle",
+                discountedProductIds: structure.discountedProductIds || [],
+                freeShipping: structure.freeShipping || false,
             };
 
-            existingDiscounts = existingDiscounts.filter(
-                (d) => d.bundleId !== this.bundle!.id,
-            );
+            existingDiscounts = existingDiscounts.filter((d) => d.bundleId !== this.bundle!.id);
             existingDiscounts.push(newDiscount);
 
             await fetch("/cart/update.js", {
@@ -589,24 +589,17 @@ class RadiusBundleWidget {
 
             this.container.dispatchEvent(
                 new CustomEvent("bundle:addedToCart", {
-                    detail: {
-                        bundle: this.bundle,
-                        cartItems,
-                        discountConfig: newDiscount,
-                    },
+                    detail: { bundle: this.bundle, cartItems, discountConfig: newDiscount },
                     bubbles: true,
                 }),
             );
 
             document.dispatchEvent(new CustomEvent("cart:refresh"));
-
-            this.updateCartCount();
+            await this.updateCartCount();
         } catch (error) {
             console.error("[RadiusBundle] Add to cart error:", error);
             const errorMessage =
-                error instanceof Error
-                    ? error.message
-                    : "Failed to add bundle to cart";
+                error instanceof Error ? error.message : "Failed to add bundle to cart";
             this.showMessage(messageEl, errorMessage, "error");
         } finally {
             button.classList.remove("is-loading");
@@ -614,13 +607,8 @@ class RadiusBundleWidget {
         }
     }
 
-    /**
-     * Slides products in slider layout.
-     */
     private slideProducts(direction: "prev" | "next"): void {
-        const track = this.container.querySelector(
-            "[data-slider-track]",
-        ) as HTMLElement;
+        const track = this.container.querySelector("[data-slider-track]") as HTMLElement;
         if (!track) return;
 
         const scrollAmount = 200;
@@ -631,12 +619,8 @@ class RadiusBundleWidget {
         }
     }
 
-    /**
-     * Initializes slider dots.
-     */
     private initSliderDots(count: number): void {
-        const dotsContainer =
-            this.container.querySelector("[data-slider-dots]");
+        const dotsContainer = this.container.querySelector("[data-slider-dots]");
         if (!dotsContainer || count <= 1) return;
 
         let html = "";
@@ -646,9 +630,6 @@ class RadiusBundleWidget {
         dotsContainer.innerHTML = html;
     }
 
-    /**
-     * Updates the cart count in header.
-     */
     private async updateCartCount(): Promise<void> {
         try {
             const cart = await fetch("/cart.js").then((r) => r.json());
@@ -666,12 +647,9 @@ class RadiusBundleWidget {
                     `;
                     cartLink.appendChild(bubble);
                 } else {
-                    const countSpan = bubble.querySelector(
-                        '[aria-hidden="true"]',
-                    );
+                    const countSpan = bubble.querySelector('[aria-hidden="true"]');
                     const srSpan = bubble.querySelector(".visually-hidden");
-                    if (countSpan)
-                        countSpan.textContent = cart.item_count.toString();
+                    if (countSpan) countSpan.textContent = cart.item_count.toString();
                     if (srSpan) srSpan.textContent = `${cart.item_count} items`;
                     (bubble as HTMLElement).style.display = "flex";
                 }
@@ -681,63 +659,22 @@ class RadiusBundleWidget {
         }
     }
 
-    /**
-     * Gets the current layout type.
-     */
     private getLayout(): string {
         return this.container.classList.contains("radius-bundle--grid")
             ? "grid"
-            : this.container.classList.contains("radius-bundle--slider")
-              ? "slider"
-              : "list";
+            : this.container.classList.contains("radius-bundle--carousel")
+                ? "carousel"
+                : "list";
     }
 
-    /**
-     * Hides the loading skeleton.
-     */
-    private hideLoading(): void {
-        const loading = this.container.querySelector("[data-bundle-loading]");
-        if (loading) {
-            loading.remove();
-        }
-    }
-
-    /**
-     * Shows an error message.
-     */
     private showError(message: string): void {
-        this.hideLoading();
-
-        const titleSkeleton = this.container.querySelector(
-            "[data-bundle-title-skeleton]",
-        );
-        if (titleSkeleton) {
-            titleSkeleton.classList.add(
-                "radius-bundle__title-skeleton--hidden",
-            );
-        }
-
-        const badgeEl = this.container.querySelector("[data-bundle-badge]");
-        if (badgeEl) {
-            (badgeEl as HTMLElement).style.display = "none";
-        }
-
-        const productsContainer = this.container.querySelector(
-            "[data-bundle-products]",
-        );
+        const productsContainer = this.container.querySelector("[data-bundle-products]");
         if (productsContainer) {
             productsContainer.innerHTML = `<div class="radius-bundle__error">${message}</div>`;
         }
     }
 
-    /**
-     * Shows a temporary message.
-     */
-    private showMessage(
-        element: Element | null,
-        message: string,
-        type: "success" | "error",
-    ): void {
+    private showMessage(element: Element | null, message: string, type: "success" | "error"): void {
         if (!element) return;
 
         element.textContent = message;
@@ -749,19 +686,13 @@ class RadiusBundleWidget {
         }, 4000);
     }
 
-    /**
-     * Formats money value.
-     */
     private formatMoney(cents: number): string {
         if (typeof window.Shopify?.formatMoney === "function") {
-            return window.Shopify.formatMoney(cents * 100);
+            return window.Shopify.formatMoney(cents);
         }
-        return `$${cents.toFixed(2)}`;
+        return `$${(cents / 100).toFixed(2)}`;
     }
 
-    /**
-     * Extracts numeric ID from Shopify GID.
-     */
     private extractNumericId(gid: string): string {
         if (!gid) return "";
         if (/^\d+$/.test(gid)) return gid;
@@ -769,9 +700,6 @@ class RadiusBundleWidget {
         return match ? match[1] : gid;
     }
 
-    /**
-     * Escapes HTML to prevent XSS.
-     */
     private escapeHtml(text: string): string {
         const div = document.createElement("div");
         div.textContent = text;
@@ -779,13 +707,8 @@ class RadiusBundleWidget {
     }
 }
 
-/**
- * Auto-initialize all bundle widgets when DOM is ready.
- */
 function initRadiusBundles(): void {
-    const bundles = document.querySelectorAll<HTMLElement>(
-        ".radius-bundle[data-bundle-id]",
-    );
+    const bundles = document.querySelectorAll<HTMLElement>(".radius-bundle[data-bundle-id]");
 
     bundles.forEach((container) => {
         try {
@@ -796,12 +719,10 @@ function initRadiusBundles(): void {
     });
 }
 
-// Initialize on DOM ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initRadiusBundles);
 } else {
     initRadiusBundles();
 }
 
-// Export for external use
 window.RadiusBundleWidget = RadiusBundleWidget;

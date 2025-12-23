@@ -14,114 +14,103 @@
 {% assign bundle_ids = product.metafields.radius_bundles.bundle_ids.value %}
 
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
-    {% comment %} Load settings from shop metafields (single source of truth) {% endcomment %}
-    {% assign global = shop.metafields.radius_bundles.global_settings.value %}
-    {% assign bundles = shop.metafields.radius_bundles.active_bundles.value %}
+	{% comment %} Load settings from shop metafields (single source of truth) {% endcomment %}
+	{% assign global = shop.metafields.radius_bundles.global_settings.value %}
+	{% assign bundles = shop.metafields.radius_bundles.active_bundles.value %}
 
-    {% comment %} Resolve global defaults {% endcomment %}
-    {% assign g_labels = global.labels %}
-    {% assign g_styles = global.styles %}
+	{% comment %} Resolve global defaults {% endcomment %}
+	{% assign g_labels = global.labels %}
+	{% assign g_styles = global.styles %}
 
-    <div
-            class="radius-bundle-widget"
-            data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
-            data-shop="{{ shop.permanent_domain }}"
-    >
-        {% for bundle_id in bundle_ids %}
-            {% assign bundle = bundles[bundle_id] %}
+	<div
+			class="radius-bundle-widget"
+			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
+			data-shop="{{ shop.permanent_domain }}"
+	>
+		{% for bundle_id in bundle_ids %}
+			{% assign bundle = bundles[bundle_id] %}
 
-            {% if bundle and bundle.status == 'ACTIVE' %}
-                {% comment %}
-                  Resolve settings with cascade:
-                  Block settings > Bundle settings > Global settings
-                {% endcomment %}
+			{% if bundle and bundle.status == 'ACTIVE' %}
+				{% comment %} Colors {% endcomment %}
+				{% assign primary_color = block.settings.primary_color
+						| default: g_styles.colors.primary
+						| default: '#333333' %}
+				{% assign background_color = block.settings.background_color
+						| default: g_styles.colors.background
+						| default: '#ffffff' %}
+				{% assign border_color = block.settings.border_color
+						| default: g_styles.colors.border
+						| default: '#e1e1e1' %}
+				{% assign text_color = block.settings.text_color
+						| default: g_styles.colors.text.primary
+						| default: '#333333' %}
+				{% assign savings_color = block.settings.savings_color
+						| default: g_styles.colors.savings
+						| default: '#22c55e' %}
 
-                {% comment %} Colors {% endcomment %}
-                {% assign primary_color = block.settings.primary_color
-                        | default: bundle.primaryColor
-                        | default: g_styles.colors.primary
-                        | default: '#333333' %}
-                {% assign background_color = block.settings.background_color
-                        | default: bundle.backgroundColor
-                        | default: g_styles.colors.background
-                        | default: '#ffffff' %}
-                {% assign border_color = block.settings.border_color
-                        | default: bundle.borderColor
-                        | default: g_styles.colors.border
-                        | default: '#e1e1e1' %}
-                {% assign text_color = block.settings.text_color
-                        | default: bundle.textColor
-                        | default: g_styles.colors.text.primary
-                        | default: '#333333' %}
-                {% assign savings_color = block.settings.savings_color
-                        | default: bundle.savingsColor
-                        | default: g_styles.colors.savings
-                        | default: '#22c55e' %}
+				{% comment %} Layout {% endcomment %}
+				{% assign layout = block.settings.layout
+						| default: bundle.layout
+						| default: 'list' %}
+				{% assign border_radius = block.settings.border_radius
+						| default: g_styles.borders.radius.lg
+						| default: 12 %}
+				{% assign spacing = block.settings.spacing
+						| default: g_styles.spacing.itemGap
+						| default: 16 %}
 
-                {% comment %} Layout {% endcomment %}
-                {% assign layout = block.settings.layout
-                        | default: bundle.layout
-                        | default: 'list' %}
-                {% assign border_radius = block.settings.border_radius
-                        | default: g_styles.borders.radius.lg
-                        | default: 12 %}
-                {% assign spacing = block.settings.spacing
-                        | default: g_styles.spacing.itemGap
-                        | default: 16 %}
+				{% comment %} Features {% endcomment %}
+				{% assign show_savings = block.settings.show_savings
+						| default: bundle.showSavings
+						| default: true %}
+				{% assign show_images = block.settings.show_product_images
+						| default: bundle.showImages
+						| default: true %}
+				{% assign show_free_shipping = bundle.showFreeShipping
+						| default: bundle.freeShipping
+						| default: false %}
 
-                {% comment %} Features {% endcomment %}
-                {% assign show_savings = block.settings.show_savings
-                        | default: bundle.showSavings
-                        | default: true %}
-                {% assign show_images = block.settings.show_product_images
-                        | default: bundle.showImages
-                        | default: true %}
-                {% assign show_free_shipping = bundle.showFreeShipping
-                        | default: bundle.freeShipping
-                        | default: false %}
+				{% comment %} Labels {% endcomment %}
+				{% assign button_text = block.settings.button_text
+						| default: bundle.buttonText
+						| default: g_labels.addToCartText
+						| default: 'Add Bundle to Cart' %}
+				{% assign regular_price_label = g_labels.regularPriceLabel
+						| default: 'Regular Price:' %}
+				{% assign bundle_price_label = g_labels.bundlePriceLabel
+						| default: 'Bundle Price:' %}
+				{% assign you_save_label = g_labels.youSaveLabel
+						| default: 'You Save:' %}
+				{% assign free_shipping_text = g_labels.freeShippingText
+						| default: 'Free Shipping Included' %}
 
-                {% comment %} Labels {% endcomment %}
-                {% assign button_text = block.settings.button_text
-                        | default: bundle.buttonText
-                        | default: g_labels.addToCartText
-                        | default: 'Add Bundle to Cart' %}
-                {% assign regular_price_label = g_labels.regularPriceLabel
-                        | default: 'Regular Price:' %}
-                {% assign bundle_price_label = g_labels.bundlePriceLabel
-                        | default: 'Bundle Price:' %}
-                {% assign you_save_label = g_labels.youSaveLabel
-                        | default: 'You Save:' %}
-                {% assign free_shipping_text = g_labels.freeShippingText
-                        | default: 'Free Shipping' %}
+				{% comment %} ⭐ Build STRUCTURE-ONLY JSON for JS (not full product details) {% endcomment %}
+				{% capture bundle_structure_json %}
+					{
+					"id": "{{ bundle_id }}",
+					"status": "{{ bundle.status }}",
+					"discountType": "{{ bundle.discountType }}",
+					"discountValue": {{ bundle.discountValue | default: 0 }},
+					"freeShipping": {{ bundle.freeShipping | default: false }},
+					"minOrderValue": {{ bundle.minOrderValue | default: 0 }},
+					"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},
+					"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}",
+					"discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},
+					"productCount": {{ bundle.productCount | default: 0 }},
+					"productIds": {{ bundle.productIds | default: '[]' | json }},
+					"layout": "{{ layout }}",
+					"labels": {
+					"buttonText": "{{ button_text | escape }}",
+					"regularPriceLabel": "{{ regular_price_label | escape }}",
+					"bundlePriceLabel": "{{ bundle_price_label | escape }}",
+					"youSaveLabel": "{{ you_save_label | escape }}",
+					"freeShippingText": "{{ free_shipping_text | escape }}"
+					}
+					}
+				{% endcapture %}
 
-                {% comment %} ⭐ Build STRUCTURE-ONLY JSON for JS (not full product details) {% endcomment %}
-                {% capture bundle_structure_json %}
-                    {
-                    "id": "{{ bundle_id }}",
-                    "status": "{{ bundle.status }}",
-                    "name": "{{ bundle.title | escape }}",
-                    "discountType": "{{ bundle.discountType }}",
-                    "discountValue": {{ bundle.discountValue | default: 0 }},
-                    "freeShipping": {{ bundle.freeShipping | default: false }},
-                    "minOrderValue": {{ bundle.minOrderValue | default: 0 }},
-                    "maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},
-                    "discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}",
-                    "discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},
-                    "productCount": {{ bundle.productCount | default: 0 }},
-                    "productIds": {{ bundle.productIds | default: '[]' | json }},
-                    "layout": "{{ layout }}",
-                    "labels": {
-                    "buttonText": "{{ button_text | escape }}",
-                    "regularPriceLabel": "{{ regular_price_label | escape }}",
-                    "bundlePriceLabel": "{{ bundle_price_label | escape }}",
-                    "youSaveLabel": "{{ you_save_label | escape }}",
-                    "freeShippingText": "{{ free_shipping_text | escape }}"
-                    }
-                    }
-                {% endcapture %}
-
-                {% comment %} Inject CSS variables {% endcomment %}
-                <style>
+				{% comment %} Inject CSS variables {% endcomment %}
+				<style>
 					#radius-bundle-{{ bundle_id }} {
 						--rb-primary-color: {{ primary_color }};
 						--rb-background-color: {{ background_color }};
@@ -131,84 +120,84 @@
 						--rb-border-radius: {{ border_radius }}px;
 						--rb-spacing: {{ spacing }}px;
 					}
-                </style>
+				</style>
 
-                <div
-                        id="radius-bundle-{{ bundle_id }}"
-                        class="radius-bundle radius-bundle--{{ layout | downcase }}"
-                        data-bundle-id="{{ bundle_id }}"
-                        data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
-                        data-show-images="{{ show_images }}"
-                        data-show-savings="{{ show_savings }}"
-                >
-                    {% assign layout = layout | default: 'list' | downcase %}
-                    {% assign show_images = show_images | default: true %}
-                    {% assign show_savings = show_savings | default: true %}
+				<div
+						id="radius-bundle-{{ bundle_id }}"
+						class="radius-bundle radius-bundle--{{ layout | downcase }}"
+						data-bundle-id="{{ bundle_id }}"
+						data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
+						data-show-images="{{ show_images }}"
+						data-show-savings="{{ show_savings }}"
+				>
+					{% assign layout = layout | default: 'list' | downcase %}
+					{% assign show_images = show_images | default: true %}
+					{% assign show_savings = show_savings | default: true %}
 
-                    {% comment %} Get product count for accurate skeleton {% endcomment %}
-                    {% assign product_count = bundle.productCount | default: 0 %}
-                    {% if product_count == 0 %}
-                        {% assign product_ids = bundle.productIds | default: empty %}
-                        {% assign product_count = product_ids | size %}
-                    {% endif %}
-                    {% if product_count == 0 %}
-                        {% assign product_count = 3 %}
-                    {% endif %}
+					{% comment %} Get product count for accurate skeleton {% endcomment %}
+					{% assign product_count = bundle.productCount | default: 0 %}
+					{% if product_count == 0 %}
+						{% assign product_ids = bundle.productIds | default: empty %}
+						{% assign product_count = product_ids | size %}
+					{% endif %}
+					{% if product_count == 0 %}
+						{% assign product_count = 3 %}
+					{% endif %}
 
-                    {% case layout %}
-                        {% when 'grid' %}
-                            {% render 'radius-bundle-grid',
-                                    bundle_id: bundle_id,
-									name: bundle.name,
-                                    product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-                                    show_free_shipping: show_free_shipping,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_text: free_shipping_text,
-                                    block: block
-                            %}
-                        {% when 'slider' %}
-                            {% render 'radius-bundle-slider',
-                                    bundle_id: bundle_id,
-									name: bundle.name,
-                                    product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-                                    show_free_shipping: show_free_shipping,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_text: free_shipping_text,
-                                    block: block
-                            %}
-                        {% else %}
-                            {% render 'radius-bundle-list',
-                                    bundle_id: bundle_id,
-									name: bundle.name,
-                                    product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-                                    show_free_shipping: show_free_shipping,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_text: free_shipping_text,
-                                    block: block
-                            %}
-                    {% endcase %}
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+					{% case layout %}
+						{% when 'grid' %}
+							{% render 'radius-bundle-grid',
+									bundle_id: bundle_id,
+									name: bundle.title,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_free_shipping: show_free_shipping,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_text: free_shipping_text,
+									block: block
+							%}
+						{% when 'carousel' %}
+							{% render 'radius-bundle-carousel',
+									bundle_id: bundle_id,
+									name: bundle.title,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_free_shipping: show_free_shipping,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_text: free_shipping_text,
+									block: block
+							%}
+						{% else %}
+							{% render 'radius-bundle-list',
+									bundle_id: bundle_id,
+									name: bundle.title,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_free_shipping: show_free_shipping,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_text: free_shipping_text,
+									block: block
+							%}
+					{% endcase %}
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
 
-    {{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-    <script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
+	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
 
 {% schema %}
@@ -225,22 +214,10 @@
 			"id": "layout",
 			"label": "Display Layout",
 			"options": [
-				{
-					"value": "",
-					"label": "Use bundle default"
-				},
-				{
-					"value": "list",
-					"label": "List"
-				},
-				{
-					"value": "grid",
-					"label": "Grid"
-				},
-				{
-					"value": "slider",
-					"label": "Slider"
-				}
+				{ "value": "", "label": "Use bundle default" },
+				{ "value": "list", "label": "List" },
+				{ "value": "grid", "label": "Grid" },
+				{ "value": "carousel", "label": "Carousel" }
 			],
 			"default": ""
 		},

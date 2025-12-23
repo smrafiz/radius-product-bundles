@@ -1,22 +1,19 @@
 {% comment %}
   Radius Bundle - Add to Cart Button
-
-  Renders the add to cart button with loading state.
 {% endcomment %}
 
 <div class="radius-bundle__actions">
-    <button
-            type="button"
-            class="radius-bundle__add-to-cart"
-            data-bundle-add-to-cart
-            data-bundle-id="{{ bundle_id }}"
-    >
+	<button
+			type="button"
+			class="radius-bundle__add-to-cart"
+			data-bundle-add-to-cart
+			data-bundle-id="{{ bundle_id }}"
+	>
         <span class="radius-bundle__button-text">
             {{ button_text | default: 'Add Bundle to Cart' }}
         </span>
-        <span class="radius-bundle__button-loading">
+		<span class="radius-bundle__button-loading">
             <span class="radius-bundle__spinner"></span>
-            <span>Adding...</span>
         </span>
-    </button>
+	</button>
 </div>
