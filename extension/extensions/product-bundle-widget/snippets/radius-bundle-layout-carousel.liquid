@@ -4,19 +4,10 @@
 
 <div class="radius-bundle__inner">
     {% comment %} Header {% endcomment %}
-    <div class="radius-bundle__header">
-        <div class="radius-bundle__title-wrapper">
-            <h3 class="radius-bundle__title" data-bundle-title>
-                {{ name }}
-            </h3>
-        </div>
-
-        {% if show_savings %}
-            <div class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge>
-                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
-            </div>
-        {% endif %}
-    </div>
+    {% render 'radius-bundle-header',
+            name: name,
+            show_savings: show_savings
+    %}
 
     {% comment %} Slider Container {% endcomment %}
     <div class="radius-bundle__slider-wrapper">
@@ -64,38 +55,14 @@
     <div class="radius-bundle__slider-dots" data-slider-dots></div>
 
     {% comment %} Pricing Section {% endcomment %}
-    <div class="radius-bundle__pricing" data-bundle-pricing>
-        <div class="radius-bundle__pricing-row">
-            <span class="radius-bundle__pricing-label">{{ regular_price_label }}</span>
-            <span class="radius-bundle__price-original" data-regular-price>
-                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
-            </span>
-        </div>
-        <div class="radius-bundle__pricing-row radius-bundle__pricing-row--highlight">
-            <span class="radius-bundle__pricing-label">{{ bundle_price_label }}</span>
-            <span class="radius-bundle__price-discounted" data-bundle-price>
-                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
-            </span>
-        </div>
-        {% if show_savings %}
-            <div class="radius-bundle__savings" data-savings>
-                <span class="radius-bundle__savings-label">{{ you_save_label }}</span>
-                <span class="radius-bundle__savings-amount" data-savings-amount>
-                    <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
-                </span>
-            </div>
-        {% endif %}
-        {% if show_free_shipping %}
-            <div class="radius-bundle__free-shipping">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1"/>
-                    <circle cx="7" cy="18" r="2"/>
-                    <circle cx="17" cy="18" r="2"/>
-                </svg>
-                <span>{{ free_shipping_text }}</span>
-            </div>
-        {% endif %}
-    </div>
+    {% render 'radius-bundle-pricing',
+            show_savings: show_savings,
+            show_free_shipping: show_free_shipping,
+            regular_price_label: regular_price_label,
+            bundle_price_label: bundle_price_label,
+            you_save_label: you_save_label,
+            free_shipping_text: free_shipping_text
+    %}
 
     {% comment %} Add to Cart Button {% endcomment %}
     {% render 'radius-bundle-add-to-cart',

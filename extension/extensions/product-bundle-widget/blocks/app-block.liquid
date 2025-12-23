@@ -84,9 +84,7 @@
 				{% assign free_shipping_text = g_labels.freeShippingText
 						| default: 'Free Shipping Included' %}
 
-				{% comment %} ⭐ Build STRUCTURE-ONLY JSON for JS (not full product details) {% endcomment %}
-				{% capture bundle_structure_json %}
-					{
+				{% comment %} Build JSON for JS. Formatted structure (DO NOT REMOVE)
 					"id": "{{ bundle_id }}",
 					"status": "{{ bundle.status }}",
 					"discountType": "{{ bundle.discountType }}",
@@ -100,13 +98,15 @@
 					"productIds": {{ bundle.productIds | default: '[]' | json }},
 					"layout": "{{ layout }}",
 					"labels": {
-					"buttonText": "{{ button_text | escape }}",
-					"regularPriceLabel": "{{ regular_price_label | escape }}",
-					"bundlePriceLabel": "{{ bundle_price_label | escape }}",
-					"youSaveLabel": "{{ you_save_label | escape }}",
-					"freeShippingText": "{{ free_shipping_text | escape }}"
+							"buttonText": "{{ button_text | escape }}",
+							"regularPriceLabel": "{{ regular_price_label | escape }}",
+							"bundlePriceLabel": "{{ bundle_price_label | escape }}",
+							"youSaveLabel": "{{ you_save_label | escape }}",
+							"freeShippingText": "{{ free_shipping_text | escape }}"
+						}
 					}
-					}
+				{% endcomment %}
+				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"buttonText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingText": "{{ free_shipping_text | escape }}"}}
 				{% endcapture %}
 
 				{% comment %} Inject CSS variables {% endcomment %}
@@ -146,7 +146,7 @@
 
 					{% case layout %}
 						{% when 'grid' %}
-							{% render 'radius-bundle-grid',
+							{% render 'radius-bundle-layout-grid',
 									bundle_id: bundle_id,
 									name: bundle.title,
 									product_count: product_count,
@@ -161,7 +161,7 @@
 									block: block
 							%}
 						{% when 'carousel' %}
-							{% render 'radius-bundle-carousel',
+							{% render 'radius-bundle-layout-carousel',
 									bundle_id: bundle_id,
 									name: bundle.title,
 									product_count: product_count,
@@ -176,7 +176,7 @@
 									block: block
 							%}
 						{% when 'compact' %}
-							{% render 'radius-bundle-compact',
+							{% render 'radius-bundle-layout-compact',
 									bundle_id: bundle_id,
 									name: bundle.title,
 									product_count: product_count,
@@ -191,7 +191,7 @@
 									block: block
 							%}
 						{% else %}
-							{% render 'radius-bundle-list',
+							{% render 'radius-bundle-layout-list',
 									bundle_id: bundle_id,
 									name: bundle.title,
 									product_count: product_count,
@@ -229,10 +229,22 @@
 			"id": "layout",
 			"label": "Display Layout",
 			"options": [
-				{ "value": "", "label": "Use bundle default" },
-				{ "value": "list", "label": "List" },
-				{ "value": "grid", "label": "Grid" },
-				{ "value": "carousel", "label": "Carousel" }
+				{
+					"value": "",
+					"label": "Use bundle default"
+				},
+				{
+					"value": "list",
+					"label": "List"
+				},
+				{
+					"value": "grid",
+					"label": "Grid"
+				},
+				{
+					"value": "carousel",
+					"label": "Carousel"
+				}
 			],
 			"default": ""
 		},

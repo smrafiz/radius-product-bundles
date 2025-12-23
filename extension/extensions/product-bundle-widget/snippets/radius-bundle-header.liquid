@@ -1,0 +1,17 @@
+{% comment %}
+  Radius Bundle Header Snippet
+{% endcomment %}
+
+<div class="radius-bundle__header">
+	<div class="radius-bundle__title-wrapper">
+		<h3 class="radius-bundle__title" data-bundle-title>
+			{{ name }}
+		</h3>
+	</div>
+
+	{% if show_savings %}
+		<div class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge>
+			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
+		</div>
+	{% endif %}
+</div>

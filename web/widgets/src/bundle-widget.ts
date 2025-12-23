@@ -110,6 +110,9 @@ class RadiusBundleWidget {
     private readonly showImages: boolean = true;
     private readonly showSavings: boolean = true;
 
+    /*
+     * Constructor
+     */
     constructor(container: HTMLElement) {
         this.container = container;
         this.bundleId = container.dataset.bundleId || "";
@@ -123,7 +126,7 @@ class RadiusBundleWidget {
         this.showImages = container.dataset.showImages !== "false";
         this.showSavings = container.dataset.showSavings !== "false";
 
-        // ⭐ Parse structure from Liquid
+        // Parse structure from Liquid
         const structureJson = container.dataset.bundleStructure;
         if (structureJson) {
             try {
@@ -139,28 +142,34 @@ class RadiusBundleWidget {
         void this.init();
     }
 
+    /*
+     * Initialize widget
+     */
     private async init(): Promise<void> {
         if (!this.bundleId || !this.productId || !this.shop) {
             console.warn("[RadiusBundle] Missing required data attributes");
             return;
         }
 
-        // ⭐ PHASE 1: Show badge immediately (no API needed)
+        // Show the badge immediately
         if (this.bundleStructure) {
             this.updateBadgeFromStructure(this.bundleStructure);
         }
 
-        // ⭐ PHASE 2: Fetch product details only
+        // Fetch product details only
         await this.loadProductDetails();
         this.bindEvents();
     }
 
     /**
-     * ⭐ Shows badge immediately from structure.
+     * Shows badge from structure.
      */
     private updateBadgeFromStructure(structure: BundleStructure): void {
         const badgeEl = this.container.querySelector("[data-bundle-badge]");
-        if (!badgeEl) return;
+
+        if (!badgeEl) {
+            return;
+        }
 
         let badgeText = "";
 
@@ -187,7 +196,7 @@ class RadiusBundleWidget {
     }
 
     /**
-     * ⭐ Fetches ONLY product details (optimized API call).
+     * Fetches ONLY product details.
      */
     private async loadProductDetails(): Promise<void> {
         try {
@@ -203,7 +212,7 @@ class RadiusBundleWidget {
                 `[RadiusBundle] Fetching ${this.bundleStructure.productIds.length} products`,
             );
 
-            // ⭐ Optimized: Fetch products by IDs only
+            // Fetch products by IDs only
             const productIds = this.bundleStructure.productIds.join(",");
             const url = `/apps/bundles/products?shop=${encodeURIComponent(this.shop)}&ids=${encodeURIComponent(productIds)}`;
 
@@ -219,7 +228,7 @@ class RadiusBundleWidget {
                 this.showToast("No products returned", "error");
             }
 
-            // ⭐ Build bundle from structure + product details
+            // Build bundle from structure + product details
             this.bundle = {
                 ...this.bundleStructure,
                 products: this.matchProductsToStructure(data.products),
@@ -239,12 +248,14 @@ class RadiusBundleWidget {
     }
 
     /**
-     * ⭐ Matches fetched products to structure.
+     * Matches fetched products to structure.
      */
     private matchProductsToStructure(
         products: ProductDetailsResponse["products"],
     ): BundleProduct[] {
-        if (!this.bundleStructure?.productIds) return [];
+        if (!this.bundleStructure?.productIds) {
+            return [];
+        }
 
         const productMap = new Map(products.map((p) => [p.id, p]));
 
@@ -309,7 +320,10 @@ class RadiusBundleWidget {
         const productsContainer = this.container.querySelector(
             "[data-bundle-products]",
         );
-        if (!productsContainer) return;
+
+        if (!productsContainer) {
+            return;
+        }
 
         const layout = this.getLayout();
         const sortedProducts = [...bundle.products].sort(
@@ -322,14 +336,14 @@ class RadiusBundleWidget {
             const isLast = index === sortedProducts.length - 1;
             html += this.renderProductCard(product, layout);
 
-            if (layout === "carousel" && !isLast) {
+            if (layout === "slider" && !isLast) {
                 html += '<div class="radius-bundle__slider-plus">+</div>';
             }
         });
 
         productsContainer.innerHTML = html;
 
-        if (layout === "carousel") {
+        if (layout === "slider") {
             this.initSliderDots(sortedProducts.length);
         }
     }
@@ -345,7 +359,7 @@ class RadiusBundleWidget {
                   ? `<div class="radius-bundle__product-placeholder">📦</div>`
                   : "";
 
-        // ⭐ Calculate discounted price based on bundle discount
+        // Calculate discounted price based on bundle discount
         const structure = this.bundleStructure;
         let discountedPrice = product.price;
 
@@ -356,7 +370,7 @@ class RadiusBundleWidget {
                         product.price * (1 - structure.discountValue / 100);
                     break;
                 case "FIXED_AMOUNT":
-                    // For fixed amount, distribute proportionally across products
+                    // For a fixed amount, distribute proportionally across products
                     const totalPrice =
                         this.bundle?.products.reduce(
                             (sum, p) => sum + p.price,
@@ -385,7 +399,7 @@ class RadiusBundleWidget {
             }
         }
 
-        // Round to nearest cent
+        // Round to the nearest cent
         discountedPrice = Math.round(discountedPrice);
 
         const priceHtml =
@@ -401,6 +415,7 @@ class RadiusBundleWidget {
             ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
             : "";
 
+        // List layout
         if (layout === "list") {
             return `
             <div class="radius-bundle__product radius-bundle__product--list" data-product-id="${product.id}" data-variant-id="${product.variantId}">
@@ -416,6 +431,7 @@ class RadiusBundleWidget {
         `;
         }
 
+        // Grid layout
         if (layout === "grid") {
             return `
             <div class="radius-bundle__product radius-bundle__product--grid" data-product-id="${product.id}" data-variant-id="${product.variantId}">
@@ -429,6 +445,7 @@ class RadiusBundleWidget {
         `;
         }
 
+        // Compact layout
         if (layout === "compact") {
             return `
             <div class="radius-bundle__product radius-bundle__product--compact" data-product-id="${product.id}" data-variant-id="${product.variantId}">
@@ -528,6 +545,7 @@ class RadiusBundleWidget {
         const addToCartBtn = this.container.querySelector(
             "[data-bundle-add-to-cart]",
         );
+
         if (addToCartBtn) {
             addToCartBtn.addEventListener("click", () =>
                 this.handleAddToCart(),
@@ -549,7 +567,9 @@ class RadiusBundleWidget {
      * Handles add to cart.
      */
     private async handleAddToCart(): Promise<void> {
-        if (!this.bundle) return;
+        if (!this.bundle) {
+            return;
+        }
 
         const button = this.container.querySelector(
             "[data-bundle-add-to-cart]",
@@ -598,6 +618,7 @@ class RadiusBundleWidget {
             const cart = await fetch("/cart.js").then((r) => r.json());
 
             let existingDiscounts: DiscountConfig[] = [];
+
             if (cart.attributes?._radiusDiscounts) {
                 try {
                     existingDiscounts = JSON.parse(
@@ -668,13 +689,20 @@ class RadiusBundleWidget {
         }
     }
 
+    /**
+     * Slides products in the carousel
+     */
     private slideProducts(direction: "prev" | "next"): void {
         const track = this.container.querySelector(
             "[data-slider-track]",
         ) as HTMLElement;
-        if (!track) return;
+
+        if (!track) {
+            return;
+        }
 
         const scrollAmount = 200;
+
         if (direction === "prev") {
             track.scrollBy({ left: -scrollAmount, behavior: "smooth" });
         } else {
@@ -682,18 +710,29 @@ class RadiusBundleWidget {
         }
     }
 
+    /**
+     * Initializes slider dots
+     */
     private initSliderDots(count: number): void {
         const dotsContainer =
             this.container.querySelector("[data-slider-dots]");
-        if (!dotsContainer || count <= 1) return;
+
+        if (!dotsContainer || count <= 1) {
+            return;
+        }
 
         let html = "";
+
         for (let i = 0; i < count; i++) {
             html += `<button class="radius-bundle__slider-dot${i === 0 ? " active" : ""}" data-index="${i}"></button>`;
         }
+
         dotsContainer.innerHTML = html;
     }
 
+    /**
+     * Updates cart count
+     */
     private async updateCartCount(): Promise<void> {
         try {
             const cart = await fetch("/cart.js").then((r) => r.json());
@@ -715,9 +754,14 @@ class RadiusBundleWidget {
                         '[aria-hidden="true"]',
                     );
                     const srSpan = bubble.querySelector(".visually-hidden");
+
                     if (countSpan)
                         countSpan.textContent = cart.item_count.toString();
-                    if (srSpan) srSpan.textContent = `${cart.item_count} items`;
+
+                    if (srSpan) {
+                        srSpan.textContent = `${cart.item_count} items`;
+                    }
+
                     (bubble as HTMLElement).style.display = "flex";
                 }
             }
@@ -726,12 +770,15 @@ class RadiusBundleWidget {
         }
     }
 
+    /**
+     * Gets layout
+     */
     private getLayout(): string {
         if (this.container.classList.contains("radius-bundle--grid")) {
             return "grid";
         }
 
-        if (this.container.classList.contains("radius-bundle--slider")) {
+        if (this.container.classList.contains("radius-bundle--carousel")) {
             return "slider";
         }
 
@@ -747,6 +794,7 @@ class RadiusBundleWidget {
     private showToast(message: string, type: "success" | "error"): void {
         // Remove any existing toasts
         const existingToast = document.querySelector(".radius-bundle-toast");
+
         if (existingToast) {
             existingToast.remove();
         }
@@ -795,6 +843,9 @@ class RadiusBundleWidget {
         setTimeout(closeToast, 4000);
     }
 
+    /**
+     * Shows error message
+     */
     private showError(message: string): void {
         const productsContainer = this.container.querySelector(
             "[data-bundle-products]",
@@ -804,6 +855,9 @@ class RadiusBundleWidget {
         }
     }
 
+    /**
+     * Formats money
+     */
     private formatMoney(cents: number): string {
         if (typeof window.Shopify?.formatMoney === "function") {
             return window.Shopify.formatMoney(cents);
@@ -811,6 +865,9 @@ class RadiusBundleWidget {
         return `$${(cents / 100).toFixed(2)}`;
     }
 
+    /**
+     * Extracts numeric ID from GID
+     */
     private extractNumericId(gid: string): string {
         if (!gid) return "";
         if (/^\d+$/.test(gid)) return gid;
@@ -818,13 +875,20 @@ class RadiusBundleWidget {
         return match ? match[1] : gid;
     }
 
+    /**
+     * Escapes HTML
+     */
     private escapeHtml(text: string): string {
         const div = document.createElement("div");
         div.textContent = text;
+
         return div.innerHTML;
     }
 }
 
+/**
+ * Initializes radius bundles
+ */
 function initRadiusBundles(): void {
     const bundles = document.querySelectorAll<HTMLElement>(
         ".radius-bundle[data-bundle-id]",

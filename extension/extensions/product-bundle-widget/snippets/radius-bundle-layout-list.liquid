@@ -1,0 +1,48 @@
+{% comment %}
+  Radius Bundle - List Template
+{% endcomment %}
+
+<div class="radius-bundle__inner">
+	{% comment %} Header {% endcomment %}
+	{% render 'radius-bundle-header',
+			name: name,
+			show_savings: show_savings
+	%}
+
+	{% comment %} Products List Container {% endcomment %}
+	<div class="radius-bundle__products radius-bundle__products--list" data-bundle-products>
+		<div class="radius-bundle__loading" data-bundle-loading>
+			<div class="radius-bundle__skeleton radius-bundle__skeleton--list">
+				{% for i in (1..product_count) %}
+					<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--list">
+						<div class="radius-bundle__skeleton-image"></div>
+						<div class="radius-bundle__skeleton-content">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--subtitle"></div>
+						</div>
+						<div class="radius-bundle__skeleton-price-wrapper">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	{% comment %} Pricing Section {% endcomment %}
+	{% render 'radius-bundle-pricing',
+			show_savings: show_savings,
+			show_free_shipping: show_free_shipping,
+			regular_price_label: regular_price_label,
+			bundle_price_label: bundle_price_label,
+			you_save_label: you_save_label,
+			free_shipping_text: free_shipping_text
+	%}
+
+	{% comment %} Add to Cart Button {% endcomment %}
+	{% render 'radius-bundle-add-to-cart',
+			bundle_id: bundle_id,
+			button_text: button_text
+	%}
+
+</div>

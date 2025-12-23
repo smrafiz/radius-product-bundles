@@ -1,0 +1,42 @@
+{% comment %}
+  Radius Bundle - Compact Template
+{% endcomment %}
+
+<div class="radius-bundle__inner radius-bundle__inner--compact">
+	{% comment %} Header {% endcomment %}
+	{% render 'radius-bundle-header',
+			name: name,
+			show_savings: show_savings
+	%}
+
+	{% comment %} Compact Products List {% endcomment %}
+	<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
+		{% for i in (1..product_count) %}
+			<div class="radius-bundle__product radius-bundle__product--compact radius-bundle__product--skeleton">
+				{% if show_images %}
+					<div class="radius-bundle__product-image radius-bundle__product-image--compact radius-bundle__skeleton-box"></div>
+				{% endif %}
+				<div class="radius-bundle__product-info radius-bundle__product-info--compact">
+					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{% comment %} Pricing Section {% endcomment %}
+	{% render 'radius-bundle-pricing',
+			show_savings: show_savings,
+			show_free_shipping: show_free_shipping,
+			regular_price_label: regular_price_label,
+			bundle_price_label: bundle_price_label,
+			you_save_label: you_save_label,
+			free_shipping_text: free_shipping_text
+	%}
+
+	{% comment %} Add to Cart Button {% endcomment %}
+	{% render 'radius-bundle-add-to-cart',
+			bundle_id: bundle_id,
+			button_text: button_text
+	%}
+</div>
