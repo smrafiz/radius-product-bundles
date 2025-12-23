@@ -22,7 +22,7 @@ export function BundleOptionsButton() {
     return (
         <s-stack>
             <div
-                className="cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7]"
+                className={`cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7] ${open ? "bg-[#f7f7f7]" : ""}`}
                 onClick={() => setOpen((prev) => !prev)}
             >
                 <s-stack
@@ -32,7 +32,7 @@ export function BundleOptionsButton() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Bundle Button</s-heading>
+                    <s-heading>Button</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>

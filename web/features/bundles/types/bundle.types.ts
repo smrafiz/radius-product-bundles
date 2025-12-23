@@ -331,13 +331,16 @@ export interface DisplaySettings {
         productBorderEnabled?: boolean;
         productBorderColor?: string;
         productRadius?: number;
+        productAlign?: "row" | "column" | "row-reverse" | "column-reverse";
+        productFontSize?: number;
         // Widget
-        widgetBgColor?: string;
-        widgetTextColor?: string;
-        widgetBorderEnabled?: boolean;
-        widgetBorderColor?: string;
-        widgetRadius?: number;
+        boxBgColor?: string;
+        boxTextColor?: string;
+        boxBorderEnabled?: boolean;
+        boxBorderColor?: string;
+        boxRadius?: number;
         //image
+        imageBorderEnabled?: boolean;
         imageRadius?: number;
         imageBorderColor?: string;
     };

@@ -203,7 +203,7 @@
 }
 
 /* customizer modal style*/
-.rtpb-full-content {
+.rtpb-full-modal-content {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -211,19 +211,26 @@
     @media(max-width: 1039px) {
         flex-direction: column;
     }
-}
-
-.left-side-auto-scroll {
-    height: 100vh;
-    width: 100%;
-    overflow: scroll;
-}
-
-.rtpb-full-content .rtpb-right-review {
-    flex-direction: column;
-    overflow: hidden;
-    flex: 1;
-    min-width: 350px;
+    .left-side-auto-scroll {
+        height: 100vh;
+        width: 100%;
+        overflow-y: scroll;
+        @media(max-width: 1039px) {
+            height: auto;
+        }
+    }
+    .rtpb-right-review {
+        flex-direction: column;
+        overflow: hidden;
+        flex: 1;
+        min-width: 350px;
+    }
+    .rtpb-left-setting {
+        width: 380px;
+        @media(max-width: 1039px) {
+            width: auto;
+        }
+    }
 }
 
 @import "./widget/bundle.css";

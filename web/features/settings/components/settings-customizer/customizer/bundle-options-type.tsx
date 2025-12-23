@@ -7,7 +7,7 @@ import {
 
 export function BundleOptionsType() {
     return(
-        <div className="left-side-auto-scroll border border-[#e3e3e3] bg-white rounded-xl overflow-hidden">
+        <div className="left-side-auto-scroll ">
             <BundleOptionsBox/>
             <BundleOptionsProduct/>
             <BundleOptionsButton/>

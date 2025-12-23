@@ -22,7 +22,7 @@ export function BundleOptionsProduct() {
     return (
         <s-stack>
             <div
-                className="cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7]"
+                className={`cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7] ${open ? "bg-[#f7f7f7]" : ""}`}
                 onClick={() => setOpen((prev) => !prev)}
             >
                 <s-stack
@@ -32,7 +32,7 @@ export function BundleOptionsProduct() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Bundle Product</s-heading>
+                    <s-heading>Product</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>
@@ -43,9 +43,41 @@ export function BundleOptionsProduct() {
                     `}
             >
                 <s-stack gap="base" padding="base">
+                    <s-stack direction="inline" alignItems="center" gap="small-300">
+                        <s-heading>Font size</s-heading>
+                        <s-button-group gap="none">
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() => updateStyle("productFontSize", 12) }
+                            >
+                                Small
+                            </s-button>
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() =>
+                                    updateStyle(
+                                        "productFontSize",
+                                        14,
+                                    )
+                                }
+                            >
+                                Medium
+                            </s-button>
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() =>
+                                    updateStyle(
+                                        "productFontSize",
+                                        16,
+                                    )
+                                }
+                            >
+                                Large
+                            </s-button>
+                        </s-button-group>
+                    </s-stack>
                     {/* Product styling */}
                     <s-stack gap="base">
-                        <s-heading>Product</s-heading>
                         <s-grid
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
@@ -148,6 +180,50 @@ export function BundleOptionsProduct() {
                                 }
                             />
                         </s-stack>
+                    </s-stack>
+                    <s-stack direction="inline" alignItems="center" gap="small-300">
+                        <s-text>Image align</s-text>
+                        <s-button-group gap="none">
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() => updateStyle("productAlign", "row") }
+                            >
+                                Left
+                            </s-button>
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() =>
+                                    updateStyle(
+                                        "productAlign",
+                                        "column",
+                                    )
+                                }
+                            >
+                                Top
+                            </s-button>
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() =>
+                                    updateStyle(
+                                        "productAlign",
+                                        "row-reverse",
+                                    )
+                                }
+                            >
+                                Right
+                            </s-button>
+                            <s-button
+                                slot="secondary-actions"
+                                onClick={() =>
+                                    updateStyle(
+                                        "productAlign",
+                                        "column-reverse",
+                                    )
+                                }
+                            >
+                                Bottom
+                            </s-button>
+                        </s-button-group>
                     </s-stack>
                 </s-stack>
             </div>

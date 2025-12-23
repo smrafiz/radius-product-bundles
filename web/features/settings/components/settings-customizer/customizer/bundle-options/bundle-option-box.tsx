@@ -22,7 +22,7 @@ export function BundleOptionsBox() {
     return (
         <s-stack>
             <div
-                className="cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7]"
+                className={`cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7] ${open ? "bg-[#f7f7f7]" : ""}`}
                 onClick={() => setOpen((prev) => !prev)}
             >
                 <s-stack
@@ -32,7 +32,7 @@ export function BundleOptionsBox() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Bundle Box</s-heading>
+                    <s-heading>Box</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>
@@ -44,8 +44,8 @@ export function BundleOptionsBox() {
             >
                 <s-stack gap="base" padding="base">
                     {/* Widget styling */}
+
                     <s-stack gap="base">
-                        <s-heading>Widget</s-heading>
                         <s-grid
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
@@ -53,14 +53,14 @@ export function BundleOptionsBox() {
                             <s-grid-item gridColumn="span 6" gridRow="span 2">
                                 <s-color-field
                                     label="Background"
-                                    name="widgetBgColor"
+                                    name="boxBgColor"
                                     placeholder="Select a color"
-                                    value={style.widgetBgColor || "#ffffff"}
+                                    value={style.boxBgColor || "#ffffff"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         updateStyle(
-                                            "widgetBgColor",
+                                            "boxBgColor",
                                             target.value,
                                         );
                                     }}
@@ -69,14 +69,14 @@ export function BundleOptionsBox() {
                             <s-grid-item gridColumn="span 6" gridRow="span 2">
                                 <s-color-field
                                     label="Text"
-                                    name="widgetTextColor"
+                                    name="boxTextColor"
                                     placeholder="Select a color"
-                                    value={style.widgetTextColor || "#303030"}
+                                    value={style.boxTextColor || "#303030"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         updateStyle(
-                                            "widgetTextColor",
+                                            "boxTextColor",
                                             target.value,
                                         );
                                     }}
@@ -91,15 +91,15 @@ export function BundleOptionsBox() {
                                 alignItems="center"
                             >
                                 <s-switch
-                                    id="widget-add-border"
+                                    id="box-add-border"
                                     label="Add border"
                                     accessibilityLabel="Add border"
-                                    checked={style.widgetBorderEnabled ?? true}
+                                    checked={style.boxBorderEnabled ?? true}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         updateStyle(
-                                            "widgetBorderEnabled",
+                                            "boxBorderEnabled",
                                             target.checked,
                                         );
                                     }}
@@ -108,17 +108,17 @@ export function BundleOptionsBox() {
                         </s-stack>
 
                         <s-stack gap="base" paddingBlockEnd="base">
-                            {(style.widgetBorderEnabled ?? true) && (
+                            {(style.boxBorderEnabled ?? true) && (
                                 <s-color-field
                                     label="Border color"
-                                    name="widgetBorderColor"
+                                    name="boxBorderColor"
                                     placeholder="Select a color"
-                                    value={style.widgetBorderColor || "#e3e3e3"}
+                                    value={style.boxBorderColor || "#e3e3e3"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         updateStyle(
-                                            "widgetBorderColor",
+                                            "boxBorderColor",
                                             target.value,
                                         );
                                     }}
@@ -127,7 +127,7 @@ export function BundleOptionsBox() {
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
-                                    values={style.widgetRadius ?? 12}
+                                    values={style.boxRadius ?? 12}
                                     action={(val) =>
                                         updateStyle("widgetRadius", val)
                                     }

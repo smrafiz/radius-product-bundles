@@ -48,6 +48,39 @@ export function WidgetAppearance() {
                     `}
                 >
                     <s-stack gap="base" paddingBlockStart="base">
+                        <s-stack direction="inline" alignItems="center" gap="small-300">
+                            <s-heading>Font size</s-heading>
+                            <s-button-group gap="none">
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() => updateStyle("productFontSize", 12) }
+                                >
+                                    Small
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle(
+                                            "productFontSize",
+                                            14,
+                                        )
+                                    }
+                                >
+                                    Medium
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle(
+                                            "productFontSize",
+                                            16,
+                                        )
+                                    }
+                                >
+                                    Large
+                                </s-button>
+                            </s-button-group>
+                        </s-stack>
                         {/* Add to cart button styling */}
                         <s-stack
                             direction="inline"
@@ -277,14 +310,14 @@ export function WidgetAppearance() {
                                 >
                                     <s-color-field
                                         label="Background"
-                                        name="widgetBgColor"
+                                        name="boxBgColor"
                                         placeholder="Select a color"
-                                        value={style.widgetBgColor || "#ffffff"}
+                                        value={style.boxBgColor || "#ffffff"}
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "widgetBgColor",
+                                                "boxBgColor",
                                                 target.value,
                                             );
                                         }}
@@ -296,16 +329,16 @@ export function WidgetAppearance() {
                                 >
                                     <s-color-field
                                         label="Text"
-                                        name="widgetTextColor"
+                                        name="boxTextColor"
                                         placeholder="Select a color"
                                         value={
-                                            style.widgetTextColor || "#303030"
+                                            style.boxTextColor || "#303030"
                                         }
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "widgetTextColor",
+                                                "boxTextColor",
                                                 target.value,
                                             );
                                         }}
@@ -320,17 +353,17 @@ export function WidgetAppearance() {
                                     alignItems="center"
                                 >
                                     <s-switch
-                                        id="widget-add-border"
+                                        id="box-add-border"
                                         label="Add border"
                                         accessibilityLabel="Add border"
                                         checked={
-                                            style.widgetBorderEnabled ?? true
+                                            style.boxBorderEnabled ?? true
                                         }
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "widgetBorderEnabled",
+                                                "boxBorderEnabled",
                                                 target.checked,
                                             );
                                         }}
@@ -339,32 +372,76 @@ export function WidgetAppearance() {
                             </s-stack>
 
                             <s-stack gap="base" paddingBlockEnd="base">
-                                {(style.widgetBorderEnabled ?? true) && (
+                                {(style.boxBorderEnabled ?? true) && (
                                     <s-color-field
                                         label="Border color"
-                                        name="widgetBorderColor"
+                                        name="boxBorderColor"
                                         placeholder="Select a color"
                                         value={
-                                            style.widgetBorderColor || "#e3e3e3"
+                                            style.boxBorderColor || "#e3e3e3"
                                         }
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "widgetBorderColor",
+                                                "boxBorderColor",
                                                 target.value,
                                             );
                                         }}
                                     />
                                 )}
-                                <s-stack>
+                                <s-stack gap="small-300">
                                     <s-text>Corner radius</s-text>
                                     <RtpbRangeSlider
-                                        values={style.widgetRadius ?? 12}
+                                        values={style.boxRadius ?? 12}
                                         action={(val) =>
                                             updateStyle("widgetRadius", val)
                                         }
                                     />
+                                </s-stack>
+                                <s-stack direction="inline" alignItems="center" gap="small-300">
+                                    <s-text>Image align</s-text>
+                                    <s-button-group gap="none">
+                                        <s-button
+                                            slot="secondary-actions"
+                                            onClick={() => updateStyle("productAlign", "row") }
+                                        >
+                                            Left
+                                        </s-button>
+                                        <s-button
+                                            slot="secondary-actions"
+                                            onClick={() =>
+                                                updateStyle(
+                                                    "productAlign",
+                                                    "column",
+                                                )
+                                            }
+                                        >
+                                            Top
+                                        </s-button>
+                                        <s-button
+                                            slot="secondary-actions"
+                                            onClick={() =>
+                                                updateStyle(
+                                                    "productAlign",
+                                                    "row-reverse",
+                                                )
+                                            }
+                                        >
+                                            Right
+                                        </s-button>
+                                        <s-button
+                                            slot="secondary-actions"
+                                            onClick={() =>
+                                                updateStyle(
+                                                    "productAlign",
+                                                    "column-reverse",
+                                                )
+                                            }
+                                        >
+                                            Bottom
+                                        </s-button>
+                                    </s-button-group>
                                 </s-stack>
                             </s-stack>
                         </s-stack>
@@ -374,30 +451,58 @@ export function WidgetAppearance() {
                         {/* Image styling */}
                         <s-stack gap="base">
                             <s-heading>Image</s-heading>
+                            <s-stack gap="base">
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                >
+                                    <s-switch
+                                        id="image-add-border"
+                                        label="Add border"
+                                        accessibilityLabel="Add border"
+                                        checked={
+                                            style.imageBorderEnabled ?? true
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "imageBorderEnabled",
+                                                target.checked,
+                                            );
+                                        }}
+                                    />
+                                </s-stack>
+                            </s-stack>
                             <s-stack gap="base" paddingBlockEnd="base">
-                                <s-color-field
-                                    label="Border color"
-                                    name="imageBorderColor"
-                                    placeholder="Select a color"
-                                    value={
-                                        style.imageBorderColor || "#e3e3e3"
-                                    }
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "imageBorderColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
-                                <s-text>Corner radius</s-text>
-                                <RtpbRangeSlider
-                                    values={style.imageRadius ?? 6}
-                                    action={(val) =>
-                                        updateStyle("imageRadius", val)
-                                    }
-                                />
+                                {(style.imageBorderEnabled ?? true) && (
+                                    <s-color-field
+                                        label="Border color"
+                                        name="imageBorderColor"
+                                        placeholder="Select a color"
+                                        value={
+                                            style.imageBorderColor || "#e3e3e3"
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "imageBorderColor",
+                                                target.value,
+                                            );
+                                        }}
+                                    />
+                                )}
+                                <s-stack paddingBlockEnd="large-500">
+                                    <s-text>Corner radius</s-text>
+                                    <RtpbRangeSlider
+                                        values={style.imageRadius ?? 6}
+                                        action={(val) =>
+                                            updateStyle("imageRadius", val)
+                                        }
+                                    />
+                                </s-stack>
                             </s-stack>
                         </s-stack>
                     </s-stack>

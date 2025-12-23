@@ -22,7 +22,7 @@ export function BundleOptionsImage() {
     return (
         <s-stack>
             <div
-                className="cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7]"
+                className={`cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7] ${open ? "bg-[#f7f7f7]" : ""}`}
                 onClick={() => setOpen((prev) => !prev)}
             >
                 <s-stack
@@ -32,7 +32,7 @@ export function BundleOptionsImage() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Bundle Image</s-heading>
+                    <s-heading>Image</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>
@@ -45,24 +45,49 @@ export function BundleOptionsImage() {
                 <s-stack gap="base" padding="base">
                     {/* Image styling */}
                     <s-stack gap="base">
-                        <s-heading>Image</s-heading>
+                        <s-stack gap="base">
+                            <s-stack
+                                direction="inline"
+                                justifyContent="space-between"
+                                alignItems="center"
+                            >
+                                <s-switch
+                                    id="image-add-border"
+                                    label="Add border"
+                                    accessibilityLabel="Add border"
+                                    checked={
+                                        style.imageBorderEnabled ?? true
+                                    }
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "imageBorderEnabled",
+                                            target.checked,
+                                        );
+                                    }}
+                                />
+                            </s-stack>
+                        </s-stack>
                         <s-stack gap="base" paddingBlockEnd="base">
-                            <s-color-field
-                                label="Border color"
-                                name="imageBorderColor"
-                                placeholder="Select a color"
-                                value={
-                                    style.imageBorderColor || "#e3e3e3"
-                                }
-                                onInput={(event: Event) => {
-                                    const target =
-                                        event.target as HTMLInputElement;
-                                    updateStyle(
-                                        "imageBorderColor",
-                                        target.value,
-                                    );
-                                }}
-                            />
+                            {(style.imageBorderEnabled ?? true) && (
+                                <s-color-field
+                                    label="Border color"
+                                    name="imageBorderColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.imageBorderColor || "#e3e3e3"
+                                    }
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "imageBorderColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
+                            )}
                             <s-text>Corner radius</s-text>
                             <RtpbRangeSlider
                                 values={style.imageRadius ?? 6}

@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default function Page() {
     return (
         <div className="rtpb-full-modal-editor">
-            <div className="rtpb-full-content flex flex-wrap gap-6">
+            <div className="rtpb-full-modal-content flex flex-wrap gap-6">
                 {/* Left option */}
-                <div className="rtpb-left-setting lg:w-[380px]">
+                <div className="rtpb-left-setting border border-[#e3e3e3] bg-white rounded-xl overflow-hidden">
                     <BundleOptionsType />
                 </div>
                 {/* Right review */}

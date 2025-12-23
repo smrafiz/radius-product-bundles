@@ -22,12 +22,14 @@ export function BundlePreview() {
     const renderSelectedProducts = () => {
         return visibleItems.map((item, index) => (
             <div
-                className="rtpb-widget-product-layout-one"
+                className="rtpb-bundle-product"
                 key={index}
                 style={{
                     backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: styleData.productRadius || "12px",
+                    borderRadius: `${styleData.productRadius ?? 12}px`,
+                    fontSize: `${styleData.productFontSize ?? 14}px`,
                     color: styleData.productTextColor || "#303030",
+                    flexDirection: styleData.productAlign || "row",
                     ...((styleData.productBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",
@@ -38,26 +40,28 @@ export function BundlePreview() {
                         : {}),
                 }}
             >
-                <div>
-                    <div
-                        className="w-20 h-20 bg-[var(--p-color-bg-surface)] flex items-center justify-center overflow-hidden"
-                        style={{
-                            borderRadius: styleData.imageRadius || "6px",
-                            borderStyle: "solid",
-                            borderWidth: "1px",
-                            borderColor:
-                                styleData.imageBorderColor || "#e3e3e3",
-                        }}
-                    >
-                        <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
+                <div
+                    className="rtpb-product-thumbnail"
+                    style={{
+                        borderRadius: `${styleData.imageRadius ?? 6}px`,
+                        ...((styleData.imageBorderEnabled ?? true)
+                            ? {
+                                borderStyle: "solid",
+                                borderWidth: "1px",
+                                borderColor:
+                                    styleData.imageBorderColor || "#e3e3e3",
+                            }
+                            : {}),
+                    }}
+                >
+                    <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
 
-                <div>
+                <div className="rtpb-prodict-info">
                     <div className="rtpb-product-title">
                         {item.title.length > 25
                             ? `${item.title.slice(0, 25)}...`
@@ -115,29 +119,29 @@ export function BundlePreview() {
             <BundlePreviewStatus />
 
             <div
-                className="rtpb-widget-layout-one"
+                className="rtpb-bundle-layout-one"
                 style={{
-                    backgroundColor: styleData.widgetBgColor || "#ffffff",
-                    borderRadius: styleData.widgetRadius || "12px",
-                    color: styleData.widgetTextColor || "#303030",
-                    ...((styleData.widgetBorderEnabled ?? true)
+                    backgroundColor: styleData.boxBgColor || "#ffffff",
+                    borderRadius: `${styleData.boxRadius ?? 12}px`,
+                    color: styleData.boxTextColor || "#303030",
+                    ...((styleData.boxBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",
                               borderWidth: "1px",
                               borderColor:
-                                  styleData.widgetBorderColor || "#e3e3e3",
+                                  styleData.boxBorderColor || "#e3e3e3",
                           }
                         : {}),
                 }}
             >
-                <div className="flex flex-col gap-4">
+                <div className="rtpb-box-wrap">
                     <div className="font-semibold">
                         {displaySettings.title || ""}
                     </div>
 
                     {selectedItems.length > 0 ? (
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-2">
+                        <div className="rtpb-box-container">
+                            <div className="rtpb-product-item">
                                 {renderSelectedProducts()}
                             </div>
 
@@ -153,10 +157,10 @@ export function BundlePreview() {
                             )}
 
                             {/* Pricing */}
-                            <div className="flex flex-col gap-2">
+                            <div className="rtpb-product-total-price">
                                 {displaySettings.showPrices && (
-                                    <div className="flex justify-between">
-                                        <div className="gap-2 flex items-center justify-between">
+                                    <div className="rtpb-product-original-price">
+                                        <div className="rtpb-product-original-wrap">
                                             <span className="font-semibold">
                                                 Original Price:
                                             </span>
@@ -167,7 +171,7 @@ export function BundlePreview() {
                                             )}
                                         </div>
 
-                                        <div className="gap-2 flex items-center justify-between">
+                                        <div className="rtpb-product-original-wrap">
                                             <span className="font-semibold">
                                                 Total Price:
                                             </span>
@@ -180,7 +184,7 @@ export function BundlePreview() {
 
                                 {displaySettings.showSavings &&
                                     discountAmount > 0 && (
-                                        <div className="gap-2 flex items-center justify-between">
+                                        <div className="rtpb-product-original-wrap">
                                             <span className="font-semibold">
                                                 You save:
                                             </span>
@@ -191,8 +195,7 @@ export function BundlePreview() {
                                         </div>
                                     )}
                             </div>
-
-                            <div className="rtpb-summary-button flex justify-center">
+                            <div className="rtpb-summary-button">
                                 <button
                                     aria-expanded="false"
                                     aria-label={
@@ -208,9 +211,7 @@ export function BundlePreview() {
                                                   color:
                                                       styleData.buttonTextColor ||
                                                       "#fff",
-                                                  borderRadius:
-                                                      styleData.buttonRadius ||
-                                                      "8px",
+                                                 borderRadius: `${styleData.buttonRadius ?? 8}px`,
                                               }
                                             : undefined
                                     }
