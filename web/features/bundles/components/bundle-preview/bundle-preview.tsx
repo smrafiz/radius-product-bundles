@@ -9,6 +9,11 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 
+/*
+ * CSS Reference:
+ * import "@/widgets/src/scss/index.scss";
+ */
+
 import { useState } from "react";
 
 export function BundlePreview() {

@@ -1,4 +1,4 @@
-import "./bundle-widget.scss";
+import "./scss/index.scss";
 
 /**
  * Radius Bundle Widget

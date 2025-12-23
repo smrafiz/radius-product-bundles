@@ -881,95 +881,6 @@ $rb-skeleton-shine: #f5f5f5;
 		color: var(--rb-muted-color);
 		font-size: 0.9rem;
 	}
-
-	&-toast {
-		position: fixed;
-		top: 20px;
-		right: 20px;
-		z-index: 10000;
-
-		display: flex;
-		align-items: center;
-		gap: 12px;
-
-		min-width: 300px;
-		max-width: 500px;
-		padding: 16px;
-
-		background: rgb(var(--color-background));
-		border: 1px solid rgba(var(--color-foreground), 0.08);
-		border-radius: var(--border-radius, 8px);
-		box-shadow: 0 4px 12px rgba(var(--color-shadow), 0.12);
-
-		transform: translateX(calc(100% + 40px));
-		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-		pointer-events: all;
-
-		&--visible {
-			transform: translateX(0);
-		}
-
-		&__icon {
-			flex-shrink: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 32px;
-			height: 32px;
-			border-radius: 50%;
-		}
-
-		&--success {
-			.radius-bundle-toast__icon {
-				background: rgba(46, 125, 50, 0.12);
-				color: rgb(46, 125, 50);
-			}
-		}
-
-		&--error {
-			.radius-bundle-toast__icon {
-				background: rgba(198, 40, 40, 0.12);
-				color: rgb(198, 40, 40);
-			}
-		}
-
-		&__message {
-			flex: 1;
-			font-size: 1.4rem;
-			line-height: 1.5;
-			color: rgb(var(--color-foreground));
-			font-weight: 500;
-			font-family: var(--font-body-family), serif;
-		}
-
-		&__close {
-			flex-shrink: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 24px;
-			height: 24px;
-
-			padding: 0;
-			border: none;
-			background: transparent;
-			color: rgba(var(--color-foreground), 0.5);
-
-			border-radius: var(--border-radius, 4px);
-			cursor: pointer;
-			transition: all 0.2s;
-
-			&:hover {
-				background: rgba(var(--color-foreground), 0.05);
-				color: rgb(var(--color-foreground));
-			}
-
-			&:active {
-				transform: scale(0.95);
-			}
-		}
-	}
 }
 
 // ==========================================================================
@@ -1008,16 +919,6 @@ $rb-skeleton-shine: #f5f5f5;
 	}
 }
 
-@media (max-width: 640px) {
-	.radius-bundle-toast {
-		top: 10px;
-		right: 10px;
-		left: 10px;
-		min-width: unset;
-		max-width: unset;
-	}
-}
-
 @media (max-width: 480px) {
 	.radius-bundle {
 		&__products--grid,
@@ -1040,32 +941,5 @@ $rb-skeleton-shine: #f5f5f5;
 				border-top: 1px dashed var(--rb-border-color);
 			}
 		}
-	}
-}
-
-// ==========================================================================
-// Dark Mode
-// ==========================================================================
-
-@media (prefers-color-scheme: dark) {
-	.radius-bundle-toast {
-		background: #1f2937;
-		box-shadow:
-				0 4px 6px -1px rgba(0, 0, 0, 0.3),
-				0 2px 4px -1px rgba(0, 0, 0, 0.2),
-				0 0 0 1px rgba(255, 255, 255, 0.1);
-	}
-
-	.radius-bundle-toast__message {
-		color: #f9fafb;
-	}
-
-	.radius-bundle-toast__close {
-		color: #d1d5db;
-	}
-
-	.radius-bundle-toast__close:hover {
-		background: #374151;
-		color: #f3f4f6;
 	}
 }
