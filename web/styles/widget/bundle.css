@@ -54,6 +54,14 @@
         font-weight: 500;
     }
 }
+.rtpb-product-divider {
+    position: relative;
+    margin: auto;
+    .rtpb-product-divider-position {
+        position: absolute;
+        bottom: -12px;
+    }
+}
 .rtpb-summary-button {
     display: flex;
     justify-content: center;

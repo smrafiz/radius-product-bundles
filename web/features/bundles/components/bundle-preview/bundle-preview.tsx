@@ -26,58 +26,79 @@ export function BundlePreview() {
 
     const renderSelectedProducts = () => {
         return visibleItems.map((item, index) => (
-            <div
-                className="rtpb-bundle-product"
-                key={index}
-                style={{
-                    backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: `${styleData.productRadius ?? 12}px`,
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
-                    color: styleData.productTextColor || "#303030",
-                    flexDirection: styleData.productAlign || "row",
-                    ...((styleData.productBorderEnabled ?? true)
-                        ? {
-                              borderStyle: "solid",
-                              borderWidth: "1px",
-                              borderColor:
-                                  styleData.productBorderColor || "#e3e3e3",
-                          }
-                        : {}),
-                }}
-            >
+            <>
                 <div
-                    className="rtpb-product-thumbnail"
+                    className="rtpb-bundle-product"
+                    key={index}
                     style={{
-                        borderRadius: `${styleData.imageRadius ?? 6}px`,
-                        ...((styleData.imageBorderEnabled ?? true)
+                        backgroundColor: styleData.productBgColor || "#f7f7f7",
+                        borderRadius: `${styleData.productRadius ?? 12}px`,
+                        fontSize: `${styleData.productFontSize ?? 14}px`,
+                        color: styleData.productTextColor || "#303030",
+                        flexDirection: styleData.productAlign || "row",
+                        ...((styleData.productBorderEnabled ?? true)
                             ? {
-                                borderStyle: "solid",
-                                borderWidth: "1px",
-                                borderColor:
-                                    styleData.imageBorderColor || "#e3e3e3",
-                            }
+                                  borderStyle: "solid",
+                                  borderWidth: "1px",
+                                  borderColor:
+                                      styleData.productBorderColor || "#e3e3e3",
+                              }
                             : {}),
                     }}
                 >
-                    <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                    />
+                    <div
+                        className="rtpb-product-thumbnail"
+                        style={{
+                            borderRadius: `${styleData.imageRadius ?? 6}px`,
+                            ...((styleData.imageBorderEnabled ?? true)
+                                ? {
+                                      borderStyle: "solid",
+                                      borderWidth: "1px",
+                                      borderColor:
+                                          styleData.imageBorderColor ||
+                                          "#e3e3e3",
+                                  }
+                                : {}),
+                        }}
+                    >
+                        <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+
+                    <div className="rtpb-prodict-info">
+                        <div className="rtpb-product-title">
+                            {item.title.length > 25
+                                ? `${item.title.slice(0, 25)}...`
+                                : item.title}
+                        </div>
+                        <div className="rtpb-product-price">
+                            Qty: {item.quantity} ×{" "}
+                            {formatPrice(parseFloat(item.price))}
+                        </div>
+                    </div>
                 </div>
 
-                <div className="rtpb-prodict-info">
-                    <div className="rtpb-product-title">
-                        {item.title.length > 25
-                            ? `${item.title.slice(0, 25)}...`
-                            : item.title}
+                {index < visibleItems.length - 1 && (
+                    <div className="rtpb-product-divider">
+                        <div className="rtpb-product-divider-position">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 32 32"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M22 17h-5v5a1.001 1.001 0 0 1-2 0v-5h-5a1.001 1.001 0 0 1 0-2h5v-5a1.001 1.001 0 0 1 2 0v5h5a1.001 1.001 0 0 1 0 2zM16 0C7.163 0 0 7.16 0 16s7.163 16 16 16 16-7.16 16-16S24.837 0 16 0z"
+                                />
+                            </svg>
+                        </div>
                     </div>
-                    <div className="rtpb-product-price">
-                        Qty: {item.quantity} ×{" "}
-                        {formatPrice(parseFloat(item.price))}
-                    </div>
-                </div>
-            </div>
+                )}
+            </>
         ));
     };
 
@@ -162,17 +183,26 @@ export function BundlePreview() {
                             )}
 
                             {/* Pricing */}
-                            <div className="rtpb-product-total-price">
+                            <div
+                                className="rtpb-product-total-price"
+                                style={{
+                                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                                }}
+                            >
                                 {displaySettings.showPrices && (
                                     <div className="rtpb-product-original-price">
                                         <div className="rtpb-product-original-wrap">
-                                            <span className="font-semibold">
-                                                Original Price:
-                                            </span>
                                             {discountAmount > 0 && (
-                                                <span>
-                                                    {formatPrice(originalPrice)}
-                                                </span>
+                                                <>
+                                                    <span className="font-semibold">
+                                                        Original Price:
+                                                    </span>
+                                                    <span>
+                                                        {formatPrice(
+                                                            originalPrice,
+                                                        )}
+                                                    </span>
+                                                </>
                                             )}
                                         </div>
 
@@ -200,7 +230,12 @@ export function BundlePreview() {
                                         </div>
                                     )}
                             </div>
-                            <div className="rtpb-summary-button">
+                            <div
+                                className="rtpb-summary-button"
+                                style={{
+                                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                                }}
+                            >
                                 <button
                                     aria-expanded="false"
                                     aria-label={
@@ -216,7 +251,7 @@ export function BundlePreview() {
                                                   color:
                                                       styleData.buttonTextColor ||
                                                       "#fff",
-                                                 borderRadius: `${styleData.buttonRadius ?? 8}px`,
+                                                  borderRadius: `${styleData.buttonRadius ?? 8}px`,
                                               }
                                             : undefined
                                     }
@@ -227,7 +262,7 @@ export function BundlePreview() {
                         </div>
                     ) : (
                         <div className="min-h-96 flex flex-col items-center justify-center gap-3">
-                            <div className="w-[var(--p-font-size-1000)]">
+                            <div className="rtpb-product-not-found">
                                 <img
                                     src="/assets/not-found.svg"
                                     alt="No products selected"
