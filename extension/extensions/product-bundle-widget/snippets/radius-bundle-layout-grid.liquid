@@ -5,6 +5,8 @@
 {% endcomment %}
 
 {% assign grid_columns = block.settings.grid_columns | default: 2 %}
+{% assign grid_columns_tablet = block.settings.grid_columns_tablet | default: 2 %}
+{% assign grid_columns_mobile = block.settings.grid_columns_mobile | default: 1 %}
 
 <div class="radius-bundle__inner">
     {% comment %} Header {% endcomment %}
@@ -17,7 +19,11 @@
     <div
             class="radius-bundle__products radius-bundle__products--grid"
             data-bundle-products
-            style="--grid-columns: {{ grid_columns }}"
+            style="
+                    --grid-cols-desktop: {{ grid_columns }};
+                    --grid-cols-tablet: {{ grid_columns_tablet }};
+                    --grid-cols-mobile: {{ grid_columns_mobile }};
+                    "
     >
             {% for i in (1..product_count) %}
                 <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>

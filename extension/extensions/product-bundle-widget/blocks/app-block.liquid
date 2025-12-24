@@ -84,7 +84,7 @@
 				{% assign free_shipping_text = g_labels.freeShippingText
 						| default: 'Free Shipping Included' %}
 
-				{% comment %} Build JSON for JS. Formatted structure (DO NOT REMOVE)
+				{% comment %} (DO NOT REMOVE) Build JSON for JS. Formatted structure (DO NOT REMOVE)
 					"id": "{{ bundle_id }}",
 					"status": "{{ bundle.status }}",
 					"discountType": "{{ bundle.discountType }}",
@@ -215,6 +215,7 @@
 	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
 
+{% comment %} DO NOT TOUCH BELOW SCHEMA. IT IS AUTOMATICALLY GENERATED {% endcomment %}
 {% schema %}
 {
 	"name": "Product Bundle",
@@ -222,7 +223,7 @@
 	"settings": [
 		{
 			"type": "header",
-			"content": "Layout"
+			"content": "Layout & Display"
 		},
 		{
 			"type": "select",
@@ -244,13 +245,74 @@
 				{
 					"value": "carousel",
 					"label": "Carousel"
+				},
+				{
+					"value": "compact",
+					"label": "Compact"
 				}
 			],
 			"default": ""
 		},
 		{
-			"type": "header",
-			"content": "Display Options"
+			"type": "range",
+			"id": "grid_columns",
+			"label": "Grid columns (desktop)",
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"default": 2,
+			"info": "Only applies to grid layout"
+		},
+		{
+			"type": "range",
+			"id": "grid_columns_tablet",
+			"label": "Grid columns (tablet)",
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"default": 2,
+			"info": "Only applies to grid layout"
+		},
+		{
+			"type": "range",
+			"id": "grid_columns_mobile",
+			"label": "Grid columns (mobile)",
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"default": 1,
+			"info": "Only applies to grid layout"
+		},
+		{
+			"type": "select",
+			"id": "alignment",
+			"label": "Content alignment",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"default": "left"
+		},
+		{
+			"type": "range",
+			"id": "max_width",
+			"label": "Maximum width",
+			"min": 400,
+			"max": 1200,
+			"step": 50,
+			"unit": "px",
+			"default": 800,
+			"info": "Maximum width of bundle container"
 		},
 		{
 			"type": "checkbox",
@@ -265,13 +327,213 @@
 			"default": true
 		},
 		{
-			"type": "header",
-			"content": "Colors (Leave blank to use defaults)"
+			"type": "checkbox",
+			"id": "show_product_titles",
+			"label": "Show product titles",
+			"default": true
 		},
 		{
-			"type": "color",
-			"id": "primary_color",
-			"label": "Button color"
+			"type": "checkbox",
+			"id": "show_product_prices",
+			"label": "Show individual prices",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_compare_at_price",
+			"label": "Show compare at price",
+			"default": true,
+			"info": "Show original price with strikethrough"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_dividers",
+			"label": "Show dividers between items",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "show_free_shipping",
+			"label": "Show free shipping badge",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "mobile_hide_images",
+			"label": "Hide images on mobile",
+			"default": false,
+			"info": "Save space by hiding product images on mobile"
+		},
+		{
+			"type": "select",
+			"id": "mobile_button_position",
+			"label": "Mobile button position",
+			"options": [
+				{
+					"value": "inline",
+					"label": "Inline (in bundle)"
+				},
+				{
+					"value": "fixed",
+					"label": "Fixed (bottom of screen)"
+				}
+			],
+			"default": "inline"
+		},
+		{
+			"type": "header",
+			"content": "Typography & Text"
+		},
+		{
+			"type": "select",
+			"id": "heading_size",
+			"label": "Heading size",
+			"options": [
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				},
+				{
+					"value": "extra-large",
+					"label": "Extra Large"
+				}
+			],
+			"default": "medium"
+		},
+		{
+			"type": "select",
+			"id": "text_size",
+			"label": "Body text size",
+			"options": [
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": "medium"
+		},
+		{
+			"type": "select",
+			"id": "price_size",
+			"label": "Price text size",
+			"options": [
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				},
+				{
+					"value": "extra-large",
+					"label": "Extra Large"
+				}
+			],
+			"default": "large"
+		},
+		{
+			"type": "select",
+			"id": "font_weight",
+			"label": "Heading font weight",
+			"options": [
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "semibold",
+					"label": "Semibold"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				}
+			],
+			"default": "semibold"
+		},
+		{
+			"type": "select",
+			"id": "text_transform",
+			"label": "Heading text transform",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "text",
+			"id": "bundle_heading",
+			"label": "Bundle heading text",
+			"default": "Bundle & Save",
+			"info": "Custom heading for bundle section"
+		},
+		{
+			"type": "text",
+			"id": "regular_price_label",
+			"label": "Regular price label",
+			"default": "Regular Price:",
+			"info": "Label for regular total price"
+		},
+		{
+			"type": "text",
+			"id": "bundle_price_label",
+			"label": "Bundle price label",
+			"default": "Bundle Price:",
+			"info": "Label for discounted bundle price"
+		},
+		{
+			"type": "text",
+			"id": "you_save_label",
+			"label": "Savings label",
+			"default": "You Save:",
+			"info": "Label for savings amount"
+		},
+		{
+			"type": "text",
+			"id": "free_shipping_text",
+			"label": "Free shipping text",
+			"default": "Free Shipping",
+			"info": "Text for free shipping badge"
+		},
+		{
+			"type": "header",
+			"content": "Colors"
 		},
 		{
 			"type": "color",
@@ -285,46 +547,357 @@
 		},
 		{
 			"type": "color",
+			"id": "divider_color",
+			"label": "Divider color"
+		},
+		{
+			"type": "color",
+			"id": "heading_color",
+			"label": "Heading color"
+		},
+		{
+			"type": "color",
 			"id": "text_color",
 			"label": "Text color"
 		},
 		{
 			"type": "color",
+			"id": "price_color",
+			"label": "Price color"
+		},
+		{
+			"type": "color",
+			"id": "primary_color",
+			"label": "Primary/accent color"
+		},
+		{
+			"type": "color",
 			"id": "savings_color",
-			"label": "Savings color"
+			"label": "Savings badge background"
+		},
+		{
+			"type": "color",
+			"id": "savings_text_color",
+			"label": "Savings badge text"
 		},
 		{
 			"type": "header",
-			"content": "Spacing"
+			"content": "Spacing & Sizing"
 		},
 		{
 			"type": "range",
-			"id": "border_radius",
-			"label": "Border radius",
+			"id": "section_padding_top",
+			"label": "Section padding top",
 			"min": 0,
-			"max": 24,
-			"step": 2,
+			"max": 100,
+			"step": 4,
 			"unit": "px",
-			"default": 12
+			"default": 40
+		},
+		{
+			"type": "range",
+			"id": "section_padding_bottom",
+			"label": "Section padding bottom",
+			"min": 0,
+			"max": 100,
+			"step": 4,
+			"unit": "px",
+			"default": 40
 		},
 		{
 			"type": "range",
 			"id": "spacing",
 			"label": "Internal spacing",
 			"min": 8,
-			"max": 32,
+			"max": 48,
 			"step": 4,
 			"unit": "px",
 			"default": 16
 		},
 		{
+			"type": "range",
+			"id": "item_spacing",
+			"label": "Space between items",
+			"min": 8,
+			"max": 32,
+			"step": 4,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "mobile_spacing",
+			"label": "Mobile spacing",
+			"min": 4,
+			"max": 24,
+			"step": 2,
+			"unit": "px",
+			"default": 12,
+			"info": "Spacing on mobile devices"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border width",
+			"min": 0,
+			"max": 8,
+			"step": 1,
+			"unit": "px",
+			"default": 1
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Container border radius",
+			"min": 0,
+			"max": 32,
+			"step": 2,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "image_size",
+			"label": "Image size",
+			"min": 60,
+			"max": 200,
+			"step": 10,
+			"unit": "px",
+			"default": 80,
+			"info": "Width/height for product images"
+		},
+		{
+			"type": "range",
+			"id": "image_border_radius",
+			"label": "Image border radius",
+			"min": 0,
+			"max": 24,
+			"step": 2,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "select",
+			"id": "image_fit",
+			"label": "Image fit",
+			"options": [
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "contain",
+					"label": "Contain"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "cover",
+			"info": "How images are fitted within their container"
+		},
+		{
+			"type": "range",
+			"id": "opacity",
+			"label": "Background opacity",
+			"min": 0,
+			"max": 100,
+			"step": 5,
+			"unit": "%",
+			"default": 100
+		},
+		{
 			"type": "header",
-			"content": "Button"
+			"content": "Button & Badge Styling"
 		},
 		{
 			"type": "text",
 			"id": "button_text",
 			"label": "Button text (leave blank for default)"
+		},
+		{
+			"type": "select",
+			"id": "button_size",
+			"label": "Button size",
+			"options": [
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": "medium"
+		},
+		{
+			"type": "checkbox",
+			"id": "button_full_width",
+			"label": "Full width button",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "button_border_radius",
+			"label": "Button border radius",
+			"min": 0,
+			"max": 50,
+			"step": 2,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "color",
+			"id": "button_background",
+			"label": "Button background color"
+		},
+		{
+			"type": "color",
+			"id": "button_text_color",
+			"label": "Button text color"
+		},
+		{
+			"type": "color",
+			"id": "button_hover_background",
+			"label": "Button hover background"
+		},
+		{
+			"type": "color",
+			"id": "button_hover_text",
+			"label": "Button hover text color"
+		},
+		{
+			"type": "select",
+			"id": "savings_position",
+			"label": "Savings badge position",
+			"options": [
+				{
+					"value": "top-left",
+					"label": "Top Left"
+				},
+				{
+					"value": "top-right",
+					"label": "Top Right"
+				},
+				{
+					"value": "bottom-left",
+					"label": "Bottom Left"
+				},
+				{
+					"value": "bottom-right",
+					"label": "Bottom Right"
+				},
+				{
+					"value": "inline",
+					"label": "Inline with content"
+				}
+			],
+			"default": "top-right"
+		},
+		{
+			"type": "select",
+			"id": "savings_style",
+			"label": "Savings badge style",
+			"options": [
+				{
+					"value": "rounded",
+					"label": "Rounded"
+				},
+				{
+					"value": "square",
+					"label": "Square"
+				},
+				{
+					"value": "pill",
+					"label": "Pill"
+				},
+				{
+					"value": "circle",
+					"label": "Circle"
+				}
+			],
+			"default": "rounded"
+		},
+		{
+			"type": "range",
+			"id": "savings_size",
+			"label": "Savings badge size",
+			"min": 12,
+			"max": 24,
+			"step": 2,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "header",
+			"content": "Effects & Animation"
+		},
+		{
+			"type": "select",
+			"id": "shadow_style",
+			"label": "Shadow style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				},
+				{
+					"value": "extra-large",
+					"label": "Extra Large"
+				}
+			],
+			"default": "small"
+		},
+		{
+			"type": "checkbox",
+			"id": "hover_effect",
+			"label": "Enable hover effect",
+			"default": true,
+			"info": "Adds subtle animation on hover"
+		},
+		{
+			"type": "select",
+			"id": "transition_speed",
+			"label": "Animation speed",
+			"options": [
+				{
+					"value": "fast",
+					"label": "Fast"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "slow",
+					"label": "Slow"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "text",
+			"id": "custom_css_class",
+			"label": "Custom CSS class",
+			"info": "Add custom class for additional styling"
 		}
 	]
 }

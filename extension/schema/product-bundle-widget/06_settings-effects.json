@@ -1,0 +1,43 @@
+[
+    {
+        "type": "header",
+        "content": "Effects & Animation"
+    },
+    {
+        "type": "select",
+        "id": "shadow_style",
+        "label": "Shadow style",
+        "options": [
+            { "value": "none", "label": "None" },
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" },
+            { "value": "extra-large", "label": "Extra Large" }
+        ],
+        "default": "small"
+    },
+    {
+        "type": "checkbox",
+        "id": "hover_effect",
+        "label": "Enable hover effect",
+        "default": true,
+        "info": "Adds subtle animation on hover"
+    },
+    {
+        "type": "select",
+        "id": "transition_speed",
+        "label": "Animation speed",
+        "options": [
+            { "value": "fast", "label": "Fast" },
+            { "value": "normal", "label": "Normal" },
+            { "value": "slow", "label": "Slow" }
+        ],
+        "default": "normal"
+    },
+    {
+        "type": "text",
+        "id": "custom_css_class",
+        "label": "Custom CSS class",
+        "info": "Add custom class for additional styling"
+    }
+]

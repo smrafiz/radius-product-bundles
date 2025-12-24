@@ -1,0 +1,131 @@
+[
+    {
+        "type": "header",
+        "content": "Layout & Display"
+    },
+    {
+        "type": "select",
+        "id": "layout",
+        "label": "Display Layout",
+        "options": [
+            { "value": "", "label": "Use bundle default" },
+            { "value": "list", "label": "List" },
+            { "value": "grid", "label": "Grid" },
+            { "value": "carousel", "label": "Carousel" },
+            { "value": "compact", "label": "Compact" }
+        ],
+        "default": ""
+    },
+    {
+        "type": "range",
+        "id": "grid_columns",
+        "label": "Grid columns (desktop)",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 2,
+        "info": "Only applies to grid layout"
+    },
+    {
+        "type": "range",
+        "id": "grid_columns_tablet",
+        "label": "Grid columns (tablet)",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 2,
+        "info": "Only applies to grid layout"
+    },
+    {
+        "type": "range",
+        "id": "grid_columns_mobile",
+        "label": "Grid columns (mobile)",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 1,
+        "info": "Only applies to grid layout"
+    },
+    {
+        "type": "select",
+        "id": "alignment",
+        "label": "Content alignment",
+        "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+        ],
+        "default": "left"
+    },
+    {
+        "type": "range",
+        "id": "max_width",
+        "label": "Maximum width",
+        "min": 400,
+        "max": 1200,
+        "step": 50,
+        "unit": "px",
+        "default": 800,
+        "info": "Maximum width of bundle container"
+    },
+    {
+        "type": "checkbox",
+        "id": "show_product_images",
+        "label": "Show product images",
+        "default": true
+    },
+    {
+        "type": "checkbox",
+        "id": "show_savings",
+        "label": "Show savings badge",
+        "default": true
+    },
+    {
+        "type": "checkbox",
+        "id": "show_product_titles",
+        "label": "Show product titles",
+        "default": true
+    },
+    {
+        "type": "checkbox",
+        "id": "show_product_prices",
+        "label": "Show individual prices",
+        "default": true
+    },
+    {
+        "type": "checkbox",
+        "id": "show_compare_at_price",
+        "label": "Show compare at price",
+        "default": true,
+        "info": "Show original price with strikethrough"
+    },
+    {
+        "type": "checkbox",
+        "id": "show_dividers",
+        "label": "Show dividers between items",
+        "default": false
+    },
+    {
+        "type": "checkbox",
+        "id": "show_free_shipping",
+        "label": "Show free shipping badge",
+        "default": true
+    },
+    {
+        "type": "checkbox",
+        "id": "mobile_hide_images",
+        "label": "Hide images on mobile",
+        "default": false,
+        "info": "Save space by hiding product images on mobile"
+    },
+    {
+        "type": "select",
+        "id": "mobile_button_position",
+        "label": "Mobile button position",
+        "options": [
+            { "value": "inline", "label": "Inline (in bundle)" },
+            { "value": "fixed", "label": "Fixed (bottom of screen)" }
+        ],
+        "default": "inline"
+    }
+]

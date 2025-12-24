@@ -1,0 +1,99 @@
+[
+    {
+        "type": "header",
+        "content": "Typography & Text"
+    },
+    {
+        "type": "select",
+        "id": "heading_size",
+        "label": "Heading size",
+        "options": [
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" },
+            { "value": "extra-large", "label": "Extra Large" }
+        ],
+        "default": "medium"
+    },
+    {
+        "type": "select",
+        "id": "text_size",
+        "label": "Body text size",
+        "options": [
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" }
+        ],
+        "default": "medium"
+    },
+    {
+        "type": "select",
+        "id": "price_size",
+        "label": "Price text size",
+        "options": [
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" },
+            { "value": "extra-large", "label": "Extra Large" }
+        ],
+        "default": "large"
+    },
+    {
+        "type": "select",
+        "id": "font_weight",
+        "label": "Heading font weight",
+        "options": [
+            { "value": "normal", "label": "Normal" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "semibold", "label": "Semibold" },
+            { "value": "bold", "label": "Bold" }
+        ],
+        "default": "semibold"
+    },
+    {
+        "type": "select",
+        "id": "text_transform",
+        "label": "Heading text transform",
+        "options": [
+            { "value": "none", "label": "None" },
+            { "value": "uppercase", "label": "Uppercase" },
+            { "value": "capitalize", "label": "Capitalize" }
+        ],
+        "default": "none"
+    },
+    {
+        "type": "text",
+        "id": "bundle_heading",
+        "label": "Bundle heading text",
+        "default": "Bundle & Save",
+        "info": "Custom heading for bundle section"
+    },
+    {
+        "type": "text",
+        "id": "regular_price_label",
+        "label": "Regular price label",
+        "default": "Regular Price:",
+        "info": "Label for regular total price"
+    },
+    {
+        "type": "text",
+        "id": "bundle_price_label",
+        "label": "Bundle price label",
+        "default": "Bundle Price:",
+        "info": "Label for discounted bundle price"
+    },
+    {
+        "type": "text",
+        "id": "you_save_label",
+        "label": "Savings label",
+        "default": "You Save:",
+        "info": "Label for savings amount"
+    },
+    {
+        "type": "text",
+        "id": "free_shipping_text",
+        "label": "Free shipping text",
+        "default": "Free Shipping",
+        "info": "Text for free shipping badge"
+    }
+]
