@@ -1,10 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-    DisplaySettings,
-    useBundleStore,
-} from "@/features/bundles";
+import { DisplaySettings, useBundleStore } from "@/features/bundles";
 
 export function WidgetPosition() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();

@@ -19,7 +19,6 @@ export function MetricCard({
         <s-section>
             <s-stack>
                 <s-stack direction="inline" gap="base" alignItems="center">
-
                     <s-stack gap="small-400">
                         <s-heading>{title}</s-heading>
 

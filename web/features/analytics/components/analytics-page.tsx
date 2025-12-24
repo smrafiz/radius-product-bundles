@@ -1,7 +1,4 @@
-import {
-    AnalyticsMetrics,
-    AnalyticsTabs,
-} from "@/features/analytics";
+import { AnalyticsMetrics, AnalyticsTabs } from "@/features/analytics";
 
 export function AnalyticsPage() {
     return (

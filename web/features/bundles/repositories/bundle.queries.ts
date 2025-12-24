@@ -8,7 +8,8 @@ import {
     INCLUDE_BUNDLE_DASHBOARD,
     INCLUDE_BUNDLE_DETAILS,
     INCLUDE_BUNDLE_FULL,
-    INCLUDE_BUNDLE_PRODUCTS, INCLUDE_SETTINGS,
+    INCLUDE_BUNDLE_PRODUCTS,
+    INCLUDE_SETTINGS,
 } from "./bundle.fragments";
 import { AppSettings, Prisma } from "@/prisma/generated/client";
 import { prisma } from "@/shared/repositories/prisma-connect";

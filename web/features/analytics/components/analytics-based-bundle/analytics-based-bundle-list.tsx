@@ -17,7 +17,6 @@ type BundleTableRowProps = {
 };
 
 const BundleTableRow = ({ bundle }: BundleTableRowProps) => {
-
     const products = Array.isArray(bundle.products) ? bundle.products : [];
     const { displayProducts, remainingCount } = useBundlePreview(products);
 

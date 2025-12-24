@@ -25,7 +25,10 @@ export function SettingsCustomizer() {
 
                 <s-stack direction="inline" alignItems="center" gap="small-400">
                     <s-badge tone="info">New</s-badge>
-                    <s-paragraph>Open the new design editor to update your design in real time.</s-paragraph>
+                    <s-paragraph>
+                        Open the new design editor to update your design in real
+                        time.
+                    </s-paragraph>
                 </s-stack>
 
                 <CustomizerModal />

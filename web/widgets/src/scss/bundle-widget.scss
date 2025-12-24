@@ -33,18 +33,18 @@ $rb-skeleton-shine: #f5f5f5;
 // ==========================================================================
 
 @keyframes skeleton-shimmer {
-	0% {
-		background-position: 200% 0;
-	}
-	100% {
-		background-position: -200% 0;
-	}
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 @keyframes spin {
-	to {
-		transform: rotate(360deg);
-	}
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 // ==========================================================================
@@ -52,32 +52,35 @@ $rb-skeleton-shine: #f5f5f5;
 // ==========================================================================
 
 @mixin skeleton-gradient {
-	background: linear-gradient(
-					90deg,
-					var(--rb-skeleton-base) 25%,
-					var(--rb-skeleton-shine) 50%,
-					var(--rb-skeleton-base) 75%
-	);
-	background-size: 200% 100%;
-	animation: skeleton-shimmer 1.5s ease-in-out infinite;
-	border-radius: 4px;
+    background: linear-gradient(
+        90deg,
+        var(--rb-skeleton-base) 25%,
+        var(--rb-skeleton-shine) 50%,
+        var(--rb-skeleton-base) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
 }
 
 @mixin card-hover {
-	transition: box-shadow var(--rb-transition), transform var(--rb-transition), border-color var(--rb-transition);
+    transition:
+        box-shadow var(--rb-transition),
+        transform var(--rb-transition),
+        border-color var(--rb-transition);
 
-	&:hover {
-		box-shadow: var(--rb-shadow);
-		transform: translateY(-1px);
-		border-color: var(--rb-primary-color);
-	}
+    &:hover {
+        box-shadow: var(--rb-shadow);
+        transform: translateY(-1px);
+        border-color: var(--rb-primary-color);
+    }
 }
 
 @mixin line-clamp($lines: 2) {
-	display: -webkit-box;
-	-webkit-line-clamp: $lines;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 // ==========================================================================
@@ -85,32 +88,32 @@ $rb-skeleton-shine: #f5f5f5;
 // ==========================================================================
 
 .radius-bundle-widget {
-	--rb-primary-color: #{$rb-primary-color};
-	--rb-secondary-color: #{$rb-secondary-color};
-	--rb-background-color: #{$rb-background-color};
-	--rb-border-color: #{$rb-border-color};
-	--rb-text-color: #{$rb-text-color};
-	--rb-savings-color: #{$rb-savings-color};
-	--rb-muted-color: #{$rb-muted-color};
-	--rb-border-radius: #{$rb-border-radius};
-	--rb-spacing: #{$rb-spacing};
-	--rb-spacing-xs: calc(var(--rb-spacing) * 0.25);
-	--rb-spacing-sm: calc(var(--rb-spacing) * 0.5);
-	--rb-spacing-md: var(--rb-spacing);
-	--rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
-	--rb-spacing-xl: calc(var(--rb-spacing) * 2);
-	--rb-shadow: #{$rb-shadow};
-	--rb-shadow-hover: #{$rb-shadow-hover};
-	--rb-transition: #{$rb-transition};
-	--rb-skeleton-base: #{$rb-skeleton-base};
-	--rb-skeleton-shine: #{$rb-skeleton-shine};
+    --rb-primary-color: #{$rb-primary-color};
+    --rb-secondary-color: #{$rb-secondary-color};
+    --rb-background-color: #{$rb-background-color};
+    --rb-border-color: #{$rb-border-color};
+    --rb-text-color: #{$rb-text-color};
+    --rb-savings-color: #{$rb-savings-color};
+    --rb-muted-color: #{$rb-muted-color};
+    --rb-border-radius: #{$rb-border-radius};
+    --rb-spacing: #{$rb-spacing};
+    --rb-spacing-xs: calc(var(--rb-spacing) * 0.25);
+    --rb-spacing-sm: calc(var(--rb-spacing) * 0.5);
+    --rb-spacing-md: var(--rb-spacing);
+    --rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
+    --rb-spacing-xl: calc(var(--rb-spacing) * 2);
+    --rb-shadow: #{$rb-shadow};
+    --rb-shadow-hover: #{$rb-shadow-hover};
+    --rb-transition: #{$rb-transition};
+    --rb-skeleton-base: #{$rb-skeleton-base};
+    --rb-skeleton-shine: #{$rb-skeleton-shine};
 
-	font-family: inherit;
-	margin: 24px 0;
+    font-family: inherit;
+    margin: 24px 0;
 
-	& *:empty:not(img):not(br):not(hr) {
-		display: revert;
-	}
+    & *:empty:not(img):not(br):not(hr) {
+        display: revert;
+    }
 }
 
 // ==========================================================================
@@ -118,769 +121,771 @@ $rb-skeleton-shine: #f5f5f5;
 // ==========================================================================
 
 .radius-bundle {
-	background: var(--rb-background-color);
-	border: 1px solid var(--rb-border-color);
-	border-radius: var(--rb-border-radius);
-	overflow: hidden;
-
-	&__inner {
-		padding: var(--rb-spacing-lg);
-	}
-
-	// ==========================================================================
-	// Header
-	// ==========================================================================
-
-	&__header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: var(--rb-spacing);
-		margin-bottom: var(--rb-spacing);
-		padding-bottom: var(--rb-spacing);
-		border-bottom: 1px solid var(--rb-border-color);
-	}
-
-	&__title-wrapper {
-		flex: 1;
-		min-width: 0;
-		position: relative;
-	}
-
-	&__title {
-		font-size: 1.25rem;
-		font-weight: 600;
-		color: var(--rb-text-color);
-		margin: 0;
-		line-height: 1.3;
-
-		&--hidden {
-			opacity: 0;
-			position: absolute;
-			pointer-events: none;
-		}
-
-		&--visible {
-			opacity: 1;
-			position: relative;
-			pointer-events: auto;
-		}
-	}
-
-	&__title-skeleton {
-		display: block;
-
-		&--hidden {
-			display: none;
-		}
-	}
-
-	&__badge {
-		background: var(--rb-savings-color);
-		color: #ffffff;
-		padding: 6px 14px;
-		border-radius: 20px;
-		font-size: 0.875rem;
-		font-weight: 600;
-		white-space: nowrap;
-		flex-shrink: 0;
-		text-align: center;
-		min-height: 28px;
-
-		&--skeleton {
-			min-width: 80px;
-			border-radius: 20px !important;
-		}
-
-		&--visible {
-			background: var(--rb-savings-color) !important;
-		}
-	}
-
-	&__description {
-		font-size: 0.9rem;
-		color: var(--rb-secondary-color);
-		margin: 0 0 var(--rb-spacing);
-		line-height: 1.5;
-	}
-
-	// ==========================================================================
-	// Skeleton Elements
-	// ==========================================================================
-
-	&__skeleton-text,
-	&__skeleton-image,
-	&__badge--skeleton {
-		@include skeleton-gradient;
-	}
-
-	&__skeleton-text {
-		&--title {
-			height: 20px;
-			width: 80%;
-			margin-bottom: var(--rb-spacing-sm);
-		}
-
-		&--subtitle {
-			height: 14px;
-			width: 40%;
-		}
-
-		&--price {
-			height: 16px;
-			width: 50%;
-			margin: 0 auto;
-		}
-
-		&--qty {
-			height: 12px;
-			width: 30%;
-			margin: var(--rb-spacing-xs) auto 0;
-		}
-
-		&--badge {
-			height: 14px;
-			width: 60px;
-			display: inline-block;
-		}
-
-		&--inline {
-			height: 16px;
-			width: 60px;
-			display: inline-block !important;
-			vertical-align: middle;
-		}
-	}
-
-	&__skeleton-image {
-		&--large {
-			width: 100%;
-			height: 100px;
-			margin-bottom: var(--rb-spacing-sm);
-			border-radius: 8px;
-		}
-	}
-
-	// ==========================================================================
-	// Loading State
-	// ==========================================================================
-
-	&__skeleton {
-		display: flex;
-		flex-direction: column;
-		gap: var(--rb-spacing);
-
-		// List skeleton
-		&--list {
-			display: flex;
-			flex-direction: column;
-			gap: var(--rb-spacing);
-		}
-
-		// Grid skeleton
-		&--grid {
-			display: grid;
-			grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
-			gap: var(--rb-spacing);
-		}
-
-		// Slider skeleton
-		&--slider {
-			display: flex;
-			align-items: center;
-			gap: var(--rb-spacing-sm);
-			flex-direction: row;
-		}
-	}
-
-	&__skeleton-item {
-		&--list {
-			display: flex;
-			align-items: center;
-			gap: var(--rb-spacing);
-			padding: var(--rb-spacing);
-			background: #f9f9f9;
-			border-radius: var(--rb-border-radius);
-			border: 1px solid var(--rb-border-color);
-
-			.radius-bundle__skeleton-image {
-				width: 70px;
-				height: 70px;
-				border-radius: 8px;
-				flex-shrink: 0;
-			}
-
-			.radius-bundle__skeleton-content {
-				flex: 1;
-				min-width: 0;
-			}
-
-			.radius-bundle__skeleton-price-wrapper {
-				flex-shrink: 0;
-				width: 80px;
-				text-align: right;
-			}
-		}
-	}
-
-	&__skeleton-card {
-		padding: var(--rb-spacing);
-		background: #f9f9f9;
-		border-radius: var(--rb-border-radius);
-		border: 1px solid var(--rb-border-color);
-		text-align: center;
-	}
-
-	&__skeleton-slide {
-		flex: 0 0 auto;
-		width: 140px;
-		padding: var(--rb-spacing);
-		background: #f9f9f9;
-		border-radius: var(--rb-border-radius);
-		border: 1px solid var(--rb-border-color);
-		text-align: center;
-	}
-
-	// ==========================================================================
-	// Products Container
-	// ==========================================================================
-
-	&__products {
-		margin-bottom: var(--rb-spacing);
-
-		// List layout
-		&--list {
-			display: flex;
-			flex-direction: column;
-			gap: var(--rb-spacing);
-		}
-
-		// Grid layout
-		&--grid {
-			display: grid;
-			grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
-			gap: var(--rb-spacing);
-		}
-
-		// Slider layout
-		&--slider {
-			display: flex;
-			align-items: center;
-			gap: var(--rb-spacing-sm);
-			overflow-x: auto;
-			padding: var(--rb-spacing-sm) 0;
-			scroll-snap-type: x mandatory;
-			-webkit-overflow-scrolling: touch;
-			scrollbar-width: none;
-
-			&::-webkit-scrollbar {
-				display: none;
-			}
-		}
-	}
-
-	// ==========================================================================
-	// Product Card - List Layout
-	// ==========================================================================
-
-	&__product--list {
-		display: flex;
-		align-items: center;
-		gap: var(--rb-spacing);
-		padding: var(--rb-spacing);
-		background: #f9f9f9;
-		border: 1px solid var(--rb-border-color);
-		border-radius: var(--rb-border-radius);
-		@include card-hover;
-
-		.radius-bundle__product-image {
-			width: 70px;
-			height: 70px;
-			flex-shrink: 0;
-			border-radius: 8px;
-			overflow: hidden;
-			background: #ffffff;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-			}
-		}
-
-		.radius-bundle__product-info {
-			flex: 1;
-			min-width: 0;
-		}
-
-		.radius-bundle__product-title {
-			font-size: 0.95rem;
-			font-weight: 500;
-			color: var(--rb-text-color);
-			margin: 0 0 4px;
-			line-height: 1.3;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-
-		.radius-bundle__product-quantity {
-			font-size: 0.8rem;
-			color: var(--rb-muted-color);
-		}
-
-		.radius-bundle__product-price {
-			text-align: right;
-			flex-shrink: 0;
-		}
-	}
-
-	// ==========================================================================
-	// Product Card - Grid Layout
-	// ==========================================================================
-
-	&__product--grid {
-		padding: var(--rb-spacing);
-		background: #f9f9f9;
-		border: 1px solid var(--rb-border-color);
-		border-radius: var(--rb-border-radius);
-		text-align: center;
-		@include card-hover;
-
-		&:hover {
-			box-shadow: var(--rb-shadow-hover);
-			transform: translateY(-2px);
-		}
-
-		.radius-bundle__product-image {
-			width: 100%;
-			height: 100px;
-			margin-bottom: var(--rb-spacing-sm);
-			border-radius: 8px;
-			overflow: hidden;
-			background: #ffffff;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: contain;
-			}
-		}
-
-		.radius-bundle__product-title {
-			font-size: 0.9rem;
-			font-weight: 500;
-			color: var(--rb-text-color);
-			margin: 0 0 var(--rb-spacing-xs);
-			line-height: 1.3;
-			@include line-clamp(2);
-			min-height: 2.4em;
-		}
-
-		.radius-bundle__product-price {
-			margin-bottom: var(--rb-spacing-xs);
-		}
-
-		.radius-bundle__product-quantity {
-			font-size: 0.75rem;
-			color: var(--rb-muted-color);
-		}
-	}
-
-	// ==========================================================================
-	// Product Card - Compact Layout
-	// ==========================================================================
-
-	&__title--compact {
-		font-size: 14px;
-		margin-bottom: 8px;
-	}
-
-	&__badge--compact {
-		font-size: 11px;
-		padding: 4px 8px;
-	}
-
-	&__product--compact {
-		display: flex;
-		gap: 8px;
-		padding: 6px 0;
-	}
-
-	&__product-info--compact {
-		flex: 1;
-		min-width: 0;
-
-		&__skeleton-text--title {
-			width: 100%;
-		}
-	}
-
-	&__pricing--compact {
-		padding: 8px;
-		background: var(--rb-background-color);
-		border-radius: 6px;
-	}
-
-	&__button--compact {
-		width: 100%;
-		padding: 10px;
-		font-size: 13px;
-	}
-
-	&__product--compact {
-		.radius-bundle__product-image {
-			width: 40px;
-			height: 40px;
-			flex-shrink: 0;
-
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: contain;
-			}
-		}
-	}
-
-	// ==========================================================================
-	// Product Card - Slider Layout
-	// ==========================================================================
-
-	&__product--slider {
-		flex: 0 0 auto;
-		width: 140px;
-		padding: var(--rb-spacing);
-		background: #f9f9f9;
-		border: 1px solid var(--rb-border-color);
-		border-radius: var(--rb-border-radius);
-		text-align: center;
-		scroll-snap-align: start;
-		transition: box-shadow var(--rb-transition), transform var(--rb-transition);
-
-		&:hover {
-			box-shadow: var(--rb-shadow);
-			transform: translateY(-2px);
-		}
-
-		.radius-bundle__product-image {
-			width: 100%;
-			height: 100px;
-			margin-bottom: var(--rb-spacing-sm);
-			border-radius: 8px;
-			overflow: hidden;
-			background: #ffffff;
-
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: contain;
-			}
-		}
-
-		.radius-bundle__product-title {
-			font-size: 0.8rem;
-			font-weight: 500;
-			color: var(--rb-text-color);
-			margin: 0;
-			line-height: 1.2;
-			@include line-clamp(2);
-		}
-	}
-
-	// ==========================================================================
-	// Product Price (Shared)
-	// ==========================================================================
-
-	&__product-price-current {
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--rb-text-color);
-		display: block;
-	}
-
-	&__product-price-compare {
-		font-size: 0.85rem;
-		color: var(--rb-muted-color);
-		text-decoration: line-through;
-		display: block;
-	}
-
-	&__product-placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 2rem;
-		background: #f5f5f5;
-		border-radius: 8px;
-	}
-
-	// ==========================================================================
-	// Slider Navigation
-	// ==========================================================================
-
-	&__slider-wrapper {
-		display: flex;
-		align-items: center;
-		gap: var(--rb-spacing-sm);
-		margin-bottom: var(--rb-spacing);
-	}
-
-	&__slider-container {
-		flex: 1;
-		overflow: hidden;
-	}
-
-	&__slider-nav {
-		flex-shrink: 0;
-		width: 36px;
-		height: 36px;
-		border: 1px solid var(--rb-border-color);
-		border-radius: 50%;
-		background: var(--rb-background-color);
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: all var(--rb-transition);
-
-		&:hover:not(:disabled) {
-			border-color: var(--rb-primary-color);
-			background: var(--rb-primary-color);
-			color: #fff;
-		}
-
-		&:disabled {
-			opacity: 0.4;
-			cursor: not-allowed;
-		}
-	}
-
-	&__slider-plus {
-		flex-shrink: 0;
-		width: 32px;
-		height: 32px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 1.5rem;
-		font-weight: 300;
-		color: var(--rb-muted-color);
-	}
-
-	&__slider-dots {
-		display: flex;
-		justify-content: center;
-		gap: 8px;
-		margin-bottom: var(--rb-spacing);
-	}
-
-	&__slider-dot {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		background: var(--rb-border-color);
-		border: none;
-		padding: 0;
-		cursor: pointer;
-		transition: all var(--rb-transition);
-
-		&.active,
-		&:hover {
-			background: var(--rb-primary-color);
-		}
-	}
-
-	// ==========================================================================
-	// Pricing Section
-	// ==========================================================================
-
-	&__pricing {
-		padding: var(--rb-spacing);
-		background: #f9f9f9;
-		border-radius: var(--rb-border-radius);
-		margin-bottom: var(--rb-spacing);
-	}
-
-	&__pricing-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--rb-spacing-xs) 0;
-
-		&--highlight {
-			padding: var(--rb-spacing-sm) 0;
-			border-top: 1px dashed var(--rb-border-color);
-			margin-top: var(--rb-spacing-xs);
-		}
-	}
-
-	&__pricing-label {
-		font-size: 0.9rem;
-		color: var(--rb-secondary-color);
-	}
-
-	&__price-original {
-		font-size: 0.95rem;
-		color: var(--rb-muted-color);
-		text-decoration: line-through;
-	}
-
-	&__price-discounted {
-		font-size: 1.1rem;
-		font-weight: 700;
-		color: var(--rb-text-color);
-	}
-
-	&__savings {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--rb-spacing-sm);
-		background: rgba(34, 197, 94, 0.1);
-		border-radius: 8px;
-		margin-top: var(--rb-spacing-sm);
-	}
-
-	&__savings-label {
-		font-size: 0.9rem;
-		color: var(--rb-savings-color);
-		font-weight: 500;
-	}
-
-	&__savings-amount {
-		font-size: 1rem;
-		font-weight: 700;
-		color: var(--rb-savings-color);
-	}
-
-	&__free-shipping {
-		display: flex;
-		align-items: center;
-		gap: var(--rb-spacing-sm);
-		padding: var(--rb-spacing-sm);
-		background: rgba(59, 130, 246, 0.1);
-		border-radius: 8px;
-		margin-top: var(--rb-spacing-sm);
-		font-size: 0.85rem;
-		color: #3b82f6;
-
-		svg {
-			flex-shrink: 0;
-		}
-	}
-
-	// ==========================================================================
-	// Add to Cart Button
-	// ==========================================================================
-
-	&__actions {
-		margin-top: var(--rb-spacing);
-	}
-
-	&__add-to-cart {
-		width: 100%;
-		padding: 14px 24px;
-		background: var(--rb-primary-color);
-		color: #ffffff;
-		border: none;
-		border-radius: var(--rb-border-radius);
-		font-size: 1rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all var(--rb-transition);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		min-height: 46px;
-
-		&:hover:not(:disabled) {
-			opacity: 0.9;
-			transform: translateY(-1px);
-			box-shadow: var(--rb-shadow);
-		}
-
-		&:active:not(:disabled) {
-			transform: translateY(0);
-		}
-
-		&:disabled {
-			opacity: 0.6;
-			cursor: not-allowed;
-		}
-
-		&.is-loading {
-			.radius-bundle__button-text {
-				display: none;
-			}
-
-			.radius-bundle__button-loading {
-				display: flex;
-			}
-		}
-	}
-
-	&__button-text {
-		display: block;
-	}
-
-	&__button-loading {
-		display: none;
-		align-items: center;
-		gap: 8px;
-	}
-
-	&__spinner {
-		width: 18px;
-		height: 18px;
-		border: 2px solid rgba(255, 255, 255, 0.3);
-		border-top-color: #ffffff;
-		border-radius: 50%;
-		animation: spin 0.8s linear infinite;
-	}
-
-	// ==========================================================================
-	// Messages
-	// ==========================================================================
-
-	&__message {
-		min-height: 0;
-		overflow: hidden;
-		transition: all var(--rb-transition);
-
-		&:not(:empty) {
-			padding: var(--rb-spacing-sm) var(--rb-spacing);
-			margin-top: var(--rb-spacing-sm);
-			border-radius: 8px;
-			font-size: 0.9rem;
-			text-align: center;
-		}
-
-		&--success {
-			background: rgba(34, 197, 94, 0.1);
-			color: var(--rb-savings-color);
-		}
-
-		&--error {
-			background: rgba(239, 68, 68, 0.1);
-			color: #ef4444;
-		}
-	}
-
-	&__error {
-		padding: var(--rb-spacing);
-		text-align: center;
-		color: var(--rb-muted-color);
-		font-size: 0.9rem;
-	}
+    background: var(--rb-background-color);
+    border: 1px solid var(--rb-border-color);
+    border-radius: var(--rb-border-radius);
+    overflow: hidden;
+
+    &__inner {
+        padding: var(--rb-spacing-lg);
+    }
+
+    // ==========================================================================
+    // Header
+    // ==========================================================================
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--rb-spacing);
+        margin-bottom: var(--rb-spacing);
+        padding-bottom: var(--rb-spacing);
+        border-bottom: 1px solid var(--rb-border-color);
+    }
+
+    &__title-wrapper {
+        flex: 1;
+        min-width: 0;
+        position: relative;
+    }
+
+    &__title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--rb-text-color);
+        margin: 0;
+        line-height: 1.3;
+
+        &--hidden {
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        &--visible {
+            opacity: 1;
+            position: relative;
+            pointer-events: auto;
+        }
+    }
+
+    &__title-skeleton {
+        display: block;
+
+        &--hidden {
+            display: none;
+        }
+    }
+
+    &__badge {
+        background: var(--rb-savings-color);
+        color: #ffffff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+        text-align: center;
+        min-height: 28px;
+
+        &--skeleton {
+            min-width: 80px;
+            border-radius: 20px !important;
+        }
+
+        &--visible {
+            background: var(--rb-savings-color) !important;
+        }
+    }
+
+    &__description {
+        font-size: 0.9rem;
+        color: var(--rb-secondary-color);
+        margin: 0 0 var(--rb-spacing);
+        line-height: 1.5;
+    }
+
+    // ==========================================================================
+    // Skeleton Elements
+    // ==========================================================================
+
+    &__skeleton-text,
+    &__skeleton-image,
+    &__badge--skeleton {
+        @include skeleton-gradient;
+    }
+
+    &__skeleton-text {
+        &--title {
+            height: 20px;
+            width: 80%;
+            margin-bottom: var(--rb-spacing-sm);
+        }
+
+        &--subtitle {
+            height: 14px;
+            width: 40%;
+        }
+
+        &--price {
+            height: 16px;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        &--qty {
+            height: 12px;
+            width: 30%;
+            margin: var(--rb-spacing-xs) auto 0;
+        }
+
+        &--badge {
+            height: 14px;
+            width: 60px;
+            display: inline-block;
+        }
+
+        &--inline {
+            height: 16px;
+            width: 60px;
+            display: inline-block !important;
+            vertical-align: middle;
+        }
+    }
+
+    &__skeleton-image {
+        &--large {
+            width: 100%;
+            height: 100px;
+            margin-bottom: var(--rb-spacing-sm);
+            border-radius: 8px;
+        }
+    }
+
+    // ==========================================================================
+    // Loading State
+    // ==========================================================================
+
+    &__skeleton {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rb-spacing);
+
+        // List skeleton
+        &--list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rb-spacing);
+        }
+
+        // Grid skeleton
+        &--grid {
+            display: grid;
+            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
+            gap: var(--rb-spacing);
+        }
+
+        // Slider skeleton
+        &--slider {
+            display: flex;
+            align-items: center;
+            gap: var(--rb-spacing-sm);
+            flex-direction: row;
+        }
+    }
+
+    &__skeleton-item {
+        &--list {
+            display: flex;
+            align-items: center;
+            gap: var(--rb-spacing);
+            padding: var(--rb-spacing);
+            background: #f9f9f9;
+            border-radius: var(--rb-border-radius);
+            border: 1px solid var(--rb-border-color);
+
+            .radius-bundle__skeleton-image {
+                width: 70px;
+                height: 70px;
+                border-radius: 8px;
+                flex-shrink: 0;
+            }
+
+            .radius-bundle__skeleton-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .radius-bundle__skeleton-price-wrapper {
+                flex-shrink: 0;
+                width: 80px;
+                text-align: right;
+            }
+        }
+    }
+
+    &__skeleton-card {
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border-radius: var(--rb-border-radius);
+        border: 1px solid var(--rb-border-color);
+        text-align: center;
+    }
+
+    &__skeleton-slide {
+        flex: 0 0 auto;
+        width: 140px;
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border-radius: var(--rb-border-radius);
+        border: 1px solid var(--rb-border-color);
+        text-align: center;
+    }
+
+    // ==========================================================================
+    // Products Container
+    // ==========================================================================
+
+    &__products {
+        margin-bottom: var(--rb-spacing);
+
+        // List layout
+        &--list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rb-spacing);
+        }
+
+        // Grid layout
+        &--grid {
+            display: grid;
+            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
+            gap: var(--rb-spacing);
+        }
+
+        // Slider layout
+        &--slider {
+            display: flex;
+            align-items: center;
+            gap: var(--rb-spacing-sm);
+            overflow-x: auto;
+            padding: var(--rb-spacing-sm) 0;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
+
+    // ==========================================================================
+    // Product Card - List Layout
+    // ==========================================================================
+
+    &__product--list {
+        display: flex;
+        align-items: center;
+        gap: var(--rb-spacing);
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border: 1px solid var(--rb-border-color);
+        border-radius: var(--rb-border-radius);
+        @include card-hover;
+
+        .radius-bundle__product-image {
+            width: 70px;
+            height: 70px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .radius-bundle__product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .radius-bundle__product-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--rb-text-color);
+            margin: 0 0 4px;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .radius-bundle__product-quantity {
+            font-size: 0.8rem;
+            color: var(--rb-muted-color);
+        }
+
+        .radius-bundle__product-price {
+            text-align: right;
+            flex-shrink: 0;
+        }
+    }
+
+    // ==========================================================================
+    // Product Card - Grid Layout
+    // ==========================================================================
+
+    &__product--grid {
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border: 1px solid var(--rb-border-color);
+        border-radius: var(--rb-border-radius);
+        text-align: center;
+        @include card-hover;
+
+        &:hover {
+            box-shadow: var(--rb-shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .radius-bundle__product-image {
+            width: 100%;
+            height: 100px;
+            margin-bottom: var(--rb-spacing-sm);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        .radius-bundle__product-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--rb-text-color);
+            margin: 0 0 var(--rb-spacing-xs);
+            line-height: 1.3;
+            @include line-clamp(2);
+            min-height: 2.4em;
+        }
+
+        .radius-bundle__product-price {
+            margin-bottom: var(--rb-spacing-xs);
+        }
+
+        .radius-bundle__product-quantity {
+            font-size: 0.75rem;
+            color: var(--rb-muted-color);
+        }
+    }
+
+    // ==========================================================================
+    // Product Card - Compact Layout
+    // ==========================================================================
+
+    &__title--compact {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    &__badge--compact {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    &__product--compact {
+        display: flex;
+        gap: 8px;
+        padding: 6px 0;
+    }
+
+    &__product-info--compact {
+        flex: 1;
+        min-width: 0;
+
+        &__skeleton-text--title {
+            width: 100%;
+        }
+    }
+
+    &__pricing--compact {
+        padding: 8px;
+        background: var(--rb-background-color);
+        border-radius: 6px;
+    }
+
+    &__button--compact {
+        width: 100%;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    &__product--compact {
+        .radius-bundle__product-image {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+    }
+
+    // ==========================================================================
+    // Product Card - Slider Layout
+    // ==========================================================================
+
+    &__product--slider {
+        flex: 0 0 auto;
+        width: 140px;
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border: 1px solid var(--rb-border-color);
+        border-radius: var(--rb-border-radius);
+        text-align: center;
+        scroll-snap-align: start;
+        transition:
+            box-shadow var(--rb-transition),
+            transform var(--rb-transition);
+
+        &:hover {
+            box-shadow: var(--rb-shadow);
+            transform: translateY(-2px);
+        }
+
+        .radius-bundle__product-image {
+            width: 100%;
+            height: 100px;
+            margin-bottom: var(--rb-spacing-sm);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        .radius-bundle__product-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--rb-text-color);
+            margin: 0;
+            line-height: 1.2;
+            @include line-clamp(2);
+        }
+    }
+
+    // ==========================================================================
+    // Product Price (Shared)
+    // ==========================================================================
+
+    &__product-price-current {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--rb-text-color);
+        display: block;
+    }
+
+    &__product-price-compare {
+        font-size: 0.85rem;
+        color: var(--rb-muted-color);
+        text-decoration: line-through;
+        display: block;
+    }
+
+    &__product-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+
+    // ==========================================================================
+    // Slider Navigation
+    // ==========================================================================
+
+    &__slider-wrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--rb-spacing-sm);
+        margin-bottom: var(--rb-spacing);
+    }
+
+    &__slider-container {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    &__slider-nav {
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--rb-border-color);
+        border-radius: 50%;
+        background: var(--rb-background-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--rb-transition);
+
+        &:hover:not(:disabled) {
+            border-color: var(--rb-primary-color);
+            background: var(--rb-primary-color);
+            color: #fff;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    }
+
+    &__slider-plus {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--rb-muted-color);
+    }
+
+    &__slider-dots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: var(--rb-spacing);
+    }
+
+    &__slider-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--rb-border-color);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all var(--rb-transition);
+
+        &.active,
+        &:hover {
+            background: var(--rb-primary-color);
+        }
+    }
+
+    // ==========================================================================
+    // Pricing Section
+    // ==========================================================================
+
+    &__pricing {
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border-radius: var(--rb-border-radius);
+        margin-bottom: var(--rb-spacing);
+    }
+
+    &__pricing-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--rb-spacing-xs) 0;
+
+        &--highlight {
+            padding: var(--rb-spacing-sm) 0;
+            border-top: 1px dashed var(--rb-border-color);
+            margin-top: var(--rb-spacing-xs);
+        }
+    }
+
+    &__pricing-label {
+        font-size: 0.9rem;
+        color: var(--rb-secondary-color);
+    }
+
+    &__price-original {
+        font-size: 0.95rem;
+        color: var(--rb-muted-color);
+        text-decoration: line-through;
+    }
+
+    &__price-discounted {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--rb-text-color);
+    }
+
+    &__savings {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--rb-spacing-sm);
+        background: rgba(34, 197, 94, 0.1);
+        border-radius: 8px;
+        margin-top: var(--rb-spacing-sm);
+    }
+
+    &__savings-label {
+        font-size: 0.9rem;
+        color: var(--rb-savings-color);
+        font-weight: 500;
+    }
+
+    &__savings-amount {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--rb-savings-color);
+    }
+
+    &__free-shipping {
+        display: flex;
+        align-items: center;
+        gap: var(--rb-spacing-sm);
+        padding: var(--rb-spacing-sm);
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 8px;
+        margin-top: var(--rb-spacing-sm);
+        font-size: 0.85rem;
+        color: #3b82f6;
+
+        svg {
+            flex-shrink: 0;
+        }
+    }
+
+    // ==========================================================================
+    // Add to Cart Button
+    // ==========================================================================
+
+    &__actions {
+        margin-top: var(--rb-spacing);
+    }
+
+    &__add-to-cart {
+        width: 100%;
+        padding: 14px 24px;
+        background: var(--rb-primary-color);
+        color: #ffffff;
+        border: none;
+        border-radius: var(--rb-border-radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--rb-transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 46px;
+
+        &:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: var(--rb-shadow);
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        &.is-loading {
+            .radius-bundle__button-text {
+                display: none;
+            }
+
+            .radius-bundle__button-loading {
+                display: flex;
+            }
+        }
+    }
+
+    &__button-text {
+        display: block;
+    }
+
+    &__button-loading {
+        display: none;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    // ==========================================================================
+    // Messages
+    // ==========================================================================
+
+    &__message {
+        min-height: 0;
+        overflow: hidden;
+        transition: all var(--rb-transition);
+
+        &:not(:empty) {
+            padding: var(--rb-spacing-sm) var(--rb-spacing);
+            margin-top: var(--rb-spacing-sm);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        &--success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--rb-savings-color);
+        }
+
+        &--error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+    }
+
+    &__error {
+        padding: var(--rb-spacing);
+        text-align: center;
+        color: var(--rb-muted-color);
+        font-size: 0.9rem;
+    }
 }
 
 // ==========================================================================
@@ -888,58 +893,58 @@ $rb-skeleton-shine: #f5f5f5;
 // ==========================================================================
 
 @media (max-width: 768px) {
-	.radius-bundle {
-		&__inner {
-			padding: var(--rb-spacing);
-		}
+    .radius-bundle {
+        &__inner {
+            padding: var(--rb-spacing);
+        }
 
-		&__header {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: var(--rb-spacing-sm);
-		}
+        &__header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--rb-spacing-sm);
+        }
 
-		&__title-wrapper {
-			width: 100%;
-		}
+        &__title-wrapper {
+            width: 100%;
+        }
 
-		&__products--grid,
-		&__skeleton--grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
+        &__products--grid,
+        &__skeleton--grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
 
-		&__product--list .radius-bundle__product-image {
-			width: 60px;
-			height: 60px;
-		}
+        &__product--list .radius-bundle__product-image {
+            width: 60px;
+            height: 60px;
+        }
 
-		&__product--grid .radius-bundle__product-image {
-			height: 120px;
-		}
-	}
+        &__product--grid .radius-bundle__product-image {
+            height: 120px;
+        }
+    }
 }
 
 @media (max-width: 480px) {
-	.radius-bundle {
-		&__products--grid,
-		&__skeleton--grid {
-			grid-template-columns: 1fr;
-		}
+    .radius-bundle {
+        &__products--grid,
+        &__skeleton--grid {
+            grid-template-columns: 1fr;
+        }
 
-		&__product--grid .radius-bundle__product-image {
-			height: 160px;
-		}
+        &__product--grid .radius-bundle__product-image {
+            height: 160px;
+        }
 
-		&__product--list {
-			flex-wrap: wrap;
+        &__product--list {
+            flex-wrap: wrap;
 
-			.radius-bundle__product-price {
-				width: 100%;
-				text-align: left;
-				margin-top: var(--rb-spacing-sm);
-				padding-top: var(--rb-spacing-sm);
-				border-top: 1px dashed var(--rb-border-color);
-			}
-		}
-	}
+            .radius-bundle__product-price {
+                width: 100%;
+                text-align: left;
+                margin-top: var(--rb-spacing-sm);
+                padding-top: var(--rb-spacing-sm);
+                border-top: 1px dashed var(--rb-border-color);
+            }
+        }
+    }
 }

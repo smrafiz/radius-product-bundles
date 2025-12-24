@@ -61,16 +61,16 @@ interface MetafieldBundleConfig {
  */
 function isGlobalStyleSettings(obj: any): obj is GlobalStyleSettings {
     return (
-        obj && 
-        typeof obj === 'object' &&
-        'colors' in obj &&
-        'typography' in obj &&
-        'spacing' in obj &&
-        'borders' in obj &&
-        'shadows' in obj &&
-        'button' in obj &&
-        'badge' in obj &&
-        'image' in obj
+        obj &&
+        typeof obj === "object" &&
+        "colors" in obj &&
+        "typography" in obj &&
+        "spacing" in obj &&
+        "borders" in obj &&
+        "shadows" in obj &&
+        "button" in obj &&
+        "badge" in obj &&
+        "image" in obj
     );
 }
 
@@ -81,7 +81,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function getValidGlobalLabels(labels: unknown): Partial<GlobalLabels> {
     try {
         const maybeParsed =
-            typeof labels === "string" ? (JSON.parse(labels) as unknown) : labels;
+            typeof labels === "string"
+                ? (JSON.parse(labels) as unknown)
+                : labels;
 
         if (!isRecord(maybeParsed)) {
             return {};
@@ -113,15 +115,15 @@ function getValidGlobalStyles(styles: any): GlobalStyleSettings {
         if (isGlobalStyleSettings(styles)) {
             return styles;
         }
-        
+
         // If it's a string, try to parse it
-        if (typeof styles === 'string') {
+        if (typeof styles === "string") {
             const parsed = JSON.parse(styles);
             if (isGlobalStyleSettings(parsed)) {
                 return parsed;
             }
         }
-        
+
         // If we get here, return default styles
         return DEFAULT_GLOBAL_STYLES;
     } catch (e) {

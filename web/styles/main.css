@@ -208,14 +208,14 @@
     width: 100%;
     margin: 0;
     padding: 12px;
-    @media(max-width: 1039px) {
+    @media (max-width: 1039px) {
         flex-direction: column;
     }
     .left-side-auto-scroll {
         height: 100vh;
         width: 100%;
         overflow-y: scroll;
-        @media(max-width: 1039px) {
+        @media (max-width: 1039px) {
             height: auto;
         }
     }
@@ -227,7 +227,7 @@
     }
     .rtpb-left-setting {
         width: 380px;
-        @media(max-width: 1039px) {
+        @media (max-width: 1039px) {
             width: auto;
         }
     }

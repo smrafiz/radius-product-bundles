@@ -119,7 +119,7 @@ export const initialDisplaySettings: DisplaySettings = {
         productBorderEnabled: true,
         productBorderColor: "#e3e3e3",
         productRadius: 12,
-        productAlign: 'row',
+        productAlign: "row",
         productFontSize: 14,
         boxBgColor: "#ffffff",
         boxTextColor: "#303030",
@@ -128,7 +128,7 @@ export const initialDisplaySettings: DisplaySettings = {
         boxRadius: 12,
         imageRadius: 6,
         imageBorderEnabled: true,
-        imageBorderColor:"#e3e3e3",
+        imageBorderColor: "#e3e3e3",
     },
 };
 

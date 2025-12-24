@@ -13,12 +13,13 @@ mutation CreateBundleAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
     }
 }
 
-mutation UpdateBundleDiscountMetafield($id: ID!, $metafields: [MetafieldInput!]!) {
+mutation UpdateBundleDiscountMetafield(
+    $id: ID!
+    $metafields: [MetafieldInput!]!
+) {
     discountAutomaticAppUpdate(
         id: $id
-        automaticAppDiscount: {
-            metafields: $metafields
-        }
+        automaticAppDiscount: { metafields: $metafields }
     ) {
         automaticAppDiscount {
             discountId

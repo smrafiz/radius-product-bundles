@@ -43,22 +43,25 @@ export function BundleOptionsProduct() {
                     `}
             >
                 <s-stack gap="base" padding="base">
-                    <s-stack direction="inline" alignItems="center" gap="small-300">
+                    <s-stack
+                        direction="inline"
+                        alignItems="center"
+                        gap="small-300"
+                    >
                         <s-heading>Font size</s-heading>
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"
-                                onClick={() => updateStyle("productFontSize", 12) }
+                                onClick={() =>
+                                    updateStyle("productFontSize", 12)
+                                }
                             >
                                 Small
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle(
-                                        "productFontSize",
-                                        14,
-                                    )
+                                    updateStyle("productFontSize", 14)
                                 }
                             >
                                 Medium
@@ -66,10 +69,7 @@ export function BundleOptionsProduct() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle(
-                                        "productFontSize",
-                                        16,
-                                    )
+                                    updateStyle("productFontSize", 16)
                                 }
                             >
                                 Large
@@ -181,22 +181,25 @@ export function BundleOptionsProduct() {
                             />
                         </s-stack>
                     </s-stack>
-                    <s-stack direction="inline" alignItems="center" gap="small-300">
+                    <s-stack
+                        direction="inline"
+                        alignItems="center"
+                        gap="small-300"
+                    >
                         <s-text>Image align</s-text>
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"
-                                onClick={() => updateStyle("productAlign", "row") }
+                                onClick={() =>
+                                    updateStyle("productAlign", "row")
+                                }
                             >
                                 Left
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle(
-                                        "productAlign",
-                                        "column",
-                                    )
+                                    updateStyle("productAlign", "column")
                                 }
                             >
                                 Top
@@ -204,10 +207,7 @@ export function BundleOptionsProduct() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle(
-                                        "productAlign",
-                                        "row-reverse",
-                                    )
+                                    updateStyle("productAlign", "row-reverse")
                                 }
                             >
                                 Right

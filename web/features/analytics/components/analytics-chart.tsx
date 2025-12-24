@@ -34,7 +34,12 @@ export function AnalyticsChart() {
         <s-section>
             <s-heading>Additional revenue</s-heading>
             <LineChart
-                style={{ width: "100%", aspectRatio: 1.618, height: 340, paddingBottom: 40 }}
+                style={{
+                    width: "100%",
+                    aspectRatio: 1.618,
+                    height: 340,
+                    paddingBottom: 40,
+                }}
                 data={data}
                 responsive
                 margin={{ top: 10, right: 30, bottom: 20, left: 25 }}

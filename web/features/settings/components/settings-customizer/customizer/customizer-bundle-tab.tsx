@@ -20,8 +20,7 @@ export function CustomizerBundleTab() {
     const types = Object.values(BUNDLE_TYPES);
     const [activeId, setActiveId] = useState(types[0]?.id);
 
-    const ActiveComponent =
-        activeId && BUNDLE_PREVIEW_MAP[activeId];
+    const ActiveComponent = activeId && BUNDLE_PREVIEW_MAP[activeId];
 
     const PreviewComponent = BUNDLE_PREVIEW_MAP[activeId];
 
@@ -39,10 +38,10 @@ export function CustomizerBundleTab() {
                                 onClick={() => setActiveId(type.id)}
                                 className={`text-left px-4 py-3 border-l-4 transition
                                     ${
-                                    isActive
-                                        ? "border-[#303030] bg-[#f7f7f7] font-semibold"
-                                        : "border-transparent hover:bg-[#f7f7f7]"
-                                }
+                                        isActive
+                                            ? "border-[#303030] bg-[#f7f7f7] font-semibold"
+                                            : "border-transparent hover:bg-[#f7f7f7]"
+                                    }
                                 `}
                             >
                                 {type.label}

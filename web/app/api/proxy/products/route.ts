@@ -77,7 +77,8 @@ export async function GET(request: NextRequest) {
                     const product = item as any; // Use 'any' to avoid complex type issues
 
                     // Get variant - handle both possible structures
-                    const variant = product.variants?.nodes?.[0] || product.variants?.[0];
+                    const variant =
+                        product.variants?.nodes?.[0] || product.variants?.[0];
 
                     // Parse prices safely
                     const parsePrice = (price: any): number => {
@@ -91,7 +92,8 @@ export async function GET(request: NextRequest) {
                         title: product.title || "Unknown Product",
                         price: parsePrice(variant?.price),
                         compareAtPrice: parsePrice(variant?.compareAtPrice),
-                        image: product.featuredMedia?.image?.url ||
+                        image:
+                            product.featuredMedia?.image?.url ||
                             product.featuredImage?.url ||
                             null,
                         handle: product.handle || "",
@@ -173,7 +175,9 @@ export async function GET(request: NextRequest) {
                 const transformedProducts =
                     bundle.bundleProducts?.map((bp) => {
                         console.log(`Looking for product: ${bp.productId}`);
-                        const shopifyProduct = productMap.get(bp.productId) as any;
+                        const shopifyProduct = productMap.get(
+                            bp.productId,
+                        ) as any;
                         console.log(
                             "Found shopify product:",
                             shopifyProduct?.title || "NOT FOUND",
@@ -240,12 +244,12 @@ export async function GET(request: NextRequest) {
                     products: transformedProducts,
                     settings: bundle.settings
                         ? {
-                            layout: bundle.settings.layout,
-                            theme: bundle.settings.theme,
-                            showPrices: bundle.settings.showPrices,
-                            showSavings: bundle.settings.showSavings,
-                            enableHyperLink: bundle.settings.enableHyperLink,
-                        }
+                              layout: bundle.settings.layout,
+                              theme: bundle.settings.theme,
+                              showPrices: bundle.settings.showPrices,
+                              showSavings: bundle.settings.showSavings,
+                              enableHyperLink: bundle.settings.enableHyperLink,
+                          }
                         : null,
                 };
             }),

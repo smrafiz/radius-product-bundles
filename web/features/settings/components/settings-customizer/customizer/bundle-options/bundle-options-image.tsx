@@ -55,9 +55,7 @@ export function BundleOptionsImage() {
                                     id="image-add-border"
                                     label="Add border"
                                     accessibilityLabel="Add border"
-                                    checked={
-                                        style.imageBorderEnabled ?? true
-                                    }
+                                    checked={style.imageBorderEnabled ?? true}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
@@ -75,9 +73,7 @@ export function BundleOptionsImage() {
                                     label="Border color"
                                     name="imageBorderColor"
                                     placeholder="Select a color"
-                                    value={
-                                        style.imageBorderColor || "#e3e3e3"
-                                    }
+                                    value={style.imageBorderColor || "#e3e3e3"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;

@@ -1,12 +1,8 @@
 "use client";
 
-import {
-    useDashboardStore,
-} from "@/features/dashboard";
+import { useDashboardStore } from "@/features/dashboard";
 
-import {
-    AnalyticsOrderBundlesList,
-} from "@/features/analytics";
+import { AnalyticsOrderBundlesList } from "@/features/analytics";
 
 import { BundleTableSkeleton } from "@/features/bundles";
 /**

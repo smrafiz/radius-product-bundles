@@ -27,7 +27,12 @@ import {
     syncAllSettingsToMetafields,
     syncBundleProductMetafields,
 } from "@/lib";
-import { BundleFormData, bundleSchema, BundleStatus, CreateBundleActionInput, } from "@/features/bundles";
+import {
+    BundleFormData,
+    bundleSchema,
+    BundleStatus,
+    CreateBundleActionInput,
+} from "@/features/bundles";
 
 /**
  * Update bundle status

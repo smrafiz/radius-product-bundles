@@ -154,49 +154,77 @@ export function AnalyticsDate() {
                         <s-stack gap="large" direction="inline">
                             <s-stack gap="small-200">
                                 <s-button
-                                    variant={activePreset === "today" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "today"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={todayDays}
                                 >
                                     Today
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "yesterday" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "yesterday"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={yesTerDays}
                                 >
                                     Yesterday
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "last7" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "last7"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={last7Days}
                                 >
                                     Last 7 days
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "last30" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "last30"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={last30Days}
                                 >
                                     Last 30 days
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "month" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "month"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={thisMonth}
                                 >
                                     This month
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "last90" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "last90"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={last90Days}
                                 >
                                     Last 90 days
                                 </s-button>
 
                                 <s-button
-                                    variant={activePreset === "year" ? "secondary" : "tertiary"}
+                                    variant={
+                                        activePreset === "year"
+                                            ? "secondary"
+                                            : "tertiary"
+                                    }
                                     onClick={last360Days}
                                 >
                                     Last Year
@@ -230,14 +258,22 @@ export function AnalyticsDate() {
                         </s-stack>
 
                         {/* Apply / Cancel Buttons */}
-                        <s-stack direction="inline" justifyContent="end" gap="small">
+                        <s-stack
+                            direction="inline"
+                            justifyContent="end"
+                            gap="small"
+                        >
                             <s-button
                                 variant="secondary"
                                 onClick={() => {
                                     setValue(getLast7Days());
-                                    const popover = document.getElementById("date-popover");
+                                    const popover =
+                                        document.getElementById("date-popover");
                                     if (popover) {
-                                        const popoverButton = document.querySelector('[commandfor="date-popover"]') as HTMLElement;
+                                        const popoverButton =
+                                            document.querySelector(
+                                                '[commandfor="date-popover"]',
+                                            ) as HTMLElement;
                                         popoverButton?.click();
                                     }
                                 }}

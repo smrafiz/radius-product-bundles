@@ -3,7 +3,6 @@
  */
 import { MetricFormat } from "@/shared";
 
-
 /**
  * Processed analytics metrics
  */

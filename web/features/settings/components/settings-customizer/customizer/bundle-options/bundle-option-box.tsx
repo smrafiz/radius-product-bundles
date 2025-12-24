@@ -59,10 +59,7 @@ export function BundleOptionsBox() {
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "boxBgColor",
-                                            target.value,
-                                        );
+                                        updateStyle("boxBgColor", target.value);
                                     }}
                                 />
                             </s-grid-item>

@@ -9,12 +9,7 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 
-/*
- * CSS Reference:
- * import "@/widgets/src/scss/index.scss";
- */
-
-import { useState } from "react";
+import { useState, Fragment } from "react";
 
 export function BundlePreview() {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();
@@ -26,10 +21,10 @@ export function BundlePreview() {
 
     const renderSelectedProducts = () => {
         return visibleItems.map((item, index) => (
-            <>
+            <Fragment key={item.id ?? index}>
+                {/* Product */}
                 <div
                     className="rtpb-bundle-product"
-                    key={index}
                     style={{
                         backgroundColor: styleData.productBgColor || "#f7f7f7",
                         borderRadius: `${styleData.productRadius ?? 12}px`,
@@ -81,6 +76,7 @@ export function BundlePreview() {
                     </div>
                 </div>
 
+                {/* Divider */}
                 {index < visibleItems.length - 1 && (
                     <div className="rtpb-product-divider">
                         <div className="rtpb-product-divider-position">
@@ -98,7 +94,7 @@ export function BundlePreview() {
                         </div>
                     </div>
                 )}
-            </>
+            </Fragment>
         ));
     };
 
@@ -178,7 +174,9 @@ export function BundlePreview() {
                                 >
                                     {showAll
                                         ? "Show less"
-                                        : `+ ${selectedItems.length - 4} more products`}
+                                        : `+ ${
+                                              selectedItems.length - 4
+                                          } more products`}
                                 </button>
                             )}
 
@@ -191,20 +189,16 @@ export function BundlePreview() {
                             >
                                 {displaySettings.showPrices && (
                                     <div className="rtpb-product-original-price">
-                                        <div className="rtpb-product-original-wrap">
-                                            {discountAmount > 0 && (
-                                                <>
-                                                    <span className="font-semibold">
-                                                        Original Price:
-                                                    </span>
-                                                    <span>
-                                                        {formatPrice(
-                                                            originalPrice,
-                                                        )}
-                                                    </span>
-                                                </>
-                                            )}
-                                        </div>
+                                        {discountAmount > 0 && (
+                                            <div className="rtpb-product-original-wrap">
+                                                <span className="font-semibold">
+                                                    Original Price:
+                                                </span>
+                                                <span>
+                                                    {formatPrice(originalPrice)}
+                                                </span>
+                                            </div>
+                                        )}
 
                                         <div className="rtpb-product-original-wrap">
                                             <span className="font-semibold">
@@ -230,6 +224,7 @@ export function BundlePreview() {
                                         </div>
                                     )}
                             </div>
+
                             <div
                                 className="rtpb-summary-button"
                                 style={{
@@ -237,10 +232,6 @@ export function BundlePreview() {
                                 }}
                             >
                                 <button
-                                    aria-expanded="false"
-                                    aria-label={
-                                        displaySettings.cartButtonText || ""
-                                    }
                                     className="rtpb-button"
                                     style={
                                         (styleData.buttonStyleEnabled ?? true)

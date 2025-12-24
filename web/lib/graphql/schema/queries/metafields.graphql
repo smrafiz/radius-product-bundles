@@ -66,11 +66,17 @@ query GetBundleDiscountId($query: String!) {
 query GetShopMetafields {
     shop {
         id
-        activeBundles: metafield(namespace: "radius_bundles", key: "active_bundles") {
+        activeBundles: metafield(
+            namespace: "radius_bundles"
+            key: "active_bundles"
+        ) {
             id
             value
         }
-        globalSettings: metafield(namespace: "radius_bundles", key: "global_settings") {
+        globalSettings: metafield(
+            namespace: "radius_bundles"
+            key: "global_settings"
+        ) {
             id
             value
         }
