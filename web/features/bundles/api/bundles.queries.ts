@@ -1,16 +1,7 @@
-import {
-    BundleDetail,
-    BundleFilters,
-    BundleListItem,
-    BundleMetricsData,
-    bundlesQueryKeys,
-} from "@/features/bundles";
-import {
-    getBundleAction,
-    getBundleMetricsAction,
-    getBundlesAction,
-} from "@/features/bundles/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { getAnalyticsMetricsAction } from "@/features/analytics/actions";
+import { getBundleAction, getBundlesAction, } from "@/features/bundles/actions";
+import { BundleDetail, BundleFilters, BundleListItem, BundleMetricsData, bundlesQueryKeys, } from "@/features/bundles";
 
 /**
  * Bundles queries
@@ -68,7 +59,7 @@ export const bundlesQueries = (
         queryKey: bundlesQueryKeys.metrics(),
         queryFn: async () => {
             const token = await app.idToken();
-            const result = await getBundleMetricsAction(token);
+            const result = await getAnalyticsMetricsAction(token, 30);
 
             if (result.status === "error") {
                 throw new Error(result.message);

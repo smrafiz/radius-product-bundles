@@ -1,24 +1,32 @@
 "use client";
 
-import { ANALYTICS_METRICS } from "@/features/analytics";
-
-import { formatByType, useDashboardData } from "@/features/dashboard";
+import {
+    ANALYTICS_METRICS,
+    AnalyticsMetricCard,
+    AnalyticsMetricsData,
+    useAnalyticsMetrics,
+} from "@/features/analytics";
 import { useMemo } from "react";
-import { AnalyticsMetricCard } from "./analytics-metrics-card";
+import { formatByType } from "@/features/dashboard";
 
 export function AnalyticsMetrics() {
-    const { metrics, isMetricsFetching } = useDashboardData();
+    const { metrics, isFetching } = useAnalyticsMetrics(30);
 
-    const cards = useMemo(
-        () =>
-            ANALYTICS_METRICS.map((cfg) => ({
-                title: cfg.title,
-                icon: cfg.icon,
-                tone: cfg.tone,
-                value: formatByType(metrics?.[cfg.key], cfg.format),
-            })),
-        [metrics],
-    );
+    const cards = useMemo(() => {
+        const metricsData: Partial<AnalyticsMetricsData> = {
+            totalRevenue: metrics?.totals?.revenue ?? 0,
+            revenueGrowth: metrics?.growth?.revenue ?? 0,
+            conversionGrowth: metrics?.growth?.conversion ?? 0,
+            avgConversionRate: metrics?.metrics?.conversionRate ?? 0,
+        };
+
+        return ANALYTICS_METRICS.map((cfg) => ({
+            title: cfg.title,
+            icon: cfg.icon,
+            tone: cfg.tone,
+            value: formatByType(metricsData?.[cfg.key] ?? 0, cfg.format),
+        }));
+    }, [metrics]);
 
     return (
         <s-grid
@@ -29,7 +37,7 @@ export function AnalyticsMetrics() {
                 <s-grid-item key={_card.title} gridColumn="auto">
                     <AnalyticsMetricCard
                         key={_card.title}
-                        loading={isMetricsFetching}
+                        loading={isFetching}
                         {..._card}
                     />
                 </s-grid-item>

@@ -1,29 +1,30 @@
 "use client";
 
-import {
-    DASHBOARD_METRICS,
-    formatByType,
-    useDashboardData,
-} from "@/features/dashboard";
 import { useMemo } from "react";
 import { MetricCard } from "@/shared/components";
+import { useAnalyticsMetrics } from "@/features/analytics";
+import { DASHBOARD_METRICS, formatByType } from "@/features/dashboard";
 
 /**
  * Dashboard Metrics Component
  */
 export function DashboardMetrics() {
-    const { metrics, isMetricsFetching } = useDashboardData();
+    const { metrics, isFetching } = useAnalyticsMetrics(30);
 
-    const cards = useMemo(
-        () =>
-            DASHBOARD_METRICS.map((cfg) => ({
-                title: cfg.title,
-                icon: cfg.icon,
-                tone: cfg.tone,
-                value: formatByType(metrics?.[cfg.key], cfg.format),
-            })),
-        [metrics],
-    );
+    const cards = useMemo(() => {
+        const metricsData: Record<string, number> = {
+            totalRevenue: metrics?.totals?.revenueAllTime ?? 0,
+            avgConversionRate: metrics?.metrics?.conversionRate ?? 0,
+            totalViews: metrics?.totals?.views ?? 0,
+        };
+
+        return DASHBOARD_METRICS.map((cfg) => ({
+            title: cfg.title,
+            icon: cfg.icon,
+            tone: cfg.tone,
+            value: formatByType(metricsData[cfg.key], cfg.format),
+        }));
+    }, [metrics]);
 
     return (
         <s-grid
@@ -34,7 +35,7 @@ export function DashboardMetrics() {
                 <s-grid-item key={card.title} gridColumn="auto">
                     <MetricCard
                         key={card.title}
-                        loading={isMetricsFetching}
+                        loading={isFetching}
                         {...card}
                     />
                 </s-grid-item>

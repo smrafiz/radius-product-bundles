@@ -2,9 +2,12 @@
  * Format number as percentage
  */
 export const formatPercentage = (
-    value: number,
+    value: number | undefined | null,
     decimals: number = 1,
 ): string => {
+    if (value === undefined || value === null || isNaN(value)) {
+        return "0.0%";
+    }
     return `${value.toFixed(decimals)}%`;
 };
 

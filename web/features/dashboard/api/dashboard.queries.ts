@@ -1,9 +1,7 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { dashboardQueryKeys } from "@/features/dashboard";
-import {
-    getBundleMetricsAction,
-    getBundlesAction,
-} from "@/features/bundles/actions";
+import { getBundlesAction, } from "@/features/bundles/actions";
+import { getAnalyticsMetricsAction } from "@/features/analytics/actions";
 
 /**
  * Dashboard queries
@@ -29,7 +27,7 @@ export const dashboardQueries = (app: ReturnType<typeof useAppBridge>) => ({
         queryKey: dashboardQueryKeys.metrics(),
         queryFn: async () => {
             const token = await app.idToken();
-            const result = await getBundleMetricsAction(token);
+            const result = await getAnalyticsMetricsAction(token);
 
             if (result.status === "error") {
                 throw new Error(result.message);

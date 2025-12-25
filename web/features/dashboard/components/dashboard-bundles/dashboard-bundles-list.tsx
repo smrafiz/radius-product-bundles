@@ -1,8 +1,8 @@
 "use client";
 
-import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
 import { DashboardBundlesListProps } from "@/features/dashboard";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
+import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
 
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();

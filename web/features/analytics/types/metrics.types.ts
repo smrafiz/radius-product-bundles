@@ -15,6 +15,10 @@ export interface AnalyticsMetricsData {
     activeBundles: number;
     revenueGrowth: number;
     conversionGrowth: number;
+    cartConversionRate: number;
+    totalPurchases: number;
+    avgOrderValue: number;
+    totalAddToCarts: number;
 }
 
 /**

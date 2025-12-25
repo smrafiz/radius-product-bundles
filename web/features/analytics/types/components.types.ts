@@ -4,14 +4,7 @@
 import { Bundle } from "@/features/bundles";
 
 /**
- * Analytics bundles list props
- */
-export interface AnalyticsBasedBundlesListProps {
-    bundles: Bundle[];
-}
-
-/**
- * Analytics based bundle configuration
+ * Analytics-based bundle configuration
  */
 export interface AnalyticsBasedBundleConfig {
     name: string;
