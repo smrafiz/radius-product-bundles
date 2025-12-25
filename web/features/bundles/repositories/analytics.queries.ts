@@ -95,7 +95,7 @@ export async function getBundleAnalytics(
         where.date.lte = endDate;
     }
 
-    return await prisma.bundleAnalytics.findMany({
+    return prisma.bundleAnalytics.findMany({
         where,
         orderBy: { date: "asc" },
     });
@@ -108,7 +108,7 @@ export async function getBundleAnalyticsSummary(
     bundleId: string,
     startDate: Date,
 ) {
-    return await prisma.bundleAnalytics.aggregate({
+    return prisma.bundleAnalytics.aggregate({
         where: {
             bundleId,
             date: { gte: startDate },
@@ -142,7 +142,7 @@ export async function getTopBundlesByRevenue(
         where.date = { gte: startDate };
     }
 
-    return await prisma.bundleAnalytics.groupBy({
+    return prisma.bundleAnalytics.groupBy({
         by: ["bundleId"],
         where,
         _sum: {
@@ -166,7 +166,7 @@ export async function getAnalyticsTrend(
     startDate: Date,
     endDate: Date,
 ) {
-    return await prisma.bundleAnalytics.groupBy({
+    return prisma.bundleAnalytics.groupBy({
         by: ["date"],
         where: {
             bundle: { shop },
