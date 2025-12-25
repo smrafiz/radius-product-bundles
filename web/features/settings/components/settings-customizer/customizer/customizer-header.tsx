@@ -7,7 +7,7 @@ export function CustomizerHeader() {
                 justifyContent="space-between"
             >
                 <s-stack>
-                    <s-heading>Hello</s-heading>
+                    <s-heading>Bundle type</s-heading>
                 </s-stack>
                 <s-stack>
                     <s-button-group gap="none">

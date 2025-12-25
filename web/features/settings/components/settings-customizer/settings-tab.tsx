@@ -60,13 +60,14 @@ export const SettingsTab = () => {
                             {SETTINGS_TAB_NAV.map((tab) => (
                                 <s-clickable
                                     key={tab.id}
+                                    borderRadius="base"
                                     onClick={() => setActiveTab(tab.id)}
                                 >
                                     <div
-                                        className={`p-2 rounded-lg transition-colors ${
+                                        className={`p-2 rounded-md transition-colors ${
                                             activeTab === tab.id
-                                                ? "bg-gray-200 font-semibold"
-                                                : "hover:bg-gray-100 font-normal"
+                                                ? "bg-[#ebebeb] font-semibold"
+                                                : "hover:bg-[#f7f7f7] font-normal"
                                         }`}
                                     >
                                         <s-stack

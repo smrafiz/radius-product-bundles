@@ -191,12 +191,12 @@
 .rtpb-active-shadow {
     background-color: #f7f7f7;
     border-radius: 0.5rem;
-    box-shadow: -.0625rem 0rem .0625rem 0rem #1a1a1a1f inset, .0625rem 0rem .0625rem 0rem #1a1a1a1f inset, 0rem .125rem .0625rem 0rem #1a1a1a33 inset;;
+    box-shadow: -.0625rem 0 .0625rem 0 #1a1a1a1f inset, .0625rem 0 .0625rem 0 #1a1a1a1f inset, 0 .125rem .0625rem 0 #1a1a1a33 inset;;
 }
 
 .rtpb-normal-shadow {
     border-radius: 0.5rem;
-    box-shadow: 0rem -.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem .0625rem #0000001a inset, 0rem .03125rem 0rem .09375rem #FFF inset;;
+    box-shadow: 0 -.0625rem 0 0 #b5b5b5 inset, 0 0 0 .0625rem #0000001a inset, 0 .03125rem 0 .09375rem #FFF inset;;
 }
 
 .fade-wrapper {

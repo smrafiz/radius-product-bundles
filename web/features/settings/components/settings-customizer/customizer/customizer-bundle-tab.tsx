@@ -36,7 +36,7 @@ export function CustomizerBundleTab() {
                             <button
                                 key={type.id}
                                 onClick={() => setActiveId(type.id)}
-                                className={`text-left px-4 py-3 border-l-4 transition
+                                className={`text-left px-4 py-3 border-l-4 transition cursor-pointer
                                     ${
                                         isActive
                                             ? "border-[#303030] bg-[#f7f7f7] font-semibold"

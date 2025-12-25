@@ -64,7 +64,6 @@ export function BundlePreviewStatus() {
 
         if (!start || !end) return "";
 
-        // Handle Date objects
         const startStr = start.toISOString().split("T")[0];
         const endStr = end.toISOString().split("T")[0];
 
@@ -96,7 +95,7 @@ export function BundlePreviewStatus() {
 
     return (
         <s-section>
-            <s-stack gap="base">
+            <s-stack gap="small-200">
                 <s-stack
                     direction="inline"
                     justifyContent="space-between"
@@ -153,8 +152,8 @@ export function BundlePreviewStatus() {
                 </div>
 
                 <s-popover id="status-popover">
-                    <s-box padding="small">
-                        <s-stack gap="none">
+                    <div className="p-2 w-[355px]">
+                        <s-stack gap="small-400">
                             {availableStatuses.map((key) => (
                                 <s-clickable
                                     key={key}
@@ -167,7 +166,7 @@ export function BundlePreviewStatus() {
                                     }}
                                 >
                                     <div
-                                        className={`py-1 px-3 rounded transition-colors
+                                        className={`py-1 px-2 rounded-md transition-colors
                                             ${bundleData.status === key ? "bg-[#ebebeb]" : "hover:bg-[#f7f7f7]"}`}
                                     >
                                         <s-stack gap="none">
@@ -182,7 +181,7 @@ export function BundlePreviewStatus() {
                                 </s-clickable>
                             ))}
                         </s-stack>
-                    </s-box>
+                    </div>
                 </s-popover>
 
                 {bundleData.status === "SCHEDULED" && (
