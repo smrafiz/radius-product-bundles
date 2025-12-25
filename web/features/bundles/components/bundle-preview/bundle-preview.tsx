@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    BundlePriority,
     BundlePreviewStatus,
     calculateBundlePrice,
     calculateDiscountAmount,
@@ -22,7 +23,6 @@ export function BundlePreview() {
     const renderSelectedProducts = () => {
         return visibleItems.map((item, index) => (
             <Fragment key={item.id ?? index}>
-                {/* Product */}
                 <div
                     className="rtpb-bundle-product"
                     style={{
@@ -139,6 +139,7 @@ export function BundlePreview() {
     return (
         <div className="flex flex-col gap-4">
             <BundlePreviewStatus />
+            <BundlePriority />
 
             <div
                 className="rtpb-bundle-layout-one"

@@ -7,21 +7,33 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 import { formatDateLong } from "@/shared";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-/**
- * Bundle status selector with optional date scheduling.
- */
 export function BundlePreviewStatus() {
     const { bundleData, updateBundleField } = useBundleStore();
-
-    // Determine mode based on whether bundleData.id exists
     const mode = bundleData.id ? "edit" : "create";
     const availableStatuses = getAvailableStatuses(mode);
+    const [isOpen, setIsOpen] = useState(false);
 
-    /**
-     * Converts a date value to a Date object.
-     */
+    useEffect(() => {
+        const popover = document.getElementById("status-popover");
+
+        if (!popover) {
+            return;
+        }
+
+        const handleShow = () => setIsOpen(true);
+        const handleHide = () => setIsOpen(false);
+
+        popover.addEventListener("show", handleShow as EventListener);
+        popover.addEventListener("hide", handleHide as EventListener);
+
+        return () => {
+            popover.removeEventListener("show", handleShow as EventListener);
+            popover.removeEventListener("hide", handleHide as EventListener);
+        };
+    }, []);
+
     const toDate = (value: Date | string | undefined): Date | undefined => {
         if (!value) {
             return undefined;
@@ -34,9 +46,6 @@ export function BundlePreviewStatus() {
         return new Date(value);
     };
 
-    /**
-     * Handles date range picker changes.
-     */
     const handleDateChange = (value: string) => {
         if (!value || !value.includes("--")) {
             updateBundleField("startDate", undefined);
@@ -49,10 +58,6 @@ export function BundlePreviewStatus() {
         updateBundleField("endDate", end ? new Date(end) : undefined);
     };
 
-    /**
-     * Formats date value for the date picker.
-     * Returns format: YYYY-MM-DD--YYYY-MM-DD
-     */
     const getDatePickerValue = (): string => {
         const start = toDate(bundleData.startDate);
         const end = toDate(bundleData.endDate);
@@ -66,9 +71,6 @@ export function BundlePreviewStatus() {
         return `${startStr}--${endStr}`;
     };
 
-    /**
-     * Formats date for human-readable display.
-     */
     const formatDisplayDate = (date: Date | string | undefined): string => {
         const dateObj = toDate(date);
         if (!dateObj) return "";
@@ -77,28 +79,19 @@ export function BundlePreviewStatus() {
         return formatDateLong(dateStr);
     };
 
-    /**
-     * Handles status change.
-     */
     const handleStatusChange = (newStatus: BundleStatus) => {
         updateBundleField("status", newStatus);
-
-        // Clear dates if not scheduled
         if (newStatus !== "SCHEDULED") {
             updateBundleField("startDate", undefined);
             updateBundleField("endDate", undefined);
         }
     };
 
-    /**
-     * Resets both start and end dates.
-     */
     const handleResetDates = () => {
         updateBundleField("startDate", undefined);
         updateBundleField("endDate", undefined);
     };
 
-    // Check if dates are set
     const hasDates = bundleData.startDate && bundleData.endDate;
 
     return (
@@ -123,21 +116,74 @@ export function BundlePreviewStatus() {
                     />
                 </s-stack>
 
-                <s-select
-                    label="Bundle status"
-                    value={bundleData.status || "DRAFT"}
-                    onChange={(e) => {
-                        const target = e.target as HTMLSelectElement;
-                        handleStatusChange(target.value as BundleStatus);
-                    }}
-                    labelAccessibilityVisibility="exclusive"
-                >
-                    {availableStatuses.map((key) => (
-                        <s-option key={key} value={key}>
-                            {BUNDLE_STATUSES[key].text}
-                        </s-option>
-                    ))}
-                </s-select>
+                <div className={`relative ${isOpen ? "rtpb-active-shadow" : "rtpb-normal-shadow"}`}>
+                    <s-clickable
+                        command="--toggle"
+                        commandFor="status-popover"
+                        borderWidth="small"
+                        borderColor="strong"
+                        borderRadius="base"
+                        padding="small-300"
+                        paddingInline="small"
+                        type="submit"
+                        onClick={() => setIsOpen((prev) => !prev)}
+                    >
+                        <div className="w-full flex justify-between items-center">
+                            <s-text>
+                                <div className="font-[550]">
+                                    {
+                                        BUNDLE_STATUSES[
+                                            bundleData.status ?? "DRAFT"
+                                        ].text
+                                    }
+                                </div>
+                            </s-text>
+                            <div className="chevrons flex flex-col relative">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 16 16"
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 fill-[rgba(97,97,97,1)]"
+                                >
+                                    <path d="M8.884 2.323a1.25 1.25 0 0 0-1.768 0l-2.646 2.647a.749.749 0 1 0 1.06 1.06l2.47-2.47 2.47 2.47a.749.749 0 1 0 1.06-1.06z"></path>
+                                    <path d="m11.53 11.03-2.646 2.647a1.25 1.25 0 0 1-1.768 0l-2.646-2.647a.749.749 0 1 1 1.06-1.06l2.47 2.47 2.47-2.47a.749.749 0 1 1 1.06 1.06"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </s-clickable>
+                </div>
+
+                <s-popover id="status-popover">
+                    <s-box padding="small">
+                        <s-stack gap="none">
+                            {availableStatuses.map((key) => (
+                                <s-clickable
+                                    key={key}
+                                    command="--hide"
+                                    commandFor="status-popover"
+                                    borderRadius="base"
+                                    onClick={() => {
+                                        handleStatusChange(key);
+                                        setIsOpen(false);
+                                    }}
+                                >
+                                    <div
+                                        className={`py-1 px-3 rounded transition-colors
+                                            ${bundleData.status === key ? "bg-[#ebebeb]" : "hover:bg-[#f7f7f7]"}`}
+                                    >
+                                        <s-stack gap="none">
+                                            <s-heading>
+                                                {BUNDLE_STATUSES[key].text}
+                                            </s-heading>
+                                            <s-paragraph color="subdued">
+                                                {BUNDLE_STATUSES[key].desc}
+                                            </s-paragraph>
+                                        </s-stack>
+                                    </div>
+                                </s-clickable>
+                            ))}
+                        </s-stack>
+                    </s-box>
+                </s-popover>
 
                 {bundleData.status === "SCHEDULED" && (
                     <s-stack gap="small">

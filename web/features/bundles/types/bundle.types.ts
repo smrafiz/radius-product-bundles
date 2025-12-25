@@ -184,6 +184,7 @@ export interface BundleStatusBadge {
 
 export interface BundleStatusBadgeNew {
     text: string;
+    desc?: string;
     tone:
         | "success"
         | "warning"
