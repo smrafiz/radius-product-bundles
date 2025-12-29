@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    BundlePriority,
     BundlePreviewStatus,
     calculateBundlePrice,
     calculateDiscountAmount,
@@ -22,7 +23,6 @@ export function BundlePreview() {
     const renderSelectedProducts = () => {
         return visibleItems.map((item, index) => (
             <Fragment key={item.id ?? index}>
-                {/* Product */}
                 <div
                     className="rtpb-bundle-product"
                     style={{
@@ -139,6 +139,7 @@ export function BundlePreview() {
     return (
         <div className="flex flex-col gap-4">
             <BundlePreviewStatus />
+            <BundlePriority />
 
             <div
                 className="rtpb-bundle-layout-one"
@@ -252,12 +253,12 @@ export function BundlePreview() {
                             </div>
                         </div>
                     ) : (
-                        <div className="min-h-96 flex flex-col items-center justify-center gap-3">
-                            <div className="rtpb-product-not-found">
+                        <div className="min-h-96 flex flex-col items-center justify-around gap-3">
+                            <div className="rtpb-product-not-found flex justify-center">
                                 <img
                                     src="/assets/not-found.svg"
                                     alt="No products selected"
-                                    className="w-full h-full object-cover"
+                                    className="w-1/2 h-full object-cover"
                                 />
                             </div>
                             <span>

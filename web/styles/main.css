@@ -31,9 +31,9 @@
     width: 48px;
     height: 48px;
     background: linear-gradient(
-        135deg,
-        var(--radius-primary),
-        var(--radius-accent)
+            135deg,
+            var(--radius-primary),
+            var(--radius-accent)
     );
     border-radius: 12px;
     display: flex;
@@ -188,6 +188,17 @@
     animation: shimmer 1.5s infinite linear;
 }
 
+.rtpb-active-shadow {
+    background-color: #f7f7f7;
+    border-radius: 0.5rem;
+    box-shadow: -.0625rem 0 .0625rem 0 #1a1a1a1f inset, .0625rem 0 .0625rem 0 #1a1a1a1f inset, 0 .125rem .0625rem 0 #1a1a1a33 inset;;
+}
+
+.rtpb-normal-shadow {
+    border-radius: 0.5rem;
+    box-shadow: 0 -.0625rem 0 0 #b5b5b5 inset, 0 0 0 .0625rem #0000001a inset, 0 .03125rem 0 .09375rem #FFF inset;;
+}
+
 .fade-wrapper {
     &.fade-hidden {
         opacity: 0;
@@ -211,6 +222,7 @@
     @media (max-width: 1039px) {
         flex-direction: column;
     }
+
     .left-side-auto-scroll {
         height: 100vh;
         width: 100%;
@@ -219,12 +231,14 @@
             height: auto;
         }
     }
+
     .rtpb-right-review {
         flex-direction: column;
         overflow: hidden;
         flex: 1;
         min-width: 350px;
     }
+
     .rtpb-left-setting {
         width: 380px;
         @media (max-width: 1039px) {
