@@ -28,21 +28,14 @@
 .range-slider-value .webkit-slider-thumb {
     width: var(--pc-range-slider-thumb-size);
     height: var(--pc-range-slider-thumb-size);
+    border-radius: 50%;
     border: var(--p-border-width-025) solid transparent;
-    border-radius: var(--p-border-radius-full);
-    background: linear-gradient(
-        var(--p-color-bg-fill-brand),
-        var(--p-color-bg-fill-brand)
-    );
+    background: var(--p-color-bg-fill-brand);
     box-shadow: 0 0 0 0 var(--p-color-border-focus);
     -webkit-appearance: none;
     appearance: none;
     margin-top: calc(
-        (
-                var(--pc-range-slider-thumb-size) -
-                    var(--pc-range-slider-track-height)
-            ) *
-            -0.5
+            (var(--pc-range-slider-thumb-size) - var(--pc-range-slider-track-height)) * -0.5
     );
 }
 .range-slider-value .webkit-slider-thumb:focus {

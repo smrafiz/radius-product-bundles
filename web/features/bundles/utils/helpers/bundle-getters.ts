@@ -126,9 +126,12 @@ export const initialDisplaySettings: DisplaySettings = {
         boxBorderEnabled: true,
         boxBorderColor: "#e3e3e3",
         boxRadius: 12,
+        boxBorderWidth: 1,
         imageRadius: 6,
         imageBorderEnabled: true,
         imageBorderColor: "#e3e3e3",
+        imageWidth: 80,
+        titleFontSize: 20,
     },
 };
 

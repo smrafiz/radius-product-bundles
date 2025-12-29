@@ -44,6 +44,7 @@ export function BundlePreview() {
                     <div
                         className="rtpb-product-thumbnail"
                         style={{
+                            width: `${styleData.imageWidth ?? 80}px`,
                             borderRadius: `${styleData.imageRadius ?? 6}px`,
                             ...((styleData.imageBorderEnabled ?? true)
                                 ? {
@@ -150,7 +151,7 @@ export function BundlePreview() {
                     ...((styleData.boxBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",
-                              borderWidth: "1px",
+                              borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
                               borderColor:
                                   styleData.boxBorderColor || "#e3e3e3",
                           }
@@ -158,9 +159,7 @@ export function BundlePreview() {
                 }}
             >
                 <div className="rtpb-box-wrap">
-                    <div className="font-semibold">
-                        {displaySettings.title || ""}
-                    </div>
+                    <div className="font-semibold text-xl">{displaySettings.title || ""}</div>
 
                     {selectedItems.length > 0 ? (
                         <div className="rtpb-box-container">

@@ -1,8 +1,9 @@
 import {
     BundleOptionsBox,
+    BundleOptionsImage,
     BundleOptionsButton,
     BundleOptionsProduct,
-    BundleOptionsImage,
+    BundleOptionsAdditional,
 } from "@/features/settings";
 
 export function BundleOptionsType() {
@@ -12,6 +13,7 @@ export function BundleOptionsType() {
             <BundleOptionsProduct />
             <BundleOptionsButton />
             <BundleOptionsImage />
+            <BundleOptionsAdditional />
         </div>
     );
 }

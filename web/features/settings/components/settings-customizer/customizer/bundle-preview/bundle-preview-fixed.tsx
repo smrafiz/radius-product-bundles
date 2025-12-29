@@ -28,6 +28,7 @@ export function BundlePreviewFixed() {
                 <div
                     className="rtpb-product-thumbnail"
                     style={{
+                        width: `${styleData.imageWidth ?? 80}px`,
                         borderRadius: `${styleData.imageRadius ?? 6}px`,
                         ...((styleData.imageBorderEnabled ?? true)
                             ? {
@@ -63,18 +64,23 @@ export function BundlePreviewFixed() {
                 ...((styleData.boxBorderEnabled ?? true)
                     ? {
                           borderStyle: "solid",
-                          borderWidth: "1px",
+                          borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
                           borderColor: styleData.boxBorderColor || "#e3e3e3",
                       }
                     : {}),
             }}
         >
             <div className="rtpb-box-wrap">
-                <div className="font-semibold text-xl">Fixed Bundle</div>
+                <div
+                    className="font-semibold"
+                    style={{
+                        fontSize: `${styleData.titleFontSize ?? 20}px`,
+                    }}
+                >Fixed Bundle</div>
 
                 <div className="rtpb-box-container">
                     <div className="rtpb-product-item">
-                        <RenderSelectedProducts />
+                        <s-stack><RenderSelectedProducts /></s-stack>
                         <div className="rtpb-product-divider">
                             <div className="rtpb-product-divider-position">
                                 <svg

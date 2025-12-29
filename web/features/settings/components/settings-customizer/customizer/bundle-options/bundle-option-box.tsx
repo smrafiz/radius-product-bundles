@@ -43,8 +43,6 @@ export function BundleOptionsBox() {
                     `}
             >
                 <s-stack gap="base" padding="base">
-                    {/* Widget styling */}
-
                     <s-stack gap="base">
                         <s-grid
                             gridTemplateColumns="repeat(12, 1fr)"
@@ -106,27 +104,45 @@ export function BundleOptionsBox() {
 
                         <s-stack gap="base" paddingBlockEnd="base">
                             {(style.boxBorderEnabled ?? true) && (
-                                <s-color-field
-                                    label="Border color"
-                                    name="boxBorderColor"
-                                    placeholder="Select a color"
-                                    value={style.boxBorderColor || "#e3e3e3"}
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "boxBorderColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
+                                <>
+                                    <s-color-field
+                                        label="Border color"
+                                        name="boxBorderColor"
+                                        placeholder="Select a color"
+                                        value={
+                                            style.boxBorderColor || "#e3e3e3"
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "boxBorderColor",
+                                                target.value,
+                                            );
+                                        }}
+                                    />
+                                    <s-stack gap="small-400">
+                                        <s-text>Thin</s-text>
+                                        <RtpbRangeSlider
+                                            values={style.boxBorderWidth ?? 1}
+                                            maxValue={5}
+                                            action={(val) =>
+                                                updateStyle(
+                                                    "boxBorderWidth",
+                                                    val,
+                                                )
+                                            }
+                                        />
+                                    </s-stack>
+                                </>
                             )}
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
                                     values={style.boxRadius ?? 12}
+                                    maxValue={30}
                                     action={(val) =>
-                                        updateStyle("widgetRadius", val)
+                                        updateStyle("boxRadius", val)
                                     }
                                 />
                             </s-stack>
