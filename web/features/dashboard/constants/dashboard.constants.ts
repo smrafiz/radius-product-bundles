@@ -11,6 +11,11 @@ import { ACTION_THEMES, ROUTES } from "@/shared/constants";
  */
 export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
     {
+        key: "activeBundles",
+        title: "Active Bundles",
+        format: "number",
+    },
+    {
         key: "totalRevenue",
         title: "Total Revenue",
         format: "currency",

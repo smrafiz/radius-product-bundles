@@ -4,17 +4,17 @@ import {
     DashboardBundlesEmpty,
     DashboardBundlesHeader,
     DashboardBundlesList,
-    useDashboardStore,
 } from "@/features/dashboard";
-import { BundleTableSkeleton } from "@/features/bundles";
+import { BundleTableSkeleton, useBundlesData } from "@/features/bundles";
+import { useAnalytics } from "@/features/analytics";
 
 /**
  * Dashboard Bundles Component
  */
 export function DashboardBundles() {
-    const { loading, error, bundles } = useDashboardStore();
+    const { isLoading, error, bundles } = useBundlesData();
 
-    if (loading) {
+    if (isLoading) {
         return <BundleTableSkeleton />;
     }
 
@@ -24,11 +24,14 @@ export function DashboardBundles() {
         <s-section padding="none">
             {recentBundles.length > 0 ? (
                 <>
+                    {/* Header */}
                     <DashboardBundlesHeader />
+
+                    {/* Bundle list */}
                     <DashboardBundlesList bundles={recentBundles} />
                 </>
             ) : (
-                <DashboardBundlesEmpty error={error} />
+                <DashboardBundlesEmpty error={error?.message || null} />
             )}
         </s-section>
     );

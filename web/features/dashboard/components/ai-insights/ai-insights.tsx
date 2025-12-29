@@ -1,14 +1,16 @@
 "use client";
-import { useDashboardStore } from "@/features/dashboard";
+
 import { SkeletonLines } from "@/shared";
+import { useAnalytics } from "@/features/analytics";
+import { useBundlesData } from "@/features/bundles";
 
 /**
  * AI Insights Component
  */
 export function AIInsights({ lines = 4 }: { lines?: number }) {
-    const { bundles, loading } = useDashboardStore();
+    const { bundles, isLoading } = useBundlesData();
 
-    if (loading) {
+    if (isLoading) {
         return (
             <s-section padding="base">
                 <s-grid
@@ -71,7 +73,7 @@ export function AIInsights({ lines = 4 }: { lines?: number }) {
                     <s-badge tone="info">Beta</s-badge>
                 </s-stack>
             </s-grid>
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg">
+            <div className="bg-linear-to-r from-purple-50 to-blue-50 p-4 rounded-lg">
                 <s-stack gap="base">
                     <s-heading>💡 Bundle Performance Analysis</s-heading>
                     <s-text>

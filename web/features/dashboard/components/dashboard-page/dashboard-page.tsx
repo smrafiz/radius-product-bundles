@@ -3,15 +3,14 @@
 import {
     AIInsights,
     DashboardBundles,
+    DashboardCalloutCards,
+    DashboardMediaCard,
     DashboardMetrics,
     DashboardQuickActions,
     DashboardSetUpGuide,
     DashboardVideo,
-    DashboardCalloutCards,
-    DashboardMediaCard,
-    useDashboardData,
 } from "@/features/dashboard";
-import { GlobalBanner, useAppNavigation, useSyncBundles } from "@/shared";
+import { GlobalBanner, useAppNavigation } from "@/shared";
 
 /**
  * Main Dashboard Page Component
@@ -19,13 +18,8 @@ import { GlobalBanner, useAppNavigation, useSyncBundles } from "@/shared";
 export function DashboardPage() {
     const { bundleData, analytics } = useAppNavigation();
 
-    useDashboardData();
-
-    useSyncBundles();
-
     return (
         <s-page heading="Product Bundle">
-            {/* Header buttons */}
             <s-button
                 slot="secondary-actions"
                 variant="secondary"
@@ -50,7 +44,7 @@ export function DashboardPage() {
                     {/* Banner */}
                     <GlobalBanner />
 
-                    {/*Setup Guide*/}
+                    {/* Setup Guide */}
                     <DashboardSetUpGuide />
 
                     {/* Metrics overview */}
@@ -62,13 +56,13 @@ export function DashboardPage() {
                     {/* Quick actions */}
                     <DashboardQuickActions />
 
-                    {/* Video actions */}
+                    {/* Video overview */}
                     <DashboardVideo />
 
-                    {/* Callout Cards */}
+                    {/* Useful links */}
                     <DashboardCalloutCards />
 
-                    {/* Media Cards */}
+                    {/* Guidance */}
                     <DashboardMediaCard />
 
                     {/* AI insights */}

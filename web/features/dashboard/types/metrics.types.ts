@@ -30,8 +30,8 @@ export interface DashboardMetricConfig {
     key: keyof DashboardMetricsData;
     title: string;
     format: MetricFormat;
-    icon: "arrow-up" | "arrow-down" | "work-list";
-    tone:
+    icon?: "arrow-up" | "arrow-down" | "work-list";
+    tone?:
         | "success"
         | "info"
         | "critical"

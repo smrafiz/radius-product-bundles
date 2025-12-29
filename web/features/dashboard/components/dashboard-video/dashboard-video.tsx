@@ -1,8 +1,9 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
-import { useDashboardStore } from "@/features/dashboard";
+
+import React, { useEffect, useRef, useState } from "react";
 import { SkeletonLines } from "@/shared";
 import ReactPlayer from "react-player";
+import { useAnalytics } from "@/features/analytics";
 
 function getYouTubeId(url: string) {
     try {
@@ -18,14 +19,14 @@ function getYouTubeId(url: string) {
 }
 
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
-    const { loading } = useDashboardStore();
+    const { isLoading } = useAnalytics(30);
     const videoUrl = "https://www.youtube.com/watch?v=wDchsz8nmbo";
 
     const isYouTube: boolean =
         videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
     const ytId = getYouTubeId(videoUrl);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <s-section padding="base">
                 <s-box>

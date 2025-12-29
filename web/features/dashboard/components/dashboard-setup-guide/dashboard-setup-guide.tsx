@@ -4,16 +4,16 @@ import {
     DASHBOARD_SETUP_ITEMS,
     DashboardSetupConfig,
     DashboardSetupSteps,
-    useDashboardStore,
 } from "@/features/dashboard";
 import { useState } from "react";
 import { SkeletonLines } from "@/shared";
+import { useAnalytics } from "@/features/analytics";
 
 /**
  * Dashboard setup guide component
  */
 export function DashboardSetUpGuide() {
-    const { loading } = useDashboardStore();
+    const { isLoading } = useAnalytics(30);
     const [showGuide, setShowGuide] = useState(true);
     const [items, setItems] = useState<DashboardSetupConfig[]>(
         DASHBOARD_SETUP_ITEMS,
@@ -39,7 +39,7 @@ export function DashboardSetUpGuide() {
         }
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <s-section padding="base">
                 <div className="p-4">
