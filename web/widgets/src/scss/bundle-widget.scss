@@ -10,8 +10,8 @@
  */
 
 
-@use "bundle-variable";
-@use "bundle-mixins";
+@use "bundle-variable" as *;
+@use "bundle-mixins" as *;
 
 
 

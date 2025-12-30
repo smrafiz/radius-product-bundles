@@ -2,18 +2,13 @@
 // Skeleton Elements
 // ==========================================================================
 
-@use "bundle-variable";
 @use "bundle-mixins";
-
-//.rb-skeleton {
-//    @include bundle-mixins.skeleton-gradient;
-//}
 
 .radius-bundle {
     &__skeleton-text,
     &__skeleton-image,
     &__badge--skeleton {
-        //@include skeleton-gradient;
+        @include bundle-mixins.skeleton-gradient;
     }
 
     &__skeleton-text {
