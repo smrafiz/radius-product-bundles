@@ -2,13 +2,15 @@
 
 import { BundleTableSkeleton } from "@/features/bundles";
 import { DashboardBundlesEmpty } from "@/features/dashboard";
-import { AnalyticsBasedBundlesList, useAnalytics } from "@/features/analytics";
+import { AnalyticsBasedBundlesList, useAnalyticsWithBundles, } from "@/features/analytics";
 
 /**
- * Dashboard Bundles Component
+ * Analytics-Based Bundles Component
+ *
+ * Displays bundle performance with full product details.
  */
 export function AnalyticsBasedBundles() {
-    const { bundles, isLoading, error } = useAnalytics(30);
+    const { bundles, isLoading, error } = useAnalyticsWithBundles(30);
 
     if (isLoading) {
         return <BundleTableSkeleton />;

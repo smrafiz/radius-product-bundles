@@ -1,9 +1,6 @@
-import {
-    analyticsQueryKeys,
-} from "@/features/analytics";
+import { analyticsQueryKeys } from "@/features/analytics";
 import {
     getAnalyticsMetricsAction,
-    getBundleStatsAction,
     getChartDataAction,
 } from "@/features/analytics/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -14,6 +11,8 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
     /**
      * Metrics query
+     *
+     * Fetches aggregate analytics metrics (revenue, views, conversions, etc.)
      */
     metrics: (days: number = 30) => ({
         queryKey: analyticsQueryKeys.metrics(days),
@@ -27,33 +26,15 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
             return result.data ?? {};
         },
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        cacheTime: 10 * 60 * 1000, // 10 minutes
-        refetchOnWindowFocus: false,
-    }),
-
-    /**
-     * Bundle stats query
-     */
-    bundles: (days: number = 30) => ({
-        queryKey: analyticsQueryKeys.bundles(days),
-        queryFn: async () => {
-            const token = await app.idToken();
-            const result = await getBundleStatsAction(token, days);
-
-            if (result.status === "error") {
-                throw new Error(result.message);
-            }
-
-            return result.data ?? [];
-        },
-        staleTime: 5 * 60 * 1000,
-        cacheTime: 10 * 60 * 1000,
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     }),
 
     /**
      * Chart data query
+     *
+     * Fetches time-series data for analytics charts.
      */
     chart: (days: number = 30) => ({
         queryKey: analyticsQueryKeys.chart(days),
@@ -67,8 +48,8 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
             return result.data ?? [];
         },
-        staleTime: 5 * 60 * 1000,
-        cacheTime: 10 * 60 * 1000,
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     }),
 });

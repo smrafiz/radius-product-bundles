@@ -1,1 +1,2 @@
-export * from "./use-analytics";
+export { useAnalytics, useAnalyticsMetrics } from "./use-analytics";
+export { useAnalyticsWithBundles } from "./use-analytics-with-bundles";

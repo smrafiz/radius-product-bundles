@@ -3,8 +3,8 @@
 /**
  * Analytics Hook
  *
- * Fetches analytics data using TanStack Query.
- * No Zustand store needed - TanStack Query handles caching.
+ * Fetches analytics metrics and chart data using TanStack Query.
+ * Bundle data is fetched separately via useBundlesData for consistency.
  */
 
 import { useQuery } from "@tanstack/react-query";
@@ -12,64 +12,73 @@ import { analyticsQueries } from "@/features/analytics";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 /**
- * Hook to fetch analytics data
+ * Hook to fetch analytics data (metrics and chart only)
+ *
+ * For the bundle data with products, use useAnalyticsWithBundles instead.
  */
 export function useAnalytics(days: number = 30) {
     const app = useAppBridge();
     const queries = analyticsQueries(app);
 
-    const metricsQuery = useQuery(queries.metrics(days));
-    const bundlesQuery = useQuery(queries.bundles(days));
-    const chartQuery = useQuery(queries.chart(days));
+    const metricsQuery = useQuery({
+        ...queries.metrics(days),
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
+
+    const chartQuery = useQuery({
+        ...queries.chart(days),
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     return {
         // Data
         metrics: metricsQuery.data,
-        bundles: bundlesQuery.data,
         chartData: chartQuery.data,
 
         // Loading states
-        isLoading:
-            metricsQuery.isLoading ||
-            bundlesQuery.isLoading ||
-            chartQuery.isLoading,
+        isLoading: metricsQuery.isLoading || chartQuery.isLoading,
         isMetricsLoading: metricsQuery.isLoading,
-        isBundlesLoading: bundlesQuery.isLoading,
         isChartLoading: chartQuery.isLoading,
 
         // Fetching states (refetch in progress)
-        isFetching:
-            metricsQuery.isFetching ||
-            bundlesQuery.isFetching ||
-            chartQuery.isFetching,
+        isFetching: metricsQuery.isFetching || chartQuery.isFetching,
         isMetricsFetching: metricsQuery.isFetching,
+        isChartFetching: chartQuery.isFetching,
 
         // Error states
-        error: metricsQuery.error || bundlesQuery.error || chartQuery.error,
+        error: metricsQuery.error || chartQuery.error,
         metricsError: metricsQuery.error,
-        bundlesError: bundlesQuery.error,
         chartError: chartQuery.error,
 
         // Refetch functions
         refetchAll: () => {
             void metricsQuery.refetch();
-            void bundlesQuery.refetch();
             void chartQuery.refetch();
         },
         refetchMetrics: metricsQuery.refetch,
-        refetchBundles: bundlesQuery.refetch,
         refetchChart: chartQuery.refetch,
     };
 }
 
 /**
  * Hook to fetch only metrics (lighter weight)
+ *
+ * Use this for dashboard metrics cards or when you only need aggregate data.
  */
 export function useAnalyticsMetrics(days: number = 30) {
     const app = useAppBridge();
     const queries = analyticsQueries(app);
 
-    const metricsQuery = useQuery(queries.metrics(days));
+    const metricsQuery = useQuery({
+        ...queries.metrics(days),
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     return {
         metrics: metricsQuery.data,
