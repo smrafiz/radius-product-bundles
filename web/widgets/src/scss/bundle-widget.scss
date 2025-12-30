@@ -10,44 +10,8 @@
  */
 
 
-@use "bundle-variable" as *;
-@use "bundle-mixins" as *;
-
-
-
-
-// ==========================================================================
-// Root Container with CSS Variables
-// ==========================================================================
-
-.radius-bundle-widget {
-    --rb-primary-color: #{$rb-primary-color};
-    --rb-secondary-color: #{$rb-secondary-color};
-    --rb-background-color: #{$rb-background-color};
-    --rb-border-color: #{$rb-border-color};
-    --rb-text-color: #{$rb-text-color};
-    --rb-savings-color: #{$rb-savings-color};
-    --rb-muted-color: #{$rb-muted-color};
-    --rb-border-radius: #{$rb-border-radius};
-    --rb-spacing: #{$rb-spacing};
-    --rb-spacing-xs: calc(var(--rb-spacing) * 0.25);
-    --rb-spacing-sm: calc(var(--rb-spacing) * 0.5);
-    --rb-spacing-md: var(--rb-spacing);
-    --rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
-    --rb-spacing-xl: calc(var(--rb-spacing) * 2);
-    --rb-shadow: #{$rb-shadow};
-    --rb-shadow-hover: #{$rb-shadow-hover};
-    --rb-transition: #{$rb-transition};
-    --rb-skeleton-base: #{$rb-skeleton-base};
-    --rb-skeleton-shine: #{$rb-skeleton-shine};
-
-    font-family: inherit;
-    margin: 24px 0;
-
-    & *:empty:not(img):not(br):not(hr) {
-        display: revert;
-    }
-}
+@use "variable" as *;
+@use "mixins" as *;
 
 // ==========================================================================
 // Base Bundle Container
@@ -62,9 +26,6 @@
     &__inner {
         padding: var(--rb-spacing-lg);
     }
-
-
-
 
     // ==========================================================================
     // Products Container
@@ -91,7 +52,6 @@
         &--slider {
             display: flex;
             align-items: center;
-            gap: var(--rb-spacing-sm);
             overflow-x: auto;
             padding: var(--rb-spacing-sm) 0;
             scroll-snap-type: x mandatory;
@@ -105,234 +65,18 @@
     }
 
     // ==========================================================================
-    // Product Card - List Layout
-    // ==========================================================================
-
-    &__product--list {
-        display: flex;
-        align-items: center;
-        gap: var(--rb-spacing);
-        padding: var(--rb-spacing);
-        background: #f9f9f9;
-        border: 1px solid var(--rb-border-color);
-        border-radius: var(--rb-border-radius);
-        @include card-hover;
-
-        .radius-bundle__product-image {
-            width: 70px;
-            height: 70px;
-            flex-shrink: 0;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-        }
-
-        .radius-bundle__product-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .radius-bundle__product-title {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--rb-text-color);
-            margin: 0 0 4px;
-            line-height: 1.3;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .radius-bundle__product-quantity {
-            font-size: 0.8rem;
-            color: var(--rb-muted-color);
-        }
-
-        .radius-bundle__product-price {
-            text-align: right;
-            flex-shrink: 0;
-        }
-    }
-
-    // ==========================================================================
-    // Product Card - Grid Layout
-    // ==========================================================================
-
-    &__product--grid {
-        padding: var(--rb-spacing);
-        background: #f9f9f9;
-        border: 1px solid var(--rb-border-color);
-        border-radius: var(--rb-border-radius);
-        text-align: center;
-        @include card-hover;
-
-        &:hover {
-            box-shadow: var(--rb-shadow-hover);
-            transform: translateY(-2px);
-        }
-
-        .radius-bundle__product-image {
-            width: 100%;
-            height: 100px;
-            margin-bottom: var(--rb-spacing-sm);
-            border-radius: 8px;
-            overflow: hidden;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-        }
-
-        .radius-bundle__product-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--rb-text-color);
-            margin: 0 0 var(--rb-spacing-xs);
-            line-height: 1.3;
-            @include line-clamp(2);
-            min-height: 2.4em;
-        }
-
-        .radius-bundle__product-price {
-            margin-bottom: var(--rb-spacing-xs);
-        }
-
-        .radius-bundle__product-quantity {
-            font-size: 0.75rem;
-            color: var(--rb-muted-color);
-        }
-    }
-
-    // ==========================================================================
-    // Product Card - Compact Layout
-    // ==========================================================================
-
-    &__title--compact {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    &__badge--compact {
-        font-size: 11px;
-        padding: 4px 8px;
-    }
-
-    &__product--compact {
-        display: flex;
-        gap: 8px;
-        padding: 6px 0;
-    }
-
-    &__product-info--compact {
-        flex: 1;
-        min-width: 0;
-
-        &__skeleton-text--title {
-            width: 100%;
-        }
-    }
-
-    &__pricing--compact {
-        padding: 8px;
-        background: var(--rb-background-color);
-        border-radius: 6px;
-    }
-
-    &__button--compact {
-        width: 100%;
-        padding: 10px;
-        font-size: 13px;
-    }
-
-    &__product--compact {
-        .radius-bundle__product-image {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-        }
-    }
-
-    // ==========================================================================
-    // Product Card - Slider Layout
-    // ==========================================================================
-
-    &__product--slider {
-        flex: 0 0 auto;
-        width: 140px;
-        padding: var(--rb-spacing);
-        background: #f9f9f9;
-        border: 1px solid var(--rb-border-color);
-        border-radius: var(--rb-border-radius);
-        text-align: center;
-        scroll-snap-align: start;
-        transition:
-            box-shadow var(--rb-transition),
-            transform var(--rb-transition);
-
-        &:hover {
-            box-shadow: var(--rb-shadow);
-            transform: translateY(-2px);
-        }
-
-        .radius-bundle__product-image {
-            width: 100%;
-            height: 100px;
-            margin-bottom: var(--rb-spacing-sm);
-            border-radius: 8px;
-            overflow: hidden;
-            background: #ffffff;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-        }
-
-        .radius-bundle__product-title {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--rb-text-color);
-            margin: 0;
-            line-height: 1.2;
-            @include line-clamp(2);
-        }
-    }
-
-    // ==========================================================================
     // Product Price (Shared)
     // ==========================================================================
 
     &__product-price-current {
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: var(--rb-font-size-medium);
+        font-weight: 500;
         color: var(--rb-text-color);
         display: block;
     }
 
     &__product-price-compare {
-        font-size: 0.85rem;
+        font-size: var(--rb-font-size-small);
         color: var(--rb-muted-color);
         text-decoration: line-through;
         display: block;
@@ -392,8 +136,8 @@
 
     &__slider-plus {
         flex-shrink: 0;
-        width: 32px;
-        height: 32px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -450,19 +194,19 @@
     }
 
     &__pricing-label {
-        font-size: 0.9rem;
+        font-size: var(--rb-font-size-medium);
         color: var(--rb-secondary-color);
     }
 
     &__price-original {
-        font-size: 0.95rem;
+        font-size: var(--rb-font-size-small);
         color: var(--rb-muted-color);
         text-decoration: line-through;
     }
 
     &__price-discounted {
-        font-size: 1.1rem;
-        font-weight: 700;
+        font-size: var(--rb-font-size-medium);
+        font-weight: 600;
         color: var(--rb-text-color);
     }
 
@@ -477,14 +221,14 @@
     }
 
     &__savings-label {
-        font-size: 0.9rem;
+        font-size: var(--rb-font-size-medium);
         color: var(--rb-savings-color);
         font-weight: 500;
     }
 
     &__savings-amount {
-        font-size: 1rem;
-        font-weight: 700;
+        font-size: var(--rb-font-size-medium);
+        font-weight: 600;
         color: var(--rb-savings-color);
     }
 
@@ -496,7 +240,7 @@
         background: rgba(59, 130, 246, 0.1);
         border-radius: 8px;
         margin-top: var(--rb-spacing-sm);
-        font-size: 0.85rem;
+        font-size: var(--rb-font-size-medium);
         color: #3b82f6;
 
         svg {
@@ -518,16 +262,16 @@
         background: var(--rb-primary-color);
         color: #ffffff;
         border: none;
-        border-radius: var(--rb-border-radius);
-        font-size: 1rem;
-        font-weight: 600;
+        border-radius: var(--rb-border-radius-small);
+        font-size: var(--rb-font-size-medium);
+        font-weight: 500;
         cursor: pointer;
         transition: all var(--rb-transition);
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        min-height: 46px;
+        min-height: 42px;
 
         &:hover:not(:disabled) {
             opacity: 0.9;

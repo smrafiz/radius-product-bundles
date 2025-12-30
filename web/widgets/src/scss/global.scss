@@ -1,0 +1,40 @@
+// ==========================================================================
+// Root Container with CSS Variables
+// ==========================================================================
+
+@use "variable" as *;
+
+.radius-bundle-widget {
+    --rb-primary-color: #{$rb-primary-color};
+    --rb-secondary-color: #{$rb-secondary-color};
+    --rb-background-color: #{$rb-background-color};
+    --rb-border-color: #{$rb-border-color};
+    --rb-text-color: #{$rb-text-color};
+    --rb-savings-color: #{$rb-savings-color};
+    --rb-muted-color: #{$rb-muted-color};
+    --rb-border-radius: #{$rb-border-radius};
+    --rb-border-radius-small: #{$rb-border-radius-small};
+
+    --rb-font-size-small: #{$rb-font-size-small};
+    --rb-font-size-medium: #{$rb-font-size-medium};
+    --rb-font-size-large: #{$rb-font-size-large};
+
+    --rb-spacing: #{$rb-spacing};
+    --rb-spacing-xs: calc(var(--rb-spacing) * 0.25);
+    --rb-spacing-sm: calc(var(--rb-spacing) * 0.5);
+    --rb-spacing-md: var(--rb-spacing);
+    --rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
+    --rb-spacing-xl: calc(var(--rb-spacing) * 2);
+    --rb-shadow: #{$rb-shadow};
+    --rb-shadow-hover: #{$rb-shadow-hover};
+    --rb-transition: #{$rb-transition};
+    --rb-skeleton-base: #{$rb-skeleton-base};
+    --rb-skeleton-shine: #{$rb-skeleton-shine};
+
+    font-family: inherit;
+    margin: 24px 0;
+
+    & *:empty:not(img):not(br):not(hr) {
+        display: revert;
+    }
+}
