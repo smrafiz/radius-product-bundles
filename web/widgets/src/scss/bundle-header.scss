@@ -1,0 +1,78 @@
+// ==========================================================================
+// Header
+// ==========================================================================
+
+
+.radius-bundle {
+    &__header {
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--rb-spacing);
+        margin-bottom: var(--rb-spacing);
+        padding-bottom: var(--rb-spacing);
+        border-bottom: 1px solid var(--rb-border-color);
+    }
+
+    &__title-wrapper {
+        flex: 1;
+        min-width: 0;
+        position: relative;
+    }
+
+    &__title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--rb-text-color);
+        margin: 0;
+        line-height: 1.3;
+
+        &--hidden {
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        &--visible {
+            opacity: 1;
+            position: relative;
+            pointer-events: auto;
+        }
+    }
+
+    &__title-skeleton {
+        display: block;
+
+        &--hidden {
+            display: none;
+        }
+    }
+
+    &__badge {
+        background: var(--rb-savings-color);
+        color: #ffffff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+        text-align: center;
+        min-height: 28px;
+
+        &--skeleton {
+            min-width: 80px;
+            border-radius: 20px !important;
+        }
+
+        &--visible {
+            background: var(--rb-savings-color) !important;
+        }
+    }
+
+    &__description {
+        font-size: 0.9rem;
+        color: var(--rb-secondary-color);
+        margin: 0 0 var(--rb-spacing);
+        line-height: 1.5;
+    }
+}
