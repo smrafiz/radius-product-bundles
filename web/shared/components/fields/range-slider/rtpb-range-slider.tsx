@@ -7,8 +7,9 @@ import { FC, useEffect, useState } from "react";
 
 export const RtpbRangeSlider: FC<{
     values?: number;
+    maxValue?: number;
     action?: (value: number) => void;
-}> = ({ values = 8, action }) => {
+}> = ({ values = 8, action, maxValue = 30 }) => {
     const [internalValue, setInternalValue] = useState([values]);
 
     useEffect(() => {
@@ -25,11 +26,11 @@ export const RtpbRangeSlider: FC<{
             <Range
                 step={1}
                 min={0}
-                max={30}
+                max={maxValue}
                 values={internalValue}
                 onChange={handleChange}
                 renderTrack={({ props, children }) => {
-                    const percentage = (internalValue[0] / 30) * 100;
+                    const percentage = (internalValue[0] / maxValue) * 100;
 
                     return (
                         <div
@@ -38,7 +39,7 @@ export const RtpbRangeSlider: FC<{
                             style={{
                                 ...props.style,
                                 height: "4px",
-                                width: "90%",
+                                width: "100%",
                                 borderRadius: "30px",
                                 backgroundImage: `
                                     linear-gradient(
@@ -79,7 +80,7 @@ export const RtpbRangeSlider: FC<{
                 )}
             />
 
-            <div className="absolute right-0">{internalValue[0]}px</div>
+            <div>{internalValue[0]}px</div>
         </div>
     );
 };

@@ -334,16 +334,20 @@ export interface DisplaySettings {
         productRadius?: number;
         productAlign?: "row" | "column" | "row-reverse" | "column-reverse";
         productFontSize?: number;
-        // Widget
+        // Box
         boxBgColor?: string;
         boxTextColor?: string;
         boxBorderEnabled?: boolean;
         boxBorderColor?: string;
         boxRadius?: number;
+        boxBorderWidth?: number;
         //image
         imageBorderEnabled?: boolean;
         imageRadius?: number;
         imageBorderColor?: string;
+        imageWidth?: number;
+        //additional
+        titleFontSize?: number;
     };
     widget?: {
         showOnMobile: boolean;
@@ -422,3 +426,10 @@ export interface ExistingMedia {
 export type PendingMediaItem =
     | { type: "file"; file: File; id: string }
     | { type: "url"; url: string; id: string };
+
+
+export interface BundlePriorityInfo {
+    id: string;
+    title?: string;
+    description?: string;
+}

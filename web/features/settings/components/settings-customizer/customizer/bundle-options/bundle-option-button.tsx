@@ -118,6 +118,7 @@ export function BundleOptionsButton() {
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
                                     values={style.buttonRadius ?? 8}
+                                    maxValue={30}
                                     action={(val) =>
                                         updateStyle("buttonRadius", val)
                                     }

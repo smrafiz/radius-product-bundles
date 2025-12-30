@@ -84,13 +84,26 @@ export function BundleOptionsImage() {
                                     }}
                                 />
                             )}
-                            <s-text>Corner radius</s-text>
-                            <RtpbRangeSlider
-                                values={style.imageRadius ?? 6}
-                                action={(val) =>
-                                    updateStyle("imageRadius", val)
-                                }
-                            />
+                            <s-stack>
+                                <s-text>Corner radius</s-text>
+                                <RtpbRangeSlider
+                                    values={style.imageRadius ?? 6}
+                                    maxValue={100}
+                                    action={(val) =>
+                                        updateStyle("imageRadius", val)
+                                    }
+                                />
+                            </s-stack>
+                            <s-stack>
+                                <s-text>Width</s-text>
+                                <RtpbRangeSlider
+                                    values={style.imageWidth ?? 80}
+                                    maxValue={500}
+                                    action={(val) =>
+                                        updateStyle("imageWidth", val)
+                                    }
+                                />
+                            </s-stack>
                         </s-stack>
                     </s-stack>
                 </s-stack>

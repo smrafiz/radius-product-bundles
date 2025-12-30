@@ -24,10 +24,10 @@ export function WidgetAppearance() {
     };
 
     return (
-        <s-section>
+        <s-section padding="none">
             <s-stack>
                 <div
-                    className="cursor-pointer z-30"
+                    className="cursor-pointer p-4 z-30"
                     onClick={() => setOpen((prev) => !prev)}
                 >
                     <s-stack
@@ -47,7 +47,7 @@ export function WidgetAppearance() {
                          ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}
                     `}
                 >
-                    <s-stack gap="base" paddingBlockStart="base">
+                    <s-stack gap="base" padding="base">
                         <s-stack
                             direction="inline"
                             alignItems="center"
@@ -160,6 +160,7 @@ export function WidgetAppearance() {
                                     <s-text>Corner radius</s-text>
                                     <RtpbRangeSlider
                                         values={style.buttonRadius ?? 8}
+                                        maxValue={30}
                                         action={(val) =>
                                             updateStyle("buttonRadius", val)
                                         }
@@ -288,10 +289,83 @@ export function WidgetAppearance() {
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
                                     values={style.productRadius ?? 12}
+                                    maxValue={30}
                                     action={(val) =>
                                         updateStyle("productRadius", val)
                                     }
                                 />
+                            </s-stack>
+                        </s-stack>
+
+                        <s-divider />
+
+                        {/* Image styling */}
+                        <s-stack gap="base">
+                            <s-heading>Image</s-heading>
+                            <s-stack gap="base">
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                >
+                                    <s-switch
+                                        id="image-add-border"
+                                        label="Add border"
+                                        accessibilityLabel="Add border"
+                                        checked={
+                                            style.imageBorderEnabled ?? true
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "imageBorderEnabled",
+                                                target.checked,
+                                            );
+                                        }}
+                                    />
+                                </s-stack>
+                            </s-stack>
+                            <s-stack gap="base" paddingBlockEnd="base">
+                                {(style.imageBorderEnabled ?? true) && (
+                                    <s-color-field
+                                        label="Border color"
+                                        name="imageBorderColor"
+                                        placeholder="Select a color"
+                                        value={
+                                            style.imageBorderColor || "#e3e3e3"
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "imageBorderColor",
+                                                target.value,
+                                            );
+                                        }}
+                                    />
+                                )}
+                                <s-stack>
+                                    <s-text>Corner radius</s-text>
+                                    <RtpbRangeSlider
+                                        values={style.imageRadius ?? 6}
+                                        maxValue={100}
+                                        action={(val) =>
+                                            updateStyle("imageRadius", val)
+                                        }
+                                    />
+                                </s-stack>
+
+                                <s-stack>
+                                    <s-text>Width</s-text>
+                                    <RtpbRangeSlider
+                                        values={style.imageWidth ?? 80}
+                                        maxValue={500}
+                                        action={(val) =>
+                                            updateStyle("imageWidth", val)
+                                        }
+                                    />
+                                </s-stack>
                             </s-stack>
                         </s-stack>
 
@@ -369,29 +443,49 @@ export function WidgetAppearance() {
 
                             <s-stack gap="base" paddingBlockEnd="base">
                                 {(style.boxBorderEnabled ?? true) && (
-                                    <s-color-field
-                                        label="Border color"
-                                        name="boxBorderColor"
-                                        placeholder="Select a color"
-                                        value={
-                                            style.boxBorderColor || "#e3e3e3"
-                                        }
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "boxBorderColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
+                                    <s-stack gap="base">
+                                        <s-color-field
+                                            label="Border color"
+                                            name="boxBorderColor"
+                                            placeholder="Select a color"
+                                            value={
+                                                style.boxBorderColor ||
+                                                "#e3e3e3"
+                                            }
+                                            onInput={(event: Event) => {
+                                                const target =
+                                                    event.target as HTMLInputElement;
+                                                updateStyle(
+                                                    "boxBorderColor",
+                                                    target.value,
+                                                );
+                                            }}
+                                        />
+                                        <s-stack gap="small-400">
+                                            <s-text>Thin</s-text>
+                                            <RtpbRangeSlider
+                                                values={
+                                                    style.boxBorderWidth ?? 1
+                                                }
+                                                maxValue={5}
+                                                action={(val) =>
+                                                    updateStyle(
+                                                        "boxBorderWidth",
+                                                        val,
+                                                    )
+                                                }
+                                            />
+                                        </s-stack>
+                                    </s-stack>
                                 )}
-                                <s-stack gap="small-300">
+
+                                <s-stack gap="small-400">
                                     <s-text>Corner radius</s-text>
                                     <RtpbRangeSlider
                                         values={style.boxRadius ?? 12}
+                                        maxValue={30}
                                         action={(val) =>
-                                            updateStyle("widgetRadius", val)
+                                            updateStyle("boxRadius", val)
                                         }
                                     />
                                 </s-stack>
@@ -401,9 +495,10 @@ export function WidgetAppearance() {
                                     gap="small-300"
                                 >
                                     <s-text>Image align</s-text>
-                                    <s-button-group gap="none">
+                                    <s-button-group>
                                         <s-button
                                             slot="secondary-actions"
+                                            variant="primary"
                                             onClick={() =>
                                                 updateStyle(
                                                     "productAlign",
@@ -447,66 +542,6 @@ export function WidgetAppearance() {
                                             Bottom
                                         </s-button>
                                     </s-button-group>
-                                </s-stack>
-                            </s-stack>
-                        </s-stack>
-
-                        <s-divider />
-
-                        {/* Image styling */}
-                        <s-stack gap="base">
-                            <s-heading>Image</s-heading>
-                            <s-stack gap="base">
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                >
-                                    <s-switch
-                                        id="image-add-border"
-                                        label="Add border"
-                                        accessibilityLabel="Add border"
-                                        checked={
-                                            style.imageBorderEnabled ?? true
-                                        }
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "imageBorderEnabled",
-                                                target.checked,
-                                            );
-                                        }}
-                                    />
-                                </s-stack>
-                            </s-stack>
-                            <s-stack gap="base" paddingBlockEnd="base">
-                                {(style.imageBorderEnabled ?? true) && (
-                                    <s-color-field
-                                        label="Border color"
-                                        name="imageBorderColor"
-                                        placeholder="Select a color"
-                                        value={
-                                            style.imageBorderColor || "#e3e3e3"
-                                        }
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "imageBorderColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
-                                )}
-                                <s-stack paddingBlockEnd="large-500">
-                                    <s-text>Corner radius</s-text>
-                                    <RtpbRangeSlider
-                                        values={style.imageRadius ?? 6}
-                                        action={(val) =>
-                                            updateStyle("imageRadius", val)
-                                        }
-                                    />
                                 </s-stack>
                             </s-stack>
                         </s-stack>

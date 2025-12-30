@@ -28,6 +28,7 @@ export function BundlePreviewBuyGet() {
                 <div
                     className="rtpb-product-thumbnail"
                     style={{
+                        width: `${styleData.imageWidth ?? 80}px`,
                         borderRadius: `${styleData.imageRadius ?? 6}px`,
                         ...((styleData.imageBorderEnabled ?? true)
                             ? {
