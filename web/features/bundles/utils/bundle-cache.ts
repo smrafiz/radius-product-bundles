@@ -1,7 +1,8 @@
-/*
+/**
  * Bundle cache invalidation utilities
  */
 
+import { broadcastInvalidation } from "@/shared";
 import { QueryClient } from "@tanstack/react-query";
 import { bundlesQueryKeys } from "@/features/bundles";
 import { analyticsQueryKeys } from "@/features/analytics";
@@ -21,4 +22,10 @@ export const invalidateBundleCache = async (queryClient: QueryClient) => {
         queryKey: analyticsQueryKeys.all,
         refetchType: "active",
     });
+
+    // Broadcast to other tabs
+    broadcastInvalidation("INVALIDATE_BUNDLES");
+    broadcastInvalidation("INVALIDATE_ANALYTICS");
+
+    console.log("[BundleCache] Invalidated and broadcasted");
 };

@@ -45,3 +45,11 @@ export interface SerializableFile {
     size: number;
     data: string;
 }
+
+/**
+ * Invalidation message type
+ */
+export type InvalidationMessage = {
+    type: "INVALIDATE_BUNDLES" | "INVALIDATE_ANALYTICS" | "INVALIDATE_ALL";
+    timestamp: number;
+};
