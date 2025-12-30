@@ -10,14 +10,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { analyticsQueries } from "@/features/analytics";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useAnalyticsStore } from "@/features/analytics";
 
 /**
  * Hook to fetch analytics data (metrics and chart only)
  *
  * For the bundle data with products, use useAnalyticsWithBundles instead.
  */
-export function useAnalytics(days: number = 30) {
+export function useAnalytics() {
     const app = useAppBridge();
+    const { days } = useAnalyticsStore();
     const queries = analyticsQueries(app);
 
     const metricsQuery = useQuery({

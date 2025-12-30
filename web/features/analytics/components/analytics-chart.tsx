@@ -1,50 +1,68 @@
 "use client";
 
+import { useMemo } from "react";
 import {
     CartesianGrid,
     Legend,
     Line,
     LineChart,
+    ResponsiveContainer,
     XAxis,
     YAxis,
     Tooltip,
 } from "recharts";
+import { useAnalytics } from "@/features/analytics";
+import { formatCurrency } from "@/shared";
 
-const data = [
-    { name: "Dec 01, 2025", uv: 0 },
-    { name: "Dec 02, 2025", uv: 2 },
-    { name: "Dec 03, 2025", uv: 5 },
-    { name: "Dec 04, 2025", uv: 8 },
-    { name: "Dec 05, 2025", uv: 5 },
-    { name: "Dec 06, 2025", uv: 6 },
-    { name: "Dec 07, 2025", uv: 3 },
-    { name: "Dec 08, 2025", uv: 1 },
-    { name: "Dec 09, 2025", uv: 4 },
-    { name: "Dec 10, 2025", uv: 6 },
-    { name: "Dec 11, 2025", uv: 4 },
-    { name: "Dec 12, 2025", uv: 1 },
-    { name: "Dec 13, 2025", uv: 3 },
-    { name: "Dec 14, 2025", uv: 6 },
-    { name: "Dec 15, 2025", uv: 9 },
-    { name: "Dec 16, 2025", uv: 1 },
-];
-
+/**
+ * Analytics chart component
+ *
+ * Displays time-series data for bundle performance.
+ */
 export function AnalyticsChart() {
+    const { chartData, isChartLoading } = useAnalytics(30);
+
+    const formattedData = useMemo(() => {
+        if (!chartData) return [];
+
+        return chartData.map((point) => ({
+            date: new Date(point.date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+            }),
+            revenue: point.revenue,
+            views: point.views,
+            purchases: point.purchases,
+            addToCarts: point.addToCarts,
+        }));
+    }, [chartData]);
+
+    if (isChartLoading) {
+        return (
+            <s-section>
+                <s-heading>Bundle Performance Trends</s-heading>
+                <div
+                    style={{
+                        height: 340,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <s-spinner size="large" />
+                </div>
+            </s-section>
+        );
+    }
+
     return (
         <s-section>
-            <s-heading>Additional revenue</s-heading>
-            <LineChart
-                style={{
-                    width: "100%",
-                    aspectRatio: 1.618,
-                    height: 340,
-                    paddingBottom: 40,
-                }}
-                data={data}
-                responsive
-                margin={{ top: 10, right: 30, bottom: 20, left: 25 }}
-            >
-                <div className="mb-3 block pb-5">
+            <s-heading>Bundle Performance Trends</s-heading>
+            <ResponsiveContainer width="100%" height={340}>
+                <LineChart
+                    data={formattedData}
+                    margin={{ top: 10, right: 30, bottom: 20, left: 25 }}
+                >
                     <CartesianGrid
                         stroke="#e3e3e3"
                         horizontal={true}
@@ -59,33 +77,59 @@ export function AnalyticsChart() {
                             fontSize: 11,
                             boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                         }}
+                        formatter={(value: number, name: string) => {
+                            if (name === "revenue")
+                                return formatCurrency(value);
+                            return value;
+                        }}
                         cursor={{ stroke: "#e3e3e3", strokeWidth: 1 }}
                     />
                     <Line
                         type="monotone"
-                        dataKey="uv"
+                        dataKey="revenue"
                         stroke="#13ACF0"
-                        strokeWidth={1}
+                        strokeWidth={2}
+                        name="Revenue"
+                        dot={false}
+                        activeDot={{ r: 4 }}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="views"
+                        stroke="#00C9A7"
+                        strokeWidth={2}
+                        name="Views"
+                        dot={false}
+                        activeDot={{ r: 4 }}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="purchases"
+                        stroke="#FF6B6B"
+                        strokeWidth={2}
+                        name="Purchases"
                         dot={false}
                         activeDot={{ r: 4 }}
                     />
                     <XAxis
-                        dataKey="name"
+                        dataKey="date"
                         tick={{ fill: "#6B7280", fontSize: 11, dy: 12 }}
-                        axisLine={{ stroke: "#13ACF0", strokeWidth: 1.5 }}
-                        tickLine={true}
+                        axisLine={{ stroke: "#E5E7EB", strokeWidth: 1 }}
+                        tickLine={false}
                     />
                     <YAxis
-                        ticks={[0, 5, 10]}
-                        domain={[0, 10]}
                         tick={{ fill: "#6B7280", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
-                        width="auto"
+                        width={60}
                     />
-                </div>
-                <Legend align="center" verticalAlign="bottom" />
-            </LineChart>
+                    <Legend
+                        align="center"
+                        verticalAlign="bottom"
+                        wrapperStyle={{ paddingTop: 20 }}
+                    />
+                </LineChart>
+            </ResponsiveContainer>
         </s-section>
     );
 }

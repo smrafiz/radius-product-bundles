@@ -1,0 +1,147 @@
+/* Custom Calendar - Shopify Analytics Design with Semantic Table Structure */
+
+.custom-calendar-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--p-space-300, 12px);
+	max-width: 100%;
+	position: relative;
+}
+
+.custom-calendar-navigation {
+	position: absolute;
+	top: 0;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.custom-calendar-nav-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	background: transparent;
+	border: none;
+	border-radius: var(--p-border-radius-200, 8px);
+	cursor: pointer;
+	font-size: var(--p-font-size-400, 16px);
+	color: var(--p-color-text, #202223);
+	transition: background-color 0.2s;
+}
+
+.custom-calendar-nav-btn:hover {
+	background: var(--p-color-bg-surface-hover, #f6f6f7);
+}
+
+.custom-calendar-months {
+	display: flex;
+	gap: var(--p-space-400, 16px);
+	margin-top: var(--p-space-150);
+}
+
+.custom-calendar-month {
+	flex: 1 1 14.375rem;
+	max-width: calc(100% - var(--p-space-400));
+	min-width: 14.375rem;
+}
+
+.custom-calendar-table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.custom-calendar-caption {
+	text-align: center;
+	font-size: var(--p-font-size-325, 14px);
+	font-weight: var(--p-font-weight-semibold, 600);
+	color: var(--p-color-text, #202223);
+	padding-block-end: var(--p-space-300, 12px);
+	caption-side: top;
+}
+
+.custom-calendar-weekday {
+	text-align: center;
+	font-size: var(--p-font-size-300, 12px);
+	font-weight: var(--p-font-weight-medium, 500);
+	color: var(--p-color-text-subdued, #6d7175);
+	padding: var(--p-space-100, 4px);
+}
+
+.custom-calendar-week {
+	/* Week rows */
+}
+
+.custom-calendar-day-cell {
+	text-align: center;
+	padding: 0;
+	position: relative;
+	width: 14.28571%;
+}
+
+.custom-calendar-day-cell--in-range {
+	background: var(--p-color-bg-surface-brand-selected, #e3f1ff);
+}
+
+.custom-calendar-empty-cell {
+	/* Empty cells before/after month */
+}
+
+.custom-calendar-day {
+	width: 100%;
+	aspect-ratio: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-size: var(--p-font-size-300, 12px);
+	line-height: var(--p-font-line-height-500, 1.6);
+	color: var(--p-color-text, #202223);
+	border-radius: 0;
+	transition: background-color 0.15s;
+	position: relative;
+}
+
+.custom-calendar-day:hover {
+	background: var(--p-color-bg-surface-hover, #f6f6f7);
+}
+
+.custom-calendar-day--today {
+	font-weight: var(--p-font-weight-semibold, 600);
+	color: var(--p-color-text-brand, #005bd3);
+}
+
+.custom-calendar-day--in-range {
+	background: var(--p-color-bg-surface-brand-selected, #e3f1ff);
+	color: var(--p-color-text, #202223);
+}
+
+.custom-calendar-day--range-start,
+.custom-calendar-day--range-end {
+	background: var(--p-color-bg-fill-brand, #005bd3);
+	color: var(--p-color-text-on-color, #ffffff);
+	z-index: 1;
+}
+
+.custom-calendar-day--range-start:hover,
+.custom-calendar-day--range-end:hover {
+	background: var(--p-color-bg-fill-brand-hover, #004b9c);
+}
+
+/* Round corners on range edges */
+.custom-calendar-day--range-start {
+	border-radius: var(--p-border-radius-200, 8px) 0 0 var(--p-border-radius-200, 8px);
+}
+
+.custom-calendar-day--range-end {
+	border-radius: 0 var(--p-border-radius-200, 8px) var(--p-border-radius-200, 8px) 0;
+}
+
+/* Single day selection (start === end) */
+.custom-calendar-day--single {
+	border-radius: var(--p-border-radius-200, 8px);
+}

@@ -1,263 +1,315 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { formatDateLong } from "@/shared";
 
+import React, { useEffect, useState } from "react";
+import { useAnalyticsStore } from "@/features/analytics";
+import { CustomCalendar } from "@/features/analytics/components/analytics-calender/analytics-calender";
+
+/**
+ * Analytics date range picker
+ *
+ * Shopify-style date picker with custom calendar and Polaris components.
+ */
 export function AnalyticsDate() {
+    const { days } = useAnalyticsStore();
+    const [isOpen, setIsOpen] = useState(false);
+
     const format = (date: Date) => date.toISOString().split("T")[0];
+    const parseDate = (dateStr: string) => new Date(dateStr + "T00:00:00");
     const today = new Date();
 
     // ==== PRESET RANGE FUNCTIONS ====
     const getToday = () => {
         const d = format(today);
-        return `${d}--${d}`;
+        return { start: d, end: d };
     };
 
     const getYesterday = () => {
         const y = new Date(today);
         y.setDate(y.getDate() - 1);
         const d = format(y);
-        return `${d}--${d}`;
+        return { start: d, end: d };
     };
 
     const getLast7Days = () => {
         const end = format(today);
         const start = new Date(today);
         start.setDate(start.getDate() - 6);
-        return `${format(start)}--${end}`;
+        return { start: format(start), end };
     };
 
     const getLast30Days = () => {
         const end = format(today);
         const start = new Date(today);
         start.setDate(start.getDate() - 29);
-        return `${format(start)}--${end}`;
+        return { start: format(start), end };
     };
 
     const getLast90Days = () => {
         const end = format(today);
         const start = new Date(today);
         start.setDate(start.getDate() - 89);
-        return `${format(start)}--${end}`;
+        return { start: format(start), end };
     };
 
-    const getLastYear = () => {
+    const getLast365Days = () => {
         const end = format(today);
         const start = new Date(today);
         start.setDate(start.getDate() - 364);
-        return `${format(start)}--${end}`;
+        return { start: format(start), end };
     };
 
-    const getThisMonth = () => {
-        const y = today.getFullYear();
-        const m = (today.getMonth() + 1).toString().padStart(2, "0");
-        const start = `${y}-${m}-01`;
-        return `${start}--${format(today)}`;
+    const getLastWeek = () => {
+        const end = new Date(today);
+        end.setDate(end.getDate() - end.getDay()); // Last Sunday
+        const start = new Date(end);
+        start.setDate(start.getDate() - 6);
+        return { start: format(start), end: format(end) };
     };
 
-    // INITIAL VALUE
-    const [value, setValue] = useState(getLast7Days());
-    const [label, setLabel] = useState("Last 7 days");
-    const [activePreset, setActivePreset] = useState("last7");
-
-    // DYNAMIC VIEW (YYYY-MM)
-    const [view, setView] = useState(() =>
-        getLast7Days().split("--")[0].slice(0, 7),
-    );
-
-    const getStartEnd = (range: string) => {
-        const [s, e] = range.split("--");
-        return { start: s, end: e };
+    const getLastMonth = () => {
+        const lastMonth = new Date(
+            today.getFullYear(),
+            today.getMonth() - 1,
+            1,
+        );
+        const lastDay = new Date(today.getFullYear(), today.getMonth(), 0);
+        return { start: format(lastMonth), end: format(lastDay) };
     };
 
-    // AUTO-LABEL THE RANGE
-    useEffect(() => {
-        if (value === getToday()) setLabel("Today");
-        else if (value === getYesterday()) setLabel("Yesterday");
-        else if (value === getLast7Days()) setLabel("Last 7 days");
-        else if (value === getLast30Days()) setLabel("Last 30 days");
-        else if (value === getThisMonth()) setLabel("This month");
-        else if (value === getLast90Days()) setLabel("Last 90 days");
-        else if (value === getLastYear()) setLabel("Last Year");
-        else {
-            const { start, end } = getStartEnd(value);
-            setLabel(`${start} → ${end}`);
+    // Get initial value
+    const getInitialValue = () => {
+        switch (days) {
+            case 1:
+                return getToday();
+            case 7:
+                return getLast7Days();
+            case 30:
+                return getLast30Days();
+            case 90:
+                return getLast90Days();
+            case 365:
+                return getLast365Days();
+            default:
+                return getLast30Days();
         }
-    }, [value]);
-
-    // ==== BUTTON HANDLERS ====
-
-    const setRangePreset = (preset: string, range: string) => {
-        setActivePreset(preset);
-        setValue(range);
-        setView(range.split("--")[0].slice(0, 7));
     };
 
-    const todayDays = () => setRangePreset("today", getToday());
-    const yesTerDays = () => setRangePreset("yesterday", getYesterday());
-    const last7Days = () => setRangePreset("last7", getLast7Days());
-    const last30Days = () => setRangePreset("last30", getLast30Days());
-    const thisMonth = () => setRangePreset("month", getThisMonth());
-    const last90Days = () => setRangePreset("last90", getLast90Days());
-    const last360Days = () => setRangePreset("year", getLastYear());
+    // Local state
+    const [range, setRange] = useState(getInitialValue());
+    const [startInput, setStartInput] = useState(range.start);
+    const [endInput, setEndInput] = useState(range.end);
+    const [label, setLabel] = useState(getLabelForDays(days));
+    const [activePreset, setActivePreset] = useState(getPresetForDays(days));
 
-    const { start, end } = getStartEnd(value);
+    // Update inputs when range changes
+    useEffect(() => {
+        setStartInput(range.start);
+        setEndInput(range.end);
+    }, [range]);
 
     /**
-     * Converts a date value to a Date object.
+     * Get label for number of days
      */
-    const toDate = (value: Date | string | undefined): Date | undefined => {
-        if (!value) {
-            return undefined;
+    function getLabelForDays(d: number): string {
+        switch (d) {
+            case 1:
+                return "Today";
+            case 7:
+                return "Last 7 days";
+            case 30:
+                return "Last 30 days";
+            case 90:
+                return "Last 90 days";
+            case 365:
+                return "Last 365 days";
+            default:
+                return `Last ${d} days`;
         }
+    }
 
-        if (value instanceof Date) {
-            return value;
+    /**
+     * Get preset key for number of days
+     */
+    function getPresetForDays(d: number): string {
+        switch (d) {
+            case 1:
+                return "today";
+            case 7:
+                return "last7";
+            case 30:
+                return "last30";
+            case 90:
+                return "last90";
+            case 365:
+                return "last365";
+            default:
+                return "last30";
         }
+    }
 
-        return new Date(value);
+    // Preset buttons
+    const presets = [
+        { key: "today", label: "Today", getValue: getToday },
+        { key: "yesterday", label: "Yesterday", getValue: getYesterday },
+        { key: "last7", label: "Last 7 days", getValue: getLast7Days },
+        { key: "last30", label: "Last 30 days", getValue: getLast30Days },
+        { key: "last90", label: "Last 90 days", getValue: getLast90Days },
+        { key: "last365", label: "Last 365 days", getValue: getLast365Days },
+        { key: "lastWeek", label: "Last week", getValue: getLastWeek },
+        { key: "lastMonth", label: "Last month", getValue: getLastMonth },
+    ];
+
+    /**
+     * Handle preset click
+     */
+    const handlePresetClick = (preset: (typeof presets)[0]) => {
+        const value = preset.getValue();
+        setRange(value);
+        setActivePreset(preset.key);
     };
-    const formatDisplayDate = (date: Date | string | undefined): string => {
-        const dateObj = toDate(date);
-        if (!dateObj) return "";
 
-        const dateStr = dateObj.toISOString().split("T")[0];
-        return formatDateLong(dateStr);
+    /**
+     * Handle manual date input
+     */
+    const handleStartInputChange = (event: any) => {
+        const value = event.currentTarget.value;
+        setStartInput(value);
+
+        // Validate and update range
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+            const date = parseDate(value);
+            if (!isNaN(date.getTime())) {
+                setRange((prev) => ({ ...prev, start: value }));
+                setActivePreset("custom");
+            }
+        }
+    };
+
+    const handleEndInputChange = (event: any) => {
+        const value = event.currentTarget.value;
+        setEndInput(value);
+
+        // Validate and update range
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+            const date = parseDate(value);
+            if (!isNaN(date.getTime())) {
+                setRange((prev) => ({ ...prev, end: value }));
+                setActivePreset("custom");
+            }
+        }
+    };
+
+    /**
+     * Handle Apply
+     */
+    const handleApply = () => {
+        useAnalyticsStore.getState().setDateRange(range.start, range.end);
+        setIsOpen(false);
+    };
+
+    /**
+     * Handle Cancel
+     */
+    const handleCancel = () => {
+        const initial = getInitialValue();
+        setRange(initial);
+        setIsOpen(false);
     };
 
     return (
         <s-stack gap="base">
-            <s-button commandFor="date-popover" variant="secondary">
+            <s-button
+                commandFor="analytics-date-popover"
+                variant="secondary"
+                onClick={() => setIsOpen(!isOpen)}
+            >
                 <s-stack direction="inline" alignItems="center" gap="small-300">
                     <s-icon type="calendar" />
-                    {label}
+                    <s-text>{label}</s-text>
                 </s-stack>
             </s-button>
 
-            <s-popover id="date-popover">
+            <s-popover id="analytics-date-popover">
                 <s-box padding="base">
                     <s-stack gap="base">
-                        <div className="flex gap-3 items-center">
+                        {/* Date Range Inputs */}
+                        <s-stack
+                            direction="inline"
+                            gap="small"
+                            alignItems="center"
+                        >
                             <s-text-field
-                                label="Start"
+                                label="Start Date"
                                 labelAccessibilityVisibility="exclusive"
-                                value={formatDisplayDate(start)}
+                                value={startInput}
+                                placeholder="YYYY-MM-DD"
+                                onChange={handleStartInputChange}
                             />
-                            <s-stack paddingInlineEnd="small">
-                                <s-icon size="base" type="arrow-right" />
-                            </s-stack>
+                            <s-icon type="arrow-right" tone="neutral" />
                             <s-text-field
-                                label="End"
+                                label="End Date"
                                 labelAccessibilityVisibility="exclusive"
-                                value={formatDisplayDate(end)}
+                                value={endInput}
+                                placeholder="YYYY-MM-DD"
+                                onChange={handleEndInputChange}
                             />
-                        </div>
-                        <s-stack gap="large" direction="inline">
-                            <s-stack gap="small-200">
-                                <s-button
-                                    variant={
-                                        activePreset === "today"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={todayDays}
-                                >
-                                    Today
-                                </s-button>
-
-                                <s-button
-                                    variant={
-                                        activePreset === "yesterday"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={yesTerDays}
-                                >
-                                    Yesterday
-                                </s-button>
-
-                                <s-button
-                                    variant={
-                                        activePreset === "last7"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={last7Days}
-                                >
-                                    Last 7 days
-                                </s-button>
-
-                                <s-button
-                                    variant={
-                                        activePreset === "last30"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={last30Days}
-                                >
-                                    Last 30 days
-                                </s-button>
-
-                                <s-button
-                                    variant={
-                                        activePreset === "month"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={thisMonth}
-                                >
-                                    This month
-                                </s-button>
-
-                                <s-button
-                                    variant={
-                                        activePreset === "last90"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={last90Days}
-                                >
-                                    Last 90 days
-                                </s-button>
-
-                                <s-button
-                                    variant={
-                                        activePreset === "year"
-                                            ? "secondary"
-                                            : "tertiary"
-                                    }
-                                    onClick={last360Days}
-                                >
-                                    Last Year
-                                </s-button>
-                            </s-stack>
-                            <s-stack direction="inline" gap="large">
-                                {/* LEFT CALENDAR (Start) */}
-                                <s-date-picker
-                                    type="range"
-                                    view={value.split("--")[0].slice(0, 7)}
-                                    value={value}
-                                    onChange={(event) => {
-                                        const v = event.currentTarget.value;
-                                        setValue(v);
-                                        setView(v.split("--")[0].slice(0, 7));
-                                    }}
-                                />
-
-                                {/* RIGHT CALENDAR (End) */}
-                                {/*<s-date-picker*/}
-                                {/*    type="range"*/}
-                                {/*    view={value.split("--")[1].slice(0, 7)}*/}
-                                {/*    value={value}*/}
-                                {/*    onChange={(event) => {*/}
-                                {/*        const v = event.currentTarget.value;*/}
-                                {/*        setValue(v);*/}
-                                {/*        setView(v.split("--")[0].slice(0, 7));*/}
-                                {/*    }}*/}
-                                {/*/>*/}
-                            </s-stack>
                         </s-stack>
 
-                        {/* Apply / Cancel Buttons */}
+                        {/* Main Content: Presets + Calendar */}
+                        <s-stack
+                            direction="inline"
+                            gap="base"
+                            alignItems="start"
+                        >
+                            {/* Preset Buttons */}
+                            <s-stack gap="small-200">
+                                {presets.map((preset) => (
+                                    <s-button
+                                        key={preset.key}
+                                        variant={
+                                            activePreset === preset.key
+                                                ? "secondary"
+                                                : "tertiary"
+                                        }
+                                        onClick={() =>
+                                            handlePresetClick(preset)
+                                        }
+                                    >
+                                        <s-stack
+                                            direction="inline"
+                                            justifyContent="space-between"
+                                        >
+                                            <s-text>{preset.label}</s-text>
+                                            {activePreset === preset.key && (
+                                                <s-text>✓</s-text>
+                                            )}
+                                        </s-stack>
+                                    </s-button>
+                                ))}
+                            </s-stack>
+
+                            {/* Vertical Divider */}
+                            <div
+                                style={{
+                                    width: "1px",
+                                    background:
+                                        "var(--p-color-border-subdued, #e1e3e5)",
+                                    alignSelf: "stretch",
+                                }}
+                            />
+
+                            {/* Custom Calendar */}
+                            <CustomCalendar
+                                value={range}
+                                onChange={(newRange) => {
+                                    setRange(newRange);
+                                    setActivePreset("custom");
+                                }}
+                            />
+                        </s-stack>
+                        <s-divider direction="inline" />
+
+                        {/* Action Buttons */}
                         <s-stack
                             direction="inline"
                             justifyContent="end"
@@ -265,25 +317,11 @@ export function AnalyticsDate() {
                         >
                             <s-button
                                 variant="secondary"
-                                onClick={() => {
-                                    setValue(getLast7Days());
-                                    const popover =
-                                        document.getElementById("date-popover");
-                                    if (popover) {
-                                        const popoverButton =
-                                            document.querySelector(
-                                                '[commandfor="date-popover"]',
-                                            ) as HTMLElement;
-                                        popoverButton?.click();
-                                    }
-                                }}
+                                onClick={handleCancel}
                             >
                                 Cancel
                             </s-button>
-                            <s-button
-                                variant="primary"
-                                onClick={() => console.log("Apply", value)}
-                            >
+                            <s-button variant="primary" onClick={handleApply}>
                                 Apply
                             </s-button>
                         </s-stack>
