@@ -21,16 +21,19 @@
         justify-content: center;
         gap: 8px;
     }
-    .rtpb-product-original-price {
+    .rtpb-product-box-price {
         display: flex;
         justify-content: space-between;
     }
-    .rtpb-product-original-wrap {
+    .rtpb-product-box-wrap {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 8px;
     }
+}
+.rtpb-standard-title {
+    font-weight: 600;
 }
 .rtpb-bundle-product {
     background-color: #f7f7f7;
@@ -58,6 +61,9 @@
         position: absolute;
         bottom: -12px;
     }
+}
+.rtpb-total-label-text {
+    font-weight: 500;
 }
 .rtpb-summary-button {
     display: flex;

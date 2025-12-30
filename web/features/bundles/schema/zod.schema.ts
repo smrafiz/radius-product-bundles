@@ -90,6 +90,7 @@ const bundleSettingsSchema = z
                 imageBorderColor: z.string().optional(),
                 imageWidth: z.number().optional(),
                 titleFontSize: z.number().optional(),
+                titleAlignment: z.string().optional(),
             })
             .optional(),
         widget: z

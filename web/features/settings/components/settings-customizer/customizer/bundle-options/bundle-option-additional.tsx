@@ -19,6 +19,10 @@ export function BundleOptionsAdditional() {
         });
     };
 
+    interface ChoiceListElement extends HTMLElement {
+        values: string[];
+    }
+
     return (
         <s-stack>
             <div
@@ -48,7 +52,7 @@ export function BundleOptionsAdditional() {
                         alignItems="center"
                         gap="small-300"
                     >
-                        <s-heading>Title font size</s-heading>
+                        <s-text>Title font size</s-text>
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"
@@ -75,6 +79,27 @@ export function BundleOptionsAdditional() {
                                 Large
                             </s-button>
                         </s-button-group>
+                    </s-stack>
+                    <s-stack>
+                        <s-choice-list
+                            label="Title alignment"
+                            name="title-alignment"
+                            values={[style.titleAlignment ?? "left"]}
+                            onChange={(event: Event) => {
+                                const target = event.currentTarget as ChoiceListElement;
+
+                                if (!target.values?.length) return;
+
+                                updateStyle(
+                                    "titleAlignment",
+                                    target.values[0] as "left" | "center" | "right"
+                                );
+                            }}
+                        >
+                            <s-choice value="left">Left</s-choice>
+                            <s-choice value="center">Center</s-choice>
+                            <s-choice value="right">Right</s-choice>
+                        </s-choice-list>
                     </s-stack>
                 </s-stack>
             </div>

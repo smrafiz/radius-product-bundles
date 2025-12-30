@@ -71,7 +71,12 @@ export function BundlePreviewBogo() {
             }}
         >
             <div className="rtpb-box-wrap">
-                <div className="font-semibold text-xl">BOGO</div>
+                <div className="rtpb-standard-title"
+                    style={{
+                        fontSize: `${styleData.titleFontSize ?? 20}px`,
+                        textAlign: styleData.titleAlignment || "left",
+                    }}
+                >BOGO</div>
                 <div className="rtpb-box-container">
                     <div className="rtpb-product-item">
                         <RenderSelectedProducts />
@@ -116,24 +121,24 @@ export function BundlePreviewBogo() {
                             fontSize: `${styleData.productFontSize ?? 14}px`,
                         }}
                     >
-                        <div className="rtpb-product-original-price">
-                            <div className="rtpb-product-original-wrap">
-                                <span className="font-semibold">
+                        <div className="rtpb-product-box-price">
+                            <div className="rtpb-product-box-wrap">
+                                <span className="rtpb-total-label-text">
                                     Original Price:
                                 </span>
                                 <span>$2,899.96</span>
                             </div>
 
-                            <div className="rtpb-product-original-wrap">
-                                <span className="font-semibold">
+                            <div className="rtpb-product-box-wrap">
+                                <span className="rtpb-total-label-text">
                                     Total Price:
                                 </span>
                                 <span>$1,899.96</span>
                             </div>
                         </div>
 
-                        <div className="rtpb-product-original-wrap">
-                            <span className="font-semibold">You save:</span>
+                        <div className="rtpb-product-box-wrap">
+                            <span className="rtpb-total-label-text">You save:</span>
                             <span>$474.99 (20%)</span>
                         </div>
                     </div>
