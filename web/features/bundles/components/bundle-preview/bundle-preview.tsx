@@ -159,7 +159,12 @@ export function BundlePreview() {
                 }}
             >
                 <div className="rtpb-box-wrap">
-                    <div className="font-semibold text-xl">{displaySettings.title || ""}</div>
+                    <div
+                        className="font-semibold text-xl"
+                        style={{
+                            textAlign: styleData.titleAlignment || "left",
+                        }}
+                    >{displaySettings.title || ""}</div>
 
                     {selectedItems.length > 0 ? (
                         <div className="rtpb-box-container">
@@ -188,10 +193,10 @@ export function BundlePreview() {
                                 }}
                             >
                                 {displaySettings.showPrices && (
-                                    <div className="rtpb-product-original-price">
+                                    <div className="rtpb-product-box-price">
                                         {discountAmount > 0 && (
-                                            <div className="rtpb-product-original-wrap">
-                                                <span className="font-semibold">
+                                            <div className="rtpb-product-box-wrap">
+                                                <span className="rtpb-total-label-text">
                                                     Original Price:
                                                 </span>
                                                 <span>
@@ -200,8 +205,8 @@ export function BundlePreview() {
                                             </div>
                                         )}
 
-                                        <div className="rtpb-product-original-wrap">
-                                            <span className="font-semibold">
+                                        <div className="rtpb-product-box-wrap">
+                                            <span className="rtpb-total-label-text">
                                                 Total Price:
                                             </span>
                                             <span>
@@ -213,8 +218,8 @@ export function BundlePreview() {
 
                                 {displaySettings.showSavings &&
                                     discountAmount > 0 && (
-                                        <div className="rtpb-product-original-wrap">
-                                            <span className="font-semibold">
+                                        <div className="rtpb-product-box-wrap">
+                                            <span className="rtpb-total-label-text">
                                                 You save:
                                             </span>
                                             <span>

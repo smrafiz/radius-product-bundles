@@ -332,7 +332,7 @@ export interface DisplaySettings {
         productBorderEnabled?: boolean;
         productBorderColor?: string;
         productRadius?: number;
-        productAlign?: "row" | "column" | "row-reverse" | "column-reverse";
+        productAlign?: "row" | "row-reverse";
         productFontSize?: number;
         // Box
         boxBgColor?: string;
@@ -348,6 +348,7 @@ export interface DisplaySettings {
         imageWidth?: number;
         //additional
         titleFontSize?: number;
+        titleAlignment?: "left" | "center" | "right";
     };
     widget?: {
         showOnMobile: boolean;

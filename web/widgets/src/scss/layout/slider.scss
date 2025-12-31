@@ -1,0 +1,52 @@
+// ==========================================================================
+// Product Card - Slider Layout
+// ==========================================================================
+
+@use "../mixins";
+@use "../variable" as *;
+@use "../global" as *;
+
+.radius-bundle {
+    &__product--slider {
+        flex: 0 0 auto;
+        width: 140px;
+        padding: var(--rb-spacing);
+        background: #f9f9f9;
+        border: 1px solid var(--rb-border-color);
+        border-radius: var(--rb-border-radius);
+        text-align: center;
+        scroll-snap-align: start;
+        transition:
+                box-shadow var(--rb-transition),
+                transform var(--rb-transition);
+
+        &:hover {
+            box-shadow: var(--rb-shadow);
+            transform: translateY(-2px);
+        }
+
+        .radius-bundle__product-image {
+            width: 100%;
+            height: 100px;
+            margin-bottom: var(--rb-spacing-sm);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        .radius-bundle__product-title {
+            font-size: var(--rb-font-size-medium);
+            font-weight: 500;
+            color: var(--rb-text-color);
+            margin: 0 0 var(--rb-spacing-xs);
+            line-height: 1.3;
+            @include mixins.line-clamp(2);
+        }
+    }
+}

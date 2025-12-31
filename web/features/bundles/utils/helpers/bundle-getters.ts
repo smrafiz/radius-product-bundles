@@ -132,6 +132,7 @@ export const initialDisplaySettings: DisplaySettings = {
         imageBorderColor: "#e3e3e3",
         imageWidth: 80,
         titleFontSize: 20,
+        titleAlignment: "left",
     },
 };
 

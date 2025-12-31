@@ -23,6 +23,10 @@ export function WidgetAppearance() {
         });
     };
 
+    interface ChoiceListElement extends HTMLElement {
+        values: string[];
+    }
+
     return (
         <s-section padding="none">
             <s-stack>
@@ -242,6 +246,28 @@ export function WidgetAppearance() {
                                     />
                                 </s-grid-item>
                             </s-grid>
+                        </s-stack>
+
+                        <s-stack>
+                            <s-choice-list
+                                label="Title alignment"
+                                name="title-alignment"
+                                values={[style.titleAlignment ?? "left"]}
+                                onChange={(event: Event) => {
+                                    const target = event.currentTarget as ChoiceListElement;
+
+                                    if (!target.values?.length) return;
+
+                                    updateStyle(
+                                        "titleAlignment",
+                                        target.values[0] as "left" | "center" | "right"
+                                    );
+                                }}
+                            >
+                                <s-choice value="left">Left</s-choice>
+                                <s-choice value="center">Center</s-choice>
+                                <s-choice value="right">Right</s-choice>
+                            </s-choice-list>
                         </s-stack>
 
                         <s-stack gap="base">
@@ -513,33 +539,11 @@ export function WidgetAppearance() {
                                             onClick={() =>
                                                 updateStyle(
                                                     "productAlign",
-                                                    "column",
-                                                )
-                                            }
-                                        >
-                                            Top
-                                        </s-button>
-                                        <s-button
-                                            slot="secondary-actions"
-                                            onClick={() =>
-                                                updateStyle(
-                                                    "productAlign",
                                                     "row-reverse",
                                                 )
                                             }
                                         >
                                             Right
-                                        </s-button>
-                                        <s-button
-                                            slot="secondary-actions"
-                                            onClick={() =>
-                                                updateStyle(
-                                                    "productAlign",
-                                                    "column-reverse",
-                                                )
-                                            }
-                                        >
-                                            Bottom
                                         </s-button>
                                     </s-button-group>
                                 </s-stack>

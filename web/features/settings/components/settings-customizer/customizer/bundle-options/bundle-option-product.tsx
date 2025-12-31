@@ -200,29 +200,10 @@ export function BundleOptionsProduct() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("productAlign", "column")
-                                }
-                            >
-                                Top
-                            </s-button>
-                            <s-button
-                                slot="secondary-actions"
-                                onClick={() =>
                                     updateStyle("productAlign", "row-reverse")
                                 }
                             >
                                 Right
-                            </s-button>
-                            <s-button
-                                slot="secondary-actions"
-                                onClick={() =>
-                                    updateStyle(
-                                        "productAlign",
-                                        "column-reverse",
-                                    )
-                                }
-                            >
-                                Bottom
                             </s-button>
                         </s-button-group>
                     </s-stack>
