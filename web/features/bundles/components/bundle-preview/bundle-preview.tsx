@@ -9,8 +9,8 @@ import {
     formatPrice,
     useBundleStore,
 } from "@/features/bundles";
-
 import { useState, Fragment } from "react";
+import "@/styles/components/bundle.css";
 
 export function BundlePreview() {
     const { bundleData, selectedItems, displaySettings } = useBundleStore();

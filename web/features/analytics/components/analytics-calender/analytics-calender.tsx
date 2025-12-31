@@ -1,31 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
-import "./custom-calendar.css";
+import React from "react";
+import { AnalyticsCalendarProps, formatDate, useCalendar, } from "@/features/analytics";
 
-interface CustomCalendarProps {
-    value: { start: string; end: string };
-    onChange: (range: { start: string; end: string }) => void;
-}
+import "@/styles/components/calendar.css";
 
 /**
- * Custom dual-month calendar for date range selection
- *
- * Uses semantic table structure for accessibility, matching Shopify Analytics design.
+ * Custom dual-month calendar component
  */
-export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
-    const [leftMonth, setLeftMonth] = useState(() => {
-        const d = new Date(value.start || new Date());
-        return new Date(d.getFullYear(), d.getMonth(), 1);
-    });
+export function AnalyticsCalendar({
+    value,
+    onChange,
+    onStartInputChange,
+    onEndInputChange,
+    startInput,
+    endInput,
+}: AnalyticsCalendarProps) {
+    const {
+        leftMonth,
+        hoverDate,
+        selectingStart,
+        navigateMonth,
+        handleDateClick,
+        setHoverDate,
+        isInRange,
+        isRangeStart,
+        isRangeEnd,
+        isToday,
+    } = useCalendar(value, onChange);
 
-    const [hoverDate, setHoverDate] = useState<string | null>(null);
-    const [selectingStart, setSelectingStart] = useState(true);
-
-    const today = new Date();
-    const format = (date: Date) => date.toISOString().split("T")[0];
-
-    // Calculate right month (next month from left)
+    // Calculate right month
     const rightMonth = new Date(
         leftMonth.getFullYear(),
         leftMonth.getMonth() + 1,
@@ -33,73 +37,18 @@ export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
     );
 
     /**
-     * Navigate months (moves both calendars together)
+     * Handle input change events
      */
-    const navigateMonth = (direction: "prev" | "next") => {
-        setLeftMonth((prev) => {
-            const newMonth = new Date(prev);
-            newMonth.setMonth(
-                newMonth.getMonth() + (direction === "next" ? 1 : -1),
-            );
-            return newMonth;
-        });
+    const handleStartChange = (event: any) => {
+        onStartInputChange?.(event.currentTarget.value);
+    };
+
+    const handleEndChange = (event: any) => {
+        onEndInputChange?.(event.currentTarget.value);
     };
 
     /**
-     * Handle date click with proper 3-click behavior:
-     * Click 1: Set start date
-     * Click 2: Set end date
-     * Click 3: Reset and set new start date
-     */
-    const handleDateClick = (date: Date) => {
-        const dateStr = format(date);
-
-        if (selectingStart) {
-            // First click: Set start date
-            onChange({ start: dateStr, end: dateStr });
-            setSelectingStart(false);
-        } else {
-            // Second click: Set end date
-            const start = new Date(value.start);
-            if (date < start) {
-                // If clicked date is before start, swap them
-                onChange({ start: dateStr, end: value.start });
-            } else {
-                onChange({ start: value.start, end: dateStr });
-            }
-            // Third click will reset
-            setSelectingStart(true);
-        }
-    };
-
-    /**
-     * Check if date is in range (including hover preview)
-     */
-    const isInRange = (date: Date) => {
-        const dateStr = format(date);
-        if (!value.start) return false;
-
-        // If selecting end and hovering, show preview range
-        if (!selectingStart && hoverDate) {
-            const start = value.start;
-            const end = hoverDate;
-            if (end < start) {
-                return dateStr >= end && dateStr <= start;
-            }
-            return dateStr >= start && dateStr <= end;
-        }
-
-        // Show actual selected range
-        if (!value.end) return dateStr === value.start;
-        return dateStr >= value.start && dateStr <= value.end;
-    };
-
-    const isRangeStart = (date: Date) => format(date) === value.start;
-    const isRangeEnd = (date: Date) => format(date) === value.end;
-    const isToday = (date: Date) => format(date) === format(today);
-
-    /**
-     * Render calendar month as a semantic table
+     * Render calendar month as semantic table
      */
     const renderCalendar = (month: Date) => {
         const year = month.getFullYear();
@@ -117,7 +66,7 @@ export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
         const weeks = [];
         let currentWeek = [];
 
-        // Empty cells for days before month starts
+        // Empty cells before month starts
         for (let i = 0; i < startDayOfWeek; i++) {
             currentWeek.push(
                 <td
@@ -130,11 +79,7 @@ export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
         // Days of the month
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(year, monthIndex, day);
-            const dateStr = format(date);
-            const isTodayDate = isToday(date);
-            const inRange = isInRange(date);
-            const isStart = isRangeStart(date);
-            const isEnd = isRangeEnd(date);
+            const dateStr = formatDate(date);
 
             const dayLabel = date.toLocaleDateString("en-US", {
                 weekday: "long",
@@ -142,6 +87,11 @@ export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
                 day: "numeric",
                 year: "numeric",
             });
+
+            const isTodayDate = isToday(date);
+            const inRange = isInRange(date);
+            const isStart = isRangeStart(date);
+            const isEnd = isRangeEnd(date);
 
             currentWeek.push(
                 <td
@@ -173,7 +123,7 @@ export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
 
             // Start new week on Sunday
             if ((startDayOfWeek + day) % 7 === 0 || day === daysInMonth) {
-                // Fill remaining cells if last week of month
+                // Fill remaining cells if last week
                 if (day === daysInMonth) {
                     const remaining = 7 - (currentWeek.length % 7);
                     if (remaining < 7) {
@@ -193,74 +143,131 @@ export function CustomCalendar({ value, onChange }: CustomCalendarProps) {
         }
 
         return (
-            <div className="custom-calendar-month">
-                <table role="grid" className="custom-calendar-table">
-                    <caption className="custom-calendar-caption">
-                        {monthName}
-                    </caption>
-                    <thead>
-                        <tr>
-                            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(
-                                (day, i) => (
-                                    <th
-                                        key={day}
-                                        scope="col"
-                                        className="custom-calendar-weekday"
-                                        aria-label={
-                                            [
-                                                "Sunday",
-                                                "Monday",
-                                                "Tuesday",
-                                                "Wednesday",
-                                                "Thursday",
-                                                "Friday",
-                                                "Saturday",
-                                            ][i]
-                                        }
-                                    >
-                                        {day}
-                                    </th>
-                                ),
-                            )}
+            <table role="grid" className="custom-calendar-table">
+                <caption className="custom-calendar-caption">
+                    {monthName}
+                </caption>
+                <thead>
+                    <tr>
+                        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(
+                            (day, i) => (
+                                <th
+                                    key={day}
+                                    scope="col"
+                                    className="custom-calendar-weekday"
+                                    aria-label={
+                                        [
+                                            "Sunday",
+                                            "Monday",
+                                            "Tuesday",
+                                            "Wednesday",
+                                            "Thursday",
+                                            "Friday",
+                                            "Saturday",
+                                        ][i]
+                                    }
+                                >
+                                    {day}
+                                </th>
+                            ),
+                        )}
+                    </tr>
+                </thead>
+                <tbody>
+                    {weeks.map((week, i) => (
+                        <tr key={i} className="custom-calendar-week">
+                            {week}
                         </tr>
-                    </thead>
-                    <tbody>
-                        {weeks.map((week, i) => (
-                            <tr key={i} className="custom-calendar-week">
-                                {week}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                    ))}
+                </tbody>
+            </table>
         );
     };
 
     return (
         <div className="custom-calendar-container">
-            <div className="custom-calendar-navigation">
-                <button
-                    type="button"
-                    className="custom-calendar-nav-btn"
-                    onClick={() => navigateMonth("prev")}
-                    aria-label="Previous month"
+            <s-box padding="none">
+                {/* Date Inputs with Navigation */}
+                <s-box
+                    padding="small"
+                    background="strong"
+                    inlineSize="100%"
+                    border="base"
+                    borderStyle="none none solid none"
+                    borderColor="base"
                 >
-                    <s-icon type="arrow-left" tone="neutral" />
-                </button>
-                <button
-                    type="button"
-                    className="custom-calendar-nav-btn"
-                    onClick={() => navigateMonth("next")}
-                    aria-label="Next month"
-                >
-                    <s-icon type="arrow-right" tone="neutral" />
-                </button>
-            </div>
+                    <s-stack direction="inline" gap="small" alignItems="center">
+                        <div className="custom-calendar-input-group">
+                            <s-text-field
+                                label="Start Date"
+                                labelAccessibilityVisibility="exclusive"
+                                value={startInput}
+                                placeholder="YYYY-MM-DD"
+                                onChange={handleStartChange}
+                            />
+                        </div>
 
-            <div className="custom-calendar-months">
-                {renderCalendar(leftMonth)}
-                {renderCalendar(rightMonth)}
-            </div>
+                        <s-icon type="arrow-right" tone="neutral" />
+
+                        <div className="custom-calendar-input-group">
+                            <s-text-field
+                                label="End Date"
+                                labelAccessibilityVisibility="exclusive"
+                                value={endInput}
+                                placeholder="YYYY-MM-DD"
+                                onChange={handleEndChange}
+                            />
+                        </div>
+                    </s-stack>
+                </s-box>
+
+                {/* Dual Calendar Months */}
+                <div className="custom-calendar-months">
+                    {/* Navigation Arrows */}
+                    <div className="custom-calendar-navigation">
+                        <s-box padding="small">
+                            <s-stack
+                                direction="inline"
+                                justifyContent="space-between"
+                                inlineSize="100%"
+                            >
+                                <button
+                                    type="button"
+                                    className="custom-calendar-nav-btn"
+                                    onClick={() => navigateMonth("prev")}
+                                    aria-label="Previous month"
+                                >
+                                    <s-icon type="arrow-left" tone="neutral" />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="custom-calendar-nav-btn"
+                                    onClick={() => navigateMonth("next")}
+                                    aria-label="Next month"
+                                >
+                                    <s-icon type="arrow-right" tone="neutral" />
+                                </button>
+                            </s-stack>
+                        </s-box>
+                    </div>
+
+                    <s-box padding="small">
+                        <s-stack
+                            direction="inline"
+                            gap="base"
+                            paddingBlockStart="small-300"
+                            paddingBlockEnd="large-500"
+                        >
+                            <div className="custom-calendar-month">
+                                {renderCalendar(leftMonth)}
+                            </div>
+                            <div className="custom-calendar-month">
+                                {renderCalendar(rightMonth)}
+                            </div>
+                        </s-stack>
+                    </s-box>
+                </div>
+            </s-box>
         </div>
     );
 }

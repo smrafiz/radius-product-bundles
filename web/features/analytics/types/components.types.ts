@@ -33,3 +33,15 @@ export interface AnalyticsOrderBundleConfig {
     bundle_total: string;
     order_total: string;
 }
+
+/**
+ * Analytics calendar props
+ */
+export interface AnalyticsCalendarProps {
+    value: { start: string; end: string };
+    onChange: (range: { start: string; end: string }) => void;
+    onStartInputChange?: (value: string) => void;
+    onEndInputChange?: (value: string) => void;
+    startInput: string;
+    endInput: string;
+}

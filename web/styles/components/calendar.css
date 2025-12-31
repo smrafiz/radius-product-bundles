@@ -1,4 +1,4 @@
-/* Custom Calendar - Shopify Analytics Design with Semantic Table Structure */
+/* Custom Calendar Styles - Shopify Analytics Design */
 
 .custom-calendar-container {
 	display: flex;
@@ -8,11 +8,26 @@
 	position: relative;
 }
 
+/* Date Inputs Header */
+.custom-calendar-header {
+	display: flex;
+	align-items: center;
+	gap: var(--p-space-200, 8px);
+	margin-bottom: var(--p-space-200, 8px);
+}
+
+.custom-calendar-input-group {
+	flex: 1;
+}
+
+.custom-calendar-input-group s-text-field {
+	width: 100%;
+}
+
+/* Navigation Arrows */
 .custom-calendar-navigation {
 	position: absolute;
-	top: 0;
-	display: flex;
-	justify-content: space-between;
+	top: 0.35rem;
 	width: 100%;
 }
 
@@ -26,7 +41,6 @@
 	border: none;
 	border-radius: var(--p-border-radius-200, 8px);
 	cursor: pointer;
-	font-size: var(--p-font-size-400, 16px);
 	color: var(--p-color-text, #202223);
 	transition: background-color 0.2s;
 }
@@ -35,18 +49,21 @@
 	background: var(--p-color-bg-surface-hover, #f6f6f7);
 }
 
+/* Calendar Months Container */
 .custom-calendar-months {
 	display: flex;
 	gap: var(--p-space-400, 16px);
-	margin-top: var(--p-space-150);
+	position: relative;
 }
 
 .custom-calendar-month {
 	flex: 1 1 14.375rem;
 	max-width: calc(100% - var(--p-space-400));
 	min-width: 14.375rem;
+	margin-top: var(--p-space-150);
 }
 
+/* Calendar Table */
 .custom-calendar-table {
 	width: 100%;
 	border-collapse: separate;
@@ -98,7 +115,7 @@
 	border: none;
 	background: transparent;
 	cursor: pointer;
-	font-size: var(--p-font-size-300, 12px);
+	font-size: var(--p-font-size-325, 13px);
 	line-height: var(--p-font-line-height-500, 1.6);
 	color: var(--p-color-text, #202223);
 	border-radius: 0;
@@ -124,6 +141,7 @@
 .custom-calendar-day--range-end {
 	background: var(--p-color-bg-fill-brand, #005bd3);
 	color: var(--p-color-text-on-color, #ffffff);
+	font-weight: var(--p-font-weight-semibold, 600);
 	z-index: 1;
 }
 

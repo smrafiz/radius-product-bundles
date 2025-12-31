@@ -56,7 +56,7 @@ export function BundlePreviewFixed() {
 
     return (
         <div
-            className="rtpb-bundle-layout-one sm:w-[500px] m-auto"
+            className="rtpb-bundle-layout-one sm:w-125 m-auto"
             style={{
                 backgroundColor: styleData.boxBgColor || "#ffffff",
                 borderRadius: `${styleData.boxRadius ?? 12}px`,
