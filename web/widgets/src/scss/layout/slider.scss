@@ -7,6 +7,21 @@
 @use "../global" as *;
 
 .radius-bundle {
+    &__products {
+        &--slider {
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            padding: var(--rb-spacing-sm) 0;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
     &__product--slider {
         flex: 0 0 auto;
         width: 140px;
