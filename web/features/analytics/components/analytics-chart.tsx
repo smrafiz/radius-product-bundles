@@ -20,7 +20,7 @@ import { formatCurrency } from "@/shared";
  * Displays time-series data for bundle performance.
  */
 export function AnalyticsChart() {
-    const { chartData, isChartLoading } = useAnalytics(30);
+    const { chartData, isChartLoading } = useAnalytics();
 
     const formattedData = useMemo(() => {
         if (!chartData) return [];

@@ -27,6 +27,8 @@ export function AnalyticsCalendar({
         isRangeStart,
         isRangeEnd,
         isToday,
+        isHovered,
+        isInMiddle,
     } = useCalendar(value, onChange);
 
     // Calculate right month
@@ -92,6 +94,8 @@ export function AnalyticsCalendar({
             const inRange = isInRange(date);
             const isStart = isRangeStart(date);
             const isEnd = isRangeEnd(date);
+            const isHover = isHovered(date);
+            const isMiddle = isInMiddle(date);
 
             currentWeek.push(
                 <td
@@ -106,6 +110,8 @@ export function AnalyticsCalendar({
                             inRange && "custom-calendar-day--in-range",
                             isStart && "custom-calendar-day--range-start",
                             isEnd && "custom-calendar-day--range-end",
+                            isHover && "custom-calendar-day--hover-only",
+                            isMiddle && "custom-calendar-day--middle",
                             isStart && isEnd && "custom-calendar-day--single",
                         ]
                             .filter(Boolean)

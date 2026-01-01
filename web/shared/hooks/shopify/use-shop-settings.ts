@@ -34,6 +34,7 @@ export const useShopSettings = (options: { enabled?: boolean } = {}) => {
                 currencyCode: shopData.currencyCode || "USD",
                 countryCode: shopData.billingAddress?.countryCode ?? undefined,
                 planDisplayName: shopData.plan?.displayName,
+                timezone: shopData.ianaTimezone || "UTC",
             };
 
             memoizedSetSettings(newSettings);
@@ -76,6 +77,8 @@ export const useShopSettings = (options: { enabled?: boolean } = {}) => {
         currencyCode: settings?.currencyCode,
         countryCode: settings?.countryCode,
         name: settings?.name,
+        timezone: settings?.timezone,
+        query: shopQuery,
         refreshShopSettings,
     };
 };

@@ -1,28 +1,76 @@
-/**
- * Date range utility functions
- *
- * Provides preset date range calculations for analytics.
- */
+import { useShopSettingsStore } from "@/shared";
 
 /**
- * Format date to ISO string (YYYY-MM-DD)
+ * Get shop timezone from the settings store
+ */
+function getShopTimezone(): string {
+    const settings = useShopSettingsStore.getState().settings;
+
+    // If shop settings loaded, use shop timezone
+    if (settings?.timezone) {
+        return settings.timezone;
+    }
+
+    // Fallback to browser's timezone
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+}
+
+/**
+ * Format date to ISO string (YYYY-MM-DD) in shop timezone
  */
 export function formatDate(date: Date): string {
-    return date.toISOString().split("T")[0];
+    const timezone = getShopTimezone();
+
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+
+    const parts = formatter.formatToParts(date);
+    const year = parts.find((p) => p.type === "year")?.value;
+    const month = parts.find((p) => p.type === "month")?.value;
+    const day = parts.find((p) => p.type === "day")?.value;
+
+    return `${year}-${month}-${day}`;
 }
 
 /**
  * Parse date string to Date object
  */
 export function parseDate(dateStr: string): Date {
-    return new Date(dateStr + "T00:00:00");
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+}
+
+/**
+ * Get current date in shop timezone
+ */
+export function getTodayInShopTimezone(): Date {
+    const timezone = getShopTimezone();
+    const now = new Date();
+
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+
+    const parts = formatter.formatToParts(now);
+    const year = parseInt(parts.find((p) => p.type === "year")?.value || "0");
+    const month = parseInt(parts.find((p) => p.type === "month")?.value || "0");
+    const day = parseInt(parts.find((p) => p.type === "day")?.value || "0");
+
+    return new Date(year, month - 1, day);
 }
 
 /**
  * Get today's date range
  */
 export function getToday(): { start: string; end: string } {
-    const today = new Date();
+    const today = getTodayInShopTimezone();
     const d = formatDate(today);
     return { start: d, end: d };
 }
@@ -31,7 +79,7 @@ export function getToday(): { start: string; end: string } {
  * Get yesterday's date range
  */
 export function getYesterday(): { start: string; end: string } {
-    const today = new Date();
+    const today = getTodayInShopTimezone();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     const d = formatDate(yesterday);
@@ -42,10 +90,11 @@ export function getYesterday(): { start: string; end: string } {
  * Get last N days range
  */
 export function getLastNDays(days: number): { start: string; end: string } {
-    const today = new Date();
+    const today = getTodayInShopTimezone();
     const end = formatDate(today);
     const start = new Date(today);
     start.setDate(start.getDate() - (days - 1));
+
     return { start: formatDate(start), end };
 }
 
@@ -81,7 +130,7 @@ export function getLast365Days(): { start: string; end: string } {
  * Get last week range (Monday to Sunday)
  */
 export function getLastWeek(): { start: string; end: string } {
-    const today = new Date();
+    const today = getTodayInShopTimezone();
     const end = new Date(today);
     end.setDate(end.getDate() - end.getDay()); // Last Sunday
     const start = new Date(end);
@@ -93,7 +142,7 @@ export function getLastWeek(): { start: string; end: string } {
  * Get last month range
  */
 export function getLastMonth(): { start: string; end: string } {
-    const today = new Date();
+    const today = getTodayInShopTimezone();
     const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
     const lastDay = new Date(today.getFullYear(), today.getMonth(), 0);
     return { start: formatDate(lastMonth), end: formatDate(lastDay) };
@@ -166,5 +215,24 @@ export function getInitialRangeForDays(days: number): {
  * Validate date string format (YYYY-MM-DD)
  */
 export function isValidDateString(dateStr: string): boolean {
-    return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return false;
+    }
+
+    const date = parseDate(dateStr);
+    return !isNaN(date.getTime());
+}
+
+/**
+ * Validate date range
+ */
+export function isValidDateRange(start: string, end: string): boolean {
+    if (!isValidDateString(start) || !isValidDateString(end)) {
+        return false;
+    }
+
+    const startDate = parseDate(start);
+    const endDate = parseDate(end);
+
+    return startDate <= endDate;
 }

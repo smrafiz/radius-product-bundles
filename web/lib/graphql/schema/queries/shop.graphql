@@ -16,5 +16,6 @@ query GetShopInfo {
         billingAddress {
             countryCode
         }
+        ianaTimezone
     }
 }

@@ -5,6 +5,7 @@ export interface ShopSettings {
     currencyCode: string;
     countryCode?: string;
     planDisplayName?: string;
+    timezone?: string;
 }
 
 export interface ShopSettingsState {

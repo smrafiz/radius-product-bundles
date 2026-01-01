@@ -1,45 +1,37 @@
 "use client";
 
 import { create } from "zustand";
-
-interface AnalyticsDateRangeState {
-    startDate: string;
-    endDate: string;
-    days: number;
-    setDateRange: (start: string, end: string) => void;
-    setDays: (days: number) => void;
-}
+import { AnalyticsState } from "@/features/analytics";
+import { formatDate, getTodayInShopTimezone } from "@/features/analytics/utils";
 
 /**
  * Analytics date range store
  *
  * Manages the selected date range for analytics queries.
  */
-export const useAnalyticsStore = create<AnalyticsDateRangeState>((set) => {
-    const today = new Date();
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
+export const useAnalyticsStore = create<AnalyticsState>((set) => {
     return {
-        startDate: sevenDaysAgo.toISOString().split("T")[0],
-        endDate: today.toISOString().split("T")[0],
-        days: 7,
+        startDate: "",
+        endDate: "",
+        days: 30,
+
         setDateRange: (start, end) => {
             const startDate = new Date(start);
             const endDate = new Date(end);
             const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
             set({ startDate: start, endDate: end, days: diffDays });
         },
+
         setDays: (days) => {
-            const today = new Date();
+            const today = getTodayInShopTimezone();
             const startDate = new Date(today);
-            startDate.setDate(startDate.getDate() - days);
+            startDate.setDate(startDate.getDate() - (days - 1));
 
             set({
-                startDate: startDate.toISOString().split("T")[0],
-                endDate: today.toISOString().split("T")[0],
+                startDate: formatDate(startDate),
+                endDate: formatDate(today),
                 days,
             });
         },

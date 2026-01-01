@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatDate } from "@/features/analytics";
+import { formatDate } from "@/features/analytics/utils";
 
 /**
  * Calendar hook
@@ -46,32 +46,40 @@ export function useCalendar(
         } else {
             // Second click: Set end date
             const start = new Date(value.start);
+
             if (date < start) {
-                // If clicked date is before start, swap them
-                onChange({ start: dateStr, end: value.start });
+                // If clicked date is before start, reset and set a new start
+                onChange({ start: dateStr, end: dateStr });
+                // Stay in selecting end mode
+                setSelectingStart(false);
             } else {
+                // If the clicked date is after start, set as the end
                 onChange({ start: value.start, end: dateStr });
+                // The third click will reset
+                setSelectingStart(true);
             }
-            // Third click will reset
-            setSelectingStart(true);
         }
     };
 
     /**
-     * Check if date is in range
+     * Check if date is in range (including hover preview)
      */
     const isInRange = (date: Date): boolean => {
         const dateStr = formatDate(date);
         if (!value.start) return false;
 
-        // If selecting end and hovering, show preview range
+        // If selecting end and hovering
         if (!selectingStart && hoverDate) {
             const start = value.start;
             const end = hoverDate;
-            if (end < start) {
-                return dateStr >= end && dateStr <= start;
+
+            // Only show range if hovering AFTER start date
+            if (end >= start) {
+                return dateStr >= start && dateStr <= end;
             }
-            return dateStr >= start && dateStr <= end;
+
+            // If hovering before start, no range preview
+            return false;
         }
 
         // Show actual selected range
@@ -87,10 +95,17 @@ export function useCalendar(
     };
 
     /**
-     * Check if date is range end
+     * Check if date is range end (includes hover preview)
      */
     const isRangeEnd = (date: Date): boolean => {
-        return formatDate(date) === value.end;
+        const dateStr = formatDate(date);
+
+        // If selecting end and hovering AFTER start
+        if (!selectingStart && hoverDate && hoverDate >= value.start) {
+            return dateStr === hoverDate;
+        }
+
+        return dateStr === value.end;
     };
 
     /**
@@ -99,6 +114,35 @@ export function useCalendar(
     const isToday = (date: Date): boolean => {
         const today = new Date();
         return formatDate(date) === formatDate(today);
+    };
+
+    /**
+     * Check if date is being hovered (for backward hover style)
+     */
+    const isHovered = (date: Date): boolean => {
+        const dateStr = formatDate(date);
+
+        // Only show hover if selecting end and hovering BEFORE start
+        if (!selectingStart && hoverDate && hoverDate < value.start) {
+            return dateStr === hoverDate;
+        }
+
+        return false;
+    };
+
+    /**
+     * Check if date is in middle of range (for border radius 0)
+     */
+    const isInMiddle = (date: Date): boolean => {
+        const dateStr = formatDate(date);
+
+        // If selecting end and hovering
+        if (!selectingStart && hoverDate && hoverDate >= value.start) {
+            return dateStr > value.start && dateStr < hoverDate;
+        }
+
+        // Actual range
+        return !!(value.end && dateStr > value.start && dateStr < value.end);
     };
 
     return {
@@ -117,5 +161,7 @@ export function useCalendar(
         isRangeStart,
         isRangeEnd,
         isToday,
+        isHovered,
+        isInMiddle,
     };
 }

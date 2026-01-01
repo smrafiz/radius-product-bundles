@@ -1,57 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
     DATE_PRESET_GROUPS,
     DATE_RANGE_PRESETS,
 } from "@/features/analytics/constants";
+import { useShopSettings } from "@/shared";
 import { AnalyticsCalendar, useDateRangePicker } from "@/features/analytics";
 
 /**
  * Analytics date range picker component
- *
- * Provides date range selection with presets and custom calendar.
  */
 export function AnalyticsDate() {
-    const [isOpen, setIsOpen] = useState(false);
-
     const {
         range,
         startInput,
         endInput,
         label,
         activePreset,
-        setRange,
         handleStartInputChange,
         handleEndInputChange,
         handlePresetClick,
-        applyRange,
-        resetRange,
+        handleCalendarChange,
+        handleApply,
+        handleCancel,
+        isValidRange,
     } = useDateRangePicker();
 
-    /**
-     * Handle Apply button
-     */
-    const handleApply = () => {
-        applyRange();
-        setIsOpen(false);
-    };
-
-    /**
-     * Handle Cancel button
-     */
-    const handleCancel = () => {
-        resetRange();
-        setIsOpen(false);
-    };
+    useShopSettings();
 
     return (
         <s-stack gap="base">
-            <s-button
-                commandFor="analytics-date-popover"
-                variant="secondary"
-                onClick={() => setIsOpen(!isOpen)}
-            >
+            <s-button commandFor="analytics-date-popover" variant="secondary">
                 <s-stack direction="inline" alignItems="center" gap="small-300">
                     <s-icon type="calendar" />
                     <s-text>{label}</s-text>
@@ -129,15 +109,13 @@ export function AnalyticsDate() {
 
                             {/* Vertical Divider */}
                             <div className="h-100">
-                                <s-divider direction="block"></s-divider>
+                                <s-divider direction="block" />
                             </div>
 
-                            {/* Custom Calendar with Inputs */}
+                            {/* Custom Calendar */}
                             <AnalyticsCalendar
                                 value={range}
-                                onChange={(newRange) => {
-                                    setRange(newRange);
-                                }}
+                                onChange={handleCalendarChange}
                                 onStartInputChange={handleStartInputChange}
                                 onEndInputChange={handleEndInputChange}
                                 startInput={startInput}
@@ -156,11 +134,19 @@ export function AnalyticsDate() {
                         >
                             <s-button
                                 variant="secondary"
+                                command="--hide"
+                                commandFor="analytics-date-popover"
                                 onClick={handleCancel}
                             >
                                 Cancel
                             </s-button>
-                            <s-button variant="primary" onClick={handleApply}>
+                            <s-button
+                                variant="primary"
+                                command="--hide"
+                                commandFor="analytics-date-popover"
+                                onClick={(event) => handleApply(event)}
+                                disabled={!isValidRange()}
+                            >
                                 Apply
                             </s-button>
                         </s-stack>
