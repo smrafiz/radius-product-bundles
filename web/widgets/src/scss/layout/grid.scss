@@ -7,6 +7,13 @@
 @use "../global" as *;
 
 .radius-bundle {
+    &__products {
+        &--grid {
+            display: grid;
+            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
+            gap: var(--rb-spacing);
+        }
+    }
     &__product--grid {
         padding: var(--rb-spacing);
         background: #f7f7f7;

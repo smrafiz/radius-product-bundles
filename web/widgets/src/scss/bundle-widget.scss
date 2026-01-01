@@ -27,70 +27,8 @@
         padding: var(--rb-spacing-lg);
     }
 
-    // ==========================================================================
-    // Products Container
-    // ==========================================================================
-
     &__products {
         margin-bottom: var(--rb-spacing);
-
-        // List layout
-        &--list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--rb-spacing);
-        }
-
-        // Grid layout
-        &--grid {
-            display: grid;
-            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
-            gap: var(--rb-spacing);
-        }
-
-        // Slider layout
-        &--slider {
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            padding: var(--rb-spacing-sm) 0;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-
-            &::-webkit-scrollbar {
-                display: none;
-            }
-        }
-    }
-
-    // ==========================================================================
-    // Product Price (Shared)
-    // ==========================================================================
-
-    &__product-price-current {
-        font-size: var(--rb-font-size-medium);
-        font-weight: 500;
-        color: var(--rb-text-color);
-        display: block;
-    }
-
-    &__product-price-compare {
-        font-size: var(--rb-font-size-small);
-        color: var(--rb-muted-color);
-        text-decoration: line-through;
-        display: block;
-    }
-
-    &__product-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        background: #f5f5f5;
-        border-radius: 8px;
     }
 
     // ==========================================================================
@@ -169,84 +107,6 @@
         }
     }
 
-    // ==========================================================================
-    // Pricing Section
-    // ==========================================================================
-
-    &__pricing {
-        padding: var(--rb-spacing);
-        background: #f9f9f9;
-        border-radius: var(--rb-border-radius);
-        margin-bottom: var(--rb-spacing);
-    }
-
-    &__pricing-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--rb-spacing-xs) 0;
-
-        &--highlight {
-            padding: var(--rb-spacing-sm) 0;
-            border-top: 1px dashed var(--rb-border-color);
-            margin-top: var(--rb-spacing-xs);
-        }
-    }
-
-    &__pricing-label {
-        font-size: var(--rb-font-size-medium);
-        color: var(--rb-secondary-color);
-    }
-
-    &__price-original {
-        font-size: var(--rb-font-size-small);
-        color: var(--rb-muted-color);
-        text-decoration: line-through;
-    }
-
-    &__price-discounted {
-        font-size: var(--rb-font-size-medium);
-        font-weight: 600;
-        color: var(--rb-text-color);
-    }
-
-    &__savings {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--rb-spacing-sm);
-        background: rgba(34, 197, 94, 0.1);
-        border-radius: 8px;
-        margin-top: var(--rb-spacing-sm);
-    }
-
-    &__savings-label {
-        font-size: var(--rb-font-size-medium);
-        color: var(--rb-savings-color);
-        font-weight: 500;
-    }
-
-    &__savings-amount {
-        font-size: var(--rb-font-size-medium);
-        font-weight: 600;
-        color: var(--rb-savings-color);
-    }
-
-    &__free-shipping {
-        display: flex;
-        align-items: center;
-        gap: var(--rb-spacing-sm);
-        padding: var(--rb-spacing-sm);
-        background: rgba(59, 130, 246, 0.1);
-        border-radius: 8px;
-        margin-top: var(--rb-spacing-sm);
-        font-size: var(--rb-font-size-medium);
-        color: #3b82f6;
-
-        svg {
-            flex-shrink: 0;
-        }
-    }
 
     // ==========================================================================
     // Add to Cart Button
