@@ -5,31 +5,6 @@
   },
   {
     "type": "color",
-    "id": "background_color",
-    "label": "Background color"
-  },
-  {
-    "type": "color",
-    "id": "border_color",
-    "label": "Border color"
-  },
-  {
-    "type": "color",
-    "id": "heading_color",
-    "label": "Heading color"
-  },
-  {
-    "type": "color",
-    "id": "text_color",
-    "label": "Text color"
-  },
-  {
-    "type": "color",
-    "id": "price_color",
-    "label": "Price color"
-  },
-  {
-    "type": "color",
     "id": "primary_color",
     "label": "Primary/accent color"
   },
@@ -40,12 +15,23 @@
   },
   {
     "type": "color",
-    "id": "savings_color",
-    "label": "Savings badge background"
+    "id": "background_color",
+    "label": "Background color"
   },
   {
     "type": "color",
-    "id": "savings_text_color",
-    "label": "Savings badge text"
+    "id": "heading_color",
+    "label": "Heading color",
+    "default": "#303030"
+  },
+  {
+    "type": "color",
+    "id": "text_color",
+    "label": "Text color"
+  },
+  {
+    "type": "color",
+    "id": "border_color",
+    "label": "Border color"
   }
 ]

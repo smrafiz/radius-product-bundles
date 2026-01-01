@@ -15,7 +15,8 @@
 
     &__product-price-compare {
         font-size: var(--rb-font-size-small);
-        color: var(--rb-muted-color);
+        color: var(--rb-text-color);
+        opacity: 0.5;
         text-decoration: line-through;
         display: block;
     }
@@ -57,12 +58,13 @@
 
     &__pricing-label {
         font-size: var(--rb-font-size-medium);
-        color: var(--rb-secondary-color);
+        color: var(--rb-text-color);
     }
 
     &__price-original {
         font-size: var(--rb-font-size-small);
-        color: var(--rb-muted-color);
+        color: var(--rb-text-color);
+        opacity: 0.5;
         text-decoration: line-through;
     }
 
