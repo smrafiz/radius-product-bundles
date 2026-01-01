@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { DATE_RANGE_PRESETS } from "@/features/analytics/constants";
+import {
+    DATE_PRESET_GROUPS,
+    DATE_RANGE_PRESETS,
+} from "@/features/analytics/constants";
 import { AnalyticsCalendar, useDateRangePicker } from "@/features/analytics";
 
 /**
@@ -65,55 +68,69 @@ export function AnalyticsDate() {
                             alignItems="start"
                         >
                             {/* Preset Buttons */}
-                            <s-box padding="small-300">
-                                <s-stack gap="small-400" inlineSize="197px">
-                                    {DATE_RANGE_PRESETS.map((preset) => (
-                                        <s-clickable
-                                            key={preset.key}
-                                            padding="small-300"
-                                            borderRadius="base"
-                                            background={
-                                                activePreset === preset.key
-                                                    ? "strong"
-                                                    : "transparent"
-                                            }
-                                            onClick={() =>
-                                                handlePresetClick(preset)
-                                            }
-                                        >
-                                            <s-stack
-                                                direction="inline"
-                                                justifyContent="space-between"
-                                            >
-                                                <s-text
-                                                    type={
-                                                        activePreset ===
-                                                        preset.key
-                                                            ? "strong"
-                                                            : "generic"
-                                                    }
-                                                >
-                                                    {preset.label}
-                                                </s-text>
-                                                {activePreset ===
-                                                    preset.key && (
-                                                    <s-text>✓</s-text>
-                                                )}
+                            <s-stack gap="small-500" inlineSize="200px">
+                                {DATE_PRESET_GROUPS.map((group, groupIndex) => (
+                                    <React.Fragment key={groupIndex}>
+                                        <s-box padding="small-300">
+                                            <s-stack gap="small-400">
+                                                {DATE_RANGE_PRESETS.slice(
+                                                    group.start,
+                                                    group.end,
+                                                ).map((preset) => (
+                                                    <s-clickable
+                                                        key={preset.key}
+                                                        padding="small-300"
+                                                        borderRadius="base"
+                                                        background={
+                                                            activePreset ===
+                                                            preset.key
+                                                                ? "strong"
+                                                                : "transparent"
+                                                        }
+                                                        onClick={() =>
+                                                            handlePresetClick(
+                                                                preset,
+                                                            )
+                                                        }
+                                                    >
+                                                        <s-stack
+                                                            direction="inline"
+                                                            justifyContent="space-between"
+                                                        >
+                                                            <s-text
+                                                                type={
+                                                                    activePreset ===
+                                                                    preset.key
+                                                                        ? "strong"
+                                                                        : "generic"
+                                                                }
+                                                            >
+                                                                {preset.label}
+                                                            </s-text>
+                                                            {activePreset ===
+                                                                preset.key && (
+                                                                <s-text>
+                                                                    ✓
+                                                                </s-text>
+                                                            )}
+                                                        </s-stack>
+                                                    </s-clickable>
+                                                ))}
                                             </s-stack>
-                                        </s-clickable>
-                                    ))}
-                                </s-stack>
-                            </s-box>
+                                        </s-box>
+
+                                        {groupIndex <
+                                            DATE_PRESET_GROUPS.length - 1 && (
+                                            <s-divider />
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </s-stack>
 
                             {/* Vertical Divider */}
-                            <div
-                                style={{
-                                    width: "1px",
-                                    background:
-                                        "var(--p-color-border-subdued, #e1e3e5)",
-                                    alignSelf: "stretch",
-                                }}
-                            />
+                            <div className="h-100">
+                                <s-divider direction="block"></s-divider>
+                            </div>
 
                             {/* Custom Calendar with Inputs */}
                             <AnalyticsCalendar

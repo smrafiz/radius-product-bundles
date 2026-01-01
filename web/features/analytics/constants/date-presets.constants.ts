@@ -22,3 +22,9 @@ export const DATE_RANGE_PRESETS = [
     { key: "lastWeek", label: "Last week", getValue: getLastWeek },
     { key: "lastMonth", label: "Last month", getValue: getLastMonth },
 ] as const;
+
+export const DATE_PRESET_GROUPS = [
+    { start: 0, end: 2 },
+    { start: 2, end: 6 },
+    { start: 6, end: 8 },
+] as const;

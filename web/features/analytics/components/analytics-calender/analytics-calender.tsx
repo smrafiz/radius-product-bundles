@@ -100,14 +100,16 @@ export function AnalyticsCalendar({
                 >
                     <button
                         type="button"
-                        className={`
-                            custom-calendar-day
-                            ${isTodayDate ? "custom-calendar-day--today" : ""}
-                            ${inRange ? "custom-calendar-day--in-range" : ""}
-                            ${isStart ? "custom-calendar-day--range-start" : ""}
-                            ${isEnd ? "custom-calendar-day--range-end" : ""}
-                            ${isStart && isEnd ? "custom-calendar-day--single" : ""}
-                        `.trim()}
+                        className={[
+                            "custom-calendar-day",
+                            isTodayDate && "custom-calendar-day--today",
+                            inRange && "custom-calendar-day--in-range",
+                            isStart && "custom-calendar-day--range-start",
+                            isEnd && "custom-calendar-day--range-end",
+                            isStart && isEnd && "custom-calendar-day--single",
+                        ]
+                            .filter(Boolean)
+                            .join(" ")}
                         onClick={() => handleDateClick(date)}
                         onMouseEnter={() =>
                             !selectingStart && setHoverDate(dateStr)
@@ -190,7 +192,7 @@ export function AnalyticsCalendar({
                 {/* Date Inputs with Navigation */}
                 <s-box
                     padding="small"
-                    background="strong"
+                    background="subdued"
                     inlineSize="100%"
                     border="base"
                     borderStyle="none none solid none"

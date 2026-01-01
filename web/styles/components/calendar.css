@@ -1,27 +1,7 @@
 /* Custom Calendar Styles - Shopify Analytics Design */
 
-.custom-calendar-container {
-	display: flex;
-	flex-direction: column;
-	gap: var(--p-space-300, 12px);
-	max-width: 100%;
-	position: relative;
-}
-
-/* Date Inputs Header */
-.custom-calendar-header {
-	display: flex;
-	align-items: center;
-	gap: var(--p-space-200, 8px);
-	margin-bottom: var(--p-space-200, 8px);
-}
-
 .custom-calendar-input-group {
 	flex: 1;
-}
-
-.custom-calendar-input-group s-text-field {
-	width: 100%;
 }
 
 /* Navigation Arrows */
@@ -39,10 +19,9 @@
 	height: 2rem;
 	background: transparent;
 	border: none;
-	border-radius: var(--p-border-radius-200, 8px);
+	border-radius: var(--p-border-radius-200, .5rem);
 	cursor: pointer;
 	color: var(--p-color-text, #202223);
-	transition: background-color 0.2s;
 }
 
 .custom-calendar-nav-btn:hover {
@@ -51,8 +30,6 @@
 
 /* Calendar Months Container */
 .custom-calendar-months {
-	display: flex;
-	gap: var(--p-space-400, 16px);
 	position: relative;
 }
 
@@ -73,7 +50,7 @@
 .custom-calendar-caption {
 	text-align: center;
 	font-size: var(--p-font-size-325, 14px);
-	font-weight: var(--p-font-weight-semibold, 600);
+	font-weight: var(--p-font-weight-medium, 550);
 	color: var(--p-color-text, #202223);
 	padding-block-end: var(--p-space-300, 12px);
 	caption-side: top;
@@ -82,13 +59,9 @@
 .custom-calendar-weekday {
 	text-align: center;
 	font-size: var(--p-font-size-300, 12px);
-	font-weight: var(--p-font-weight-medium, 500);
-	color: var(--p-color-text-subdued, #6d7175);
+	font-weight: var(--p-font-weight-regular, 450);
+	color: var(--p-color-text-secondary, #616161);
 	padding: var(--p-space-100, 4px);
-}
-
-.custom-calendar-week {
-	/* Week rows */
 }
 
 .custom-calendar-day-cell {
@@ -102,10 +75,6 @@
 	background: var(--p-color-bg-surface-brand-selected, #e3f1ff);
 }
 
-.custom-calendar-empty-cell {
-	/* Empty cells before/after month */
-}
-
 .custom-calendar-day {
 	width: 100%;
 	aspect-ratio: 1;
@@ -115,16 +84,12 @@
 	border: none;
 	background: transparent;
 	cursor: pointer;
-	font-size: var(--p-font-size-325, 13px);
-	line-height: var(--p-font-line-height-500, 1.6);
+	font-size: var(--p-font-size-300, .75rem);
+	font-weight: var(--p-font-weight-regular, 450);
+	line-height: var(--p-font-line-height-400, 1rem);
 	color: var(--p-color-text, #202223);
-	border-radius: 0;
-	transition: background-color 0.15s;
+	border-radius: var(--p-border-radius-200, .5rem);
 	position: relative;
-}
-
-.custom-calendar-day:hover {
-	background: var(--p-color-bg-surface-hover, #f6f6f7);
 }
 
 .custom-calendar-day--today {
@@ -133,16 +98,17 @@
 }
 
 .custom-calendar-day--in-range {
-	background: var(--p-color-bg-surface-brand-selected, #e3f1ff);
-	color: var(--p-color-text, #202223);
+	background: var(--p-color-bg-surface-brand-selected, #f1f1f1);
+	border-radius: 0;
 }
 
+.custom-calendar-day:hover,
 .custom-calendar-day--range-start,
 .custom-calendar-day--range-end {
-	background: var(--p-color-bg-fill-brand, #005bd3);
-	color: var(--p-color-text-on-color, #ffffff);
-	font-weight: var(--p-font-weight-semibold, 600);
 	z-index: 1;
+	background: var(--p-color-bg-fill-brand-hover, #1a1a1a);
+	color: var(--p-color-text-brand-on-bg-fill, #fff);
+	outline: var(--p-border-width-025, .0625rem) solid #0000;
 }
 
 .custom-calendar-day--range-start:hover,
@@ -150,16 +116,15 @@
 	background: var(--p-color-bg-fill-brand-hover, #004b9c);
 }
 
-/* Round corners on range edges */
+/* Round corners */
 .custom-calendar-day--range-start {
-	border-radius: var(--p-border-radius-200, 8px) 0 0 var(--p-border-radius-200, 8px);
+	border-radius: var(--p-border-radius-200, .5rem) 0 0 var(--p-border-radius-200, .5rem);
 }
 
 .custom-calendar-day--range-end {
-	border-radius: 0 var(--p-border-radius-200, 8px) var(--p-border-radius-200, 8px) 0;
+	border-radius: 0 var(--p-border-radius-200, .5rem) var(--p-border-radius-200, .5rem) 0;
 }
 
-/* Single day selection (start === end) */
 .custom-calendar-day--single {
-	border-radius: var(--p-border-radius-200, 8px);
+	border-radius: var(--p-border-radius-200, .5rem);
 }
