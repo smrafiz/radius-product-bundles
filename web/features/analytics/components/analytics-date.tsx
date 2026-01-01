@@ -31,11 +31,12 @@ export function AnalyticsDate() {
 
     return (
         <s-stack gap="base">
-            <s-button commandFor="analytics-date-popover" variant="secondary">
-                <s-stack direction="inline" alignItems="center" gap="small-300">
-                    <s-icon type="calendar" />
-                    <s-text>{label}</s-text>
-                </s-stack>
+            <s-button
+                commandFor="analytics-date-popover"
+                variant="secondary"
+                icon="calendar"
+            >
+                {label}
             </s-button>
 
             <s-popover id="analytics-date-popover">

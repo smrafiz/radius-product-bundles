@@ -6,6 +6,7 @@ import {
     getPresetForDays,
     parseDate,
     isValidDateString,
+    formatDateRangeLabel,
 } from "@/features/analytics/utils";
 import { useShopSettings } from "@/shared";
 import { useState, useEffect } from "react";
@@ -32,19 +33,21 @@ export function useDateRangePicker() {
     const [range, setRange] = useState(defaultRange);
     const [startInput, setStartInput] = useState(defaultRange.start);
     const [endInput, setEndInput] = useState(defaultRange.end);
-    const [label] = useState(getLabelForDays(days));
     const [activePreset, setActivePreset] = useState(getPresetForDays(days));
+
+    // Track applied preset separately (only changes on Apply)
+    const [appliedPreset, setAppliedPreset] = useState(getPresetForDays(days));
+
+    // Calculate label based on APPLIED range and preset (from store)
+    const label =
+        startDate && endDate
+            ? formatDateRangeLabel(startDate, endDate, appliedPreset)
+            : getLabelForDays(days);
 
     // initialize store ONLY when shop settings are ready
     useEffect(() => {
         if (isInitialized && (!startDate || !endDate)) {
             const range = getInitialRangeForDays(days);
-            console.log(
-                "🔍 Initializing store with timezone:",
-                timezone,
-                "range:",
-                range,
-            );
             useAnalyticsStore.getState().setDateRange(range.start, range.end);
         }
     }, [isInitialized, startDate, endDate, days, timezone]);
@@ -58,10 +61,6 @@ export function useDateRangePicker() {
                 startDate !== correctRange.start ||
                 endDate !== correctRange.end
             ) {
-                console.log(
-                    "🔍 Timezone changed, recalculating range:",
-                    correctRange,
-                );
                 useAnalyticsStore
                     .getState()
                     .setDateRange(correctRange.start, correctRange.end);
@@ -114,7 +113,7 @@ export function useDateRangePicker() {
             const date = parseDate(value);
             if (!isNaN(date.getTime())) {
                 setRange((prev) => ({ ...prev, start: value }));
-                setActivePreset("custom");
+                setActivePreset("custom"); // Only update active preset, not applied
             }
         }
     };
@@ -129,7 +128,7 @@ export function useDateRangePicker() {
             const date = parseDate(value);
             if (!isNaN(date.getTime())) {
                 setRange((prev) => ({ ...prev, end: value }));
-                setActivePreset("custom");
+                setActivePreset("custom"); // Only update active preset, not applied
             }
         }
     };
@@ -145,7 +144,7 @@ export function useDateRangePicker() {
         setRange(value);
         setStartInput(value.start);
         setEndInput(value.end);
-        setActivePreset(preset.key);
+        setActivePreset(preset.key); // Only update active preset, not applied
     };
 
     /**
@@ -153,7 +152,7 @@ export function useDateRangePicker() {
      */
     const handleCalendarChange = (newRange: { start: string; end: string }) => {
         setRange(newRange);
-        setActivePreset("custom");
+        setActivePreset("custom"); // Only update active preset, not applied
     };
 
     /**
@@ -185,7 +184,9 @@ export function useDateRangePicker() {
             return;
         }
 
+        // Update store AND applied preset
         useAnalyticsStore.getState().setDateRange(range.start, range.end);
+        setAppliedPreset(activePreset); // Update label after Apply
     };
 
     /**
@@ -200,7 +201,7 @@ export function useDateRangePicker() {
         setRange(resetRange);
         setStartInput(resetRange.start);
         setEndInput(resetRange.end);
-        setActivePreset(getPresetForDays(days));
+        setActivePreset(appliedPreset); // Reset to applied preset, not calculated
     };
 
     return {

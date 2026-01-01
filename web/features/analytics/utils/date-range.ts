@@ -189,6 +189,81 @@ export function getPresetForDays(days: number): string {
 }
 
 /**
+ * Format date range label like Shopify
+ */
+export function formatDateRangeLabel(
+    startDateStr: string,
+    endDateStr: string,
+    preset?: string,
+): string {
+    // If custom, show only date range
+    if (!preset || preset === "custom") {
+        return formatDateRange(startDateStr, endDateStr);
+    }
+
+    // If preset, show only preset name using existing utility
+    return getLabelForPreset(preset);
+}
+
+/**
+ * Get label for preset key
+ */
+function getLabelForPreset(preset: string): string {
+    switch (preset) {
+        case "today":
+            return "Today";
+        case "yesterday":
+            return "Yesterday";
+        case "last7":
+            return "Last 7 days";
+        case "last30":
+            return "Last 30 days";
+        case "last90":
+            return "Last 90 days";
+        case "last365":
+            return "Last 365 days";
+        case "lastWeek":
+            return "Last week";
+        case "lastMonth":
+            return "Last month";
+        default:
+            return "Last 30 days";
+    }
+}
+
+/**
+ * Format date range as string (e.g., "Dec 2–31, 2025")
+ */
+function formatDateRange(startDateStr: string, endDateStr: string): string {
+    const start = parseDate(startDateStr);
+    const end = parseDate(endDateStr);
+
+    const startMonth = start.toLocaleDateString("en-US", { month: "short" });
+    const endMonth = end.toLocaleDateString("en-US", { month: "short" });
+    const startDay = start.getDate();
+    const endDay = end.getDate();
+    const year = end.getFullYear();
+
+    // Single day
+    if (start.getTime() === end.getTime()) {
+        return `${startMonth} ${startDay}, ${year}`;
+    }
+
+    // Same month
+    if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+        return `${startMonth} ${startDay}–${endDay}, ${year}`;
+    }
+
+    // Same year, different months
+    if (start.getFullYear() === end.getFullYear()) {
+        return `${startMonth} ${startDay}–${endMonth} ${endDay}, ${year}`;
+    }
+
+    // Different years
+    return `${startMonth} ${startDay}, ${start.getFullYear()}–${endMonth} ${endDay}, ${year}`;
+}
+
+/**
  * Get initial date range based on days
  */
 export function getInitialRangeForDays(days: number): {
