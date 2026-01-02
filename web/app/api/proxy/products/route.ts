@@ -1,4 +1,3 @@
-import { Product } from "@/shared";
 import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,

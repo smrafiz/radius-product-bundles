@@ -39,12 +39,17 @@ export async function getAnalyticsMetrics(
  * Track analytics event (view, add-to-cart, purchase)
  */
 export async function trackAnalyticsEvent(event: TrackingEvent) {
+    const timestamp =
+        typeof event.timestamp === "string"
+            ? new Date(event.timestamp)
+            : event.timestamp;
+
     switch (event.type) {
         case "bundle_view":
-            return await trackBundleView(event.bundleId, event.timestamp);
+            return await trackBundleView(event.bundleId, timestamp);
 
         case "bundle_add_to_cart":
-            return await trackAddToCart(event.bundleId, event.timestamp);
+            return await trackAddToCart(event.bundleId, timestamp);
 
         case "bundle_purchase":
             return await trackBundlePurchase({
@@ -52,7 +57,7 @@ export async function trackAnalyticsEvent(event: TrackingEvent) {
                 revenue: event.revenue,
                 customerId: event.customerId,
                 isNewCustomer: event.isNewCustomer,
-                timestamp: event.timestamp,
+                timestamp: timestamp,
             });
 
         default:

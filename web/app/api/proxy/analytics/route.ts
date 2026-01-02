@@ -1,40 +1,12 @@
+import { AnalyticsEventPayload } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
 import { trackAnalyticsEventAction } from "@/features/analytics/actions";
 
 /**
  * Analytics Proxy API
  *
- * Handles analytics tracking from storefront (theme/app embed)
- *
- * Usage from storefront:
- * ```javascript
- * const url = `/apps/bundles/analytics?shop=${shop}`;
- * fetch(url, {
- *   method: 'POST',
- *   headers: { 'Content-Type': 'application/json' },
- *   body: JSON.stringify({
- *     type: 'bundle_view',
- *     bundleId: 'bundle_123',
- *     productId: 'gid://shopify/Product/123',
- *     customerId: 'customer_456' // optional
- *   })
- * });
- * ```
+ * Handles analytics tracking from the storefront
  */
-
-interface AnalyticsEventPayload {
-    type: "bundle_view" | "bundle_add_to_cart" | "page_view";
-    bundleId?: string;
-    productId?: string;
-    customerId?: string;
-    productIds?: string[];
-    totalValue?: number;
-    discountValue?: number;
-    pageType?: string;
-    url?: string;
-    timestamp?: string;
-}
-
 export async function POST(request: NextRequest) {
     try {
         const { searchParams } = request.nextUrl;
@@ -51,7 +23,7 @@ export async function POST(request: NextRequest) {
         const body: AnalyticsEventPayload = await request.json();
         const { type, bundleId, productId, customerId, ...data } = body;
 
-        // Validate event type
+        // Validate the event type
         if (!type) {
             return NextResponse.json(
                 { error: "Missing event type" },

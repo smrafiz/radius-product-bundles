@@ -1,161 +1,217 @@
+import "./scss/radius-bundles.scss";
+
 /**
- * Radius Bundles - Storefront Script
- * Handles analytics tracking and cart management
- *
- * Usage: Loaded automatically via app embed
+ * Radius Bundles - Analytics & Cart Management
  */
 
-(function() {
-    'use strict';
+(function () {
+    "use strict";
 
-    // Get configuration from Liquid
-    const config = window.RadiusBundles?.config || {};
-    const ANALYTICS_ENDPOINT = '/apps/bundles/analytics';
-    const PRODUCTS_ENDPOINT = '/apps/bundles/products';
+    /**
+     * Radius Bundles Configuration Interface
+     */
+    interface RadiusBundlesConfig {
+        shop: string;
+        customerId: string;
+        pageType: string;
+        template: string;
+        enableAnalytics: boolean;
+        showSavingsBanner: boolean;
+        activeBundles: Record<string, BundleMetafieldData> | null;
+    }
 
-    // ============================================
-    // ANALYTICS MODULE
-    // ============================================
+    /**
+     * Bundle Metafield Data Interface
+     */
+    interface BundleMetafieldData {
+        status: string;
+        discountType: string;
+        discountValue: number;
+        freeShipping: boolean;
+        minOrderValue: number;
+        maxDiscountAmount: number;
+        discountApplication: string;
+        discountedProductIds: string[];
+    }
 
-    const Analytics = {
-        /**
-         * Sends tracking event to proxy API
-         */
-        async track(eventType, data = {}) {
-            if (!config.enableAnalytics) {
-                console.log('[RadiusBundles] Analytics disabled');
+    /**
+     * Analytics Event Interface
+     */
+    interface AnalyticsEvent {
+        type: "bundle_view" | "bundle_add_to_cart" | "page_view";
+        bundleId?: string;
+        productId?: string;
+        customerId?: string | null;
+        productIds?: string[];
+        totalValue?: number;
+        discountValue?: number;
+        pageType?: string;
+        template?: string;
+        url?: string;
+        timestamp: string;
+    }
+
+    /**
+     * Cart Response Interface
+     */
+    interface CartResponse {
+        token: string;
+        item_count: number;
+        items: CartItem[];
+        attributes: Record<string, string>;
+    }
+
+    /**
+     * Cart Item Interface
+     */
+    interface CartItem {
+        id: string;
+        quantity: number;
+        properties?: Record<string, string>;
+    }
+
+    /**
+     * Discount Config Interface
+     */
+    interface DiscountConfig {
+        bundleId: string;
+        bundleName: string;
+        discountType: string;
+        discountValue: number;
+        requiredLineCount: number;
+        minOrderValue: number;
+        maxDiscountAmount: number;
+        discountApplication: string;
+        discountedProductIds: string[];
+        freeShipping: boolean;
+    }
+
+    /**
+     * Analytics Class
+     */
+    class Analytics {
+        private readonly config: RadiusBundlesConfig;
+        private readonly apiEndpoint: string = "/apps/bundles/analytics";
+
+        constructor(config: RadiusBundlesConfig) {
+            this.config = config;
+        }
+
+        public async track(
+            eventType: AnalyticsEvent["type"],
+            data: Partial<AnalyticsEvent> = {},
+        ): Promise<void> {
+            if (!this.config.enableAnalytics) {
+                console.log("[RadiusBundles] Analytics disabled");
                 return;
             }
 
-            if (!config.shop) {
-                console.error('[RadiusBundles] Missing shop configuration');
+            if (!this.config.shop) {
+                console.error("[RadiusBundles] Missing shop configuration");
                 return;
             }
 
-            const payload = {
+            const payload: AnalyticsEvent = {
                 type: eventType,
-                customerId: config.customerId || null,
+                customerId: this.config.customerId || null,
                 timestamp: new Date().toISOString(),
-                ...data
+                ...data,
             };
 
             try {
-                const url = `${ANALYTICS_ENDPOINT}?shop=${encodeURIComponent(config.shop)}`;
+                const url = `${this.apiEndpoint}?shop=${encodeURIComponent(this.config.shop)}`;
 
                 const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
                 });
 
                 if (!response.ok) {
                     const error = await response.json();
-                    console.error('[RadiusBundles] Tracking failed:', error);
+                    console.error("[RadiusBundles] Tracking failed:", error);
                     return;
                 }
 
                 const result = await response.json();
-                console.log('[RadiusBundles] Tracked:', eventType, result);
-
+                console.log("[RadiusBundles] Tracked:", eventType, result);
             } catch (error) {
-                console.error('[RadiusBundles] Tracking error:', error);
+                console.error("[RadiusBundles] Tracking error:", error);
             }
-        },
+        }
 
-        /**
-         * Track bundle view
-         * Called when a bundle widget is displayed on product page
-         */
-        trackBundleView(bundleId, productId = null) {
-            this.track('bundle_view', {
-                bundleId: bundleId,
-                productId: productId,
-                pageType: config.pageType,
-                url: window.location.href
-            });
-        },
-
-        /**
-         * Track add to cart
-         * Called when user adds bundle to cart
-         */
-        trackAddToCart(bundleId, bundleData = {}) {
-            this.track('bundle_add_to_cart', {
-                bundleId: bundleId,
-                productIds: bundleData.productIds || [],
-                totalValue: bundleData.totalValue || 0,
-                discountValue: bundleData.discountValue || 0
-            });
-        },
-
-        /**
-         * Track page view (optional)
-         * Can be used for general analytics
-         */
-        trackPageView() {
-            this.track('page_view', {
-                pageType: config.pageType,
-                template: config.template,
-                url: window.location.href
+        public trackBundleView(
+            bundleId: string,
+            productId: string | null = null,
+        ): void {
+            void this.track("bundle_view", {
+                bundleId,
+                productId: productId || undefined,
+                pageType: this.config.pageType,
+                url: window.location.href,
             });
         }
-    };
 
-    // ============================================
-    // CART CLEANUP MODULE
-    // ============================================
-
-    const CartCleanup = {
-        isRunning: false,
-        debounceTimer: null,
-
-        /**
-         * Fetch current cart from Shopify
-         */
-        async fetchCart() {
-            const response = await fetch('/cart.js');
-            return response.json();
-        },
-
-        /**
-         * Update cart attributes
-         */
-        async updateAttributes(attributes) {
-            await fetch('/cart/update.js', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ attributes })
+        public trackAddToCart(
+            bundleId: string,
+            bundleData: {
+                productIds?: string[];
+                totalValue?: number;
+                discountValue?: number;
+            } = {},
+        ): void {
+            void this.track("bundle_add_to_cart", {
+                bundleId,
+                productIds: bundleData.productIds || [],
+                totalValue: bundleData.totalValue || 0,
+                discountValue: bundleData.discountValue || 0,
             });
-        },
+        }
 
-        /**
-         * Check if bundle is active using metafield data
-         */
-        isBundleActive(bundleId) {
-            const activeBundles = config.activeBundles;
+        public trackPageView(): void {
+            void this.track("page_view", {
+                pageType: this.config.pageType,
+                template: this.config.template,
+                url: window.location.href,
+            });
+        }
+    }
+
+    /**
+     * Cart Cleanup Class
+     */
+    class CartCleanup {
+        private readonly config: RadiusBundlesConfig;
+        private isRunning: boolean = false;
+        private debounceTimer: number | null = null;
+        private readonly debounceDelay: number = 500;
+
+        constructor(config: RadiusBundlesConfig) {
+            this.config = config;
+        }
+
+        public init(): void {
+            this.interceptFetch();
+            this.attachEventListeners();
+            setTimeout(() => this.cleanup(), this.debounceDelay);
+        }
+
+        public isBundleActive(bundleId: string): boolean {
+            const activeBundles = this.config.activeBundles;
             if (!activeBundles) return true;
 
             const bundle = activeBundles[bundleId];
-            return bundle && bundle.status === 'ACTIVE';
-        },
+            return bundle && bundle.status === "ACTIVE";
+        }
 
-        /**
-         * Get bundle settings from metafield
-         */
-        getBundleSettings(bundleId) {
-            const activeBundles = config.activeBundles;
+        public getBundleSettings(bundleId: string): BundleMetafieldData | null {
+            const activeBundles = this.config.activeBundles;
             if (!activeBundles) return null;
 
             return activeBundles[bundleId] || null;
-        },
+        }
 
-        /**
-         * Main cleanup and sync function
-         * 1. Removes bundles missing items in cart
-         * 2. Removes inactive bundles
-         * 3. Syncs settings from metafield
-         */
-        async cleanup() {
+        public async cleanup(): Promise<void> {
             if (this.isRunning) return;
             this.isRunning = true;
 
@@ -167,12 +223,12 @@
                     return;
                 }
 
-                let bundles;
+                let bundles: DiscountConfig[];
                 try {
                     bundles = JSON.parse(cart.attributes._radiusDiscounts);
                 } catch {
-                    await this.updateAttributes({ _radiusDiscounts: '' });
-                    console.log('[RadiusBundles] Cleared invalid bundle data');
+                    await this.updateAttributes({ _radiusDiscounts: "" });
+                    console.log("[RadiusBundles] Cleared invalid bundle data");
                     this.isRunning = false;
                     return;
                 }
@@ -182,17 +238,10 @@
                     return;
                 }
 
-                // Count items per bundle in cart
-                const bundleItemCounts = {};
-                cart.items.forEach(item => {
-                    const bundleId = item.properties?._bundle_id;
-                    if (bundleId) {
-                        bundleItemCounts[bundleId] = (bundleItemCounts[bundleId] || 0) + 1;
-                    }
-                });
+                const bundleItemCounts = this.countBundleItems(cart.items);
 
                 let hasChanges = false;
-                const validBundles = [];
+                const validBundles: DiscountConfig[] = [];
 
                 for (const bundle of bundles) {
                     const itemCount = bundleItemCounts[bundle.bundleId] || 0;
@@ -200,33 +249,35 @@
                     const hasItems = itemCount >= required;
                     const isActive = this.isBundleActive(bundle.bundleId);
 
-                    // Skip if incomplete or inactive
                     if (!hasItems || !isActive) {
                         hasChanges = true;
                         if (!isActive) {
-                            console.log('[RadiusBundles] Removed inactive bundle:', bundle.bundleId);
+                            console.log(
+                                "[RadiusBundles] Removed inactive bundle:",
+                                bundle.bundleId,
+                            );
                         }
                         continue;
                     }
 
-                    // Get latest settings from metafield
-                    const latestSettings = this.getBundleSettings(bundle.bundleId);
+                    const latestSettings = this.getBundleSettings(
+                        bundle.bundleId,
+                    );
 
                     if (latestSettings) {
-                        // Check if settings changed
-                        const settingsChanged =
-                            bundle.discountType !== latestSettings.discountType ||
-                            bundle.discountValue !== latestSettings.discountValue ||
-                            bundle.freeShipping !== latestSettings.freeShipping ||
-                            bundle.minOrderValue !== latestSettings.minOrderValue ||
-                            bundle.maxDiscountAmount !== latestSettings.maxDiscountAmount;
+                        const settingsChanged = this.hasSettingsChanged(
+                            bundle,
+                            latestSettings,
+                        );
 
                         if (settingsChanged) {
                             hasChanges = true;
-                            console.log('[RadiusBundles] Synced settings for bundle:', bundle.bundleId);
+                            console.log(
+                                "[RadiusBundles] Synced settings for bundle:",
+                                bundle.bundleId,
+                            );
                         }
 
-                        // Merge with metafield values (source of truth)
                         validBundles.push({
                             ...bundle,
                             discountType: latestSettings.discountType,
@@ -234,287 +285,449 @@
                             freeShipping: latestSettings.freeShipping,
                             minOrderValue: latestSettings.minOrderValue,
                             maxDiscountAmount: latestSettings.maxDiscountAmount,
-                            discountApplication: latestSettings.discountApplication,
-                            discountedProductIds: latestSettings.discountedProductIds,
+                            discountApplication:
+                                latestSettings.discountApplication,
+                            discountedProductIds:
+                                latestSettings.discountedProductIds,
                         });
                     } else {
-                        // Keep original if no metafield data
                         validBundles.push(bundle);
                     }
                 }
 
-                // Update if changed
                 if (hasChanges || validBundles.length !== bundles.length) {
-                    const value = validBundles.length > 0
-                        ? JSON.stringify(validBundles)
-                        : '';
+                    const value =
+                        validBundles.length > 0
+                            ? JSON.stringify(validBundles)
+                            : "";
 
                     await this.updateAttributes({ _radiusDiscounts: value });
 
                     const removed = bundles.length - validBundles.length;
                     if (removed > 0) {
-                        console.log('[RadiusBundles] Removed', removed, 'bundle(s)');
+                        console.log(
+                            "[RadiusBundles] Removed",
+                            removed,
+                            "bundle(s)",
+                        );
                     }
 
-                    // Dispatch event
-                    document.dispatchEvent(new CustomEvent('radiusBundles:cleanup', {
-                        detail: {
-                            removed: removed,
-                            remaining: validBundles.length,
-                            synced: hasChanges
-                        }
-                    }));
+                    this.dispatchCleanupEvent(
+                        removed,
+                        validBundles.length,
+                        hasChanges,
+                    );
                 }
-
             } catch (error) {
-                console.error('[RadiusBundles] Cleanup error:', error);
+                console.error("[RadiusBundles] Cleanup error:", error);
             } finally {
                 this.isRunning = false;
             }
-        },
+        }
 
-        /**
-         * Debounced cleanup to avoid rapid calls
-         */
-        trigger() {
-            clearTimeout(this.debounceTimer);
-            this.debounceTimer = setTimeout(() => this.cleanup(), 500);
-        },
+        public trigger(): void {
+            if (this.debounceTimer !== null) {
+                clearTimeout(this.debounceTimer);
+            }
+            this.debounceTimer = window.setTimeout(
+                () => this.cleanup(),
+                this.debounceDelay,
+            );
+        }
 
-        /**
-         * Initialize cleanup system
-         */
-        init() {
-            // Intercept fetch for cart modifications
+        private async fetchCart(): Promise<CartResponse> {
+            const response = await fetch("/cart.js");
+            return response.json();
+        }
+
+        private async updateAttributes(
+            attributes: Record<string, string>,
+        ): Promise<void> {
+            await fetch("/cart/update.js", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ attributes }),
+            });
+        }
+
+        private countBundleItems(items: CartItem[]): Record<string, number> {
+            const counts: Record<string, number> = {};
+
+            items.forEach((item) => {
+                const bundleId = item.properties?._bundle_id;
+                if (bundleId) {
+                    counts[bundleId] = (counts[bundleId] || 0) + 1;
+                }
+            });
+
+            return counts;
+        }
+
+        private hasSettingsChanged(
+            bundle: DiscountConfig,
+            latest: BundleMetafieldData,
+        ): boolean {
+            return (
+                bundle.discountType !== latest.discountType ||
+                bundle.discountValue !== latest.discountValue ||
+                bundle.freeShipping !== latest.freeShipping ||
+                bundle.minOrderValue !== latest.minOrderValue ||
+                bundle.maxDiscountAmount !== latest.maxDiscountAmount
+            );
+        }
+
+        private dispatchCleanupEvent(
+            removed: number,
+            remaining: number,
+            synced: boolean,
+        ): void {
+            document.dispatchEvent(
+                new CustomEvent("radiusBundles:cleanup", {
+                    detail: { removed, remaining, synced },
+                }),
+            );
+        }
+
+        private interceptFetch(): void {
             const originalFetch = window.fetch;
-            window.fetch = function(input, init) {
-                const result = originalFetch.apply(this, arguments);
-                const url = typeof input === 'string' ? input : input.url;
-                const method = init?.method || 'GET';
 
-                // Trigger cleanup on cart modifications
-                if (method === 'POST' &&
-                    (url.includes('/cart/change') ||
-                        url.includes('/cart/update') ||
-                        url.includes('/cart/clear'))) {
-                    result.then(() => CartCleanup.trigger()).catch(() => {});
+            window.fetch = (
+                input: RequestInfo | URL,
+                init?: RequestInit,
+            ): Promise<Response> => {
+                const result = originalFetch.call(window, input, init);
+                const url =
+                    typeof input === "string"
+                        ? input
+                        : input instanceof URL
+                          ? input.href
+                          : (input as Request).url;
+                const method = init?.method || "GET";
+
+                if (
+                    method === "POST" &&
+                    (url.includes("/cart/change") ||
+                        url.includes("/cart/update") ||
+                        url.includes("/cart/clear"))
+                ) {
+                    result.then(() => this.trigger()).catch(() => {});
                 }
 
                 return result;
             };
-
-            // Event listeners
-            document.addEventListener('cart:refresh', () => this.trigger());
-            document.addEventListener('cart:updated', () => this.trigger());
-
-            // Initial cleanup on load
-            setTimeout(() => this.cleanup(), 500);
         }
-    };
 
-    // ============================================
-    // SAVINGS BANNER MODULE
-    // ============================================
+        private attachEventListeners(): void {
+            document.addEventListener("cart:refresh", () => this.trigger());
+            document.addEventListener("cart:updated", () => this.trigger());
+        }
+    }
 
-    const SavingsBanner = {
-        /**
-         * Update savings banner display
-         */
-        async update() {
-            if (config.pageType !== 'cart' || !config.showSavingsBanner) {
+    /**
+     * Savings Banner Class
+     */
+    class SavingsBanner {
+        private readonly config: RadiusBundlesConfig;
+        private readonly cartCleanup: CartCleanup;
+        private pollInterval: number | null = null;
+        private lastCartToken: string | null = null;
+        private lastItemCount: number | null = null;
+
+        constructor(config: RadiusBundlesConfig, cartCleanup: CartCleanup) {
+            this.config = config;
+            this.cartCleanup = cartCleanup;
+        }
+
+        public init(): void {
+            if (
+                this.config.pageType !== "cart" ||
+                !this.config.showSavingsBanner
+            ) {
                 return;
             }
 
-            const container = document.getElementById('radius-bundle-savings');
+            setTimeout(() => this.update(), 100);
+
+            document.addEventListener("cart:updated", () => this.update());
+            document.addEventListener("radiusBundles:cleanup", () =>
+                this.update(),
+            );
+
+            this.startPolling();
+        }
+
+        public async update(): Promise<void> {
+            const container = document.getElementById("radius-bundle-savings");
             if (!container) return;
 
             try {
-                const cart = await CartCleanup.fetchCart();
+                const cart = await this.fetchCart();
                 const bundlesRaw = cart.attributes?._radiusDiscounts;
 
                 if (!bundlesRaw) {
-                    container.style.display = 'none';
+                    this.hideBanner(container);
                     return;
                 }
 
-                let bundles;
+                let bundles: DiscountConfig[];
                 try {
                     bundles = JSON.parse(bundlesRaw);
                 } catch {
-                    container.style.display = 'none';
+                    this.hideBanner(container);
                     return;
                 }
 
                 if (!bundles || bundles.length === 0) {
-                    container.style.display = 'none';
+                    this.hideBanner(container);
                     return;
                 }
 
-                // Count items per bundle
-                const bundleItemCounts = {};
-                cart.items.forEach(item => {
-                    const bundleId = item.properties?._bundle_id;
-                    if (bundleId) {
-                        bundleItemCounts[bundleId] = (bundleItemCounts[bundleId] || 0) + 1;
-                    }
-                });
-
-                // Build messages for complete AND active bundles
-                const messages = [];
-                let hasFreeShipping = false;
-
-                bundles.forEach(bundle => {
-                    const itemCount = bundleItemCounts[bundle.bundleId] || 0;
-                    const required = bundle.requiredLineCount || 0;
-
-                    if (itemCount >= required && required > 0 &&
-                        CartCleanup.isBundleActive(bundle.bundleId)) {
-
-                        const name = bundle.bundleName || 'this bundle';
-
-                        if (bundle.freeShipping) {
-                            hasFreeShipping = true;
-                        }
-
-                        switch (bundle.discountType) {
-                            case 'PERCENTAGE':
-                                messages.push(`You're saving ${bundle.discountValue}% with ${name}`);
-                                break;
-                            case 'FIXED_AMOUNT':
-                                messages.push(`You're saving $${bundle.discountValue.toFixed(2)} with ${name}`);
-                                break;
-                            case 'CUSTOM_PRICE':
-                                messages.push(`Special price: $${bundle.discountValue.toFixed(2)} for ${name}`);
-                                break;
-                            case 'NO_DISCOUNT':
-                                if (bundle.freeShipping) {
-                                    messages.push(`${name} qualifies for free shipping!`);
-                                }
-                                break;
-                        }
-                    }
-                });
+                const bundleItemCounts = this.countBundleItems(cart.items);
+                const messages = this.buildMessages(bundles, bundleItemCounts);
 
                 if (messages.length > 0) {
-                    const contentEl = container.querySelector('.radius-savings-banner__content');
-
-                    let html = messages.length === 1
-                        ? messages[0]
-                        : `<ul class="radius-savings-banner__list">${messages.map(m => `<li>${m}</li>`).join('')}</ul>`;
-
-                    if (hasFreeShipping && !messages.some(m => m.includes('free shipping'))) {
-                        html += '<div class="radius-savings-banner--free-shipping">🚚 Free shipping included!</div>';
-                    }
-
-                    contentEl.innerHTML = html;
-                    container.style.display = 'block';
-
-                    // Move to top of cart form
-                    const form = document.querySelector('form#cart') ||
-                        document.querySelector('.cart__contents') ||
-                        document.querySelector('#MainContent form[action="/cart"]');
-
-                    if (form && container.parentNode !== form) {
-                        form.insertBefore(container, form.firstChild);
-                    }
+                    this.showBanner(container, messages);
                 } else {
-                    container.style.display = 'none';
+                    this.hideBanner(container);
                 }
-
             } catch (error) {
-                console.error('[RadiusBundles] Banner error:', error);
+                console.error("[RadiusBundles] Banner error:", error);
             }
-        },
+        }
 
-        /**
-         * Initialize banner updates
-         */
-        init() {
-            if (config.pageType !== 'cart') return;
+        public destroy(): void {
+            if (this.pollInterval !== null) {
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
+        }
 
-            // Update on load
-            setTimeout(() => this.update(), 100);
+        private async fetchCart(): Promise<CartResponse> {
+            const response = await fetch("/cart.js");
+            return response.json();
+        }
 
-            // Listen for events
-            document.addEventListener('cart:updated', () => this.update());
-            document.addEventListener('radiusBundles:cleanup', () => this.update());
+        private countBundleItems(items: CartItem[]): Record<string, number> {
+            const counts: Record<string, number> = {};
 
-            // Poll for cart changes
-            let lastToken = null;
-            let lastCount = null;
-            setInterval(async () => {
-                try {
-                    const cart = await CartCleanup.fetchCart();
-                    if (cart.token !== lastToken || cart.item_count !== lastCount) {
-                        lastToken = cart.token;
-                        lastCount = cart.item_count;
-                        this.update();
+            items.forEach((item) => {
+                const bundleId = item.properties?._bundle_id;
+                if (bundleId) {
+                    counts[bundleId] = (counts[bundleId] || 0) + 1;
+                }
+            });
+
+            return counts;
+        }
+
+        private buildMessages(
+            bundles: DiscountConfig[],
+            itemCounts: Record<string, number>,
+        ): string[] {
+            const messages: string[] = [];
+
+            bundles.forEach((bundle) => {
+                const itemCount = itemCounts[bundle.bundleId] || 0;
+                const required = bundle.requiredLineCount || 0;
+
+                if (
+                    itemCount >= required &&
+                    required > 0 &&
+                    this.cartCleanup.isBundleActive(bundle.bundleId)
+                ) {
+                    const name = bundle.bundleName || "this bundle";
+                    const message = this.formatBundleMessage(bundle, name);
+
+                    if (message) {
+                        messages.push(message);
                     }
-                } catch {}
+                }
+            });
+
+            return messages;
+        }
+
+        private formatBundleMessage(
+            bundle: DiscountConfig,
+            name: string,
+        ): string | null {
+            switch (bundle.discountType) {
+                case "PERCENTAGE":
+                    return `You're saving ${bundle.discountValue}% with ${name}`;
+
+                case "FIXED_AMOUNT":
+                    return `You're saving $${bundle.discountValue.toFixed(2)} with ${name}`;
+
+                case "CUSTOM_PRICE":
+                    return `Special price: $${bundle.discountValue.toFixed(2)} for ${name}`;
+
+                case "NO_DISCOUNT":
+                    if (bundle.freeShipping) {
+                        return `${name} qualifies for free shipping!`;
+                    }
+                    return null;
+
+                default:
+                    return null;
+            }
+        }
+
+        private showBanner(container: HTMLElement, messages: string[]): void {
+            const contentEl = container.querySelector(
+                ".radius-savings-banner__content",
+            );
+            if (!contentEl) return;
+
+            let html =
+                messages.length === 1
+                    ? this.escapeHtml(messages[0])
+                    : `<ul class="radius-savings-banner__list">${messages
+                          .map((m) => `<li>${this.escapeHtml(m)}</li>`)
+                          .join("")}</ul>`;
+
+            const hasFreeShipping = messages.some((m) =>
+                m.includes("free shipping"),
+            );
+            if (
+                hasFreeShipping &&
+                !messages.some((m) => m.includes("Free shipping"))
+            ) {
+                html +=
+                    '<div class="radius-savings-banner--free-shipping">🚚 Free shipping included!</div>';
+            }
+
+            contentEl.innerHTML = html;
+            container.style.display = "block";
+
+            this.moveToCartForm(container);
+        }
+
+        private hideBanner(container: HTMLElement): void {
+            container.style.display = "none";
+        }
+
+        private moveToCartForm(container: HTMLElement): void {
+            const form =
+                document.querySelector("form#cart") ||
+                document.querySelector(".cart__contents") ||
+                document.querySelector('#MainContent form[action="/cart"]');
+
+            if (form && container.parentNode !== form) {
+                form.insertBefore(container, form.firstChild);
+            }
+        }
+
+        private startPolling(): void {
+            this.pollInterval = window.setInterval(async () => {
+                try {
+                    const cart = await this.fetchCart();
+                    if (
+                        cart.token !== this.lastCartToken ||
+                        cart.item_count !== this.lastItemCount
+                    ) {
+                        this.lastCartToken = cart.token;
+                        this.lastItemCount = cart.item_count;
+                        void this.update();
+                    }
+                } catch {
+                    // Silently fail
+                }
             }, 1500);
         }
-    };
 
-    // ============================================
-    // INITIALIZATION
-    // ============================================
+        private escapeHtml(text: string): string {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    }
 
-    function init() {
-        console.log('[RadiusBundles] Initializing...', {
-            shop: config.shop,
-            pageType: config.pageType,
-            analyticsEnabled: config.enableAnalytics
-        });
+    /**
+     * Radius Bundles Manager Class
+     */
+    class RadiusBundlesManager {
+        private readonly config: RadiusBundlesConfig;
+        private readonly analytics: Analytics;
+        private readonly cartCleanup: CartCleanup;
+        private readonly savingsBanner: SavingsBanner;
 
-        // Track page view
-        if (config.enableAnalytics) {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    Analytics.trackPageView();
-                });
-            } else {
-                Analytics.trackPageView();
-            }
+        constructor(config: RadiusBundlesConfig) {
+            this.config = config;
+            this.analytics = new Analytics(config);
+            this.cartCleanup = new CartCleanup(config);
+            this.savingsBanner = new SavingsBanner(config, this.cartCleanup);
         }
 
-        // Initialize cart cleanup
-        CartCleanup.init();
+        public init(): void {
+            console.log("[RadiusBundles] Initializing...", {
+                shop: this.config.shop,
+                pageType: this.config.pageType,
+                analyticsEnabled: this.config.enableAnalytics,
+            });
 
-        // Initialize savings banner
-        SavingsBanner.init();
+            if (this.config.enableAnalytics) {
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", () => {
+                        this.analytics.trackPageView();
+                    });
+                } else {
+                    this.analytics.trackPageView();
+                }
+            }
 
-        // Listen for bundle events from widgets
-        document.addEventListener('bundle:viewed', (e) => {
-            Analytics.trackBundleView(e.detail.bundleId, e.detail.productId);
-        });
+            this.cartCleanup.init();
+            this.savingsBanner.init();
+            this.attachBundleEventListeners();
 
-        document.addEventListener('bundle:addedToCart', (e) => {
-            Analytics.trackAddToCart(e.detail.bundleId, e.detail);
-        });
+            // Export for external access
+            if (!(window as any).RadiusBundles) {
+                (window as any).RadiusBundles = { config: this.config };
+            }
+            (window as any).RadiusBundles.analytics = this.analytics;
+            (window as any).RadiusBundles.cartCleanup = this.cartCleanup;
+            (window as any).RadiusBundles.savingsBanner = this.savingsBanner;
 
-        console.log('[RadiusBundles] Initialized successfully');
+            console.log("[RadiusBundles] Initialized successfully");
+        }
+
+        private attachBundleEventListeners(): void {
+            document.addEventListener("bundle:viewed", (e: Event) => {
+                const event = e as CustomEvent;
+                this.analytics.trackBundleView(
+                    event.detail.bundleId,
+                    event.detail.productId,
+                );
+            });
+
+            document.addEventListener("bundle:addedToCart", (e: Event) => {
+                const event = e as CustomEvent;
+                this.analytics.trackAddToCart(
+                    event.detail.bundleId,
+                    event.detail,
+                );
+            });
+        }
     }
 
-    // ============================================
-    // PUBLIC API
-    // ============================================
+    /**
+     * Initializes Radius Bundles
+     */
+    function initRadiusBundles(): void {
+        const config = (window as any).RadiusBundles?.config;
 
-    window.RadiusBundles = window.RadiusBundles || {};
+        if (!config) {
+            console.error("[RadiusBundles] Configuration not found");
+            return;
+        }
 
-    // Export methods
-    window.RadiusBundles.track = Analytics.track.bind(Analytics);
-    window.RadiusBundles.trackBundleView = Analytics.trackBundleView.bind(Analytics);
-    window.RadiusBundles.trackAddToCart = Analytics.trackAddToCart.bind(Analytics);
-    window.RadiusBundles.cleanupCart = CartCleanup.cleanup.bind(CartCleanup);
-    window.RadiusBundles.triggerCleanup = CartCleanup.trigger.bind(CartCleanup);
-    window.RadiusBundles.isBundleActive = CartCleanup.isBundleActive.bind(CartCleanup);
-    window.RadiusBundles.getBundleSettings = CartCleanup.getBundleSettings.bind(CartCleanup);
+        const manager = new RadiusBundlesManager(config);
+        manager.init();
+    }
 
-    // Initialize when ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+    // Auto-initialize
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initRadiusBundles);
     } else {
-        init();
+        initRadiusBundles();
     }
-
 })();
