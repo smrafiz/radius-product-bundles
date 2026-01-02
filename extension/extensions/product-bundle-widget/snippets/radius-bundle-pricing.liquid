@@ -22,16 +22,14 @@
 	</div>
 
 	{% comment %} Savings Row {% endcomment %}
-	{% if show_savings %}
-		<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
-			{% unless compact %}
-				<span class="radius-bundle__savings-label">{{ you_save_label }}</span>
-			{% endunless %}
-			<span class="radius-bundle__savings-amount" data-savings-amount>
-                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
-            </span>
-		</div>
-	{% endif %}
+	<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
+		{% unless compact %}
+			<span class="radius-bundle__savings-label">{{ you_save_label }}</span>
+		{% endunless %}
+		<span class="radius-bundle__savings-amount" data-savings-amount>
+			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
+		</span>
+	</div>
 
 	{% comment %} Free Shipping Badge {% endcomment %}
 	{% if show_free_shipping %}

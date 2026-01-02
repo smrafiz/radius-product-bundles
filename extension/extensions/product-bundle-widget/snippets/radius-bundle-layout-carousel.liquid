@@ -28,7 +28,9 @@
                     <div class="radius-bundle__skeleton radius-bundle__skeleton--slider">
                         {% for i in (1..product_count) %}
                             <div class="radius-bundle__skeleton-slide">
-                                <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
+                                {% if show_images %}
+                                    <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
+                                {% endif %}
                                 <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
                                 <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
                             </div>
