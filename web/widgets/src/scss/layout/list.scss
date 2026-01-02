@@ -31,7 +31,7 @@
             width: 70px;
             height: 70px;
             flex-shrink: 0;
-            border-radius: var(--rb-border-radius-small);
+            border-radius: var(--rb-image-border-radius);
             overflow: hidden;
             background: #ffffff;
             display: flex;
@@ -51,7 +51,7 @@
         }
 
         .radius-bundle__product-title {
-            font-size: var(--rb-font-size-medium);
+            font-size: var(--rb-font-size, 16px);
             font-weight: 500;
             color: var(--rb-heading-color);
             margin: 0 0 var(--rb-spacing-xs);
@@ -62,7 +62,7 @@
         }
 
         .radius-bundle__product-quantity {
-            font-size: var(--rb-font-size-medium);
+            font-size: var(--rb-font-size, 16px);
             font-weight: 500;
             color: var(--rb-text-color);
         }

@@ -22,16 +22,15 @@
         }
     }
 
-    .radius-bundle__product-title {
-        font-size: var(--rb-font-size-medium);
-        font-weight: 500;
-        color: var(--rb-heading-color);
-        margin: 0 0 var(--rb-spacing-xs);
-        line-height: 1.3;
-        @include mixins.line-clamp(2);
-    }
-
     &__product--compact {
+        .radius-bundle__product-title {
+            font-size: var(--rb-font-size, 16px);
+            font-weight: 500;
+            color: var(--rb-heading-color);
+            margin: 0 0 var(--rb-spacing-xs);
+            line-height: 1.3;
+            @include mixins.line-clamp(2);
+        }
         .radius-bundle__product-image {
             width: 40px;
             height: 40px;
