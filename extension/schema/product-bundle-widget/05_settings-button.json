@@ -29,12 +29,6 @@
     "default": "medium"
   },
   {
-    "type": "checkbox",
-    "id": "button_full_width",
-    "label": "Full width button",
-    "default": true
-  },
-  {
     "type": "range",
     "id": "button_border_radius",
     "label": "Button border radius",
@@ -53,68 +47,6 @@
     "type": "color",
     "id": "button_text_color",
     "label": "Button text color"
-  },
-  {
-    "type": "select",
-    "id": "savings_position",
-    "label": "Savings badge position",
-    "options": [
-      {
-        "value": "top-left",
-        "label": "Top Left"
-      },
-      {
-        "value": "top-right",
-        "label": "Top Right"
-      },
-      {
-        "value": "bottom-left",
-        "label": "Bottom Left"
-      },
-      {
-        "value": "bottom-right",
-        "label": "Bottom Right"
-      },
-      {
-        "value": "inline",
-        "label": "Inline with content"
-      }
-    ],
-    "default": "top-right"
-  },
-  {
-    "type": "select",
-    "id": "savings_style",
-    "label": "Savings badge style",
-    "options": [
-      {
-        "value": "rounded",
-        "label": "Rounded"
-      },
-      {
-        "value": "square",
-        "label": "Square"
-      },
-      {
-        "value": "pill",
-        "label": "Pill"
-      },
-      {
-        "value": "circle",
-        "label": "Circle"
-      }
-    ],
-    "default": "rounded"
-  },
-  {
-    "type": "range",
-    "id": "savings_size",
-    "label": "Savings badge size",
-    "min": 12,
-    "max": 24,
-    "step": 2,
-    "unit": "px",
-    "default": 14
   },
   {
     "type": "color",

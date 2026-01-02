@@ -16,6 +16,7 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            gap: var(--rb-spacing-xs);
 
             &::-webkit-scrollbar {
                 display: none;
@@ -24,7 +25,7 @@
     }
     &__product--slider {
         flex: 0 0 auto;
-        width: 140px;
+        width: 136px;
         padding: var(--rb-spacing);
         background: #f9f9f9;
         border: 1px solid var(--rb-border-color);

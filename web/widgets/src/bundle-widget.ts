@@ -340,8 +340,8 @@ class RadiusBundleWidget {
             const isLast = index === sortedProducts.length - 1;
             html += this.renderProductCard(product, layout);
 
-            if (layout === "slider" && !isLast) {
-                html += '<div class="radius-bundle__slider-plus">+</div>';
+            if ( ["slider", "list"].includes(layout) && !isLast) {
+                html += '<div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>';
             }
         });
 
