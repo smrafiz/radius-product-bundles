@@ -17,7 +17,7 @@
     {
         "type": "select",
         "id": "text_size",
-        "label": "Body text size",
+        "label": "Text size",
         "options": [
             { "value": "small", "label": "Small" },
             { "value": "medium", "label": "Medium" },
@@ -27,31 +27,7 @@
     },
     {
         "type": "select",
-        "id": "price_size",
-        "label": "Price text size",
-        "options": [
-            { "value": "small", "label": "Small" },
-            { "value": "medium", "label": "Medium" },
-            { "value": "large", "label": "Large" },
-            { "value": "extra-large", "label": "Extra Large" }
-        ],
-        "default": "large"
-    },
-    {
-        "type": "select",
-        "id": "font_weight",
-        "label": "Heading font weight",
-        "options": [
-            { "value": "normal", "label": "Normal" },
-            { "value": "medium", "label": "Medium" },
-            { "value": "semibold", "label": "Semibold" },
-            { "value": "bold", "label": "Bold" }
-        ],
-        "default": "semibold"
-    },
-    {
-        "type": "select",
-        "id": "text_transform",
+        "id": "heading_transform",
         "label": "Heading text transform",
         "options": [
             { "value": "none", "label": "None" },
@@ -64,7 +40,6 @@
         "type": "text",
         "id": "bundle_heading",
         "label": "Bundle heading text",
-        "default": "Bundle & Save",
         "info": "Custom heading for bundle section"
     },
     {
@@ -90,8 +65,8 @@
     },
     {
         "type": "text",
-        "id": "free_shipping_text",
-        "label": "Free shipping text",
+        "id": "free_shipping_label",
+        "label": "Free shipping label",
         "default": "Free Shipping",
         "info": "Text for free shipping badge"
     }

@@ -48,8 +48,8 @@
     },
     {
         "type": "select",
-        "id": "alignment",
-        "label": "Content alignment",
+        "id": "box_alignment",
+        "label": "Box alignment",
         "options": [
             { "value": "left", "label": "Left" },
             { "value": "center", "label": "Center" },
@@ -59,11 +59,11 @@
     },
     {
         "type": "range",
-        "id": "max_width",
+        "id": "bundle_max_width",
         "label": "Maximum width",
         "min": 400,
         "max": 1200,
-        "step": 50,
+        "step": 10,
         "unit": "px",
         "default": 800,
         "info": "Maximum width of bundle container"

@@ -24,8 +24,9 @@
 
     &__title {
         font-size: var(--rb-heading-font);
-        font-weight: 500;
         color: var(--rb-heading-color);
+        font-weight: 500;
+        text-transform: var(--rb-heading-transform);
         margin: 0;
         line-height: 1.3;
 

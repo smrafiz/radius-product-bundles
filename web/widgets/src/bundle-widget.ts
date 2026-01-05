@@ -41,7 +41,7 @@ interface BundleStructure {
         regularPriceLabel: string;
         bundlePriceLabel: string;
         youSaveLabel: string;
-        freeShippingText: string;
+        freeShippingLabel: string;
     };
 }
 

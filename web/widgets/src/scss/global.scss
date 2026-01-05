@@ -49,6 +49,8 @@
     --rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
     --rb-spacing-xl: calc(var(--rb-spacing) * 2);
 
+    --rb-image-size: #{$rb-image-size};
+
     /* Effects */
     --rb-shadow: #{$rb-shadow};
     --rb-shadow-hover: #{$rb-shadow-hover};
