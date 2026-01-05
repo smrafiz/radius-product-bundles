@@ -67,10 +67,36 @@ export async function GET(request: NextRequest) {
 
         // Register webhooks (APP_UNINSTALLED, etc.)
         try {
-            await registerWebhooks(session);
-            console.log("[OAuth] Webhooks registered successfully for", shop);
+            console.log("[OAuth] 🔄 Starting webhook registration for", shop);
+            console.log("[OAuth] Session info:", {
+                shop: session.shop,
+                hasAccessToken: !!session.accessToken,
+                state: session.state,
+            });
+
+            const webhookResponses = await registerWebhooks(session);
+
+            console.log(
+                "[OAuth] ✅ Webhooks registered successfully for",
+                shop,
+            );
+            console.log(
+                "[OAuth] Webhook responses:",
+                JSON.stringify(webhookResponses, null, 2),
+            );
         } catch (webhookError) {
-            console.error("[OAuth] Webhook registration failed:", webhookError);
+            console.error(
+                "[OAuth] ❌ Webhook registration failed:",
+                webhookError,
+            );
+            console.error("[OAuth] Error details:", {
+                message:
+                    webhookError instanceof Error
+                        ? webhookError.message
+                        : "Unknown",
+                stack:
+                    webhookError instanceof Error ? webhookError.stack : null,
+            });
             // Continue anyway - don't block installation
         }
 

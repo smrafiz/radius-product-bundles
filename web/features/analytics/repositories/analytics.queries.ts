@@ -13,10 +13,13 @@ import { AnalyticsMetricsRepository } from "@/features/analytics";
  */
 export async function trackBundleView(
     bundleId: string,
-    timestamp: Date = new Date(),
+    timestamp: Date | string = new Date(),
 ) {
-    const date = startOfDay(timestamp);
-    const hour = timestamp.getHours();
+    const dateObj =
+        typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+
+    const hour = dateObj.getHours();
+    const date = startOfDay(dateObj);
 
     return prisma.bundleAnalytics.upsert({
         where: {
@@ -44,8 +47,11 @@ export async function trackAddToCart(
     bundleId: string,
     timestamp: Date = new Date(),
 ) {
-    const date = startOfDay(timestamp);
-    const hour = timestamp.getHours();
+    const dateObj =
+        typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+
+    const hour = dateObj.getHours();
+    const date = startOfDay(dateObj);
 
     return prisma.bundleAnalytics.upsert({
         where: {
@@ -76,9 +82,14 @@ export async function trackBundlePurchase(params: {
     isNewCustomer?: boolean;
     timestamp?: Date;
 }) {
-    const timestamp = params.timestamp || new Date();
-    const date = startOfDay(timestamp);
-    const hour = timestamp.getHours();
+    const timestampObj = params.timestamp
+        ? typeof params.timestamp === "string"
+            ? new Date(params.timestamp)
+            : params.timestamp
+        : new Date();
+
+    const hour = timestampObj.getHours();
+    const date = startOfDay(timestampObj);
 
     return prisma.bundleAnalytics.upsert({
         where: {
