@@ -1,10 +1,11 @@
+@use "variable" as *;
+
 // ==========================================================================
 // Root Container with CSS Variables
 // ==========================================================================
 
-@use "variable" as *;
-
 .radius-bundle-widget {
+    /* Colors */
     --rb-primary-color: #{$rb-primary-color};
     --rb-secondary-color: #{$rb-secondary-color};
     --rb-background-color: #{$rb-background-color};
@@ -16,26 +17,49 @@
     --rb-button-color: #{$rb-button-color};
     --rb-button-text-color: #{$rb-button-text-color};
     --rb-muted-color: #{$rb-muted-color};
+
+    /* Radius */
     --rb-border-radius: #{$rb-border-radius};
     --rb-border-radius-small: #{$rb-border-radius-small};
+    --rb-image-border-radius: #{$rb-image-border-radius};
 
-    --rb-font-size-small: #{$rb-font-size-small};
-    --rb-font-size-medium: #{$rb-font-size-medium};
-    --rb-font-size-large: #{$rb-font-size-large};
+    /* Typography */
+    --rb-font-scale-sm: #{$rb-font-scale-sm};
+    --rb-font-scale-md: #{$rb-font-scale-md};
+    --rb-font-scale-lg: #{$rb-font-scale-lg};
 
+    --rb-heading-base: #{$rb-heading-base};
+    --rb-heading-sm: calc(#{$rb-heading-base} * #{$rb-font-scale-sm});
+    --rb-heading-md: calc(#{$rb-heading-base} * #{$rb-font-scale-md});
+    --rb-heading-lg: calc(#{$rb-heading-base} * #{$rb-font-scale-lg});
+
+    --rb-body-font-base: #{$rb-font-base-size};
+    --rb-body-font-sm: calc(#{$rb-font-base-size} * #{$rb-font-scale-sm});
+    --rb-body-font-md: calc(#{$rb-font-base-size} * #{$rb-font-scale-md});
+    --rb-body-font-lg: calc(#{$rb-font-base-size} * #{$rb-font-scale-lg});
+
+    --rb-button-font-sm: calc(#{$rb-button-font-base} * #{$rb-font-scale-sm});
+    --rb-button-font-md: calc(#{$rb-button-font-base} * #{$rb-font-scale-md});
+    --rb-button-font-lg: calc(#{$rb-button-font-base} * #{$rb-font-scale-lg});
+
+    /* Spacing */
     --rb-spacing: #{$rb-spacing};
     --rb-spacing-xs: calc(var(--rb-spacing) * 0.25);
     --rb-spacing-sm: calc(var(--rb-spacing) * 0.5);
-    --rb-spacing-md: var(--rb-spacing);
     --rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
     --rb-spacing-xl: calc(var(--rb-spacing) * 2);
+
+    /* Effects */
     --rb-shadow: #{$rb-shadow};
     --rb-shadow-hover: #{$rb-shadow-hover};
     --rb-transition: #{$rb-transition};
+
+    /* Skeleton */
     --rb-skeleton-base: #{$rb-skeleton-base};
     --rb-skeleton-shine: #{$rb-skeleton-shine};
 
     font-family: inherit;
+    font-size: var(--rb-font-size, 16px);
     margin: 24px 0;
 
     & *:empty:not(img):not(br):not(hr) {

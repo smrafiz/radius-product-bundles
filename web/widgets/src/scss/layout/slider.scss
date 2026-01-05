@@ -16,6 +16,7 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            gap: var(--rb-spacing-xs);
 
             &::-webkit-scrollbar {
                 display: none;
@@ -24,7 +25,7 @@
     }
     &__product--slider {
         flex: 0 0 auto;
-        width: 140px;
+        width: 136px;
         padding: var(--rb-spacing);
         background: #f9f9f9;
         border: 1px solid var(--rb-border-color);
@@ -44,7 +45,7 @@
             width: 100%;
             height: 100px;
             margin-bottom: var(--rb-spacing-sm);
-            border-radius: 8px;
+            border-radius: var(--rb-image-border-radius);
             overflow: hidden;
             background: #ffffff;
 
@@ -56,7 +57,7 @@
         }
 
         .radius-bundle__product-title {
-            font-size: var(--rb-font-size-medium);
+            font-size: var(--rb-font-size, 16px);
             font-weight: 500;
             color: var(--rb-heading-color);
             margin: 0 0 var(--rb-spacing-xs);

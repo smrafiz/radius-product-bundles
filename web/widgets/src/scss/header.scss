@@ -23,7 +23,7 @@
     }
 
     &__title {
-        font-size: 2rem;
+        font-size: var(--rb-heading-font);
         font-weight: 500;
         color: var(--rb-heading-color);
         margin: 0;
@@ -42,6 +42,7 @@
         }
     }
 
+
     &__title-skeleton {
         display: block;
 
@@ -53,10 +54,10 @@
     &__badge {
         background: var(--rb-savings-color);
         color: var(--rb-savings-text-color);
-        padding: 6px 12px;
-        border-radius: 30px;
-        font-size: var(--rb-font-size-small);
+        border-radius: var(--rb-border-radius-small);
+        font-size: var(--rb-button-font);
         font-weight: 500;
+        padding: 6px 12px;
         white-space: nowrap;
         flex-shrink: 0;
         text-align: center;
@@ -68,14 +69,13 @@
 
         &--skeleton {
             min-width: 80px;
-            border-radius: 20px !important;
+            border-radius: var(--rb-border-radius-small);
         }
 
         &--visible {
             background: var(--rb-savings-color) !important;
         }
     }
-
     &__description {
         font-size: 0.9rem;
         color: var(--rb-secondary-color);

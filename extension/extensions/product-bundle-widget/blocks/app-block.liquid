@@ -50,15 +50,12 @@
 				{% assign border_color = block.settings.border_color
 						| default: g_styles.colors.border
 						| default: '#e1e1e1' %}
-
-
                 {% assign savings_color = block.settings.savings_color
                         | default: g_styles.colors.savings
                         | default: '#22c55e' %}
                 {% assign savings_text_color = block.settings.savings_text_color
                         | default: g_styles.colors.savingsText
                         | default: '#ffffff' %}
-
 				{% assign button_color = block.settings.button_color
 						| default: g_styles.colors.button
 						| default: '#333333' %}
@@ -70,12 +67,24 @@
                 {% assign layout = block.settings.layout
                         | default: bundle.layout
                         | default: 'list' %}
+
                 {% assign border_radius = block.settings.border_radius
                         | default: g_styles.borders.radius.lg
                         | default: 12 %}
+				{% assign button_border_radius = block.settings.button_border_radius
+						| default: g_styles.borders.borderRadius
+						| default: 8 %}
+				{% assign image_border_radius = block.settings.image_border_radius
+						| default: g_styles.borders.imageRadis
+						| default: 8 %}
                 {% assign spacing = block.settings.spacing
                         | default: g_styles.spacing.itemGap
                         | default: 16 %}
+
+
+				{% assign heading_size = block.settings.heading_size | default: 'medium' %}
+				{% assign text_size = block.settings.text_size | default: 'medium' %}
+				{% assign button_size = block.settings.button_size | default: 'medium' %}
 
                 {% comment %} Features {% endcomment %}
                 {% assign show_images = block.settings.show_product_images %}
@@ -147,24 +156,59 @@
                 {% endcapture %}
 
                 {% comment %} Inject CSS variables {% endcomment %}
-                <style>
-                    #radius-bundle-{{ bundle_id }} {
-                        --rb-primary-color: {{ primary_color }};
-                        --rb-secondary-color: {{ secondary_color }};
-                        --rb-background-color: {{ background_color }};
-                        --rb-border-color: {{ border_color }};
-                        --rb-heading-color: {{ heading_color }};
-                        --rb-text-color: {{ text_color }};
-                        --rb-savings-color: {{ savings_color }};
-                        --rb-savings-text-color: {{ savings_text_color }};
+				<style>
+					#radius-bundle-{{ bundle_id }} {
+						/* Colors */
+						--rb-primary-color: {{ primary_color }};
+						--rb-secondary-color: {{ secondary_color }};
+						--rb-background-color: {{ background_color }};
+						--rb-border-color: {{ border_color }};
+						--rb-heading-color: {{ heading_color }};
+						--rb-text-color: {{ text_color }};
+						--rb-savings-color: {{ savings_color }};
+						--rb-savings-text-color: {{ savings_text_color }};
 						--rb-button-color: {{ button_color }};
 						--rb-button-text-color: {{ button_text_color }};
-                        --rb-border-radius: {{ border_radius }}px;
-                        --rb-spacing: {{ spacing }}px;
-                    }
-                </style>
 
-                <div
+						/* Radius & spacing */
+						--rb-border-radius: {{ border_radius }}px;
+						--rb-border-radius-small: {{ button_border_radius }}px;
+						--rb-image-border-radius: {{ image_border_radius }}px;
+						--rb-spacing: {{ spacing }}px;
+
+						/* Heading size */
+						{% case heading_size %}
+						{% when 'small' %}
+							--rb-heading-font: var(--rb-heading-sm);
+						{% when 'large' %}
+							--rb-heading-font: var(--rb-heading-lg);
+						{% else %}
+							--rb-heading-font: var(--rb-heading-md);
+						{% endcase %}
+
+						{% case button_size %}
+						{% when 'small' %}
+							--rb-button-font: var(--rb-button-font-sm);
+						{% when 'large' %}
+							--rb-button-font: var(--rb-button-font-lg);
+						{% else %}
+							--rb-button-font: var(--rb-button-font-md);
+						{% endcase %}
+
+							/* Text size */
+						{% case text_size %}
+						{% when 'small' %}
+							--rb-font-size: var(--rb-body-font-sm);
+						{% when 'large' %}
+							--rb-font-size: var(--rb-body-font-lg);
+						{% else %}
+							--rb-font-size: var(--rb-body-font-md);
+						{% endcase %}
+					}
+				</style>
+
+
+				<div
                         id="radius-bundle-{{ bundle_id }}"
                         class="radius-bundle radius-bundle--{{ layout | downcase }}"
                         data-bundle-id="{{ bundle_id }}"
@@ -383,38 +427,9 @@
 		},
 		{
 			"type": "checkbox",
-			"id": "show_dividers",
-			"label": "Show dividers between items",
-			"default": false
-		},
-		{
-			"type": "checkbox",
 			"id": "show_free_shipping",
 			"label": "Show free shipping badge",
 			"default": true
-		},
-		{
-			"type": "checkbox",
-			"id": "mobile_hide_images",
-			"label": "Hide images on mobile",
-			"default": false,
-			"info": "Save space by hiding product images on mobile"
-		},
-		{
-			"type": "select",
-			"id": "mobile_button_position",
-			"label": "Mobile button position",
-			"options": [
-				{
-					"value": "inline",
-					"label": "Inline (in bundle)"
-				},
-				{
-					"value": "fixed",
-					"label": "Fixed (bottom of screen)"
-				}
-			],
-			"default": "inline"
 		},
 		{
 			"type": "header",
@@ -436,10 +451,6 @@
 				{
 					"value": "large",
 					"label": "Large"
-				},
-				{
-					"value": "extra-large",
-					"label": "Extra Large"
 				}
 			],
 			"default": "medium"
@@ -608,72 +619,11 @@
 		},
 		{
 			"type": "range",
-			"id": "section_padding_top",
-			"label": "Section padding top",
-			"min": 0,
-			"max": 100,
-			"step": 4,
-			"unit": "px",
-			"default": 40
-		},
-		{
-			"type": "range",
-			"id": "section_padding_bottom",
-			"label": "Section padding bottom",
-			"min": 0,
-			"max": 100,
-			"step": 4,
-			"unit": "px",
-			"default": 40
-		},
-		{
-			"type": "range",
-			"id": "spacing",
-			"label": "Internal spacing",
-			"min": 8,
-			"max": 48,
-			"step": 4,
-			"unit": "px",
-			"default": 16
-		},
-		{
-			"type": "range",
-			"id": "item_spacing",
-			"label": "Space between items",
-			"min": 8,
-			"max": 32,
-			"step": 4,
-			"unit": "px",
-			"default": 12
-		},
-		{
-			"type": "range",
-			"id": "mobile_spacing",
-			"label": "Mobile spacing",
-			"min": 4,
-			"max": 24,
-			"step": 2,
-			"unit": "px",
-			"default": 12,
-			"info": "Spacing on mobile devices"
-		},
-		{
-			"type": "range",
-			"id": "border_width",
-			"label": "Border width",
-			"min": 0,
-			"max": 8,
-			"step": 1,
-			"unit": "px",
-			"default": 1
-		},
-		{
-			"type": "range",
 			"id": "border_radius",
-			"label": "Container border radius",
+			"label": "Corner radius",
 			"min": 0,
 			"max": 32,
-			"step": 2,
+			"step": 1,
 			"unit": "px",
 			"default": 12
 		},
@@ -691,10 +641,10 @@
 		{
 			"type": "range",
 			"id": "image_border_radius",
-			"label": "Image border radius",
+			"label": "Image radius",
 			"min": 0,
-			"max": 24,
-			"step": 2,
+			"max": 50,
+			"step": 1,
 			"unit": "px",
 			"default": 8
 		},
@@ -759,12 +709,6 @@
 			"default": "medium"
 		},
 		{
-			"type": "checkbox",
-			"id": "button_full_width",
-			"label": "Full width button",
-			"default": true
-		},
-		{
 			"type": "range",
 			"id": "button_border_radius",
 			"label": "Button border radius",
@@ -783,68 +727,6 @@
 			"type": "color",
 			"id": "button_text_color",
 			"label": "Button text color"
-		},
-		{
-			"type": "select",
-			"id": "savings_position",
-			"label": "Savings badge position",
-			"options": [
-				{
-					"value": "top-left",
-					"label": "Top Left"
-				},
-				{
-					"value": "top-right",
-					"label": "Top Right"
-				},
-				{
-					"value": "bottom-left",
-					"label": "Bottom Left"
-				},
-				{
-					"value": "bottom-right",
-					"label": "Bottom Right"
-				},
-				{
-					"value": "inline",
-					"label": "Inline with content"
-				}
-			],
-			"default": "top-right"
-		},
-		{
-			"type": "select",
-			"id": "savings_style",
-			"label": "Savings badge style",
-			"options": [
-				{
-					"value": "rounded",
-					"label": "Rounded"
-				},
-				{
-					"value": "square",
-					"label": "Square"
-				},
-				{
-					"value": "pill",
-					"label": "Pill"
-				},
-				{
-					"value": "circle",
-					"label": "Circle"
-				}
-			],
-			"default": "rounded"
-		},
-		{
-			"type": "range",
-			"id": "savings_size",
-			"label": "Savings badge size",
-			"min": 12,
-			"max": 24,
-			"step": 2,
-			"unit": "px",
-			"default": 14
 		},
 		{
 			"type": "color",

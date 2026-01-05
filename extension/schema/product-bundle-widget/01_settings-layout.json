@@ -95,31 +95,8 @@
     },
     {
         "type": "checkbox",
-        "id": "show_dividers",
-        "label": "Show dividers between items",
-        "default": false
-    },
-    {
-        "type": "checkbox",
         "id": "show_free_shipping",
         "label": "Show free shipping badge",
         "default": true
-    },
-    {
-        "type": "checkbox",
-        "id": "mobile_hide_images",
-        "label": "Hide images on mobile",
-        "default": false,
-        "info": "Save space by hiding product images on mobile"
-    },
-    {
-        "type": "select",
-        "id": "mobile_button_position",
-        "label": "Mobile button position",
-        "options": [
-            { "value": "inline", "label": "Inline (in bundle)" },
-            { "value": "fixed", "label": "Fixed (bottom of screen)" }
-        ],
-        "default": "inline"
     }
 ]

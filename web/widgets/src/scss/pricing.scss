@@ -7,14 +7,14 @@
     // ==========================================================================
 
     &__product-price-current {
-        font-size: var(--rb-font-size-medium);
+        font-size: var(--rb-font-size, 16px);
         font-weight: 500;
         color: var(--rb-text-color);
         display: block;
     }
 
     &__product-price-compare {
-        font-size: var(--rb-font-size-small);
+        font-size: var(--rb-body-font-sm);
         color: var(--rb-text-color);
         opacity: 0.5;
         text-decoration: line-through;
@@ -57,19 +57,19 @@
     }
 
     &__pricing-label {
-        font-size: var(--rb-font-size-medium);
+        font-size: var(--rb-font-size, 16px);
         color: var(--rb-text-color);
     }
 
     &__price-original {
-        font-size: var(--rb-font-size-small);
+        font-size: var(--rb-body-font-sm);
         color: var(--rb-text-color);
         opacity: 0.5;
         text-decoration: line-through;
     }
 
     &__price-discounted {
-        font-size: var(--rb-font-size-medium);
+        font-size: var(--rb-font-size, 16px);
         font-weight: 600;
         color: var(--rb-text-color);
     }
@@ -85,13 +85,13 @@
     }
 
     &__savings-label {
-        font-size: var(--rb-font-size-medium);
+        font-size: var(--rb-font-size, 16px);
         color: var(--rb-savings-color);
         font-weight: 500;
     }
 
     &__savings-amount {
-        font-size: var(--rb-font-size-medium);
+        font-size: var(--rb-font-size, 16px);
         font-weight: 600;
         color: var(--rb-savings-color);
     }
@@ -104,7 +104,7 @@
         background: rgba(59, 130, 246, 0.1);
         border-radius: 8px;
         margin-top: var(--rb-spacing-sm);
-        font-size: var(--rb-font-size-medium);
+        font-size: var(--rb-font-size, 16px);
         color: #3b82f6;
 
         svg {

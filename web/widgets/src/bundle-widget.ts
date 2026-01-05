@@ -414,8 +414,8 @@ declare global {
                 const isLast = index === sortedProducts.length - 1;
                 html += this.renderProductCard(product, layout);
 
-                if (layout === "slider" && !isLast) {
-                    html += '<div class="radius-bundle__slider-plus">+</div>';
+                if ( ["slider", "list"].includes(layout) && !isLast) {
+                    html += '<div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>';
                 }
             });
 
@@ -950,15 +950,15 @@ declare global {
                     : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
 
             toast.innerHTML = `
-            <div class="radius-bundle-toast__icon">${icon}</div>
-            <div class="radius-bundle-toast__message">${this.escapeHtml(message)}</div>
-            <button class="radius-bundle-toast__close" aria-label="Close">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        `;
+                <div class="radius-bundle-toast__icon">${icon}</div>
+                <div class="radius-bundle-toast__message">${this.escapeHtml(message)}</div>
+                <button class="radius-bundle-toast__close" aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
 
             // Add to body
             document.body.appendChild(toast);

@@ -1,5 +1,5 @@
 // ==========================================================================
-// Variables
+// Design Tokens
 // ==========================================================================
 
 $rb-primary-color: #333333;
@@ -13,14 +13,25 @@ $rb-savings-text-color: #ffffff;
 $rb-button-color: #333333;
 $rb-button-text-color: #ffffff;
 $rb-muted-color: #888888;
+
 $rb-border-radius: 12px;
 $rb-border-radius-small: 8px;
-$rb-font-size-small: 12px;
-$rb-font-size-medium: 14px;
-$rb-font-size-large: 16px;
+$rb-image-border-radius: 8px;
+
+$rb-heading-base: 20px;
+$rb-font-base-size: 16px;
+
+$rb-font-scale-sm: 0.85;
+$rb-font-scale-md: 1;
+$rb-font-scale-lg: 1.15;
+
+$rb-button-font-base: 16px;
+
 $rb-spacing: 16px;
+
 $rb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 $rb-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
 $rb-transition: 0.2s ease;
+
 $rb-skeleton-base: #e8e8e8;
 $rb-skeleton-shine: #f5f5f5;
