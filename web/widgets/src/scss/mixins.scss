@@ -15,14 +15,12 @@
 
 @mixin card-hover {
     transition:
-            box-shadow var(--rb-transition),
-            transform var(--rb-transition),
-            border-color var(--rb-transition);
+            box-shadow var(--rb-hover-transition),
+            transform var(--rb-hover-transition);
 
     &:hover {
-        box-shadow: var(--rb-shadow);
-        transform: translateY(-1px);
-        border-color: var(--rb-primary-color);
+        box-shadow: var(--rb-shadow-hover);
+        transform: translateY(calc(var(--rb-hover-enabled) * -2px));
     }
 }
 

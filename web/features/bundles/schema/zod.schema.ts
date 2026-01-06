@@ -62,8 +62,12 @@ const bundleSettingsSchema = z
             .default("STORE_DEFAULT"),
         title: z.string().max(100).default("Bundle Offers"),
         cartButtonText: z.string().max(50).default("Add bundle to cart"),
+        showImages: z.boolean().default(true),
+        // showSavingsBadge: z.boolean().default(true),
         showPrices: z.boolean().default(true),
+        showComparePrice: z.boolean().default(true),
         showSavings: z.boolean().default(true),
+        showFreeShipping: z.boolean().default(true),
         enableHyperLink: z.boolean().default(false),
         style: z
             .object({

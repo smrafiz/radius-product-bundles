@@ -192,7 +192,6 @@ function buildActiveBundlesMetafieldValue(
                 layout: bundle.settings?.layout || "list",
                 showPrices: bundle.settings?.showPrices ?? true,
                 showSavings: bundle.settings?.showSavings ?? true,
-                showImages: bundle.settings?.showProductImages ?? true,
                 buttonText: bundle.settings?.buttonText || "Add Bundle to Cart",
                 // Widget styling from DB
                 primaryColor: bundle.settings?.primaryColor || "#333333",

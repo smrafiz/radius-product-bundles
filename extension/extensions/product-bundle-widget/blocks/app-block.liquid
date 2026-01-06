@@ -102,13 +102,13 @@
 
 				{% comment %} Features {% endcomment %}
                 {% assign show_images = block.settings.show_product_images %}
-                {% assign show_savings = block.settings.show_savings %}
+				{% assign show_savings = block.settings.show_savings %}
 				{% assign show_product_prices = block.settings.show_product_prices %}
 				{% assign show_compare_at_price = block.settings.show_compare_at_price %}
                 {% assign show_free_shipping = block.settings.show_free_shipping %}
 
                 {% if show_images == null %}
-                    {% assign show_images = g_styles.spacing.showProductImages | default: true %}
+                    {% assign show_images = bundle.showImages | default: true %}
                 {% endif %}
 
                 {% if show_savings == null %}
@@ -116,16 +116,21 @@
                 {% endif %}
 
 				{% if show_product_prices == null %}
-					{% assign show_product_prices = g_styles.features.showProductPrices | default: true %}
+					{% assign show_product_prices = bundle.showPrices | default: true %}
 				{% endif %}
 
 				{% if show_compare_at_price == null %}
-					{% assign show_compare_at_price = g_styles.features.showComparePrices | default: true %}
+					{% assign show_compare_at_price = bundle.showComparePrice | default: true %}
 				{% endif %}
 
                 {% if show_free_shipping == null %}
-                    {% assign show_free_shipping = g_styles.spacing.showFreeShipping | default: true %}
+                    {% assign show_free_shipping = bundle.showFreeShipping | default: true %}
                 {% endif %}
+
+				{% assign hover_effect = block.settings.hover_effect %}
+				{% if hover_effect == null %}
+					{% assign hover_effect = true %}
+				{% endif %}
 
                 {% comment %} Labels {% endcomment %}
 				{% assign bundle_heading = block.settings.bundle_heading
@@ -213,6 +218,7 @@
 							--rb-heading-font: var(--rb-heading-md);
 						{% endcase %}
 
+						/* Button size */
 						{% case button_size %}
 						{% when 'small' %}
 							--rb-button-font: var(--rb-button-font-sm);
@@ -232,14 +238,33 @@
 							--rb-font-size: var(--rb-body-font-md);
 						{% endcase %}
 
-						{% comment %}{% case box_alignment %}{% endcomment %}
-						{% comment %}{% when 'center' %}{% endcomment %}
-							{% comment %}--rb-box-align: center;{% endcomment %}
-						{% comment %}{% when 'right' %}{% endcomment %}
-							{% comment %}--rb-box-align: right;{% endcomment %}
-						{% comment %}{% else %}{% endcomment %}
-							{% comment %}--rb-box-align: left;{% endcomment %}
-						{% comment %}{% endcase %}{% endcomment %}
+						/* product shadow */
+						{% case block.settings.shadow_style %}
+						{% when 'none' %}
+							--rb-shadow: none;
+							--rb-shadow-hover: none;
+						{% when 'style2' %}
+							--rb-shadow: var(--rb-shadow-md);
+							--rb-shadow-hover: var(--rb-shadow-md-hover);
+						{% when 'style3' %}
+							--rb-shadow: var(--rb-shadow-lg);
+							--rb-shadow-hover: var(--rb-shadow-lg-hover);
+						{% else %}
+							--rb-shadow: var(--rb-shadow-sm);
+							--rb-shadow-hover: var(--rb-shadow-sm-hover);
+						{% endcase %}
+
+						/* Hover effect */
+						{% if block.settings.hover_effect %}
+							--rb-hover-enabled: 1;
+							/*--rb-shadow-hover: var(--rb-shadow-hover);*/
+							--rb-hover-transition: 0.25s ease;
+						{% else %}
+							--rb-hover-enabled: 0;
+							/*--rb-shadow-hover: var(--rb-shadow);*/
+							--rb-hover-transition: 0s;
+						{% endif %}
+
 					}
 				</style>
 
@@ -251,7 +276,7 @@
 						data-box-align="{{ box_alignment }}"
                         data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
                         data-show-images="{{ show_images }}"
-                        data-show-savings="{{ show_savings }}"
+						data-show-savings="{{ show_savings }}"
                         data-show-prices="{{ show_product_prices }}"
                         data-show-compare-prices="{{ show_compare_at_price }}"
                 >
@@ -740,23 +765,19 @@
 					"label": "None"
 				},
 				{
-					"value": "small",
-					"label": "Small"
+					"value": "style1",
+					"label": "Style 1"
 				},
 				{
-					"value": "medium",
-					"label": "Medium"
+					"value": "style2",
+					"label": "Style 2"
 				},
 				{
-					"value": "large",
-					"label": "Large"
-				},
-				{
-					"value": "extra-large",
-					"label": "Extra Large"
+					"value": "style3",
+					"label": "Style 3"
 				}
 			],
-			"default": "small"
+			"default": "style1"
 		},
 		{
 			"type": "checkbox",
@@ -764,26 +785,6 @@
 			"label": "Enable hover effect",
 			"default": true,
 			"info": "Adds subtle animation on hover"
-		},
-		{
-			"type": "select",
-			"id": "transition_speed",
-			"label": "Animation speed",
-			"options": [
-				{
-					"value": "fast",
-					"label": "Fast"
-				},
-				{
-					"value": "normal",
-					"label": "Normal"
-				},
-				{
-					"value": "slow",
-					"label": "Slow"
-				}
-			],
-			"default": "normal"
 		},
 		{
 			"type": "textarea",

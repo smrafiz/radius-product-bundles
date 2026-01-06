@@ -25,6 +25,7 @@
         background: #f9f9f9;
         border: 1px solid var(--rb-border-color);
         border-radius: var(--rb-border-radius);
+        box-shadow: var(--rb-shadow);
         @include mixins.card-hover;
 
         .radius-bundle__product-image {
