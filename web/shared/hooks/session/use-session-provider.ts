@@ -1,12 +1,20 @@
 "use client";
 
 import { useSessionStore } from "@/shared";
+import { storeToken } from "@/shared/actions";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { doWebhookRegistration, storeToken } from "@/shared/actions";
+import { doWebhookRegistration } from "@/features/webhooks/actions";
 
+console.log("🔵 [Session Provider Module] File loaded");
+
+/**
+ * Custom hook to manage Shopify session initialization and webhook registration
+ */
 export function useSessionProvider() {
+    console.log("🟢 [Session Provider Hook] useSessionProvider() called");
+
     const app = useAppBridge();
     const searchParams = useSearchParams();
 
@@ -23,7 +31,6 @@ export function useSessionProvider() {
         sessionError,
     } = useSessionStore();
 
-    const [isAppBridgeReady, setIsAppBridgeReady] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
     const tokenProcessed = useRef(false);
 
@@ -34,66 +41,54 @@ export function useSessionProvider() {
             document.referrer.includes("myshopify.com/admin/themes"));
 
     /**
-     * 🧠 Initialize App Bridge
+     * Handle session token retrieval and webhook registration on app load
      */
     useEffect(() => {
-        if (isThemeExtension) {
-            updateSessionToken("theme-extension-context");
+        console.log(
+            "🟡 [Session Provider Effect] Webhook registration effect triggered",
+            {
+                tokenProcessed: tokenProcessed.current,
+                hasValidSession,
+            },
+        );
+
+        if (tokenProcessed.current || hasValidSession) {
+            console.log(
+                "⚪ [Session Provider] Skipping - already processed or has valid session",
+            );
             return;
         }
 
-        const checkAppBridge = () => {
-            if (typeof window !== "undefined" && window.shopify && app) {
-                setIsAppBridgeReady(true);
-                return true;
-            }
-            return false;
-        };
-
-        if (checkAppBridge()) return;
-
-        let attempts = 0;
-        const maxAttempts = 40;
-
-        const interval = setInterval(() => {
-            attempts++;
-            if (checkAppBridge()) {
-                clearInterval(interval);
-                return;
-            }
-            if (attempts >= maxAttempts) {
-                clearInterval(interval);
-                console.error("❌ App Bridge failed to initialize");
-            }
-        }, 100);
-
-        return () => clearInterval(interval);
-    }, [app, isThemeExtension, updateSessionToken]);
-
-    /**
-     * 🔐 Handle session token + webhook registration
-     */
-    useEffect(() => {
-        if (
-            // isThemeExtension ||
-            !isAppBridgeReady ||
-            tokenProcessed.current ||
-            hasValidSession
-        )
-            return;
-
         const handleSession = async () => {
+            console.log("🟠 [Session Provider] Starting handleSession()");
+
             if (tokenProcessed.current) {
+                console.log(
+                    "⚪ [Session Provider] Token already processed, skipping",
+                );
                 return;
             }
 
             tokenProcessed.current = true;
 
             try {
+                if (!app) {
+                    console.error(
+                        "❌ [Session Provider] App Bridge not available",
+                    );
+                    tokenProcessed.current = false;
+                    return;
+                }
+
+                console.log(
+                    "🔴 [Session Provider] Getting token from App Bridge...",
+                );
                 const token = await app.idToken();
 
                 if (!token) {
-                    console.error("No token received from App Bridge");
+                    console.error(
+                        "❌ [Session Provider] No token received from App Bridge",
+                    );
                     clearSession();
                     if (retryCount < 3) {
                         setTimeout(() => {
@@ -104,30 +99,88 @@ export function useSessionProvider() {
                     return;
                 }
 
+                console.log(
+                    "✅ [Session Provider] Token received:",
+                    token.substring(0, 30) + "...",
+                );
                 updateSessionToken(token);
 
                 let stored = false;
                 try {
+                    console.log("📝 [Session Provider] Storing token...");
                     await storeToken(token);
                     stored = true;
+                    console.log("✅ [Session Provider] Token stored");
                 } catch (e) {
-                    console.error("Token storage failed", e);
+                    console.error(
+                        "❌ [Session Provider] Token storage failed:",
+                        e,
+                    );
                 }
 
                 try {
+                    console.log("━".repeat(80));
+                    console.log(
+                        "🎯 [Session Provider] STARTING WEBHOOK REGISTRATION",
+                    );
+                    console.log(
+                        "[Session Provider] Token length:",
+                        token.length,
+                    );
+                    console.log(
+                        "[Session Provider] Token prefix:",
+                        token.substring(0, 30) + "...",
+                    );
+                    console.log("━".repeat(80));
+
                     await doWebhookRegistration(token);
+
+                    console.log("━".repeat(80));
+                    console.log(
+                        "✅ [Session Provider] WEBHOOK REGISTRATION COMPLETE",
+                    );
+                    console.log("━".repeat(80));
                 } catch (e) {
-                    console.error("Webhook registration failed", e);
+                    console.error("━".repeat(80));
+                    console.error(
+                        "❌ [Session Provider] WEBHOOK REGISTRATION FAILED",
+                    );
+                    console.error(
+                        "[Session Provider] Error type:",
+                        e?.constructor?.name,
+                    );
+                    console.error(
+                        "[Session Provider] Error message:",
+                        e instanceof Error ? e.message : String(e),
+                    );
+                    console.error(
+                        "[Session Provider] Error stack:",
+                        e instanceof Error ? e.stack : "No stack",
+                    );
+
+                    if (e && typeof e === "object") {
+                        console.error(
+                            "[Session Provider] Full error details:",
+                            JSON.stringify(e, Object.getOwnPropertyNames(e), 2),
+                        );
+                    }
+                    console.error("━".repeat(80));
                 }
 
                 if (!stored) {
-                    console.error("Token store failed");
+                    console.error("❌ [Session Provider] Token store failed");
                     clearSession();
                     return;
                 }
+
+                console.log("🔍 [Session Provider] Validating session...");
                 await validateSession();
+                console.log("✅ [Session Provider] Session validated");
             } catch (error) {
-                console.error("Session init failed:", error);
+                console.error(
+                    "❌ [Session Provider] Session init failed:",
+                    error,
+                );
                 clearSession();
 
                 if (retryCount < 3) {
@@ -142,7 +195,6 @@ export function useSessionProvider() {
         void handleSession();
     }, [
         app,
-        isAppBridgeReady,
         isThemeExtension,
         hasValidSession,
         retryCount,
@@ -152,7 +204,7 @@ export function useSessionProvider() {
     ]);
 
     /**
-     * 🧭 Handle URL params (shop, host)
+     * Handle URL params (shop, host)
      */
     useEffect(() => {
         if (isThemeExtension) return;
@@ -169,14 +221,13 @@ export function useSessionProvider() {
      * Store App Bridge globally for validation hook
      */
     useEffect(() => {
-        if (!isThemeExtension && isAppBridgeReady && app) {
+        if (!isThemeExtension && app) {
             (window as any).__APP_BRIDGE__ = app;
         }
-    }, [app, isAppBridgeReady, isThemeExtension]);
+    }, [app, isThemeExtension]);
 
     return {
         isThemeExtension,
-        isAppBridgeReady,
         hasValidSession,
         sessionError,
         sessionToken,

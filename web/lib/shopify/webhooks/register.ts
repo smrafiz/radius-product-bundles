@@ -1,14 +1,16 @@
-import { AppInstallations } from "@/shared/repositories";
 import shopify from "@/lib/shopify/config/initialize-context";
 import { DeliveryMethod, Session } from "@shopify/shopify-api";
-import { handleShopUpdate, setupGDPRWebHooks } from "@/lib/shopify";
-import { trackBundlePurchase } from "@/features/analytics/repositories";
-import { ShopifyLineItem, ShopifyLineItemProperty, ShopifyOrder } from "@/shared";
+import { setupGDPRWebHooks } from "@/lib/shopify";
+import {
+    handleAppUninstalled,
+    handleOrdersCreate,
+    handleShopUpdate,
+} from "@/features/webhooks/handlers";
 
 let webhooksInitialized = false;
 
 /**
- * Add webhook handlers
+ * Add webhook handlers to the Shopify API instance
  */
 export function addHandlers() {
     if (!webhooksInitialized) {
@@ -17,68 +19,32 @@ export function addHandlers() {
         setupGDPRWebHooks("/api/webhooks");
 
         shopify.webhooks.addHandlers({
-            ["APP_UNINSTALLED"]: {
+            APP_UNINSTALLED: {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
-                callback: async (_topic, shop, _body) => {
-                    console.log("Uninstalled app from shop: " + shop);
-                    await AppInstallations.delete(shop);
+                callback: async (_topic, shop, body) => {
+                    console.log(
+                        `[Webhooks] APP_UNINSTALLED received for ${shop}`,
+                    );
+                    await handleAppUninstalled(shop, body);
                 },
             },
-            ["SHOP_UPDATE"]: {
+            SHOP_UPDATE: {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
-                callback: async (topic, shop, body) => {
-                    console.log(`Received ${topic} webhook for ${shop}`);
+                callback: async (_topic, shop, body) => {
+                    console.log(`[Webhooks] SHOP_UPDATE received for ${shop}`);
                     await handleShopUpdate(shop, body);
                 },
             },
-            ["ORDERS_CREATE"]: {
+            ORDERS_CREATE: {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
-                callback: async (topic, shop, body) => {
-                    try {
-                        const order: ShopifyOrder = JSON.parse(body);
-
-                        console.log(`[Order Webhook] Processing order ${order.name} from ${shop}`);
-
-                        // Find all line items with the bundle_id property
-                        const bundleItems = order.line_items.filter((item: ShopifyLineItem) =>
-                            item.properties?.some(
-                                (prop: ShopifyLineItemProperty) => prop.name === "_bundle_id",
-                            ),
-                        );
-
-                        if (bundleItems.length === 0) {
-                            console.log(`[Order Webhook] No bundles found in order ${order.name}`);
-                            return;
-                        }
-
-                        console.log(`[Order Webhook] Found ${bundleItems.length} bundle item(s)`);
-
-                        // Track each bundle item
-                        for (const item of bundleItems) {
-                            const bundleId = item.properties?.find(
-                                (p: ShopifyLineItemProperty) => p.name === "_bundle_id",
-                            )?.value;
-
-                            if (bundleId) {
-                                const revenue = parseFloat(item.price) * item.quantity;
-
-                                await trackBundlePurchase({
-                                    bundleId,
-                                    revenue,
-                                    customerId: order.customer?.id?.toString(),
-                                    isNewCustomer: (order.customer?.orders_count || 0) === 1,
-                                    timestamp: new Date(order.created_at),
-                                });
-
-                                console.log(`[Order Webhook] Tracked purchase: Bundle ${bundleId}, Revenue $${revenue}`);
-                            }
-                        }
-                    } catch (error) {
-                        console.error(`[Order Webhook] Error processing order:`, error);
-                    }
+                callback: async (_topic, shop, body) => {
+                    console.log(
+                        `[Webhooks] ORDERS_CREATE received for ${shop}`,
+                    );
+                    await handleOrdersCreate(shop, body);
                 },
             },
         });
@@ -126,7 +92,10 @@ export async function registerWebhooks(session: Session) {
         const responses = await shopify.webhooks.register({ session });
 
         console.log("[Webhooks] ✅ Registration API call completed");
-        console.log("[Webhooks] Number of responses:", Object.keys(responses).length);
+        console.log(
+            "[Webhooks] Number of responses:",
+            Object.keys(responses).length,
+        );
 
         // Log each webhook registration result
         for (const [topic, results] of Object.entries(responses)) {
@@ -145,14 +114,19 @@ export async function registerWebhooks(session: Session) {
     } catch (error) {
         console.error("[Webhooks] ❌ Registration failed");
         console.error("[Webhooks] Error type:", error?.constructor?.name);
-        console.error("[Webhooks] Error message:", error instanceof Error ? error.message : String(error));
+        console.error(
+            "[Webhooks] Error message:",
+            error instanceof Error ? error.message : String(error),
+        );
 
         if (error instanceof Error) {
             console.error("[Webhooks] Stack trace:", error.stack);
         }
 
-        // Log full error object
-        console.error("[Webhooks] Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+        console.error(
+            "[Webhooks] Full error object:",
+            JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+        );
 
         throw error;
     }

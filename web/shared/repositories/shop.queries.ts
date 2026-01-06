@@ -1,6 +1,12 @@
 import prisma from "@/shared/repositories/prisma-connect";
 
 /**
+ * Shop Repository
+ *
+ * Handles shop-related database operations
+ */
+
+/**
  * Creates or updates a shop record
  */
 export async function upsertShop(

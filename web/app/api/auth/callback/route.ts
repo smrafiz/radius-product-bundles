@@ -1,9 +1,13 @@
 import { Session } from "@shopify/shopify-api";
 import { NextRequest, NextResponse } from "next/server";
-import { runAppSetup, registerWebhooks } from "@/lib/shopify";
-import { storeSession, upsertShop } from "@/shared/repositories";
+import { registerWebhooks, runAppSetup } from "@/lib/shopify";
 import { createSessionConfig, isValidShopifyToken } from "@/shared";
+import { storeSession, upsertShop } from "@/shared/repositories";
+import { markSetupComplete, markWebhooksRegistered } from "@/features/webhooks";
 
+/**
+ * OAuth Callback (Legacy support)
+ */
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get("code");
@@ -20,14 +24,13 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // Exchange code for access token
+        console.log("[OAuth] Processing callback for shop:", shop);
+
         const tokenResponse = await fetch(
             `https://${shop}/admin/oauth/access_token`,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     client_id: process.env.SHOPIFY_API_KEY,
                     client_secret: process.env.SHOPIFY_API_SECRET,
@@ -42,14 +45,11 @@ export async function GET(request: NextRequest) {
 
         const tokenData = await tokenResponse.json();
 
-        // Validate token format using utility function
         if (!isValidShopifyToken(tokenData.access_token)) {
             throw new Error("Invalid access token format received");
         }
 
         const sessionState = state || crypto.randomUUID();
-
-        // Create a session object
         const sessionConfig = createSessionConfig(
             shop,
             tokenData.access_token,
@@ -59,69 +59,42 @@ export async function GET(request: NextRequest) {
 
         const session = new Session(sessionConfig);
 
-        // Store session in the database
         await storeSession(session);
-
-        // Ensure shop record exists in the database
         await upsertShop(shop);
 
-        // Register webhooks (APP_UNINSTALLED, etc.)
+        console.log("[OAuth] Session stored, running setup...");
+
+        // Run app setup
+        const setupResult = await runAppSetup(tokenData.access_token, shop);
+
+        if (setupResult.success) {
+            await markSetupComplete(shop);
+            console.log("[OAuth] ✅ Setup complete");
+        } else {
+            console.warn("[OAuth] ⚠️ Setup warning:", setupResult.error);
+        }
+
+        // Register webhooks
         try {
-            console.log("[OAuth] 🔄 Starting webhook registration for", shop);
-            console.log("[OAuth] Session info:", {
-                shop: session.shop,
-                hasAccessToken: !!session.accessToken,
-                state: session.state,
-            });
-
-            const webhookResponses = await registerWebhooks(session);
-
-            console.log(
-                "[OAuth] ✅ Webhooks registered successfully for",
-                shop,
-            );
-            console.log(
-                "[OAuth] Webhook responses:",
-                JSON.stringify(webhookResponses, null, 2),
-            );
+            await registerWebhooks(session);
+            await markWebhooksRegistered(shop);
+            console.log("[OAuth] ✅ Webhooks registered");
         } catch (webhookError) {
             console.error(
                 "[OAuth] ❌ Webhook registration failed:",
                 webhookError,
             );
-            console.error("[OAuth] Error details:", {
-                message:
-                    webhookError instanceof Error
-                        ? webhookError.message
-                        : "Unknown",
-                stack:
-                    webhookError instanceof Error ? webhookError.stack : null,
-            });
-            // Continue anyway - don't block installation
         }
 
-        // Run app setup (creates metafield definitions, etc.)
-        const setupResult = await runAppSetup(tokenData.access_token, shop);
-        if (!setupResult.success) {
-            console.warn("[OAuth] App setup warning:", setupResult.error);
-        }
-
-        // Build redirect URL with proper parameters
         const baseUrl = returnTo || "/dashboard";
         const redirectUrl = new URL(baseUrl, request.url);
-
         redirectUrl.searchParams.set("shop", shop);
-
-        if (host) {
-            redirectUrl.searchParams.set("host", host);
-        }
-
+        if (host) redirectUrl.searchParams.set("host", host);
         redirectUrl.searchParams.set("embedded", "1");
 
         return NextResponse.redirect(redirectUrl.toString());
     } catch (error) {
-        console.error("OAuth callback error:", error);
-
+        console.error("[OAuth] Callback error:", error);
         return NextResponse.json(
             {
                 error: "OAuth authentication failed",
