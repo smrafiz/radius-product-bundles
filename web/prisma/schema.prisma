@@ -430,24 +430,32 @@ model AlertRule {
 }
 
 model Shop {
-  id                 String         @id @default(cuid())
-  domain             String         @unique
-  status             ShopStatus     @default(ACTIVE)
-  plan               String?
-  trialEndsAt        DateTime?
-  metafieldSetupDone Boolean        @default(false)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  abTests            ABTest[]
-  aiInsights         AIInsight[]
-  alertRules         AlertRule[]
-  appSettings        AppSettings?   @relation("ShopAppSettings")
-  automations        Automation[]
-  bundles            Bundle[]
-  notifications      Notification[]
-  pricingRules       PricingRule[]
+    id                 String     @id @default(cuid())
+    domain             String     @unique
+    status             ShopStatus @default(ACTIVE)
+    plan               String?
+    trialEndsAt        DateTime?
+    metafieldSetupDone Boolean    @default(false)
 
-  @@map("shops")
+    // Setup tracking
+    setupComplete      Boolean   @default(false)
+    webhooksRegistered Boolean   @default(false)
+    lastSetupCheck     DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    abTests       ABTest[]
+    aiInsights    AIInsight[]
+    alertRules    AlertRule[]
+    appSettings   AppSettings?   @relation("ShopAppSettings")
+    automations   Automation[]
+    bundles       Bundle[]
+    notifications Notification[]
+    pricingRules  PricingRule[]
+
+    @@index([domain, setupComplete])
+    @@map("shops")
 }
 
 model AppSettings {

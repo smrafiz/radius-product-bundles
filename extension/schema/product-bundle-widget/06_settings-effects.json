@@ -35,7 +35,7 @@
         "default": "normal"
     },
     {
-        "type": "text",
+        "type": "textarea",
         "id": "custom_css_class",
         "label": "Custom CSS class",
         "info": "Add custom class for additional styling"
