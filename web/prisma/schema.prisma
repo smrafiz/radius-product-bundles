@@ -150,26 +150,32 @@ model BundleProductGroup {
 }
 
 model BundleSettings {
-    id               String       @id @default(cuid())
-    bundleId         String       @unique
-    layout           WidgetLayout @default(GRID)
-    theme            WidgetTheme  @default(STORE_DEFAULT)
-    title            String?
-    cartButtonText   String?
-    widget           Json?
-    showPrices       Boolean      @default(true)
-    showSavings      Boolean      @default(true)
-    enableHyperLink  Boolean      @default(false)
-    variant          String?
-    misc             Json?
-    createdAt        DateTime     @default(now())
-    updatedAt        DateTime     @updatedAt
-    responsive       Json?
-    showComparePrice Boolean      @default(true)
-    showFreeShipping Boolean      @default(true)
-    showImages       Boolean      @default(true)
-    style            Json?
-    bundle           Bundle       @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    id             String       @id @default(cuid())
+    bundleId       String       @unique
+    layout         WidgetLayout @default(GRID)
+    theme          WidgetTheme  @default(STORE_DEFAULT)
+    title          String?
+    cartButtonText String?
+    widget         Json?
+    variant        String?
+    misc           Json?
+    responsive     Json?
+
+    // Display settings
+    showImages        Boolean @default(true)
+    showSavingsBadge  Boolean @default(true)
+    showPrices        Boolean @default(true)
+    showComparePrices Boolean @default(true)
+    showSavings       Boolean @default(true)
+    showFreeShipping  Boolean @default(true)
+    enableHyperLink   Boolean @default(false)
+
+    // Style settings
+    style  Json?
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([layout])
     @@index([theme])

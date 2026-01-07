@@ -110,7 +110,7 @@ export const ADVANCED_OPTIONS = [
         description: "Display the price of each product within a bundle",
     },
     {
-        key: "showComparePrice" as const,
+        key: "showComparePrices" as const,
         title: "Show compare at price",
         description: "Display the compare at of each product within a bundle",
     },
