@@ -130,9 +130,6 @@
 					{% assign enable_hyperlink = false %}
 				{% endunless %}
 
-				{{ enable_hyperlink }}
-
-
 				{% assign hover_effect = block.settings.hover_effect %}
 				{% if hover_effect == null %}
 					{% assign hover_effect = true %}
@@ -263,17 +260,14 @@
 						/* Hover effect */
 						{% if block.settings.hover_effect %}
 							--rb-hover-enabled: 1;
-							/*--rb-shadow-hover: var(--rb-shadow-hover);*/
 							--rb-hover-transition: 0.25s ease;
 						{% else %}
 							--rb-hover-enabled: 0;
-							/*--rb-shadow-hover: var(--rb-shadow);*/
 							--rb-hover-transition: 0s;
 						{% endif %}
 
 					}
 				</style>
-
 
 				<div
                         id="radius-bundle-{{ bundle_id }}"
@@ -753,6 +747,7 @@
 			"type": "select",
 			"id": "shadow_style",
 			"label": "Shadow style",
+			"info": "Shadow only applies to grid and list layout",
 			"options": [
 				{
 					"value": "none",

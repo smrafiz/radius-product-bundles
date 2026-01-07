@@ -507,35 +507,36 @@ declare global {
                 ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
                 : "";
 
+
+            const productUrl = product.handle ? `/products/${product.handle}` : "#";
+            const productTitleHtml = this.enableHyperLink
+                ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
+                : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
+
             // List layout
             if (layout === "list") {
                 return `
-            <div class="radius-bundle__product radius-bundle__product--list" data-product-id="${product.id}" data-variant-id="${product.variantId}">
-                ${imageWrapper}
-                <div class="radius-bundle__product-info">
-                    <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
-                    <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
-                </div>
-                ${
-                    this.showPrices
-                        ? `
-                    <div class="radius-bundle__product-price">
-                        ${priceHtml}
+                    <div class="radius-bundle__product radius-bundle__product--list" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+                        ${imageWrapper}
+                        <div class="radius-bundle__product-info">
+                            ${productTitleHtml}
+                            <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
+                        </div>
+                        ${
+                            this.showPrices
+                                ? `
+                            <div class="radius-bundle__product-price">
+                                ${priceHtml}
+                            </div>
+                        `
+                                : ""
+                        }
                     </div>
-                `
-                        : ""
-                }
-            </div>
-        `;
+                `;
             }
 
             // Grid layout
             if (layout === "grid") {
-                const productUrl = product.handle ? `/products/${product.handle}` : "#";
-                const productTitleHtml = this.enableHyperLink
-                    ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
-                    : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
-
                 return `
                     <div class="radius-bundle__product radius-bundle__product--grid" 
                          data-product-id="${product.id}" 
@@ -558,7 +559,7 @@ declare global {
             <div class="radius-bundle__product radius-bundle__product--compact" data-product-id="${product.id}" data-variant-id="${product.variantId}">
                 ${imageWrapper}
                 <div class="radius-bundle__product-info radius-bundle__product-info--compact">
-                    <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
+                    ${productTitleHtml}
                     ${
                         this.showPrices
                             ? `
@@ -577,7 +578,7 @@ declare global {
             return `
         <div class="radius-bundle__product radius-bundle__product--slider" data-product-id="${product.id}" data-variant-id="${product.variantId}">
             ${imageWrapper}
-            <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
+            ${productTitleHtml}
             ${
                 this.showPrices
                     ? `

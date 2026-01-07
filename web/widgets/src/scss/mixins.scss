@@ -21,6 +21,7 @@
     &:hover {
         box-shadow: var(--rb-shadow-hover);
         transform: translateY(calc(var(--rb-hover-enabled) * -2px));
+
     }
 }
 

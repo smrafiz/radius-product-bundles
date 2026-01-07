@@ -7,6 +7,7 @@
         "type": "select",
         "id": "shadow_style",
         "label": "Shadow style",
+        "info": "Shadow only applies to grid and list layout",
         "options": [
             { "value": "none", "label": "None" },
             { "value": "style1", "label": "Style 1" },
