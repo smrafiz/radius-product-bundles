@@ -22,6 +22,7 @@
 	</div>
 
 	{% comment %} Savings Row {% endcomment %}
+	{% if show_savings %}
 	<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
 		{% unless compact %}
 			<span class="radius-bundle__savings-label">{{ you_save_label }}</span>
@@ -30,6 +31,7 @@
 			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
 		</span>
 	</div>
+	{% endif %}
 
 	{% comment %} Free Shipping Badge {% endcomment %}
 	{% if show_free_shipping %}

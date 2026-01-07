@@ -8,11 +8,12 @@
 {% assign grid_columns_tablet = block.settings.grid_columns_tablet | default: 2 %}
 {% assign grid_columns_mobile = block.settings.grid_columns_mobile | default: 1 %}
 
+
 <div class="radius-bundle__inner">
     {% comment %} Header {% endcomment %}
     {% render 'radius-bundle-header',
             name: name,
-            show_savings: show_savings
+            show_savings_badge: show_savings_badge
     %}
 
     {% comment %} Products Grid Container {% endcomment %}

@@ -131,9 +131,10 @@ declare global {
         private readonly bundleStructure: BundleStructure | null = null;
         private bundle: Bundle | null = null;
         private readonly showImages: boolean = true;
-        private readonly showSavings: boolean = true;
+        private readonly showSavingsBadge: boolean = true;
         private readonly showPrices: boolean = true;
         private readonly showComparePrices: boolean = true;
+        private readonly enableHyperLink: boolean = false;
 
         /*
          * Constructor
@@ -150,10 +151,11 @@ declare global {
                 "";
 
             this.showImages = container.dataset.showImages !== "false";
-            this.showSavings = container.dataset.showSavings !== "false";
+            this.showSavingsBadge = container.dataset.showSavingsBadge !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
-            this.showComparePrices =
-                container.dataset.showComparePrices !== "false";
+            this.showComparePrices = container.dataset.showComparePrices !== "false";
+            this.enableHyperLink = container.dataset.enableHyperLink !== "false";
+            console.log("enableHyperLink:", this.enableHyperLink);
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -219,7 +221,7 @@ declare global {
                 }
             }
 
-            if (badgeText && this.showSavings) {
+            if (badgeText && this.showSavingsBadge) {
                 badgeEl.textContent = badgeText;
                 badgeEl.classList.add("radius-bundle__badge--visible");
             } else {
@@ -521,22 +523,25 @@ declare global {
 
             // Grid layout
             if (layout === "grid") {
+                const productUrl = product.handle ? `/products/${product.handle}` : "#";
+                const productTitleHtml = this.enableHyperLink
+                    ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
+                    : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
+
                 return `
-            <div class="radius-bundle__product radius-bundle__product--grid" data-product-id="${product.id}" data-variant-id="${product.variantId}">
-                ${imageWrapper}
-                <h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>
-                ${
-                    this.showPrices
-                        ? `
-                    <div class="radius-bundle__product-price">
-                        ${priceHtml}
+                    <div class="radius-bundle__product radius-bundle__product--grid" 
+                         data-product-id="${product.id}" 
+                         data-variant-id="${product.variantId}">
+                        ${imageWrapper}
+                        ${productTitleHtml}
+                        ${
+                                this.showPrices
+                                    ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                                    : ""
+                            }
+                        <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
                     </div>
-                `
-                        : ""
-                }
-                <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
-            </div>
-        `;
+                `;
             }
 
             // Compact layout

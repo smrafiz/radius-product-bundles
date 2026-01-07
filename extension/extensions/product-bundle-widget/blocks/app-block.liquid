@@ -29,7 +29,6 @@
     >
         {% for bundle_id in bundle_ids %}
             {% assign bundle = bundles[bundle_id] %}
-			{{ bundle }}
 
             {% if bundle and bundle.status == 'ACTIVE' %}
                 {% comment %} Colors {% endcomment %}
@@ -101,32 +100,38 @@
 				{% assign heading_transform = block.settings.heading_transform | default: 'none' %}
 				{% assign box_alignment = block.settings.box_alignment | default: 'left' %}
 
-				{% comment %} Features {% endcomment %}
-                {% assign show_images = block.settings.show_product_images %}
-				{% assign show_savings = block.settings.show_savings %}
-				{% assign show_product_prices = block.settings.show_product_prices %}
-				{% assign show_compare_at_price = block.settings.show_compare_at_price %}
-                {% assign show_free_shipping = block.settings.show_free_shipping %}
+				{% assign show_images = bundle.showImages %}
+				{% assign show_savings = bundle.showSavings %}
+				{% assign show_product_prices = bundle.showPrices %}
+				{% assign show_compare_at_price = bundle.showComparePrices %}
+				{% assign show_free_shipping = bundle.showFreeShipping %}
+				{% assign show_savings_badge = bundle.showSavingsBadge %}
+				{% assign enable_hyperlink = bundle.enableHyperLink %}
 
-                {% if show_images == null %}
-                    {% assign show_images = bundle.showImages | default: true %}
-                {% endif %}
-
-                {% if show_savings == null %}
-                    {% assign show_savings = g_styles.spacing.showSavings | default: true %}
-                {% endif %}
-
+				{% if show_images == null %}
+					{% assign show_images = true %}
+				{% endif %}
+				{% if show_savings == null %}
+					{% assign show_savings = true %}
+				{% endif %}
 				{% if show_product_prices == null %}
-					{% assign show_product_prices = bundle.showPrices | default: true %}
+					{% assign show_product_prices = true %}
 				{% endif %}
-
 				{% if show_compare_at_price == null %}
-					{% assign show_compare_at_price = bundle.showComparePrice | default: true %}
+					{% assign show_compare_at_price = true %}
 				{% endif %}
+				{% if show_free_shipping == null %}
+					{% assign show_free_shipping = true %}
+				{% endif %}
+				{% if show_savings_badge == null %}
+					{% assign show_savings_badge = true %}
+				{% endif %}
+				{% unless enable_hyperlink == true or enable_hyperlink == false %}
+					{% assign enable_hyperlink = false %}
+				{% endunless %}
 
-                {% if show_free_shipping == null %}
-                    {% assign show_free_shipping = bundle.showFreeShipping | default: true %}
-                {% endif %}
+				{{ enable_hyperlink }}
+
 
 				{% assign hover_effect = block.settings.hover_effect %}
 				{% if hover_effect == null %}
@@ -280,6 +285,9 @@
 						data-show-savings="{{ show_savings }}"
                         data-show-prices="{{ show_product_prices }}"
                         data-show-compare-prices="{{ show_compare_at_price }}"
+						data-show-free-shipping="{{ show_free_shipping }}"
+						data-show-savings-badge="{{ show_savings_badge }}"
+						data-enable-hyperlink="{{ enable_hyperlink }}"
                 >
                     {% assign layout = layout | default: 'list' | downcase %}
 
@@ -301,7 +309,11 @@
                                     product_count: product_count,
                                     show_images: show_images,
                                     show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
                                     show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
                                     regular_price_label: regular_price_label,
                                     bundle_price_label: bundle_price_label,
@@ -314,9 +326,13 @@
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
                                     product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-                                    show_free_shipping: show_free_shipping,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
                                     regular_price_label: regular_price_label,
                                     bundle_price_label: bundle_price_label,
@@ -329,9 +345,13 @@
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
                                     product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-                                    show_free_shipping: show_free_shipping,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
                                     regular_price_label: regular_price_label,
                                     bundle_price_label: bundle_price_label,
@@ -344,9 +364,13 @@
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
                                     product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-                                    show_free_shipping: show_free_shipping,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
                                     regular_price_label: regular_price_label,
                                     bundle_price_label: bundle_price_label,
@@ -462,37 +486,6 @@
 			"unit": "px",
 			"default": 800,
 			"info": "Maximum width of bundle container"
-		},
-		{
-			"type": "checkbox",
-			"id": "show_product_images",
-			"label": "Show product images",
-			"default": true
-		},
-		{
-			"type": "checkbox",
-			"id": "show_savings",
-			"label": "Show savings badge",
-			"default": true
-		},
-		{
-			"type": "checkbox",
-			"id": "show_product_prices",
-			"label": "Show individual prices",
-			"default": true
-		},
-		{
-			"type": "checkbox",
-			"id": "show_compare_at_price",
-			"label": "Show compare at price",
-			"default": true,
-			"info": "Show original price with strikethrough"
-		},
-		{
-			"type": "checkbox",
-			"id": "show_free_shipping",
-			"label": "Show free shipping badge",
-			"default": true
 		},
 		{
 			"type": "header",

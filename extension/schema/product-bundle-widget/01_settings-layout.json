@@ -67,36 +67,5 @@
         "unit": "px",
         "default": 800,
         "info": "Maximum width of bundle container"
-    },
-    {
-        "type": "checkbox",
-        "id": "show_product_images",
-        "label": "Show product images",
-        "default": true
-    },
-    {
-        "type": "checkbox",
-        "id": "show_savings",
-        "label": "Show savings badge",
-        "default": true
-    },
-    {
-        "type": "checkbox",
-        "id": "show_product_prices",
-        "label": "Show individual prices",
-        "default": true
-    },
-    {
-        "type": "checkbox",
-        "id": "show_compare_at_price",
-        "label": "Show compare at price",
-        "default": true,
-        "info": "Show original price with strikethrough"
-    },
-    {
-        "type": "checkbox",
-        "id": "show_free_shipping",
-        "label": "Show free shipping badge",
-        "default": true
     }
 ]
