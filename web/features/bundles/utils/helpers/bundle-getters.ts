@@ -105,7 +105,7 @@ export const initialDisplaySettings: DisplaySettings = {
     showImages: true,
     showSavingsBadge: true,
     showPrices: true,
-    showComparePrice: true,
+    showComparePrices: true,
     showSavings: true,
     showFreeShipping: true,
     enableHyperLink: false,

@@ -319,7 +319,7 @@ export interface DisplaySettings {
     showImages: boolean;
     showSavingsBadge: boolean;
     showPrices: boolean;
-    showComparePrice: boolean;
+    showComparePrices: boolean;
     showSavings: boolean;
     showFreeShipping: boolean;
     enableHyperLink: boolean;

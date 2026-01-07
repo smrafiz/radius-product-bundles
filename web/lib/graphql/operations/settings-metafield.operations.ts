@@ -165,46 +165,6 @@ export function buildGlobalSettingsMetafieldValue(
 }
 
 /**
- * Builds the metafield value from active bundles.
- * Includes display settings for storefront rendering.
- */
-function buildActiveBundlesMetafieldValue(
-    bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
-): string {
-    const bundleMap: Record<string, MetafieldBundleConfig> = {};
-
-    for (const bundle of bundles) {
-        bundleMap[bundle.id] = {
-            // Discount settings (for Rust function)
-            status: bundle.status,
-            discountType: bundle.discountType || "PERCENTAGE",
-            discountValue: bundle.discountValue || 0,
-            freeShipping: bundle.freeShipping || false,
-            minOrderValue: bundle.minOrderValue || 0,
-            maxDiscountAmount: bundle.maxDiscountAmount || 0,
-            discountApplication: bundle.discountApplication || "bundle",
-            discountedProductIds: bundle.discountedProductIds || [],
-
-            // Display settings (for Liquid/storefront)
-            name: bundle.name,
-            description: bundle.description || "",
-            settings: {
-                layout: bundle.settings?.layout || "list",
-                showPrices: bundle.settings?.showPrices ?? true,
-                showSavings: bundle.settings?.showSavings ?? true,
-                buttonText: bundle.settings?.buttonText || "Add Bundle to Cart",
-                // Widget styling from DB
-                primaryColor: bundle.settings?.primaryColor || "#333333",
-                backgroundColor: bundle.settings?.backgroundColor || "#ffffff",
-                borderRadius: bundle.settings?.borderRadius || 12,
-            },
-        };
-    }
-
-    return JSON.stringify(bundleMap);
-}
-
-/**
  * Deep merge utility.
  */
 function mergeDeep<T extends object>(target: T, source: Partial<T>): T {

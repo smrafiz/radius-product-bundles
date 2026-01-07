@@ -412,7 +412,11 @@ function buildActiveBundlesMetafieldValue(
             buttonText: bundle.settings?.cartButtonText || "Add Bundle to Cart",
             showSavings: bundle.settings?.showSavings ?? true,
             showImages: bundle.settings?.showImages ?? true,
-            showFreeShipping: bundle.settings?.showFreeShipping ?? false,
+            showSavingsBadge: bundle.settings?.showSavingsBadge ?? true,
+            showPrices: bundle.settings?.showPrices ?? true,
+            showComparePrices: bundle.settings?.showComparePrices ?? true,
+            showFreeShipping: bundle.settings?.showFreeShipping ?? true,
+            enableHyperLink: bundle.settings?.enableHyperLink ?? false,
         };
     }
 

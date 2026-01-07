@@ -29,6 +29,7 @@
     >
         {% for bundle_id in bundle_ids %}
             {% assign bundle = bundles[bundle_id] %}
+			{{ bundle }}
 
             {% if bundle and bundle.status == 'ACTIVE' %}
                 {% comment %} Colors {% endcomment %}

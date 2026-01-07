@@ -133,7 +133,7 @@ declare global {
         private readonly showImages: boolean = true;
         private readonly showSavings: boolean = true;
         private readonly showPrices: boolean = true;
-        private readonly showComparePrice: boolean = true;
+        private readonly showComparePrices: boolean = true;
 
         /*
          * Constructor
@@ -152,8 +152,8 @@ declare global {
             this.showImages = container.dataset.showImages !== "false";
             this.showSavings = container.dataset.showSavings !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
-            this.showComparePrice =
-                container.dataset.showComparePrice !== "false";
+            this.showComparePrices =
+                container.dataset.showComparePrices !== "false";
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -487,10 +487,10 @@ declare global {
             const priceHtml =
                 product.compareAtPrice > product.price
                     ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
-               ${this.showComparePrice ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
+               ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
                     : discountedPrice < product.price
                       ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
-                   ${this.showComparePrice ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
+                   ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
                       : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
 
             const imageWrapper = this.showImages
