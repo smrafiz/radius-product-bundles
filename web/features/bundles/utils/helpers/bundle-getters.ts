@@ -102,8 +102,12 @@ export const initialDisplaySettings: DisplaySettings = {
     title: "Bundle Offers",
     cartButtonText: "Add bundle to cart",
     // colorTheme: "brand",
+    showImages: true,
+    showSavingsBadge: true,
     showPrices: true,
+    showComparePrice: true,
     showSavings: true,
+    showFreeShipping: true,
     enableHyperLink: false,
     widget: {
         showOnMobile: true,

@@ -52,9 +52,20 @@
     --rb-image-size: #{$rb-image-size};
 
     /* Effects */
-    --rb-shadow: #{$rb-shadow};
-    --rb-shadow-hover: #{$rb-shadow-hover};
     --rb-transition: #{$rb-transition};
+    //--rb-shadow: #{$rb-shadow};
+    //--rb-shadow-hover: #{$rb-shadow-hover};
+
+    --rb-shadow-none: #{$rb-shadow-none};
+
+    --rb-shadow-sm: #{$rb-shadow-sm};
+    --rb-shadow-sm-hover: #{$rb-shadow-sm-hover};
+
+    --rb-shadow-md: #{$rb-shadow-md};
+    --rb-shadow-md-hover: #{$rb-shadow-md-hover};
+
+    --rb-shadow-lg: #{$rb-shadow-lg};
+    --rb-shadow-lg-hover: #{$rb-shadow-lg-hover};
 
     /* Skeleton */
     --rb-skeleton-base: #{$rb-skeleton-base};

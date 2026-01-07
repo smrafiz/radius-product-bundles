@@ -133,7 +133,7 @@ declare global {
         private readonly showImages: boolean = true;
         private readonly showSavings: boolean = true;
         private readonly showPrices: boolean = true;
-        private readonly showComparePrices: boolean = true;
+        private readonly showComparePrice: boolean = true;
 
         /*
          * Constructor
@@ -152,8 +152,8 @@ declare global {
             this.showImages = container.dataset.showImages !== "false";
             this.showSavings = container.dataset.showSavings !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
-            this.showComparePrices =
-                container.dataset.showComparePrices !== "false";
+            this.showComparePrice =
+                container.dataset.showComparePrice !== "false";
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -414,8 +414,9 @@ declare global {
                 const isLast = index === sortedProducts.length - 1;
                 html += this.renderProductCard(product, layout);
 
-                if ( ["slider", "list"].includes(layout) && !isLast) {
-                    html += '<div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>';
+                if (["slider", "list"].includes(layout) && !isLast) {
+                    html +=
+                        '<div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>';
                 }
             });
 
@@ -486,10 +487,10 @@ declare global {
             const priceHtml =
                 product.compareAtPrice > product.price
                     ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
-               ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
+               ${this.showComparePrice ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
                     : discountedPrice < product.price
                       ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
-                   ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
+                   ${this.showComparePrice ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
                       : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
 
             const imageWrapper = this.showImages

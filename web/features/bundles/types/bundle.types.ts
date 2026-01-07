@@ -316,8 +316,12 @@ export interface DisplaySettings {
     title: string;
     cartButtonText: string;
     // colorTheme: "brand" | "success" | "warning" | "critical";
+    showImages: boolean;
+    showSavingsBadge: boolean;
     showPrices: boolean;
+    showComparePrice: boolean;
     showSavings: boolean;
+    showFreeShipping: boolean;
     enableHyperLink: boolean;
     style?: {
         // Add to Cart button

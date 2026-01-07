@@ -95,13 +95,33 @@ export const BUNDLE_STEPS = [
 
 export const ADVANCED_OPTIONS = [
     {
+        key: "showImages" as const,
+        title: "Show product images",
+        description: "Display the images of each product within a bundle",
+    },
+    {
+        key: "showSavingsBadge" as const,
+        title: "Show savings badge",
+        description: "Display the savings badge of each product within a bundle",
+    },
+    {
         key: "showPrices" as const,
         title: "Show individual product prices",
         description: "Display the price of each product within a bundle",
     },
     {
+        key: "showComparePrice" as const,
+        title: "Show compare at price",
+        description: "Display the compare at of each product within a bundle",
+    },
+    {
         key: "showSavings" as const,
         title: "Show bundle savings amount",
+        description: "Show how much customers save by purchasing the bundle",
+    },
+    {
+        key: "showFreeShipping" as const,
+        title: "Show free shipping",
         description: "Show how much customers save by purchasing the bundle",
     },
     {
