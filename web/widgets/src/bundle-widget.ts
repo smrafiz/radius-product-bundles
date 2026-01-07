@@ -154,8 +154,7 @@ declare global {
             this.showSavingsBadge = container.dataset.showSavingsBadge !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
             this.showComparePrices = container.dataset.showComparePrices !== "false";
-            this.enableHyperLink = container.dataset.enableHyperLink !== "false";
-            console.log("enableHyperLink:", this.enableHyperLink);
+            this.enableHyperLink = container.dataset.enableHyperlink !== "false";
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -233,33 +232,42 @@ declare global {
          * Track bundle view event
          */
         private trackBundleView(): void {
+            let viewTimeout: number;
+
             try {
                 const observer = new IntersectionObserver(
                     (entries) => {
                         entries.forEach((entry) => {
                             if (entry.isIntersecting) {
-                                document.dispatchEvent(
-                                    new CustomEvent("bundle:viewed", {
-                                        detail: {
-                                            bundleId: this.bundleId,
-                                            productId: this.extractNumericId(
-                                                this.productId,
-                                            ),
-                                        },
-                                        bubbles: true,
-                                    }),
-                                );
+                                viewTimeout = window.setTimeout(() => {
+                                    if (entry.isIntersecting) {
+                                        document.dispatchEvent(
+                                            new CustomEvent("bundle:viewed", {
+                                                detail: {
+                                                    bundleId: this.bundleId,
+                                                    productId:
+                                                        this.extractNumericId(
+                                                            this.productId,
+                                                        ),
+                                                },
+                                                bubbles: true,
+                                            }),
+                                        );
 
-                                console.log(
-                                    "[RadiusBundle] Bundle view tracked:",
-                                    {
-                                        bundleId: this.bundleId,
-                                        productId: this.productId,
-                                    },
-                                );
+                                        console.log(
+                                            "[RadiusBundle] Bundle view triggered:",
+                                            {
+                                                bundleId: this.bundleId,
+                                                productId: this.productId,
+                                            },
+                                        );
 
-                                // Stop observing after tracking once
-                                observer.unobserve(this.container);
+                                        // Stop observing after tracking once
+                                        observer.unobserve(this.container);
+                                    }
+                                }, 1000);
+                            } else {
+                                clearTimeout(viewTimeout);
                             }
                         });
                     },

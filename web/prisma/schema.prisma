@@ -102,6 +102,7 @@ model Bundle {
     settings             BundleSettings?
     Shop                 Shop?                @relation(fields: [shopId], references: [id])
     pricingRules         PricingRuleBundle[]
+    bundleViews          BundleView[]
 
     @@unique([shop, name])
     @@index([shop, status, type])
@@ -326,6 +327,26 @@ model BundleAnalytics {
     @@unique([bundleId, date, hour])
     @@index([bundleId, date])
     @@map("bundle_analytics")
+}
+
+model BundleView {
+    id         String   @id @default(cuid())
+    bundleId   String
+    customerId String?
+    sessionId  String?
+    date       String
+    timestamp  DateTime @default(now())
+
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+
+    // One view per customer per bundle per day
+    @@unique([bundleId, customerId, date], name: "unique_customer_view")
+    // One view per session per bundle per day (for anonymous)
+    @@unique([bundleId, sessionId, date], name: "unique_session_view")
+    @@index([bundleId])
+    @@index([customerId])
+    @@index([date])
+    @@map("bundle_views")
 }
 
 model AIInsight {

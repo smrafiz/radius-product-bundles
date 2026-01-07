@@ -44,9 +44,16 @@ export async function trackAnalyticsEvent(event: TrackingEvent) {
             ? new Date(event.timestamp)
             : event.timestamp;
 
+    console.log("trackAnalyticsEvent", event);
+
     switch (event.type) {
         case "bundle_view":
-            return await trackBundleView(event.bundleId, timestamp);
+            return await trackBundleView(
+                event.bundleId,
+                timestamp,
+                event.customerId,
+                event.sessionId,
+            );
 
         case "bundle_add_to_cart":
             return await trackAddToCart(event.bundleId, timestamp);
@@ -54,7 +61,7 @@ export async function trackAnalyticsEvent(event: TrackingEvent) {
         case "bundle_purchase":
             return await trackBundlePurchase({
                 bundleId: event.bundleId,
-                revenue: event.revenue,
+                revenue: event.revenue ?? 0,
                 customerId: event.customerId,
                 isNewCustomer: event.isNewCustomer,
                 timestamp: timestamp,

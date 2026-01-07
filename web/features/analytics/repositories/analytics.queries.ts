@@ -4,7 +4,7 @@
  * Analytics and metrics queries for tracking and reporting.
  */
 
-import { startOfDay } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import { prisma } from "@/shared/repositories/prisma-connect";
 import { AnalyticsMetricsRepository } from "@/features/analytics";
 
@@ -14,30 +14,91 @@ import { AnalyticsMetricsRepository } from "@/features/analytics";
 export async function trackBundleView(
     bundleId: string,
     timestamp: Date | string = new Date(),
+    customerId?: string,
+    sessionId?: string,
 ) {
     const dateObj =
         typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
     const hour = dateObj.getHours();
     const date = startOfDay(dateObj);
+    const dateKey = format(date, "yyyy-MM-dd");
 
-    return prisma.bundleAnalytics.upsert({
-        where: {
-            bundleId_date_hour: { bundleId, date, hour },
-        },
-        update: {
-            bundleViews: { increment: 1 },
-        },
-        create: {
-            bundleId,
-            date,
-            hour,
-            bundleViews: 1,
-            bundleAddToCarts: 0,
-            bundlePurchases: 0,
-            bundleRevenue: 0,
-        },
-    });
+    let isNewView = false;
+
+    if (customerId) {
+        // For logged-in users: Check if the customer already viewed this bundle today
+        try {
+            await prisma.bundleView.create({
+                data: {
+                    bundleId,
+                    customerId,
+                    date: dateKey,
+                    timestamp: dateObj,
+                },
+            });
+            isNewView = true;
+            console.log(
+                `[Analytics] New view tracked: bundle=${bundleId}, customer=${customerId}`,
+            );
+        } catch (error: any) {
+            if (error.code === "P2002") {
+                // Customer already viewed today
+                console.log(
+                    `[Analytics] Deduplicated view: bundle=${bundleId}, customer=${customerId}, date=${dateKey}`,
+                );
+                return;
+            }
+            throw error;
+        }
+    } else if (sessionId) {
+        // For anonymous users: Check if the session already viewed this bundle today
+        try {
+            await prisma.bundleView.create({
+                data: {
+                    bundleId,
+                    sessionId,
+                    date: dateKey,
+                    timestamp: dateObj,
+                },
+            });
+            isNewView = true;
+            console.log(
+                `[Analytics] New view tracked: bundle=${bundleId}, session=${sessionId}`,
+            );
+        } catch (error: any) {
+            if (error.code === "P2002") {
+                console.log(
+                    `[Analytics] Deduplicated view: bundle=${bundleId}, session=${sessionId}, date=${dateKey}`,
+                );
+                return;
+            }
+            throw error;
+        }
+    } else {
+        // No customer or session ID - count as anonymous view
+        isNewView = true;
+    }
+
+    if (isNewView) {
+        return prisma.bundleAnalytics.upsert({
+            where: {
+                bundleId_date_hour: { bundleId, date, hour },
+            },
+            update: {
+                bundleViews: { increment: 1 },
+            },
+            create: {
+                bundleId,
+                date,
+                hour,
+                bundleViews: 1,
+                bundleAddToCarts: 0,
+                bundlePurchases: 0,
+                bundleRevenue: 0,
+            },
+        });
+    }
 }
 
 /**

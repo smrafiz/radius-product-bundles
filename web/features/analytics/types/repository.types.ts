@@ -87,7 +87,16 @@ export interface PurchaseEvent extends BaseTrackingEvent {
 /**
  * Union of all tracking events
  */
-export type TrackingEvent = BundleViewEvent | AddToCartEvent | PurchaseEvent;
+export interface TrackingEvent {
+    type: "bundle_view" | "bundle_add_to_cart" | "bundle_purchase";
+    bundleId: string;
+    productId?: string;
+    customerId?: string;
+    sessionId?: string; // ✅ Add this
+    revenue?: number;
+    isNewCustomer?: boolean;
+    timestamp?: Date | string;
+}
 
 /**
  * Bundle performance stats

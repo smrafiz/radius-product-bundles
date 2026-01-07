@@ -10,16 +10,68 @@
 
 <!-- Initialize Configuration -->
 <script>
+    /**
+     * Get customer ID from various Shopify sources
+     * Only returns numeric Shopify customer IDs
+     */
+    function getCustomerId() {
+        let customerId = null;
+
+        // Try ShopifyAnalytics.meta.page.customerId
+        try {
+            let curr = window.ShopifyAnalytics.meta.page.customerId;
+            if (curr !== undefined && curr !== null && curr !== "") {
+                customerId = String(curr);
+            }
+        } catch(e) { }
+
+        // Try window.meta.page.customerId
+        if (!customerId) {
+            try {
+                let curr = window.meta.page.customerId;
+                if (curr !== undefined && curr !== null && curr !== "") {
+                    customerId = String(curr);
+                }
+            } catch (e) { }
+        }
+
+        // Try _st.cid (Shopify tracking)
+        if (!customerId) {
+            try {
+                let curr = window._st.cid;
+                if (curr !== undefined && curr !== null && curr !== "") {
+                    customerId = String(curr);
+                }
+            } catch (e) { }
+        }
+
+        // Fallback to Liquid customer.id if available
+        {% if customer.id %}
+        if (!customerId) {
+            customerId = {{ customer.id | json }};
+        }
+        {% endif %}
+
+        // ✅ VALIDATE: Only return if it's a numeric ID
+        if (customerId && /^\d+$/.test(customerId)) {
+            return customerId;
+        }
+
+        return null;
+    }
+
     window.RadiusBundles = window.RadiusBundles || {};
     window.RadiusBundles.config = {
         shop: "{{ shop.permanent_domain }}",
-        customerId: "{{ customer.id | default: '' }}",
+        customerId: getCustomerId(),
         pageType: "{{ request.page_type }}",
         template: "{{ template.name }}",
         enableAnalytics: {{ block.settings.enable_analytics | default: true }},
         showSavingsBanner: {{ block.settings.show_savings_banner | default: true }},
         activeBundles: {{ active_bundles_raw | json }}
     };
+
+    console.log('[RadiusBundles] Customer ID:', window.RadiusBundles.config.customerId);
 </script>
 
 <!-- Load JavaScript -->

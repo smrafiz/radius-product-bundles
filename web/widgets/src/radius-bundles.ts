@@ -650,6 +650,7 @@ import "./scss/radius-bundles.scss";
         private readonly analytics: Analytics;
         private readonly cartCleanup: CartCleanup;
         private readonly savingsBanner: SavingsBanner;
+        private viewedBundles: Set<string> = new Set();
 
         constructor(config: RadiusBundlesConfig) {
             this.config = config;
@@ -693,10 +694,22 @@ import "./scss/radius-bundles.scss";
         private attachBundleEventListeners(): void {
             document.addEventListener("bundle:viewed", (e: Event) => {
                 const event = e as CustomEvent;
-                this.analytics.trackBundleView(
-                    event.detail.bundleId,
-                    event.detail.productId,
-                );
+                const { bundleId, productId } = event.detail;
+
+                // Create unique key (per bundle per page)
+                const viewKey = `${bundleId}:${window.location.pathname}`;
+
+                if (this.viewedBundles.has(viewKey)) {
+                    console.log(
+                        "[RadiusBundles] Bundle already viewed in this session:",
+                        bundleId,
+                    );
+                    return;
+                }
+
+                this.viewedBundles.add(viewKey);
+
+                this.analytics.trackBundleView(bundleId, productId);
             });
 
             document.addEventListener("bundle:addedToCart", (e: Event) => {
