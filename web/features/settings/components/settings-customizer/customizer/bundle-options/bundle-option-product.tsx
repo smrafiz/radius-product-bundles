@@ -53,7 +53,7 @@ export function BundleOptionsProduct() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("productFontSize", 12)
+                                    updateStyle("productFontSize", 14)
                                 }
                             >
                                 Small
@@ -61,7 +61,7 @@ export function BundleOptionsProduct() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("productFontSize", 14)
+                                    updateStyle("productFontSize", 16)
                                 }
                             >
                                 Medium
@@ -69,7 +69,7 @@ export function BundleOptionsProduct() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("productFontSize", 16)
+                                    updateStyle("productFontSize", 18)
                                 }
                             >
                                 Large

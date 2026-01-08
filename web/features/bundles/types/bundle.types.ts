@@ -96,6 +96,7 @@ export interface SelectedItem {
     variantId?: string;
     variantIds: string[];
     title: string;
+    url: string;
     type: "product" | "variant";
     quantity: number;
     price: string;
