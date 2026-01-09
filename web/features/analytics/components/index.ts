@@ -7,3 +7,4 @@ export * from "./analytics-order-bundle";
 export * from "./analytics-based-bundle";
 export * from "./analytics-calender/analytics-calender";
 export * from "./chart-skeleton";
+export * from "./analytics-charts";

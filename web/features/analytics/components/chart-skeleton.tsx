@@ -1,6 +1,11 @@
 import { SkeletonLine } from "@/shared";
+import { ReactNode } from "react";
 
-export function ChartSkeleton() {
+export function ChartSkeleton({
+    tabs = false,
+}: {
+    tabs?: boolean;
+}) {
     return (
         <s-section>
             <s-stack gap="base">
@@ -31,15 +36,17 @@ export function ChartSkeleton() {
                     </s-stack>
 
                     {/* Tabs */}
-                    <s-stack direction="inline" gap="none">
-                        <div className="w-52.5 h-7 rounded-lg overflow-hidden">
-                            <SkeletonLine
-                                height="h-[28px]"
-                                width={210}
-                                duration={1.9}
-                            />
-                        </div>
-                    </s-stack>
+                    {tabs && (
+                        <s-stack direction="inline" gap="none">
+                            <div className="w-52.5 h-7 rounded-lg overflow-hidden">
+                                <SkeletonLine
+                                    height="h-[28px]"
+                                    width={210}
+                                    duration={1.9}
+                                />
+                            </div>
+                        </s-stack>
+                    )}
                 </s-stack>
 
                 {/* Chart */}

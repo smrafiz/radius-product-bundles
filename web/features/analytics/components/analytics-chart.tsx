@@ -1,8 +1,18 @@
 "use client";
 
 import { clsx } from "clsx";
-import { useMemo, useState } from "react";
-import { CHART_METRICS, ChartSkeleton, useAnalytics } from "@/features/analytics";
+import {
+    CHART_GRID_CONFIG,
+    CHART_METRICS,
+    CHART_TOOLTIP_CONFIG,
+    CHART_XAXIS_CONFIG,
+    CHART_YAXIS_CONFIG,
+    ChartSkeleton,
+    formatChartDate,
+    useAnalytics,
+    useFormattedChartData,
+} from "@/features/analytics";
+import { useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
 
 /**
@@ -14,47 +24,37 @@ export function AnalyticsChart() {
         "revenue" | "views" | "purchases"
     >("revenue");
 
-    const formattedData = useMemo(() => {
-        if (!chartData) {
-            return [];
-        }
-
-        return chartData.map((point) => ({
-            date: new Date(point.date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-            }),
-            revenue: point.revenue,
-            views: point.views,
-            purchases: point.purchases,
-            addToCarts: point.addToCarts,
-        }));
-    }, [chartData]);
+    // Format data for the chart
+    const formattedData = useFormattedChartData(chartData, (point) => ({
+        date: formatChartDate(new Date(point.date)),
+        revenue: point.revenue,
+        views: point.views,
+        purchases: point.purchases,
+        addToCarts: point.addToCarts,
+    }));
 
     // Get current metric config
     const currentMetric = CHART_METRICS.find((m) => m.key === activeMetric)!;
 
     // Calculate total for active metric
-    const totalValue = useMemo(() => {
-        if (!chartData) return 0;
-        return chartData.reduce((sum, point) => sum + point[activeMetric], 0);
-    }, [chartData, activeMetric]);
+    const totalValue =
+        chartData?.reduce((sum, point) => sum + point[activeMetric], 0) ?? 0;
 
     if (isChartLoading) {
-        return <ChartSkeleton />;
+        return <ChartSkeleton tabs={true} />;
     }
 
     return (
         <s-section>
             <s-stack gap="base">
-                {/* Metric tabs */}
+                {/* Header with metric tabs */}
                 <s-stack
                     direction="inline"
                     gap="small-200"
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    {/* Header with total */}
+                    {/* Title and total */}
                     <s-stack gap="small-200">
                         <s-heading>
                             Total {currentMetric.label.toLowerCase()} over time
@@ -65,6 +65,8 @@ export function AnalyticsChart() {
                             </span>
                         </s-heading>
                     </s-stack>
+
+                    {/* Metric tabs */}
                     <s-stack
                         direction="inline"
                         gap="small-200"
@@ -109,73 +111,34 @@ export function AnalyticsChart() {
                         data={formattedData}
                         margin={{ top: 10, right: 10, bottom: 0, left: 0 }}
                     >
-                        {/* Minimal grid */}
-                        <CartesianGrid
-                            strokeDasharray="0"
-                            stroke="#F0F0F0"
-                            horizontal={true}
-                            vertical={false}
-                        />
+                        {/* Grid */}
+                        <CartesianGrid {...CHART_GRID_CONFIG} />
 
                         {/* Tooltip */}
                         <Tooltip
-                            contentStyle={{
-                                borderRadius: 8,
-                                border: "1px solid #E5E5E5",
-                                padding: "8px 12px",
-                                background: "#fff",
-                                fontSize: 12,
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                            }}
-                            labelStyle={{
-                                color: "#6B7280",
-                                fontSize: 11,
-                                marginBottom: 4,
-                                fontWeight: "bold"
-                            }}
+                            {...CHART_TOOLTIP_CONFIG}
                             formatter={(value: number | undefined) => {
                                 if (value === undefined) {
                                     return ["-", currentMetric.label];
                                 }
-
                                 return [
                                     currentMetric.formatter(value),
                                     currentMetric.label,
                                 ];
                             }}
-                            cursor={{
-                                stroke: "#E5E5E5",
-                                strokeWidth: 1,
-                                strokeDasharray: "4 4",
-                            }}
                         />
 
                         {/* X-Axis */}
-                        <XAxis
-                            dataKey="date"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{
-                                fill: "#9CA3AF",
-                                fontSize: 11,
-                                dy: 10,
-                            }}
-                            minTickGap={30}
-                        />
+                        <XAxis dataKey="date" {...CHART_XAXIS_CONFIG} />
 
                         {/* Y-Axis */}
                         <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{
-                                fill: "#9CA3AF",
-                                fontSize: 11,
-                            }}
+                            {...CHART_YAXIS_CONFIG}
                             tickFormatter={currentMetric.yAxisFormatter}
                             width={50}
                         />
 
-                        {/* Dynamic gradient */}
+                        {/* Gradient definition */}
                         <defs>
                             <linearGradient
                                 id={`${activeMetric}Gradient`}
@@ -197,7 +160,7 @@ export function AnalyticsChart() {
                             </linearGradient>
                         </defs>
 
-                        {/* Area chart */}
+                        {/* Area */}
                         <Area
                             type="monotone"
                             dataKey={activeMetric}
@@ -211,7 +174,7 @@ export function AnalyticsChart() {
                                 stroke: currentMetric.color,
                                 fill: "#fff",
                             }}
-                            animationDuration={300}
+                            animationDuration={700}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
