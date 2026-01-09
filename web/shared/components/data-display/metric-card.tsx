@@ -8,9 +8,9 @@ import { MetricCardProps, SkeletonLine } from "@/shared";
 export function MetricCard({
     title,
     value,
-    icon,
     tone,
     loading = false,
+    growth = null,
 }: MetricCardProps) {
     const isLoading =
         loading || value === undefined || value === null || value === "";
@@ -23,7 +23,7 @@ export function MetricCard({
                         <s-heading>{title}</s-heading>
 
                         {isLoading ? (
-                            <div className="h-[20px] w-[40px]">
+                            <div className="h-5 w-10">
                                 <SkeletonLine height="h-[20px]" />
                             </div>
                         ) : (
@@ -32,11 +32,24 @@ export function MetricCard({
                                     <div className="text-[20px]">{value}</div>
                                 </s-text>
 
-                                {tone && icon && (
-                                    <s-badge tone={tone} icon={icon}>
-                                        12%
-                                    </s-badge>
-                                )}
+                                {tone &&
+                                    growth !== null &&
+                                    growth !== 0 && (
+                                        <s-badge
+                                            tone={
+                                                growth > 0
+                                                    ? "success"
+                                                    : "critical"
+                                            }
+                                            icon={
+                                                growth > 0
+                                                    ? "arrow-up"
+                                                    : "arrow-down"
+                                            }
+                                        >
+                                            {Math.abs(growth).toFixed(1)}%
+                                        </s-badge>
+                                    )}
                             </s-stack>
                         )}
                     </s-stack>

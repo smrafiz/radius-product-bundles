@@ -68,12 +68,13 @@ export function useAnalytics() {
 
 /**
  * Hook to fetch only metrics (lighter weight)
- *
- * Use this for dashboard metrics cards or when you only need aggregate data.
  */
-export function useAnalyticsMetrics(days: number = 30) {
+export function useAnalyticsMetrics(overrideDays?: number) {
     const app = useAppBridge();
+    const { days: storeDays } = useAnalyticsStore();
     const queries = analyticsQueries(app);
+
+    const days = overrideDays ?? storeDays;
 
     const metricsQuery = useQuery({
         ...queries.metrics(days),
@@ -88,5 +89,6 @@ export function useAnalyticsMetrics(days: number = 30) {
         isFetching: metricsQuery.isFetching,
         error: metricsQuery.error,
         refetch: metricsQuery.refetch,
+        days,
     };
 }

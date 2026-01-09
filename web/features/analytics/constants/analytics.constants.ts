@@ -2,6 +2,7 @@ import {
     AnalyticsMetricConfig,
     AnalyticsOrderBundleConfig,
 } from "@/features/analytics";
+import { formatCurrency } from "@/shared";
 
 /*
  * Analytics Metrics
@@ -12,30 +13,63 @@ export const ANALYTICS_METRICS: AnalyticsMetricConfig[] = [
         title: "Total Revenue",
         format: "currency",
         tone: "success",
-        icon: "arrow-up",
     },
     {
         key: "revenueGrowth",
         title: "Revenue Growth",
         format: "percentage",
         tone: "warning",
-        icon: "arrow-up",
     },
     {
         key: "conversionGrowth",
         title: "Conversion Growth",
-        format: "number",
+        format: "percentage",
         tone: "info",
-        icon: "arrow-down",
     },
     {
         key: "avgConversionRate",
         title: "Avg Conversion Rate",
-        format: "number",
+        format: "percentage",
         tone: "info",
-        icon: "arrow-down",
     },
 ];
+
+/**
+ * Chart metric configuration for tabs
+ */
+export const CHART_METRICS = [
+    {
+        key: "revenue",
+        label: "Revenue",
+        color: "#008CFF",
+        formatter: (value: number) => formatCurrency(value),
+        yAxisFormatter: (value: number) => {
+            if (value >= 1000) {
+                return `$${Math.round(value / 100)}K`;
+            }
+            return `$${Math.round(value / 100)}`;
+        },
+    },
+    {
+        key: "views",
+        label: "Views",
+        color: "#00C896",
+        formatter: (value: number) => value.toLocaleString(),
+        yAxisFormatter: (value: number) => {
+            if (value >= 1000) {
+                return `${(value / 1000).toFixed(1)}K`;
+            }
+            return value.toString();
+        },
+    },
+    {
+        key: "purchases",
+        label: "Purchases",
+        color: "#FF6B6B",
+        formatter: (value: number) => value.toLocaleString(),
+        yAxisFormatter: (value: number) => value.toString(),
+    },
+] as const;
 
 /*
  * Analytics order bundle

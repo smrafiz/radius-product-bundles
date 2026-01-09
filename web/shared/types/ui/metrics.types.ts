@@ -4,7 +4,7 @@
 export interface MetricCardProps {
     title: string;
     value: string | number;
-    growth?: number;
+    growth?: number | null;
     subtitle?: string;
     icon?: "arrow-up" | "arrow-down" | "work-list";
     tone?:

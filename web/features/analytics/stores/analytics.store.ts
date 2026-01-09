@@ -13,7 +13,7 @@ export const useAnalyticsStore = create<AnalyticsState>((set) => {
     return {
         startDate: "",
         endDate: "",
-        days: 30,
+        days: 7,
 
         setDateRange: (start, end) => {
             const startDate = new Date(start);

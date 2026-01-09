@@ -1,12 +1,14 @@
 "use client";
+
 import React, { useState } from "react";
 
 import {
-    AnalyticsChart,
     AnalyticsBasedBundles,
-    AnalyticsOrderBundles,
+    AnalyticsChart,
     AnalyticsDate,
+    AnalyticsOrderBundles,
 } from "@/features/analytics";
+import { AnalyticsComparisonCharts } from "@/features/analytics/components/analytics-charts";
 
 export function AnalyticsTabs() {
     const [activeTab, setActiveTab] = useState("tab1");
@@ -45,11 +47,14 @@ export function AnalyticsTabs() {
                 {activeTab === "tab1" && (
                     <s-stack gap="base">
                         <AnalyticsChart />
-                        <AnalyticsBasedBundles />
+                        <s-stack gap="small-200">
+                            <AnalyticsComparisonCharts />
+                        </s-stack>
                     </s-stack>
                 )}
                 {activeTab === "tab2" && (
                     <s-stack gap="base">
+                        <AnalyticsBasedBundles />
                         <AnalyticsOrderBundles />
                     </s-stack>
                 )}

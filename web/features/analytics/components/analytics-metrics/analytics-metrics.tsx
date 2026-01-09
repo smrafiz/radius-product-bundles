@@ -2,11 +2,11 @@
 
 import {
     ANALYTICS_METRICS,
-    AnalyticsMetricCard,
     AnalyticsMetricsData,
     useAnalyticsMetrics,
 } from "@/features/analytics";
 import { useMemo } from "react";
+import { MetricCard } from "@/shared";
 import { formatByType } from "@/features/dashboard";
 
 export function AnalyticsMetrics() {
@@ -20,11 +20,20 @@ export function AnalyticsMetrics() {
             avgConversionRate: metrics?.metrics?.conversionRate ?? 0,
         };
 
+        // Growth data mapping
+        const growthData: Record<string, number | undefined> = {
+            totalRevenue: metrics?.growth?.revenue,
+            revenueGrowth: undefined,
+            conversionGrowth: undefined,
+            avgConversionRate: metrics?.growth?.conversion,
+        };
+
         return ANALYTICS_METRICS.map((cfg) => ({
             title: cfg.title,
             icon: cfg.icon,
             tone: cfg.tone,
             value: formatByType(metricsData?.[cfg.key] ?? 0, cfg.format),
+            growth: growthData[cfg.key],
         }));
     }, [metrics]);
 
@@ -33,9 +42,9 @@ export function AnalyticsMetrics() {
             gridTemplateColumns="repeat(auto-fit, minmax(180px, 1fr))"
             gap="base"
         >
-            {cards.map((_card, index) => (
+            {cards.map((_card) => (
                 <s-grid-item key={_card.title} gridColumn="auto">
-                    <AnalyticsMetricCard
+                    <MetricCard
                         key={_card.title}
                         loading={isFetching}
                         {..._card}
