@@ -1,3 +1,4 @@
+export * from "./chart-title-tooltip";
 export { ChartWrapper } from "./chart-wrapper";
 export { RevenueAOVChart } from "./revenue-aov-chart";
 export { ConversionRatesChart } from "./conversion-rates-chart";

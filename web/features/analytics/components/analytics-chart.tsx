@@ -8,6 +8,7 @@ import {
     CHART_XAXIS_CONFIG,
     CHART_YAXIS_CONFIG,
     ChartSkeleton,
+    ChartTitleTooltip,
     formatChartDate,
     useAnalytics,
     useFormattedChartData,
@@ -41,7 +42,7 @@ export function AnalyticsChart() {
         chartData?.reduce((sum, point) => sum + point[activeMetric], 0) ?? 0;
 
     if (isChartLoading) {
-        return <ChartSkeleton tabs={true} />;
+        return <ChartSkeleton />;
     }
 
     return (
@@ -57,7 +58,14 @@ export function AnalyticsChart() {
                     {/* Title and total */}
                     <s-stack gap="small-200">
                         <s-heading>
-                            Total {currentMetric.label.toLowerCase()} over time
+                            <ChartTitleTooltip
+                                title={`Total ${currentMetric.label}`}
+                                description={currentMetric.description}
+                                formula={currentMetric.formula}
+                            >
+                                Total {currentMetric.label.toLowerCase()} over
+                                time
+                            </ChartTitleTooltip>
                         </s-heading>
                         <s-heading>
                             <span className="text-xl">
@@ -174,7 +182,7 @@ export function AnalyticsChart() {
                                 stroke: currentMetric.color,
                                 fill: "#fff",
                             }}
-                            animationDuration={700}
+                            animationDuration={300}
                         />
                     </AreaChart>
                 </ResponsiveContainer>

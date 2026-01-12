@@ -13,3 +13,16 @@ export interface ChartWrapperProps {
     isLoading?: boolean;
     gap?: "small" | "small-200" | "base";
 }
+
+/**
+ * Chart Title Tooltip Props
+ */
+export interface ChartTitleTooltipProps {
+    children: ReactNode;
+    content?: ReactNode;
+    title?: string;
+    description?: string;
+    formula?: string;
+    width?: string;
+    id?: string;
+}

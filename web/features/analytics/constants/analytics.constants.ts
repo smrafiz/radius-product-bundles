@@ -42,6 +42,9 @@ export const CHART_METRICS = [
         key: "revenue",
         label: "Revenue",
         color: "#008CFF",
+        description:
+            "Total revenue from bundle sales including discounts, excluding shipping, taxes, and fees.",
+        formula: "Revenue = Product Prices - Bundle Discounts",
         formatter: (value: number) => formatCurrency(value),
         yAxisFormatter: (value: number) => {
             if (value >= 1000) {
@@ -54,6 +57,9 @@ export const CHART_METRICS = [
         key: "views",
         label: "Views",
         color: "#00C896",
+        description:
+            "Total number of times bundles were viewed by customers. Each customer counts once per session per bundle.",
+        formula: "Views = Unique bundle page visits per session",
         formatter: (value: number) => value.toLocaleString(),
         yAxisFormatter: (value: number) => {
             if (value >= 1000) {
@@ -66,6 +72,9 @@ export const CHART_METRICS = [
         key: "purchases",
         label: "Purchases",
         color: "#FF6B6B",
+        description:
+            "Total number of completed bundle purchases from all customers.",
+        formula: "Purchases = Orders containing bundle products",
         formatter: (value: number) => value.toLocaleString(),
         yAxisFormatter: (value: number) => value.toString(),
     },

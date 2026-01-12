@@ -20,7 +20,10 @@ export function useFormattedChartData<T extends Record<string, any>>(
     formatter: (point: any) => T,
 ) {
     return useMemo(() => {
-        if (!data) return [];
+        if (!data) {
+            return [];
+        }
+
         return data.map(formatter);
     }, [data, formatter]);
 }
@@ -62,7 +65,10 @@ export function useConversionRate(
     decimals = 1,
 ): string {
     return useMemo(() => {
-        if (denominator === 0) return "0";
+        if (denominator === 0) {
+            return "0";
+        }
+
         return ((numerator / denominator) * 100).toFixed(decimals);
     }, [numerator, denominator, decimals]);
 }
