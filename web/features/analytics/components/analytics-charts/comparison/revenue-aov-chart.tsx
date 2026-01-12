@@ -10,7 +10,11 @@ import {
     ChartWrapper,
     formatChartDate,
     getActiveDotConfig,
+    InsufficientDataState,
+    NoActivityState,
+    NoDataState,
     useAnalytics,
+    useChartDataStatus,
     useChartTotals,
     useFormattedChartData,
 } from "@/features/analytics";
@@ -24,6 +28,9 @@ import { Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, T
  */
 export function RevenueAOVChart() {
     const { chartData, isChartLoading } = useAnalytics();
+
+    // Check data validity
+    const dataStatus = useChartDataStatus(chartData);
 
     // Format data with AOV calculation
     const formattedData = useFormattedChartData(chartData, (point) => {
@@ -43,6 +50,24 @@ export function RevenueAOVChart() {
     // Loading state
     if (isChartLoading) {
         return <ChartSkeleton tabs={false} />;
+    }
+
+    // Show the empty state if data is invalid
+    if (!dataStatus.isValid) {
+        switch (dataStatus.reason) {
+            case "no_data":
+                return <NoDataState />;
+            case "insufficient_points":
+                return (
+                    <InsufficientDataState
+                        currentPoints={dataStatus.points || 1}
+                    />
+                );
+            case "no_activity":
+                return <NoActivityState />;
+            default:
+                return <NoDataState />;
+        }
     }
 
     return (

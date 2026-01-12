@@ -1,6 +1,11 @@
 "use client";
 
-import { ChartTitleTooltip, ChartWrapperProps } from "@/features/analytics";
+import {
+    ChartTitleTooltip,
+    ChartWrapperProps,
+    LimitedDataBanner,
+    useAnalytics,
+} from "@/features/analytics";
 
 /**
  * Reusable Chart Wrapper
@@ -13,6 +18,11 @@ export function ChartWrapper({
     children,
     gap = "base",
 }: ChartWrapperProps) {
+    const { chartData } = useAnalytics();
+
+    // Show limited data warning if less than 7 days
+    const showLimitedDataWarning = chartData && chartData.length < 8;
+
     return (
         <s-section>
             <s-stack gap={gap}>
@@ -26,6 +36,11 @@ export function ChartWrapper({
                         {title}
                     </ChartTitleTooltip>
                 </s-heading>
+
+                {/* Limited data warning */}
+                {showLimitedDataWarning && (
+                    <LimitedDataBanner days={chartData!.length} minDays={7} />
+                )}
 
                 {/* Summary Stats */}
                 {summaryStats && summaryStats.length > 0 && (

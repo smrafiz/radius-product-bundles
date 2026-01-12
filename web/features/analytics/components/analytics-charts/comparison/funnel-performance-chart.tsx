@@ -11,7 +11,11 @@ import {
     ChartWrapper,
     formatChartDate,
     getLineConfig,
+    InsufficientDataState,
+    NoActivityState,
+    NoDataState,
     useAnalytics,
+    useChartDataStatus,
     useChartTotals,
     useFormattedChartData,
 } from "@/features/analytics";
@@ -22,6 +26,9 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
  */
 export function FunnelPerformanceChart() {
     const { chartData, isChartLoading } = useAnalytics();
+
+    // Check data validity
+    const dataStatus = useChartDataStatus(chartData);
 
     // Format data for the chart
     const formattedData = useFormattedChartData(chartData, (point) => ({
@@ -43,9 +50,27 @@ export function FunnelPerformanceChart() {
         return <ChartSkeleton tabs={false} />;
     }
 
+    // Show the empty state if data is invalid
+    if (!dataStatus.isValid) {
+        switch (dataStatus.reason) {
+            case "no_data":
+                return <NoDataState />;
+            case "insufficient_points":
+                return (
+                    <InsufficientDataState
+                        currentPoints={dataStatus.points || 1}
+                    />
+                );
+            case "no_activity":
+                return <NoActivityState />;
+            default:
+                return <NoDataState />;
+        }
+    }
+
     return (
         <ChartWrapper
-            title="Funnel Performance"
+            title="Customer Journey Funnel"
             description="Track how customers progress through your bundle funnel from initial view to final purchase. Identify drop-off points to optimize conversion."
             formula="Flow: Views → Add-to-Cart → Purchases"
             summaryStats={[

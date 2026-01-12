@@ -11,27 +11,25 @@ import {
     ChartWrapper,
     formatChartDate,
     getLineConfig,
+    InsufficientDataState,
+    NoActivityState,
+    NoDataState,
     useAnalytics,
+    useChartDataStatus,
     useChartTotals,
     useConversionRate,
     useFormattedChartData,
 } from "@/features/analytics";
-import {
-    CartesianGrid,
-    Legend,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
 
 /**
  * Conversion Rates Chart
  */
 export function ConversionRatesChart() {
     const { chartData, isChartLoading } = useAnalytics();
+
+    // Check data validity
+    const dataStatus = useChartDataStatus(chartData);
 
     // Format data with conversion rates
     const formattedData = useFormattedChartData(chartData, (point) => {
@@ -67,6 +65,24 @@ export function ConversionRatesChart() {
     // Loading state
     if (isChartLoading) {
         return <ChartSkeleton tabs={false} />;
+    }
+
+    // Show the empty state if data is invalid
+    if (!dataStatus.isValid) {
+        switch (dataStatus.reason) {
+            case "no_data":
+                return <NoDataState />;
+            case "insufficient_points":
+                return (
+                    <InsufficientDataState
+                        currentPoints={dataStatus.points || 1}
+                    />
+                );
+            case "no_activity":
+                return <NoActivityState />;
+            default:
+                return <NoDataState />;
+        }
     }
 
     return (

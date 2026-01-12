@@ -28,3 +28,44 @@ export interface ChartTitleTooltipProps {
     width?: string;
     id?: string;
 }
+
+/**
+ * Chart data point interface
+ */
+export interface ChartDataPoint {
+    date: string | Date;
+    views?: number;
+    addToCarts?: number;
+    purchases?: number;
+    revenue?: number;
+    [key: string]: any;
+}
+
+/**
+ * Chart Empty State Props
+ */
+export interface ChartEmptyStateProps {
+    icon?: string;
+    title: string;
+    description: string;
+    action?: {
+        label: string;
+        onClick: () => void;
+        variant?: "primary" | "secondary";
+    };
+}
+
+/**
+ * Chart data status result
+ */
+export interface ChartDataStatusResult {
+    isValid: boolean;
+    reason:
+        | "no_data"
+        | "insufficient_points"
+        | "no_activity"
+        | "no_conversions"
+        | "no_purchases"
+        | null;
+    points?: number;
+}

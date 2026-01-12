@@ -10,7 +10,11 @@ import {
     ChartSkeleton,
     ChartTitleTooltip,
     formatChartDate,
+    InsufficientDataState,
+    NoActivityState,
+    NoDataState,
     useAnalytics,
+    useChartDataStatus,
     useFormattedChartData,
 } from "@/features/analytics";
 import { useState } from "react";
@@ -24,6 +28,9 @@ export function AnalyticsChart() {
     const [activeMetric, setActiveMetric] = useState<
         "revenue" | "views" | "purchases"
     >("revenue");
+
+    // Check data validity
+    const dataStatus = useChartDataStatus(chartData);
 
     // Format data for the chart
     const formattedData = useFormattedChartData(chartData, (point) => ({
@@ -39,10 +46,31 @@ export function AnalyticsChart() {
 
     // Calculate total for active metric
     const totalValue =
-        chartData?.reduce((sum, point) => sum + point[activeMetric], 0) ?? 0;
+        chartData?.reduce(
+            (sum, point) => sum + (point[activeMetric] ?? 0),
+            0,
+        ) ?? 0;
 
     if (isChartLoading) {
         return <ChartSkeleton />;
+    }
+
+    // Show the empty state if data is invalid
+    if (!dataStatus.isValid) {
+        switch (dataStatus.reason) {
+            case "no_data":
+                return <NoDataState />;
+            case "insufficient_points":
+                return (
+                    <InsufficientDataState
+                        currentPoints={dataStatus.points || 1}
+                    />
+                );
+            case "no_activity":
+                return <NoActivityState />;
+            default:
+                return <NoDataState />;
+        }
     }
 
     return (
