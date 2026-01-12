@@ -5,8 +5,12 @@ import {
 } from "@/features/bundles";
 
 export function BundleAddToCart() {
-    const { displaySettings } = useBundleStore();
+    const { selectedItems, displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
+
+    if (!selectedItems.length) {
+        return null;
+    }
     return (
         <div
             className="radius-bundle__actions"

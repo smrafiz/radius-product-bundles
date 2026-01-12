@@ -379,7 +379,7 @@
     </div>
 
     {{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-    <script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
+    {% comment %}<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>{% endcomment %}
 {% endif %}
 
 {% comment %} DO NOT TOUCH BELOW SCHEMA. IT IS AUTOMATICALLY GENERATED {% endcomment %}

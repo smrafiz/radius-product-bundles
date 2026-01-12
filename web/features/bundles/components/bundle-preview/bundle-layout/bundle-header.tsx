@@ -16,10 +16,10 @@ export function BundleHeader() {
                     style={{
                         textAlign: styleData.titleAlignment || "left",
                     }}
-                >List {displaySettings.title || ""}</div>
+                >{displaySettings.title || ""}</div>
             </div>
             {displaySettings.showSavingsBadge && (
-                <div className="radius-bundle__badge radius-bundle__badge--skeleton radius-bundle__badge--visible">Save 50%</div>
+                <div className="radius-bundle__badge">Save 50%</div>
             )}
         </div>
     );

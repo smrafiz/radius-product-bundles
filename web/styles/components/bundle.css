@@ -10,13 +10,6 @@
 }
 
 .rtpb-bundle-product {
-    background-color: #f7f7f7;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
     font-size: 16px;
     .rtpb-product-title {
         margin-bottom: 4px;
@@ -24,10 +17,25 @@
     }
 }
 
+/* list layout */
 .radius-bundle__products--list {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+.radius-bundle__product--list {
+    background-color: #f7f7f7;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.10);
+    transition: transform 0.25s ease;
+    &:hover {
+        transform: translateY(-2px);
+    }
     .radius-bundle__product-image {
         width: 70px;
         height: 70px;
@@ -48,11 +56,120 @@
         flex: 1;
         min-width: 0;
     }
+    .radius-bundle__product-title {
+        margin-bottom: 6px;
+    }
     .radius-bundle__product-price {
         text-align: right;
         flex-shrink: 0;
     }
 }
+
+/* grid layout */
+.radius-bundle__product--grid {
+    background-color: #f7f7f7;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.10);
+    transition: transform 0.25s ease;
+    &:hover {
+        transform: translateY(-2px);
+    }
+    .radius-bundle__product-image {
+        width: 100%;
+        height: 100px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+        background: #fff;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+    .radius-bundle__product-title {
+        margin-bottom: 8px;
+    }
+    .radius-bundle__product-price {
+        margin-bottom: 8px;
+    }
+}
+
+/* carousel layout */
+.radius-bundle__products--carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    gap: 16px;
+    .radius-bundle__product--carousel {
+        flex-shrink: 0;
+        scroll-snap-align: start;
+    }
+    .radius-bundle__product {
+        text-align: center;
+        padding: 16px;
+    }
+    .radius-bundle__product-image {
+        width: 100%;
+        height: 100px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+        background: #fff;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+    .radius-bundle__product-title {
+        margin-bottom: 8px;
+    }
+    .radius-bundle__product-price {
+        margin-bottom: 8px;
+    }
+}
+
+/* compact layout */
+.radius-bundle__products--compact {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.radius-bundle__product--compact {
+    display: flex;
+    gap: 8px;
+    .radius-bundle__product-image {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+    .radius-bundle__product-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .radius-bundle__product-title {
+        margin-bottom: 6px;
+    }
+    .radius-bundle__product-price {
+        text-align: right;
+        flex-shrink: 0;
+    }
+}
+
 .radius-bundle__product-price-current {
     font-weight: 500;
     color: #333333;
@@ -66,7 +183,8 @@
     display: block;
     margin-top: 6px;
 }
-/* header */
+
+/* header style */
 .radius-bundle__header {
     display: flex;
     justify-content: space-between;
@@ -91,14 +209,14 @@
     justify-content: center;
 }
 
-/* divider */
+/* divider style */
 .radius-bundle__divider-plus {
     position: relative;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 17px;
+    font-size: 16px;
     .divider-position {
         position: absolute;
         width: 24px;
@@ -162,6 +280,9 @@
     padding: 12px;
     background: #22c55e1a;
     border-radius: 8px;
+}
+.radius-bundle__savings-label {
+    color: #22c55e;
 }
 .radius-bundle__savings-amount {
     font-weight: 600;

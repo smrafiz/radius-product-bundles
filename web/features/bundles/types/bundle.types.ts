@@ -337,7 +337,6 @@ export interface DisplaySettings {
         productBorderEnabled?: boolean;
         productBorderColor?: string;
         productRadius?: number;
-        productAlign?: "row" | "row-reverse";
         productFontSize?: number;
         // Box
         boxBgColor?: string;
@@ -347,9 +346,7 @@ export interface DisplaySettings {
         boxRadius?: number;
         boxBorderWidth?: number;
         //image
-        imageBorderEnabled?: boolean;
         imageRadius?: number;
-        imageBorderColor?: string;
         imageWidth?: number;
         //additional
         titleFontSize?: number;

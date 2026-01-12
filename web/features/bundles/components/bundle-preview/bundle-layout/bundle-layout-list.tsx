@@ -32,16 +32,12 @@ export function BundleLayoutList() {
                     <Fragment key={item.id ?? index}>
                         {/* Product */}
                         <div
-                            className="rtpb-bundle-product"
+                            className="radius-bundle__product radius-bundle__product--list"
                             style={{
-                                backgroundColor:
-                                    styleData.productBgColor || "#f7f7f7",
+                                backgroundColor: styleData.productBgColor || "#f7f7f7",
                                 borderRadius: `${styleData.productRadius ?? 12}px`,
                                 fontSize: `${styleData.productFontSize ?? 16}px`,
-                                color:
-                                    styleData.productTextColor || "#303030",
-                                flexDirection:
-                                    styleData.productAlign || "row",
+                                color: styleData.productTextColor || "#303030",
                                 ...(styleData.productBorderEnabled ?? true
                                     ? {
                                         border: `1px solid ${
@@ -53,28 +49,13 @@ export function BundleLayoutList() {
                             }}
                         >
                             {/* Image */}
-                            {displaySettings.showImages && (
+                            {displaySettings.showImages && item.image && item.image.trim() !== "" && (
                                 <div
                                     className="radius-bundle__product-image"
                                     style={{
-                                        width: `${
-                                            styleData.imageWidth ?? 70
-                                        }px`,
-                                        height: `${
-                                            styleData.imageWidth ?? 70
-                                        }px`,
-                                        borderRadius: `${
-                                            styleData.imageRadius ?? 6
-                                        }px`,
-                                        ...(styleData.imageBorderEnabled ??
-                                        true
-                                            ? {
-                                                border: `1px solid ${
-                                                    styleData.imageBorderColor ||
-                                                    "#e3e3e3"
-                                                }`,
-                                            }
-                                            : {}),
+                                        width: `${ styleData.imageWidth ?? 70 }px`,
+                                        height: `${ styleData.imageWidth ?? 70 }px`,
+                                        borderRadius: `${ styleData.imageRadius ?? 6 }px`,
                                     }}
                                 >
                                     <img
@@ -87,25 +68,25 @@ export function BundleLayoutList() {
 
                             {/* Info */}
                             <div className="radius-bundle__product-info">
-                                <div className="rtpb-product-title">
+                                <div className="radius-bundle__product-title">
                                     {displaySettings.enableHyperLink ? (
                                         <a
                                             href={item.url}
                                             className="hover:underline"
                                         >
-                                            {item.title.length > 25
+                                            {item.title.length > 40
                                                 ? `${item.title.slice(
                                                     0,
-                                                    25,
+                                                    40,
                                                 )}...`
                                                 : item.title}
                                         </a>
                                     ) : (
                                         <span>
-                                            {item.title.length > 25
+                                            {item.title.length > 40
                                                 ? `${item.title.slice(
                                                     0,
-                                                    25,
+                                                    40,
                                                 )}...`
                                                 : item.title}
                                         </span>

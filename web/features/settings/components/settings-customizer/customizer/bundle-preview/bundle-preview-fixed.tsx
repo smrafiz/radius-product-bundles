@@ -7,14 +7,13 @@ export function BundlePreviewFixed() {
 
     const RenderSelectedProducts = () => {
         return (
-            <div
-                className="rtpb-bundle-product"
+
+            <div className="radius-bundle__product radius-bundle__product--list"
                 style={{
                     backgroundColor: styleData.productBgColor || "#f7f7f7",
                     borderRadius: `${styleData.productRadius ?? 12}px`,
                     fontSize: `${styleData.productFontSize ?? 14}px`,
                     color: styleData.productTextColor || "#303030",
-                    flexDirection: styleData.productAlign || "row",
                     ...((styleData.productBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",
@@ -25,19 +24,10 @@ export function BundlePreviewFixed() {
                         : {}),
                 }}
             >
-                <div
-                    className="rtpb-product-thumbnail"
+                <div className="radius-bundle__product-image"
                     style={{
                         width: `${styleData.imageWidth ?? 80}px`,
                         borderRadius: `${styleData.imageRadius ?? 6}px`,
-                        ...((styleData.imageBorderEnabled ?? true)
-                            ? {
-                                  borderStyle: "solid",
-                                  borderWidth: "1px",
-                                  borderColor:
-                                      styleData.imageBorderColor || "#e3e3e3",
-                              }
-                            : {}),
                     }}
                 >
                     <s-image
@@ -46,9 +36,14 @@ export function BundlePreviewFixed() {
                     ></s-image>
                 </div>
 
-                <div className="rtpb-product-info">
-                    <div className="rtpb-product-title">Bundle product</div>
-                    <div className="rtpb-product-price">Qty: 1 × $600.00</div>
+                <div className="radius-bundle__product-info">
+                    <div className="radius-bundle__product-title">Bundle product</div>
+                    <div className="radius-bundle__product-quantity">Qty: 1</div>
+                </div>
+
+                <div className="radius-bundle__product-price">
+                    <div className="radius-bundle__product-price-current">$300.33</div>
+                    <div className="radius-bundle__product-price-compare">$600.00</div>
                 </div>
             </div>
         );
@@ -56,7 +51,7 @@ export function BundlePreviewFixed() {
 
     return (
         <div
-            className="rtpb-bundle-layout-one sm:w-125 m-auto"
+            className="radius-bundle__inner sm:w-125 m-auto"
             style={{
                 backgroundColor: styleData.boxBgColor || "#ffffff",
                 borderRadius: `${styleData.boxRadius ?? 12}px`,
@@ -70,109 +65,95 @@ export function BundlePreviewFixed() {
                     : {}),
             }}
         >
-            <div className="rtpb-box-wrap">
-                <div className="rtpb-standard-title"
+            <div className="radius-bundle__products radius-bundle__products--list">
+                <div className="radius-bundle__header">
+                    <div className="radius-bundle__title-wrapper"
                     style={{
                         fontSize: `${styleData.titleFontSize ?? 20}px`,
                         textAlign: styleData.titleAlignment || "left",
                     }}
                 >Fixed Bundle</div>
+                    <div className="radius-bundle__badge radius-bundle__badge--skeleton radius-bundle__badge--visible">Save 50%</div>
+                </div>
 
-                <div className="rtpb-box-container">
-                    <div className="rtpb-product-item">
-                        <RenderSelectedProducts />
-                        <div className="rtpb-product-divider">
-                            <div className="rtpb-product-divider-position">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 32 32"
-                                >
-                                    <path
-                                        fill="currentColor"
-                                        d="M22 17h-5v5a1.001 1.001 0 0 1-2 0v-5h-5a1.001 1.001 0 0 1 0-2h5v-5a1.001 1.001 0 0 1 2 0v5h5a1.001 1.001 0 0 1 0 2zM16 0C7.163 0 0 7.16 0 16s7.163 16 16 16 16-7.16 16-16S24.837 0 16 0z"
-                                    />
-                                </svg>
-                            </div>
-                        </div>
-                        <RenderSelectedProducts />
-                        <div className="rtpb-product-divider">
-                            <div className="rtpb-product-divider-position">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 32 32"
-                                >
-                                    <path
-                                        fill="currentColor"
-                                        d="M22 17h-5v5a1.001 1.001 0 0 1-2 0v-5h-5a1.001 1.001 0 0 1 0-2h5v-5a1.001 1.001 0 0 1 2 0v5h5a1.001 1.001 0 0 1 0 2zM16 0C7.163 0 0 7.16 0 16s7.163 16 16 16 16-7.16 16-16S24.837 0 16 0z"
-                                    />
-                                </svg>
-                            </div>
-                        </div>
-                        <RenderSelectedProducts />
-                    </div>
+                <RenderSelectedProducts />
+                <div className="radius-bundle__divider-plus">
+                    <div className="divider-position">+</div>
+                </div>
+                <RenderSelectedProducts />
+                <div className="radius-bundle__divider-plus">
+                    <div className="divider-position">+</div>
+                </div>
+                <RenderSelectedProducts />
+            </div>
 
-                    {/* Pricing */}
-                    <div
-                        className="rtpb-product-total-price"
-                        style={{
-                            fontSize: `${styleData.productFontSize ?? 14}px`,
-                        }}
-                    >
-                        <div className="rtpb-product-box-price">
-                            <div className="rtpb-product-box-wrap">
-                                <span className="rtpb-total-label-text">
-                                    Original Price:
-                                </span>
-                                <span>$2,899.96</span>
-                            </div>
+            {/* Pricing */}
+            <div className="radius-bundle__pricing"
+                style={{
+                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                }}
+            >
+                <div className="radius-bundle__pricing-row">
+                    <span className="radius-bundle__pricing-label">
+                        Regular Price:
+                    </span>
+                    <span className="radius-bundle__price-original">$2,899.96</span>
+                </div>
 
-                            <div className="rtpb-product-box-wrap">
-                                <span className="rtpb-total-label-text">
-                                    Total Price:
-                                </span>
-                                <span>$1,899.96</span>
-                            </div>
-                        </div>
+                <div className="radius-bundle__pricing-row radius-bundle__pricing-row--highlight">
+                    <span className="radius-bundle__pricing-label">
+                        Bundle Price:
+                    </span>
+                    <span className="radius-bundle__price-discounted">$1,899.96</span>
+                </div>
 
-                        <div className="rtpb-product-box-wrap">
-                            <span className="rtpb-total-label-text">You save:</span>
-                            <span>$474.99 (20%)</span>
-                        </div>
-                    </div>
+                <div className="radius-bundle__pricing-row radius-bundle__savings">
+                    <span className="radius-bundle__savings-label">
+                        You save:
+                    </span>
+                    <span className="radius-bundle__savings-amount">$474.99 (20%)</span>
+                </div>
 
-                    <div
-                        className="rtpb-summary-button"
-                        style={{
-                            fontSize: `${styleData.productFontSize ?? 14}px`,
-                        }}
-                    >
-                        <button
-                            aria-expanded="false"
-                            aria-label="Add bundle to cart"
-                            className="rtpb-button"
-                            style={
-                                (styleData.buttonStyleEnabled ?? true)
-                                    ? {
-                                          backgroundColor:
-                                              styleData.buttonBgColor ||
-                                              "#303030",
-                                          color:
-                                              styleData.buttonTextColor ||
-                                              "#fff",
-                                          borderRadius: `${styleData.buttonRadius ?? 8}px`,
-                                      }
-                                    : undefined
-                            }
-                        >
-                            Add bundle to cart
-                        </button>
-                    </div>
+                <div className="radius-bundle__free-shipping">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
+                        <circle cx="7" cy="18" r="2" />
+                        <circle cx="17" cy="18" r="2" />
+                    </svg>
+                    <span>Free Shipping</span>
                 </div>
             </div>
+
+            {/* Button */}
+
+            <div
+                className="radius-bundle__actions"
+                style={{
+                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                }}
+            >
+                <button
+                    aria-expanded="false"
+                    aria-label="Add bundle to cart"
+                    className="radius-bundle__add-to-cart"
+                    style={
+                        (styleData.buttonStyleEnabled ?? true)
+                            ? {
+                                backgroundColor:
+                                    styleData.buttonBgColor ||
+                                    "#303030",
+                                color:
+                                    styleData.buttonTextColor ||
+                                    "#fff",
+                                borderRadius: `${styleData.buttonRadius ?? 8}px`,
+                            }
+                            : undefined
+                    }
+                >
+                    Add bundle to cart
+                </button>
+            </div>
+
         </div>
     );
 }

@@ -34,51 +34,31 @@ export function BundleLayoutGrid() {
                 style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-                    gap: "12px",
+                    gap: "16px",
                 }}
             >
                 {visibleItems.map((item, index) => (
                     <div
                         key={item.id ?? index}
-                        className="rtpb-bundle-product rtpb-bundle-product--grid"
+                        className="radius-bundle__product radius-bundle__product--grid"
                         style={{
-                            backgroundColor:
-                                styleData.productBgColor || "#f7f7f7",
+                            backgroundColor: styleData.productBgColor || "#f7f7f7",
                             borderRadius: `${styleData.productRadius ?? 12}px`,
                             fontSize: `${styleData.productFontSize ?? 16}px`,
                             color: styleData.productTextColor || "#303030",
-                            padding: "12px",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "8px",
-                            textAlign: "center",
                             ...((styleData.productBorderEnabled ?? true)
                                 ? {
-                                    border: `1px solid ${
-                                        styleData.productBorderColor ||
-                                        "#e3e3e3"
-                                    }`,
+                                    border: `1px solid ${ styleData.productBorderColor || "#e3e3e3" }`,
                                 }
                                 : {}),
                         }}
                     >
                         {/* IMAGE */}
-                        {displaySettings.showImages && (
+                        {displaySettings.showImages && item.image && item.image.trim() !== "" && (
                             <div
                                 className="radius-bundle__product-image"
                                 style={{
-                                    width: "100%",
-                                    aspectRatio: "1 / 1",
-                                    borderRadius: `${styleData.imageRadius ?? 8}px`,
-                                    overflow: "hidden",
-                                    ...((styleData.imageBorderEnabled ?? true)
-                                        ? {
-                                            border: `1px solid ${
-                                                styleData.imageBorderColor ||
-                                                "#e3e3e3"
-                                            }`,
-                                        }
-                                        : {}),
+                                    borderRadius: `${styleData.imageRadius ?? 6}px`,
                                 }}
                             >
                                 <img
@@ -90,7 +70,7 @@ export function BundleLayoutGrid() {
                         )}
 
                         {/* TITLE */}
-                        <div className="rtpb-product-title font-medium leading-tight">
+                        <div className="radius-bundle__product-title">
                             {displaySettings.enableHyperLink ? (
                                 <a
                                     href={item.url}
@@ -105,14 +85,9 @@ export function BundleLayoutGrid() {
                             )}
                         </div>
 
-                        {/* QTY */}
-                        <div className="text-xs opacity-70">
-                            Qty: {item.quantity}
-                        </div>
-
                         {/* PRICE */}
                         {displaySettings.showPrices && (
-                            <div className="radius-bundle__product-price flex flex-col items-center gap-1">
+                            <div className="radius-bundle__product-price flex flex-col items-center">
                                 <span className="radius-bundle__product-price-current font-semibold">
                                     $285.95
                                 </span>
@@ -126,6 +101,12 @@ export function BundleLayoutGrid() {
                                 )}
                             </div>
                         )}
+
+                        {/* QTY */}
+                        <div className="radius-bundle__product-quantity">
+                            Qty: {item.quantity}
+                        </div>
+
                     </div>
                 ))}
             </div>

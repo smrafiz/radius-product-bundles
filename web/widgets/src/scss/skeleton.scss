@@ -3,6 +3,7 @@
 // ==========================================================================
 
 @use "mixins";
+@use "variable" as *;
 @use "global" as *;
 
 .radius-bundle {
@@ -84,10 +85,10 @@
 
         // Slider skeleton
         &--slider {
-            display: flex;
-            align-items: center;
-            gap: var(--rb-spacing-sm);
-            flex-direction: row;
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
+            gap: var(--rb-spacing);
         }
     }
 

@@ -182,31 +182,6 @@ export function BundleOptionsProduct() {
                             />
                         </s-stack>
                     </s-stack>
-                    <s-stack
-                        direction="inline"
-                        alignItems="center"
-                        gap="small-300"
-                    >
-                        <s-text>Image align</s-text>
-                        <s-button-group gap="none">
-                            <s-button
-                                slot="secondary-actions"
-                                onClick={() =>
-                                    updateStyle("productAlign", "row")
-                                }
-                            >
-                                Left
-                            </s-button>
-                            <s-button
-                                slot="secondary-actions"
-                                onClick={() =>
-                                    updateStyle("productAlign", "row-reverse")
-                                }
-                            >
-                                Right
-                            </s-button>
-                        </s-button-group>
-                    </s-stack>
                 </s-stack>
             </div>
         </s-stack>

@@ -14,7 +14,6 @@ export function BundlePreviewBogo() {
                     borderRadius: `${styleData.productRadius ?? 12}px`,
                     fontSize: `${styleData.productFontSize ?? 14}px`,
                     color: styleData.productTextColor || "#303030",
-                    flexDirection: styleData.productAlign || "row",
                     ...((styleData.productBorderEnabled ?? true)
                         ? {
                               borderStyle: "solid",
@@ -30,14 +29,6 @@ export function BundlePreviewBogo() {
                     style={{
                         width: `${styleData.imageWidth ?? 80}px`,
                         borderRadius: `${styleData.imageRadius ?? 6}px`,
-                        ...((styleData.imageBorderEnabled ?? true)
-                            ? {
-                                  borderStyle: "solid",
-                                  borderWidth: "1px",
-                                  borderColor:
-                                      styleData.imageBorderColor || "#e3e3e3",
-                              }
-                            : {}),
                     }}
                 >
                     <s-image

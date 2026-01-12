@@ -424,7 +424,7 @@ declare global {
                 const isLast = index === sortedProducts.length - 1;
                 html += this.renderProductCard(product, layout);
 
-                if (["slider", "list"].includes(layout) && !isLast) {
+                if (["list"].includes(layout) && !isLast) {
                     html +=
                         '<div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>';
                 }
@@ -544,10 +544,10 @@ declare global {
                         ${imageWrapper}
                         ${productTitleHtml}
                         ${
-                                this.showPrices
-                                    ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-                                    : ""
-                            }
+                            this.showPrices
+                                ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                                : ""
+                        }
                         <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
                     </div>
                 `;
@@ -556,7 +556,9 @@ declare global {
             // Compact layout
             if (layout === "compact") {
                 return `
-            <div class="radius-bundle__product radius-bundle__product--compact" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+            <div class="radius-bundle__product radius-bundle__product--compact" 
+                data-product-id="${product.id}" 
+                data-variant-id="${product.variantId}">
                 ${imageWrapper}
                 <div class="radius-bundle__product-info radius-bundle__product-info--compact">
                     ${productTitleHtml}
@@ -570,26 +572,23 @@ declare global {
                             : ""
                     }
                 </div>
-            </div>
-        `;
+            </div>`;
             }
 
             // Slider layout
             return `
-        <div class="radius-bundle__product radius-bundle__product--slider" data-product-id="${product.id}" data-variant-id="${product.variantId}">
-            ${imageWrapper}
-            ${productTitleHtml}
-            ${
-                this.showPrices
-                    ? `
-                <div class="radius-bundle__product-price">
-                    ${priceHtml}
-                </div>
-            `
-                    : ""
-            }
-        </div>
-    `;
+            <div class="radius-bundle__product radius-bundle__product--slider" 
+                data-product-id="${product.id}" 
+                data-variant-id="${product.variantId}">
+                ${imageWrapper}
+                ${productTitleHtml}
+                ${
+                    this.showPrices
+                        ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                        : ""
+                }
+                    <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
+            </div>`;
         }
 
         /**

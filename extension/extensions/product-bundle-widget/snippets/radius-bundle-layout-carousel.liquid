@@ -2,6 +2,10 @@
   Radius Bundle - Slider Template
 {% endcomment %}
 
+{% assign grid_columns = block.settings.grid_columns | default: 2 %}
+{% assign grid_columns_tablet = block.settings.grid_columns_tablet | default: 2 %}
+{% assign grid_columns_mobile = block.settings.grid_columns_mobile | default: 1 %}
+
 <div class="radius-bundle__inner">
     {% comment %} Header {% endcomment %}
     {% render 'radius-bundle-header',
@@ -11,6 +15,7 @@
 
     {% comment %} Slider Container {% endcomment %}
     <div class="radius-bundle__slider-wrapper">
+        <!-- PREV -->
         <button
                 class="radius-bundle__slider-nav radius-bundle__slider-nav--prev"
                 aria-label="Previous product"
@@ -22,8 +27,17 @@
             </svg>
         </button>
 
+        <!-- SLIDER -->
         <div class="radius-bundle__slider-container">
-            <div class="radius-bundle__products radius-bundle__products--slider" data-bundle-products data-slider-track>
+            <div class="radius-bundle__products radius-bundle__products--slider"
+                 data-bundle-products
+                 data-slider-track
+                 style="
+                         --grid-columns: {{ grid_columns }};
+                         --grid-cols-tablet: {{ grid_columns_tablet }};
+                         --grid-cols-mobile: {{ grid_columns_mobile }};
+                         "
+            >
                 <div class="radius-bundle__loading" data-bundle-loading>
                     <div class="radius-bundle__skeleton radius-bundle__skeleton--slider">
                         {% for i in (1..product_count) %}
@@ -33,16 +47,15 @@
                                 {% endif %}
                                 <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
                                 <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+                                <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
                             </div>
-                            {% unless forloop.last %}
-                                <div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>
-                            {% endunless %}
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- NEXT -->
         <button
                 class="radius-bundle__slider-nav radius-bundle__slider-nav--next"
                 aria-label="Next product"
@@ -54,7 +67,7 @@
         </button>
     </div>
 
-    <div class="radius-bundle__slider-dots" data-slider-dots></div>
+    {% comment %}<div class="radius-bundle__slider-dots" data-slider-dots></div>{% endcomment %}
 
     {% comment %} Pricing Section {% endcomment %}
     {% render 'radius-bundle-pricing',
@@ -71,4 +84,94 @@
             bundle_id: bundle_id,
             button_text: button_text
     %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const wrapper = document.querySelector(".radius-bundle__slider-wrapper");
+            if (!wrapper) return;
+
+            const track = wrapper.querySelector("[data-slider-track]");
+            const prevBtn = wrapper.querySelector("[data-slider-prev]");
+            const nextBtn = wrapper.querySelector("[data-slider-next]");
+            const container = wrapper.querySelector(".radius-bundle__slider-container");
+
+            if (!track || !container) return;
+
+            const slides = track.querySelectorAll(".radius-bundle__product--slider");
+            const images = track.querySelectorAll("img");
+
+            let index = 0;
+
+            function slideWidth() {
+                const slide = slides[0];
+                if (!slide) return container.offsetWidth;
+                return slide.offsetWidth + parseInt(getComputedStyle(slide).gap || 0);
+            }
+
+            function updateButtons() {
+                if (!prevBtn || !nextBtn) return;
+
+                prevBtn.disabled = track.scrollLeft <= 1;
+                nextBtn.disabled =
+                    track.scrollLeft + container.offsetWidth >= track.scrollWidth - 1;
+            }
+
+            function snapToStart() {
+                track.scrollLeft = 0;
+                updateButtons();
+            }
+
+            // BUTTONS
+            prevBtn?.addEventListener("click", () => {
+                track.scrollBy({
+                    left: slideWidth(),
+                    behavior: "smooth"
+                });
+            });
+
+            nextBtn?.addEventListener("click", () => {
+                track.scrollBy({
+                    left: slideWidth(),
+                    behavior: "smooth"
+                });
+            });
+
+            track.addEventListener("scroll", updateButtons);
+
+            // Wait until all images are loaded
+            let loadedCount = 0;
+            if (images.length === 0) {
+                snapToStart();
+            } else {
+                images.forEach(img => {
+                    if (img.complete) {
+                        loadedCount++;
+                    } else {
+                        img.addEventListener("load", () => {
+                            loadedCount++;
+                            if (loadedCount === images.length) snapToStart();
+                        });
+                        img.addEventListener("error", () => {
+                            loadedCount++;
+                            if (loadedCount === images.length) snapToStart();
+                        });
+                    }
+                });
+                if (loadedCount === images.length) snapToStart();
+            }
+
+            // OBSERVE CONTENT CHANGES
+            const mutationObserver = new MutationObserver(snapToStart);
+            mutationObserver.observe(track, { childList: true, subtree: true });
+
+            // OBSERVE SIZE CHANGES
+            const resizeObserver = new ResizeObserver(snapToStart);
+            slides.forEach(slide => resizeObserver.observe(slide));
+            resizeObserver.observe(container);
+        });
+    </script>
+
+
+
+
 </div>

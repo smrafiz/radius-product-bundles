@@ -13,8 +13,11 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 import "@/styles/components/bundle.css";
+import React from "react";
+import { useRouter } from "next/navigation";
 
 export function BundlePreview() {
+    const router = useRouter();
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
@@ -60,10 +63,19 @@ export function BundlePreview() {
                                 : {}),
                         }}
                     >
+                        <s-stack paddingBlockEnd="base" >
+                            <s-stack direction="inline" justifyContent="space-between" alignItems="center" paddingBlockEnd="small-200">
+                                <s-heading>Preview</s-heading>
+                                <s-button
+                                    variant="tertiary"
+                                    onClick={() => router.push("/settings")}
+                                >Customization</s-button>
+                            </s-stack>
+                            <s-divider />
+                        </s-stack>
+
                         <BundleHeader />
-
                         {renderLayout()}
-
                         <BundlePricing />
                         <BundleAddToCart />
                     </div>
