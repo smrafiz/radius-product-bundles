@@ -7,7 +7,6 @@ export function BundlePreviewFixed() {
 
     const RenderSelectedProducts = () => {
         return (
-
             <div className="radius-bundle__product radius-bundle__product--list"
                 style={{
                     backgroundColor: styleData.productBgColor || "#f7f7f7",

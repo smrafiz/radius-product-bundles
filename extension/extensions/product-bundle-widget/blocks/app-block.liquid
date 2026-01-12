@@ -44,6 +44,9 @@
                 {% assign heading_color = block.settings.heading_color
                         | default: g_styles.colors.headingColor
                         | default: '#303030' %}
+				{% assign inner_background_color = block.settings.inner_background_color
+						| default: g_styles.colors.productBgColor
+						| default: '#f7f7f7' %}
                 {% assign text_color = block.settings.text_color
                         | default: g_styles.colors.text.textColor
                         | default: '#333333' %}
@@ -192,6 +195,7 @@
 						--rb-background-color: {{ background_color }};
 						--rb-border-color: {{ border_color }};
 						--rb-heading-color: {{ heading_color }};
+						--rb-product-bg-color: {{ inner_background_color }};
 						--rb-text-color: {{ text_color }};
 						--rb-savings-color: {{ savings_color }};
 						--rb-savings-text-color: {{ savings_text_color }};
@@ -428,7 +432,7 @@
 			"max": 4,
 			"step": 1,
 			"default": 2,
-			"info": "Only applies to grid layout"
+			"info": "Number of products visible per row in grid layout and per slide in slider layout."
 		},
 		{
 			"type": "range",
@@ -438,7 +442,7 @@
 			"max": 4,
 			"step": 1,
 			"default": 2,
-			"info": "Only applies to grid layout"
+			"info": "Number of products visible per row in grid layout and per slide in slider layout."
 		},
 		{
 			"type": "range",
@@ -448,7 +452,7 @@
 			"max": 4,
 			"step": 1,
 			"default": 1,
-			"info": "Only applies to grid layout"
+			"info": "Number of products visible per row in grid layout and per slide in slider layout."
 		},
 		{
 			"type": "select",
@@ -603,6 +607,11 @@
 			"id": "heading_color",
 			"label": "Heading color",
 			"default": "#303030"
+		},
+		{
+			"type": "color",
+			"id": "inner_background_color",
+			"label": "Inner Background color"
 		},
 		{
 			"type": "color",

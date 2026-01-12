@@ -24,7 +24,7 @@
         "max": 4,
         "step": 1,
         "default": 2,
-        "info": "Only applies to grid layout"
+        "info": "Number of products visible per row in grid layout and per slide in slider layout."
     },
     {
         "type": "range",
@@ -34,7 +34,7 @@
         "max": 4,
         "step": 1,
         "default": 2,
-        "info": "Only applies to grid layout"
+        "info": "Number of products visible per row in grid layout and per slide in slider layout."
     },
     {
         "type": "range",
@@ -44,7 +44,7 @@
         "max": 4,
         "step": 1,
         "default": 1,
-        "info": "Only applies to grid layout"
+        "info": "Number of products visible per row in grid layout and per slide in slider layout."
     },
     {
         "type": "select",

@@ -129,14 +129,4 @@
         border: 1px solid var(--rb-border-color);
         text-align: center;
     }
-
-    &__skeleton-slide {
-        flex: 0 0 auto;
-        width: 136px;
-        padding: var(--rb-spacing);
-        background: var(--rb-skeleton-shine);
-        border-radius: var(--rb-border-radius);
-        border: 1px solid var(--rb-border-color);
-        text-align: center;
-    }
 }

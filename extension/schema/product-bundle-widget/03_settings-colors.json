@@ -26,6 +26,11 @@
   },
   {
     "type": "color",
+    "id": "inner_background_color",
+    "label": "Inner Background color"
+  },
+  {
+    "type": "color",
     "id": "text_color",
     "label": "Text color"
   },
