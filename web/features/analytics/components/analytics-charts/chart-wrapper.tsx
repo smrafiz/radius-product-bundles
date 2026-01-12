@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartWrapperProps } from "@/features/analytics";
+import { ChartTitleTooltip, ChartWrapperProps } from "@/features/analytics";
 
 /**
  * Reusable Chart Wrapper
@@ -8,15 +8,24 @@ import { ChartWrapperProps } from "@/features/analytics";
 export function ChartWrapper({
     title,
     summaryStats,
+    description,
+    formula,
     children,
-    isLoading = false,
     gap = "base",
 }: ChartWrapperProps) {
     return (
         <s-section>
             <s-stack gap={gap}>
                 {/* Title */}
-                <s-heading>{title}</s-heading>
+                <s-heading>
+                    <ChartTitleTooltip
+                        title={title}
+                        description={description}
+                        formula={formula}
+                    >
+                        {title}
+                    </ChartTitleTooltip>
+                </s-heading>
 
                 {/* Summary Stats */}
                 {summaryStats && summaryStats.length > 0 && (

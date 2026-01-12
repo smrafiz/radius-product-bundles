@@ -5,6 +5,8 @@ import { ReactNode } from "react";
  */
 export interface ChartWrapperProps {
     title: string;
+    description?: string;
+    formula?: string;
     summaryStats?: Array<{
         label: string;
         value: string | number;

@@ -46,6 +46,8 @@ export function FunnelPerformanceChart() {
     return (
         <ChartWrapper
             title="Funnel Performance"
+            description="Track how customers progress through your bundle funnel from initial view to final purchase. Identify drop-off points to optimize conversion."
+            formula="Flow: Views → Add-to-Cart → Purchases"
             summaryStats={[
                 { label: "Views", value: totals.views },
                 { label: "Add to Cart", value: totals.addToCarts },

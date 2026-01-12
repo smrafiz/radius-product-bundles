@@ -16,7 +16,16 @@ import {
     useConversionRate,
     useFormattedChartData,
 } from "@/features/analytics";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
+import {
+    CartesianGrid,
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 
 /**
  * Conversion Rates Chart
@@ -63,6 +72,9 @@ export function ConversionRatesChart() {
     return (
         <ChartWrapper
             title="Conversion Performance"
+            description="Track how effectively you convert views to cart additions and cart additions to purchases. Higher percentages indicate better funnel optimization."
+            formula="View→Cart = (Add-to-Cart / Views) × 100%
+            Cart→Purchase = (Purchases / Add-to-Cart) × 100%"
             summaryStats={[
                 { label: "Avg View-to-Cart", value: `${avgViewToCart}%` },
                 {

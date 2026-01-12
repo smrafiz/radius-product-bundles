@@ -48,6 +48,8 @@ export function RevenueAOVChart() {
     return (
         <ChartWrapper
             title="Revenue Analysis"
+            description="Understand both volume (total revenue) and quality (average order value) of your bundle sales. Increasing AOV means customers are buying more valuable bundles."
+            formula="AOV = Total Revenue / Number of Purchases"
             summaryStats={[
                 {
                     label: "Total Revenue",
