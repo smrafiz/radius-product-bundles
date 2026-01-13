@@ -170,6 +170,7 @@ model BundleSettings {
     showSavings       Boolean @default(true)
     showFreeShipping  Boolean @default(true)
     enableHyperLink   Boolean @default(false)
+    showQuantity      Boolean @default(true)
 
     // Style settings
     style  Json?
