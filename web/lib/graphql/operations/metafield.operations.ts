@@ -415,6 +415,7 @@ function buildActiveBundlesMetafieldValue(
             showSavingsBadge: bundle.settings?.showSavingsBadge ?? true,
             showPrices: bundle.settings?.showPrices ?? true,
             showComparePrices: bundle.settings?.showComparePrices ?? true,
+            showQuantity: bundle.settings?.showQuantity ?? true,
             showFreeShipping: bundle.settings?.showFreeShipping ?? true,
             enableHyperLink: bundle.settings?.enableHyperLink ?? false,
         };

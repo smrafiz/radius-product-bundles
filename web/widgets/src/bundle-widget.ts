@@ -134,6 +134,7 @@ declare global {
         private readonly showSavingsBadge: boolean = true;
         private readonly showPrices: boolean = true;
         private readonly showComparePrices: boolean = true;
+        private readonly showQuantity: boolean = true;
         private readonly enableHyperLink: boolean = false;
 
         /*
@@ -154,6 +155,7 @@ declare global {
             this.showSavingsBadge = container.dataset.showSavingsBadge !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
             this.showComparePrices = container.dataset.showComparePrices !== "false";
+            this.showQuantity = container.dataset.showQuantity !== "false";
             this.enableHyperLink = container.dataset.enableHyperlink !== "false";
 
             // Parse structure from Liquid
@@ -516,11 +518,13 @@ declare global {
             // List layout
             if (layout === "list") {
                 return `
-                    <div class="radius-bundle__product radius-bundle__product--list" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+                    <div class="radius-bundle__product radius-bundle__product--list" 
+                    data-product-id="${product.id}" 
+                    data-variant-id="${product.variantId}">
                         ${imageWrapper}
                         <div class="radius-bundle__product-info">
                             ${productTitleHtml}
-                            <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
+                            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
                         </div>
                         ${
                             this.showPrices
@@ -548,7 +552,7 @@ declare global {
                                 ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
                                 : ""
                         }
-                        <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
+                        ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
                     </div>
                 `;
             }
@@ -560,18 +564,18 @@ declare global {
                 data-product-id="${product.id}" 
                 data-variant-id="${product.variantId}">
                 ${imageWrapper}
-                <div class="radius-bundle__product-info radius-bundle__product-info--compact">
-                    ${productTitleHtml}
-                    ${
-                        this.showPrices
-                            ? `
-                        <div class="radius-bundle__product-price">
-                            ${priceHtml}
-                        </div>
-                    `
-                            : ""
+                    <div class="radius-bundle__product-info radius-bundle__product-info--compact">
+                        ${productTitleHtml}
+                        ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
+                    </div>
+                    ${ this.showPrices
+                        ? `
+                            <div class="radius-bundle__product-price">
+                                ${priceHtml}
+                            </div>
+                        `
+                        : ""
                     }
-                </div>
             </div>`;
             }
 
@@ -587,7 +591,7 @@ declare global {
                         ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
                         : ""
                 }
-                    <div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>
+                ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
             </div>`;
         }
 

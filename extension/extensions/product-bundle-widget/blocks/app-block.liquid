@@ -107,6 +107,7 @@
 				{% assign show_savings = bundle.showSavings %}
 				{% assign show_product_prices = bundle.showPrices %}
 				{% assign show_compare_at_price = bundle.showComparePrices %}
+				{% assign show_quantity = bundle.showQuantity %}
 				{% assign show_free_shipping = bundle.showFreeShipping %}
 				{% assign show_savings_badge = bundle.showSavingsBadge %}
 				{% assign enable_hyperlink = bundle.enableHyperLink %}
@@ -122,6 +123,9 @@
 				{% endif %}
 				{% if show_compare_at_price == null %}
 					{% assign show_compare_at_price = true %}
+				{% endif %}
+				{% if show_quantity == null %}
+					{% assign show_quantity = true %}
 				{% endif %}
 				{% if show_free_shipping == null %}
 					{% assign show_free_shipping = true %}
@@ -142,7 +146,6 @@
 				{% assign bundle_heading = block.settings.bundle_heading
 						| default: bundle.title
 						| default: 'Bundle & Save' %}
-
                 {% assign button_text = block.settings.button_text
                         | default: bundle.buttonText
                         | default: g_labels.addToCartText
@@ -283,6 +286,7 @@
 						data-show-savings="{{ show_savings }}"
                         data-show-prices="{{ show_product_prices }}"
                         data-show-compare-prices="{{ show_compare_at_price }}"
+						data-show-quantity="{{ show_quantity }}"
 						data-show-free-shipping="{{ show_free_shipping }}"
 						data-show-savings-badge="{{ show_savings_badge }}"
 						data-enable-hyperlink="{{ enable_hyperlink }}"
@@ -310,6 +314,7 @@
 									show_savings_badge: show_savings_badge,
 									show_product_prices: show_product_prices,
 									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
                                     show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
@@ -329,6 +334,7 @@
 									show_savings_badge: show_savings_badge,
 									show_product_prices: show_product_prices,
 									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
 									show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
@@ -348,6 +354,7 @@
 									show_savings_badge: show_savings_badge,
 									show_product_prices: show_product_prices,
 									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
 									show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
@@ -367,6 +374,7 @@
 									show_savings_badge: show_savings_badge,
 									show_product_prices: show_product_prices,
 									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
 									show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
                                     button_text: button_text,
@@ -604,14 +612,14 @@
 		},
 		{
 			"type": "color",
-			"id": "heading_color",
-			"label": "Heading color",
-			"default": "#303030"
+			"id": "inner_background_color",
+			"label": "Inner Background color"
 		},
 		{
 			"type": "color",
-			"id": "inner_background_color",
-			"label": "Inner Background color"
+			"id": "heading_color",
+			"label": "Heading color",
+			"default": "#303030"
 		},
 		{
 			"type": "color",

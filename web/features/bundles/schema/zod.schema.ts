@@ -66,6 +66,7 @@ const bundleSettingsSchema = z
         showSavingsBadge: z.boolean().default(true),
         showPrices: z.boolean().default(true),
         showComparePrices: z.boolean().default(true),
+        showQuantity: z.boolean().default(true),
         showSavings: z.boolean().default(true),
         showFreeShipping: z.boolean().default(true),
         enableHyperLink: z.boolean().default(false),

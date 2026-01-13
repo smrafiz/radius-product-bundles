@@ -20,14 +20,14 @@
   },
   {
     "type": "color",
-    "id": "heading_color",
-    "label": "Heading color",
-    "default": "#303030"
+    "id": "inner_background_color",
+    "label": "Inner Background color"
   },
   {
     "type": "color",
-    "id": "inner_background_color",
-    "label": "Inner Background color"
+    "id": "heading_color",
+    "label": "Heading color",
+    "default": "#303030"
   },
   {
     "type": "color",

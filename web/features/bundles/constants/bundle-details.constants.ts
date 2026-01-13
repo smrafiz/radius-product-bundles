@@ -96,38 +96,42 @@ export const BUNDLE_STEPS = [
 export const ADVANCED_OPTIONS = [
     {
         key: "showImages" as const,
-        title: "Show product images",
-        description: "Display the images of each product within a bundle",
+        title: "Display product images",
+        description: "Show product images for each item included in the bundle.",
     },
     {
         key: "showSavingsBadge" as const,
-        title: "Show savings badge",
-        description: "Display the savings badge of each product within a bundle",
+        title: "Display savings badge",
+        description: "Highlight savings with a badge on eligible bundle items.",
     },
     {
         key: "showPrices" as const,
-        title: "Show individual product prices",
-        description: "Display the price of each product within a bundle",
+        title: "Display individual product prices",
+        description: "Show the price of each product included in the bundle.",
     },
     {
         key: "showComparePrices" as const,
-        title: "Show compare at price",
-        description: "Display the compare at of each product within a bundle",
+        title: "Display compare-at prices",
+        description: "Show the original (compare-at) price alongside the current price.",
+    },
+    {
+        key: "showQuantity" as const,
+        title: "Display product quantities",
+        description: "Show the quantity of each product included in the bundle.",
     },
     {
         key: "showSavings" as const,
-        title: "Show bundle savings amount",
-        description: "Show how much customers save by purchasing the bundle",
+        title: "Display total bundle savings",
+        description: "Show the total amount customers save when purchasing the bundle.",
     },
     {
         key: "showFreeShipping" as const,
-        title: "Show free shipping",
-        description: "Show how much customers save by purchasing the bundle",
+        title: "Display free shipping message",
+        description: "Inform customers when the bundle qualifies for free shipping.",
     },
     {
         key: "enableHyperLink" as const,
         title: "Enable product page link",
-        description:
-            "Add linked titles to the individual product pages of the bundle",
+        description: "Link product titles to their respective product pages.",
     },
 ];

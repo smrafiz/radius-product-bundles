@@ -24,10 +24,17 @@
 
             padding: var(--rb-spacing-sm) 0;
             scrollbar-width: none;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-drag: none;
 
             &::-webkit-scrollbar {
                 display: none;
             }
+            &.is-dragging {
+                cursor: grabbing;
+            }
+
 
             @media (max-width: 1024px) {
                 grid-auto-columns: calc(
@@ -76,6 +83,9 @@
             line-height: 1.3;
             @include mixins.line-clamp(2);
         }
+        //.radius-bundle__product-title:not([style*="--rb-primary-color"]) {
+        //    color: var(--rb-heading-color);
+        //}
     }
     &__loading {
         width: 100%;
@@ -94,7 +104,7 @@
 
     &__slider-container {
         flex: 1;
-        overflow: visible;
+        overflow: hidden;
     }
 
     &__slider-nav {
@@ -153,10 +163,10 @@
     &__slider-dot {
         width: 8px;
         height: 8px;
+        padding: var(--rb-spacing-xs);
         border-radius: 50%;
         background: var(--rb-border-color);
         border: none;
-        padding: 0;
         cursor: pointer;
         transition: all var(--rb-transition);
 

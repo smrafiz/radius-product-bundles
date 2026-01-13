@@ -58,6 +58,9 @@
             &:hover {
                 text-decoration: underline;
             }
+            //&:not([style*="--rb-primary-color"]) {
+            //    color: var(--rb-heading-color);
+            //}
         }
     }
 

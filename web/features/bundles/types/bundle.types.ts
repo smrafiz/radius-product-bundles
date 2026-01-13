@@ -321,6 +321,7 @@ export interface DisplaySettings {
     showSavingsBadge: boolean;
     showPrices: boolean;
     showComparePrices: boolean;
+    showQuantity: boolean;
     showSavings: boolean;
     showFreeShipping: boolean;
     enableHyperLink: boolean;

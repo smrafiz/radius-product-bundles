@@ -84,9 +84,11 @@ export function BundleLayoutCompact() {
                                     )}
                                 </div>
 
-                                <div className="radius-bundle__product-quantity">
-                                    Qty: {item.quantity}
-                                </div>
+                                {displaySettings.showQuantity && (
+                                    <div className="radius-bundle__product-quantity">
+                                        Qty: {item.quantity}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Price */}

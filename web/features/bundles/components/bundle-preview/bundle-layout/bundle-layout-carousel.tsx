@@ -115,9 +115,11 @@ export function BundleLayoutCarousel() {
                             )}
 
                             {/* QTY */}
+                            {displaySettings.showQuantity && (
                             <div className="radius-bundle__product-quantity">
                                 Qty: {item.quantity}
                             </div>
+                            )}
                         </div>
                     </div>
                 ))}
