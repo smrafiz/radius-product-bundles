@@ -4,6 +4,7 @@
 
 import {
     aggregateBundleMetrics,
+    aggregateBundleMetricsByRange,
     getAnalyticsTrend,
     getBundlePerformanceStats,
     trackAddToCart,
@@ -11,8 +12,8 @@ import {
     trackBundleView,
 } from "@/features/analytics/repositories";
 import { transformBundleMetrics } from "@/shared";
-import { TrackingEvent } from "@/features/analytics";
-import { eachDayOfInterval, endOfDay, startOfDay, subDays } from "date-fns";
+import { endOfDayUTC, parseDateAsUTC, TrackingEvent, } from "@/features/analytics";
+import { endOfDay, startOfDay, subDays, } from "date-fns";
 
 /**
  * Get analytics metrics for the dashboard
@@ -20,18 +21,46 @@ import { eachDayOfInterval, endOfDay, startOfDay, subDays } from "date-fns";
 export async function getAnalyticsMetrics(
     shop: string,
     days: number = 30,
+    startDateStr?: string,
+    endDateStr?: string,
 ): Promise<any> {
-    const now = new Date();
-    const thirtyDaysAgo = startOfDay(subDays(now, days));
-    const sixtyDaysAgo = startOfDay(subDays(now, days * 2));
+    let rawMetrics;
 
-    const rawMetrics = await aggregateBundleMetrics(
-        shop,
-        thirtyDaysAgo,
-        sixtyDaysAgo,
-    );
+    if (startDateStr && endDateStr) {
+        const currentPeriodStart = parseDateAsUTC(startDateStr);
+        const currentPeriodEnd = endOfDayUTC(endDateStr);
 
-    // Transform using existing transformer
+        // Calculate previous period (same duration before current period)
+        const daysDifference = Math.ceil(
+            (currentPeriodEnd.getTime() - currentPeriodStart.getTime()) /
+                (1000 * 60 * 60 * 24),
+        );
+
+        const previousPeriodStart = new Date(currentPeriodStart);
+        previousPeriodStart.setUTCDate(
+            previousPeriodStart.getUTCDate() - daysDifference,
+        );
+
+        rawMetrics = await aggregateBundleMetricsByRange(
+            shop,
+            currentPeriodStart,
+            currentPeriodEnd,
+            previousPeriodStart,
+            currentPeriodStart,
+        );
+    } else {
+        // Use days approach
+        const now = new Date();
+        const currentPeriodStart = startOfDay(subDays(now, days));
+        const previousPeriodStart = startOfDay(subDays(now, days * 2));
+
+        rawMetrics = await aggregateBundleMetrics(
+            shop,
+            currentPeriodStart,
+            previousPeriodStart,
+        );
+    }
+
     return transformBundleMetrics(rawMetrics);
 }
 
@@ -84,16 +113,36 @@ export async function getBundleStats(shop: string, days: number = 30) {
 /**
  * Get chart data for the analytics dashboard
  */
-export async function getChartData(shop: string, days: number = 30) {
-    const now = new Date();
-    const startDate = startOfDay(subDays(now, days));
-    const endDate = endOfDay(now);
+export async function getChartData(
+    shop: string,
+    days: number = 30,
+    startDateStr?: string,
+    endDateStr?: string,
+) {
+    // Determine date range
+    let startDate: Date;
+    let endDate: Date;
 
+    if (startDateStr && endDateStr) {
+        startDate = parseDateAsUTC(startDateStr);
+        endDate = endOfDayUTC(endDateStr);
+    } else {
+        startDate = startOfDay(subDays(new Date(), days));
+        endDate = endOfDay(new Date());
+    }
+
+    // Fetch analytics data
     const analytics = await getAnalyticsTrend(shop, startDate, endDate);
 
-    // Fill in missing days with zero values
-    const dateRange = eachDayOfInterval({ start: startDate, end: endDate });
+    const dateRange: Date[] = [];
+    const current = new Date(startDate);
 
+    while (current <= endDate) {
+        dateRange.push(new Date(current));
+        current.setUTCDate(current.getUTCDate() + 1);
+    }
+
+    // Map to chart data
     return dateRange.map((date) => {
         const dateStr = date.toISOString().split("T")[0];
         const data = analytics.find(

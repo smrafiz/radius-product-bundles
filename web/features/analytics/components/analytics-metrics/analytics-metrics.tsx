@@ -10,7 +10,7 @@ import { MetricCard } from "@/shared";
 import { formatByType } from "@/features/dashboard";
 
 export function AnalyticsMetrics() {
-    const { metrics, isFetching } = useAnalyticsMetrics(30);
+    const { metrics, isFetching } = useAnalyticsMetrics();
 
     const cards = useMemo(() => {
         const metricsData: Partial<AnalyticsMetricsData> = {

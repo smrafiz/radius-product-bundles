@@ -19,25 +19,15 @@ function getShopTimezone(): string {
  * Format date to ISO string (YYYY-MM-DD) in shop timezone
  */
 export function formatDate(date: Date): string {
-    const timezone = getShopTimezone();
-
-    const formatter = new Intl.DateTimeFormat("en-US", {
-        timeZone: timezone,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-
-    const parts = formatter.formatToParts(date);
-    const year = parts.find((p) => p.type === "year")?.value;
-    const month = parts.find((p) => p.type === "month")?.value;
-    const day = parts.find((p) => p.type === "day")?.value;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
 }
 
 /**
- * Parse date string to Date object
+ * Parse date string to a Date object
  */
 export function parseDate(dateStr: string): Date {
     const [year, month, day] = dateStr.split("-").map(Number);
@@ -310,4 +300,18 @@ export function isValidDateRange(start: string, end: string): boolean {
     const endDate = parseDate(end);
 
     return startDate <= endDate;
+}
+
+/**
+ * Parse date string as UTC (no timezone shift)
+ */
+export function parseDateAsUTC(dateStr: string): Date {
+    return new Date(dateStr + "T00:00:00.000Z");
+}
+
+/**
+ * Get end of day in UTC
+ */
+export function endOfDayUTC(dateStr: string): Date {
+    return new Date(dateStr + "T23:59:59.999Z");
 }

@@ -29,7 +29,7 @@ export interface AnalyticsMetricConfig {
     title: string;
     format: MetricFormat;
     icon?: "arrow-up" | "arrow-down" | "work-list";
-    tone:
+    tone?:
         | "success"
         | "info"
         | "critical"

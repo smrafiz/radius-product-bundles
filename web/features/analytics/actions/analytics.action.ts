@@ -8,9 +8,9 @@
 
 import {
     getAnalyticsMetrics,
-    trackAnalyticsEvent,
     getBundleStats,
     getChartData,
+    trackAnalyticsEvent,
     validateTrackingEvent,
 } from "@/features/analytics/services";
 import { ApiResponse } from "@/shared";
@@ -23,13 +23,20 @@ import { TrackingEvent } from "@/features/analytics";
 export async function getAnalyticsMetricsAction(
     sessionToken: string,
     days: number = 30,
+    startDate?: string,
+    endDate?: string,
 ): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const metrics = await getAnalyticsMetrics(shop, days);
+        const metrics = await getAnalyticsMetrics(
+            shop,
+            days,
+            startDate,
+            endDate,
+        );
 
         return {
             status: "success",
@@ -87,13 +94,15 @@ export async function getBundleStatsAction(
 export async function getChartDataAction(
     sessionToken: string,
     days: number = 30,
+    startDate?: string,
+    endDate?: string,
 ): Promise<ApiResponse> {
     try {
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const chartData = await getChartData(shop, days);
+        const chartData = await getChartData(shop, days, startDate, endDate);
 
         return {
             status: "success",

@@ -256,6 +256,80 @@ export async function aggregateBundleMetrics(
 }
 
 /**
+ * Aggregate bundle metrics by date range
+ */
+export async function aggregateBundleMetricsByRange(
+    shop: string,
+    currentStart: Date,
+    currentEnd: Date,
+    previousStart: Date,
+    previousEnd: Date,
+): Promise<AnalyticsMetricsRepository> {
+    const [
+        currentPeriod,
+        previousPeriod,
+        totalRevenueAllTime,
+        totalBundles,
+        activeBundles,
+    ] = await Promise.all([
+        // Current period (selected date range)
+        prisma.bundleAnalytics.aggregate({
+            where: {
+                bundle: { shop },
+                date: {
+                    gte: currentStart,
+                    lte: currentEnd,
+                },
+            },
+            _sum: {
+                bundleViews: true,
+                bundlePurchases: true,
+                bundleRevenue: true,
+                bundleAddToCarts: true,
+            },
+        }),
+
+        // Previous period (for comparison)
+        prisma.bundleAnalytics.aggregate({
+            where: {
+                bundle: { shop },
+                date: {
+                    gte: previousStart,
+                    lt: previousEnd,
+                },
+            },
+            _sum: {
+                bundleViews: true,
+                bundlePurchases: true,
+                bundleRevenue: true,
+            },
+        }),
+
+        // All-time revenue
+        prisma.bundleAnalytics.aggregate({
+            where: {
+                bundle: { shop },
+            },
+            _sum: { bundleRevenue: true },
+        }),
+
+        // Total bundles count
+        prisma.bundle.count({ where: { shop } }),
+
+        // Active bundles count
+        prisma.bundle.count({ where: { shop, status: "ACTIVE" } }),
+    ]);
+
+    return {
+        currentPeriod,
+        previousPeriod,
+        totalRevenueAllTime,
+        totalBundles,
+        activeBundles,
+    };
+}
+
+/**
  * Get analytics for a specific bundle
  */
 export async function getBundleAnalytics(

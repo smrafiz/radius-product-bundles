@@ -1,4 +1,4 @@
-import { AnalyticsMetrics, AnalyticsTabs } from "@/features/analytics";
+import { AnalyticsTabs } from "@/features/analytics";
 
 export function AnalyticsPage() {
     return (
@@ -23,7 +23,6 @@ export function AnalyticsPage() {
                 </s-stack>
 
                 <s-stack gap="base">
-                    <AnalyticsMetrics />
                     <AnalyticsTabs />
                 </s-stack>
             </s-stack>

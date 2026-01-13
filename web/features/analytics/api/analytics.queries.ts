@@ -11,11 +11,16 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
      *
      * Fetches aggregate analytics metrics (revenue, views, conversions, etc.)
      */
-    metrics: (days: number = 30) => ({
-        queryKey: analyticsQueryKeys.metrics(days),
+    metrics: (days: number = 30, startDate?: string, endDate?: string) => ({
+        queryKey: analyticsQueryKeys.metrics(days, startDate, endDate),
         queryFn: async () => {
             const token = await app.idToken();
-            const result = await getAnalyticsMetricsAction(token, days);
+            const result = await getAnalyticsMetricsAction(
+                token,
+                days,
+                startDate,
+                endDate,
+            );
 
             if (result.status === "error") {
                 throw new Error(result.message);
@@ -33,11 +38,16 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
      *
      * Fetches time-series data for analytics charts.
      */
-    chart: (days: number = 30) => ({
-        queryKey: analyticsQueryKeys.chart(days),
+    chart: (days: number = 30, startDate?: string, endDate?: string) => ({
+        queryKey: analyticsQueryKeys.chart(days, startDate, endDate),
         queryFn: async (): Promise<ChartDataPoint[]> => {
             const token = await app.idToken();
-            const result = await getChartDataAction(token, days);
+            const result = await getChartDataAction(
+                token,
+                days,
+                startDate,
+                endDate,
+            );
 
             if (result.status === "error") {
                 throw new Error(result.message);

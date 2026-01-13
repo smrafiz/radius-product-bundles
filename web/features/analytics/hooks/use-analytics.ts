@@ -19,18 +19,18 @@ import { useAnalyticsStore } from "@/features/analytics";
  */
 export function useAnalytics() {
     const app = useAppBridge();
-    const { days } = useAnalyticsStore();
+    const { days, startDate, endDate } = useAnalyticsStore();
     const queries = analyticsQueries(app);
 
     const metricsQuery = useQuery({
-        ...queries.metrics(days),
+        ...queries.chart(days, startDate, endDate),
         staleTime: 2 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     });
 
     const chartQuery = useQuery({
-        ...queries.chart(days),
+        ...queries.chart(days, startDate, endDate),
         staleTime: 2 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
@@ -71,13 +71,13 @@ export function useAnalytics() {
  */
 export function useAnalyticsMetrics(overrideDays?: number) {
     const app = useAppBridge();
-    const { days: storeDays } = useAnalyticsStore();
+    const { days: storeDays, startDate, endDate } = useAnalyticsStore();
     const queries = analyticsQueries(app);
 
     const days = overrideDays ?? storeDays;
 
     const metricsQuery = useQuery({
-        ...queries.metrics(days),
+        ...queries.metrics(days, startDate, endDate),
         staleTime: 2 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
@@ -90,5 +90,7 @@ export function useAnalyticsMetrics(overrideDays?: number) {
         error: metricsQuery.error,
         refetch: metricsQuery.refetch,
         days,
+        startDate,
+        endDate,
     };
 }
