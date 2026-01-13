@@ -14,6 +14,8 @@ export interface ChartWrapperProps {
     children: ReactNode;
     isLoading?: boolean;
     gap?: "small" | "small-200" | "base";
+    showInfoBanner?: boolean;
+    infoBannerMessage?: string;
 }
 
 /**

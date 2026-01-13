@@ -44,11 +44,15 @@ export function useDateRangePicker() {
             ? formatDateRangeLabel(startDate, endDate, appliedPreset)
             : getLabelForDays(days);
 
-    // initialize store ONLY when shop settings are ready
+    // Initialize store ONLY when shop settings are ready
     useEffect(() => {
         if (isInitialized && (!startDate || !endDate)) {
             const range = getInitialRangeForDays(days);
-            useAnalyticsStore.getState().setDateRange(range.start, range.end);
+            const preset = getPresetForDays(days);
+
+            useAnalyticsStore
+                .getState()
+                .setDateRange(range.start, range.end, preset);
         }
     }, [isInitialized, startDate, endDate, days, timezone]);
 
@@ -61,9 +65,11 @@ export function useDateRangePicker() {
                 startDate !== correctRange.start ||
                 endDate !== correctRange.end
             ) {
+                const preset = getPresetForDays(days);
+
                 useAnalyticsStore
                     .getState()
-                    .setDateRange(correctRange.start, correctRange.end);
+                    .setDateRange(correctRange.start, correctRange.end, preset);
             }
         }
     }, [timezone]);
@@ -113,7 +119,7 @@ export function useDateRangePicker() {
             const date = parseDate(value);
             if (!isNaN(date.getTime())) {
                 setRange((prev) => ({ ...prev, start: value }));
-                setActivePreset("custom"); // Only update active preset, not applied
+                setActivePreset("custom");
             }
         }
     };
@@ -128,7 +134,7 @@ export function useDateRangePicker() {
             const date = parseDate(value);
             if (!isNaN(date.getTime())) {
                 setRange((prev) => ({ ...prev, end: value }));
-                setActivePreset("custom"); // Only update active preset, not applied
+                setActivePreset("custom");
             }
         }
     };
@@ -144,7 +150,7 @@ export function useDateRangePicker() {
         setRange(value);
         setStartInput(value.start);
         setEndInput(value.end);
-        setActivePreset(preset.key); // Only update active preset, not applied
+        setActivePreset(preset.key);
     };
 
     /**
@@ -152,7 +158,7 @@ export function useDateRangePicker() {
      */
     const handleCalendarChange = (newRange: { start: string; end: string }) => {
         setRange(newRange);
-        setActivePreset("custom"); // Only update active preset, not applied
+        setActivePreset("custom");
     };
 
     /**
@@ -184,9 +190,11 @@ export function useDateRangePicker() {
             return;
         }
 
-        // Update store AND applied preset
-        useAnalyticsStore.getState().setDateRange(range.start, range.end);
-        setAppliedPreset(activePreset); // Update label after Apply
+        // ✅ This is correct - passes activePreset
+        useAnalyticsStore
+            .getState()
+            .setDateRange(range.start, range.end, activePreset);
+        setAppliedPreset(activePreset);
     };
 
     /**
@@ -201,7 +209,7 @@ export function useDateRangePicker() {
         setRange(resetRange);
         setStartInput(resetRange.start);
         setEndInput(resetRange.end);
-        setActivePreset(appliedPreset); // Reset to applied preset, not calculated
+        setActivePreset(appliedPreset);
     };
 
     return {

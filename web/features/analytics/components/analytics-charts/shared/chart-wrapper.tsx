@@ -3,6 +3,7 @@
 import {
     ChartTitleTooltip,
     ChartWrapperProps,
+    InfoDuringTimePeriod,
     LimitedDataBanner,
     useAnalytics,
 } from "@/features/analytics";
@@ -17,11 +18,26 @@ export function ChartWrapper({
     formula,
     children,
     gap = "base",
+    showInfoBanner = false,
+    infoBannerMessage,
 }: ChartWrapperProps) {
     const { chartData } = useAnalytics();
 
     // Show limited data warning if less than 7 days
-    const showLimitedDataWarning = chartData && chartData.length < 8;
+    const showLimitedDataWarning = (() => {
+        if (!chartData || chartData.length >= 8) {
+            return false;
+        }
+
+        const hasActivity = chartData.some(
+            (point) =>
+                (point.views || 0) > 0 ||
+                (point.addToCarts || 0) > 0 ||
+                (point.purchases || 0) > 0,
+        );
+
+        return !hasActivity && chartData.length < 7;
+    })();
 
     return (
         <s-section>
@@ -38,8 +54,15 @@ export function ChartWrapper({
                 </s-heading>
 
                 {/* Limited data warning */}
-                {showLimitedDataWarning && (
-                    <LimitedDataBanner days={chartData!.length} minDays={7} />
+                {showInfoBanner && infoBannerMessage ? (
+                    <InfoDuringTimePeriod message={infoBannerMessage} />
+                ) : (
+                    showLimitedDataWarning && (
+                        <LimitedDataBanner
+                            days={chartData!.length}
+                            minDays={7}
+                        />
+                    )
                 )}
 
                 {/* Summary Stats */}

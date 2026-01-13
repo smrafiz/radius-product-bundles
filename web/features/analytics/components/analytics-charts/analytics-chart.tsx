@@ -14,8 +14,9 @@ import {
     NoActivityState,
     NoDataState,
     useAnalytics,
-    useChartDataStatus,
+    useAnalyticsStore,
     useFormattedChartData,
+    useSmartChartDisplay,
 } from "@/features/analytics";
 import { useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
@@ -25,12 +26,11 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
  */
 export function AnalyticsChart() {
     const { chartData, isChartLoading } = useAnalytics();
+    const { preset } = useAnalyticsStore();
+    const display = useSmartChartDisplay(chartData, preset);
     const [activeMetric, setActiveMetric] = useState<
         "revenue" | "views" | "purchases"
     >("revenue");
-
-    // Check data validity
-    const dataStatus = useChartDataStatus(chartData);
 
     // Format data for the chart
     const formattedData = useFormattedChartData(chartData, (point) => ({
@@ -56,14 +56,14 @@ export function AnalyticsChart() {
     }
 
     // Show the empty state if data is invalid
-    if (!dataStatus.isValid) {
-        switch (dataStatus.reason) {
+    if (display.shouldShowEmptyState) {
+        switch (display.emptyStateReason) {
             case "no_data":
                 return <NoDataState />;
             case "insufficient_points":
                 return (
                     <InsufficientDataState
-                        currentPoints={dataStatus.points || 1}
+                        currentPoints={display.points || 1}
                     />
                 );
             case "no_activity":

@@ -15,21 +15,21 @@ import {
     NoActivityState,
     NoDataState,
     useAnalytics,
-    useChartDataStatus,
+    useAnalyticsStore,
     useChartTotals,
     useConversionRate,
     useFormattedChartData,
+    useSmartChartDisplay,
 } from "@/features/analytics";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 /**
- * Conversion Rates Chart
+ * Conversion Rates Chart - Using useSmartChartDisplay Hook
  */
 export function ConversionRatesChart() {
     const { chartData, isChartLoading } = useAnalytics();
-
-    // Check data validity
-    const dataStatus = useChartDataStatus(chartData);
+    const { preset } = useAnalyticsStore();
+    const display = useSmartChartDisplay(chartData, preset);
 
     // Format data with conversion rates
     const formattedData = useFormattedChartData(chartData, (point) => {
@@ -67,15 +67,15 @@ export function ConversionRatesChart() {
         return <ChartSkeleton tabs={false} />;
     }
 
-    // Show the empty state if data is invalid
-    if (!dataStatus.isValid) {
-        switch (dataStatus.reason) {
+    // Show empty state (for presets only)
+    if (display.shouldShowEmptyState) {
+        switch (display.emptyStateReason) {
             case "no_data":
                 return <NoDataState />;
             case "insufficient_points":
                 return (
                     <InsufficientDataState
-                        currentPoints={dataStatus.points || 1}
+                        currentPoints={display.points || 1}
                     />
                 );
             case "no_activity":
@@ -86,55 +86,62 @@ export function ConversionRatesChart() {
     }
 
     return (
-        <ChartWrapper
-            title="Conversion Performance"
-            description="Track how effectively you convert views to cart additions and cart additions to purchases. Higher percentages indicate better funnel optimization."
-            formula="View→Cart = (Add-to-Cart / Views) × 100%
-            Cart→Purchase = (Purchases / Add-to-Cart) × 100%"
-            summaryStats={[
-                { label: "Avg View-to-Cart", value: `${avgViewToCart}%` },
-                {
-                    label: "Avg Cart-to-Purchase",
-                    value: `${avgCartToPurchase}%`,
-                },
-            ]}
-        >
-            <ResponsiveContainer width="100%" height={240}>
-                <LineChart data={formattedData} margin={CHART_MARGINS.default}>
-                    <CartesianGrid {...CHART_GRID_CONFIG} />
+        <>
+            <ChartWrapper
+                title="Conversion Performance"
+                description="Track how effectively you convert views to cart additions and cart additions to purchases. Higher percentages indicate better funnel optimization."
+                formula="View→Cart = (Add-to-Cart / Views) × 100%
+                Cart→Purchase = (Purchases / Add-to-Cart) × 100%"
+                showInfoBanner={display.showInfoBanner}
+                infoBannerMessage={display.bannerMessage}
+                summaryStats={[
+                    { label: "Avg View-to-Cart", value: `${avgViewToCart}%` },
+                    {
+                        label: "Avg Cart-to-Purchase",
+                        value: `${avgCartToPurchase}%`,
+                    },
+                ]}
+            >
+                <ResponsiveContainer width="100%" height={240}>
+                    <LineChart
+                        data={formattedData}
+                        margin={CHART_MARGINS.default}
+                    >
+                        <CartesianGrid {...CHART_GRID_CONFIG} />
 
-                    <Tooltip
-                        {...CHART_TOOLTIP_CONFIG}
-                        formatter={(value: number | undefined) =>
-                            value == null ? "-" : `${value.toFixed(1)}%`
-                        }
-                    />
+                        <Tooltip
+                            {...CHART_TOOLTIP_CONFIG}
+                            formatter={(value: number | undefined) =>
+                                value == null ? "-" : `${value.toFixed(1)}%`
+                            }
+                        />
 
-                    <XAxis dataKey="date" {...CHART_XAXIS_CONFIG} />
+                        <XAxis dataKey="date" {...CHART_XAXIS_CONFIG} />
 
-                    <YAxis
-                        {...CHART_YAXIS_CONFIG}
-                        tickFormatter={(value) => `${value}%`}
-                        domain={[0, 100]}
-                    />
+                        <YAxis
+                            {...CHART_YAXIS_CONFIG}
+                            tickFormatter={(value) => `${value}%`}
+                            domain={[0, 100]}
+                        />
 
-                    <Line
-                        dataKey="viewToCartRate"
-                        stroke="#008CFF"
-                        name="View → Cart"
-                        {...getLineConfig("#008CFF", 2.5)}
-                    />
+                        <Line
+                            dataKey="viewToCartRate"
+                            stroke="#008CFF"
+                            name="View → Cart"
+                            {...getLineConfig("#008CFF", 2.5)}
+                        />
 
-                    <Line
-                        dataKey="cartToPurchaseRate"
-                        stroke="#9B59B6"
-                        name="Cart → Purchase"
-                        {...getLineConfig("#9B59B6", 2.5)}
-                    />
+                        <Line
+                            dataKey="cartToPurchaseRate"
+                            stroke="#9B59B6"
+                            name="Cart → Purchase"
+                            {...getLineConfig("#9B59B6", 2.5)}
+                        />
 
-                    <Legend {...CHART_LEGEND_CONFIG} />
-                </LineChart>
-            </ResponsiveContainer>
-        </ChartWrapper>
+                        <Legend {...CHART_LEGEND_CONFIG} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </ChartWrapper>
+        </>
     );
 }

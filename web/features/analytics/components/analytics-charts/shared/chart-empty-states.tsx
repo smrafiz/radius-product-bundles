@@ -186,3 +186,18 @@ export function LimitedDataBanner({
         </s-banner>
     );
 }
+
+/*
+ * Message when a time period selected
+ */
+export function InfoDuringTimePeriod({
+    message,
+}: {
+    message: string;
+}) {
+    return (
+        <s-banner tone="info">
+            <s-text>{message}</s-text>
+        </s-banner>
+    );
+}

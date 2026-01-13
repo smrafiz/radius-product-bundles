@@ -15,9 +15,10 @@ import {
     NoActivityState,
     NoDataState,
     useAnalytics,
-    useChartDataStatus,
+    useAnalyticsStore,
     useChartTotals,
     useFormattedChartData,
+    useSmartChartDisplay,
 } from "@/features/analytics";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
 
@@ -26,9 +27,8 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
  */
 export function FunnelPerformanceChart() {
     const { chartData, isChartLoading } = useAnalytics();
-
-    // Check data validity
-    const dataStatus = useChartDataStatus(chartData);
+    const { preset } = useAnalyticsStore();
+    const display = useSmartChartDisplay(chartData, preset);
 
     // Format data for the chart
     const formattedData = useFormattedChartData(chartData, (point) => ({
@@ -51,14 +51,14 @@ export function FunnelPerformanceChart() {
     }
 
     // Show the empty state if data is invalid
-    if (!dataStatus.isValid) {
-        switch (dataStatus.reason) {
+    if (display.shouldShowEmptyState) {
+        switch (display.emptyStateReason) {
             case "no_data":
                 return <NoDataState />;
             case "insufficient_points":
                 return (
                     <InsufficientDataState
-                        currentPoints={dataStatus.points || 1}
+                        currentPoints={display.points || 1}
                     />
                 );
             case "no_activity":
@@ -73,6 +73,8 @@ export function FunnelPerformanceChart() {
             title="Customer Journey Funnel"
             description="Track how customers progress through your bundle funnel from initial view to final purchase. Identify drop-off points to optimize conversion."
             formula="Flow: Views → Add-to-Cart → Purchases"
+            showInfoBanner={display.showInfoBanner}
+            infoBannerMessage={display.bannerMessage}
             summaryStats={[
                 { label: "Views", value: totals.views },
                 { label: "Add to Cart", value: totals.addToCarts },

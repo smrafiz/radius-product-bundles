@@ -14,9 +14,10 @@ import {
     NoActivityState,
     NoDataState,
     useAnalytics,
-    useChartDataStatus,
+    useAnalyticsStore,
     useChartTotals,
     useFormattedChartData,
+    useSmartChartDisplay,
 } from "@/features/analytics";
 import { formatCurrency } from "@/shared";
 import { Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
@@ -28,9 +29,8 @@ import { Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, T
  */
 export function RevenueAOVChart() {
     const { chartData, isChartLoading } = useAnalytics();
-
-    // Check data validity
-    const dataStatus = useChartDataStatus(chartData);
+    const { preset } = useAnalyticsStore();
+    const display = useSmartChartDisplay(chartData, preset);
 
     // Format data with AOV calculation
     const formattedData = useFormattedChartData(chartData, (point) => {
@@ -53,14 +53,14 @@ export function RevenueAOVChart() {
     }
 
     // Show the empty state if data is invalid
-    if (!dataStatus.isValid) {
-        switch (dataStatus.reason) {
+    if (display.shouldShowEmptyState) {
+        switch (display.emptyStateReason) {
             case "no_data":
                 return <NoDataState />;
             case "insufficient_points":
                 return (
                     <InsufficientDataState
-                        currentPoints={dataStatus.points || 1}
+                        currentPoints={display.points || 1}
                     />
                 );
             case "no_activity":
@@ -75,6 +75,8 @@ export function RevenueAOVChart() {
             title="Revenue Analysis"
             description="Understand both volume (total revenue) and quality (average order value) of your bundle sales. Increasing AOV means customers are buying more valuable bundles."
             formula="AOV = Total Revenue / Number of Purchases"
+            showInfoBanner={display.showInfoBanner}
+            infoBannerMessage={display.bannerMessage}
             summaryStats={[
                 {
                     label: "Total Revenue",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatDate } from "@/features/analytics/utils";
 
 /**
@@ -21,6 +21,41 @@ export function useCalendar(
     const [selectingStart, setSelectingStart] = useState(true);
 
     /**
+     * Reset calendar month to show the start date
+     */
+    const resetToStartDate = () => {
+        if (value.start) {
+            const d = new Date(value.start);
+            setLeftMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+        }
+    };
+
+    /**
+     * Auto-update calendar month when value changes externally
+     */
+    useEffect(() => {
+        if (value.start) {
+            const currentMonth = new Date(value.start);
+            const displayedMonth = leftMonth;
+
+            // Check if the start date is in a different month than displayed
+            if (
+                currentMonth.getFullYear() !== displayedMonth.getFullYear() ||
+                currentMonth.getMonth() !== displayedMonth.getMonth()
+            ) {
+                // Jump to the month containing the start date
+                setLeftMonth(
+                    new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth(),
+                        1,
+                    ),
+                );
+            }
+        }
+    }, [value.start]);
+
+    /**
      * Navigate months (prev/next)
      */
     const navigateMonth = (direction: "prev" | "next") => {
@@ -34,28 +69,22 @@ export function useCalendar(
     };
 
     /**
-     * Handle date click with 3-click behavior
+     * Handle date click with a 3-click behavior
      */
     const handleDateClick = (date: Date) => {
         const dateStr = formatDate(date);
 
         if (selectingStart) {
-            // First click: Set start date
             onChange({ start: dateStr, end: dateStr });
             setSelectingStart(false);
         } else {
-            // Second click: Set end date
             const start = new Date(value.start);
 
             if (date < start) {
-                // If clicked date is before start, reset and set a new start
                 onChange({ start: dateStr, end: dateStr });
-                // Stay in selecting end mode
                 setSelectingStart(false);
             } else {
-                // If the clicked date is after start, set as the end
                 onChange({ start: value.start, end: dateStr });
-                // The third click will reset
                 setSelectingStart(true);
             }
         }
@@ -66,19 +95,18 @@ export function useCalendar(
      */
     const isInRange = (date: Date): boolean => {
         const dateStr = formatDate(date);
-        if (!value.start) return false;
+        if (!value.start) {
+            return false;
+        }
 
-        // If selecting end and hovering
         if (!selectingStart && hoverDate) {
             const start = value.start;
             const end = hoverDate;
 
-            // Only show range if hovering AFTER start date
             if (end >= start) {
                 return dateStr >= start && dateStr <= end;
             }
 
-            // If hovering before start, no range preview
             return false;
         }
 
@@ -155,6 +183,7 @@ export function useCalendar(
         navigateMonth,
         handleDateClick,
         setHoverDate,
+        resetToStartDate, // ✅ NEW: Export this function
 
         // Checkers
         isInRange,
