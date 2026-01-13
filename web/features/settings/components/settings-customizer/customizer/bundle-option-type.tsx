@@ -6,7 +6,7 @@ import {
     BundleOptionsAdditional,
 } from "@/features/settings";
 
-export function BundleOptionsType() {
+export function BundleOptionType() {
     return (
         <div className="left-side-auto-scroll ">
             <BundleOptionsBox />

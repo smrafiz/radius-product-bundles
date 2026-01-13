@@ -1,6 +1,6 @@
 export * from "./settings-customizer/customizer";
-export { SettingsTab } from "./settings-customizer/settings-tab";
 export { SettingsPage } from "./settings-page/settings-page";
+export { SettingsTab } from "./settings-customizer/settings-tab";
 export { SettingsTools } from "./settings-customizer/settings-tools";
 export { SettingsGeneral } from "./settings-customizer/settings-general";
 export { SettingsAdvanced } from "./settings-customizer/settings-advanced";

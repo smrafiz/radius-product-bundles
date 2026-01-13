@@ -1,6 +1,9 @@
-export * from "./bundle-preview";
+export * from "./bundle-type";
+export * from "./bundle-layout";
 export * from "./bundle-options";
 export { CustomizerModal } from "./customizer-modal";
+export { BundleLayoutTab } from "./bundle-layout-tab";
 export { CustomizerHeader } from "./customizer-header";
-export { BundleOptionsType } from "./bundle-options-type";
-export { CustomizerBundleTab } from "./customizer-bundle-tab";
+export { BundleOptionType } from "./bundle-option-type";
+export { CustomizerBundleType } from "./customizer-bundle-type";
+export { CustomizerBundlePreview } from "./customizer-bundle-preview";

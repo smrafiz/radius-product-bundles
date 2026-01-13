@@ -1,3 +1,7 @@
+import {
+    BundleLayoutTab,
+} from "@/features/settings";
+
 export function CustomizerHeader() {
     return (
         <s-section>
@@ -7,7 +11,7 @@ export function CustomizerHeader() {
                 justifyContent="space-between"
             >
                 <s-stack>
-                    <s-heading>Bundle type</s-heading>
+                    <s-heading><BundleLayoutTab /></s-heading>
                 </s-stack>
                 <s-stack>
                     <s-button-group gap="none">

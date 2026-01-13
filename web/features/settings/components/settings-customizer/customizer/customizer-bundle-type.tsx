@@ -16,7 +16,7 @@ export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
     BOGO: BundlePreviewBogo,
 };
 
-export function CustomizerBundleTab() {
+export function CustomizerBundleType() {
     const types = Object.values(BUNDLE_TYPES);
     const [activeId, setActiveId] = useState(types[0]?.id);
 

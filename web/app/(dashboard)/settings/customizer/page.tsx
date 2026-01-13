@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 import {
-    CustomizerBundleTab,
+    CustomizerBundleType,
+    CustomizerBundlePreview,
     CustomizerHeader,
-    BundleOptionsType,
+    BundleOptionType,
 } from "@/features/settings";
 export const metadata: Metadata = {
     title: "Customizer | Manage Your Bundle Customization",
@@ -19,13 +20,14 @@ export default function Page() {
             <div className="rtpb-full-modal-content flex flex-wrap gap-6">
                 {/* Left option */}
                 <div className="rtpb-left-setting border border-[#e3e3e3] bg-white rounded-xl overflow-hidden">
-                    <BundleOptionsType />
+                    <BundleOptionType />
                 </div>
                 {/* Right review */}
                 <div className="rtpb-right-review">
                     <s-stack gap="base">
                         <CustomizerHeader />
-                        <CustomizerBundleTab />
+                        <CustomizerBundlePreview />
+                        {/*<CustomizerBundleType />*/}
                     </s-stack>
                 </div>
             </div>

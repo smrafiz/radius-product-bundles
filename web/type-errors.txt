@@ -185,7 +185,7 @@
 [7m212[0m         </s-card>
 [7m   [0m [91m        ~~~~~~~~~[0m
 
-[96mtests/fixtures/bundles.fixture.ts[0m:[93m12[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ type: BundleType; id: string; name: string; shop: string; description: string | null; status: BundleStatus; mainProductId: string | null; ... 31 more ...; shopId?: string | ... 1 more ... | undefined; }' is not assignable to type '{ type: BundleType; id: string; name: string; shop: string; description: string | null; status: BundleStatus; mainProductId: string | null; mainVariantId: string | null; ... 30 more ...; shopId: string | null; }'.
+[96mtests/fixtures/bundles.fixture.ts[0m:[93m12[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType '{ type: BundleOptionType; id: string; name: string; shop: string; description: string | null; status: BundleStatus; mainProductId: string | null; ... 31 more ...; shopId?: string | ... 1 more ... | undefined; }' is not assignable to type '{ type: BundleOptionType; id: string; name: string; shop: string; description: string | null; status: BundleStatus; mainProductId: string | null; mainVariantId: string | null; ... 30 more ...; shopId: string | null; }'.
   Types of property 'discountedProductIds' are incompatible.
     Type 'string[] | undefined' is not assignable to type 'string[]'.
       Type 'undefined' is not assignable to type 'string[]'.
