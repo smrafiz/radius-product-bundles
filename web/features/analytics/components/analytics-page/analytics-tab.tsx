@@ -22,7 +22,7 @@ const TABS = [
 type TabKey = (typeof TABS)[number]["key"];
 
 export function AnalyticsTabs() {
-    const [activeTab, setActiveTab] = useState<TabKey>("overview");
+    const [activeTab, setActiveTab] = useState<TabKey>("bundle-performance");
 
     return (
         <s-stack gap="base">

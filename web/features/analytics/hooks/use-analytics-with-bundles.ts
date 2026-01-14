@@ -7,8 +7,8 @@ import { useBundlesData } from "@/features/bundles";
 /**
  * Hook to fetch analytics with enriched bundle data
  */
-export function useAnalyticsWithBundles(days: number = 30) {
-    const analytics = useAnalytics(days);
+export function useAnalyticsWithBundles() {
+    const analytics = useAnalytics();
     const {
         bundles: fullBundles,
         isLoading: isBundlesLoading,

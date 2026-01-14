@@ -55,6 +55,53 @@ export const formatCurrency = (
     }
 };
 
+/*
+ * Format amount as currency compact
+ */
+export const formatCurrencyCompact = (
+    amount?: number | string | null,
+    {
+        currencyCode,
+        locale,
+        decimals = 1,
+    }: {
+        currencyCode?: string;
+        locale?: string;
+        decimals?: number;
+    } = {},
+): string => {
+    if (amount == null) return "";
+
+    const value = Number(amount);
+    if (Number.isNaN(value)) {
+        return "";
+    }
+
+    // Small numbers → normal currency
+    if (Math.abs(value) < 1000) {
+        return formatCurrency(value, currencyCode, locale);
+    }
+
+    const units = [
+        { limit: 1e9, suffix: "B" },
+        { limit: 1e6, suffix: "M" },
+        { limit: 1e3, suffix: "K" },
+    ];
+
+    const unit = units.find((u) => Math.abs(value) >= u.limit)!;
+    const compactValue = value / unit.limit;
+
+    const fixed = compactValue.toFixed(decimals);
+    const trimmed = fixed.endsWith(".0") ? fixed.slice(0, -2) : fixed;
+
+    // Get currency symbol safely (same logic as your formatter)
+    const symbol = currencyCode
+        ? getCurrencySymbol(currencyCode)
+        : getCurrencySymbol("USD");
+
+    return `${symbol}${trimmed}${unit.suffix}`;
+};
+
 /**
  * Convert Shopify locale to standard locale format
  */

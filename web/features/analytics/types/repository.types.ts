@@ -2,6 +2,8 @@
  * Analytics Types
  */
 
+import { prisma } from "@/shared/repositories";
+
 /**
  * Raw analytics metrics from the database
  */
@@ -85,20 +87,6 @@ export interface PurchaseEvent extends BaseTrackingEvent {
 }
 
 /**
- * Union of all tracking events
- */
-export interface TrackingEvent {
-    type: "bundle_view" | "bundle_add_to_cart" | "bundle_purchase";
-    bundleId: string;
-    productId?: string;
-    customerId?: string;
-    sessionId?: string; // ✅ Add this
-    revenue?: number;
-    isNewCustomer?: boolean;
-    timestamp?: Date | string;
-}
-
-/**
  * Bundle performance stats
  */
 export interface BundlePerformanceStats {
@@ -113,18 +101,27 @@ export interface BundlePerformanceStats {
     conversionRate: number;
 }
 
-/**
- * Chart data point
- */
-export interface ChartDataPoint {
-    date: string;
+export interface TopBundleStats {
+    bundleId: string;
+    revenue: number;
+    purchases: number;
     views: number;
     addToCarts: number;
-    purchases: number;
-    revenue: number;
+    conversionRate: number;
+    addToCartRate: number;
+    revenuePerView: number;
 }
 
-/**
- * Date range option
- */
-export type DateRangeOption = 7 | 14 | 30 | 60 | 90;
+export interface TopBundleDetails extends TopBundleStats {
+    title: string;
+    status: string;
+    discountType: string | null;
+    discountValue: number | null;
+    createdAt: Date;
+}
+
+export interface TopBundleTrend {
+    currentRevenue: number;
+    previousRevenue: number;
+    trendPercentage: number;
+}

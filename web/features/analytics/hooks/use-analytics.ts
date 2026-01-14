@@ -14,8 +14,6 @@ import { useAnalyticsStore } from "@/features/analytics";
 
 /**
  * Hook to fetch analytics data (metrics and chart only)
- *
- * For the bundle data with products, use useAnalyticsWithBundles instead.
  */
 export function useAnalytics() {
     const app = useAppBridge();

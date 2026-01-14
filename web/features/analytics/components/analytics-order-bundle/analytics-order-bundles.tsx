@@ -7,7 +7,7 @@ import { BundleTableSkeleton } from "@/features/bundles";
  * Dashboard Bundles Component
  */
 export function AnalyticsOrderBundles() {
-    const { isLoading } = useAnalytics(9999);
+    const { isLoading } = useAnalytics();
 
     if (isLoading) {
         return <BundleTableSkeleton />;

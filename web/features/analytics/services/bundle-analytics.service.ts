@@ -1,0 +1,169 @@
+/**
+ * Bundle Analytics Service - Business Logic Layer
+ *
+ * Combines repository data with business rules and enhancements
+ */
+
+import {
+    BundleBadge,
+    endOfDayUTC,
+    parseDateAsUTC,
+    TopBundleWithTrend,
+} from "@/features/analytics";
+import {
+    getBundleDetails,
+    getBundleTrend,
+    getTopPerformingBundles,
+} from "@/features/analytics/repositories";
+import { formatCurrencyCompact } from "@/shared";
+
+/**
+ * Get top performing bundles with all enhancements
+ */
+export async function getTopBundlesService(
+    shop: string,
+    startDateStr: string,
+    endDateStr: string,
+    limit: number = 10,
+): Promise<TopBundleWithTrend[]> {
+    const currentStart = parseDateAsUTC(startDateStr);
+    const currentEnd = endOfDayUTC(endDateStr);
+
+    // Calculate previous period (same duration)
+    const daysDifference = Math.ceil(
+        (currentEnd.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    const previousStart = new Date(currentStart);
+    previousStart.setUTCDate(previousStart.getUTCDate() - daysDifference);
+    const previousEnd = currentStart;
+
+    // Get top bundles
+    const bundleStats = await getTopPerformingBundles(
+        shop,
+        currentStart,
+        currentEnd,
+        limit,
+    );
+
+    if (bundleStats.length === 0) {
+        return [];
+    }
+
+    // Get bundle details
+    const bundleIds = bundleStats.map((b) => b.bundleId);
+    const bundleDetails = await getBundleDetails(bundleIds);
+
+    // Get trend data for each bundle
+    const bundlesWithTrends = await Promise.all(
+        bundleStats.map(async (stats) => {
+            const details = bundleDetails.find((b) => b.id === stats.bundleId);
+
+            if (!details) {
+                return null;
+            }
+
+            // Get trend
+            const trend = await getBundleTrend(
+                shop,
+                stats.bundleId,
+                currentStart,
+                currentEnd,
+                previousStart,
+                previousEnd,
+            );
+
+            // Generate badges
+            const badges = generateBundleBadges(stats, trend);
+
+            return {
+                bundleId: stats.bundleId,
+                title: details.name,
+                status: details.status,
+                discountType: details.discountType,
+                discountValue: details.discountValue,
+                createdAt: details.createdAt,
+                revenue: stats.revenue,
+                purchases: stats.purchases,
+                views: stats.views,
+                addToCarts: stats.addToCarts,
+                conversionRate: stats.conversionRate,
+                addToCartRate: stats.addToCartRate,
+                revenuePerView: stats.revenuePerView,
+                trendPercentage: trend.trendPercentage,
+                badges,
+            };
+        }),
+    );
+
+    return bundlesWithTrends.filter((b) => b !== null) as TopBundleWithTrend[];
+}
+
+/**
+ * Generate performance badges for a bundle
+ */
+function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
+    const badges: BundleBadge[] = [];
+
+    // High Converter Badge
+    if (stats.conversionRate >= 15) {
+        badges.push({
+            icon: "🔥",
+            label: "High Converter",
+            tone: "success",
+            tooltip: `Exceptional ${stats.conversionRate}% conversion rate. This bundle is highly effective at turning views into sales.`,
+        });
+    }
+
+    // Revenue Star Badge
+    if (stats.revenue >= 5000) {
+        badges.push({
+            icon: "💰",
+            label: "Revenue Star",
+            tone: "success",
+            tooltip: `Top revenue performer with ${formatCurrencyCompact(stats.revenue)} earned. A major contributor to your store's income.`,
+        });
+    }
+
+    // Hidden Gem Badge (low views, high conversion)
+    if (stats.views < 100 && stats.conversionRate >= 10) {
+        badges.push({
+            icon: "💎",
+            label: "Hidden Gem",
+            tone: "info",
+            tooltip: `Strong ${stats.conversionRate}% conversion with only ${stats.views} views. Consider promoting this bundle more for greater impact.`,
+        });
+    }
+
+    // Trending Up Badge
+    if (trend.trendPercentage >= 25) {
+        badges.push({
+            icon: "📈",
+            label: "Trending",
+            tone: "success",
+            tooltip: `Growing fast with ${trend.trendPercentage.toFixed(0)}% revenue increase vs previous period. Momentum is building!`,
+        });
+    }
+
+    // Needs Attention Badge (declining)
+    if (trend.trendPercentage <= -25) {
+        badges.push({
+            icon: "⚠️",
+            label: "Declining",
+            tone: "attention",
+            tooltip: `Revenue decreased ${Math.abs(trend.trendPercentage).toFixed(0)}% vs previous period. Review pricing, promotion, or bundle composition.`,
+        });
+    }
+
+    // Strong Add-to-Cart Badge
+    if (stats.addToCartRate >= 30) {
+        badges.push({
+            icon: "🛒",
+            label: "High Interest",
+            tone: "info",
+            tooltip: `Strong ${stats.addToCartRate.toFixed(0)}% add-to-cart rate shows high customer interest. Focus on improving checkout conversion.`,
+        });
+    }
+
+    return badges;
+}
