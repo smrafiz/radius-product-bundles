@@ -73,6 +73,32 @@ export function AnalyticsChart() {
         }
     }
 
+    const dateLabel = (() => {
+        if (formattedData.length === 0) return null;
+
+        const firstPoint = chartData![0];
+        const lastPoint = chartData![chartData!.length - 1];
+
+        const firstDate = new Date(firstPoint.date);
+        const lastDate = new Date(lastPoint.date);
+
+        const sameDay = firstDate.toDateString() === lastDate.toDateString();
+        const sameYear = firstDate.getFullYear() === lastDate.getFullYear();
+
+        const firstLabel = formatChartDate(firstDate);
+        const lastLabel = formatChartDate(lastDate);
+
+        if (sameDay) {
+            return `${firstLabel}, ${firstDate.getFullYear()}`;
+        }
+
+        if (sameYear) {
+            return `${firstLabel} – ${lastLabel}, ${firstDate.getFullYear()}`;
+        }
+
+        return `${firstLabel}, ${firstDate.getFullYear()} – ${lastLabel}, ${lastDate.getFullYear()}`;
+    })();
+
     return (
         <s-section>
             <s-stack gap="base">
@@ -216,21 +242,24 @@ export function AnalyticsChart() {
                 </ResponsiveContainer>
 
                 {/* Date range indicator */}
-                <s-stack
-                    direction="inline"
-                    gap="small-200"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: currentMetric.color }}
-                    />
-                    <s-text tone="info">
-                        {formattedData.length > 0 &&
-                            `${formattedData[0].date} - ${formattedData[formattedData.length - 1].date}, ${new Date().getFullYear()}`}
-                    </s-text>
-                </s-stack>
+                {dateLabel && (
+                    <s-stack
+                        direction="inline"
+                        gap="small-200"
+                        alignItems="center"
+                        justifyContent="center"
+                    >
+                        <div
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: currentMetric.color }}
+                        />
+                        <s-text tone="info">
+                            <span className="text-[11px] text-[#70707b]">
+                                {dateLabel}
+                            </span>
+                        </s-text>
+                    </s-stack>
+                )}
             </s-stack>
         </s-section>
     );

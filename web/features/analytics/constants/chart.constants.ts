@@ -44,7 +44,7 @@ export const CHART_XAXIS_CONFIG = {
     axisLine: false,
     tickLine: false,
     tick: {
-        fill: "#9CA3AF",
+        fill: "#70707B",
         fontSize: 11,
         dy: 10,
     },
@@ -58,7 +58,7 @@ export const CHART_YAXIS_CONFIG = {
     axisLine: false,
     tickLine: false,
     tick: {
-        fill: "#9CA3AF",
+        fill: "#70707B",
         fontSize: 11,
     },
     width: 40,

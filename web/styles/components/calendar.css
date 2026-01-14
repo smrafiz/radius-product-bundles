@@ -102,6 +102,15 @@
 	border-radius: 0;
 }
 
+.custom-calendar-day--disabled {
+	cursor: not-allowed;
+	color: var(--p-color-text-disabled);
+}
+
+.custom-calendar-day--disabled:hover {
+	background-color: transparent;
+}
+
 .custom-calendar-day:hover,
 .custom-calendar-day--range-start,
 .custom-calendar-day--range-end {

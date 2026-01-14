@@ -60,6 +60,11 @@ export function AnalyticsCalendar({
             year: "numeric",
         });
 
+        const today = new Date();
+        const isCurrentMonth =
+            year === today.getFullYear() && monthIndex === today.getMonth();
+        const todayDayOfWeek = isCurrentMonth ? today.getDay() : -1;
+
         const firstDay = new Date(year, monthIndex, 1);
         const lastDay = new Date(year, monthIndex + 1, 0);
         const startDayOfWeek = firstDay.getDay();
@@ -97,6 +102,10 @@ export function AnalyticsCalendar({
             const isHover = isHovered(date);
             const isMiddle = isInMiddle(date);
 
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const isFutureDate = date >= today;
+
             currentWeek.push(
                 <td
                     key={day}
@@ -113,6 +122,7 @@ export function AnalyticsCalendar({
                             isHover && "custom-calendar-day--hover-only",
                             isMiddle && "custom-calendar-day--middle",
                             isStart && isEnd && "custom-calendar-day--single",
+                            isFutureDate && "custom-calendar-day--disabled",
                         ]
                             .filter(Boolean)
                             .join(" ")}
@@ -123,6 +133,8 @@ export function AnalyticsCalendar({
                         onMouseLeave={() => setHoverDate(null)}
                         aria-label={dayLabel}
                         aria-pressed={isStart || isEnd}
+                        disabled={isFutureDate}
+                        aria-disabled={isFutureDate}
                     >
                         {day}
                     </button>
@@ -158,26 +170,35 @@ export function AnalyticsCalendar({
                 <thead>
                     <tr>
                         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(
-                            (day, i) => (
-                                <th
-                                    key={day}
-                                    scope="col"
-                                    className="custom-calendar-weekday"
-                                    aria-label={
-                                        [
-                                            "Sunday",
-                                            "Monday",
-                                            "Tuesday",
-                                            "Wednesday",
-                                            "Thursday",
-                                            "Friday",
-                                            "Saturday",
-                                        ][i]
-                                    }
-                                >
-                                    {day}
-                                </th>
-                            ),
+                            (day, i) => {
+                                const isTodayWeekday = i === todayDayOfWeek;
+
+                                return (
+                                    <th
+                                        key={day}
+                                        scope="col"
+                                        className="custom-calendar-weekday"
+                                        style={
+                                            isTodayWeekday
+                                                ? { fontWeight: "650", color: "initial" }
+                                                : undefined
+                                        }
+                                        aria-label={
+                                            [
+                                                "Sunday",
+                                                "Monday",
+                                                "Tuesday",
+                                                "Wednesday",
+                                                "Thursday",
+                                                "Friday",
+                                                "Saturday",
+                                            ][i]
+                                        }
+                                    >
+                                        {day}
+                                    </th>
+                                );
+                            },
                         )}
                     </tr>
                 </thead>
