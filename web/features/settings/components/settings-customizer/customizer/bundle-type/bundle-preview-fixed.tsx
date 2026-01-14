@@ -8,20 +8,13 @@ export function BundlePreviewFixed() {
     const RenderSelectedProducts = () => {
         return (
             <div className="radius-bundle__product radius-bundle__product--list"
-                style={{
-                    backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: `${styleData.productRadius ?? 12}px`,
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
-                    color: styleData.productTextColor || "#303030",
-                    ...((styleData.productBorderEnabled ?? true)
-                        ? {
-                              borderStyle: "solid",
-                              borderWidth: "1px",
-                              borderColor:
-                                  styleData.productBorderColor || "#e3e3e3",
-                          }
-                        : {}),
-                }}
+                 style={{
+                     backgroundColor: styleData.productBgColor || "#f7f7f7",
+                     borderRadius: `${styleData.productRadius ?? 12}px`,
+                     fontSize: `${styleData.productFontSize ?? 14}px`,
+                     color: styleData.productTextColor || "#303030",
+                     borderColor: styleData.productBorderColor || "#e3e3e3",
+                 }}
             >
                 <div className="radius-bundle__product-image"
                     style={{
@@ -54,24 +47,41 @@ export function BundlePreviewFixed() {
             style={{
                 backgroundColor: styleData.boxBgColor || "#ffffff",
                 borderRadius: `${styleData.boxRadius ?? 12}px`,
-                color: styleData.boxTextColor || "#303030",
-                ...((styleData.boxBorderEnabled ?? true)
-                    ? {
-                          borderStyle: "solid",
-                          borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
-                          borderColor: styleData.boxBorderColor || "#e3e3e3",
-                      }
-                    : {}),
+                borderStyle: "solid",
+                borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
+                borderColor: styleData.boxBorderColor || "#e3e3e3",
             }}
         >
             <div className="radius-bundle__products radius-bundle__products--list">
                 <div className="radius-bundle__header">
-                    <div className="radius-bundle__title-wrapper"
-                    style={{
-                        fontSize: `${styleData.titleFontSize ?? 20}px`,
-                    }}
-                >Fixed Bundle</div>
-                    <div className="radius-bundle__badge radius-bundle__badge--skeleton radius-bundle__badge--visible">Save 50%</div>
+                    <div className="radius-bundle__title-wrapper">
+                        <div
+                            className="radius-bundle__title"
+                            style={{
+                                fontSize: `${styleData.headingFontSize ?? 20}px`,
+                                color: styleData.headingColor || "#303030",
+                            }}
+                        >{displaySettings.title || ""}</div>
+                    </div>
+                    {displaySettings.showSavingsBadge && (
+                        <div
+                            className="radius-bundle__actions"
+                            style={{
+                                fontSize: `${styleData.badgeFontSize ?? 16}px`,
+                            }}
+                        >
+                            <button
+                                className="radius-bundle__badge"
+                                style={{
+                                    backgroundColor: styleData.badgeBgColor || "#22c55e",
+                                    color: styleData.badgeTextColor || "#ffffff",
+                                    borderRadius: `${styleData.badgeRadius ?? 8}px`,
+                                }}
+                            >
+                                Save 50%
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <RenderSelectedProducts />
@@ -87,9 +97,10 @@ export function BundlePreviewFixed() {
 
             {/* Pricing */}
             <div className="radius-bundle__pricing"
-                style={{
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
-                }}
+                 style={{
+                     fontSize: `${styleData.productFontSize ?? 14}px`,
+                     color: styleData.productTextColor || "#303030",
+                 }}
             >
                 <div className="radius-bundle__pricing-row">
                     <span className="radius-bundle__pricing-label">
@@ -127,26 +138,18 @@ export function BundlePreviewFixed() {
             <div
                 className="radius-bundle__actions"
                 style={{
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                    fontSize: `${styleData.buttonFontSize ?? 16}px`,
                 }}
             >
                 <button
                     aria-expanded="false"
                     aria-label="Add bundle to cart"
                     className="radius-bundle__add-to-cart"
-                    style={
-                        (styleData.buttonStyleEnabled ?? true)
-                            ? {
-                                backgroundColor:
-                                    styleData.buttonBgColor ||
-                                    "#303030",
-                                color:
-                                    styleData.buttonTextColor ||
-                                    "#fff",
-                                borderRadius: `${styleData.buttonRadius ?? 8}px`,
-                            }
-                            : undefined
-                    }
+                    style={{
+                        backgroundColor: styleData.buttonBgColor || "#303030",
+                        color: styleData.buttonTextColor || "#fff",
+                        borderRadius: `${styleData.buttonRadius ?? 8}px`,
+                    }}
                 >
                     Add bundle to cart
                 </button>

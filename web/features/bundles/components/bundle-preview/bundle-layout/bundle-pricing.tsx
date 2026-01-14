@@ -57,7 +57,8 @@ export function BundlePricing() {
         <div
             className="radius-bundle__pricing"
             style={{
-                fontSize: `${styleData.productFontSize ?? 16}px`,
+                fontSize: `${styleData.productFontSize ?? 14}px`,
+                color: styleData.productTextColor || "#303030",
             }}
         >
 

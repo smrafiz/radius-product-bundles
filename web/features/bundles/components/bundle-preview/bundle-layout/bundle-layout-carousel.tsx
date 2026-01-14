@@ -60,13 +60,9 @@ export function BundleLayoutCarousel() {
                             style={{
                                 backgroundColor: styleData.productBgColor || "#f7f7f7",
                                 borderRadius: `${styleData.productRadius ?? 12}px`,
-                                fontSize: `${styleData.productFontSize ?? 16}px`,
+                                fontSize: `${styleData.productFontSize ?? 14}px`,
                                 color: styleData.productTextColor || "#303030",
-                                ...((styleData.productBorderEnabled ?? true)
-                                    ? {
-                                        border: `1px solid ${ styleData.productBorderColor || "#e3e3e3" }`,
-                                    }
-                                    : {}),
+                                borderColor: styleData.productBorderColor || "#e3e3e3",
                             }}
                         >
                             {/* IMAGE */}

@@ -44,75 +44,62 @@ export function BundleOptionsBox() {
             >
                 <s-stack gap="base" padding="base">
                     <s-stack gap="base">
-                        <s-color-field
-                            label="Background"
-                            name="boxBgColor"
-                            placeholder="Select a color"
-                            value={style.boxBgColor || "#ffffff"}
-                            onInput={(event: Event) => {
-                                const target =
-                                    event.target as HTMLInputElement;
-                                updateStyle("boxBgColor", target.value);
-                            }}
-                        />
-
-                        <s-stack gap="base">
-                            <s-stack
-                                direction="inline"
-                                justifyContent="space-between"
-                                alignItems="center"
+                        <s-grid
+                            gridTemplateColumns="repeat(12, 1fr)"
+                            gap="base"
+                        >
+                            <s-grid-item
+                                gridColumn="span 6"
+                                gridRow="span 2"
                             >
-                                <s-switch
-                                    id="box-add-border"
-                                    label="Add border"
-                                    accessibilityLabel="Add border"
-                                    checked={style.boxBorderEnabled ?? true}
+                                <s-color-field
+                                    label="Background"
+                                    name="boxBgColor"
+                                    placeholder="Select a color"
+                                    value={style.boxBgColor || "#ffffff"}
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle("boxBgColor", target.value);
+                                    }}
+                                />
+                            </s-grid-item>
+                            <s-grid-item
+                                gridColumn="span 6"
+                                gridRow="span 2"
+                            >
+                                <s-color-field
+                                    label="Border"
+                                    name="boxBorderColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.boxBorderColor || "#e3e3e3"
+                                    }
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         updateStyle(
-                                            "boxBorderEnabled",
-                                            target.checked,
+                                            "boxBorderColor",
+                                            target.value,
                                         );
                                     }}
                                 />
-                            </s-stack>
-                        </s-stack>
-
+                            </s-grid-item>
+                        </s-grid>
                         <s-stack gap="base" paddingBlockEnd="base">
-                            {(style.boxBorderEnabled ?? true) && (
-                                <>
-                                    <s-color-field
-                                        label="Border color"
-                                        name="boxBorderColor"
-                                        placeholder="Select a color"
-                                        value={
-                                            style.boxBorderColor || "#e3e3e3"
-                                        }
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "boxBorderColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
-                                    <s-stack gap="small-400">
-                                        <s-text>Thin</s-text>
-                                        <RtpbRangeSlider
-                                            values={style.boxBorderWidth ?? 1}
-                                            maxValue={5}
-                                            action={(val) =>
-                                                updateStyle(
-                                                    "boxBorderWidth",
-                                                    val,
-                                                )
-                                            }
-                                        />
-                                    </s-stack>
-                                </>
-                            )}
+                            <s-stack gap="small-400">
+                                <s-text>Thin</s-text>
+                                <RtpbRangeSlider
+                                    values={style.boxBorderWidth ?? 1}
+                                    maxValue={5}
+                                    action={(val) =>
+                                        updateStyle(
+                                            "boxBorderWidth",
+                                            val,
+                                        )
+                                    }
+                                />
+                            </s-stack>
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider

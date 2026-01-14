@@ -15,20 +15,16 @@ export function BundleAddToCart() {
         <div
             className="radius-bundle__actions"
             style={{
-                fontSize: `${styleData.productFontSize ?? 16}px`,
+                fontSize: `${styleData.buttonFontSize ?? 16}px`,
             }}
         >
             <button
                 className="radius-bundle__add-to-cart"
-                style={
-                    (styleData.buttonStyleEnabled ?? true)
-                        ? {
-                            backgroundColor: styleData.buttonBgColor || "#303030",
-                            color: styleData.buttonTextColor || "#fff",
-                            borderRadius: `${styleData.buttonRadius ?? 8}px`,
-                        }
-                        : undefined
-                }
+                style={{
+                    backgroundColor: styleData.buttonBgColor || "#303030",
+                    color: styleData.buttonTextColor || "#fff",
+                    borderRadius: `${styleData.buttonRadius ?? 8}px`,
+                }}
             >
                 {displaySettings.cartButtonText || ""}
             </button>

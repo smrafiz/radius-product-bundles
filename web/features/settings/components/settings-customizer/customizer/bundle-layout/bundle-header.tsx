@@ -20,25 +20,17 @@ export function BundleHeader() {
             {displaySettings.showSavingsBadge && (
             <div
                 className="radius-bundle__actions"
-                style={
-                    (styleData.badgeStyleEnabled ?? true) ?
-                        {
-                            fontSize: `${styleData.badgeFontSize ?? 16}px`,
-                        }
-                        : undefined
-                }
+                style={{
+                    fontSize: `${styleData.badgeFontSize ?? 16}px`,
+                }}
             >
                 <button
                     className="radius-bundle__badge"
-                    style={
-                        (styleData.badgeStyleEnabled ?? true)
-                            ? {
-                                backgroundColor: styleData.badgeBgColor || "#22c55e",
-                                color: styleData.badgeTextColor || "#ffffff",
-                                borderRadius: `${styleData.badgeRadius ?? 8}px`,
-                            }
-                            : undefined
-                    }
+                    style={{
+                        backgroundColor: styleData.badgeBgColor || "#22c55e",
+                        color: styleData.badgeTextColor || "#ffffff",
+                        borderRadius: `${styleData.badgeRadius ?? 8}px`,
+                    }}
                 >
                     Save 50%
                 </button>

@@ -11,25 +11,17 @@ export function BundleAddToCart() {
     return (
         <div
             className="radius-bundle__actions"
-            style={
-            (styleData.buttonStyleEnabled ?? true) ?
-                {
-                    fontSize: `${styleData.buttonFontSize ?? 16}px`,
-                }
-                : undefined
-            }
+            style={{
+                fontSize: `${styleData.buttonFontSize ?? 16}px`,
+            }}
         >
             <button
                 className="radius-bundle__add-to-cart"
-                style={
-                    (styleData.buttonStyleEnabled ?? true)
-                        ? {
-                            backgroundColor: styleData.buttonBgColor || "#303030",
-                            color: styleData.buttonTextColor || "#fff",
-                            borderRadius: `${styleData.buttonRadius ?? 8}px`,
-                        }
-                        : undefined
-                }
+                style={{
+                    backgroundColor: styleData.buttonBgColor || "#303030",
+                    color: styleData.buttonTextColor || "#fff",
+                    borderRadius: `${styleData.buttonRadius ?? 8}px`,
+                }}
             >
                 {displaySettings.cartButtonText || ""}
             </button>

@@ -52,15 +52,9 @@ export function BundlePreview() {
                         style={{
                             backgroundColor: styleData.boxBgColor || "#ffffff",
                             borderRadius: `${styleData.boxRadius ?? 12}px`,
-                            color: styleData.boxTextColor || "#303030",
-                            ...((styleData.boxBorderEnabled ?? true)
-                                ? {
-                                    borderStyle: "solid",
-                                    borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
-                                    borderColor:
-                                        styleData.boxBorderColor || "#e3e3e3",
-                                }
-                                : {}),
+                            borderStyle: "solid",
+                            borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
+                            borderColor: styleData.boxBorderColor || "#e3e3e3",
                         }}
                     >
                         <s-stack paddingBlockEnd="base" >

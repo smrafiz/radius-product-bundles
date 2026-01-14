@@ -48,17 +48,11 @@ export function CustomizerBundlePreview() {
                         style={{
                             backgroundColor: styleData.boxBgColor || "#ffffff",
                             borderRadius: `${styleData.boxRadius ?? 12}px`,
-                            ...((styleData.boxBorderEnabled ?? true)
-                                ? {
-                                    borderStyle: "solid",
-                                    borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
-                                    borderColor:
-                                        styleData.boxBorderColor || "#e3e3e3",
-                                }
-                                : {}),
+                            borderStyle: "solid",
+                            borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
+                            borderColor: styleData.boxBorderColor || "#e3e3e3",
                         }}
                     >
-
                         <BundleHeader />
                         {renderLayout()}
                         <BundlePricing />

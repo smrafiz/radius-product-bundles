@@ -13,20 +13,14 @@ export function BundleList() {
                      borderRadius: `${styleData.productRadius ?? 12}px`,
                      fontSize: `${styleData.productFontSize ?? 14}px`,
                      color: styleData.productTextColor || "#303030",
-                     ...((styleData.productBorderEnabled ?? true)
-                         ? {
-                             borderStyle: "solid",
-                             borderWidth: "1px",
-                             borderColor:
-                                 styleData.productBorderColor || "#e3e3e3",
-                         }
-                         : {}),
+                     borderColor: styleData.productBorderColor || "#e3e3e3",
                  }}
             >
                 <div className="radius-bundle__product-image"
                      style={{
-                         width: `${styleData.imageWidth ?? 70}px`,
-                         borderRadius: `${styleData.imageRadius ?? 6}px`,
+                         width: `${ styleData.imageWidth ?? 70 }px`,
+                         height: `${ styleData.imageWidth ?? 70 }px`,
+                         borderRadius: `${ styleData.imageRadius ?? 6 }px`,
                      }}
                 >
                     <s-image

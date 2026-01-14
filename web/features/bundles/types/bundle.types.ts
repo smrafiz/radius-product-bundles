@@ -331,24 +331,20 @@ export interface DisplaySettings {
         buttonBgColor?: string;
         buttonTextColor?: string;
         buttonRadius?: number;
-        buttonStyleEnabled?: boolean;
         // Saving badge
         badgeFontSize?: number;
         badgeBgColor?: string;
         badgeTextColor?: string;
         badgeRadius?: number;
-        badgeStyleEnabled?: boolean;
         // Product
         productBgColor?: string;
         productTextColor?: string;
         productStarColor?: string;
-        productBorderEnabled?: boolean;
         productBorderColor?: string;
         productRadius?: number;
         productFontSize?: number;
         // Box
         boxBgColor?: string;
-        boxBorderEnabled?: boolean;
         boxBorderColor?: string;
         boxRadius?: number;
         boxBorderWidth?: number;

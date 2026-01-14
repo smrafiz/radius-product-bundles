@@ -44,121 +44,96 @@ export function BundleOptionsButton() {
             >
                 <s-stack gap="base" padding="base">
                     {/* Add to cart button styling */}
-                    <s-stack
-                        direction="inline"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        background="subdued"
-                        padding="small"
-                        borderRadius="large"
-                    >
-                        <s-switch
-                            id="cart-button-switch"
-                            label="Styling of the Add to Cart button"
-                            accessibilityLabel="Toggle add to cart"
-                            checked={style.buttonStyleEnabled ?? true}
-                            onInput={(event: Event) => {
-                                const target = event.target as HTMLInputElement;
-                                updateStyle(
-                                    "buttonStyleEnabled",
-                                    target.checked,
-                                );
-                            }}
-                        />
-                    </s-stack>
-
-                    {(style.buttonStyleEnabled ?? true) && (
-                        <s-stack gap="base">
-                            <s-stack
-                                direction="inline"
-                                alignItems="center"
-                                gap="small-300"
-                            >
-                                <s-heading>Font size</s-heading>
-                                <s-button-group gap="none">
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("buttonFontSize", 14)
-                                        }
-                                    >
-                                        Small
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("buttonFontSize", 16)
-                                        }
-                                    >
-                                        Medium
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("buttonFontSize", 18)
-                                        }
-                                    >
-                                        Large
-                                    </s-button>
-                                </s-button-group>
-                            </s-stack>
-                            <s-grid
-                                gridTemplateColumns="repeat(12, 1fr)"
-                                gap="base"
-                            >
-                                <s-grid-item
-                                    gridColumn="span 6"
-                                    gridRow="span 2"
-                                >
-                                    <s-color-field
-                                        label="Background"
-                                        name="buttonBgColor"
-                                        placeholder="Select a color"
-                                        value={style.buttonBgColor || "#303030"}
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "buttonBgColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
-                                </s-grid-item>
-                                <s-grid-item
-                                    gridColumn="span 6"
-                                    gridRow="span 2"
-                                >
-                                    <s-color-field
-                                        label="Text"
-                                        name="buttonTextColor"
-                                        placeholder="Select a color"
-                                        value={
-                                            style.buttonTextColor || "#ffffff"
-                                        }
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "buttonTextColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
-                                </s-grid-item>
-                            </s-grid>
-                            <s-stack>
-                                <s-text>Corner radius</s-text>
-                                <RtpbRangeSlider
-                                    values={style.buttonRadius ?? 8}
-                                    maxValue={30}
-                                    action={(val) =>
-                                        updateStyle("buttonRadius", val)
+                    <s-stack gap="base">
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            gap="small-300"
+                        >
+                            <s-heading>Font size</s-heading>
+                            <s-button-group gap="none">
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("buttonFontSize", 14)
                                     }
-                                />
-                            </s-stack>
+                                >
+                                    Small
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("buttonFontSize", 16)
+                                    }
+                                >
+                                    Medium
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("buttonFontSize", 18)
+                                    }
+                                >
+                                    Large
+                                </s-button>
+                            </s-button-group>
                         </s-stack>
-                    )}
+                        <s-grid
+                            gridTemplateColumns="repeat(12, 1fr)"
+                            gap="base"
+                        >
+                            <s-grid-item
+                                gridColumn="span 6"
+                                gridRow="span 2"
+                            >
+                                <s-color-field
+                                    label="Background"
+                                    name="buttonBgColor"
+                                    placeholder="Select a color"
+                                    value={style.buttonBgColor || "#303030"}
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "buttonBgColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
+                            </s-grid-item>
+                            <s-grid-item
+                                gridColumn="span 6"
+                                gridRow="span 2"
+                            >
+                                <s-color-field
+                                    label="Text"
+                                    name="buttonTextColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.buttonTextColor || "#ffffff"
+                                    }
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "buttonTextColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
+                            </s-grid-item>
+                        </s-grid>
+                        <s-stack>
+                            <s-text>Corner radius</s-text>
+                            <RtpbRangeSlider
+                                values={style.buttonRadius ?? 8}
+                                maxValue={30}
+                                action={(val) =>
+                                    updateStyle("buttonRadius", val)
+                                }
+                            />
+                        </s-stack>
+                    </s-stack>
                 </s-stack>
             </div>
         </s-stack>

@@ -86,92 +86,67 @@ export function WidgetAppearance() {
                             </s-button-group>
                         </s-stack>
                         {/* Add to cart button styling */}
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            background="subdued"
-                            padding="small"
-                            borderRadius="large"
-                        >
-                            <s-switch
-                                id="cart-button-switch"
-                                label="Styling of the Add to Cart button"
-                                accessibilityLabel="Toggle add to cart"
-                                checked={style.buttonStyleEnabled ?? true}
-                                onInput={(event: Event) => {
-                                    const target =
-                                        event.target as HTMLInputElement;
-                                    updateStyle(
-                                        "buttonStyleEnabled",
-                                        target.checked,
-                                    );
-                                }}
-                            />
-                        </s-stack>
 
-                        {(style.buttonStyleEnabled ?? true) && (
-                            <s-stack gap="base">
-                                <s-grid
-                                    gridTemplateColumns="repeat(12, 1fr)"
-                                    gap="base"
+                        <s-stack gap="base">
+                            <s-grid
+                                gridTemplateColumns="repeat(12, 1fr)"
+                                gap="base"
+                            >
+                                <s-grid-item
+                                    gridColumn="span 6"
+                                    gridRow="span 2"
                                 >
-                                    <s-grid-item
-                                        gridColumn="span 6"
-                                        gridRow="span 2"
-                                    >
-                                        <s-color-field
-                                            label="Background"
-                                            name="buttonBgColor"
-                                            placeholder="Select a color"
-                                            value={
-                                                style.buttonBgColor || "#303030"
-                                            }
-                                            onInput={(event: Event) => {
-                                                const target =
-                                                    event.target as HTMLInputElement;
-                                                updateStyle(
-                                                    "buttonBgColor",
-                                                    target.value,
-                                                );
-                                            }}
-                                        />
-                                    </s-grid-item>
-                                    <s-grid-item
-                                        gridColumn="span 6"
-                                        gridRow="span 2"
-                                    >
-                                        <s-color-field
-                                            label="Text"
-                                            name="buttonTextColor"
-                                            placeholder="Select a color"
-                                            value={
-                                                style.buttonTextColor ||
-                                                "#ffffff"
-                                            }
-                                            onInput={(event: Event) => {
-                                                const target =
-                                                    event.target as HTMLInputElement;
-                                                updateStyle(
-                                                    "buttonTextColor",
-                                                    target.value,
-                                                );
-                                            }}
-                                        />
-                                    </s-grid-item>
-                                </s-grid>
-                                <s-stack>
-                                    <s-text>Corner radius</s-text>
-                                    <RtpbRangeSlider
-                                        values={style.buttonRadius ?? 8}
-                                        maxValue={30}
-                                        action={(val) =>
-                                            updateStyle("buttonRadius", val)
+                                    <s-color-field
+                                        label="Background"
+                                        name="buttonBgColor"
+                                        placeholder="Select a color"
+                                        value={
+                                            style.buttonBgColor || "#303030"
                                         }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "buttonBgColor",
+                                                target.value,
+                                            );
+                                        }}
                                     />
-                                </s-stack>
+                                </s-grid-item>
+                                <s-grid-item
+                                    gridColumn="span 6"
+                                    gridRow="span 2"
+                                >
+                                    <s-color-field
+                                        label="Text"
+                                        name="buttonTextColor"
+                                        placeholder="Select a color"
+                                        value={
+                                            style.buttonTextColor ||
+                                            "#ffffff"
+                                        }
+                                        onInput={(event: Event) => {
+                                            const target =
+                                                event.target as HTMLInputElement;
+                                            updateStyle(
+                                                "buttonTextColor",
+                                                target.value,
+                                            );
+                                        }}
+                                    />
+                                </s-grid-item>
+                            </s-grid>
+                            <s-stack>
+                                <s-text>Corner radius</s-text>
+                                <RtpbRangeSlider
+                                    values={style.buttonRadius ?? 8}
+                                    maxValue={30}
+                                    action={(val) =>
+                                        updateStyle("buttonRadius", val)
+                                    }
+                                />
                             </s-stack>
-                        )}
+                        </s-stack>
 
                         <s-divider />
 
@@ -249,46 +224,22 @@ export function WidgetAppearance() {
                         </s-stack>
 
                         <s-stack gap="base">
-                            <s-stack
-                                direction="inline"
-                                justifyContent="space-between"
-                                alignItems="center"
-                            >
-                                <s-switch
-                                    id="product-add-border"
-                                    label="Add border"
-                                    accessibilityLabel="Add border"
-                                    checked={style.productBorderEnabled ?? true}
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "productBorderEnabled",
-                                            target.checked,
-                                        );
-                                    }}
-                                />
-                            </s-stack>
-                        </s-stack>
-                        <s-stack gap="base">
-                            {(style.productBorderEnabled ?? true) && (
-                                <s-color-field
-                                    label="Border color"
-                                    name="productBorderColor"
-                                    placeholder="Select a color"
-                                    value={
-                                        style.productBorderColor || "#e3e3e3"
-                                    }
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "productBorderColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
-                            )}
+                            <s-color-field
+                                label="Border color"
+                                name="productBorderColor"
+                                placeholder="Select a color"
+                                value={
+                                    style.productBorderColor || "#e3e3e3"
+                                }
+                                onInput={(event: Event) => {
+                                    const target =
+                                        event.target as HTMLInputElement;
+                                    updateStyle(
+                                        "productBorderColor",
+                                        target.value,
+                                    );
+                                }}
+                            />
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
@@ -352,10 +303,7 @@ export function WidgetAppearance() {
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "boxBgColor",
-                                                target.value,
-                                            );
+                                            updateStyle("boxBgColor", target.value);
                                         }}
                                     />
                                 </s-grid-item>
@@ -364,15 +312,17 @@ export function WidgetAppearance() {
                                     gridRow="span 2"
                                 >
                                     <s-color-field
-                                        label="Text"
-                                        name="boxTextColor"
+                                        label="Border"
+                                        name="boxBorderColor"
                                         placeholder="Select a color"
-                                        value={style.boxTextColor || "#303030"}
+                                        value={
+                                            style.boxBorderColor || "#e3e3e3"
+                                        }
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "boxTextColor",
+                                                "boxBorderColor",
                                                 target.value,
                                             );
                                         }}
@@ -380,66 +330,24 @@ export function WidgetAppearance() {
                                 </s-grid-item>
                             </s-grid>
 
-                            <s-stack gap="base">
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                >
-                                    <s-switch
-                                        id="box-add-border"
-                                        label="Add border"
-                                        accessibilityLabel="Add border"
-                                        checked={style.boxBorderEnabled ?? true}
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "boxBorderEnabled",
-                                                target.checked,
-                                            );
-                                        }}
-                                    />
-                                </s-stack>
-                            </s-stack>
-
                             <s-stack gap="base" paddingBlockEnd="base">
-                                {(style.boxBorderEnabled ?? true) && (
-                                    <s-stack gap="base">
-                                        <s-color-field
-                                            label="Border color"
-                                            name="boxBorderColor"
-                                            placeholder="Select a color"
-                                            value={
-                                                style.boxBorderColor ||
-                                                "#e3e3e3"
+                                <s-stack gap="base">
+                                    <s-stack gap="small-400">
+                                        <s-text>Thin</s-text>
+                                        <RtpbRangeSlider
+                                            values={
+                                                style.boxBorderWidth ?? 1
                                             }
-                                            onInput={(event: Event) => {
-                                                const target =
-                                                    event.target as HTMLInputElement;
+                                            maxValue={5}
+                                            action={(val) =>
                                                 updateStyle(
-                                                    "boxBorderColor",
-                                                    target.value,
-                                                );
-                                            }}
+                                                    "boxBorderWidth",
+                                                    val,
+                                                )
+                                            }
                                         />
-                                        <s-stack gap="small-400">
-                                            <s-text>Thin</s-text>
-                                            <RtpbRangeSlider
-                                                values={
-                                                    style.boxBorderWidth ?? 1
-                                                }
-                                                maxValue={5}
-                                                action={(val) =>
-                                                    updateStyle(
-                                                        "boxBorderWidth",
-                                                        val,
-                                                    )
-                                                }
-                                            />
-                                        </s-stack>
                                     </s-stack>
-                                )}
+                                </s-stack>
 
                                 <s-stack gap="small-400">
                                     <s-text>Corner radius</s-text>

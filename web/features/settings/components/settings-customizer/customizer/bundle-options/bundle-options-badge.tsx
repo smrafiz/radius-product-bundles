@@ -44,121 +44,96 @@ export function BundleOptionsBadge() {
             >
                 <s-stack gap="base" padding="base">
                     {/* Add to cart button styling */}
-                    <s-stack
-                        direction="inline"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        background="subdued"
-                        padding="small"
-                        borderRadius="large"
-                    >
-                        <s-switch
-                            id="cart-button-switch"
-                            label="Styling of the Add to Cart button"
-                            accessibilityLabel="Toggle add to cart"
-                            checked={style.badgeStyleEnabled ?? true}
-                            onInput={(event: Event) => {
-                                const target = event.target as HTMLInputElement;
-                                updateStyle(
-                                    "badgeStyleEnabled",
-                                    target.checked,
-                                );
-                            }}
-                        />
-                    </s-stack>
-
-                    {(style.badgeStyleEnabled ?? true) && (
-                        <s-stack gap="base">
-                            <s-stack
-                                direction="inline"
-                                alignItems="center"
-                                gap="small-300"
-                            >
-                                <s-heading>Font size</s-heading>
-                                <s-button-group gap="none">
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("badgeFontSize", 14)
-                                        }
-                                    >
-                                        Small
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("badgeFontSize", 16)
-                                        }
-                                    >
-                                        Medium
-                                    </s-button>
-                                    <s-button
-                                        slot="secondary-actions"
-                                        onClick={() =>
-                                            updateStyle("badgeFontSize", 18)
-                                        }
-                                    >
-                                        Large
-                                    </s-button>
-                                </s-button-group>
-                            </s-stack>
-                            <s-grid
-                                gridTemplateColumns="repeat(12, 1fr)"
-                                gap="base"
-                            >
-                                <s-grid-item
-                                    gridColumn="span 6"
-                                    gridRow="span 2"
-                                >
-                                    <s-color-field
-                                        label="Background"
-                                        name="badgeBgColor"
-                                        placeholder="Select a color"
-                                        value={style.badgeBgColor || "#303030"}
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "badgeBgColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
-                                </s-grid-item>
-                                <s-grid-item
-                                    gridColumn="span 6"
-                                    gridRow="span 2"
-                                >
-                                    <s-color-field
-                                        label="Text"
-                                        name="badgeTextColor"
-                                        placeholder="Select a color"
-                                        value={
-                                            style.badgeTextColor || "#ffffff"
-                                        }
-                                        onInput={(event: Event) => {
-                                            const target =
-                                                event.target as HTMLInputElement;
-                                            updateStyle(
-                                                "badgeTextColor",
-                                                target.value,
-                                            );
-                                        }}
-                                    />
-                                </s-grid-item>
-                            </s-grid>
-                            <s-stack>
-                                <s-text>Corner radius</s-text>
-                                <RtpbRangeSlider
-                                    values={style.badgeRadius ?? 8}
-                                    maxValue={30}
-                                    action={(val) =>
-                                        updateStyle("badgeRadius", val)
+                    <s-stack gap="base">
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            gap="small-300"
+                        >
+                            <s-heading>Font size</s-heading>
+                            <s-button-group gap="none">
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("badgeFontSize", 14)
                                     }
-                                />
-                            </s-stack>
+                                >
+                                    Small
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("badgeFontSize", 16)
+                                    }
+                                >
+                                    Medium
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("badgeFontSize", 18)
+                                    }
+                                >
+                                    Large
+                                </s-button>
+                            </s-button-group>
                         </s-stack>
-                    )}
+                        <s-grid
+                            gridTemplateColumns="repeat(12, 1fr)"
+                            gap="base"
+                        >
+                            <s-grid-item
+                                gridColumn="span 6"
+                                gridRow="span 2"
+                            >
+                                <s-color-field
+                                    label="Background"
+                                    name="badgeBgColor"
+                                    placeholder="Select a color"
+                                    value={style.badgeBgColor || "#303030"}
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "badgeBgColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
+                            </s-grid-item>
+                            <s-grid-item
+                                gridColumn="span 6"
+                                gridRow="span 2"
+                            >
+                                <s-color-field
+                                    label="Text"
+                                    name="badgeTextColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.badgeTextColor || "#ffffff"
+                                    }
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "badgeTextColor",
+                                            target.value,
+                                        );
+                                    }}
+                                />
+                            </s-grid-item>
+                        </s-grid>
+                        <s-stack>
+                            <s-text>Corner radius</s-text>
+                            <RtpbRangeSlider
+                                values={style.badgeRadius ?? 8}
+                                maxValue={30}
+                                action={(val) =>
+                                    updateStyle("badgeRadius", val)
+                                }
+                            />
+                        </s-stack>
+                    </s-stack>
                 </s-stack>
             </div>
         </s-stack>

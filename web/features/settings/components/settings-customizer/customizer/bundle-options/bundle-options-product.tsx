@@ -133,44 +133,20 @@ export function BundleOptionsProduct() {
                         </s-grid>
                     </s-stack>
                     <s-stack gap="base">
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
-                            alignItems="center"
-                        >
-                            <s-switch
-                                id="product-add-border"
-                                label="Add border"
-                                accessibilityLabel="Add border"
-                                checked={style.productBorderEnabled ?? true}
-                                onInput={(event: Event) => {
-                                    const target =
-                                        event.target as HTMLInputElement;
-                                    updateStyle(
-                                        "productBorderEnabled",
-                                        target.checked,
-                                    );
-                                }}
-                            />
-                        </s-stack>
-                    </s-stack>
-                    <s-stack gap="base">
-                        {(style.productBorderEnabled ?? true) && (
-                            <s-color-field
-                                label="Border color"
-                                name="productBorderColor"
-                                placeholder="Select a color"
-                                value={style.productBorderColor || "#e3e3e3"}
-                                onInput={(event: Event) => {
-                                    const target =
-                                        event.target as HTMLInputElement;
-                                    updateStyle(
-                                        "productBorderColor",
-                                        target.value,
-                                    );
-                                }}
-                            />
-                        )}
+                        <s-color-field
+                            label="Border color"
+                            name="productBorderColor"
+                            placeholder="Select a color"
+                            value={style.productBorderColor || "#e3e3e3"}
+                            onInput={(event: Event) => {
+                                const target =
+                                    event.target as HTMLInputElement;
+                                updateStyle(
+                                    "productBorderColor",
+                                    target.value,
+                                );
+                            }}
+                        />
                         <s-stack>
                             <s-text>Corner radius</s-text>
                             <RtpbRangeSlider
