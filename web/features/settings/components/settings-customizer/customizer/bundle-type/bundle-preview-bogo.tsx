@@ -69,7 +69,6 @@ export function BundlePreviewBogo() {
                     <div className="radius-bundle__title-wrapper"
                          style={{
                              fontSize: `${styleData.titleFontSize ?? 20}px`,
-                             textAlign: styleData.titleAlignment || "left",
                          }}
                     >BOGO</div>
                     <div className="radius-bundle__badge radius-bundle__badge--skeleton radius-bundle__badge--visible">Save 50%</div>

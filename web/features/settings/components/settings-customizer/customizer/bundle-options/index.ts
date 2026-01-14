@@ -1,5 +1,6 @@
-export { BundleOptionsBox } from "./bundle-option-box";
+export { BundleOptionsBox } from "./bundle-options-box";
 export { BundleOptionsImage } from "./bundle-options-image";
-export { BundleOptionsButton } from "./bundle-option-button";
-export { BundleOptionsProduct } from "./bundle-option-product";
-export { BundleOptionsAdditional } from "./bundle-option-additional";
+export { BundleOptionsBadge } from "./bundle-options-badge";
+export { BundleOptionsButton } from "./bundle-options-button";
+export { BundleOptionsProduct } from "./bundle-options-product";
+export { BundleOptionsAdditional } from "./bundle-options-additional";

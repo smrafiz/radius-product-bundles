@@ -1,6 +1,7 @@
 import {
     BundleOptionsBox,
     BundleOptionsImage,
+    BundleOptionsBadge,
     BundleOptionsButton,
     BundleOptionsProduct,
     BundleOptionsAdditional,
@@ -10,6 +11,7 @@ export function BundleOptionType() {
     return (
         <div className="left-side-auto-scroll ">
             <BundleOptionsBox />
+            <BundleOptionsBadge />
             <BundleOptionsProduct />
             <BundleOptionsButton />
             <BundleOptionsImage />

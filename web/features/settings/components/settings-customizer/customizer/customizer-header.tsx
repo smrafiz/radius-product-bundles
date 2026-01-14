@@ -9,6 +9,7 @@ export function CustomizerHeader() {
                 direction="inline"
                 alignItems="center"
                 justifyContent="space-between"
+                gap="base"
             >
                 <s-stack>
                     <s-heading><BundleLayoutTab /></s-heading>

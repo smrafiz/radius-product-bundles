@@ -49,6 +49,26 @@
     "label": "Button text color"
   },
   {
+    "type": "select",
+    "id": "savings_badge_size",
+    "label": "Savings Badge size",
+    "options": [
+      {
+        "value": "small",
+        "label": "Small"
+      },
+      {
+        "value": "medium",
+        "label": "Medium"
+      },
+      {
+        "value": "large",
+        "label": "Large"
+      }
+    ],
+    "default": "medium"
+  },
+  {
     "type": "color",
     "id": "savings_color",
     "label": "Savings badge background"

@@ -44,40 +44,17 @@ export function BundleOptionsBox() {
             >
                 <s-stack gap="base" padding="base">
                     <s-stack gap="base">
-                        <s-grid
-                            gridTemplateColumns="repeat(12, 1fr)"
-                            gap="base"
-                        >
-                            <s-grid-item gridColumn="span 6" gridRow="span 2">
-                                <s-color-field
-                                    label="Background"
-                                    name="boxBgColor"
-                                    placeholder="Select a color"
-                                    value={style.boxBgColor || "#ffffff"}
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle("boxBgColor", target.value);
-                                    }}
-                                />
-                            </s-grid-item>
-                            <s-grid-item gridColumn="span 6" gridRow="span 2">
-                                <s-color-field
-                                    label="Text"
-                                    name="boxTextColor"
-                                    placeholder="Select a color"
-                                    value={style.boxTextColor || "#303030"}
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "boxTextColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
-                            </s-grid-item>
-                        </s-grid>
+                        <s-color-field
+                            label="Background"
+                            name="boxBgColor"
+                            placeholder="Select a color"
+                            value={style.boxBgColor || "#ffffff"}
+                            onInput={(event: Event) => {
+                                const target =
+                                    event.target as HTMLInputElement;
+                                updateStyle("boxBgColor", target.value);
+                            }}
+                        />
 
                         <s-stack gap="base">
                             <s-stack

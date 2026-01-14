@@ -327,10 +327,17 @@ export interface DisplaySettings {
     enableHyperLink: boolean;
     style?: {
         // Add to Cart button
+        buttonFontSize?: number;
         buttonBgColor?: string;
         buttonTextColor?: string;
         buttonRadius?: number;
         buttonStyleEnabled?: boolean;
+        // Saving badge
+        badgeFontSize?: number;
+        badgeBgColor?: string;
+        badgeTextColor?: string;
+        badgeRadius?: number;
+        badgeStyleEnabled?: boolean;
         // Product
         productBgColor?: string;
         productTextColor?: string;
@@ -341,7 +348,6 @@ export interface DisplaySettings {
         productFontSize?: number;
         // Box
         boxBgColor?: string;
-        boxTextColor?: string;
         boxBorderEnabled?: boolean;
         boxBorderColor?: string;
         boxRadius?: number;
@@ -350,8 +356,9 @@ export interface DisplaySettings {
         imageRadius?: number;
         imageWidth?: number;
         //additional
-        titleFontSize?: number;
-        titleAlignment?: "left" | "center" | "right";
+        headingFontSize?: number;
+        headingColor?: string;
+
     };
     widget?: {
         showOnMobile: boolean;

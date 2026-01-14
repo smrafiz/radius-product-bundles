@@ -1,19 +1,13 @@
 "use client";
 
 import {
-    BundleHeader,
-    BundlePricing,
-    BundlePriority,
-    BundleAddToCart,
-    BundleLayoutGrid,
-    BundleLayoutList,
-    BundleLayoutCompact,
-    BundlePreviewStatus,
-    BundleLayoutCarousel,
     useBundleStore,
 } from "@/features/bundles";
 
 import {
+    BundleHeader,
+    BundlePricing,
+    BundleAddToCart,
     BundleGrid,
     BundleList,
     BundleCarousel,
@@ -22,10 +16,8 @@ import {
 
 import "@/styles/components/bundle.css";
 import React from "react";
-import { useRouter } from "next/navigation";
 
 export function CustomizerBundlePreview() {
-    const router = useRouter();
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
@@ -49,7 +41,6 @@ export function CustomizerBundlePreview() {
     };
 
     return (
-        <div className="flex flex-col gap-4">
             <div className="radius-bundle-widget">
                 <div className="radius-bundle">
                     <div
@@ -57,7 +48,6 @@ export function CustomizerBundlePreview() {
                         style={{
                             backgroundColor: styleData.boxBgColor || "#ffffff",
                             borderRadius: `${styleData.boxRadius ?? 12}px`,
-                            color: styleData.boxTextColor || "#303030",
                             ...((styleData.boxBorderEnabled ?? true)
                                 ? {
                                     borderStyle: "solid",
@@ -68,16 +58,6 @@ export function CustomizerBundlePreview() {
                                 : {}),
                         }}
                     >
-                        <s-stack paddingBlockEnd="base" >
-                            <s-stack direction="inline" justifyContent="space-between" alignItems="center" paddingBlockEnd="small-200">
-                                <s-heading>Preview</s-heading>
-                                <s-button
-                                    variant="tertiary"
-                                    onClick={() => router.push("/settings")}
-                                >Customization</s-button>
-                            </s-stack>
-                            <s-divider />
-                        </s-stack>
 
                         <BundleHeader />
                         {renderLayout()}
@@ -86,6 +66,5 @@ export function CustomizerBundlePreview() {
                     </div>
                 </div>
             </div>
-        </div>
     );
 }

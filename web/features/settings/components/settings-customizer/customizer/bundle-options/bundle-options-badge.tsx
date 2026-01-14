@@ -4,7 +4,7 @@ import { useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
 
-export function BundleOptionsButton() {
+export function BundleOptionsBadge() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
     const style = displaySettings.style ?? {};
     const [open, setOpen] = useState(false);
@@ -32,7 +32,7 @@ export function BundleOptionsButton() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Button</s-heading>
+                    <s-heading>Badge</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>
@@ -56,19 +56,52 @@ export function BundleOptionsButton() {
                             id="cart-button-switch"
                             label="Styling of the Add to Cart button"
                             accessibilityLabel="Toggle add to cart"
-                            checked={style.buttonStyleEnabled ?? true}
+                            checked={style.badgeStyleEnabled ?? true}
                             onInput={(event: Event) => {
                                 const target = event.target as HTMLInputElement;
                                 updateStyle(
-                                    "buttonStyleEnabled",
+                                    "badgeStyleEnabled",
                                     target.checked,
                                 );
                             }}
                         />
                     </s-stack>
 
-                    {(style.buttonStyleEnabled ?? true) && (
+                    {(style.badgeStyleEnabled ?? true) && (
                         <s-stack gap="base">
+                            <s-stack
+                                direction="inline"
+                                alignItems="center"
+                                gap="small-300"
+                            >
+                                <s-heading>Font size</s-heading>
+                                <s-button-group gap="none">
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() =>
+                                            updateStyle("badgeFontSize", 14)
+                                        }
+                                    >
+                                        Small
+                                    </s-button>
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() =>
+                                            updateStyle("badgeFontSize", 16)
+                                        }
+                                    >
+                                        Medium
+                                    </s-button>
+                                    <s-button
+                                        slot="secondary-actions"
+                                        onClick={() =>
+                                            updateStyle("badgeFontSize", 18)
+                                        }
+                                    >
+                                        Large
+                                    </s-button>
+                                </s-button-group>
+                            </s-stack>
                             <s-grid
                                 gridTemplateColumns="repeat(12, 1fr)"
                                 gap="base"
@@ -79,14 +112,14 @@ export function BundleOptionsButton() {
                                 >
                                     <s-color-field
                                         label="Background"
-                                        name="buttonBgColor"
+                                        name="badgeBgColor"
                                         placeholder="Select a color"
-                                        value={style.buttonBgColor || "#303030"}
+                                        value={style.badgeBgColor || "#303030"}
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "buttonBgColor",
+                                                "badgeBgColor",
                                                 target.value,
                                             );
                                         }}
@@ -98,16 +131,16 @@ export function BundleOptionsButton() {
                                 >
                                     <s-color-field
                                         label="Text"
-                                        name="buttonTextColor"
+                                        name="badgeTextColor"
                                         placeholder="Select a color"
                                         value={
-                                            style.buttonTextColor || "#ffffff"
+                                            style.badgeTextColor || "#ffffff"
                                         }
                                         onInput={(event: Event) => {
                                             const target =
                                                 event.target as HTMLInputElement;
                                             updateStyle(
-                                                "buttonTextColor",
+                                                "badgeTextColor",
                                                 target.value,
                                             );
                                         }}
@@ -117,10 +150,10 @@ export function BundleOptionsButton() {
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
-                                    values={style.buttonRadius ?? 8}
+                                    values={style.badgeRadius ?? 8}
                                     maxValue={30}
                                     action={(val) =>
-                                        updateStyle("buttonRadius", val)
+                                        updateStyle("badgeRadius", val)
                                     }
                                 />
                             </s-stack>

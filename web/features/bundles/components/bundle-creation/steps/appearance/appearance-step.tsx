@@ -10,7 +10,7 @@ export function AppearanceStep() {
         <s-stack gap="base">
             <WidgetLayout />
             <WidgetPosition />
-            {/*<WidgetAppearance />*/}
+            <WidgetAppearance />
             <WidgetDisplaySettings />
         </s-stack>
     );

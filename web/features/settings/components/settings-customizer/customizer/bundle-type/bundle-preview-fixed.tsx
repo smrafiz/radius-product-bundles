@@ -69,7 +69,6 @@ export function BundlePreviewFixed() {
                     <div className="radius-bundle__title-wrapper"
                     style={{
                         fontSize: `${styleData.titleFontSize ?? 20}px`,
-                        textAlign: styleData.titleAlignment || "left",
                     }}
                 >Fixed Bundle</div>
                     <div className="radius-bundle__badge radius-bundle__badge--skeleton radius-bundle__badge--visible">Save 50%</div>

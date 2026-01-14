@@ -13,9 +13,6 @@ export function BundleHeader() {
             <div className="radius-bundle__title-wrapper">
                 <div
                     className="font-semibold text-xl"
-                    style={{
-                        textAlign: styleData.titleAlignment || "left",
-                    }}
                 >{displaySettings.title || ""}</div>
             </div>
             {displaySettings.showSavingsBadge && (

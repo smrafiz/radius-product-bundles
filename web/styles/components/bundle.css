@@ -1,4 +1,10 @@
 /* bundle layout */
+.radius-bundle-widget {
+    .radius-bundle {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+}
 .radius-bundle__inner {
     background-color: #ffffff;
     border: 1px solid transparent;
@@ -9,12 +15,9 @@
     }
 }
 
-.rtpb-bundle-product {
+.radius-bundle__product {
     font-size: 16px;
-    .rtpb-product-title {
-        margin-bottom: 4px;
-        font-weight: 500;
-    }
+    color: #303030;
 }
 
 /* list layout */
@@ -25,7 +28,7 @@
 }
 .radius-bundle__product--list {
     background-color: #f7f7f7;
-    border: 1px solid #e3e3e3;
+    border: 1px solid transparent;
     border-radius: 8px;
     padding: 16px;
     display: flex;
@@ -68,7 +71,7 @@
 /* grid layout */
 .radius-bundle__product--grid {
     background-color: #f7f7f7;
-    border: 1px solid #e3e3e3;
+    border: 1px solid transparent;
     border-radius: 8px;
     padding: 16px;
     display: flex;
@@ -85,11 +88,11 @@
         border-radius: 8px;
         margin-bottom: 16px;
         overflow: hidden;
-        background: #fff;
+        background: #ffffff;
         img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
         }
     }
     .radius-bundle__product-title {
@@ -144,7 +147,7 @@
 }
 .radius-bundle__product--compact {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     .radius-bundle__product-image {
         width: 40px;
         height: 40px;
@@ -178,12 +181,10 @@
 
 .radius-bundle__product-price-current {
     font-weight: 500;
-    color: #333333;
     display: block;
 }
 .radius-bundle__product-price-compare {
     font-size: 14px;
-    color: #333333;
     opacity: .5;
     text-decoration: line-through;
     display: block;

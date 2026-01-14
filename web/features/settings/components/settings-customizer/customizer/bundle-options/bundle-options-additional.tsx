@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { RtpbRangeSlider } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
 
 export function BundleOptionsAdditional() {
@@ -57,7 +56,7 @@ export function BundleOptionsAdditional() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("titleFontSize", 18)
+                                    updateStyle("headingFontSize", 18)
                                 }
                             >
                                 Small
@@ -65,7 +64,7 @@ export function BundleOptionsAdditional() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("titleFontSize", 20)
+                                    updateStyle("headingFontSize", 20)
                                 }
                             >
                                 Medium
@@ -73,7 +72,7 @@ export function BundleOptionsAdditional() {
                             <s-button
                                 slot="secondary-actions"
                                 onClick={() =>
-                                    updateStyle("titleFontSize", 22)
+                                    updateStyle("headingFontSize", 22)
                                 }
                             >
                                 Large
@@ -81,25 +80,20 @@ export function BundleOptionsAdditional() {
                         </s-button-group>
                     </s-stack>
                     <s-stack>
-                        <s-choice-list
-                            label="Title alignment"
-                            name="title-alignment"
-                            values={[style.titleAlignment ?? "left"]}
-                            onChange={(event: Event) => {
-                                const target = event.currentTarget as ChoiceListElement;
-
-                                if (!target.values?.length) return;
-
+                        <s-color-field
+                            label="Text"
+                            name="headingColor"
+                            placeholder="Select a color"
+                            value={style.headingColor || "#303030"}
+                            onInput={(event: Event) => {
+                                const target =
+                                    event.target as HTMLInputElement;
                                 updateStyle(
-                                    "titleAlignment",
-                                    target.values[0] as "left" | "center" | "right"
+                                    "headingColor",
+                                    target.value,
                                 );
                             }}
-                        >
-                            <s-choice value="left">Left</s-choice>
-                            <s-choice value="center">Center</s-choice>
-                            <s-choice value="right">Right</s-choice>
-                        </s-choice-list>
+                        />
                     </s-stack>
                 </s-stack>
             </div>
