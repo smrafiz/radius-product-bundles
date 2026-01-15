@@ -1,12 +1,13 @@
 "use client";
 
-import { BundleTableSkeleton } from "@/features/bundles";
-import { DashboardBundlesEmpty } from "@/features/dashboard";
 import {
-    AnalyticsBasedBundlesList,
+    TopBundlesHeader,
+    TopBundlesSkeleton,
     TopBundlesTable,
+    TopBundlesTableHeader,
     useAnalyticsWithBundles,
 } from "@/features/analytics";
+import { DashboardBundlesEmpty } from "@/features/dashboard";
 
 /**
  * Analytics-Based Bundles Component
@@ -17,7 +18,12 @@ export function AnalyticsBasedBundles() {
     const { bundles, isLoading, error } = useAnalyticsWithBundles();
 
     if (isLoading) {
-        return <BundleTableSkeleton />;
+        return (
+            <TopBundlesSkeleton
+                Header={TopBundlesHeader}
+                TableHeader={TopBundlesTableHeader}
+            />
+        );
     }
 
     return (

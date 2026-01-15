@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { ChartDataStatusResult } from "@/features/analytics";
 
 /**
  * Format date for chart display

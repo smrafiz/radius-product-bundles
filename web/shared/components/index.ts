@@ -11,4 +11,5 @@ export * from "./overlays";
 export * from "./providers";
 export * from "./data-display";
 export { Navigation } from "./navigation/navigation";
+export { EmptyState } from "./empty-state/empty-state";
 export { ProtectedRoute } from "./auth/protected-route";

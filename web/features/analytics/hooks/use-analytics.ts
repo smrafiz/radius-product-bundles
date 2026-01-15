@@ -2,9 +2,6 @@
 
 /**
  * Analytics Hook
- *
- * Fetches analytics metrics and chart data using TanStack Query.
- * Bundle data is fetched separately via useBundlesData for consistency.
  */
 
 import { useQuery } from "@tanstack/react-query";

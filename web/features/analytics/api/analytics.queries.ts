@@ -1,6 +1,6 @@
-import { getAnalyticsMetricsAction, getChartDataAction, } from "@/features/analytics/actions";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { analyticsQueryKeys, ChartDataPoint } from "@/features/analytics";
+import { analyticsQueryKeys, ChartDataPoint, TopBundle, } from "@/features/analytics";
+import { getAnalyticsMetricsAction, getChartDataAction, getTopBundlesAction, } from "@/features/analytics/actions";
 
 /**
  * Analytics queries for TanStack Query
@@ -8,8 +8,6 @@ import { analyticsQueryKeys, ChartDataPoint } from "@/features/analytics";
 export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
     /**
      * Metrics query
-     *
-     * Fetches aggregate analytics metrics (revenue, views, conversions, etc.)
      */
     metrics: (days: number = 30, startDate?: string, endDate?: string) => ({
         queryKey: analyticsQueryKeys.metrics(days, startDate, endDate),
@@ -35,8 +33,6 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
     /**
      * Chart data query
-     *
-     * Fetches time-series data for analytics charts.
      */
     chart: (days: number = 30, startDate?: string, endDate?: string) => ({
         queryKey: analyticsQueryKeys.chart(days, startDate, endDate),
@@ -56,6 +52,39 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
             return (result.data ?? []) as ChartDataPoint[];
         },
         staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    }),
+
+    /**
+     * Top bundles query
+     */
+    topBundles: (startDate?: string, endDate?: string, limit: number = 10) => ({
+        queryKey: analyticsQueryKeys.bundles.top(startDate, endDate, limit),
+        queryFn: async (): Promise<TopBundle[]> => {
+            const token = await app.idToken();
+
+            if (!token || !startDate || !endDate) {
+                throw new Error("Missing required parameters");
+            }
+
+            const result = await getTopBundlesAction(
+                token,
+                startDate,
+                endDate,
+                limit,
+            );
+
+            if (result.status === "error") {
+                throw new Error(
+                    result.message || "Failed to fetch top bundles",
+                );
+            }
+
+            return result.data ?? [];
+        },
+        enabled: !!startDate && !!endDate,
+        staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     }),

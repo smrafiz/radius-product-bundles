@@ -3,7 +3,7 @@
  */
 
 import { DASHBOARD_QUICK_ACTIONS } from "@/features/dashboard";
-import { formatCurrency, formatPercentage, MetricFormat } from "@/shared";
+import { formatCurrencyCompact, formatPercentage, MetricFormat, } from "@/shared";
 
 /*
  * Format metric value based on type
@@ -11,7 +11,7 @@ import { formatCurrency, formatPercentage, MetricFormat } from "@/shared";
 export function formatByType(value: number, format: MetricFormat): string {
     switch (format) {
         case "currency":
-            return formatCurrency(value);
+            return formatCurrencyCompact(value);
         case "percentage":
             return formatPercentage(value);
         case "number":
