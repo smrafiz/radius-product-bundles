@@ -91,9 +91,15 @@ const bundleSettingsSchema = z
                 boxRadius: z.number().optional(),
                 boxBorderWidth: z.number().optional(),
                 imageRadius: z.number().optional(),
-                imageWidth: z.number().optional(),
+                imageSize: z.number().optional(),
+                imageFit: z.enum(["cover", "contain", "fill"]).optional(),
                 headingFontSize: z.number().optional(),
                 headingColor: z.string().optional(),
+                headingLabel: z.string().optional(),
+                regularPriceLabel: z.string().optional(),
+                bundlePriceLabel: z.string().optional(),
+                youSaveLabel: z.string().optional(),
+                freeShippingLabel: z.string().optional(),
             })
             .optional(),
         widget: z

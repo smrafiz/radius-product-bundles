@@ -1,33 +1,22 @@
 "use client";
 
-import { useBundleStore, WIDGET_LAYOUTS } from "@/features/bundles";
-import React from "react";
+import React, { useState } from "react";
+import { BUNDLE_TYPES } from "@/features/bundles";
 
 export function BundleLayoutTab() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
+    const types = Object.values(BUNDLE_TYPES);
+    const [activeId] = useState(types[0]?.id);
 
     return (
         <s-section>
-            <s-stack gap="small" direction="inline">
-                {WIDGET_LAYOUTS.map(
-                    ({ label, value }) => {
-                        return (
-                            <s-stack key={value} gap="small" >
-                                <div
-                                    className={`flex items-center justify-between border-1 rounded-md px-5 py-2 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-gray-500 bg-[var(--p-color-bg-surface-secondary)]" : "border-gray-50 bg-[var(--p-color-bg-surface-secondary)] hover:border-gray-500"}`}
-                                    onClick={() =>
-                                        updateDisplaySettings(
-                                            "layout",
-                                            value,
-                                        )
-                                    }
-                                >
-                                    <s-text>{label}</s-text>
-                                </div>
-                            </s-stack>
-                        );
-                    },
-                )}
+            <s-stack gap="none">
+                <s-select value={activeId}>
+                    {types.map((type) => (
+                        <s-option key={type.id} value={type.id}>
+                            {type.label}
+                        </s-option>
+                    ))}
+                </s-select>
             </s-stack>
         </s-section>
     );

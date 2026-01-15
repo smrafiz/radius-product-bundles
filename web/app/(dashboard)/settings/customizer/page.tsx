@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import {
     CustomizerBundleType,
-    CustomizerBundlePreview,
+    CustomizerPreview,
     CustomizerHeader,
     BundleOptionType,
 } from "@/features/settings";
@@ -26,8 +26,8 @@ export default function Page() {
                 <div className="rtpb-right-review">
                     <s-stack gap="base">
                         <CustomizerHeader />
-                        <CustomizerBundlePreview />
-                        {/*<CustomizerBundleType />*/}
+                        <CustomizerPreview />
+                        <CustomizerBundleType />
                     </s-stack>
                 </div>
             </div>

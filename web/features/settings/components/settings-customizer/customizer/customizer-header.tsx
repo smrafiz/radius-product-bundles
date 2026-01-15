@@ -11,9 +11,7 @@ export function CustomizerHeader() {
                 justifyContent="space-between"
                 gap="base"
             >
-                <s-stack>
-                    <s-heading><BundleLayoutTab /></s-heading>
-                </s-stack>
+                <BundleLayoutTab />
                 <s-stack>
                     <s-button-group gap="none">
                         <s-button slot="secondary-actions">Desktop</s-button>

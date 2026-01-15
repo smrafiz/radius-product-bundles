@@ -5,7 +5,6 @@ import { useState, Fragment } from "react";
 
 export function BundleLayoutList() {
     const { selectedItems, displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
     const [showAll, setShowAll] = useState(false);
 
     const visibleItems = showAll
@@ -30,27 +29,10 @@ export function BundleLayoutList() {
             <div className="radius-bundle__products radius-bundle__products--list">
                 {visibleItems.map((item, index) => (
                     <Fragment key={item.id ?? index}>
-                        {/* Product */}
-                        <div
-                            className="radius-bundle__product radius-bundle__product--list"
-                            style={{
-                                backgroundColor: styleData.productBgColor || "#f7f7f7",
-                                borderRadius: `${styleData.productRadius ?? 12}px`,
-                                fontSize: `${styleData.productFontSize ?? 14}px`,
-                                color: styleData.productTextColor || "#303030",
-                                borderColor: styleData.productBorderColor || "#e3e3e3",
-                            }}
-                        >
+                        <div className="radius-bundle__product radius-bundle__product--list">
                             {/* Image */}
                             {displaySettings.showImages && item.image && item.image.trim() !== "" && (
-                                <div
-                                    className="radius-bundle__product-image"
-                                    style={{
-                                        width: `${ styleData.imageWidth ?? 70 }px`,
-                                        height: `${ styleData.imageWidth ?? 70 }px`,
-                                        borderRadius: `${ styleData.imageRadius ?? 6 }px`,
-                                    }}
-                                >
+                                <div className="radius-bundle__product-image">
                                     <img
                                         src={item.image}
                                         alt={item.title}

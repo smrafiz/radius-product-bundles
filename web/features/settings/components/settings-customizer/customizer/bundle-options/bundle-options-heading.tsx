@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useBundleStore } from "@/features/bundles";
 
-export function BundleOptionsAdditional() {
+export function BundleOptionsHeading() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
     const style = displaySettings.style ?? {};
     const [open, setOpen] = useState(false);
@@ -35,7 +35,7 @@ export function BundleOptionsAdditional() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Additional</s-heading>
+                    <s-heading>Heading</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>
@@ -51,7 +51,7 @@ export function BundleOptionsAdditional() {
                         alignItems="center"
                         gap="small-300"
                     >
-                        <s-text>Title font size</s-text>
+                        <s-text>Font size</s-text>
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"

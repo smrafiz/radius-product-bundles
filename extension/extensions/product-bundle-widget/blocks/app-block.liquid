@@ -84,13 +84,10 @@
 				{% assign image_border_radius = block.settings.image_border_radius
 						| default: g_styles.borders.imageRadius
 						| default: 8 %}
+
 				{% assign image_size = block.settings.image_size
 						| default: g_styles.images.imageSize
 						| default: 70 %}
-
-				{% if layout != 'list' %}
-					{% assign image_size = null %}
-				{% endif %}
 
 				{% assign box_spacing = block.settings.box_spacing
 						| default: g_styles.spacing.boxSpacing
@@ -146,6 +143,7 @@
                 {% comment %} Labels {% endcomment %}
 				{% assign bundle_heading = block.settings.bundle_heading
 						| default: bundle.title
+						| default: bundle.headingLabel
 						| default: 'Bundle & Save' %}
                 {% assign button_text = block.settings.button_text
                         | default: bundle.buttonText
@@ -211,8 +209,8 @@
 						--rb-border-radius-small: {{ button_border_radius }}px;
 						--rb-image-border-radius: {{ image_border_radius }}px;
 						--rb-box-spacing: {{ box_spacing }}px;
-
 						--rb-bundle-max-width: {{ bundle_max_width }}px;
+
 						{% if image_size %}
 							--rb-image-size: {{ image_size }}px;
 						{% endif %}
@@ -670,11 +668,11 @@
 			"id": "image_size",
 			"label": "Image size",
 			"min": 50,
-			"max": 200,
-			"step": 2,
+			"max": 300,
+			"step": 5,
 			"unit": "px",
 			"default": 70,
-			"info": "Width/height applies only to List layout"
+			"info": "Controls the base image size (70px by default). Grid uses this value, Slider displays slightly larger images, and Compact shows smaller images."
 		},
 		{
 			"type": "range",

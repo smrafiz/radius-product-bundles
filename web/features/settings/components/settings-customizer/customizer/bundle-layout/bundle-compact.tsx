@@ -16,12 +16,18 @@ export function BundleCompact() {
                 <div className="radius-bundle__product-image"
                      style={{
                          borderRadius: `${styleData.imageRadius ?? 6}px`,
+                         width: `${styleData.imageSize ?? undefined}px`,
+                         height: `${styleData.imageSize ?? undefined}px`,
                      }}
                 >
                     <s-image
-                        objectFit="cover"
+                        ref={(el) => {
+                            if (el) {
+                                (el as any).objectFit = styleData.imageFit ?? "contain";
+                            }
+                        }}
                         src="/assets/product-image-placeholder.webp"
-                    ></s-image>
+                    />
                 </div>
 
                 <div className="radius-bundle__product-info">

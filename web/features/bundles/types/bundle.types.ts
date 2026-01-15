@@ -348,12 +348,19 @@ export interface DisplaySettings {
         boxBorderColor?: string;
         boxRadius?: number;
         boxBorderWidth?: number;
-        //image
+        //Image
         imageRadius?: number;
-        imageWidth?: number;
-        //additional
+        imageSize?: number;
+        imageFit?: "cover" | "contain" | "fill";
+        //Heading
         headingFontSize?: number;
         headingColor?: string;
+        // label
+        headingLabel?: string;
+        regularPriceLabel?: string;
+        bundlePriceLabel?: string;
+        youSaveLabel?: string;
+        freeShippingLabel?: string;
 
     };
     widget?: {

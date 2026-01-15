@@ -9,7 +9,7 @@ export const RtpbRangeSlider: FC<{
     values?: number;
     maxValue?: number;
     action?: (value: number) => void;
-}> = ({ values = 8, action, maxValue = 30 }) => {
+}> = ({ values = 0, action, maxValue = 30 }) => {
     const [internalValue, setInternalValue] = useState([values]);
 
     useEffect(() => {

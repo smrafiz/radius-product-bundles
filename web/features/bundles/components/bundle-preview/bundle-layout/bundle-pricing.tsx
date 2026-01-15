@@ -54,14 +54,7 @@ export function BundlePricing() {
         return null;
     }
     return (
-        <div
-            className="radius-bundle__pricing"
-            style={{
-                fontSize: `${styleData.productFontSize ?? 14}px`,
-                color: styleData.productTextColor || "#303030",
-            }}
-        >
-
+        <div className="radius-bundle__pricing">
             {discountAmount > 0 && (
                 <div className="radius-bundle__pricing-row">
                     <span className="radius-bundle__pricing-label">

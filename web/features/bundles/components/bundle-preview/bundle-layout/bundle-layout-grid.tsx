@@ -8,7 +8,6 @@ import { Fragment, useState } from "react";
 
 export function BundleLayoutGrid() {
     const { selectedItems, displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
     const [showAll, setShowAll] = useState(false);
 
     const visibleItems = showAll ? selectedItems : selectedItems.slice(0, 4);
@@ -41,22 +40,10 @@ export function BundleLayoutGrid() {
                     <div
                         key={item.id ?? index}
                         className="radius-bundle__product radius-bundle__product--grid"
-                        style={{
-                            backgroundColor: styleData.productBgColor || "#f7f7f7",
-                            borderRadius: `${styleData.productRadius ?? 12}px`,
-                            fontSize: `${styleData.productFontSize ?? 14}px`,
-                            color: styleData.productTextColor || "#303030",
-                            borderColor: styleData.productBorderColor || "#e3e3e3",
-                        }}
                     >
                         {/* IMAGE */}
                         {displaySettings.showImages && item.image && item.image.trim() !== "" && (
-                            <div
-                                className="radius-bundle__product-image"
-                                style={{
-                                    borderRadius: `${styleData.imageRadius ?? 6}px`,
-                                }}
-                            >
+                            <div className="radius-bundle__product-image">
                                 <img
                                     src={item.image}
                                     alt={item.title}

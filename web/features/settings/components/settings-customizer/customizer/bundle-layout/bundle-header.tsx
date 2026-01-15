@@ -15,7 +15,7 @@ export function BundleHeader() {
                         fontSize: `${styleData.headingFontSize ?? 20}px`,
                         color: styleData.headingColor || "#303030",
                     }}
-                >{displaySettings.title || ""}</div>
+                >{styleData.headingLabel ?? "Bundle Offers"}</div>
             </div>
             {displaySettings.showSavingsBadge && (
             <div

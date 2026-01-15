@@ -1,10 +1,11 @@
 import {
     BundleOptionsBox,
+    BundleOptionsLabel,
     BundleOptionsImage,
     BundleOptionsBadge,
     BundleOptionsButton,
     BundleOptionsProduct,
-    BundleOptionsAdditional,
+    BundleOptionsHeading,
 } from "@/features/settings";
 
 export function BundleOptionType() {
@@ -12,10 +13,11 @@ export function BundleOptionType() {
         <div className="left-side-auto-scroll ">
             <BundleOptionsBox />
             <BundleOptionsBadge />
+            <BundleOptionsHeading />
             <BundleOptionsProduct />
             <BundleOptionsButton />
             <BundleOptionsImage />
-            <BundleOptionsAdditional />
+            <BundleOptionsLabel />
         </div>
     );
 }

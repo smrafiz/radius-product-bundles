@@ -133,9 +133,15 @@ export const initialDisplaySettings: DisplaySettings = {
         boxRadius: 12,
         boxBorderWidth: 1,
         imageRadius: 6,
-        imageWidth: 70,
+        imageSize: undefined,
+        imageFit: "contain",
         headingFontSize: 20,
         headingColor: "#303030",
+        headingLabel: "Bundle Offers",
+        regularPriceLabel: "Regular price:",
+        bundlePriceLabel: "Bundle price:",
+        youSaveLabel: "You save:",
+        freeShippingLabel: "Free shipping",
     },
 };
 

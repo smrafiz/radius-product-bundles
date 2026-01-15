@@ -8,7 +8,6 @@ import { Fragment, useState } from "react";
 
 export function BundleLayoutCompact() {
     const { selectedItems, displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
     const [showAll, setShowAll] = useState(false);
 
     const visibleItems = showAll
@@ -33,22 +32,10 @@ export function BundleLayoutCompact() {
             <div className="radius-bundle__products radius-bundle__products--compact">
                 {visibleItems.map((item, index) => (
                     <Fragment key={item.id ?? index}>
-                        {/* Product */}
-                        <div
-                            className="radius-bundle__product radius-bundle__product--compact"
-                            style={{
-                                fontSize: `${styleData.productFontSize ?? 16}px`,
-                                color: styleData.productTextColor || "#303030",
-                            }}
-                        >
+                        <div className="radius-bundle__product radius-bundle__product--compact">
                             {/* Image */}
                             {displaySettings.showImages && item.image && item.image.trim() !== "" && (
-                                <div
-                                    className="radius-bundle__product-image"
-                                    style={{
-                                        borderRadius: `${ styleData.imageRadius ?? 6 }px`,
-                                    }}
-                                >
+                                <div className="radius-bundle__product-image">
                                     <img
                                         src={item.image}
                                         alt={item.title}

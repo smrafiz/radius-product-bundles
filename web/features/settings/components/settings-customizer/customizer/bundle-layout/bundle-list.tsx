@@ -18,15 +18,19 @@ export function BundleList() {
             >
                 <div className="radius-bundle__product-image"
                      style={{
-                         width: `${ styleData.imageWidth ?? 70 }px`,
-                         height: `${ styleData.imageWidth ?? 70 }px`,
+                         width: `${ styleData.imageSize ?? undefined }px`,
+                         height: `${ styleData.imageSize ?? undefined }px`,
                          borderRadius: `${ styleData.imageRadius ?? 6 }px`,
                      }}
                 >
                     <s-image
-                        objectFit="cover"
+                        ref={(el) => {
+                            if (el) {
+                                (el as any).objectFit = styleData.imageFit ?? "contain";
+                            }
+                        }}
                         src="/assets/product-image-placeholder.webp"
-                    ></s-image>
+                    />
                 </div>
 
                 <div className="radius-bundle__product-info">

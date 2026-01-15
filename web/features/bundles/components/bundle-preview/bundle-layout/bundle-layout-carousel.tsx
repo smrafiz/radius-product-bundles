@@ -5,7 +5,6 @@ import { useRef } from "react";
 
 export function BundleLayoutCarousel() {
     const { selectedItems, displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
     const carouselRef = useRef<HTMLDivElement>(null);
 
     if (!selectedItems.length) {
@@ -46,77 +45,61 @@ export function BundleLayoutCarousel() {
             {/* CAROUSEL */}
             <div
                 ref={carouselRef}
-                className="radius-bundle__products radius-bundle__products--carousel"
+                className="radius-bundle__products radius-bundle__products--slider"
                 style={{ scrollbarWidth: "none" }}
             >
                 {selectedItems.map((item, index) => (
                     <div
                         key={item.id ?? index}
-                        className="radius-bundle__product--carousel"
+                        className="radius-bundle__product radius-bundle__product--slider"
                         style={{ width: "47.8%" }}
                     >
-                        <div
-                            className="radius-bundle__product"
-                            style={{
-                                backgroundColor: styleData.productBgColor || "#f7f7f7",
-                                borderRadius: `${styleData.productRadius ?? 12}px`,
-                                fontSize: `${styleData.productFontSize ?? 14}px`,
-                                color: styleData.productTextColor || "#303030",
-                                borderColor: styleData.productBorderColor || "#e3e3e3",
-                            }}
-                        >
-                            {/* IMAGE */}
-                            {displaySettings.showImages && item.image && item.image.trim() !== "" && (
-                                <div className="radius-bundle__product-image"
-                                    style={{
-                                        borderRadius: `${styleData.imageRadius ?? 6}px`,
-                                    }}
-                                >
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            )}
-
-                            {/* TITLE */}
-                            <div className="radius-bundle__product-title">
-                                {displaySettings.enableHyperLink ? (
-                                    <a href={item.url} className="hover:underline">
-                                        {item.title.length > 40
-                                            ? `${item.title.slice(0, 40)}...`
-                                            : item.title}
-                                    </a>
-                                ) : (
-                                    item.title
-                                )}
+                        {/* IMAGE */}
+                        {displaySettings.showImages && item.image && item.image.trim() !== "" && (
+                            <div className="radius-bundle__product-image">
+                                <img
+                                    src={item.image}
+                                    alt={item.title}
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
+                        )}
 
-                            {/* PRICE */}
-                            {displaySettings.showPrices && (
-                                <div className="radius-bundle__product-price flex flex-col items-center">
-                                <span className="radius-bundle__product-price-current font-semibold">
-                                    $285.95
-                                </span>
+                        {/* TITLE */}
+                        <div className="radius-bundle__product-title">
+                            {displaySettings.enableHyperLink ? (
+                                <a href={item.url} className="hover:underline">
+                                    {item.title.length > 40
+                                        ? `${item.title.slice(0, 40)}...`
+                                        : item.title}
+                                </a>
+                            ) : (
+                                item.title
+                            )}
+                        </div>
 
-                                    {displaySettings.showComparePrices && (
-                                        <span className="radius-bundle__product-price-compare line-through text-sm opacity-60">
+                        {/* PRICE */}
+                        {displaySettings.showPrices && (
+                            <div className="radius-bundle__product-price flex flex-col items-center">
+                            <span className="radius-bundle__product-price-current font-semibold">
+                                $285.95
+                            </span>
+                                {displaySettings.showComparePrices && (
+                                    <span className="radius-bundle__product-price-compare line-through text-sm opacity-60">
                                         {formatPrice(
                                             parseFloat(item.price),
                                         )}
                                     </span>
-                                    )}
-                                </div>
-                            )}
+                                )}
+                            </div>
+                        )}
 
-                            {/* QTY */}
-                            {displaySettings.showQuantity && (
+                        {/* QTY */}
+                        {displaySettings.showQuantity && (
                             <div className="radius-bundle__product-quantity">
                                 Qty: {item.quantity}
                             </div>
-                            )}
-                        </div>
+                        )}
                     </div>
                 ))}
             </div>

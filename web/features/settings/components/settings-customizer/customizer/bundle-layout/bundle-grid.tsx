@@ -22,12 +22,17 @@ export function BundleGrid() {
                 <div className="radius-bundle__product-image"
                      style={{
                          borderRadius: `${styleData.imageRadius ?? 6}px`,
+                         height: `${ styleData.imageSize ?? undefined }px`,
                      }}
                 >
                     <s-image
-                        objectFit="contain"
+                        ref={(el) => {
+                            if (el) {
+                                (el as any).objectFit = styleData.imageFit ?? "contain";
+                            }
+                        }}
                         src="/assets/product-image-placeholder.webp"
-                    ></s-image>
+                    />
                 </div>
 
                 <div className="radius-bundle__product-title">Bundle product</div>
@@ -46,7 +51,7 @@ export function BundleGrid() {
             className="radius-bundle__products radius-bundle__products--grid"
             style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
                 gap: "16px",
             }}
         >

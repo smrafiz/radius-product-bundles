@@ -15,21 +15,21 @@ export function BundlePricing() {
         >
             <div className="radius-bundle__pricing-row">
                     <span className="radius-bundle__pricing-label">
-                        Regular Price:
+                        {styleData.regularPriceLabel ?? "Regular Price:"}
                     </span>
                 <span className="radius-bundle__price-original">$2,899.96</span>
             </div>
 
             <div className="radius-bundle__pricing-row radius-bundle__pricing-row--highlight">
                     <span className="radius-bundle__pricing-label">
-                        Bundle Price:
+                        {styleData.bundlePriceLabel ?? "Bundle Price:"}
                     </span>
                 <span className="radius-bundle__price-discounted">$1,899.96</span>
             </div>
 
             <div className="radius-bundle__pricing-row radius-bundle__savings">
                     <span className="radius-bundle__savings-label">
-                        You save:
+                        {styleData.youSaveLabel ?? "You save:"}
                     </span>
                 <span className="radius-bundle__savings-amount">$474.99 (20%)</span>
             </div>
@@ -40,7 +40,7 @@ export function BundlePricing() {
                     <circle cx="7" cy="18" r="2" />
                     <circle cx="17" cy="18" r="2" />
                 </svg>
-                <span>Free Shipping</span>
+                <span>{styleData.freeShippingLabel ?? "Free Shipping"}</span>
             </div>
         </div>
     )
