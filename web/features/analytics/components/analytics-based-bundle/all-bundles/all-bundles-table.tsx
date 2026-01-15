@@ -26,16 +26,16 @@ function formatNumber(num: number): string {
 /**
  * Get status badge tone
  */
-function getStatusTone(status: string): "success" | "info" | "subdued" {
+function getStatusTone(status: string): "success" | "info" | "neutral" {
     switch (status.toLowerCase()) {
         case "active":
             return "success";
         case "draft":
-            return "subdued";
+            return "neutral";
         case "scheduled":
             return "info";
         default:
-            return "subdued";
+            return "neutral";
     }
 }
 
@@ -67,7 +67,7 @@ function getHealthBadge(status: string): {
 function getConversionBadge(
     rate: number,
     views: number,
-): { tone: "success" | "attention" | "subdued"; hasWarning: boolean } {
+): { tone: "success" | "attention" | "neutral"; hasWarning: boolean } {
     const hasWarning = views < 30;
 
     if (hasWarning) {
@@ -76,7 +76,7 @@ function getConversionBadge(
 
     if (rate >= 8) return { tone: "success", hasWarning: false };
     if (rate >= 5) return { tone: "attention", hasWarning: false };
-    return { tone: "subdued", hasWarning: false };
+    return { tone: "neutral", hasWarning: false };
 }
 
 /**
@@ -86,76 +86,82 @@ function FunnelBar({
     views,
     carts,
     orders,
+    healthBadge,
 }: {
     views: number;
     carts: number;
     orders: number;
+    healthBadge: {
+        icon: string;
+        tone: "success" | "warning" | "critical" | "info";
+        label: string;
+    };
 }) {
-    if (views === 0) return null;
+    if (views === 0) {
+        return "-";
+    }
 
     const cartPercentage = (carts / views) * 100;
     const orderPercentage = (orders / views) * 100;
 
     return (
-        <s-stack gap="small-100">
-            {/* Views bar (baseline) */}
-            <s-stack direction="inline" gap="small-100" alignItems="center">
-                <s-text
-                    tone="subdued"
-                    size="xs"
-                    style={{ width: "35px", fontSize: "11px" }}
-                >
-                    Views
-                </s-text>
-                <div
-                    style={{
-                        width: "100px",
-                        height: "4px",
-                        backgroundColor: "#E3E3E3",
-                        borderRadius: "2px",
-                    }}
-                />
-            </s-stack>
+        <s-stack
+            gap="small"
+            direction="inline"
+            alignItems="center"
+            justifyContent="space-between"
+        >
+            <s-stack gap="small-500">
+                {/* Views bar (baseline) */}
+                <s-stack direction="inline" gap="small-100" alignItems="center">
+                    <s-text tone="neutral">
+                        <div className="w-8.75 text-[11px]">Views</div>
+                    </s-text>
+                    <div
+                        style={{
+                            width: "100px",
+                            height: "6px",
+                            backgroundColor: "#E3E3E3",
+                            borderRadius: "2px",
+                        }}
+                    />
+                </s-stack>
 
-            {/* Cart bar */}
-            <s-stack direction="inline" gap="small-100" alignItems="center">
-                <s-text
-                    tone="subdued"
-                    size="xs"
-                    style={{ width: "35px", fontSize: "11px" }}
-                >
-                    Cart
-                </s-text>
-                <div
-                    style={{
-                        width: `${cartPercentage}px`,
-                        maxWidth: "100px",
-                        height: "4px",
-                        backgroundColor: "#5C6AC4",
-                        borderRadius: "2px",
-                    }}
-                />
-            </s-stack>
+                {/* Cart bar */}
+                <s-stack direction="inline" gap="small-100" alignItems="center">
+                    <s-text tone="neutral">
+                        <div className="w-8.75 text-[11px]">Cart</div>
+                    </s-text>
+                    <div
+                        style={{
+                            width: `${cartPercentage}px`,
+                            maxWidth: "100px",
+                            height: "6px",
+                            backgroundColor: "#5C6AC4",
+                            borderRadius: "2px",
+                        }}
+                    />
+                </s-stack>
 
-            {/* Order bar */}
-            <s-stack direction="inline" gap="small-100" alignItems="center">
-                <s-text
-                    tone="subdued"
-                    size="xs"
-                    style={{ width: "35px", fontSize: "11px" }}
-                >
-                    Order
-                </s-text>
-                <div
-                    style={{
-                        width: `${orderPercentage}px`,
-                        maxWidth: "100px",
-                        height: "4px",
-                        backgroundColor: "#50B83C",
-                        borderRadius: "2px",
-                    }}
-                />
+                {/* Order bar */}
+                <s-stack direction="inline" gap="small-100" alignItems="center">
+                    <s-text tone="neutral">
+                        <div className="w-8.75 text-[11px]">Order</div>
+                    </s-text>
+                    <div
+                        style={{
+                            width: `${orderPercentage}px`,
+                            maxWidth: "100px",
+                            height: "6px",
+                            backgroundColor: "#50B83C",
+                            borderRadius: "2px",
+                        }}
+                    />
+                </s-stack>
             </s-stack>
+            <s-badge tone={healthBadge.tone}>
+                {healthBadge.icon} {healthBadge.label}
+            </s-badge>
         </s-stack>
     );
 }
@@ -225,12 +231,12 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
     return (
         <s-section>
             <s-stack gap="base" alignItems="center">
-                <s-icon type="search" size="xl" tone="subdued" />
+                <s-icon type="search" size="xl" tone="neutral" />
                 <s-stack gap="small-300" alignItems="center">
                     <s-text heading size="lg">
                         {hasFilters ? "No bundles found" : "No bundles yet"}
                     </s-text>
-                    <s-text tone="subdued" alignContent="center">
+                    <s-text tone="neutral" alignContent="center">
                         {hasFilters
                             ? "Try adjusting your filters or search query"
                             : "Create your first bundle to see analytics here"}
@@ -270,7 +276,16 @@ function SortHeader({
         <s-table-header listSlot={listSlot} format={format}>
             <div className="-ml-3">
                 <s-button variant="tertiary" onClick={() => onSort(field)}>
-                    {label} {icon}
+                    <span
+                        style={{
+                            borderBottom:
+                                ".125rem dotted var(--p-color-border-tertiary)",
+                            cursor: "help",
+                            display: "inline-block",
+                        }}
+                    >
+                        {label} {icon}
+                    </span>
                 </s-button>
             </div>
         </s-table-header>
@@ -353,7 +368,7 @@ export function AllBundlesTable() {
                             <s-text heading size="lg">
                                 All Bundles Analytics ({data.totalBundles})
                             </s-text>
-                            <s-text tone="subdued" size="sm">
+                            <s-text tone="neutral" size="sm">
                                 Analyze performance across revenue, traffic,
                                 conversion & quality signals
                             </s-text>
@@ -367,7 +382,7 @@ export function AllBundlesTable() {
                                     gap="small-100"
                                     alignItems="center"
                                 >
-                                    <s-text tone="subdued" size="sm">
+                                    <s-text tone="neutral" size="sm">
                                         Active:
                                     </s-text>
                                     <s-text type="strong">
@@ -381,7 +396,7 @@ export function AllBundlesTable() {
                                     gap="small-100"
                                     alignItems="center"
                                 >
-                                    <s-text tone="subdued" size="sm">
+                                    <s-text tone="neutral" size="sm">
                                         Draft:
                                     </s-text>
                                     <s-text>{data.statusCounts.DRAFT}</s-text>
@@ -442,6 +457,7 @@ export function AllBundlesTable() {
                         currentOrder={sortOrder}
                         onSort={handleSort}
                     />
+                    <s-table-header listSlot="labeled">Cart %</s-table-header>
                     <SortHeader
                         field="conversion"
                         label="Conv %"
@@ -449,7 +465,6 @@ export function AllBundlesTable() {
                         currentOrder={sortOrder}
                         onSort={handleSort}
                     />
-                    <s-table-header listSlot="labeled">Cart %</s-table-header>
                     <s-table-header listSlot="labeled">Funnel</s-table-header>
                     {/*<s-table-header listSlot="inline">Health</s-table-header>*/}
                 </s-table-header-row>
@@ -509,7 +524,7 @@ export function AllBundlesTable() {
                                             </s-text>
                                             {bundle.averageOrderValue > 0 && (
                                                 <s-text
-                                                    tone="subdued"
+                                                    tone="neutral"
                                                     size="sm"
                                                 >
                                                     {formatCurrency(
@@ -526,6 +541,18 @@ export function AllBundlesTable() {
                                         <s-text type="strong">
                                             {formatNumber(bundle.purchases)}
                                         </s-text>
+                                    </s-table-cell>
+
+                                    {/* Views */}
+                                    <s-table-cell>
+                                        <s-text tone="neutral">
+                                            {formatNumber(bundle.views)}
+                                        </s-text>
+                                    </s-table-cell>
+
+                                    {/* Cart % (Add-to-cart rate) */}
+                                    <s-table-cell>
+                                        <s-text>{bundle.addToCartRate}%</s-text>
                                     </s-table-cell>
 
                                     {/* Conversion % with color coding */}
@@ -545,7 +572,7 @@ export function AllBundlesTable() {
                                                 preferredPlacement="top"
                                             >
                                                 <s-text
-                                                    tone="subdued"
+                                                    tone="neutral"
                                                     size="sm"
                                                 >
                                                     ({bundle.purchases}/
@@ -557,24 +584,13 @@ export function AllBundlesTable() {
                                         </s-stack>
                                     </s-table-cell>
 
-                                    {/* Views */}
-                                    <s-table-cell>
-                                        <s-text tone="subdued">
-                                            {formatNumber(bundle.views)}
-                                        </s-text>
-                                    </s-table-cell>
-
-                                    {/* Cart % (Add-to-cart rate) */}
-                                    <s-table-cell>
-                                        <s-text>{bundle.addToCartRate}%</s-text>
-                                    </s-table-cell>
-
                                     {/* Funnel visualization */}
                                     <s-table-cell>
                                         <FunnelBar
                                             views={bundle.views}
                                             carts={bundle.addToCarts}
                                             orders={bundle.purchases}
+                                            healthBadge={healthBadge}
                                         />
                                     </s-table-cell>
 
