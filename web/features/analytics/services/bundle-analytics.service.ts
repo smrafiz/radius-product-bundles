@@ -5,13 +5,19 @@
  */
 
 import {
+    AllBundlesResponse,
     BundleBadge,
+    BundleWithAnalytics,
     endOfDayUTC,
     parseDateAsUTC,
+    SortField,
+    SortOrder,
     TopBundleWithTrend,
 } from "@/features/analytics";
 import {
+    getAllBundlesWithAnalytics,
     getBundleDetails,
+    getBundleStatusCounts,
     getBundleTrend,
     getTopPerformingBundles,
 } from "@/features/analytics/repositories";
@@ -166,4 +172,63 @@ function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     }
 
     return badges;
+}
+
+/**
+ * Get all bundles with analytics
+ */
+export async function getAllBundlesAnalytics(
+    shop: string,
+    startDateStr: string,
+    endDateStr: string,
+    sortBy: SortField = "revenue",
+    sortOrder: SortOrder = "desc",
+): Promise<AllBundlesResponse> {
+    const startDate = parseDateAsUTC(startDateStr);
+    const endDate = endOfDayUTC(endDateStr);
+
+    const [bundles, statusCounts] = await Promise.all([
+        getAllBundlesWithAnalytics(shop, startDate, endDate, sortBy, sortOrder),
+        getBundleStatusCounts(shop),
+    ]);
+
+    const totalBundles = Object.values(statusCounts).reduce((a, b) => a + b, 0);
+
+    return {
+        bundles,
+        statusCounts,
+        totalBundles,
+    };
+}
+
+/**
+ * Filter bundles by status
+ */
+export function filterBundlesByStatus(
+    bundles: BundleWithAnalytics[],
+    status: string | null,
+): BundleWithAnalytics[] {
+    if (!status || status === "all") {
+        return bundles;
+    }
+
+    return bundles.filter((bundle) => bundle.status.toLowerCase() === status.toLowerCase());
+}
+
+/**
+ * Search bundles by title
+ */
+export function searchBundles(
+    bundles: BundleWithAnalytics[],
+    searchQuery: string,
+): BundleWithAnalytics[] {
+    if (!searchQuery || searchQuery.trim() === "") {
+        return bundles;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+
+    return bundles.filter((bundle) =>
+        bundle.title.toLowerCase().includes(query),
+    );
 }

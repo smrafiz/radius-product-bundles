@@ -59,7 +59,7 @@ model Bundle {
     shop                 String
     name                 String
     description          String?
-    type                 BundleOptionType
+    type                 BundleType
     status               BundleStatus         @default(DRAFT)
     mainProductId        String?
     mainVariantId        String?
@@ -382,7 +382,7 @@ model Template {
     name            String
     description     String
     category        String
-    bundleType      BundleOptionType
+    bundleType      BundleType
     difficulty      TemplateDifficulty
     bundleConfig    Json
     pricingConfig   Json
@@ -510,7 +510,7 @@ model AppSettings {
 
 /// *
 /// * Enumerations
-enum BundleOptionType {
+enum BundleType {
     FIXED_BUNDLE
     BUY_X_GET_Y
     BOGO

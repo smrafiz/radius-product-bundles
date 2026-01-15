@@ -32,75 +32,9 @@ export interface AnalyticsMetricsRepository {
     activeBundles: number;
 }
 
-/**
- * Transformed analytics metrics for UI
+/*
+ * Top bundle stats
  */
-export interface TransformedAnalyticsMetrics {
-    totalRevenue: number;
-    revenueAllTime: number;
-    totalViews: number;
-    avgConversionRate: number;
-    totalBundles: number;
-    activeBundles: number;
-    revenueGrowth: number;
-    conversionGrowth: number;
-}
-
-/**
- * Tracking event types
- */
-export type TrackingEventType =
-    | "bundle_view"
-    | "bundle_add_to_cart"
-    | "bundle_purchase";
-
-/**
- * Base tracking event
- */
-interface BaseTrackingEvent {
-    bundleId: string;
-    timestamp?: Date;
-}
-
-/**
- * Bundle view event
- */
-export interface BundleViewEvent extends BaseTrackingEvent {
-    type: "bundle_view";
-}
-
-/**
- * Add to cart event
- */
-export interface AddToCartEvent extends BaseTrackingEvent {
-    type: "bundle_add_to_cart";
-}
-
-/**
- * Purchase event
- */
-export interface PurchaseEvent extends BaseTrackingEvent {
-    type: "bundle_purchase";
-    revenue: number;
-    customerId?: string;
-    isNewCustomer?: boolean;
-}
-
-/**
- * Bundle performance stats
- */
-export interface BundlePerformanceStats {
-    bundleId: string;
-    bundleName: string;
-    bundleStatus: string;
-    bundleType?: string;
-    views: number;
-    addToCarts: number;
-    purchases: number;
-    revenue: number;
-    conversionRate: number;
-}
-
 export interface TopBundleStats {
     bundleId: string;
     revenue: number;
@@ -124,4 +58,27 @@ export interface TopBundleTrend {
     currentRevenue: number;
     previousRevenue: number;
     trendPercentage: number;
+}
+
+/*
+ * Bundle with analytics
+ */
+export interface BundleWithAnalytics {
+    id: string;
+    title: string;
+    status: string;
+    type: string;
+    discountType: string;
+    discountValue: number;
+    createdAt: Date;
+    publishedAt: Date | null;
+    isPublished: boolean;
+    revenue: number;
+    views: number;
+    addToCarts: number;
+    purchases: number;
+    conversionRate: number;
+    addToCartRate: number;
+    revenuePerView: number;
+    averageOrderValue: number;
 }

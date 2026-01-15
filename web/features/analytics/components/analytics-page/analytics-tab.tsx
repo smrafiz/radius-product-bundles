@@ -9,6 +9,7 @@ import {
     AnalyticsMetrics,
     AnalyticsOrderBundles,
 } from "@/features/analytics";
+import { AllBundlesTable } from "@/features/analytics/components/analytics-based-bundle/all-bundles/all-bundles-table";
 
 /**
  * Analytics Tabs Component
@@ -82,7 +83,7 @@ export function AnalyticsTabs() {
             ) : (
                 <s-stack gap="base">
                     <AnalyticsBasedBundles />
-                    <AnalyticsOrderBundles />
+                    <AllBundlesTable />
                 </s-stack>
             )}
         </s-stack>

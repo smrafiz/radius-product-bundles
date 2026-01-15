@@ -1,4 +1,4 @@
-import { TopBundleDetails } from "@/features/analytics";
+import { BundleWithAnalytics, TopBundleDetails } from "@/features/analytics";
 
 /**
  * bundle details with trend analysis and performance indicators.
@@ -30,4 +30,28 @@ export interface TrackingEvent {
     revenue?: number;
     isNewCustomer?: boolean;
     timestamp?: Date | string;
+}
+
+/**
+ * Sort field for bundle analytics
+ */
+export type SortField =
+    | "revenue"
+    | "views"
+    | "purchases"
+    | "conversion"
+    | "created";
+
+/**
+ * Sort order for bundle analytics
+ */
+export type SortOrder = "asc" | "desc";
+
+/**
+ * Response for all bundles with analytics
+ */
+export interface AllBundlesResponse {
+    bundles: BundleWithAnalytics[];
+    statusCounts: Record<string, number>;
+    totalBundles: number;
 }

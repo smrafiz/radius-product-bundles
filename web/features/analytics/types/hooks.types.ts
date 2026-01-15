@@ -1,3 +1,4 @@
+import { BundleWithAnalytics } from "@/features/analytics";
 
 /*
  * Interface for top bundle
@@ -34,4 +35,10 @@ export interface SmartChartDisplay {
     points?: number;
     showInfoBanner?: boolean;
     bannerMessage?: string;
+}
+
+export interface AllBundlesData {
+    bundles: BundleWithAnalytics[];
+    statusCounts: Record<string, number>;
+    totalBundles: number;
 }
