@@ -1,20 +1,20 @@
-import {
-    useAllBundles,
-    useBundleFilters,
-    useBundleSort,
-} from "@/features/analytics";
+import { useAllBundlesSearch } from "@/features/analytics";
 
 /**
- * Top Bundles Header
+ * All Bundles Header Component
+ *
+ * Contains the title, tooltip, and search field for the all bundles table.
  */
 export function AllBundlesHeader() {
-    const {
-        searchQuery,
-        setSearchQuery,
-    } = useBundleFilters();
+    const { searchQuery, setSearchQuery } = useAllBundlesSearch();
+
     return (
         <s-box padding="base" border="base" borderStyle="none none solid none">
-            <s-stack gap="small-200" direction="inline" justifyContent="space-between">
+            <s-stack
+                gap="small-200"
+                direction="inline"
+                justifyContent="space-between"
+            >
                 <s-stack direction="inline" gap="small-200" alignItems="center">
                     <s-heading>All Bundles Performance</s-heading>
                     <s-icon
@@ -38,7 +38,6 @@ export function AllBundlesHeader() {
                         placeholder="Search bundles..."
                         value={searchQuery}
                         onInput={(e: any) => setSearchQuery(e.target.value)}
-                        onClear={() => setSearchQuery("")}
                     />
                 </s-stack>
             </s-stack>

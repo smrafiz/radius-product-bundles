@@ -39,7 +39,6 @@ export type SortField =
     | "revenue"
     | "views"
     | "purchases"
-    | "cart"
     | "conversion"
     | "created";
 
@@ -56,3 +55,44 @@ export interface AllBundlesResponse {
     statusCounts: Record<string, number>;
     totalBundles: number;
 }
+
+/**
+ * Parameters for paginated bundles service
+ */
+export interface PaginatedBundlesServiceParams {
+    shop: string;
+    startDateStr: string;
+    endDateStr: string;
+    sortBy?: SortField;
+    sortOrder?: SortOrder;
+    page?: number;
+    perPage?: number;
+    search?: string;
+}
+
+/**
+ * Pagination metadata
+ */
+export interface PaginationMeta {
+    page: number;
+    perPage: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+}
+
+/**
+ * Response for paginated bundles with analytics
+ */
+export interface PaginatedAllBundlesResponse {
+    bundles: BundleWithAnalytics[];
+    pagination: PaginationMeta;
+    statusCounts: Record<string, number>;
+    totalBundles: number;
+}
+
+/**
+ * Data type for paginated bundles hook
+ */
+export type PaginatedAllBundlesData = PaginatedAllBundlesResponse;

@@ -4,11 +4,8 @@ import {
     AllBundlesHeader,
     AllBundlesSkeleton,
     AllBundlesTableHeader,
-    useAllBundles,
-    useBundleFilters,
-    useBundleSort,
+    useAllBundlesTableWithPagination,
 } from "@/features/analytics";
-import { useMemo } from "react";
 import { getBundleStatusBadge } from "@/features/bundles";
 import { EmptyState, formatCurrencyCompact, formatNumber } from "@/shared";
 
@@ -127,29 +124,39 @@ function FunnelBar({
 }
 
 /**
- * All Bundles Analytics Table - Diagnostic View
+ * All Bundles Analytics Table - Diagnostic View with Pagination
+ *
+ * Uses the native s-table pagination support for consistent Shopify UX.
  */
 export function AllBundlesTable() {
-    const { sortBy, sortOrder } = useBundleSort();
     const {
-        statusFilter,
-        setStatusFilter,
-        searchQuery,
-        setSearchQuery,
-        filterBundles,
-    } = useBundleFilters();
-    const { data, isLoading, error } = useAllBundles(sortBy, sortOrder);
+        bundles,
+        pagination,
+        isLoading,
+        isFetching,
+        error,
+        hasFilters,
+        nextPage,
+        prevPage,
+    } = useAllBundlesTableWithPagination();
 
-    // Apply filters
-    const filteredBundles = useMemo(() => {
-        if (!data?.bundles) {
-            return [];
+    /**
+     * Handle next page event from s-table
+     */
+    const handleNextPage = () => {
+        if (pagination?.hasNextPage) {
+            nextPage();
         }
+    };
 
-        return filterBundles(data.bundles);
-    }, [data?.bundles, filterBundles]);
-
-    const hasFilters = statusFilter !== "all" || searchQuery.trim() !== "";
+    /**
+     * Handle previous page event from s-table
+     */
+    const handlePreviousPage = () => {
+        if (pagination?.hasPrevPage) {
+            prevPage();
+        }
+    };
 
     if (isLoading) {
         return (
@@ -176,7 +183,7 @@ export function AllBundlesTable() {
         );
     }
 
-    if (!filteredBundles || filteredBundles.length === 0) {
+    if (!bundles || bundles.length === 0) {
         return (
             <s-section padding="none">
                 <AllBundlesHeader />
@@ -201,12 +208,19 @@ export function AllBundlesTable() {
             {/* Header with search */}
             <AllBundlesHeader />
 
-            {/* Table */}
-            <s-table>
+            {/* Table with native pagination */}
+            <s-table
+                paginate={true}
+                hasPreviousPage={pagination?.hasPrevPage ?? false}
+                hasNextPage={pagination?.hasNextPage ?? false}
+                loading={isFetching && !isLoading}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+            >
                 <AllBundlesTableHeader />
 
                 <s-table-body>
-                    {filteredBundles.map((bundle) => {
+                    {bundles.map((bundle) => {
                         const conversionBadge = getConversionTone(
                             bundle.conversionRate,
                         );

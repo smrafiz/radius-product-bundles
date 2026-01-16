@@ -9,6 +9,8 @@ import {
     BundleBadge,
     BundleWithAnalytics,
     endOfDayUTC,
+    PaginatedAllBundlesResponse,
+    PaginatedBundlesServiceParams,
     parseDateAsUTC,
     SortField,
     SortOrder,
@@ -19,6 +21,7 @@ import {
     getBundleDetails,
     getBundleStatusCounts,
     getBundleTrend,
+    getPaginatedBundlesWithAnalytics,
     getTopPerformingBundles,
 } from "@/features/analytics/repositories";
 import { formatCurrencyCompact } from "@/shared";
@@ -108,7 +111,7 @@ export async function getTopBundlesService(
 /**
  * Generate performance badges for a bundle
  */
-function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
+export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     const badges: BundleBadge[] = [];
 
     // High Converter Badge
@@ -201,6 +204,64 @@ export async function getAllBundlesAnalytics(
     };
 }
 
+export async function getPaginatedBundlesAnalytics(
+    params: PaginatedBundlesServiceParams,
+): Promise<PaginatedAllBundlesResponse> {
+    const {
+        shop,
+        startDateStr,
+        endDateStr,
+        sortBy = "revenue",
+        sortOrder = "desc",
+        page = 1,
+        perPage = 10,
+        search = "",
+    } = params;
+
+    const startDate = parseDateAsUTC(startDateStr);
+    const endDate = endOfDayUTC(endDateStr);
+
+    // Map SortField to repository sort field
+    const repoSortBy = mapSortFieldToRepo(sortBy);
+
+    const [paginatedResult, statusCounts] = await Promise.all([
+        getPaginatedBundlesWithAnalytics({
+            shop,
+            startDate,
+            endDate,
+            sortBy: repoSortBy,
+            sortOrder,
+            page,
+            perPage,
+            search,
+        }),
+        getBundleStatusCounts(shop),
+    ]);
+
+    const totalBundles = Object.values(statusCounts).reduce((a, b) => a + b, 0);
+
+    return {
+        bundles: paginatedResult.bundles,
+        pagination: paginatedResult.pagination,
+        statusCounts,
+        totalBundles,
+    };
+}
+
+/**
+ * Map SortField type to repository sort field
+ */
+function mapSortFieldToRepo(
+    sortBy: SortField,
+): "revenue" | "views" | "purchases" | "conversion" | "created" {
+    return sortBy as
+        | "revenue"
+        | "views"
+        | "purchases"
+        | "conversion"
+        | "created";
+}
+
 /**
  * Filter bundles by status
  */
@@ -212,7 +273,9 @@ export function filterBundlesByStatus(
         return bundles;
     }
 
-    return bundles.filter((bundle) => bundle.status.toLowerCase() === status.toLowerCase());
+    return bundles.filter(
+        (bundle) => bundle.status.toLowerCase() === status.toLowerCase(),
+    );
 }
 
 /**

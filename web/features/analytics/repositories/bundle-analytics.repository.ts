@@ -3,8 +3,17 @@
  *
  * Handles all database queries for top performing bundles analytics
  */
+import {
+    BundleWithAnalytics,
+    calculateHealthStatus,
+    CoreBundleFetchParams,
+    CoreBundleFetchResult,
+    PaginatedBundleParams,
+    PaginatedBundleResult,
+    TopBundleStats,
+    TopBundleTrend,
+} from "@/features/analytics";
 import { prisma } from "@/shared/repositories";
-import { BundleWithAnalytics, calculateHealthStatus, TopBundleStats, TopBundleTrend, } from "@/features/analytics";
 
 /**
  * Get top performing bundles with comprehensive metrics
@@ -149,10 +158,114 @@ export async function getAllBundlesWithAnalytics(
         | "created" = "revenue",
     sortOrder: "asc" | "desc" = "desc",
 ): Promise<BundleWithAnalytics[]> {
-    // Parallel Execution
-    const [bundles, bundleAnalytics] = await Promise.all([
+    const result = await fetchBundlesWithAnalyticsCore({
+        shop,
+        startDate,
+        endDate,
+        sortBy,
+        sortOrder,
+    });
+
+    return result.bundles;
+}
+
+/**
+ * Get paginated bundles with analytics, search, and sorting
+ */
+export async function getPaginatedBundlesWithAnalytics(
+    params: PaginatedBundleParams,
+): Promise<PaginatedBundleResult> {
+    const {
+        shop,
+        startDate,
+        endDate,
+        sortBy = "revenue",
+        sortOrder = "desc",
+        page = 1,
+        perPage = 10,
+        search = "",
+    } = params;
+
+    // Fetch all matching bundles with analytics
+    const { bundles, totalCount } = await fetchBundlesWithAnalyticsCore({
+        shop,
+        startDate,
+        endDate,
+        sortBy,
+        sortOrder,
+        search,
+    });
+
+    // Apply pagination
+    const startIndex = (page - 1) * perPage;
+    const paginatedBundles = bundles.slice(startIndex, startIndex + perPage);
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    return {
+        bundles: paginatedBundles,
+        pagination: {
+            page,
+            perPage,
+            total: totalCount,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+        },
+    };
+}
+
+/**
+ * Get bundle count by status
+ */
+export async function getBundleStatusCounts(shop: string) {
+    const counts = await prisma.bundle.groupBy({
+        by: ["status"],
+        where: {
+            shop,
+            deletedAt: null,
+        },
+        _count: {
+            id: true,
+        },
+    });
+
+    return counts.reduce(
+        (acc, curr) => {
+            acc[curr.status] = curr._count.id;
+            return acc;
+        },
+        {} as Record<string, number>,
+    );
+}
+
+/**
+ * Core function to fetch and transform bundles with analytics
+ */
+export async function fetchBundlesWithAnalyticsCore(
+    params: CoreBundleFetchParams,
+): Promise<CoreBundleFetchResult> {
+    const { shop, startDate, endDate, sortBy, sortOrder, search = "" } = params;
+
+    // Build the where clause for bundles
+    const bundleWhereClause: any = {
+        shop,
+        deletedAt: null,
+    };
+
+    // Add search filter if provided
+    if (search && search.trim() !== "") {
+        bundleWhereClause.name = {
+            contains: search.trim(),
+            mode: "insensitive",
+        };
+    }
+
+    // Parallel Execution: Get bundles, analytics, and count
+    const [bundles, bundleAnalytics, totalCount] = await Promise.all([
         prisma.bundle.findMany({
-            where: { shop, deletedAt: null },
+            where: bundleWhereClause,
             select: {
                 id: true,
                 name: true,
@@ -178,60 +291,89 @@ export async function getAllBundlesWithAnalytics(
                 bundlePurchases: true,
             },
         }),
+        prisma.bundle.count({
+            where: bundleWhereClause,
+        }),
     ]);
 
-    // Hash Map Lookup
+    // Hash Map Lookup for analytics
     const analyticsMap = new Map(bundleAnalytics.map((a) => [a.bundleId, a]));
 
-    // Single-Pass Transformation
-    const bundlesWithAnalytics = bundles.map((bundle) => {
-        const analytics = analyticsMap.get(bundle.id);
+    // Transform bundles with analytics
+    const bundlesWithAnalytics = bundles.map((bundle) =>
+        transformBundleWithAnalytics(bundle, analyticsMap),
+    );
 
-        const views = analytics?._sum.bundleViews || 0;
-        const purchases = analytics?._sum.bundlePurchases || 0;
-        const revenue = analytics?._sum.bundleRevenue || 0;
-        const addToCarts = analytics?._sum.bundleAddToCarts || 0;
+    // Sort bundles
+    const sortedBundles = sortBundles(bundlesWithAnalytics, sortBy, sortOrder);
 
-        const conversionRate = views > 0 ? (purchases / views) * 100 : 0;
-        const addToCartRate = views > 0 ? (addToCarts / views) * 100 : 0;
-        const revenuePerView = views > 0 ? revenue / views : 0;
-        const averageOrderValue = purchases > 0 ? revenue / purchases : 0;
+    return {
+        bundles: sortedBundles,
+        totalCount,
+    };
+}
 
-        // Health logic
-        const health = calculateHealthStatus({
-            views,
-            conversionRate,
-            revenue,
-            addToCartRate,
-        });
+/**
+ * Transform a bundle record with its analytics data
+ */
+export function transformBundleWithAnalytics(
+    bundle: any,
+    analyticsMap: Map<string, any>,
+): BundleWithAnalytics {
+    const analytics = analyticsMap.get(bundle.id);
 
-        return {
-            id: bundle.id,
-            title: bundle.name,
-            status: bundle.status,
-            type: bundle.type,
-            discountType: bundle.discountType,
-            discountValue: bundle.discountValue,
-            createdAt: bundle.createdAt,
-            publishedAt: bundle.publishedAt,
-            isPublished: bundle.isPublished,
-            revenue,
-            views,
-            addToCarts,
-            purchases,
-            conversionRate: Number(conversionRate.toFixed(2)),
-            addToCartRate: Number(addToCartRate.toFixed(2)),
-            revenuePerView: Number(revenuePerView.toFixed(2)),
-            averageOrderValue: Number(averageOrderValue.toFixed(2)),
-            healthStatus: health.status,
-            healthReason: health.reason,
-        };
+    const views = analytics?._sum.bundleViews || 0;
+    const purchases = analytics?._sum.bundlePurchases || 0;
+    const revenue = analytics?._sum.bundleRevenue || 0;
+    const addToCarts = analytics?._sum.bundleAddToCarts || 0;
+
+    const conversionRate = views > 0 ? (purchases / views) * 100 : 0;
+    const addToCartRate = views > 0 ? (addToCarts / views) * 100 : 0;
+    const revenuePerView = views > 0 ? revenue / views : 0;
+    const averageOrderValue = purchases > 0 ? revenue / purchases : 0;
+
+    // Health logic
+    const health = calculateHealthStatus({
+        views,
+        conversionRate,
+        revenue,
+        addToCartRate,
     });
 
-    // Mathematical Sorting
-    return bundlesWithAnalytics.sort((a, b) => {
-        const multiplier = sortOrder === "desc" ? -1 : 1;
+    return {
+        id: bundle.id,
+        title: bundle.name,
+        status: bundle.status,
+        type: bundle.type,
+        discountType: bundle.discountType,
+        discountValue: bundle.discountValue,
+        createdAt: bundle.createdAt,
+        publishedAt: bundle.publishedAt,
+        isPublished: bundle.isPublished,
+        revenue,
+        views,
+        addToCarts,
+        purchases,
+        conversionRate: Number(conversionRate.toFixed(2)),
+        addToCartRate: Number(addToCartRate.toFixed(2)),
+        revenuePerView: Number(revenuePerView.toFixed(2)),
+        averageOrderValue: Number(averageOrderValue.toFixed(2)),
+        healthStatus: health.status,
+        healthReason: health.reason,
+    };
+}
 
+/**
+ * Sort bundles by the specified field and order
+ */
+export function sortBundles(
+    bundles: BundleWithAnalytics[],
+    sortBy: "revenue" | "views" | "purchases" | "conversion" | "created",
+    sortOrder: "asc" | "desc",
+): BundleWithAnalytics[] {
+    const multiplier = sortOrder === "desc" ? -1 : 1;
+
+    return [...bundles].sort((a, b) => {
         switch (sortBy) {
             case "revenue":
                 return (a.revenue - b.revenue) * multiplier;
@@ -249,28 +391,4 @@ export async function getAllBundlesWithAnalytics(
                 return 0;
         }
     });
-}
-
-/**
- * Get bundle count by status
- */
-export async function getBundleStatusCounts(shop: string) {
-    const counts = await prisma.bundle.groupBy({
-        by: ["status"],
-        where: {
-            shop,
-            deletedAt: null,
-        },
-        _count: {
-            id: true,
-        },
-    });
-
-    return counts.reduce(
-        (acc, curr) => {
-            acc[curr.status] = curr._count.id;
-            return acc;
-        },
-        {} as Record<string, number>,
-    );
 }

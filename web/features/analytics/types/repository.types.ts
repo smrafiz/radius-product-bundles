@@ -82,3 +82,52 @@ export interface BundleWithAnalytics {
     healthStatus?: string;
     healthReason?: string;
 }
+
+/**
+ * Parameters for paginated bundle analytics query
+ */
+export interface PaginatedBundleParams {
+    shop: string;
+    startDate: Date;
+    endDate: Date;
+    sortBy?: "revenue" | "views" | "purchases" | "conversion" | "created";
+    sortOrder?: "asc" | "desc";
+    page?: number;
+    perPage?: number;
+    search?: string;
+}
+
+/**
+ * Result of paginated bundle analytics query
+ */
+export interface PaginatedBundleResult {
+    bundles: BundleWithAnalytics[];
+    pagination: {
+        page: number;
+        perPage: number;
+        total: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+    };
+}
+
+/**
+ * Internal parameters for the core bundle fetching function
+ */
+export interface CoreBundleFetchParams {
+    shop: string;
+    startDate: Date;
+    endDate: Date;
+    sortBy: "revenue" | "views" | "purchases" | "conversion" | "created";
+    sortOrder: "asc" | "desc";
+    search?: string;
+}
+
+/**
+ * Internal result from core bundle fetching function
+ */
+export interface CoreBundleFetchResult {
+    bundles: BundleWithAnalytics[];
+    totalCount: number;
+}
