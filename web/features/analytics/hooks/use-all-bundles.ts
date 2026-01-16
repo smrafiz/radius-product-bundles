@@ -77,7 +77,6 @@ export function useBundleSort() {
  * Hook to manage table filters
  */
 export function useBundleFilters() {
-    const [statusFilter, setStatusFilter] = useState<string>("all");
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     /**
@@ -85,13 +84,6 @@ export function useBundleFilters() {
      */
     const filterBundles = (bundles: BundleWithAnalytics[]): BundleWithAnalytics[] => {
         let filtered = [...bundles];
-
-        // Status filter
-        if (statusFilter && statusFilter !== "all") {
-            filtered = filtered.filter(
-                (b) => b.status.toLowerCase() === statusFilter.toLowerCase(),
-            );
-        }
 
         // Search filter
         if (searchQuery && searchQuery.trim() !== "") {
@@ -105,8 +97,6 @@ export function useBundleFilters() {
     };
 
     return {
-        statusFilter,
-        setStatusFilter,
         searchQuery,
         setSearchQuery,
         filterBundles,

@@ -1,7 +1,7 @@
 /**
  * Analytics component types
  */
-import { Bundle } from "@/features/bundles";
+import { SortField } from "@/features/analytics";
 
 /**
  * Analytics-based bundle configuration
@@ -44,4 +44,17 @@ export interface AnalyticsCalendarProps {
     onEndInputChange?: (value: string) => void;
     startInput: string;
     endInput: string;
+}
+
+export /**
+ * Sort Header Cell
+ */
+interface SortHeaderProps {
+    field: SortField;
+    label: string;
+    currentSort: SortField;
+    currentOrder: "asc" | "desc";
+    onSort: (field: SortField) => void;
+    format?: "currency" | "numeric";
+    listSlot?: "primary" | "inline" | "labeled";
 }

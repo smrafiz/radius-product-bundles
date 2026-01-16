@@ -100,7 +100,7 @@ function hasLowConfidence(views: number): boolean {
  * Top Performing Bundles Table
  */
 export function TopBundlesTable() {
-    const { data: bundles, isLoading, error } = useTopBundles(10);
+    const { data: bundles, isLoading, error } = useTopBundles(5);
 
     if (isLoading) {
         return (

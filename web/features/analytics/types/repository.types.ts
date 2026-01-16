@@ -2,8 +2,6 @@
  * Analytics Types
  */
 
-import { prisma } from "@/shared/repositories";
-
 /**
  * Raw analytics metrics from the database
  */
@@ -81,4 +79,6 @@ export interface BundleWithAnalytics {
     addToCartRate: number;
     revenuePerView: number;
     averageOrderValue: number;
+    healthStatus?: string;
+    healthReason?: string;
 }

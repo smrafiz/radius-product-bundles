@@ -39,6 +39,7 @@ export type SortField =
     | "revenue"
     | "views"
     | "purchases"
+    | "cart"
     | "conversion"
     | "created";
 

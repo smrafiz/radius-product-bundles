@@ -4,12 +4,36 @@
 export function TopBundlesTableHeader() {
     return (
         <s-table-header-row>
-            <s-table-header listSlot="primary">Bundle</s-table-header>
-            <s-table-header listSlot="inline">Assessment</s-table-header>
-            <s-table-header listSlot="labeled">Revenue + AOV</s-table-header>
-            <s-table-header listSlot="labeled">Orders</s-table-header>
-            <s-table-header listSlot="labeled">Views</s-table-header>
-            <s-table-header listSlot="labeled">Conversion</s-table-header>
+            <s-table-header listSlot="primary">
+                <s-stack paddingInline="none" paddingBlock="small-300">
+                    Bundle
+                </s-stack>
+            </s-table-header>
+            <s-table-header listSlot="inline">
+                <s-stack paddingInline="none" paddingBlock="small-300">
+                    Assessment
+                </s-stack>
+            </s-table-header>
+            <s-table-header listSlot="labeled">
+                <s-stack paddingInline="none" paddingBlock="small-300">
+                    Revenue + AOV
+                </s-stack>
+            </s-table-header>
+            <s-table-header listSlot="labeled">
+                <s-stack paddingInline="none" paddingBlock="small-300">
+                    Orders
+                </s-stack>
+            </s-table-header>
+            <s-table-header listSlot="labeled">
+                <s-stack paddingInline="none" paddingBlock="small-300">
+                    Views
+                </s-stack>
+            </s-table-header>
+            <s-table-header listSlot="labeled">
+                <s-stack paddingInline="none" paddingBlock="small-300">
+                    Conversion
+                </s-stack>
+            </s-table-header>
         </s-table-header-row>
     );
 }

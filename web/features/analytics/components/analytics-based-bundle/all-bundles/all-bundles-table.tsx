@@ -1,82 +1,51 @@
 "use client";
 
-import { SortField, useAllBundles, useBundleFilters, useBundleSort, } from "@/features/analytics";
+import {
+    AllBundlesHeader,
+    AllBundlesSkeleton,
+    AllBundlesTableHeader,
+    useAllBundles,
+    useBundleFilters,
+    useBundleSort,
+} from "@/features/analytics";
 import { useMemo } from "react";
 import { getBundleStatusBadge } from "@/features/bundles";
-
-/**
- * Format currency
- */
-function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(amount);
-}
-
-/**
- * Format number with commas
- */
-function formatNumber(num: number): string {
-    return new Intl.NumberFormat("en-US").format(num);
-}
-
-/**
- * Get status badge tone
- */
-function getStatusTone(status: string): "success" | "info" | "neutral" {
-    switch (status.toLowerCase()) {
-        case "active":
-            return "success";
-        case "draft":
-            return "neutral";
-        case "scheduled":
-            return "info";
-        default:
-            return "neutral";
-    }
-}
+import { EmptyState, formatCurrencyCompact, formatNumber } from "@/shared";
 
 /**
  * Get health status badge config
  */
 function getHealthBadge(status: string): {
-    icon: string;
-    tone: "success" | "attention" | "critical" | "info";
+    color: string;
     label: string;
 } {
     switch (status) {
         case "healthy":
-            return { icon: "🟢", tone: "success", label: "Healthy" };
+            return { color: "#047b5d", label: "Healthy" };
         case "needs-work":
-            return { icon: "⚠️", tone: "attention", label: "Needs Work" };
+            return { color: "#b28400", label: "Needs Work" };
         case "poor":
-            return { icon: "🔴", tone: "critical", label: "Poor" };
+            return { color: "#e22c38", label: "Poor" };
         case "new":
-            return { icon: "🆕", tone: "info", label: "New" };
+            return { color: "#0094d5", label: "New" };
         default:
-            return { icon: "—", tone: "info", label: "Unknown" };
+            return { color: "#0094d5", label: "Unknown" };
     }
 }
 
 /**
- * Get conversion badge tone based on rate and sample size
+ * Get conversion rate tone based on value
  */
-function getConversionBadge(
-    rate: number,
-    views: number,
-): { tone: "success" | "attention" | "neutral"; hasWarning: boolean } {
-    const hasWarning = views < 30;
-
-    if (hasWarning) {
-        return { tone: "attention", hasWarning: true };
+function getConversionTone(rate: number): "success" | "warning" | "neutral" {
+    if (rate >= 10) {
+        return "success";
     }
 
-    if (rate >= 8) return { tone: "success", hasWarning: false };
-    if (rate >= 5) return { tone: "attention", hasWarning: false };
-    return { tone: "neutral", hasWarning: false };
+    if (rate >= 5) {
+        return "warning";
+    }
+
+    return "neutral";
 }
 
 /**
@@ -86,16 +55,10 @@ function FunnelBar({
     views,
     carts,
     orders,
-    healthBadge,
 }: {
     views: number;
     carts: number;
     orders: number;
-    healthBadge: {
-        icon: string;
-        tone: "success" | "warning" | "critical" | "info";
-        label: string;
-    };
 }) {
     if (views === 0) {
         return "-";
@@ -121,7 +84,7 @@ function FunnelBar({
                         style={{
                             width: "100px",
                             height: "6px",
-                            backgroundColor: "#E3E3E3",
+                            backgroundColor: "#ffa55f",
                             borderRadius: "2px",
                         }}
                     />
@@ -159,150 +122,15 @@ function FunnelBar({
                     />
                 </s-stack>
             </s-stack>
-            <s-badge tone={healthBadge.tone}>
-                {healthBadge.icon} {healthBadge.label}
-            </s-badge>
         </s-stack>
     );
 }
 
 /**
- * Table Skeleton
- */
-function TableSkeleton() {
-    return (
-        <s-section padding="none">
-            <s-table loading>
-                <s-table-header-row>
-                    <s-table-header listSlot="primary">Bundle</s-table-header>
-                    <s-table-header listSlot="inline">Status</s-table-header>
-                    <s-table-header listSlot="labeled" format="currency">
-                        Revenue
-                    </s-table-header>
-                    <s-table-header listSlot="labeled">Orders</s-table-header>
-                    <s-table-header listSlot="labeled">Conv %</s-table-header>
-                    <s-table-header listSlot="labeled">Views</s-table-header>
-                    <s-table-header listSlot="labeled">Cart %</s-table-header>
-                    <s-table-header listSlot="labeled">Funnel</s-table-header>
-                    <s-table-header listSlot="inline">Health</s-table-header>
-                </s-table-header-row>
-                <s-table-body>
-                    {[...Array(5)].map((_, i) => (
-                        <s-table-row key={i}>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                            <s-table-cell>
-                                <s-skeleton-text lines={1} />
-                            </s-table-cell>
-                        </s-table-row>
-                    ))}
-                </s-table-body>
-            </s-table>
-        </s-section>
-    );
-}
-
-/**
- * Empty State
- */
-function EmptyState({ hasFilters }: { hasFilters: boolean }) {
-    return (
-        <s-section>
-            <s-stack gap="base" alignItems="center">
-                <s-icon type="search" size="xl" tone="neutral" />
-                <s-stack gap="small-300" alignItems="center">
-                    <s-text heading size="lg">
-                        {hasFilters ? "No bundles found" : "No bundles yet"}
-                    </s-text>
-                    <s-text tone="neutral" alignContent="center">
-                        {hasFilters
-                            ? "Try adjusting your filters or search query"
-                            : "Create your first bundle to see analytics here"}
-                    </s-text>
-                </s-stack>
-            </s-stack>
-        </s-section>
-    );
-}
-
-/**
- * Sort Header Cell (Clickable)
- */
-interface SortHeaderProps {
-    field: SortField;
-    label: string;
-    currentSort: SortField;
-    currentOrder: "asc" | "desc";
-    onSort: (field: SortField) => void;
-    format?: "currency" | "numeric";
-    listSlot?: "primary" | "inline" | "labeled";
-}
-
-function SortHeader({
-    field,
-    label,
-    currentSort,
-    currentOrder,
-    onSort,
-    format,
-    listSlot = "labeled",
-}: SortHeaderProps) {
-    const isActive = currentSort === field;
-    const icon = isActive ? (currentOrder === "desc" ? "↓" : "↑") : "";
-
-    return (
-        <s-table-header listSlot={listSlot} format={format}>
-            <div className="-ml-3">
-                <s-button variant="tertiary" onClick={() => onSort(field)}>
-                    <span
-                        style={{
-                            borderBottom:
-                                ".125rem dotted var(--p-color-border-tertiary)",
-                            cursor: "help",
-                            display: "inline-block",
-                        }}
-                    >
-                        {label} {icon}
-                    </span>
-                </s-button>
-            </div>
-        </s-table-header>
-    );
-}
-
-/**
  * All Bundles Analytics Table - Diagnostic View
- *
- * Visual analysis table optimized for:
- * - Multi-signal diagnostics
- * - Health status indicators
- * - Funnel visualization
- * - Actionable insights
  */
 export function AllBundlesTable() {
-    const { sortBy, sortOrder, handleSort } = useBundleSort();
+    const { sortBy, sortOrder } = useBundleSort();
     const {
         statusFilter,
         setStatusFilter,
@@ -314,7 +142,10 @@ export function AllBundlesTable() {
 
     // Apply filters
     const filteredBundles = useMemo(() => {
-        if (!data?.bundles) return [];
+        if (!data?.bundles) {
+            return [];
+        }
+
         return filterBundles(data.bundles);
     }, [data?.bundles, filterBundles]);
 
@@ -322,294 +153,187 @@ export function AllBundlesTable() {
 
     if (isLoading) {
         return (
-            <s-card>
-                <TableSkeleton />
-            </s-card>
+            <AllBundlesSkeleton
+                Header={AllBundlesHeader}
+                TableHeader={AllBundlesTableHeader}
+            />
         );
     }
 
     if (error) {
         return (
-            <s-card>
-                <s-section>
+            <s-section padding="none">
+                <AllBundlesHeader />
+                <s-box padding="base">
                     <s-banner tone="critical">
                         <s-text>
-                            Failed to load bundles. Please try again.
+                            Failed to load bundle performance data. Please try
+                            again.
                         </s-text>
                     </s-banner>
-                </s-section>
-            </s-card>
+                </s-box>
+            </s-section>
         );
     }
 
-    if (!data || data.bundles.length === 0) {
+    if (!filteredBundles || filteredBundles.length === 0) {
         return (
-            <s-card>
-                <EmptyState hasFilters={false} />
-            </s-card>
+            <s-section padding="none">
+                <AllBundlesHeader />
+                <s-box padding="base">
+                    <EmptyState
+                        heading={
+                            hasFilters ? "No bundles found" : "No bundles yet"
+                        }
+                        description={
+                            hasFilters
+                                ? "Try adjusting your filters or search query"
+                                : "Create your first bundle to see analytics here"
+                        }
+                    />
+                </s-box>
+            </s-section>
         );
     }
 
     return (
         <s-section padding="none">
-            {/* Header with filters */}
-            <s-box
-                padding="base"
-                border="base"
-                borderStyle="none none solid none"
-            >
-                <s-stack gap="base">
-                    <s-stack
-                        direction="inline"
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
-                        <s-stack gap="small-200">
-                            <s-text heading size="lg">
-                                All Bundles Analytics ({data.totalBundles})
-                            </s-text>
-                            <s-text tone="neutral" size="sm">
-                                Analyze performance across revenue, traffic,
-                                conversion & quality signals
-                            </s-text>
-                        </s-stack>
-
-                        {/* Status counts */}
-                        <s-stack direction="inline" gap="small-300">
-                            {data.statusCounts.ACTIVE > 0 && (
-                                <s-stack
-                                    direction="inline"
-                                    gap="small-100"
-                                    alignItems="center"
-                                >
-                                    <s-text tone="neutral" size="sm">
-                                        Active:
-                                    </s-text>
-                                    <s-text type="strong">
-                                        {data.statusCounts.ACTIVE}
-                                    </s-text>
-                                </s-stack>
-                            )}
-                            {data.statusCounts.DRAFT > 0 && (
-                                <s-stack
-                                    direction="inline"
-                                    gap="small-100"
-                                    alignItems="center"
-                                >
-                                    <s-text tone="neutral" size="sm">
-                                        Draft:
-                                    </s-text>
-                                    <s-text>{data.statusCounts.DRAFT}</s-text>
-                                </s-stack>
-                            )}
-                        </s-stack>
-                    </s-stack>
-
-                    {/* Filters row */}
-                    <s-stack direction="inline" gap="base">
-                        {/* Search */}
-                        <s-search-field
-                            placeholder="Search bundles..."
-                            value={searchQuery}
-                            onInput={(e: any) => setSearchQuery(e.target.value)}
-                            onClear={() => setSearchQuery("")}
-                        />
-
-                        {/* Status filter */}
-                        <s-select
-                            value={statusFilter}
-                            onChange={(e: any) =>
-                                setStatusFilter(e.target.value)
-                            }
-                        >
-                            <option value="all">All statuses</option>
-                            <option value="active">Active</option>
-                            <option value="draft">Draft</option>
-                            <option value="scheduled">Scheduled</option>
-                        </s-select>
-                    </s-stack>
-                </s-stack>
-            </s-box>
+            {/* Header with search */}
+            <AllBundlesHeader />
 
             {/* Table */}
             <s-table>
-                <s-table-header-row>
-                    <s-table-header listSlot="primary">Bundle</s-table-header>
-                    <s-table-header listSlot="inline">Status</s-table-header>
-                    <SortHeader
-                        field="revenue"
-                        label="Revenue"
-                        currentSort={sortBy}
-                        currentOrder={sortOrder}
-                        onSort={handleSort}
-                    />
-                    <SortHeader
-                        field="purchases"
-                        label="Orders"
-                        currentSort={sortBy}
-                        currentOrder={sortOrder}
-                        onSort={handleSort}
-                    />
-                    <SortHeader
-                        field="views"
-                        label="Views"
-                        currentSort={sortBy}
-                        currentOrder={sortOrder}
-                        onSort={handleSort}
-                    />
-                    <s-table-header listSlot="labeled">Cart %</s-table-header>
-                    <SortHeader
-                        field="conversion"
-                        label="Conv %"
-                        currentSort={sortBy}
-                        currentOrder={sortOrder}
-                        onSort={handleSort}
-                    />
-                    <s-table-header listSlot="labeled">Funnel</s-table-header>
-                    {/*<s-table-header listSlot="inline">Health</s-table-header>*/}
-                </s-table-header-row>
+                <AllBundlesTableHeader />
 
                 <s-table-body>
-                    {filteredBundles.length === 0 ? (
-                        <s-table-row>
-                            <s-table-cell colSpan={9}>
-                                <EmptyState hasFilters={hasFilters} />
-                            </s-table-cell>
-                        </s-table-row>
-                    ) : (
-                        filteredBundles.map((bundle) => {
-                            const conversionBadge = getConversionBadge(
-                                bundle.conversionRate,
-                                bundle.views,
-                            );
-                            const healthBadge = getHealthBadge(
-                                bundle.healthStatus,
-                            );
-                            const statusTone = getStatusTone(bundle.status);
+                    {filteredBundles.map((bundle) => {
+                        const conversionBadge = getConversionTone(
+                            bundle.conversionRate,
+                        );
+                        const healthBadge = getHealthBadge(
+                            bundle.healthStatus || "unknown",
+                        );
 
-                            return (
-                                <s-table-row key={bundle.id}>
-                                    {/* Bundle name + type */}
-                                    <s-table-cell>
-                                        <s-stack gap="small-200">
-                                            <s-text type="strong">
-                                                {bundle.title}
-                                            </s-text>
-                                        </s-stack>
-                                    </s-table-cell>
+                        return (
+                            <s-table-row key={bundle.id}>
+                                {/* Bundle name + type */}
+                                <s-table-cell>
+                                    <s-stack gap="small-200">
+                                        <s-heading>{bundle.title}</s-heading>
+                                    </s-stack>
+                                </s-table-cell>
 
-                                    {/* Status badge */}
-                                    <s-table-cell>
-                                        {(() => {
-                                            const badgeProps =
-                                                getBundleStatusBadge(
-                                                    bundle.status,
-                                                );
-                                            return (
-                                                <s-badge
-                                                    color="base"
-                                                    {...badgeProps}
-                                                >
-                                                    {badgeProps.text}
-                                                </s-badge>
-                                            );
-                                        })()}
-                                    </s-table-cell>
-
-                                    {/* Revenue + AOV */}
-                                    <s-table-cell>
-                                        <s-stack gap="small-200">
-                                            <s-text type="strong">
-                                                {formatCurrency(bundle.revenue)}
-                                            </s-text>
-                                            {bundle.averageOrderValue > 0 && (
-                                                <s-text
-                                                    tone="neutral"
-                                                    size="sm"
-                                                >
-                                                    {formatCurrency(
-                                                        bundle.averageOrderValue,
-                                                    )}
-                                                    /ord
-                                                </s-text>
-                                            )}
-                                        </s-stack>
-                                    </s-table-cell>
-
-                                    {/* Orders */}
-                                    <s-table-cell>
-                                        <s-text type="strong">
-                                            {formatNumber(bundle.purchases)}
-                                        </s-text>
-                                    </s-table-cell>
-
-                                    {/* Views */}
-                                    <s-table-cell>
-                                        <s-text tone="neutral">
-                                            {formatNumber(bundle.views)}
-                                        </s-text>
-                                    </s-table-cell>
-
-                                    {/* Cart % (Add-to-cart rate) */}
-                                    <s-table-cell>
-                                        <s-text>{bundle.addToCartRate}%</s-text>
-                                    </s-table-cell>
-
-                                    {/* Conversion % with color coding */}
-                                    <s-table-cell>
-                                        <s-stack gap="small-200">
+                                {/* Status badge */}
+                                <s-table-cell>
+                                    {(() => {
+                                        const badgeProps = getBundleStatusBadge(
+                                            bundle.status,
+                                        );
+                                        return (
                                             <s-badge
-                                                tone={conversionBadge.tone}
+                                                color="base"
+                                                {...badgeProps}
                                             >
-                                                {bundle.conversionRate}%
+                                                {badgeProps.text}
                                             </s-badge>
-                                            <s-tooltip
-                                                content={
-                                                    conversionBadge.hasWarning
-                                                        ? "Low sample size - conversion rate may fluctuate"
-                                                        : `${bundle.purchases} orders from ${bundle.views} views`
+                                        );
+                                    })()}
+                                </s-table-cell>
+
+                                {/* Revenue + AOV */}
+                                <s-table-cell>
+                                    <s-stack gap="small-200">
+                                        <s-text
+                                            tone={
+                                                bundle.revenue > 0
+                                                    ? "success"
+                                                    : "neutral"
+                                            }
+                                        >
+                                            <span
+                                                className={
+                                                    bundle.revenue > 0
+                                                        ? "font-semibold"
+                                                        : "font-normal"
                                                 }
-                                                preferredPlacement="top"
                                             >
-                                                <s-text
-                                                    tone="neutral"
-                                                    size="sm"
-                                                >
-                                                    ({bundle.purchases}/
-                                                    {bundle.views})
-                                                    {conversionBadge.hasWarning &&
-                                                        " ⚠"}
-                                                </s-text>
-                                            </s-tooltip>
-                                        </s-stack>
-                                    </s-table-cell>
+                                                {formatCurrencyCompact(
+                                                    bundle.revenue,
+                                                )}
+                                            </span>
+                                        </s-text>
+                                        {bundle.averageOrderValue > 0 && (
+                                            <s-text tone="neutral">
+                                                {formatCurrencyCompact(
+                                                    bundle.averageOrderValue,
+                                                )}
+                                                /order
+                                            </s-text>
+                                        )}
+                                    </s-stack>
+                                </s-table-cell>
 
-                                    {/* Funnel visualization */}
-                                    <s-table-cell>
-                                        <FunnelBar
-                                            views={bundle.views}
-                                            carts={bundle.addToCarts}
-                                            orders={bundle.purchases}
-                                            healthBadge={healthBadge}
-                                        />
-                                    </s-table-cell>
+                                {/* Orders */}
+                                <s-table-cell>
+                                    <s-text type="strong">
+                                        {formatNumber(bundle.purchases)}
+                                    </s-text>
+                                </s-table-cell>
 
-                                    {/* Health status with tooltip */}
-                                    {/*<s-table-cell>*/}
-                                    {/*    <s-tooltip*/}
-                                    {/*        content={bundle.healthReason}*/}
-                                    {/*        preferredPlacement="left"*/}
-                                    {/*    >*/}
-                                    {/*        <s-badge tone={healthBadge.tone}>*/}
-                                    {/*            {healthBadge.icon}{" "}*/}
-                                    {/*            {healthBadge.label}*/}
-                                    {/*        </s-badge>*/}
-                                    {/*    </s-tooltip>*/}
-                                    {/*</s-table-cell>*/}
-                                </s-table-row>
-                            );
-                        })
-                    )}
+                                {/* Views */}
+                                <s-table-cell>
+                                    <s-text tone="neutral">
+                                        {formatNumber(bundle.views)}
+                                    </s-text>
+                                </s-table-cell>
+
+                                {/* Cart % (Add-to-cart rate) */}
+                                <s-table-cell>
+                                    <s-text>{bundle.addToCartRate}%</s-text>
+                                </s-table-cell>
+
+                                {/* Conversion % with color coding */}
+                                <s-table-cell>
+                                    <s-stack gap="small-200">
+                                        <s-badge tone={conversionBadge}>
+                                            {bundle.conversionRate}%
+                                        </s-badge>
+                                    </s-stack>
+                                </s-table-cell>
+
+                                {/* Funnel visualization */}
+                                <s-table-cell>
+                                    <FunnelBar
+                                        views={bundle.views}
+                                        carts={bundle.addToCarts}
+                                        orders={bundle.purchases}
+                                    />
+                                </s-table-cell>
+                                <s-table-cell>
+                                    <span>
+                                        <s-text
+                                            interestFor={`${bundle.id}-health-tooltip`}
+                                        >
+                                            <span
+                                                className="w-3 h-3 rounded-full text-center inline-block"
+                                                style={{
+                                                    backgroundColor:
+                                                        healthBadge.color,
+                                                }}
+                                            />
+                                        </s-text>
+                                        <s-tooltip
+                                            id={`${bundle.id}-health-tooltip`}
+                                        >
+                                            <s-text tone="neutral">
+                                                {bundle.healthReason}
+                                            </s-text>
+                                        </s-tooltip>
+                                    </span>
+                                </s-table-cell>
+                            </s-table-row>
+                        );
+                    })}
                 </s-table-body>
             </s-table>
         </s-section>
