@@ -5,6 +5,11 @@ export function BundleList() {
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
+    const productTextColor =
+        styleData.productTextColor && styleData.productTextColor !== ""
+            ? styleData.productTextColor
+            : styleData.primaryColor || "#303030";
+
     const RenderSelectedProducts = () => {
         return (
             <div className="radius-bundle__product radius-bundle__product--list"
@@ -12,7 +17,7 @@ export function BundleList() {
                      backgroundColor: styleData.productBgColor || "#f7f7f7",
                      borderRadius: `${styleData.productRadius ?? 12}px`,
                      fontSize: `${styleData.productFontSize ?? 14}px`,
-                     color: styleData.productTextColor || "#303030",
+                     color: productTextColor,
                      borderColor: styleData.productBorderColor || "#e3e3e3",
                  }}
             >

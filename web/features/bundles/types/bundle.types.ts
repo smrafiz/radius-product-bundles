@@ -326,10 +326,16 @@ export interface DisplaySettings {
     showFreeShipping: boolean;
     enableHyperLink: boolean;
     style?: {
+        // General
+        primaryColor?: string;
+        secondaryColor?: string;
+        textColor?: string;
         // Add to Cart button
         buttonFontSize?: number;
         buttonBgColor?: string;
         buttonTextColor?: string;
+        buttonHoverBgColor?: string;
+        buttonHoverTextColor?: string;
         buttonRadius?: number;
         // Saving badge
         badgeFontSize?: number;
@@ -339,7 +345,6 @@ export interface DisplaySettings {
         // Product
         productBgColor?: string;
         productTextColor?: string;
-        productStarColor?: string;
         productBorderColor?: string;
         productRadius?: number;
         productFontSize?: number;

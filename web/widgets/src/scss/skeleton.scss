@@ -54,9 +54,13 @@
     &__skeleton-image {
         &--large {
             width: 100%;
-            height: 100px;
+            height: calc(var(--rb-image-size) + 30px);
             margin-bottom: var(--rb-spacing-sm);
             border-radius: 8px;
+        }
+        &--box {
+            width: calc(var(--rb-image-size) - 30px);
+            height: calc(var(--rb-image-size) - 30px);
         }
     }
 
@@ -103,8 +107,8 @@
             border: 1px solid var(--rb-border-color);
 
             .radius-bundle__skeleton-image {
-                width: 70px;
-                height: 70px;
+                width: var(--rb-image-size);
+                height: var(--rb-image-size);
                 border-radius: 8px;
                 flex-shrink: 0;
             }

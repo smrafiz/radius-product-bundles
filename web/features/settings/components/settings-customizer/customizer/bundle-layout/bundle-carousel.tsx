@@ -17,6 +17,11 @@ export function BundleCarousel() {
         });
     };
 
+    const productTextColor =
+        styleData.productTextColor && styleData.productTextColor !== ""
+            ? styleData.productTextColor
+            : styleData.primaryColor || "#303030";
+
     const RenderSelectedProducts = () => {
         return (
             <div className="radius-bundle__product radius-bundle__product--slider"
@@ -25,7 +30,7 @@ export function BundleCarousel() {
                      backgroundColor: styleData.productBgColor || "#f7f7f7",
                      borderRadius: `${styleData.productRadius ?? 12}px`,
                      fontSize: `${styleData.productFontSize ?? 14}px`,
-                     color: styleData.productTextColor || "#303030",
+                     color: productTextColor,
                      borderColor: styleData.productBorderColor || "#e3e3e3",
                 }}
             >

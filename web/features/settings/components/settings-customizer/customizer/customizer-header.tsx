@@ -1,8 +1,16 @@
 import {
-    BundleLayoutTab,
+    BundleTypeTab,
 } from "@/features/settings";
 
-export function CustomizerHeader() {
+interface Props {
+    activeBundleType: string;
+    onBundleTypeChange: (id: string) => void;
+}
+
+export function CustomizerHeader({
+    activeBundleType,
+    onBundleTypeChange,
+    }: Props) {
     return (
         <s-section>
             <s-stack
@@ -11,15 +19,19 @@ export function CustomizerHeader() {
                 justifyContent="space-between"
                 gap="base"
             >
-                <BundleLayoutTab />
-                <s-stack>
-                    <s-button-group gap="none">
-                        <s-button slot="secondary-actions">Desktop</s-button>
-                        <s-button slot="secondary-actions">Tablet</s-button>
-                        <s-button slot="secondary-actions">Mobile</s-button>
-                    </s-button-group>
-                </s-stack>
+                <BundleTypeTab
+                    activeId={activeBundleType}
+                    onChange={onBundleTypeChange}
+                />
+
+                <s-button-group gap="none">
+                    <s-button slot="secondary-actions">Desktop</s-button>
+                    <s-button slot="secondary-actions">Tablet</s-button>
+                    <s-button slot="secondary-actions">Mobile</s-button>
+                </s-button-group>
             </s-stack>
         </s-section>
     );
 }
+
+

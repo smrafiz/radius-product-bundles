@@ -7,7 +7,14 @@ import { useBundleStore } from "@/features/bundles";
 export function BundleOptionsButton() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
     const style = displaySettings.style ?? {};
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
+
+    const [activeTab, setActiveTab] = useState('normal')
+
+    const tabs = [
+        { id: 'normal', label: 'Normal' },
+        { id: 'hover', label: 'Hover' },
+    ]
 
     /**
      * Updates a style property in the store
@@ -39,8 +46,8 @@ export function BundleOptionsButton() {
 
             <div
                 className={`overflow-hidden transition-all duration-300 ease-in-out
-                         ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}
-                    `}
+                     ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}
+                `}
             >
                 <s-stack gap="base" padding="base">
                     {/* Add to cart button styling */}
@@ -49,6 +56,7 @@ export function BundleOptionsButton() {
                             direction="inline"
                             alignItems="center"
                             gap="small-300"
+                            justifyContent="space-between"
                         >
                             <s-heading>Font size</s-heading>
                             <s-button-group gap="none">
@@ -78,51 +86,130 @@ export function BundleOptionsButton() {
                                 </s-button>
                             </s-button-group>
                         </s-stack>
-                        <s-grid
-                            gridTemplateColumns="repeat(12, 1fr)"
-                            gap="base"
-                        >
-                            <s-grid-item
-                                gridColumn="span 6"
-                                gridRow="span 2"
-                            >
-                                <s-color-field
-                                    label="Background"
-                                    name="buttonBgColor"
-                                    placeholder="Select a color"
-                                    value={style.buttonBgColor || "#303030"}
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "buttonBgColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
-                            </s-grid-item>
-                            <s-grid-item
-                                gridColumn="span 6"
-                                gridRow="span 2"
-                            >
-                                <s-color-field
-                                    label="Text"
-                                    name="buttonTextColor"
-                                    placeholder="Select a color"
-                                    value={
-                                        style.buttonTextColor || "#ffffff"
-                                    }
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "buttonTextColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
-                            </s-grid-item>
-                        </s-grid>
+
+                        <s-stack gap="base">
+                            {/* Tab Navigation */}
+                            <s-stack direction="inline">
+                                <s-stack
+                                    direction="inline"
+                                    gap="none"
+                                    border="base"
+                                    borderRadius="base"
+                                    padding="small-400"
+                                    background="subdued"
+                                >
+                                    {tabs.map((tab) => (
+                                        <s-button
+                                            key={tab.id}
+                                            onClick={() => setActiveTab(tab.id)}
+                                            variant={activeTab === tab.id ? 'secondary' : 'tertiary'}
+                                        >
+                                            {tab.label}
+                                        </s-button>
+                                    ))}
+                                </s-stack>
+                            </s-stack>
+
+                            {/* Tab Content */}
+                            <s-box>
+                                {activeTab === 'normal' && (
+                                    <s-grid
+                                        gridTemplateColumns="repeat(12, 1fr)"
+                                        gap="base"
+                                    >
+                                        <s-grid-item
+                                            gridColumn="span 6"
+                                            gridRow="span 2"
+                                        >
+                                            <s-color-field
+                                                label="Background"
+                                                name="buttonBgColor"
+                                                placeholder="Select a color"
+                                                value={style.buttonBgColor || "#303030"}
+                                                onInput={(event: Event) => {
+                                                    const target =
+                                                        event.target as HTMLInputElement;
+                                                    updateStyle(
+                                                        "buttonBgColor",
+                                                        target.value,
+                                                    );
+                                                }}
+                                            />
+                                        </s-grid-item>
+                                        <s-grid-item
+                                            gridColumn="span 6"
+                                            gridRow="span 2"
+                                        >
+                                            <s-color-field
+                                                label="Text"
+                                                name="buttonTextColor"
+                                                placeholder="Select a color"
+                                                value={
+                                                    style.buttonTextColor || "#ffffff"
+                                                }
+                                                onInput={(event: Event) => {
+                                                    const target =
+                                                        event.target as HTMLInputElement;
+                                                    updateStyle(
+                                                        "buttonTextColor",
+                                                        target.value,
+                                                    );
+                                                }}
+                                            />
+                                        </s-grid-item>
+                                    </s-grid>
+                                )}
+
+                                {activeTab === 'hover' && (
+                                    <s-grid
+                                        gridTemplateColumns="repeat(12, 1fr)"
+                                        gap="base"
+                                    >
+                                        <s-grid-item
+                                            gridColumn="span 6"
+                                            gridRow="span 2"
+                                        >
+                                            <s-color-field
+                                                label="Background"
+                                                name="buttonHoverBgColor"
+                                                placeholder="Select a color"
+                                                value={style.buttonHoverBgColor || "#666666"}
+                                                onInput={(event: Event) => {
+                                                    const target =
+                                                        event.target as HTMLInputElement;
+                                                    updateStyle(
+                                                        "buttonHoverBgColor",
+                                                        target.value,
+                                                    );
+                                                }}
+                                            />
+                                        </s-grid-item>
+                                        <s-grid-item
+                                            gridColumn="span 6"
+                                            gridRow="span 2"
+                                        >
+                                            <s-color-field
+                                                label="Text"
+                                                name="buttonHoverTextColor"
+                                                placeholder="Select a color"
+                                                value={
+                                                    style.buttonHoverTextColor || "#ffffff"
+                                                }
+                                                onInput={(event: Event) => {
+                                                    const target =
+                                                        event.target as HTMLInputElement;
+                                                    updateStyle(
+                                                        "buttonHoverTextColor",
+                                                        target.value,
+                                                    );
+                                                }}
+                                            />
+                                        </s-grid-item>
+                                    </s-grid>
+                                )}
+                            </s-box>
+                        </s-stack>
+
                         <s-stack>
                             <s-text>Corner radius</s-text>
                             <RtpbRangeSlider

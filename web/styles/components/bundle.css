@@ -244,18 +244,18 @@
 .radius-bundle__actions {
     display: flex;
     justify-content: center;
-    .radius-bundle__add-to-cart {
-        background-color: #303030;
-        color: #fff;
-        border-radius: 6px;
-        width: 100%;
-        height: 42px;
-        padding: 6px 18px;
-        line-height: 28px;
-        cursor: pointer;
-        &:hover {
-            opacity: 0.7;
-        }
+}
+.radius-bundle__add-to-cart {
+    background-color: #303030;
+    color: #fff;
+    border-radius: 6px;
+    width: 100%;
+    height: 42px;
+    padding: 6px 18px;
+    line-height: 28px;
+    cursor: pointer;
+    &:hover {
+        opacity: 0.7;
     }
 }
 

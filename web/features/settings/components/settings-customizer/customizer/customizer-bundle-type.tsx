@@ -4,10 +4,13 @@ import { useState } from "react";
 import type { ComponentType } from "react";
 
 import { BUNDLE_TYPES } from "@/features/bundles";
+
 import {
+    CustomizerHeader,
+    BundleOptionType,
+    BundlePreviewBogo,
     BundlePreviewFixed,
     BundlePreviewBuyGet,
-    BundlePreviewBogo,
 } from "@/features/settings";
 
 export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
@@ -18,49 +21,41 @@ export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
 
 export function CustomizerBundleType() {
     const types = Object.values(BUNDLE_TYPES);
-    const [activeId, setActiveId] = useState(types[0]?.id);
+    const [activeId, setActiveId] = useState<string>(
+        types[0].id
+    );
 
-    const ActiveComponent = activeId && BUNDLE_PREVIEW_MAP[activeId];
-
-    const PreviewComponent = BUNDLE_PREVIEW_MAP[activeId];
+    const PreviewComponent = activeId
+        ? BUNDLE_PREVIEW_MAP[activeId]
+        : null;
 
     return (
-        <div className="md:flex border border-[#e3e3e3] rounded-xl overflow-hidden min-h-[300px]">
-            {/* LEFT: Tabs */}
-            <div className="md:w-[260px] border-r border-[#e3e3e3] bg-white">
-                <s-stack gap="none">
-                    {types.map((type) => {
-                        const isActive = type.id === activeId;
+        <div className="rtpb-full-modal-editor">
+            <div className="rtpb-full-modal-content flex flex-wrap gap-6">
+                {/* Left option */}
+                <div className="rtpb-left-setting">
+                    <div className="sticky top-0">
+                        <BundleOptionType />
+                    </div>
+                </div>
 
-                        return (
-                            <button
-                                key={type.id}
-                                onClick={() => setActiveId(type.id)}
-                                className={`text-left px-4 py-3 border-l-4 transition cursor-pointer
-                                    ${
-                                        isActive
-                                            ? "border-[#303030] bg-[#f7f7f7] font-semibold"
-                                            : "border-transparent hover:bg-[#f7f7f7]"
-                                    }
-                                `}
-                            >
-                                {type.label}
-                            </button>
-                        );
-                    })}
-                </s-stack>
-            </div>
-
-            {/* RIGHT: Content */}
-            <div className="flex-1 p-6 bg-[#fafafa]">
-                {ActiveComponent ? (
+                {/* Right review */}
+                <div className="rtpb-right-review">
                     <s-stack gap="base">
-                        {PreviewComponent && <PreviewComponent />}
+                        <CustomizerHeader
+                            activeBundleType={activeId}
+                            onBundleTypeChange={setActiveId}
+                        />
+
+                        {PreviewComponent ? (
+                            <PreviewComponent />
+                        ) : (
+                            <s-text>No preview available</s-text>
+                        )}
                     </s-stack>
-                ) : (
-                    <s-text>No preview available</s-text>
-                )}
+                </div>
             </div>
         </div>
     );
 }
+

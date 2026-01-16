@@ -3,9 +3,9 @@
 import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
 
 /**
- * Settings customizer page skeleton with sidebar layout
+ * Settings page skeleton with sidebar layout
  */
-export default function SettingsPageSkeleton() {
+export default function SettingsCustomizerPageSkeleton() {
     return (
         <PageSkeleton withPadding={true}>
             <PageHeaderSkeleton

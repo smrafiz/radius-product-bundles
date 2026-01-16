@@ -70,6 +70,7 @@ export function BundleOptionsImage() {
                                 direction="inline"
                                 alignItems="center"
                                 gap="small-300"
+                                justifyContent="space-between"
                             >
                                 <s-heading>Image fit</s-heading>
                                 <s-button-group gap="none">

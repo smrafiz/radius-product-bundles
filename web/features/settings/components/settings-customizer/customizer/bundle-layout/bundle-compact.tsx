@@ -5,11 +5,16 @@ export function BundleCompact() {
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
+    const productTextColor =
+        styleData.productTextColor && styleData.productTextColor !== ""
+            ? styleData.productTextColor
+            : styleData.primaryColor || "#303030";
+
     const RenderSelectedProducts = () => {
         return (
             <div className="radius-bundle__product radius-bundle__product--compact"
                  style={{
-                     color: styleData.productTextColor || "#303030",
+                     color: productTextColor,
                      fontSize: `${styleData.productFontSize ?? 14}px`,
                  }}
             >

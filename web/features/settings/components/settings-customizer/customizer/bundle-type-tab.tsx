@@ -1,16 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { BUNDLE_TYPES } from "@/features/bundles";
 
-export function BundleLayoutTab() {
+interface Props {
+    activeId: string;
+    onChange: (id: string) => void;
+}
+
+export function BundleTypeTab({ activeId, onChange }: Props) {
     const types = Object.values(BUNDLE_TYPES);
-    const [activeId] = useState(types[0]?.id);
 
     return (
         <s-section>
             <s-stack gap="none">
-                <s-select value={activeId}>
+                <s-select
+                    value={activeId}
+                    onChange={(e: Event) => {
+                        const target = e.target as HTMLSelectElement;
+                        onChange(target.value);
+                    }}
+                >
                     {types.map((type) => (
                         <s-option key={type.id} value={type.id}>
                             {type.label}
@@ -21,3 +31,4 @@ export function BundleLayoutTab() {
         </s-section>
     );
 }
+

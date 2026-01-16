@@ -564,18 +564,18 @@ declare global {
                 data-product-id="${product.id}" 
                 data-variant-id="${product.variantId}">
                 ${imageWrapper}
-                    <div class="radius-bundle__product-info radius-bundle__product-info--compact">
-                        ${productTitleHtml}
-                        ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
-                    </div>
-                    ${ this.showPrices
-                        ? `
-                            <div class="radius-bundle__product-price">
-                                ${priceHtml}
-                            </div>
-                        `
-                        : ""
-                    }
+                <div class="radius-bundle__product-info radius-bundle__product-info--compact">
+                    ${productTitleHtml}
+                    ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
+                </div>
+                ${ this.showPrices
+                    ? `
+                        <div class="radius-bundle__product-price">
+                            ${priceHtml}
+                        </div>
+                    `
+                    : ""
+                }
             </div>`;
             }
 

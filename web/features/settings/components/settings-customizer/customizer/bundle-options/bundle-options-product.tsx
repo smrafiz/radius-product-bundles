@@ -47,6 +47,7 @@ export function BundleOptionsProduct() {
                         direction="inline"
                         alignItems="center"
                         gap="small-300"
+                        justifyContent="space-between"
                     >
                         <s-heading>Font size</s-heading>
                         <s-button-group gap="none">
@@ -82,7 +83,7 @@ export function BundleOptionsProduct() {
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
                         >
-                            <s-grid-item gridColumn="span 4" gridRow="span 3">
+                            <s-grid-item gridColumn="span 6" gridRow="span 1">
                                 <s-color-field
                                     label="Background"
                                     name="productBgColor"
@@ -98,7 +99,7 @@ export function BundleOptionsProduct() {
                                     }}
                                 />
                             </s-grid-item>
-                            <s-grid-item gridColumn="span 4" gridRow="span 3">
+                            <s-grid-item gridColumn="span 6" gridRow="span 1">
                                 <s-color-field
                                     label="Text"
                                     name="productTextColor"
@@ -109,22 +110,6 @@ export function BundleOptionsProduct() {
                                             event.target as HTMLInputElement;
                                         updateStyle(
                                             "productTextColor",
-                                            target.value,
-                                        );
-                                    }}
-                                />
-                            </s-grid-item>
-                            <s-grid-item gridColumn="span 4" gridRow="span 3">
-                                <s-color-field
-                                    label="Review stars"
-                                    name="productStarColor"
-                                    placeholder="Select a color"
-                                    value={style.productStarColor || "#ffce07"}
-                                    onInput={(event: Event) => {
-                                        const target =
-                                            event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "productStarColor",
                                             target.value,
                                         );
                                     }}

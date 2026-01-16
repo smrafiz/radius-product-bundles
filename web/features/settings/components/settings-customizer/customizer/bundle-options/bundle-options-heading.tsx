@@ -50,6 +50,7 @@ export function BundleOptionsHeading() {
                         direction="inline"
                         alignItems="center"
                         gap="small-300"
+                        justifyContent="space-between"
                     >
                         <s-text>Font size</s-text>
                         <s-button-group gap="none">

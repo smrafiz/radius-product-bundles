@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { RtpbRangeSlider } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
 
-export function BundleOptionsBadge() {
+export function BundleOptionsGeneral() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
     const style = displaySettings.style ?? {};
     const [open, setOpen] = useState(false);
@@ -32,7 +31,7 @@ export function BundleOptionsBadge() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Badge</s-heading>
+                    <s-heading>General</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>
@@ -43,97 +42,65 @@ export function BundleOptionsBadge() {
                     `}
             >
                 <s-stack gap="base" padding="base">
-                    {/* Add to cart button styling */}
                     <s-stack gap="base">
-                        <s-stack
-                            direction="inline"
-                            alignItems="center"
-                            gap="small-300"
-                            justifyContent="space-between"
-                        >
-                            <s-heading>Font size</s-heading>
-                            <s-button-group gap="none">
-                                <s-button
-                                    slot="secondary-actions"
-                                    onClick={() =>
-                                        updateStyle("badgeFontSize", 14)
-                                    }
-                                >
-                                    Small
-                                </s-button>
-                                <s-button
-                                    slot="secondary-actions"
-                                    onClick={() =>
-                                        updateStyle("badgeFontSize", 16)
-                                    }
-                                >
-                                    Medium
-                                </s-button>
-                                <s-button
-                                    slot="secondary-actions"
-                                    onClick={() =>
-                                        updateStyle("badgeFontSize", 18)
-                                    }
-                                >
-                                    Large
-                                </s-button>
-                            </s-button-group>
-                        </s-stack>
                         <s-grid
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
                         >
                             <s-grid-item
-                                gridColumn="span 6"
+                                gridColumn="span 4"
                                 gridRow="span 2"
                             >
                                 <s-color-field
-                                    label="Background"
-                                    name="badgeBgColor"
+                                    label="Primary"
+                                    name="primaryColor"
                                     placeholder="Select a color"
-                                    value={style.badgeBgColor || "#303030"}
+                                    value={style.primaryColor || "#303030"}
+                                    onInput={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle("primaryColor", target.value);
+                                    }}
+                                />
+                            </s-grid-item>
+                            <s-grid-item
+                                gridColumn="span 4"
+                                gridRow="span 2"
+                            >
+                                <s-color-field
+                                    label="Secondary"
+                                    name="secondaryColor"
+                                    placeholder="Select a color"
+                                    value={
+                                        style.secondaryColor || "#666666"
+                                    }
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         updateStyle(
-                                            "badgeBgColor",
+                                            "secondaryColor",
                                             target.value,
                                         );
                                     }}
                                 />
                             </s-grid-item>
                             <s-grid-item
-                                gridColumn="span 6"
+                                gridColumn="span 4"
                                 gridRow="span 2"
                             >
                                 <s-color-field
                                     label="Text"
-                                    name="badgeTextColor"
+                                    name="textColor"
                                     placeholder="Select a color"
-                                    value={
-                                        style.badgeTextColor || "#ffffff"
-                                    }
+                                    value={style.textColor || "#333333"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
-                                            "badgeTextColor",
-                                            target.value,
-                                        );
+                                        updateStyle("textColor", target.value);
                                     }}
                                 />
                             </s-grid-item>
                         </s-grid>
-                        <s-stack>
-                            <s-text>Corner radius</s-text>
-                            <RtpbRangeSlider
-                                values={style.badgeRadius ?? 8}
-                                maxValue={30}
-                                action={(val) =>
-                                    updateStyle("badgeRadius", val)
-                                }
-                            />
-                        </s-stack>
                     </s-stack>
                 </s-stack>
             </div>
