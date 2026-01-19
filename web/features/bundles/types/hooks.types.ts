@@ -21,3 +21,14 @@ export interface UseBundleFormManagerOptions {
     bundleType: BundleType;
     bundleName?: string;
 }
+
+/**
+ * Bundle pricing calculation result
+ */
+export interface useBundlePreviewPricingProps {
+    originalPrice: number;
+    discountAmount: number;
+    finalPrice: number;
+    savingsPercentage: number;
+    hasDiscount: boolean;
+}

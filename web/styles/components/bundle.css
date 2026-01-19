@@ -275,7 +275,7 @@
     gap: 8px;
 }
 .radius-bundle__pricing-row--highlight {
-    border-top: 1px dashed #e3e3e3;
+    border-bottom: 1px dashed #e3e3e3;
 }
 .radius-bundle__price-original {
     font-size: 13px;

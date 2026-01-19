@@ -8,6 +8,7 @@ import {
     formatDiscountFromValues,
     SelectedProducts,
     useBundleField,
+    useBundlePreviewPricing,
     useBundleStore,
 } from "@/features/bundles";
 import { formatDateLong, useShopSettings } from "@/shared";
@@ -28,6 +29,13 @@ export function BundleSummary() {
 
     const { isLoading, currencyCode } = useShopSettings();
     const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
+
+    // Use the pricing hook for consistent calculations
+    const {
+        originalPrice: subtotal,
+        discountAmount: discount,
+        finalPrice: total,
+    } = useBundlePreviewPricing();
 
     /**
      * Formats the discount display text.
@@ -66,26 +74,6 @@ export function BundleSummary() {
         const dateStr = dateObj.toISOString().split("T")[0];
         return formatDateLong(dateStr);
     };
-
-    // Calculate pricing
-    const subtotal = groupedItems.reduce((sum, group) => {
-        const productPrice = parseFloat(group.product.price ?? "0");
-        const variantSum = group.variants.reduce(
-            (s, v) => s + parseFloat(v.price ?? "0"),
-            0,
-        );
-        return sum + productPrice + variantSum;
-    }, 0);
-
-    const discount =
-        bundleData.discountType === "PERCENTAGE" && bundleData.discountValue
-            ? (subtotal * bundleData.discountValue) / 100
-            : bundleData.discountType === "FIXED_AMOUNT" &&
-                bundleData.discountValue
-              ? bundleData.discountValue
-              : 0;
-
-    const total = subtotal - discount;
 
     // Get status badge info
     const statusInfo = bundleData.status

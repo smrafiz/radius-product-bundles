@@ -11,34 +11,38 @@ import {
     BundlePreviewStatus,
     BundleLayoutCarousel,
     useBundleStore,
+    DisplaySettings,
 } from "@/features/bundles";
-import "@/styles/components/bundle.css";
-import React from "react";
 import { useRouter } from "next/navigation";
+
+import "@/styles/components/bundle.css";
+
+/*
+ * Render layout based on the layout type
+ */
+const RenderLayout = ({ layout }: {layout: DisplaySettings["layout"]}) => {
+    switch (layout) {
+        case "GRID":
+            return <BundleLayoutGrid />;
+
+        case "LIST":
+            return <BundleLayoutList />;
+
+        case "CAROUSEL":
+            return <BundleLayoutCarousel />;
+
+        case "COMPACT":
+            return <BundleLayoutCompact />;
+
+        default:
+            return <BundleLayoutGrid />;
+    }
+};
 
 export function BundlePreview() {
     const router = useRouter();
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
-
-    const renderLayout = () => {
-        switch (displaySettings.layout) {
-            case "GRID":
-                return <BundleLayoutGrid />;
-
-            case "LIST":
-                return <BundleLayoutList />;
-
-            case "CAROUSEL":
-                return <BundleLayoutCarousel />;
-
-            case "COMPACT":
-                return <BundleLayoutCompact />;
-
-            default:
-                return <BundleLayoutGrid />;
-        }
-    };
 
     return (
         <div className="flex flex-col gap-4">
@@ -69,7 +73,7 @@ export function BundlePreview() {
                         </s-stack>
 
                         <BundleHeader />
-                        {renderLayout()}
+                        <RenderLayout layout={displaySettings.layout} />
                         <BundlePricing />
                         <BundleAddToCart />
                     </div>

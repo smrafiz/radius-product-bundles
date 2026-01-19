@@ -70,3 +70,47 @@ export function calculateSavingsPercentage(
         ((originalPrice - discountedPrice) / originalPrice) * 100,
     );
 }
+
+/**
+ * Calculate discounted price for a single item
+ */
+export function calculateDiscountedPrice(
+    originalPrice: number,
+    discountType: string | undefined,
+    discountValue: number | undefined,
+    maxDiscountAmount?: number | null,
+): number {
+    if (!discountType || !discountValue || discountValue <= 0) {
+        return originalPrice;
+    }
+
+    let discountAmount = 0;
+
+    switch (discountType) {
+        case "PERCENTAGE":
+            discountAmount = originalPrice * (discountValue / 100);
+            break;
+
+        case "FIXED_AMOUNT":
+            discountAmount = discountValue;
+            break;
+
+        case "CUSTOM_PRICE":
+            return originalPrice;
+
+        case "BUY_X_GET_Y":
+        case "QUANTITY_BREAKS":
+            return originalPrice;
+
+        case "NO_DISCOUNT":
+        default:
+            return originalPrice;
+    }
+
+    // Apply max discount cap if specified
+    if (maxDiscountAmount && maxDiscountAmount > 0) {
+        discountAmount = Math.min(discountAmount, maxDiscountAmount);
+    }
+
+    return Math.max(0, originalPrice - discountAmount);
+}

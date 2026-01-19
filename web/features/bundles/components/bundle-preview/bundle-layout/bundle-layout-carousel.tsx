@@ -1,21 +1,33 @@
 "use client";
 
-import { formatPrice, useBundleStore } from "@/features/bundles";
 import { useRef } from "react";
+import { calculateDiscountedPrice, formatPrice, useBundleStore, } from "@/features/bundles";
 
+/**
+ * Carousel layout for bundle product preview
+ *
+ * Displays products in a horizontally scrollable carousel with proper discounted pricing.
+ */
 export function BundleLayoutCarousel() {
-    const { selectedItems, displaySettings } = useBundleStore();
+    const { selectedItems, displaySettings, bundleData } = useBundleStore();
     const carouselRef = useRef<HTMLDivElement>(null);
 
     if (!selectedItems.length) {
         return (
             <div className="min-h-96 flex flex-col items-center justify-around gap-3">
-                <img src="/assets/not-found.svg" alt="No products" className="w-1/2" />
+                <img
+                    src="/assets/not-found.svg"
+                    alt="No products"
+                    className="w-1/2"
+                />
                 <span>Please choose product to see the bundle preview</span>
             </div>
         );
     }
 
+    /**
+     * Scroll the carousel in the specified direction
+     */
     const scroll = (direction: "left" | "right") => {
         if (!carouselRef.current) return;
         const width = carouselRef.current.clientWidth;
@@ -48,60 +60,77 @@ export function BundleLayoutCarousel() {
                 className="radius-bundle__products radius-bundle__products--slider"
                 style={{ scrollbarWidth: "none" }}
             >
-                {selectedItems.map((item, index) => (
-                    <div
-                        key={item.id ?? index}
-                        className="radius-bundle__product radius-bundle__product--slider"
-                        style={{ width: "47.8%" }}
-                    >
-                        {/* IMAGE */}
-                        {displaySettings.showImages && item.image && item.image.trim() !== "" && (
-                            <div className="radius-bundle__product-image">
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        )}
+                {selectedItems.map((item, index) => {
+                    const originalPrice =
+                        parseFloat(item.price) * item.quantity;
+                    const discountedPrice = calculateDiscountedPrice(
+                        originalPrice,
+                        bundleData.discountType,
+                        bundleData.discountValue,
+                        bundleData.maxDiscountAmount,
+                    );
+                    const hasDiscount = discountedPrice < originalPrice;
 
-                        {/* TITLE */}
-                        <div className="radius-bundle__product-title">
-                            {displaySettings.enableHyperLink ? (
-                                <a href={item.url} className="hover:underline">
-                                    {item.title.length > 40
-                                        ? `${item.title.slice(0, 40)}...`
-                                        : item.title}
-                                </a>
-                            ) : (
-                                item.title
-                            )}
-                        </div>
+                    return (
+                        <div
+                            key={item.id ?? index}
+                            className="radius-bundle__product radius-bundle__product--slider"
+                            style={{ width: "47.8%" }}
+                        >
+                            {/* IMAGE */}
+                            {displaySettings.showImages &&
+                                item.image &&
+                                item.image.trim() !== "" && (
+                                    <div className="radius-bundle__product-image">
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                )}
 
-                        {/* PRICE */}
-                        {displaySettings.showPrices && (
-                            <div className="radius-bundle__product-price flex flex-col items-center">
-                            <span className="radius-bundle__product-price-current font-semibold">
-                                $285.95
-                            </span>
-                                {displaySettings.showComparePrices && (
-                                    <span className="radius-bundle__product-price-compare line-through text-sm opacity-60">
-                                        {formatPrice(
-                                            parseFloat(item.price),
-                                        )}
-                                    </span>
+                            {/* TITLE */}
+                            <div className="radius-bundle__product-title">
+                                {displaySettings.enableHyperLink ? (
+                                    <a
+                                        href={item.url}
+                                        className="hover:underline"
+                                    >
+                                        {item.title.length > 40
+                                            ? `${item.title.slice(0, 40)}...`
+                                            : item.title}
+                                    </a>
+                                ) : (
+                                    item.title
                                 )}
                             </div>
-                        )}
 
-                        {/* QTY */}
-                        {displaySettings.showQuantity && (
-                            <div className="radius-bundle__product-quantity">
-                                Qty: {item.quantity}
-                            </div>
-                        )}
-                    </div>
-                ))}
+                            {/* PRICE */}
+                            {displaySettings.showPrices && (
+                                <div className="radius-bundle__product-price flex flex-col items-center">
+                                    <span className="radius-bundle__product-price-current font-semibold">
+                                        {formatPrice(discountedPrice)}
+                                    </span>
+
+                                    {displaySettings.showComparePrices &&
+                                        hasDiscount && (
+                                            <span className="radius-bundle__product-price-compare line-through text-sm opacity-60">
+                                                {formatPrice(originalPrice)}
+                                            </span>
+                                        )}
+                                </div>
+                            )}
+
+                            {/* QTY */}
+                            {displaySettings.showQuantity && (
+                                <div className="radius-bundle__product-quantity">
+                                    Qty: {item.quantity}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

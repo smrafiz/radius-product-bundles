@@ -3,3 +3,4 @@ export { useBundlesData } from "./use-bundles-data";
 export { useBundlesPage } from "./use-bundles-page";
 export { useBundleDataSync } from "./use-bundle-data-sync";
 export { useEditBundleTransform } from "./use-edit-bundle-transform";
+export { useBundlePreviewPricing } from "./use-bundle-preview-pricing";

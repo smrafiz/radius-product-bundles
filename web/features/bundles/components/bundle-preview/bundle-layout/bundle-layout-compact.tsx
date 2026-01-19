@@ -1,18 +1,18 @@
 "use client";
 
-import {
-    formatPrice,
-    useBundleStore,
-} from "@/features/bundles";
 import { Fragment, useState } from "react";
+import { calculateDiscountedPrice, formatPrice, useBundleStore, } from "@/features/bundles";
 
+/**
+ * Compact layout for bundle product preview
+ *
+ * Displays products in a condensed format with proper discounted pricing.
+ */
 export function BundleLayoutCompact() {
-    const { selectedItems, displaySettings } = useBundleStore();
+    const { selectedItems, displaySettings, bundleData } = useBundleStore();
     const [showAll, setShowAll] = useState(false);
 
-    const visibleItems = showAll
-        ? selectedItems
-        : selectedItems.slice(0, 4);
+    const visibleItems = showAll ? selectedItems : selectedItems.slice(0, 4);
 
     if (!selectedItems.length) {
         return (
@@ -30,73 +30,80 @@ export function BundleLayoutCompact() {
     return (
         <Fragment>
             <div className="radius-bundle__products radius-bundle__products--compact">
-                {visibleItems.map((item, index) => (
-                    <Fragment key={item.id ?? index}>
-                        <div className="radius-bundle__product radius-bundle__product--compact">
-                            {/* Image */}
-                            {displaySettings.showImages && item.image && item.image.trim() !== "" && (
-                                <div className="radius-bundle__product-image">
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            )}
+                {visibleItems.map((item, index) => {
+                    const originalPrice =
+                        parseFloat(item.price) * item.quantity;
+                    const discountedPrice = calculateDiscountedPrice(
+                        originalPrice,
+                        bundleData.discountType,
+                        bundleData.discountValue,
+                        bundleData.maxDiscountAmount,
+                    );
+                    const hasDiscount = discountedPrice < originalPrice;
 
-                            {/* Info */}
-                            <div className="radius-bundle__product-info">
-                                <div className="radius-bundle__product-title">
-                                    {displaySettings.enableHyperLink ? (
-                                        <a
-                                            href={item.url}
-                                            className="hover:underline"
-                                        >
-                                            {item.title.length > 40
-                                                ? `${item.title.slice(
-                                                    0,
-                                                    40,
-                                                )}...`
-                                                : item.title}
-                                        </a>
-                                    ) : (
-                                        <span>
-                                            {item.title.length > 40
-                                                ? `${item.title.slice(
-                                                    0,
-                                                    40,
-                                                )}...`
-                                                : item.title}
-                                        </span>
+                    return (
+                        <Fragment key={item.id ?? index}>
+                            <div className="radius-bundle__product radius-bundle__product--compact">
+                                {/* Image */}
+                                {displaySettings.showImages &&
+                                    item.image &&
+                                    item.image.trim() !== "" && (
+                                        <div className="radius-bundle__product-image">
+                                            <img
+                                                src={item.image}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    )}
+
+                                {/* Info */}
+                                <div className="radius-bundle__product-info">
+                                    <div className="radius-bundle__product-title">
+                                        {displaySettings.enableHyperLink ? (
+                                            <a
+                                                href={item.url}
+                                                className="hover:underline"
+                                            >
+                                                {item.title.length > 40
+                                                    ? `${item.title.slice(0, 40)}...`
+                                                    : item.title}
+                                            </a>
+                                        ) : (
+                                            <span>
+                                                {item.title.length > 40
+                                                    ? `${item.title.slice(0, 40)}...`
+                                                    : item.title}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {displaySettings.showQuantity && (
+                                        <div className="radius-bundle__product-quantity">
+                                            Qty: {item.quantity}
+                                        </div>
                                     )}
                                 </div>
 
-                                {displaySettings.showQuantity && (
-                                    <div className="radius-bundle__product-quantity">
-                                        Qty: {item.quantity}
+                                {/* Price */}
+                                {displaySettings.showPrices && (
+                                    <div className="radius-bundle__product-price">
+                                        <span className="radius-bundle__product-price-current">
+                                            {formatPrice(discountedPrice)}
+                                        </span>
+
+                                        {displaySettings.showComparePrices &&
+                                            hasDiscount && (
+                                                <span className="radius-bundle__product-price-compare">
+                                                    {formatPrice(originalPrice)}
+                                                </span>
+                                            )}
                                     </div>
                                 )}
                             </div>
-
-                            {/* Price */}
-                            {displaySettings.showPrices && (
-                                <div className="radius-bundle__product-price">
-                                    <span className="radius-bundle__product-price-current">
-                                        $285.95
-                                    </span>
-
-                                    {displaySettings.showComparePrices && (
-                                        <span className="radius-bundle__product-price-compare">
-                                            {formatPrice(
-                                                parseFloat(item.price),
-                                            )}
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </Fragment>
-                ))}
+                        </Fragment>
+                    );
+                })}
             </div>
 
             {selectedItems.length > 4 && (
