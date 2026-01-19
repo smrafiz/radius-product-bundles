@@ -61,6 +61,15 @@ export function BundleOptionsLabel() {
                             }}
                         />
                         <s-text-field
+                            label="Quantity text"
+                            placeholder="Become quantity text"
+                            value={style.quantityLabel}
+                            onInput={(event: Event) => {
+                                const target = event.target as HTMLInputElement;
+                                updateStyle("quantityLabel", target.value);
+                            }}
+                        />
+                        <s-text-field
                             label="Regular price label"
                             placeholder="Become regular price"
                             value={style.regularPriceLabel}

@@ -6,6 +6,16 @@ export function BundleHeader() {
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
+    const badgeBgColor =
+        styleData.badgeBgColor && styleData.badgeBgColor !== ""
+            ? styleData.badgeBgColor
+            : styleData.primaryColor || "#333333";
+
+    const headingColor =
+        styleData.headingColor && styleData.headingColor !== ""
+            ? styleData.headingColor
+            : styleData.primaryColor || "#303030";
+
     return(
         <div className="radius-bundle__header">
             <div className="radius-bundle__title-wrapper">
@@ -13,7 +23,8 @@ export function BundleHeader() {
                     className="radius-bundle__title"
                     style={{
                         fontSize: `${styleData.headingFontSize ?? 20}px`,
-                        color: styleData.headingColor || "#303030",
+                        color: headingColor,
+                        textTransform: styleData.headingTransform ?? "none",
                     }}
                 >{styleData.headingLabel ?? "Bundle Offers"}</div>
             </div>
@@ -27,7 +38,7 @@ export function BundleHeader() {
                 <button
                     className="radius-bundle__badge"
                     style={{
-                        backgroundColor: styleData.badgeBgColor || "#22c55e",
+                        backgroundColor: badgeBgColor,
                         color: styleData.badgeTextColor || "#ffffff",
                         borderRadius: `${styleData.badgeRadius ?? 8}px`,
                     }}

@@ -44,6 +44,65 @@ export function BundleOptionsBox() {
             >
                 <s-stack gap="base" padding="base">
                     <s-stack gap="base">
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            gap="small-300"
+                            justifyContent="space-between"
+                        >
+                            <s-heading>Maximum width</s-heading>
+                            <s-stack>
+                                <s-number-field
+                                    label="Maximum width"
+                                    labelAccessibilityVisibility="exclusive"
+                                    placeholder="0"
+                                    step={5}
+                                    min={0}
+                                    max={800}
+                                    value={(style.boxMaxWidth ?? 500).toString()}
+                                    onInput={(event: Event) => {
+                                        const target = event.target as HTMLInputElement;
+                                        updateStyle("boxMaxWidth", target.value);
+                                    }}
+                                />
+                            </s-stack>
+                        </s-stack>
+
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            gap="small-300"
+                            justifyContent="space-between"
+                        >
+                            <s-heading>Box alignment</s-heading>
+                            <s-button-group gap="none">
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("boxAlignment", "left")
+                                    }
+                                >
+                                    Left
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("boxAlignment", "center")
+                                    }
+                                >
+                                    Center
+                                </s-button>
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() =>
+                                        updateStyle("boxAlignment", "right")
+                                    }
+                                >
+                                    Right
+                                </s-button>
+                            </s-button-group>
+                        </s-stack>
+
                         <s-grid
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"

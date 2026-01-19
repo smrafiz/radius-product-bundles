@@ -12,7 +12,7 @@ export function BundleGrid() {
     const productTextColor =
         styleData.productTextColor && styleData.productTextColor !== ""
             ? styleData.productTextColor
-            : styleData.primaryColor || "#303030";
+            : styleData.textColor || "#333333";
 
     const RenderSelectedProducts = () => {
         return (
@@ -47,7 +47,7 @@ export function BundleGrid() {
                     <div className="radius-bundle__product-price-current">$300.33</div>
                     <div className="radius-bundle__product-price-compare">$600.00</div>
                 </div>
-                <div className="radius-bundle__product-quantity">Qty: 1</div>
+                <div className="radius-bundle__product-quantity">{styleData.quantityLabel ?? "Qty:"} 1</div>
             </div>
         );
     };

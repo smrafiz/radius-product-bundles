@@ -20,7 +20,7 @@ export function BundleCarousel() {
     const productTextColor =
         styleData.productTextColor && styleData.productTextColor !== ""
             ? styleData.productTextColor
-            : styleData.primaryColor || "#303030";
+            : styleData.textColor || "#333333";
 
     const RenderSelectedProducts = () => {
         return (
@@ -37,7 +37,7 @@ export function BundleCarousel() {
                 <div className="radius-bundle__product-image"
                      style={{
                          borderRadius: `${styleData.imageRadius ?? 6}px`,
-                         height: `${styleData.imageSize ?? undefined}px`,
+                         height: `${styleData.imageSize ?? 100}px`,
                      }}
                 >
                     <s-image
@@ -54,7 +54,7 @@ export function BundleCarousel() {
                     <div className="radius-bundle__product-price-current">$300.33</div>
                     <div className="radius-bundle__product-price-compare">$600.00</div>
                 </div>
-                <div className="radius-bundle__product-quantity">Qty: 1</div>
+                <div className="radius-bundle__product-quantity">{styleData.quantityLabel ?? "Qty:"} 1</div>
             </div>
         );
     };

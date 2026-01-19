@@ -61,7 +61,7 @@
 						| default: '#ffffff' %}
 				{% assign savings_color = block.settings.savings_color
 						| default: g_styles.colors.savingsColor
-						| default: '#22c55e' %}
+						| default: '#333333' %}
 				{% assign savings_text_color = block.settings.savings_text_color
 						| default: g_styles.colors.savingsTextColor
 						| default: '#ffffff' %}
@@ -143,7 +143,7 @@
                 {% comment %} Labels {% endcomment %}
 				{% assign bundle_heading = block.settings.bundle_heading
 						| default: bundle.title
-						| default: bundle.headingLabel
+						| default: g_labels.headingLabel
 						| default: 'Bundle & Save' %}
                 {% assign button_text = block.settings.button_text
                         | default: bundle.buttonText

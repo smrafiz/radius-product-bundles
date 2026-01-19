@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
-import { useBundleStore } from "@/features/bundles";
+import { useBundleStore, WIDGET_LAYOUTS } from "@/features/bundles";
 
 export function BundleOptionsImage() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();

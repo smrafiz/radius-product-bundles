@@ -125,7 +125,7 @@ export function BundleOptionsButton() {
                                                 label="Background"
                                                 name="buttonBgColor"
                                                 placeholder="Select a color"
-                                                value={style.buttonBgColor || "#303030"}
+                                                value={style.buttonBgColor || "#333333"}
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;

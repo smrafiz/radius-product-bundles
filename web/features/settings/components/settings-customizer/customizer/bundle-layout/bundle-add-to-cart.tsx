@@ -8,9 +8,17 @@ export function BundleAddToCart() {
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
-    const bg = styleData.buttonBgColor || "#303030";
+    const bg =
+        styleData.buttonBgColor && styleData.buttonBgColor !== ""
+            ? styleData.buttonBgColor
+            : styleData.primaryColor || "#333333";
+
+    const hoverBg =
+        styleData.buttonHoverBgColor && styleData.buttonHoverBgColor !== ""
+            ? styleData.buttonHoverBgColor
+            : styleData.secondaryColor || "#666666";
+
     const text = styleData.buttonTextColor || "#ffffff";
-    const hoverBg = styleData.buttonHoverBgColor || "#666666";
     const hoverText = styleData.buttonHoverTextColor || "#ffffff";
     const radius = styleData.buttonRadius ?? 8;
     const fontSize = styleData.buttonFontSize ?? 16;

@@ -353,6 +353,8 @@ export interface DisplaySettings {
         boxBorderColor?: string;
         boxRadius?: number;
         boxBorderWidth?: number;
+        boxMaxWidth?: number;
+        boxAlignment?: "left" | "center" | "right";
         //Image
         imageRadius?: number;
         imageSize?: number;
@@ -360,8 +362,10 @@ export interface DisplaySettings {
         //Heading
         headingFontSize?: number;
         headingColor?: string;
+        headingTransform?: string;
         // label
         headingLabel?: string;
+        quantityLabel?: string;
         regularPriceLabel?: string;
         bundlePriceLabel?: string;
         youSaveLabel?: string;

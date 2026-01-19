@@ -1,4 +1,8 @@
 /* bundle layout */
+.radius-bundle-widget--customizer {
+    max-width: 900px;
+    margin: 0 auto;
+}
 .radius-bundle-widget {
     .radius-bundle {
         max-width: 500px;
@@ -17,7 +21,7 @@
 
 .radius-bundle__product {
     font-size: 16px;
-    color: #303030;
+    color: #333333;
 }
 
 /* list layout */
@@ -202,9 +206,13 @@
     margin-bottom: 16px;
     padding-bottom: 16px;
     border-bottom: 1px solid #e3e3e3;
+    .radius-bundle__title {
+        font-size: 20px;
+        color: #303030;
+    }
 }
 .radius-bundle__badge {
-    background: #22c55e;
+    background: #333333;
     color: #FFFFFF;
     border-radius: 8px;
     padding: 6px 12px;
@@ -246,16 +254,17 @@
     justify-content: center;
 }
 .radius-bundle__add-to-cart {
-    background-color: #303030;
+    background-color: #333333;
     color: #fff;
+    font-size: 16px;
     border-radius: 6px;
     width: 100%;
     height: 42px;
-    padding: 6px 18px;
+    padding: 6px 24px;
     line-height: 28px;
     cursor: pointer;
     &:hover {
-        opacity: 0.7;
+        opacity: 0.9;
     }
 }
 
@@ -266,6 +275,7 @@
     border-radius: 12px;
     margin-bottom: 16px;
     margin-top: 16px;
+    font-size: 16px;
 }
 .radius-bundle__pricing-row {
     display: flex;

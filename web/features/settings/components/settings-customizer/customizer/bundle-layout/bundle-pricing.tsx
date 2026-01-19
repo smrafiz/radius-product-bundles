@@ -6,11 +6,16 @@ export function BundlePricing() {
     const { displaySettings } = useBundleStore();
     const styleData = displaySettings.style || {};
 
+    const productTextColor =
+        styleData.productTextColor && styleData.productTextColor !== ""
+            ? styleData.productTextColor
+            : styleData.textColor || "#333333";
+
     return(
         <div className="radius-bundle__pricing"
              style={{
                  fontSize: `${styleData.productFontSize ?? 14}px`,
-                 color: styleData.productTextColor || "#303030",
+                 color: productTextColor,
              }}
         >
             <div className="radius-bundle__pricing-row">

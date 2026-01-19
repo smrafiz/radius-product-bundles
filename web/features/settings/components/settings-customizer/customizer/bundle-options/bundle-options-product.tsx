@@ -104,7 +104,7 @@ export function BundleOptionsProduct() {
                                     label="Text"
                                     name="productTextColor"
                                     placeholder="Select a color"
-                                    value={style.productTextColor || "#303030"}
+                                    value={style.productTextColor || "#333333"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;

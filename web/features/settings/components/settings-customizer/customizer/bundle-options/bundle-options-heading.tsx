@@ -96,6 +96,29 @@ export function BundleOptionsHeading() {
                             }}
                         />
                     </s-stack>
+                    <s-stack
+                        direction="inline"
+                        alignItems="center"
+                        gap="small-300"
+                        justifyContent="space-between"
+                    >
+                        <s-text>Transform</s-text>
+                        <s-stack>
+                            <s-select
+                                label="Transform"
+                                labelAccessibilityVisibility="exclusive"
+                                value={style.headingTransform ?? "none"}
+                                onInput={(event: Event) => {
+                                    const value = (event.target as HTMLSelectElement).value;
+                                    updateStyle("headingTransform", value);
+                                }}
+                            >
+                                <s-option value="none">None</s-option>
+                                <s-option value="uppercase">Uppercase</s-option>
+                                <s-option value="capitalize">Capitalize</s-option>
+                            </s-select>
+                        </s-stack>
+                    </s-stack>
                 </s-stack>
             </div>
         </s-stack>

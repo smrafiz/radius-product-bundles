@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useBundleStore } from "@/features/bundles";
 const BOGO_LAYOUTS = [
     { label: "Grid", value: "GRID" },
@@ -17,7 +18,6 @@ import {
 } from "@/features/settings";
 
 import "@/styles/components/bundle.css";
-import React from "react";
 
 export function BundlePreviewBuyGet() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
@@ -70,8 +70,19 @@ export function BundlePreviewBuyGet() {
 
             {/* RIGHT: Content */}
             <div className="flex-1 p-4 bg-[#fafafa]">
-                <div className="radius-bundle-widget">
-                    <div className="radius-bundle">
+                <div className="radius-bundle-widget radius-bundle-widget--customizer">
+                    <div
+                        className="radius-bundle"
+                        style={{
+                            maxWidth: `${styleData.boxMaxWidth ?? 450}px`,
+                            margin:
+                                styleData?.boxAlignment === "left"
+                                    ? "0 auto 0 0"
+                                    : styleData?.boxAlignment === "right"
+                                        ? "0 0 0 auto"
+                                        : "0 auto",
+                        }}
+                    >
                         <div
                             className="radius-bundle__inner"
                             style={{

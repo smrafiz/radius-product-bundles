@@ -5,5 +5,4 @@ export { BundleTypeTab } from "./bundle-type-tab";
 export { CustomizerModal } from "./customizer-modal";
 export { CustomizerHeader } from "./customizer-header";
 export { BundleOptionType } from "./bundle-option-type";
-export { CustomizerPreview } from "./customizer-preview";
 export { CustomizerBundleType } from "./customizer-bundle-type";

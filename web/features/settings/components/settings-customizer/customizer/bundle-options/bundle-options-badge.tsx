@@ -91,7 +91,7 @@ export function BundleOptionsBadge() {
                                     label="Background"
                                     name="badgeBgColor"
                                     placeholder="Select a color"
-                                    value={style.badgeBgColor || "#303030"}
+                                    value={style.badgeBgColor || "#333333"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;

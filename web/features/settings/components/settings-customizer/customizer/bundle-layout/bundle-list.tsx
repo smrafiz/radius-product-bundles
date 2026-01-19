@@ -8,7 +8,7 @@ export function BundleList() {
     const productTextColor =
         styleData.productTextColor && styleData.productTextColor !== ""
             ? styleData.productTextColor
-            : styleData.primaryColor || "#303030";
+            : styleData.textColor || "#333333";
 
     const RenderSelectedProducts = () => {
         return (
@@ -40,7 +40,7 @@ export function BundleList() {
 
                 <div className="radius-bundle__product-info">
                     <div className="radius-bundle__product-title">Bundle product</div>
-                    <div className="radius-bundle__product-quantity">Qty: 1</div>
+                    <div className="radius-bundle__product-quantity">{styleData.quantityLabel ?? "Qty:"} 1</div>
                 </div>
 
                 <div className="radius-bundle__product-price">
