@@ -126,7 +126,8 @@ function FunnelBar({
 /**
  * All Bundles Analytics Table - Diagnostic View with Pagination
  *
- * Uses the native s-table pagination support for consistent Shopify UX.
+ * Shows skeleton on initial load and when dates change.
+ * Shows table loading state for search, sort, and pagination changes.
  */
 export function AllBundlesTable() {
     const {
@@ -158,6 +159,7 @@ export function AllBundlesTable() {
         }
     };
 
+    // Show skeleton on loading (including date changes)
     if (isLoading) {
         return (
             <AllBundlesSkeleton
@@ -170,7 +172,7 @@ export function AllBundlesTable() {
     if (error) {
         return (
             <s-section padding="none">
-                <AllBundlesHeader />
+                <AllBundlesHeader loading={isFetching} />
                 <s-box padding="base">
                     <s-banner tone="critical">
                         <s-text>
@@ -186,7 +188,7 @@ export function AllBundlesTable() {
     if (!bundles || bundles.length === 0) {
         return (
             <s-section padding="none">
-                <AllBundlesHeader />
+                <AllBundlesHeader loading={isFetching} />
                 <s-box padding="base">
                     <EmptyState
                         heading={
@@ -197,23 +199,31 @@ export function AllBundlesTable() {
                                 ? "Try adjusting your filters or search query"
                                 : "Create your first bundle to see analytics here"
                         }
+                        isSearch={hasFilters}
                     />
                 </s-box>
             </s-section>
         );
     }
 
+    // Determine if we should show pagination
+    const showPagination =
+        pagination && (pagination.hasNextPage || pagination.hasPrevPage);
+
+    // Show table loading for non-date refetches (search, sort, pagination)
+    const showTableLoading = isFetching && !isLoading;
+
     return (
         <s-section padding="none">
-            {/* Header with search */}
-            <AllBundlesHeader />
+            {/* Header with search - pass loading for spinner */}
+            <AllBundlesHeader loading={isFetching} />
 
             {/* Table with native pagination */}
             <s-table
                 paginate={true}
                 hasPreviousPage={pagination?.hasPrevPage ?? false}
                 hasNextPage={pagination?.hasNextPage ?? false}
-                loading={isFetching && !isLoading}
+                loading={showTableLoading}
                 onNextPage={handleNextPage}
                 onPreviousPage={handlePreviousPage}
             >

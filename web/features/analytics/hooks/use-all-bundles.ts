@@ -2,24 +2,25 @@
 
 /**
  * All Bundles Query - React Query hooks
+ *
+ * Provides hooks for fetching all bundles data with pagination and search.
  */
 
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAppBridge } from "@shopify/app-bridge-react";
 import {
-    AllBundlesData,
+    analyticsQueries,
     BundleWithAnalytics,
-    PaginatedAllBundlesData,
     SortField,
     SortOrder,
     useAllBundlesTableStore,
     useAnalyticsStore,
 } from "@/features/analytics";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
-import { useAppBridge } from "@shopify/app-bridge-react";
-import { getAllBundlesAction, getPaginatedBundlesAction, } from "@/features/analytics/actions";
+import { useDebounce } from "@/shared";
 
 /**
- * Hook for fetching all bundles (original, non-paginated)
+ * Hook for fetching all bundles (non-paginated)
  *
  * Use this when you need all bundles without pagination.
  */
@@ -29,33 +30,9 @@ export function useAllBundles(
 ) {
     const app = useAppBridge();
     const { startDate, endDate } = useAnalyticsStore();
+    const queries = analyticsQueries(app);
 
-    return useQuery({
-        queryKey: ["all-bundles", startDate, endDate, sortBy, sortOrder],
-        queryFn: async () => {
-            const token = await app.idToken();
-
-            if (!token || !startDate || !endDate) {
-                throw new Error("Missing required parameters");
-            }
-
-            const response = await getAllBundlesAction(
-                token,
-                startDate,
-                endDate,
-                sortBy,
-                sortOrder,
-            );
-
-            if (response.status === "error") {
-                throw new Error(response.message || "Failed to fetch bundles");
-            }
-
-            return response.data as AllBundlesData;
-        },
-        enabled: !!startDate && !!endDate,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    });
+    return useQuery(queries.allBundles(startDate, endDate, sortBy, sortOrder));
 }
 
 /**
@@ -66,48 +43,67 @@ export function useAllBundles(
 export function usePaginatedBundles() {
     const app = useAppBridge();
     const { startDate, endDate } = useAnalyticsStore();
-    const { sortBy, sortOrder, page, perPage, debouncedSearchQuery } =
+    const { sortBy, sortOrder, page, perPage, searchQuery, setPage } =
         useAllBundlesTableStore();
+    const queries = analyticsQueries(app);
 
-    return useQuery({
-        queryKey: [
-            "paginated-bundles",
+    // Debounce search query to prevent excessive API calls
+    const debouncedSearch = useDebounce(searchQuery, 300);
+
+    // Track if dates have changed to show skeleton
+    const [isDateChanging, setIsDateChanging] = useState(false);
+    const prevDatesRef = useRef<{ startDate?: string; endDate?: string }>({
+        startDate: undefined,
+        endDate: undefined,
+    });
+
+    // Detect date changes
+    useEffect(() => {
+        const prevStartDate = prevDatesRef.current.startDate;
+        const prevEndDate = prevDatesRef.current.endDate;
+
+        // Only consider it a "change" if we had previous dates (not initial load)
+        const hadPreviousDates =
+            prevStartDate !== undefined && prevEndDate !== undefined;
+        const datesChanged =
+            prevStartDate !== startDate || prevEndDate !== endDate;
+
+        if (hadPreviousDates && datesChanged) {
+            setIsDateChanging(true);
+            // Reset page to 1 when dates change
+            if (page !== 1) {
+                setPage(1);
+            }
+        }
+
+        // Update ref
+        prevDatesRef.current = { startDate, endDate };
+    }, [startDate, endDate, page, setPage]);
+
+    const queryResult = useQuery(
+        queries.paginatedBundles(
             startDate,
             endDate,
             sortBy,
             sortOrder,
             page,
             perPage,
-            debouncedSearchQuery,
-        ],
-        queryFn: async () => {
-            const token = await app.idToken();
+            debouncedSearch,
+        ),
+    );
 
-            if (!token || !startDate || !endDate) {
-                throw new Error("Missing required parameters");
-            }
+    // Reset date changing flag when data loads
+    useEffect(() => {
+        if (!queryResult.isFetching && isDateChanging) {
+            setIsDateChanging(false);
+        }
+    }, [queryResult.isFetching, isDateChanging]);
 
-            const response = await getPaginatedBundlesAction({
-                sessionToken: token,
-                startDate,
-                endDate,
-                sortBy,
-                sortOrder,
-                page,
-                perPage,
-                search: debouncedSearchQuery,
-            });
-
-            if (response.status === "error") {
-                throw new Error(response.message || "Failed to fetch bundles");
-            }
-
-            return response.data as PaginatedAllBundlesData;
-        },
-        enabled: !!startDate && !!endDate,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        placeholderData: (previousData) => previousData, // Keep previous data while loading
-    });
+    return {
+        ...queryResult,
+        isDateChanging,
+        debouncedSearch, // Expose debounced search for accurate hasFilters check
+    };
 }
 
 /**
@@ -122,10 +118,8 @@ export function useBundleSort() {
      */
     const handleSort = (field: SortField) => {
         if (sortBy === field) {
-            // Toggle order if same field
             setSortOrder(sortOrder === "desc" ? "asc" : "desc");
         } else {
-            // New field, default to desc
             setSortBy(field);
             setSortOrder("desc");
         }
@@ -152,7 +146,6 @@ export function useBundleFilters() {
     ): BundleWithAnalytics[] => {
         let filtered = [...bundles];
 
-        // Search filter
         if (searchQuery && searchQuery.trim() !== "") {
             const query = searchQuery.toLowerCase().trim();
             filtered = filtered.filter((b) =>
@@ -171,47 +164,24 @@ export function useBundleFilters() {
 }
 
 /**
- * Custom hook for debounced search with store integration
- *
- * Debounces the search input to prevent excessive API calls.
- */
-export function useAllBundlesSearch(delay: number = 300) {
-    const { searchQuery, setSearchQuery, setDebouncedSearchQuery } =
-        useAllBundlesTableStore();
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearchQuery(searchQuery);
-        }, delay);
-
-        return () => clearTimeout(timer);
-    }, [searchQuery, delay, setDebouncedSearchQuery]);
-
-    /**
-     * Clear the search query
-     */
-    const clearSearch = useCallback(() => {
-        setSearchQuery("");
-        setDebouncedSearchQuery("");
-    }, [setSearchQuery, setDebouncedSearchQuery]);
-
-    return {
-        searchQuery,
-        setSearchQuery,
-        clearSearch,
-    };
-}
-
-/**
  * Combined hook for all bundles table with pagination
  *
  * Provides all state and handlers for the paginated table.
  * Designed to work with the native s-table pagination.
  */
 export function useAllBundlesTableWithPagination() {
-    const { data, isLoading, error, isFetching } = usePaginatedBundles();
-    const { searchQuery, setSearchQuery, clearSearch } = useAllBundlesSearch();
+    const { startDate, endDate } = useAnalyticsStore();
     const {
+        data,
+        isLoading,
+        error,
+        isFetching,
+        isDateChanging,
+        debouncedSearch,
+    } = usePaginatedBundles();
+    const {
+        searchQuery,
+        setSearchQuery,
         sortBy,
         sortOrder,
         handleSort,
@@ -223,6 +193,23 @@ export function useAllBundlesTableWithPagination() {
         setPerPage,
     } = useAllBundlesTableStore();
 
+    // Show skeleton on:
+    // 1. Initial load (dates not set or isLoading with no data)
+    // 2. Date change (isDateChanging flag)
+    const showSkeleton =
+        !startDate || !endDate || (isLoading && !data) || isDateChanging;
+
+    /**
+     * Clear the search query
+     */
+    const clearSearch = () => {
+        setSearchQuery("");
+    };
+
+    // Use debouncedSearch to determine if we have active filters
+    // This ensures the empty state matches the actual query being used
+    const hasFilters = debouncedSearch.trim() !== "";
+
     return {
         // Data
         bundles: data?.bundles ?? [],
@@ -231,7 +218,7 @@ export function useAllBundlesTableWithPagination() {
         totalBundles: data?.totalBundles ?? 0,
 
         // Loading states
-        isLoading,
+        isLoading: showSkeleton,
         isFetching,
         error,
 
@@ -254,6 +241,6 @@ export function useAllBundlesTableWithPagination() {
 
         // Utils
         resetFilters,
-        hasFilters: searchQuery.trim() !== "",
+        hasFilters,
     };
 }

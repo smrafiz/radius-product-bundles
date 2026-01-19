@@ -1,6 +1,20 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { analyticsQueryKeys, ChartDataPoint, TopBundle, } from "@/features/analytics";
-import { getAnalyticsMetricsAction, getChartDataAction, getTopBundlesAction, } from "@/features/analytics/actions";
+import {
+    AllBundlesData,
+    analyticsQueryKeys,
+    ChartDataPoint,
+    PaginatedAllBundlesData,
+    SortField,
+    SortOrder,
+    TopBundle,
+} from "@/features/analytics";
+import {
+    getAllBundlesAction,
+    getAnalyticsMetricsAction,
+    getChartDataAction,
+    getPaginatedBundlesAction,
+    getTopBundlesAction,
+} from "@/features/analytics/actions";
 
 /**
  * Analytics queries for TanStack Query
@@ -87,5 +101,100 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
+    }),
+
+    /**
+     * All bundles query (non-paginated)
+     */
+    allBundles: (
+        startDate?: string,
+        endDate?: string,
+        sortBy: SortField = "revenue",
+        sortOrder: SortOrder = "desc",
+    ) => ({
+        queryKey: analyticsQueryKeys.bundles.list(
+            startDate,
+            endDate,
+            sortBy,
+            sortOrder,
+        ),
+        queryFn: async (): Promise<AllBundlesData> => {
+            const token = await app.idToken();
+
+            if (!token || !startDate || !endDate) {
+                throw new Error("Missing required parameters");
+            }
+
+            const result = await getAllBundlesAction(
+                token,
+                startDate,
+                endDate,
+                sortBy,
+                sortOrder,
+            );
+
+            if (result.status === "error") {
+                throw new Error(result.message || "Failed to fetch bundles");
+            }
+
+            return result.data as AllBundlesData;
+        },
+        enabled: !!startDate && !!endDate,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    }),
+
+    /**
+     * Paginated bundles query with search
+     */
+    paginatedBundles: (
+        startDate?: string,
+        endDate?: string,
+        sortBy: SortField = "revenue",
+        sortOrder: SortOrder = "desc",
+        page: number = 1,
+        perPage: number = 10,
+        search: string = "",
+    ) => ({
+        queryKey: analyticsQueryKeys.bundles.paginated(
+            startDate,
+            endDate,
+            sortBy,
+            sortOrder,
+            page,
+            perPage,
+            search,
+        ),
+        queryFn: async (): Promise<PaginatedAllBundlesData> => {
+            const token = await app.idToken();
+
+            if (!token || !startDate || !endDate) {
+                throw new Error("Missing required parameters");
+            }
+
+            const result = await getPaginatedBundlesAction({
+                sessionToken: token,
+                startDate,
+                endDate,
+                sortBy,
+                sortOrder,
+                page,
+                perPage,
+                search,
+            });
+
+            if (result.status === "error") {
+                throw new Error(result.message || "Failed to fetch bundles");
+            }
+
+            return result.data as PaginatedAllBundlesData;
+        },
+        enabled: !!startDate && !!endDate,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        placeholderData: (previousData: PaginatedAllBundlesData | undefined) =>
+            previousData,
     }),
 });

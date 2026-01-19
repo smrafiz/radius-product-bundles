@@ -7,13 +7,41 @@
  */
 
 import { create } from "zustand";
-import { AllBundlesTableState, SortField, SortOrder, } from "@/features/analytics";
+import { SortField, SortOrder } from "@/features/analytics";
+
+/**
+ * All bundles table state interface
+ */
+export interface AllBundlesTableState {
+    // Search state
+    searchQuery: string;
+
+    // Sort state
+    sortBy: SortField;
+    sortOrder: SortOrder;
+
+    // Pagination state
+    page: number;
+    perPage: number;
+
+    // Actions
+    setSearchQuery: (query: string) => void;
+    setSortBy: (field: SortField) => void;
+    setSortOrder: (order: SortOrder) => void;
+    toggleSortOrder: () => void;
+    handleSort: (field: SortField) => void;
+    setPage: (page: number) => void;
+    setPerPage: (perPage: number) => void;
+    nextPage: () => void;
+    prevPage: () => void;
+    resetFilters: () => void;
+}
 
 /**
  * Default values for the store
  */
 const DEFAULT_PAGE = 1;
-const DEFAULT_PER_PAGE = 10;
+const DEFAULT_PER_PAGE = 2;
 const DEFAULT_SORT_BY: SortField = "revenue";
 const DEFAULT_SORT_ORDER: SortOrder = "desc";
 
@@ -26,25 +54,17 @@ const DEFAULT_SORT_ORDER: SortOrder = "desc";
 export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     // Initial state
     searchQuery: "",
-    debouncedSearchQuery: "",
     sortBy: DEFAULT_SORT_BY,
     sortOrder: DEFAULT_SORT_ORDER,
     page: DEFAULT_PAGE,
     perPage: DEFAULT_PER_PAGE,
 
     /**
-     * Set the search query (immediate, for input display)
+     * Set the search query
      */
     setSearchQuery: (query: string) => {
-        set({ searchQuery: query });
-    },
-
-    /**
-     * Set the debounced search query (for API calls)
-     */
-    setDebouncedSearchQuery: (query: string) => {
         set({
-            debouncedSearchQuery: query,
+            searchQuery: query,
             page: DEFAULT_PAGE, // Reset to first page on search
         });
     },
@@ -55,7 +75,7 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     setSortBy: (field: SortField) => {
         set({
             sortBy: field,
-            page: DEFAULT_PAGE, // Reset to first page on sort change
+            page: DEFAULT_PAGE,
         });
     },
 
@@ -65,7 +85,7 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     setSortOrder: (order: SortOrder) => {
         set({
             sortOrder: order,
-            page: DEFAULT_PAGE, // Reset to first page on sort change
+            page: DEFAULT_PAGE,
         });
     },
 
@@ -88,13 +108,11 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     handleSort: (field: SortField) => {
         set((state) => {
             if (state.sortBy === field) {
-                // Same column - toggle order
                 return {
                     sortOrder: state.sortOrder === "desc" ? "asc" : "desc",
                     page: DEFAULT_PAGE,
                 };
             }
-            // New column - set with desc order
             return {
                 sortBy: field,
                 sortOrder: "desc",
@@ -116,7 +134,7 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     setPerPage: (perPage: number) => {
         set({
             perPage: Math.max(1, Math.min(100, perPage)),
-            page: DEFAULT_PAGE, // Reset to first page when changing page size
+            page: DEFAULT_PAGE,
         });
     },
 
@@ -140,7 +158,6 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     resetFilters: () => {
         set({
             searchQuery: "",
-            debouncedSearchQuery: "",
             sortBy: DEFAULT_SORT_BY,
             sortOrder: DEFAULT_SORT_ORDER,
             page: DEFAULT_PAGE,
