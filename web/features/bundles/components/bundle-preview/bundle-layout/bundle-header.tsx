@@ -1,11 +1,13 @@
 "use client";
 
-import {
-    useBundleStore,
-} from "@/features/bundles";
+import { useBundlePreviewPricing, useBundleStore } from "@/features/bundles";
 
+/**
+ * Bundle header component with title and savings badge
+ */
 export function BundleHeader() {
     const { displaySettings } = useBundleStore();
+    const { savingsPercentage, hasDiscount } = useBundlePreviewPricing();
 
     return (
         <div className="radius-bundle__header">
@@ -14,10 +16,10 @@ export function BundleHeader() {
                     {displaySettings.title || ""}
                 </div>
             </div>
-            {displaySettings.showSavingsBadge && (
+            {displaySettings.showSavingsBadge && hasDiscount && (
                 <div className="radius-bundle__actions">
                     <button className="radius-bundle__badge">
-                        Save 50%
+                        Save {savingsPercentage}%
                     </button>
                 </div>
             )}
