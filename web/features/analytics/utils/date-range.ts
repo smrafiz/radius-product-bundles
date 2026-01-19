@@ -315,3 +315,43 @@ export function parseDateAsUTC(dateStr: string): Date {
 export function endOfDayUTC(dateStr: string): Date {
     return new Date(dateStr + "T23:59:59.999Z");
 }
+
+/**
+ * Builds a human-friendly date range label
+ */
+export function getDateRangeLabel(
+    startDate?: string | Date,
+    endDate?: string | Date,
+    formatDate?: (date: Date) => string,
+): string | null {
+    if (!startDate || !endDate) {
+        return null;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const sameDay = start.toDateString() === end.toDateString();
+    const sameYear = start.getFullYear() === end.getFullYear();
+
+    const format =
+        formatDate ??
+        ((date: Date) =>
+            date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+            }));
+
+    const startLabel = format(start);
+    const endLabel = format(end);
+
+    if (sameDay) {
+        return `${startLabel}, ${start.getFullYear()}`;
+    }
+
+    if (sameYear) {
+        return `${startLabel} – ${endLabel}, ${start.getFullYear()}`;
+    }
+
+    return `${startLabel}, ${start.getFullYear()} – ${endLabel}, ${end.getFullYear()}`;
+}

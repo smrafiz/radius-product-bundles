@@ -34,7 +34,7 @@ export interface PaginationState {
 export interface AllBundlesTableState {
     // Search state
     searchQuery: string;
-    debouncedSearchQuery: string;
+    showSearch: boolean;
 
     // Sort state
     sortBy: SortField;
@@ -46,7 +46,9 @@ export interface AllBundlesTableState {
 
     // Actions
     setSearchQuery: (query: string) => void;
-    setDebouncedSearchQuery: (query: string) => void;
+    setShowSearch: (show: boolean) => void;
+    toggleSearch: () => void;
+    clearSearch: () => void;
     setSortBy: (field: SortField) => void;
     setSortOrder: (order: SortOrder) => void;
     toggleSortOrder: () => void;

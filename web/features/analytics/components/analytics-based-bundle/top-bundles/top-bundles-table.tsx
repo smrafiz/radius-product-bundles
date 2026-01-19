@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyState, formatCurrencyCompact, formatNumber } from "@/shared";
+import { EmptyState, formatCurrencyCompact, formatNumber, useAppNavigation } from "@/shared";
 import { TopBundlesHeader, TopBundlesSkeleton, TopBundlesTableHeader, useTopBundles } from "@/features/analytics";
 
 /**
@@ -101,6 +101,14 @@ function hasLowConfidence(views: number): boolean {
  */
 export function TopBundlesTable() {
     const { data: bundles, isLoading, error } = useTopBundles(5);
+    const { bundleData } = useAppNavigation();
+
+    /**
+     * Handle bundle name click - navigate to edit page
+     */
+    const handleBundleClick = (bundleId: string) => {
+        bundleData.edit(bundleId);
+    };
 
     if (isLoading) {
         return (
@@ -183,7 +191,19 @@ export function TopBundlesTable() {
                                                     #{index + 1}
                                                 </span>
                                             </s-text>
-                                            {bundle.title}
+                                            <s-text>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleBundleClick(
+                                                            bundle.bundleId,
+                                                        )
+                                                    }
+                                                    className="text-left font-semibold text-[--p-color-text-emphasis] hover:text-[--p-color-text-emphasis-hover] hover:underline cursor-pointer bg-transparent border-none p-0"
+                                                >
+                                                    {bundle.title}
+                                                </button>
+                                            </s-text>
                                         </s-heading>
                                     </s-stack>
                                 </s-table-cell>

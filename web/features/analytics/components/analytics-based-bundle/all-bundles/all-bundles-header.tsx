@@ -1,73 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import { LoadingSpinner } from "@/shared";
-import { useAllBundlesTableStore } from "@/features/analytics";
 import { BUNDLE_FILTERS } from "@/features/bundles";
+import {
+    getDateRangeLabel,
+    useAllBundlesSearch,
+    useAnalyticsStore,
+} from "@/features/analytics";
 
 /**
  * All Bundles Header Component
  *
- * Contains the title, tooltip, and collapsible search field for the all bundles table.
- * Follows the same pattern as BundleIndexFilters.
+ * Contains the title, tooltip, date range indicator, and collapsible search field.
  */
 export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
-    const { searchQuery, setSearchQuery } = useAllBundlesTableStore();
-    const [showSearch, setShowSearch] = useState(false);
-    const searchContainerRef = useRef<HTMLDivElement>(null);
+    const {
+        searchQuery,
+        showSearch,
+        hasSearchQuery,
+        searchContainerRef,
+        handleSearchInput,
+        toggleSearch,
+    } = useAllBundlesSearch();
+    const { startDate, endDate } = useAnalyticsStore();
 
-    // Check if there's an active search query
-    const hasSearchQuery = searchQuery.trim() !== "";
-
-    /**
-     * Toggle search field visibility
-     */
-    const toggleFilters = () => {
-        if (showSearch) {
-            // Closing search - clear the query
-            setSearchQuery("");
-        }
-        setShowSearch(!showSearch);
-    };
-
-    /**
-     * Handle search input change
-     */
-    const handleSearchInput = useCallback(
-        (event: Event) => {
-            const target = event.target as HTMLInputElement;
-            setSearchQuery(target.value);
-        },
-        [setSearchQuery],
-    );
-
-    /**
-     * Autofocus search field when shown
-     */
-    useEffect(() => {
-        if (showSearch && searchContainerRef.current) {
-            const timer = setTimeout(() => {
-                const searchField =
-                    searchContainerRef.current?.querySelector("s-search-field");
-                if (searchField) {
-                    const input =
-                        searchField.shadowRoot?.querySelector("input") ||
-                        searchField.querySelector("input");
-                    if (input) {
-                        input.focus();
-                    }
-                }
-            }, 0);
-            return () => clearTimeout(timer);
-        }
-    }, [showSearch]);
+    const dateLabel = getDateRangeLabel(startDate, endDate);
 
     return (
         <>
             <s-stack gap="base" padding="small">
                 <s-grid
                     gap="small-200"
-                    gridTemplateColumns={!showSearch ? "1fr auto" : "1fr auto"}
+                    gridTemplateColumns={
+                        !showSearch ? "1fr auto auto" : "1fr auto"
+                    }
                     alignItems="center"
                 >
                     <s-grid-item>
@@ -115,16 +81,38 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                         </div>
                     </s-grid-item>
 
+                    {/* Date Range Indicator - Hide when search is open */}
+                    {!showSearch && dateLabel && (
+                        <s-grid-item>
+                            <s-stack
+                                direction="inline"
+                                gap="small-200"
+                                alignItems="center"
+                            >
+                                {!showSearch && loading && <LoadingSpinner />}
+
+                                <div
+                                    className="w-2 h-2 rounded-full"
+                                    style={{ backgroundColor: "#008CFF" }}
+                                />
+                                <s-text tone="info">
+                                    <span className="text-[11px] text-[#70707b]">
+                                        {dateLabel}
+                                    </span>
+                                </s-text>
+                            </s-stack>
+                        </s-grid-item>
+                    )}
+
                     {/* Search Toggle Button */}
                     <s-grid-item>
                         <s-stack direction="inline" gap="small-200">
-                            {!showSearch && loading && <LoadingSpinner />}
                             <s-button
                                 variant={
                                     hasSearchQuery ? "primary" : "secondary"
                                 }
                                 icon={!showSearch ? "search" : "x"}
-                                onClick={toggleFilters}
+                                onClick={toggleSearch}
                                 aria-expanded={showSearch}
                                 accessibilityLabel="search bundles"
                                 loading={showSearch && loading}

@@ -7,7 +7,12 @@ import {
     useAllBundlesTableWithPagination,
 } from "@/features/analytics";
 import { getBundleStatusBadge } from "@/features/bundles";
-import { EmptyState, formatCurrencyCompact, formatNumber } from "@/shared";
+import {
+    EmptyState,
+    formatCurrencyCompact,
+    formatNumber,
+    useAppNavigation,
+} from "@/shared";
 
 /**
  * Get health status badge config
@@ -140,6 +145,14 @@ export function AllBundlesTable() {
         nextPage,
         prevPage,
     } = useAllBundlesTableWithPagination();
+    const { bundleData } = useAppNavigation();
+
+    /**
+     * Handle bundle name click - navigate to edit page
+     */
+    const handleBundleClick = (bundleId: string) => {
+        bundleData.edit(bundleId);
+    };
 
     /**
      * Handle next page event from s-table
@@ -240,11 +253,21 @@ export function AllBundlesTable() {
 
                         return (
                             <s-table-row key={bundle.id}>
-                                {/* Bundle name + type */}
+                                {/* Bundle name */}
                                 <s-table-cell>
-                                    <s-stack gap="small-200">
-                                        <s-heading>{bundle.title}</s-heading>
-                                    </s-stack>
+                                    <s-heading>
+                                        <s-text>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleBundleClick(bundle.id)
+                                                }
+                                                className="text-left font-semibold text-[--p-color-text-emphasis] hover:text-[--p-color-text-emphasis-hover] hover:underline cursor-pointer bg-transparent border-none p-0"
+                                            >
+                                                {bundle.title}
+                                            </button>
+                                        </s-text>
+                                    </s-heading>
                                 </s-table-cell>
 
                                 {/* Status badge */}

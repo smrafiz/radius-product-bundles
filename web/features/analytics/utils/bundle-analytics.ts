@@ -8,7 +8,7 @@ export function calculateHealthStatus(bundle: {
     addToCartRate: number;
 }): { status: "healthy" | "needs-work" | "poor" | "new"; reason: string } {
     // New bundle (insufficient data)
-    if (bundle.views < 10) {
+    if (bundle.views < 30) {
         return {
             status: "new",
             reason: "Insufficient data for reliable analysis (< 30 views)",

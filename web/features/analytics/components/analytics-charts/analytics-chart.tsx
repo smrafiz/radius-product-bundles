@@ -10,6 +10,7 @@ import {
     ChartSkeleton,
     ChartTitleTooltip,
     formatChartDate,
+    getDateRangeLabel,
     InsufficientDataState,
     NoActivityState,
     NoDataState,
@@ -73,31 +74,13 @@ export function AnalyticsChart() {
         }
     }
 
-    const dateLabel = (() => {
-        if (formattedData.length === 0) return null;
-
-        const firstPoint = chartData![0];
-        const lastPoint = chartData![chartData!.length - 1];
-
-        const firstDate = new Date(firstPoint.date);
-        const lastDate = new Date(lastPoint.date);
-
-        const sameDay = firstDate.toDateString() === lastDate.toDateString();
-        const sameYear = firstDate.getFullYear() === lastDate.getFullYear();
-
-        const firstLabel = formatChartDate(firstDate);
-        const lastLabel = formatChartDate(lastDate);
-
-        if (sameDay) {
-            return `${firstLabel}, ${firstDate.getFullYear()}`;
-        }
-
-        if (sameYear) {
-            return `${firstLabel} – ${lastLabel}, ${firstDate.getFullYear()}`;
-        }
-
-        return `${firstLabel}, ${firstDate.getFullYear()} – ${lastLabel}, ${lastDate.getFullYear()}`;
-    })();
+    const dateLabel = chartData?.length
+        ? getDateRangeLabel(
+              chartData[0].date,
+              chartData[chartData.length - 1].date,
+              formatChartDate,
+          )
+        : null;
 
     return (
         <s-section>

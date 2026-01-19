@@ -6,9 +6,6 @@
  * Provides hooks for fetching all bundles data with pagination and search.
  */
 
-import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useAppBridge } from "@shopify/app-bridge-react";
 import {
     analyticsQueries,
     BundleWithAnalytics,
@@ -18,6 +15,9 @@ import {
     useAnalyticsStore,
 } from "@/features/analytics";
 import { useDebounce } from "@/shared";
+import { useQuery } from "@tanstack/react-query";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Hook for fetching all bundles (non-paginated)
@@ -102,7 +102,7 @@ export function usePaginatedBundles() {
     return {
         ...queryResult,
         isDateChanging,
-        debouncedSearch, // Expose debounced search for accurate hasFilters check
+        debouncedSearch,
     };
 }
 
@@ -164,6 +164,68 @@ export function useBundleFilters() {
 }
 
 /**
+ * Hook for managing search field with autofocus
+ *
+ * Returns a ref and handles autofocus when search is shown.
+ */
+export function useAllBundlesSearch() {
+    const {
+        searchQuery,
+        setSearchQuery,
+        showSearch,
+        toggleSearch,
+        clearSearch,
+    } = useAllBundlesTableStore();
+
+    const searchContainerRef = useRef<HTMLDivElement>(null);
+
+    // Check if there's an active search query
+    const hasSearchQuery = searchQuery.trim() !== "";
+
+    /**
+     * Handle search input change
+     */
+    const handleSearchInput = useCallback(
+        (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            setSearchQuery(target.value);
+        },
+        [setSearchQuery],
+    );
+
+    /**
+     * Autofocus search field when shown
+     */
+    useEffect(() => {
+        if (showSearch && searchContainerRef.current) {
+            const timer = setTimeout(() => {
+                const searchField =
+                    searchContainerRef.current?.querySelector("s-search-field");
+                if (searchField) {
+                    const input =
+                        searchField.shadowRoot?.querySelector("input") ||
+                        searchField.querySelector("input");
+                    if (input) {
+                        input.focus();
+                    }
+                }
+            }, 0);
+            return () => clearTimeout(timer);
+        }
+    }, [showSearch]);
+
+    return {
+        searchQuery,
+        showSearch,
+        hasSearchQuery,
+        searchContainerRef,
+        handleSearchInput,
+        toggleSearch,
+        clearSearch,
+    };
+}
+
+/**
  * Combined hook for all bundles table with pagination
  *
  * Provides all state and handlers for the paginated table.
@@ -191,6 +253,9 @@ export function useAllBundlesTableWithPagination() {
         page,
         perPage,
         setPerPage,
+        showSearch,
+        toggleSearch,
+        clearSearch,
     } = useAllBundlesTableStore();
 
     // Show skeleton on:
@@ -198,13 +263,6 @@ export function useAllBundlesTableWithPagination() {
     // 2. Date change (isDateChanging flag)
     const showSkeleton =
         !startDate || !endDate || (isLoading && !data) || isDateChanging;
-
-    /**
-     * Clear the search query
-     */
-    const clearSearch = () => {
-        setSearchQuery("");
-    };
 
     // Use debouncedSearch to determine if we have active filters
     // This ensures the empty state matches the actual query being used
@@ -225,6 +283,8 @@ export function useAllBundlesTableWithPagination() {
         // Search
         searchQuery,
         setSearchQuery,
+        showSearch,
+        toggleSearch,
         clearSearch,
 
         // Sorting

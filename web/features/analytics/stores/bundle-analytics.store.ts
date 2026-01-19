@@ -7,41 +7,13 @@
  */
 
 import { create } from "zustand";
-import { SortField, SortOrder } from "@/features/analytics";
-
-/**
- * All bundles table state interface
- */
-export interface AllBundlesTableState {
-    // Search state
-    searchQuery: string;
-
-    // Sort state
-    sortBy: SortField;
-    sortOrder: SortOrder;
-
-    // Pagination state
-    page: number;
-    perPage: number;
-
-    // Actions
-    setSearchQuery: (query: string) => void;
-    setSortBy: (field: SortField) => void;
-    setSortOrder: (order: SortOrder) => void;
-    toggleSortOrder: () => void;
-    handleSort: (field: SortField) => void;
-    setPage: (page: number) => void;
-    setPerPage: (perPage: number) => void;
-    nextPage: () => void;
-    prevPage: () => void;
-    resetFilters: () => void;
-}
+import { AllBundlesTableState, SortField, SortOrder, } from "@/features/analytics";
 
 /**
  * Default values for the store
  */
 const DEFAULT_PAGE = 1;
-const DEFAULT_PER_PAGE = 2;
+const DEFAULT_PER_PAGE = 10;
 const DEFAULT_SORT_BY: SortField = "revenue";
 const DEFAULT_SORT_ORDER: SortOrder = "desc";
 
@@ -54,6 +26,7 @@ const DEFAULT_SORT_ORDER: SortOrder = "desc";
 export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     // Initial state
     searchQuery: "",
+    showSearch: false,
     sortBy: DEFAULT_SORT_BY,
     sortOrder: DEFAULT_SORT_ORDER,
     page: DEFAULT_PAGE,
@@ -66,6 +39,41 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
         set({
             searchQuery: query,
             page: DEFAULT_PAGE, // Reset to first page on search
+        });
+    },
+
+    /**
+     * Set search visibility
+     */
+    setShowSearch: (show: boolean) => {
+        set({ showSearch: show });
+    },
+
+    /**
+     * Toggle search visibility
+     */
+    toggleSearch: () => {
+        set((state) => {
+            // If closing search, clear the query
+            if (state.showSearch) {
+                return {
+                    showSearch: false,
+                    searchQuery: "",
+                    page: DEFAULT_PAGE,
+                };
+            }
+            return { showSearch: true };
+        });
+    },
+
+    /**
+     * Clear search query and close search
+     */
+    clearSearch: () => {
+        set({
+            searchQuery: "",
+            showSearch: false,
+            page: DEFAULT_PAGE,
         });
     },
 
@@ -158,6 +166,7 @@ export const useAllBundlesTableStore = create<AllBundlesTableState>((set) => ({
     resetFilters: () => {
         set({
             searchQuery: "",
+            showSearch: false,
             sortBy: DEFAULT_SORT_BY,
             sortOrder: DEFAULT_SORT_ORDER,
             page: DEFAULT_PAGE,
