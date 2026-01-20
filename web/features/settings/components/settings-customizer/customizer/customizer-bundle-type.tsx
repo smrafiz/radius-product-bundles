@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import type { ComponentType } from "react";
+import { useState } from "react";
 
 import { BUNDLE_TYPES } from "@/features/bundles";
 
 import {
-    CustomizerHeader,
     BundleOptionType,
     BundlePreviewBogo,
-    BundlePreviewFixed,
     BundlePreviewBuyGet,
+    BundlePreviewFixed,
+    CustomizerHeader,
 } from "@/features/settings";
 
 export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
@@ -21,13 +21,9 @@ export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
 
 export function CustomizerBundleType() {
     const types = Object.values(BUNDLE_TYPES);
-    const [activeId, setActiveId] = useState<string>(
-        types[0].id
-    );
+    const [activeId, setActiveId] = useState<string>(types[0].id);
 
-    const PreviewComponent = activeId
-        ? BUNDLE_PREVIEW_MAP[activeId]
-        : null;
+    const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
 
     return (
         <div className="rtpb-full-modal-editor">
@@ -58,4 +54,3 @@ export function CustomizerBundleType() {
         </div>
     );
 }
-

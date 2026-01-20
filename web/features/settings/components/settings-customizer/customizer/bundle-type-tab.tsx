@@ -31,4 +31,3 @@ export function BundleTypeTab({ activeId, onChange }: Props) {
         </s-section>
     );
 }
-

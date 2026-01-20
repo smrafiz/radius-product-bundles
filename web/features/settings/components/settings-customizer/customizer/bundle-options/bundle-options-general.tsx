@@ -47,10 +47,7 @@ export function BundleOptionsGeneral() {
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
                         >
-                            <s-grid-item
-                                gridColumn="span 4"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 4" gridRow="span 2">
                                 <s-color-field
                                     label="Primary"
                                     name="primaryColor"
@@ -59,21 +56,19 @@ export function BundleOptionsGeneral() {
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle("primaryColor", target.value);
+                                        updateStyle(
+                                            "primaryColor",
+                                            target.value,
+                                        );
                                     }}
                                 />
                             </s-grid-item>
-                            <s-grid-item
-                                gridColumn="span 4"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 4" gridRow="span 2">
                                 <s-color-field
                                     label="Secondary"
                                     name="secondaryColor"
                                     placeholder="Select a color"
-                                    value={
-                                        style.secondaryColor || "#666666"
-                                    }
+                                    value={style.secondaryColor || "#666666"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
@@ -84,10 +79,7 @@ export function BundleOptionsGeneral() {
                                     }}
                                 />
                             </s-grid-item>
-                            <s-grid-item
-                                gridColumn="span 4"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 4" gridRow="span 2">
                                 <s-color-field
                                     label="Text"
                                     name="textColor"

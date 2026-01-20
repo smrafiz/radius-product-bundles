@@ -1,12 +1,9 @@
-
 /*
  * Settings
  */
 
-
 import {
     SettingsAdvanced,
-    SettingsBundleWidget,
     SettingsButtonAction,
     SettingsCustomizer,
     SettingsDiscount,
@@ -27,13 +24,6 @@ export const SETTINGS_TAB_NAV: readonly SettingsTabNavInfo[] = [
         component: SettingsGeneral,
     },
     {
-        id: "bundle_widget",
-        title: "Bundle widget",
-        icon: "store-online",
-        component: SettingsBundleWidget,
-        visible: (ctx) => ctx.hasOnlineStore,
-    },
-    {
         id: "customizer",
         title: "Customizer",
         icon: "edit",
@@ -45,13 +35,6 @@ export const SETTINGS_TAB_NAV: readonly SettingsTabNavInfo[] = [
         icon: "discount",
         component: SettingsDiscount,
         visible: (ctx) => ctx.isPro,
-    },
-    {
-        id: "subscriptions",
-        title: "Subscriptions",
-        icon: "refresh",
-        component: SettingsSubscriptions,
-        // visible: (ctx) => ctx.hasSubscriptions,
     },
     {
         id: "button_action",

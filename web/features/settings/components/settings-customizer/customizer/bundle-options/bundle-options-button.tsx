@@ -7,14 +7,14 @@ import { useBundleStore } from "@/features/bundles";
 export function BundleOptionsButton() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
     const style = displaySettings.style ?? {};
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
 
-    const [activeTab, setActiveTab] = useState('normal')
+    const [activeTab, setActiveTab] = useState("normal");
 
     const tabs = [
-        { id: 'normal', label: 'Normal' },
-        { id: 'hover', label: 'Hover' },
-    ]
+        { id: "normal", label: "Normal" },
+        { id: "hover", label: "Hover" },
+    ];
 
     /**
      * Updates a style property in the store
@@ -102,7 +102,11 @@ export function BundleOptionsButton() {
                                         <s-button
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
-                                            variant={activeTab === tab.id ? 'secondary' : 'tertiary'}
+                                            variant={
+                                                activeTab === tab.id
+                                                    ? "secondary"
+                                                    : "tertiary"
+                                            }
                                         >
                                             {tab.label}
                                         </s-button>
@@ -112,7 +116,7 @@ export function BundleOptionsButton() {
 
                             {/* Tab Content */}
                             <s-box>
-                                {activeTab === 'normal' && (
+                                {activeTab === "normal" && (
                                     <s-grid
                                         gridTemplateColumns="repeat(12, 1fr)"
                                         gap="base"
@@ -125,7 +129,10 @@ export function BundleOptionsButton() {
                                                 label="Background"
                                                 name="buttonBgColor"
                                                 placeholder="Select a color"
-                                                value={style.buttonBgColor || "#333333"}
+                                                value={
+                                                    style.buttonBgColor ||
+                                                    "#333333"
+                                                }
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;
@@ -145,7 +152,8 @@ export function BundleOptionsButton() {
                                                 name="buttonTextColor"
                                                 placeholder="Select a color"
                                                 value={
-                                                    style.buttonTextColor || "#ffffff"
+                                                    style.buttonTextColor ||
+                                                    "#ffffff"
                                                 }
                                                 onInput={(event: Event) => {
                                                     const target =
@@ -160,7 +168,7 @@ export function BundleOptionsButton() {
                                     </s-grid>
                                 )}
 
-                                {activeTab === 'hover' && (
+                                {activeTab === "hover" && (
                                     <s-grid
                                         gridTemplateColumns="repeat(12, 1fr)"
                                         gap="base"
@@ -173,7 +181,10 @@ export function BundleOptionsButton() {
                                                 label="Background"
                                                 name="buttonHoverBgColor"
                                                 placeholder="Select a color"
-                                                value={style.buttonHoverBgColor || "#666666"}
+                                                value={
+                                                    style.buttonHoverBgColor ||
+                                                    "#666666"
+                                                }
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;
@@ -193,7 +204,8 @@ export function BundleOptionsButton() {
                                                 name="buttonHoverTextColor"
                                                 placeholder="Select a color"
                                                 value={
-                                                    style.buttonHoverTextColor || "#ffffff"
+                                                    style.buttonHoverTextColor ||
+                                                    "#ffffff"
                                                 }
                                                 onInput={(event: Event) => {
                                                     const target =

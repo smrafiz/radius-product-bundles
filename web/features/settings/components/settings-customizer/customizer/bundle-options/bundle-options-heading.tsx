@@ -87,12 +87,8 @@ export function BundleOptionsHeading() {
                             placeholder="Select a color"
                             value={style.headingColor || "#303030"}
                             onInput={(event: Event) => {
-                                const target =
-                                    event.target as HTMLInputElement;
-                                updateStyle(
-                                    "headingColor",
-                                    target.value,
-                                );
+                                const target = event.target as HTMLInputElement;
+                                updateStyle("headingColor", target.value);
                             }}
                         />
                     </s-stack>
@@ -109,13 +105,17 @@ export function BundleOptionsHeading() {
                                 labelAccessibilityVisibility="exclusive"
                                 value={style.headingTransform ?? "none"}
                                 onInput={(event: Event) => {
-                                    const value = (event.target as HTMLSelectElement).value;
+                                    const value = (
+                                        event.target as HTMLSelectElement
+                                    ).value;
                                     updateStyle("headingTransform", value);
                                 }}
                             >
                                 <s-option value="none">None</s-option>
                                 <s-option value="uppercase">Uppercase</s-option>
-                                <s-option value="capitalize">Capitalize</s-option>
+                                <s-option value="capitalize">
+                                    Capitalize
+                                </s-option>
                             </s-select>
                         </s-stack>
                     </s-stack>

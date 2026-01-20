@@ -8,7 +8,6 @@ export { SettingsDiscount } from "./settings-customizer/settings-discount";
 export { SettingsCustomizer } from "./settings-customizer/settings-customizer";
 export { SettingsOnlineShop } from "./settings-customizer/settings-online-shop";
 export { SettingsButtonAction } from "./settings-customizer/settings-button-action";
-export { SettingsBundleWidget } from "./settings-customizer/settings-bundle-widget";
 export { SettingsNotifications } from "./settings-customizer/settings-notifications";
 export { SettingsSubscriptions } from "./settings-customizer/settings-subscriptions";
 export { SettingsVariantSelectorType } from "./settings-customizer/variant-selector-type";

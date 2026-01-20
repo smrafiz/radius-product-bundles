@@ -1,19 +1,19 @@
 import {
-    BundleOptionsBox,
-    BundleOptionsLabel,
-    BundleOptionsImage,
     BundleOptionsBadge,
+    BundleOptionsBox,
     BundleOptionsButton,
-    BundleOptionsProduct,
-    BundleOptionsHeading,
     BundleOptionsGeneral,
+    BundleOptionsHeading,
+    BundleOptionsImage,
+    BundleOptionsLabel,
+    BundleOptionsProduct,
 } from "@/features/settings";
 
 export function BundleOptionType() {
     return (
         <div className="left-side-auto-scroll border border-[#e3e3e3] bg-white rounded-xl">
             <s-stack>
-                <BundleOptionsGeneral/>
+                <BundleOptionsGeneral />
                 <BundleOptionsBox />
                 <BundleOptionsBadge />
                 <BundleOptionsHeading />

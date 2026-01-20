@@ -83,10 +83,7 @@ export function BundleOptionsBadge() {
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
                         >
-                            <s-grid-item
-                                gridColumn="span 6"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 6" gridRow="span 2">
                                 <s-color-field
                                     label="Background"
                                     name="badgeBgColor"
@@ -102,17 +99,12 @@ export function BundleOptionsBadge() {
                                     }}
                                 />
                             </s-grid-item>
-                            <s-grid-item
-                                gridColumn="span 6"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 6" gridRow="span 2">
                                 <s-color-field
                                     label="Text"
                                     name="badgeTextColor"
                                     placeholder="Select a color"
-                                    value={
-                                        style.badgeTextColor || "#ffffff"
-                                    }
+                                    value={style.badgeTextColor || "#ffffff"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;

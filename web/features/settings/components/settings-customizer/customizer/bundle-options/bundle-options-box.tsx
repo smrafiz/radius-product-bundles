@@ -59,10 +59,16 @@ export function BundleOptionsBox() {
                                     step={5}
                                     min={400}
                                     max={1200}
-                                    value={(style.boxMaxWidth ?? 500).toString()}
+                                    value={(
+                                        style.boxMaxWidth ?? 500
+                                    ).toString()}
                                     onInput={(event: Event) => {
-                                        const target = event.target as HTMLInputElement;
-                                        updateStyle("boxMaxWidth", target.value);
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        updateStyle(
+                                            "boxMaxWidth",
+                                            target.value,
+                                        );
                                     }}
                                 />
                             </s-stack>
@@ -107,10 +113,7 @@ export function BundleOptionsBox() {
                             gridTemplateColumns="repeat(12, 1fr)"
                             gap="base"
                         >
-                            <s-grid-item
-                                gridColumn="span 6"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 6" gridRow="span 2">
                                 <s-color-field
                                     label="Background"
                                     name="boxBgColor"
@@ -123,17 +126,12 @@ export function BundleOptionsBox() {
                                     }}
                                 />
                             </s-grid-item>
-                            <s-grid-item
-                                gridColumn="span 6"
-                                gridRow="span 2"
-                            >
+                            <s-grid-item gridColumn="span 6" gridRow="span 2">
                                 <s-color-field
                                     label="Border"
                                     name="boxBorderColor"
                                     placeholder="Select a color"
-                                    value={
-                                        style.boxBorderColor || "#e3e3e3"
-                                    }
+                                    value={style.boxBorderColor || "#e3e3e3"}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
@@ -152,10 +150,7 @@ export function BundleOptionsBox() {
                                     values={style.boxBorderWidth ?? 1}
                                     maxValue={5}
                                     action={(val) =>
-                                        updateStyle(
-                                            "boxBorderWidth",
-                                            val,
-                                        )
+                                        updateStyle("boxBorderWidth", val)
                                     }
                                 />
                             </s-stack>

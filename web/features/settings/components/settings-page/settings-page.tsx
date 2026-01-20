@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useAppNavigation } from "@/shared";
 import { SettingsTab, useSettingStore } from "@/features/settings";
 
@@ -25,9 +24,11 @@ export function SettingsPage() {
                 console.log("Handle discarded changes if necessary");
             }}
         >
-        <s-page heading="Settings">
-            <SettingsTab />
-        </s-page>
+            <s-page heading="Settings">
+                <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
+                <SettingsTab />
+                </s-stack>
+            </s-page>
         </form>
     );
 }

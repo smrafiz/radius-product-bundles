@@ -124,12 +124,8 @@ export function BundleOptionsProduct() {
                             placeholder="Select a color"
                             value={style.productBorderColor || "#e3e3e3"}
                             onInput={(event: Event) => {
-                                const target =
-                                    event.target as HTMLInputElement;
-                                updateStyle(
-                                    "productBorderColor",
-                                    target.value,
-                                );
+                                const target = event.target as HTMLInputElement;
+                                updateStyle("productBorderColor", target.value);
                             }}
                         />
                         <s-stack>

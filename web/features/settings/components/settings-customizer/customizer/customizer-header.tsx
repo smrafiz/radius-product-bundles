@@ -1,6 +1,4 @@
-import {
-    BundleTypeTab,
-} from "@/features/settings";
+import { BundleTypeTab } from "@/features/settings";
 
 interface Props {
     activeBundleType: string;
@@ -10,7 +8,7 @@ interface Props {
 export function CustomizerHeader({
     activeBundleType,
     onBundleTypeChange,
-    }: Props) {
+}: Props) {
     return (
         <s-section>
             <s-stack
@@ -33,5 +31,3 @@ export function CustomizerHeader({
         </s-section>
     );
 }
-
-

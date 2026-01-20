@@ -1,6 +1,4 @@
-import {
-    useBundleStore,
-} from "@/features/bundles";
+import { useBundleStore } from "@/features/bundles";
 
 export function BundleHeader() {
     const { displaySettings } = useBundleStore();
@@ -16,7 +14,7 @@ export function BundleHeader() {
             ? styleData.headingColor
             : styleData.primaryColor || "#303030";
 
-    return(
+    return (
         <div className="radius-bundle__header">
             <div className="radius-bundle__title-wrapper">
                 <div
@@ -26,27 +24,29 @@ export function BundleHeader() {
                         color: headingColor,
                         textTransform: styleData.headingTransform ?? "none",
                     }}
-                >{styleData.headingLabel ?? "Bundle Offers"}</div>
+                >
+                    {styleData.headingLabel ?? "Bundle Offers"}
+                </div>
             </div>
             {displaySettings.showSavingsBadge && (
-            <div
-                className="radius-bundle__actions"
-                style={{
-                    fontSize: `${styleData.badgeFontSize ?? 16}px`,
-                }}
-            >
-                <button
-                    className="radius-bundle__badge"
+                <div
+                    className="radius-bundle__actions"
                     style={{
-                        backgroundColor: badgeBgColor,
-                        color: styleData.badgeTextColor || "#ffffff",
-                        borderRadius: `${styleData.badgeRadius ?? 8}px`,
+                        fontSize: `${styleData.badgeFontSize ?? 16}px`,
                     }}
                 >
-                    Save 50%
-                </button>
-            </div>
+                    <button
+                        className="radius-bundle__badge"
+                        style={{
+                            backgroundColor: badgeBgColor,
+                            color: styleData.badgeTextColor || "#ffffff",
+                            borderRadius: `${styleData.badgeRadius ?? 8}px`,
+                        }}
+                    >
+                        Save 50%
+                    </button>
+                </div>
             )}
         </div>
-    )
+    );
 }

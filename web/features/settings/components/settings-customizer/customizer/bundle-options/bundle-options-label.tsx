@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { RtpbRangeSlider } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
 
 export function BundleOptionsLabel() {
@@ -49,8 +48,7 @@ export function BundleOptionsLabel() {
                             direction="inline"
                             alignItems="center"
                             gap="small-300"
-                        >
-                        </s-stack>
+                        ></s-stack>
                         <s-text-field
                             label="Bundle heading text"
                             placeholder="Become heading text"
