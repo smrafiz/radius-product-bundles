@@ -1,9 +1,10 @@
 "use client";
 
-import { useModalStore } from "@/shared";
+import { useModalStore, useShopSettingsStore } from "@/shared";
 import {
     BUNDLE_LISTING_ACTIONS,
     BundleActionsGroupProps,
+    BundleListItem,
 } from "@/features/bundles";
 
 /**
@@ -14,6 +15,9 @@ export function BundleActionsGroup({
     onAction,
 }: BundleActionsGroupProps) {
     const { openModal } = useModalStore();
+    const popoverId = `bundle-view-popover-${bundle.id}`;
+    const { settings } = useShopSettingsStore();
+    const shopDomain = settings?.myshopifyDomain;
 
     const handleActionClick = (actionKey: string) => {
         switch (actionKey) {
@@ -48,6 +52,16 @@ export function BundleActionsGroup({
         }
     };
 
+    const handleViewClick = ({
+        bundle,
+        popoverId,
+    }: {
+        bundle: BundleListItem;
+        popoverId: string;
+    }) => {
+        console.log(bundle);
+    };
+
     return (
         <>
             {/* Tooltips */}
@@ -67,7 +81,17 @@ export function BundleActionsGroup({
                     const isModalAction =
                         action.key === "delete" || action.key === "duplicate";
 
-                    return (
+                    return action.key === "view" ? (
+                        <s-button
+                            key={action.key}
+                            slot="secondary-actions"
+                            interestFor={tooltipId}
+                            commandFor={popoverId}
+                            accessibilityLabel={action.tooltip}
+                            icon={action.icon}
+                            tone={action.tone}
+                        />
+                    ) : (
                         <s-button
                             key={action.key}
                             slot="secondary-actions"
@@ -86,6 +110,42 @@ export function BundleActionsGroup({
                     );
                 })}
             </s-button-group>
+            {/* Popover */}
+            <s-popover id={popoverId}>
+                <s-box padding="small">
+                    <s-stack gap="small">
+                        <div
+                            onClick={() =>
+                                handleViewClick({ bundle, popoverId })
+                            }
+                        >
+                            <s-stack gap="small-200">
+                                <s-heading>Included products</s-heading>
+                                {bundle.products?.length ? (
+                                    bundle.products.map((product) => (
+                                        <s-stack
+                                            key={product.id}
+                                        >
+                                            <a
+                                                href={`https://${shopDomain}/products/${product.handle}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="hover:underline"
+                                            >
+                                                <s-text>{product.title}</s-text>
+                                            </a>
+                                        </s-stack>
+                                    ))
+                                ) : (
+                                    <s-text>No products in this bundle</s-text>
+                                )}
+                                <s-divider />
+                                <s-heading>Bundle product</s-heading>
+                            </s-stack>
+                        </div>
+                    </s-stack>
+                </s-box>
+            </s-popover>
         </>
     );
 }

@@ -27,6 +27,7 @@ export const useBundleListingStore = create<BundleListingState>()(
             message: "",
         },
         queryValue: "",
+        viewBundle: null,
 
         // Data actions
         setBundles: (bundles) =>
@@ -181,6 +182,16 @@ export const useBundleListingStore = create<BundleListingState>()(
 
             return filtered;
         },
+
+        openViewBundle: (bundle) =>
+            set({
+                viewBundle: bundle,
+            }),
+
+        closeViewBundle: () =>
+            set({
+                viewBundle: null,
+            }),
 
         getPaginatedBundles: () => {
             const { pagination } = get();

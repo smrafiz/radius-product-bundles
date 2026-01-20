@@ -50,7 +50,11 @@ export function useBundleActions(
             },
 
             view: () => {
-                console.log("View button clicked");
+                if (!bundle) {
+                    throw new Error("Bundle not found");
+                }
+
+                useBundleListingStore.getState().openViewBundle(bundle);
             },
 
             duplicate: async () => {

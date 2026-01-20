@@ -81,6 +81,11 @@ export interface BundleListingState {
         hasPrevious: boolean;
         label: string;
     };
+
+    // View bundle
+    viewBundle: BundleListItem | null;
+    openViewBundle: (bundle: BundleListItem) => void;
+    closeViewBundle: () => void;
 }
 
 export interface BundleState {
