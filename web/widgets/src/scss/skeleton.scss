@@ -55,7 +55,7 @@
         &--large {
             width: 100%;
             height: calc(var(--rb-image-size) + 30px);
-            margin-bottom: var(--rb-spacing-sm);
+            margin-bottom: var(--rb-spacing);
             border-radius: 8px;
         }
         &--box {
@@ -83,6 +83,7 @@
         // Grid skeleton
         &--grid {
             display: grid;
+            align-items: center;
             grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
             gap: var(--rb-spacing);
         }
@@ -90,6 +91,7 @@
         // Slider skeleton
         &--slider {
             display: grid;
+            align-items: center;
             grid-auto-flow: column;
             grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
             gap: var(--rb-spacing);

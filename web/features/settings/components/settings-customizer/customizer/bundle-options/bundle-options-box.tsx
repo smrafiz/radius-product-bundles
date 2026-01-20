@@ -57,8 +57,8 @@ export function BundleOptionsBox() {
                                     labelAccessibilityVisibility="exclusive"
                                     placeholder="0"
                                     step={5}
-                                    min={0}
-                                    max={800}
+                                    min={400}
+                                    max={1200}
                                     value={(style.boxMaxWidth ?? 500).toString()}
                                     onInput={(event: Event) => {
                                         const target = event.target as HTMLInputElement;

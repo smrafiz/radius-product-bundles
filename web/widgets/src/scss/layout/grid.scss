@@ -60,6 +60,11 @@
             color: var(--rb-text-color);
             margin: 0 0 var(--rb-spacing-xs);
             line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
             @include mixins.line-clamp(2);
         }
 

@@ -24,6 +24,20 @@
         "info": "Adds subtle animation on hover"
     },
     {
+        "type": "checkbox",
+        "id": "display_slider_navigation",
+        "label": "Show navigation arrows",
+        "default": true,
+        "info": "Displays previous and next arrows to help customers navigate the slider."
+    },
+    {
+        "type": "checkbox",
+        "id": "display_slider_dots",
+        "label": "Show pagination dots",
+        "default": true,
+        "info": "Displays dots below the slider to indicate the number of slides and the current position."
+    },
+    {
         "type": "textarea",
         "id": "custom_css_class",
         "label": "Custom CSS class",

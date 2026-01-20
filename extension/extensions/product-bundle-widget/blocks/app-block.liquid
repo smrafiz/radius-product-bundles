@@ -140,6 +140,16 @@
 					{% assign hover_effect = true %}
 				{% endif %}
 
+				{% assign show_slider_navigation = block.settings.display_slider_navigation %}
+				{% if show_slider_navigation == null %}
+					{% assign show_slider_navigation = true %}
+				{% endif %}
+
+				{% assign show_slider_dots = block.settings.display_slider_dots %}
+				{% if show_slider_dots == null %}
+					{% assign show_slider_dots = true %}
+				{% endif %}
+
                 {% comment %} Labels {% endcomment %}
 				{% assign bundle_heading = block.settings.bundle_heading
 						| default: bundle.title
@@ -290,6 +300,8 @@
                         class="radius-bundle radius-bundle--{{ layout | downcase }}"
                         data-bundle-id="{{ bundle_id }}"
 						data-box-align="{{ box_alignment }}"
+						data-show-navigation="{{ show_slider_navigation }}"
+						data-show-pagination="{{ show_slider_dots }}"
                         data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
                         data-show-images="{{ show_images }}"
 						data-show-savings="{{ show_savings }}"
@@ -819,6 +831,20 @@
 			"label": "Enable hover effect",
 			"default": true,
 			"info": "Adds subtle animation on hover"
+		},
+		{
+			"type": "checkbox",
+			"id": "display_slider_navigation",
+			"label": "Show navigation arrows",
+			"default": true,
+			"info": "Displays previous and next arrows to help customers navigate the slider."
+		},
+		{
+			"type": "checkbox",
+			"id": "display_slider_dots",
+			"label": "Show pagination dots",
+			"default": true,
+			"info": "Displays dots below the slider to indicate the number of slides and the current position."
 		},
 		{
 			"type": "textarea",
