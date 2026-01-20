@@ -1,8 +1,40 @@
 /**
  * Settings tab nav types
  */
-export interface SettingsTabNavInfo {
-    id: string;
+import { ComponentType } from "react";
+
+/**
+ * Settings tab ids
+ */
+export type SettingsTabId =
+    | "general"
+    | "bundle_widget"
+    | "customizer"
+    | "discount"
+    | "subscriptions"
+    | "button_action"
+    | "variant_selector"
+    | "notifications"
+    | "integrations"
+    | "track_inventory"
+    | "enable_online_shop"
+    | "advanced"
+    | "tools";
+
+/**
+ * Feature context for settings tabs
+ */
+export type FeatureContext = {
+    isPro: boolean;
+    hasOnlineStore: boolean;
+    hasSubscriptions: boolean;
+};
+
+/**
+ * Settings tab nav types
+ */
+export type SettingsTabNavInfo = {
+    id: SettingsTabId;
     title: string;
     icon:
         | "settings"
@@ -18,16 +50,9 @@ export interface SettingsTabNavInfo {
         | "notification"
         | "dns-settings"
         | "wrench";
-    tone?:
-        | "success"
-        | "info"
-        | "warning"
-        | "critical"
-        | "neutral"
-        | "caution"
-        | "auto"
-        | undefined;
-}
+    component: ComponentType;
+    visible?: (ctx: FeatureContext) => boolean;
+};
 
 /**
  * Global style settings applied to all bundles by default.

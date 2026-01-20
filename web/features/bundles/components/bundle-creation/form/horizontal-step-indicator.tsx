@@ -138,7 +138,7 @@ export function HorizontalStepIndicator() {
                                 {/* Progress Line */}
                                 {index < steps.length - 1 && (
                                     <div
-                                        className={`h-[3px] flex-1 max-w-[120px] min-w-[60px]`}
+                                        className={`h-0.75 flex-1 max-w-30 min-w-15`}
                                         style={{
                                             backgroundColor:
                                                 getProgressLineColor(

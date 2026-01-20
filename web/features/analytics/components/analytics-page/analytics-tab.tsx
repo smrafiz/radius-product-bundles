@@ -1,20 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import {
+    AllBundlesTable,
     AnalyticsBasedBundles,
     AnalyticsChart,
     AnalyticsComparisonCharts,
     AnalyticsDate,
     AnalyticsMetrics,
-    AnalyticsOrderBundles,
 } from "@/features/analytics";
-import { AllBundlesTable } from "@/features/analytics/components/analytics-based-bundle/all-bundles/all-bundles-table";
+import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 /**
  * Analytics Tabs Component
  */
-
 const TABS = [
     { key: "overview", label: "Overview", icon: "chart-vertical" },
     { key: "bundle-performance", label: "Bundle Performance", icon: "package" },
@@ -23,7 +22,15 @@ const TABS = [
 type TabKey = (typeof TABS)[number]["key"];
 
 export function AnalyticsTabs() {
-    const [activeTab, setActiveTab] = useState<TabKey>("bundle-performance");
+    const [activeTab, setActiveTab] = useState<TabKey>("overview");
+    const shouldReduceMotion = useReducedMotion();
+
+    // Framer Motion variants
+    const tabContentVariants = {
+        initial: { opacity: 0, y: 5 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -3 },
+    };
 
     return (
         <s-stack gap="base">
@@ -74,18 +81,33 @@ export function AnalyticsTabs() {
             {/* Metrics cards */}
             <AnalyticsMetrics />
 
-            {/* Tab content */}
-            {activeTab === "overview" ? (
-                <s-stack gap="base">
-                    <AnalyticsChart />
-                    <AnalyticsComparisonCharts />
-                </s-stack>
-            ) : (
-                <s-stack gap="base">
-                    <AnalyticsBasedBundles />
-                    <AllBundlesTable />
-                </s-stack>
-            )}
+            {/* Tab content with animation */}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={activeTab}
+                    variants={tabContentVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={
+                        shouldReduceMotion
+                            ? { duration: 0 }
+                            : { duration: 0.15, ease: "easeOut" }
+                    }
+                >
+                    {activeTab === "overview" ? (
+                        <s-stack gap="base">
+                            <AnalyticsChart />
+                            <AnalyticsComparisonCharts />
+                        </s-stack>
+                    ) : (
+                        <s-stack gap="base">
+                            <AnalyticsBasedBundles />
+                            <AllBundlesTable />
+                        </s-stack>
+                    )}
+                </motion.div>
+            </AnimatePresence>
         </s-stack>
     );
 }

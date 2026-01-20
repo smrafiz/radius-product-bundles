@@ -37,6 +37,7 @@ export const useBundleStore = create(
     immer<BundleState>((set, get) => ({
         // Initial state
         currentStep: 1,
+        previousStep: 1,
         totalSteps: 4,
         bundleData: initialBundleData,
         selectedItems: [],
@@ -65,6 +66,7 @@ export const useBundleStore = create(
         setStep: (step) =>
             set((state) => {
                 if (step >= 1 && step <= state.totalSteps) {
+                    state.previousStep = state.currentStep;
                     state.currentStep = step;
                 }
             }),
@@ -80,6 +82,7 @@ export const useBundleStore = create(
                 state.validationAttempted = true;
 
                 if (state.currentStep < state.totalSteps && canProceed) {
+                    state.previousStep = state.currentStep;
                     state.currentStep += 1;
                     state.validationAttempted = false;
                 }
@@ -88,6 +91,7 @@ export const useBundleStore = create(
         prevStep: () =>
             set((state) => {
                 if (state.currentStep > 1) {
+                    state.previousStep = state.currentStep;
                     state.currentStep -= 1;
                 }
             }),
@@ -95,6 +99,7 @@ export const useBundleStore = create(
         goToNextStep: () =>
             set((state) => {
                 if (state.currentStep < state.totalSteps) {
+                    state.previousStep = state.currentStep;
                     state.currentStep += 1;
                     state.validationAttempted = false;
                 }

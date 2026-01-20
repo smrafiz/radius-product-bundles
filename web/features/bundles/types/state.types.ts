@@ -86,6 +86,7 @@ export interface BundleListingState {
 export interface BundleState {
     totalSteps: number;
     currentStep: number;
+    previousStep: number;
     bundleData: Partial<ExtendedBundleFormData>;
     selectedItems: SelectedItem[];
     displaySettings: DisplaySettings;

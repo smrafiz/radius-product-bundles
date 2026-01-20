@@ -1,5 +1,5 @@
+export * from "./settings-page";
 export * from "./settings-customizer/customizer";
-export { SettingsPage } from "./settings-page/settings-page";
 export { SettingsTab } from "./settings-customizer/settings-tab";
 export { SettingsTools } from "./settings-customizer/settings-tools";
 export { SettingsGeneral } from "./settings-customizer/settings-general";

@@ -166,7 +166,6 @@ export function GlobalForm<T extends FieldValues>({
                     variant="primary"
                     onClick={handleSave}
                     disabled={isSaving}
-                    // @ts-ignore
                     loading={isSaving ? "" : undefined}
                 />
                 <button onClick={handleDiscard} disabled={isSaving} />

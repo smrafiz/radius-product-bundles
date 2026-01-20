@@ -1,0 +1,1 @@
+export { useSettingsTabs } from "./use-settings-tabs";

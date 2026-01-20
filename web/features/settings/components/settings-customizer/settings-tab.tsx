@@ -1,63 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { SETTINGS_TAB_NAV } from "@/features/settings";
+import { useMemo, useState } from "react";
 import {
-    SettingsTools,
-    SettingsGeneral,
-    SettingsDiscount,
-    SettingsAdvanced,
-    SettingsOnlineShop,
-    SettingsBundleWidget,
-    SettingsButtonAction,
-    SettingsSubscriptions,
-    SettingsNotifications,
-    SettingsCustomizer,
-    SettingsVariantSelectorType,
+    AnimatedTabPanel,
+    SettingsTabId,
+    useSettingsTabs,
 } from "@/features/settings";
+import { AnimatePresence } from "framer-motion";
 
 export const SettingsTab = () => {
-    const [activeTab, setActiveTab] = useState<string>(SETTINGS_TAB_NAV[0].id);
-
-    const activeTabData = SETTINGS_TAB_NAV.find((tab) => tab.id === activeTab);
-
-    const renderActiveComponent = () => {
-        switch (activeTab) {
-            case "general":
-                return <SettingsGeneral />;
-            case "bundle_widget":
-                return <SettingsBundleWidget />;
-            case "customizer":
-                return <SettingsCustomizer />;
-            case "discount":
-                return <SettingsDiscount />;
-            case "subscriptions":
-                return <SettingsSubscriptions />;
-            case "button_action":
-                return <SettingsButtonAction />;
-            case "variant_selector":
-                return <SettingsVariantSelectorType />;
-            case "notifications":
-                return <SettingsNotifications />;
-            case "enable_online_shop":
-                return <SettingsOnlineShop />;
-            case "advanced":
-                return <SettingsAdvanced />;
-            case "tools":
-                return <SettingsTools />;
-            default:
-                return <s-text>No settings found.</s-text>;
-        }
+    /** Feature flags – later this can come from API / app config */
+    const featureContext = {
+        isPro: true,
+        hasOnlineStore: true,
+        hasSubscriptions: false,
     };
+
+    const tabs = useSettingsTabs(featureContext);
+
+    const [activeTab, setActiveTab] = useState<SettingsTabId>(tabs[0].id);
+
+    const activeTabData = useMemo(
+        () => tabs.find((tab) => tab.id === activeTab),
+        [tabs, activeTab],
+    );
 
     return (
         <s-box>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                {/* Left: Tab list */}
+                {/* Left: Tabs */}
                 <div className="md:col-span-4">
                     <s-section>
                         <s-stack gap="small-500">
-                            {SETTINGS_TAB_NAV.map((tab) => (
+                            {tabs.map((tab) => (
                                 <s-clickable
                                     key={tab.id}
                                     borderRadius="base"
@@ -67,12 +42,13 @@ export const SettingsTab = () => {
                                         className={`p-2 rounded-md transition-colors ${
                                             activeTab === tab.id
                                                 ? "bg-[#ebebeb] font-semibold"
-                                                : "hover:bg-[#f7f7f7] font-normal"
+                                                : "hover:bg-[#f7f7f7]"
                                         }`}
                                     >
                                         <s-stack
                                             direction="inline"
                                             gap="small-300"
+                                            alignItems="center"
                                         >
                                             <s-icon
                                                 size="base"
@@ -99,15 +75,18 @@ export const SettingsTab = () => {
                         </s-stack>
                     </s-section>
                 </div>
-                {/* Right: Active content */}
+
+                {/* Right: Content */}
                 <div className="md:col-span-8">
-                    <s-section>
+                    <AnimatePresence mode="wait">
                         {activeTabData ? (
-                            <s-stack>{renderActiveComponent()}</s-stack>
+                            <AnimatedTabPanel tabKey={activeTabData.id}>
+                                <activeTabData.component />
+                            </AnimatedTabPanel>
                         ) : (
                             <s-text>No content found.</s-text>
                         )}
-                    </s-section>
+                    </AnimatePresence>
                 </div>
             </div>
         </s-box>
