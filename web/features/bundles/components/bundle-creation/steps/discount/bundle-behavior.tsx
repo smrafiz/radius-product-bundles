@@ -100,6 +100,7 @@ export function BundleBehavior() {
             <s-modal
                 id="discount-products-modal"
                 heading="Select products for discount"
+                accessibilityLabel="Products discount"
                 onHide={handleModalHide}
             >
                 <s-stack gap="base">

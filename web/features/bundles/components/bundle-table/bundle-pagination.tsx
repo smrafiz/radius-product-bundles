@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback } from "react";
-import { Pagination } from "@shopify/polaris";
 import { useBundleListingStore } from "@/features/bundles";
 
 /**
@@ -26,38 +25,30 @@ export function BundlePagination() {
     }, [hasNext, pagination.currentPage, setCurrentPage]);
 
     return (
-        // <div className="flex items-center justify-center p-6 bg-[var(--p-color-bg-surface-secondary)] border-t-[var(--p-color-border)] border-solid border-t">
-        //     <Pagination
-        //         hasPrevious={hasPrevious}
-        //         onPrevious={handlePreviousPage}
-        //         hasNext={hasNext}
-        //         onNext={handleNextPage}
-        //         label={label}
-        //     />
-        // </div>
-        <s-box padding="base" background="subdued">
-            <s-stack direction="inline" gap="base" alignItems="center" justifyContent="space-between">
-                {/* Previous Button */}
-                <s-button
-                    variant="secondary"
-                    disabled={!hasPrevious}
-                    onClick={handlePreviousPage}
-                >
-                    Previous
-                </s-button>
+        <s-stack
+            direction="inline"
+            background="subdued"
+            padding="small"
+            gap="small-200"
+            alignItems="center"
+            justifyContent="center"
+        >
+            {/* Previous Button */}
+            <s-button
+                variant="secondary"
+                disabled={!hasPrevious}
+                onClick={handlePreviousPage}
+                icon="caret-left"
+            />
 
-                {/* Pagination Label */}
-                <s-text>{label}</s-text>
+            <s-text color="subdued">{label}</s-text>
 
-                {/* Next Button */}
-                <s-button
-                    variant="secondary"
-                    disabled={!hasNext}
-                    onClick={handleNextPage}
-                >
-                    Next
-                </s-button>
-            </s-stack>
-        </s-box>
+            <s-button
+                variant="secondary"
+                disabled={!hasNext}
+                onClick={handleNextPage}
+                icon="caret-right"
+            />
+        </s-stack>
     );
 }

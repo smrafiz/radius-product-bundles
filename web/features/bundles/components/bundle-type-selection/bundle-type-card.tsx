@@ -84,6 +84,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         <s-modal
                             id={`modal-${bundleType.id}`}
                             heading={bundleType.label}
+                            accessibilityLabel="Modal bundle type"
                         >
                             <s-stack gap="base">
                                 {bundleType.modalImage && (

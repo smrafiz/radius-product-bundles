@@ -76,28 +76,24 @@ export function NewBundleTable() {
     // Check for empty states
     if (safeBundles.length === 0) {
         return (
-            <s-card>
+            <s-box>
                 <BundleIndexFilters loading={isFetching} />
                 <BundleTableEmptyStates
                     totalBundles={hasActiveFilters ? 1 : totalBundles}
                     filteredBundlesCount={totalBundles}
                 />
                 <BundlePagination />
-            </s-card>
+            </s-box>
         );
     }
 
     // Render bulk actions bar
     const bulkActionsMarkup = selectedResources.length > 0 && (
         <s-box
-            padding="base"
-            style={{
-                backgroundColor: "var(--p-color-bg-surface-selected)",
-                borderBottom: "1px solid var(--p-color-border)",
-            }}
+            padding="base" background="subdued"
         >
             <s-stack direction="inline" gap="base" alignItems="center">
-                <s-text variant="bodyMd" fontWeight="medium">
+                <s-text>
                     {allResourcesSelected
                         ? `All ${safeBundles.length} bundles selected`
                         : `${selectedResources.length} selected`}
@@ -108,7 +104,6 @@ export function NewBundleTable() {
                         <s-button
                             key={index}
                             variant={index === 0 ? "primary" : "secondary"}
-                            size="small"
                             onClick={() => action.onAction?.()}
                         >
                             {action.content}
@@ -119,7 +114,6 @@ export function NewBundleTable() {
                         <>
                             <s-button
                                 variant="secondary"
-                                size="small"
                                 commandFor="bulk-actions-popover"
                             >
                                 More actions
@@ -134,7 +128,6 @@ export function NewBundleTable() {
                                                 onClick={() =>
                                                     action.onAction?.()
                                                 }
-                                                fullWidth
                                             >
                                                 {action.content}
                                             </s-button>
@@ -150,10 +143,10 @@ export function NewBundleTable() {
     );
 
     return (
-        <s-card>
+        <s-box>
             <BundleIndexFilters loading={isFetching} />
 
-            <s-table variant="table">
+            <s-table>
                 {/* Header Row */}
                 {bulkActionsMarkup ? (
                     <s-table-header-row>
@@ -209,6 +202,6 @@ export function NewBundleTable() {
             </s-table>
 
             <BundlePagination />
-        </s-card>
+        </s-box>
     );
 }

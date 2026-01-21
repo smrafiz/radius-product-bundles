@@ -72,6 +72,7 @@ export function ProductMediaPicker({
         <s-modal
             id="product-media-picker-modal"
             heading="Add media from products"
+            accessibilityLabel="Add media from products"
             onHide={handleHide}
         >
             <s-stack gap="base">

@@ -56,13 +56,13 @@ export function NewBundleTableRow({
             {/* Bundle name */}
             <s-table-cell>
                 <s-link
-                    removeUnderline
+                    // removeUnderline
                     onClick={(e: Event) => {
                         e.stopPropagation();
                         actions.edit();
                     }}
                 >
-                    <s-text variant="bodyMd" fontWeight="medium">
+                    <s-text>
                         {bundle.name}
                     </s-text>
                 </s-link>
@@ -71,7 +71,7 @@ export function NewBundleTableRow({
             {/* Bundled products */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text variant="bodyMd">
+                    <s-text>
                         <BundleProductsPreview bundle={bundle} />
                     </s-text>
                 </div>
@@ -80,7 +80,7 @@ export function NewBundleTableRow({
             {/* Bundle type */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text variant="bodyMd" fontWeight="medium">
+                    <s-text>
                         {getBundleProperty(bundle.type, "label")}
                     </s-text>
                 </div>
@@ -89,7 +89,7 @@ export function NewBundleTableRow({
             {/* Bundle discount */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text variant="bodyMd" fontWeight="medium" tone="subdued">
+                    <s-text>
                         {isLoading ? "•" : formatDiscount()}
                     </s-text>
                 </div>

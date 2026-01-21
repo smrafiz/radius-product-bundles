@@ -14,7 +14,7 @@ export function BundleTableEmptyStates({
 
     if (totalBundles === 0) {
         return (
-            <s-section>
+            <s-stack>
                 <s-grid
                     gap="base"
                     justifyItems="center"
@@ -49,14 +49,14 @@ export function BundleTableEmptyStates({
                         </s-button>
                     </s-grid>
                 </s-grid>
-            </s-section>
+            </s-stack>
         );
     }
 
     // No bundles match filters
     if (filteredBundlesCount === 0) {
         return (
-            <s-section>
+            <s-stack>
                 <s-grid
                     gap="base"
                     justifyItems="center"
@@ -83,7 +83,7 @@ export function BundleTableEmptyStates({
                         </s-stack>
                     </s-grid>
                 </s-grid>
-            </s-section>
+            </s-stack>
         );
     }
 
