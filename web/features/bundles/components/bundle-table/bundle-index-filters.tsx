@@ -39,7 +39,7 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
                         {/* Search Field */}
                         <div
                             ref={searchContainerRef}
-                            className={`fade-wrapper ${showSearch ? "fade-visible" : "fade-hidden"}`}
+                            className={`fade-wrapper ${showSearch ? "fade-visible z-20 relative" : "fade-hidden"}`}
                         >
                             <s-search-field
                                 name="search"

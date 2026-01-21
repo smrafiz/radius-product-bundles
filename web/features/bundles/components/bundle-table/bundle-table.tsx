@@ -127,7 +127,6 @@
 //     );
 // }
 
-
 "use client";
 
 import {
@@ -156,8 +155,8 @@ export function BundleTable() {
         clearSelection,
         selectedBundle,
         allResourcesSelected,
-        // toggleSelection,
-        // toggleAllSelection,
+        toggleSelection,
+        toggleAllSelection,
     } = useBundleSelection(safeBundles);
 
     const hasActiveFilters =
@@ -185,13 +184,13 @@ export function BundleTable() {
     const promotedBulkActions =
         selectedResources.length > 0
             ? [
-                ...getPromotedBulkActions(
-                    selectedResources,
-                    selectedBundle,
-                    selectedBundleActions,
-                ),
-                { content: "Cancel", onAction: handleClearSelection },
-            ]
+                  ...getPromotedBulkActions(
+                      selectedResources,
+                      selectedBundle,
+                      selectedBundleActions,
+                  ),
+                  { content: "Cancel", onAction: handleClearSelection },
+              ]
             : [];
 
     const bulkActions = getBulkActions(
@@ -202,7 +201,12 @@ export function BundleTable() {
 
     if (safeBundles.length === 0) {
         return (
-            <s-box background="base" borderRadius="large" border="base" overflow="hidden">
+            <s-box
+                background="base"
+                borderRadius="large"
+                border="base"
+                overflow="hidden"
+            >
                 <BundleIndexFilters loading={isFetching} />
                 <BundleTableEmptyStates
                     totalBundles={hasActiveFilters ? 1 : totalBundles}
@@ -215,119 +219,134 @@ export function BundleTable() {
 
     // Render bulk actions bar
     const bulkActionsMarkup = selectedResources.length > 0 && (
-        <s-box
-            padding="base" background="subdued"
-        >
-            <s-stack direction="inline" gap="base" alignItems="center">
-                <s-text>
-                    {allResourcesSelected
-                        ? `All ${safeBundles.length} bundles selected`
-                        : `${selectedResources.length} selected`}
-                </s-text>
+        <div className="absolute z-10 top-[1px]">
+            <s-box
+                paddingInline="small"
+                paddingBlock="small"
+                background="base"
+                borderRadius="large"
+            >
+                <s-stack direction="inline" gap="base" alignItems="center">
+                    <s-stack direction="inline">
+                        <s-text>
+                            {allResourcesSelected
+                                ? `All ${safeBundles.length} bundles selected`
+                                : `${selectedResources.length} selected`}
+                        </s-text>
+                    </s-stack>
 
-                <s-stack direction="inline" gap="small-200">
-                    {promotedBulkActions.map((action, index) => (
-                        <s-button
-                            key={index}
-                            variant={index === 0 ? "primary" : "secondary"}
-                            onClick={() => action.onAction?.()}
-                        >
-                            {action.content}
-                        </s-button>
-                    ))}
-
-                    {bulkActions.length > 0 && (
-                        <>
+                    <s-stack direction="inline" gap="small-200">
+                        {promotedBulkActions.map((action, index) => (
                             <s-button
-                                variant="secondary"
-                                commandFor="bulk-actions-popover"
+                                key={index}
+                                variant={index === 0 ? "primary" : "secondary"}
+                                onClick={() => action.onAction?.()}
                             >
-                                More actions
+                                {action.content}
                             </s-button>
-                            <s-popover id="bulk-actions-popover">
-                                <s-box padding="small">
-                                    <s-stack gap="small-100">
-                                        {bulkActions.map((action, index) => (
-                                            <s-button
-                                                key={index}
-                                                variant="tertiary"
-                                                onClick={() =>
-                                                    action.onAction?.()
-                                                }
-                                            >
-                                                {action.content}
-                                            </s-button>
-                                        ))}
-                                    </s-stack>
-                                </s-box>
-                            </s-popover>
-                        </>
-                    )}
+                        ))}
+
+                        {bulkActions.length > 0 && (
+                            <s-stack direction="inline">
+                                <s-button
+                                    variant="secondary"
+                                    commandFor="bulk-actions-popover"
+                                    icon="menu-horizontal"
+                                    accessibilityLabel="More actions"
+                                />
+                                <s-popover id="bulk-actions-popover">
+                                    <s-box padding="small">
+                                        <s-stack gap="small-100">
+                                            {bulkActions.map(
+                                                (action, index) => (
+                                                    <s-button
+                                                        key={index}
+                                                        variant="tertiary"
+                                                        onClick={() =>
+                                                            action.onAction?.()
+                                                        }
+                                                    >
+                                                        {action.content}
+                                                    </s-button>
+                                                ),
+                                            )}
+                                        </s-stack>
+                                    </s-box>
+                                </s-popover>
+                            </s-stack>
+                        )}
+                    </s-stack>
                 </s-stack>
-            </s-stack>
-        </s-box>
+            </s-box>
+        </div>
     );
 
     return (
-        <s-box background="base" borderRadius="large" border="base" overflow="hidden">
-            <BundleIndexFilters loading={isFetching} />
+        <div className="relative">
+            <s-box
+                background="base"
+                borderRadius="large"
+                border="base"
+                overflow="hidden"
+            >
+                <BundleIndexFilters loading={isFetching} />
+                {bulkActionsMarkup && <s-stack>{bulkActionsMarkup}</s-stack>}
 
-            <s-table loading={isFetching}>
-                {/* Header Row */}
-                {bulkActionsMarkup ? (
+                <s-table loading={isFetching}>
+                    {/* Header Row */}
                     <s-table-header-row>
-                        {/*<s-table-header listSlot="labeled" slot="first-column">*/}
-                        {/*    <s-checkbox*/}
-                        {/*        checked={allResourcesSelected}*/}
-                        {/*        onChange={toggleAllSelection}*/}
-                        {/*    />*/}
-                        {/*</s-table-header>*/}
-                        <s-table-header listSlot="labeled">
-                            {bulkActionsMarkup}
-                        </s-table-header>
-                    </s-table-header-row>
-                ) : (
-                    <s-table-header-row>
-                        {/*<s-table-header listSlot="labeled" slot="first-column">*/}
-                        {/*    <s-checkbox*/}
-                        {/*        checked={allResourcesSelected}*/}
-                        {/*        onChange={toggleAllSelection}*/}
-                        {/*    />*/}
-                        {/*</s-table-header>*/}
                         <s-table-header listSlot="primary">
-                            <s-stack paddingBlock="small-400">Bundle Name</s-stack>
+                            <s-checkbox
+                                checked={allResourcesSelected}
+                                onChange={(e: Event) => {
+                                    e.stopPropagation();
+                                    toggleAllSelection();
+                                }}
+                            />
                         </s-table-header>
-                        <s-table-header listSlot="labeled">
-                            Bundled Products
-                        </s-table-header>
-                        <s-table-header listSlot="labeled">Type</s-table-header>
-                        <s-table-header listSlot="labeled">
-                            Discount
-                        </s-table-header>
-                        <s-table-header listSlot="labeled">
-                            Status
-                        </s-table-header>
-                        <s-table-header listSlot="labeled">
-                            Actions
-                        </s-table-header>
+
+                        <>
+                            <s-table-header listSlot="labeled">
+                                <s-stack paddingBlock="small-300">
+                                    Bundle Name
+                                </s-stack>
+                            </s-table-header>
+                            <s-table-header>
+                                <s-stack>Products</s-stack>
+                            </s-table-header>
+                            <s-table-header>
+                                <s-stack>Type</s-stack>
+                            </s-table-header>
+                            <s-table-header>
+                                <s-stack>Discount</s-stack>
+                            </s-table-header>
+                            <s-table-header>
+                                <s-stack>Status</s-stack>
+                            </s-table-header>
+                            <s-table-header>
+                                <s-stack>Actions</s-stack>
+                            </s-table-header>
+                        </>
                     </s-table-header-row>
-                )}
 
-                {/* Table Body */}
-                <s-table-body>
-                    {safeBundles.map((bundle, index) => (
-                        <BundleTableRow
-                            key={bundle.id}
-                            bundle={bundle}
-                            index={index}
-                            isSelected={selectedResources.includes(bundle.id)}
-                            // onToggleSelection={toggleSelection}
-                        />
-                    ))}
-                </s-table-body>
-            </s-table>
+                    {/* Table Body */}
+                    <s-table-body>
+                        {safeBundles.map((bundle, index) => (
+                            <BundleTableRow
+                                key={bundle.id}
+                                bundle={bundle}
+                                index={index}
+                                isSelected={selectedResources.includes(
+                                    bundle.id,
+                                )}
+                                onToggleSelection={toggleSelection}
+                            />
+                        ))}
+                    </s-table-body>
+                </s-table>
 
-            <BundlePagination />
-        </s-box>
+                <BundlePagination />
+            </s-box>
+        </div>
     );
 }

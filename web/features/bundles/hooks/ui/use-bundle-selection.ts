@@ -38,7 +38,6 @@ export function useBundleSelection(bundles: any[]) {
         if (clearSelectionRef.current) {
             clearSelectionRef.current();
         } else {
-            // Fallback if the ref is not set
             handleSelectionChange("page" as SelectionType, false);
         }
     }, [handleSelectionChange]);
@@ -49,6 +48,32 @@ export function useBundleSelection(bundles: any[]) {
         showToast("Selection cleared");
     }, [clearSelection, showToast]);
 
+    /**
+     * Toggle ALL selection (header checkbox)
+     */
+    const toggleAllSelection = useCallback(() => {
+        handleSelectionChange(
+            "page" as SelectionType,
+            !allResourcesSelected,
+        );
+    }, [handleSelectionChange, allResourcesSelected]);
+
+    /**
+     * Toggle SINGLE row selection
+     */
+    const toggleSelection = useCallback(
+        (bundleId: string) => {
+            const isSelected = selectedResources.includes(bundleId);
+
+            handleSelectionChange(
+                "single" as SelectionType,
+                !isSelected,
+                bundleId,
+            );
+        },
+        [handleSelectionChange, selectedResources],
+    );
+
     // Get selected bundle for single selection
     const selectedBundle =
         selectedResources.length === 1
@@ -58,6 +83,8 @@ export function useBundleSelection(bundles: any[]) {
     return {
         selectedResources,
         allResourcesSelected,
+        toggleAllSelection,
+        toggleSelection,
         handleSelectionChange,
         clearSelection,
         handleClearSelection,

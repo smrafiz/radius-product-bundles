@@ -131,7 +131,7 @@ interface BundleTableRowProps {
     bundle: any;
     index: number;
     isSelected: boolean;
-    // onToggleSelection: (bundleId: string) => void;
+    onToggleSelection: (bundleId: string) => void;
 }
 
 /**
@@ -141,7 +141,7 @@ export function BundleTableRow({
     bundle,
     index,
     isSelected,
-    // onToggleSelection,
+    onToggleSelection,
     }: BundleTableRowProps) {
     const { isLoading, currencyCode } = useShopSettings();
     const { actions } = useBundleActions(bundle);
@@ -150,23 +150,23 @@ export function BundleTableRow({
     const formatDiscount = () =>
         formatBundleDiscount(bundle, currencyFormatter);
 
-    // const handleCheckboxChange = useCallback(
-    //     (event: Event) => {
-    //         event.stopPropagation();
-    //         onToggleSelection(bundle.id);
-    //     },
-    //     [bundle.id, onToggleSelection],
-    // );
+    const handleCheckboxChange = useCallback(
+        (event: Event) => {
+            event.stopPropagation();
+            onToggleSelection(bundle.id);
+        },
+        [bundle.id, onToggleSelection],
+    );
 
     return (
         <s-table-row id={bundle.id}>
             {/* Checkbox */}
-            {/*<s-table-cell>*/}
-            {/*    <s-checkbox*/}
-            {/*        checked={isSelected}*/}
-            {/*        onChange={handleCheckboxChange}*/}
-            {/*    />*/}
-            {/*</s-table-cell>*/}
+            <s-table-cell>
+                <s-checkbox
+                    checked={isSelected}
+                    onChange={handleCheckboxChange}
+                />
+            </s-table-cell>
 
             {/* Bundle name */}
             <s-table-cell>

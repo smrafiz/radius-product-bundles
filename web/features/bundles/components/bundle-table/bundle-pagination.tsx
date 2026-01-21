@@ -39,6 +39,7 @@ export function BundlePagination() {
                 disabled={!hasPrevious}
                 onClick={handlePreviousPage}
                 icon="caret-left"
+                accessibilityLabel="Previous page"
             />
 
             <s-text color="subdued">{label}</s-text>
@@ -48,6 +49,7 @@ export function BundlePagination() {
                 disabled={!hasNext}
                 onClick={handleNextPage}
                 icon="caret-right"
+                accessibilityLabel="Next page"
             />
         </s-stack>
     );
