@@ -5,7 +5,6 @@ import {
     BundleOptionsGeneral,
     BundleOptionsHeading,
     BundleOptionsImage,
-    BundleOptionsLabel,
     BundleOptionsProduct,
 } from "@/features/settings";
 
@@ -20,7 +19,6 @@ export function BundleOptionType() {
                 <BundleOptionsProduct />
                 <BundleOptionsButton />
                 <BundleOptionsImage />
-                <BundleOptionsLabel />
             </s-stack>
             <s-stack padding="base">
                 <s-button icon="undo">Restore defaults</s-button>

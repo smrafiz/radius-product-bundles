@@ -3,6 +3,7 @@
  */
 
 import { ValidationErrors } from "@/shared";
+import DOMPurify from "isomorphic-dompurify";
 
 /**
  * Format errors as a single concatenated string
@@ -144,3 +145,13 @@ export function getFieldErrorMessage(
     }
     return errors[field]._errors.join(", ");
 }
+
+/**
+ * Sanitizes HTML content by removing all tags and attributes.
+ */
+export const sanitizeHtml = (value: string) => {
+    return DOMPurify.sanitize(value, {
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: [],
+    }).trim();
+};

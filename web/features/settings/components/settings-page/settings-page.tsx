@@ -1,34 +1,51 @@
 "use client";
 
-import { useAppNavigation } from "@/shared";
-import { SettingsTab, useSettingStore } from "@/features/settings";
+import { SettingsFormProvider, SettingsTab, useSettingsSubmit, } from "@/features/settings";
 
 /**
- * Settings Page Component
+ * Settings page content component
  */
-export function SettingsPage() {
-    const { goTo } = useAppNavigation();
-    const { toast, loading, setLoading, hideToast, showToast } =
-        useSettingStore();
+function SettingsPageContent() {
+    const { submitSettings, isDirty, isSubmitting } = useSettingsSubmit();
+
+    /**
+     * Handles form submission
+     */
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        await submitSettings();
+    }
+
+    /**
+     * Handles form reset/discard
+     */
+    function handleReset() {
+        console.log("Handle discarded changes if necessary");
+    }
 
     return (
-        <form
-            data-save-bar
-            onSubmit={(event) => {
-                event.preventDefault();
-                const formData = new FormData(event.target);
-                const formEntries = Object.fromEntries(formData);
-                console.log("Form data", formEntries);
-            }}
-            onReset={(event) => {
-                console.log("Handle discarded changes if necessary");
-            }}
-        >
+        <form data-save-bar onSubmit={handleSubmit} onReset={handleReset}>
             <s-page heading="Settings">
                 <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
-                <SettingsTab />
+                    <SettingsTab />
                 </s-stack>
             </s-page>
         </form>
+    );
+}
+
+/**
+ * Settings page component
+ *
+ * Wraps content with form provider for RHF context.
+ */
+export function SettingsPage() {
+    // TODO: Fetch initial settings from API
+    const initialData = undefined;
+
+    return (
+        <SettingsFormProvider initialData={initialData}>
+            <SettingsPageContent />
+        </SettingsFormProvider>
     );
 }

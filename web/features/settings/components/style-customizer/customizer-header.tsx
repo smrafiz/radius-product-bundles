@@ -1,14 +1,15 @@
 import { BundleTypeTab } from "@/features/settings";
 
-interface Props {
-    activeBundleType: string;
-    onBundleTypeChange: (id: string) => void;
-}
-
+/*
+ * Customizer Header
+ */
 export function CustomizerHeader({
     activeBundleType,
     onBundleTypeChange,
-}: Props) {
+}: {
+    activeBundleType: string;
+    onBundleTypeChange: (id: string) => void;
+}) {
     return (
         <s-section>
             <s-stack

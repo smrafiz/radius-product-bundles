@@ -1,13 +1,5 @@
 export * from "./settings-page";
-export * from "./settings-customizer/customizer";
-export { SettingsTab } from "./settings-customizer/settings-tab";
-export { SettingsTools } from "./settings-customizer/settings-tools";
-export { SettingsGeneral } from "./settings-customizer/settings-general";
-export { SettingsAdvanced } from "./settings-customizer/settings-advanced";
-export { SettingsDiscount } from "./settings-customizer/settings-discount";
-export { SettingsCustomizer } from "./settings-customizer/settings-customizer";
-export { SettingsOnlineShop } from "./settings-customizer/settings-online-shop";
-export { SettingsButtonAction } from "./settings-customizer/settings-button-action";
-export { SettingsNotifications } from "./settings-customizer/settings-notifications";
-export { SettingsSubscriptions } from "./settings-customizer/settings-subscriptions";
-export { SettingsVariantSelectorType } from "./settings-customizer/variant-selector-type";
+export * from "./settings-tabs";
+export * from "./style-customizer";
+export * from "./style-customizer";
+export { SettingsFormProvider } from "./settings-form/settings-form-provider";

@@ -1,16 +1,6 @@
 import { z } from "zod";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/shared";
 import { VALIDATION_MESSAGES } from "@/shared/constants";
-
-/**
- * Sanitizes HTML content by removing all tags and attributes.
- */
-const sanitizeHtml = (value: string) => {
-    return DOMPurify.sanitize(value, {
-        ALLOWED_TAGS: [],
-        ALLOWED_ATTR: [],
-    }).trim();
-};
 
 /**
  * Validates the Shopify Product GID format.

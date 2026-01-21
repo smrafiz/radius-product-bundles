@@ -4,16 +4,11 @@
 
 import {
     SettingsAdvanced,
-    SettingsButtonAction,
-    SettingsCustomizer,
-    SettingsDiscount,
     SettingsGeneral,
-    SettingsNotifications,
-    SettingsOnlineShop,
-    SettingsSubscriptions,
+    SettingsLabels,
+    SettingsStyle,
     SettingsTabNavInfo,
     SettingsTools,
-    SettingsVariantSelectorType,
 } from "@/features/settings";
 
 export const SETTINGS_TAB_NAV: readonly SettingsTabNavInfo[] = [
@@ -25,41 +20,15 @@ export const SETTINGS_TAB_NAV: readonly SettingsTabNavInfo[] = [
     },
     {
         id: "customizer",
-        title: "Customizer",
+        title: "Style",
         icon: "edit",
-        component: SettingsCustomizer,
+        component: SettingsStyle,
     },
     {
-        id: "discount",
-        title: "Discount",
-        icon: "discount",
-        component: SettingsDiscount,
-        visible: (ctx) => ctx.isPro,
-    },
-    {
-        id: "button_action",
-        title: "Button action",
-        icon: "button",
-        component: SettingsButtonAction,
-    },
-    {
-        id: "variant_selector",
-        title: "Variant selector type",
-        icon: "variant",
-        component: SettingsVariantSelectorType,
-    },
-    {
-        id: "notifications",
-        title: "Notifications",
-        icon: "notification",
-        component: SettingsNotifications,
-    },
-    {
-        id: "enable_online_shop",
-        title: "Enable in online shop",
-        icon: "adjust",
-        component: SettingsOnlineShop,
-        visible: (ctx) => ctx.hasOnlineStore,
+        id: "labels",
+        title: "Labels",
+        icon: "text-block",
+        component: SettingsLabels,
     },
     {
         id: "advanced",

@@ -1,13 +1,42 @@
 "use client";
 
+import { useSettingsField } from "@/features/settings";
 import { DISCOUNT_TYPES } from "@/features/bundles";
 
 /**
  * General settings component
  *
- * Handles core app behavior including defaults, cart behavior, and localization.
+ * Handles core app behavior including defaults, cart behavior, discount, and localization.
+ * Integrates with React Hook Form via useSettingsField hook.
  */
 export function SettingsGeneral() {
+    // Defaults Section
+    const defaultDiscountType = useSettingsField({
+        name: "defaultDiscountType",
+    });
+    const defaultDiscountValue = useSettingsField({
+        name: "defaultDiscountValue",
+    });
+    const maxBundleProducts = useSettingsField({ name: "maxBundleProducts" });
+    const maxBundlesPerShop = useSettingsField({ name: "maxBundlesPerShop" });
+
+    // Cart Behavior Section
+    const redirectAfterCart = useSettingsField({ name: "redirectAfterCart" });
+    const hidePaymentButtons = useSettingsField({ name: "hidePaymentButtons" });
+    const enableStockValidation = useSettingsField({
+        name: "enableStockValidation",
+    });
+
+    // Discount Section
+    const discountTitle = useSettingsField({ name: "discountTitle" });
+    const trackOrdersWithoutDiscount = useSettingsField({
+        name: "trackOrdersWithoutDiscount",
+    });
+
+    // Localization Section
+    const currencyDisplay = useSettingsField({ name: "currencyDisplay" });
+    const disableCartLocale = useSettingsField({ name: "disableCartLocale" });
+
     return (
         <s-stack gap="large">
             {/* Defaults Section */}
@@ -36,7 +65,10 @@ export function SettingsGeneral() {
                         <s-select
                             label="Default discount type"
                             name="defaultDiscountType"
+                            value={defaultDiscountType.value}
+                            onChange={defaultDiscountType.onShopifyChange}
                             details="Applied to new bundles by default"
+                            error={defaultDiscountType.error}
                         >
                             {Object.values(DISCOUNT_TYPES).map((discount) => (
                                 <s-option key={discount.id} value={discount.id}>
@@ -50,8 +82,10 @@ export function SettingsGeneral() {
                             name="defaultDiscountValue"
                             min={0}
                             max={100}
-                            value="10"
+                            value={defaultDiscountValue.value}
+                            onChange={defaultDiscountValue.onShopifyChange}
                             details="Default percentage or fixed amount"
+                            error={defaultDiscountValue.error}
                         />
                     </div>
 
@@ -59,10 +93,12 @@ export function SettingsGeneral() {
                         <s-number-field
                             label="Max products per bundle"
                             name="maxBundleProducts"
-                            placeholder="10"
                             min={2}
                             max={50}
+                            value={maxBundleProducts.value}
+                            onChange={maxBundleProducts.onShopifyChange}
                             details="Maximum products allowed in a single bundle"
+                            error={maxBundleProducts.error}
                         />
 
                         <s-number-field
@@ -71,8 +107,8 @@ export function SettingsGeneral() {
                             readOnly={true}
                             min={1}
                             max={500}
-                            value={"5"}
-                            details="Total bundles limit (based on plan)"
+                            value={maxBundlesPerShop.value}
+                            details="Total bundles limit (based on your plan)"
                         />
                     </div>
                 </s-stack>
@@ -103,7 +139,10 @@ export function SettingsGeneral() {
                     <s-select
                         label="Redirect after add to cart"
                         name="redirectAfterCart"
+                        value={redirectAfterCart.value}
+                        onChange={redirectAfterCart.onShopifyChange}
                         details="Where customers go after adding a bundle to cart"
+                        error={redirectAfterCart.error}
                     >
                         <s-option value="cart">Cart page</s-option>
                         <s-option value="checkout">Checkout</s-option>
@@ -114,24 +153,65 @@ export function SettingsGeneral() {
                     </s-select>
 
                     <s-stack gap="base">
-                        {/* Hide Payment Buttons */}
                         <s-switch
                             name="hidePaymentButtons"
                             label="Hide third-party payment buttons"
-                            details="Hides PayPal, Apple Pay, etc. in cart since
-                                    bundle discounts only apply through standard
-                                    checkout."
+                            details="Hides PayPal, Apple Pay, etc. in cart since bundle discounts only apply through standard checkout."
+                            checked={hidePaymentButtons.value}
+                            onChange={hidePaymentButtons.onShopifyChange}
                         />
 
-                        {/* Enable Stock Validation */}
                         <s-switch
                             name="enableStockValidation"
                             label="Enable stock validation"
-                            details="Disables the bundle button when any product
-                                    in the bundle is out of stock."
-                            defaultChecked
+                            details="Disables the bundle button when any product in the bundle is out of stock."
+                            checked={enableStockValidation.value}
+                            onChange={enableStockValidation.onShopifyChange}
                         />
                     </s-stack>
+                </s-stack>
+            </s-section>
+
+            {/* Discount Section */}
+            <s-section>
+                <s-stack gap="base">
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <s-heading>Discount</s-heading>
+                        <s-tooltip id="discount-tooltip">
+                            <s-text>
+                                Configure how discounts are displayed and
+                                tracked.
+                            </s-text>
+                        </s-tooltip>
+                        <s-icon
+                            tone="neutral"
+                            type="info"
+                            interestFor="discount-tooltip"
+                        />
+                    </s-stack>
+
+                    <s-text-field
+                        label="Discount title"
+                        name="discountTitle"
+                        placeholder="Bundle Discount"
+                        value={discountTitle.value}
+                        onChange={discountTitle.onShopifyChange}
+                        details="Customers will see this in their cart and at checkout."
+                        maxLength={60}
+                        error={discountTitle.error}
+                    />
+
+                    <s-switch
+                        name="trackOrdersWithoutDiscount"
+                        label="Track orders without discount"
+                        details="By default, only orders with discounts are tracked. Enable this to track any order containing bundle products."
+                        checked={trackOrdersWithoutDiscount.value}
+                        onChange={trackOrdersWithoutDiscount.onShopifyChange}
+                    />
                 </s-stack>
             </s-section>
 
@@ -160,7 +240,10 @@ export function SettingsGeneral() {
                     <s-select
                         label="Currency display"
                         name="currencyDisplay"
+                        value={currencyDisplay.value}
+                        onChange={currencyDisplay.onShopifyChange}
                         details="How prices are displayed in the bundle widget"
+                        error={currencyDisplay.error}
                     >
                         <s-option value="store">Use store default</s-option>
                         <s-option value="code">
@@ -171,13 +254,12 @@ export function SettingsGeneral() {
                         </s-option>
                     </s-select>
 
-                    {/* Disable Cart Locale */}
                     <s-switch
                         name="disableCartLocale"
                         label="Disable cart locale redirect"
-                        details="Prevents redirect to localized cart URLs (e.g.,
-                                /fr/cart). Enable this if you have issues with
-                                multi-language stores."
+                        details="Prevents redirect to localized cart URLs (e.g., /fr/cart). Enable this if you have issues with multi-language stores."
+                        checked={disableCartLocale.value}
+                        onChange={disableCartLocale.onShopifyChange}
                     />
                 </s-stack>
             </s-section>

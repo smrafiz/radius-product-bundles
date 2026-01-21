@@ -1,9 +1,14 @@
 import {
+    AppSettings,
+    AppSettingsFormData,
+    AppSettingsGlobalStyles,
+    AppSettingsLabels,
     GlobalLabels,
     GlobalStyleSettings,
     ResponsiveSettings,
     WidgetBehavior,
 } from "@/features/settings";
+import { DiscountType } from "@/features/bundles";
 
 /**
  * Defaults
@@ -120,3 +125,133 @@ export const DEFAULT_RESPONSIVE_SETTINGS: ResponsiveSettings = {
         desktop: 1024,
     },
 };
+
+/**
+ * Default labels for bundle widgets
+ */
+export const DEFAULT_LABELS = {
+    // Widget Text
+    headingLabel: "Bundle & Save",
+    addToCartText: "Add Bundle to Cart",
+    quantityLabel: "Qty:",
+
+    // Button States
+    addingText: "Adding...",
+    addedText: "Added!",
+    outOfStockText: "Out of Stock",
+
+    // Price Labels
+    regularPriceLabel: "Regular Price:",
+    bundlePriceLabel: "Bundle Price:",
+    youSaveLabel: "You Save:",
+    savingsBadgeText: "Save {percent}%",
+
+    // Shipping Labels
+    freeShippingLabel: "Free Shipping",
+    freeShippingMethodTitle: "Free Shipping",
+} as const;
+
+/**
+ * Default global styles for bundle widgets
+ */
+export const GLOBAL_STYLES = {
+    colors: {
+        primary: "#000000",
+        secondary: "#666666",
+        background: "#ffffff",
+        innerBackground: "#f9f9f9",
+        border: "#e5e5e5",
+        heading: "#000000",
+        text: "#333333",
+        button: "#000000",
+        buttonText: "#ffffff",
+        buttonHover: "#333333",
+        savings: "#22c55e",
+        savingsText: "#ffffff",
+    },
+    typography: {
+        headingSize: "md" as const,
+        headingTransform: "none" as const,
+        textSize: "md" as const,
+    },
+    button: {
+        size: "md" as const,
+        borderRadius: 4,
+    },
+    badge: {
+        size: "md" as const,
+        borderRadius: 4,
+        fontSize: "12px",
+    },
+    product: {
+        background: "#ffffff",
+        text: "#333333",
+        border: "#e5e5e5",
+        borderRadius: 4,
+        fontSize: "14px",
+    },
+    image: {
+        size: "md" as const,
+        borderRadius: 4,
+        fit: "cover" as const,
+    },
+    box: {
+        background: "#ffffff",
+        border: "#e5e5e5",
+        borderRadius: 8,
+    },
+} as const;
+
+/**
+ * Default app settings values
+ */
+export const APP_SETTINGS: AppSettingsFormData = {
+    // General - Defaults
+    defaultDiscountType: "PERCENTAGE",
+    defaultDiscountValue: 10,
+    maxBundleProducts: 10,
+    maxBundlesPerShop: 5,
+
+    // General - Cart Behavior
+    redirectAfterCart: "cart",
+    hidePaymentButtons: false,
+    enableStockValidation: true,
+
+    // General - Discount
+    discountTitle: "Bundle Discount",
+    trackOrdersWithoutDiscount: true,
+
+    // General - Localization
+    currencyDisplay: "store",
+    disableCartLocale: false,
+
+    // Labels
+    labels: DEFAULT_LABELS,
+
+    // Style
+    globalStyles: GLOBAL_STYLES,
+
+    // Advanced
+    currencyFormat: "",
+    customCssClass: "",
+    customCss: "",
+};
+
+/**
+ * Redirect after cart options
+ */
+export const REDIRECT_AFTER_CART_OPTIONS = [
+    { value: "cart", label: "Cart page" },
+    { value: "checkout", label: "Checkout" },
+    { value: "none", label: "Stay on page (no redirect)" },
+    { value: "drawer", label: "Open cart drawer" },
+] as const;
+
+/**
+ * Currency display options
+ */
+export const CURRENCY_DISPLAY_OPTIONS = [
+    { value: "store", label: "Use store default" },
+    { value: "code", label: "Always show currency code (e.g., USD)" },
+    { value: "symbol", label: "Always show symbol (e.g., $)" },
+] as const;
