@@ -5,7 +5,7 @@ export function EmptyState({
     heading,
     description,
     image = "/assets/empty.png",
-    isSearch = false
+    isSearch = false,
 }: {
     heading: string;
     description: string;

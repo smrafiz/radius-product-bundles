@@ -246,9 +246,11 @@ export async function GET(request: NextRequest) {
                               layout: bundle.settings.layout,
                               theme: bundle.settings.theme,
                               showImages: bundle.settings.showImages,
-                              showComparePrices: bundle.settings.showComparePrices,
+                              showComparePrices:
+                                  bundle.settings.showComparePrices,
                               showQuantity: bundle.settings.showQuantity,
-                              showFreeShipping: bundle.settings.showFreeShipping,
+                              showFreeShipping:
+                                  bundle.settings.showFreeShipping,
                               showPrices: bundle.settings.showPrices,
                               showSavings: bundle.settings.showSavings,
                               enableHyperLink: bundle.settings.enableHyperLink,

@@ -97,7 +97,8 @@ export const ADVANCED_OPTIONS = [
     {
         key: "showImages" as const,
         title: "Display product images",
-        description: "Show product images for each item included in the bundle.",
+        description:
+            "Show product images for each item included in the bundle.",
     },
     {
         key: "showSavingsBadge" as const,
@@ -112,22 +113,26 @@ export const ADVANCED_OPTIONS = [
     {
         key: "showComparePrices" as const,
         title: "Display compare-at prices",
-        description: "Show the original (compare-at) price alongside the current price.",
+        description:
+            "Show the original (compare-at) price alongside the current price.",
     },
     {
         key: "showQuantity" as const,
         title: "Display product quantities",
-        description: "Show the quantity of each product included in the bundle.",
+        description:
+            "Show the quantity of each product included in the bundle.",
     },
     {
         key: "showSavings" as const,
         title: "Display total bundle savings",
-        description: "Show the total amount customers save when purchasing the bundle.",
+        description:
+            "Show the total amount customers save when purchasing the bundle.",
     },
     {
         key: "showFreeShipping" as const,
         title: "Display free shipping message",
-        description: "Inform customers when the bundle qualifies for free shipping.",
+        description:
+            "Inform customers when the bundle qualifies for free shipping.",
     },
     {
         key: "enableHyperLink" as const,

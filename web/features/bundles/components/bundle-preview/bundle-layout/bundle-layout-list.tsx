@@ -1,7 +1,11 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import { calculateDiscountedPrice, formatPrice, useBundleStore, } from "@/features/bundles";
+import {
+    calculateDiscountedPrice,
+    formatPrice,
+    useBundleStore,
+} from "@/features/bundles";
 
 /**
  * List layout for bundle product preview

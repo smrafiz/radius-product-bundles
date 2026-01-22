@@ -142,7 +142,7 @@ export function BundleTableRow({
     index,
     isSelected,
     onToggleSelection,
-    }: BundleTableRowProps) {
+}: BundleTableRowProps) {
     const { isLoading, currencyCode } = useShopSettings();
     const { actions } = useBundleActions(bundle);
 
@@ -177,9 +177,7 @@ export function BundleTableRow({
                         actions.edit();
                     }}
                 >
-                    <s-text>
-                        {bundle.name}
-                    </s-text>
+                    <s-text>{bundle.name}</s-text>
                 </s-link>
             </s-table-cell>
 
@@ -195,18 +193,14 @@ export function BundleTableRow({
             {/* Bundle type */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>
-                        {getBundleProperty(bundle.type, "label")}
-                    </s-text>
+                    <s-text>{getBundleProperty(bundle.type, "label")}</s-text>
                 </div>
             </s-table-cell>
 
             {/* Bundle discount */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>
-                        {isLoading ? "•" : formatDiscount()}
-                    </s-text>
+                    <s-text>{isLoading ? "•" : formatDiscount()}</s-text>
                 </div>
             </s-table-cell>
 

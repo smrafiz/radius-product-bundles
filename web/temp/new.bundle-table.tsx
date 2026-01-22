@@ -89,9 +89,7 @@ export function NewBundleTable() {
 
     // Render bulk actions bar
     const bulkActionsMarkup = selectedResources.length > 0 && (
-        <s-box
-            padding="base" background="subdued"
-        >
+        <s-box padding="base" background="subdued">
             <s-stack direction="inline" gap="base" alignItems="center">
                 <s-text>
                     {allResourcesSelected

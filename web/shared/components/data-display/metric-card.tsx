@@ -32,24 +32,20 @@ export function MetricCard({
                                     <div className="text-[20px]">{value}</div>
                                 </s-text>
 
-                                {tone &&
-                                    growth !== null &&
-                                    growth !== 0 && (
-                                        <s-badge
-                                            tone={
-                                                growth > 0
-                                                    ? "success"
-                                                    : "critical"
-                                            }
-                                            icon={
-                                                growth > 0
-                                                    ? "arrow-up"
-                                                    : "arrow-down"
-                                            }
-                                        >
-                                            {Math.abs(growth).toFixed(1)}%
-                                        </s-badge>
-                                    )}
+                                {tone && growth !== null && growth !== 0 && (
+                                    <s-badge
+                                        tone={
+                                            growth > 0 ? "success" : "critical"
+                                        }
+                                        icon={
+                                            growth > 0
+                                                ? "arrow-up"
+                                                : "arrow-down"
+                                        }
+                                    >
+                                        {Math.abs(growth).toFixed(1)}%
+                                    </s-badge>
+                                )}
                             </s-stack>
                         )}
                     </s-stack>

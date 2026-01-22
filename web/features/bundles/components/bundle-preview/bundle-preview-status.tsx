@@ -115,7 +115,9 @@ export function BundlePreviewStatus() {
                     />
                 </s-stack>
 
-                <div className={`relative ${isOpen ? "rtpb-active-shadow" : "rtpb-normal-shadow"}`}>
+                <div
+                    className={`relative ${isOpen ? "rtpb-active-shadow" : "rtpb-normal-shadow"}`}
+                >
                     <s-clickable
                         command="--toggle"
                         commandFor="status-popover"

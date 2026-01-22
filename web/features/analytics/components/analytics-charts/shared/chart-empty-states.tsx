@@ -190,11 +190,7 @@ export function LimitedDataBanner({
 /*
  * Message when a time period selected
  */
-export function InfoDuringTimePeriod({
-    message,
-}: {
-    message: string;
-}) {
+export function InfoDuringTimePeriod({ message }: { message: string }) {
     return (
         <s-banner tone="info">
             <s-text>{message}</s-text>

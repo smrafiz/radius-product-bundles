@@ -1,7 +1,17 @@
 "use client";
 
-import { EmptyState, formatCurrencyCompact, formatNumber, useAppNavigation } from "@/shared";
-import { TopBundlesHeader, TopBundlesSkeleton, TopBundlesTableHeader, useTopBundles } from "@/features/analytics";
+import {
+    EmptyState,
+    formatCurrencyCompact,
+    formatNumber,
+    useAppNavigation,
+} from "@/shared";
+import {
+    TopBundlesHeader,
+    TopBundlesSkeleton,
+    TopBundlesTableHeader,
+    useTopBundles,
+} from "@/features/analytics";
 
 /**
  * Calculate Average Order Value

@@ -1,41 +1,41 @@
 [
-  {
-    "type": "header",
-    "content": "Colors"
-  },
-  {
-    "type": "color",
-    "id": "primary_color",
-    "label": "Primary/accent color"
-  },
-  {
-    "type": "color",
-    "id": "secondary_color",
-    "label": "Secondary color"
-  },
-  {
-    "type": "color",
-    "id": "background_color",
-    "label": "Background color"
-  },
-  {
-    "type": "color",
-    "id": "inner_background_color",
-    "label": "Inner Background color"
-  },
-  {
-    "type": "color",
-    "id": "heading_color",
-    "label": "Heading color"
-  },
-  {
-    "type": "color",
-    "id": "text_color",
-    "label": "Text color"
-  },
-  {
-    "type": "color",
-    "id": "border_color",
-    "label": "Border color"
-  }
+    {
+        "type": "header",
+        "content": "Colors"
+    },
+    {
+        "type": "color",
+        "id": "primary_color",
+        "label": "Primary/accent color"
+    },
+    {
+        "type": "color",
+        "id": "secondary_color",
+        "label": "Secondary color"
+    },
+    {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+    },
+    {
+        "type": "color",
+        "id": "inner_background_color",
+        "label": "Inner Background color"
+    },
+    {
+        "type": "color",
+        "id": "heading_color",
+        "label": "Heading color"
+    },
+    {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+    },
+    {
+        "type": "color",
+        "id": "border_color",
+        "label": "Border color"
+    }
 ]

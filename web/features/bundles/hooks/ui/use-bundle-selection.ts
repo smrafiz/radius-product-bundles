@@ -52,10 +52,7 @@ export function useBundleSelection(bundles: any[]) {
      * Toggle ALL selection (header checkbox)
      */
     const toggleAllSelection = useCallback(() => {
-        handleSelectionChange(
-            "page" as SelectionType,
-            !allResourcesSelected,
-        );
+        handleSelectionChange("page" as SelectionType, !allResourcesSelected);
     }, [handleSelectionChange, allResourcesSelected]);
 
     /**

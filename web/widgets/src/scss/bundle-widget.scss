@@ -9,7 +9,6 @@
  * - Responsive design
  */
 
-
 @use "variable" as *;
 @use "mixins" as *;
 
@@ -207,7 +206,6 @@
         &__title-wrapper {
             width: 100%;
         }
-
 
         &__product--list .radius-bundle__product-image {
             width: 60px;

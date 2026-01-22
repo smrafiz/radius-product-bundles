@@ -152,11 +152,14 @@ declare global {
                 "";
 
             this.showImages = container.dataset.showImages !== "false";
-            this.showSavingsBadge = container.dataset.showSavingsBadge !== "false";
+            this.showSavingsBadge =
+                container.dataset.showSavingsBadge !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
-            this.showComparePrices = container.dataset.showComparePrices !== "false";
+            this.showComparePrices =
+                container.dataset.showComparePrices !== "false";
             this.showQuantity = container.dataset.showQuantity !== "false";
-            this.enableHyperLink = container.dataset.enableHyperlink !== "false";
+            this.enableHyperLink =
+                container.dataset.enableHyperlink !== "false";
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -509,8 +512,9 @@ declare global {
                 ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
                 : "";
 
-
-            const productUrl = product.handle ? `/products/${product.handle}` : "#";
+            const productUrl = product.handle
+                ? `/products/${product.handle}`
+                : "#";
             const productTitleHtml = this.enableHyperLink
                 ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
                 : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
@@ -568,13 +572,14 @@ declare global {
                     ${productTitleHtml}
                     ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
                 </div>
-                ${ this.showPrices
-                    ? `
+                ${
+                    this.showPrices
+                        ? `
                         <div class="radius-bundle__product-price">
                             ${priceHtml}
                         </div>
                     `
-                    : ""
+                        : ""
                 }
             </div>`;
             }

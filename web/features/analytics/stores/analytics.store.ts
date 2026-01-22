@@ -1,7 +1,11 @@
 "use client";
 
 import { create } from "zustand";
-import { AnalyticsState, formatDate, getTodayInShopTimezone } from "@/features/analytics";
+import {
+    AnalyticsState,
+    formatDate,
+    getTodayInShopTimezone,
+} from "@/features/analytics";
 
 /**
  * Analytics date range store

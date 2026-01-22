@@ -123,9 +123,7 @@ export function BundleActionsGroup({
                                 <s-heading>Included products</s-heading>
                                 {bundle.products?.length ? (
                                     bundle.products.map((product) => (
-                                        <s-stack
-                                            key={product.id}
-                                        >
+                                        <s-stack key={product.id}>
                                             <a
                                                 href={`https://${shopDomain}/products/${product.handle}`}
                                                 target="_blank"

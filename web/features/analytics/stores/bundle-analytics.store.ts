@@ -7,7 +7,11 @@
  */
 
 import { create } from "zustand";
-import { AllBundlesTableState, SortField, SortOrder, } from "@/features/analytics";
+import {
+    AllBundlesTableState,
+    SortField,
+    SortOrder,
+} from "@/features/analytics";
 
 /**
  * Default values for the store

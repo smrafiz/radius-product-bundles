@@ -23,7 +23,7 @@ console.log("🔨 Building schemas...\n");
 function buildSchemaForExtension(extensionName) {
     const configDir = path.join(SCHEMA_DIR, extensionName);
     const extensionDir = path.join(EXTENSIONS_DIR, extensionName);
-    console.log(configDir,extensionDir);
+    console.log(configDir, extensionDir);
     const blockFile = path.join(extensionDir, "blocks/app-block.liquid");
 
     // Check if the config directory exists

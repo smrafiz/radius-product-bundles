@@ -1,7 +1,5 @@
 import { Metadata } from "next";
-import {
-    CustomizerBundleType,
-} from "@/features/settings";
+import { CustomizerBundleType } from "@/features/settings";
 export const metadata: Metadata = {
     title: "Customizer | Manage Your Bundle Customization",
     description:
@@ -12,6 +10,5 @@ export const metadata: Metadata = {
  * Setting Customizer Page
  */
 export default function Page() {
-
-    return <CustomizerBundleType />
+    return <CustomizerBundleType />;
 }

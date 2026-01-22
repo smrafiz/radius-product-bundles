@@ -10,7 +10,12 @@ export function TopBundlesHeader() {
 
     return (
         <s-box padding="base" border="base" borderStyle="none none solid none">
-            <s-stack gap="small-200" direction="inline" alignItems="center" justifyContent="space-between">
+            <s-stack
+                gap="small-200"
+                direction="inline"
+                alignItems="center"
+                justifyContent="space-between"
+            >
                 <s-stack direction="inline" gap="small-200" alignItems="center">
                     <s-heading>Top Performing Bundles</s-heading>
                     <s-icon

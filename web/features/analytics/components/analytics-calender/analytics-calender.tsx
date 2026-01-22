@@ -1,7 +1,11 @@
 "use client";
 
 import React from "react";
-import { AnalyticsCalendarProps, formatDate, useCalendar, } from "@/features/analytics";
+import {
+    AnalyticsCalendarProps,
+    formatDate,
+    useCalendar,
+} from "@/features/analytics";
 
 import "@/styles/components/calendar.css";
 
@@ -180,7 +184,10 @@ export function AnalyticsCalendar({
                                         className="custom-calendar-weekday"
                                         style={
                                             isTodayWeekday
-                                                ? { fontWeight: "650", color: "initial" }
+                                                ? {
+                                                      fontWeight: "650",
+                                                      color: "initial",
+                                                  }
                                                 : undefined
                                         }
                                         aria-label={

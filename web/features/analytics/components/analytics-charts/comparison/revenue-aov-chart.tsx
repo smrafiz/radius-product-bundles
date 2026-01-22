@@ -20,7 +20,17 @@ import {
     useSmartChartDisplay,
 } from "@/features/analytics";
 import { formatCurrency } from "@/shared";
-import { Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
+import {
+    Bar,
+    CartesianGrid,
+    ComposedChart,
+    Legend,
+    Line,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 
 /**
  * Revenue + AOV Chart

@@ -4,7 +4,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { analyticsQueries, useAnalyticsStore, } from "@/features/analytics";
+import { analyticsQueries, useAnalyticsStore } from "@/features/analytics";
 
 /**
  * Hook to fetch top performing bundles

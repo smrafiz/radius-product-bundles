@@ -370,7 +370,6 @@ export interface DisplaySettings {
         bundlePriceLabel?: string;
         youSaveLabel?: string;
         freeShippingLabel?: string;
-
     };
     widget?: {
         showOnMobile: boolean;
@@ -449,7 +448,6 @@ export interface ExistingMedia {
 export type PendingMediaItem =
     | { type: "file"; file: File; id: string }
     | { type: "url"; url: string; id: string };
-
 
 export interface BundlePriorityInfo {
     id: string;

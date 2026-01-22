@@ -20,7 +20,16 @@ import {
     useFormattedChartData,
     useSmartChartDisplay,
 } from "@/features/analytics";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
+import {
+    CartesianGrid,
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 
 /**
  * Funnel Performance Chart

@@ -21,7 +21,16 @@ import {
     useFormattedChartData,
     useSmartChartDisplay,
 } from "@/features/analytics";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+    CartesianGrid,
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 
 /**
  * Conversion Rates Chart - Using useSmartChartDisplay Hook

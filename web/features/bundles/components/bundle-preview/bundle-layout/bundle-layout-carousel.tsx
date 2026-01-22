@@ -1,7 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { calculateDiscountedPrice, formatPrice, useBundleStore, } from "@/features/bundles";
+import {
+    calculateDiscountedPrice,
+    formatPrice,
+    useBundleStore,
+} from "@/features/bundles";
 
 /**
  * Carousel layout for bundle product preview

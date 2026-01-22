@@ -13,7 +13,11 @@ import {
     getTopBundlesService,
 } from "@/features/analytics/services";
 import { handleSessionToken } from "@/lib/shopify";
-import { GetPaginatedBundlesParams, SortField, SortOrder, } from "@/features/analytics";
+import {
+    GetPaginatedBundlesParams,
+    SortField,
+    SortOrder,
+} from "@/features/analytics";
 
 /**
  * Get top-performing bundles with all enhancements

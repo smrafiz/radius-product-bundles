@@ -1,6 +1,10 @@
 "use client";
 
-import { SettingsFormProvider, SettingsTab, useSettingsSubmit, } from "@/features/settings";
+import {
+    SettingsFormProvider,
+    SettingsTab,
+    useSettingsSubmit,
+} from "@/features/settings";
 
 /**
  * Settings page content component

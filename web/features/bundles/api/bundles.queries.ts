@@ -1,7 +1,13 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { getAnalyticsMetricsAction } from "@/features/analytics/actions";
-import { getBundleAction, getBundlesAction, } from "@/features/bundles/actions";
-import { BundleDetail, BundleFilters, BundleListItem, BundleMetricsData, bundlesQueryKeys, } from "@/features/bundles";
+import { getBundleAction, getBundlesAction } from "@/features/bundles/actions";
+import {
+    BundleDetail,
+    BundleFilters,
+    BundleListItem,
+    BundleMetricsData,
+    bundlesQueryKeys,
+} from "@/features/bundles";
 
 /**
  * Bundles queries

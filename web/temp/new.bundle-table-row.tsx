@@ -62,9 +62,7 @@ export function NewBundleTableRow({
                         actions.edit();
                     }}
                 >
-                    <s-text>
-                        {bundle.name}
-                    </s-text>
+                    <s-text>{bundle.name}</s-text>
                 </s-link>
             </s-table-cell>
 
@@ -80,18 +78,14 @@ export function NewBundleTableRow({
             {/* Bundle type */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>
-                        {getBundleProperty(bundle.type, "label")}
-                    </s-text>
+                    <s-text>{getBundleProperty(bundle.type, "label")}</s-text>
                 </div>
             </s-table-cell>
 
             {/* Bundle discount */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>
-                        {isLoading ? "•" : formatDiscount()}
-                    </s-text>
+                    <s-text>{isLoading ? "•" : formatDiscount()}</s-text>
                 </div>
             </s-table-cell>
 

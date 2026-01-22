@@ -114,9 +114,9 @@ export const initialDisplaySettings: DisplaySettings = {
         showOnMobile: true,
     },
     style: {
-        primaryColor:"#303030",
-        secondaryColor:"#666666",
-        textColor:"#333333",
+        primaryColor: "#303030",
+        secondaryColor: "#666666",
+        textColor: "#333333",
         buttonFontSize: 16,
         buttonBgColor: "",
         buttonTextColor: "#ffffff",

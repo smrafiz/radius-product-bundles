@@ -7,7 +7,11 @@ import { PaginationMeta, useAllBundlesPagination } from "@/features/analytics";
  *
  * Displays pagination controls with page info and navigation buttons.
  */
-export function AllBundlesPagination({ pagination }: { pagination: PaginationMeta }) {
+export function AllBundlesPagination({
+    pagination,
+}: {
+    pagination: PaginationMeta;
+}) {
     const { page, setPage, perPage, setPerPage } = useAllBundlesPagination();
     const { total, totalPages, hasNextPage, hasPrevPage } = pagination;
 

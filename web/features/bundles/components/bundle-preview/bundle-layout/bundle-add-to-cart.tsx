@@ -1,8 +1,6 @@
 "use client";
 
-import {
-    useBundleStore,
-} from "@/features/bundles";
+import { useBundleStore } from "@/features/bundles";
 
 export function BundleAddToCart() {
     const { selectedItems, displaySettings } = useBundleStore();

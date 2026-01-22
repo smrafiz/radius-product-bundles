@@ -3,7 +3,11 @@
  */
 
 import { DASHBOARD_QUICK_ACTIONS } from "@/features/dashboard";
-import { formatCurrencyCompact, formatPercentage, MetricFormat, } from "@/shared";
+import {
+    formatCurrencyCompact,
+    formatPercentage,
+    MetricFormat,
+} from "@/shared";
 
 /*
  * Format metric value based on type

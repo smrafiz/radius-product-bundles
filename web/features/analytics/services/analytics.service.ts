@@ -12,8 +12,12 @@ import {
     trackBundleView,
 } from "@/features/analytics/repositories";
 import { transformBundleMetrics } from "@/shared";
-import { endOfDayUTC, parseDateAsUTC, TrackingEvent, } from "@/features/analytics";
-import { endOfDay, startOfDay, subDays, } from "date-fns";
+import {
+    endOfDayUTC,
+    parseDateAsUTC,
+    TrackingEvent,
+} from "@/features/analytics";
+import { endOfDay, startOfDay, subDays } from "date-fns";
 
 /**
  * Get analytics metrics for the dashboard

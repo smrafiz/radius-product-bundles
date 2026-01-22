@@ -1,6 +1,10 @@
 "use client";
 
-import { ConversionRatesChart, FunnelPerformanceChart, RevenueAOVChart, } from "@/features/analytics";
+import {
+    ConversionRatesChart,
+    FunnelPerformanceChart,
+    RevenueAOVChart,
+} from "@/features/analytics";
 
 /**
  * Analytics Comparison Charts

@@ -6,10 +6,14 @@
  * Handles authentication and calls service layer.
  */
 
-import { ApiResponse, } from "@/shared";
+import { ApiResponse } from "@/shared";
 import { BundleFilters } from "@/features/bundles";
 import { handleSessionToken } from "@/lib/shopify";
-import { generateUniqueBundleNameService, getBundleDetails, getBundlesListService, } from "@/features/bundles/services";
+import {
+    generateUniqueBundleNameService,
+    getBundleDetails,
+    getBundlesListService,
+} from "@/features/bundles/services";
 
 /**
  * Get bundles for a shop

@@ -20,7 +20,7 @@ import "@/styles/components/bundle.css";
 /*
  * Render layout based on the layout type
  */
-const RenderLayout = ({ layout }: {layout: DisplaySettings["layout"]}) => {
+const RenderLayout = ({ layout }: { layout: DisplaySettings["layout"] }) => {
     switch (layout) {
         case "GRID":
             return <BundleLayoutGrid />;
@@ -61,13 +61,20 @@ export function BundlePreview() {
                             borderColor: styleData.boxBorderColor || "#e3e3e3",
                         }}
                     >
-                        <s-stack paddingBlockEnd="base" >
-                            <s-stack direction="inline" justifyContent="space-between" alignItems="center" paddingBlockEnd="small-200">
+                        <s-stack paddingBlockEnd="base">
+                            <s-stack
+                                direction="inline"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                paddingBlockEnd="small-200"
+                            >
                                 <s-heading>Preview</s-heading>
                                 <s-button
                                     variant="tertiary"
                                     onClick={() => router.push("/settings")}
-                                >Customization</s-button>
+                                >
+                                    Customization
+                                </s-button>
                             </s-stack>
                             <s-divider />
                         </s-stack>

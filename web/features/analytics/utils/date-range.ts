@@ -240,7 +240,10 @@ function formatDateRange(startDateStr: string, endDateStr: string): string {
     }
 
     // Same month
-    if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    if (
+        start.getMonth() === end.getMonth() &&
+        start.getFullYear() === end.getFullYear()
+    ) {
         return `${startMonth} ${startDay}–${endDay}, ${year}`;
     }
 
