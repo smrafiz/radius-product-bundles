@@ -3,6 +3,7 @@ import {
     AppSettingsFormData,
     AppSettingsGlobalStyles,
     AppSettingsLabels,
+    getDefaultValuesFromConfig,
     GlobalLabels,
     GlobalStyleSettings,
     ResponsiveSettings,
@@ -80,32 +81,6 @@ export const DEFAULT_GLOBAL_STYLES: GlobalStyleSettings = {
         aspectRatio: "1/1",
         objectFit: "cover",
     },
-};
-
-// export const DEFAULT_GLOBAL_LABELS: GlobalLabels = {
-//     regularPriceLabel: "Regular Price:",
-//     bundlePriceLabel: "Bundle Price:",
-//     youSaveLabel: "You Save:",
-//     savingsText: "Save {percent}%",
-//     addToCartText: "Add Bundle to Cart",
-//     addingText: "Adding...",
-//     addedText: "Added!",
-//     freeShippingText: "Free Shipping",
-//     successMessage: "Bundle added to cart!",
-//     errorMessage: "Failed to add bundle",
-//     outOfStockText: "Out of Stock",
-//     quantityLabel: "Qty:",
-//     limitedOfferText: "Limited Offer",
-//     bestSellerText: "Best Seller",
-//     includesLabel: "Includes:",
-//     plusSymbol: "+",
-// };
-
-export const DEFAULT_WIDGET_BEHAVIOR: WidgetBehavior = {
-    showConfirmation: true,
-    confirmationDuration: 3000,
-    enableAnimations: true,
-    animationType: "fade",
 };
 
 export const DEFAULT_RESPONSIVE_SETTINGS: ResponsiveSettings = {
@@ -203,55 +178,10 @@ export const GLOBAL_STYLES = {
 } as const;
 
 /**
- * Default app settings values
+ * Auto-generated default values from config files.
  */
-export const APP_SETTINGS: AppSettingsFormData = {
-    // General - Defaults
-    defaultDiscountType: "PERCENTAGE",
-    defaultDiscountValue: 10,
-    maxBundleProducts: 10,
-    maxBundlesPerShop: 5,
-
-    // General - Cart Behavior
-    redirectAfterCart: "cart",
-    hidePaymentButtons: false,
-    enableStockValidation: true,
-
-    // General - Discount
-    discountTitle: "Bundle Discount",
-    trackOrdersWithoutDiscount: true,
-
-    // General - Localization
-    currencyDisplay: "store",
-    disableCartLocale: false,
-
-    // Labels
-    labels: DEFAULT_LABELS,
-
-    // Style
+export const APP_SETTINGS = {
+    ...getDefaultValuesFromConfig(),
+    // Add complex objects not defined in simple config fields
     globalStyles: GLOBAL_STYLES,
-
-    // Advanced
-    currencyFormat: "",
-    customCssClass: "",
-    customCss: "",
 };
-
-/**
- * Redirect after cart options
- */
-export const REDIRECT_AFTER_CART_OPTIONS = [
-    { value: "cart", label: "Cart page" },
-    { value: "checkout", label: "Checkout" },
-    { value: "none", label: "Stay on page (no redirect)" },
-    { value: "drawer", label: "Open cart drawer" },
-] as const;
-
-/**
- * Currency display options
- */
-export const CURRENCY_DISPLAY_OPTIONS = [
-    { value: "store", label: "Use store default" },
-    { value: "code", label: "Always show currency code (e.g., USD)" },
-    { value: "symbol", label: "Always show symbol (e.g., $)" },
-] as const;
