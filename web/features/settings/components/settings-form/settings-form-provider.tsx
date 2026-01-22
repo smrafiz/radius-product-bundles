@@ -4,11 +4,7 @@ import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 import { APP_SETTINGS } from "@/features/settings/constants/defaults.constants";
-import {
-    AppSettingsFormData,
-    appSettingsSchema,
-    SettingsFormProviderProps,
-} from "@/features/settings";
+import { AppSettingsFormData, appSettingsSchema, SettingsFormProviderProps, } from "@/features/settings";
 
 /**
  * Provides form context for app settings.

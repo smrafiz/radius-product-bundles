@@ -1,4 +1,5 @@
-import { AppSettingsFormData } from "@/features/settings";
+import { z } from "zod";
+import { appSettingsSchema, labelsSchema } from "@/features/settings";
 
 /**
  * Validation configuration
@@ -16,7 +17,7 @@ export interface FieldValidation {
  * Base field configuration
  */
 interface BaseFieldConfig {
-    name: keyof AppSettingsFormData | string;
+    name: string;
     label: string;
     details?: string;
     placeholder?: string;
@@ -136,8 +137,31 @@ export type SettingsTabType = "standard" | "labels" | "style" | "tools";
 export interface SettingsTabConfig {
     id: string;
     title: string;
-    icon: string;
+    icon:
+        | "settings"
+        | "store-online"
+        | "edit"
+        | "text-block"
+        | "refresh"
+        | "button"
+        | "variant"
+        | "apps"
+        | "inventory"
+        | "adjust"
+        | "notification"
+        | "dns-settings"
+        | "wrench";
     type: SettingsTabType;
     sections?: SectionConfig[];
     labelSections?: LabelSectionConfig[];
 }
+
+/**
+ * Type inference from schema
+ */
+export type AppSettingsFormData = z.infer<typeof appSettingsSchema>;
+
+/**
+ * Labels type
+ */
+export type LabelsSettingsFormData = z.infer<typeof labelsSchema>;

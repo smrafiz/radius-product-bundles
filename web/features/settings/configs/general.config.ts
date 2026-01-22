@@ -44,9 +44,13 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     max: 100,
                     validation: {
                         required: "Discount value is required",
+                        minLength: {
+                            value: 1,
+                            message: "Discount value is required",
+                        },
                         min: {
-                            value: 0,
-                            message: "Discount value must be at least 0",
+                            value: 1,
+                            message: "Discount value must be greater than 0",
                         },
                         max: {
                             value: 100,
@@ -65,8 +69,8 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     validation: {
                         required: "Max products is required",
                         min: {
-                            value: 2,
-                            message: "Minimum 2 products per bundle",
+                            value: 1,
+                            message: "Minimum 1 products per bundle",
                         },
                         max: {
                             value: 50,

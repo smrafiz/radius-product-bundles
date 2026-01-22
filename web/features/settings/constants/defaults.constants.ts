@@ -82,24 +82,24 @@ export const DEFAULT_GLOBAL_STYLES: GlobalStyleSettings = {
     },
 };
 
-export const DEFAULT_GLOBAL_LABELS: GlobalLabels = {
-    regularPriceLabel: "Regular Price:",
-    bundlePriceLabel: "Bundle Price:",
-    youSaveLabel: "You Save:",
-    savingsText: "Save {percent}%",
-    addToCartText: "Add Bundle to Cart",
-    addingText: "Adding...",
-    addedText: "Added!",
-    freeShippingText: "Free Shipping",
-    successMessage: "Bundle added to cart!",
-    errorMessage: "Failed to add bundle",
-    outOfStockText: "Out of Stock",
-    quantityLabel: "Qty:",
-    limitedOfferText: "Limited Offer",
-    bestSellerText: "Best Seller",
-    includesLabel: "Includes:",
-    plusSymbol: "+",
-};
+// export const DEFAULT_GLOBAL_LABELS: GlobalLabels = {
+//     regularPriceLabel: "Regular Price:",
+//     bundlePriceLabel: "Bundle Price:",
+//     youSaveLabel: "You Save:",
+//     savingsText: "Save {percent}%",
+//     addToCartText: "Add Bundle to Cart",
+//     addingText: "Adding...",
+//     addedText: "Added!",
+//     freeShippingText: "Free Shipping",
+//     successMessage: "Bundle added to cart!",
+//     errorMessage: "Failed to add bundle",
+//     outOfStockText: "Out of Stock",
+//     quantityLabel: "Qty:",
+//     limitedOfferText: "Limited Offer",
+//     bestSellerText: "Best Seller",
+//     includesLabel: "Includes:",
+//     plusSymbol: "+",
+// };
 
 export const DEFAULT_WIDGET_BEHAVIOR: WidgetBehavior = {
     showConfirmation: true,

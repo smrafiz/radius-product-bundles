@@ -1,6 +1,7 @@
+export * from "./sections";
+export { LabelField } from "./label-field";
 export { SettingsTab } from "./settings-tab";
 export { SettingsTools } from "./settings-tools";
-export { SettingsStyle } from "./settings-style";
-export { SettingsLabels } from "./settings-labels";
-export { SettingsGeneral } from "./settings-general";
-export { SettingsAdvanced } from "./settings-advanced";
+export { SectionHeader } from "./section-header";
+export { SettingsField } from "./settings-field";
+export { DynamicSettingsTab } from "./dynamic-settings-tab";
