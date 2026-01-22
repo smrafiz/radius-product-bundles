@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, FieldPath, PathValue } from "react-hook-form";
 import { AppSettingsFormData } from "@/features/settings";
 
 /**
@@ -31,9 +31,9 @@ export function useSettingsForm() {
      * Wrapped setValue that always marks the form as dirty
      */
     const setValue = useCallback(
-        <K extends keyof AppSettingsFormData>(
-            name: K,
-            value: AppSettingsFormData[K],
+        <TFieldName extends FieldPath<AppSettingsFormData>>(
+            name: TFieldName,
+            value: PathValue<AppSettingsFormData, TFieldName>,
             options?: { shouldValidate?: boolean; shouldDirty?: boolean },
         ) => {
             originalSetValue(name, value, {
@@ -100,7 +100,7 @@ export function useSettingsForm() {
         getFieldError,
         getAllErrors,
         isFieldDirty,
-        // Convenience accessors
+
         errors: formState.errors,
         isDirty: formState.isDirty,
         isValid: formState.isValid,

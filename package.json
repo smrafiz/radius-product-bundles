@@ -31,14 +31,14 @@
     ],
     "dependencies": {
         "@iarna/toml": "^2.2.5",
-        "prettier": "^3.8.0"
+        "prettier": "^3.8.1"
     },
     "private": true,
     "devDependencies": {
-        "@types/node": "^25.0.9",
+        "@types/node": "^25.0.10",
         "concurrently": "^9.2.1",
         "nodemon": "^3.1.11",
-        "sass-embedded": "^1.97.2",
+        "sass-embedded": "^1.97.3",
         "vite": "^7.3.1"
     }
 }

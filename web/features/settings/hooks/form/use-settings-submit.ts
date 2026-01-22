@@ -6,14 +6,12 @@ import { AppSettingsFormData } from "@/features/settings";
 
 /**
  * Hook for handling settings form submission.
- *
- * Provides submit handler with loading state and error handling.
  */
 export function useSettingsSubmit(options?: {
     onSuccess?: (data: AppSettingsFormData) => void;
     onError?: (error: Error) => void;
 }) {
-    const { handleSubmit, formState, reset } = useSettingsForm();
+    const { handleSubmit, formState, reset, trigger } = useSettingsForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -92,12 +90,10 @@ export function useSettingsSubmit(options?: {
      * Validates the form without submitting
      */
     const validateSettings = useCallback(async () => {
-        const result = await handleSubmit(
-            () => true,
-            () => false,
-        )();
-        return result !== false;
-    }, [handleSubmit]);
+        // Use trigger() to validate all fields and return result
+        const isValid = await trigger();
+        return isValid;
+    }, [trigger]);
 
     return {
         submitSettings,

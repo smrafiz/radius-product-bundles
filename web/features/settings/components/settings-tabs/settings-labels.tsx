@@ -1,6 +1,10 @@
 "use client";
 
-import { useSettingsForm } from "@/features/settings";
+import {
+    useSettingsForm,
+    LabelsSettingsFormData,
+    DEFAULT_LABELS,
+} from "@/features/settings";
 
 /**
  * Labels settings component
@@ -11,14 +15,14 @@ import { useSettingsForm } from "@/features/settings";
 export function SettingsLabels() {
     const { watch, setValue, formState } = useSettingsForm();
 
-    // Watch the entire labels object
-    const labels = watch("labels") || {};
+    // Watch the entire labels object with default fallback
+    const labels: LabelsSettingsFormData = watch("labels") ?? DEFAULT_LABELS;
 
     /**
      * Handles label field change
      */
     function handleLabelChange(
-        field: string,
+        field: keyof LabelsSettingsFormData,
         event: CustomEvent | React.ChangeEvent<HTMLInputElement>,
     ) {
         const target = event.target as HTMLInputElement;
@@ -31,7 +35,9 @@ export function SettingsLabels() {
     /**
      * Gets error for a specific label field
      */
-    function getLabelError(field: string): string | undefined {
+    function getLabelError(
+        field: keyof LabelsSettingsFormData,
+    ): string | undefined {
         const labelsErrors = formState.errors.labels as any;
         return labelsErrors?.[field]?.message;
     }
@@ -64,7 +70,7 @@ export function SettingsLabels() {
                         label="Bundle heading"
                         name="labels.headingLabel"
                         placeholder="Bundle & Save"
-                        value={labels.headingLabel || ""}
+                        value={labels.headingLabel}
                         onChange={(e: any) =>
                             handleLabelChange("headingLabel", e)
                         }
@@ -77,7 +83,7 @@ export function SettingsLabels() {
                             label="Add to cart button"
                             name="labels.addToCartText"
                             placeholder="Add Bundle to Cart"
-                            value={labels.addToCartText || ""}
+                            value={labels.addToCartText}
                             onChange={(e: any) =>
                                 handleLabelChange("addToCartText", e)
                             }
@@ -89,7 +95,7 @@ export function SettingsLabels() {
                             label="Quantity label"
                             name="labels.quantityLabel"
                             placeholder="Qty:"
-                            value={labels.quantityLabel || ""}
+                            value={labels.quantityLabel}
                             onChange={(e: any) =>
                                 handleLabelChange("quantityLabel", e)
                             }
@@ -126,7 +132,7 @@ export function SettingsLabels() {
                             label="Adding text"
                             name="labels.addingText"
                             placeholder="Adding..."
-                            value={labels.addingText || ""}
+                            value={labels.addingText}
                             onChange={(e: any) =>
                                 handleLabelChange("addingText", e)
                             }
@@ -138,7 +144,7 @@ export function SettingsLabels() {
                             label="Added text"
                             name="labels.addedText"
                             placeholder="Added!"
-                            value={labels.addedText || ""}
+                            value={labels.addedText}
                             onChange={(e: any) =>
                                 handleLabelChange("addedText", e)
                             }
@@ -150,7 +156,7 @@ export function SettingsLabels() {
                             label="Out of stock text"
                             name="labels.outOfStockText"
                             placeholder="Out of Stock"
-                            value={labels.outOfStockText || ""}
+                            value={labels.outOfStockText}
                             onChange={(e: any) =>
                                 handleLabelChange("outOfStockText", e)
                             }
@@ -188,7 +194,7 @@ export function SettingsLabels() {
                             label="Regular price label"
                             name="labels.regularPriceLabel"
                             placeholder="Regular Price:"
-                            value={labels.regularPriceLabel || ""}
+                            value={labels.regularPriceLabel}
                             onChange={(e: any) =>
                                 handleLabelChange("regularPriceLabel", e)
                             }
@@ -200,7 +206,7 @@ export function SettingsLabels() {
                             label="Bundle price label"
                             name="labels.bundlePriceLabel"
                             placeholder="Bundle Price:"
-                            value={labels.bundlePriceLabel || ""}
+                            value={labels.bundlePriceLabel}
                             onChange={(e: any) =>
                                 handleLabelChange("bundlePriceLabel", e)
                             }
@@ -214,7 +220,7 @@ export function SettingsLabels() {
                             label="Savings label"
                             name="labels.youSaveLabel"
                             placeholder="You Save:"
-                            value={labels.youSaveLabel || ""}
+                            value={labels.youSaveLabel}
                             onChange={(e: any) =>
                                 handleLabelChange("youSaveLabel", e)
                             }
@@ -226,7 +232,7 @@ export function SettingsLabels() {
                             label="Savings badge text"
                             name="labels.savingsBadgeText"
                             placeholder="Save {percent}%"
-                            value={labels.savingsBadgeText || ""}
+                            value={labels.savingsBadgeText}
                             onChange={(e: any) =>
                                 handleLabelChange("savingsBadgeText", e)
                             }
@@ -264,7 +270,7 @@ export function SettingsLabels() {
                             label="Free shipping label"
                             name="labels.freeShippingLabel"
                             placeholder="Free Shipping"
-                            value={labels.freeShippingLabel || ""}
+                            value={labels.freeShippingLabel}
                             onChange={(e: any) =>
                                 handleLabelChange("freeShippingLabel", e)
                             }
@@ -276,7 +282,7 @@ export function SettingsLabels() {
                             label="Free shipping method title"
                             name="labels.freeShippingMethodTitle"
                             placeholder="Free Shipping"
-                            value={labels.freeShippingMethodTitle || ""}
+                            value={labels.freeShippingMethodTitle}
                             onChange={(e: any) =>
                                 handleLabelChange("freeShippingMethodTitle", e)
                             }
