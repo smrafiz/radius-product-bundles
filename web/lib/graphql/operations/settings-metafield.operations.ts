@@ -1,5 +1,5 @@
 import {
-    DEFAULT_GLOBAL_LABELS,
+    DEFAULT_LABELS,
     DEFAULT_GLOBAL_STYLES,
     GlobalLabels,
     GlobalStyleSettings,
@@ -91,7 +91,7 @@ function getValidGlobalLabels(labels: unknown): Partial<GlobalLabels> {
 
         const result: Partial<GlobalLabels> = {};
 
-        for (const key of Object.keys(DEFAULT_GLOBAL_LABELS) as Array<
+        for (const key of Object.keys(DEFAULT_LABELS) as Array<
             keyof GlobalLabels
         >) {
             const value = maybeParsed[key as string];
@@ -146,10 +146,10 @@ export function buildGlobalSettingsMetafieldValue(
             : DEFAULT_GLOBAL_STYLES,
         labels: appSettings?.labels
             ? mergeDeep(
-                  DEFAULT_GLOBAL_LABELS,
+                  DEFAULT_LABELS,
                   getValidGlobalLabels(appSettings.labels),
               )
-            : DEFAULT_GLOBAL_LABELS,
+            : DEFAULT_LABELS,
         defaults: {
             layout: "LIST",
             discountType: appSettings?.defaultDiscountType || "PERCENTAGE",

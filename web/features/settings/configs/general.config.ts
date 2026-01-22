@@ -7,7 +7,6 @@ export const GENERAL_TAB: SettingsTabConfig = {
     id: "general",
     title: "General",
     icon: "settings",
-    type: "standard",
     sections: [
         // ─────────────────────────────────────────────────────────────────
         // DEFAULTS SECTION
@@ -43,7 +42,6 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     min: 0,
                     max: 100,
                     validation: {
-                        required: "Discount value is required",
                         min: {
                             value: 0,
                             message: "Discount value must be at least 0",
@@ -63,7 +61,6 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     min: 2,
                     max: 50,
                     validation: {
-                        required: "Max products is required",
                         min: {
                             value: 2,
                             message: "Minimum 2 products per bundle",
@@ -146,10 +143,6 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     defaultValue: "Bundle Discount",
                     validation: {
                         required: "Discount title is required",
-                        minLength: {
-                            value: 1,
-                            message: "Discount title is required",
-                        },
                         maxLength: {
                             value: 60,
                             message:

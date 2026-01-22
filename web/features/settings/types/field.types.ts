@@ -1,4 +1,5 @@
-import { AppSettingsFormData } from "@/features/settings";
+import { z } from "zod";
+import { appSettingsSchema, labelsSchema } from "@/features/settings";
 
 /**
  * Validation configuration
@@ -16,7 +17,7 @@ export interface FieldValidation {
  * Base field configuration
  */
 interface BaseFieldConfig {
-    name: keyof AppSettingsFormData | string;
+    name: string;
     label: string;
     details?: string;
     placeholder?: string;
@@ -94,41 +95,11 @@ export type FieldConfig =
 export interface SectionConfig {
     id: string;
     title: string;
+    description?: string;
     tooltip?: string;
     fields: FieldConfig[];
     columns?: 1 | 2 | 3;
 }
-
-/**
- * Label field configuration (for nested labels object)
- */
-export interface LabelFieldConfig {
-    name: string;
-    label: string;
-    placeholder: string;
-    details?: string;
-    defaultValue?: string;
-    validation?: {
-        required?: string;
-        maxLength?: { value: number; message: string };
-    };
-}
-
-/**
- * Label section configuration
- */
-export interface LabelSectionConfig {
-    id: string;
-    title: string;
-    tooltip?: string;
-    fields: LabelFieldConfig[];
-    columns?: 1 | 2 | 3;
-}
-
-/**
- * Tab types
- */
-export type SettingsTabType = "standard" | "labels" | "style" | "tools";
 
 /**
  * Tab configuration
@@ -136,8 +107,30 @@ export type SettingsTabType = "standard" | "labels" | "style" | "tools";
 export interface SettingsTabConfig {
     id: string;
     title: string;
-    icon: string;
-    type: SettingsTabType;
+    icon:
+        | "settings"
+        | "store-online"
+        | "paint-brush-round"
+        | "text-block"
+        | "refresh"
+        | "button"
+        | "variant"
+        | "apps"
+        | "inventory"
+        | "adjust"
+        | "notification"
+        | "dns-settings"
+        | "wrench";
     sections?: SectionConfig[];
-    labelSections?: LabelSectionConfig[];
+    parentPath?: string;
 }
+
+/**
+ * Type inference from schema
+ */
+export type AppSettingsFormData = z.infer<typeof appSettingsSchema>;
+
+/**
+ * Labels type
+ */
+export type LabelsSettingsFormData = z.infer<typeof labelsSchema>;
