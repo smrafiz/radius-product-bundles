@@ -130,14 +130,14 @@
 "use client";
 
 import {
-    BundleIndexFilters,
-    BundlePagination,
-    BundleTableEmptyStates,
     BundleTableRow,
-    useBundleActions,
-    useBundleListingStore,
     useBundlesData,
+    useBundleActions,
+    BundlePagination,
+    BundleIndexFilters,
     useBundleSelection,
+    useBundleListingStore,
+    BundleTableEmptyStates,
     useBundleTableBulkActions,
 } from "@/features/bundles";
 import { useCallback } from "react";
@@ -151,13 +151,15 @@ export function BundleTable() {
     const safeBundles = Array.isArray(bundles) ? bundles : [];
 
     const {
-        selectedResources,
-        clearSelection,
         selectedBundle,
-        allResourcesSelected,
+        clearSelection,
         toggleSelection,
+        selectedResources,
         toggleAllSelection,
+        allResourcesSelected,
     } = useBundleSelection(safeBundles);
+
+    const hasSelection = selectedResources.length > 0;
 
     const hasActiveFilters =
         filters.search !== "" ||
@@ -207,7 +209,10 @@ export function BundleTable() {
                 border="base"
                 overflow="hidden"
             >
-                <BundleIndexFilters loading={isFetching} />
+                <BundleIndexFilters
+                    loading={isFetching}
+                    hasSelection={hasSelection}
+                />
                 <BundleTableEmptyStates
                     totalBundles={hasActiveFilters ? 1 : totalBundles}
                     filteredBundlesCount={totalBundles}
@@ -239,7 +244,7 @@ export function BundleTable() {
                         {promotedBulkActions.map((action, index) => (
                             <s-button
                                 key={index}
-                                variant={index === 0 ? "primary" : "secondary"}
+                                variant="secondary"
                                 onClick={() => action.onAction?.()}
                             >
                                 {action.content}
@@ -256,15 +261,18 @@ export function BundleTable() {
                                 />
                                 <s-popover id="bulk-actions-popover">
                                     <s-box padding="small">
-                                        <s-stack gap="small-100">
+                                        <s-stack gap="small-300">
                                             {bulkActions.map(
                                                 (action, index) => (
                                                     <s-button
                                                         key={index}
+                                                        icon={action.icon}
                                                         variant="tertiary"
-                                                        onClick={() =>
-                                                            action.onAction?.()
-                                                        }
+                                                        onClick={() =>{
+                                                            action.onAction?.();
+                                                            console.log('hello')
+                                                        }}
+                                                        tone={action.destructive ? 'critical' : 'auto'}
                                                     >
                                                         {action.content}
                                                     </s-button>
@@ -289,7 +297,10 @@ export function BundleTable() {
                 border="base"
                 overflow="hidden"
             >
-                <BundleIndexFilters loading={isFetching} />
+                <BundleIndexFilters
+                    loading={isFetching}
+                    hasSelection={hasSelection}
+                />
                 {bulkActionsMarkup && <s-stack>{bulkActionsMarkup}</s-stack>}
 
                 <s-table loading={isFetching}>

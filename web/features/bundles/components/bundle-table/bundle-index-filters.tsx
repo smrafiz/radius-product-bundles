@@ -6,7 +6,13 @@ import { BUNDLE_FILTERS, useBundleFilters } from "@/features/bundles";
 /**
  * Bundle index filters component
  */
-export function BundleIndexFilters({ loading }: { loading?: boolean }) {
+export function BundleIndexFilters({
+    loading,
+    hasSelection,
+}: {
+    loading?: boolean;
+    hasSelection: boolean;
+}) {
     const {
         filters,
         queryValue,
@@ -39,7 +45,11 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
                         {/* Search Field */}
                         <div
                             ref={searchContainerRef}
-                            className={`fade-wrapper ${showSearch ? "fade-visible z-20 relative" : "fade-hidden"}`}
+                            className={`fade-wrapper ${
+                                showSearch
+                                    ? "fade-visible z-20 relative"
+                                    : "fade-hidden"
+                            }`}
                         >
                             <s-search-field
                                 name="search"
@@ -53,7 +63,11 @@ export function BundleIndexFilters({ loading }: { loading?: boolean }) {
 
                         {/* Status Tabs */}
                         <div
-                            className={`fade-wrapper ${showSearch ? "fade-hidden" : "fade-visible"}`}
+                            className={`fade-wrapper ${
+                                showSearch || hasSelection
+                                    ? "fade-hidden"
+                                    : "fade-visible"
+                            }`}
                         >
                             <s-stack direction="inline" gap="small-400">
                                 {BUNDLE_FILTERS.tabs.items.map(

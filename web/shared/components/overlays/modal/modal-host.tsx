@@ -69,7 +69,7 @@ export function ModalHost() {
 
     // Always render the modal
     return (
-        <s-modal id="radius-bundles-app-modal" heading={heading}>
+        <s-modal id="radius-bundles-app-modal" accessibilityLabel="bundle app modal" heading={heading}>
             {hasActiveModal && modal.error && (
                 <s-banner tone="critical">
                     <s-text>{modal.error}</s-text>

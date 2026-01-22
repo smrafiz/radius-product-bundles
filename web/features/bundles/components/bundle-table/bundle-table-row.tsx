@@ -125,7 +125,6 @@ import {
     useBundleActions,
 } from "@/features/bundles";
 import { useShopSettings } from "@/shared";
-import { useCallback } from "react";
 
 interface BundleTableRowProps {
     bundle: any;
@@ -150,21 +149,16 @@ export function BundleTableRow({
     const formatDiscount = () =>
         formatBundleDiscount(bundle, currencyFormatter);
 
-    const handleCheckboxChange = useCallback(
-        (event: Event) => {
-            event.stopPropagation();
-            onToggleSelection(bundle.id);
-        },
-        [bundle.id, onToggleSelection],
-    );
-
     return (
         <s-table-row id={bundle.id}>
             {/* Checkbox */}
             <s-table-cell>
                 <s-checkbox
                     checked={isSelected}
-                    onChange={handleCheckboxChange}
+                    onChange={(e: Event) => {
+                        e.stopPropagation();
+                        onToggleSelection(bundle.id);
+                    }}
                 />
             </s-table-cell>
 

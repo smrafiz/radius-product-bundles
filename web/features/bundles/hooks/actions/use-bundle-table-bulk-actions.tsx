@@ -13,7 +13,6 @@ import {
 } from "@/features/bundles/actions";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { DeleteIcon, DuplicateIcon } from "@shopify/polaris-icons";
 
 /**
  * Get bundle table bulk actions
@@ -261,12 +260,17 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         selectedResources: string[],
         selectedBundle: any,
         rowActions: any,
-    ) => {
+    ): {
+        content: string;
+        icon: "delete" | "duplicate";
+        destructive?: boolean | undefined;
+        onAction: () => void | Promise<void>;
+    }[] => {
         if (selectedResources.length === 1 && selectedBundle) {
             return [
                 {
                     content: "Duplicate",
-                    icon: DuplicateIcon,
+                    icon: "duplicate",
                     onAction: () => {
                         openModal({
                             type: "duplicate",
@@ -280,7 +284,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                 },
                 {
                     content: "Delete bundle",
-                    icon: DeleteIcon,
+                    icon: "delete",
                     destructive: true,
                     onAction: () => {
                         openModal({
@@ -298,7 +302,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
             return [
                 {
                     content: "Delete bundles",
-                    icon: DeleteIcon,
+                    icon: "delete",
                     destructive: true,
                     onAction: () => handleBulkDelete(selectedResources),
                 },

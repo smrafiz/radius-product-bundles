@@ -1,90 +1,73 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import { useIndexResourceState } from "@shopify/polaris";
+import { useCallback, useMemo, useState } from "react";
 import { useBundleListingStore } from "@/features/bundles";
-import { SelectionType } from "@shopify/polaris/build/ts/src/utilities/index-provider";
 
-/**
- * Bundle selection
- */
-export function useBundleSelection(bundles: any[]) {
+type ResourceId = string;
+
+export function useBundleSelection<T extends { id: ResourceId }>(
+    bundles: T[],
+) {
     const showToast = useBundleListingStore((s) => s.showToast);
+
     const safeBundles = Array.isArray(bundles) ? bundles : [];
 
-    const resourceIDResolver = (bundle: any) => bundle.id;
-    const indexResourceState = useIndexResourceState(safeBundles, {
-        resourceIDResolver,
-    });
-
-    const { selectedResources, allResourcesSelected, handleSelectionChange } =
-        indexResourceState;
-    const clearSelectionRef = useRef<(() => void) | null>(null);
-
-    // Capture clearSelection when it exists (only when items are selected)
-    useEffect(() => {
-        if (
-            "clearSelection" in indexResourceState &&
-            typeof (indexResourceState as any).clearSelection === "function"
-        ) {
-            clearSelectionRef.current = (
-                indexResourceState as any
-            ).clearSelection;
-        }
-    }, [indexResourceState, selectedResources.length]);
-
-    // Stable clearSelection function that uses the ref
-    const clearSelection = useCallback(() => {
-        if (clearSelectionRef.current) {
-            clearSelectionRef.current();
-        } else {
-            handleSelectionChange("page" as SelectionType, false);
-        }
-    }, [handleSelectionChange]);
-
-    // Clear selection with toast
-    const handleClearSelection = useCallback(() => {
-        clearSelection();
-        showToast("Selection cleared");
-    }, [clearSelection, showToast]);
+    const [selectedResources, setSelectedResources] = useState<ResourceId[]>([]);
 
     /**
-     * Toggle ALL selection (header checkbox)
+     * All selected?
+     */
+    const allResourcesSelected = useMemo(() => {
+        return (
+            safeBundles.length > 0 &&
+            selectedResources.length === safeBundles.length
+        );
+    }, [safeBundles.length, selectedResources.length]);
+
+    /**
+     * Header checkbox (select / clear all)
      */
     const toggleAllSelection = useCallback(() => {
-        handleSelectionChange("page" as SelectionType, !allResourcesSelected);
-    }, [handleSelectionChange, allResourcesSelected]);
+        if (allResourcesSelected) {
+            setSelectedResources([]);
+        } else {
+            setSelectedResources(safeBundles.map((b) => b.id));
+        }
+    }, [allResourcesSelected, safeBundles]);
 
     /**
-     * Toggle SINGLE row selection
+     * Row checkbox
      */
-    const toggleSelection = useCallback(
-        (bundleId: string) => {
-            const isSelected = selectedResources.includes(bundleId);
+    const toggleSelection = useCallback((id: ResourceId) => {
+        setSelectedResources((prev) =>
+            prev.includes(id)
+                ? prev.filter((item) => item !== id)
+                : [...prev, id],
+        );
+    }, []);
 
-            handleSelectionChange(
-                "single" as SelectionType,
-                !isSelected,
-                bundleId,
-            );
-        },
-        [handleSelectionChange, selectedResources],
-    );
+    /**
+     * Explicit clear (Cancel / Bulk cancel)
+     */
+    const clearSelection = useCallback(() => {
+        setSelectedResources([]);
+        showToast("Selection cleared");
+    }, [showToast]);
 
-    // Get selected bundle for single selection
-    const selectedBundle =
-        selectedResources.length === 1
-            ? safeBundles.find((bundle) => bundle.id === selectedResources[0])
-            : null;
+    /**
+     * Single selected bundle
+     */
+    const selectedBundle = useMemo(() => {
+        if (selectedResources.length !== 1) return null;
+        return safeBundles.find((b) => b.id === selectedResources[0]) ?? null;
+    }, [safeBundles, selectedResources]);
 
     return {
         selectedResources,
         allResourcesSelected,
         toggleAllSelection,
         toggleSelection,
-        handleSelectionChange,
         clearSelection,
-        handleClearSelection,
         selectedBundle,
     };
 }

@@ -5,7 +5,7 @@ import {
     BundleTableSkeleton,
     useBundlesPage,
 } from "@/features/bundles";
-import { GlobalBanner, MetricCard } from "@/shared";
+import { GlobalBanner, MetricCard, ModalHost } from "@/shared";
 
 /**
  * Bundle listing page
@@ -94,6 +94,7 @@ export function BundleListingPage() {
                     </s-stack>
                 </s-stack>
             </s-stack>
+            <ModalHost />
         </s-page>
     );
 }
