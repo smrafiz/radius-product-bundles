@@ -7,7 +7,6 @@ export const ADVANCED_TAB: SettingsTabConfig = {
     id: "advanced",
     title: "Advanced",
     icon: "dns-settings",
-    type: "standard",
     sections: [
         // ─────────────────────────────────────────────────────────────────
         // CURRENCY SECTION

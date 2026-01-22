@@ -2,13 +2,15 @@ import { SettingsTabConfig } from "@/features/settings";
 
 /**
  * Labels tab configuration
+ *
+ * Uses parentPath: "labels" so fields map to labels.headingLabel, labels.addToCartText, etc.
  */
 export const LABELS_TAB: SettingsTabConfig = {
     id: "labels",
     title: "Labels",
     icon: "text-block",
-    type: "labels",
-    labelSections: [
+    parentPath: "labels",
+    sections: [
         // ─────────────────────────────────────────────────────────────────
         // WIDGET TEXT SECTION
         // ─────────────────────────────────────────────────────────────────
@@ -19,6 +21,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             columns: 1,
             fields: [
                 {
+                    type: "text",
                     name: "headingLabel",
                     label: "Bundle heading",
                     placeholder: "Bundle & Save",
@@ -32,6 +35,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "addToCartText",
                     label: "Add to cart button",
                     placeholder: "Add Bundle to Cart",
@@ -45,6 +49,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "quantityLabel",
                     label: "Quantity label",
                     placeholder: "Qty:",
@@ -71,6 +76,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             columns: 3,
             fields: [
                 {
+                    type: "text",
                     name: "addingText",
                     label: "Adding text",
                     placeholder: "Adding...",
@@ -84,6 +90,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "addedText",
                     label: "Added text",
                     placeholder: "Added!",
@@ -97,6 +104,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "outOfStockText",
                     label: "Out of stock text",
                     placeholder: "Out of Stock",
@@ -123,6 +131,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             columns: 2,
             fields: [
                 {
+                    type: "text",
                     name: "regularPriceLabel",
                     label: "Regular price label",
                     placeholder: "Regular Price:",
@@ -137,6 +146,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "bundlePriceLabel",
                     label: "Bundle price label",
                     placeholder: "Bundle Price:",
@@ -151,6 +161,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "youSaveLabel",
                     label: "Savings label",
                     placeholder: "You Save:",
@@ -165,6 +176,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "savingsBadgeText",
                     label: "Savings badge text",
                     placeholder: "Save {percent}%",
@@ -192,6 +204,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             columns: 2,
             fields: [
                 {
+                    type: "text",
                     name: "freeShippingLabel",
                     label: "Free shipping label",
                     placeholder: "Free Shipping",
@@ -206,6 +219,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     },
                 },
                 {
+                    type: "text",
                     name: "freeShippingMethodTitle",
                     label: "Free shipping method title",
                     placeholder: "Free Shipping",

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { sanitizeHtml } from "@/shared";
-import { FieldConfig, LabelFieldConfig } from "@/features/settings";
+import { FieldConfig } from "@/features/settings";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
 
 /**
@@ -102,59 +102,37 @@ function buildFieldSchema(field: FieldConfig): z.ZodTypeAny {
 }
 
 /**
- * Builds Zod schema for a label field from its config
- */
-function buildLabelFieldSchema(field: LabelFieldConfig): z.ZodTypeAny {
-    const { validation } = field;
-    let schema = z.string();
-
-    if (validation?.required) {
-        schema = schema.min(1, validation.required);
-    }
-    if (validation?.maxLength) {
-        schema = schema.max(
-            validation.maxLength.value,
-            validation.maxLength.message,
-        );
-    }
-
-    let finalSchema = schema.transform(sanitizeHtml);
-    if (field.defaultValue !== undefined) {
-        return finalSchema.default(field.defaultValue);
-    }
-    return finalSchema;
-}
-
-/**
  * Generates the complete app settings Zod schema from config
  */
 export function generateSettingsSchema() {
     const schemaShape: Record<string, z.ZodTypeAny> = {};
+    const nestedSchemas: Record<string, Record<string, z.ZodTypeAny>> = {};
 
     for (const tab of SETTINGS_TABS) {
-        // Standard sections
-        if (tab.sections) {
-            for (const section of tab.sections) {
-                for (const field of section.fields) {
-                    if (field.type !== "custom") {
-                        schemaShape[field.name] = buildFieldSchema(field);
+        if (!tab.sections) continue;
+
+        for (const section of tab.sections) {
+            for (const field of section.fields) {
+                if (field.type === "custom") continue;
+
+                const fieldSchema = buildFieldSchema(field);
+
+                // Check if fields should be nested (e.g., labels.headingLabel)
+                if (tab.parentPath) {
+                    if (!nestedSchemas[tab.parentPath]) {
+                        nestedSchemas[tab.parentPath] = {};
                     }
+                    nestedSchemas[tab.parentPath][field.name] = fieldSchema;
+                } else {
+                    schemaShape[field.name] = fieldSchema;
                 }
             }
         }
+    }
 
-        // Label sections (nested object)
-        if (tab.labelSections) {
-            const labelSchemaShape: Record<string, z.ZodTypeAny> = {};
-
-            for (const section of tab.labelSections) {
-                for (const field of section.fields) {
-                    labelSchemaShape[field.name] = buildLabelFieldSchema(field);
-                }
-            }
-
-            schemaShape.labels = z.object(labelSchemaShape).optional();
-        }
+    // Add nested schemas
+    for (const [parentPath, fields] of Object.entries(nestedSchemas)) {
+        schemaShape[parentPath] = z.object(fields).optional();
     }
 
     // Add globalStyles as optional JSON
@@ -172,13 +150,15 @@ export const appSettingsSchema = generateSettingsSchema();
  * Labels schema (extracted for separate use)
  */
 export const labelsSchema = (() => {
-    const labelsTab = SETTINGS_TABS.find((tab) => tab.id === "labels");
-    if (!labelsTab?.labelSections) return z.object({});
+    const labelsTab = SETTINGS_TABS.find((tab) => tab.parentPath === "labels");
+    if (!labelsTab?.sections) return z.object({});
 
     const shape: Record<string, z.ZodTypeAny> = {};
-    for (const section of labelsTab.labelSections) {
+    for (const section of labelsTab.sections) {
         for (const field of section.fields) {
-            shape[field.name] = buildLabelFieldSchema(field);
+            if (field.type !== "custom") {
+                shape[field.name] = buildFieldSchema(field);
+            }
         }
     }
     return z.object(shape);

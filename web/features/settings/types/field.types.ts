@@ -95,41 +95,11 @@ export type FieldConfig =
 export interface SectionConfig {
     id: string;
     title: string;
+    description?: string;
     tooltip?: string;
     fields: FieldConfig[];
     columns?: 1 | 2 | 3;
 }
-
-/**
- * Label field configuration (for nested labels object)
- */
-export interface LabelFieldConfig {
-    name: string;
-    label: string;
-    placeholder: string;
-    details?: string;
-    defaultValue?: string;
-    validation?: {
-        required?: string;
-        maxLength?: { value: number; message: string };
-    };
-}
-
-/**
- * Label section configuration
- */
-export interface LabelSectionConfig {
-    id: string;
-    title: string;
-    tooltip?: string;
-    fields: LabelFieldConfig[];
-    columns?: 1 | 2 | 3;
-}
-
-/**
- * Tab types
- */
-export type SettingsTabType = "standard" | "labels" | "style" | "tools";
 
 /**
  * Tab configuration
@@ -140,7 +110,7 @@ export interface SettingsTabConfig {
     icon:
         | "settings"
         | "store-online"
-        | "edit"
+        | "paint-brush-round"
         | "text-block"
         | "refresh"
         | "button"
@@ -151,9 +121,8 @@ export interface SettingsTabConfig {
         | "notification"
         | "dns-settings"
         | "wrench";
-    type: SettingsTabType;
     sections?: SectionConfig[];
-    labelSections?: LabelSectionConfig[];
+    parentPath?: string;
 }
 
 /**

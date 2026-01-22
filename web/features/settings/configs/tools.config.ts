@@ -7,5 +7,4 @@ export const TOOLS_TAB: SettingsTabConfig = {
     id: "tools",
     title: "Tools",
     icon: "wrench",
-    type: "tools",
 };
