@@ -37,8 +37,8 @@ export interface BundleTableEmptyStatesProps {
  */
 export interface BundleTableRowProps {
     bundle: BundleListItem;
-    index: number;
     isSelected: boolean;
+    onToggleSelection: (bundleId: string) => void;
 }
 
 /*
@@ -91,3 +91,23 @@ export interface StepHeadingProps {
  * Discount application types
  */
 export type DiscountApplication = "bundle" | "products";
+
+/*
+ * Bundle bulk actions bar components
+ */
+export interface BundleBulkActionsBarProps {
+    selectedResources: string[];
+    selectedBundle: BundleListItem | null;
+    allResourcesSelected: boolean;
+    toggleAllSelection: () => void;
+    clearSelection: () => void;
+}
+
+/*
+ * Bundle table header components
+ */
+export interface BundleTableHeaderProps {
+    selectedResources: string[];
+    allResourcesSelected: boolean;
+    toggleAllSelection: () => void;
+}

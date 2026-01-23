@@ -1,6 +1,10 @@
 export { BundleTable } from "./bundle-table";
 export { BundleTableRow } from "./bundle-table-row";
 export { BundlePagination } from "./bundle-pagination";
+export { BundleTableHeader } from "./bundle-table-header";
 export { BundleIndexFilters } from "./bundle-index-filters";
 export { BundleTableSkeleton } from "./bundle-table-skeleton";
+export { BundleBulkActionsBar } from "./bundle-bulk-actions-bar";
 export { BundleTableEmptyStates } from "./bundle-table-empty-states";
+export { BundleBulkActionsButtons } from "./bundle-bulk-actions-buttons";
+export { BundleBulkActionsPopover } from "./bundle-bulk-actions-popover";

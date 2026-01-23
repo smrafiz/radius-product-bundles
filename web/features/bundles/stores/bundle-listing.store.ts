@@ -18,7 +18,7 @@ export const useBundleListingStore = create<BundleListingState>()(
         },
         pagination: {
             currentPage: 1,
-            itemsPerPage: 2,
+            itemsPerPage: 10,
             totalItems: 0,
             totalPages: 0,
         },
