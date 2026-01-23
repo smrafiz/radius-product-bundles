@@ -1,18 +1,23 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useBundleListingStore } from "@/features/bundles";
 
-type ResourceId = string;
-
-export function useBundleSelection<T extends { id: ResourceId }>(
-    bundles: T[],
-) {
-    const showToast = useBundleListingStore((s) => s.showToast);
+/**
+ * Hook for bundle table selection.
+ *
+ * Uses store state so selection clears automatically when pagination/filters change.
+ */
+export function useBundleSelection<T extends { id: string }>(bundles: T[]) {
+    const {
+        selectedResources,
+        toggleSelection: storeToggleSelection,
+        toggleAllSelection: storeToggleAllSelection,
+        clearSelection: storeClearSelection,
+    } = useBundleListingStore();
 
     const safeBundles = Array.isArray(bundles) ? bundles : [];
-
-    const [selectedResources, setSelectedResources] = useState<ResourceId[]>([]);
+    const allIds = safeBundles.map((b) => b.id);
 
     /**
      * All selected?
@@ -28,31 +33,25 @@ export function useBundleSelection<T extends { id: ResourceId }>(
      * Header checkbox (select / clear all)
      */
     const toggleAllSelection = useCallback(() => {
-        if (allResourcesSelected) {
-            setSelectedResources([]);
-        } else {
-            setSelectedResources(safeBundles.map((b) => b.id));
-        }
-    }, [allResourcesSelected, safeBundles]);
+        storeToggleAllSelection(allIds);
+    }, [storeToggleAllSelection, allIds]);
 
     /**
      * Row checkbox
      */
-    const toggleSelection = useCallback((id: ResourceId) => {
-        setSelectedResources((prev) =>
-            prev.includes(id)
-                ? prev.filter((item) => item !== id)
-                : [...prev, id],
-        );
-    }, []);
+    const toggleSelection = useCallback(
+        (id: string) => {
+            storeToggleSelection(id);
+        },
+        [storeToggleSelection],
+    );
 
     /**
      * Explicit clear (Cancel / Bulk cancel)
      */
     const clearSelection = useCallback(() => {
-        setSelectedResources([]);
-        showToast("Selection cleared");
-    }, [showToast]);
+        storeClearSelection();
+    }, [storeClearSelection]);
 
     /**
      * Single selected bundle

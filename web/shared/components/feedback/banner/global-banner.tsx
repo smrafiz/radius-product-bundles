@@ -31,7 +31,9 @@ export function GlobalBanner() {
         };
     }, [pathname, clearAllMessages]);
 
-    if (messages.length === 0) return null;
+    if (messages.length === 0) {
+        return null;
+    }
 
     return (
         <s-stack gap="base">

@@ -18,7 +18,7 @@ export const useBundleListingStore = create<BundleListingState>()(
         },
         pagination: {
             currentPage: 1,
-            itemsPerPage: 10,
+            itemsPerPage: 2,
             totalItems: 0,
             totalPages: 0,
         },
@@ -29,6 +29,9 @@ export const useBundleListingStore = create<BundleListingState>()(
         queryValue: "",
         viewBundle: null,
 
+        // Selection state
+        selectedResources: [],
+
         // Data actions
         setBundles: (bundles) =>
             set({
@@ -38,26 +41,47 @@ export const useBundleListingStore = create<BundleListingState>()(
         setLoading: (loading) => set({ loading }),
         setError: (error) => set({ error }),
 
-        // Filter actions
+        // Selection actions
+        setSelectedResources: (ids) => set({ selectedResources: ids }),
+        clearSelection: () => set({ selectedResources: [] }),
+        toggleSelection: (id) =>
+            set((state) => ({
+                selectedResources: state.selectedResources.includes(id)
+                    ? state.selectedResources.filter((item) => item !== id)
+                    : [...state.selectedResources, id],
+            })),
+        toggleAllSelection: (allIds) =>
+            set((state) => ({
+                selectedResources:
+                    state.selectedResources.length === allIds.length
+                        ? []
+                        : allIds,
+            })),
+
+        // Filter actions - clears selection
         setSearch: (search) =>
             set((state) => ({
                 filters: { ...state.filters, search },
                 pagination: { ...state.pagination, currentPage: 1 },
+                selectedResources: [],
             })),
         setStatusFilter: (statusFilter) =>
             set((state) => ({
                 filters: { ...state.filters, statusFilter },
                 pagination: { ...state.pagination, currentPage: 1 },
+                selectedResources: [],
             })),
         setSelectedTab: (selectedTab) =>
             set((state) => ({
                 filters: { ...state.filters, selectedTab },
                 pagination: { ...state.pagination, currentPage: 1 },
+                selectedResources: [],
             })),
         setSortSelected: (sortSelected) =>
             set((state) => ({
                 filters: { ...state.filters, sortSelected },
                 pagination: { ...state.pagination, currentPage: 1 },
+                selectedResources: [],
             })),
         clearFilters: () =>
             set((state) => ({
@@ -71,13 +95,15 @@ export const useBundleListingStore = create<BundleListingState>()(
                 },
                 queryValue: "",
                 pagination: { ...state.pagination, currentPage: 1 },
+                selectedResources: [],
             })),
         setQueryValue: (value) => set({ queryValue: value }),
 
-        // Pagination actions
+        // Pagination actions - clears selection
         setCurrentPage: (currentPage) =>
             set((state) => ({
                 pagination: { ...state.pagination, currentPage },
+                selectedResources: [],
             })),
 
         setItemsPerPage: (itemsPerPage) =>
@@ -87,6 +113,7 @@ export const useBundleListingStore = create<BundleListingState>()(
                     itemsPerPage,
                     currentPage: 1,
                 },
+                selectedResources: [],
             })),
 
         setPaginationMetadata: (metadata: {
@@ -228,6 +255,10 @@ export const useBundleListingStore = create<BundleListingState>()(
                     bundles: safeBundles.filter(
                         (bundle) => bundle.id !== bundleId,
                     ),
+                    // Also remove from selection if selected
+                    selectedResources: state.selectedResources.filter(
+                        (id) => id !== bundleId,
+                    ),
                 };
             }),
 
@@ -244,7 +275,7 @@ export const useBundleListingStore = create<BundleListingState>()(
 
                 if (result.status === "success") {
                     set({
-                        bundles: Array.isArray(result.data) ? result.data : [], // ✅
+                        bundles: Array.isArray(result.data) ? result.data : [],
                         loading: false,
                         pagination: {
                             ...get().pagination,
@@ -255,6 +286,7 @@ export const useBundleListingStore = create<BundleListingState>()(
                             totalPages:
                                 result.data?.pagination?.totalPages ?? 0,
                         },
+                        selectedResources: [], // Clear selection on refresh
                     });
                 } else {
                     set({

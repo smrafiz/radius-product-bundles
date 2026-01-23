@@ -1,11 +1,7 @@
 "use client";
 
 import { useGlobalBanner, useModalStore, withLoader } from "@/shared";
-import {
-    BundleStatus,
-    invalidateBundleCache,
-    useBundleListingStore,
-} from "@/features/bundles";
+import { BundleStatus, invalidateBundleCache, useBundleListingStore, } from "@/features/bundles";
 import {
     bulkToggleBundleStatusAction,
     deleteBundlesAction,
@@ -128,12 +124,14 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
      * Bulk draft bundles
      */
     const handleBulkDraft = (bundleIds: string[]) => {
-        if (!app) return;
+        if (!app) {
+            return;
+        }
 
         openModal({
             type: "status",
-            newStatus: "DRAFT",
             bundle: { name: "selected bundles" } as any,
+            newStatus: "DRAFT",
             onConfirm: async () => {
                 setLoading(true);
                 try {
@@ -229,12 +227,13 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                         selectedBundle.status === "ACTIVE"
                             ? "Set as draft"
                             : "Set as active",
-                    onAction: () =>
+                    onAction: () => {
                         handleToggleBundleStatus(
                             selectedBundle.id,
                             selectedBundle.status,
                             selectedBundle.name,
-                        ),
+                        );
+                    },
                 },
             );
         } else if (selectedResources.length > 1) {

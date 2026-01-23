@@ -152,34 +152,40 @@ export function BundleTableRow({
     return (
         <s-table-row id={bundle.id}>
             {/* Checkbox */}
-            <s-table-cell>
-                <s-checkbox
-                    checked={isSelected}
-                    onChange={(e: Event) => {
-                        e.stopPropagation();
-                        onToggleSelection(bundle.id);
-                    }}
-                />
-            </s-table-cell>
 
             {/* Bundle name */}
             <s-table-cell>
-                <s-link
-                    // removeUnderline
-                    onClick={(e: Event) => {
-                        e.stopPropagation();
-                        actions.edit();
-                    }}
-                >
-                    <s-text>{bundle.name}</s-text>
-                </s-link>
+                <s-stack direction="inline" gap="small" alignItems="center">
+                    <s-checkbox
+                        checked={isSelected}
+                        onChange={(e: Event) => {
+                            e.stopPropagation();
+                            onToggleSelection(bundle.id);
+                        }}
+                    />
+                    <s-link
+                        // removeUnderline
+                        onClick={(e: Event) => {
+                            e.stopPropagation();
+                            actions.edit();
+                        }}
+                    >
+                        <s-text>
+                            <span className="block w-55 whitespace-normal! font-semibold">
+                                {bundle.name}
+                            </span>
+                        </s-text>
+                    </s-link>
+                </s-stack>
             </s-table-cell>
 
             {/* Bundled products */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
                     <s-text>
-                        <BundleProductsPreview bundle={bundle} />
+                        <span className="block w-30 whitespace-normal!">
+                            <BundleProductsPreview bundle={bundle} />
+                        </span>
                     </s-text>
                 </div>
             </s-table-cell>
@@ -187,14 +193,22 @@ export function BundleTableRow({
             {/* Bundle type */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>{getBundleProperty(bundle.type, "label")}</s-text>
+                    <s-text>
+                        <span className="block w-30 whitespace-normal! font-semibold">
+                            {getBundleProperty(bundle.type, "label")}
+                        </span>
+                    </s-text>
                 </div>
             </s-table-cell>
 
             {/* Bundle discount */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>{isLoading ? "•" : formatDiscount()}</s-text>
+                    <s-text>
+                        <span className="block w-30 whitespace-normal!">
+                            {isLoading ? "•" : formatDiscount()}
+                        </span>
+                    </s-text>
                 </div>
             </s-table-cell>
 

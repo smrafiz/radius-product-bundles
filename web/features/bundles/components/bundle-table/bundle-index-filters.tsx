@@ -64,9 +64,7 @@ export function BundleIndexFilters({
                         {/* Status Tabs */}
                         <div
                             className={`fade-wrapper ${
-                                showSearch || hasSelection
-                                    ? "fade-hidden"
-                                    : "fade-visible"
+                                showSearch ? "fade-hidden" : "fade-visible"
                             }`}
                         >
                             <s-stack direction="inline" gap="small-400">

@@ -42,16 +42,6 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                 await actions.status(status);
             },
         });
-
-        // Show modal element
-        setTimeout(() => {
-            const modalElement = document.getElementById(
-                "radius-bundles-app-modal",
-            ) as any;
-            if (modalElement?.showOverlay) {
-                modalElement.showOverlay();
-            }
-        }, 100);
     };
 
     const badge = getBundleStatusBadge(bundle.status);

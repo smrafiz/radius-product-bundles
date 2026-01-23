@@ -1,10 +1,13 @@
 import { create } from "zustand";
-import { ModalState } from "@/shared";
+import { ModalState, showModalElement } from "@/shared";
 
 export const useModalStore = create<ModalState>((set) => ({
     modal: { type: null },
     openModal: (modal) => {
         set({ modal: { ...modal, loading: false, error: undefined } });
+
+        // Show modal element
+        showModalElement();
     },
     closeModal: () => set({ modal: { type: null } }),
     setLoading: (loading) =>

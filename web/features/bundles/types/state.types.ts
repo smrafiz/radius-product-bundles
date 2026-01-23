@@ -86,6 +86,15 @@ export interface BundleListingState {
     viewBundle: BundleListItem | null;
     openViewBundle: (bundle: BundleListItem) => void;
     closeViewBundle: () => void;
+
+    // Selection state
+    selectedResources: string[];
+
+    // Selection actions
+    setSelectedResources: (ids: string[]) => void;
+    clearSelection: () => void;
+    toggleSelection: (id: string) => void;
+    toggleAllSelection: (allIds: string[]) => void;
 }
 
 export interface BundleState {
