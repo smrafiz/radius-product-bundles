@@ -1,4 +1,4 @@
-import type { BundleStatus, BundleStatusBadgeNew } from "@/features/bundles";
+import type { BundleStatus, BundleStatusBadge } from "@/features/bundles";
 
 /**
  * Bundle status badge configurations
@@ -29,7 +29,7 @@ export const BUNDLE_STATUSES = {
         tone: "critical",
         desc: "Sell via selected sales channels and markets",
     },
-} as const satisfies Record<BundleStatus, BundleStatusBadgeNew>;
+} as const satisfies Record<BundleStatus, BundleStatusBadge>;
 
 /**
  * Statuses available when creating a new bundle

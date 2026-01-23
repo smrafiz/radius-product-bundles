@@ -13,7 +13,7 @@ import { useAnalytics } from "@/features/analytics";
  * Dashboard setup guide component
  */
 export function DashboardSetUpGuide() {
-    const { isLoading } = useAnalytics(30);
+    const { isLoading } = useAnalytics();
     const [showGuide, setShowGuide] = useState(true);
     const [items, setItems] = useState<DashboardSetupConfig[]>(
         DASHBOARD_SETUP_ITEMS,

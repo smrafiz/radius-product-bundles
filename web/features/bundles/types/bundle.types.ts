@@ -11,7 +11,6 @@ import type {
 import { z } from "zod";
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
-import { Tone } from "@shopify/polaris/build/ts/src/components/Badge";
 
 // Re-export Prisma enums
 export type BundleStatus = PrismaBundleStatus;
@@ -174,16 +173,7 @@ export interface BundleAction {
     disabled?: boolean;
 }
 
-/*
- * Bundle status badge types
- */
 export interface BundleStatusBadge {
-    text: string;
-    tone: Tone;
-    children?: string;
-}
-
-export interface BundleStatusBadgeNew {
     text: string;
     desc?: string;
     tone:

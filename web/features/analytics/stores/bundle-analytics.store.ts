@@ -17,7 +17,7 @@ import {
  * Default values for the store
  */
 const DEFAULT_PAGE = 1;
-const DEFAULT_PER_PAGE = 3;
+const DEFAULT_PER_PAGE = 10;
 const DEFAULT_SORT_BY: SortField = "revenue";
 const DEFAULT_SORT_ORDER: SortOrder = "desc";
 

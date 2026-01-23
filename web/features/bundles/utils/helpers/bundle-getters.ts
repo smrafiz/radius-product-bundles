@@ -8,7 +8,6 @@ import {
     BundleConfiguration,
     BundleStatus,
     BundleStatusBadge,
-    BundleStatusBadgeNew,
     BundleType,
     CREATE_STATUSES,
     DISCOUNT_TYPES,
@@ -25,8 +24,8 @@ import { Bundle, BundleProduct } from "@/prisma/generated/client";
  * Bundle status badge
  */
 export const getBundleStatusBadge = (
-    status: string | BundleStatusBadge,
-): BundleStatusBadgeNew => {
+    status: string,
+): BundleStatusBadge => {
     const capitalizeWords = (str: string) =>
         str.replace(/\b\w/g, (char) => char.toUpperCase());
 
