@@ -9,6 +9,7 @@ export function MetricCard({
     title,
     value,
     tone,
+    img,
     loading = false,
     growth = null,
 }: MetricCardProps) {
@@ -18,7 +19,16 @@ export function MetricCard({
     return (
         <s-section>
             <s-stack>
-                <s-stack direction="inline" gap="base" alignItems="center">
+                <div className="flex gap-3 flex-nowrap">
+                    <div className="flex-shrink-0 items-center w-[44px] h-[44px]">
+                        {img && (
+                            <img
+                                className="w-[44px] h-[44px]"
+                                src={img.url}
+                                alt={img.alt}
+                            />
+                        )}
+                    </div>
                     <s-stack gap="small-400">
                         <s-heading>{title}</s-heading>
 
@@ -49,7 +59,7 @@ export function MetricCard({
                             </s-stack>
                         )}
                     </s-stack>
-                </s-stack>
+                </div>
             </s-stack>
         </s-section>
     );

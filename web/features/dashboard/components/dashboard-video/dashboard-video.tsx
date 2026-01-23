@@ -19,7 +19,7 @@ function getYouTubeId(url: string) {
 }
 
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
-    const { isLoading } = useAnalytics(30);
+    const { isLoading } = useAnalytics();
     const videoUrl = "https://www.youtube.com/watch?v=wDchsz8nmbo";
 
     const isYouTube: boolean =
@@ -46,9 +46,9 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
                     <div className="relative cursor-pointer">
                         {isYouTube ? (
                             <img
-                                src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+                                src={`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
                                 alt="Video thumbnail"
-                                className="w-full rounded-[8px]"
+                                className="w-full h-[200px] object-cover rounded-[8px]"
                             />
                         ) : (
                             <video

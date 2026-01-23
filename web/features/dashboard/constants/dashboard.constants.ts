@@ -12,31 +12,47 @@ import { ACTION_THEMES, ROUTES } from "@/shared/constants";
 export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
     {
         key: "activeBundles",
-        title: "Active Bundles",
+        title: "Active bundles",
         format: "number",
+        img: {
+            url: "/assets/active-bundles.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         key: "totalRevenue",
-        title: "Total Revenue",
+        title: "Total revenue",
         format: "currency",
         tone: "success",
         icon: "arrow-up",
+        img: {
+            url: "/assets/total-revenue.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         key: "avgConversionRate",
-        title: "Conversion Rate",
+        title: "Conversion rate",
         format: "percentage",
         tone: "warning",
         icon: "arrow-up",
+        img: {
+            url: "/assets/conversion-rate.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         key: "totalViews",
-        title: "Total Views",
+        title: "Total views",
         format: "number",
         tone: "info",
         icon: "arrow-down",
         comparisonLabel: "Last 30 days",
         action: { label: "View details", url: ROUTES.ANALYTICS },
+        img: {
+            url: "/assets/total-views.svg",
+            alt: "Enable app embed",
+        },
     },
 ];
 
@@ -46,79 +62,91 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
 export const DASHBOARD_QUICK_ACTIONS: DashboardQuickActionItem[] = [
     {
         id: "bundles",
-        title: "Manage Bundle",
+        title: "Manage bundle",
         description: "Create and edit bundle offers",
-        icon: "order",
+        icon: "text-in-rows",
         tone: "success",
         url: ROUTES.BUNDLES,
         ...ACTION_THEMES.success,
         enabled: true,
+        img: {
+            url: "/assets/manage-bundle.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         id: "analytics",
-        title: "View Analytics",
+        title: "View analytics",
         description: "Track performance metrics",
-        icon: "chart-vertical",
+        icon: "chart-histogram-second-last",
         tone: "info",
         url: ROUTES.ANALYTICS,
         ...ACTION_THEMES.info,
         enabled: true,
+        img: {
+            url: "/assets/view-analytics.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         id: "studio",
-        title: "Bundle Studio",
+        title: "Bundle studio",
         description: "Create just like the templates",
-        icon: "work-list",
-        tone: "critical",
+        icon: "database",
+        tone: "info",
         url: ROUTES.BUNDLE_STUDIO,
-        ...ACTION_THEMES.critical,
+        ...ACTION_THEMES.info,
         badge: "New",
         enabled: true,
+        img: {
+            url: "/assets/bundle-studio.svg",
+            alt: "Enable app embed",
+        },
     },
 ];
 
 export const DASHBOARD_CALLOUT_CARDS: DashboardCalloutCardsItem[] = [
     {
-        title: "Installation Guide",
+        title: "Need any support?",
         description:
             "Step by step guide to install and activate BundleSuite on your store.",
         primaryButton: {
-            content: "Learn Now",
+            content: "Send us mail",
             props: {
                 url: "https://www.example.com",
                 external: true,
             },
             tone: "critical",
         },
-        icon: "lightbulb",
+        icon: "email",
     },
     {
-        title: "Video Tutorials",
+        title: "Upcoming new features",
         description:
             "Watch our video tutorials to learn how to use BundleSuite.",
         primaryButton: {
-            content: "Watch Now",
+            content: "See all features",
             props: {
                 url: "https://www.example.com",
                 external: true,
             },
             tone: "neutral",
         },
-        icon: "video",
+        icon: "star",
     },
     {
-        title: "Help Docs",
+        title: "Help docs",
         description:
             "Translating your store improves cross-border conversion by an average of 13%.",
         primaryButton: {
-            content: "Visit Help Center",
+            content: "See help doc",
             props: {
                 url: "https://www.example.com",
                 external: true,
             },
             tone: "neutral",
         },
-        icon: "question-circle",
+        icon: "book",
     },
 ];
 
@@ -132,10 +160,10 @@ export const DASHBOARD_SETUP_ITEMS: DashboardSetupConfig[] = [
         description:
             "For your bundles to appear on your storefront, enable Bundles app embed and click Save on your theme.",
         image: {
-            url: "https://cdn.shopify.com/shopifycloud/shopify/assets/admin/home/onboarding/shop_pay_task-70830ae12d3f01fed1da23e607dc58bc726325144c29f96c949baca598ee3ef6.svg",
+            url: "/assets/setup-guide-step-one.svg",
             alt: "Enable app embed",
         },
-        complete: true,
+        complete: false,
         primaryButton: {
             content: "Enable in theme editor",
             props: {
@@ -150,7 +178,7 @@ export const DASHBOARD_SETUP_ITEMS: DashboardSetupConfig[] = [
         description:
             "Pick a bundle type, customize it to fit your products and brand, and preview it live on your store.",
         image: {
-            url: "https://cdn.shopify.com/shopifycloud/shopify/assets/admin/home/onboarding/detail-images/home-onboard-share-store-b265242552d9ed38399455a5e4472c147e421cb43d72a0db26d2943b55bdb307.svg",
+            url: "/assets/setup-guide-step-two.svg",
             alt: "Create your first bundle campaign",
         },
         complete: false,
@@ -175,7 +203,7 @@ export const DASHBOARD_SETUP_ITEMS: DashboardSetupConfig[] = [
         description:
             "You're all set! Click Finish setup and start monitoring how your bundles are performing.",
         image: {
-            url: "https://cdn.shopify.com/b/shopify-guidance-dashboard-public/nqjyaxwdnkg722ml73r6dmci3cpn.svgz",
+            url: "/assets/setup-guide-step-three.svg",
             alt: "Start tracking your bundle campaign performance",
         },
         complete: false,

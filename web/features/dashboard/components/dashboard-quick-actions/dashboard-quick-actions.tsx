@@ -46,19 +46,13 @@ export const DashboardQuickActions = () => {
                                     gap="base"
                                 >
                                     <s-box>
-                                        <div
-                                            className="w-10 h-10 rounded-[var(--p-border-radius-150)] flex items-center justify-center"
-                                            style={{
-                                                backgroundColor:
-                                                    action.backgroundColor,
-                                            }}
-                                        >
-                                            <s-icon
-                                                size="base"
-                                                tone={action.tone}
-                                                type={action.icon}
+                                        {action.img && (
+                                            <img
+                                                className="w-[44px] h-[44px]"
+                                                src={action.img.url}
+                                                alt={action.img.alt}
                                             />
-                                        </div>
+                                        )}
                                     </s-box>
                                     <s-box>
                                         <s-heading>{action.title}</s-heading>

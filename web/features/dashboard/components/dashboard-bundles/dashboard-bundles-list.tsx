@@ -10,9 +10,9 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     return (
         <s-table>
             <s-table-header-row>
-                <s-table-header>Item</s-table-header>
-                <s-table-header>Name</s-table-header>
-                <s-table-header>Type</s-table-header>
+                <s-table-header listSlot="primary">Item</s-table-header>
+                <s-table-header listSlot="labeled">Name</s-table-header>
+                <s-table-header listSlot="inline">Type</s-table-header>
                 <s-table-header format="numeric">Views</s-table-header>
                 <s-table-header format="numeric">Conversion</s-table-header>
                 <s-table-header format="numeric">Revenue</s-table-header>
@@ -25,27 +25,23 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                         clickDelegate="mountain-view-checkbox"
                     >
                         <s-table-cell>
-                            <s-stack
-                                direction="inline"
-                                gap="small"
-                                alignItems="center"
+                            <s-clickable
+                                accessibilityLabel={bundle.name}
+                                border="base"
+                                borderRadius="base"
+                                overflow="hidden"
+                                inlineSize="40px"
+                                blockSize="40px"
+                                onClick={() => bundleData.edit(bundle.id)}
                             >
-                                <s-clickable
-                                    accessibilityLabel={bundle.name}
-                                    border="base"
-                                    borderRadius="base"
-                                    overflow="hidden"
-                                    inlineSize="40px"
-                                    blockSize="40px"
-                                    onClick={() => bundleData.edit(bundle.id)}
-                                >
-                                    <s-image objectFit="cover" src=""></s-image>
-                                </s-clickable>
-                            </s-stack>
+                                <s-stack alignItems="center">
+                                    <s-icon type="image" color="subdued"/>
+                                </s-stack>
+                            </s-clickable>
                         </s-table-cell>
                         <s-table-cell>
                             <s-link onClick={() => bundleData.edit(bundle.id)}>
-                                {bundle.name}
+                                <span className="max-w-[220px]">{bundle.name}</span>
                             </s-link>
                         </s-table-cell>
                         <s-table-cell>

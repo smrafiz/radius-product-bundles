@@ -2,13 +2,14 @@
 
 import {
     AIInsights,
-    DashboardBundles,
-    DashboardCalloutCards,
-    DashboardMediaCard,
-    DashboardMetrics,
-    DashboardQuickActions,
-    DashboardSetUpGuide,
     DashboardVideo,
+    DashboardBundles,
+    DashboardMetrics,
+    DashboardMediaCard,
+    DashboardSetUpGuide,
+    DashboardQuickActions,
+    DashboardCalloutCards,
+    DashboardBuilderAddons,
 } from "@/features/dashboard";
 import { GlobalBanner, useAppNavigation } from "@/shared";
 
@@ -56,14 +57,17 @@ export function DashboardPage() {
                     {/* Quick actions */}
                     <DashboardQuickActions />
 
-                    {/* Video overview */}
-                    <DashboardVideo />
+                    {/* Guidance */}
+                    <DashboardMediaCard />
+
+                    {/* Builder Addons */}
+                    <DashboardBuilderAddons/>
 
                     {/* Useful links */}
                     <DashboardCalloutCards />
 
-                    {/* Guidance */}
-                    <DashboardMediaCard />
+                    {/* Video overview */}
+                    <DashboardVideo />
 
                     {/* AI insights */}
                     <AIInsights />

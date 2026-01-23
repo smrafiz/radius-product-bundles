@@ -9,26 +9,21 @@ export function CalloutCard({
     return (
         <s-section>
             <s-stack gap="small">
-                <s-stack direction="inline" gap="small-200">
-                    <s-icon type={icon as any} />
-                    <s-heading>{title}</s-heading>
-                </s-stack>
-
+                <s-heading>{title}</s-heading>
                 <s-text>{description}</s-text>
 
                 {primaryButton && (
                     <s-stack gap="small">
                         {primaryButton.props?.url && (
-                            <s-link
+                            <s-button
+                                variant="secondary"
+                                tone="auto"
+                                icon={icon as any}
                                 href={primaryButton.props.url}
-                                target={
-                                    primaryButton.props.external
-                                        ? "_blank"
-                                        : "_self"
-                                }
+                                target={primaryButton.props.external ? "_blank" : "_self"}
                             >
                                 {primaryButton.content}
-                            </s-link>
+                            </s-button>
                         )}
                     </s-stack>
                 )}

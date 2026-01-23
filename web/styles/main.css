@@ -1,5 +1,6 @@
 /* Radius Product Bundles - Minimal Styles */
 .radius-app-wrapper {
+    word-break: break-word;
     --radius-primary: #6366f1;
     --radius-accent: #f59e0b;
 }

@@ -18,7 +18,8 @@ export interface DashboardQuickActionItem {
     id: string;
     title: string;
     description: string;
-    icon: "order" | "chart-vertical" | "work-list";
+    img?: { url: string; alt: string };
+    icon: "text-in-rows" | "chart-histogram-second-last" | "database";
     tone:
         | "success"
         | "info"
@@ -42,8 +43,7 @@ export interface DashboardQuickActionItem {
 export interface DashboardCalloutCardsItem {
     title: string;
     description: string;
-    // icon: IconSource;
-    icon: "lightbulb" | "video" | "question-circle";
+    icon: "email" | "star" | "book";
     primaryButton?: CalloutButtonProps | null;
 }
 
