@@ -43,3 +43,15 @@ export interface GlobalFormProps<T extends FieldValues> {
         message: string;
     }) => void;
 }
+
+/**
+ * Table Pagination Props
+ */
+export interface TablePaginationProps {
+    hasPrevious: boolean;
+    hasNext: boolean;
+    label: string;
+    onPrevious: () => void;
+    onNext: () => void;
+    loading?: boolean;
+}

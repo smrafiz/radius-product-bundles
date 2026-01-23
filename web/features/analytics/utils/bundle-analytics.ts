@@ -11,7 +11,7 @@ export function calculateHealthStatus(bundle: {
     if (bundle.views < 30) {
         return {
             status: "new",
-            reason: "Insufficient data for reliable analysis (< 30 views)",
+            reason: "Insufficient data for reliable analysis (less than 30 views)",
         };
     }
 

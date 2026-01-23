@@ -20,10 +20,9 @@ export function useAnalyticsWithBundles() {
      * Merge analytics stats with full bundle data
      */
     const enrichedBundles = useMemo(() => {
-        if (!fullBundles || fullBundles.length === 0) return [];
-
-        // Create a map for O(1) lookups
-        const bundleMap = new Map(fullBundles.map((b) => [b.id, b]));
+        if (!fullBundles || fullBundles.length === 0) {
+            return [];
+        }
 
         // Sort bundles by revenue (descending)
         return [...fullBundles]

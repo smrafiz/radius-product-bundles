@@ -46,10 +46,10 @@ export interface AnalyticsCalendarProps {
     endInput: string;
 }
 
-export /**
+/**
  * Sort Header Cell
  */
-interface SortHeaderProps {
+export interface SortHeaderProps {
     field: SortField;
     label: string;
     currentSort: SortField;
