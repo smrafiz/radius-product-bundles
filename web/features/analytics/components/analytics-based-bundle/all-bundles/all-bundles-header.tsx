@@ -27,7 +27,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
     const dateLabel = getDateRangeLabel(startDate, endDate);
 
     return (
-        <>
+        <s-stack>
             <s-stack gap="base" padding="small">
                 <s-grid
                     gap="small-200"
@@ -132,6 +132,6 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                 </s-grid>
             </s-stack>
             <s-divider />
-        </>
+        </s-stack>
     );
 }

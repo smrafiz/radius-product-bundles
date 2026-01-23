@@ -7,12 +7,7 @@ import {
     useAllBundlesTableWithPagination,
 } from "@/features/analytics";
 import { getBundleStatusBadge } from "@/features/bundles";
-import {
-    EmptyState,
-    formatCurrencyCompact,
-    formatNumber,
-    useAppNavigation,
-} from "@/shared";
+import { EmptyState, formatCurrencyCompact, formatNumber, TablePagination, useAppNavigation, } from "@/shared";
 
 /**
  * Get health status badge config
@@ -219,27 +214,22 @@ export function AllBundlesTable() {
         );
     }
 
-    // Determine if we should show pagination
-    const showPagination =
-        pagination && (pagination.hasNextPage || pagination.hasPrevPage);
-
     // Show table loading for non-date refetches (search, sort, pagination)
     const showTableLoading = isFetching && !isLoading;
+    const totalPages = pagination?.totalPages ?? 0;
+    const currentPage = pagination?.page ?? 1;
+
+    const paginationLabel =
+        totalPages > 0
+            ? `Showing page ${currentPage} of ${totalPages}`
+            : "Showing page 1 of 1";
 
     return (
         <s-section padding="none">
-            {/* Header with search - pass loading for spinner */}
+            {/* Header with search */}
             <AllBundlesHeader loading={isFetching} />
 
-            {/* Table with native pagination */}
-            <s-table
-                paginate={true}
-                hasPreviousPage={pagination?.hasPrevPage ?? false}
-                hasNextPage={pagination?.hasNextPage ?? false}
-                loading={showTableLoading}
-                onNextPage={handleNextPage}
-                onPreviousPage={handlePreviousPage}
-            >
+            <s-table loading={showTableLoading}>
                 <AllBundlesTableHeader />
 
                 <s-table-body>
@@ -383,6 +373,14 @@ export function AllBundlesTable() {
                     })}
                 </s-table-body>
             </s-table>
+            <TablePagination
+                hasPrevious={pagination?.hasPrevPage ?? false}
+                hasNext={pagination?.hasNextPage ?? false}
+                label={paginationLabel}
+                onPrevious={handlePreviousPage}
+                onNext={handleNextPage}
+                loading={showTableLoading}
+            />
         </s-section>
     );
 }

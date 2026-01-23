@@ -2,12 +2,13 @@
 
 import { useCallback } from "react";
 import { useBundleListingStore } from "@/features/bundles";
+import { TablePagination } from "@/shared";
 
 /**
  * Bundle pagination
  */
 export function BundlePagination() {
-    const { pagination, setCurrentPage, getPaginationInfo } =
+    const { pagination, setCurrentPage, getPaginationInfo, loading } =
         useBundleListingStore();
 
     const { hasNext, hasPrevious, label } = getPaginationInfo();
@@ -25,32 +26,13 @@ export function BundlePagination() {
     }, [hasNext, pagination.currentPage, setCurrentPage]);
 
     return (
-        <s-stack
-            direction="inline"
-            background="subdued"
-            padding="small"
-            gap="small-200"
-            alignItems="center"
-            justifyContent="center"
-        >
-            {/* Previous Button */}
-            <s-button
-                variant="secondary"
-                disabled={!hasPrevious}
-                onClick={handlePreviousPage}
-                icon="caret-left"
-                accessibilityLabel="Previous page"
-            />
-
-            <s-text color="subdued">{label}</s-text>
-
-            <s-button
-                variant="secondary"
-                disabled={!hasNext}
-                onClick={handleNextPage}
-                icon="caret-right"
-                accessibilityLabel="Next page"
-            />
-        </s-stack>
+        <TablePagination
+            hasPrevious={hasPrevious}
+            hasNext={hasNext}
+            label={label}
+            onPrevious={handlePreviousPage}
+            onNext={handleNextPage}
+            loading={loading}
+        />
     );
 }

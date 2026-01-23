@@ -40,47 +40,47 @@ export function AllBundlesTableHeader() {
     return (
         <s-table-header-row>
             <s-table-header listSlot="primary">
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Bundle
                 </s-stack>
             </s-table-header>
             <s-table-header listSlot="inline">
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Status
                 </s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Revenue
                 </s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Orders
                 </s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Views
                 </s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Cart %
                 </s-stack>{" "}
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Conv %
                 </s-stack>{" "}
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Funnel
                 </s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingInline="none" paddingBlock="small-300">
+                <s-stack paddingInline="none" paddingBlock="small-400">
                     Health
                 </s-stack>
             </s-table-header>
