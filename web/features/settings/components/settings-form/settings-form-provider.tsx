@@ -33,7 +33,16 @@ export function SettingsFormProvider({
 
     const {
         formState: { isDirty },
+        reset,
     } = form;
+
+    // Reset form when initialData changes (on refetch)
+    useEffect(() => {
+        if (initialData && isInitialized.current) {
+            const mergedData = mergeWithDefaults(initialData);
+            reset(mergedData, { keepDirty: false });
+        }
+    }, [initialData, reset]);
 
     // Notify parent of dirty state changes
     useEffect(() => {

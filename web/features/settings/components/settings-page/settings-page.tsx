@@ -4,7 +4,11 @@ import {
     SettingsFormProvider,
     SettingsTab,
     useSettingsSubmit,
+    useSettingsQuery,
 } from "@/features/settings";
+import { LoadingSpinner } from "@/shared";
+import { useEffect } from "react";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
 
 /**
  * Settings page content component
@@ -41,14 +45,53 @@ function SettingsPageContent() {
 /**
  * Settings page component
  *
- * Wraps content with form provider for RHF context.
+ * Fetches settings from API and wraps content with form provider.
  */
 export function SettingsPage() {
-    // TODO: Fetch initial settings from API
-    const initialData = undefined;
+    // Fetch settings from API
+    const { data: settingsData, isLoading, error } = useSettingsQuery();
+    const { setServerData, setLoading } = useSettingsStore();
 
+    // Sync React Query data with Zustand store
+    useEffect(() => {
+        if (settingsData) {
+            setServerData(settingsData);
+        }
+    }, [settingsData, setServerData]);
+
+    // Sync loading state
+    useEffect(() => {
+        setLoading(isLoading);
+    }, [isLoading, setLoading]);
+
+    // Show loading state
+    if (isLoading) {
+        return (
+            <s-page heading="Settings">
+                <s-stack
+                    paddingBlockStart="large-300"
+                    paddingBlockEnd="large"
+                >
+                    <LoadingSpinner />
+                </s-stack>
+            </s-page>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <s-page heading="Settings">
+                <s-banner tone="critical" heading="Failed to load settings">
+                    {error.message}
+                </s-banner>
+            </s-page>
+        );
+    }
+
+    // Pass fetched data to form provider
     return (
-        <SettingsFormProvider initialData={initialData}>
+        <SettingsFormProvider initialData={settingsData ?? undefined}>
             <SettingsPageContent />
         </SettingsFormProvider>
     );

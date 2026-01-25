@@ -22,10 +22,10 @@ export function useSettingsSubmit(options?: {
             try {
                 const savedData = await mutation.mutateAsync(data);
 
-                // Reset form with saved data to clear dirty state
-                reset(savedData);
-
-                options?.onSuccess?.(savedData);
+                if (savedData) {
+                    reset(savedData);
+                    options?.onSuccess?.(savedData);
+                }
             } catch (error) {
                 options?.onError?.(
                     error instanceof Error
@@ -48,8 +48,7 @@ export function useSettingsSubmit(options?: {
      * Validates the form without submitting
      */
     const validateSettings = useCallback(async () => {
-        const isValid = await trigger();
-        return isValid;
+        return await trigger();
     }, [trigger]);
 
     return {

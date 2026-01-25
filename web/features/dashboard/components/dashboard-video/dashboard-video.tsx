@@ -20,7 +20,7 @@ function getYouTubeId(url: string) {
 
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
     const { isLoading } = useAnalytics();
-    const videoUrl = "https://www.youtube.com/watch?v=wDchsz8nmbo";
+    const videoUrl = "https://www.youtube.com/watch?v=sRWcJrMTtMI";
 
     const isYouTube: boolean =
         videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
@@ -42,17 +42,17 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
         <s-section>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
                 {/* LEFT SIDE: Thumbnail */}
-                <div className="relative sm:max-w-[300px] w-full">
+                <div className="relative sm:max-w-75 w-full">
                     <div className="relative cursor-pointer">
                         {isYouTube ? (
                             <img
                                 src={`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
                                 alt="Video thumbnail"
-                                className="w-full h-[200px] object-cover rounded-[8px]"
+                                className="w-full h-50 object-cover rounded-lg"
                             />
                         ) : (
                             <video
-                                className="w-full object-cover rounded-[8px]"
+                                className="w-full object-cover rounded-lg"
                                 muted
                                 src={videoUrl}
                             />
@@ -103,7 +103,9 @@ export default function Modal({ videoUrl }: { videoUrl: string }) {
 
     useEffect(() => {
         const modal = modalRef.current;
-        if (!modal) return;
+        if (!modal) {
+            return;
+        }
 
         const handleShow = () => {
             setTimeout(() => setPlaying(true), 50);
@@ -132,10 +134,12 @@ export default function Modal({ videoUrl }: { videoUrl: string }) {
                 src={videoUrl}
                 playing={playing}
                 muted={true}
-                controls
+                controls={true}
                 playsInline
                 width="100%"
-                height="400px"
+                height="auto"
+                style={{ aspectRatio: "16/9" }}
+                className="rounded-lg overflow-hidden"
             />
 
             <s-button
