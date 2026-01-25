@@ -31,8 +31,8 @@ export function DynamicField({
         const target = e.target as HTMLInputElement;
         let newValue: any;
 
-        if (target.type === "checkbox") {
-            newValue = target.checked;
+        if (config.type === "switch") {
+            newValue = target?.checked;
         } else if (config.type === "number") {
             newValue = target.value === "" ? 0 : Number(target.value);
         } else {
@@ -113,7 +113,7 @@ export function DynamicField({
                     label={config.label}
                     details={config.details}
                     checked={Boolean(value ?? defaultValue ?? false)}
-                    onChange={handleChange}
+                    onInput={handleChange}
                 />
             );
 
