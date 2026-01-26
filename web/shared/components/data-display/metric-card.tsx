@@ -20,12 +20,19 @@ export function MetricCard({
         <s-section>
             <s-stack>
                 <div className="flex gap-3 flex-nowrap">
-                    <div className="flex-shrink-0 items-center w-[44px] h-[44px]">
-                        {img && (
+                    <div className="shrink-0 items-center w-11 h-11">
+                        {img?.url && (
                             <img
-                                className="w-[44px] h-[44px]"
+                                className="w-11 h-11"
                                 src={img.url}
                                 alt={img.alt}
+                            />
+                        )}
+                        {img?.svg && (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: img?.svg,
+                                }}
                             />
                         )}
                     </div>
