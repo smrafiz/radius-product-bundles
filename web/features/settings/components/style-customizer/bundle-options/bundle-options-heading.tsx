@@ -1,26 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useBundleStore } from "@/features/bundles";
+import { RefObject, useState } from "react";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsHeading() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsHeadingProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * Heading style options for the customizer.
+ *
+ * Handles font size, color, and text transform settings.
+ */
+export function BundleOptionsHeading({ formRef }: BundleOptionsHeadingProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
-
-    interface ChoiceListElement extends HTMLElement {
-        values: string[];
-    }
 
     return (
         <s-stack>
@@ -56,24 +62,39 @@ export function BundleOptionsHeading() {
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"
+                                variant={
+                                    styles.headingFontSize === 18
+                                        ? "primary"
+                                        : "secondary"
+                                }
                                 onClick={() =>
-                                    updateStyle("headingFontSize", 18)
+                                    handleStyleChange("headingFontSize", 18)
                                 }
                             >
                                 Small
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
+                                variant={
+                                    styles.headingFontSize === 20
+                                        ? "primary"
+                                        : "secondary"
+                                }
                                 onClick={() =>
-                                    updateStyle("headingFontSize", 20)
+                                    handleStyleChange("headingFontSize", 20)
                                 }
                             >
                                 Medium
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
+                                variant={
+                                    styles.headingFontSize === 22
+                                        ? "primary"
+                                        : "secondary"
+                                }
                                 onClick={() =>
-                                    updateStyle("headingFontSize", 22)
+                                    handleStyleChange("headingFontSize", 22)
                                 }
                             >
                                 Large
@@ -85,10 +106,10 @@ export function BundleOptionsHeading() {
                             label="Text"
                             name="headingColor"
                             placeholder="Select a color"
-                            value={style.headingColor || "#303030"}
+                            value={styles.headingColor}
                             onInput={(event: Event) => {
                                 const target = event.target as HTMLInputElement;
-                                updateStyle("headingColor", target.value);
+                                handleStyleChange("headingColor", target.value);
                             }}
                         />
                     </s-stack>
@@ -103,12 +124,18 @@ export function BundleOptionsHeading() {
                             <s-select
                                 label="Transform"
                                 labelAccessibilityVisibility="exclusive"
-                                value={style.headingTransform ?? "none"}
+                                value={styles.headingTransform}
                                 onInput={(event: Event) => {
                                     const value = (
                                         event.target as HTMLSelectElement
-                                    ).value;
-                                    updateStyle("headingTransform", value);
+                                    ).value as
+                                        | "none"
+                                        | "uppercase"
+                                        | "capitalize";
+                                    handleStyleChange(
+                                        "headingTransform",
+                                        value,
+                                    );
                                 }}
                             >
                                 <s-option value="none">None</s-option>

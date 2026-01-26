@@ -2,24 +2,24 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { settingsQueryKeys } from "@/features/settings";
-import { useCallback } from "react";
 
 /**
- * Hook to manually refetch settings
+ * Hook to refetch settings from API.
+ *
+ * Use this to refresh settings after external changes,
+ * such as when the customizer modal is closed.
  */
 export function useRefetchSettings() {
     const queryClient = useQueryClient();
 
-    const refetch = useCallback(async () => {
-        return await queryClient.invalidateQueries({
+    /**
+     * Invalidates and refetches settings query.
+     */
+    const refetch = () => {
+        queryClient.invalidateQueries({
             queryKey: settingsQueryKeys.detail(),
         });
-    }, [queryClient]);
+    };
 
-    const isRefetching =
-        queryClient.isFetching({
-            queryKey: settingsQueryKeys.detail(),
-        }) > 0;
-
-    return { refetch, isRefetching };
+    return { refetch };
 }

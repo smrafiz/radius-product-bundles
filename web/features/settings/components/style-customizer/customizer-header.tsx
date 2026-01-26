@@ -1,7 +1,9 @@
+"use client";
+
 import { BundleTypeTab } from "@/features/settings";
 
-/*
- * Customizer Header
+/**
+ * Customizer header component.
  */
 export function CustomizerHeader({
     activeBundleType,

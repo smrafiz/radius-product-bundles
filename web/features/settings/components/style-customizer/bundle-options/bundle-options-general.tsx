@@ -1,21 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useBundleStore } from "@/features/bundles";
+import { RefObject, useState } from "react";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsGeneral() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsGeneralProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * General style options for the customizer.
+ *
+ * Handles primary, secondary, and text color settings.
+ */
+export function BundleOptionsGeneral({ formRef }: BundleOptionsGeneralProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        // Trigger form input event for native save bar
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
 
     return (
@@ -52,11 +63,11 @@ export function BundleOptionsGeneral() {
                                     label="Primary"
                                     name="primaryColor"
                                     placeholder="Select a color"
-                                    value={style.primaryColor || "#303030"}
+                                    value={styles.primaryColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "primaryColor",
                                             target.value,
                                         );
@@ -68,11 +79,11 @@ export function BundleOptionsGeneral() {
                                     label="Secondary"
                                     name="secondaryColor"
                                     placeholder="Select a color"
-                                    value={style.secondaryColor || "#666666"}
+                                    value={styles.secondaryColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "secondaryColor",
                                             target.value,
                                         );
@@ -84,11 +95,14 @@ export function BundleOptionsGeneral() {
                                     label="Text"
                                     name="textColor"
                                     placeholder="Select a color"
-                                    value={style.textColor || "#333333"}
+                                    value={styles.textColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle("textColor", target.value);
+                                        handleStyleChange(
+                                            "textColor",
+                                            target.value,
+                                        );
                                     }}
                                 />
                             </s-grid-item>

@@ -1,22 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
-import { useBundleStore } from "@/features/bundles";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsProduct() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsProductProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * Product card style options for the customizer.
+ *
+ * Handles font size, colors, border, and radius settings.
+ */
+export function BundleOptionsProduct({ formRef }: BundleOptionsProductProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
 
     return (
@@ -53,24 +63,39 @@ export function BundleOptionsProduct() {
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"
+                                variant={
+                                    styles.productFontSize === 14
+                                        ? "primary"
+                                        : "secondary"
+                                }
                                 onClick={() =>
-                                    updateStyle("productFontSize", 14)
+                                    handleStyleChange("productFontSize", 14)
                                 }
                             >
                                 Small
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
+                                variant={
+                                    styles.productFontSize === 16
+                                        ? "primary"
+                                        : "secondary"
+                                }
                                 onClick={() =>
-                                    updateStyle("productFontSize", 16)
+                                    handleStyleChange("productFontSize", 16)
                                 }
                             >
                                 Medium
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
+                                variant={
+                                    styles.productFontSize === 18
+                                        ? "primary"
+                                        : "secondary"
+                                }
                                 onClick={() =>
-                                    updateStyle("productFontSize", 18)
+                                    handleStyleChange("productFontSize", 18)
                                 }
                             >
                                 Large
@@ -88,11 +113,11 @@ export function BundleOptionsProduct() {
                                     label="Background"
                                     name="productBgColor"
                                     placeholder="Select a color"
-                                    value={style.productBgColor || "#f7f7f7"}
+                                    value={styles.productBgColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "productBgColor",
                                             target.value,
                                         );
@@ -104,11 +129,11 @@ export function BundleOptionsProduct() {
                                     label="Text"
                                     name="productTextColor"
                                     placeholder="Select a color"
-                                    value={style.productTextColor || "#333333"}
+                                    value={styles.productTextColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "productTextColor",
                                             target.value,
                                         );
@@ -122,19 +147,22 @@ export function BundleOptionsProduct() {
                             label="Border color"
                             name="productBorderColor"
                             placeholder="Select a color"
-                            value={style.productBorderColor || "#e3e3e3"}
+                            value={styles.productBorderColor}
                             onInput={(event: Event) => {
                                 const target = event.target as HTMLInputElement;
-                                updateStyle("productBorderColor", target.value);
+                                handleStyleChange(
+                                    "productBorderColor",
+                                    target.value,
+                                );
                             }}
                         />
                         <s-stack>
                             <s-text>Corner radius</s-text>
                             <RtpbRangeSlider
-                                values={style.productRadius ?? 12}
+                                values={styles.productRadius}
                                 maxValue={30}
                                 action={(val) =>
-                                    updateStyle("productRadius", val)
+                                    handleStyleChange("productRadius", val)
                                 }
                             />
                         </s-stack>

@@ -1,22 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
-import { useBundleStore } from "@/features/bundles";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsBox() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsBoxProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * Box/container style options for the customizer.
+ *
+ * Handles max width, alignment, background, border, and radius settings.
+ */
+export function BundleOptionsBox({ formRef }: BundleOptionsBoxProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
 
     return (
@@ -59,15 +69,13 @@ export function BundleOptionsBox() {
                                     step={5}
                                     min={400}
                                     max={1200}
-                                    value={(
-                                        style.boxMaxWidth ?? 500
-                                    ).toString()}
+                                    value={String(styles.boxMaxWidth)}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "boxMaxWidth",
-                                            target.value,
+                                            Number(target.value) || 500,
                                         );
                                     }}
                                 />
@@ -84,24 +92,48 @@ export function BundleOptionsBox() {
                             <s-button-group gap="none">
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.boxAlignment === "left"
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("boxAlignment", "left")
+                                        handleStyleChange(
+                                            "boxAlignment",
+                                            "left",
+                                        )
                                     }
                                 >
                                     Left
                                 </s-button>
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.boxAlignment === "center"
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("boxAlignment", "center")
+                                        handleStyleChange(
+                                            "boxAlignment",
+                                            "center",
+                                        )
                                     }
                                 >
                                     Center
                                 </s-button>
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.boxAlignment === "right"
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("boxAlignment", "right")
+                                        handleStyleChange(
+                                            "boxAlignment",
+                                            "right",
+                                        )
                                     }
                                 >
                                     Right
@@ -118,11 +150,14 @@ export function BundleOptionsBox() {
                                     label="Background"
                                     name="boxBgColor"
                                     placeholder="Select a color"
-                                    value={style.boxBgColor || "#ffffff"}
+                                    value={styles.boxBgColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle("boxBgColor", target.value);
+                                        handleStyleChange(
+                                            "boxBgColor",
+                                            target.value,
+                                        );
                                     }}
                                 />
                             </s-grid-item>
@@ -131,11 +166,11 @@ export function BundleOptionsBox() {
                                     label="Border"
                                     name="boxBorderColor"
                                     placeholder="Select a color"
-                                    value={style.boxBorderColor || "#e3e3e3"}
+                                    value={styles.boxBorderColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "boxBorderColor",
                                             target.value,
                                         );
@@ -145,22 +180,22 @@ export function BundleOptionsBox() {
                         </s-grid>
                         <s-stack gap="base" paddingBlockEnd="base">
                             <s-stack gap="small-400">
-                                <s-text>Thin</s-text>
+                                <s-text>Border width</s-text>
                                 <RtpbRangeSlider
-                                    values={style.boxBorderWidth ?? 1}
+                                    values={styles.boxBorderWidth}
                                     maxValue={5}
                                     action={(val) =>
-                                        updateStyle("boxBorderWidth", val)
+                                        handleStyleChange("boxBorderWidth", val)
                                     }
                                 />
                             </s-stack>
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
-                                    values={style.boxRadius ?? 12}
+                                    values={styles.boxRadius}
                                     maxValue={30}
                                     action={(val) =>
-                                        updateStyle("boxRadius", val)
+                                        handleStyleChange("boxRadius", val)
                                     }
                                 />
                             </s-stack>

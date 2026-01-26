@@ -1,15 +1,9 @@
 import {
-    AppSettings,
-    AppSettingsFormData,
-    AppSettingsGlobalStyles,
-    AppSettingsLabels,
+    CustomizerStyles,
     getDefaultValuesFromConfig,
-    GlobalLabels,
     GlobalStyleSettings,
     ResponsiveSettings,
-    WidgetBehavior,
 } from "@/features/settings";
-import { DiscountType } from "@/features/bundles";
 
 /**
  * Defaults
@@ -184,4 +178,53 @@ export const APP_SETTINGS = {
     ...getDefaultValuesFromConfig(),
     // Add complex objects not defined in simple config fields
     globalStyles: GLOBAL_STYLES,
+};
+
+/**
+ * Default customizer styles
+ */
+export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
+    // General
+    primaryColor: "#303030",
+    secondaryColor: "#666666",
+    textColor: "#333333",
+
+    // Box
+    boxMaxWidth: 500,
+    boxAlignment: "center",
+    boxBgColor: "#ffffff",
+    boxBorderColor: "#e3e3e3",
+    boxBorderWidth: 1,
+    boxRadius: 12,
+
+    // Heading
+    headingFontSize: 20,
+    headingColor: "#303030",
+    headingTransform: "none",
+
+    // Product
+    productFontSize: 16,
+    productBgColor: "#f7f7f7",
+    productTextColor: "#333333",
+    productBorderColor: "#e3e3e3",
+    productRadius: 12,
+
+    // Button
+    buttonFontSize: 16,
+    buttonBgColor: "#333333",
+    buttonTextColor: "#ffffff",
+    buttonHoverBgColor: "#666666",
+    buttonHoverTextColor: "#ffffff",
+    buttonRadius: 8,
+
+    // Badge
+    badgeFontSize: 14,
+    badgeBgColor: "#333333",
+    badgeTextColor: "#ffffff",
+    badgeRadius: 8,
+
+    // Image
+    imageRadius: 6,
+    imageSize: 80,
+    imageFit: "cover",
 };

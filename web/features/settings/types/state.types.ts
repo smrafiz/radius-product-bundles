@@ -2,7 +2,7 @@
  * Setting state types
  */
 
-import { AppSettingsFormData } from "@/features/settings";
+import { AppSettingsFormData, CustomizerStyles, GlobalStylesFormData, } from "@/features/settings";
 
 /**
  * Settings store state
@@ -51,4 +51,32 @@ export interface SettingsStoreState {
 
     // Computed
     getEffectiveData: () => AppSettingsFormData;
+}
+
+/**
+ * Customizer store state
+ */
+export interface CustomizerStoreState {
+    // Style data
+    styles: CustomizerStyles;
+    originalStyles: CustomizerStyles | null;
+    isInitialized: boolean;
+
+    // Layout
+    activeLayout: "LIST" | "GRID" | "CAROUSEL" | "COMPACT";
+
+    // Actions
+    initializeStyles: (styles?: Partial<CustomizerStyles>) => void;
+    initializeFromGlobalStyles: (globalStyles?: GlobalStylesFormData) => void;
+    updateStyle: <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => void;
+    updateStyles: (styles: Partial<CustomizerStyles>) => void;
+    setActiveLayout: (layout: "LIST" | "GRID" | "CAROUSEL" | "COMPACT") => void;
+    resetToDefaults: () => void;
+    discardChanges: () => void;
+    getStyles: () => CustomizerStyles;
+    getGlobalStyles: () => GlobalStylesFormData;
+    markClean: () => void;
 }

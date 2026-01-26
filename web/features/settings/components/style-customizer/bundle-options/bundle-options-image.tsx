@@ -1,22 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
-import { useBundleStore } from "@/features/bundles";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsImage() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsImageProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * Image style options for the customizer.
+ *
+ * Handles corner radius, size, and fit settings.
+ */
+export function BundleOptionsImage({ formRef }: BundleOptionsImageProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
 
     return (
@@ -43,26 +53,25 @@ export function BundleOptionsImage() {
                     `}
             >
                 <s-stack gap="base" padding="base">
-                    {/* Image styling */}
                     <s-stack gap="base">
                         <s-stack gap="base" paddingBlockEnd="base">
                             <s-stack>
                                 <s-text>Corner radius</s-text>
                                 <RtpbRangeSlider
-                                    values={style.imageRadius ?? 6}
+                                    values={styles.imageRadius}
                                     maxValue={100}
                                     action={(val) =>
-                                        updateStyle("imageRadius", val)
+                                        handleStyleChange("imageRadius", val)
                                     }
                                 />
                             </s-stack>
                             <s-stack>
                                 <s-text>Size</s-text>
                                 <RtpbRangeSlider
-                                    values={style.imageSize ?? undefined}
+                                    values={styles.imageSize}
                                     maxValue={300}
                                     action={(val) =>
-                                        updateStyle("imageSize", val)
+                                        handleStyleChange("imageSize", val)
                                     }
                                 />
                             </s-stack>
@@ -76,24 +85,48 @@ export function BundleOptionsImage() {
                                 <s-button-group gap="none">
                                     <s-button
                                         slot="secondary-actions"
+                                        variant={
+                                            styles.imageFit === "cover"
+                                                ? "primary"
+                                                : "secondary"
+                                        }
                                         onClick={() =>
-                                            updateStyle("imageFit", "cover")
+                                            handleStyleChange(
+                                                "imageFit",
+                                                "cover",
+                                            )
                                         }
                                     >
                                         Cover
                                     </s-button>
                                     <s-button
                                         slot="secondary-actions"
+                                        variant={
+                                            styles.imageFit === "contain"
+                                                ? "primary"
+                                                : "secondary"
+                                        }
                                         onClick={() =>
-                                            updateStyle("imageFit", "contain")
+                                            handleStyleChange(
+                                                "imageFit",
+                                                "contain",
+                                            )
                                         }
                                     >
                                         Contain
                                     </s-button>
                                     <s-button
                                         slot="secondary-actions"
+                                        variant={
+                                            styles.imageFit === "fill"
+                                                ? "primary"
+                                                : "secondary"
+                                        }
                                         onClick={() =>
-                                            updateStyle("imageFit", "fill")
+                                            handleStyleChange(
+                                                "imageFit",
+                                                "fill",
+                                            )
                                         }
                                     >
                                         Fill

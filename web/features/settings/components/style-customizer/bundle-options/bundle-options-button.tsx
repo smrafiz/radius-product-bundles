@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
-import { useBundleStore } from "@/features/bundles";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsButton() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsButtonProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * Button style options for the customizer.
+ *
+ * Handles font size, colors (normal/hover), and border radius settings.
+ */
+export function BundleOptionsButton({ formRef }: BundleOptionsButtonProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
-
     const [activeTab, setActiveTab] = useState("normal");
 
     const tabs = [
@@ -17,13 +25,14 @@ export function BundleOptionsButton() {
     ];
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
 
     return (
@@ -50,7 +59,6 @@ export function BundleOptionsButton() {
                 `}
             >
                 <s-stack gap="base" padding="base">
-                    {/* Add to cart button styling */}
                     <s-stack gap="base">
                         <s-stack
                             direction="inline"
@@ -62,24 +70,39 @@ export function BundleOptionsButton() {
                             <s-button-group gap="none">
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.buttonFontSize === 14
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("buttonFontSize", 14)
+                                        handleStyleChange("buttonFontSize", 14)
                                     }
                                 >
                                     Small
                                 </s-button>
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.buttonFontSize === 16
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("buttonFontSize", 16)
+                                        handleStyleChange("buttonFontSize", 16)
                                     }
                                 >
                                     Medium
                                 </s-button>
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.buttonFontSize === 18
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("buttonFontSize", 18)
+                                        handleStyleChange("buttonFontSize", 18)
                                     }
                                 >
                                     Large
@@ -129,14 +152,11 @@ export function BundleOptionsButton() {
                                                 label="Background"
                                                 name="buttonBgColor"
                                                 placeholder="Select a color"
-                                                value={
-                                                    style.buttonBgColor ||
-                                                    "#333333"
-                                                }
+                                                value={styles.buttonBgColor}
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;
-                                                    updateStyle(
+                                                    handleStyleChange(
                                                         "buttonBgColor",
                                                         target.value,
                                                     );
@@ -151,14 +171,11 @@ export function BundleOptionsButton() {
                                                 label="Text"
                                                 name="buttonTextColor"
                                                 placeholder="Select a color"
-                                                value={
-                                                    style.buttonTextColor ||
-                                                    "#ffffff"
-                                                }
+                                                value={styles.buttonTextColor}
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;
-                                                    updateStyle(
+                                                    handleStyleChange(
                                                         "buttonTextColor",
                                                         target.value,
                                                     );
@@ -182,13 +199,12 @@ export function BundleOptionsButton() {
                                                 name="buttonHoverBgColor"
                                                 placeholder="Select a color"
                                                 value={
-                                                    style.buttonHoverBgColor ||
-                                                    "#666666"
+                                                    styles.buttonHoverBgColor
                                                 }
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;
-                                                    updateStyle(
+                                                    handleStyleChange(
                                                         "buttonHoverBgColor",
                                                         target.value,
                                                     );
@@ -204,13 +220,12 @@ export function BundleOptionsButton() {
                                                 name="buttonHoverTextColor"
                                                 placeholder="Select a color"
                                                 value={
-                                                    style.buttonHoverTextColor ||
-                                                    "#ffffff"
+                                                    styles.buttonHoverTextColor
                                                 }
                                                 onInput={(event: Event) => {
                                                     const target =
                                                         event.target as HTMLInputElement;
-                                                    updateStyle(
+                                                    handleStyleChange(
                                                         "buttonHoverTextColor",
                                                         target.value,
                                                     );
@@ -225,10 +240,10 @@ export function BundleOptionsButton() {
                         <s-stack>
                             <s-text>Corner radius</s-text>
                             <RtpbRangeSlider
-                                values={style.buttonRadius ?? 8}
+                                values={styles.buttonRadius}
                                 maxValue={30}
                                 action={(val) =>
-                                    updateStyle("buttonRadius", val)
+                                    handleStyleChange("buttonRadius", val)
                                 }
                             />
                         </s-stack>

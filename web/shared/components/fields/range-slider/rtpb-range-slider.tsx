@@ -49,8 +49,8 @@ export const RtpbRangeSlider: FC<{
                                     ),
                                     linear-gradient(
                                         to right,
-                                        var(--pc-track-dashed-color),
-                                        var(--pc-track-dashed-color) 50%,
+                                        #e3e3e3,
+                                        #e3e3e3 50%,
                                         transparent 50%,
                                         transparent 100%
                                     )

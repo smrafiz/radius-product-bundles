@@ -1,22 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { RtpbRangeSlider } from "@/shared";
-import { useBundleStore } from "@/features/bundles";
+import { useCustomizer } from "@/features/settings/hooks/use-customizer";
+import { CustomizerStyles } from "@/features/settings";
 
-export function BundleOptionsBadge() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const style = displaySettings.style ?? {};
+interface BundleOptionsBadgeProps {
+    formRef?: RefObject<HTMLFormElement | null>;
+}
+
+/**
+ * Badge style options for the customizer.
+ *
+ * Handles font size, colors, and border radius settings.
+ */
+export function BundleOptionsBadge({ formRef }: BundleOptionsBadgeProps) {
+    const { styles, updateStyle } = useCustomizer();
     const [open, setOpen] = useState(false);
 
     /**
-     * Updates a style property in the store
+     * Updates style and triggers form change for save bar.
      */
-    const updateStyle = (key: string, value: string | number | boolean) => {
-        updateDisplaySettings("style", {
-            ...style,
-            [key]: value,
-        });
+    const handleStyleChange = <K extends keyof CustomizerStyles>(
+        key: K,
+        value: CustomizerStyles[K],
+    ) => {
+        updateStyle(key, value);
+        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
     };
 
     return (
@@ -43,7 +53,6 @@ export function BundleOptionsBadge() {
                     `}
             >
                 <s-stack gap="base" padding="base">
-                    {/* Add to cart button styling */}
                     <s-stack gap="base">
                         <s-stack
                             direction="inline"
@@ -55,24 +64,39 @@ export function BundleOptionsBadge() {
                             <s-button-group gap="none">
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.badgeFontSize === 14
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("badgeFontSize", 14)
+                                        handleStyleChange("badgeFontSize", 14)
                                     }
                                 >
                                     Small
                                 </s-button>
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.badgeFontSize === 16
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("badgeFontSize", 16)
+                                        handleStyleChange("badgeFontSize", 16)
                                     }
                                 >
                                     Medium
                                 </s-button>
                                 <s-button
                                     slot="secondary-actions"
+                                    variant={
+                                        styles.badgeFontSize === 18
+                                            ? "primary"
+                                            : "secondary"
+                                    }
                                     onClick={() =>
-                                        updateStyle("badgeFontSize", 18)
+                                        handleStyleChange("badgeFontSize", 18)
                                     }
                                 >
                                     Large
@@ -88,11 +112,11 @@ export function BundleOptionsBadge() {
                                     label="Background"
                                     name="badgeBgColor"
                                     placeholder="Select a color"
-                                    value={style.badgeBgColor || "#333333"}
+                                    value={styles.badgeBgColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "badgeBgColor",
                                             target.value,
                                         );
@@ -104,11 +128,11 @@ export function BundleOptionsBadge() {
                                     label="Text"
                                     name="badgeTextColor"
                                     placeholder="Select a color"
-                                    value={style.badgeTextColor || "#ffffff"}
+                                    value={styles.badgeTextColor}
                                     onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
-                                        updateStyle(
+                                        handleStyleChange(
                                             "badgeTextColor",
                                             target.value,
                                         );
@@ -119,10 +143,10 @@ export function BundleOptionsBadge() {
                         <s-stack>
                             <s-text>Corner radius</s-text>
                             <RtpbRangeSlider
-                                values={style.badgeRadius ?? 8}
+                                values={styles.badgeRadius}
                                 maxValue={30}
                                 action={(val) =>
-                                    updateStyle("badgeRadius", val)
+                                    handleStyleChange("badgeRadius", val)
                                 }
                             />
                         </s-stack>
