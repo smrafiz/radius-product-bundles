@@ -11,9 +11,10 @@ import {
     useCustomizerSubmit,
     useSettingsQuery,
 } from "@/features/settings";
-import { BUNDLE_TYPES } from "@/features/bundles";
-import { ComponentType, useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
+import { BUNDLE_TYPES } from "@/features/bundles/constants/bundle-types.constants";
 
 /*
  * Preview components for different bundle types.
@@ -32,19 +33,17 @@ export function CustomizerBundleType() {
     const [activeId, setActiveId] = useState<string>(types[0].id);
     const formRef = useRef<HTMLFormElement>(null);
 
-    // Fetch settings for this modal context
     const { data: settingsData, isLoading } = useSettingsQuery();
-
-    // Customizer store
-    const { initializeFromGlobalStyles, isInitialized } = useCustomizer();
-
-    // Submit handler
+    const { initializeFromGlobalStyles, isInitialized, discardChanges } =
+        useCustomizer();
     const { handleSubmit, isLoading: isSaving } = useCustomizerSubmit();
 
     // Initialize customizer when settings are loaded
     useEffect(() => {
         if (settingsData && !isInitialized) {
-            initializeFromGlobalStyles(settingsData.globalStyles as GlobalStylesFormData | undefined);
+            initializeFromGlobalStyles(
+                settingsData.globalStyles as GlobalStylesFormData | undefined,
+            );
         }
     }, [settingsData, isInitialized, initializeFromGlobalStyles]);
 
@@ -54,6 +53,15 @@ export function CustomizerBundleType() {
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         await handleSubmit();
+    };
+
+    /**
+     * Handles form reset (discard).
+     * Restores the customizer store to the original saved values.
+     */
+    const onReset = (e: React.FormEvent) => {
+        e.preventDefault();
+        discardChanges();
     };
 
     const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
@@ -85,6 +93,7 @@ export function CustomizerBundleType() {
                 ref={formRef}
                 data-save-bar
                 onSubmit={onSubmit}
+                onReset={onReset}
             >
                 <div className="rtpb-full-modal-editor">
                     <div className="rtpb-full-modal-content flex flex-wrap gap-6">
