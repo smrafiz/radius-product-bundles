@@ -38,7 +38,7 @@ export function WidgetLayout() {
 
                                 return (
                                     <s-grid-item key={value} gridColumn="auto">
-                                        <s-stack gap="small">
+                                        <s-stack>
                                             <s-tooltip id={tooltipId}>
                                                 <s-text>{label}</s-text>
                                             </s-tooltip>

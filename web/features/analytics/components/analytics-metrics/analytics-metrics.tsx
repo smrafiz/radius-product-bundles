@@ -32,6 +32,7 @@ export function AnalyticsMetrics() {
             title: cfg.title,
             icon: cfg.icon,
             tone: cfg.tone,
+            img: cfg.img,
             value: formatByType(metricsData?.[cfg.key] ?? 0, cfg.format),
             growth: growthData[cfg.key],
         }));

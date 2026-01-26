@@ -29,8 +29,8 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
 
     return (
         <div className="relative">
-            <s-box background="base" border="base" borderRadius="base">
-                <s-stack gap="base">
+            <s-section>
+                <s-stack gap="base" paddingBlockEnd="base">
                     <div className="absolute right-4 top-4">
                         {bundleType.badge && (
                             <s-badge tone={bundleType.badge.tone}>
@@ -41,7 +41,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
 
                     {bundleType.bundleImage && (
                         <s-box>
-                            <div className="flex items-center justify-center bg-[var(--p-color-bg-surface-secondary)] rounded-t-[7px] min-h-[145px] w-full">
+                            <div className="flex items-center justify-center bg-[#f7f7f7] rounded-md min-h-[145px] w-full">
                                 <img
                                     src={bundleType.bundleImage}
                                     alt={bundleType.label}
@@ -50,7 +50,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         </s-box>
                     )}
                 </s-stack>
-                <s-stack padding="base" gap="small-300">
+                <s-stack>
                     <s-stack>
                         <s-heading>{bundleType.label}</s-heading>
                     </s-stack>
@@ -95,21 +95,23 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                         />
                                     </s-stack>
                                 )}
-                                <s-paragraph>
-                                    {bundleType.description}
-                                </s-paragraph>
-                                {bundleType.features &&
-                                    bundleType.features.length > 0 && (
-                                        <s-unordered-list>
-                                            {bundleType.features.map(
-                                                (feature, index) => (
-                                                    <s-list-item key={index}>
-                                                        {feature}
-                                                    </s-list-item>
-                                                ),
-                                            )}
-                                        </s-unordered-list>
-                                    )}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <s-heading>
+                                        {bundleType.description}
+                                    </s-heading>
+                                    {bundleType.features &&
+                                        bundleType.features.length > 0 && (
+                                            <s-unordered-list>
+                                                {bundleType.features.map(
+                                                    (feature, index) => (
+                                                        <s-list-item key={index}>
+                                                            {feature}
+                                                        </s-list-item>
+                                                    ),
+                                                )}
+                                            </s-unordered-list>
+                                        )}
+                                </div>
                                 <s-stack>
                                     <s-button
                                         variant="primary"
@@ -125,7 +127,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         </s-modal>
                     </s-stack>
                 </s-stack>
-            </s-box>
+            </s-section>
         </div>
     );
 }

@@ -10,18 +10,40 @@
 	%}
 
 	{% comment %} Compact Products List {% endcomment %}
+	{% comment %}<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>{% endcomment %}
+		{% comment %}{% for i in (1..product_count) %}{% endcomment %}
+			{% comment %}<div class="radius-bundle__product radius-bundle__product--compact">{% endcomment %}
+				{% comment %}{% if show_images %}{% endcomment %}
+					{% comment %}<div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--box"></div>{% endcomment %}
+				{% comment %}{% endif %}{% endcomment %}
+				{% comment %}<div class="radius-bundle__product-info radius-bundle__product-info--compact">{% endcomment %}
+					{% comment %}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>{% endcomment %}
+					{% comment %}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>{% endcomment %}
+				{% comment %}</div>{% endcomment %}
+			{% comment %}</div>{% endcomment %}
+		{% comment %}{% endfor %}{% endcomment %}
+	{% comment %}</div>{% endcomment %}
+
+	{% comment %} Products List Container {% endcomment %}
 	<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
-		{% for i in (1..product_count) %}
-			<div class="radius-bundle__product radius-bundle__product--compact">
-				{% if show_images %}
-					<div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--box"></div>
-				{% endif %}
-				<div class="radius-bundle__product-info radius-bundle__product-info--compact">
-					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
-				</div>
+		<div class="radius-bundle__loading" data-bundle-loading>
+			<div class="radius-bundle__skeleton radius-bundle__skeleton--compact">
+				{% for i in (1..product_count) %}
+					<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--compact">
+						{% if show_images %}
+							<div class="radius-bundle__skeleton-image"></div>
+						{% endif %}
+						<div class="radius-bundle__skeleton-content">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--subtitle"></div>
+						</div>
+						<div class="radius-bundle__skeleton-price-wrapper">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+						</div>
+					</div>
+				{% endfor %}
 			</div>
-		{% endfor %}
+		</div>
 	</div>
 
 	{% comment %} Pricing Section {% endcomment %}

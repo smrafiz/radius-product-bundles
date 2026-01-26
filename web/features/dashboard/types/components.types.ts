@@ -18,7 +18,7 @@ export interface DashboardQuickActionItem {
     id: string;
     title: string;
     description: string;
-    img?: { url: string; alt: string };
+    img?: { url?: string; alt?: string; svg?: string };
     icon: "text-in-rows" | "chart-histogram-second-last" | "database";
     tone:
         | "success"

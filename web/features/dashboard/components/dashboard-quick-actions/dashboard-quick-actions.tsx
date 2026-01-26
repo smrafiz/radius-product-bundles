@@ -46,11 +46,18 @@ export const DashboardQuickActions = () => {
                                     gap="base"
                                 >
                                     <s-box>
-                                        {action.img && (
+                                        {action.img?.url && (
                                             <img
-                                                className="w-[44px] h-[44px]"
+                                                className="w-11 h-11"
                                                 src={action.img.url}
                                                 alt={action.img.alt}
+                                            />
+                                        )}
+                                        {action.img?.svg && (
+                                            <div
+                                                dangerouslySetInnerHTML={{
+                                                    __html: action.img?.svg,
+                                                }}
                                             />
                                         )}
                                     </s-box>

@@ -33,17 +33,17 @@ export const WIDGET_LAYOUTS = [
     {
         label: "List",
         value: "LIST" as const,
-        widgetLayout: "/assets/widget-horizontal-layout.png",
+        widgetLayout: "/assets/widget-list-layout.png",
     },
     {
         label: "Slider",
         value: "CAROUSEL" as const,
-        widgetLayout: "/assets/widget-vertical-layout.png",
+        widgetLayout: "/assets/widget-carousel-layout.png",
     },
     {
         label: "Compact",
         value: "COMPACT" as const,
-        widgetLayout: "/assets/widget-vertical-layout.png",
+        widgetLayout: "/assets/widget-compact-layout.png",
     },
 ];
 

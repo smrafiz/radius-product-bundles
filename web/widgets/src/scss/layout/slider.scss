@@ -13,15 +13,10 @@
             gap: var(--rb-spacing, 16px);
 
             grid-auto-flow: column;
-            grid-auto-columns: calc(
-                (
-                        100% -
-                            (
-                                var(--rb-spacing, 16px) *
-                                    (var(--grid-columns, 2) - 1)
-                            )
-                    ) /
-                    var(--grid-columns, 2)
+            grid-auto-columns: calc((100% -
+            (var(--rb-spacing, 16px) *
+            (var(--grid-columns, 2) - 1))) /
+            var(--grid-columns, 2)
             );
 
             overflow-x: auto;
@@ -37,53 +32,43 @@
             &::-webkit-scrollbar {
                 display: none;
             }
+
             &.is-dragging {
                 cursor: grabbing;
             }
 
             @media (max-width: 1024px) {
                 grid-auto-columns: calc(
-                    (
-                            100% -
-                                (
-                                    var(--rb-spacing, 16px) *
-                                        (var(--grid-cols-tablet, 2) - 1)
-                                )
-                        ) /
+                        (100% -
+                        (var(--rb-spacing, 16px) *
+                        (var(--grid-cols-tablet, 2) - 1))) /
                         var(--grid-cols-tablet, 2)
                 );
             }
 
             @media (max-width: 768px) {
                 grid-auto-columns: calc(
-                    (
-                            100% -
-                                (
-                                    var(--rb-spacing, 16px) *
-                                        (var(--grid-cols-mobile, 1) - 1)
-                                )
-                        ) /
+                        (100% -
+                        (var(--rb-spacing, 16px) *
+                        (var(--grid-cols-mobile, 1) - 1))) /
                         var(--grid-cols-mobile, 1)
                 );
             }
         }
     }
+
     &__product--slider {
         width: 100%;
         padding: var(--rb-spacing);
         background: var(--rb-product-bg-color);
         border: 1px solid var(--rb-border-color);
         border-radius: var(--rb-border-radius);
-        text-align: center;
         scroll-snap-align: start;
 
         .radius-bundle__product-image {
             width: 100%;
             height: calc(var(--rb-image-size) + 30px);
             margin-bottom: var(--rb-spacing);
-            border-radius: var(--rb-image-border-radius);
-            overflow: hidden;
-            background: #ffffff;
 
             img {
                 width: 100%;
@@ -91,12 +76,11 @@
                 object-fit: var(--rb-image-fit, contain);
             }
         }
-
         .radius-bundle__product-title {
             font-size: var(--rb-font-size, 16px);
             font-weight: 500;
             color: var(--rb-text-color);
-            margin: 0 0 var(--rb-spacing-xs);
+            margin: 0 0 var(--rb-spacing-sm);
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -105,12 +89,23 @@
             text-overflow: ellipsis;
             @include mixins.line-clamp(2);
         }
+
+        .radius-bundle__product-price {
+            margin-bottom: var(--rb-spacing-xs);
+            line-height: 1.3;
+        }
+
+        .radius-bundle__product-price-compare {
+            margin-left: 5px;
+        }
+
         .radius-bundle__product-quantity {
             font-size: var(--rb-font-size, 16px);
             font-weight: 500;
             color: var(--rb-text-color);
         }
     }
+
     &__loading {
         width: 100%;
     }
@@ -124,10 +119,12 @@
         align-items: center;
         gap: var(--rb-spacing-sm);
         position: relative;
+
         &:hover {
             .radius-bundle__slider-nav {
                 opacity: 1;
             }
+
             .radius-bundle__slider-nav--prev {
                 left: 0;
             }
@@ -150,7 +147,7 @@
         border: 1px solid var(--rb-border-color);
         border-radius: 50%;
         background: var(--rb-background-color);
-        box-shadow: var(--rb-shadow);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -169,6 +166,7 @@
             cursor: not-allowed;
         }
     }
+
     &__slider-nav--prev {
         left: -16px;
     }
@@ -200,9 +198,11 @@
         }
     }
 }
+
 .radius-bundle[data-show-navigation="false"] .radius-bundle__slider-nav {
     display: none;
 }
+
 .radius-bundle[data-show-pagination="false"] .radius-bundle__slider-dots {
     display: none;
 }

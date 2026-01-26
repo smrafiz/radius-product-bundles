@@ -67,6 +67,8 @@
         margin-bottom: 6px;
     }
     .radius-bundle__product-price {
+        display: flex;
+        flex-direction: column;
         text-align: right;
         flex-shrink: 0;
     }
@@ -80,7 +82,6 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.25s ease;
     &:hover {
@@ -102,8 +103,11 @@
     .radius-bundle__product-title {
         margin-bottom: 8px;
     }
-    .radius-bundle__product-price {
-        margin-bottom: 8px;
+    .radius-bundle__product-price-compare {
+        margin-left: 5px;
+    }
+    .radius-bundle__product-quantity {
+        margin-top: 8px;
     }
 }
 
@@ -122,7 +126,6 @@
         background: #f7f7f7;
         border: 1px solid #e3e3e3;
         border-radius: 12px;
-        text-align: center;
     }
     .radius-bundle__product-image {
         width: 100%;
@@ -140,8 +143,11 @@
     .radius-bundle__product-title {
         margin-bottom: 8px;
     }
-    .radius-bundle__product-price {
-        margin-bottom: 8px;
+    .radius-bundle__product-price-compare {
+        margin-left: 5px;
+    }
+    .radius-bundle__product-quantity {
+        margin-top: 8px;
     }
 }
 
@@ -187,14 +193,11 @@
 
 .radius-bundle__product-price-current {
     font-weight: 500;
-    display: block;
 }
 .radius-bundle__product-price-compare {
     font-size: 14px;
     opacity: 0.5;
     text-decoration: line-through;
-    display: block;
-    margin-top: 6px;
 }
 
 /* header style */
@@ -297,23 +300,20 @@
 }
 .radius-bundle__savings {
     padding: 12px;
-    background: #22c55e1a;
+    background: #AFFEBF;
     border-radius: 8px;
 }
-.radius-bundle__savings-label {
-    color: #22c55e;
-}
+
 .radius-bundle__savings-amount {
     font-weight: 600;
-    color: #22c55e;
 }
 .radius-bundle__free-shipping {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 12px;
-    background: #3b82f61a;
+    background: #D1EAFF;
     border-radius: 8px;
     margin-top: 8px;
-    color: #3b82f6;
+    color: #004BFF;
 }

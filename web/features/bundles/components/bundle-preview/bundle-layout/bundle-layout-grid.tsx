@@ -90,14 +90,14 @@ export function BundleLayoutGrid() {
 
                             {/* PRICE */}
                             {displaySettings.showPrices && (
-                                <div className="radius-bundle__product-price flex flex-col items-center">
+                                <div className="radius-bundle__product-price">
                                     <span className="radius-bundle__product-price-current font-semibold">
                                         {formatPrice(discountedPrice)}
                                     </span>
 
                                     {displaySettings.showComparePrices &&
                                         hasDiscount && (
-                                            <span className="radius-bundle__product-price-compare line-through text-sm opacity-60">
+                                            <span className="radius-bundle__product-price-compare">
                                                 {formatPrice(originalPrice)}
                                             </span>
                                         )}
