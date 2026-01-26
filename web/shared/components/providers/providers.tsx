@@ -1,16 +1,8 @@
 "use client";
 
-import { AppProvider } from "@shopify/polaris";
-import "@shopify/polaris/build/esm/styles.css";
 import { DehydratedState } from "@tanstack/react-query";
-import translations from "@shopify/polaris/locales/en.json";
 import { ReactNode, Suspense, useEffect, useState } from "react";
-import {
-    Navigation,
-    ProtectedRoute,
-    SessionProvider,
-    TanstackProvider,
-} from "@/shared";
+import { Navigation, ProtectedRoute, SessionProvider, TanstackProvider, } from "@/shared";
 
 /**
  * Root Providers Component
@@ -33,10 +25,11 @@ export function Providers({
     }
 
     return (
-        <AppProvider i18n={translations}>
+        <>
             <Suspense fallback={null}>
                 <Navigation />
             </Suspense>
+
             <TanstackProvider dehydratedState={dehydratedState}>
                 <Suspense
                     fallback={
@@ -50,6 +43,6 @@ export function Providers({
                     </SessionProvider>
                 </Suspense>
             </TanstackProvider>
-        </AppProvider>
+        </>
     );
 }
