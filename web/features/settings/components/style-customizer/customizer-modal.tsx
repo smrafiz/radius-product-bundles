@@ -2,6 +2,7 @@
 
 import { ROUTES } from "@/shared";
 import { useRefetchSettings } from "@/features/settings";
+import { useEffect, useRef } from "react";
 
 /**
  * Customizer modal launcher component.
@@ -10,6 +11,7 @@ import { useRefetchSettings } from "@/features/settings";
  */
 export function CustomizerModal() {
     const { refetch } = useRefetchSettings();
+    const appWindowRef = useRef<HTMLElement>(null);
 
     /**
      * Handles the app window close event.
@@ -19,12 +21,26 @@ export function CustomizerModal() {
         void refetch();
     };
 
+    useEffect(() => {
+        const appWindow = appWindowRef.current;
+
+        if (!appWindow) {
+            return;
+        }
+
+        appWindow.addEventListener("hide", handleClose);
+
+        return () => {
+            appWindow.removeEventListener("hide", handleClose);
+        };
+    }, [handleClose]);
+
     return (
         <div>
             <s-app-window
+                ref={appWindowRef}
                 id="rtpb-window"
                 src={ROUTES.CUSTOMIZER}
-                onClose={handleClose}
             ></s-app-window>
             <s-button
                 variant="primary"

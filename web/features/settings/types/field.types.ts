@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { appSettingsSchema, labelsSchema } from "@/features/settings";
+import { appSettingsSchema, CustomizerStyles } from "@/features/settings";
 
 /**
  * Validation configuration
@@ -48,6 +48,19 @@ export interface NumberFieldConfig extends BaseFieldConfig {
     type: "number";
     min?: number;
     max?: number;
+    step?: number;
+    readOnly?: boolean;
+    defaultValue?: number;
+}
+
+/**
+ * Number field configuration for customizer
+ */
+export interface CustomizerNumberFieldConfig extends BaseCustomizerFieldConfig {
+    type: "number";
+    min?: number;
+    max?: number;
+    step?: number;
     readOnly?: boolean;
     defaultValue?: number;
 }
@@ -59,6 +72,15 @@ export interface SelectFieldConfig extends BaseFieldConfig {
     type: "select";
     options: Array<{ value: string; label: string }>;
     defaultValue?: string;
+}
+
+/**
+ * Select field configuration for customizer
+ */
+export interface CustomizerSelectFieldConfig extends BaseCustomizerFieldConfig {
+    type: "select";
+    options: Array<{ value: string | number; label: string }>;
+    defaultValue?: string | number;
 }
 
 /**
@@ -131,6 +153,70 @@ export interface SettingsTabConfig {
 export type AppSettingsFormData = z.infer<typeof appSettingsSchema>;
 
 /**
- * Labels type
+ * Base customizer field configuration
  */
-export type LabelsSettingsFormData = z.infer<typeof labelsSchema>;
+export interface BaseCustomizerFieldConfig {
+    name: keyof CustomizerStyles;
+    label: string;
+    details?: string;
+}
+
+/**
+ * Color field configuration
+ */
+export interface ColorFieldConfig extends BaseCustomizerFieldConfig {
+    type: "color";
+    defaultValue?: string;
+}
+
+/**
+ * Range slider field configuration
+ */
+export interface RangeFieldConfig extends BaseCustomizerFieldConfig {
+    type: "range";
+    min?: number;
+    max?: number;
+    step?: number;
+    defaultValue?: number;
+}
+
+/**
+ * Button group field configuration (for alignment, sizes, etc.)
+ */
+export interface ButtonGroupFieldConfig extends BaseCustomizerFieldConfig {
+    type: "buttonGroup";
+    options: Array<{ value: string | number; label: string }>;
+    defaultValue?: string | number;
+}
+
+/**
+ * Union type for all customizer field configurations
+ */
+export type CustomizerFieldConfig =
+    | ColorFieldConfig
+    | CustomizerNumberFieldConfig
+    | RangeFieldConfig
+    | ButtonGroupFieldConfig
+    | CustomizerSelectFieldConfig;
+
+/**
+ * Customizer section configuration
+ */
+export interface CustomizerSectionConfig {
+    id: string;
+    title: string;
+    description?: string;
+    defaultOpen?: boolean;
+    fields: CustomizerFieldConfig[];
+    /** Optional grid layout for fields (default: stack) */
+    columns?: 1 | 2 | 3;
+}
+
+/**
+ * Customizer panel configuration (for different bundle types)
+ */
+export interface CustomizerPanelConfig {
+    id: string;
+    title: string;
+    sections: CustomizerSectionConfig[];
+}

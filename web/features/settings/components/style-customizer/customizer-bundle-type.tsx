@@ -1,19 +1,21 @@
 "use client";
 
 import {
-    BundleOptionType,
     BundlePreviewBogo,
     BundlePreviewBuyGet,
     BundlePreviewFixed,
     CustomizerHeader,
+    DynamicCustomizerPanel,
+    GlobalStylesFormData,
     useCustomizer,
     useCustomizerSubmit,
     useSettingsQuery,
 } from "@/features/settings";
 import { BUNDLE_TYPES } from "@/features/bundles";
 import { ComponentType, useEffect, useRef, useState } from "react";
+import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
 
-/**
+/*
  * Preview components for different bundle types.
  */
 export const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
@@ -30,14 +32,19 @@ export function CustomizerBundleType() {
     const [activeId, setActiveId] = useState<string>(types[0].id);
     const formRef = useRef<HTMLFormElement>(null);
 
+    // Fetch settings for this modal context
     const { data: settingsData, isLoading } = useSettingsQuery();
+
+    // Customizer store
     const { initializeFromGlobalStyles, isInitialized } = useCustomizer();
+
+    // Submit handler
     const { handleSubmit, isLoading: isSaving } = useCustomizerSubmit();
 
     // Initialize customizer when settings are loaded
     useEffect(() => {
         if (settingsData && !isInitialized) {
-            initializeFromGlobalStyles(settingsData.globalStyles);
+            initializeFromGlobalStyles(settingsData.globalStyles as GlobalStylesFormData | undefined);
         }
     }, [settingsData, isInitialized, initializeFromGlobalStyles]);
 
@@ -81,10 +88,13 @@ export function CustomizerBundleType() {
             >
                 <div className="rtpb-full-modal-editor">
                     <div className="rtpb-full-modal-content flex flex-wrap gap-6">
-                        {/* Left: Style Options */}
+                        {/* Left: Config-based Style Options */}
                         <div className="rtpb-left-setting">
                             <div className="sticky top-0">
-                                <BundleOptionType formRef={formRef} />
+                                <DynamicCustomizerPanel
+                                    config={CUSTOMIZER_CONFIG}
+                                    formRef={formRef}
+                                />
                             </div>
                         </div>
 

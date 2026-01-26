@@ -6,3 +6,6 @@ export { CustomizerModal } from "./customizer-modal";
 export { CustomizerHeader } from "./customizer-header";
 export { BundleOptionType } from "./bundle-option-type";
 export { CustomizerBundleType } from "./customizer-bundle-type";
+export { DynamicCustomizerField } from "./dynamic-customizer-field";
+export { DynamicCustomizerPanel } from "./dynamic-customizer-panel";
+export { DynamicCustomizerSection } from "./dynamic-customizer-section";
