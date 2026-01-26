@@ -2,22 +2,29 @@
 
 import { useCallback } from "react";
 import { useSettingsForm } from "./use-settings-form";
-import { AppSettingsFormData, useSaveSettingsMutation } from "@/features/settings";
+import {
+    AppSettingsFormData,
+    useSaveSettingsMutation,
+} from "@/features/settings";
 
 /**
  * Hook for handling settings form submission with React Query.
+ *
+ * Returns handleSubmit and resetDirty for use with GlobalForm,
+ * following the same pattern as useBundleSubmit.
  */
 export function useSettingsSubmit(options?: {
     onSuccess?: (data: AppSettingsFormData) => void;
     onError?: (error: Error) => void;
 }) {
-    const { handleSubmit, formState, reset, trigger } = useSettingsForm();
+    const { formState, reset, trigger } = useSettingsForm();
     const mutation = useSaveSettingsMutation();
 
     /**
-     * Handles form submission with validation
+     * Handles form submission - called by GlobalForm.
+     * This is the main submit handler that processes the validated data.
      */
-    const onSubmit = useCallback(
+    const handleSubmit = useCallback(
         async (data: AppSettingsFormData) => {
             try {
                 const savedData = await mutation.mutateAsync(data);
@@ -25,34 +32,39 @@ export function useSettingsSubmit(options?: {
                 if (savedData) {
                     reset(savedData);
                     options?.onSuccess?.(savedData);
+                    window.shopify?.toast?.show("Settings saved successfully");
                 }
             } catch (error) {
-                options?.onError?.(
+                const errorMessage =
                     error instanceof Error
-                        ? error
-                        : new Error("Failed to save settings"),
-                );
+                        ? error.message
+                        : "Failed to save settings";
+                options?.onError?.(new Error(errorMessage));
+                window.shopify?.toast?.show(errorMessage, { isError: true });
             }
         },
         [mutation, reset, options],
     );
 
     /**
-     * Submit handler that validates before submitting
+     * Resets the dirty state after successful save.
+     * Called by GlobalForm after successful submission.
      */
-    const submitSettings = useCallback(() => {
-        return handleSubmit(onSubmit)();
-    }, [handleSubmit, onSubmit]);
+    const resetDirty = useCallback(() => {
+        // Reset is handled in handleSubmit, but this callback
+        // allows GlobalForm to trigger additional cleanup if needed
+    }, []);
 
     /**
-     * Validates the form without submitting
+     * Validates the form without submitting.
      */
     const validateSettings = useCallback(async () => {
         return await trigger();
     }, [trigger]);
 
     return {
-        submitSettings,
+        handleSubmit,
+        resetDirty,
         validateSettings,
         isSubmitting: mutation.isPending || formState.isSubmitting,
         isSuccess: mutation.isSuccess,

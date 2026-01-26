@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
+import { PageSkeleton, SkeletonLines } from "@/shared";
 
 /**
  * Settings customizer page skeleton with sidebar layout
@@ -8,28 +8,24 @@ import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
 export default function SettingsPageSkeleton() {
     return (
         <PageSkeleton withPadding={true}>
-            <PageHeaderSkeleton
-                showBackButton={true}
-                heading="Settings"
-                subtext="Manage your app settings"
-            />
-
-            <s-grid gridTemplateColumns="250px 1fr" gap="base">
-                <s-grid-item>
-                    <s-section padding="base">
-                        <div className="p-4">
-                            <SkeletonLines lines={15} random={true} />
-                        </div>
-                    </s-section>
-                </s-grid-item>
-                <s-grid-item>
-                    <s-section padding="base">
-                        <div className="p-4">
-                            <SkeletonLines lines={20} random={true} />
-                        </div>
-                    </s-section>
-                </s-grid-item>
-            </s-grid>
+            <s-box>
+                <s-grid gridTemplateColumns="250px 1fr" gap="base">
+                    <s-grid-item>
+                        <s-section padding="base">
+                            <div className="p-2">
+                                <SkeletonLines lines={8} random={true} />
+                            </div>
+                        </s-section>
+                    </s-grid-item>
+                    <s-grid-item>
+                        <s-section padding="base">
+                            <div className="p-2">
+                                <SkeletonLines lines={20} random={true} />
+                            </div>
+                        </s-section>
+                    </s-grid-item>
+                </s-grid>
+            </s-box>
         </PageSkeleton>
     );
 }

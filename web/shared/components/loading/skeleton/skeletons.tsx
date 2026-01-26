@@ -217,7 +217,7 @@ export function PageSkeleton({
             {withPadding ? (
                 <s-stack
                     gap="large"
-                    paddingBlockStart="large"
+                    paddingBlockStart="large-300"
                     paddingBlockEnd="large"
                 >
                     {children}

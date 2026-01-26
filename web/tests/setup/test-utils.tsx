@@ -1,6 +1,4 @@
 import { ReactElement } from "react";
-import { AppProvider } from "@shopify/polaris";
-import translations from "@shopify/polaris/locales/en.json";
 import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -54,11 +52,9 @@ function AllProviders({ children }: AllProvidersProps) {
     const queryClient = createTestQueryClient();
 
     return (
-        <AppProvider i18n={translations}>
-            <QueryClientProvider client={queryClient}>
-                {children}
-            </QueryClientProvider>
-        </AppProvider>
+        <QueryClientProvider client={queryClient}>
+            {children}
+        </QueryClientProvider>
     );
 }
 

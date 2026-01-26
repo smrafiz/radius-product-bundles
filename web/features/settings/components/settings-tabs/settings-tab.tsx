@@ -22,11 +22,11 @@ export function SettingsTab() {
 
     return (
         <s-box>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <s-grid gridTemplateColumns="250px 1fr" gap="base">
                 {/* Left: Tab Navigation */}
-                <div className="md:col-span-4">
-                    <s-section>
-                        <s-stack gap="small-500">
+                <s-grid-item>
+                    <div className="sticky top-6">
+                        <s-section padding="base">
                             {SETTINGS_TABS.map((tab) => (
                                 <TabButton
                                     key={tab.id}
@@ -35,12 +35,12 @@ export function SettingsTab() {
                                     onClick={() => setActiveTab(tab.id)}
                                 />
                             ))}
-                        </s-stack>
-                    </s-section>
-                </div>
+                        </s-section>
+                    </div>
+                </s-grid-item>
 
                 {/* Right: Tab Content */}
-                <div className="md:col-span-8">
+                <s-grid-item>
                     <AnimatePresence mode="wait">
                         {activeTabConfig && (
                             <AnimatedTabPanel tabKey={activeTabConfig.id}>
@@ -48,8 +48,8 @@ export function SettingsTab() {
                             </AnimatedTabPanel>
                         )}
                     </AnimatePresence>
-                </div>
-            </div>
+                </s-grid-item>
+            </s-grid>
         </s-box>
     );
 }

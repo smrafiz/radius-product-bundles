@@ -1,17 +1,8 @@
 import { create } from "zustand";
-import { TRIGGER_SAVE_BAR } from "@/shared";
 import { immer } from "zustand/middleware/immer";
 import { AppSettingsFormData, SettingsStoreState } from "@/features/settings";
 import { getDefaultValuesFromConfig } from "@/features/settings/utils/defaults.utils";
-
-/**
- * Triggers the Shopify save bar
- */
-function triggerSaveBar() {
-    if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent(TRIGGER_SAVE_BAR));
-    }
-}
+import { triggerSaveBar } from "@/shared";
 
 /**
  * Settings store

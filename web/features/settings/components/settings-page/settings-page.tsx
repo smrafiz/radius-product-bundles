@@ -1,49 +1,43 @@
 "use client";
 
 import {
+    AppSettingsFormData,
     SettingsFormProvider,
     SettingsTab,
     useSettingsSubmit,
     useSettingsQuery,
 } from "@/features/settings";
-import { LoadingSpinner } from "@/shared";
+import { GlobalForm, LoadingSpinner } from "@/shared";
 import { useEffect } from "react";
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
+import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 
 /**
- * Settings page content component
+ * Settings page content component.
+ *
+ * Uses GlobalForm for consistent SaveBar behavior
+ * matching the bundle creation page pattern.
  */
 function SettingsPageContent() {
-    const { submitSettings, isDirty, isSubmitting } = useSettingsSubmit();
-
-    /**
-     * Handles form submission
-     */
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        await submitSettings();
-    }
-
-    /**
-     * Handles form reset/discard
-     */
-    function handleReset() {
-        console.log("Handle discarded changes if necessary");
-    }
+    const { handleSubmit, resetDirty } = useSettingsSubmit();
 
     return (
-        <form data-save-bar onSubmit={handleSubmit} onReset={handleReset}>
+        <GlobalForm<AppSettingsFormData>
+            formId="settings"
+            onSubmit={handleSubmit}
+            resetDirty={resetDirty}
+        >
             <s-page heading="Settings">
                 <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
                     <SettingsTab />
                 </s-stack>
             </s-page>
-        </form>
+        </GlobalForm>
     );
 }
 
 /**
- * Settings page component
+ * Settings page component.
  *
  * Fetches settings from API and wraps content with form provider.
  */
@@ -66,16 +60,7 @@ export function SettingsPage() {
 
     // Show loading state
     if (isLoading) {
-        return (
-            <s-page heading="Settings">
-                <s-stack
-                    paddingBlockStart="large-300"
-                    paddingBlockEnd="large"
-                >
-                    <LoadingSpinner />
-                </s-stack>
-            </s-page>
-        );
+        return <SettingsPageSkeleton />;
     }
 
     // Show error state

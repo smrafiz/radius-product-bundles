@@ -1,10 +1,16 @@
 "use client";
 
+import { triggerSaveBar } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { AppSettingsFormData, FieldConfig } from "@/features/settings";
 
+/** Form ID for settings - must match GlobalForm formId */
+const SETTINGS_FORM_ID = "settings";
+
 /**
  * Universal field renderer - renders any field type from config.
+ *
+ * Automatically triggers SaveBar when field values change.
  */
 export function DynamicField({
     config,
@@ -25,7 +31,7 @@ export function DynamicField({
     const defaultValue = (config as any).defaultValue;
 
     /**
-     * Handles field value change
+     * Handles field value change and triggers SaveBar.
      */
     function handleChange(e: any) {
         const target = e.target as HTMLInputElement;
@@ -43,6 +49,9 @@ export function DynamicField({
             shouldDirty: true,
             shouldValidate: true,
         });
+
+        // Trigger SaveBar to show
+        triggerSaveBar(SETTINGS_FORM_ID);
     }
 
     switch (config.type) {
@@ -127,7 +136,7 @@ export function DynamicField({
 }
 
 /**
- * Gets nested error message from errors object
+ * Gets nested error message from errors object.
  */
 function getNestedError(errors: any, path: string): string | undefined {
     const parts = path.split(".");
