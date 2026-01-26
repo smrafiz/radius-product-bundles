@@ -18,7 +18,7 @@ export function useAnalytics() {
     const queries = analyticsQueries(app);
 
     const metricsQuery = useQuery({
-        ...queries.chart(days, startDate, endDate),
+        ...queries.metrics(days, startDate, endDate),
         staleTime: 2 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,

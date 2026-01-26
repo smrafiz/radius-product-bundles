@@ -19,7 +19,7 @@ export function useBundlesPage() {
     const [isButtonLoading, setIsButtonLoading] = useState(false);
 
     const { isLoading } = useBundlesData();
-    const { metrics: analyticsMetrics, isMetricsFetching } = useAnalytics(9999);
+    const { metrics: analyticsMetrics, isMetricsFetching } = useAnalytics();
     const { bundleData } = useAppNavigation();
     const { bundles, toast, hideToast } = useBundleListingStore();
     const { showSkeleton } = useInitialBundleState({
@@ -31,7 +31,9 @@ export function useBundlesPage() {
      * Transform analytics data to flat structure for metric cards
      */
     const transformedMetrics = useMemo(() => {
-        if (!analyticsMetrics) return null;
+        if (!analyticsMetrics) {
+            return null;
+        }
 
         return {
             activeBundles: analyticsMetrics.totals?.activeBundles ?? 0,

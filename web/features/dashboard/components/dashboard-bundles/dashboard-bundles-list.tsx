@@ -8,6 +8,7 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();
 
     return (
+        <div className="relative overflow-hidden">
         <s-table>
             <s-table-header-row>
                 <s-table-header listSlot="primary">Item</s-table-header>
@@ -41,20 +42,22 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                         </s-table-cell>
                         <s-table-cell>
                             <s-link onClick={() => bundleData.edit(bundle.id)}>
-                                <span className="max-w-[220px]">{bundle.name}</span>
+                                <s-text>
+                                    <span className="block w-55 font-semibold">{bundle.name}</span>
+                                </s-text>
                             </s-link>
                         </s-table-cell>
                         <s-table-cell>
-                            {formatBundleType(bundle.type)}
+                            <span className="block w-30 font-semibold">{formatBundleType(bundle.type)}</span>
                         </s-table-cell>
-                        <s-table-cell>{bundle.views}</s-table-cell>
+                        <s-table-cell><span className="block w-20">{bundle.views}</span></s-table-cell>
                         <s-table-cell>
-                            {formatPercentage(bundle.conversionRate)}
-                        </s-table-cell>
-                        <s-table-cell>
-                            {formatCurrency(bundle.revenue)}
+                            <span className="block w-20">{formatPercentage(bundle.conversionRate)}</span>
                         </s-table-cell>
                         <s-table-cell>
+                            <span className="block w-20">{formatCurrency(bundle.revenue)}</span>
+                        </s-table-cell>
+                        <s-table-cell><span className="block w-20">
                             {(() => {
                                 const badgeProps = getBundleStatusBadge(
                                     bundle.status,
@@ -68,11 +71,12 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                                         {badgeProps.text}
                                     </s-badge>
                                 );
-                            })()}
+                            })()}</span>
                         </s-table-cell>
                     </s-table-row>
                 ))}
             </s-table-body>
         </s-table>
+        </div>
     );
 }

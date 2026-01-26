@@ -12,11 +12,19 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
         title: "Active Bundles",
         value: (metrics?.activeBundles ?? "").toString(),
         comparisonLabel: "Total created",
+        img: {
+            url: "/assets/active-bundles.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         title: "Total Bundles",
         value: (metrics?.totalBundles ?? "").toString(),
         comparisonLabel: "Total created",
+        img: {
+            url: "/assets/total-bundles.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         title: "Total Views",
@@ -26,6 +34,10 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
                 : "",
         tone: "info",
         icon: "arrow-down",
+        img: {
+            url: "/assets/total-views.svg",
+            alt: "Enable app embed",
+        },
     },
     {
         title: "Total Revenue",
@@ -35,5 +47,9 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
                 : "",
         tone: "info",
         icon: "arrow-down",
+        img: {
+            url: "/assets/total-revenue.svg",
+            alt: "Enable app embed",
+        },
     },
 ];
