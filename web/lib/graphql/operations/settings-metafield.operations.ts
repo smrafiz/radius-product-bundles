@@ -1,6 +1,8 @@
 import {
-    DEFAULT_LABELS,
+    CustomizerStyles,
+    DEFAULT_CUSTOMIZER_STYLES,
     DEFAULT_GLOBAL_STYLES,
+    DEFAULT_LABELS,
     GlobalLabels,
     GlobalStyleSettings,
     ResponsiveSettings,
@@ -8,20 +10,29 @@ import {
     WidgetBehavior,
 } from "@/features/settings";
 import { AppSettings } from "@/prisma/generated/client";
-import { BundleWithSettings } from "@/features/bundles";
-import { findActiveBundlesByShop } from "@/features/bundles/repositories";
 
 interface MetafieldGlobalSettings {
-    styles: GlobalStyleSettings;
+    // Required for Liquid rendering
+    styles: CustomizerStyles;
     labels: GlobalLabels;
-    defaults: {
-        layout: string;
-        discountType: string;
-        discountValue: number;
+
+    // Required for JS cart behavior
+    cart: {
+        redirectAfterCart: string;
+        hidePaymentButtons: boolean;
+        disableCartLocale: boolean;
     };
-    features: {
-        aiOptimizations: boolean;
-        aiRecommendations: boolean;
+
+    // Required for custom styling
+    custom: {
+        cssClass: string;
+        css: string;
+    };
+
+    // Optional: currency formatting
+    currency?: {
+        display: string;
+        format: string;
     };
 }
 
@@ -80,12 +91,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function getValidGlobalLabels(labels: unknown): Partial<GlobalLabels> {
     try {
-        const maybeParsed =
-            typeof labels === "string"
-                ? (JSON.parse(labels) as unknown)
-                : labels;
+        const parsed = typeof labels === "string" ? JSON.parse(labels) : labels;
 
-        if (!isRecord(maybeParsed)) {
+        if (!parsed || typeof parsed !== "object") {
             return {};
         }
 
@@ -94,7 +102,7 @@ function getValidGlobalLabels(labels: unknown): Partial<GlobalLabels> {
         for (const key of Object.keys(DEFAULT_LABELS) as Array<
             keyof GlobalLabels
         >) {
-            const value = maybeParsed[key as string];
+            const value = parsed[key];
             if (typeof value === "string") {
                 result[key] = value;
             }
@@ -138,26 +146,39 @@ export function buildGlobalSettingsMetafieldValue(
     appSettings: AppSettings | null,
 ): string {
     const settings: MetafieldGlobalSettings = {
-        styles: appSettings?.globalStyles
-            ? mergeDeep(
-                  DEFAULT_GLOBAL_STYLES,
-                  getValidGlobalStyles(appSettings.globalStyles),
-              )
-            : DEFAULT_GLOBAL_STYLES,
-        labels: appSettings?.labels
-            ? mergeDeep(
-                  DEFAULT_LABELS,
-                  getValidGlobalLabels(appSettings.labels),
-              )
-            : DEFAULT_LABELS,
-        defaults: {
-            layout: "LIST",
-            discountType: appSettings?.defaultDiscountType || "PERCENTAGE",
-            discountValue: appSettings?.defaultDiscountValue || 10,
+        // Styles for Liquid
+        styles: {
+            ...DEFAULT_CUSTOMIZER_STYLES,
+            ...(appSettings?.globalStyles
+                ? getValidCustomizerStyles(appSettings.globalStyles)
+                : {}),
         },
-        features: {
-            aiOptimizations: appSettings?.aiOptimizations ?? true,
-            aiRecommendations: appSettings?.aiRecommendations ?? true,
+
+        // Labels for Liquid
+        labels: {
+            ...DEFAULT_LABELS,
+            ...(appSettings?.labels
+                ? getValidGlobalLabels(appSettings.labels)
+                : {}),
+        } as GlobalLabels,
+
+        // Cart behavior for JS
+        cart: {
+            redirectAfterCart: appSettings?.redirectAfterCart || "cart",
+            hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
+            disableCartLocale: appSettings?.disableCartLocale ?? false,
+        },
+
+        // Custom CSS for Liquid
+        custom: {
+            cssClass: appSettings?.customCssClass || "",
+            css: appSettings?.customCss || "",
+        },
+
+        // Currency for JS
+        currency: {
+            display: appSettings?.currencyDisplay || "symbol",
+            format: appSettings?.currencyFormat || "standard",
         },
     };
 
@@ -188,4 +209,67 @@ function mergeDeep<T extends object>(target: T, source: Partial<T>): T {
     }
 
     return result;
+}
+
+/**
+ * Validates and returns CustomizerStyles from appSettings.
+ */
+function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
+    try {
+        const parsed = typeof styles === "string" ? JSON.parse(styles) : styles;
+
+        if (!parsed || typeof parsed !== "object") {
+            return {};
+        }
+
+        // Only return valid keys from CustomizerStyles
+        const validKeys: (keyof CustomizerStyles)[] = [
+            "primaryColor",
+            "secondaryColor",
+            "textColor",
+            "boxMaxWidth",
+            "boxAlignment",
+            "boxBgColor",
+            "boxBorderColor",
+            "boxBorderWidth",
+            "boxRadius",
+            "headingFontSize",
+            "headingColor",
+            "headingTransform",
+            "productFontSize",
+            "productBgColor",
+            "productTextColor",
+            "productBorderColor",
+            "productRadius",
+            "buttonFontSize",
+            "buttonBgColor",
+            "buttonTextColor",
+            "buttonHoverBgColor",
+            "buttonHoverTextColor",
+            "buttonRadius",
+            "badgeFontSize",
+            "badgeBgColor",
+            "badgeTextColor",
+            "badgeRadius",
+            "imageRadius",
+            "imageSize",
+            "imageFit",
+        ];
+
+        const result: Partial<CustomizerStyles> = {};
+
+        for (const key of validKeys) {
+            if (
+                key in parsed &&
+                parsed[key] !== undefined &&
+                parsed[key] !== null
+            ) {
+                result[key] = parsed[key];
+            }
+        }
+
+        return result;
+    } catch {
+        return {};
+    }
 }

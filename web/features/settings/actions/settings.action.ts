@@ -5,7 +5,9 @@
  */
 
 import { ApiResponse } from "@/shared";
+import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify";
+import { syncAllSettingsToMetafields } from "@/lib";
 import {
     getSettingsService,
     resetSettingsService,
@@ -14,7 +16,7 @@ import {
 import { AppSettingsFormData } from "@/features/settings";
 
 /**
- * Get app settings for the current shop
+ * Get app settings for the current shop.
  */
 export async function getSettingsAction(
     sessionToken: string,
@@ -45,7 +47,9 @@ export async function getSettingsAction(
 }
 
 /**
- * Save app settings for the current shop
+ * Save app settings for the current shop.
+ *
+ * Also syncs settings to Shopify metafields for storefront access.
  */
 export async function saveSettingsAction(
     sessionToken: string,
@@ -56,7 +60,27 @@ export async function saveSettingsAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
+        // Save to database
         const savedSettings = await saveSettingsService({ shop, data });
+
+        // Sync to Shopify metafields (global settings + active bundles)
+        const syncResult = await syncAllSettingsToMetafields(
+            sessionToken,
+            shop,
+        );
+
+        if (!syncResult.success) {
+            console.warn(
+                "[saveSettings] Metafield sync warning:",
+                syncResult.error,
+            );
+            // Don't fail the whole operation, just log warning
+        }
+
+        // Revalidate cached pages
+        revalidatePath("/settings");
+        revalidatePath("/settings/customizer");
+        revalidatePath("/dashboard");
 
         return {
             status: "success",
@@ -78,7 +102,9 @@ export async function saveSettingsAction(
 }
 
 /**
- * Reset app settings to defaults
+ * Reset app settings to defaults.
+ *
+ * Also syncs reset settings to Shopify metafields.
  */
 export async function resetSettingsAction(
     sessionToken: string,
@@ -88,7 +114,27 @@ export async function resetSettingsAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
+        // Reset in database
         await resetSettingsService({ shop });
+
+        // Sync to Shopify metafields (will use default values)
+        const syncResult = await syncAllSettingsToMetafields(
+            sessionToken,
+            shop,
+        );
+
+        if (!syncResult.success) {
+            console.warn(
+                "[resetSettings] Metafield sync warning:",
+                syncResult.error,
+            );
+            // Don't fail the whole operation, just log warning
+        }
+
+        // Revalidate cached pages
+        revalidatePath("/settings");
+        revalidatePath("/settings/customizer");
+        revalidatePath("/dashboard");
 
         return {
             status: "success",
