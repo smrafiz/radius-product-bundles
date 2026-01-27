@@ -5,8 +5,10 @@
  */
 
 import { prisma } from "@/shared/repositories/prisma-connect";
+import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
 import { AppSettingsFormData, GetSettingsInput, SaveSettingsInput, } from "@/features/settings";
 import { findSettingsByShopDomain, findShopByDomain, upsertSettings, } from "@/features/settings/repositories";
+import { formatValidationErrorsAsString } from "@/shared";
 
 /**
  * Get app settings for a shop
@@ -34,6 +36,27 @@ export async function saveSettingsService(
 ): Promise<AppSettingsFormData> {
     const { shop, data } = input;
 
+    // Validate input data with Zod schema
+    const validationResult = appSettingsSchema.safeParse(data);
+
+    if (!validationResult.success) {
+        const formattedErrors: Record<string, { _errors: string[] }> = {};
+
+        validationResult.error.issues.forEach((issue) => {
+            const path = issue.path.join(".");
+            if (!formattedErrors[path]) {
+                formattedErrors[path] = { _errors: [] };
+            }
+            formattedErrors[path]._errors.push(issue.message);
+        });
+
+        throw new Error(
+            `Validation failed: ${formatValidationErrorsAsString(formattedErrors)}`,
+        );
+    }
+
+    const validatedData = validationResult.data;
+
     // Find shop by domain
     const shopRecord = await findShopByDomain(shop);
 
@@ -41,13 +64,9 @@ export async function saveSettingsService(
         throw new Error(`Shop not found: ${shop}`);
     }
 
-    // Transform form data to database model
-    const dbData = transformFormDataToSettings(data);
-
-    // Upsert settings
+    const dbData = transformFormDataToSettings(validatedData);
     const savedSettings = await upsertSettings(shopRecord.id, dbData);
 
-    // Return transformed data
     return transformSettingsToFormData(savedSettings);
 }
 
@@ -105,7 +124,7 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         // Labels (JSON field)
         labels: settings.labels ?? undefined,
 
-        // Style (JSON field)
+        // Style (JSON field) - flat structure
         globalStyles: settings.globalStyles ?? undefined,
 
         // Advanced

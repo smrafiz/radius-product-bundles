@@ -1,11 +1,7 @@
-import {
-    CustomizerStoreState,
-    DEFAULT_CUSTOMIZER_STYLES,
-    transformToFlat,
-    transformToStructured,
-} from "@/features/settings";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { CustomizerStoreState, CustomizerStyles } from "@/features/settings";
+import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Customizer store for style settings.
@@ -19,7 +15,7 @@ export const useCustomizerStore = create(
         activeLayout: "LIST",
 
         /**
-         * Initializes the customizer with flat styles.
+         * Initializes the customizer with styles.
          */
         initializeStyles: (styles) => {
             const mergedStyles = {
@@ -34,15 +30,14 @@ export const useCustomizerStore = create(
         },
 
         /**
-         * Initializes from structured GlobalStylesFormData (from API).
+         * Initializes from globalStyles (same flat structure from DB).
          */
-        initializeFromGlobalStyles: (globalStyles) => {
-            const flatStyles = globalStyles
-                ? transformToFlat(globalStyles)
-                : {};
+        initializeFromGlobalStyles: (
+            globalStyles: Partial<CustomizerStyles> | null,
+        ) => {
             const mergedStyles = {
                 ...DEFAULT_CUSTOMIZER_STYLES,
-                ...flatStyles,
+                ...(globalStyles || {}),
             };
             set((state) => {
                 state.styles = mergedStyles;
@@ -106,10 +101,10 @@ export const useCustomizerStore = create(
         },
 
         /**
-         * Gets styles in GlobalStylesFormData format for API.
+         * Gets styles for API - same flat structure, no transform needed.
          */
         getGlobalStyles: () => {
-            return transformToStructured(get().styles);
+            return get().styles;
         },
 
         /**

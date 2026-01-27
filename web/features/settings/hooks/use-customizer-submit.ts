@@ -3,35 +3,32 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveSettingsAction } from "@/features/settings/actions/settings.action";
-import { AppSettingsFormData, settingsQueryKeys, useCustomizerStore, useSettingsStore, } from "@/features/settings";
+import { CustomizerStyles, settingsQueryKeys, useCustomizerStore, useSettingsQuery, } from "@/features/settings";
 
 /**
  * Hook for handling customizer form submission.
  *
- * Saves the customizer styles to the database via the settings API.
- * Used with the native data-save-bar form integration.
+ * Works with React Hook Form - data is pre-validated by Zod resolver.
+ * Saves styles to database and updates cache.
  */
 export function useCustomizerSubmit() {
     const app = useAppBridge();
     const queryClient = useQueryClient();
-    const {
-        localData,
-        setServerData,
-        resetDirty: resetStoreDirty,
-    } = useSettingsStore();
+    const { data: settingsData } = useSettingsQuery();
     const { getGlobalStyles, markClean, discardChanges } = useCustomizerStore();
 
     const mutation = useMutation({
-        mutationFn: async () => {
-            if (!localData) {
+        mutationFn: async (validatedData?: CustomizerStyles) => {
+            if (!settingsData) {
                 throw new Error("Settings not loaded");
             }
 
-            const globalStyles = getGlobalStyles();
+            // Use validated data from RHF if provided, otherwise get from store
+            const globalStyles = validatedData ?? getGlobalStyles();
 
             // Merge global styles into current settings
-            const updatedSettings: AppSettingsFormData = {
-                ...localData,
+            const updatedSettings = {
+                ...settingsData,
                 globalStyles,
             };
 
@@ -48,10 +45,6 @@ export function useCustomizerSubmit() {
             if (savedData) {
                 // Update React Query cache
                 queryClient.setQueryData(settingsQueryKeys.detail(), savedData);
-
-                // Update Zustand store
-                setServerData(savedData);
-                resetStoreDirty();
 
                 // Mark customizer as clean
                 markClean();
@@ -76,9 +69,10 @@ export function useCustomizerSubmit() {
 
     /**
      * Handles form submission.
+     * Can optionally receive pre-validated data from RHF.
      */
-    const handleSubmit = async () => {
-        await mutation.mutateAsync();
+    const handleSubmit = async (validatedData?: CustomizerStyles) => {
+        await mutation.mutateAsync(validatedData);
     };
 
     /**

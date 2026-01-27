@@ -1,7 +1,15 @@
 "use client";
 
-import { RefObject } from "react";
-import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizer } from "@/features/settings";
+import {
+    CustomizerPanelConfig,
+    DynamicCustomizerSection,
+    useCustomizer,
+} from "@/features/settings";
+
+interface DynamicCustomizerPanelProps {
+    config: CustomizerPanelConfig;
+    onFieldChange?: () => void;
+}
 
 /**
  * Main customizer panel renderer.
@@ -10,20 +18,16 @@ import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizer } from "
  */
 export function DynamicCustomizerPanel({
     config,
-    formRef,
-}: {
-    config: CustomizerPanelConfig;
-    formRef?: RefObject<HTMLFormElement | null>;
-}) {
+    onFieldChange,
+}: DynamicCustomizerPanelProps) {
     const { resetToDefaults } = useCustomizer();
 
     /**
-     * Handles restore defaults with form change trigger.
+     * Handles restore defaults with field change trigger.
      */
     const handleRestoreDefaults = () => {
         resetToDefaults();
-        // Trigger form change event for save bar
-        formRef?.current?.dispatchEvent(new Event("input", { bubbles: true }));
+        onFieldChange?.();
     };
 
     return (
@@ -33,7 +37,7 @@ export function DynamicCustomizerPanel({
                     <DynamicCustomizerSection
                         key={section.id}
                         config={section}
-                        formRef={formRef}
+                        onFieldChange={onFieldChange}
                     />
                 ))}
             </s-stack>

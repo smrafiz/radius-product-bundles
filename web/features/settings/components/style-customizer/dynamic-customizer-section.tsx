@@ -1,7 +1,15 @@
 "use client";
 
-import { ReactElement, RefObject, useState } from "react";
-import { CustomizerSectionConfig, DynamicCustomizerField, } from "@/features/settings";
+import { ReactElement, useState } from "react";
+import {
+    CustomizerSectionConfig,
+    DynamicCustomizerField,
+} from "@/features/settings";
+
+interface DynamicCustomizerSectionProps {
+    config: CustomizerSectionConfig;
+    onFieldChange?: () => void;
+}
 
 /**
  * Collapsible customizer section renderer.
@@ -10,11 +18,8 @@ import { CustomizerSectionConfig, DynamicCustomizerField, } from "@/features/set
  */
 export function DynamicCustomizerSection({
     config,
-    formRef,
-}: {
-    config: CustomizerSectionConfig;
-    formRef?: RefObject<HTMLFormElement | null>;
-}) {
+    onFieldChange,
+}: DynamicCustomizerSectionProps) {
     const [open, setOpen] = useState(config.defaultOpen ?? false);
 
     const { title, fields, columns = 1 } = config;
@@ -53,7 +58,7 @@ export function DynamicCustomizerSection({
                             <DynamicCustomizerField
                                 key={field.name}
                                 config={field}
-                                formRef={formRef}
+                                onFieldChange={onFieldChange}
                             />
                         ))}
                     </s-stack>,
@@ -69,7 +74,7 @@ export function DynamicCustomizerSection({
                             <DynamicCustomizerField
                                 key={field.name}
                                 config={field}
-                                formRef={formRef}
+                                onFieldChange={onFieldChange}
                             />
                         ))}
                     </div>,

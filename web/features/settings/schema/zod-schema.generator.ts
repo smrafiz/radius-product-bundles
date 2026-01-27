@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { sanitizeHtml } from "@/shared";
-import { FieldConfig } from "@/features/settings";
+import { FieldConfig, globalStylesSchema } from "@/features/settings";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
 
 /**
@@ -135,8 +135,8 @@ export function generateSettingsSchema() {
         schemaShape[parentPath] = z.object(fields).optional();
     }
 
-    // Add globalStyles as optional JSON
-    schemaShape.globalStyles = z.any().optional();
+    // Add globalStyles
+    schemaShape.globalStyles = globalStylesSchema.optional();
 
     return z.object(schemaShape);
 }
@@ -145,21 +145,3 @@ export function generateSettingsSchema() {
  * Pre-generated schema
  */
 export const appSettingsSchema = generateSettingsSchema();
-
-/**
- * Labels schema (extracted for separate use)
- */
-export const labelsSchema = (() => {
-    const labelsTab = SETTINGS_TABS.find((tab) => tab.parentPath === "labels");
-    if (!labelsTab?.sections) return z.object({});
-
-    const shape: Record<string, z.ZodTypeAny> = {};
-    for (const section of labelsTab.sections) {
-        for (const field of section.fields) {
-            if (field.type !== "custom") {
-                shape[field.name] = buildFieldSchema(field);
-            }
-        }
-    }
-    return z.object(shape);
-})();
