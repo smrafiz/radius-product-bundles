@@ -9,11 +9,13 @@ export function CalloutCard({
     return (
         <s-section>
             <s-stack gap="small">
-                <s-heading>{title}</s-heading>
-                <s-text>{description}</s-text>
+                <s-stack gap="small-300">
+                    <s-heading>{title}</s-heading>
+                    <s-text>{description}</s-text>
+                </s-stack>
 
                 {primaryButton && (
-                    <s-stack gap="small">
+                    <s-stack>
                         {primaryButton.props?.url && (
                             <s-button
                                 variant="secondary"

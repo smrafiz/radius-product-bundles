@@ -7,27 +7,27 @@ export const BUNDLE_STATUSES = {
     DRAFT: {
         text: "Draft",
         tone: "info",
-        desc: "Not visible on selected sales channels or markets",
+        desc: "Work in progress, not visible to customers",
     },
     ACTIVE: {
         text: "Active",
         tone: "success",
-        desc: "Sell via selected sales channels and markets",
+        desc: "Live and available for purchase",
     },
     SCHEDULED: {
         text: "Scheduled",
         tone: "caution",
-        desc: "Sell via selected sales channels and markets",
+        desc: "Will go live at the scheduled time",
     },
     PAUSED: {
         text: "Paused",
         tone: "warning",
-        desc: "Sell via selected sales channels and markets",
+        desc: "Temporarily hidden, settings preserved",
     },
     ARCHIVED: {
         text: "Archived",
         tone: "critical",
-        desc: "Sell via selected sales channels and markets",
+        desc: "Permanently deactivated and hidden",
     },
 } as const satisfies Record<BundleStatus, BundleStatusBadge>;
 

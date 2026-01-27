@@ -3,6 +3,7 @@ export * from "./dashboard-setup-guide";
 export { AIInsights } from "./ai-insights/ai-insights";
 export { DashboardPage } from "./dashboard-page/dashboard-page";
 export { DashboardVideo } from "./dashboard-video/dashboard-video";
+export { DashboardVideoItem } from "./dashboard-video/dashboard-video-item";
 export { DashboardMetrics } from "./dashboard-metrics/dashboard-metrics";
 export { DashboardMediaCard } from "./dashboard-media-card/dashboard-media-card";
 export { DashboardQuickActions } from "./dashboard-quick-actions/dashboard-quick-actions";

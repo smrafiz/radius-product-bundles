@@ -88,7 +88,7 @@ export function ProductItem({ group }: { group: ProductGroup }) {
                             <s-icon type="drag-handle" />
                         </div>
                         {product.image ? (
-                            <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                            <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                                 <s-image
                                     src={product.image}
                                     alt={product.title}
@@ -98,7 +98,7 @@ export function ProductItem({ group }: { group: ProductGroup }) {
                                 />
                             </div>
                         ) : (
-                            <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                            <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                                 <s-icon type="image" tone="neutral" />
                             </div>
                         )}

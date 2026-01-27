@@ -209,7 +209,7 @@ export function TopBundlesTable() {
                                                             bundle.bundleId,
                                                         )
                                                     }
-                                                    className="text-left font-semibold text-[--p-color-text-emphasis] hover:text-[--p-color-text-emphasis-hover] hover:underline cursor-pointer bg-transparent border-none p-0"
+                                                    className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
                                                 >
                                                     {bundle.title}
                                                 </button>
@@ -229,7 +229,7 @@ export function TopBundlesTable() {
                                                 <span
                                                     style={{
                                                         borderBottom:
-                                                            ".125rem dotted var(--p-color-border-tertiary)",
+                                                            ".125rem dotted #cccccc",
                                                         cursor: "help",
                                                         display: "inline-block",
                                                     }}

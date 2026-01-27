@@ -57,17 +57,17 @@ export function DashboardPage() {
                     {/* Quick actions */}
                     <DashboardQuickActions />
 
-                    {/* Guidance */}
-                    <DashboardMediaCard />
-
                     {/* Builder Addons */}
                     <DashboardBuilderAddons/>
 
-                    {/* Useful links */}
-                    <DashboardCalloutCards />
+                    {/* Guidance */}
+                    <DashboardMediaCard />
 
                     {/* Video overview */}
                     <DashboardVideo />
+
+                    {/* Useful links */}
+                    <DashboardCalloutCards />
 
                     {/* AI insights */}
                     <AIInsights />

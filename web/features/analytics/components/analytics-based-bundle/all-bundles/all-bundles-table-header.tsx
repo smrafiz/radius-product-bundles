@@ -23,7 +23,7 @@ function SortHeader({
                     <span
                         style={{
                             borderBottom:
-                                ".125rem dotted var(--p-color-border-tertiary)",
+                                ".125rem dotted #cccccc",
                             cursor: "n-resize",
                             display: "inline-block",
                         }}

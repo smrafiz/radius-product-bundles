@@ -54,7 +54,7 @@ export function SelectedProducts() {
                                 {/* Product Info */}
                                 <s-stack gap="base" direction="inline">
                                     {group.product.image ? (
-                                        <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                        <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                                             <s-image
                                                 src={group.product.image}
                                                 alt={group.product.title}
@@ -65,7 +65,7 @@ export function SelectedProducts() {
                                             />
                                         </div>
                                     ) : (
-                                        <div className="w-10 h-10 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                        <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                                             <s-icon
                                                 type="image"
                                                 tone="neutral"

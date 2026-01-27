@@ -116,7 +116,7 @@ export function ProductMediaPicker({
                                                 />
                                             </div>
 
-                                            <div className="w-full h-full rounded-lg border overflow-hidden transition-colors border-[var(--p-color-border)]">
+                                            <div className="w-full h-full rounded-lg border overflow-hidden transition-colors border-[#e3e3e3]">
                                                 <s-image
                                                     src={item.imageUrl}
                                                     alt={item.productTitle}
@@ -127,7 +127,7 @@ export function ProductMediaPicker({
                                                 />
                                             </div>
                                             {isSelected && (
-                                                <div className="absolute inset-0 border-2 border-[var(--p-color-border-focus)] rounded-lg"></div>
+                                                <div className="absolute inset-0 border-2 border-[#005bd3] rounded-lg"></div>
                                             )}
                                         </div>
                                     </s-grid-item>

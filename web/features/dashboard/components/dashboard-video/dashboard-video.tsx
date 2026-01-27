@@ -1,30 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { SkeletonLines } from "@/shared";
-import ReactPlayer from "react-player";
 import { useAnalytics } from "@/features/analytics";
+import { DashboardVideoItem } from "@/features/dashboard";
+import { DASHBOARD_VIDEO_ITEMS } from "@/features/dashboard";
 
-function getYouTubeId(url: string) {
-    try {
-        const u = new URL(url);
-        if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
-        if (u.hostname.includes("youtube.com"))
-            return u.searchParams.get("v") || null;
-        return null;
-    } catch {
-        const m = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-        return m ? m[1] : null;
-    }
-}
-
+/**
+ * Dashboard video grid section displaying multiple video items
+ */
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
     const { isLoading } = useAnalytics();
-    const videoUrl = "https://www.youtube.com/watch?v=sRWcJrMTtMI";
-
-    const isYouTube: boolean =
-        videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
-    const ytId = getYouTubeId(videoUrl);
 
     if (isLoading) {
         return (
@@ -40,116 +26,19 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
 
     return (
         <s-section>
-            <div className="flex flex-col sm:flex-row gap-4 items-center">
-                {/* LEFT SIDE: Thumbnail */}
-                <div className="relative sm:max-w-75 w-full">
-                    <div className="relative cursor-pointer">
-                        {isYouTube ? (
-                            <img
-                                src={`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
-                                alt="Video thumbnail"
-                                className="w-full h-50 object-cover rounded-lg"
-                            />
-                        ) : (
-                            <video
-                                className="w-full object-cover rounded-lg"
-                                muted
-                                src={videoUrl}
-                            />
-                        )}
-
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <s-button
-                                variant="secondary"
-                                commandFor="video-modal"
-                                command="--show"
-                            >
-                                <s-icon type="play" />
-                            </s-button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* RIGHT SIDE */}
-                <s-grid alignItems="center">
-                    <s-stack gap="small">
-                        <s-heading>See it in action</s-heading>
-                        <s-text>
-                            Bundles are a great way to increase average order
-                            value, move slow-moving inventory, and offer more
-                            value to your customers.
-                        </s-text>
-                        <s-button
-                            variant="secondary"
-                            tone="auto"
-                            commandFor="video-modal"
-                            command="--show"
-                        >
-                            Watch Video
-                        </s-button>
-                    </s-stack>
-                </s-grid>
-            </div>
-
-            {/* Modal */}
-            <Modal videoUrl={videoUrl} />
+            <s-grid
+                gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+                gap="base"
+                justifyContent="center"
+            >
+                {DASHBOARD_VIDEO_ITEMS.map((video) => (
+                    <s-grid-item key={video.id} gridColumn="auto">
+                        <DashboardVideoItem video={video} />
+                    </s-grid-item>
+                ))}
+            </s-grid>
         </s-section>
     );
 }
 
-export default function Modal({ videoUrl }: { videoUrl: string }) {
-    const modalRef = useRef<HTMLElement | null>(null);
-    const [playing, setPlaying] = useState(false);
-
-    useEffect(() => {
-        const modal = modalRef.current;
-        if (!modal) {
-            return;
-        }
-
-        const handleShow = () => {
-            setTimeout(() => setPlaying(true), 50);
-        };
-
-        const handleHide = () => {
-            setPlaying(false);
-        };
-
-        modal.addEventListener("show", handleShow);
-        modal.addEventListener("hide", handleHide);
-
-        return () => {
-            modal.removeEventListener("show", handleShow);
-            modal.removeEventListener("hide", handleHide);
-        };
-    }, []);
-
-    return (
-        <s-modal
-            id="video-modal"
-            ref={modalRef as any}
-            heading="Video Tutorial"
-        >
-            <ReactPlayer
-                src={videoUrl}
-                playing={playing}
-                muted={true}
-                controls={true}
-                playsInline
-                width="100%"
-                height="auto"
-                style={{ aspectRatio: "16/9" }}
-                className="rounded-lg overflow-hidden"
-            />
-
-            <s-button
-                slot="primary-action"
-                variant="primary"
-                commandFor="video-modal"
-                command="--hide"
-            >
-                Close
-            </s-button>
-        </s-modal>
-    );
-}
+export default DashboardVideo;

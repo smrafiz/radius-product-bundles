@@ -238,7 +238,7 @@ export function MetricCardSkeleton({ title, icon }: MetricCardSkeletonProps) {
             <s-stack>
                 <s-stack direction="inline" gap="base" alignItems="center">
                     {icon && (
-                        <div className="w-(--p-font-size-1000)">
+                        <div className="w-[40px]">
                             <s-image
                                 src={`/assets/${icon}.svg`}
                                 alt={title || "Loading"}

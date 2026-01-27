@@ -2,23 +2,22 @@
 
 export function DashboardBuilderAddons() {
     return (
-        <s-section>
+        <s-section padding="none">
             <s-grid
                 gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))"
-                gap="base"
                 alignItems="center"
             >
                 {/* LEFT SIDE: Video Thumbnail */}
                 <s-grid-item gridColumn="auto">
                     <img
-                        className="rounded-md w-full object-cover"
+                        className="w-full object-cover"
                         alt="Builder Addons"
                         src="/assets/shopbuilder.jpg"
                     />
                 </s-grid-item>
                 {/* RIGHT SIDE: Info */}
                 <s-grid-item gridColumn="auto">
-                    <s-stack gap="small">
+                    <s-stack gap="small" padding="base">
                         <s-heading>
                             ShopBuilder – Elementor WooCommerce Builder Addons
                         </s-heading>
@@ -31,9 +30,8 @@ export function DashboardBuilderAddons() {
                         <s-button
                             variant="secondary"
                             tone="auto"
-                            onClick={() => {
-                                console.log("clicked");
-                            }}
+                            href="https://www.example.com"
+                            target="_blank"
                         >
                             See details
                         </s-button>

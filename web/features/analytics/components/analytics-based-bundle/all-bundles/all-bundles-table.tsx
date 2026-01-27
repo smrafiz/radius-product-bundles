@@ -252,7 +252,7 @@ export function AllBundlesTable() {
                                                 onClick={() =>
                                                     handleBundleClick(bundle.id)
                                                 }
-                                                className="text-left font-semibold text-[--p-color-text-emphasis] hover:text-[--p-color-text-emphasis-hover] hover:underline cursor-pointer bg-transparent border-none p-0"
+                                                className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
                                             >
                                                 {bundle.title}
                                             </button>

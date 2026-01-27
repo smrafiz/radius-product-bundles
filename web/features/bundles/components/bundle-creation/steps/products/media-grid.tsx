@@ -26,10 +26,10 @@ function MediaItem({
             onMouseLeave={onHoverEnd}
         >
             <div
-                className={`w-full h-full rounded-lg border overflow-hidden transition-colors ${
+                className={`w-full h-full rounded-md border overflow-hidden transition-colors ${
                     isHovered
-                        ? "border-[var(--p-color-border-focus)]"
-                        : "border-[var(--p-color-border)]"
+                        ? "border-[#005bd3]"
+                        : "border-[#e3e3e3]"
                 }`}
             >
                 <s-image
@@ -95,9 +95,9 @@ export function MediaGrid({
 
     const getGridClass = () => {
         if (totalMedia === 1) {
-            return "grid grid-cols-3 auto-rows-[80px] gap-[var(--p-space-150)]";
+            return "grid grid-cols-3 auto-rows-[80px] gap-1.5";
         }
-        return "grid grid-cols-6 auto-rows-[80px] gap-[var(--p-space-150)]";
+        return "grid grid-cols-6 auto-rows-[80px] gap-1.5";
     };
 
     let currentIndex = 0;

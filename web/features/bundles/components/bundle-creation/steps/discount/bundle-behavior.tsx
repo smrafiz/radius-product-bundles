@@ -137,8 +137,8 @@ export function BundleBehavior() {
                                         <div
                                             className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                                 isSelected
-                                                    ? "border-[var(--p-color-border-focus)] bg-[var(--p-color-bg-surface-secondary)]"
-                                                    : "border-[var(--p-color-border)] hover:bg-[var(--p-color-bg-surface-hover)]"
+                                                    ? "border-[#005bd3] bg-[#f1f1f1]"
+                                                    : "border-[#e3e3e3] hover:bg-[#f1f1f1]"
                                             }`}
                                         >
                                             <s-checkbox
@@ -149,7 +149,7 @@ export function BundleBehavior() {
                                             />
 
                                             {product.image ? (
-                                                <div className="w-12 h-12 rounded-lg border overflow-hidden flex-shrink-0 border-[var(--p-color-border)]">
+                                                <div className="w-12 h-12 rounded-md border overflow-hidden flex-shrink-0 border-[#e3e3e3]">
                                                     <s-image
                                                         src={product.image}
                                                         alt={product.title}
@@ -160,7 +160,7 @@ export function BundleBehavior() {
                                                     />
                                                 </div>
                                             ) : (
-                                                <div className="w-12 h-12 bg-[var(--p-color-bg-surface)] border border-[var(--p-color-border)] rounded-[var(--p-border-radius-150)] flex items-center justify-center overflow-hidden">
+                                                <div className="w-12 h-12 bg-[#ffffff] border border-[#e3e3e3] rounded-md flex items-center justify-center overflow-hidden">
                                                     <s-icon
                                                         type="image"
                                                         tone="neutral"

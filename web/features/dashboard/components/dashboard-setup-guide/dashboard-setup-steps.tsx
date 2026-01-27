@@ -134,9 +134,9 @@ export function DashboardSetupSteps({
 
                                 {completedItemsLength !== items.length ? (
                                     <div className="w-full">
-                                        <div className="w-full h-2 bg-[var(--p-color-border-secondary)] rounded-md overflow-hidden">
+                                        <div className="w-full h-2 bg-[#ebebeb] rounded-md overflow-hidden">
                                             <div
-                                                className="h-full bg-[var(--p-color-bg-inverse)] rounded-[4px] transition-all duration-300 ease-in-out"
+                                                className="h-full bg-[#1a1a1a] rounded-[4px] transition-all duration-300 ease-in-out"
                                                 style={{
                                                     width: `${
                                                         (items.filter(

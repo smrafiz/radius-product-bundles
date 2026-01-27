@@ -7,7 +7,6 @@
 /* Navigation Arrows */
 .custom-calendar-navigation {
     position: absolute;
-    top: 0.35rem;
     width: 100%;
 }
 
@@ -19,13 +18,13 @@
     height: 2rem;
     background: transparent;
     border: none;
-    border-radius: var(--p-border-radius-200, 0.5rem);
+    border-radius: 8px;
     cursor: pointer;
-    color: var(--p-color-text, #202223);
+    color: #303030;
 }
 
 .custom-calendar-nav-btn:hover {
-    background: var(--p-color-bg-surface-hover, #f6f6f7);
+    background: #f6f6f7;
 }
 
 /* Calendar Months Container */
@@ -35,9 +34,8 @@
 
 .custom-calendar-month {
     flex: 1 1 14.375rem;
-    max-width: calc(100% - var(--p-space-400));
+    max-width: calc(100% - 16px);
     min-width: 14.375rem;
-    margin-top: var(--p-space-150);
 }
 
 /* Calendar Table */
@@ -49,19 +47,19 @@
 
 .custom-calendar-caption {
     text-align: center;
-    font-size: var(--p-font-size-325, 14px);
-    font-weight: var(--p-font-weight-medium, 550);
-    color: var(--p-color-text, #202223);
-    padding-block-end: var(--p-space-300, 12px);
+    font-size: 13px;
+    font-weight: 550;
+    color: #303030;
+    padding-block-end: 12px;
     caption-side: top;
 }
 
 .custom-calendar-weekday {
     text-align: center;
-    font-size: var(--p-font-size-300, 12px);
-    font-weight: var(--p-font-weight-regular, 450);
-    color: var(--p-color-text-secondary, #616161);
-    padding: var(--p-space-100, 4px);
+    font-size: 12px;
+    font-weight: 450;
+    color: #616161;
+    padding: 4px;
 }
 
 .custom-calendar-day-cell {
@@ -72,7 +70,7 @@
 }
 
 .custom-calendar-day-cell--in-range {
-    background: var(--p-color-bg-surface-brand-selected, #e3f1ff);
+    background: #f1f1f1;
 }
 
 .custom-calendar-day {
@@ -84,27 +82,27 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    font-size: var(--p-font-size-300, 0.75rem);
-    font-weight: var(--p-font-weight-regular, 450);
-    line-height: var(--p-font-line-height-400, 1rem);
-    color: var(--p-color-text, #202223);
-    border-radius: var(--p-border-radius-200, 0.5rem);
+    font-size: 12px;
+    font-weight: 450;
+    line-height: 16px;
+    color: #303030;
+    border-radius: 8px;
     position: relative;
 }
 
 .custom-calendar-day--today {
-    font-weight: var(--p-font-weight-semibold, 600);
-    color: var(--p-color-text-brand, #005bd3);
+    font-weight: 600;
+    color: #4a4a4a;
 }
 
 .custom-calendar-day--in-range {
-    background: var(--p-color-bg-surface-brand-selected, #f1f1f1);
+    background: #f1f1f1;
     border-radius: 0;
 }
 
 .custom-calendar-day--disabled {
     cursor: not-allowed;
-    color: var(--p-color-text-disabled);
+    color: #b5b5b5;
 }
 
 .custom-calendar-day--disabled:hover {
@@ -115,27 +113,25 @@
 .custom-calendar-day--range-start,
 .custom-calendar-day--range-end {
     z-index: 1;
-    background: var(--p-color-bg-fill-brand-hover, #1a1a1a);
-    color: var(--p-color-text-brand-on-bg-fill, #fff);
-    outline: var(--p-border-width-025, 0.0625rem) solid #0000;
+    background: #303030;
+    color: #fff;
+    outline: 1px solid #0000;
 }
 
 .custom-calendar-day--range-start:hover,
 .custom-calendar-day--range-end:hover {
-    background: var(--p-color-bg-fill-brand-hover, #004b9c);
+    background: #004b9c;
 }
 
 /* Round corners */
 .custom-calendar-day--range-start {
-    border-radius: var(--p-border-radius-200, 0.5rem) 0 0
-        var(--p-border-radius-200, 0.5rem);
+    border-radius: 8px 0 0 8px;
 }
 
 .custom-calendar-day--range-end {
-    border-radius: 0 var(--p-border-radius-200, 0.5rem)
-        var(--p-border-radius-200, 0.5rem) 0;
+    border-radius: 0 8px 8px 0;
 }
 
 .custom-calendar-day--single {
-    border-radius: var(--p-border-radius-200, 0.5rem);
+    border-radius: 8px;
 }

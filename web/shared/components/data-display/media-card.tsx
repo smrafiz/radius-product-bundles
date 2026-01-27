@@ -1,10 +1,8 @@
 /**
  * Media Card Component
  */
-import { useAppNavigation } from "@/shared";
 
 export function MediaCard() {
-    const { bundleData } = useAppNavigation();
     return (
         <s-section>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
@@ -19,7 +17,8 @@ export function MediaCard() {
                     <s-button
                         variant="secondary"
                         tone="auto"
-                        onClick={bundleData.studio}
+                        href="https://www.example.com"
+                        target="_blank"
                     >
                         See details
                     </s-button>

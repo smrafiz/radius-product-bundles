@@ -18,7 +18,7 @@ export function ChartTitleTooltip({
 
             {description && (
                 <s-paragraph>
-                    <span className="text-(length:--p-font-size-300)">
+                    <span className="text-[12px]">
                         {description}
                     </span>
                 </s-paragraph>
@@ -26,7 +26,7 @@ export function ChartTitleTooltip({
 
             {formula && (
                 <s-text tone="info">
-                    <span className="font-mono text-[#086b5a] text-(length:--p-font-size-275) font-normal leading-relaxed">
+                    <span className="font-mono text-[#086b5a] text-[11px] font-normal leading-relaxed">
                         {formula}
                     </span>
                 </s-text>
@@ -41,7 +41,7 @@ export function ChartTitleTooltip({
                     <span
                         style={{
                             borderBottom:
-                                ".125rem dotted var(--p-color-border-tertiary)",
+                                ".125rem dotted #cccccc",
                             cursor: "help",
                             display: "inline-block",
                         }}

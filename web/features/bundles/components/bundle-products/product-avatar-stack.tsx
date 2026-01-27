@@ -18,7 +18,7 @@ export function ProductAvatarStack({
                         <div
                             className={`${
                                 index === 2 ? "absolute -top-5" : "relative"
-                            } w-10 h-10 rounded-full overflow-hidden border border-[var(--p-color-border)] ${offset}`}
+                            } w-10 h-10 rounded-full overflow-hidden border border-[#e3e3e3] ${offset}`}
                         >
                             <s-image
                                 src={product.featuredImage?.url || ""}
@@ -28,7 +28,7 @@ export function ProductAvatarStack({
                             />
                         </div>
                         {index === 2 && remainingCount > 0 && (
-                            <div className="absolute w-10 h-10 -top-5 inset-0 bg-white/90 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 border border-[var(--p-color-border)]">
+                            <div className="absolute w-10 h-10 -top-5 inset-0 bg-white/90 flex items-center justify-center text-[12px] font-bold rounded-full -left-10 border border-[#e3e3e3]">
                                 +{remainingCount}
                             </div>
                         )}
