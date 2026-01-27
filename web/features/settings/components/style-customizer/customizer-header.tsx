@@ -2,15 +2,12 @@
 
 import { BundleTypeTab } from "@/features/settings";
 
-/**
- * Customizer header component.
- */
 export function CustomizerHeader({
     activeBundleType,
-    onBundleTypeChange,
+    onBundleTypeChangeAction,
 }: {
     activeBundleType: string;
-    onBundleTypeChange: (id: string) => void;
+    onBundleTypeChangeAction: (id: string) => void;
 }) {
     return (
         <s-section>
@@ -22,7 +19,7 @@ export function CustomizerHeader({
             >
                 <BundleTypeTab
                     activeId={activeBundleType}
-                    onChange={onBundleTypeChange}
+                    onChangeAction={onBundleTypeChangeAction}
                 />
 
                 <s-button-group gap="none">

@@ -1,14 +1,18 @@
 "use client";
 
 import React from "react";
-import { BUNDLE_TYPES } from "@/features/bundles";
+import { BUNDLE_TYPES } from "@/features/bundles/constants";
 
-interface Props {
+/**
+ * Bundle type tab component.
+ */
+export function BundleTypeTab({
+    activeId,
+    onChangeAction,
+}: {
     activeId: string;
-    onChange: (id: string) => void;
-}
-
-export function BundleTypeTab({ activeId, onChange }: Props) {
+    onChangeAction: (id: string) => void;
+}) {
     const types = Object.values(BUNDLE_TYPES);
 
     return (
@@ -18,7 +22,7 @@ export function BundleTypeTab({ activeId, onChange }: Props) {
                     value={activeId}
                     onChange={(e: Event) => {
                         const target = e.target as HTMLSelectElement;
-                        onChange(target.value);
+                        onChangeAction(target.value);
                     }}
                 >
                     {types.map((type) => (

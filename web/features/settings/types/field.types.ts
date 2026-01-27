@@ -220,3 +220,12 @@ export interface CustomizerPanelConfig {
     title: string;
     sections: CustomizerSectionConfig[];
 }
+
+/**
+ * Field group for rendering.
+ */
+export interface FieldGroup {
+    id: string;
+    isRange: boolean;
+    fields: CustomizerFieldConfig[];
+}

@@ -1,34 +1,18 @@
 "use client";
 
-import {
-    CustomizerPanelConfig,
-    DynamicCustomizerSection,
-    useCustomizer,
-} from "@/features/settings";
-
-interface DynamicCustomizerPanelProps {
-    config: CustomizerPanelConfig;
-    onFieldChange?: () => void;
-}
+import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizerPanel, } from "@/features/settings";
 
 /**
  * Main customizer panel renderer.
- *
- * Renders all sections with a restore defaults button.
  */
 export function DynamicCustomizerPanel({
     config,
-    onFieldChange,
-}: DynamicCustomizerPanelProps) {
-    const { resetToDefaults } = useCustomizer();
-
-    /**
-     * Handles restore defaults with field change trigger.
-     */
-    const handleRestoreDefaults = () => {
-        resetToDefaults();
-        onFieldChange?.();
-    };
+    onFieldChangeAction,
+}: {
+    config: CustomizerPanelConfig;
+    onFieldChangeAction?: () => void;
+}) {
+    const { handleRestoreDefaults } = useCustomizerPanel(onFieldChangeAction);
 
     return (
         <div className="left-side-auto-scroll border border-[#e3e3e3] bg-white rounded-xl">
@@ -37,7 +21,7 @@ export function DynamicCustomizerPanel({
                     <DynamicCustomizerSection
                         key={section.id}
                         config={section}
-                        onFieldChange={onFieldChange}
+                        onFieldChange={onFieldChangeAction}
                     />
                 ))}
             </s-stack>

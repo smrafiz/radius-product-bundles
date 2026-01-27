@@ -100,8 +100,8 @@ export interface ButtonGroupFieldConfig extends BaseCustomizerFieldConfig {
  */
 export interface SelectFieldConfig extends BaseCustomizerFieldConfig {
     type: "select";
-    options: Array<{ value: string; label: string }>;
-    defaultValue?: string;
+    options: Array<{ value: string | number; label: string }>;
+    defaultValue?: string | number;
 }
 
 /**
