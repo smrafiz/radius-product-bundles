@@ -14,9 +14,6 @@ import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 
 /**
  * Settings page content component.
- *
- * Uses GlobalForm for consistent SaveBar behavior
- * matching the bundle creation page pattern.
  */
 function SettingsPageContent() {
     const { handleSubmit, resetDirty } = useSettingsSubmit();

@@ -36,7 +36,7 @@
 }
 
 .range-slider-value .webkit-slider-thumb:focus {
-	border-color: #303030;
+	border-color: #fff;
 	box-shadow: 0 0 0 0.125rem #005bd3;
 }
 

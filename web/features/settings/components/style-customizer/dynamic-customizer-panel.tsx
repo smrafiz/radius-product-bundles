@@ -21,7 +21,7 @@ export function DynamicCustomizerPanel({
                     <DynamicCustomizerSection
                         key={section.id}
                         config={section}
-                        onFieldChange={onFieldChangeAction}
+                        onFieldChangeAction={onFieldChangeAction}
                     />
                 ))}
             </s-stack>

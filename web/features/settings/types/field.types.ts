@@ -194,6 +194,7 @@ export interface ButtonGroupFieldConfig extends BaseCustomizerFieldConfig {
  */
 export type CustomizerFieldConfig =
     | ColorFieldConfig
+    | NumberFieldConfig
     | CustomizerNumberFieldConfig
     | RangeFieldConfig
     | ButtonGroupFieldConfig
@@ -208,7 +209,6 @@ export interface CustomizerSectionConfig {
     description?: string;
     defaultOpen?: boolean;
     fields: CustomizerFieldConfig[];
-    /** Optional grid layout for fields (default: stack) */
     columns?: 1 | 2 | 3;
 }
 

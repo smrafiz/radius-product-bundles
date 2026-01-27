@@ -133,17 +133,17 @@ export function DynamicCustomizerField({
                             label={config.label}
                             labelAccessibilityVisibility="exclusive"
                             value={String(value ?? "")}
-                            onInput={(e: Event) =>
-                                handleChange(
-                                    (e.target as HTMLSelectElement)
-                                        .value as any,
-                                )
-                            }
+                            onInput={(e: Event) => {
+                                const targetValue = (e.target as HTMLSelectElement).value;
+                                // Convert back to original type if needed
+                                const convertedValue = config.options.find(opt => String(opt.value) === targetValue)?.value;
+                                handleChange(convertedValue as any);
+                            }}
                         >
                             {config.options.map((option) => (
                                 <s-option
                                     key={option.value}
-                                    value={option.value}
+                                    value={String(option.value)}
                                 >
                                     {option.label}
                                 </s-option>

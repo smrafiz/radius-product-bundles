@@ -1,14 +1,16 @@
 "use client";
 
 import { useCallback } from "react";
-import { useFormContext } from "react-hook-form";
+import { Path, PathValue, useFormContext } from "react-hook-form";
 import { CustomizerFieldConfig, CustomizerStyles, useCustomizerStore, } from "@/features/settings";
 
 /**
  * Hook for managing a single customizer field.
+ *
+ * Uses generic type parameter to preserve the field name literal type.
  */
-export function useCustomizerField(
-    config: CustomizerFieldConfig,
+export function useCustomizerField<K extends keyof CustomizerStyles>(
+    config: CustomizerFieldConfig & { name: K },
     onFieldChange?: () => void,
 ) {
     const { styles, updateStyle } = useCustomizerStore();
@@ -18,33 +20,35 @@ export function useCustomizerField(
         formState: { errors },
     } = useFormContext<CustomizerStyles>();
 
-    const value = styles[config.name];
-    const defaultValue = (config as any).defaultValue;
-    const error = errors[config.name]?.message as string | undefined;
+    const fieldName: K = config.name;
+    const value: CustomizerStyles[K] = styles[fieldName];
+    const error = errors[fieldName]?.message as string | undefined;
+
+    const defaultValue = (
+        "defaultValue" in config ? config.defaultValue : undefined
+    ) as CustomizerStyles[K] | undefined;
 
     /**
      * Updates both RHF (validation) and Zustand (preview).
      */
     const handleChange = useCallback(
-        (newValue: CustomizerStyles[typeof config.name]) => {
-            // Update RHF for validation
-            setValue(config.name, newValue, {
-                shouldDirty: true,
-                shouldValidate: true,
-            });
+        (newValue: CustomizerStyles[K]) => {
+            setValue(
+                fieldName as Path<CustomizerStyles>,
+                newValue as PathValue<CustomizerStyles, Path<CustomizerStyles>>,
+                { shouldDirty: true, shouldValidate: true },
+            );
 
             // Update Zustand for live preview
-            updateStyle(config.name, newValue);
+            updateStyle(fieldName, newValue);
 
             // Trigger SaveBar dirty state
             onFieldChange?.();
         },
-        [config.name, setValue, updateStyle, onFieldChange],
+        [fieldName, setValue, updateStyle, onFieldChange],
     );
 
-    /**
-     * Gets the display value with fallback to default.
-     */
+    // Display value with fallback to default
     const displayValue = value ?? defaultValue;
 
     return {

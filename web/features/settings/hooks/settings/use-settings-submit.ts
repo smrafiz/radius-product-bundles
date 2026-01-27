@@ -1,76 +1,181 @@
 "use client";
 
-import { useCallback } from "react";
-import { useSettingsForm } from "./use-settings-form";
 import {
     AppSettingsFormData,
-    useSaveSettingsMutation,
+    CustomizerModeOptions,
+    CustomizerStyles,
+    SettingsModeOptions,
+    settingsMutations,
+    settingsQueryKeys,
+    useCustomizerStore,
+    UseSettingsSubmitOptions,
 } from "@/features/settings";
+import { useCallback } from "react";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 /**
- * Hook for handling settings form submission with React Query.
- *
- * Returns handleSubmit and resetDirty for use with GlobalForm,
- * following the same pattern as useBundleSubmit.
+ * Checks if options specify settings mode.
  */
-export function useSettingsSubmit(options?: {
-    onSuccess?: (data: AppSettingsFormData) => void;
-    onError?: (error: Error) => void;
-}) {
-    const { formState, reset, trigger } = useSettingsForm();
-    const mutation = useSaveSettingsMutation();
+function isSettingsMode(
+    opts: UseSettingsSubmitOptions,
+): opts is SettingsModeOptions {
+    return "mode" in opts && opts.mode === "settings";
+}
+
+/**
+ * Checks if options specify customizer mode.
+ */
+function isCustomizerMode(
+    opts: UseSettingsSubmitOptions,
+): opts is CustomizerModeOptions {
+    return "mode" in opts && opts.mode === "customizer";
+}
+
+/**
+ * Hook for handling settings and customizer form submission.
+ */
+export function useSettingsSubmit(options: UseSettingsSubmitOptions = {}) {
+    const app = useAppBridge();
+    const queryClient = useQueryClient();
+    const { getGlobalStyles, markClean, discardChanges } = useCustomizerStore();
+
+    // Get mutation options from factory
+    const mutations = settingsMutations(app);
+
+    const mutation = useMutation({
+        ...mutations.save(),
+        onSuccess: (savedData) => {
+            if (savedData) {
+                // Update React Query cache
+                queryClient.setQueryData(settingsQueryKeys.detail(), savedData);
+
+                // Mode-specific cleanup
+                if (isCustomizerMode(options)) {
+                    markClean();
+                }
+
+                // Call user callback
+                options.onSuccess?.(savedData);
+            }
+
+            // Show success notification
+            const message = isCustomizerMode(options)
+                ? "Styles saved successfully"
+                : "Settings saved successfully";
+
+            window.shopify?.toast?.show(message, { duration: 3000 });
+        },
+        onError: (error: Error) => {
+            options.onError?.(error);
+
+            window.shopify?.toast?.show(
+                error.message || "Failed to save settings",
+                { duration: 5000, isError: true },
+            );
+        },
+    });
 
     /**
-     * Handles form submission - called by GlobalForm.
-     * This is the main submit handler that processes the validated data.
+     * Handles settings form submission (default & settings mode).
      */
-    const handleSubmit = useCallback(
+    const handleSettingsSubmit = useCallback(
         async (data: AppSettingsFormData) => {
-            try {
-                const savedData = await mutation.mutateAsync(data);
+            const savedData = await mutation.mutateAsync(data);
 
-                if (savedData) {
-                    reset(savedData);
-                    options?.onSuccess?.(savedData);
-                    window.shopify?.toast?.show("Settings saved successfully");
-                }
-            } catch (error) {
-                const errorMessage =
-                    error instanceof Error
-                        ? error.message
-                        : "Failed to save settings";
-                options?.onError?.(new Error(errorMessage));
-                window.shopify?.toast?.show(errorMessage, { isError: true });
+            if (savedData && isSettingsMode(options)) {
+                options.reset(savedData);
             }
         },
-        [mutation, reset, options],
+        [mutation, options],
     );
 
     /**
-     * Resets the dirty state after successful save.
-     * Called by GlobalForm after successful submission.
+     * Handles customizer form submission.
      */
-    const resetDirty = useCallback(() => {
-        // Reset is handled in handleSubmit, but this callback
-        // allows GlobalForm to trigger additional cleanup if needed
-    }, []);
+    const handleCustomizerSubmit = useCallback(
+        async (validatedStyles?: CustomizerStyles) => {
+            if (!isCustomizerMode(options)) return;
+
+            if (!options.currentSettings) {
+                throw new Error("Settings not loaded");
+            }
+
+            const globalStyles = validatedStyles ?? getGlobalStyles();
+
+            const updatedSettings: AppSettingsFormData = {
+                ...options.currentSettings,
+                globalStyles,
+            };
+
+            await mutation.mutateAsync(updatedSettings);
+        },
+        [mutation, options, getGlobalStyles],
+    );
 
     /**
-     * Validates the form without submitting.
+     * Unified submit handler.
      */
-    const validateSettings = useCallback(async () => {
-        return await trigger();
-    }, [trigger]);
+    const handleSubmit = useCallback(
+        async (data?: AppSettingsFormData | CustomizerStyles) => {
+            if (isCustomizerMode(options)) {
+                await handleCustomizerSubmit(
+                    data as CustomizerStyles | undefined,
+                );
+            } else {
+                await handleSettingsSubmit(data as AppSettingsFormData);
+            }
+        },
+        [options, handleSettingsSubmit, handleCustomizerSubmit],
+    );
 
-    return {
+    /**
+     * Resets dirty state.
+     */
+    const resetDirty = useCallback(() => {
+        if (isCustomizerMode(options)) {
+            discardChanges();
+        }
+    }, [options, discardChanges]);
+
+    /**
+     * Validates the form (settings mode only).
+     */
+    const validate = useCallback(async () => {
+        if (isSettingsMode(options)) {
+            return await options.trigger();
+        }
+        return true;
+    }, [options]);
+
+    // Base return object
+    const baseReturn = {
         handleSubmit,
         resetDirty,
-        validateSettings,
-        isSubmitting: mutation.isPending || formState.isSubmitting,
+        isSubmitting: mutation.isPending,
         isSuccess: mutation.isSuccess,
-        submitError: mutation.error?.message ?? null,
+        error: mutation.error?.message ?? null,
         clearError: () => mutation.reset(),
-        isDirty: formState.isDirty,
-        isValid: formState.isValid,
     };
+
+    // Settings mode return
+    if (isSettingsMode(options)) {
+        return {
+            ...baseReturn,
+            validate,
+            isDirty: options.formState.isDirty,
+            isValid: options.formState.isValid,
+        };
+    }
+
+    // Customizer mode return
+    if (isCustomizerMode(options)) {
+        return {
+            ...baseReturn,
+            isLoading: mutation.isPending,
+        };
+    }
+
+    // Default mode return
+    return baseReturn;
 }
