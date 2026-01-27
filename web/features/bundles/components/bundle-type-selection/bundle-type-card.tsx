@@ -41,7 +41,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
 
                     {bundleType.bundleImage && (
                         <s-box>
-                            <div className="flex items-center justify-center bg-[#f7f7f7] rounded-md min-h-[145px] w-full">
+                            <div className="flex items-center py-8 px-6 justify-center bg-[#f7f7f7] rounded-md min-h-[145px] w-full">
                                 <img
                                     src={bundleType.bundleImage}
                                     alt={bundleType.label}
@@ -50,7 +50,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         </s-box>
                     )}
                 </s-stack>
-                <s-stack>
+                <s-stack gap="small-300">
                     <s-stack>
                         <s-heading>{bundleType.label}</s-heading>
                     </s-stack>

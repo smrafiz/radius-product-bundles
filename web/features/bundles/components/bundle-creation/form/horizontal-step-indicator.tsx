@@ -122,14 +122,17 @@ export function HorizontalStepIndicator() {
                                     </div>
 
                                     {index < steps.length - 1 && (
-                                        <s-box
-                                            inlineSize="24px"
-                                            borderWidth="base"
-                                            borderColor={
+                                        <s-icon
+                                            type="arrow-right"
+                                            tone={
                                                 getStepStatus(step.number) ===
                                                 "completed"
-                                                    ? "strong"
-                                                    : "base"
+                                                    ? "success"
+                                                    : getStepStatus(
+                                                        step.number,
+                                                    ) === "current"
+                                                        ? "info"
+                                                        : undefined
                                             }
                                         />
                                     )}

@@ -49,7 +49,6 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
 
             {/* Bundle product list */}
             <s-section>
-                {/*<s-heading>Select products</s-heading>*/}
                 <s-stack gap="base">
                     <s-stack
                         direction="inline"

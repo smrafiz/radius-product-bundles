@@ -16,6 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import "@/styles/components/bundle.css";
+import React from "react";
 
 /*
  * Render layout based on the layout type
@@ -69,12 +70,25 @@ export function BundlePreview() {
                                 paddingBlockEnd="small-200"
                             >
                                 <s-heading>Preview</s-heading>
-                                <s-button
-                                    variant="tertiary"
-                                    onClick={() => router.push("/settings")}
-                                >
-                                    Customization
-                                </s-button>
+                                <s-stack direction="inline" alignItems="center" gap="small-500">
+                                    <s-button
+                                        variant="tertiary"
+                                        onClick={() => router.push("/settings")}
+                                    >
+                                        Customization
+                                    </s-button>
+
+                                    <s-tooltip id="customization-tooltip">
+                                        <s-text>
+                                            Customize bundle display settings, colors, and styling to match your store's branding.
+                                        </s-text>
+                                    </s-tooltip>
+                                    <s-icon
+                                        tone="neutral"
+                                        type="info"
+                                        interestFor="customization-tooltip"
+                                    />
+                                </s-stack>
                             </s-stack>
                             <s-divider />
                         </s-stack>
