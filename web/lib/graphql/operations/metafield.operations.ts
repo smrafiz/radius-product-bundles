@@ -32,7 +32,9 @@ import {
     METAFIELD_KEYS,
     METAFIELD_NAMESPACE,
 } from "@/shared/constants/metafields.constants";
+import { AppSettingsFormData } from "@/features/settings";
 import { buildGlobalSettingsMetafieldValue } from "@/lib/graphql/operations";
+import { transformFormDataToAppSettings } from "@/features/settings/services/settings.service";
 
 const METAFIELD_KEY = METAFIELD_KEYS["BUNDLE_IDS"];
 const METAFIELD_TYPE = "list.single_line_text_field";
@@ -526,6 +528,7 @@ export async function syncActiveBundlesToMetafield(
 export async function syncAllSettingsToMetafields(
     sessionToken: string,
     shop: string,
+    savedSettings?: AppSettingsFormData,
 ): Promise<SyncResult> {
     try {
         console.log("[Metafield] 🔄 Starting full sync for:", shop);
@@ -542,9 +545,11 @@ export async function syncAllSettingsToMetafields(
             };
         }
 
-        // Fetch all data in parallel
+        // Use provided settings or fetch from DB
         const [globalSettings, activeBundles] = await Promise.all([
-            findAppSettingsByShop(shop),
+            savedSettings
+                ? Promise.resolve(transformFormDataToAppSettings(savedSettings))
+                : findAppSettingsByShop(shop),
             findActiveBundlesByShop(shop),
         ]);
 

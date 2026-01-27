@@ -63,10 +63,11 @@ export async function saveSettingsAction(
         // Save to database
         const savedSettings = await saveSettingsService({ shop, data });
 
-        // Sync to Shopify metafields (global settings + active bundles)
+        // Sync to Shopify metafields (pass saved settings directly)
         const syncResult = await syncAllSettingsToMetafields(
             sessionToken,
             shop,
+            savedSettings,
         );
 
         if (!syncResult.success) {

@@ -170,3 +170,13 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         customCss: data.customCss ?? "",
     };
 }
+
+/**
+ * Transform form data to AppSettings format for metafield sync.
+ * This converts AppSettingsFormData to the AppSettings interface.
+ */
+export async function transformFormDataToAppSettings(
+    data: AppSettingsFormData,
+): Promise<any> {
+    return transformFormDataToSettings(data);
+}
