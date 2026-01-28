@@ -8,9 +8,11 @@ import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizerPanel, } 
 export function DynamicCustomizerPanel({
     config,
     onFieldChangeAction,
+    resetKey = 0,
 }: {
     config: CustomizerPanelConfig;
     onFieldChangeAction?: () => void;
+    resetKey?: number;
 }) {
     const { openSectionId, handleToggle, handleRestoreDefaults } =
         useCustomizerPanel(config, onFieldChangeAction);
@@ -25,11 +27,16 @@ export function DynamicCustomizerPanel({
                         isOpen={openSectionId === section.id}
                         onToggleAction={() => handleToggle(section.id)}
                         onFieldChangeAction={onFieldChangeAction}
+                        resetKey={resetKey}
                     />
                 ))}
             </s-stack>
             <s-stack padding="base" justifyContent="center" direction="inline">
-                <s-button icon="undo" onClick={handleRestoreDefaults} tone="critical">
+                <s-button
+                    icon="undo"
+                    onClick={handleRestoreDefaults}
+                    tone="critical"
+                >
                     Restore defaults
                 </s-button>
             </s-stack>

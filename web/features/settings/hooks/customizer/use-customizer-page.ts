@@ -16,15 +16,38 @@ import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
 
 /**
+ * Deep clones and merges saved styles with defaults.
+ */
+function createInitialStyles(
+    savedStyles: Partial<CustomizerStyles> | null | undefined,
+): CustomizerStyles {
+    const defaults = JSON.parse(JSON.stringify(DEFAULT_CUSTOMIZER_STYLES));
+    const saved = savedStyles ? JSON.parse(JSON.stringify(savedStyles)) : {};
+
+    return {
+        ...defaults,
+        ...saved,
+    };
+}
+
+/**
  * Hook for managing the customizer page state and actions.
  */
 export function useCustomizerPage() {
     const types = Object.values(BUNDLE_TYPES);
     const [activeId, setActiveId] = useState<string>(types[0].id);
+    const [resetCounter, setResetCounter] = useState(0);
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 
+    // Store the ORIGINAL server values in a ref (immutable snapshot)
+    const serverSnapshotRef = useRef<CustomizerStyles | null>(null);
+
     const { data: settingsData, isLoading } = useSettingsQuery();
-    const { initializeStyles, discardChanges, markClean, getOriginalStyles } = useCustomizerStore();
+    const initializeStyles = useCustomizerStore(
+        (state) => state.initializeStyles,
+    );
+    const markClean = useCustomizerStore((state) => state.markClean);
+
     const { handleSubmit: submitToServer, isLoading: isSaving } =
         useCustomizerSubmit();
     const { showError, removeMessageByKey } = useGlobalBanner();
@@ -35,25 +58,23 @@ export function useCustomizerPage() {
         [],
     );
 
-    const savedValues = useMemo<CustomizerStyles>(() => ({
-        ...DEFAULT_CUSTOMIZER_STYLES,
-        ...(settingsData?.globalStyles || {}),
-    }), [settingsData?.globalStyles]);
-
     // Initialize RHF with Zod resolver
     const form = useForm<CustomizerStyles>({
         resolver: zodResolver(globalStylesSchema),
-        defaultValues: savedValues,
+        defaultValues: DEFAULT_CUSTOMIZER_STYLES,
         mode: "onChange",
     });
 
-    // Sync form and store when settings load
+    // Sync form and store when settings load - capture snapshot ONCE
     useEffect(() => {
-        if (settingsData) {
-            initializeStyles(settingsData.globalStyles || {});
-            form.reset(savedValues);
+        if (settingsData !== undefined && serverSnapshotRef.current === null) {
+            const snapshot = createInitialStyles(settingsData?.globalStyles ?? {});
+            serverSnapshotRef.current = snapshot;
+
+            initializeStyles(snapshot);
+            form.reset(snapshot);
         }
-    }, [settingsData, initializeStyles, form, savedValues]);
+    }, [settingsData, initializeStyles, form]);
 
     /**
      * Triggers SaveBar by changing hidden input value.
@@ -74,11 +95,14 @@ export function useCustomizerPage() {
         async (data) => {
             removeMessageByKey("customizer-validation");
             await submitToServer();
+
+            // Update snapshot to new saved values
+            serverSnapshotRef.current = JSON.parse(JSON.stringify(data));
+
             form.reset(data);
             markClean();
         },
         (errors) => {
-            // Format errors as HTML list with styled labels
             const errorItems = Object.entries(errors)
                 .map(([field, error]) => {
                     const label = fieldLabels[field] || field;
@@ -107,10 +131,24 @@ export function useCustomizerPage() {
      * Handles form reset (discard changes).
      */
     const handleReset = useCallback(() => {
-        const originalStyles = getOriginalStyles();
-        form.reset(originalStyles);
-        discardChanges();
-    }, [form, getOriginalStyles, discardChanges]);
+        const snapshot = serverSnapshotRef.current;
+
+        if (!snapshot) {
+            console.warn("[useCustomizerPage] No server snapshot available");
+            return;
+        }
+
+        const freshValues = JSON.parse(JSON.stringify(snapshot));
+
+        // Reset Zustand store FIRST
+        initializeStyles(freshValues);
+
+        // Then reset RHF form
+        form.reset(freshValues);
+
+        // Increment reset counter to force re-render of web components
+        setResetCounter((c) => c + 1);
+    }, [form, initializeStyles]);
 
     return {
         // State
@@ -120,6 +158,7 @@ export function useCustomizerPage() {
         isSaving,
         isDirty: form.formState.isDirty,
         hiddenInputRef,
+        resetCounter,
 
         // Actions
         setActiveId,

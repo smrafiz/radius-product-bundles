@@ -17,17 +17,21 @@ export function DynamicCustomizerSection({
     isOpen,
     onToggleAction,
     onFieldChangeAction,
+    resetKey = 0,
 }: {
     config: CustomizerSectionConfig;
     isOpen: boolean;
     onToggleAction: () => void;
     onFieldChangeAction?: () => void;
+    resetKey?: number;
 }) {
     const { title, fields, columns = 1 } = config;
-    const { formState: { errors } } = useFormContext<CustomizerStyles>();
+    const {
+        formState: { errors },
+    } = useFormContext<CustomizerStyles>();
 
     const fieldGroups = groupFieldsByType(fields);
-    const hasError = fields.some(field => errors[field.name]);
+    const hasError = fields.some((field) => errors[field.name]);
 
     return (
         <s-stack>
@@ -44,7 +48,9 @@ export function DynamicCustomizerSection({
                 >
                     <s-stack direction="inline" alignItems="center" gap="small">
                         <s-heading>
-                            <s-text tone={hasError ? "critical" : "auto"}>{title}</s-text>
+                            <s-text tone={hasError ? "critical" : "auto"}>
+                                {title}
+                            </s-text>
                         </s-heading>
                         {hasError && (
                             <s-icon
@@ -75,6 +81,7 @@ export function DynamicCustomizerSection({
                                         onFieldChangeAction={
                                             onFieldChangeAction
                                         }
+                                        resetKey={resetKey}
                                     />
                                 ))}
                             </s-stack>
@@ -90,6 +97,7 @@ export function DynamicCustomizerSection({
                                         onFieldChangeAction={
                                             onFieldChangeAction
                                         }
+                                        resetKey={resetKey}
                                     />
                                 ))}
                             </div>

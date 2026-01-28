@@ -35,6 +35,7 @@ export function CustomizerBundleType() {
         isSaving,
         isDirty,
         hiddenInputRef,
+        resetCounter,
         setActiveId,
         triggerSaveBar,
         handleSubmit,
@@ -88,6 +89,7 @@ export function CustomizerBundleType() {
                                         <DynamicCustomizerPanel
                                             config={CUSTOMIZER_CONFIG}
                                             onFieldChangeAction={triggerSaveBar}
+                                            resetKey={resetCounter}
                                         />
                                     </div>
                                 </div>

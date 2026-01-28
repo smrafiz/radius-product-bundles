@@ -8,9 +8,9 @@ import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/default
  */
 export const useCustomizerStore = create(
     immer<CustomizerStoreState>((set, get) => ({
-        // Initial state
+        // Initial state - always start with complete defaults
         styles: { ...DEFAULT_CUSTOMIZER_STYLES },
-        originalStyles: null,
+        originalStyles: { ...DEFAULT_CUSTOMIZER_STYLES },
         isInitialized: false,
         activeLayout: "LIST",
 
@@ -18,13 +18,14 @@ export const useCustomizerStore = create(
          * Initializes the customizer with styles.
          */
         initializeStyles: (styles) => {
-            const mergedStyles = {
+            const mergedStyles: CustomizerStyles = {
                 ...DEFAULT_CUSTOMIZER_STYLES,
                 ...styles,
             };
+
             set((state) => {
                 state.styles = mergedStyles;
-                state.originalStyles = mergedStyles;
+                state.originalStyles = { ...mergedStyles };
                 state.isInitialized = true;
             });
         },
@@ -35,13 +36,13 @@ export const useCustomizerStore = create(
         initializeFromGlobalStyles: (
             globalStyles: Partial<CustomizerStyles> | null,
         ) => {
-            const mergedStyles = {
+            const mergedStyles: CustomizerStyles = {
                 ...DEFAULT_CUSTOMIZER_STYLES,
                 ...(globalStyles || {}),
             };
             set((state) => {
                 state.styles = mergedStyles;
-                state.originalStyles = mergedStyles;
+                state.originalStyles = { ...mergedStyles };
                 state.isInitialized = true;
             });
         },
@@ -86,10 +87,15 @@ export const useCustomizerStore = create(
          * Discards changes and reverts to original styles.
          */
         discardChanges: () => {
+            const original = get().originalStyles;
+
+            const restoredStyles: CustomizerStyles = {
+                ...DEFAULT_CUSTOMIZER_STYLES,
+                ...(original || {}),
+            };
+
             set((state) => {
-                state.styles = state.originalStyles
-                    ? { ...state.originalStyles }
-                    : { ...DEFAULT_CUSTOMIZER_STYLES };
+                state.styles = restoredStyles;
             });
         },
 
@@ -101,7 +107,7 @@ export const useCustomizerStore = create(
         },
 
         /**
-         * Gets styles for API - same flat structure, no transform needed.
+         * Gets styles for API.
          */
         getGlobalStyles: () => {
             return get().styles;
@@ -120,7 +126,11 @@ export const useCustomizerStore = create(
          * Gets the original (last saved) styles.
          */
         getOriginalStyles: () => {
-            return get().originalStyles ?? { ...DEFAULT_CUSTOMIZER_STYLES };
+            const original = get().originalStyles;
+            return {
+                ...DEFAULT_CUSTOMIZER_STYLES,
+                ...(original || {}),
+            };
         },
     })),
 );

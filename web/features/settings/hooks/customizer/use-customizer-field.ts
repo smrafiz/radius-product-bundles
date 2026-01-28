@@ -2,19 +2,25 @@
 
 import { useCallback } from "react";
 import { Path, PathValue, useFormContext } from "react-hook-form";
-import { CustomizerFieldConfig, CustomizerStyles, useCustomizerStore } from "@/features/settings";
+import {
+    CustomizerFieldConfig,
+    CustomizerStyles,
+    useCustomizerStore,
+} from "@/features/settings";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants";
 
 /**
  * Hook for managing a single customizer field.
  *
- * Uses generic type parameter to preserve the field name literal type.
+ * Reads value from Zustand store for live preview updates.
  */
 export function useCustomizerField<K extends keyof CustomizerStyles>(
     config: CustomizerFieldConfig & { name: K },
     onFieldChange?: () => void,
 ) {
-    const { styles, updateStyle } = useCustomizerStore();
+    // Subscribe to the specific field value from the store
+    const storeValue = useCustomizerStore((state) => state.styles[config.name]);
+    const updateStyle = useCustomizerStore((state) => state.updateStyle);
 
     const {
         setValue,
@@ -22,18 +28,24 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     } = useFormContext<CustomizerStyles>();
 
     const fieldName: K = config.name;
-    const value: CustomizerStyles[K] = styles[fieldName];
     const error = errors[fieldName]?.message as string | undefined;
 
-    const defaultValue = (
+    // Get default from config or global defaults
+    const configDefault = (
         "defaultValue" in config ? config.defaultValue : undefined
     ) as CustomizerStyles[K] | undefined;
+
+    const globalDefault = DEFAULT_CUSTOMIZER_STYLES[fieldName];
+
+    // Value with fallback chain: store → config default → global default
+    const value = storeValue ?? configDefault ?? globalDefault;
 
     /**
      * Updates both RHF (validation) and Zustand (preview).
      */
     const handleChange = useCallback(
         (newValue: CustomizerStyles[K]) => {
+            // Update RHF for validation
             setValue(
                 fieldName as Path<CustomizerStyles>,
                 newValue as PathValue<CustomizerStyles, Path<CustomizerStyles>>,
@@ -49,11 +61,8 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
         [fieldName, setValue, updateStyle, onFieldChange],
     );
 
-    // Display value with fallback chain: store → config → defaults
-    const displayValue = value ?? defaultValue ?? DEFAULT_CUSTOMIZER_STYLES[fieldName];
-
     return {
-        value: displayValue,
+        value,
         error,
         handleChange,
     };

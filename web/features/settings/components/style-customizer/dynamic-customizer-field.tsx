@@ -9,9 +9,11 @@ import { CustomizerFieldConfig, useCustomizerField } from "@/features/settings";
 export function DynamicCustomizerField({
     config,
     onFieldChangeAction,
+    resetKey = 0,
 }: {
     config: CustomizerFieldConfig;
     onFieldChangeAction?: () => void;
+    resetKey?: number;
 }) {
     const { value, error, handleChange } = useCustomizerField(
         config,
@@ -21,10 +23,14 @@ export function DynamicCustomizerField({
     const renderError = () =>
         error ? <s-text tone="critical">{error}</s-text> : null;
 
+    // Use resetKey to force re-mount of web components after discard
+    const fieldKey = `${config.name}-${resetKey}`;
+
     switch (config.type) {
         case "color":
             return (
                 <s-color-field
+                    key={fieldKey}
                     label={config.label}
                     name={config.name}
                     placeholder="Select a color"
@@ -48,6 +54,7 @@ export function DynamicCustomizerField({
                 >
                     <s-text>{config.label}</s-text>
                     <s-number-field
+                        key={fieldKey}
                         label={config.label}
                         labelAccessibilityVisibility="exclusive"
                         placeholder="0"
@@ -82,6 +89,7 @@ export function DynamicCustomizerField({
                             }}
                         >
                             <RtpbRangeSlider
+                                key={fieldKey}
                                 values={Number(value ?? 0)}
                                 maxValue={config.max ?? 100}
                                 action={(val) => handleChange(val as any)}
@@ -152,6 +160,7 @@ export function DynamicCustomizerField({
                 >
                     <s-text>{config.label}</s-text>
                     <s-select
+                        key={fieldKey}
                         label={config.label}
                         labelAccessibilityVisibility="exclusive"
                         value={String(value ?? "")}
