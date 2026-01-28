@@ -26,6 +26,7 @@ export type ModalType =
     | "duplicate"
     | "status"
     | "delete-product"
+    | "restore-defaults"
     | null;
 
 export interface ModalPayload {
@@ -35,6 +36,7 @@ export interface ModalPayload {
     bundle?: BundleListItem;
     productTitle?: string;
     newStatus?: BundleStatus;
+    confirmText?: string;
     onConfirm?: () => Promise<void> | void;
     onError?: (error: string) => void;
     loading?: boolean;

@@ -55,6 +55,15 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }) => {
                 destructive: true,
             };
 
+        case "restore-defaults":
+            return {
+                heading: modal.title || "Restore defaults?",
+                message:
+                    modal.message ||
+                    "This will reset all style settings to their default values. This action cannot be undone.",
+                destructive: true,
+            };
+
         default:
             return {
                 heading: "Confirm Action",

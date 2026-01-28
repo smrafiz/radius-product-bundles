@@ -13,6 +13,7 @@ import {
 import { useCallback } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getDefaultValuesFromConfig } from "@/features/settings/utils/defaults.utils";
 
 /**
  * Checks if options specify settings mode.
@@ -99,14 +100,15 @@ export function useSettingsSubmit(options: UseSettingsSubmitOptions = {}) {
                 return;
             }
 
-            if (!options.currentSettings) {
-                throw new Error("Settings not loaded");
-            }
-
             const globalStyles = validatedStyles ?? getGlobalStyles();
 
+            // Use current settings or create defaults if none exist
+            const baseSettings =
+                options.currentSettings ??
+                (getDefaultValuesFromConfig() as AppSettingsFormData);
+
             const updatedSettings: AppSettingsFormData = {
-                ...options.currentSettings,
+                ...baseSettings,
                 globalStyles,
             };
 

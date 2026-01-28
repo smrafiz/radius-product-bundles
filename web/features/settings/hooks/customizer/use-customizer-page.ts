@@ -94,7 +94,9 @@ export function useCustomizerPage() {
     const handleSubmit = form.handleSubmit(
         async (data) => {
             removeMessageByKey("customizer-validation");
-            await submitToServer();
+
+            // Pass the validated form data to the server
+            await submitToServer(data);
 
             // Update snapshot to new saved values
             serverSnapshotRef.current = JSON.parse(JSON.stringify(data));

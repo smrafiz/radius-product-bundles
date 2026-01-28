@@ -1,10 +1,8 @@
 "use client";
 
-import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizerPanel, } from "@/features/settings";
+import { useModalStore } from "@/shared";
+import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizerPanel } from "@/features/settings";
 
-/**
- * Main customizer panel renderer.
- */
 export function DynamicCustomizerPanel({
     config,
     onFieldChangeAction,
@@ -16,6 +14,15 @@ export function DynamicCustomizerPanel({
 }) {
     const { openSectionId, handleToggle, handleRestoreDefaults } =
         useCustomizerPanel(config, onFieldChangeAction);
+    const { openModal } = useModalStore();
+
+    const handleRestoreClick = () => {
+        openModal({
+            type: "restore-defaults",
+            confirmText: "Restore",
+            onConfirm: handleRestoreDefaults,
+        });
+    };
 
     return (
         <div className="left-side-auto-scroll border border-[#e3e3e3] bg-white rounded-xl">
@@ -32,11 +39,7 @@ export function DynamicCustomizerPanel({
                 ))}
             </s-stack>
             <s-stack padding="base" justifyContent="center" direction="inline">
-                <s-button
-                    icon="undo"
-                    onClick={handleRestoreDefaults}
-                    tone="critical"
-                >
+                <s-button icon="undo" tone="critical" onClick={handleRestoreClick}>
                     Restore defaults
                 </s-button>
             </s-stack>
