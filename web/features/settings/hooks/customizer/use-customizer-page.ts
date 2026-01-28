@@ -94,9 +94,12 @@ export function useCustomizerPage() {
     const handleSubmit = form.handleSubmit(
         async (data) => {
             removeMessageByKey("customizer-validation");
+            window.shopify?.loading(true);
 
             // Pass the validated form data to the server
             await submitToServer(data);
+
+            window.shopify?.loading(false);
 
             // Update snapshot to new saved values
             serverSnapshotRef.current = JSON.parse(JSON.stringify(data));
