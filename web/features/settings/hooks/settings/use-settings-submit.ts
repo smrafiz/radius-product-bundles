@@ -95,7 +95,9 @@ export function useSettingsSubmit(options: UseSettingsSubmitOptions = {}) {
      */
     const handleCustomizerSubmit = useCallback(
         async (validatedStyles?: CustomizerStyles) => {
-            if (!isCustomizerMode(options)) return;
+            if (!isCustomizerMode(options)) {
+                return;
+            }
 
             if (!options.currentSettings) {
                 throw new Error("Settings not loaded");

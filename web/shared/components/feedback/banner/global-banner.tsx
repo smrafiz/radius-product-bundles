@@ -49,7 +49,13 @@ export function GlobalBanner() {
                             : undefined
                     }
                 >
-                    {message.content}
+                    {message.isHtml && message.content ? (
+                        <div
+                            dangerouslySetInnerHTML={{ __html: message.content }}
+                        />
+                    ) : (
+                        message.content
+                    )}
 
                     {message.action && (
                         <s-button

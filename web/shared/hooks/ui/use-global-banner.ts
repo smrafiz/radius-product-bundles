@@ -17,6 +17,7 @@ export function useGlobalBanner() {
             type,
             title,
             content: options?.content,
+            isHtml: options?.isHtml,
             action: options?.action,
             dismissible: options?.dismissible,
             autoHide: options?.autoHide,

@@ -8,6 +8,7 @@ import {
     DynamicCustomizerPanel,
     useCustomizerPage,
 } from "@/features/settings";
+import { GlobalBanner } from "@/shared";
 import type { ComponentType } from "react";
 import { FormProvider } from "react-hook-form";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
@@ -91,6 +92,7 @@ export function CustomizerBundleType() {
 
                             <div className="rtpb-right-review">
                                 <s-stack gap="base">
+                                    <GlobalBanner />
                                     <CustomizerHeader
                                         activeBundleType={activeId}
                                         onBundleTypeChangeAction={setActiveId}

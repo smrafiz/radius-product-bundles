@@ -2,8 +2,8 @@
  * Format validation errors into user-friendly messages
  */
 
-import { ValidationErrors } from "@/shared";
 import DOMPurify from "isomorphic-dompurify";
+import { Config, ExtractLabelsOptions, ValidationErrors } from "@/shared";
 
 /**
  * Format errors as a single concatenated string
@@ -155,3 +155,50 @@ export const sanitizeHtml = (value: string) => {
         ALLOWED_ATTR: [],
     }).trim();
 };
+
+/**
+ * Extract field labels from a config object.
+ */
+export function extractFieldLabelsFromConfig(
+    config: Config,
+    options: ExtractLabelsOptions = {},
+): Record<string, string> {
+    const { includeSectionTitle = true, separator = " " } = options;
+    const labels: Record<string, string> = {};
+
+    config.sections.forEach((section) => {
+        section.fields.forEach((field) => {
+            if (includeSectionTitle) {
+                labels[field.name] =
+                    `${section.title}${separator}${field.label}`;
+            } else {
+                labels[field.name] = field.label;
+            }
+        });
+    });
+
+    return labels;
+}
+
+/**
+ * Format validation errors with custom field labels from config.
+ */
+export function formatValidationErrorsWithConfig(
+    errors: ValidationErrors,
+    config: Config,
+    options: ExtractLabelsOptions = {},
+): string {
+    if (!errors || Object.keys(errors).length === 0) {
+        return "Validation failed";
+    }
+
+    const fieldLabels = extractFieldLabelsFromConfig(config, options);
+
+    return Object.entries(errors)
+        .map(([field, error]) => {
+            const label = fieldLabels[field] || formatFieldName(field);
+            const messages = error._errors.join(", ");
+            return `${label}: ${messages}`;
+        })
+        .join("; ");
+}
