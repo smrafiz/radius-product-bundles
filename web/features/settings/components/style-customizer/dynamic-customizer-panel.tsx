@@ -6,14 +6,16 @@ import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizerPanel } f
 export function DynamicCustomizerPanel({
     config,
     onFieldChangeAction,
+    onClearErrorsAction,
     resetKey = 0,
 }: {
     config: CustomizerPanelConfig;
     onFieldChangeAction?: () => void;
+    onClearErrorsAction?: () => void;
     resetKey?: number;
 }) {
     const { openSectionId, handleToggle, handleRestoreDefaults } =
-        useCustomizerPanel(config, onFieldChangeAction);
+        useCustomizerPanel(config, onFieldChangeAction, onClearErrorsAction);
     const { openModal } = useModalStore();
 
     const handleRestoreClick = () => {

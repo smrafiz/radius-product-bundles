@@ -9,6 +9,7 @@ import { CustomizerPanelConfig, useCustomizerStore } from "@/features/settings";
 export function useCustomizerPanel(
     config: CustomizerPanelConfig,
     onFieldChange?: () => void,
+    onClearErrors?: () => void,
 ) {
     const { resetToDefaults } = useCustomizerStore();
     const defaultOpenSection = config.sections.find(s => s.defaultOpen)?.id ?? null;
@@ -19,8 +20,9 @@ export function useCustomizerPanel(
      */
     const handleRestoreDefaults = useCallback(() => {
         resetToDefaults();
-        onFieldChange?.();
-    }, [resetToDefaults, onFieldChange]);
+        onClearErrors?.(); // Clear validation errors
+        onFieldChange?.(); // Trigger save bar
+    }, [resetToDefaults, onFieldChange, onClearErrors]);
 
     /**
      * Toggles accordion section - closes first, then opens new.

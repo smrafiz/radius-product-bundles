@@ -77,6 +77,14 @@ export function useCustomizerPage() {
     }, [settingsData, initializeStyles, form]);
 
     /**
+     * Clears validation errors and error banner.
+     */
+    const handleClearErrors = useCallback(() => {
+        removeMessageByKey("customizer-validation");
+        form.clearErrors();
+    }, [form, removeMessageByKey]);
+
+    /**
      * Triggers SaveBar by changing hidden input value.
      */
     const triggerSaveBar = useCallback(() => {
@@ -145,15 +153,21 @@ export function useCustomizerPage() {
 
         const freshValues = JSON.parse(JSON.stringify(snapshot));
 
+        // Clear validation error banner
+        removeMessageByKey("customizer-validation");
+
         // Reset Zustand store FIRST
         initializeStyles(freshValues);
 
-        // Then reset RHF form
+        // Then reset RHF form (this clears validation errors)
         form.reset(freshValues);
+
+        // Clear any remaining form errors explicitly
+        form.clearErrors();
 
         // Increment reset counter to force re-render of web components
         setResetCounter((c) => c + 1);
-    }, [form, initializeStyles]);
+    }, [form, initializeStyles, removeMessageByKey]);
 
     return {
         // State
@@ -168,6 +182,7 @@ export function useCustomizerPage() {
         // Actions
         setActiveId,
         triggerSaveBar,
+        handleClearErrors,
         handleSubmit,
         handleReset,
     };

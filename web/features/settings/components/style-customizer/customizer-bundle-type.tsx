@@ -38,6 +38,7 @@ export function CustomizerBundleType() {
         resetCounter,
         setActiveId,
         triggerSaveBar,
+        handleClearErrors,
         handleSubmit,
         handleReset,
     } = useCustomizerPage();
@@ -88,6 +89,7 @@ export function CustomizerBundleType() {
                                         <DynamicCustomizerPanel
                                             config={CUSTOMIZER_CONFIG}
                                             onFieldChangeAction={triggerSaveBar}
+                                            onClearErrorsAction={handleClearErrors}
                                             resetKey={resetCounter}
                                         />
                                     </form>
