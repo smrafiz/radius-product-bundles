@@ -46,7 +46,7 @@ export const useGlobalBannerStore = create(
                 );
             }),
 
-        removeMessageByKey: (key) =>
+        removeMessageByKey: (key: string) =>
             set((state) => {
                 state.messages = state.messages.filter(
                     (msg: GlobalMessage) => msg.key !== key,

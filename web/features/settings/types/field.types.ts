@@ -194,7 +194,6 @@ export interface ButtonGroupFieldConfig extends BaseCustomizerFieldConfig {
  */
 export type CustomizerFieldConfig =
     | ColorFieldConfig
-    | NumberFieldConfig
     | CustomizerNumberFieldConfig
     | RangeFieldConfig
     | ButtonGroupFieldConfig
