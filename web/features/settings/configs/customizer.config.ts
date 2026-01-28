@@ -129,7 +129,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     name: "headingTransform",
                     label: "Transform",
                     options: [
-                        { value: "none", label: "None" },
+                        { value: "none", label: "Default transform" },
                         { value: "uppercase", label: "Uppercase" },
                         { value: "capitalize", label: "Capitalize" },
                     ],

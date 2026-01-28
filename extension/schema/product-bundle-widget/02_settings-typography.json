@@ -30,11 +30,11 @@
         "id": "heading_transform",
         "label": "Heading text transform",
         "options": [
-            { "value": "none", "label": "None" },
+            { "value": "", "label": "Default transform" },
             { "value": "uppercase", "label": "Uppercase" },
             { "value": "capitalize", "label": "Capitalize" }
         ],
-        "default": "none"
+        "default": ""
     },
     {
         "type": "text",

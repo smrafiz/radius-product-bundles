@@ -62,22 +62,26 @@
 						| default: g_styles.textColor
 						| default: '#333333' %}
 
-
-
 				{% assign border_color = block.settings.border_color
-						| default: g_styles.boxBorderColor
+						| default: g_styles.productBorderColor
 						| default: '#e1e1e1' %}
+
 				{% assign button_color = block.settings.button_color
-						| default: g_styles.buttonColor
+						| default: g_styles.buttonBgColor
 						| default: '#333333' %}
 				{% assign button_text_color = block.settings.button_text_color
 						| default: g_styles.buttonTextColor
 						| default: '#ffffff' %}
+				{% assign button_hover_bg_color =  g_styles.buttonHoverBgColor
+						| default: '#666666' %}
+				{% assign button_hover_text_color =  g_styles.buttonHoverTextColor
+						| default: '#ffffff' %}
+
 				{% assign savings_color = block.settings.savings_color
-						| default: g_styles.savingsColor
+						| default: g_styles.badgeBgColor
 						| default: '#333333' %}
 				{% assign savings_text_color = block.settings.savings_text_color
-						| default: g_styles.savingsTextColor
+						| default: g_styles.badgeTextColor
 						| default: '#ffffff' %}
 
                 {% comment %} Layout {% endcomment %}
@@ -94,11 +98,11 @@
                         | default: 12 %}
 
 				{% assign border_radius = block.settings.border_radius
-                        | default: g_styles.borders.productRadius
+                        | default: g_styles.productRadius
                         | default: 12 %}
 
 				{% assign button_border_radius = block.settings.button_border_radius
-						| default: g_styles.borders.buttonBorderRadius
+						| default: g_styles.buttonRadius
 						| default: 8 %}
 
 				{% assign image_border_radius = block.settings.image_border_radius
@@ -120,7 +124,10 @@
 				{% assign button_size = block.settings.button_size | default: 'medium' %}
 				{% assign savings_badge_size = block.settings.savings_badge_size | default: 'medium' %}
 				{% assign image_fit = block.settings.image_fit | default: 'contain' %}
-				{% assign heading_transform = block.settings.heading_transform | default: 'none' %}
+
+				{% assign heading_transform = block.settings.heading_transform
+						| default: g_styles.headingTransform %}
+
 				{% assign box_alignment = block.settings.box_alignment
 						| default: g_styles.boxAlignment
 						| default: 'center' %}
@@ -229,6 +236,7 @@
 						--rb-primary-color: {{ primary_color }};
 						--rb-secondary-color: {{ secondary_color }};
 						--rb-background-color: {{ background_color }};
+						--rb-box-border-color: {{ box_border_color }};
 						--rb-border-color: {{ border_color }};
 						--rb-heading-color: {{ heading_color }};
 						--rb-product-bg-color: {{ inner_background_color }};
@@ -237,6 +245,8 @@
 						--rb-savings-text-color: {{ savings_text_color }};
 						--rb-button-color: {{ button_color }};
 						--rb-button-text-color: {{ button_text_color }};
+						--rb-button-hover-bg-color: {{ button_hover_bg_color }};
+						--rb-button-hover-text-color: {{ button_hover_text_color }};
 
 						/* Radius & spacing */
 						--rb-box-radius: {{ box_radius }}px;
@@ -591,8 +601,8 @@
 			"label": "Heading text transform",
 			"options": [
 				{
-					"value": "none",
-					"label": "None"
+					"value": "",
+					"label": "Default transform"
 				},
 				{
 					"value": "uppercase",
@@ -603,7 +613,7 @@
 					"label": "Capitalize"
 				}
 			],
-			"default": "none"
+			"default": ""
 		},
 		{
 			"type": "text",
@@ -697,7 +707,7 @@
 			"id": "border_radius",
 			"label": "Corner radius",
 			"min": 0,
-			"max": 32,
+			"max": 30,
 			"step": 1,
 			"unit": "px",
 			"default": 12

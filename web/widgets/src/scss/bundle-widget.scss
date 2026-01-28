@@ -42,7 +42,7 @@
 
 .radius-bundle {
     background: var(--rb-background-color);
-    border-color: var(--rb-border-color);
+    border-color: var(--rb-box-border-color);
     border-radius: var(--rb-box-radius);
     border-width: var(--rb-box-border-width, 1px);
     border-style: solid;
@@ -120,6 +120,10 @@
         justify-content: center;
         gap: 8px;
         min-height: 42px;
+        &:hover {
+            background: var(--rb-button-hover-bg-color);
+            color: var(--rb-button-hover-text-color);
+        }
 
         &:hover:not(:disabled) {
             opacity: 0.9;
