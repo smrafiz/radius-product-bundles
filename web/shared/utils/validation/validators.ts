@@ -163,7 +163,7 @@ export function extractFieldLabelsFromConfig(
     config: Config,
     options: ExtractLabelsOptions = {},
 ): Record<string, string> {
-    const { includeSectionTitle = true, separator = " " } = options;
+    const { includeSectionTitle = true, separator = " - " } = options;
     const labels: Record<string, string> = {};
 
     config.sections.forEach((section) => {

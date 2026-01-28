@@ -30,10 +30,10 @@ export function BundlePreviewFixed() {
                 return <BundleGrid />;
             case "LIST":
                 return <BundleList />;
-            case "CAROUSEL":
-                return <BundleCarousel />;
-            case "COMPACT":
-                return <BundleCompact />;
+            // case "CAROUSEL":
+            //     return <BundleCarousel />;
+            // case "COMPACT":
+            //     return <BundleCompact />;
             default:
                 return <BundleList />;
         }

@@ -115,16 +115,24 @@ export function DynamicCustomizerField({
                                     <s-button
                                         key={String(option.value)}
                                         slot="secondary-actions"
-                                        variant={
+                                        tone={
                                             value === option.value
-                                                ? "primary"
-                                                : "secondary"
+                                                ? "critical"
+                                                : "neutral"
                                         }
                                         onClick={() =>
                                             handleChange(option.value as any)
                                         }
                                     >
-                                        {option.label}
+                                        <span
+                                            className={
+                                                value === option.value
+                                                    ? "opacity-100"
+                                                    : "opacity-60"
+                                            }
+                                        >
+                                            {option.label}
+                                        </span>
                                     </s-button>
                                 ))}
                             </s-button-group>

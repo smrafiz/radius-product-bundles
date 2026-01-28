@@ -63,52 +63,58 @@ export function CustomizerBundleType() {
                 Save
             </s-button>
 
-            <FormProvider {...form}>
-                <form
-                    id="customizer-form"
-                    data-save-bar
-                    data-discard-confirmation
-                    onSubmit={handleSubmit}
-                    onReset={handleReset}
-                    style={{ display: "contents" }}
-                >
-                    <input
-                        ref={hiddenInputRef}
-                        type="hidden"
-                        name="_dirty"
-                        defaultValue=""
-                    />
+            <s-stack paddingBlock="base large-300">
+                <FormProvider {...form}>
+                    <form
+                        id="customizer-form"
+                        data-save-bar
+                        data-discard-confirmation
+                        onSubmit={handleSubmit}
+                        onReset={handleReset}
+                        style={{ display: "contents" }}
+                    >
+                        <input
+                            ref={hiddenInputRef}
+                            type="hidden"
+                            name="_dirty"
+                            defaultValue=""
+                        />
 
-                    <div className="rtpb-full-modal-editor">
-                        <div className="rtpb-full-modal-content flex flex-wrap gap-6">
-                            <div className="rtpb-left-setting">
-                                <div className="sticky top-0">
-                                    <DynamicCustomizerPanel
-                                        config={CUSTOMIZER_CONFIG}
-                                        onFieldChangeAction={triggerSaveBar}
-                                    />
+                        <div className="rtpb-full-modal-editor">
+                            <div className="rtpb-full-modal-content flex flex-wrap gap-6">
+                                <div className="rtpb-left-setting">
+                                    <div className="sticky top-0">
+                                        <DynamicCustomizerPanel
+                                            config={CUSTOMIZER_CONFIG}
+                                            onFieldChangeAction={triggerSaveBar}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="rtpb-right-review">
+                                    <s-stack gap="base">
+                                        <GlobalBanner />
+                                        <CustomizerHeader
+                                            activeBundleType={activeId}
+                                            onBundleTypeChangeAction={
+                                                setActiveId
+                                            }
+                                        />
+
+                                        {PreviewComponent ? (
+                                            <PreviewComponent />
+                                        ) : (
+                                            <s-text>
+                                                No preview available
+                                            </s-text>
+                                        )}
+                                    </s-stack>
                                 </div>
                             </div>
-
-                            <div className="rtpb-right-review">
-                                <s-stack gap="base">
-                                    <GlobalBanner />
-                                    <CustomizerHeader
-                                        activeBundleType={activeId}
-                                        onBundleTypeChangeAction={setActiveId}
-                                    />
-
-                                    {PreviewComponent ? (
-                                        <PreviewComponent />
-                                    ) : (
-                                        <s-text>No preview available</s-text>
-                                    )}
-                                </s-stack>
-                            </div>
                         </div>
-                    </div>
-                </form>
-            </FormProvider>
+                    </form>
+                </FormProvider>
+            </s-stack>
         </s-page>
     );
 }

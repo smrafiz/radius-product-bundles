@@ -20,19 +20,19 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "color",
                     name: "primaryColor",
-                    label: "Primary",
+                    label: "Primary Color",
                     defaultValue: "#303030",
                 },
                 {
                     type: "color",
                     name: "secondaryColor",
-                    label: "Secondary",
+                    label: "Secondary Color",
                     defaultValue: "#666666",
                 },
                 {
                     type: "color",
                     name: "textColor",
-                    label: "Text",
+                    label: "Text Color",
                     defaultValue: "#333333",
                 },
             ],
