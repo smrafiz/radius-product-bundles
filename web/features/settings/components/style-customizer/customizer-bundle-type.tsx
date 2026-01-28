@@ -33,6 +33,7 @@ export function CustomizerBundleType() {
         activeId,
         isLoading,
         isSaving,
+        isDirty,
         hiddenInputRef,
         setActiveId,
         triggerSaveBar,
@@ -57,7 +58,7 @@ export function CustomizerBundleType() {
             <s-button
                 slot="primary-action"
                 type="submit"
-                disabled={isSaving}
+                disabled={!isDirty || isSaving}
                 loading={isSaving}
             >
                 Save

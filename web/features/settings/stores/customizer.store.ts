@@ -87,9 +87,9 @@ export const useCustomizerStore = create(
          */
         discardChanges: () => {
             set((state) => {
-                if (state.originalStyles) {
-                    state.styles = { ...state.originalStyles };
-                }
+                state.styles = state.originalStyles
+                    ? { ...state.originalStyles }
+                    : { ...DEFAULT_CUSTOMIZER_STYLES };
             });
         },
 
@@ -114,6 +114,13 @@ export const useCustomizerStore = create(
             set((state) => {
                 state.originalStyles = { ...state.styles };
             });
+        },
+
+        /**
+         * Gets the original (last saved) styles.
+         */
+        getOriginalStyles: () => {
+            return get().originalStyles ?? { ...DEFAULT_CUSTOMIZER_STYLES };
         },
     })),
 );

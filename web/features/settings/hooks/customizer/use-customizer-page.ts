@@ -24,7 +24,7 @@ export function useCustomizerPage() {
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 
     const { data: settingsData, isLoading } = useSettingsQuery();
-    const { initializeStyles, discardChanges } = useCustomizerStore();
+    const { initializeStyles, discardChanges, markClean, getOriginalStyles } = useCustomizerStore();
     const { handleSubmit: submitToServer, isLoading: isSaving } =
         useCustomizerSubmit();
     const { showError, removeMessageByKey } = useGlobalBanner();
@@ -35,24 +35,25 @@ export function useCustomizerPage() {
         [],
     );
 
-    const defaultValues: CustomizerStyles = {
+    const savedValues = useMemo<CustomizerStyles>(() => ({
         ...DEFAULT_CUSTOMIZER_STYLES,
         ...(settingsData?.globalStyles || {}),
-    };
+    }), [settingsData?.globalStyles]);
 
     // Initialize RHF with Zod resolver
     const form = useForm<CustomizerStyles>({
         resolver: zodResolver(globalStylesSchema),
-        defaultValues,
+        defaultValues: savedValues,
         mode: "onChange",
     });
 
-    // Initialize Zustand store when settings load
+    // Sync form and store when settings load
     useEffect(() => {
         if (settingsData) {
             initializeStyles(settingsData.globalStyles || {});
+            form.reset(savedValues);
         }
-    }, [settingsData, initializeStyles]);
+    }, [settingsData, initializeStyles, form, savedValues]);
 
     /**
      * Triggers SaveBar by changing hidden input value.
@@ -70,10 +71,11 @@ export function useCustomizerPage() {
      * Handles form submission with RHF validation.
      */
     const handleSubmit = form.handleSubmit(
-        async () => {
-            // Remove validation error banner when save starts
+        async (data) => {
             removeMessageByKey("customizer-validation");
             await submitToServer();
+            form.reset(data);
+            markClean();
         },
         (errors) => {
             // Format errors as HTML list with styled labels
@@ -105,9 +107,10 @@ export function useCustomizerPage() {
      * Handles form reset (discard changes).
      */
     const handleReset = useCallback(() => {
-        form.reset(defaultValues);
+        const originalStyles = getOriginalStyles();
+        form.reset(originalStyles);
         discardChanges();
-    }, [form, defaultValues, discardChanges]);
+    }, [form, getOriginalStyles, discardChanges]);
 
     return {
         // State
@@ -115,6 +118,7 @@ export function useCustomizerPage() {
         activeId,
         isLoading,
         isSaving,
+        isDirty: form.formState.isDirty,
         hiddenInputRef,
 
         // Actions

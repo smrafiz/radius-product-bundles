@@ -2,7 +2,8 @@
 
 import { useCallback } from "react";
 import { Path, PathValue, useFormContext } from "react-hook-form";
-import { CustomizerFieldConfig, CustomizerStyles, useCustomizerStore, } from "@/features/settings";
+import { CustomizerFieldConfig, CustomizerStyles, useCustomizerStore } from "@/features/settings";
+import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants";
 
 /**
  * Hook for managing a single customizer field.
@@ -48,8 +49,8 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
         [fieldName, setValue, updateStyle, onFieldChange],
     );
 
-    // Display value with fallback to default
-    const displayValue = value ?? defaultValue;
+    // Display value with fallback chain: store → config → defaults
+    const displayValue = value ?? defaultValue ?? DEFAULT_CUSTOMIZER_STYLES[fieldName];
 
     return {
         value: displayValue,

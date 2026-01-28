@@ -85,4 +85,6 @@ export interface CustomizerStoreState {
     getGlobalStyles: () => CustomizerStyles;
     /** Marks store as clean after save */
     markClean: () => void;
+    /** Gets original (last saved) styles */
+    getOriginalStyles: () => CustomizerStyles;
 }
