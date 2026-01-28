@@ -54,7 +54,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     min: 400,
                     max: 1200,
                     step: 5,
-                    defaultValue: 500,
+                    defaultValue: 800,
                 },
                 {
                     type: "buttonGroup",

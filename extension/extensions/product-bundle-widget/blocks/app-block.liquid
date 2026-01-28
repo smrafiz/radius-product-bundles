@@ -18,6 +18,8 @@
     {% assign global = shop.metafields.radius_bundles.global_settings.value %}
     {% assign bundles = shop.metafields.radius_bundles.active_bundles.value %}
 
+	{{ global }}
+
     {% comment %} Resolve global defaults {% endcomment %}
     {% assign g_labels = global.labels %}
     {% assign g_styles = global.styles %}
@@ -34,24 +36,36 @@
                 {% comment %} Colors {% endcomment %}
                 {% assign primary_color = block.settings.primary_color
                         | default: g_styles.primaryColor
-                        | default: '#333333' %}
+                        | default: '#303030' %}
+
                 {% assign secondary_color = block.settings.secondary_color
                         | default: g_styles.secondaryColor
-                        | default: '#333333' %}
+                        | default: '#666666' %}
+
                 {% assign background_color = block.settings.background_color
                         | default: g_styles.boxBgColor
                         | default: '#ffffff' %}
+
+				{% assign box_border_color = g_styles.boxBorderColor
+						| default: '#e1e1e1' %}
+
                 {% assign heading_color = block.settings.heading_color
                         | default: g_styles.headingColor
                         | default: '#303030' %}
+
 				{% assign inner_background_color = block.settings.inner_background_color
 						| default: g_styles.productBgColor
 						| default: '#f7f7f7' %}
-                {% assign text_color = block.settings.text_color
-                        | default: g_styles.text.textColor
-                        | default: '#333333' %}
+
+				{% assign text_color = block.settings.text_color
+						| default: g_styles.productTextColor
+						| default: g_styles.textColor
+						| default: '#333333' %}
+
+
+
 				{% assign border_color = block.settings.border_color
-						| default: g_styles.borderColor
+						| default: g_styles.boxBorderColor
 						| default: '#e1e1e1' %}
 				{% assign button_color = block.settings.button_color
 						| default: g_styles.buttonColor
@@ -72,15 +86,21 @@
                         | default: 'list' %}
 
 				{% assign bundle_max_width = block.settings.bundle_max_width
-						| default: g_styles.images.bundleMaxWidth
-						| default: 445 %}
+						| default: g_styles.boxMaxWidth
+						| default: 800 %}
 
-                {% assign border_radius = block.settings.border_radius
-                        | default: g_styles.borders.borderRadius
+                {% assign box_radius = block.settings.box_radius
+                        | default: g_styles.boxRadius
                         | default: 12 %}
+
+				{% assign border_radius = block.settings.border_radius
+                        | default: g_styles.borders.productRadius
+                        | default: 12 %}
+
 				{% assign button_border_radius = block.settings.button_border_radius
 						| default: g_styles.borders.buttonBorderRadius
 						| default: 8 %}
+
 				{% assign image_border_radius = block.settings.image_border_radius
 						| default: g_styles.borders.imageRadius
 						| default: 8 %}
@@ -93,13 +113,17 @@
 						| default: g_styles.spacing.boxSpacing
 						| default: 16 %}
 
+				{% assign box_border_width = g_styles.boxBorderWidth | default: 1 %}
+
 				{% assign heading_size = block.settings.heading_size | default: 'medium' %}
 				{% assign text_size = block.settings.text_size | default: 'medium' %}
 				{% assign button_size = block.settings.button_size | default: 'medium' %}
 				{% assign savings_badge_size = block.settings.savings_badge_size | default: 'medium' %}
 				{% assign image_fit = block.settings.image_fit | default: 'contain' %}
 				{% assign heading_transform = block.settings.heading_transform | default: 'none' %}
-				{% assign box_alignment = block.settings.box_alignment | default: 'left' %}
+				{% assign box_alignment = block.settings.box_alignment
+						| default: g_styles.boxAlignment
+						| default: 'center' %}
 
 				{% assign show_images = bundle.showImages %}
 				{% assign show_savings = bundle.showSavings %}
@@ -215,11 +239,14 @@
 						--rb-button-text-color: {{ button_text_color }};
 
 						/* Radius & spacing */
+						--rb-box-radius: {{ box_radius }}px;
 						--rb-border-radius: {{ border_radius }}px;
 						--rb-border-radius-small: {{ button_border_radius }}px;
 						--rb-image-border-radius: {{ image_border_radius }}px;
 						--rb-box-spacing: {{ box_spacing }}px;
 						--rb-bundle-max-width: {{ bundle_max_width }}px;
+						--rb-box-border-width: {{ box_border_width }}px;
+
 
 						{% if image_size %}
 							--rb-image-size: {{ image_size }}px;
@@ -501,7 +528,7 @@
 					"label": "Right"
 				}
 			],
-			"default": "left"
+			"default": "center"
 		},
 		{
 			"type": "range",

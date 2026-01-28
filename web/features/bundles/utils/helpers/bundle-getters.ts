@@ -135,7 +135,7 @@ export const initialDisplaySettings: DisplaySettings = {
         boxBorderColor: "#e3e3e3",
         boxRadius: 12,
         boxBorderWidth: 1,
-        boxMaxWidth: 500,
+        boxMaxWidth: 800,
         boxAlignment: "center",
         imageRadius: 6,
         imageSize: undefined,

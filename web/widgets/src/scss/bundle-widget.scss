@@ -20,9 +20,11 @@
     .radius-bundle {
         max-width: var(--rb-bundle-max-width, 800px);
 
-        /* Default (left) */
-        margin-right: auto;
-        margin-left: 0;
+        /* Left */
+        &[data-box-align="left"] {
+            margin-left: 0;
+            margin-right: auto;
+        }
 
         /* Center */
         &[data-box-align="center"] {
@@ -40,8 +42,10 @@
 
 .radius-bundle {
     background: var(--rb-background-color);
-    border: 1px solid var(--rb-border-color);
-    border-radius: var(--rb-border-radius);
+    border-color: var(--rb-border-color);
+    border-radius: var(--rb-box-radius);
+    border-width: var(--rb-box-border-width, 1px);
+    border-style: solid;
     overflow: hidden;
 
     &__inner {
