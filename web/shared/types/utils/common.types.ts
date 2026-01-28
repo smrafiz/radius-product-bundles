@@ -8,6 +8,7 @@ export type MessageType = "success" | "error" | "warning" | "info";
  */
 export interface GlobalMessage {
     id: string;
+    key?: string;
     type: MessageType;
     title: string;
     content?: string;

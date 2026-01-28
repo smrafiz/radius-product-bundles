@@ -5,7 +5,7 @@ import {
 } from "@/shared";
 
 export function useGlobalBanner() {
-    const { addMessage, removeMessage, clearAllMessages } =
+    const { addMessage, removeMessage, removeMessageByKey, clearAllMessages } =
         useGlobalBannerStore();
 
     const showMessage = (
@@ -16,6 +16,7 @@ export function useGlobalBanner() {
         return addMessage({
             type,
             title,
+            key: options?.key,
             content: options?.content,
             isHtml: options?.isHtml,
             action: options?.action,
@@ -44,6 +45,7 @@ export function useGlobalBanner() {
 
         // Management methods
         removeMessage,
+        removeMessageByKey,
         clearAllMessages,
     };
 }

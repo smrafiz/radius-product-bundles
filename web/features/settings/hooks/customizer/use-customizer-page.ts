@@ -27,7 +27,7 @@ export function useCustomizerPage() {
     const { initializeStyles, discardChanges } = useCustomizerStore();
     const { handleSubmit: submitToServer, isLoading: isSaving } =
         useCustomizerSubmit();
-    const { showError } = useGlobalBanner();
+    const { showError, removeMessageByKey } = useGlobalBanner();
 
     // Build field labels from config (memoized)
     const fieldLabels = useMemo(
@@ -71,6 +71,8 @@ export function useCustomizerPage() {
      */
     const handleSubmit = form.handleSubmit(
         async () => {
+            // Remove validation error banner when save starts
+            removeMessageByKey("customizer-validation");
             await submitToServer();
         },
         (errors) => {
@@ -89,10 +91,11 @@ export function useCustomizerPage() {
             showError(
                 `Validation Failed (${errorCount} ${errorCount === 1 ? "error" : "errors"})`,
                 {
+                    key: "customizer-validation",
                     content: errorContent,
                     isHtml: true,
                     autoHide: true,
-                    duration: 5000,
+                    duration: 15000,
                 },
             );
         },

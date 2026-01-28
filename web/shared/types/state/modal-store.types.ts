@@ -6,6 +6,7 @@ export interface GlobalMessageState {
     messages: GlobalMessage[];
     addMessage: (message: Omit<GlobalMessage, "id" | "timestamp">) => string;
     removeMessage: (id: string) => void;
+    removeMessageByKey: (key: string) => void;
     clearAllMessages: () => void;
     getMessagesByType: (type: MessageType) => GlobalMessage[];
 }
