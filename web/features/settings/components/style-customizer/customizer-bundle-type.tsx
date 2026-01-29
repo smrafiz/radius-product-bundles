@@ -5,6 +5,7 @@ import {
     BundlePreviewBuyGet,
     BundlePreviewFixed,
     CustomizerHeader,
+    CustomizerSkeleton,
     DynamicCustomizerPanel,
     useCustomizerPage,
 } from "@/features/settings";
@@ -46,13 +47,7 @@ export function CustomizerBundleType() {
     const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
 
     if (isLoading) {
-        return (
-            <s-page heading="Style Customizer">
-                <div className="flex items-center justify-center min-h-100">
-                    <s-spinner />
-                </div>
-            </s-page>
-        );
+        return <CustomizerSkeleton />;
     }
 
     return (
@@ -89,7 +84,9 @@ export function CustomizerBundleType() {
                                         <DynamicCustomizerPanel
                                             config={CUSTOMIZER_CONFIG}
                                             onFieldChangeAction={triggerSaveBar}
-                                            onClearErrorsAction={handleClearErrors}
+                                            onClearErrorsAction={
+                                                handleClearErrors
+                                            }
                                             resetKey={resetCounter}
                                         />
                                     </form>

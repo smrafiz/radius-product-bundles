@@ -3,7 +3,7 @@
 import { PageSkeleton, SkeletonLines } from "@/shared";
 
 /**
- * Settings customizer page skeleton with sidebar layout
+ * Settings page skeleton with sidebar layout
  */
 export default function SettingsPageSkeleton() {
     return (

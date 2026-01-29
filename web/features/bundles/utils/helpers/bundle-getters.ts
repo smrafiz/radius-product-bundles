@@ -96,7 +96,7 @@ export const bundleTypeMap = Object.values(BUNDLE_TYPES).reduce(
 );
 
 export const initialDisplaySettings: DisplaySettings = {
-    layout: "GRID",
+    layout: "LIST",
     theme: "STORE_DEFAULT",
     title: "Bundle Offers",
     cartButtonText: "Add bundle to cart",

@@ -3,6 +3,7 @@ export * from "./bundle-layout";
 export { BundleTypeTab } from "./bundle-type-tab";
 export { CustomizerModal } from "./customizer-modal";
 export { CustomizerHeader } from "./customizer-header";
+export { CustomizerSkeleton } from "./customizer-skeletons";
 export { CustomizerBundleType } from "./customizer-bundle-type";
 export { DynamicCustomizerField } from "./dynamic-customizer-field";
 export { DynamicCustomizerPanel } from "./dynamic-customizer-panel";

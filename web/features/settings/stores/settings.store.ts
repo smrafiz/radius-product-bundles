@@ -1,8 +1,7 @@
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { AppSettingsFormData, SettingsStoreState } from "@/features/settings";
-import { getDefaultValuesFromConfig } from "@/features/settings/utils/defaults.utils";
 import { triggerSaveBar } from "@/shared";
+import { immer } from "zustand/middleware/immer";
+import { AppSettingsFormData, getDefaultValuesFromConfig, SettingsStoreState } from "@/features/settings";
 
 /**
  * Settings store

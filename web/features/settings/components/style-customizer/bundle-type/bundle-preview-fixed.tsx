@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-import { useBundleStore } from "@/features/bundles";
 import {
     BundleAddToCart,
     BundleCarousel,
@@ -10,29 +8,24 @@ import {
     BundleHeader,
     BundleList,
     BundlePricing,
+    CUSTOMIZER_LAYOUTS_MAPPING,
+    useCustomizerStore,
 } from "@/features/settings";
 
 import "@/styles/components/bundle.css";
-
-const BOGO_LAYOUTS = [
-    { label: "Grid", value: "GRID" },
-    { label: "List", value: "LIST" },
-    { label: "Slider", value: "CAROUSEL" },
-    { label: "Compact", value: "COMPACT" },
-] as const;
 
 /**
  * Preview component for Fixed Bundle type.
  */
 export function BundlePreviewFixed() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const { styles, activeLayout, setActiveLayout } = useCustomizerStore();
+    const styleData = styles;
 
     /**
      * Renders the appropriate layout component.
      */
-    const RenderLayout = () => {
-        switch (displaySettings.layout) {
+    function RenderLayout() {
+        switch (activeLayout) {
             case "GRID":
                 return <BundleGrid />;
 
@@ -48,7 +41,7 @@ export function BundlePreviewFixed() {
             default:
                 return <BundleList />;
         }
-    };
+    }
 
     return (
         <div className="md:flex border border-[#e3e3e3] rounded-xl overflow-hidden min-h-75">
@@ -58,26 +51,27 @@ export function BundlePreviewFixed() {
                     <s-heading>Fixed Bundle Layout</s-heading>
                 </s-stack>
                 <s-stack gap="none">
-                    {BOGO_LAYOUTS.map(({ label, value }) => {
-                        const isActive = displaySettings.layout === value;
-                        return (
-                            <button
-                                key={value}
-                                onClick={() =>
-                                    updateDisplaySettings("layout", value)
-                                }
-                                className={`text-left px-4 py-3 border-l-4 transition cursor-pointer
+                    {CUSTOMIZER_LAYOUTS_MAPPING.FIXED_BUNDLE.map(
+                        ({ label, value }) => {
+                            const isActive = activeLayout === value;
+
+                            return (
+                                <button
+                                    key={value}
+                                    onClick={() => setActiveLayout(value)}
+                                    className={`text-left px-4 py-3 border-l-4 transition cursor-pointer
                                     ${
-                                    isActive
-                                        ? "border-[#303030] bg-[#f7f7f7] font-semibold"
-                                        : "border-transparent hover:bg-[#f7f7f7]"
-                                }
+                                        isActive
+                                            ? "border-[#303030] bg-[#f7f7f7] font-semibold"
+                                            : "border-transparent hover:bg-[#f7f7f7]"
+                                    }
                                 `}
-                            >
-                                {label}
-                            </button>
-                        );
-                    })}
+                                >
+                                    {label}
+                                </button>
+                            );
+                        },
+                    )}
                 </s-stack>
             </div>
 
