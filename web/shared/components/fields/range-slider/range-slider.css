@@ -3,7 +3,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 10px;
 	position: relative;
 	margin-top: 5px;
 }
@@ -21,7 +20,7 @@
 	background-size: 0.25rem 0.25rem;
 	border-radius: 0.25rem;
 	border-right: 0.25rem #e3e3e3 solid;
-	flex-basis: 85%;
+	flex-basis: 100%;
 }
 
 .range-slider-value .webkit-slider-thumb {

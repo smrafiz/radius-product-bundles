@@ -2,36 +2,63 @@
 
 import { useFormContext } from "react-hook-form";
 import {
+    ConditionContext,
     CustomizerSectionConfig,
     CustomizerStyles,
     DynamicCustomizerField,
     getGridClass,
+    getVisibleFields,
     groupFieldsByType,
+    isSectionVisible,
 } from "@/features/settings";
 
-/**
- * Collapsible customizer section renderer.
- */
-export function DynamicCustomizerSection({
-    config,
-    isOpen,
-    onToggleAction,
-    onFieldChangeAction,
-    resetKey = 0,
-}: {
+interface DynamicCustomizerSectionProps {
     config: CustomizerSectionConfig;
+    context: ConditionContext;
     isOpen: boolean;
     onToggleAction: () => void;
     onFieldChangeAction?: () => void;
     resetKey?: number;
-}) {
-    const { title, fields, columns = 1 } = config;
+}
+
+/**
+ * Collapsible customizer section renderer with conditional visibility.
+ */
+export function DynamicCustomizerSection({
+    config,
+    context,
+    isOpen,
+    onToggleAction,
+    onFieldChangeAction,
+    resetKey = 0,
+}: DynamicCustomizerSectionProps) {
+    const { title, description, fields, columns = 1 } = config;
     const {
         formState: { errors },
     } = useFormContext<CustomizerStyles>();
 
-    const fieldGroups = groupFieldsByType(fields);
-    const hasError = fields.some((field) => errors[field.name]);
+    // Check if section should be visible
+    if (!isSectionVisible(config, context)) {
+        return null;
+    }
+
+    // Filter visible fields based on conditions
+    const visibleFields = getVisibleFields(fields, context);
+
+    // Don't render section if no visible fields
+    if (visibleFields.length === 0) {
+        return null;
+    }
+
+    const fieldGroups = groupFieldsByType(visibleFields);
+    const hasError = visibleFields.some(
+        (
+            field,
+        ): field is Extract<typeof field, { name: keyof CustomizerStyles }> =>
+            "name" in field &&
+            true &&
+            !!errors[field.name as keyof CustomizerStyles],
+    );
 
     return (
         <s-stack>
@@ -46,17 +73,30 @@ export function DynamicCustomizerSection({
                     gap="small"
                     aria-expanded={isOpen}
                 >
-                    <s-stack direction="inline" alignItems="center" gap="small">
-                        <s-heading>
-                            <s-text tone={hasError ? "critical" : "auto"}>
-                                {title}
+                    <s-stack gap="none">
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            gap="small"
+                        >
+                            <s-heading>
+                                <s-text tone={hasError ? "critical" : "auto"}>
+                                    {title}
+                                </s-text>
+                            </s-heading>
+                            {hasError && (
+                                <s-icon
+                                    type="alert-octagon-filled"
+                                    tone="critical"
+                                />
+                            )}
+                        </s-stack>
+                        {description && isOpen && (
+                            <s-text tone="neutral">
+                                <span className="text-[0.75rem] text-[#616161]">
+                                    {description}
+                                </span>
                             </s-text>
-                        </s-heading>
-                        {hasError && (
-                            <s-icon
-                                type="alert-octagon-filled"
-                                tone="critical"
-                            />
                         )}
                     </s-stack>
                     <s-icon type={isOpen ? "chevron-up" : "chevron-down"} />
@@ -71,13 +111,15 @@ export function DynamicCustomizerSection({
                 }`}
             >
                 <s-stack gap="base" padding="base">
+                    {/* Fields grouped by type */}
                     {fieldGroups.map((group) =>
                         group.isRange ? (
                             <s-stack gap="base" key={group.id}>
-                                {group.fields.map((field) => (
+                                {group.fields.map((field, index) => (
                                     <DynamicCustomizerField
-                                        key={field.name}
+                                        key={`${group.id}-${"name" in field ? field.name : `${field.type}-${index}`}`}
                                         config={field}
+                                        context={context}
                                         onFieldChangeAction={
                                             onFieldChangeAction
                                         }
@@ -90,10 +132,11 @@ export function DynamicCustomizerSection({
                                 className={getGridClass(columns)}
                                 key={group.id}
                             >
-                                {group.fields.map((field) => (
+                                {group.fields.map((field, index) => (
                                     <DynamicCustomizerField
-                                        key={field.name}
+                                        key={`${group.id}-${"name" in field ? field.name : `${field.type}-${index}`}`}
                                         config={field}
+                                        context={context}
                                         onFieldChangeAction={
                                             onFieldChangeAction
                                         }

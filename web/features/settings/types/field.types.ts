@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { appSettingsSchema, CustomizerStyles } from "@/features/settings";
+import { appSettingsSchema } from "@/features/settings";
+import { WidgetLayout } from "@/prisma/generated/enums";
+import { BundleType } from "@/features/bundles";
 
 /**
  * Validation configuration
@@ -54,33 +56,12 @@ export interface NumberFieldConfig extends BaseFieldConfig {
 }
 
 /**
- * Number field configuration for customizer
- */
-export interface CustomizerNumberFieldConfig extends BaseCustomizerFieldConfig {
-    type: "number";
-    min?: number;
-    max?: number;
-    step?: number;
-    readOnly?: boolean;
-    defaultValue?: number;
-}
-
-/**
  * Select field configuration
  */
 export interface SelectFieldConfig extends BaseFieldConfig {
     type: "select";
     options: Array<{ value: string; label: string }>;
     defaultValue?: string;
-}
-
-/**
- * Select field configuration for customizer
- */
-export interface CustomizerSelectFieldConfig extends BaseCustomizerFieldConfig {
-    type: "select";
-    options: Array<{ value: string | number; label: string }>;
-    defaultValue?: string | number;
 }
 
 /**
@@ -153,12 +134,184 @@ export interface SettingsTabConfig {
 export type AppSettingsFormData = z.infer<typeof appSettingsSchema>;
 
 /**
+ * Field group for rendering.
+ */
+export interface FieldGroup {
+    id: string;
+    isRange: boolean;
+    fields: CustomizerFieldConfig[];
+}
+
+/**
+ * Corner style presets
+ */
+export type CornerStyle = "sharp" | "modern" | "rounded";
+
+/**
+ * Shadow intensity presets
+ */
+export type ShadowStyle = "none" | "soft" | "strong";
+
+/**
+ * Size presets for consistent sizing
+ */
+export type SizePreset = "small" | "medium" | "large";
+
+/**
+ * Spacing presets
+ */
+export type SpacingPreset = "compact" | "comfortable" | "spacious";
+
+/**
+ * Carousel navigation options
+ */
+export type CarouselNavigation = "none" | "arrows" | "dots" | "both";
+
+/**
+ * Customizer style state - flat structure for easy UI binding
+ */
+export interface CustomizerStyles {
+    // ═══════════════════════════════════════════════════════════════════
+    // APPEARANCE - COLORS
+    // ═══════════════════════════════════════════════════════════════════
+    /** Primary accent color */
+    primaryColor: string;
+    /** Text color */
+    textColor: string;
+    /** Background color */
+    backgroundColor: string;
+    /** Border color */
+    borderColor: string;
+    /** Savings/discount color */
+    savingsColor: string;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // APPEARANCE - SHAPE & DEPTH
+    // ═══════════════════════════════════════════════════════════════════
+    /** Corner style preset */
+    cornerStyle: CornerStyle;
+    /** Shadow preset */
+    shadow: ShadowStyle;
+    /** Spacing preset */
+    spacing: SpacingPreset;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PRODUCT CARDS
+    // ═══════════════════════════════════════════════════════════════════
+    /** Enable custom card styling (false = inherit from appearance) */
+    customizeCardStyle: boolean;
+    /** Card background color */
+    productCardBg: string;
+    /** Show card border */
+    productCardBorder: boolean;
+    /** Show card shadow */
+    productCardShadow: boolean;
+    /** Image size preset */
+    imageSize: SizePreset;
+    /** Image fit mode */
+    imageFit: "cover" | "contain";
+    /** Image position (list layout) */
+    imagePosition: "left" | "top";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BUTTON
+    // ═══════════════════════════════════════════════════════════════════
+    /** Button style */
+    buttonStyle: "filled" | "outline";
+    /** Button size preset */
+    buttonSize: SizePreset;
+    /** Button width */
+    buttonWidth: "auto" | "full";
+    /** Button background color (empty = inherit primary) */
+    buttonBgColor: string;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BADGE
+    // ═══════════════════════════════════════════════════════════════════
+    /** Badge position */
+    badgePosition: "top-left" | "top-right" | "inline";
+    /** Badge style */
+    badgeStyle: "filled" | "outline";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - CONTAINER
+    // ═══════════════════════════════════════════════════════════════════
+    /** Maximum widget width */
+    boxMaxWidth: number;
+    /** Widget alignment */
+    boxAlignment: "left" | "center" | "right";
+    /** Show widget border */
+    showBorder: boolean;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - TYPOGRAPHY
+    // ═══════════════════════════════════════════════════════════════════
+    /** Heading size preset */
+    headingSize: SizePreset;
+    /** Body text size preset */
+    bodySize: SizePreset;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - LIST LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    /** Divider style */
+    dividerStyle: "none" | "line" | "plus";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - GRID LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    /** Number of grid columns */
+    gridColumns: 2 | 3 | 4;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - CAROUSEL LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    /** Slides visible at once */
+    slidesPerView: 2 | 3 | 4;
+    /** Navigation style (combined arrows + dots) */
+    carouselNavigation: CarouselNavigation;
+    /** Enable autoplay */
+    autoplay: boolean;
+    /** Autoplay speed in seconds */
+    autoplaySpeed: number;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BOGO SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    /** FREE tag color */
+    bogoFreeTagColor: string;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BUY X GET Y SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    /** Tier display style */
+    buyGetTierStyle: "cards" | "list" | "tabs";
+}
+
+/**
+ * Condition for showing/hiding fields based on other field values or context
+ */
+export interface FieldCondition {
+    /** Field name to check */
+    field: keyof CustomizerStyles | "_layout" | "_bundleType";
+    /** Operator for comparison */
+    operator: "equals" | "notEquals" | "in" | "notIn";
+    /** Value(s) to compare against */
+    value: string | number | boolean | Array<string | number | boolean>;
+}
+
+/**
  * Base customizer field configuration
  */
-export interface BaseCustomizerFieldConfig {
+interface BaseCustomizerFieldConfig {
     name: keyof CustomizerStyles;
     label: string;
     details?: string;
+    /** Conditions for showing this field */
+    showWhen?: FieldCondition | FieldCondition[];
+    /** Layouts where this field applies */
+    layouts?: WidgetLayout[];
+    bundleTypes?: BundleType[];
 }
 
 /**
@@ -167,6 +320,22 @@ export interface BaseCustomizerFieldConfig {
 export interface ColorFieldConfig extends BaseCustomizerFieldConfig {
     type: "color";
     defaultValue?: string;
+    /** If true, shows "Inherit" option that uses parent color */
+    allowInherit?: boolean;
+    /** Which field to inherit from */
+    inheritFrom?: keyof CustomizerStyles;
+}
+
+/**
+ * Number field configuration
+ */
+export interface CustomizerNumberFieldConfig extends BaseCustomizerFieldConfig {
+    type: "number";
+    min?: number;
+    max?: number;
+    step?: number;
+    suffix?: string;
+    defaultValue?: number;
 }
 
 /**
@@ -177,16 +346,84 @@ export interface RangeFieldConfig extends BaseCustomizerFieldConfig {
     min?: number;
     max?: number;
     step?: number;
+    suffix?: string;
     defaultValue?: number;
 }
 
 /**
- * Button group field configuration (for alignment, sizes, etc.)
+ * Button group field configuration
  */
 export interface ButtonGroupFieldConfig extends BaseCustomizerFieldConfig {
     type: "buttonGroup";
-    options: Array<{ value: string | number; label: string }>;
-    defaultValue?: string | number;
+    options: Array<{ value: string | number | boolean; label: string; icon?: string }>;
+    defaultValue?: string | number | boolean;
+}
+
+/**
+ * Select field configuration
+ */
+export interface CustomizerSelectFieldConfig extends BaseCustomizerFieldConfig {
+    type: "select";
+    options: Array<{ value: string; label: string }>;
+    defaultValue?: string;
+}
+
+/**
+ * Switch/Toggle field configuration
+ */
+export interface CustomizerSwitchFieldConfig extends BaseCustomizerFieldConfig {
+    type: "switch";
+    defaultValue?: boolean;
+}
+
+/**
+ * Text field configuration
+ */
+export interface CustomizerTextFieldConfig extends BaseCustomizerFieldConfig {
+    type: "text";
+    placeholder?: string;
+    defaultValue?: string;
+}
+
+/**
+ * Preset field - renders visual preset cards
+ */
+export interface PresetFieldConfig {
+    type: "preset";
+    name: "stylePreset";
+    label: string;
+    details?: string;
+    presets: Record<string, StylePreset>;
+    /** Conditions for showing this field */
+    showWhen?: FieldCondition | FieldCondition[];
+    /** Layouts where this field applies */
+    layouts?: WidgetLayout[];
+    bundleTypes?: BundleType[];
+}
+
+/**
+ * Divider field - visual separator with optional label
+ */
+export interface DividerFieldConfig {
+    type: "divider";
+    label?: string;
+    /** Conditions for showing this field */
+    showWhen?: FieldCondition | FieldCondition[];
+    /** Layouts where this field applies */
+    layouts?: WidgetLayout[];
+    /** Bundle types where this field applies */
+    bundleTypes?: BundleType[];
+}
+
+/**
+ * Heading field - section subheading
+ */
+export interface HeadingFieldConfig extends Omit<BaseCustomizerFieldConfig, "name"> {
+    type: "heading";
+    label: string;
+    details?: string;
+    layouts?: WidgetLayout[];
+    bundleTypes?: BundleType[];
 }
 
 /**
@@ -197,7 +434,12 @@ export type CustomizerFieldConfig =
     | CustomizerNumberFieldConfig
     | RangeFieldConfig
     | ButtonGroupFieldConfig
-    | CustomizerSelectFieldConfig;
+    | CustomizerSelectFieldConfig
+    | CustomizerSwitchFieldConfig
+    | CustomizerTextFieldConfig
+    | PresetFieldConfig
+    | DividerFieldConfig
+    | HeadingFieldConfig;
 
 /**
  * Customizer section configuration
@@ -206,13 +448,21 @@ export interface CustomizerSectionConfig {
     id: string;
     title: string;
     description?: string;
+    icon?: string;
     defaultOpen?: boolean;
     fields: CustomizerFieldConfig[];
+    /** Optional grid layout for fields (default: stack) */
     columns?: 1 | 2 | 3;
+    /** Conditions for showing this section (AND logic) */
+    showWhen?: FieldCondition | FieldCondition[];
+    /** Layouts where this section applies (shorthand) */
+    layouts?: WidgetLayout[];
+    /** Bundle types where this section applies (shorthand) */
+    bundleTypes?: BundleType[];
 }
 
 /**
- * Customizer panel configuration (for different bundle types)
+ * Customizer panel configuration
  */
 export interface CustomizerPanelConfig {
     id: string;
@@ -221,10 +471,29 @@ export interface CustomizerPanelConfig {
 }
 
 /**
- * Field group for rendering.
+ * Context for evaluating conditions
  */
-export interface FieldGroup {
-    id: string;
-    isRange: boolean;
-    fields: CustomizerFieldConfig[];
+export interface ConditionContext {
+    styles: CustomizerStyles;
+    activeLayout: WidgetLayout;
+    activeBundleType: BundleType;
 }
+
+/**
+ * Style preset
+ */
+export interface StylePreset {
+    name: string;
+    description: string;
+    preview?: {
+        primary: string;
+        background: string;
+        accent: string;
+    };
+    values: Partial<CustomizerStyles>;
+}
+
+/**
+ * Style presets map
+ */
+export type StylePresetsMap = Record<string, StylePreset>;

@@ -1,136 +1,158 @@
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import { devtools } from "zustand/middleware";
+import { WidgetLayout } from "@/prisma/generated/enums";
 import { CustomizerStoreState, CustomizerStyles } from "@/features/settings";
-import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
+import { DEFAULT_CUSTOMIZER_STYLES, STYLE_PRESETS, } from "@/features/settings/constants/defaults.constants";
 
 /**
- * Customizer store for style settings.
+ * Deep clones an object to prevent mutation.
  */
-export const useCustomizerStore = create(
-    immer<CustomizerStoreState>((set, get) => ({
-        // Initial state - always start with complete defaults
-        styles: { ...DEFAULT_CUSTOMIZER_STYLES },
-        originalStyles: { ...DEFAULT_CUSTOMIZER_STYLES },
-        isInitialized: false,
-        activeLayout: "LIST",
+function deepClone<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
+}
 
-        /**
-         * Initializes the customizer with styles.
-         */
-        initializeStyles: (styles) => {
-            const mergedStyles: CustomizerStyles = {
-                ...DEFAULT_CUSTOMIZER_STYLES,
-                ...styles,
-            };
+/**
+ * Customizer store for managing widget styles.
+ *
+ * Features:
+ * - Style state management with defaults
+ * - Preset application with tracking
+ * - Discard/reset functionality
+ * - Layout-aware state
+ */
+export const useCustomizerStore = create<CustomizerStoreState>()(
+    devtools(
+        (set, get) => ({
+            styles: deepClone(DEFAULT_CUSTOMIZER_STYLES),
+            originalStyles: null,
+            isInitialized: false,
+            activeLayout: "LIST" as WidgetLayout,
+            activePreset: null,
 
-            set((state) => {
-                state.styles = mergedStyles;
-                state.originalStyles = { ...mergedStyles };
-                state.isInitialized = true;
-            });
-        },
+            /**
+             * Initializes styles from partial input.
+             */
+            initializeStyles: (styles: Partial<CustomizerStyles>) => {
+                const merged = {
+                    ...deepClone(DEFAULT_CUSTOMIZER_STYLES),
+                    ...styles,
+                };
+                set({
+                    styles: merged,
+                    originalStyles: deepClone(merged),
+                    isInitialized: true,
+                    activePreset: null,
+                });
+            },
 
-        /**
-         * Initializes from globalStyles (same flat structure from DB).
-         */
-        initializeFromGlobalStyles: (
-            globalStyles: Partial<CustomizerStyles> | null,
-        ) => {
-            const mergedStyles: CustomizerStyles = {
-                ...DEFAULT_CUSTOMIZER_STYLES,
-                ...(globalStyles || {}),
-            };
-            set((state) => {
-                state.styles = mergedStyles;
-                state.originalStyles = { ...mergedStyles };
-                state.isInitialized = true;
-            });
-        },
+            /**
+             * Initializes from global styles (API response).
+             */
+            initializeFromGlobalStyles: (
+                globalStyles: Partial<CustomizerStyles> | null,
+            ) => {
+                const merged = {
+                    ...deepClone(DEFAULT_CUSTOMIZER_STYLES),
+                    ...(globalStyles || {}),
+                };
+                set({
+                    styles: merged,
+                    originalStyles: deepClone(merged),
+                    isInitialized: true,
+                    activePreset: null,
+                });
+            },
 
-        /**
-         * Updates a single style property.
-         */
-        updateStyle: (key, value) => {
-            set((state) => {
-                state.styles[key] = value;
-            });
-        },
+            /**
+             * Updates a single style property.
+             */
+            updateStyle: <K extends keyof CustomizerStyles>(
+                key: K,
+                value: CustomizerStyles[K],
+            ) => {
+                set((state) => ({
+                    styles: { ...state.styles, [key]: value },
+                    // Clear active preset when user makes changes
+                    activePreset: null,
+                }));
+            },
 
-        /**
-         * Updates multiple style properties at once.
-         */
-        updateStyles: (styles) => {
-            set((state) => {
-                Object.assign(state.styles, styles);
-            });
-        },
+            /**
+             * Updates multiple style properties.
+             */
+            updateStyles: (styles: Partial<CustomizerStyles>) => {
+                set((state) => ({
+                    styles: { ...state.styles, ...styles },
+                    activePreset: null,
+                }));
+            },
 
-        /**
-         * Sets the active layout for preview.
-         */
-        setActiveLayout: (layout) => {
-            set((state) => {
-                state.activeLayout = layout;
-            });
-        },
+            /**
+             * Sets the active layout for preview.
+             */
+            setActiveLayout: (layout: WidgetLayout) => {
+                set({ activeLayout: layout });
+            },
 
-        /**
-         * Resets all styles to defaults.
-         */
-        resetToDefaults: () => {
-            set((state) => {
-                state.styles = { ...DEFAULT_CUSTOMIZER_STYLES };
-            });
-        },
+            /**
+             * Applies a style preset.
+             */
+            applyPreset: (presetKey: string) => {
+                const preset = STYLE_PRESETS[presetKey];
+                if (!preset) return;
 
-        /**
-         * Discards changes and reverts to original styles.
-         */
-        discardChanges: () => {
-            const original = get().originalStyles;
+                set((state) => ({
+                    styles: {
+                        ...state.styles,
+                        ...preset.values,
+                    },
+                    activePreset: presetKey,
+                }));
+            },
 
-            const restoredStyles: CustomizerStyles = {
-                ...DEFAULT_CUSTOMIZER_STYLES,
-                ...(original || {}),
-            };
+            /**
+             * Resets all styles to defaults.
+             */
+            resetToDefaults: () => {
+                set({
+                    styles: deepClone(DEFAULT_CUSTOMIZER_STYLES),
+                    activePreset: null,
+                });
+            },
 
-            set((state) => {
-                state.styles = restoredStyles;
-            });
-        },
+            /**
+             * Discards changes and reverts to original styles.
+             */
+            discardChanges: () => {
+                const { originalStyles } = get();
+                if (originalStyles) {
+                    set({
+                        styles: deepClone(originalStyles),
+                        activePreset: null,
+                    });
+                }
+            },
 
-        /**
-         * Gets current flat styles.
-         */
-        getStyles: () => {
-            return get().styles;
-        },
+            /**
+             * Gets current styles.
+             */
+            getStyles: () => get().styles,
 
-        /**
-         * Gets styles for API.
-         */
-        getGlobalStyles: () => {
-            return get().styles;
-        },
+            /**
+             * Gets styles for API submission.
+             */
+            getGlobalStyles: () => get().styles,
 
-        /**
-         * Marks the store as clean (after saving).
-         */
-        markClean: () => {
-            set((state) => {
-                state.originalStyles = { ...state.styles };
-            });
-        },
-
-        /**
-         * Gets the original (last saved) styles.
-         */
-        getOriginalStyles: () => {
-            const original = get().originalStyles;
-            return {
-                ...DEFAULT_CUSTOMIZER_STYLES,
-                ...(original || {}),
-            };
-        },
-    })),
+            /**
+             * Marks store as clean after save.
+             */
+            markClean: () => {
+                const { styles } = get();
+                set({
+                    originalStyles: deepClone(styles),
+                });
+            },
+        }),
+        { name: "customizer-store" },
+    ),
 );

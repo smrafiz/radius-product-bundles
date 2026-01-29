@@ -24,15 +24,18 @@ export function groupFieldsByType(
 ): FieldGroup[] {
     const groups: FieldGroup[] = [];
     let currentGroup: CustomizerFieldConfig[] = [];
-    let currentIsRange = false;
+    let currentIsFullWidth = false;
     let groupIndex = 0;
+
+    /** Fields that should render full-width */
+    const fullWidthTypes = ["range", "preset", "heading", "divider"];
 
     const flushGroup = () => {
         if (currentGroup.length === 0) return;
 
         groups.push({
             id: `group-${groupIndex++}`,
-            isRange: currentIsRange,
+            isRange: currentIsFullWidth, // Keep as isRange for backward compatibility
             fields: [...currentGroup],
         });
 
@@ -40,16 +43,16 @@ export function groupFieldsByType(
     };
 
     fields.forEach((field) => {
-        const isRange = field.type === "range";
+        const isFullWidth = fullWidthTypes.includes(field.type);
 
         if (currentGroup.length === 0) {
-            currentIsRange = isRange;
+            currentIsFullWidth = isFullWidth;
             currentGroup.push(field);
-        } else if (isRange === currentIsRange) {
+        } else if (isFullWidth === currentIsFullWidth) {
             currentGroup.push(field);
         } else {
             flushGroup();
-            currentIsRange = isRange;
+            currentIsFullWidth = isFullWidth;
             currentGroup.push(field);
         }
     });

@@ -4,38 +4,37 @@ import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 
 export function BundleList() {
     const { styles } = useCustomizerStore();
-    const styleData = styles;
 
     const productTextColor =
-        styleData.productTextColor && styleData.productTextColor !== ""
-            ? styleData.productTextColor
-            : styleData.textColor || "#333333";
+        styles.productTextColor && styles.productTextColor !== ""
+            ? styles.productTextColor
+            : styles.textColor || "#333333";
 
-    const RenderSelectedProducts = () => {
+    const RenderDummyProduct = () => {
         return (
             <div
                 className="radius-bundle__product radius-bundle__product--list"
                 style={{
-                    backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: `${styleData.productRadius ?? 12}px`,
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                    backgroundColor: styles.productBgColor || "#f7f7f7",
+                    borderRadius: `${styles.productRadius ?? 12}px`,
+                    fontSize: `${styles.productFontSize ?? 14}px`,
                     color: productTextColor,
-                    borderColor: styleData.productBorderColor || "#e3e3e3",
+                    borderColor: styles.productBorderColor || "#e3e3e3",
                 }}
             >
                 <div
                     className="radius-bundle__product-image"
                     style={{
-                        width: `${styleData.imageSize ?? undefined}px`,
-                        height: `${styleData.imageSize ?? undefined}px`,
-                        borderRadius: `${styleData.imageRadius ?? 6}px`,
+                        width: `${styles.imageSize ?? undefined}px`,
+                        height: `${styles.imageSize ?? undefined}px`,
+                        borderRadius: `${styles.imageRadius ?? 6}px`,
                     }}
                 >
                     <s-image
                         ref={(el) => {
                             if (el) {
                                 (el as any).objectFit =
-                                    styleData.imageFit ?? "contain";
+                                    styles.imageFit ?? "contain";
                             }
                         }}
                         src="/assets/product-image-placeholder.webp"
@@ -65,15 +64,17 @@ export function BundleList() {
 
     return (
         <div className="radius-bundle__products radius-bundle__products--list">
-            <RenderSelectedProducts />
-            <div className="radius-bundle__divider-plus">
-                <div className="divider-position">+</div>
-            </div>
-            <RenderSelectedProducts />
-            <div className="radius-bundle__divider-plus">
-                <div className="divider-position">+</div>
-            </div>
-            <RenderSelectedProducts />
+            {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index}>
+                    <RenderDummyProduct />
+
+                    {index < 3 && (
+                        <div className="radius-bundle__divider-plus">
+                            <div className="divider-position">+</div>
+                        </div>
+                    )}
+                </div>
+            ))}
         </div>
     );
 }

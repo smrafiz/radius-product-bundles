@@ -3,6 +3,7 @@ import {
     getDefaultValuesFromConfig,
     GlobalStyleSettings,
     ResponsiveSettings,
+    StylePresetsMap,
 } from "@/features/settings";
 
 /**
@@ -184,47 +185,324 @@ export const APP_SETTINGS = {
  * Default customizer styles
  */
 export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
-    // General
+    // ═══════════════════════════════════════════════════════════════════
+    // APPEARANCE - COLORS
+    // ═══════════════════════════════════════════════════════════════════
     primaryColor: "#303030",
-    secondaryColor: "#666666",
     textColor: "#333333",
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
+    savingsColor: "#16a34a",
 
-    // Box
-    boxMaxWidth: 500,
-    boxAlignment: "center",
-    boxBgColor: "#ffffff",
-    boxBorderColor: "#e3e3e3",
-    boxBorderWidth: 1,
-    boxRadius: 12,
+    // ═══════════════════════════════════════════════════════════════════
+    // APPEARANCE - SHAPE & DEPTH
+    // ═══════════════════════════════════════════════════════════════════
+    cornerStyle: "modern",
+    shadow: "soft",
+    spacing: "comfortable",
 
-    // Heading
-    headingFontSize: 20,
-    headingColor: "#303030",
-    headingTransform: "none",
-
-    // Product
-    productFontSize: 16,
-    productBgColor: "#f7f7f7",
-    productTextColor: "#333333",
-    productBorderColor: "#e3e3e3",
-    productRadius: 12,
-
-    // Button
-    buttonFontSize: 16,
-    buttonBgColor: "#333333",
-    buttonTextColor: "#ffffff",
-    buttonHoverBgColor: "#666666",
-    buttonHoverTextColor: "#ffffff",
-    buttonRadius: 8,
-
-    // Badge
-    badgeFontSize: 14,
-    badgeBgColor: "#333333",
-    badgeTextColor: "#ffffff",
-    badgeRadius: 8,
-
-    // Image
-    imageRadius: 6,
-    imageSize: 80,
+    // ═══════════════════════════════════════════════════════════════════
+    // PRODUCT CARDS
+    // ═══════════════════════════════════════════════════════════════════
+    customizeCardStyle: false,
+    productCardBg: "#f9fafb",
+    productCardBorder: true,
+    productCardShadow: false,
+    imageSize: "medium",
     imageFit: "cover",
+    imagePosition: "left",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BUTTON
+    // ═══════════════════════════════════════════════════════════════════
+    buttonStyle: "filled",
+    buttonSize: "medium",
+    buttonWidth: "full",
+    buttonBgColor: "",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BADGE
+    // ═══════════════════════════════════════════════════════════════════
+    badgePosition: "top-right",
+    badgeStyle: "filled",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - CONTAINER
+    // ═══════════════════════════════════════════════════════════════════
+    boxMaxWidth: 600,
+    boxAlignment: "center",
+    showBorder: true,
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - TYPOGRAPHY
+    // ═══════════════════════════════════════════════════════════════════
+    headingSize: "medium",
+    bodySize: "medium",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - LIST LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    dividerStyle: "plus",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - GRID LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    gridColumns: 3,
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - CAROUSEL LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    slidesPerView: 3,
+    carouselNavigation: "both",
+    autoplay: false,
+    autoplaySpeed: 5,
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BOGO SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    bogoFreeTagColor: "#16a34a",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BUY X GET Y SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    buyGetTierStyle: "cards",
 };
+
+/**
+ * Style presets for quick theme application.
+ *
+ * Each preset provides a cohesive look that merchants
+ * can apply with one click, then customize further.
+ */
+export const STYLE_PRESETS: StylePresetsMap = {
+    minimal: {
+        name: "Minimal",
+        description: "Clean and simple with sharp edges",
+        preview: {
+            primary: "#000000",
+            background: "#ffffff",
+            accent: "#f3f4f6",
+        },
+        values: {
+            primaryColor: "#000000",
+            textColor: "#1f2937",
+            backgroundColor: "#ffffff",
+            borderColor: "#e5e7eb",
+            savingsColor: "#059669",
+            cornerStyle: "sharp",
+            shadow: "none",
+            spacing: "comfortable",
+            productCardBorder: false,
+            productCardShadow: false,
+            buttonStyle: "filled",
+        },
+    },
+    soft: {
+        name: "Soft",
+        description: "Gentle curves with subtle depth",
+        preview: {
+            primary: "#6366f1",
+            background: "#f9fafb",
+            accent: "#eef2ff",
+        },
+        values: {
+            primaryColor: "#6366f1",
+            textColor: "#374151",
+            backgroundColor: "#f9fafb",
+            borderColor: "#e5e7eb",
+            savingsColor: "#10b981",
+            cornerStyle: "modern",
+            shadow: "soft",
+            spacing: "comfortable",
+            productCardBorder: true,
+            productCardShadow: false,
+            buttonStyle: "filled",
+        },
+    },
+    bold: {
+        name: "Bold",
+        description: "High contrast and attention-grabbing",
+        preview: {
+            primary: "#dc2626",
+            background: "#ffffff",
+            accent: "#fef2f2",
+        },
+        values: {
+            primaryColor: "#dc2626",
+            textColor: "#111827",
+            backgroundColor: "#ffffff",
+            borderColor: "#fecaca",
+            savingsColor: "#dc2626",
+            cornerStyle: "rounded",
+            shadow: "strong",
+            spacing: "spacious",
+            productCardBorder: true,
+            productCardShadow: true,
+            buttonStyle: "filled",
+        },
+    },
+    elegant: {
+        name: "Elegant",
+        description: "Sophisticated with refined details",
+        preview: {
+            primary: "#7c3aed",
+            background: "#faf5ff",
+            accent: "#ede9fe",
+        },
+        values: {
+            primaryColor: "#7c3aed",
+            textColor: "#1e1b4b",
+            backgroundColor: "#faf5ff",
+            borderColor: "#ddd6fe",
+            savingsColor: "#7c3aed",
+            cornerStyle: "modern",
+            shadow: "soft",
+            spacing: "spacious",
+            productCardBorder: false,
+            productCardShadow: true,
+            buttonStyle: "filled",
+        },
+    },
+    dark: {
+        name: "Dark",
+        description: "Sleek dark theme with vibrant accents",
+        preview: {
+            primary: "#22d3ee",
+            background: "#1f2937",
+            accent: "#374151",
+        },
+        values: {
+            primaryColor: "#22d3ee",
+            textColor: "#f9fafb",
+            backgroundColor: "#1f2937",
+            borderColor: "#4b5563",
+            savingsColor: "#34d399",
+            cornerStyle: "modern",
+            shadow: "strong",
+            spacing: "comfortable",
+            productCardBorder: true,
+            productCardShadow: false,
+            buttonStyle: "filled",
+        },
+    },
+    nature: {
+        name: "Nature",
+        description: "Earthy tones with organic feel",
+        preview: {
+            primary: "#059669",
+            background: "#f0fdf4",
+            accent: "#dcfce7",
+        },
+        values: {
+            primaryColor: "#059669",
+            textColor: "#14532d",
+            backgroundColor: "#f0fdf4",
+            borderColor: "#bbf7d0",
+            savingsColor: "#059669",
+            cornerStyle: "rounded",
+            shadow: "soft",
+            spacing: "comfortable",
+            productCardBorder: false,
+            productCardShadow: false,
+            buttonStyle: "filled",
+        },
+    },
+    warm: {
+        name: "Warm",
+        description: "Inviting warm tones that feel friendly and human",
+        preview: {
+            primary: "#f97316",
+            background: "#fff7ed",
+            accent: "#ffedd5",
+        },
+        values: {
+            primaryColor: "#f97316",
+            textColor: "#431407",
+            backgroundColor: "#fff7ed",
+            borderColor: "#fed7aa",
+            savingsColor: "#ea580c",
+            cornerStyle: "rounded",
+            shadow: "soft",
+            spacing: "comfortable",
+            productCardBorder: false,
+            productCardShadow: true,
+            buttonStyle: "filled",
+        },
+    },
+    professional: {
+        name: "Professional",
+        description: "Neutral, structured, and trust-focused",
+        preview: {
+            primary: "#2563eb",
+            background: "#f8fafc",
+            accent: "#e5e7eb",
+        },
+        values: {
+            primaryColor: "#2563eb",
+            textColor: "#1f2937",
+            backgroundColor: "#f8fafc",
+            borderColor: "#d1d5db",
+            savingsColor: "#2563eb",
+            cornerStyle: "modern",
+            shadow: "none",
+            spacing: "comfortable",
+            productCardBorder: true,
+            productCardShadow: false,
+            buttonStyle: "outline",
+        },
+    },
+};
+
+/**
+ * Maps corner style presets to pixel values.
+ */
+export const CORNER_STYLE_VALUES = {
+    sharp: 0,
+    modern: 8,
+    rounded: 20,
+} as const;
+
+/**
+ * Maps shadow presets to CSS values.
+ */
+export const SHADOW_VALUES = {
+    none: "none",
+    soft: "0 2px 8px rgba(0, 0, 0, 0.08)",
+    strong: "0 4px 16px rgba(0, 0, 0, 0.15)",
+} as const;
+
+/**
+ * Maps spacing presets to pixel values.
+ */
+export const SPACING_VALUES = {
+    compact: { padding: 12, gap: 8 },
+    comfortable: { padding: 20, gap: 12 },
+    spacious: { padding: 28, gap: 16 },
+} as const;
+
+/**
+ * Maps image size presets to pixel values.
+ */
+export const IMAGE_SIZE_VALUES = {
+    small: 60,
+    medium: 80,
+    large: 120,
+} as const;
+
+/**
+ * Maps text size presets to pixel values.
+ */
+export const TEXT_SIZE_VALUES = {
+    small: { heading: 16, body: 13 },
+    medium: { heading: 20, body: 14 },
+    large: { heading: 24, body: 16 },
+} as const;
+
+/**
+ * Maps button size presets to styles.
+ */
+export const BUTTON_SIZE_VALUES = {
+    small: { padding: "8px 16px", fontSize: 14 },
+    medium: { padding: "12px 24px", fontSize: 16 },
+    large: { padding: "16px 32px", fontSize: 18 },
+} as const;

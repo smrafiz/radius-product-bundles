@@ -1,83 +1,109 @@
 import { z } from "zod";
 
-// ═══════════════════════════════════════════════════════════════════════════
-// GLOBAL STYLES SCHEMA (Flat Structure)
-// ═══════════════════════════════════════════════════════════════════════════
-
 /**
- * Hex color validation regex.
+ * Hex color validation (allows empty for inheritance).
  */
-const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+const hexColor = z
+    .string()
+    .regex(/^(#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})|)$/, "Invalid hex color");
 
 /**
- * Reusable hex color schema.
+ * Required hex color validation.
  */
-const hexColor = z.string().regex(hexColorRegex, "Invalid hex color");
+const requiredHexColor = z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color");
 
 /**
- * Global styles schema - flat structure.
+ * Global styles schema - styling focused.
  */
 export const globalStylesSchema = z.object({
-    // ─────────────────────────────────────────────────────────────────────
-    // GENERAL COLORS
-    // ─────────────────────────────────────────────────────────────────────
-    primaryColor: hexColor,
-    secondaryColor: hexColor,
-    textColor: hexColor,
+    // ═══════════════════════════════════════════════════════════════════
+    // APPEARANCE - COLORS
+    // ═══════════════════════════════════════════════════════════════════
+    primaryColor: requiredHexColor.optional(),
+    textColor: requiredHexColor.optional(),
+    backgroundColor: requiredHexColor.optional(),
+    borderColor: requiredHexColor.optional(),
+    savingsColor: requiredHexColor.optional(),
 
-    // ─────────────────────────────────────────────────────────────────────
-    // BOX / CONTAINER
-    // ─────────────────────────────────────────────────────────────────────
-    boxMaxWidth: z.number().min(0).max(2000),
-    boxAlignment: z.enum(["left", "center", "right"]),
-    boxBgColor: hexColor,
-    boxBorderColor: hexColor,
-    boxBorderWidth: z.number().min(0).max(10),
-    boxRadius: z.number().min(0).max(50),
+    // ═══════════════════════════════════════════════════════════════════
+    // APPEARANCE - SHAPE & DEPTH
+    // ═══════════════════════════════════════════════════════════════════
+    cornerStyle: z.enum(["sharp", "modern", "rounded"]).optional(),
+    shadow: z.enum(["none", "soft", "strong"]).optional(),
+    spacing: z.enum(["compact", "comfortable", "spacious"]).optional(),
 
-    // ─────────────────────────────────────────────────────────────────────
-    // HEADING
-    // ─────────────────────────────────────────────────────────────────────
-    headingFontSize: z.number().min(12).max(48),
-    headingColor: hexColor,
-    headingTransform: z.enum(["none", "uppercase", "capitalize"]),
+    // ═══════════════════════════════════════════════════════════════════
+    // PRODUCT CARDS
+    // ═══════════════════════════════════════════════════════════════════
+    customizeCardStyle: z.boolean().optional(),
+    productCardBg: hexColor.optional(),
+    productCardBorder: z.boolean().optional(),
+    productCardShadow: z.boolean().optional(),
+    imageSize: z.enum(["small", "medium", "large"]).optional(),
+    imageFit: z.enum(["cover", "contain"]).optional(),
+    imagePosition: z.enum(["left", "top"]).optional(),
 
-    // ─────────────────────────────────────────────────────────────────────
-    // PRODUCT CARD
-    // ─────────────────────────────────────────────────────────────────────
-    productFontSize: z.number().min(10).max(24),
-    productBgColor: hexColor,
-    productTextColor: hexColor,
-    productBorderColor: hexColor,
-    productRadius: z.number().min(0).max(50),
+    // ═══════════════════════════════════════════════════════════════════
+    // BUTTON
+    // ═══════════════════════════════════════════════════════════════════
+    buttonStyle: z.enum(["filled", "outline"]).optional(),
+    buttonSize: z.enum(["small", "medium", "large"]).optional(),
+    buttonWidth: z.enum(["auto", "full"]).optional(),
+    buttonBgColor: hexColor.optional(),
 
-    // ─────────────────────────────────────────────────────────────────────
-    // BUTTON (Add to Cart)
-    // ─────────────────────────────────────────────────────────────────────
-    buttonFontSize: z.number().min(10).max(24),
-    buttonBgColor: hexColor,
-    buttonTextColor: hexColor,
-    buttonHoverBgColor: hexColor,
-    buttonHoverTextColor: hexColor,
-    buttonRadius: z.number().min(0).max(50),
+    // ═══════════════════════════════════════════════════════════════════
+    // BADGE
+    // ═══════════════════════════════════════════════════════════════════
+    badgePosition: z.enum(["top-left", "top-right", "inline"]).optional(),
+    badgeStyle: z.enum(["filled", "outline"]).optional(),
 
-    // ─────────────────────────────────────────────────────────────────────
-    // BADGE (Savings/Discount)
-    // ─────────────────────────────────────────────────────────────────────
-    badgeFontSize: z.number().min(8).max(20),
-    badgeBgColor: hexColor,
-    badgeTextColor: hexColor,
-    badgeRadius: z.number().min(0).max(50),
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - CONTAINER
+    // ═══════════════════════════════════════════════════════════════════
+    boxMaxWidth: z.number().min(300).max(1200).optional(),
+    boxAlignment: z.enum(["left", "center", "right"]).optional(),
+    showBorder: z.boolean().optional(),
 
-    // ─────────────────────────────────────────────────────────────────────
-    // IMAGE
-    // ─────────────────────────────────────────────────────────────────────
-    imageRadius: z.number().min(0).max(100),
-    imageSize: z.number().min(40).max(300),
-    imageFit: z.enum(["cover", "contain", "fill"]),
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - TYPOGRAPHY
+    // ═══════════════════════════════════════════════════════════════════
+    headingSize: z.enum(["small", "medium", "large"]).optional(),
+    bodySize: z.enum(["small", "medium", "large"]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - LIST LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    dividerStyle: z.enum(["none", "line", "plus"]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - GRID LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    gridColumns: z.union([z.literal(2), z.literal(3), z.literal(4)]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - CAROUSEL LAYOUT
+    // ═══════════════════════════════════════════════════════════════════
+    slidesPerView: z
+        .union([z.literal(2), z.literal(3), z.literal(4)])
+        .optional(),
+    carouselNavigation: z.enum(["none", "arrows", "dots", "both"]).optional(),
+    autoplay: z.boolean().optional(),
+    autoplaySpeed: z.number().min(1).max(15).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BOGO SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    bogoFreeTagColor: requiredHexColor.optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BUY X GET Y SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    buyGetTierStyle: z.enum(["cards", "list", "tabs"]).optional(),
 });
 
 /**
- * Inferred type from the schema.
+ * Inferred type from schema.
  */
 export type GlobalStylesFormData = z.infer<typeof globalStylesSchema>;

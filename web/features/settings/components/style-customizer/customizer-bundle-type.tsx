@@ -8,11 +8,13 @@ import {
     CustomizerSkeleton,
     DynamicCustomizerPanel,
     useCustomizerPage,
+    useCustomizerStore,
 } from "@/features/settings";
 import { GlobalBanner } from "@/shared";
 import type { ComponentType } from "react";
 import { FormProvider } from "react-hook-form";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
+import { BundleType } from "@/features/bundles";
 
 /**
  * Map of bundle types to their preview components.
@@ -44,6 +46,8 @@ export function CustomizerBundleType() {
         handleReset,
     } = useCustomizerPage();
 
+    const activeLayout = useCustomizerStore((state) => state.activeLayout);
+    const activeBundleType = (activeId || "FIXED_BUNDLE") as BundleType;
     const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
 
     return (
@@ -89,6 +93,10 @@ export function CustomizerBundleType() {
                                                     handleClearErrors
                                                 }
                                                 resetKey={resetCounter}
+                                                activeLayout={activeLayout}
+                                                activeBundleType={
+                                                    activeBundleType
+                                                }
                                             />
                                         </form>
                                     </FormProvider>

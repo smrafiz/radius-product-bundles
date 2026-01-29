@@ -1,23 +1,56 @@
 "use client";
 
+import { useMemo } from "react";
 import { useModalStore } from "@/shared";
-import { CustomizerPanelConfig, DynamicCustomizerSection, useCustomizerPanel } from "@/features/settings";
+import {
+    ConditionContext,
+    createConditionContext,
+    CustomizerPanelConfig,
+    DynamicCustomizerSection,
+    getVisibleSections,
+    useCustomizerPanel,
+    useCustomizerStore,
+} from "@/features/settings";
+import { BundleType } from "@/features/bundles";
+import { WidgetLayout } from "@/prisma/generated/enums";
 
+interface DynamicCustomizerPanelProps {
+    config: CustomizerPanelConfig;
+    onFieldChangeAction?: () => void;
+    onClearErrorsAction?: () => void;
+    resetKey?: number;
+    activeLayout?: WidgetLayout;
+    activeBundleType?: BundleType;
+}
+
+/**
+ * Dynamic customizer panel with conditional section visibility.
+ */
 export function DynamicCustomizerPanel({
     config,
     onFieldChangeAction,
     onClearErrorsAction,
     resetKey = 0,
-}: {
-    config: CustomizerPanelConfig;
-    onFieldChangeAction?: () => void;
-    onClearErrorsAction?: () => void;
-    resetKey?: number;
-}) {
+    activeLayout = "LIST",
+    activeBundleType = "FIXED_BUNDLE",
+}: DynamicCustomizerPanelProps) {
+    const styles = useCustomizerStore((state) => state.styles);
     const { openSectionId, handleToggle, handleRestoreDefaults } =
         useCustomizerPanel(config, onFieldChangeAction, onClearErrorsAction);
     const { openModal } = useModalStore();
 
+    // Create condition context
+    const context: ConditionContext = useMemo(
+        () => createConditionContext(styles, activeLayout, activeBundleType),
+        [styles, activeLayout, activeBundleType],
+    );
+
+    // Filter visible sections based on conditions
+    const visibleSections = getVisibleSections(config.sections, context);
+
+    /**
+     * Opens restore defaults confirmation modal.
+     */
     const handleRestoreClick = () => {
         openModal({
             type: "restore-defaults",
@@ -29,10 +62,11 @@ export function DynamicCustomizerPanel({
     return (
         <div className="left-side-auto-scroll border border-[#e3e3e3] bg-white rounded-xl">
             <s-stack>
-                {config.sections.map((section) => (
+                {visibleSections.map((section) => (
                     <DynamicCustomizerSection
                         key={section.id}
                         config={section}
+                        context={context}
                         isOpen={openSectionId === section.id}
                         onToggleAction={() => handleToggle(section.id)}
                         onFieldChangeAction={onFieldChangeAction}
@@ -41,7 +75,11 @@ export function DynamicCustomizerPanel({
                 ))}
             </s-stack>
             <s-stack padding="base" justifyContent="center" direction="inline">
-                <s-button icon="undo" tone="critical" onClick={handleRestoreClick}>
+                <s-button
+                    icon="undo"
+                    tone="critical"
+                    onClick={handleRestoreClick}
+                >
                     Restore defaults
                 </s-button>
             </s-stack>

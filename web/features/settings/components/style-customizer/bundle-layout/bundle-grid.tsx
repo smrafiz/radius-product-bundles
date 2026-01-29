@@ -4,37 +4,36 @@ import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 
 export function BundleGrid() {
     const { styles } = useCustomizerStore();
-    const styleData = styles;
 
     const productTextColor =
-        styleData.productTextColor && styleData.productTextColor !== ""
-            ? styleData.productTextColor
-            : styleData.textColor || "#333333";
+        styles.productTextColor && styles.productTextColor !== ""
+            ? styles.productTextColor
+            : styles.textColor || "#333333";
 
-    const RenderSelectedProducts = () => {
+    function RenderDummyProduct() {
         return (
             <div
                 className="radius-bundle__product radius-bundle__product--grid"
                 style={{
-                    backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: `${styleData.productRadius ?? 12}px`,
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                    backgroundColor: styles.productBgColor || "#f7f7f7",
+                    borderRadius: `${styles.productRadius ?? 12}px`,
+                    fontSize: `${styles.productFontSize ?? 14}px`,
                     color: productTextColor,
-                    borderColor: styleData.productBorderColor || "#e3e3e3",
+                    borderColor: styles.productBorderColor || "#e3e3e3",
                 }}
             >
                 <div
                     className="radius-bundle__product-image"
                     style={{
-                        borderRadius: `${styleData.imageRadius ?? 6}px`,
-                        height: `${styleData.imageSize ?? undefined}px`,
+                        borderRadius: `${styles.imageRadius ?? 6}px`,
+                        height: `${styles.imageSize ?? undefined}px`,
                     }}
                 >
                     <s-image
                         ref={(el) => {
                             if (el) {
                                 (el as any).objectFit =
-                                    styleData.imageFit ?? "contain";
+                                    styles.imageFit ?? "contain";
                             }
                         }}
                         src="/assets/product-image-placeholder.webp"
@@ -58,7 +57,7 @@ export function BundleGrid() {
                 </div>
             </div>
         );
-    };
+    }
 
     return (
         <div
@@ -69,10 +68,9 @@ export function BundleGrid() {
                 gap: "16px",
             }}
         >
-            <RenderSelectedProducts />
-            <RenderSelectedProducts />
-            <RenderSelectedProducts />
-            <RenderSelectedProducts />
+            {Array.from({ length: 4 }).map((_, index) => (
+                <RenderDummyProduct key={index} />
+            ))}
         </div>
     );
 }

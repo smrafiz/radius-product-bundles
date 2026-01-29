@@ -8,20 +8,6 @@ import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
  * Tab ID type
  */
 export type SettingsTabId = (typeof SETTINGS_TABS)[number]["id"];
-// export type SettingsTabId =
-//     | "general"
-//     | "bundle_widget"
-//     | "customizer"
-//     | "labels"
-//     | "subscriptions"
-//     | "button_action"
-//     | "variant_selector"
-//     | "notifications"
-//     | "integrations"
-//     | "track_inventory"
-//     | "enable_online_shop"
-//     | "advanced"
-//     | "tools";
 
 /**
  * Feature context for settings tabs

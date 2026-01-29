@@ -79,8 +79,6 @@ export const RtpbRangeSlider: FC<{
                     />
                 )}
             />
-
-            <div>{internalValue[0]}px</div>
         </div>
     );
 };

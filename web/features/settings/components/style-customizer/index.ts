@@ -1,5 +1,5 @@
-export * from "./bundle-type";
 export * from "./bundle-layout";
+export * from "./bundle-preview";
 export { BundleTypeTab } from "./bundle-type-tab";
 export { CustomizerModal } from "./customizer-modal";
 export { CustomizerHeader } from "./customizer-header";

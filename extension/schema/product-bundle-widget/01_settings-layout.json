@@ -61,6 +61,7 @@
         "type": "range",
         "id": "bundle_max_width",
         "label": "Maximum width",
+        "visible_if": "{{ block.settings.layout == 'compact' }}",
         "min": 400,
         "max": 1200,
         "step": 10,

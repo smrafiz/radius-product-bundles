@@ -231,11 +231,10 @@
         position: absolute;
         width: 24px;
         height: 24px;
+        line-height: 23px;
         background: #303030;
         color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        text-align: center;
         border-radius: 50%;
         z-index: 1;
     }
