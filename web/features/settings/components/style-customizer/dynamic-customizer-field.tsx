@@ -147,7 +147,7 @@ export function DynamicCustomizerField({
                             </span>
                         </s-text>
                     )}
-                    <div className="grid grid-cols-4 gap-2 mt-1 mb-4">
+                    <div className="grid grid-cols-4 gap-2 mt-1 mb-2">
                         {Object.entries(config.presets).map(([key, preset]) => (
                             <PresetCard
                                 key={key}
@@ -265,7 +265,7 @@ export function DynamicCustomizerField({
                         </s-stack>
                         <div
                             style={{
-                                padding: "8px",
+                                paddingBlock: "8px",
                                 borderRadius: "4px",
                                 border: error ? "2px solid #8e0b21" : "none",
                             }}
@@ -406,11 +406,9 @@ export function DynamicCustomizerField({
                         />
                     </s-stack>
                     {config.details && (
-                        <s-text tone="neutral">
-                            <span className="text-[0.75rem] text-[#616161]">
+                            <span className="text-[0.75rem] text-[#616161] -mt-2">
                                 {config.details}
                             </span>
-                        </s-text>
                     )}
                 </s-stack>
             );

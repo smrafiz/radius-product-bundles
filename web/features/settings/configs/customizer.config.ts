@@ -89,7 +89,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "cornerStyle",
                     label: "Corner style",
-                    details: "Roundness of cards, buttons, and images",
                     options: [
                         { value: "sharp", label: "Sharp" },
                         { value: "modern", label: "Modern" },
@@ -101,7 +100,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "shadow",
                     label: "Shadow depth",
-                    details: "Shadow intensity for container and cards",
                     options: [
                         { value: "none", label: "None" },
                         { value: "soft", label: "Soft" },
@@ -112,8 +110,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "buttonGroup",
                     name: "spacing",
-                    label: "Layout spacing",
-                    details: "How compact or spacious the layout feels",
+                    label: "Spacing",
                     options: [
                         { value: "compact", label: "Compact" },
                         { value: "comfortable", label: "Comfortable" },
@@ -142,7 +139,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "imageSize",
                     label: "Image size",
-                    details: "Size of product thumbnails",
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -154,7 +150,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "imageFit",
                     label: "Image fit",
-                    details: "How images fill their container",
                     options: [
                         { value: "cover", label: "Cover" },
                         { value: "contain", label: "Contain" },
@@ -165,7 +160,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "imagePosition",
                     label: "Image position",
-                    details: "Image placement relative to product info",
                     options: [
                         { value: "left", label: "Left" },
                         { value: "top", label: "Top" },
@@ -243,7 +237,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "buttonStyle",
                     label: "Button style",
-                    details: "Visual style of the button",
                     options: [
                         { value: "filled", label: "Filled" },
                         { value: "outline", label: "Outline" },
@@ -254,7 +247,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "buttonSize",
                     label: "Button size",
-                    details: "Height and font size",
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -266,7 +258,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "buttonWidth",
                     label: "Button width",
-                    details: "How wide the button appears",
                     options: [
                         { value: "auto", label: "Auto" },
                         { value: "full", label: "Full Width" },
@@ -292,7 +283,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "badgePosition",
                     label: "Badge position",
-                    details: "Where the savings badge appears",
                     options: [
                         { value: "top-left", label: "Top Left" },
                         { value: "top-right", label: "Top Right" },
@@ -304,7 +294,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "badgeStyle",
                     label: "Badge style",
-                    details: "Visual style of the badge",
                     options: [
                         { value: "filled", label: "Filled" },
                         { value: "outline", label: "Outline" },
@@ -343,7 +332,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "boxAlignment",
                     label: "Widget alignment",
-                    details: "Horizontal position of the widget",
                     options: [
                         { value: "left", label: "Left" },
                         { value: "center", label: "Center" },
@@ -368,7 +356,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "headingSize",
                     label: "Heading size",
-                    details: "Size of bundle title",
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -380,7 +367,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "bodySize",
                     label: "Body text size",
-                    details: "Size of product text and prices",
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -399,7 +385,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "dividerStyle",
                     label: "Divider style",
-                    details: "Separator between products",
                     options: [
                         { value: "none", label: "None" },
                         { value: "line", label: "Line" },
@@ -419,7 +404,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "gridColumns",
                     label: "Columns",
-                    details: "Number of products per row",
                     options: [
                         { value: 2, label: "2" },
                         { value: 3, label: "3" },
@@ -439,7 +423,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "slidesPerView",
                     label: "Slides visible",
-                    details: "Products shown at once",
                     options: [
                         { value: 2, label: "2" },
                         { value: 3, label: "3" },
@@ -452,7 +435,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "carouselNavigation",
                     label: "Navigation",
-                    details: "How users navigate slides",
                     options: [
                         { value: "none", label: "None" },
                         { value: "arrows", label: "Arrows" },
@@ -512,7 +494,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "buyGetTierStyle",
                     label: "Tier display",
-                    details: "How quantity tiers are shown",
                     options: [
                         { value: "cards", label: "Cards" },
                         { value: "list", label: "List" },
