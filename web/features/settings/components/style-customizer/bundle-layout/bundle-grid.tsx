@@ -1,10 +1,10 @@
 "use client";
 
-import { useBundleStore } from "@/features/bundles";
+import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 
 export function BundleGrid() {
-    const { displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const { styles } = useCustomizerStore();
+    const styleData = styles;
 
     const productTextColor =
         styleData.productTextColor && styleData.productTextColor !== ""
@@ -54,7 +54,7 @@ export function BundleGrid() {
                     </div>
                 </div>
                 <div className="radius-bundle__product-quantity">
-                    {styleData.quantityLabel ?? "Qty:"} 1
+                    {DEFAULT_LABELS.quantityLabel} 1
                 </div>
             </div>
         );

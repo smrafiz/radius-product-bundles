@@ -1,8 +1,8 @@
-import { useBundleStore } from "@/features/bundles";
+import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 
 export function BundleHeader() {
-    const { displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const { styles } = useCustomizerStore();
+    const styleData = styles;
 
     const badgeBgColor =
         styleData.badgeBgColor && styleData.badgeBgColor !== ""
@@ -25,10 +25,10 @@ export function BundleHeader() {
                         textTransform: styleData.headingTransform ?? "none",
                     }}
                 >
-                    {styleData.headingLabel ?? "Bundle Offers"}
+                    {DEFAULT_LABELS.headingLabel}
                 </div>
             </div>
-            {displaySettings.showSavingsBadge && (
+            {(
                 <div
                     className="radius-bundle__actions"
                     style={{

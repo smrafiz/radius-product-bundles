@@ -1,11 +1,11 @@
 "use client";
 
-import { useBundleStore } from "@/features/bundles";
+import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 import { useRef } from "react";
 
 export function BundleCarousel() {
-    const { displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const { styles } = useCustomizerStore();
+    const styleData = styles;
     const carouselRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: "left" | "right") => {
@@ -64,7 +64,7 @@ export function BundleCarousel() {
                     </div>
                 </div>
                 <div className="radius-bundle__product-quantity">
-                    {styleData.quantityLabel ?? "Qty:"} 1
+                    {DEFAULT_LABELS.quantityLabel} 1
                 </div>
             </div>
         );

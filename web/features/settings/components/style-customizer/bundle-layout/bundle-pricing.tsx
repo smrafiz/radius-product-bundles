@@ -1,8 +1,8 @@
-import { useBundleStore } from "@/features/bundles";
+import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 
 export function BundlePricing() {
-    const { displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const { styles } = useCustomizerStore();
+    const styleData = styles;
 
     const productTextColor =
         styleData.productTextColor && styleData.productTextColor !== ""
@@ -19,14 +19,14 @@ export function BundlePricing() {
         >
             <div className="radius-bundle__pricing-row">
                 <span className="radius-bundle__pricing-label">
-                    {styleData.regularPriceLabel ?? "Regular Price:"}
+                    {DEFAULT_LABELS.regularPriceLabel}
                 </span>
                 <span className="radius-bundle__price-original">$2,899.96</span>
             </div>
 
             <div className="radius-bundle__pricing-row radius-bundle__pricing-row--highlight">
                 <span className="radius-bundle__pricing-label">
-                    {styleData.bundlePriceLabel ?? "Bundle Price:"}
+                    {DEFAULT_LABELS.bundlePriceLabel}
                 </span>
                 <span className="radius-bundle__price-discounted">
                     $1,899.96
@@ -35,7 +35,7 @@ export function BundlePricing() {
 
             <div className="radius-bundle__pricing-row radius-bundle__savings">
                 <span className="radius-bundle__savings-label">
-                    {styleData.youSaveLabel ?? "You save:"}
+                    {DEFAULT_LABELS.youSaveLabel}
                 </span>
                 <span className="radius-bundle__savings-amount">
                     $474.99 (20%)
@@ -55,7 +55,7 @@ export function BundlePricing() {
                     <circle cx="7" cy="18" r="2" />
                     <circle cx="17" cy="18" r="2" />
                 </svg>
-                <span>{styleData.freeShippingLabel ?? "Free Shipping"}</span>
+                <span>{DEFAULT_LABELS.freeShippingLabel}</span>
             </div>
         </div>
     );

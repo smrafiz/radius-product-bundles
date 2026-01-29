@@ -1,10 +1,10 @@
 "use client";
 
-import { useBundleStore } from "@/features/bundles";
+import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
 
 export function BundleAddToCart() {
-    const { displaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const { styles } = useCustomizerStore();
+    const styleData = styles;
 
     const bg =
         styleData.buttonBgColor && styleData.buttonBgColor !== ""
@@ -42,7 +42,7 @@ export function BundleAddToCart() {
 
             <div className="radius-bundle__actions">
                 <button className="radius-bundle__add-to-cart">
-                    {displaySettings.cartButtonText || ""}
+                    {DEFAULT_LABELS.addToCartText}
                 </button>
             </div>
         </>

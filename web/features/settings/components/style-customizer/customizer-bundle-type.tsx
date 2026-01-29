@@ -46,10 +46,6 @@ export function CustomizerBundleType() {
 
     const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
 
-    if (isLoading) {
-        return <CustomizerSkeleton />;
-    }
-
     return (
         <s-page heading="Style Customizer" inlineSize="large">
             <s-button
@@ -61,57 +57,63 @@ export function CustomizerBundleType() {
                 Save
             </s-button>
 
-            <s-stack paddingBlock="base large-300">
-                <div className="rtpb-full-modal-editor">
-                    <div className="rtpb-full-modal-content flex flex-wrap gap-6">
-                        <div className="rtpb-left-setting">
-                            <div className="sticky top-0">
-                                <FormProvider {...form}>
-                                    <form
-                                        id="customizer-form"
-                                        data-save-bar
-                                        data-discard-confirmation
-                                        onSubmit={handleSubmit}
-                                        onReset={handleReset}
-                                        style={{ display: "contents" }}
-                                    >
-                                        <input
-                                            ref={hiddenInputRef}
-                                            type="hidden"
-                                            name="_dirty"
-                                            defaultValue=""
-                                        />
-                                        <DynamicCustomizerPanel
-                                            config={CUSTOMIZER_CONFIG}
-                                            onFieldChangeAction={triggerSaveBar}
-                                            onClearErrorsAction={
-                                                handleClearErrors
-                                            }
-                                            resetKey={resetCounter}
-                                        />
-                                    </form>
-                                </FormProvider>
+            {isLoading ? (
+                <CustomizerSkeleton />
+            ) : (
+                <s-stack paddingBlock="base large-300">
+                    <div className="rtpb-full-modal-editor">
+                        <div className="rtpb-full-modal-content flex flex-wrap gap-6">
+                            <div className="rtpb-left-setting">
+                                <div className="sticky top-0">
+                                    <FormProvider {...form}>
+                                        <form
+                                            id="customizer-form"
+                                            data-save-bar
+                                            data-discard-confirmation
+                                            onSubmit={handleSubmit}
+                                            onReset={handleReset}
+                                            style={{ display: "contents" }}
+                                        >
+                                            <input
+                                                ref={hiddenInputRef}
+                                                type="hidden"
+                                                name="_dirty"
+                                                defaultValue=""
+                                            />
+                                            <DynamicCustomizerPanel
+                                                config={CUSTOMIZER_CONFIG}
+                                                onFieldChangeAction={
+                                                    triggerSaveBar
+                                                }
+                                                onClearErrorsAction={
+                                                    handleClearErrors
+                                                }
+                                                resetKey={resetCounter}
+                                            />
+                                        </form>
+                                    </FormProvider>
+                                </div>
+                            </div>
+
+                            <div className="rtpb-right-review">
+                                <s-stack gap="base">
+                                    <GlobalBanner />
+                                    <CustomizerHeader
+                                        activeBundleType={activeId}
+                                        onBundleTypeChangeAction={setActiveId}
+                                    />
+
+                                    {PreviewComponent ? (
+                                        <PreviewComponent />
+                                    ) : (
+                                        <s-text>No preview available</s-text>
+                                    )}
+                                </s-stack>
                             </div>
                         </div>
-
-                        <div className="rtpb-right-review">
-                            <s-stack gap="base">
-                                <GlobalBanner />
-                                <CustomizerHeader
-                                    activeBundleType={activeId}
-                                    onBundleTypeChangeAction={setActiveId}
-                                />
-
-                                {PreviewComponent ? (
-                                    <PreviewComponent />
-                                ) : (
-                                    <s-text>No preview available</s-text>
-                                )}
-                            </s-stack>
-                        </div>
                     </div>
-                </div>
-            </s-stack>
+                </s-stack>
+            )}
         </s-page>
     );
 }

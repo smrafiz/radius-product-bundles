@@ -97,7 +97,11 @@ function SettingsPanelSkeleton() {
 function BundleTypeTabsSkeleton() {
     return (
         <s-section>
-            <s-stack gap="none" direction="inline" justifyContent="space-between">
+            <s-stack
+                gap="none"
+                direction="inline"
+                justifyContent="space-between"
+            >
                 <div className="w-28">
                     <SkeletonLine height="h-9" width={100} />
                 </div>
@@ -152,7 +156,11 @@ function BundlePreviewContentSkeleton() {
                             alignItems="center"
                             justifyContent="space-between"
                         >
-                            <s-stack direction="inline" gap="base" alignItems="center">
+                            <s-stack
+                                direction="inline"
+                                gap="base"
+                                alignItems="center"
+                            >
                                 {/* Product image */}
                                 <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0">
                                     <SkeletonLine height="h-14" width={100} />
@@ -230,35 +238,28 @@ function PreviewCardSkeleton() {
  */
 export function CustomizerSkeleton() {
     return (
-        <s-page heading="Style Customizer" inlineSize="large">
-            {/* Save button skeleton */}
-            <div slot="primary-action" className="w-16">
-                <SkeletonLine height="h-9" width={100} />
-            </div>
-
-            <s-stack paddingBlock="base large-300">
-                <div className="rtpb-full-modal-editor">
-                    <div className="rtpb-full-modal-content flex flex-wrap gap-6">
-                        {/* Left settings panel */}
-                        <div className="rtpb-left-setting">
-                            <div className="sticky top-0">
-                                <SettingsPanelSkeleton />
-                            </div>
-                        </div>
-
-                        {/* Right preview area */}
-                        <div className="rtpb-right-review">
-                            <s-stack gap="base">
-                                {/* Bundle type tabs */}
-                                <BundleTypeTabsSkeleton />
-
-                                {/* Preview card */}
-                                <PreviewCardSkeleton />
-                            </s-stack>
+        <s-stack paddingBlock="base large-300">
+            <div className="rtpb-full-modal-editor">
+                <div className="rtpb-full-modal-content flex flex-wrap gap-6">
+                    {/* Left settings panel */}
+                    <div className="rtpb-left-setting">
+                        <div className="sticky top-0">
+                            <SettingsPanelSkeleton />
                         </div>
                     </div>
+
+                    {/* Right preview area */}
+                    <div className="rtpb-right-review">
+                        <s-stack gap="base">
+                            {/* Bundle type tabs */}
+                            <BundleTypeTabsSkeleton />
+
+                            {/* Preview card */}
+                            <PreviewCardSkeleton />
+                        </s-stack>
+                    </div>
                 </div>
-            </s-stack>
-        </s-page>
+            </div>
+        </s-stack>
     );
 }
