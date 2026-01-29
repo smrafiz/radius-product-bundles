@@ -54,7 +54,7 @@
     &__badge {
         background: var(--rb-savings-color);
         color: var(--rb-savings-text-color);
-        border-radius: var(--rb-border-radius-small);
+        border-radius: var(--rb-badge-border-radius);
         font-size: var(--rb-badge-font);
         font-weight: 500;
         padding: 6px 12px;
@@ -69,7 +69,6 @@
 
         &--skeleton {
             min-width: 80px;
-            border-radius: var(--rb-border-radius-small);
         }
 
         &--visible {

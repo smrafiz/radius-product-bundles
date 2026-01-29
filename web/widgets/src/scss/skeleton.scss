@@ -56,12 +56,12 @@
             width: 100%;
             height: calc(var(--rb-image-size) + 30px);
             margin-bottom: var(--rb-spacing);
-            border-radius: 6px;
+            border-radius: var(--rb-image-border-radius);
         }
         &--box {
             width: calc(var(--rb-image-size) - 30px);
             height: calc(var(--rb-image-size) - 30px);
-            border-radius: 6px;
+            border-radius: var(--rb-image-border-radius);
         }
     }
 
@@ -112,7 +112,7 @@
             .radius-bundle__skeleton-image {
                 width: var(--rb-image-size);
                 height: var(--rb-image-size);
-                border-radius: 6px;
+                border-radius: var(--rb-image-border-radius);
                 flex-shrink: 0;
             }
 

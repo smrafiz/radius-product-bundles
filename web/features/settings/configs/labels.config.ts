@@ -40,7 +40,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Add to cart button",
                     placeholder: "Add Bundle to Cart",
                     details: "Text on the add to cart button.",
-                    defaultValue: "Add Bundle to Cart",
+                    defaultValue: "Add bundle to cart",
                     validation: {
                         maxLength: {
                             value: 50,

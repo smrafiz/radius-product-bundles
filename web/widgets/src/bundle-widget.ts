@@ -59,6 +59,8 @@ declare global {
             bundlePriceLabel: string;
             youSaveLabel: string;
             freeShippingLabel: string;
+            quantityLabel: string;
+            savingsBadgeText: string;
         };
     }
 
@@ -214,11 +216,19 @@ declare global {
             if (structure.discountValue && structure.discountValue > 0) {
                 switch (structure.discountType) {
                     case "PERCENTAGE":
-                        badgeText = `Save ${structure.discountValue}%`;
+                        badgeText = this.formatLabel(
+                            structure.labels?.savingsBadgeText ?? "Save {percent}%",
+                            { percent: structure.discountValue }
+                        );
                         break;
+
                     case "FIXED_AMOUNT":
-                        badgeText = `Save ${this.formatMoney(structure.discountValue)}`;
+                        badgeText = this.formatLabel(
+                            structure.labels?.savingsBadgeText ?? "Save {amount}",
+                            { amount: this.formatMoney(structure.discountValue) }
+                        );
                         break;
+
                     case "CUSTOM_PRICE":
                         badgeText = "Special Price";
                         break;
@@ -406,6 +416,13 @@ declare global {
             }
         }
 
+        private getQuantityLabel(): string {
+            return (
+                this.bundleStructure?.labels?.quantityLabel ||
+                "Qty:"
+            );
+        }
+
         /**
          * Renders products (replacing skeleton).
          */
@@ -528,7 +545,7 @@ declare global {
                         ${imageWrapper}
                         <div class="radius-bundle__product-info">
                             ${productTitleHtml}
-                            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
+                            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                         </div>
                         ${
                             this.showPrices
@@ -556,7 +573,7 @@ declare global {
                                 ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
                                 : ""
                         }
-                        ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
+                        ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                     </div>
                 `;
             }
@@ -570,7 +587,7 @@ declare global {
                 ${imageWrapper}
                 <div class="radius-bundle__product-info radius-bundle__product-info--compact">
                     ${productTitleHtml}
-                    ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
+                    ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                 </div>
                 ${
                     this.showPrices
@@ -596,7 +613,7 @@ declare global {
                         ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
                         : ""
                 }
-                ${this.showQuantity ? `<div class="radius-bundle__product-quantity">Qty: ${product.quantity}</div>` : ""}
+                ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
             </div>`;
         }
 
@@ -1046,6 +1063,18 @@ declare global {
             div.textContent = text;
 
             return div.innerHTML;
+        }
+
+        /*
+         * Formats label
+         */
+        private formatLabel(
+            template: string,
+            values: Record<string, string | number>
+        ): string {
+            return template.replace(/\{(\w+)\}/g, (_, key) =>
+                values[key] !== undefined ? String(values[key]) : ""
+            );
         }
     }
 

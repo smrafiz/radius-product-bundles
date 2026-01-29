@@ -411,7 +411,7 @@ function buildActiveBundlesMetafieldValue(
 
             // Settings (for Liquid)
             layout: bundle.settings?.layout || "list",
-            buttonText: bundle.settings?.cartButtonText || "Add Bundle to Cart",
+            buttonText: bundle.settings?.cartButtonText || "",
             showSavings: bundle.settings?.showSavings ?? true,
             showImages: bundle.settings?.showImages ?? true,
             showSavingsBadge: bundle.settings?.showSavingsBadge ?? true,

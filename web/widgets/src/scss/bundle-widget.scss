@@ -110,7 +110,7 @@
         background: var(--rb-button-color);
         color: var(--rb-button-text-color);
         border: none;
-        border-radius: var(--rb-border-radius-small);
+        border-radius: var(--rb-button-border-radius);
         font-size: var(--rb-button-font);
         font-weight: 500;
         cursor: pointer;
@@ -120,15 +120,13 @@
         justify-content: center;
         gap: 8px;
         min-height: 42px;
-        &:hover {
-            background: var(--rb-button-hover-bg-color);
-            color: var(--rb-button-hover-text-color);
-        }
 
         &:hover:not(:disabled) {
             opacity: 0.9;
             transform: translateY(-1px);
             box-shadow: var(--rb-shadow);
+            background: var(--rb-button-hover-bg-color);
+            color: var(--rb-button-hover-text-color);
         }
 
         &:active:not(:disabled) {

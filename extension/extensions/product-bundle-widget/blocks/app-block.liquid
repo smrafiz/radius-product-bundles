@@ -105,6 +105,9 @@
 						| default: g_styles.buttonRadius
 						| default: 8 %}
 
+				{% assign badge_border_radius = g_styles.badgeRadius
+						| default: 8 %}
+
 				{% assign image_border_radius = block.settings.image_border_radius
 						| default: g_styles.borders.imageRadius
 						| default: 8 %}
@@ -182,26 +185,34 @@
 				{% endif %}
 
                 {% comment %} Labels {% endcomment %}
-				{% assign bundle_heading = block.settings.bundle_heading
-						| default: bundle.title
+
+				{% assign bundle_heading = bundle.title
 						| default: g_labels.headingLabel
-						| default: 'Bundle & Save' %}
-                {% assign button_text = block.settings.button_text
-                        | default: bundle.buttonText
+						| default: 'Bundle & Save'
+						| strip %}
+
+				{% assign savings_badge_text = g_labels.savingsBadgeText
+						| default: 'Save' %}
+
+				{% assign button_text = bundle.buttonText
                         | default: g_labels.addToCartText
-                        | default: 'Add bundle to cart' %}
-				{% assign regular_price_label = block.settings.regular_price_label
-						| default: bundle.regularPriceLabel
+                        | default: 'Add bundle to cart'
+						| strip %}
+
+				{% assign regular_price_label = g_labels.regularPriceLabel
 						| default: 'Regular price' %}
-                {% assign bundle_price_label = block.settings.bundle_price_label
-						| default: bundle.bundlePriceLabel
+
+                {% assign bundle_price_label = g_labels.bundlePriceLabel
                         | default: 'Bundle price:' %}
-                {% assign you_save_label = block.settings.you_save_label
-						| default: bundle.youSaveLabel
+
+                {% assign you_save_label = g_labels.youSaveLabel
                         | default: 'You save:' %}
-                {% assign free_shipping_label = block.settings.free_shipping_label
-						| default: bundle.freeShippingLabel
-                        | default: 'Free shipping included' %}
+
+				{% assign free_shipping_label = g_labels.freeShippingLabel
+						| default: 'Free shipping' %}
+
+				{% assign quantity_label = g_labels.quantityLabel
+						| default: 'Qty:' %}
 
                 {% comment %} (DO NOT REMOVE) Build JSON for JS. Formatted structure (DO NOT REMOVE)
                     "id": "{{ bundle_id }}",
@@ -217,16 +228,18 @@
                     "productIds": {{ bundle.productIds | default: '[]' | json }},
                     "layout": "{{ layout }}",
                     "labels": {
-                    		"heading": "{{ bundle_heading | escape }}"
-                            "buttonText": "{{ button_text | escape }}",
+                    		"headingLabel": "{{ bundle_heading | escape }}"
+                    		"savingsBadgeText": "{{ savings_badge_text | escape }}"
+                            "addToCartText": "{{ button_text | escape }}",
                             "regularPriceLabel": "{{ regular_price_label | escape }}",
                             "bundlePriceLabel": "{{ bundle_price_label | escape }}",
                             "youSaveLabel": "{{ you_save_label | escape }}",
                             "freeShippingLabel": "{{ free_shipping_label | escape }}"
+                            "quantityLabel": "{{ quantity_label | escape }}"
                         }
                     }
                 {% endcomment %}
-                {% capture bundle_structure_json %}{"id": "{{ bundle_id }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"heading": "{{ bundle_heading | escape }}","buttonText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}"}}
+                {% capture bundle_structure_json %}{"id": "{{ bundle_id }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}" ,"quantityLabel": "{{ quantity_label | escape }}"}}
                 {% endcapture %}
 
                 {% comment %} Inject CSS variables {% endcomment %}
@@ -251,7 +264,8 @@
 						/* Radius & spacing */
 						--rb-box-radius: {{ box_radius }}px;
 						--rb-border-radius: {{ border_radius }}px;
-						--rb-border-radius-small: {{ button_border_radius }}px;
+						--rb-button-border-radius: {{ button_border_radius }}px;
+						--rb-badge-border-radius: {{ badge_border_radius }}px;
 						--rb-image-border-radius: {{ image_border_radius }}px;
 						--rb-box-spacing: {{ box_spacing }}px;
 						--rb-bundle-max-width: {{ bundle_max_width }}px;
@@ -327,6 +341,7 @@
 						{% else %}
 							--rb-hover-enabled: 0;
 							--rb-hover-transition: 0s;
+						--rb-shadow-hover: var(--rb-shadow);
 						{% endif %}
 
 					}
@@ -366,6 +381,7 @@
                             {% render 'radius-bundle-layout-grid',
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
+                                    savings_badge_text: savings_badge_text,
                                     product_count: product_count,
                                     show_images: show_images,
                                     show_savings: show_savings,
@@ -380,12 +396,14 @@
                                     bundle_price_label: bundle_price_label,
                                     you_save_label: you_save_label,
                                     free_shipping_label: free_shipping_label,
+                                    quantity_label: quantity_label,
                                     block: block
                             %}
                         {% when 'carousel' %}
                             {% render 'radius-bundle-layout-carousel',
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
+                                    savings_badge_text: savings_badge_text,
                                     product_count: product_count,
 									show_images: show_images,
 									show_savings: show_savings,
@@ -400,12 +418,14 @@
                                     bundle_price_label: bundle_price_label,
                                     you_save_label: you_save_label,
                                     free_shipping_label: free_shipping_label,
+                                    quantity_label: quantity_label,
                                     block: block
                             %}
                         {% when 'compact' %}
                             {% render 'radius-bundle-layout-compact',
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
+                                    savings_badge_text: savings_badge_text,
                                     product_count: product_count,
 									show_images: show_images,
 									show_savings: show_savings,
@@ -420,12 +440,14 @@
                                     bundle_price_label: bundle_price_label,
                                     you_save_label: you_save_label,
                                     free_shipping_label: free_shipping_label,
+                                    quantity_label: quantity_label,
                                     block: block
                             %}
                         {% else %}
                             {% render 'radius-bundle-layout-list',
                                     bundle_id: bundle_id,
                                     name: bundle_heading,
+                                    savings_badge_text: savings_badge_text,
                                     product_count: product_count,
 									show_images: show_images,
 									show_savings: show_savings,
@@ -440,6 +462,7 @@
                                     bundle_price_label: bundle_price_label,
                                     you_save_label: you_save_label,
                                     free_shipping_label: free_shipping_label,
+                                    quantity_label: quantity_label,
                                     block: block
                             %}
                     {% endcase %}
@@ -789,10 +812,10 @@
 			"id": "button_border_radius",
 			"label": "Button corner radius",
 			"min": 0,
-			"max": 50,
+			"max": 30,
 			"step": 2,
 			"unit": "px",
-			"default": 4
+			"default": 8
 		},
 		{
 			"type": "color",

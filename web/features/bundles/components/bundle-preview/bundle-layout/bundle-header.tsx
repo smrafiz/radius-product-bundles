@@ -1,6 +1,7 @@
 "use client";
 
 import { useBundlePreviewPricing, useBundleStore } from "@/features/bundles";
+import { DEFAULT_LABELS } from "@/features/settings";
 
 /**
  * Bundle header component with title and savings badge
@@ -13,7 +14,7 @@ export function BundleHeader() {
         <div className="radius-bundle__header">
             <div className="radius-bundle__title-wrapper">
                 <div className="radius-bundle__title">
-                    {displaySettings.title || ""}
+                    {displaySettings.title || DEFAULT_LABELS.headingLabel}
                 </div>
             </div>
             {displaySettings.showSavingsBadge && hasDiscount && (

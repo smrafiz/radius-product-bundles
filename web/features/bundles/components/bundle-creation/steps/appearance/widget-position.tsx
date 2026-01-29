@@ -38,7 +38,6 @@ export function WidgetPosition() {
                 />
 
                 <s-text-field
-                    required
                     label="'Add to cart' button text"
                     value={displaySettings.cartButtonText || ""}
                     onChange={(event: Event) => {
