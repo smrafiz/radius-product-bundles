@@ -1,44 +1,57 @@
 "use client";
 
-import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
+import {
+    DEFAULT_LABELS,
+    getCardRadius,
+    getFontSize,
+    getImageSize,
+    getSpacing,
+    useCustomizerStore,
+} from "@/features/settings";
 
 export function BundleCompact() {
     const { styles } = useCustomizerStore();
-    const styleData = styles;
 
-    const productTextColor =
-        styleData.productTextColor && styleData.productTextColor !== ""
-            ? styleData.productTextColor
-            : styleData.textColor || "#333333";
+    const cardRadius = getCardRadius(styles.cornerStyle);
+    const imageSizePx = getImageSize(styles.imageSize);
+    const fontSize = getFontSize(styles.bodySize);
+    const gap = getSpacing(styles.spacing);
 
-    const RenderSelectedProducts = () => {
+    const textColor = styles.textColor || "#333";
+
+    function RenderProduct() {
         return (
             <div
                 className="radius-bundle__product radius-bundle__product--compact"
                 style={{
-                    color: productTextColor,
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
+                    display: "flex",
+                    alignItems: "center",
+                    gap,
+                    color: textColor,
+                    fontSize,
                 }}
             >
+                {/* Image */}
                 <div
                     className="radius-bundle__product-image"
                     style={{
-                        borderRadius: `${styleData.imageRadius ?? 6}px`,
-                        width: `${styleData.imageSize ?? undefined}px`,
-                        height: `${styleData.imageSize ?? undefined}px`,
+                        width: imageSizePx,
+                        height: imageSizePx,
+                        borderRadius: cardRadius,
+                        flexShrink: 0,
                     }}
                 >
                     <s-image
                         ref={(el) => {
                             if (el) {
-                                (el as any).objectFit =
-                                    styleData.imageFit ?? "contain";
+                                (el as any).objectFit = styles.imageFit;
                             }
                         }}
                         src="/assets/product-image-placeholder.webp"
                     />
                 </div>
 
+                {/* Info */}
                 <div className="radius-bundle__product-info">
                     <div className="radius-bundle__product-title">
                         Bundle product
@@ -48,7 +61,8 @@ export function BundleCompact() {
                     </div>
                 </div>
 
-                <div className="radius-bundle__product-price">
+                {/* Price */}
+                <div className="radius-bundle__product-price ml-auto text-right">
                     <div className="radius-bundle__product-price-current">
                         $300.33
                     </div>
@@ -58,13 +72,16 @@ export function BundleCompact() {
                 </div>
             </div>
         );
-    };
+    }
 
     return (
-        <div className="radius-bundle__products radius-bundle__products--compact">
-            <RenderSelectedProducts />
-            <RenderSelectedProducts />
-            <RenderSelectedProducts />
+        <div
+            className="radius-bundle__products radius-bundle__products--compact"
+            style={{ display: "grid", gap }}
+        >
+            {Array.from({ length: 3 }).map((_, i) => (
+                <RenderProduct key={i} />
+            ))}
         </div>
     );
 }

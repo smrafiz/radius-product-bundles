@@ -1,41 +1,62 @@
 "use client";
 
-import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
+import {
+    DEFAULT_LABELS,
+    getButtonFontSize,
+    getButtonPadding,
+    getButtonRadius,
+    useCustomizerStore,
+} from "@/features/settings";
 
 export function BundleAddToCart() {
     const { styles } = useCustomizerStore();
-    const styleData = styles;
 
-    const bg =
-        styleData.buttonBgColor && styleData.buttonBgColor !== ""
-            ? styleData.buttonBgColor
-            : styleData.primaryColor || "#333333";
+    const radius = getButtonRadius(styles.cornerStyle);
+    const fontSize = getButtonFontSize(styles.buttonSize);
+    const padding = getButtonPadding(styles.buttonSize);
 
-    const hoverBg =
-        styleData.buttonHoverBgColor && styleData.buttonHoverBgColor !== ""
-            ? styleData.buttonHoverBgColor
-            : styleData.secondaryColor || "#666666";
+    const bgColor =
+        styles.buttonBgColor && styles.buttonBgColor !== ""
+            ? styles.buttonBgColor
+            : styles.primaryColor || "#303030";
 
-    const text = styleData.buttonTextColor || "#ffffff";
-    const hoverText = styleData.buttonHoverTextColor || "#ffffff";
-    const radius = styleData.buttonRadius ?? 8;
-    const fontSize = styleData.buttonFontSize ?? 16;
+    const textColor = "#ffffff";
+
+    const isOutline = styles.buttonStyle === "outline";
+    const isFullWidth = styles.buttonWidth === "full";
 
     return (
         <>
             <style>
                 {`
                 .radius-bundle__add-to-cart {
-                    background-color: ${bg};
-                    color: ${text};
-                    border-radius: ${radius}px;
-                    font-size: ${fontSize}px;
-                    transition: background-color 0.2s ease, color 0.2s ease;
+                    display: inline-flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: ${isFullWidth ? "100%" : "auto"};
+                    padding: ${padding};
+                    font-size: ${fontSize};
+                    font-weight: 600;
+                    border-radius: ${radius};
+                    cursor: pointer;
+                    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+                    ${
+                        isOutline
+                            ? `
+                        background: transparent;
+                        color: ${bgColor};
+                        border: 2px solid ${bgColor};
+                    `
+                            : `
+                        background: ${bgColor};
+                        color: ${textColor};
+                        border: none;
+                    `
+                    }
                 }
 
                 .radius-bundle__add-to-cart:hover {
-                    background-color: ${hoverBg};
-                    color: ${hoverText};
+                    opacity: 0.9;
                 }
             `}
             </style>

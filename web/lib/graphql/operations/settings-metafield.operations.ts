@@ -222,38 +222,60 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             return {};
         }
 
-        // Only return valid keys from CustomizerStyles
+        /**
+         * Valid style tokens based on the CURRENT Style Customizer
+         */
         const validKeys: (keyof CustomizerStyles)[] = [
+            // Preset
+            // "stylePreset",
+
+            // Appearance
             "primaryColor",
-            "secondaryColor",
             "textColor",
-            "boxMaxWidth",
-            "boxAlignment",
-            "boxBgColor",
-            "boxBorderColor",
-            "boxBorderWidth",
-            "boxRadius",
-            "headingFontSize",
-            "headingColor",
-            "headingTransform",
-            "productFontSize",
-            "productBgColor",
-            "productTextColor",
-            "productBorderColor",
-            "productRadius",
-            "buttonFontSize",
-            "buttonBgColor",
-            "buttonTextColor",
-            "buttonHoverBgColor",
-            "buttonHoverTextColor",
-            "buttonRadius",
-            "badgeFontSize",
-            "badgeBgColor",
-            "badgeTextColor",
-            "badgeRadius",
-            "imageRadius",
+            "backgroundColor",
+            "borderColor",
+            "savingsColor",
+            "cornerStyle",
+            "shadow",
+            "spacing",
+
+            // Product cards
             "imageSize",
             "imageFit",
+            "imagePosition",
+            "customizeCardStyle",
+            "productCardBg",
+            "productCardBorder",
+            "productCardShadow",
+
+            // Button & Badge
+            "buttonStyle",
+            "buttonSize",
+            "buttonWidth",
+            "buttonBgColor",
+            "badgePosition",
+            "badgeStyle",
+
+            // Advanced – Container
+            "boxMaxWidth",
+            "boxAlignment",
+            "showBorder",
+
+            // Advanced – Typography
+            "headingSize",
+            "bodySize",
+
+            // Layout-specific
+            "dividerStyle", // LIST
+            "gridColumns", // GRID
+            "slidesPerView", // CAROUSEL
+            "carouselNavigation",
+            "autoplay",
+            "autoplaySpeed",
+
+            // Bundle-type specific
+            "bogoFreeTagColor",
+            "buyGetTierStyle",
         ];
 
         const result: Partial<CustomizerStyles> = {};

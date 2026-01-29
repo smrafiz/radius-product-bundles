@@ -88,7 +88,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "buttonGroup",
                     name: "cornerStyle",
-                    label: "Corner style",
+                    label: "Corner roundness",
                     options: [
                         { value: "sharp", label: "Sharp" },
                         { value: "modern", label: "Modern" },

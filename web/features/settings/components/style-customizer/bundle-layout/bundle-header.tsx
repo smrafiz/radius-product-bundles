@@ -1,18 +1,21 @@
-import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
+import {
+    DEFAULT_LABELS,
+    getBadgeRadius,
+    getHeadingFontSize,
+    useCustomizerStore,
+} from "@/features/settings";
 
 export function BundleHeader() {
     const { styles } = useCustomizerStore();
-    const styleData = styles;
 
-    const badgeBgColor =
-        styleData.badgeBgColor && styleData.badgeBgColor !== ""
-            ? styleData.badgeBgColor
-            : styleData.primaryColor || "#333333";
+    const headingFontSize = getHeadingFontSize(styles.headingSize);
+    const badgeRadius = getBadgeRadius(styles.cornerStyle);
 
-    const headingColor =
-        styleData.headingColor && styleData.headingColor !== ""
-            ? styleData.headingColor
-            : styleData.primaryColor || "#303030";
+    const accentColor = styles.primaryColor || "#303030";
+    const textColor = styles.textColor || "#333333";
+
+    const isOutline = styles.badgeStyle === "outline";
+    const isInline = styles.badgePosition === "inline";
 
     return (
         <div className="radius-bundle__header">
@@ -20,33 +23,39 @@ export function BundleHeader() {
                 <div
                     className="radius-bundle__title"
                     style={{
-                        fontSize: `${styleData.headingFontSize ?? 20}px`,
-                        color: headingColor,
-                        textTransform: styleData.headingTransform ?? "none",
+                        fontSize: headingFontSize,
+                        color: textColor,
+                        fontWeight: 600,
                     }}
                 >
                     {DEFAULT_LABELS.headingLabel}
                 </div>
             </div>
-            {(
-                <div
-                    className="radius-bundle__actions"
+
+            {/* Savings Badge */}
+            <div
+                className="radius-bundle__actions"
+                style={{
+                    alignSelf: isInline ? "center" : undefined,
+                }}
+            >
+                <span
+                    className="radius-bundle__badge"
                     style={{
-                        fontSize: `${styleData.badgeFontSize ?? 16}px`,
+                        borderRadius: badgeRadius,
+                        padding: "6px 10px",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        backgroundColor: isOutline
+                            ? "transparent"
+                            : accentColor,
+                        color: isOutline ? accentColor : "#ffffff",
+                        border: isOutline ? `2px solid ${accentColor}` : "none",
                     }}
                 >
-                    <button
-                        className="radius-bundle__badge"
-                        style={{
-                            backgroundColor: badgeBgColor,
-                            color: styleData.badgeTextColor || "#ffffff",
-                            borderRadius: `${styleData.badgeRadius ?? 8}px`,
-                        }}
-                    >
-                        Save 50%
-                    </button>
-                </div>
-            )}
+                    Save 50%
+                </span>
+            </div>
         </div>
     );
 }

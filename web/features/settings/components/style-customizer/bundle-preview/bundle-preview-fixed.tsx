@@ -9,6 +9,9 @@ import {
     BundleList,
     BundlePricing,
     CUSTOMIZER_LAYOUTS_MAPPING,
+    getRadius,
+    getShadow,
+    getSpacing,
     useCustomizerStore,
 } from "@/features/settings";
 
@@ -19,37 +22,29 @@ import "@/styles/components/bundle.css";
  */
 export function BundlePreviewFixed() {
     const { styles, activeLayout, setActiveLayout } = useCustomizerStore();
-    const styleData = styles;
 
-    /**
-     * Renders the appropriate layout component.
-     */
     function RenderLayout() {
         switch (activeLayout) {
             case "GRID":
                 return <BundleGrid />;
-
-            case "LIST":
-                return <BundleList />;
-
             case "CAROUSEL":
                 return <BundleCarousel />;
-
             case "COMPACT":
                 return <BundleCompact />;
-
+            case "LIST":
             default:
                 return <BundleList />;
         }
     }
 
     return (
-        <div className="md:flex border border-[#e3e3e3] rounded-xl overflow-hidden min-h-75">
+        <div className="md:flex border border-gray-200 rounded-xl overflow-hidden min-h-75">
             {/* LEFT: Layout Tabs */}
-            <div className="md:w-65 border-r border-[#e3e3e3] bg-white">
+            <div className="md:w-64 border-r border-gray-200 bg-white">
                 <s-stack padding="base">
                     <s-heading>Fixed Bundle Layout</s-heading>
                 </s-stack>
+
                 <s-stack gap="none">
                     {CUSTOMIZER_LAYOUTS_MAPPING.FIXED_BUNDLE.map(
                         ({ label, value }) => {
@@ -59,13 +54,18 @@ export function BundlePreviewFixed() {
                                 <button
                                     key={value}
                                     onClick={() => setActiveLayout(value)}
-                                    className={`text-left px-4 py-3 border-l-4 transition cursor-pointer
-                                    ${
-                                        isActive
-                                            ? "border-[#303030] bg-[#f7f7f7] font-semibold"
-                                            : "border-transparent hover:bg-[#f7f7f7]"
-                                    }
-                                `}
+                                    className={`text-left px-4 py-3 border-l-4 transition
+                                        ${
+                                            isActive
+                                                ? "border-current bg-gray-50 font-semibold"
+                                                : "border-transparent hover:bg-gray-50"
+                                        }
+                                    `}
+                                    style={{
+                                        color: isActive
+                                            ? styles.primaryColor
+                                            : undefined,
+                                    }}
                                 >
                                     {label}
                                 </button>
@@ -76,16 +76,18 @@ export function BundlePreviewFixed() {
             </div>
 
             {/* RIGHT: Preview */}
-            <div className="flex-1 p-4 bg-[#fafafa]">
+            <div className="flex-1 p-4 bg-gray-50">
                 <div className="radius-bundle-widget radius-bundle-widget--customizer">
                     <div
                         className="radius-bundle"
                         style={{
-                            maxWidth: `${styleData.boxMaxWidth}px`,
+                            maxWidth: styles.boxMaxWidth
+                                ? `${styles.boxMaxWidth}px`
+                                : undefined,
                             margin:
-                                styleData.boxAlignment === "left"
+                                styles.boxAlignment === "left"
                                     ? "0 auto 0 0"
-                                    : styleData.boxAlignment === "right"
+                                    : styles.boxAlignment === "right"
                                       ? "0 0 0 auto"
                                       : "0 auto",
                         }}
@@ -93,13 +95,14 @@ export function BundlePreviewFixed() {
                         <div
                             className="radius-bundle__inner"
                             style={{
-                                backgroundColor:
-                                    styleData.boxBgColor || "#ffffff",
-                                borderRadius: `${styleData.boxRadius ?? 12}px`,
-                                borderStyle: "solid",
-                                borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
-                                borderColor:
-                                    styleData.boxBorderColor || "#e3e3e3",
+                                backgroundColor: styles.backgroundColor,
+                                color: styles.textColor,
+                                borderRadius: getRadius(styles.cornerStyle),
+                                padding: getSpacing(styles.spacing),
+                                border: styles.showBorder
+                                    ? `1px solid ${styles.borderColor}`
+                                    : "none",
+                                boxShadow: getShadow(styles.shadow),
                             }}
                         >
                             <BundleHeader />

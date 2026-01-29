@@ -1,11 +1,17 @@
 "use client";
 
-import { DEFAULT_LABELS, useCustomizerStore } from "@/features/settings";
+import {
+    DEFAULT_LABELS,
+    getCardRadius,
+    getFontSize,
+    getImageSize,
+    getSpacing,
+    useCustomizerStore,
+} from "@/features/settings";
 import { useRef } from "react";
 
 export function BundleCarousel() {
     const { styles } = useCustomizerStore();
-    const styleData = styles;
     const carouselRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: "left" | "right") => {
@@ -17,72 +23,84 @@ export function BundleCarousel() {
         });
     };
 
-    const productTextColor =
-        styleData.productTextColor && styleData.productTextColor !== ""
-            ? styleData.productTextColor
-            : styleData.textColor || "#333333";
+    const cardRadius = getCardRadius(styles.cornerStyle);
+    const imageSizePx = getImageSize(styles.imageSize);
+    const fontSize = getFontSize(styles.bodySize);
+    const gap = getSpacing(styles.spacing);
 
-    const RenderSelectedProducts = () => {
-        return (
+    const cardBackground = styles.customizeCardStyle
+        ? styles.productCardBg
+        : styles.backgroundColor;
+
+    const RenderProduct = () => (
+        <div
+            className="radius-bundle__product radius-bundle__product--slider"
+            style={{
+                flex: "0 0 calc(50% - 8px)",
+                backgroundColor: cardBackground,
+                borderRadius: cardRadius,
+                fontSize,
+                color: styles.textColor,
+                border: styles.productCardBorder
+                    ? `1px solid ${styles.borderColor}`
+                    : "none",
+                boxShadow: styles.productCardShadow
+                    ? "0 4px 12px rgba(0,0,0,0.08)"
+                    : "none",
+                padding: gap,
+            }}
+        >
+            {/* Image */}
             <div
-                className="radius-bundle__product radius-bundle__product--slider"
+                className="radius-bundle__product-image"
                 style={{
-                    width: "48.2%",
-                    backgroundColor: styleData.productBgColor || "#f7f7f7",
-                    borderRadius: `${styleData.productRadius ?? 12}px`,
-                    fontSize: `${styleData.productFontSize ?? 14}px`,
-                    color: productTextColor,
-                    borderColor: styleData.productBorderColor || "#e3e3e3",
+                    height: imageSizePx,
+                    borderRadius: cardRadius,
                 }}
             >
-                <div
-                    className="radius-bundle__product-image"
-                    style={{
-                        borderRadius: `${styleData.imageRadius ?? 6}px`,
-                        height: `${styleData.imageSize ?? 100}px`,
+                <s-image
+                    ref={(el) => {
+                        if (el) {
+                            (el as any).objectFit = styles.imageFit;
+                        }
                     }}
-                >
-                    <s-image
-                        ref={(el) => {
-                            if (el) {
-                                (el as any).objectFit =
-                                    styleData.imageFit ?? "contain";
-                            }
-                        }}
-                        src="/assets/product-image-placeholder.webp"
-                    />
+                    src="/assets/product-image-placeholder.webp"
+                />
+            </div>
+
+            {/* Title */}
+            <div className="radius-bundle__product-title">Bundle product</div>
+
+            {/* Price */}
+            <div className="radius-bundle__product-price">
+                <div className="radius-bundle__product-price-current">
+                    $300.33
                 </div>
-                <div className="radius-bundle__product-title">
-                    Bundle product
-                </div>
-                <div className="radius-bundle__product-price">
-                    <div className="radius-bundle__product-price-current">
-                        $300.33
-                    </div>
-                    <div className="radius-bundle__product-price-compare">
-                        $600.00
-                    </div>
-                </div>
-                <div className="radius-bundle__product-quantity">
-                    {DEFAULT_LABELS.quantityLabel} 1
+                <div className="radius-bundle__product-price-compare">
+                    $600.00
                 </div>
             </div>
-        );
-    };
+
+            {/* Quantity */}
+            <div className="radius-bundle__product-quantity">
+                {DEFAULT_LABELS.quantityLabel} 1
+            </div>
+        </div>
+    );
 
     return (
         <div className="relative w-full">
             {/* NAV BUTTONS */}
             <button
                 onClick={() => scroll("left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow rounded-full cursor-pointer w-8 h-8"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow rounded-full w-8 h-8 flex items-center justify-center"
             >
                 ‹
             </button>
 
             <button
                 onClick={() => scroll("right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow rounded-full cursor-pointer w-8 h-8"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow rounded-full w-8 h-8 flex items-center justify-center"
             >
                 ›
             </button>
@@ -90,13 +108,15 @@ export function BundleCarousel() {
             {/* CAROUSEL */}
             <div
                 ref={carouselRef}
-                className="radius-bundle__products radius-bundle__products--slider"
-                style={{ scrollbarWidth: "none" }}
+                className="radius-bundle__products radius-bundle__products--slider flex overflow-x-auto scroll-smooth"
+                style={{
+                    gap,
+                    scrollbarWidth: "none",
+                }}
             >
-                <RenderSelectedProducts />
-                <RenderSelectedProducts />
-                <RenderSelectedProducts />
-                <RenderSelectedProducts />
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <RenderProduct key={i} />
+                ))}
             </div>
         </div>
     );
