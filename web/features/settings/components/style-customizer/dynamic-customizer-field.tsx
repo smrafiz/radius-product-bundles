@@ -34,7 +34,7 @@ function PresetCard({
     return (
         <div
             className={`
-                cursor-pointer rounded-lg border-2 p-2 flex justify-center items-center transition-all
+                cursor-pointer rounded-lg border-2 flex justify-center items-center transition-all
                 ${
                     isActive
                         ? "border-[#2563eb] bg-[#eff6ff]"
@@ -45,23 +45,30 @@ function PresetCard({
         >
             {/* Color preview swatches */}
             {preset.preview && (
-                <div className="flex">
-                    <div
-                        className="w-6 h-6 rounded-full border border-gray-200"
-                        style={{ backgroundColor: preset.preview.primary }}
-                        title="Primary"
-                    />
-                    <div
-                        className="-ml-2 w-6 h-6 rounded-full border border-gray-200"
-                        style={{ backgroundColor: preset.preview.background }}
-                        title="Background"
-                    />
-                    <div
-                        className="-ml-2 w-6 h-6 rounded-full border border-gray-200"
-                        style={{ backgroundColor: preset.preview.accent }}
-                        title="Accent"
-                    />
-                </div>
+                <s-text interestFor={`${preset.name}-preset-tooltip`}>
+                    <div className="flex p-2">
+                        <div
+                            className="w-6 h-6 rounded-full border border-gray-200"
+                            style={{ backgroundColor: preset.preview.primary }}
+                            title="Primary"
+                        />
+                        <div
+                            className="-ml-2 w-6 h-6 rounded-full border border-gray-200"
+                            style={{
+                                backgroundColor: preset.preview.background,
+                            }}
+                            title="Background"
+                        />
+                        <div
+                            className="-ml-2 w-6 h-6 rounded-full border border-gray-200"
+                            style={{ backgroundColor: preset.preview.accent }}
+                            title="Accent"
+                        />
+                        <s-tooltip id={`${preset.name}-preset-tooltip`}>
+                            <s-text>{preset.name}</s-text>
+                        </s-tooltip>
+                    </div>
+                </s-text>
             )}
         </div>
     );
