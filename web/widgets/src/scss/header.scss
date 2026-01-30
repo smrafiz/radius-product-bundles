@@ -24,9 +24,8 @@
 
     &__title {
         font-size: var(--rb-heading-font);
-        color: var(--rb-heading-color);
+        color: var(--rb-text-color);
         font-weight: 500;
-        text-transform: var(--rb-heading-transform);
         margin: 0;
         line-height: 1.3;
 
@@ -52,7 +51,7 @@
     }
 
     &__badge {
-        background: var(--rb-savings-color);
+        background: var(--rb-primary-color);
         color: var(--rb-savings-text-color);
         border-radius: var(--rb-badge-border-radius);
         font-size: var(--rb-badge-font);
@@ -72,7 +71,7 @@
         }
 
         &--visible {
-            background: var(--rb-savings-color) !important;
+            background: var(--rb-primary-color) !important;
         }
     }
     &__description {

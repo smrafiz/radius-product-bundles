@@ -43,18 +43,15 @@
                         | default: '#666666' %}
 
                 {% assign background_color = block.settings.background_color
-                        | default: g_styles.boxBgColor
+                        | default: g_styles.backgroundColor
                         | default: '#ffffff' %}
-
-				{% assign box_border_color = g_styles.boxBorderColor
-						| default: '#e1e1e1' %}
 
                 {% assign heading_color = block.settings.heading_color
                         | default: g_styles.headingColor
                         | default: '#303030' %}
 
-				{% assign inner_background_color = block.settings.inner_background_color
-						| default: g_styles.productBgColor
+				{% assign product_background_color = block.settings.product_background_color
+						| default: g_styles.productCardBg
 						| default: '#f7f7f7' %}
 
 				{% assign text_color = block.settings.text_color
@@ -63,23 +60,21 @@
 						| default: '#333333' %}
 
 				{% assign border_color = block.settings.border_color
-						| default: g_styles.productBorderColor
+						| default: g_styles.borderColor
 						| default: '#e1e1e1' %}
 
 				{% assign button_color = block.settings.button_color
 						| default: g_styles.buttonBgColor
 						| default: '#333333' %}
+
 				{% assign button_text_color = block.settings.button_text_color
 						| default: g_styles.buttonTextColor
 						| default: '#ffffff' %}
-				{% assign button_hover_bg_color =  g_styles.buttonHoverBgColor
-						| default: '#666666' %}
-				{% assign button_hover_text_color =  g_styles.buttonHoverTextColor
-						| default: '#ffffff' %}
 
 				{% assign savings_color = block.settings.savings_color
-						| default: g_styles.badgeBgColor
+						| default: g_styles.savingsColor
 						| default: '#333333' %}
+
 				{% assign savings_text_color = block.settings.savings_text_color
 						| default: g_styles.badgeTextColor
 						| default: '#ffffff' %}
@@ -128,8 +123,7 @@
 				{% assign savings_badge_size = block.settings.savings_badge_size | default: 'medium' %}
 				{% assign image_fit = block.settings.image_fit | default: 'contain' %}
 
-				{% assign heading_transform = block.settings.heading_transform
-						| default: g_styles.headingTransform %}
+				{% assign heading_transform = block.settings.heading_transform %}
 
 				{% assign box_alignment = block.settings.box_alignment
 						| default: g_styles.boxAlignment
@@ -249,17 +243,14 @@
 						--rb-primary-color: {{ primary_color }};
 						--rb-secondary-color: {{ secondary_color }};
 						--rb-background-color: {{ background_color }};
-						--rb-box-border-color: {{ box_border_color }};
 						--rb-border-color: {{ border_color }};
 						--rb-heading-color: {{ heading_color }};
-						--rb-product-bg-color: {{ inner_background_color }};
+						--rb-product-bg-color: {{ product_background_color }};
 						--rb-text-color: {{ text_color }};
 						--rb-savings-color: {{ savings_color }};
 						--rb-savings-text-color: {{ savings_text_color }};
 						--rb-button-color: {{ button_color }};
 						--rb-button-text-color: {{ button_text_color }};
-						--rb-button-hover-bg-color: {{ button_hover_bg_color }};
-						--rb-button-hover-text-color: {{ button_hover_text_color }};
 
 						/* Radius & spacing */
 						--rb-box-radius: {{ box_radius }}px;
@@ -276,7 +267,6 @@
 							--rb-image-size: {{ image_size }}px;
 						{% endif %}
 						--rb-image-fit: {{ image_fit }};
-						--rb-heading-transform: {{ heading_transform }};
 
 						/* Heading size */
 						{% case heading_size %}
@@ -341,7 +331,7 @@
 						{% else %}
 							--rb-hover-enabled: 0;
 							--rb-hover-transition: 0s;
-						--rb-shadow-hover: var(--rb-shadow);
+						    --rb-shadow-hover: var(--rb-shadow);
 						{% endif %}
 
 					}
@@ -694,8 +684,8 @@
 		},
 		{
 			"type": "color",
-			"id": "inner_background_color",
-			"label": "Inner Background color"
+			"id": "product_background_color",
+			"label": "Product Background color"
 		},
 		{
 			"type": "color",

@@ -105,7 +105,7 @@
             align-items: center;
             gap: var(--rb-spacing);
             padding: var(--rb-spacing);
-            background: var(--rb-skeleton-shine);
+            background: var(--rb-product-bg-color);
             border-radius: var(--rb-border-radius);
             border: 1px solid var(--rb-border-color);
 
@@ -154,7 +154,7 @@
 
     &__skeleton-card {
         padding: var(--rb-spacing);
-        background: var(--rb-skeleton-shine);
+        background: var(--rb-product-bg-color);
         border-radius: var(--rb-border-radius);
         border: 1px solid var(--rb-border-color);
     }

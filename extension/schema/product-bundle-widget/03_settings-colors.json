@@ -20,8 +20,8 @@
     },
     {
         "type": "color",
-        "id": "inner_background_color",
-        "label": "Inner Background color"
+        "id": "product_background_color",
+        "label": "Product Background color"
     },
     {
         "type": "color",

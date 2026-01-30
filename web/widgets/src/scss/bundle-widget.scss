@@ -42,7 +42,7 @@
 
 .radius-bundle {
     background: var(--rb-background-color);
-    border-color: var(--rb-box-border-color);
+    border-color: var(--rb-border-color);
     border-radius: var(--rb-box-radius);
     border-width: var(--rb-box-border-width, 1px);
     border-style: solid;
@@ -58,7 +58,7 @@
 
     &__product-title {
         a {
-            color: var(--rb-heading-color);
+            color: var(--rb-text-color);
             text-decoration: none;
 
             &:hover {
@@ -79,7 +79,7 @@
         .divider-position {
             width: 24px;
             height: 24px;
-            background: var(--rb-button-color);
+            background: var(--rb-primary-color);
             color: var(--rb-button-text-color);
             display: flex;
             align-items: center;
@@ -107,7 +107,7 @@
     .radius-bundle__add-to-cart {
         width: 100%;
         padding: 10px 24px;
-        background: var(--rb-button-color);
+        background: var(--rb-primary-color);
         color: var(--rb-button-text-color);
         border: none;
         border-radius: var(--rb-button-border-radius);
@@ -125,8 +125,6 @@
             opacity: 0.9;
             transform: translateY(-1px);
             box-shadow: var(--rb-shadow);
-            background: var(--rb-button-hover-bg-color);
-            color: var(--rb-button-hover-text-color);
         }
 
         &:active:not(:disabled) {

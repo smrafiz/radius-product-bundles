@@ -324,8 +324,6 @@ export interface DisplaySettings {
         buttonFontSize?: number;
         buttonBgColor?: string;
         buttonTextColor?: string;
-        buttonHoverBgColor?: string;
-        buttonHoverTextColor?: string;
         buttonRadius?: number;
         // Saving badge
         badgeFontSize?: number;

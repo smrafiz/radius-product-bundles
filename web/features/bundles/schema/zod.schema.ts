@@ -68,8 +68,6 @@ const bundleSettingsSchema = z
                 buttonFontSize: z.number().optional(),
                 buttonBgColor: z.string().optional(),
                 buttonTextColor: z.string().optional(),
-                buttonHoverBgColor: z.string().optional(),
-                buttonHoverTextColor: z.string().optional(),
                 buttonRadius: z.number().optional(),
                 badgeFontSize: z.number().optional(),
                 badgeBgColor: z.string().optional(),

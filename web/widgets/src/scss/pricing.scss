@@ -80,18 +80,15 @@
         background: #AFFEBF;
         border-radius: 8px;
         margin-top: var(--rb-spacing-sm);
+        color: var(--rb-savings-color);
         line-height: 1.2;
     }
 
     &__savings-label {
-        font-size: var(--rb-font-size, 16px);
-        color: var(--rb-text-color);
         font-weight: 500;
     }
 
     &__savings-amount {
-        font-size: var(--rb-font-size, 16px);
-        color: var(--rb-text-color);
         font-weight: 600;
     }
 
