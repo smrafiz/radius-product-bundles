@@ -1,0 +1,116 @@
+[
+
+    {
+        "type": "checkbox",
+        "id": "override_button_settings",
+        "label": "Override button settings",
+        "default": false
+    },
+    {
+        "type": "select",
+        "id": "button_style",
+        "label": "Button style",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "filled", "label": "Filled" },
+            { "value": "outline", "label": "Outline" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_button_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "button_size",
+        "label": "Button size",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_button_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "button_width",
+        "label": "Button width",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "auto", "label": "Auto" },
+            { "value": "full", "label": "Full Width" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_button_settings }}"
+    },
+    {
+        "type": "color",
+        "id": "button_bg_color",
+        "label": "Button color",
+        "info": "Leave empty to inherit accent color",
+        "visible_if": "{{ block.settings.override_button_settings }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "override_badge_settings",
+        "label": "Override badge settings",
+        "default": false
+    },
+    {
+        "type": "select",
+        "id": "badge_position",
+        "label": "Badge position",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "top-left", "label": "Top Left" },
+            { "value": "top-right", "label": "Top Right" },
+            { "value": "inline", "label": "Inline" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_badge_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "badge_style",
+        "label": "Badge style",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "filled", "label": "Filled" },
+            { "value": "outline", "label": "Outline" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_badge_settings }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "override_pricing_settings",
+        "label": "Override pricing summary settings",
+        "default": false
+    },
+    {
+        "type": "checkbox",
+        "id": "pricing_summary_box",
+        "label": "Show summary box",
+        "default": true,
+        "visible_if": "{{ block.settings.override_pricing_settings }}"
+    },
+    {
+        "type": "color",
+        "id": "pricing_summary_bg",
+        "label": "Summary background",
+        "visible_if": "{{ block.settings.override_pricing_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "pricing_summary_style",
+        "label": "Summary style",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "minimal", "label": "Minimal" },
+            { "value": "card", "label": "Card" },
+            { "value": "highlight", "label": "Highlight" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_pricing_settings }}"
+    }
+]

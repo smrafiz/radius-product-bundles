@@ -1,0 +1,75 @@
+[
+    {
+        "type": "header",
+        "content": "Advanced"
+    },
+    {
+        "type": "checkbox",
+        "id": "override_container_settings",
+        "label": "Override container settings",
+        "default": false
+    },
+    {
+        "type": "range",
+        "id": "box_max_width",
+        "label": "Widget max width",
+        "min": 300,
+        "max": 1200,
+        "step": 50,
+        "unit": "px",
+        "default": 600,
+        "visible_if": "{{ block.settings.override_container_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "box_alignment",
+        "label": "Widget alignment",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_container_settings }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "show_border",
+        "label": "Widget border",
+        "default": true,
+        "visible_if": "{{ block.settings.override_container_settings }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "override_typography_settings",
+        "label": "Override typography settings",
+        "default": false
+    },
+    {
+        "type": "select",
+        "id": "heading_size",
+        "label": "Heading size",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_typography_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "body_size",
+        "label": "Body text size",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_typography_settings }}"
+    }
+]

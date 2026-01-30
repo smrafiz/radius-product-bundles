@@ -1,0 +1,70 @@
+[
+    {
+        "type": "header",
+        "content": "Product Cards"
+    },
+    {
+        "type": "checkbox",
+        "id": "override_card_settings",
+        "label": "Override card settings",
+        "default": false,
+    },
+    {
+        "type": "select",
+        "id": "image_size",
+        "label": "Image size",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_card_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "image_fit",
+        "label": "Image fit",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "cover", "label": "Cover" },
+            { "value": "contain", "label": "Contain" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_card_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "image_position",
+        "label": "Image position",
+        "info": "Applies to list layout only",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "left", "label": "Left" },
+            { "value": "top", "label": "Top" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_card_settings }}"
+    },
+    {
+        "type": "color",
+        "id": "product_card_bg",
+        "label": "Card background",
+        "visible_if": "{{ block.settings.override_card_settings }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "product_card_border",
+        "label": "Show card border",
+        "default": true,
+        "visible_if": "{{ block.settings.override_card_settings }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "product_card_shadow",
+        "label": "Card shadow",
+        "default": false,
+        "visible_if": "{{ block.settings.override_card_settings }}"
+    }
+]

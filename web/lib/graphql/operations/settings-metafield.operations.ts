@@ -256,6 +256,11 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             "badgePosition",
             "badgeStyle",
 
+            // Pricing summary
+            "pricingSummaryBox",
+            "pricingSummaryBg",
+            "pricingSummaryStyle",
+
             // Advanced – Container
             "boxMaxWidth",
             "boxAlignment",

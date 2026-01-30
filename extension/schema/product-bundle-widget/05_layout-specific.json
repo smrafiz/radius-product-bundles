@@ -1,0 +1,97 @@
+[
+    {
+        "type": "header",
+        "content": "Layout"
+    },
+    {
+        "type": "checkbox",
+        "id": "override_layout_settings",
+        "label": "Override layout settings",
+        "default": false,
+        "info": "Enable to customize layout-specific options"
+    },
+    {
+        "type": "select",
+        "id": "layout",
+        "label": "Display layout",
+        "info": "Override the bundle's default layout",
+        "options": [
+            { "value": "", "label": "Use bundle default" },
+            { "value": "list", "label": "List" },
+            { "value": "grid", "label": "Grid" },
+            { "value": "carousel", "label": "Carousel" },
+            { "value": "compact", "label": "Compact" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.override_layout_settings }}"
+    },
+    {
+        "type": "select",
+        "id": "divider_style",
+        "label": "Divider style",
+        "info": "Applies to list layout",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "none", "label": "None" },
+            { "value": "line", "label": "Line" },
+            { "value": "plus", "label": "Plus" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.layout == 'list' }}"
+    },
+    {
+        "type": "range",
+        "id": "grid_columns",
+        "label": "Grid columns",
+        "info": "Applies to grid layout",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 3,
+        "visible_if": "{{ block.settings.layout == 'grid' }}"
+    },
+    {
+        "type": "range",
+        "id": "slides_per_view",
+        "label": "Slides visible",
+        "info": "Applies to carousel layout",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 3,
+        "visible_if": "{{ block.settings.layout == 'carousel' }}"
+    },
+    {
+        "type": "select",
+        "id": "carousel_navigation",
+        "label": "Carousel navigation",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "none", "label": "None" },
+            { "value": "arrows", "label": "Arrows" },
+            { "value": "dots", "label": "Dots" },
+            { "value": "both", "label": "Both" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.layout == 'carousel' }}"
+    },
+    {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Autoplay",
+        "info": "Applies to carousel layout",
+        "default": false,
+        "visible_if": "{{ block.settings.layout == 'carousel' }}"
+    },
+    {
+        "type": "range",
+        "id": "autoplay_speed",
+        "label": "Autoplay speed",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "unit": "s",
+        "default": 5,
+        "visible_if": "{{ block.settings.autoplay }}"
+    }
+]

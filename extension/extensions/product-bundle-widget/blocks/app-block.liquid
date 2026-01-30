@@ -473,12 +473,428 @@
 	"settings": [
 		{
 			"type": "header",
-			"content": "Layout & Display"
+			"content": "Appearance"
+		},
+		{
+			"type": "paragraph",
+			"content": "Leave empty to use global settings from app"
+		},
+		{
+			"type": "select",
+			"id": "style_preset",
+			"label": "Style preset",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "minimal",
+					"label": "Minimal"
+				},
+				{
+					"value": "soft",
+					"label": "Soft"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				},
+				{
+					"value": "elegant",
+					"label": "Elegant"
+				},
+				{
+					"value": "dark",
+					"label": "Dark"
+				},
+				{
+					"value": "nature",
+					"label": "Nature"
+				},
+				{
+					"value": "custom",
+					"label": "Custom (use settings below)"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "color",
+			"id": "primary_color",
+			"label": "Accent color",
+			"info": "Buttons, badges, and interactive elements"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Text color"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background color"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border color"
+		},
+		{
+			"type": "color",
+			"id": "savings_color",
+			"label": "Savings color",
+			"info": "Discount highlights"
+		},
+		{
+			"type": "select",
+			"id": "corner_style",
+			"label": "Corner style",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "sharp",
+					"label": "Sharp"
+				},
+				{
+					"value": "modern",
+					"label": "Modern"
+				},
+				{
+					"value": "rounded",
+					"label": "Rounded"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "shadow",
+			"label": "Shadow depth",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "soft",
+					"label": "Soft"
+				},
+				{
+					"value": "strong",
+					"label": "Strong"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "spacing",
+			"label": "Layout spacing",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "compact",
+					"label": "Compact"
+				},
+				{
+					"value": "comfortable",
+					"label": "Comfortable"
+				},
+				{
+					"value": "spacious",
+					"label": "Spacious"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "checkbox",
+			"id": "override_button_settings",
+			"label": "Override button settings",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "button_style",
+			"label": "Button style",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "filled",
+					"label": "Filled"
+				},
+				{
+					"value": "outline",
+					"label": "Outline"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "button_size",
+			"label": "Button size",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "button_width",
+			"label": "Button width",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "auto",
+					"label": "Auto"
+				},
+				{
+					"value": "full",
+					"label": "Full Width"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "color",
+			"id": "button_bg_color",
+			"label": "Button color",
+			"info": "Leave empty to inherit accent color"
+		},
+		{
+			"type": "checkbox",
+			"id": "override_badge_settings",
+			"label": "Override badge settings",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "badge_position",
+			"label": "Badge position",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "top-left",
+					"label": "Top Left"
+				},
+				{
+					"value": "top-right",
+					"label": "Top Right"
+				},
+				{
+					"value": "inline",
+					"label": "Inline"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "badge_style",
+			"label": "Badge style",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "filled",
+					"label": "Filled"
+				},
+				{
+					"value": "outline",
+					"label": "Outline"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "checkbox",
+			"id": "override_pricing_settings",
+			"label": "Override pricing summary settings",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "pricing_summary_box",
+			"label": "Show summary box",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "pricing_summary_bg",
+			"label": "Summary background"
+		},
+		{
+			"type": "select",
+			"id": "pricing_summary_style",
+			"label": "Summary style",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "minimal",
+					"label": "Minimal"
+				},
+				{
+					"value": "card",
+					"label": "Card"
+				},
+				{
+					"value": "highlight",
+					"label": "Highlight"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "header",
+			"content": "Advanced"
+		},
+		{
+			"type": "checkbox",
+			"id": "override_container_settings",
+			"label": "Override container settings",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "box_alignment",
+			"label": "Widget alignment",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "checkbox",
+			"id": "show_border",
+			"label": "Widget border",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "override_typography_settings",
+			"label": "Override typography settings",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "heading_size",
+			"label": "Heading size",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "body_size",
+			"label": "Body text size",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": ""
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "checkbox",
+			"id": "override_layout_settings",
+			"label": "Override layout settings",
+			"default": false,
+			"info": "Enable to customize layout-specific options"
 		},
 		{
 			"type": "select",
 			"id": "layout",
-			"label": "Display Layout",
+			"label": "Display layout",
+			"info": "Override the bundle's default layout",
 			"options": [
 				{
 					"value": "",
@@ -504,404 +920,65 @@
 			"default": ""
 		},
 		{
-			"type": "range",
-			"id": "grid_columns",
-			"label": "Grid columns (desktop)",
-			"min": 1,
-			"max": 4,
-			"step": 1,
-			"default": 2,
-			"info": "Number of products visible per row in grid layout and per slide in slider layout."
-		},
-		{
-			"type": "range",
-			"id": "grid_columns_tablet",
-			"label": "Grid columns (tablet)",
-			"min": 1,
-			"max": 4,
-			"step": 1,
-			"default": 2,
-			"info": "Number of products visible per row in grid layout and per slide in slider layout."
-		},
-		{
-			"type": "range",
-			"id": "grid_columns_mobile",
-			"label": "Grid columns (mobile)",
-			"min": 1,
-			"max": 4,
-			"step": 1,
-			"default": 1,
-			"info": "Number of products visible per row in grid layout and per slide in slider layout."
-		},
-		{
 			"type": "select",
-			"id": "box_alignment",
-			"label": "Box alignment",
-			"options": [
-				{
-					"value": "left",
-					"label": "Left"
-				},
-				{
-					"value": "center",
-					"label": "Center"
-				},
-				{
-					"value": "right",
-					"label": "Right"
-				}
-			],
-			"default": "center"
-		},
-		{
-			"type": "range",
-			"id": "bundle_max_width",
-			"label": "Maximum width",
-			"visible_if": "{{ block.settings.layout == 'compact' }}",
-			"min": 400,
-			"max": 1200,
-			"step": 10,
-			"unit": "px",
-			"default": 800,
-			"info": "Maximum width of bundle container"
-		},
-		{
-			"type": "header",
-			"content": "Typography & Text"
-		},
-		{
-			"type": "select",
-			"id": "heading_size",
-			"label": "Heading size",
-			"options": [
-				{
-					"value": "small",
-					"label": "Small"
-				},
-				{
-					"value": "medium",
-					"label": "Medium"
-				},
-				{
-					"value": "large",
-					"label": "Large"
-				}
-			],
-			"default": "medium"
-		},
-		{
-			"type": "select",
-			"id": "text_size",
-			"label": "Text size",
-			"options": [
-				{
-					"value": "small",
-					"label": "Small"
-				},
-				{
-					"value": "medium",
-					"label": "Medium"
-				},
-				{
-					"value": "large",
-					"label": "Large"
-				}
-			],
-			"default": "medium"
-		},
-		{
-			"type": "select",
-			"id": "heading_transform",
-			"label": "Heading text transform",
+			"id": "divider_style",
+			"label": "Divider style",
+			"info": "Applies to list layout",
 			"options": [
 				{
 					"value": "",
-					"label": "Default transform"
+					"label": "Use global default"
 				},
-				{
-					"value": "uppercase",
-					"label": "Uppercase"
-				},
-				{
-					"value": "capitalize",
-					"label": "Capitalize"
-				}
-			],
-			"default": ""
-		},
-		{
-			"type": "text",
-			"id": "bundle_heading",
-			"label": "Bundle heading text",
-			"info": "Custom heading for bundle section"
-		},
-		{
-			"type": "text",
-			"id": "regular_price_label",
-			"label": "Regular price label",
-			"default": "Regular Price:",
-			"info": "Label for regular total price"
-		},
-		{
-			"type": "text",
-			"id": "bundle_price_label",
-			"label": "Bundle price label",
-			"default": "Bundle Price:",
-			"info": "Label for discounted bundle price"
-		},
-		{
-			"type": "text",
-			"id": "you_save_label",
-			"label": "Savings label",
-			"default": "You Save:",
-			"info": "Label for savings amount"
-		},
-		{
-			"type": "text",
-			"id": "free_shipping_label",
-			"label": "Free shipping label",
-			"default": "Free Shipping",
-			"info": "Text for free shipping badge"
-		},
-		{
-			"type": "header",
-			"content": "Colors"
-		},
-		{
-			"type": "color",
-			"id": "primary_color",
-			"label": "Primary/accent color"
-		},
-		{
-			"type": "color",
-			"id": "secondary_color",
-			"label": "Secondary color"
-		},
-		{
-			"type": "color",
-			"id": "background_color",
-			"label": "Background color"
-		},
-		{
-			"type": "color",
-			"id": "product_background_color",
-			"label": "Product Background color"
-		},
-		{
-			"type": "color",
-			"id": "heading_color",
-			"label": "Heading color"
-		},
-		{
-			"type": "color",
-			"id": "text_color",
-			"label": "Text color"
-		},
-		{
-			"type": "color",
-			"id": "border_color",
-			"label": "Border color"
-		},
-		{
-			"type": "header",
-			"content": "Spacing & Sizing"
-		},
-		{
-			"type": "range",
-			"id": "box_spacing",
-			"label": "Box spacing",
-			"min": 8,
-			"max": 32,
-			"step": 1,
-			"unit": "px",
-			"default": 16
-		},
-		{
-			"type": "range",
-			"id": "border_radius",
-			"label": "Corner radius",
-			"min": 0,
-			"max": 30,
-			"step": 1,
-			"unit": "px",
-			"default": 12
-		},
-		{
-			"type": "range",
-			"id": "image_size",
-			"label": "Image size",
-			"min": 50,
-			"max": 300,
-			"step": 5,
-			"unit": "px",
-			"default": 70,
-			"info": "Controls the base image size (70px by default). Grid uses this value, Slider displays slightly larger images, and Compact shows smaller images."
-		},
-		{
-			"type": "range",
-			"id": "image_border_radius",
-			"label": "Image radius",
-			"min": 0,
-			"max": 50,
-			"step": 1,
-			"unit": "px",
-			"default": 8
-		},
-		{
-			"type": "select",
-			"id": "image_fit",
-			"label": "Image fit",
-			"options": [
-				{
-					"value": "cover",
-					"label": "Cover"
-				},
-				{
-					"value": "contain",
-					"label": "Contain"
-				},
-				{
-					"value": "fill",
-					"label": "Fill"
-				}
-			],
-			"default": "contain",
-			"info": "How images are fitted within their container"
-		},
-		{
-			"type": "header",
-			"content": "Button & Badge Styling"
-		},
-		{
-			"type": "text",
-			"id": "button_text",
-			"label": "Button text (leave blank for default)"
-		},
-		{
-			"type": "select",
-			"id": "button_size",
-			"label": "Button size",
-			"options": [
-				{
-					"value": "small",
-					"label": "Small"
-				},
-				{
-					"value": "medium",
-					"label": "Medium"
-				},
-				{
-					"value": "large",
-					"label": "Large"
-				}
-			],
-			"default": "medium"
-		},
-		{
-			"type": "range",
-			"id": "button_border_radius",
-			"label": "Button corner radius",
-			"min": 0,
-			"max": 30,
-			"step": 2,
-			"unit": "px",
-			"default": 8
-		},
-		{
-			"type": "color",
-			"id": "button_color",
-			"label": "Button background color"
-		},
-		{
-			"type": "color",
-			"id": "button_text_color",
-			"label": "Button text color"
-		},
-		{
-			"type": "select",
-			"id": "savings_badge_size",
-			"label": "Savings Badge size",
-			"options": [
-				{
-					"value": "small",
-					"label": "Small"
-				},
-				{
-					"value": "medium",
-					"label": "Medium"
-				},
-				{
-					"value": "large",
-					"label": "Large"
-				}
-			],
-			"default": "medium"
-		},
-		{
-			"type": "color",
-			"id": "savings_color",
-			"label": "Savings badge background"
-		},
-		{
-			"type": "color",
-			"id": "savings_text_color",
-			"label": "Savings badge text"
-		},
-		{
-			"type": "header",
-			"content": "Effects & Animation"
-		},
-		{
-			"type": "select",
-			"id": "shadow_style",
-			"label": "Shadow style",
-			"info": "Shadow only applies to grid and list layout",
-			"options": [
 				{
 					"value": "none",
 					"label": "None"
 				},
 				{
-					"value": "style1",
-					"label": "Style 1"
+					"value": "line",
+					"label": "Line"
 				},
 				{
-					"value": "style2",
-					"label": "Style 2"
-				},
-				{
-					"value": "style3",
-					"label": "Style 3"
+					"value": "plus",
+					"label": "Plus"
 				}
 			],
-			"default": "style1"
+			"default": ""
+		},
+		{
+			"type": "select",
+			"id": "carousel_navigation",
+			"label": "Carousel navigation",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "arrows",
+					"label": "Arrows"
+				},
+				{
+					"value": "dots",
+					"label": "Dots"
+				},
+				{
+					"value": "both",
+					"label": "Both"
+				}
+			],
+			"default": ""
 		},
 		{
 			"type": "checkbox",
-			"id": "hover_effect",
-			"label": "Enable hover effect",
-			"default": true,
-			"info": "Adds subtle animation on hover"
-		},
-		{
-			"type": "checkbox",
-			"id": "display_slider_navigation",
-			"label": "Show navigation arrows",
-			"default": true,
-			"info": "Displays previous and next arrows to help customers navigate the slider."
-		},
-		{
-			"type": "checkbox",
-			"id": "display_slider_dots",
-			"label": "Show pagination dots",
-			"default": true,
-			"info": "Displays dots below the slider to indicate the number of slides and the current position."
-		},
-		{
-			"type": "textarea",
-			"id": "custom_css_class",
-			"label": "Custom CSS class",
-			"info": "Add custom class for additional styling"
+			"id": "autoplay",
+			"label": "Autoplay",
+			"info": "Applies to carousel layout",
+			"default": false,
+			"visible_if": "{{ block.settings.autoplay }}"
 		}
 	]
 }

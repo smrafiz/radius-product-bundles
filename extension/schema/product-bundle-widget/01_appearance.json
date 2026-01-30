@@ -1,0 +1,97 @@
+[
+    {
+        "type": "header",
+        "content": "Appearance"
+    },
+    {
+        "type": "paragraph",
+        "content": "Leave empty to use global settings from app"
+    },
+    {
+        "type": "select",
+        "id": "style_preset",
+        "label": "Style preset",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "minimal", "label": "Minimal" },
+            { "value": "soft", "label": "Soft" },
+            { "value": "bold", "label": "Bold" },
+            { "value": "elegant", "label": "Elegant" },
+            { "value": "dark", "label": "Dark" },
+            { "value": "nature", "label": "Nature" },
+            { "value": "custom", "label": "Custom (use settings below)" }
+        ],
+        "default": ""
+    },
+    {
+        "type": "color",
+        "id": "primary_color",
+        "label": "Accent color",
+        "info": "Buttons, badges, and interactive elements",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "color",
+        "id": "border_color",
+        "label": "Border color",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "color",
+        "id": "savings_color",
+        "label": "Savings color",
+        "info": "Discount highlights",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "select",
+        "id": "corner_style",
+        "label": "Corner style",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "sharp", "label": "Sharp" },
+            { "value": "modern", "label": "Modern" },
+            { "value": "rounded", "label": "Rounded" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "select",
+        "id": "shadow",
+        "label": "Shadow depth",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "none", "label": "None" },
+            { "value": "soft", "label": "Soft" },
+            { "value": "strong", "label": "Strong" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    },
+    {
+        "type": "select",
+        "id": "spacing",
+        "label": "Layout spacing",
+        "options": [
+            { "value": "", "label": "Use global default" },
+            { "value": "compact", "label": "Compact" },
+            { "value": "comfortable", "label": "Comfortable" },
+            { "value": "spacious", "label": "Spacious" }
+        ],
+        "default": "",
+        "visible_if": "{{ block.settings.style_preset == 'custom' }}"
+    }
+]
