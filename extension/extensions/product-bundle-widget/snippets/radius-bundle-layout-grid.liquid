@@ -1,13 +1,16 @@
 {% comment %}
   Radius Bundle - Grid Template
 
-  Displays bundle products in a responsive grid layout.
+  Parameters:
+  - bundle_id, name, savings_badge_text, product_count
+  - show_images, show_savings, show_savings_badge
+  - show_product_prices, show_compare_at_price, show_quantity
+  - show_free_shipping, enable_hyperlink
+  - button_text, regular_price_label, bundle_price_label
+  - you_save_label, free_shipping_label, quantity_label
+  - grid_columns: Number (2-4)
+  - pricing_summary_box: Boolean
 {% endcomment %}
-
-{% assign grid_columns = block.settings.grid_columns | default: 2 %}
-{% assign grid_columns_tablet = block.settings.grid_columns_tablet | default: 2 %}
-{% assign grid_columns_mobile = block.settings.grid_columns_mobile | default: 1 %}
-
 
 <div class="radius-bundle__inner">
     {% comment %} Header {% endcomment %}
@@ -20,22 +23,20 @@
     <div
             class="radius-bundle__products radius-bundle__products--grid"
             data-bundle-products
-            style="
-                    --grid-columns: {{ grid_columns }};
-                    --grid-cols-tablet: {{ grid_columns_tablet }};
-                    --grid-cols-mobile: {{ grid_columns_mobile }};
-                    "
+            style="--grid-columns: {{ grid_columns | default: 3 }};"
     >
-            {% for i in (1..product_count) %}
-                <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
-                    {% if show_images %}
-                        <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
-                    {% endif %}
-                    <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-                    <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+        {% for i in (1..product_count) %}
+            <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
+                {% if show_images %}
+                    <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
+                {% endif %}
+                <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+                <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+                {% if show_quantity %}
                     <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
-                </div>
-            {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
 
     {% comment %} Pricing Section {% endcomment %}
@@ -45,7 +46,8 @@
             regular_price_label: regular_price_label,
             bundle_price_label: bundle_price_label,
             you_save_label: you_save_label,
-            free_shipping_label: free_shipping_label
+            free_shipping_label: free_shipping_label,
+            pricing_summary_box: pricing_summary_box
     %}
 
     {% comment %} Add to Cart Button {% endcomment %}

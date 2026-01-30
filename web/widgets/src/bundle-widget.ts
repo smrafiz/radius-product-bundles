@@ -2,6 +2,13 @@ import "./scss/index.scss";
 
 /**
  * Radius Bundle Widget - Product Page
+ *
+ * Features:
+ * - Multiple layouts: list, grid, carousel, compact
+ * - Configurable styling via CSS variables
+ * - Slider with navigation, dots, autoplay
+ * - Dynamic pricing calculation
+ * - Add to cart with discount tracking
  */
 
 declare global {
@@ -64,14 +71,14 @@ declare global {
         };
     }
 
-    /*
+    /**
      * Bundle Interface
      */
     interface Bundle extends BundleStructure {
         products: BundleProduct[];
     }
 
-    /*
+    /**
      * Bundle Response Interface
      */
     interface BundleResponse {
@@ -80,7 +87,7 @@ declare global {
         count: number;
     }
 
-    /*
+    /**
      * Product Details Response Interface
      */
     interface ProductDetailsResponse {
@@ -97,7 +104,7 @@ declare global {
         }>;
     }
 
-    /*
+    /**
      * Cart Add Item Interface
      */
     interface CartAddItem {
@@ -106,7 +113,7 @@ declare global {
         properties?: Record<string, string>;
     }
 
-    /*
+    /**
      * Discount Config Interface
      */
     interface DiscountConfig {
@@ -123,6 +130,20 @@ declare global {
     }
 
     /**
+     * Slider State Interface
+     */
+    interface SliderState {
+        currentIndex: number;
+        totalSlides: number;
+        slidesPerView: number;
+        maxIndex: number;
+        autoplayInterval: number | null;
+        isDragging: boolean;
+        startX: number;
+        scrollStart: number;
+    }
+
+    /**
      * Radius Bundle Widget Class
      */
     class RadiusBundleWidget {
@@ -132,15 +153,37 @@ declare global {
         private readonly shop: string;
         private readonly bundleStructure: BundleStructure | null = null;
         private bundle: Bundle | null = null;
+
+        // Display options
         private readonly showImages: boolean = true;
+        private readonly showSavings: boolean = true;
         private readonly showSavingsBadge: boolean = true;
         private readonly showPrices: boolean = true;
         private readonly showComparePrices: boolean = true;
         private readonly showQuantity: boolean = true;
+        private readonly showFreeShipping: boolean = true;
         private readonly enableHyperLink: boolean = false;
 
-        /*
-         * Constructor
+        // Layout options
+        private readonly dividerStyle: string = "plus";
+        private readonly carouselNavigation: string = "both";
+        private readonly autoplay: boolean = false;
+        private readonly autoplaySpeed: number = 5;
+
+        // Slider state
+        private sliderState: SliderState = {
+            currentIndex: 0,
+            totalSlides: 0,
+            slidesPerView: 3,
+            maxIndex: 0,
+            autoplayInterval: null,
+            isDragging: false,
+            startX: 0,
+            scrollStart: 0,
+        };
+
+        /**
+         * Constructor - Initialize widget with container element
          */
         constructor(container: HTMLElement) {
             this.container = container;
@@ -153,15 +196,21 @@ declare global {
                 container.closest("[data-shop]")?.getAttribute("data-shop") ||
                 "";
 
+            // Parse display options from data attributes
             this.showImages = container.dataset.showImages !== "false";
-            this.showSavingsBadge =
-                container.dataset.showSavingsBadge !== "false";
+            this.showSavings = container.dataset.showSavings !== "false";
+            this.showSavingsBadge = container.dataset.showSavingsBadge !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
-            this.showComparePrices =
-                container.dataset.showComparePrices !== "false";
+            this.showComparePrices = container.dataset.showComparePrices !== "false";
             this.showQuantity = container.dataset.showQuantity !== "false";
-            this.enableHyperLink =
-                container.dataset.enableHyperlink !== "false";
+            this.showFreeShipping = container.dataset.showFreeShipping !== "false";
+            this.enableHyperLink = container.dataset.enableHyperlink === "true";
+
+            // Parse layout options from data attributes
+            this.dividerStyle = container.dataset.dividerStyle || "plus";
+            this.carouselNavigation = container.dataset.carouselNavigation || "both";
+            this.autoplay = container.dataset.autoplay === "true";
+            this.autoplaySpeed = parseInt(container.dataset.autoplaySpeed || "5", 10);
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -179,7 +228,7 @@ declare global {
             void this.init();
         }
 
-        /*
+        /**
          * Initialize widget
          */
         private async init(): Promise<void> {
@@ -188,7 +237,7 @@ declare global {
                 return;
             }
 
-            // Show the badge immediately
+            // Show the badge immediately from structure
             if (this.bundleStructure) {
                 this.updateBadgeFromStructure(this.bundleStructure);
             }
@@ -198,7 +247,369 @@ declare global {
 
             // Fetch product details only
             await this.loadProductDetails();
+
+            // Bind events after products are loaded
             this.bindEvents();
+
+            // Initialize slider if carousel layout
+            if (this.getLayout() === "slider") {
+                this.initSlider();
+            }
+        }
+
+        /**
+         * Initialize slider functionality
+         */
+        private initSlider(): void {
+            const track = this.container.querySelector(
+                "[data-slider-track]",
+            ) as HTMLElement;
+
+            if (!track) {
+                return;
+            }
+
+            // Get slides per view from CSS variable or default
+            const computedStyle = getComputedStyle(this.container);
+            const slidesPerView = parseInt(
+                computedStyle.getPropertyValue("--rb-slides-per-view") || "3",
+                10,
+            );
+
+            // Count actual product slides
+            const slides = track.querySelectorAll(".radius-bundle__product--slider");
+            const totalSlides = slides.length;
+
+            // Update slider state
+            this.sliderState = {
+                ...this.sliderState,
+                totalSlides,
+                slidesPerView,
+                maxIndex: Math.max(0, totalSlides - slidesPerView),
+                currentIndex: 0,
+            };
+
+            // Build pagination dots
+            this.buildSliderDots();
+
+            // Update navigation buttons state
+            this.updateSliderNavigation();
+
+            // Add scroll listener for syncing dots
+            track.addEventListener("scroll", () => this.handleSliderScroll());
+
+            // Add touch/mouse drag support
+            this.initSliderDrag(track);
+
+            // Initialize autoplay if enabled
+            if (this.autoplay) {
+                this.startAutoplay();
+            }
+
+            // Handle resize
+            window.addEventListener("resize", () => this.handleSliderResize());
+        }
+
+        /**
+         * Build slider pagination dots
+         */
+        private buildSliderDots(): void {
+            const dotsContainer = this.container.querySelector("[data-slider-dots]");
+
+            if (!dotsContainer) {
+                return;
+            }
+
+            const { maxIndex } = this.sliderState;
+
+            // Clear existing dots
+            dotsContainer.innerHTML = "";
+
+            // Create dots for each possible position
+            for (let i = 0; i <= maxIndex; i++) {
+                const dot = document.createElement("button");
+                dot.className = `radius-bundle__slider-dot${i === 0 ? " active" : ""}`;
+                dot.setAttribute("data-index", i.toString());
+                dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+
+                dot.addEventListener("click", () => this.goToSlide(i));
+
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        /**
+         * Update slider navigation buttons state
+         */
+        private updateSliderNavigation(): void {
+            const prevBtn = this.container.querySelector(
+                "[data-slider-prev]",
+            ) as HTMLButtonElement;
+            const nextBtn = this.container.querySelector(
+                "[data-slider-next]",
+            ) as HTMLButtonElement;
+
+            const { currentIndex, maxIndex } = this.sliderState;
+
+            if (prevBtn) {
+                prevBtn.disabled = currentIndex <= 0;
+            }
+
+            if (nextBtn) {
+                nextBtn.disabled = currentIndex >= maxIndex;
+            }
+        }
+
+        /**
+         * Update active dot
+         */
+        private updateSliderDots(): void {
+            const dotsContainer = this.container.querySelector("[data-slider-dots]");
+
+            if (!dotsContainer) {
+                return;
+            }
+
+            const dots = dotsContainer.querySelectorAll(".radius-bundle__slider-dot");
+            const { currentIndex } = this.sliderState;
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle("active", i === currentIndex);
+            });
+        }
+
+        /**
+         * Handle slider scroll event
+         */
+        private handleSliderScroll(): void {
+            const track = this.container.querySelector(
+                "[data-slider-track]",
+            ) as HTMLElement;
+
+            if (!track) {
+                return;
+            }
+
+            const slideWidth = this.getSlideWidth();
+
+            if (slideWidth <= 0) {
+                return;
+            }
+
+            const newIndex = Math.round(track.scrollLeft / slideWidth);
+
+            if (newIndex !== this.sliderState.currentIndex) {
+                this.sliderState.currentIndex = Math.min(
+                    newIndex,
+                    this.sliderState.maxIndex,
+                );
+                this.updateSliderDots();
+                this.updateSliderNavigation();
+            }
+        }
+
+        /**
+         * Handle slider resize
+         */
+        private handleSliderResize(): void {
+            // Recalculate slides per view based on viewport
+            const computedStyle = getComputedStyle(this.container);
+            const slidesPerView = parseInt(
+                computedStyle.getPropertyValue("--rb-slides-per-view") || "3",
+                10,
+            );
+
+            this.sliderState.slidesPerView = slidesPerView;
+            this.sliderState.maxIndex = Math.max(
+                0,
+                this.sliderState.totalSlides - slidesPerView,
+            );
+
+            // Clamp current index
+            if (this.sliderState.currentIndex > this.sliderState.maxIndex) {
+                this.goToSlide(this.sliderState.maxIndex);
+            }
+
+            // Rebuild dots
+            this.buildSliderDots();
+            this.updateSliderNavigation();
+        }
+
+        /**
+         * Get width of a single slide including gap
+         */
+        private getSlideWidth(): number {
+            const track = this.container.querySelector(
+                "[data-slider-track]",
+            ) as HTMLElement;
+
+            if (!track) {
+                return 0;
+            }
+
+            const firstSlide = track.querySelector(
+                ".radius-bundle__product--slider",
+            ) as HTMLElement;
+
+            if (!firstSlide) {
+                return 0;
+            }
+
+            const gap = parseInt(getComputedStyle(track).gap || "0", 10);
+
+            return firstSlide.offsetWidth + gap;
+        }
+
+        /**
+         * Go to specific slide
+         */
+        private goToSlide(index: number): void {
+            const track = this.container.querySelector(
+                "[data-slider-track]",
+            ) as HTMLElement;
+
+            if (!track) {
+                return;
+            }
+
+            const clampedIndex = Math.max(
+                0,
+                Math.min(index, this.sliderState.maxIndex),
+            );
+
+            this.sliderState.currentIndex = clampedIndex;
+
+            const scrollPosition = clampedIndex * this.getSlideWidth();
+
+            track.scrollTo({
+                left: scrollPosition,
+                behavior: "smooth",
+            });
+
+            this.updateSliderDots();
+            this.updateSliderNavigation();
+        }
+
+        /**
+         * Slide to previous
+         */
+        private slidePrev(): void {
+            this.goToSlide(this.sliderState.currentIndex - 1);
+        }
+
+        /**
+         * Slide to next
+         */
+        private slideNext(): void {
+            this.goToSlide(this.sliderState.currentIndex + 1);
+        }
+
+        /**
+         * Initialize drag functionality for slider
+         */
+        private initSliderDrag(track: HTMLElement): void {
+            // Mouse drag
+            track.addEventListener("mousedown", (e) => {
+                this.sliderState.isDragging = true;
+                this.sliderState.startX = e.pageX;
+                this.sliderState.scrollStart = track.scrollLeft;
+                track.classList.add("is-dragging");
+                this.stopAutoplay();
+            });
+
+            track.addEventListener("mousemove", (e) => {
+                if (!this.sliderState.isDragging) {
+                    return;
+                }
+                e.preventDefault();
+                const walk = (e.pageX - this.sliderState.startX) * 1.2;
+                track.scrollLeft = this.sliderState.scrollStart - walk;
+            });
+
+            track.addEventListener("mouseup", () => {
+                this.sliderState.isDragging = false;
+                track.classList.remove("is-dragging");
+                this.snapToNearestSlide();
+                if (this.autoplay) {
+                    this.startAutoplay();
+                }
+            });
+
+            track.addEventListener("mouseleave", () => {
+                if (this.sliderState.isDragging) {
+                    this.sliderState.isDragging = false;
+                    track.classList.remove("is-dragging");
+                    this.snapToNearestSlide();
+                }
+            });
+
+            // Touch drag
+            track.addEventListener("touchstart", (e) => {
+                this.sliderState.startX = e.touches[0].pageX;
+                this.sliderState.scrollStart = track.scrollLeft;
+                this.stopAutoplay();
+            });
+
+            track.addEventListener("touchmove", (e) => {
+                const walk = (e.touches[0].pageX - this.sliderState.startX) * 1.2;
+                track.scrollLeft = this.sliderState.scrollStart - walk;
+            });
+
+            track.addEventListener("touchend", () => {
+                this.snapToNearestSlide();
+                if (this.autoplay) {
+                    this.startAutoplay();
+                }
+            });
+        }
+
+        /**
+         * Snap to nearest slide after drag
+         */
+        private snapToNearestSlide(): void {
+            const track = this.container.querySelector(
+                "[data-slider-track]",
+            ) as HTMLElement;
+
+            if (!track) {
+                return;
+            }
+
+            const slideWidth = this.getSlideWidth();
+
+            if (slideWidth <= 0) {
+                return;
+            }
+
+            const nearestIndex = Math.round(track.scrollLeft / slideWidth);
+            this.goToSlide(nearestIndex);
+        }
+
+        /**
+         * Start autoplay
+         */
+        private startAutoplay(): void {
+            this.stopAutoplay();
+
+            this.sliderState.autoplayInterval = window.setInterval(() => {
+                const { currentIndex, maxIndex } = this.sliderState;
+
+                if (currentIndex >= maxIndex) {
+                    this.goToSlide(0);
+                } else {
+                    this.slideNext();
+                }
+            }, this.autoplaySpeed * 1000);
+        }
+
+        /**
+         * Stop autoplay
+         */
+        private stopAutoplay(): void {
+            if (this.sliderState.autoplayInterval) {
+                clearInterval(this.sliderState.autoplayInterval);
+                this.sliderState.autoplayInterval = null;
+            }
         }
 
         /**
@@ -424,7 +835,7 @@ declare global {
         }
 
         /**
-         * Renders products (replacing skeleton).
+         * Renders products (replacing skeleton)
          */
         private renderProducts(bundle: Bundle): void {
             const productsContainer = this.container.querySelector(
@@ -446,16 +857,25 @@ declare global {
                 const isLast = index === sortedProducts.length - 1;
                 html += this.renderProductCard(product, layout);
 
-                if (["list"].includes(layout) && !isLast) {
-                    html +=
-                        '<div class="radius-bundle__divider-plus"><div class="divider-position">+</div></div>';
+                // Add divider for list layout based on divider style
+                if (layout === "list" && !isLast) {
+                    if (this.dividerStyle === "plus") {
+                        html += '<div class="radius-bundle__divider radius-bundle__divider--plus"><div class="divider-position">+</div></div>';
+                    } else if (this.dividerStyle === "line") {
+                        html += '<div class="radius-bundle__divider radius-bundle__divider--line"></div>';
+                    }
+                    // 'none' - no divider added
                 }
             });
 
             productsContainer.innerHTML = html;
 
+            // Re-initialize slider after rendering products
             if (layout === "slider") {
-                this.initSliderDots(sortedProducts.length);
+                // Use setTimeout to ensure DOM is updated
+                setTimeout(() => {
+                    this.initSlider();
+                }, 0);
             }
         }
 
@@ -470,8 +890,8 @@ declare global {
                 this.showImages && product.featuredImage
                     ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" loading="lazy" />`
                     : this.showImages
-                      ? `<div class="radius-bundle__product-placeholder">📦</div>`
-                      : "";
+                        ? `<div class="radius-bundle__product-placeholder">📦</div>`
+                        : "";
 
             // Calculate discounted price based on bundle discount
             const structure = this.bundleStructure;
@@ -521,9 +941,9 @@ declare global {
                     ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
                ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
                     : discountedPrice < product.price
-                      ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
+                        ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
                    ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
-                      : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
+                        : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
 
             const imageWrapper = this.showImages
                 ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
@@ -548,14 +968,14 @@ declare global {
                             ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                         </div>
                         ${
-                            this.showPrices
-                                ? `
+                    this.showPrices
+                        ? `
                             <div class="radius-bundle__product-price">
                                 ${priceHtml}
                             </div>
                         `
-                                : ""
-                        }
+                        : ""
+                }
                     </div>
                 `;
             }
@@ -569,10 +989,10 @@ declare global {
                         ${imageWrapper}
                         ${productTitleHtml}
                         ${
-                            this.showPrices
-                                ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-                                : ""
-                        }
+                    this.showPrices
+                        ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                        : ""
+                }
                         ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                     </div>
                 `;
@@ -609,16 +1029,16 @@ declare global {
                 ${imageWrapper}
                 ${productTitleHtml}
                 ${
-                    this.showPrices
-                        ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-                        : ""
-                }
+                this.showPrices
+                    ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                    : ""
+            }
                 ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
             </div>`;
         }
 
         /**
-         * Updates pricing display.
+         * Updates pricing display
          */
         private updatePricing(bundle: Bundle): void {
             const originalTotal = bundle.products.reduce(
@@ -653,35 +1073,55 @@ declare global {
             bundleTotal = Math.max(0, bundleTotal);
             discountAmount = Math.max(0, discountAmount);
 
+            // Update regular price
             const regularPriceEl = this.container.querySelector(
                 "[data-regular-price]",
             );
+            if (regularPriceEl) {
+                regularPriceEl.textContent = this.formatMoney(originalTotal);
+            }
+
+            // Update bundle price
             const bundlePriceEl = this.container.querySelector(
                 "[data-bundle-price]",
             );
+            if (bundlePriceEl) {
+                bundlePriceEl.textContent = this.formatMoney(bundleTotal);
+            }
+
+            // Update savings
             const savingsEl = this.container.querySelector("[data-savings]");
             const savingsAmountEl = this.container.querySelector(
                 "[data-savings-amount]",
             );
 
-            if (regularPriceEl) {
-                regularPriceEl.textContent = this.formatMoney(originalTotal);
+            if (savingsEl && savingsAmountEl) {
+                if (discountAmount > 0 && this.showSavings) {
+                    savingsAmountEl.textContent = this.formatMoney(discountAmount);
+                    (savingsEl as HTMLElement).style.display = "flex";
+                } else {
+                    (savingsEl as HTMLElement).style.display = "none";
+                }
             }
 
-            if (bundlePriceEl) {
-                bundlePriceEl.textContent = this.formatMoney(bundleTotal);
-            }
-
-            if (savingsEl && savingsAmountEl && discountAmount > 0) {
-                savingsAmountEl.textContent = this.formatMoney(discountAmount);
-                (savingsEl as HTMLElement).style.display = "flex";
+            // Update free shipping badge
+            const freeShippingEl = this.container.querySelector(
+                "[data-free-shipping]",
+            );
+            if (freeShippingEl) {
+                if (structure.freeShipping && this.showFreeShipping) {
+                    (freeShippingEl as HTMLElement).style.display = "flex";
+                } else {
+                    (freeShippingEl as HTMLElement).style.display = "none";
+                }
             }
         }
 
         /**
-         * Binds event listeners.
+         * Binds event listeners
          */
         private bindEvents(): void {
+            // Add to cart button
             const addToCartBtn = this.container.querySelector(
                 "[data-bundle-add-to-cart]",
             );
@@ -692,18 +1132,32 @@ declare global {
                 );
             }
 
+            // Slider navigation buttons
             const prevBtn = this.container.querySelector("[data-slider-prev]");
             const nextBtn = this.container.querySelector("[data-slider-next]");
 
             if (prevBtn) {
-                prevBtn.addEventListener("click", () =>
-                    this.slideProducts("prev"),
-                );
+                prevBtn.addEventListener("click", () => this.slidePrev());
             }
+
             if (nextBtn) {
-                nextBtn.addEventListener("click", () =>
-                    this.slideProducts("next"),
+                nextBtn.addEventListener("click", () => this.slideNext());
+            }
+
+            // Pause autoplay on hover
+            if (this.autoplay && this.getLayout() === "slider") {
+                const sliderWrapper = this.container.querySelector(
+                    ".radius-bundle__slider-wrapper",
                 );
+
+                if (sliderWrapper) {
+                    sliderWrapper.addEventListener("mouseenter", () =>
+                        this.stopAutoplay(),
+                    );
+                    sliderWrapper.addEventListener("mouseleave", () =>
+                        this.startAutoplay(),
+                    );
+                }
             }
         }
 
@@ -758,7 +1212,7 @@ declare global {
                         .catch(() => ({}));
                     this.showToast(
                         errorData.description ||
-                            `Failed to add to cart: ${addResponse.status}`,
+                        `Failed to add to cart: ${addResponse.status}`,
                         "error",
                     );
                 }
@@ -868,44 +1322,21 @@ declare global {
         }
 
         /**
-         * Slides products in the carousel
+         * Gets layout type from container class
          */
-        private slideProducts(direction: "prev" | "next"): void {
-            const track = this.container.querySelector(
-                "[data-slider-track]",
-            ) as HTMLElement;
-
-            if (!track) {
-                return;
+        private getLayout(): string {
+            if (this.container.classList.contains("radius-bundle--grid")) {
+                return "grid";
             }
 
-            const scrollAmount = 200;
-
-            if (direction === "prev") {
-                track.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-            } else {
-                track.scrollBy({ left: scrollAmount, behavior: "smooth" });
-            }
-        }
-
-        /**
-         * Initializes slider dots
-         */
-        private initSliderDots(count: number): void {
-            const dotsContainer =
-                this.container.querySelector("[data-slider-dots]");
-
-            if (!dotsContainer || count <= 1) {
-                return;
+            if (this.container.classList.contains("radius-bundle--carousel")) {
+                return "slider";
             }
 
-            let html = "";
-
-            for (let i = 0; i < count; i++) {
-                html += `<button class="radius-bundle__slider-dot${i === 0 ? " active" : ""}" data-index="${i}"></button>`;
+            if (this.container.classList.contains("radius-bundle--compact")) {
+                return "compact";
             }
-
-            dotsContainer.innerHTML = html;
+            return "list";
         }
 
         /**
@@ -946,24 +1377,6 @@ declare global {
             } catch (e) {
                 console.warn("[RadiusBundle] Could not update cart count:", e);
             }
-        }
-
-        /**
-         * Gets layout
-         */
-        private getLayout(): string {
-            if (this.container.classList.contains("radius-bundle--grid")) {
-                return "grid";
-            }
-
-            if (this.container.classList.contains("radius-bundle--carousel")) {
-                return "slider";
-            }
-
-            if (this.container.classList.contains("radius-bundle--compact")) {
-                return "compact";
-            }
-            return "list";
         }
 
         /**

@@ -1,32 +1,31 @@
 // ==========================================================================
-// Product Card - List Layout
+// List Layout - Radius Bundle Widget
+// Supports divider styles: none, line, plus
+// Supports image positions: left, top
 // ==========================================================================
 
-@use "../mixins";
+@use "../mixins" as *;
 @use "../variable" as *;
-@use "../global" as *;
 
 .radius-bundle {
     &__products {
         &--list {
             display: flex;
             flex-direction: column;
-            gap: var(--rb-spacing-sm);
-            .divider-position {
-                position: absolute;
-            }
+            gap: var(--rb-gap-spacing);
         }
     }
+
     &__product--list {
         display: flex;
         align-items: center;
         gap: var(--rb-spacing);
         padding: var(--rb-spacing);
         background: var(--rb-product-bg-color);
-        border: 1px solid var(--rb-border-color);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
-        box-shadow: var(--rb-shadow);
-        @include mixins.card-hover;
+        box-shadow: var(--rb-card-shadow);
+        @include card-hover;
 
         .radius-bundle__product-image {
             width: var(--rb-image-size);
@@ -46,22 +45,17 @@
         }
 
         .radius-bundle__product-title {
-            font-size: var(--rb-font-size, 16px);
+            font-size: var(--rb-body-font-size);
             font-weight: 500;
             color: var(--rb-text-color);
             margin: 0 0 var(--rb-spacing-xs);
             line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            @include line-clamp(2);
         }
 
         .radius-bundle__product-quantity {
-            font-size: var(--rb-font-size, 16px);
-            font-weight: 500;
-            color: var(--rb-text-color);
+            font-size: calc(var(--rb-body-font-size) - 1px);
+            color: var(--rb-muted-color);
             line-height: 1.3;
         }
 
@@ -70,11 +64,73 @@
             flex-shrink: 0;
             line-height: 1.5;
         }
+
         .radius-bundle__product-price-current {
             display: block;
         }
+
         .radius-bundle__product-price-compare {
             display: block;
         }
+    }
+}
+
+// ==========================================================================
+// Image Position: Top (vertical card)
+// ==========================================================================
+
+.radius-bundle[data-image-position="top"] {
+    .radius-bundle__product--list {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+
+        .radius-bundle__product-image {
+            width: 100%;
+            height: calc(var(--rb-image-size) + 40px);
+            margin-bottom: var(--rb-spacing-sm);
+        }
+
+        .radius-bundle__product-info {
+            text-align: center;
+        }
+
+        .radius-bundle__product-price {
+            text-align: center;
+            margin-top: var(--rb-spacing-sm);
+        }
+    }
+}
+
+// ==========================================================================
+// Divider Styles (data-divider-style attribute)
+// ==========================================================================
+
+// Plus divider
+.radius-bundle[data-divider-style="plus"] {
+    .radius-bundle__divider--plus {
+        display: flex;
+    }
+
+    .radius-bundle__divider--line {
+        display: none;
+    }
+}
+
+// Line divider
+.radius-bundle[data-divider-style="line"] {
+    .radius-bundle__divider--plus {
+        display: none;
+    }
+
+    .radius-bundle__divider--line {
+        display: block;
+    }
+}
+
+// No divider
+.radius-bundle[data-divider-style="none"] {
+    .radius-bundle__divider {
+        display: none;
     }
 }

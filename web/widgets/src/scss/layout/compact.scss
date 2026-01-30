@@ -1,17 +1,88 @@
 // ==========================================================================
-// Product Card - Compact Layout
+// Compact Layout - Radius Bundle Widget
+// Minimal product display with inline pricing
 // ==========================================================================
 
-@use "../mixins";
+@use "../mixins" as *;
 @use "../variable" as *;
-@use "../global" as *;
 
 .radius-bundle {
+    &__inner--compact {
+        padding: var(--rb-spacing);
+    }
+
+    &__products--compact {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rb-spacing-sm);
+    }
+
     &__product--compact {
         display: flex;
-        gap: 12px;
-        padding: 6px 0;
+        align-items: center;
+        gap: var(--rb-gap-spacing);
+        padding: var(--rb-spacing-sm) 0;
+        border-bottom: 1px solid var(--rb-border-color);
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .radius-bundle__product-image {
+            width: calc(var(--rb-image-size) - 30px);
+            height: calc(var(--rb-image-size) - 30px);
+            flex-shrink: 0;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: var(--rb-image-fit, contain);
+            }
+        }
+
+        .radius-bundle__product-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .radius-bundle__product-title {
+            font-size: var(--rb-body-font-size);
+            font-weight: 500;
+            color: var(--rb-text-color);
+            margin: 0 0 var(--rb-spacing-xs);
+            line-height: 1.3;
+            @include line-clamp(1);
+        }
+
+        .radius-bundle__product-quantity {
+            font-size: calc(var(--rb-body-font-size) - 2px);
+            color: var(--rb-muted-color);
+            line-height: 1.3;
+        }
+
+        .radius-bundle__product-price {
+            text-align: right;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .radius-bundle__product-price-current {
+            display: block;
+            font-size: calc(var(--rb-body-font-size) - 1px);
+        }
+
+        .radius-bundle__product-price-compare {
+            display: block;
+            font-size: calc(var(--rb-body-font-size) - 3px);
+        }
     }
+
+    // -------------------------------------------------------------------------
+    // Compact Product Info
+    // -------------------------------------------------------------------------
 
     &__product-info--compact {
         display: flex;
@@ -20,52 +91,8 @@
         flex: 1;
         min-width: 0;
 
-        &__skeleton-text--title {
+        .radius-bundle__skeleton-text--title {
             width: 100%;
-        }
-    }
-
-    &__product--compact {
-        .radius-bundle__product-title {
-            font-size: var(--rb-font-size, 16px);
-            font-weight: 500;
-            color: var(--rb-text-color);
-            margin: 0 0 var(--rb-spacing-sm);
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            @include mixins.line-clamp(2);
-        }
-        .radius-bundle__product-image {
-            width: calc(var(--rb-image-size) - 20px);
-            height: calc(var(--rb-image-size) - 20px);
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: var(--rb-image-fit, contain);
-            }
-        }
-        .radius-bundle__product-quantity {
-            font-size: var(--rb-font-size, 16px);
-            font-weight: 500;
-            color: var(--rb-text-color);
-            line-height: 1.3;
-        }
-
-        .radius-bundle__product-price {
-            text-align: right;
-            flex-shrink: 0;
-            line-height: 1.5;
-        }
-        .radius-bundle__product-price-current {
-            display: block;
-        }
-        .radius-bundle__product-price-compare {
-            display: block;
         }
     }
 }

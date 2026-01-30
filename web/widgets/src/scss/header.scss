@@ -1,11 +1,15 @@
 // ==========================================================================
-// Header
+// Header - Radius Bundle Widget
+// Supports badge positions: inline, top-left, top-right
 // ==========================================================================
 
 @use "variable" as *;
-@use "global" as *;
 
 .radius-bundle {
+    // -------------------------------------------------------------------------
+    // Header Container
+    // -------------------------------------------------------------------------
+
     &__header {
         display: flex;
         justify-content: space-between;
@@ -14,7 +18,12 @@
         margin-bottom: var(--rb-spacing);
         padding-bottom: var(--rb-spacing);
         border-bottom: 1px solid var(--rb-border-color);
+        position: relative;
     }
+
+    // -------------------------------------------------------------------------
+    // Title
+    // -------------------------------------------------------------------------
 
     &__title-wrapper {
         flex: 1;
@@ -23,9 +32,9 @@
     }
 
     &__title {
-        font-size: var(--rb-heading-font);
+        font-size: var(--rb-heading-font-size);
         color: var(--rb-text-color);
-        font-weight: 500;
+        font-weight: 600;
         margin: 0;
         line-height: 1.3;
 
@@ -50,17 +59,22 @@
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Badge
+    // -------------------------------------------------------------------------
+
     &__badge {
-        background: var(--rb-primary-color);
-        color: var(--rb-savings-text-color);
-        border-radius: var(--rb-badge-border-radius);
-        font-size: var(--rb-badge-font);
+        background: var(--rb-badge-bg);
+        color: var(--rb-badge-text);
+        border: var(--rb-badge-border);
+        border-radius: var(--rb-border-radius);
+        font-size: calc(var(--rb-body-font-size) * 0.9);
         font-weight: 500;
         padding: 6px 12px;
         white-space: nowrap;
         flex-shrink: 0;
         text-align: center;
-        min-height: 32px;
+        min-height: 28px;
         line-height: 1.2;
         display: flex;
         align-items: center;
@@ -71,13 +85,65 @@
         }
 
         &--visible {
-            background: var(--rb-primary-color) !important;
+            background: var(--rb-badge-bg) !important;
         }
     }
+
+    // -------------------------------------------------------------------------
+    // Description
+    // -------------------------------------------------------------------------
+
     &__description {
-        font-size: 0.9rem;
-        color: var(--rb-secondary-color);
+        font-size: calc(var(--rb-body-font-size) * 0.9);
+        color: var(--rb-muted-color);
         margin: 0 0 var(--rb-spacing);
         line-height: 1.5;
+    }
+}
+
+// ==========================================================================
+// Badge Positions (data-badge-position attribute)
+// ==========================================================================
+
+// Inline (default) - badge sits next to title in header
+.radius-bundle[data-badge-position="inline"] {
+    .radius-bundle__header {
+        position: relative;
+    }
+
+    .radius-bundle__badge {
+        position: relative;
+    }
+}
+
+// Top Left - badge floats in top left corner
+.radius-bundle[data-badge-position="top-left"] {
+    position: relative;
+
+    .radius-bundle__badge {
+        position: absolute;
+        top: var(--rb-spacing);
+        left: var(--rb-spacing);
+        z-index: 10;
+    }
+
+    .radius-bundle__header {
+        padding-top: calc(var(--rb-spacing) + 28px);
+    }
+}
+
+// Top Right - badge floats in top right corner
+.radius-bundle[data-badge-position="top-right"] {
+    position: relative;
+
+    .radius-bundle__badge {
+        position: absolute;
+        top: var(--rb-spacing);
+        right: var(--rb-spacing);
+        z-index: 10;
+    }
+
+    .radius-bundle__header {
+        padding-top: calc(var(--rb-spacing) + 28px);
     }
 }

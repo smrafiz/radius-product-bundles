@@ -1,82 +1,132 @@
+// ==========================================================================
+// Global Styles - Radius Bundle Widget
+// CSS Variables mapped from Liquid/Customizer settings
+// ==========================================================================
+
 @use "variable" as *;
 
 // ==========================================================================
-// Root Container with CSS Variables
+// Root Container with CSS Variable Defaults
 // ==========================================================================
 
 .radius-bundle-widget {
-    /* Colors */
+    // -------------------------------------------------------------------------
+    // Colors (set from Liquid)
+    // -------------------------------------------------------------------------
     --rb-primary-color: #{$rb-primary-color};
-    --rb-secondary-color: #{$rb-secondary-color};
-    --rb-background-color: #{$rb-background-color};
-    --rb-heading-color: #{$rb-heading-color};
-    --rb-product-bg-color: #{$rb-product-background-color};
     --rb-text-color: #{$rb-text-color};
+    --rb-background-color: #{$rb-background-color};
     --rb-border-color: #{$rb-border-color};
     --rb-savings-color: #{$rb-savings-color};
-    --rb-savings-text-color: #{$rb-savings-text-color};
-    --rb-button-color: #{$rb-button-color};
+
+    --rb-product-bg-color: #{$rb-product-card-bg};
+    --rb-button-color: #{$rb-button-bg-color};
     --rb-button-text-color: #{$rb-button-text-color};
+    --rb-pricing-summary-bg: #{$rb-pricing-summary-bg};
+
     --rb-muted-color: #{$rb-muted-color};
     --rb-gray-color: #{$rb-gray-color};
 
-    /* Radius */
+    // -------------------------------------------------------------------------
+    // Border Radius (set from Liquid based on cornerStyle preset)
+    // -------------------------------------------------------------------------
     --rb-border-radius: #{$rb-border-radius};
-    --rb-border-radius-small: #{$rb-border-radius-small};
-    --rb-image-border-radius: #{$rb-image-border-radius};
 
-    /* Typography */
-    --rb-font-scale-sm: #{$rb-font-scale-sm};
-    --rb-font-scale-md: #{$rb-font-scale-md};
-    --rb-font-scale-lg: #{$rb-font-scale-lg};
+    // -------------------------------------------------------------------------
+    // Spacing (set from Liquid based on spacing preset)
+    // -------------------------------------------------------------------------
+    --rb-box-spacing: #{$rb-box-spacing};
+    --rb-gap-spacing: #{$rb-gap-spacing};
 
-    --rb-heading-base: #{$rb-heading-base};
-    --rb-heading-sm: calc(#{$rb-heading-base} * #{$rb-font-scale-sm});
-    --rb-heading-md: calc(#{$rb-heading-base} * #{$rb-font-scale-md});
-    --rb-heading-lg: calc(#{$rb-heading-base} * #{$rb-font-scale-lg});
+    // Calculated spacing utilities
+    --rb-spacing-xs: calc(var(--rb-box-spacing) * 0.25);
+    --rb-spacing-sm: calc(var(--rb-box-spacing) * 0.5);
+    --rb-spacing: var(--rb-box-spacing);
+    --rb-spacing-lg: calc(var(--rb-box-spacing) * 1.5);
+    --rb-spacing-xl: calc(var(--rb-box-spacing) * 2);
 
-    --rb-body-font-base: #{$rb-font-base-size};
-    --rb-body-font-sm: calc(#{$rb-font-base-size} * #{$rb-font-scale-sm});
-    --rb-body-font-md: calc(#{$rb-font-base-size} * #{$rb-font-scale-md});
-    --rb-body-font-lg: calc(#{$rb-font-base-size} * #{$rb-font-scale-lg});
+    // -------------------------------------------------------------------------
+    // Typography (set from Liquid based on headingSize/bodySize)
+    // -------------------------------------------------------------------------
+    --rb-heading-font-size: #{$rb-heading-md};
+    --rb-body-font-size: #{$rb-body-md};
 
-    --rb-button-font-sm: calc(#{$rb-button-font-base} * #{$rb-font-scale-sm});
-    --rb-button-font-md: calc(#{$rb-button-font-base} * #{$rb-font-scale-md});
-    --rb-button-font-lg: calc(#{$rb-button-font-base} * #{$rb-font-scale-lg});
+    // -------------------------------------------------------------------------
+    // Button (set from Liquid based on buttonStyle/buttonSize/buttonWidth)
+    // -------------------------------------------------------------------------
+    --rb-button-padding: #{$rb-button-md-padding};
+    --rb-button-font-size: #{$rb-button-md-font};
+    --rb-button-bg: var(--rb-button-color);
+    --rb-button-text: var(--rb-button-text-color);
+    --rb-button-border: none;
+    --rb-button-width: auto;
 
-    /* Spacing */
-    --rb-spacing: #{$rb-spacing};
-    --rb-spacing-xs: calc(var(--rb-spacing) * 0.25);
-    --rb-spacing-sm: calc(var(--rb-spacing) * 0.5);
-    --rb-spacing-lg: calc(var(--rb-spacing) * 1.5);
-    --rb-spacing-xl: calc(var(--rb-spacing) * 2);
+    // -------------------------------------------------------------------------
+    // Badge (set from Liquid based on badgeStyle)
+    // -------------------------------------------------------------------------
+    --rb-badge-bg: var(--rb-primary-color);
+    --rb-badge-text: #ffffff;
+    --rb-badge-border: none;
 
+    // -------------------------------------------------------------------------
+    // Pricing Summary (set from Liquid based on pricingSummaryStyle)
+    // -------------------------------------------------------------------------
+    --rb-pricing-padding: 16px;
+    --rb-pricing-bg: var(--rb-pricing-summary-bg);
+    --rb-pricing-border: 1px solid var(--rb-border-color);
+    --rb-pricing-border-top: none;
+    --rb-pricing-border-left: none;
+
+    // -------------------------------------------------------------------------
+    // Image (set from Liquid based on imageSize/imageFit)
+    // -------------------------------------------------------------------------
     --rb-image-size: #{$rb-image-size};
+    --rb-image-fit: contain;
 
-    /* Effects */
+    // -------------------------------------------------------------------------
+    // Container (set from Liquid)
+    // -------------------------------------------------------------------------
+    --rb-bundle-max-width: #{$rb-max-width};
+    --rb-box-border-width: 1px;
+
+    // -------------------------------------------------------------------------
+    // Shadows (set from Liquid based on shadow preset)
+    // -------------------------------------------------------------------------
+    --rb-shadow: #{$rb-shadow};
+    --rb-shadow-hover: #{$rb-shadow-hover};
+
+    // Card shadow (set from Liquid based on productCardShadow)
+    --rb-card-shadow: none;
+    --rb-card-border: 1px solid var(--rb-border-color);
+
+    // -------------------------------------------------------------------------
+    // Grid/Carousel (set from Liquid)
+    // -------------------------------------------------------------------------
+    --rb-grid-columns: 3;
+    --rb-slides-per-view: 3;
+
+    // -------------------------------------------------------------------------
+    // Effects
+    // -------------------------------------------------------------------------
     --rb-transition: #{$rb-transition};
-    --rb-arrow-shadow: #{$rb-shadow};
-    //--rb-shadow-hover: #{$rb-shadow-hover};
+    --rb-transition-fast: #{$rb-transition-fast};
 
-    --rb-shadow-none: #{$rb-shadow-none};
-    --rb-shadow-sm: #{$rb-shadow-sm};
-    --rb-shadow-sm-hover: #{$rb-shadow-sm-hover};
-
-    --rb-shadow-md: #{$rb-shadow-md};
-    --rb-shadow-md-hover: #{$rb-shadow-md-hover};
-
-    --rb-shadow-lg: #{$rb-shadow-lg};
-    --rb-shadow-lg-hover: #{$rb-shadow-lg-hover};
-
-    /* Skeleton */
+    // -------------------------------------------------------------------------
+    // Skeleton
+    // -------------------------------------------------------------------------
     --rb-skeleton-base: #{$rb-skeleton-base};
     --rb-skeleton-shine: #{$rb-skeleton-shine};
 
+    // -------------------------------------------------------------------------
+    // Base Styles
+    // -------------------------------------------------------------------------
     font-family: inherit;
-    font-size: var(--rb-font-size, 16px);
+    font-size: var(--rb-body-font-size);
+    line-height: 1.5;
     margin: 24px 0;
 
-    & *:empty:not(img):not(br):not(hr) {
+    // Reset empty elements
+    & *:empty:not(img):not(br):not(hr):not(input):not(button) {
         display: revert;
     }
 }

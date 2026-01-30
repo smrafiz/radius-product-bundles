@@ -1,22 +1,22 @@
 // ==========================================================================
-// Product Card - Slider Layout
+// Slider/Carousel Layout - Radius Bundle Widget
+// Supports carousel navigation: none, arrows, dots, both
+// Supports configurable slides per view
 // ==========================================================================
 
-@use "../mixins";
+@use "../mixins" as *;
 @use "../variable" as *;
-@use "../global" as *;
 
 .radius-bundle {
     &__products {
         &--slider {
             display: grid;
-            gap: var(--rb-spacing, 16px);
+            gap: var(--rb-gap-spacing);
 
             grid-auto-flow: column;
-            grid-auto-columns: calc((100% -
-            (var(--rb-spacing, 16px) *
-            (var(--grid-columns, 2) - 1))) /
-            var(--grid-columns, 2)
+            grid-auto-columns: calc(
+                    (100% - (var(--rb-gap-spacing) * (var(--rb-slides-per-view, 3) - 1))) /
+                    var(--rb-slides-per-view, 3)
             );
 
             overflow-x: auto;
@@ -37,22 +37,16 @@
                 cursor: grabbing;
             }
 
+            // Responsive slides per view
             @media (max-width: 1024px) {
                 grid-auto-columns: calc(
-                        (100% -
-                        (var(--rb-spacing, 16px) *
-                        (var(--grid-cols-tablet, 2) - 1))) /
-                        var(--grid-cols-tablet, 2)
+                        (100% - (var(--rb-gap-spacing) * (min(var(--rb-slides-per-view, 3), 2) - 1))) /
+                        min(var(--rb-slides-per-view, 3), 2)
                 );
             }
 
-            @media (max-width: 768px) {
-                grid-auto-columns: calc(
-                        (100% -
-                        (var(--rb-spacing, 16px) *
-                        (var(--grid-cols-mobile, 1) - 1))) /
-                        var(--grid-cols-mobile, 1)
-                );
+            @media (max-width: 640px) {
+                grid-auto-columns: 100%;
             }
         }
     }
@@ -61,13 +55,15 @@
         width: 100%;
         padding: var(--rb-spacing);
         background: var(--rb-product-bg-color);
-        border: 1px solid var(--rb-border-color);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
+        box-shadow: var(--rb-card-shadow);
         scroll-snap-align: start;
+        @include card-hover;
 
         .radius-bundle__product-image {
             width: 100%;
-            height: calc(var(--rb-image-size) + 30px);
+            height: calc(var(--rb-image-size) + 40px);
             margin-bottom: var(--rb-spacing);
 
             img {
@@ -76,18 +72,14 @@
                 object-fit: var(--rb-image-fit, contain);
             }
         }
+
         .radius-bundle__product-title {
-            font-size: var(--rb-font-size, 16px);
+            font-size: var(--rb-body-font-size);
             font-weight: 500;
             color: var(--rb-text-color);
             margin: 0 0 var(--rb-spacing-sm);
             line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            @include mixins.line-clamp(2);
+            @include line-clamp(2);
         }
 
         .radius-bundle__product-price {
@@ -100,9 +92,8 @@
         }
 
         .radius-bundle__product-quantity {
-            font-size: var(--rb-font-size, 16px);
-            font-weight: 500;
-            color: var(--rb-text-color);
+            font-size: calc(var(--rb-body-font-size) - 1px);
+            color: var(--rb-muted-color);
         }
     }
 
@@ -110,9 +101,9 @@
         width: 100%;
     }
 
-    // ==========================================================================
-    // Slider Navigation
-    // ==========================================================================
+    // -------------------------------------------------------------------------
+    // Slider Wrapper & Container
+    // -------------------------------------------------------------------------
 
     &__slider-wrapper {
         display: flex;
@@ -140,52 +131,73 @@
         overflow: hidden;
     }
 
+    // -------------------------------------------------------------------------
+    // Navigation Arrows
+    // -------------------------------------------------------------------------
+
     &__slider-nav {
         flex-shrink: 0;
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border: 1px solid var(--rb-border-color);
         border-radius: 50%;
         background: var(--rb-background-color);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all var(--rb-transition);
         position: absolute;
-        opacity: 1;
+        opacity: 0;
+        z-index: 10;
+
+        svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--rb-text-color);
+            transition: stroke var(--rb-transition);
+        }
 
         &:hover:not(:disabled) {
             border-color: var(--rb-primary-color);
             background: var(--rb-primary-color);
-            color: #fff;
+
+            svg {
+                stroke: #ffffff;
+            }
         }
 
         &:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
+        }
+
+        &--prev {
+            left: -18px;
+        }
+
+        &--next {
+            right: -18px;
         }
     }
 
-    &__slider-nav--prev {
-        left: -16px;
-    }
-
-    &__slider-nav--next {
-        right: -16px;
-    }
+    // -------------------------------------------------------------------------
+    // Pagination Dots
+    // -------------------------------------------------------------------------
 
     &__slider-dots {
         display: flex;
         justify-content: center;
         gap: 8px;
-        margin-bottom: var(--rb-spacing);
+        margin-top: var(--rb-spacing);
+        margin-bottom: var(--rb-spacing-sm);
     }
 
     &__slider-dot {
         width: 8px;
         height: 8px;
-        padding: var(--rb-spacing-xs);
+        padding: 0;
         border-radius: 50%;
         background: var(--rb-muted-color);
         border: none;
@@ -195,14 +207,74 @@
         &.active,
         &:hover {
             background: var(--rb-primary-color);
+            transform: scale(1.2);
         }
     }
 }
 
-.radius-bundle[data-show-navigation="false"] .radius-bundle__slider-nav {
-    display: none;
+// ==========================================================================
+// Carousel Navigation Visibility (data-carousel-navigation attribute)
+// ==========================================================================
+
+// Navigation: none
+.radius-bundle[data-carousel-navigation="none"] {
+    .radius-bundle__slider-nav {
+        display: none !important;
+    }
+
+    .radius-bundle__slider-dots {
+        display: none !important;
+    }
 }
 
-.radius-bundle[data-show-pagination="false"] .radius-bundle__slider-dots {
-    display: none;
+// Navigation: arrows only
+.radius-bundle[data-carousel-navigation="arrows"] {
+    .radius-bundle__slider-nav {
+        display: flex;
+    }
+
+    .radius-bundle__slider-dots {
+        display: none !important;
+    }
+}
+
+// Navigation: dots only
+.radius-bundle[data-carousel-navigation="dots"] {
+    .radius-bundle__slider-nav {
+        display: none !important;
+    }
+
+    .radius-bundle__slider-dots {
+        display: flex;
+    }
+}
+
+// Navigation: both (default)
+.radius-bundle[data-carousel-navigation="both"] {
+    .radius-bundle__slider-nav {
+        display: flex;
+    }
+
+    .radius-bundle__slider-dots {
+        display: flex;
+    }
+}
+
+// ==========================================================================
+// Autoplay Indicator (optional visual feedback)
+// ==========================================================================
+
+.radius-bundle[data-autoplay="true"] {
+    .radius-bundle__slider-dot.active {
+        animation: pulse 2s ease-in-out infinite;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.2);
+    }
+    50% {
+        transform: scale(1.4);
+    }
 }

@@ -1,5 +1,15 @@
 {% comment %}
   Radius Bundle Pricing Section
+
+  Parameters:
+  - show_savings: Boolean
+  - show_free_shipping: Boolean
+  - regular_price_label: String
+  - bundle_price_label: String
+  - you_save_label: String
+  - free_shipping_label: String
+  - compact: Boolean (for compact layout)
+  - pricing_summary_box: Boolean (controls box styling via CSS vars)
 {% endcomment %}
 
 <div class="radius-bundle__pricing{% if compact %} radius-bundle__pricing--compact{% endif %}" data-bundle-pricing>
@@ -23,19 +33,19 @@
 
 	{% comment %} Savings Row {% endcomment %}
 	{% if show_savings %}
-	<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
-		{% unless compact %}
-			<span class="radius-bundle__savings-label">{{ you_save_label }}</span>
-		{% endunless %}
-		<span class="radius-bundle__savings-amount" data-savings-amount>
-			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
-		</span>
-	</div>
+		<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
+			{% unless compact %}
+				<span class="radius-bundle__savings-label">{{ you_save_label }}</span>
+			{% endunless %}
+			<span class="radius-bundle__savings-amount" data-savings-amount>
+                <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
+            </span>
+		</div>
 	{% endif %}
 
 	{% comment %} Free Shipping Badge {% endcomment %}
 	{% if show_free_shipping %}
-		<div class="radius-bundle__free-shipping">
+		<div class="radius-bundle__free-shipping" data-free-shipping style="display: none;">
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 				<path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
 				<circle cx="7" cy="18" r="2" />

@@ -1,161 +1,199 @@
 // ==========================================================================
-// Skeleton Elements
+// Skeleton Loading States - Radius Bundle Widget
 // ==========================================================================
 
-@use "mixins";
+@use "mixins" as *;
 @use "variable" as *;
-@use "global" as *;
 
 .radius-bundle {
-    &__skeleton-text,
-    &__skeleton-image,
-    &__badge--skeleton {
-        @include mixins.skeleton-gradient;
-    }
-
-    &__skeleton-text {
-        &--title {
-            height: 20px;
-            width: 80%;
-            margin-bottom: var(--rb-spacing-sm);
-        }
-
-        &--subtitle {
-            height: 14px;
-            width: 40%;
-        }
-
-        &--price {
-            height: 16px;
-            width: 50%;
-            margin: 0 auto;
-        }
-
-        &--qty {
-            height: 12px;
-            width: 30%;
-            margin: var(--rb-spacing-xs) auto 0;
-        }
-
-        &--badge {
-            height: 14px;
-            width: 60px;
-            display: inline-block;
-        }
-
-        &--inline {
-            height: 16px;
-            width: 60px;
-            display: inline-block !important;
-            vertical-align: middle;
-        }
-    }
-
-    &__skeleton-image {
-        &--large {
-            width: 100%;
-            height: calc(var(--rb-image-size) + 30px);
-            margin-bottom: var(--rb-spacing);
-            border-radius: var(--rb-image-border-radius);
-        }
-        &--box {
-            width: calc(var(--rb-image-size) - 30px);
-            height: calc(var(--rb-image-size) - 30px);
-            border-radius: var(--rb-image-border-radius);
-        }
-    }
-
-    // ==========================================================================
-    // Loading State
-    // ==========================================================================
+    // -------------------------------------------------------------------------
+    // Base Skeleton Styles
+    // -------------------------------------------------------------------------
 
     &__skeleton {
         display: flex;
         flex-direction: column;
-        gap: var(--rb-spacing);
+        gap: var(--rb-gap-spacing);
 
-        // List skeleton
         &--list {
-            display: flex;
             flex-direction: column;
-            gap: var(--rb-spacing-sm);
         }
 
-        // Grid skeleton
         &--grid {
             display: grid;
-            align-items: center;
-            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
-            gap: var(--rb-spacing);
+            grid-template-columns: repeat(var(--rb-grid-columns, 3), 1fr);
+            gap: var(--rb-gap-spacing);
+
+            @media (max-width: 1024px) {
+                grid-template-columns: repeat(min(var(--rb-grid-columns, 3), 2), 1fr);
+            }
+
+            @media (max-width: 640px) {
+                grid-template-columns: 1fr;
+            }
         }
 
-        // Slider skeleton
-        &--slider {
-            display: grid;
-            align-items: center;
-            grid-auto-flow: column;
-            grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
-            gap: var(--rb-spacing);
+        &--compact {
+            flex-direction: column;
+            gap: 0;
         }
     }
+
+    // -------------------------------------------------------------------------
+    // Skeleton Items
+    // -------------------------------------------------------------------------
 
     &__skeleton-item {
+        display: flex;
+        align-items: center;
+        gap: var(--rb-spacing);
+        padding: var(--rb-spacing);
+        background: var(--rb-product-bg-color);
+        border: var(--rb-card-border);
+        border-radius: var(--rb-border-radius);
+
         &--list {
-            display: flex;
-            align-items: center;
-            gap: var(--rb-spacing);
-            padding: var(--rb-spacing);
-            background: var(--rb-product-bg-color);
-            border-radius: var(--rb-border-radius);
-            border: 1px solid var(--rb-border-color);
-
-            .radius-bundle__skeleton-image {
-                width: var(--rb-image-size);
-                height: var(--rb-image-size);
-                border-radius: var(--rb-image-border-radius);
-                flex-shrink: 0;
-            }
-
-            .radius-bundle__skeleton-content {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .radius-bundle__skeleton-price-wrapper {
-                flex-shrink: 0;
-                width: 80px;
-                text-align: right;
-            }
+            flex-direction: row;
         }
+
         &--compact {
-            display: flex;
-            gap: 12px;
-            padding: 6px 0;
+            padding: var(--rb-spacing-sm) 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--rb-border-color);
+            border-radius: 0;
+
+            &:last-child {
+                border-bottom: none;
+            }
 
             .radius-bundle__skeleton-image {
-                width: calc(var(--rb-image-size) - 20px);
-                height: calc(var(--rb-image-size) - 20px);
-                border-radius: 6px;
-                flex-shrink: 0;
-            }
-
-            .radius-bundle__skeleton-content {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .radius-bundle__skeleton-price-wrapper {
-                flex-shrink: 0;
-                width: 80px;
-                text-align: right;
+                width: calc(var(--rb-image-size) - 30px);
+                height: calc(var(--rb-image-size) - 30px);
             }
         }
     }
+
+    // -------------------------------------------------------------------------
+    // Skeleton Card (for grid/slider)
+    // -------------------------------------------------------------------------
 
     &__skeleton-card {
         padding: var(--rb-spacing);
         background: var(--rb-product-bg-color);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
-        border: 1px solid var(--rb-border-color);
+        box-shadow: var(--rb-card-shadow);
+    }
+
+    // -------------------------------------------------------------------------
+    // Skeleton Image
+    // -------------------------------------------------------------------------
+
+    &__skeleton-image {
+        width: var(--rb-image-size);
+        height: var(--rb-image-size);
+        border-radius: var(--rb-border-radius);
+        flex-shrink: 0;
+        @include skeleton-gradient;
+
+        &--large {
+            width: 100%;
+            height: calc(var(--rb-image-size) + 40px);
+            margin-bottom: var(--rb-spacing);
+        }
+
+        &--box {
+            width: calc(var(--rb-image-size) - 20px);
+            height: calc(var(--rb-image-size) - 20px);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Skeleton Content
+    // -------------------------------------------------------------------------
+
+    &__skeleton-content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--rb-spacing-xs);
+    }
+
+    // -------------------------------------------------------------------------
+    // Skeleton Text Lines
+    // -------------------------------------------------------------------------
+
+    &__skeleton-text {
+        height: 16px;
+        border-radius: 4px;
+        @include skeleton-gradient;
+
+        &--title {
+            width: 70%;
+            height: 18px;
+        }
+
+        &--subtitle {
+            width: 50%;
+            height: 14px;
+        }
+
+        &--price {
+            width: 60px;
+            height: 16px;
+        }
+
+        &--qty {
+            width: 40px;
+            height: 14px;
+            margin-top: var(--rb-spacing-xs);
+        }
+
+        &--badge {
+            width: 60px;
+            height: 14px;
+        }
+
+        &--inline {
+            display: inline-block;
+            width: 50px;
+            height: 14px;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Skeleton Price Wrapper
+    // -------------------------------------------------------------------------
+
+    &__skeleton-price-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: var(--rb-spacing-xs);
+    }
+
+    // -------------------------------------------------------------------------
+    // Loading State
+    // -------------------------------------------------------------------------
+
+    &__loading {
+        &[data-bundle-loading] {
+            // Container for skeleton content
+        }
+    }
+}
+
+// ==========================================================================
+// Skeleton Animation Keyframes
+// ==========================================================================
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
     }
 }

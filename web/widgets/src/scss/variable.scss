@@ -1,53 +1,127 @@
 // ==========================================================================
-// Design Tokens
+// Design Tokens - Radius Bundle Widget
 // ==========================================================================
 
-$rb-primary-color: #303030;
-$rb-secondary-color: #666666;
-$rb-background-color: #ffffff;
-$rb-heading-color: #303030;
-$rb-product-background-color: #f7f7f7;
-$rb-text-color: #333333;
-$rb-border-color: #e3e3e3;
-$rb-savings-color: #333333;
-$rb-savings-text-color: #ffffff;
-$rb-button-color: #333333;
-$rb-button-text-color: #ffffff;
-$rb-muted-color: #888888;
-$rb-gray-color: #f7f7f7;
+// -----------------------------------------------------------------------------
+// Colors
+// -----------------------------------------------------------------------------
 
-$rb-border-radius: 12px;
-$rb-border-radius-small: 8px;
-$rb-image-border-radius: 8px;
+$rb-primary-color: #303030;
+$rb-text-color: #333333;
+$rb-background-color: #ffffff;
+$rb-border-color: #e5e7eb;
+$rb-savings-color: #16a34a;
+
+$rb-product-card-bg: #f9fafb;
+$rb-button-bg-color: #303030;
+$rb-button-text-color: #ffffff;
+$rb-pricing-summary-bg: #f9fafb;
+
+$rb-muted-color: #6b7280;
+$rb-gray-color: #f3f4f6;
+
+// -----------------------------------------------------------------------------
+// Border Radius (presets mapped to pixels)
+// -----------------------------------------------------------------------------
+
+$rb-radius-sharp: 0px;
+$rb-radius-modern: 8px;
+$rb-radius-rounded: 20px;
+
+// Default
+$rb-border-radius: $rb-radius-modern;
+
+// -----------------------------------------------------------------------------
+// Spacing (presets mapped to pixels)
+// -----------------------------------------------------------------------------
+
+$rb-spacing-compact: 12px;
+$rb-spacing-comfortable: 20px;
+$rb-spacing-spacious: 28px;
+
+$rb-gap-compact: 8px;
+$rb-gap-comfortable: 12px;
+$rb-gap-spacious: 16px;
+
+// Default
+$rb-box-spacing: $rb-spacing-comfortable;
+$rb-gap-spacing: $rb-gap-comfortable;
+
+// -----------------------------------------------------------------------------
+// Typography
+// -----------------------------------------------------------------------------
 
 $rb-heading-base: 20px;
-$rb-font-base-size: 16px;
+$rb-body-base: 14px;
+$rb-button-base: 16px;
 
+// Size multipliers
 $rb-font-scale-sm: 0.85;
 $rb-font-scale-md: 1;
-$rb-font-scale-lg: 1.15;
+$rb-font-scale-lg: 1.2;
 
-$rb-button-font-base: 16px;
+// Heading sizes
+$rb-heading-sm: 16px;
+$rb-heading-md: 20px;
+$rb-heading-lg: 24px;
 
-$rb-spacing: 16px;
+// Body sizes
+$rb-body-sm: 13px;
+$rb-body-md: 14px;
+$rb-body-lg: 16px;
 
-$rb-image-size: 70px;
+// Button sizes
+$rb-button-sm-padding: 8px 16px;
+$rb-button-md-padding: 12px 24px;
+$rb-button-lg-padding: 16px 32px;
 
-$rb-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-//$rb-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+$rb-button-sm-font: 14px;
+$rb-button-md-font: 16px;
+$rb-button-lg-font: 18px;
+
+// -----------------------------------------------------------------------------
+// Image Sizes
+// -----------------------------------------------------------------------------
+
+$rb-image-sm: 60px;
+$rb-image-md: 80px;
+$rb-image-lg: 120px;
+
+// Default
+$rb-image-size: $rb-image-md;
+
+// -----------------------------------------------------------------------------
+// Shadows
+// -----------------------------------------------------------------------------
 
 $rb-shadow-none: none;
 
-$rb-shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.12);
-$rb-shadow-sm-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+$rb-shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+$rb-shadow-soft-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
 
-$rb-shadow-md: 0 5px 5px rgba(0, 0, 0, 1);
-$rb-shadow-md-hover: 0 6px 6px rgba(0, 0, 0, 1);
+$rb-shadow-strong: 0 4px 16px rgba(0, 0, 0, 0.15);
+$rb-shadow-strong-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
 
-$rb-shadow-lg: 5px 5px 5px rgba(0, 0, 0, 0.25);
-$rb-shadow-lg-hover: 5px 5px 5px rgba(0, 0, 0, 0.3);
+// Default
+$rb-shadow: $rb-shadow-soft;
+$rb-shadow-hover: $rb-shadow-soft-hover;
+
+// -----------------------------------------------------------------------------
+// Transitions
+// -----------------------------------------------------------------------------
 
 $rb-transition: 0.25s ease;
+$rb-transition-fast: 0.15s ease;
 
-$rb-skeleton-base: #e8e8e8;
-$rb-skeleton-shine: #f5f5f5;
+// -----------------------------------------------------------------------------
+// Skeleton Loading
+// -----------------------------------------------------------------------------
+
+$rb-skeleton-base: #e5e7eb;
+$rb-skeleton-shine: #f3f4f6;
+
+// -----------------------------------------------------------------------------
+// Container
+// -----------------------------------------------------------------------------
+
+$rb-max-width: 600px;

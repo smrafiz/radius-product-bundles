@@ -1,10 +1,30 @@
 {% comment %}
-  Radius Bundle - Slider Template
+  Radius Bundle - Carousel/Slider Template
+
+  Parameters:
+  - bundle_id, name, savings_badge_text, product_count
+  - show_images, show_savings, show_savings_badge
+  - show_product_prices, show_compare_at_price, show_quantity
+  - show_free_shipping, enable_hyperlink
+  - button_text, regular_price_label, bundle_price_label
+  - you_save_label, free_shipping_label, quantity_label
+  - slides_per_view: Number (2-4)
+  - carousel_navigation: 'none' | 'arrows' | 'dots' | 'both'
+  - autoplay: Boolean
+  - autoplay_speed: Number (seconds)
+  - pricing_summary_box: Boolean
 {% endcomment %}
 
-{% assign grid_columns = block.settings.grid_columns | default: 2 %}
-{% assign grid_columns_tablet = block.settings.grid_columns_tablet | default: 2 %}
-{% assign grid_columns_mobile = block.settings.grid_columns_mobile | default: 1 %}
+{% assign show_arrows = false %}
+{% assign show_dots = false %}
+
+{% if carousel_navigation == 'arrows' or carousel_navigation == 'both' %}
+    {% assign show_arrows = true %}
+{% endif %}
+
+{% if carousel_navigation == 'dots' or carousel_navigation == 'both' %}
+    {% assign show_dots = true %}
+{% endif %}
 
 <div class="radius-bundle__inner">
     {% comment %} Header {% endcomment %}
@@ -15,28 +35,29 @@
 
     {% comment %} Slider Container {% endcomment %}
     <div class="radius-bundle__slider-wrapper">
-        <!-- PREV -->
-        <button
-                class="radius-bundle__slider-nav radius-bundle__slider-nav--prev"
-                aria-label="Previous product"
-                data-slider-prev
-                disabled
-        >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"/>
-            </svg>
-        </button>
+        {% comment %} PREV Button {% endcomment %}
+        {% if show_arrows %}
+            <button
+                    class="radius-bundle__slider-nav radius-bundle__slider-nav--prev"
+                    aria-label="Previous product"
+                    data-slider-prev
+                    disabled
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        {% endif %}
 
-        <!-- SLIDER -->
+        {% comment %} SLIDER {% endcomment %}
         <div class="radius-bundle__slider-container">
-            <div class="radius-bundle__products radius-bundle__products--slider"
-                 data-bundle-products
-                 data-slider-track
-                 style="
-                         --grid-columns: {{ grid_columns }};
-                         --grid-cols-tablet: {{ grid_columns_tablet }};
-                         --grid-cols-mobile: {{ grid_columns_mobile }};
-                         "
+            <div
+                    class="radius-bundle__products radius-bundle__products--slider"
+                    data-bundle-products
+                    data-slider-track
+                    data-autoplay="{{ autoplay }}"
+                    data-autoplay-speed="{{ autoplay_speed | default: 5 }}"
+                    style="--slides-per-view: {{ slides_per_view | default: 3 }};"
             >
                 {% for i in (1..product_count) %}
                     <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
@@ -45,25 +66,32 @@
                         {% endif %}
                         <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
                         <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
-                        <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
+                        {% if show_quantity %}
+                            <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- NEXT -->
-        <button
-                class="radius-bundle__slider-nav radius-bundle__slider-nav--next"
-                aria-label="Next product"
-                data-slider-next
-        >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
-            </svg>
-        </button>
+        {% comment %} NEXT Button {% endcomment %}
+        {% if show_arrows %}
+            <button
+                    class="radius-bundle__slider-nav radius-bundle__slider-nav--next"
+                    aria-label="Next product"
+                    data-slider-next
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </button>
+        {% endif %}
     </div>
 
-    <div class="radius-bundle__slider-dots" data-slider-dots></div>
+    {% comment %} Pagination Dots {% endcomment %}
+    {% if show_dots %}
+        <div class="radius-bundle__slider-dots" data-slider-dots></div>
+    {% endif %}
 
     {% comment %} Pricing Section {% endcomment %}
     {% render 'radius-bundle-pricing',
@@ -72,7 +100,8 @@
             regular_price_label: regular_price_label,
             bundle_price_label: bundle_price_label,
             you_save_label: you_save_label,
-            free_shipping_label: free_shipping_label
+            free_shipping_label: free_shipping_label,
+            pricing_summary_box: pricing_summary_box
     %}
 
     {% comment %} Add to Cart Button {% endcomment %}
@@ -80,206 +109,4 @@
             bundle_id: bundle_id,
             button_text: button_text
     %}
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const wrapper = document.querySelector(".radius-bundle__slider-wrapper");
-            if (!wrapper) return;
-
-            const track = wrapper.querySelector("[data-slider-track]");
-            const prevBtn = wrapper.querySelector("[data-slider-prev]");
-            const nextBtn = wrapper.querySelector("[data-slider-next]");
-            const dotsContainer = document.querySelector("[data-slider-dots]");
-
-            if (!track) return;
-
-            /* =============================
-               HELPERS
-            ============================== */
-            function getGap() {
-                return parseInt(getComputedStyle(track).gap) || 0;
-            }
-
-            function getSlideWidth() {
-                const slide = track.children[0];
-                if (!slide) return 0;
-                return slide.getBoundingClientRect().width + getGap();
-            }
-
-            function getVisibleItems() {
-                return Math.max(
-                    1,
-                    Math.floor(track.clientWidth / getSlideWidth())
-                );
-            }
-
-            function getMaxIndex() {
-                return Math.max(
-                    0,
-                    track.children.length - getVisibleItems()
-                );
-            }
-
-            function getCurrentIndex() {
-                return Math.min(
-                    getMaxIndex(),
-                    Math.round(track.scrollLeft / getSlideWidth())
-                );
-            }
-
-            function scrollToIndex(index) {
-                track.scrollTo({
-                    left: index * getSlideWidth(),
-                    behavior: "smooth"
-                });
-            }
-
-            /* =============================
-               BUTTONS
-            ============================== */
-            function updateButtons() {
-                const index = getCurrentIndex();
-                const maxIndex = getMaxIndex();
-
-                if (prevBtn) prevBtn.disabled = index <= 0;
-                if (nextBtn) nextBtn.disabled = index >= maxIndex;
-            }
-
-            prevBtn?.addEventListener("click", () => {
-                scrollToIndex(getCurrentIndex() - 1);
-            });
-
-            nextBtn?.addEventListener("click", () => {
-                scrollToIndex(getCurrentIndex() + 1);
-            });
-
-            /* =============================
-               DOTS (MULTI-ITEM SAFE)
-            ============================== */
-            function buildDots() {
-                if (!dotsContainer) return;
-
-                dotsContainer.innerHTML = "";
-                const maxIndex = getMaxIndex();
-
-                for (let i = 0; i <= maxIndex; i++) {
-                    const dot = document.createElement("button");
-                    dot.className = "radius-bundle__slider-dot";
-                    if (i === 0) dot.classList.add("active");
-
-                    dot.addEventListener("click", () => {
-                        scrollToIndex(i);
-                    });
-
-                    dotsContainer.appendChild(dot);
-                }
-            }
-
-            function updateDots() {
-                if (!dotsContainer) return;
-
-                const dots = dotsContainer.querySelectorAll(".radius-bundle__slider-dot");
-                const activeIndex = getCurrentIndex();
-
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle("active", i === activeIndex);
-                });
-            }
-
-            /* =============================
-               SCROLL SYNC
-            ============================== */
-            track.addEventListener("scroll", () => {
-                updateButtons();
-                updateDots();
-            });
-
-            /* =============================
-               MOUSE DRAG
-            ============================== */
-            let isDown = false;
-            let startX = 0;
-            let scrollStart = 0;
-
-            track.addEventListener("mousedown", (e) => {
-                isDown = true;
-                startX = e.pageX;
-                scrollStart = track.scrollLeft;
-                track.classList.add("is-dragging");
-            });
-
-            document.addEventListener("mouseup", () => {
-                isDown = false;
-                track.classList.remove("is-dragging");
-            });
-
-            track.addEventListener("mouseleave", () => {
-                isDown = false;
-                track.classList.remove("is-dragging");
-            });
-
-            track.addEventListener("mousemove", (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const walk = (e.pageX - startX) * 1.2;
-                track.scrollLeft = scrollStart - walk;
-            });
-
-            /* =============================
-               TOUCH
-            ============================== */
-            let touchStartX = 0;
-            let touchScrollStart = 0;
-
-            track.addEventListener("touchstart", (e) => {
-                touchStartX = e.touches[0].pageX;
-                touchScrollStart = track.scrollLeft;
-            });
-
-            track.addEventListener("touchmove", (e) => {
-                const walk = (e.touches[0].pageX - touchStartX) * 1.2;
-                track.scrollLeft = touchScrollStart - walk;
-            });
-
-            /* =============================
-               OBSERVERS (SHOPIFY SAFE)
-            ============================== */
-            function refresh() {
-                buildDots();
-                updateDots();
-                updateButtons();
-            }
-
-            new ResizeObserver(refresh).observe(track);
-            new MutationObserver(refresh).observe(track, { childList: true });
-
-            window.addEventListener("resize", refresh);
-
-            /* =============================
-               INIT (AFTER IMAGES LOAD)
-            ============================== */
-            const images = track.querySelectorAll("img");
-            let loaded = 0;
-
-            if (images.length === 0) {
-                refresh();
-            } else {
-                images.forEach(img => {
-                    if (img.complete) loaded++;
-                    else {
-                        img.addEventListener("load", () => {
-                            loaded++;
-                            if (loaded === images.length) refresh();
-                        });
-                        img.addEventListener("error", () => {
-                            loaded++;
-                            if (loaded === images.length) refresh();
-                        });
-                    }
-                });
-                if (loaded === images.length) refresh();
-            }
-        });
-    </script>
-
 </div>

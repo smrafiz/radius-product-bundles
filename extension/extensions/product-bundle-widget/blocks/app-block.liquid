@@ -14,121 +14,281 @@
 {% assign bundle_ids = product.metafields.radius_bundles.bundle_ids.value %}
 
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
-    {% comment %} Load settings from shop metafields (single source of truth) {% endcomment %}
-    {% assign global = shop.metafields.radius_bundles.global_settings.value %}
-    {% assign bundles = shop.metafields.radius_bundles.active_bundles.value %}
+	{% comment %} Load settings from shop metafields (single source of truth) {% endcomment %}
+	{% assign global = shop.metafields.radius_bundles.global_settings.value %}
+	{% assign bundles = shop.metafields.radius_bundles.active_bundles.value %}
 
-	{{ global }}
+	{% comment %} Resolve global defaults {% endcomment %}
+	{% assign g_labels = global.labels %}
+	{% assign g_styles = global.styles %}
 
-    {% comment %} Resolve global defaults {% endcomment %}
-    {% assign g_labels = global.labels %}
-    {% assign g_styles = global.styles %}
+	<div
+			class="radius-bundle-widget"
+			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
+			data-shop="{{ shop.permanent_domain }}"
+	>
+		{% for bundle_id in bundle_ids %}
+			{% assign bundle = bundles[bundle_id] %}
 
-    <div
-            class="radius-bundle-widget"
-            data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
-            data-shop="{{ shop.permanent_domain }}"
-    >
-        {% for bundle_id in bundle_ids %}
-            {% assign bundle = bundles[bundle_id] %}
+			{% if bundle and bundle.status == 'ACTIVE' %}
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					STYLE PRESET HANDLING
+					If a preset is selected (not custom), apply preset values
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign style_preset = block.settings.style_preset %}
 
-            {% if bundle and bundle.status == 'ACTIVE' %}
-                {% comment %} Colors {% endcomment %}
-                {% assign primary_color = block.settings.primary_color
-                        | default: g_styles.primaryColor
-                        | default: '#303030' %}
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					COLORS
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% if style_preset == 'custom' or style_preset == blank %}
+					{% assign primary_color = block.settings.primary_color
+							| default: g_styles.primaryColor
+							| default: '#303030' %}
+					{% assign text_color = block.settings.text_color
+							| default: g_styles.textColor
+							| default: '#333333' %}
+					{% assign background_color = block.settings.background_color
+							| default: g_styles.backgroundColor
+							| default: '#ffffff' %}
+					{% assign border_color = block.settings.border_color
+							| default: g_styles.borderColor
+							| default: '#e5e7eb' %}
+					{% assign savings_color = block.settings.savings_color
+							| default: g_styles.savingsColor
+							| default: '#16a34a' %}
+				{% else %}
+					{% comment %} Apply preset colors {% endcomment %}
+					{% case style_preset %}
+						{% when 'minimal' %}
+							{% assign primary_color = '#303030' %}
+							{% assign text_color = '#333333' %}
+							{% assign background_color = '#ffffff' %}
+							{% assign border_color = '#e5e7eb' %}
+							{% assign savings_color = '#16a34a' %}
+						{% when 'soft' %}
+							{% assign primary_color = '#6366f1' %}
+							{% assign text_color = '#374151' %}
+							{% assign background_color = '#f8fafc' %}
+							{% assign border_color = '#e2e8f0' %}
+							{% assign savings_color = '#10b981' %}
+						{% when 'bold' %}
+							{% assign primary_color = '#dc2626' %}
+							{% assign text_color = '#111827' %}
+							{% assign background_color = '#ffffff' %}
+							{% assign border_color = '#d1d5db' %}
+							{% assign savings_color = '#ea580c' %}
+						{% when 'elegant' %}
+							{% assign primary_color = '#78716c' %}
+							{% assign text_color = '#44403c' %}
+							{% assign background_color = '#fafaf9' %}
+							{% assign border_color = '#d6d3d1' %}
+							{% assign savings_color = '#059669' %}
+						{% when 'dark' %}
+							{% assign primary_color = '#f59e0b' %}
+							{% assign text_color = '#f3f4f6' %}
+							{% assign background_color = '#1f2937' %}
+							{% assign border_color = '#374151' %}
+							{% assign savings_color = '#34d399' %}
+						{% when 'nature' %}
+							{% assign primary_color = '#059669' %}
+							{% assign text_color = '#1f2937' %}
+							{% assign background_color = '#f0fdf4' %}
+							{% assign border_color = '#bbf7d0' %}
+							{% assign savings_color = '#16a34a' %}
+						{% else %}
+							{% assign primary_color = g_styles.primaryColor | default: '#303030' %}
+							{% assign text_color = g_styles.textColor | default: '#333333' %}
+							{% assign background_color = g_styles.backgroundColor | default: '#ffffff' %}
+							{% assign border_color = g_styles.borderColor | default: '#e5e7eb' %}
+							{% assign savings_color = g_styles.savingsColor | default: '#16a34a' %}
+					{% endcase %}
+				{% endif %}
 
-                {% assign secondary_color = block.settings.secondary_color
-                        | default: g_styles.secondaryColor
-                        | default: '#666666' %}
-
-                {% assign background_color = block.settings.background_color
-                        | default: g_styles.backgroundColor
-                        | default: '#ffffff' %}
-
-                {% assign heading_color = block.settings.heading_color
-                        | default: g_styles.headingColor
-                        | default: '#303030' %}
-
-				{% assign product_background_color = block.settings.product_background_color
+				{% comment %} Product card colors {% endcomment %}
+				{% assign product_card_bg = block.settings.product_card_bg
 						| default: g_styles.productCardBg
-						| default: '#f7f7f7' %}
+						| default: '#f9fafb' %}
 
-				{% assign text_color = block.settings.text_color
-						| default: g_styles.productTextColor
-						| default: g_styles.textColor
-						| default: '#333333' %}
-
-				{% assign border_color = block.settings.border_color
-						| default: g_styles.borderColor
-						| default: '#e1e1e1' %}
-
-				{% assign button_color = block.settings.button_color
+				{% comment %} Button colors {% endcomment %}
+				{% assign button_bg_color = block.settings.button_bg_color
 						| default: g_styles.buttonBgColor
-						| default: '#333333' %}
+						| default: primary_color %}
+				{% assign button_text_color = '#ffffff' %}
 
-				{% assign button_text_color = block.settings.button_text_color
-						| default: g_styles.buttonTextColor
-						| default: '#ffffff' %}
+				{{ primary_color }}
 
-				{% assign savings_color = block.settings.savings_color
-						| default: g_styles.savingsColor
-						| default: '#333333' %}
+				{% comment %} Pricing summary colors {% endcomment %}
+				{% assign pricing_summary_bg = block.settings.pricing_summary_bg
+						| default: g_styles.pricingSummaryBg
+						| default: '#f9fafb' %}
 
-				{% assign savings_text_color = block.settings.savings_text_color
-						| default: g_styles.badgeTextColor
-						| default: '#ffffff' %}
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					SHAPE & DEPTH
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign corner_style = block.settings.corner_style
+						| default: g_styles.cornerStyle
+						| default: 'modern' %}
 
-                {% comment %} Layout {% endcomment %}
-                {% assign layout = block.settings.layout
-                        | default: bundle.layout
-                        | default: 'list' %}
+				{% case corner_style %}
+					{% when 'sharp' %}
+						{% assign border_radius = 0 %}
+					{% when 'rounded' %}
+						{% assign border_radius = 20 %}
+					{% else %}
+						{% assign border_radius = 8 %}
+				{% endcase %}
 
-				{% assign bundle_max_width = block.settings.bundle_max_width
-						| default: g_styles.boxMaxWidth
-						| default: 800 %}
+				{% assign shadow = block.settings.shadow
+						| default: g_styles.shadow
+						| default: 'soft' %}
 
-                {% assign box_radius = block.settings.box_radius
-                        | default: g_styles.boxRadius
-                        | default: 12 %}
+				{% assign spacing = block.settings.spacing
+						| default: g_styles.spacing
+						| default: 'comfortable' %}
 
-				{% assign border_radius = block.settings.border_radius
-                        | default: g_styles.productRadius
-                        | default: 12 %}
+				{% case spacing %}
+					{% when 'compact' %}
+						{% assign box_spacing = 12 %}
+						{% assign gap_spacing = 8 %}
+					{% when 'spacious' %}
+						{% assign box_spacing = 28 %}
+						{% assign gap_spacing = 16 %}
+					{% else %}
+						{% assign box_spacing = 20 %}
+						{% assign gap_spacing = 12 %}
+				{% endcase %}
 
-				{% assign button_border_radius = block.settings.button_border_radius
-						| default: g_styles.buttonRadius
-						| default: 8 %}
-
-				{% assign badge_border_radius = g_styles.badgeRadius
-						| default: 8 %}
-
-				{% assign image_border_radius = block.settings.image_border_radius
-						| default: g_styles.borders.imageRadius
-						| default: 8 %}
-
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					PRODUCT CARDS
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
 				{% assign image_size = block.settings.image_size
-						| default: g_styles.images.imageSize
-						| default: 70 %}
+						| default: g_styles.imageSize
+						| default: 'medium' %}
 
-				{% assign box_spacing = block.settings.box_spacing
-						| default: g_styles.spacing.boxSpacing
-						| default: 16 %}
+				{% case image_size %}
+					{% when 'small' %}
+						{% assign image_size_px = 60 %}
+					{% when 'large' %}
+						{% assign image_size_px = 120 %}
+					{% else %}
+						{% assign image_size_px = 80 %}
+				{% endcase %}
 
-				{% assign box_border_width = g_styles.boxBorderWidth | default: 1 %}
+				{% assign image_fit = block.settings.image_fit
+						| default: g_styles.imageFit
+						| default: 'contain' %}
 
-				{% assign heading_size = block.settings.heading_size | default: 'medium' %}
-				{% assign text_size = block.settings.text_size | default: 'medium' %}
-				{% assign button_size = block.settings.button_size | default: 'medium' %}
-				{% assign savings_badge_size = block.settings.savings_badge_size | default: 'medium' %}
-				{% assign image_fit = block.settings.image_fit | default: 'contain' %}
+				{% assign image_position = block.settings.image_position
+						| default: g_styles.imagePosition
+						| default: 'left' %}
 
-				{% assign heading_transform = block.settings.heading_transform %}
+				{% assign product_card_border = block.settings.product_card_border %}
+				{% if product_card_border == null %}
+					{% assign product_card_border = g_styles.productCardBorder | default: true %}
+				{% endif %}
+
+				{% assign product_card_shadow = block.settings.product_card_shadow %}
+				{% if product_card_shadow == null %}
+					{% assign product_card_shadow = g_styles.productCardShadow | default: false %}
+				{% endif %}
+
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					BUTTON & BADGE
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign button_style = block.settings.button_style
+						| default: g_styles.buttonStyle
+						| default: 'filled' %}
+
+				{% assign button_size = block.settings.button_size
+						| default: g_styles.buttonSize
+						| default: 'medium' %}
+
+				{% assign button_width = block.settings.button_width
+						| default: g_styles.buttonWidth
+						| default: 'auto' %}
+
+				{% assign badge_position = block.settings.badge_position
+						| default: g_styles.badgePosition
+						| default: 'inline' %}
+
+				{% assign badge_style = block.settings.badge_style
+						| default: g_styles.badgeStyle
+						| default: 'filled' %}
+
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					PRICING SUMMARY
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign pricing_summary_box = block.settings.pricing_summary_box %}
+				{% if pricing_summary_box == null %}
+					{% assign pricing_summary_box = g_styles.pricingSummaryBox | default: true %}
+				{% endif %}
+
+				{% assign pricing_summary_style = block.settings.pricing_summary_style
+						| default: g_styles.pricingSummaryStyle
+						| default: 'card' %}
+
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					CONTAINER
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign box_max_width = block.settings.box_max_width
+						| default: g_styles.boxMaxWidth
+						| default: 600 %}
 
 				{% assign box_alignment = block.settings.box_alignment
 						| default: g_styles.boxAlignment
 						| default: 'center' %}
 
+				{% assign show_border = block.settings.show_border %}
+				{% if show_border == null %}
+					{% assign show_border = g_styles.showBorder | default: true %}
+				{% endif %}
+
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					TYPOGRAPHY
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign heading_size = block.settings.heading_size
+						| default: g_styles.headingSize
+						| default: 'medium' %}
+
+				{% assign body_size = block.settings.body_size
+						| default: g_styles.bodySize
+						| default: 'medium' %}
+
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					LAYOUT
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign layout = block.settings.layout
+						| default: bundle.layout
+						| default: 'list' %}
+
+				{% assign divider_style = block.settings.divider_style
+						| default: g_styles.dividerStyle
+						| default: 'plus' %}
+
+				{% assign grid_columns = block.settings.grid_columns
+						| default: g_styles.gridColumns
+						| default: 3 %}
+
+				{% assign slides_per_view = block.settings.slides_per_view
+						| default: g_styles.slidesPerView
+						| default: 3 %}
+
+				{% assign carousel_navigation = block.settings.carousel_navigation
+						| default: g_styles.carouselNavigation
+						| default: 'both' %}
+
+				{% assign autoplay = block.settings.autoplay %}
+				{% if autoplay == null %}
+					{% assign autoplay = g_styles.autoplay | default: false %}
+				{% endif %}
+
+				{% assign autoplay_speed = block.settings.autoplay_speed
+						| default: g_styles.autoplaySpeed
+						| default: 5 %}
+
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					BUNDLE DISPLAY OPTIONS
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
 				{% assign show_images = bundle.showImages %}
 				{% assign show_savings = bundle.showSavings %}
 				{% assign show_product_prices = bundle.showPrices %}
@@ -138,48 +298,20 @@
 				{% assign show_savings_badge = bundle.showSavingsBadge %}
 				{% assign enable_hyperlink = bundle.enableHyperLink %}
 
-				{% if show_images == null %}
-					{% assign show_images = true %}
-				{% endif %}
-				{% if show_savings == null %}
-					{% assign show_savings = true %}
-				{% endif %}
-				{% if show_product_prices == null %}
-					{% assign show_product_prices = true %}
-				{% endif %}
-				{% if show_compare_at_price == null %}
-					{% assign show_compare_at_price = true %}
-				{% endif %}
-				{% if show_quantity == null %}
-					{% assign show_quantity = true %}
-				{% endif %}
-				{% if show_free_shipping == null %}
-					{% assign show_free_shipping = true %}
-				{% endif %}
-				{% if show_savings_badge == null %}
-					{% assign show_savings_badge = true %}
-				{% endif %}
+				{% if show_images == null %}{% assign show_images = true %}{% endif %}
+				{% if show_savings == null %}{% assign show_savings = true %}{% endif %}
+				{% if show_product_prices == null %}{% assign show_product_prices = true %}{% endif %}
+				{% if show_compare_at_price == null %}{% assign show_compare_at_price = true %}{% endif %}
+				{% if show_quantity == null %}{% assign show_quantity = true %}{% endif %}
+				{% if show_free_shipping == null %}{% assign show_free_shipping = true %}{% endif %}
+				{% if show_savings_badge == null %}{% assign show_savings_badge = true %}{% endif %}
 				{% unless enable_hyperlink == true or enable_hyperlink == false %}
 					{% assign enable_hyperlink = false %}
 				{% endunless %}
 
-				{% assign hover_effect = block.settings.hover_effect %}
-				{% if hover_effect == null %}
-					{% assign hover_effect = true %}
-				{% endif %}
-
-				{% assign show_slider_navigation = block.settings.display_slider_navigation %}
-				{% if show_slider_navigation == null %}
-					{% assign show_slider_navigation = true %}
-				{% endif %}
-
-				{% assign show_slider_dots = block.settings.display_slider_dots %}
-				{% if show_slider_dots == null %}
-					{% assign show_slider_dots = true %}
-				{% endif %}
-
-                {% comment %} Labels {% endcomment %}
-
+				{% comment %} ═══════════════════════════════════════════════════════════════════
+					LABELS
+				═══════════════════════════════════════════════════════════════════ {% endcomment %}
 				{% assign bundle_heading = bundle.title
 						| default: g_labels.headingLabel
 						| default: 'Bundle & Save'
@@ -189,18 +321,18 @@
 						| default: 'Save' %}
 
 				{% assign button_text = bundle.buttonText
-                        | default: g_labels.addToCartText
-                        | default: 'Add bundle to cart'
+						| default: g_labels.addToCartText
+						| default: 'Add bundle to cart'
 						| strip %}
 
 				{% assign regular_price_label = g_labels.regularPriceLabel
-						| default: 'Regular price' %}
+						| default: 'Regular price:' %}
 
-                {% assign bundle_price_label = g_labels.bundlePriceLabel
-                        | default: 'Bundle price:' %}
+				{% assign bundle_price_label = g_labels.bundlePriceLabel
+						| default: 'Bundle price:' %}
 
-                {% assign you_save_label = g_labels.youSaveLabel
-                        | default: 'You save:' %}
+				{% assign you_save_label = g_labels.youSaveLabel
+						| default: 'You save:' %}
 
 				{% assign free_shipping_label = g_labels.freeShippingLabel
 						| default: 'Free shipping' %}
@@ -208,193 +340,220 @@
 				{% assign quantity_label = g_labels.quantityLabel
 						| default: 'Qty:' %}
 
-                {% comment %} (DO NOT REMOVE) Build JSON for JS. Formatted structure (DO NOT REMOVE)
-                    "id": "{{ bundle_id }}",
-                    "status": "{{ bundle.status }}",
-                    "discountType": "{{ bundle.discountType }}",
-                    "discountValue": {{ bundle.discountValue | default: 0 }},
-                    "freeShipping": {{ bundle.freeShipping | default: false }},
-                    "minOrderValue": {{ bundle.minOrderValue | default: 0 }},
-                    "maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},
-                    "discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}",
-                    "discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},
-                    "productCount": {{ bundle.productCount | default: 0 }},
-                    "productIds": {{ bundle.productIds | default: '[]' | json }},
-                    "layout": "{{ layout }}",
-                    "labels": {
-                    		"headingLabel": "{{ bundle_heading | escape }}"
-                    		"savingsBadgeText": "{{ savings_badge_text | escape }}"
-                            "addToCartText": "{{ button_text | escape }}",
-                            "regularPriceLabel": "{{ regular_price_label | escape }}",
-                            "bundlePriceLabel": "{{ bundle_price_label | escape }}",
-                            "youSaveLabel": "{{ you_save_label | escape }}",
-                            "freeShippingLabel": "{{ free_shipping_label | escape }}"
-                            "quantityLabel": "{{ quantity_label | escape }}"
-                        }
-                    }
-                {% endcomment %}
-                {% capture bundle_structure_json %}{"id": "{{ bundle_id }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}" ,"quantityLabel": "{{ quantity_label | escape }}"}}
-                {% endcapture %}
+				{% comment %} Build JSON for JS {% endcomment %}
+				{% capture bundle_structure_json %}{
+					"id": "{{ bundle_id }}",
+					"status": "{{ bundle.status }}",
+					"discountType": "{{ bundle.discountType }}",
+					"discountValue": {{ bundle.discountValue | default: 0 }},
+					"freeShipping": {{ bundle.freeShipping | default: false }},
+					"minOrderValue": {{ bundle.minOrderValue | default: 0 }},
+					"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},
+					"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}",
+					"discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},
+					"productCount": {{ bundle.productCount | default: 0 }},
+					"productIds": {{ bundle.productIds | default: '[]' | json }},
+					"layout": "{{ layout }}",
+					"labels": {
+					"headingLabel": "{{ bundle_heading | escape }}",
+					"savingsBadgeText": "{{ savings_badge_text | escape }}",
+					"addToCartText": "{{ button_text | escape }}",
+					"regularPriceLabel": "{{ regular_price_label | escape }}",
+					"bundlePriceLabel": "{{ bundle_price_label | escape }}",
+					"youSaveLabel": "{{ you_save_label | escape }}",
+					"freeShippingLabel": "{{ free_shipping_label | escape }}",
+					"quantityLabel": "{{ quantity_label | escape }}"
+					}
+					}{% endcapture %}
 
-                {% comment %} Inject CSS variables {% endcomment %}
+				{% comment %} Inject CSS variables {% endcomment %}
 				<style>
 					#radius-bundle-{{ bundle_id }} {
 						/* Colors */
 						--rb-primary-color: {{ primary_color }};
-						--rb-secondary-color: {{ secondary_color }};
+						--rb-text-color: {{ text_color }};
 						--rb-background-color: {{ background_color }};
 						--rb-border-color: {{ border_color }};
-						--rb-heading-color: {{ heading_color }};
-						--rb-product-bg-color: {{ product_background_color }};
-						--rb-text-color: {{ text_color }};
 						--rb-savings-color: {{ savings_color }};
-						--rb-savings-text-color: {{ savings_text_color }};
-						--rb-button-color: {{ button_color }};
+						--rb-product-bg-color: {{ product_card_bg }};
+						--rb-button-color: {{ button_bg_color }};
 						--rb-button-text-color: {{ button_text_color }};
+						--rb-pricing-summary-bg: {{ pricing_summary_bg }};
 
-						/* Radius & spacing */
-						--rb-box-radius: {{ box_radius }}px;
+						/* Border radius */
 						--rb-border-radius: {{ border_radius }}px;
-						--rb-button-border-radius: {{ button_border_radius }}px;
-						--rb-badge-border-radius: {{ badge_border_radius }}px;
-						--rb-image-border-radius: {{ image_border_radius }}px;
+
+						/* Spacing */
 						--rb-box-spacing: {{ box_spacing }}px;
-						--rb-bundle-max-width: {{ bundle_max_width }}px;
-						--rb-box-border-width: {{ box_border_width }}px;
+						--rb-gap-spacing: {{ gap_spacing }}px;
 
+						/* Container */
+						--rb-bundle-max-width: {{ box_max_width }}px;
+						--rb-box-border-width: {% if show_border %}1px{% else %}0{% endif %};
 
-						{% if image_size %}
-							--rb-image-size: {{ image_size }}px;
-						{% endif %}
+						/* Image */
+						--rb-image-size: {{ image_size_px }}px;
 						--rb-image-fit: {{ image_fit }};
 
+						/* Shadow */
+					{% case shadow %}
+					{% when 'none' %}
+						--rb-shadow: none;
+						--rb-shadow-hover: none;
+					{% when 'strong' %}
+						--rb-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+						--rb-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
+					{% else %}
+						--rb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+						--rb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+					{% endcase %}
+
+						/* Card shadow */
+					{% if product_card_shadow %}
+						--rb-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+					{% else %}
+						--rb-card-shadow: none;
+					{% endif %}
+
+						/* Card border */
+					{% if product_card_border %}
+						--rb-card-border: 1px solid var(--rb-border-color);
+					{% else %}
+						--rb-card-border: none;
+					{% endif %}
+
 						/* Heading size */
-						{% case heading_size %}
-						{% when 'small' %}
-							--rb-heading-font: var(--rb-heading-sm);
-						{% when 'large' %}
-							--rb-heading-font: var(--rb-heading-lg);
-						{% else %}
-							--rb-heading-font: var(--rb-heading-md);
-						{% endcase %}
+					{% case heading_size %}
+					{% when 'small' %}
+						--rb-heading-font-size: 16px;
+					{% when 'large' %}
+						--rb-heading-font-size: 24px;
+					{% else %}
+						--rb-heading-font-size: 20px;
+					{% endcase %}
+
+						/* Body size */
+					{% case body_size %}
+					{% when 'small' %}
+						--rb-body-font-size: 13px;
+					{% when 'large' %}
+						--rb-body-font-size: 16px;
+					{% else %}
+						--rb-body-font-size: 14px;
+					{% endcase %}
 
 						/* Button size */
-						{% case button_size %}
-						{% when 'small' %}
-							--rb-button-font: var(--rb-button-font-sm);
-						{% when 'large' %}
-							--rb-button-font: var(--rb-button-font-lg);
-						{% else %}
-							--rb-button-font: var(--rb-button-font-md);
-						{% endcase %}
+					{% case button_size %}
+					{% when 'small' %}
+						--rb-button-padding: 8px 16px;
+						--rb-button-font-size: 14px;
+					{% when 'large' %}
+						--rb-button-padding: 16px 32px;
+						--rb-button-font-size: 18px;
+					{% else %}
+						--rb-button-padding: 12px 24px;
+						--rb-button-font-size: 16px;
+					{% endcase %}
 
-						/* Button size */
-						{% case savings_badge_size %}
-						{% when 'small' %}
-							--rb-badge-font: var(--rb-button-font-sm);
-						{% when 'large' %}
-							--rb-badge-font: var(--rb-button-font-lg);
-						{% else %}
-							--rb-badge-font: var(--rb-button-font-md);
-						{% endcase %}
+						/* Button style */
+					{% if button_style == 'outline' %}
+						--rb-button-bg: transparent;
+						--rb-button-text: var(--rb-button-color);
+						--rb-button-border: 2px solid var(--rb-button-color);
+					{% else %}
+						--rb-button-bg: var(--rb-button-color);
+						--rb-button-text: var(--rb-button-text-color);
+						--rb-button-border: none;
+					{% endif %}
 
-							/* Text size */
-						{% case text_size %}
-						{% when 'small' %}
-							--rb-font-size: var(--rb-body-font-sm);
-						{% when 'large' %}
-							--rb-font-size: var(--rb-body-font-lg);
-						{% else %}
-							--rb-font-size: var(--rb-body-font-md);
-						{% endcase %}
+						/* Button width */
+					{% if button_width == 'full' %}
+						--rb-button-width: 100%;
+					{% else %}
+						--rb-button-width: auto;
+					{% endif %}
 
-						/* product shadow */
-						{% case block.settings.shadow_style %}
-						{% when 'none' %}
-							--rb-shadow: none;
-							--rb-shadow-hover: none;
-						{% when 'style2' %}
-							--rb-shadow: var(--rb-shadow-md);
-							--rb-shadow-hover: var(--rb-shadow-md-hover);
-						{% when 'style3' %}
-							--rb-shadow: var(--rb-shadow-lg);
-							--rb-shadow-hover: var(--rb-shadow-lg-hover);
-						{% else %}
-							--rb-shadow: var(--rb-shadow-sm);
-							--rb-shadow-hover: var(--rb-shadow-sm-hover);
-						{% endcase %}
+						/* Badge style */
+					{% if badge_style == 'outline' %}
+						--rb-badge-bg: transparent;
+						--rb-badge-text: var(--rb-primary-color);
+						--rb-badge-border: 2px solid var(--rb-primary-color);
+					{% else %}
+						--rb-badge-bg: var(--rb-primary-color);
+						--rb-badge-text: #ffffff;
+						--rb-badge-border: none;
+					{% endif %}
 
-						/* Hover effect */
-						{% if block.settings.hover_effect %}
-							--rb-hover-enabled: 1;
-							--rb-hover-transition: 0.25s ease;
-						{% else %}
-							--rb-hover-enabled: 0;
-							--rb-hover-transition: 0s;
-						    --rb-shadow-hover: var(--rb-shadow);
-						{% endif %}
+						/* Pricing summary style */
+					{% if pricing_summary_box %}
+					{% case pricing_summary_style %}
+					{% when 'minimal' %}
+						--rb-pricing-padding: 16px 0;
+						--rb-pricing-bg: transparent;
+						--rb-pricing-border: none;
+						--rb-pricing-border-top: 1px solid var(--rb-border-color);
+					{% when 'highlight' %}
+						--rb-pricing-padding: 16px;
+						--rb-pricing-bg: var(--rb-pricing-summary-bg);
+						--rb-pricing-border: none;
+						--rb-pricing-border-left: 4px solid var(--rb-primary-color);
+					{% else %}
+						--rb-pricing-padding: 16px;
+						--rb-pricing-bg: var(--rb-pricing-summary-bg);
+						--rb-pricing-border: 1px solid var(--rb-border-color);
+					{% endcase %}
+					{% else %}
+						--rb-pricing-padding: 8px 0;
+						--rb-pricing-bg: transparent;
+						--rb-pricing-border: none;
+					{% endif %}
 
+						/* Grid columns */
+						--rb-grid-columns: {{ grid_columns }};
+						--rb-slides-per-view: {{ slides_per_view }};
 					}
 				</style>
 
 				<div
-                        id="radius-bundle-{{ bundle_id }}"
-                        class="radius-bundle radius-bundle--{{ layout | downcase }}"
-                        data-bundle-id="{{ bundle_id }}"
+						id="radius-bundle-{{ bundle_id }}"
+						class="radius-bundle radius-bundle--{{ layout | downcase }}"
+						data-bundle-id="{{ bundle_id }}"
 						data-box-align="{{ box_alignment }}"
-						data-show-navigation="{{ show_slider_navigation }}"
-						data-show-pagination="{{ show_slider_dots }}"
-                        data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
-                        data-show-images="{{ show_images }}"
+						data-badge-position="{{ badge_position }}"
+						data-divider-style="{{ divider_style }}"
+						data-carousel-navigation="{{ carousel_navigation }}"
+						data-autoplay="{{ autoplay }}"
+						data-autoplay-speed="{{ autoplay_speed }}"
+						data-image-position="{{ image_position }}"
+						data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
+						data-show-images="{{ show_images }}"
 						data-show-savings="{{ show_savings }}"
-                        data-show-prices="{{ show_product_prices }}"
-                        data-show-compare-prices="{{ show_compare_at_price }}"
+						data-show-prices="{{ show_product_prices }}"
+						data-show-compare-prices="{{ show_compare_at_price }}"
 						data-show-quantity="{{ show_quantity }}"
 						data-show-free-shipping="{{ show_free_shipping }}"
 						data-show-savings-badge="{{ show_savings_badge }}"
 						data-enable-hyperlink="{{ enable_hyperlink }}"
-                >
-                    {% assign layout = layout | default: 'list' | downcase %}
+				>
+					{% assign layout = layout | default: 'list' | downcase %}
 
-                    {% comment %} Get product count for accurate skeleton {% endcomment %}
-                    {% assign product_count = bundle.productCount | default: 0 %}
-                    {% if product_count == 0 %}
-                        {% assign product_ids = bundle.productIds | default: empty %}
-                        {% assign product_count = product_ids | size %}
-                    {% endif %}
-                    {% if product_count == 0 %}
-                        {% assign product_count = 3 %}
-                    {% endif %}
+					{% comment %} Get product count for accurate skeleton {% endcomment %}
+					{% assign product_count = bundle.productCount | default: 0 %}
+					{% if product_count == 0 %}
+						{% assign product_ids = bundle.productIds | default: empty %}
+						{% assign product_count = product_ids | size %}
+					{% endif %}
+					{% if product_count == 0 %}
+						{% assign product_count = 3 %}
+					{% endif %}
 
-                    {% case layout %}
-                        {% when 'grid' %}
-                            {% render 'radius-bundle-layout-grid',
-                                    bundle_id: bundle_id,
-                                    name: bundle_heading,
-                                    savings_badge_text: savings_badge_text,
-                                    product_count: product_count,
-                                    show_images: show_images,
-                                    show_savings: show_savings,
-									show_savings_badge: show_savings_badge,
-									show_product_prices: show_product_prices,
-									show_compare_at_price: show_compare_at_price,
-									show_quantity: show_quantity,
-                                    show_free_shipping: show_free_shipping,
-									enable_hyperlink: enable_hyperlink,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_label: free_shipping_label,
-                                    quantity_label: quantity_label,
-                                    block: block
-                            %}
-                        {% when 'carousel' %}
-                            {% render 'radius-bundle-layout-carousel',
-                                    bundle_id: bundle_id,
-                                    name: bundle_heading,
-                                    savings_badge_text: savings_badge_text,
-                                    product_count: product_count,
+					{% case layout %}
+						{% when 'grid' %}
+							{% render 'radius-bundle-layout-grid',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
 									show_images: show_images,
 									show_savings: show_savings,
 									show_savings_badge: show_savings_badge,
@@ -403,20 +562,21 @@
 									show_quantity: show_quantity,
 									show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_label: free_shipping_label,
-                                    quantity_label: quantity_label,
-                                    block: block
-                            %}
-                        {% when 'compact' %}
-                            {% render 'radius-bundle-layout-compact',
-                                    bundle_id: bundle_id,
-                                    name: bundle_heading,
-                                    savings_badge_text: savings_badge_text,
-                                    product_count: product_count,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label,
+									grid_columns: grid_columns,
+									pricing_summary_box: pricing_summary_box
+							%}
+						{% when 'carousel' %}
+							{% render 'radius-bundle-layout-carousel',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
 									show_images: show_images,
 									show_savings: show_savings,
 									show_savings_badge: show_savings_badge,
@@ -425,20 +585,24 @@
 									show_quantity: show_quantity,
 									show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_label: free_shipping_label,
-                                    quantity_label: quantity_label,
-                                    block: block
-                            %}
-                        {% else %}
-                            {% render 'radius-bundle-layout-list',
-                                    bundle_id: bundle_id,
-                                    name: bundle_heading,
-                                    savings_badge_text: savings_badge_text,
-                                    product_count: product_count,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label,
+									slides_per_view: slides_per_view,
+									carousel_navigation: carousel_navigation,
+									autoplay: autoplay,
+									autoplay_speed: autoplay_speed,
+									pricing_summary_box: pricing_summary_box
+							%}
+						{% when 'compact' %}
+							{% render 'radius-bundle-layout-compact',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
 									show_images: show_images,
 									show_savings: show_savings,
 									show_savings_badge: show_savings_badge,
@@ -447,25 +611,47 @@
 									show_quantity: show_quantity,
 									show_free_shipping: show_free_shipping,
 									enable_hyperlink: enable_hyperlink,
-                                    button_text: button_text,
-                                    regular_price_label: regular_price_label,
-                                    bundle_price_label: bundle_price_label,
-                                    you_save_label: you_save_label,
-                                    free_shipping_label: free_shipping_label,
-                                    quantity_label: quantity_label,
-                                    block: block
-                            %}
-                    {% endcase %}
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label,
+									pricing_summary_box: pricing_summary_box
+							%}
+						{% else %}
+							{% render 'radius-bundle-layout-list',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label,
+									divider_style: divider_style,
+									pricing_summary_box: pricing_summary_box
+							%}
+					{% endcase %}
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
 
-    {{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-    <script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
+	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
 
-{% comment %} DO NOT TOUCH BELOW SCHEMA. IT IS AUTOMATICALLY GENERATED {% endcomment %}
 {% schema %}
 {
 	"name": "Product Bundle",
@@ -523,28 +709,33 @@
 			"type": "color",
 			"id": "primary_color",
 			"label": "Accent color",
-			"info": "Buttons, badges, and interactive elements"
+			"info": "Buttons, badges, and interactive elements",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "color",
 			"id": "text_color",
-			"label": "Text color"
+			"label": "Text color",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "color",
 			"id": "background_color",
-			"label": "Background color"
+			"label": "Background color",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "color",
 			"id": "border_color",
-			"label": "Border color"
+			"label": "Border color",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "color",
 			"id": "savings_color",
 			"label": "Savings color",
-			"info": "Discount highlights"
+			"info": "Discount highlights",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "select",
@@ -568,7 +759,8 @@
 					"label": "Rounded"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "select",
@@ -592,7 +784,8 @@
 					"label": "Strong"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "select",
@@ -616,7 +809,8 @@
 					"label": "Spacious"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
 		},
 		{
 			"type": "checkbox",
@@ -642,7 +836,8 @@
 					"label": "Outline"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_button_settings }}"
 		},
 		{
 			"type": "select",
@@ -666,7 +861,8 @@
 					"label": "Large"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_button_settings }}"
 		},
 		{
 			"type": "select",
@@ -686,13 +882,15 @@
 					"label": "Full Width"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_button_settings }}"
 		},
 		{
 			"type": "color",
 			"id": "button_bg_color",
 			"label": "Button color",
-			"info": "Leave empty to inherit accent color"
+			"info": "Leave empty to inherit accent color",
+			"visible_if": "{{ block.settings.override_button_settings }}"
 		},
 		{
 			"type": "checkbox",
@@ -722,7 +920,8 @@
 					"label": "Inline"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_badge_settings }}"
 		},
 		{
 			"type": "select",
@@ -742,7 +941,8 @@
 					"label": "Outline"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_badge_settings }}"
 		},
 		{
 			"type": "checkbox",
@@ -754,12 +954,14 @@
 			"type": "checkbox",
 			"id": "pricing_summary_box",
 			"label": "Show summary box",
-			"default": true
+			"default": true,
+			"visible_if": "{{ block.settings.override_pricing_settings }}"
 		},
 		{
 			"type": "color",
 			"id": "pricing_summary_bg",
-			"label": "Summary background"
+			"label": "Summary background",
+			"visible_if": "{{ block.settings.override_pricing_settings }}"
 		},
 		{
 			"type": "select",
@@ -783,7 +985,8 @@
 					"label": "Highlight"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_pricing_settings }}"
 		},
 		{
 			"type": "header",
@@ -794,6 +997,17 @@
 			"id": "override_container_settings",
 			"label": "Override container settings",
 			"default": false
+		},
+		{
+			"type": "range",
+			"id": "box_max_width",
+			"label": "Widget max width",
+			"min": 300,
+			"max": 1200,
+			"step": 50,
+			"unit": "px",
+			"default": 600,
+			"visible_if": "{{ block.settings.override_container_settings }}"
 		},
 		{
 			"type": "select",
@@ -817,13 +1031,15 @@
 					"label": "Right"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_container_settings }}"
 		},
 		{
 			"type": "checkbox",
 			"id": "show_border",
 			"label": "Widget border",
-			"default": true
+			"default": true,
+			"visible_if": "{{ block.settings.override_container_settings }}"
 		},
 		{
 			"type": "checkbox",
@@ -853,7 +1069,8 @@
 					"label": "Large"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_typography_settings }}"
 		},
 		{
 			"type": "select",
@@ -877,7 +1094,8 @@
 					"label": "Large"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_typography_settings }}"
 		},
 		{
 			"type": "header",
@@ -917,7 +1135,8 @@
 					"label": "Compact"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.override_layout_settings }}"
 		},
 		{
 			"type": "select",
@@ -942,7 +1161,30 @@
 					"label": "Plus"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.layout == 'list' }}"
+		},
+		{
+			"type": "range",
+			"id": "grid_columns",
+			"label": "Grid columns",
+			"info": "Applies to grid layout",
+			"min": 2,
+			"max": 4,
+			"step": 1,
+			"default": 3,
+			"visible_if": "{{ block.settings.layout == 'grid' }}"
+		},
+		{
+			"type": "range",
+			"id": "slides_per_view",
+			"label": "Slides visible",
+			"info": "Applies to carousel layout",
+			"min": 2,
+			"max": 4,
+			"step": 1,
+			"default": 3,
+			"visible_if": "{{ block.settings.layout == 'carousel' }}"
 		},
 		{
 			"type": "select",
@@ -970,7 +1212,8 @@
 					"label": "Both"
 				}
 			],
-			"default": ""
+			"default": "",
+			"visible_if": "{{ block.settings.layout == 'carousel' }}"
 		},
 		{
 			"type": "checkbox",
@@ -978,6 +1221,17 @@
 			"label": "Autoplay",
 			"info": "Applies to carousel layout",
 			"default": false,
+			"visible_if": "{{ block.settings.layout == 'carousel' }}"
+		},
+		{
+			"type": "range",
+			"id": "autoplay_speed",
+			"label": "Autoplay speed",
+			"min": 2,
+			"max": 10,
+			"step": 1,
+			"unit": "s",
+			"default": 5,
 			"visible_if": "{{ block.settings.autoplay }}"
 		}
 	]

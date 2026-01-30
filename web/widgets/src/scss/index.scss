@@ -1,13 +1,24 @@
-@forward "variable";
-@forward "animation";
-@forward "mixins";
-@forward "header";
-@forward "skeleton";
-@forward "global";
-@forward "pricing";
-@forward "layout/list";
-@forward "layout/grid";
-@forward "layout/compact";
-@forward "layout/slider";
-@forward "bundle-widget";
-@forward "toast";
+// ==========================================================================
+// Radius Bundle Widget - Main Stylesheet
+// ==========================================================================
+
+// Core
+@use "variable";
+@use "mixins";
+@use "global";
+@use "animation";
+
+// Components
+@use "bundle-widget";
+@use "header";
+@use "pricing";
+@use "skeleton";
+
+// Layouts
+@use "layout/list";
+@use "layout/grid";
+@use "layout/slider";
+@use "layout/compact";
+
+// Utilities
+@use "toast";

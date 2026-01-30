@@ -1,5 +1,14 @@
 {% comment %}
   Radius Bundle - Compact Template
+
+  Parameters:
+  - bundle_id, name, savings_badge_text, product_count
+  - show_images, show_savings, show_savings_badge
+  - show_product_prices, show_compare_at_price, show_quantity
+  - show_free_shipping, enable_hyperlink
+  - button_text, regular_price_label, bundle_price_label
+  - you_save_label, free_shipping_label, quantity_label
+  - pricing_summary_box: Boolean
 {% endcomment %}
 
 <div class="radius-bundle__inner radius-bundle__inner--compact">
@@ -8,21 +17,6 @@
 			name: name,
 			show_savings_badge: show_savings_badge
 	%}
-
-	{% comment %} Compact Products List {% endcomment %}
-	{% comment %}<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>{% endcomment %}
-		{% comment %}{% for i in (1..product_count) %}{% endcomment %}
-			{% comment %}<div class="radius-bundle__product radius-bundle__product--compact">{% endcomment %}
-				{% comment %}{% if show_images %}{% endcomment %}
-					{% comment %}<div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--box"></div>{% endcomment %}
-				{% comment %}{% endif %}{% endcomment %}
-				{% comment %}<div class="radius-bundle__product-info radius-bundle__product-info--compact">{% endcomment %}
-					{% comment %}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>{% endcomment %}
-					{% comment %}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>{% endcomment %}
-				{% comment %}</div>{% endcomment %}
-			{% comment %}</div>{% endcomment %}
-		{% comment %}{% endfor %}{% endcomment %}
-	{% comment %}</div>{% endcomment %}
 
 	{% comment %} Products List Container {% endcomment %}
 	<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
@@ -35,25 +29,31 @@
 						{% endif %}
 						<div class="radius-bundle__skeleton-content">
 							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--subtitle"></div>
+							{% if show_quantity %}
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--subtitle"></div>
+							{% endif %}
 						</div>
-						<div class="radius-bundle__skeleton-price-wrapper">
-							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
-						</div>
+						{% if show_product_prices %}
+							<div class="radius-bundle__skeleton-price-wrapper">
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+							</div>
+						{% endif %}
 					</div>
 				{% endfor %}
 			</div>
 		</div>
 	</div>
 
-	{% comment %} Pricing Section {% endcomment %}
+	{% comment %} Pricing Section (Compact Mode) {% endcomment %}
 	{% render 'radius-bundle-pricing',
 			show_savings: show_savings,
 			show_free_shipping: show_free_shipping,
 			regular_price_label: regular_price_label,
 			bundle_price_label: bundle_price_label,
 			you_save_label: you_save_label,
-			free_shipping_label: free_shipping_label
+			free_shipping_label: free_shipping_label,
+			compact: true,
+			pricing_summary_box: pricing_summary_box
 	%}
 
 	{% comment %} Add to Cart Button {% endcomment %}

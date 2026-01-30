@@ -1,11 +1,11 @@
 /**
- * Radius Bundle Widget - Stylesheet
+ * Radius Bundle Widget - Base Stylesheet
  *
- * Provides styling for bundle widgets including:
- * - List layout
- * - Grid layout
- * - Slider layout
- * - Loading skeletons
+ * Provides core styling for bundle widgets:
+ * - Container alignment
+ * - Add to cart button
+ * - Dividers
+ * - Messages
  * - Responsive design
  */
 
@@ -18,21 +18,19 @@
 
 .radius-bundle-widget {
     .radius-bundle {
-        max-width: var(--rb-bundle-max-width, 800px);
+        max-width: var(--rb-bundle-max-width, #{$rb-max-width});
 
-        /* Left */
+        // Widget alignment (data-box-align attribute)
         &[data-box-align="left"] {
             margin-left: 0;
             margin-right: auto;
         }
 
-        /* Center */
         &[data-box-align="center"] {
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* Right */
         &[data-box-align="right"] {
             margin-left: auto;
             margin-right: 0;
@@ -43,10 +41,16 @@
 .radius-bundle {
     background: var(--rb-background-color);
     border-color: var(--rb-border-color);
-    border-radius: var(--rb-box-radius);
+    border-radius: var(--rb-border-radius);
     border-width: var(--rb-box-border-width, 1px);
     border-style: solid;
     overflow: hidden;
+    box-shadow: var(--rb-shadow);
+    transition: box-shadow var(--rb-transition);
+
+    &:hover {
+        box-shadow: var(--rb-shadow-hover);
+    }
 
     &__inner {
         padding: var(--rb-box-spacing);
@@ -55,6 +59,10 @@
     &__products {
         margin-bottom: var(--rb-spacing);
     }
+
+    // -------------------------------------------------------------------------
+    // Product Title Link
+    // -------------------------------------------------------------------------
 
     &__product-title {
         a {
@@ -67,51 +75,82 @@
         }
     }
 
-    &__divider-plus {
+    // -------------------------------------------------------------------------
+    // Dividers (for list layout)
+    // -------------------------------------------------------------------------
+
+    &__divider {
         position: relative;
         flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 300;
 
-        .divider-position {
-            width: 24px;
-            height: 24px;
-            background: var(--rb-primary-color);
-            color: var(--rb-button-text-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            z-index: 1;
+        // Plus divider
+        &--plus {
+            font-size: 1.5rem;
+            font-weight: 300;
+
+            .divider-position {
+                width: 24px;
+                height: 24px;
+                background: var(--rb-primary-color);
+                color: var(--rb-button-text-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                z-index: 1;
+                position: absolute;
+            }
+        }
+
+        // Line divider
+        &--line {
+            height: 1px;
+            background: var(--rb-border-color);
+            margin: var(--rb-spacing-sm) 0;
         }
     }
 
-    &__product-image {
-        border: 1px solid color-mix(in srgb, var(--rb-border-color) 50%, transparent);
-        border-radius: var(--rb-image-border-radius);
-        background: #FFFFFF;
-        overflow: hidden;
+    // Legacy divider class (backward compatibility)
+    &__divider-plus {
+        @extend .radius-bundle__divider--plus;
     }
 
-    // ==========================================================================
+    // -------------------------------------------------------------------------
+    // Product Image
+    // -------------------------------------------------------------------------
+
+    &__product-image {
+        border: var(--rb-card-border);
+        border-radius: var(--rb-border-radius);
+        background: #ffffff;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: var(--rb-image-fit, contain);
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Add to Cart Button
-    // ==========================================================================
+    // -------------------------------------------------------------------------
 
     &__actions {
         margin-top: var(--rb-spacing);
     }
 
-    .radius-bundle__add-to-cart {
-        width: 100%;
-        padding: 10px 24px;
-        background: var(--rb-primary-color);
-        color: var(--rb-button-text-color);
-        border: none;
-        border-radius: var(--rb-button-border-radius);
-        font-size: var(--rb-button-font);
+    &__add-to-cart {
+        width: var(--rb-button-width, auto);
+        padding: var(--rb-button-padding);
+        background: var(--rb-button-bg);
+        color: var(--rb-button-text);
+        border: var(--rb-button-border);
+        border-radius: var(--rb-border-radius);
+        font-size: var(--rb-button-font-size);
         font-weight: 500;
         cursor: pointer;
         transition: all var(--rb-transition);
@@ -119,12 +158,11 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        min-height: 42px;
+        min-height: 44px;
 
         &:hover:not(:disabled) {
             opacity: 0.9;
             transform: translateY(-1px);
-            box-shadow: var(--rb-shadow);
         }
 
         &:active:not(:disabled) {
@@ -161,14 +199,14 @@
         width: 18px;
         height: 18px;
         border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top-color: #ffffff;
+        border-top-color: currentColor;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
     }
 
-    // ==========================================================================
+    // -------------------------------------------------------------------------
     // Messages
-    // ==========================================================================
+    // -------------------------------------------------------------------------
 
     &__message {
         min-height: 0;
@@ -178,8 +216,8 @@
         &:not(:empty) {
             padding: var(--rb-spacing-sm) var(--rb-spacing);
             margin-top: var(--rb-spacing-sm);
-            border-radius: 8px;
-            font-size: 0.9rem;
+            border-radius: var(--rb-border-radius);
+            font-size: 0.9em;
             text-align: center;
         }
 
@@ -198,7 +236,17 @@
         padding: var(--rb-spacing);
         text-align: center;
         color: var(--rb-muted-color);
-        font-size: 0.9rem;
+        font-size: 0.9em;
+    }
+}
+
+// ==========================================================================
+// Animations
+// ==========================================================================
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
@@ -231,8 +279,7 @@
 
 @media (max-width: 480px) {
     .radius-bundle {
-        &__products--grid,
-        &__skeleton--grid {
+        &__products--grid {
             grid-template-columns: 1fr;
         }
 
