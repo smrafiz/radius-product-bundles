@@ -184,7 +184,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "color",
                     name: "productCardBg",
                     label: "Card background",
-                    details: "Background color of product cards",
                     defaultValue: "#f9fafb",
                     showWhen: {
                         field: "customizeCardStyle",
@@ -196,7 +195,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "switch",
                     name: "productCardBorder",
                     label: "Show card border",
-                    details: "Display border around product cards",
                     defaultValue: true,
                     showWhen: {
                         field: "customizeCardStyle",
@@ -208,7 +206,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "switch",
                     name: "productCardShadow",
                     label: "Card shadow",
-                    details: "Add shadow to product cards",
                     defaultValue: false,
                     showWhen: {
                         field: "customizeCardStyle",
@@ -300,6 +297,44 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     ],
                     defaultValue: "filled",
                 },
+                // Pricing Summary group
+                {
+                    type: "heading",
+                    label: "Pricing Summary",
+                },
+                {
+                    type: "switch",
+                    name: "pricingSummaryBox",
+                    label: "Show summary box",
+                    defaultValue: true,
+                },
+                {
+                    type: "color",
+                    name: "pricingSummaryBg",
+                    label: "Summary background",
+                    defaultValue: "#f9fafb",
+                    showWhen: {
+                        field: "pricingSummaryBox",
+                        operator: "equals",
+                        value: true,
+                    },
+                },
+                {
+                    type: "buttonGroup",
+                    name: "pricingSummaryStyle",
+                    label: "Summary style",
+                    options: [
+                        { value: "minimal", label: "Minimal" },
+                        { value: "card", label: "Card" },
+                        { value: "highlight", label: "Highlight" },
+                    ],
+                    defaultValue: "card",
+                    showWhen: {
+                        field: "pricingSummaryBox",
+                        operator: "equals",
+                        value: true,
+                    },
+                },
             ],
         },
 
@@ -321,7 +356,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "range",
                     name: "boxMaxWidth",
                     label: "Widget max width",
-                    details: "Maximum width of the bundle widget",
                     suffix: "px",
                     min: 300,
                     max: 1200,
@@ -343,7 +377,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "switch",
                     name: "showBorder",
                     label: "Widget border",
-                    details: "Show border around the widget",
                     defaultValue: true,
                 },
 
@@ -448,7 +481,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "switch",
                     name: "autoplay",
                     label: "Autoplay",
-                    details: "Auto-advance slides",
                     defaultValue: false,
                     layouts: ["CAROUSEL"],
                 },
@@ -456,7 +488,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "range",
                     name: "autoplaySpeed",
                     label: "Autoplay speed",
-                    details: "Seconds between slides",
                     suffix: "s",
                     min: 2,
                     max: 10,

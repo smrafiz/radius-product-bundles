@@ -234,6 +234,16 @@ export interface CustomizerStyles {
     badgeStyle: "filled" | "outline";
 
     // ═══════════════════════════════════════════════════════════════════
+    // PRICING SUMMARY
+    // ═══════════════════════════════════════════════════════════════════
+    /** Show pricing in a box/container */
+    pricingSummaryBox: boolean;
+    /** Pricing summary background color */
+    pricingSummaryBg: string;
+    /** Pricing summary visual style */
+    pricingSummaryStyle: "minimal" | "card" | "highlight";
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - CONTAINER
     // ═══════════════════════════════════════════════════════════════════
     /** Maximum widget width */

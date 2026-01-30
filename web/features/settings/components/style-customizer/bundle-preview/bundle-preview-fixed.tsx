@@ -9,7 +9,7 @@ import {
     BundleList,
     BundlePricing,
     CUSTOMIZER_LAYOUTS_MAPPING,
-    getRadius,
+    getCardRadius,
     getShadow,
     getSpacing,
     useCustomizerStore,
@@ -97,7 +97,7 @@ export function BundlePreviewFixed() {
                             style={{
                                 backgroundColor: styles.backgroundColor,
                                 color: styles.textColor,
-                                borderRadius: getRadius(styles.cornerStyle),
+                                borderRadius: getCardRadius(styles.cornerStyle),
                                 padding: getSpacing(styles.spacing),
                                 border: styles.showBorder
                                     ? `1px solid ${styles.borderColor}`

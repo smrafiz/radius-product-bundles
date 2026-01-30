@@ -1,3 +1,5 @@
+"use client";
+
 import {
     DEFAULT_LABELS,
     getBadgeRadius,
@@ -5,6 +7,9 @@ import {
     useCustomizerStore,
 } from "@/features/settings";
 
+/**
+ * Bundle header with title and savings badge.
+ */
 export function BundleHeader() {
     const { styles } = useCustomizerStore();
 
@@ -18,7 +23,16 @@ export function BundleHeader() {
     const isInline = styles.badgePosition === "inline";
 
     return (
-        <div className="radius-bundle__header">
+        <div
+            className="radius-bundle__header"
+            style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: isInline ? "center" : "flex-start",
+                flexWrap: "wrap",
+                gap: "8px",
+            }}
+        >
             <div className="radius-bundle__title-wrapper">
                 <div
                     className="radius-bundle__title"
@@ -42,6 +56,7 @@ export function BundleHeader() {
                 <span
                     className="radius-bundle__badge"
                     style={{
+                        display: "inline-block",
                         borderRadius: badgeRadius,
                         padding: "6px 10px",
                         fontSize: "14px",

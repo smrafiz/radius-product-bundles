@@ -60,6 +60,13 @@ export const globalStylesSchema = z.object({
     badgeStyle: z.enum(["filled", "outline"]).optional(),
 
     // ═══════════════════════════════════════════════════════════════════
+    // PRICING SUMMARY
+    // ═══════════════════════════════════════════════════════════════════
+    pricingSummaryBox: z.boolean().optional(),
+    pricingSummaryBg: hexColor.optional(),
+    pricingSummaryStyle: z.enum(["minimal", "card", "highlight"]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - CONTAINER
     // ═══════════════════════════════════════════════════════════════════
     boxMaxWidth: z.number().min(300).max(1200).optional(),

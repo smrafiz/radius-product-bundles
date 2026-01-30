@@ -21,12 +21,10 @@ interface DynamicCustomizerFieldProps {
  * Renders a single preset card.
  */
 function PresetCard({
-    presetKey,
     preset,
     isActive,
     onSelect,
 }: {
-    presetKey: string;
     preset: StylePreset;
     isActive: boolean;
     onSelect: () => void;
@@ -151,7 +149,6 @@ export function DynamicCustomizerField({
                         {Object.entries(config.presets).map(([key, preset]) => (
                             <PresetCard
                                 key={key}
-                                presetKey={key}
                                 preset={preset}
                                 isActive={activePreset === key}
                                 onSelect={() => {
@@ -303,13 +300,6 @@ export function DynamicCustomizerField({
                     >
                         <s-stack>
                             <s-text>{config.label}</s-text>
-                            {config.details && (
-                                <s-text tone="neutral">
-                                    <span className="text-[0.75rem] text-[#616161]">
-                                        {config.details}
-                                    </span>
-                                </s-text>
-                            )}
                         </s-stack>
                         <div
                             style={{
@@ -344,6 +334,13 @@ export function DynamicCustomizerField({
                                 ))}
                             </s-button-group>
                         </div>
+                        {config.details && (
+                            <s-text tone="neutral">
+                                <span className="block text-[0.75rem] text-[#616161] -mt-1">
+                                    {config.details}
+                                </span>
+                            </s-text>
+                        )}
                     </s-stack>
                     {renderError()}
                 </s-stack>

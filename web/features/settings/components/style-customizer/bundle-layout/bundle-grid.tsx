@@ -6,9 +6,13 @@ import {
     getFontSize,
     getImageSize,
     getSpacing,
+    getCardBgColor,
     useCustomizerStore,
 } from "@/features/settings";
 
+/**
+ * Bundle grid layout preview.
+ */
 export function BundleGrid() {
     const { styles } = useCustomizerStore();
 
@@ -16,65 +20,92 @@ export function BundleGrid() {
     const cardRadius = getCardRadius(styles.cornerStyle);
     const fontSize = getFontSize(styles.bodySize);
     const gap = getSpacing(styles.spacing);
+    const cardBackground = getCardBgColor(styles);
 
-    const cardBackground = styles.customizeCardStyle
-        ? styles.productCardBg
-        : styles.backgroundColor;
-
-    const RenderDummyProduct = () => (
-        <div
-            className="radius-bundle__product radius-bundle__product--grid"
-            style={{
-                backgroundColor: cardBackground,
-                borderRadius: cardRadius,
-                fontSize,
-                color: styles.textColor,
-                border: styles.productCardBorder
-                    ? `1px solid ${styles.borderColor}`
-                    : "none",
-                boxShadow: styles.productCardShadow
-                    ? "0 4px 12px rgba(0,0,0,0.08)"
-                    : "none",
-                padding: gap,
-            }}
-        >
-            {/* Image */}
+    /**
+     * Renders a single product card.
+     */
+    function RenderProduct() {
+        return (
             <div
-                className="radius-bundle__product-image"
+                className="radius-bundle__product radius-bundle__product--grid"
                 style={{
-                    height: imageSizePx,
+                    backgroundColor: cardBackground,
                     borderRadius: cardRadius,
+                    fontSize,
+                    color: styles.textColor,
+                    border: styles.productCardBorder
+                        ? `1px solid ${styles.borderColor}`
+                        : "none",
+                    boxShadow: styles.productCardShadow
+                        ? "0 4px 12px rgba(0,0,0,0.08)"
+                        : "none",
+                    padding: gap,
                 }}
             >
-                <s-image
-                    ref={(el) => {
-                        if (el) {
-                            (el as any).objectFit = styles.imageFit;
-                        }
+                {/* Image */}
+                <div
+                    className="radius-bundle__product-image"
+                    style={{
+                        height: imageSizePx,
+                        borderRadius: cardRadius,
+                        marginBottom: "8px",
+                        backgroundColor: "#f3f4f6",
+                        overflow: "hidden",
                     }}
-                    src="/assets/product-image-placeholder.webp"
-                />
-            </div>
-
-            {/* Title */}
-            <div className="radius-bundle__product-title">Bundle product</div>
-
-            {/* Price */}
-            <div className="radius-bundle__product-price">
-                <div className="radius-bundle__product-price-current">
-                    $300.33
+                >
+                    <img
+                        src="/assets/product-image-placeholder.webp"
+                        alt="Product"
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: styles.imageFit,
+                        }}
+                    />
                 </div>
-                <div className="radius-bundle__product-price-compare">
-                    $600.00
+
+                {/* Title */}
+                <div
+                    className="radius-bundle__product-title"
+                    style={{ fontWeight: 500, marginBottom: "4px" }}
+                >
+                    Bundle product
+                </div>
+
+                {/* Price */}
+                <div
+                    className="radius-bundle__product-price"
+                    style={{ marginBottom: "4px" }}
+                >
+                    <span
+                        className="radius-bundle__product-price-current"
+                        style={{ fontWeight: 600, marginRight: "6px" }}
+                    >
+                        $300.33
+                    </span>
+                    <span
+                        className="radius-bundle__product-price-compare"
+                        style={{
+                            textDecoration: "line-through",
+                            opacity: 0.6,
+                            fontSize: "0.9em",
+                        }}
+                    >
+                        $600.00
+                    </span>
+                </div>
+
+                {/* Quantity */}
+                <div
+                    className="radius-bundle__product-quantity"
+                    style={{ opacity: 0.7, fontSize: "0.9em" }}
+                >
+                    {DEFAULT_LABELS.quantityLabel} 1
                 </div>
             </div>
-
-            {/* Quantity */}
-            <div className="radius-bundle__product-quantity">
-                {DEFAULT_LABELS.quantityLabel} 1
-            </div>
-        </div>
-    );
+        );
+    }
 
     return (
         <div
@@ -86,7 +117,7 @@ export function BundleGrid() {
             }}
         >
             {Array.from({ length: 4 }).map((_, index) => (
-                <RenderDummyProduct key={index} />
+                <RenderProduct key={index} />
             ))}
         </div>
     );

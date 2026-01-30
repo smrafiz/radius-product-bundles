@@ -36,7 +36,7 @@
         "@shopify/app-bridge-react": "^4.2.8",
         "@shopify/app-bridge-types": "^0.5.3",
         "@shopify/app-bridge-ui-types": "^0.3.3",
-        "@shopify/cli-kit": "^3.89.0",
+        "@shopify/cli-kit": "^3.90.0",
         "@shopify/polaris-types": "^1.0.1",
         "@shopify/shopify-api": "^12.3.0",
         "@tailwindcss/vite": "^4.1.18",

@@ -227,6 +227,13 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     badgeStyle: "filled",
 
     // ═══════════════════════════════════════════════════════════════════
+    // PRICING SUMMARY
+    // ═══════════════════════════════════════════════════════════════════
+    pricingSummaryBox: true,
+    pricingSummaryBg: "#f9fafb",
+    pricingSummaryStyle: "card",
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - CONTAINER
     // ═══════════════════════════════════════════════════════════════════
     boxMaxWidth: 600,

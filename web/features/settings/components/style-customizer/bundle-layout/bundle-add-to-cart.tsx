@@ -5,67 +5,47 @@ import {
     getButtonFontSize,
     getButtonPadding,
     getButtonRadius,
+    getButtonBgColor,
     useCustomizerStore,
 } from "@/features/settings";
 
+/**
+ * Bundle add to cart button.
+ */
 export function BundleAddToCart() {
     const { styles } = useCustomizerStore();
 
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
-
-    const bgColor =
-        styles.buttonBgColor && styles.buttonBgColor !== ""
-            ? styles.buttonBgColor
-            : styles.primaryColor || "#303030";
+    const bgColor = getButtonBgColor(styles);
 
     const textColor = "#ffffff";
-
     const isOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
 
     return (
-        <>
-            <style>
-                {`
-                .radius-bundle__add-to-cart {
-                    display: inline-flex;
-                    justify-content: center;
-                    align-items: center;
-                    width: ${isFullWidth ? "100%" : "auto"};
-                    padding: ${padding};
-                    font-size: ${fontSize};
-                    font-weight: 600;
-                    border-radius: ${radius};
-                    cursor: pointer;
-                    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-                    ${
-                        isOutline
-                            ? `
-                        background: transparent;
-                        color: ${bgColor};
-                        border: 2px solid ${bgColor};
-                    `
-                            : `
-                        background: ${bgColor};
-                        color: ${textColor};
-                        border: none;
-                    `
-                    }
-                }
-
-                .radius-bundle__add-to-cart:hover {
-                    opacity: 0.9;
-                }
-            `}
-            </style>
-
-            <div className="radius-bundle__actions">
-                <button className="radius-bundle__add-to-cart">
-                    {DEFAULT_LABELS.addToCartText}
-                </button>
-            </div>
-        </>
+        <div className="radius-bundle__actions">
+            <button
+                className="radius-bundle__add-to-cart"
+                style={{
+                    display: "inline-flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: isFullWidth ? "100%" : "auto",
+                    padding,
+                    fontSize,
+                    fontWeight: 600,
+                    borderRadius: radius,
+                    cursor: "pointer",
+                    transition: "opacity 0.2s ease",
+                    backgroundColor: isOutline ? "transparent" : bgColor,
+                    color: isOutline ? bgColor : textColor,
+                    border: isOutline ? `2px solid ${bgColor}` : "none",
+                }}
+            >
+                {DEFAULT_LABELS.addToCartText}
+            </button>
+        </div>
     );
 }
