@@ -25,12 +25,6 @@
     // Title
     // -------------------------------------------------------------------------
 
-    &__title-wrapper {
-        flex: 1;
-        min-width: 0;
-        position: relative;
-    }
-
     &__title {
         font-size: var(--rb-heading-font-size);
         color: var(--rb-text-color);
@@ -74,7 +68,7 @@
         white-space: nowrap;
         flex-shrink: 0;
         text-align: center;
-        min-height: 28px;
+        min-height: 30px;
         line-height: 1.2;
         display: flex;
         align-items: center;
@@ -108,42 +102,20 @@
 // Inline (default) - badge sits next to title in header
 .radius-bundle[data-badge-position="inline"] {
     .radius-bundle__header {
-        position: relative;
-    }
-
-    .radius-bundle__badge {
-        position: relative;
+        justify-content: flex-start;
     }
 }
 
 // Top Left - badge floats in top left corner
 .radius-bundle[data-badge-position="top-left"] {
-    position: relative;
-
-    .radius-bundle__badge {
-        position: absolute;
-        top: var(--rb-spacing);
-        left: var(--rb-spacing);
-        z-index: 10;
-    }
-
     .radius-bundle__header {
-        padding-top: calc(var(--rb-spacing) + 28px);
+        flex-direction: row-reverse;
     }
 }
 
 // Top Right - badge floats in top right corner
 .radius-bundle[data-badge-position="top-right"] {
-    position: relative;
-
-    .radius-bundle__badge {
-        position: absolute;
-        top: var(--rb-spacing);
-        right: var(--rb-spacing);
-        z-index: 10;
-    }
-
     .radius-bundle__header {
-        padding-top: calc(var(--rb-spacing) + 28px);
+        position: relative;
     }
 }
