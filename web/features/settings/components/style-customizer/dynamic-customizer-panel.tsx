@@ -34,15 +34,15 @@ export function DynamicCustomizerPanel({
     activeLayout = "LIST",
     activeBundleType = "FIXED_BUNDLE",
 }: DynamicCustomizerPanelProps) {
-    const styles = useCustomizerStore((state) => state.styles);
+    const { styles, activeDevice } = useCustomizerStore();
     const { openSectionId, handleToggle, handleRestoreDefaults } =
         useCustomizerPanel(config, onFieldChangeAction, onClearErrorsAction);
     const { openModal } = useModalStore();
 
     // Create condition context
     const context: ConditionContext = useMemo(
-        () => createConditionContext(styles, activeLayout, activeBundleType),
-        [styles, activeLayout, activeBundleType],
+        () => createConditionContext(styles, activeLayout, activeBundleType, activeDevice),
+        [styles, activeLayout, activeBundleType, activeDevice],
     );
 
     // Filter visible sections based on conditions

@@ -5,13 +5,14 @@ import {
     getBadgeRadius,
     getHeadingFontSize,
     useCustomizerStore,
+    useEffectiveStyles,
 } from "@/features/settings";
 
 /**
  * Bundle header with title and savings badge.
  */
 export function BundleHeader() {
-    const { styles } = useCustomizerStore();
+    const styles = useEffectiveStyles();
 
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const badgeRadius = getBadgeRadius(styles.cornerStyle);

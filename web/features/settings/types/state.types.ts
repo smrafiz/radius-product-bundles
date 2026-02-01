@@ -72,6 +72,7 @@ export interface CustomizerStoreState {
     originalStyles: CustomizerStyles | null;
     isInitialized: boolean;
     activeLayout: WidgetLayout;
+    activeDevice: "desktop" | "tablet" | "mobile";
     activePreset: string | null;
 
     initializeStyles: (styles: Partial<CustomizerStyles>) => void;
@@ -84,6 +85,7 @@ export interface CustomizerStoreState {
     ) => void;
     updateStyles: (styles: Partial<CustomizerStyles>) => void;
     setActiveLayout: (layout: WidgetLayout) => void;
+    setActiveDevice: (device: "desktop" | "tablet" | "mobile") => void;
     applyPreset: (presetKey: string) => void;
     resetToDefaults: () => void;
     discardChanges: () => void;

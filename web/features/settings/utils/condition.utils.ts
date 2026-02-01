@@ -22,7 +22,19 @@ function getConditionValue(
     if (field === "_bundleType") {
         return context.activeBundleType;
     }
-    return context.styles[field as keyof CustomizerStyles];
+
+    // Resolve value with responsive overrides
+    const key = field as keyof CustomizerStyles;
+    let value = context.styles[key];
+
+    if (context.activeDevice !== "desktop") {
+        const override = context.styles[context.activeDevice]?.[key];
+        if (override !== undefined) {
+            value = override as any;
+        }
+    }
+
+    return value;
 }
 
 /**
@@ -165,10 +177,12 @@ export function createConditionContext(
     styles: CustomizerStyles,
     activeLayout: WidgetLayout,
     activeBundleType: BundleType,
+    activeDevice: "desktop" | "tablet" | "mobile" = "desktop",
 ): ConditionContext {
     return {
         styles,
         activeLayout,
         activeBundleType,
+        activeDevice,
     };
 }

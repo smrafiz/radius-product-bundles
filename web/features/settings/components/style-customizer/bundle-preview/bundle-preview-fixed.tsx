@@ -13,6 +13,7 @@ import {
     getShadow,
     getSpacing,
     useCustomizerStore,
+    useEffectiveStyles,
 } from "@/features/settings";
 
 import "@/styles/components/bundle.css";
@@ -21,7 +22,9 @@ import "@/styles/components/bundle.css";
  * Preview component for Fixed Bundle type.
  */
 export function BundlePreviewFixed() {
-    const { styles, activeLayout, setActiveLayout } = useCustomizerStore();
+    const { activeLayout, activeDevice, setActiveLayout } =
+        useCustomizerStore();
+    const styles = useEffectiveStyles();
 
     function RenderLayout() {
         switch (activeLayout) {
@@ -76,7 +79,25 @@ export function BundlePreviewFixed() {
             </div>
 
             {/* RIGHT: Preview */}
-            <div className="flex-1 p-4 bg-gray-50">
+            <div
+                className="flex-1 p-4 bg-gray-50"
+                style={{
+                    maxWidth:
+                        activeDevice === "mobile"
+                            ? "400px"
+                            : activeDevice === "tablet"
+                              ? "768px"
+                              : "100%",
+                    margin: "0 auto",
+                    transition: "max-width 0.3s ease-in-out",
+                    border:
+                        activeDevice !== "desktop"
+                            ? "1px solid #e1e3e5"
+                            : "none",
+                    borderRadius: activeDevice !== "desktop" ? "8px" : "0",
+                    overflow: "hidden",
+                }}
+            >
                 <div className="radius-bundle-widget radius-bundle-widget--customizer">
                     <div
                         className="radius-bundle"

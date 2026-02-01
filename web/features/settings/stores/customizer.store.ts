@@ -27,6 +27,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             originalStyles: null,
             isInitialized: false,
             activeLayout: "LIST" as WidgetLayout,
+            activeDevice: "desktop",
             activePreset: null,
 
             /**
@@ -70,11 +71,29 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 key: K,
                 value: CustomizerStyles[K],
             ) => {
-                set((state) => ({
-                    styles: { ...state.styles, [key]: value },
-                    // Clear active preset when user makes changes
-                    activePreset: null,
-                }));
+                const { activeDevice, styles } = get();
+
+                if (activeDevice === "desktop") {
+                    set((state) => ({
+                        styles: { ...state.styles, [key]: value },
+                        activePreset: null,
+                    }));
+                } else {
+                    // Handle nested overrides
+                    const currentMap = styles[activeDevice] || {};
+                    const updatedMap = {
+                        ...currentMap,
+                        [key]: value,
+                    };
+
+                    set((state) => ({
+                        styles: {
+                            ...state.styles,
+                            [activeDevice]: updatedMap,
+                        },
+                        activePreset: null,
+                    }));
+                }
             },
 
             /**
@@ -92,6 +111,13 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
              */
             setActiveLayout: (layout: WidgetLayout) => {
                 set({ activeLayout: layout });
+            },
+
+            /**
+             * Sets the active device for responsive editing.
+             */
+            setActiveDevice: (device: "desktop" | "tablet" | "mobile") => {
+                set({ activeDevice: device });
             },
 
             /**

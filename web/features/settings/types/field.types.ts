@@ -111,19 +111,19 @@ export interface SettingsTabConfig {
     id: string;
     title: string;
     icon:
-        | "settings"
-        | "store-online"
-        | "paint-brush-round"
-        | "text-block"
-        | "refresh"
-        | "button"
-        | "variant"
-        | "apps"
-        | "inventory"
-        | "adjust"
-        | "notification"
-        | "dns-settings"
-        | "wrench";
+    | "settings"
+    | "store-online"
+    | "paint-brush-round"
+    | "text-block"
+    | "refresh"
+    | "button"
+    | "variant"
+    | "apps"
+    | "inventory"
+    | "adjust"
+    | "notification"
+    | "dns-settings"
+    | "wrench";
     sections?: SectionConfig[];
     parentPath?: string;
 }
@@ -296,6 +296,14 @@ export interface CustomizerStyles {
     // ═══════════════════════════════════════════════════════════════════
     /** Tier display style */
     buyGetTierStyle: "cards" | "list" | "tabs";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // RESPONSIVE OVERRIDES
+    // ═══════════════════════════════════════════════════════════════════
+    /** Mobile overrides (applies < 768px) */
+    mobile?: Partial<CustomizerStyles>;
+    /** Tablet overrides (applies 768px - 1024px) */
+    tablet?: Partial<CustomizerStyles>;
 }
 
 /**
@@ -487,6 +495,7 @@ export interface ConditionContext {
     styles: CustomizerStyles;
     activeLayout: WidgetLayout;
     activeBundleType: BundleType;
+    activeDevice: "desktop" | "tablet" | "mobile";
 }
 
 /**

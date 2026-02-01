@@ -8,6 +8,7 @@ import {
     BundleHeader,
     BundleList,
     BundlePricing,
+    useEffectiveStyles,
 } from "@/features/settings";
 
 import "@/styles/components/bundle.css";
@@ -19,7 +20,7 @@ const BOGO_LAYOUTS = [
 
 export function BundlePreviewBogo() {
     const { displaySettings, updateDisplaySettings } = useBundleStore();
-    const styleData = displaySettings.style || {};
+    const styleData = useEffectiveStyles();
 
     const RenderLayout = () => {
         switch (displaySettings.layout) {
@@ -51,10 +52,9 @@ export function BundlePreviewBogo() {
                                     updateDisplaySettings("layout", value)
                                 }
                                 className={`text-left px-4 py-3 border-l-4 transition cursor-pointer
-                                    ${
-                                        isActive
-                                            ? "border-[#303030] bg-[#f7f7f7] font-semibold"
-                                            : "border-transparent hover:bg-[#f7f7f7]"
+                                    ${isActive
+                                        ? "border-[#303030] bg-[#f7f7f7] font-semibold"
+                                        : "border-transparent hover:bg-[#f7f7f7]"
                                     }
                                 `}
                             >
@@ -76,20 +76,20 @@ export function BundlePreviewBogo() {
                                 styleData?.boxAlignment === "left"
                                     ? "0 auto 0 0"
                                     : styleData?.boxAlignment === "right"
-                                      ? "0 0 0 auto"
-                                      : "0 auto",
+                                        ? "0 0 0 auto"
+                                        : "0 auto",
                         }}
                     >
                         <div
                             className="radius-bundle__inner"
                             style={{
                                 backgroundColor:
-                                    styleData.boxBgColor || "#ffffff",
-                                borderRadius: `${styleData.boxRadius ?? 12}px`,
+                                    styleData.backgroundColor || "#ffffff",
+                                borderRadius: styleData.cornerStyle === "rounded" ? "12px" : styleData.cornerStyle === "modern" ? "8px" : "0px",
                                 borderStyle: "solid",
-                                borderWidth: `${styleData.boxBorderWidth ?? 1}px`,
+                                borderWidth: styleData.showBorder ? "1px" : "0px",
                                 borderColor:
-                                    styleData.boxBorderColor || "#e3e3e3",
+                                    styleData.borderColor || "#e3e3e3",
                             }}
                         >
                             <BundleHeader />

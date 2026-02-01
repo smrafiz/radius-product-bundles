@@ -18,9 +18,8 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     config: CustomizerFieldConfig & { name: K },
     onFieldChange?: () => void,
 ) {
-    // Subscribe to the specific field value from the store
-    const storeValue = useCustomizerStore((state) => state.styles[config.name]);
-    const updateStyle = useCustomizerStore((state) => state.updateStyle);
+    // Subscribe to the store
+    const { styles, activeDevice, updateStyle } = useCustomizerStore();
 
     const {
         setValue,
@@ -28,37 +27,60 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     } = useFormContext<CustomizerStyles>();
 
     const fieldName: K = config.name;
-    const error = errors[fieldName]?.message as string | undefined;
 
-    // Get default from config or global defaults
+    // Determine effective path for RHF and validation
+    // e.g. "primaryColor" or "mobile.primaryColor"
+    const rhfPath =
+        activeDevice === "desktop"
+            ? fieldName
+            : (`${activeDevice}.${fieldName}` as Path<CustomizerStyles>);
+
+    // Get error from the specific path
+    // We need to cast because RHF types get complex with dynamic paths
+    const error = (
+        activeDevice === "desktop"
+            ? errors[fieldName]
+            : (errors as any)[activeDevice]?.[fieldName]
+    )?.message as string | undefined;
+
+    // Resolve value: Override -> Store Base -> Config Default -> Global Default
+    let resolvedValue: any = styles[fieldName];
+
+    if (activeDevice !== "desktop") {
+        const override = styles[activeDevice]?.[fieldName];
+        if (override !== undefined) {
+            resolvedValue = override;
+        }
+    }
+
     const configDefault = (
         "defaultValue" in config ? config.defaultValue : undefined
     ) as CustomizerStyles[K] | undefined;
 
     const globalDefault = DEFAULT_CUSTOMIZER_STYLES[fieldName];
 
-    // Value with fallback chain: store → config default → global default
-    const value = storeValue ?? configDefault ?? globalDefault;
+    // Final effective value
+    const value = resolvedValue ?? configDefault ?? globalDefault;
 
     /**
      * Updates both RHF (validation) and Zustand (preview).
      */
     const handleChange = useCallback(
         (newValue: CustomizerStyles[K]) => {
-            // Update RHF for validation
-            setValue(
-                fieldName as Path<CustomizerStyles>,
-                newValue as PathValue<CustomizerStyles, Path<CustomizerStyles>>,
-                { shouldDirty: true, shouldValidate: true },
-            );
+            // Update RHF for validation/submission
+            setValue(rhfPath, newValue as any, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
 
             // Update Zustand for live preview
+            // Note: updateStyle handles the activeDevice redirect internally
             updateStyle(fieldName, newValue);
 
             // Trigger SaveBar dirty state
             onFieldChange?.();
         },
-        [fieldName, setValue, updateStyle, onFieldChange],
+        [fieldName, rhfPath, setValue, updateStyle, onFieldChange],
     );
 
     return {

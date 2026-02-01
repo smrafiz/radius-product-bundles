@@ -46,7 +46,7 @@ export function CustomizerBundleType() {
         handleReset,
     } = useCustomizerPage();
 
-    const activeLayout = useCustomizerStore((state) => state.activeLayout);
+    const { activeLayout } = useCustomizerStore();
     const activeBundleType = (activeId || "FIXED_BUNDLE") as BundleType;
     const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
 
