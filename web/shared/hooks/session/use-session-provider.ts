@@ -118,54 +118,56 @@ export function useSessionProvider() {
                     );
                 }
 
-                try {
-                    console.log("━".repeat(80));
-                    console.log(
-                        "🎯 [Session Provider] STARTING WEBHOOK REGISTRATION",
-                    );
-                    console.log(
-                        "[Session Provider] Token length:",
-                        token.length,
-                    );
-                    console.log(
-                        "[Session Provider] Token prefix:",
-                        token.substring(0, 30) + "...",
-                    );
-                    console.log("━".repeat(80));
-
-                    await doWebhookRegistration(token);
-
-                    console.log("━".repeat(80));
-                    console.log(
-                        "✅ [Session Provider] WEBHOOK REGISTRATION COMPLETE",
-                    );
-                    console.log("━".repeat(80));
-                } catch (e) {
-                    console.error("━".repeat(80));
-                    console.error(
-                        "❌ [Session Provider] WEBHOOK REGISTRATION FAILED",
-                    );
-                    console.error(
-                        "[Session Provider] Error type:",
-                        e?.constructor?.name,
-                    );
-                    console.error(
-                        "[Session Provider] Error message:",
-                        e instanceof Error ? e.message : String(e),
-                    );
-                    console.error(
-                        "[Session Provider] Error stack:",
-                        e instanceof Error ? e.stack : "No stack",
-                    );
-
-                    if (e && typeof e === "object") {
-                        console.error(
-                            "[Session Provider] Full error details:",
-                            JSON.stringify(e, Object.getOwnPropertyNames(e), 2),
-                        );
-                    }
-                    console.error("━".repeat(80));
-                }
+                /*
+                                try {
+                                    console.log("━".repeat(80));
+                                    console.log(
+                                        "🎯 [Session Provider] STARTING WEBHOOK REGISTRATION",
+                                    );
+                                    console.log(
+                                        "[Session Provider] Token length:",
+                                        token.length,
+                                    );
+                                    console.log(
+                                        "[Session Provider] Token prefix:",
+                                        token.substring(0, 30) + "...",
+                                    );
+                                    console.log("━".repeat(80));
+                
+                                    await doWebhookRegistration(token);
+                
+                                    console.log("━".repeat(80));
+                                    console.log(
+                                        "✅ [Session Provider] WEBHOOK REGISTRATION COMPLETE",
+                                    );
+                                    console.log("━".repeat(80));
+                                } catch (e) {
+                                    console.error("━".repeat(80));
+                                    console.error(
+                                        "❌ [Session Provider] WEBHOOK REGISTRATION FAILED",
+                                    );
+                                    console.error(
+                                        "[Session Provider] Error type:",
+                                        e?.constructor?.name,
+                                    );
+                                    console.error(
+                                        "[Session Provider] Error message:",
+                                        e instanceof Error ? e.message : String(e),
+                                    );
+                                    console.error(
+                                        "[Session Provider] Error stack:",
+                                        e instanceof Error ? e.stack : "No stack",
+                                    );
+                
+                                    if (e && typeof e === "object") {
+                                        console.error(
+                                            "[Session Provider] Full error details:",
+                                            JSON.stringify(e, Object.getOwnPropertyNames(e), 2),
+                                        );
+                                    }
+                                    console.error("━".repeat(80));
+                                }
+                                */
 
                 if (!stored) {
                     console.error("❌ [Session Provider] Token store failed");

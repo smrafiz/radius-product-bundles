@@ -19,7 +19,7 @@ import {
 } from "@/features/bundles/services";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
-import { ensureMetafieldDefinition, handleSessionToken } from "@/lib/shopify";
+import { ensureMetafieldDefinition, ensureBundleDiscount, handleSessionToken } from "@/lib/shopify";
 import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
 import {
     addBundleIdToProducts,
@@ -363,13 +363,39 @@ export async function createBundleAction(
 
         console.log("[Action] Schema validation passed");
 
+        // Ensure metafield definitions exist before creating bundle
+        const metafieldSetupResult = await ensureMetafieldDefinition(sessionToken);
+        if (!metafieldSetupResult.success) {
+            console.error(
+                "[createBundleAction] Failed to ensure metafield definitions:",
+                metafieldSetupResult.error,
+            );
+            return {
+                status: "error",
+                message: "Failed to setup required metafield definitions",
+                errors: [metafieldSetupResult.error || "Unknown error"],
+            };
+        }
+
+        // Ensure discount function exists before creating bundle
+        const discountSetupResult = await ensureBundleDiscount(sessionToken);
+        if (!discountSetupResult.success) {
+            console.error(
+                "[createBundleAction] Failed to ensure discount function:",
+                discountSetupResult.error,
+            );
+            return {
+                status: "error",
+                message: "Failed to setup required discount function",
+                errors: [discountSetupResult.error || "Unknown error"],
+            };
+        }
+
         // Call Service with Clean Data
         const result = await createBundleService({
             shop,
             data: schemaValidation.data,
         });
-        // await syncActiveBundlesToMetafield(sessionToken, shop);
-        await syncAllSettingsToMetafields(sessionToken, shop);
 
         if (!result.success) {
             return {
@@ -381,12 +407,14 @@ export async function createBundleAction(
             };
         }
 
+        // Sync metafields AFTER successful creation
+        await syncAllSettingsToMetafields(sessionToken, shop);
+
         // Add bundle ID to product metafields
         const productIds = schemaValidation.data.products.map(
             (p) => p.productId,
         );
         if (productIds.length > 0 && result.bundle?.id) {
-            await ensureMetafieldDefinition(sessionToken);
 
             console.log(
                 `[Action] Adding metafields to ${productIds.length} products`,
@@ -503,12 +531,39 @@ export async function updateBundleAction(
         const oldProductIds =
             existingBundle?.bundleProducts?.map((bp) => bp.productId) || [];
 
+        // Ensure metafield definitions exist before updating bundle
+        const metafieldSetupResult = await ensureMetafieldDefinition(sessionToken);
+        if (!metafieldSetupResult.success) {
+            console.error(
+                "[updateBundleAction] Failed to ensure metafield definitions:",
+                metafieldSetupResult.error,
+            );
+            return {
+                status: "error",
+                message: "Failed to setup required metafield definitions",
+                errors: [metafieldSetupResult.error || "Unknown error"],
+            };
+        }
+
+        // Ensure discount function exists before updating bundle
+        const discountSetupResult = await ensureBundleDiscount(sessionToken);
+        if (!discountSetupResult.success) {
+            console.error(
+                "[updateBundleAction] Failed to ensure discount function:",
+                discountSetupResult.error,
+            );
+            return {
+                status: "error",
+                message: "Failed to setup required discount function",
+                errors: [discountSetupResult.error || "Unknown error"],
+            };
+        }
+
         const result = await updateBundleService({
             shop,
             bundleId,
             data: schemaValidation.data,
         });
-        await syncAllSettingsToMetafields(sessionToken, shop);
 
         if (!result.success) {
             console.log(
@@ -527,6 +582,9 @@ export async function updateBundleAction(
         console.log(
             `[updateBundleAction] Bundle updated successfully: ${result.bundle!.id}`,
         );
+
+        // Sync metafields AFTER successful update
+        await syncAllSettingsToMetafields(sessionToken, shop);
 
         // Sync metafields for changed products
         const newProductIds = schemaValidation.data.products.map(
