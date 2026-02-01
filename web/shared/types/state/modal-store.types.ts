@@ -27,6 +27,7 @@ export type ModalType =
     | "status"
     | "delete-product"
     | "restore-defaults"
+    | "import-settings"
     | null;
 
 export interface ModalPayload {

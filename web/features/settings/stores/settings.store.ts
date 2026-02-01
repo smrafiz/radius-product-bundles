@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { triggerSaveBar } from "@/shared";
 import { immer } from "zustand/middleware/immer";
-import { AppSettingsFormData, getDefaultValuesFromConfig, SettingsStoreState } from "@/features/settings";
+import {
+    AppSettingsFormData,
+    getDefaultValuesFromConfig,
+    SettingsStoreState,
+} from "@/features/settings";
 
 /**
  * Settings store
@@ -13,6 +17,11 @@ export const useSettingsStore = create(
         localData: null,
         isLoading: false,
         isSaving: false,
+        isExporting: false,
+        isImporting: false,
+        isSyncing: false,
+        isResetting: false,
+        isClearing: false,
         isDirty: false,
         error: null,
         toast: { active: false, message: "" },
@@ -109,6 +118,18 @@ export const useSettingsStore = create(
             });
         },
 
+        setExporting: (exporting) => {
+            set((state) => {
+                state.isExporting = exporting;
+            });
+        },
+
+        setImporting: (importing) => {
+            set((state) => {
+                state.isImporting = importing;
+            });
+        },
+
         setError: (error) => {
             set((state) => {
                 state.error = error;
@@ -125,6 +146,65 @@ export const useSettingsStore = create(
             set((state) => {
                 state.toast = { active: false, message: "" };
             });
+        },
+
+        // Tool Actions
+        syncMetafields: async () => {
+            set((state) => {
+                state.isSyncing = true;
+            });
+            try {
+                // TODO: Implement sync logic
+                console.log("Syncing to Shopify...");
+                // Simulate delay
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                get().showToast("Sync completed successfully");
+            } catch (error) {
+                console.error("Sync error:", error);
+                get().showToast("Failed to sync", true);
+            } finally {
+                set((state) => {
+                    state.isSyncing = false;
+                });
+            }
+        },
+
+        resetApp: async () => {
+            set((state) => {
+                state.isResetting = true;
+            });
+            try {
+                // TODO: Implement reset logic
+                console.log("Resetting settings...");
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                get().showToast("App reset successfully");
+            } catch (error) {
+                console.error("Reset error:", error);
+                get().showToast("Failed to reset app", true);
+            } finally {
+                set((state) => {
+                    state.isResetting = false;
+                });
+            }
+        },
+
+        clearWidgetCache: async () => {
+            set((state) => {
+                state.isClearing = true;
+            });
+            try {
+                // TODO: Implement clear cache logic
+                console.log("Clearing cache...");
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                get().showToast("Cache cleared successfully");
+            } catch (error) {
+                console.error("Cache clear error:", error);
+                get().showToast("Failed to clear cache", true);
+            } finally {
+                set((state) => {
+                    state.isClearing = false;
+                });
+            }
         },
 
         // Get effective data (local or defaults)

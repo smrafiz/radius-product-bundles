@@ -1,81 +1,29 @@
-"use client";
-
-import { useState } from "react";
+import {
+    useSettingsStore,
+    useSettingsTools
+} from "@/features/settings";
 
 /**
  * Tools settings component
  */
 export function SettingsTools() {
-    const [isExporting, setIsExporting] = useState(false);
-    const [isImporting, setIsImporting] = useState(false);
-    const [isSyncing, setIsSyncing] = useState(false);
-    const [isResetting, setIsResetting] = useState(false);
-    const [isClearing, setIsClearing] = useState(false);
+    const {
+        isSyncing,
+        isResetting,
+        isClearing,
+        syncMetafields,
+        resetApp,
+        clearWidgetCache,
+    } = useSettingsStore();
 
-    /**
-     * Handles exporting settings to JSON file
-     */
-    async function handleExport() {
-        setIsExporting(true);
-        try {
-            // TODO: Implement export logic
-            console.log("Exporting settings...");
-        } finally {
-            setIsExporting(false);
-        }
-    }
-
-    /**
-     * Handles importing settings from JSON file
-     */
-    async function handleImport() {
-        setIsImporting(true);
-        try {
-            // TODO: Implement import logic
-            console.log("Importing settings...");
-        } finally {
-            setIsImporting(false);
-        }
-    }
-
-    /**
-     * Handles syncing metafields to Shopify
-     */
-    async function handleSync() {
-        setIsSyncing(true);
-        try {
-            // TODO: Implement sync logic
-            console.log("Syncing to Shopify...");
-        } finally {
-            setIsSyncing(false);
-        }
-    }
-
-    /**
-     * Handles clearing widget cache
-     */
-    async function handleClearCache() {
-        setIsClearing(true);
-        try {
-            // TODO: Implement clear cache logic
-            console.log("Clearing cache...");
-        } finally {
-            setIsClearing(false);
-        }
-    }
-
-    /**
-     * Handles resetting all settings to defaults
-     */
-    async function handleReset() {
-        setIsResetting(true);
-        try {
-            // TODO: Implement reset logic
-            console.log("Resetting settings...");
-        } finally {
-            setIsResetting(false);
-        }
-    }
+    const {
+        isExporting,
+        isImporting,
+        handleExport,
+        triggerImport,
+        onFileSelected,
+        fileInputRef
+    } = useSettingsTools();
 
     return (
         <s-stack gap="large">
@@ -135,10 +83,17 @@ export function SettingsTools() {
                                 file.
                             </s-paragraph>
                         </s-stack>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: "none" }}
+                            accept=".json"
+                            onChange={onFileSelected}
+                        />
                         <s-button
                             variant="secondary"
                             icon="upload"
-                            onClick={handleImport}
+                            onClick={triggerImport}
                             loading={isImporting}
                         >
                             Import
@@ -185,7 +140,7 @@ export function SettingsTools() {
                         <s-button
                             variant="secondary"
                             icon="refresh"
-                            onClick={handleSync}
+                            onClick={syncMetafields}
                             loading={isSyncing}
                         >
                             Sync
@@ -210,7 +165,7 @@ export function SettingsTools() {
                         <s-button
                             variant="secondary"
                             icon="delete"
-                            onClick={handleClearCache}
+                            onClick={clearWidgetCache}
                             loading={isClearing}
                         >
                             Clear
@@ -290,7 +245,7 @@ export function SettingsTools() {
 
                 <s-button
                     slot="primary-action"
-                    onClick={handleReset}
+                    onClick={resetApp}
                     loading={isResetting}
                 >
                     Reset all settings

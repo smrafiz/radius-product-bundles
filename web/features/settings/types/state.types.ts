@@ -7,6 +7,11 @@ export type SettingsStoreState = {
 
     isLoading: boolean;
     isSaving: boolean;
+    isExporting: boolean;
+    isImporting: boolean;
+    isSyncing: boolean;
+    isResetting: boolean;
+    isClearing: boolean;
     isDirty: boolean;
 
     error: string | null;
@@ -41,11 +46,17 @@ export type SettingsStoreState = {
 
     setLoading: (loading: boolean) => void;
     setSaving: (saving: boolean) => void;
+    setExporting: (exporting: boolean) => void;
+    setImporting: (importing: boolean) => void;
 
     setError: (error: string | null) => void;
 
     showToast: (message: string, isError?: boolean) => void;
     hideToast: () => void;
+
+    syncMetafields: () => Promise<void>;
+    resetApp: () => Promise<void>;
+    clearWidgetCache: () => Promise<void>;
 
     getEffectiveData: () => AppSettingsFormData;
 };
