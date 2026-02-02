@@ -25,6 +25,7 @@ export function BundlePreviewFixed() {
     const { activeLayout, activeDevice, setActiveLayout } =
         useCustomizerStore();
     const styles = useEffectiveStyles();
+    const padding = getSpacing(styles.spacing);
 
     function RenderLayout() {
         switch (activeLayout) {
@@ -122,7 +123,7 @@ export function BundlePreviewFixed() {
                                 backgroundColor: styles.backgroundColor,
                                 color: styles.textColor,
                                 borderRadius: getCardRadius(styles.cornerStyle),
-                                padding: getSpacing(styles.spacing),
+                                padding: styles.spacing === "compact" ? "12px" : styles.spacing === "spacious" ? "28px" : "20px",
                                 border: styles.showBorder
                                     ? `1px solid ${styles.borderColor}`
                                     : "none",

@@ -131,10 +131,13 @@
 				{% comment %} ═══════════════════════════════════════════════════════════════════
 					SHAPE & DEPTH
 				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% assign corner_style = block.settings.corner_style
-						| default: g_styles.cornerStyle
-						| default: 'modern' %}
+				{% if style_preset == 'custom' %}
+				  {% assign corner_style = block.settings.corner_style %}
+				{% else %}
+				  {% assign corner_style = g_styles.cornerStyle %}
+				{% endif %}
 
+				{% assign corner_style = corner_style | default: 'modern' %}
 				{% case corner_style %}
 					{% when 'sharp' %}
 						{% assign border_radius = 0 %}
@@ -144,13 +147,19 @@
 						{% assign border_radius = 8 %}
 				{% endcase %}
 
-				{% assign shadow = block.settings.shadow
-						| default: g_styles.shadow
-						| default: 'soft' %}
+				{% assign shadow = shadow | default: 'soft' %}
+				{% if style_preset == 'custom' and block.settings.shadow != blank %}
+				  {% assign shadow = block.settings.shadow %}
+				{% else %}
+				  {% assign shadow = g_styles.shadow %}
+				{% endif %}
 
-				{% assign spacing = block.settings.spacing
-						| default: g_styles.spacing
-						| default: 'comfortable' %}
+				{% assign spacing = spacing | default: 'comfortable' %}
+				{% if style_preset == 'custom' and block.settings.spacing != blank %}
+				  {% assign spacing = block.settings.spacing %}
+				{% else %}
+				  {% assign spacing = g_styles.spacing %}
+				{% endif %}
 
 				{% case spacing %}
 					{% when 'compact' %}
