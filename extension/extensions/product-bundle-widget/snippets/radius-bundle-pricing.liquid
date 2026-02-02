@@ -25,7 +25,7 @@
 
 	{% comment %} Bundle Price Row {% endcomment %}
 	<div class="radius-bundle__pricing-row{% if compact %} radius-bundle__pricing-row--compact{% endif %}{% unless compact %} radius-bundle__pricing-row--highlight{% endunless %}">
-		<span class="radius-bundle__pricing-label">{{ bundle_price_label }}</span>
+		<span class="radius-bundle__pricing-discounted-label">{{ bundle_price_label }}</span>
 		<span class="radius-bundle__price-discounted{% if compact %} radius-bundle__price-discounted--compact{% endif %}" data-bundle-price>
             <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
         </span>
@@ -34,9 +34,7 @@
 	{% comment %} Savings Row {% endcomment %}
 	{% if show_savings %}
 		<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
-			{% unless compact %}
 				<span class="radius-bundle__savings-label">{{ you_save_label }}</span>
-			{% endunless %}
 			<span class="radius-bundle__savings-amount" data-savings-amount>
                 <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--inline"></span>
             </span>

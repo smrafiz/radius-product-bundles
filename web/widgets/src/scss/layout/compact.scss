@@ -22,7 +22,7 @@
         align-items: center;
         gap: var(--rb-gap-spacing);
         padding: var(--rb-spacing-sm) 0;
-        border-bottom: 1px solid var(--rb-border-color);
+        border-bottom: var(--rb-card-border);
 
         &:last-child {
             border-bottom: none;
@@ -55,12 +55,6 @@
             margin: 0 0 var(--rb-spacing-xs);
             line-height: 1.3;
             @include line-clamp(1);
-        }
-
-        .radius-bundle__product-quantity {
-            font-size: calc(var(--rb-body-font-size) - 2px);
-            color: var(--rb-muted-color);
-            line-height: 1.3;
         }
 
         .radius-bundle__product-price {

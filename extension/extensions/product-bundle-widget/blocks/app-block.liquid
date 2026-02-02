@@ -104,10 +104,15 @@
 					{% endcase %}
 				{% endif %}
 
+				{{ primary_color }}
+
 				{% comment %} Product card colors {% endcomment %}
-				{% assign product_card_bg = block.settings.product_card_bg
-						| default: g_styles.productCardBg
+
+
+				{% if g_styles.customizeCardStyle %}
+					{% assign product_card_bg = g_styles.productCardBg
 						| default: '#f9fafb' %}
+				{% endif %}
 
 				{% comment %} Button colors {% endcomment %}
 				{% assign button_bg_color = block.settings.button_bg_color
@@ -180,14 +185,14 @@
 						| default: g_styles.imagePosition
 						| default: 'left' %}
 
-				{% assign product_card_border = block.settings.product_card_border %}
-				{% if product_card_border == null %}
-					{% assign product_card_border = g_styles.productCardBorder | default: true %}
-				{% endif %}
+				{% if g_styles.customizeCardStyle %}
+						{% if g_styles.productCardBorder %}
+							{% assign product_card_border = g_styles.productCardBorder | default: true %}
+						{% endif %}
 
-				{% assign product_card_shadow = block.settings.product_card_shadow %}
-				{% if product_card_shadow == null %}
-					{% assign product_card_shadow = g_styles.productCardShadow | default: false %}
+						{% if g_styles.productCardShadow  %}
+							{% assign product_card_shadow = g_styles.productCardShadow | default: false %}
+						{% endif %}
 				{% endif %}
 
 				{% comment %} ═══════════════════════════════════════════════════════════════════
@@ -416,8 +421,10 @@
 						/* Card shadow */
 					{% if product_card_shadow %}
 						--rb-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+						--rb-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
 					{% else %}
 						--rb-card-shadow: none;
+						--rb-card-shadow-hover: none;
 					{% endif %}
 
 						/* Card border */

@@ -68,6 +68,10 @@
         }
     }
 
+    &__pricing-discounted-label {
+        color: var(--rb-primary-color);
+    }
+
     &__pricing-label {
         font-size: var(--rb-body-font-size);
         color: var(--rb-text-color);
@@ -83,7 +87,7 @@
     &__price-discounted {
         font-size: var(--rb-body-font-size);
         font-weight: 600;
-        color: var(--rb-text-color);
+        color: var(--rb-primary-color);
 
         &--compact {
             font-size: calc(var(--rb-body-font-size) + 2px);
@@ -108,7 +112,6 @@
         &--compact {
             padding: var(--rb-spacing-sm);
             margin-top: var(--rb-spacing-xs);
-            justify-content: center;
         }
     }
 

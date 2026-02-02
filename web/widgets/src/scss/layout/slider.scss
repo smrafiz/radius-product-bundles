@@ -53,13 +53,11 @@
 
     &__product--slider {
         width: 100%;
+        scroll-snap-align: start;
         padding: var(--rb-spacing);
         background: var(--rb-product-bg-color);
         border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
-        box-shadow: var(--rb-card-shadow);
-        scroll-snap-align: start;
-        @include card-hover;
 
         .radius-bundle__product-image {
             width: 100%;
@@ -91,10 +89,6 @@
             margin-left: 5px;
         }
 
-        .radius-bundle__product-quantity {
-            font-size: calc(var(--rb-body-font-size) - 1px);
-            color: var(--rb-muted-color);
-        }
     }
 
     &__loading {

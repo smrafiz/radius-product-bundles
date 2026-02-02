@@ -60,7 +60,7 @@
             padding: var(--rb-spacing-sm) 0;
             background: transparent;
             border: none;
-            border-bottom: 1px solid var(--rb-border-color);
+            border-bottom: var(--rb-card-border);
             border-radius: 0;
 
             &:last-child {

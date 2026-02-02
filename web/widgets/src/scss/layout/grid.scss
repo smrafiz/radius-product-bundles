@@ -17,10 +17,7 @@
             );
 
             @media (max-width: 1024px) {
-                grid-template-columns: repeat(
-                    min(var(--rb-grid-columns, 3), 2),
-                                minmax(0, 1fr)
-                );
+                grid-template-columns: repeat(min(var(--rb-grid-columns, 3), 2),minmax(0, 1fr));
             }
 
             @media (max-width: 640px) {
@@ -35,7 +32,10 @@
         border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
         box-shadow: var(--rb-card-shadow);
-        @include card-hover;
+        transition: box-shadow var(--rb-transition);
+        &:hover {
+            box-shadow: var(--rb-card-shadow-hover);
+        }
 
         .radius-bundle__product-image {
             width: 100%;
@@ -67,9 +67,5 @@
             margin-left: 5px;
         }
 
-        .radius-bundle__product-quantity {
-            font-size: calc(var(--rb-body-font-size) - 1px);
-            color: var(--rb-muted-color);
-        }
     }
 }
