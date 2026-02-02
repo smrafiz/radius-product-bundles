@@ -5,6 +5,7 @@ import {
     DEFAULT_LABELS,
     GlobalLabels,
     GlobalStyleSettings,
+    resolveBreakpoints,
     ResponsiveSettings,
     StyleOverrides,
     WidgetBehavior,
@@ -145,14 +146,20 @@ function getValidGlobalStyles(styles: any): GlobalStyleSettings {
 export function buildGlobalSettingsMetafieldValue(
     appSettings: AppSettings | null,
 ): string {
+    const mergedStyles: CustomizerStyles = {
+        ...DEFAULT_CUSTOMIZER_STYLES,
+        ...(appSettings?.globalStyles
+            ? getValidCustomizerStyles(appSettings.globalStyles)
+            : {}),
+    };
+
+    const bp = resolveBreakpoints(mergedStyles);
+    mergedStyles.tabletBreakpoint = bp.tablet;
+    mergedStyles.mobileBreakpoint = bp.mobile;
+
     const settings: MetafieldGlobalSettings = {
         // Styles for Liquid
-        styles: {
-            ...DEFAULT_CUSTOMIZER_STYLES,
-            ...(appSettings?.globalStyles
-                ? getValidCustomizerStyles(appSettings.globalStyles)
-                : {}),
-        },
+        styles: mergedStyles,
 
         // Labels for Liquid
         labels: {
@@ -281,6 +288,12 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             // Bundle-type specific
             "bogoFreeTagColor",
             "buyGetTierStyle",
+
+            // Breakpoints
+            "breakpointPreset",
+            "customBreakpoints",
+            "tabletBreakpoint",
+            "mobileBreakpoint",
         ];
 
         const result: Partial<CustomizerStyles> = {};

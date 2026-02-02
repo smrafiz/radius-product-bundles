@@ -37,8 +37,7 @@
                 cursor: grabbing;
             }
 
-            // Mobile floor: single column on very small screens
-            @media (max-width: 640px) {
+            .rb--mobile & {
                 grid-auto-columns: 100%;
             }
         }

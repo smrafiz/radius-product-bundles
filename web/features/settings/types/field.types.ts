@@ -153,6 +153,11 @@ export type CornerStyle = "sharp" | "modern" | "rounded";
 export type ShadowStyle = "none" | "soft" | "strong";
 
 /**
+ * Breakpoint presets
+ */
+export type BreakpointPreset = "standard" | "compact" | "wide";
+
+/**
  * Size presets for consistent sizing
  */
 export type SizePreset = "small" | "medium" | "large";
@@ -296,6 +301,18 @@ export interface CustomizerStyles {
     // ═══════════════════════════════════════════════════════════════════
     /** Tier display style */
     buyGetTierStyle: "cards" | "list" | "tabs";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BREAKPOINTS
+    // ═══════════════════════════════════════════════════════════════════
+    /** Breakpoint preset */
+    breakpointPreset: BreakpointPreset;
+    /** Use custom pixel values instead of preset */
+    customBreakpoints: boolean;
+    /** Tablet breakpoint in pixels */
+    tabletBreakpoint: number;
+    /** Mobile breakpoint in pixels */
+    mobileBreakpoint: number;
 
     // ═══════════════════════════════════════════════════════════════════
     // RESPONSIVE OVERRIDES

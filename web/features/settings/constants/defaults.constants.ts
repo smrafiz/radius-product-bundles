@@ -1,4 +1,5 @@
 import {
+    BreakpointPreset,
     CustomizerStyles,
     getDefaultValuesFromConfig,
     GlobalStyleSettings,
@@ -182,6 +183,18 @@ export const APP_SETTINGS = {
 };
 
 /**
+ * Maps breakpoint presets to pixel values.
+ */
+export const BREAKPOINT_PRESET_VALUES: Record<
+    BreakpointPreset,
+    { tablet: number; mobile: number }
+> = {
+    standard: { tablet: 1024, mobile: 768 },
+    compact: { tablet: 960, mobile: 640 },
+    wide: { tablet: 1200, mobile: 768 },
+} as const;
+
+/**
  * Default customizer styles
  */
 export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
@@ -273,6 +286,14 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     buyGetTierStyle: "cards",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BREAKPOINTS
+    // ═══════════════════════════════════════════════════════════════════
+    breakpointPreset: "standard",
+    customBreakpoints: false,
+    tabletBreakpoint: 1024,
+    mobileBreakpoint: 768,
 };
 
 /**

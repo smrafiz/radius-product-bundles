@@ -174,6 +174,7 @@ declare global {
         private readonly responsiveOverrides: {
             tablet?: Record<string, string>;
             mobile?: Record<string, string>;
+            breakpoints?: { tablet?: number; mobile?: number };
         } | null = null;
         private readonly desktopDataAttrs: Record<string, string> = {};
 
@@ -262,12 +263,11 @@ declare global {
         }
 
         private initResponsive(): void {
-            if (!this.responsiveOverrides) {
-                return;
-            }
-
-            const tabletMq = window.matchMedia("(max-width: 1024px)");
-            const mobileMq = window.matchMedia("(max-width: 768px)");
+            const bp = this.responsiveOverrides?.breakpoints;
+            const tabletBp = bp?.tablet ?? 1024;
+            const mobileBp = bp?.mobile ?? 768;
+            const tabletMq = window.matchMedia(`(max-width: ${tabletBp}px)`);
+            const mobileMq = window.matchMedia(`(max-width: ${mobileBp}px)`);
 
             const update = () => {
                 const device = mobileMq.matches
@@ -275,12 +275,24 @@ declare global {
                     : tabletMq.matches
                       ? "tablet"
                       : "desktop";
-                this.applyResponsiveDataAttrs(device);
+                this.applyDeviceClass(device);
+                if (this.responsiveOverrides) {
+                    this.applyResponsiveDataAttrs(device);
+                }
             };
 
             tabletMq.addEventListener("change", update);
             mobileMq.addEventListener("change", update);
             update();
+        }
+
+        private applyDeviceClass(device: string): void {
+            this.container.classList.remove(
+                "rb--desktop",
+                "rb--tablet",
+                "rb--mobile",
+            );
+            this.container.classList.add(`rb--${device}`);
         }
 
         private applyResponsiveDataAttrs(device: string): void {

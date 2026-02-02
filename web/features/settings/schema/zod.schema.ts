@@ -105,6 +105,14 @@ const baseStylesSchema = z.object({
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     buyGetTierStyle: z.enum(["cards", "list", "tabs"]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - BREAKPOINTS
+    // ═══════════════════════════════════════════════════════════════════
+    breakpointPreset: z.enum(["standard", "compact", "wide"]).optional(),
+    customBreakpoints: z.boolean().optional(),
+    tabletBreakpoint: z.number().min(600).max(1200).optional(),
+    mobileBreakpoint: z.number().min(320).max(800).optional(),
 });
 
 export const globalStylesSchema = baseStylesSchema.extend({

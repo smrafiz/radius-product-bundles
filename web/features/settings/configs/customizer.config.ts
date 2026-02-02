@@ -386,6 +386,63 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     defaultValue: true,
                 },
 
+                // Breakpoints
+                {
+                    type: "heading",
+                    label: "Breakpoints",
+                },
+                {
+                    type: "buttonGroup",
+                    name: "breakpointPreset",
+                    label: "Breakpoint preset",
+                    details:
+                        "Standard (1024/768), Compact (960/640), Wide (1200/768)",
+                    options: [
+                        { value: "standard", label: "Standard" },
+                        { value: "compact", label: "Compact" },
+                        { value: "wide", label: "Wide" },
+                    ],
+                    defaultValue: "standard",
+                },
+                {
+                    type: "switch",
+                    name: "customBreakpoints",
+                    label: "Use custom values",
+                    details:
+                        "Override preset with exact pixel values",
+                    defaultValue: false,
+                },
+                {
+                    type: "range",
+                    name: "tabletBreakpoint",
+                    label: "Tablet breakpoint",
+                    suffix: "px",
+                    min: 600,
+                    max: 1200,
+                    step: 10,
+                    defaultValue: 1024,
+                    showWhen: {
+                        field: "customBreakpoints",
+                        operator: "equals",
+                        value: true,
+                    },
+                },
+                {
+                    type: "range",
+                    name: "mobileBreakpoint",
+                    label: "Mobile breakpoint",
+                    suffix: "px",
+                    min: 320,
+                    max: 800,
+                    step: 10,
+                    defaultValue: 768,
+                    showWhen: {
+                        field: "customBreakpoints",
+                        operator: "equals",
+                        value: true,
+                    },
+                },
+
                 // Typography
                 {
                     type: "heading",

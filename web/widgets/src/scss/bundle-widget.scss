@@ -260,49 +260,46 @@
 // Responsive Design
 // ==========================================================================
 
-@media (max-width: 768px) {
-    .radius-bundle {
-        &__inner {
-            padding: var(--rb-spacing);
-        }
+.radius-bundle.rb--tablet,
+.radius-bundle.rb--mobile {
+    .radius-bundle__inner {
+        padding: var(--rb-spacing);
+    }
 
-        &__header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: var(--rb-spacing-sm);
-        }
+    .radius-bundle__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rb-spacing-sm);
+    }
 
-        &__title-wrapper {
-            width: 100%;
-        }
+    .radius-bundle__title-wrapper {
+        width: 100%;
+    }
 
-        &__product--list .radius-bundle__product-image {
-            width: 60px;
-            height: 60px;
-        }
+    .radius-bundle__product--list .radius-bundle__product-image {
+        width: 60px;
+        height: 60px;
     }
 }
 
-@media (max-width: 480px) {
-    .radius-bundle {
-        &__products--grid {
-            grid-template-columns: 1fr;
-        }
+.radius-bundle.rb--mobile {
+    .radius-bundle__products--grid {
+        grid-template-columns: 1fr;
+    }
 
-        &__product--grid .radius-bundle__product-image {
-            height: 160px;
-        }
+    .radius-bundle__product--grid .radius-bundle__product-image {
+        height: 160px;
+    }
 
-        &__product--list {
-            flex-wrap: wrap;
+    .radius-bundle__product--list {
+        flex-wrap: wrap;
 
-            .radius-bundle__product-price {
-                width: 100%;
-                text-align: left;
-                margin-top: var(--rb-spacing-sm);
-                padding-top: var(--rb-spacing-sm);
-                border-top: 1px dashed var(--rb-border-color);
-            }
+        .radius-bundle__product-price {
+            width: 100%;
+            text-align: left;
+            margin-top: var(--rb-spacing-sm);
+            padding-top: var(--rb-spacing-sm);
+            border-top: 1px dashed var(--rb-border-color);
         }
     }
 }
