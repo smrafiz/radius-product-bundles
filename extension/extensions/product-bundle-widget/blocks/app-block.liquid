@@ -115,8 +115,6 @@
 						| default: primary_color %}
 				{% assign button_text_color = '#ffffff' %}
 
-				{{ primary_color }}
-
 				{% comment %} Pricing summary colors {% endcomment %}
 				{% assign pricing_summary_bg = block.settings.pricing_summary_bg
 						| default: g_styles.pricingSummaryBg
@@ -257,9 +255,16 @@
 				{% comment %} ═══════════════════════════════════════════════════════════════════
 					LAYOUT
 				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% assign layout = block.settings.layout
-						| default: bundle.layout
-						| default: 'list' %}
+
+				{% assign layout_override = block.settings.override_layout_settings
+						| default: false %}
+
+				{% assign layout = bundle.layout
+						| default: 'LIST' %}
+
+				{% if layout_override %}
+					{% assign layout = block.settings.layout %}
+				{% endif %}
 
 				{% assign divider_style = block.settings.divider_style
 						| default: g_styles.dividerStyle
@@ -318,7 +323,7 @@
 						| strip %}
 
 				{% assign savings_badge_text = g_labels.savingsBadgeText
-						| default: 'Save' %}
+						| default: 'Save {percent}%' %}
 
 				{% assign button_text = bundle.buttonText
 						| default: g_labels.addToCartText
@@ -811,6 +816,104 @@
 			],
 			"default": "",
 			"visible_if": "{{ block.settings.style_preset == 'custom' }}"
+		},
+		{
+			"type": "header",
+			"content": "Product Cards"
+		},
+		{
+			"type": "checkbox",
+			"id": "override_card_settings",
+			"label": "Override card settings",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "image_size",
+			"label": "Image size",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": "",
+			"visible_if": "{{ block.settings.override_card_settings }}"
+		},
+		{
+			"type": "select",
+			"id": "image_fit",
+			"label": "Image fit",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "contain",
+					"label": "Contain"
+				}
+			],
+			"default": "",
+			"visible_if": "{{ block.settings.override_card_settings }}"
+		},
+		{
+			"type": "select",
+			"id": "image_position",
+			"label": "Image position",
+			"info": "Applies to list layout only",
+			"options": [
+				{
+					"value": "",
+					"label": "Use global default"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "top",
+					"label": "Top"
+				}
+			],
+			"default": "",
+			"visible_if": "{{ block.settings.override_card_settings }}"
+		},
+		{
+			"type": "color",
+			"id": "product_card_bg",
+			"label": "Card background",
+			"visible_if": "{{ block.settings.override_card_settings }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "product_card_border",
+			"label": "Show card border",
+			"default": true,
+			"visible_if": "{{ block.settings.override_card_settings }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "product_card_shadow",
+			"label": "Card shadow",
+			"default": false,
+			"visible_if": "{{ block.settings.override_card_settings }}"
 		},
 		{
 			"type": "checkbox",

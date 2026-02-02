@@ -7,7 +7,7 @@
         "type": "checkbox",
         "id": "override_card_settings",
         "label": "Override card settings",
-        "default": false,
+        "default": false
     },
     {
         "type": "select",
