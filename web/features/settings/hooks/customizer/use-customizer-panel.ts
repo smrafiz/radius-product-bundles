@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { CustomizerPanelConfig, useCustomizerStore } from "@/features/settings";
+import { useFormContext } from "react-hook-form";
+import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
+import { CustomizerPanelConfig, CustomizerStyles, useCustomizerStore } from "@/features/settings";
 
 /**
  * Hook for managing the customizer panel actions.
@@ -12,6 +14,7 @@ export function useCustomizerPanel(
     onClearErrors?: () => void,
 ) {
     const { resetToDefaults } = useCustomizerStore();
+    const { setValue: setFormValue } = useFormContext<CustomizerStyles>();
     const defaultOpenSection = config.sections.find(s => s.defaultOpen)?.id ?? null;
     const [openSectionId, setOpenSectionId] = useState<string | null>(defaultOpenSection);
 
@@ -20,9 +23,19 @@ export function useCustomizerPanel(
      */
     const handleRestoreDefaults = useCallback(() => {
         resetToDefaults();
+
+        // Sync default values to React Hook Form so they persist on save
+        Object.entries(DEFAULT_CUSTOMIZER_STYLES).forEach(([field, value]) => {
+            setFormValue(
+                field as keyof CustomizerStyles,
+                value as any,
+                { shouldDirty: true },
+            );
+        });
+
         onClearErrors?.(); // Clear validation errors
         onFieldChange?.(); // Trigger save bar
-    }, [resetToDefaults, onFieldChange, onClearErrors]);
+    }, [resetToDefaults, setFormValue, onFieldChange, onClearErrors]);
 
     /**
      * Toggles accordion section - closes first, then opens new.

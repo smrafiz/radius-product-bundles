@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    CustomizerStyles,
     DynamicCustomizerFieldProps,
     isFieldVisible,
     ResponsiveFieldIndicator,
@@ -9,6 +10,8 @@ import {
     useCustomizerStore,
 } from "@/features/settings";
 import { RtpbRangeSlider } from "@/shared";
+import { useFormContext } from "react-hook-form";
+import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Renders a single preset card.
@@ -115,6 +118,9 @@ export function DynamicCustomizerField({
     const applyPreset = useCustomizerStore((state) => state.applyPreset);
     const activePreset = useCustomizerStore((state) => state.activePreset);
 
+    // Form context for syncing preset values to RHF
+    const { setValue: setFormValue } = useFormContext<CustomizerStyles>();
+
     // Check visibility conditions (skip for non-conditional types)
     if (isFormField && !isFieldVisible(config as any, context)) {
         return null;
@@ -168,6 +174,22 @@ export function DynamicCustomizerField({
                                 isActive={activePreset === key}
                                 onSelect={() => {
                                     applyPreset(key);
+
+                                    // Sync preset values to React Hook Form so they persist on save
+                                    const presetValues =
+                                        STYLE_PRESETS[key]?.values;
+                                    if (presetValues) {
+                                        Object.entries(presetValues).forEach(
+                                            ([field, value]) => {
+                                                setFormValue(
+                                                    field as keyof CustomizerStyles,
+                                                    value as any,
+                                                    { shouldDirty: true },
+                                                );
+                                            },
+                                        );
+                                    }
+
                                     onFieldChangeAction?.();
                                 }}
                             />

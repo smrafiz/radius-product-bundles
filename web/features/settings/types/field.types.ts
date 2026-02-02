@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { BundleType } from "@/features/bundles";
 import { appSettingsSchema } from "@/features/settings";
 import { WidgetLayout } from "@/prisma/generated/enums";
-import { BundleType } from "@/features/bundles";
 
 /**
  * Validation configuration
@@ -111,21 +111,22 @@ export interface SettingsTabConfig {
     id: string;
     title: string;
     icon:
-    | "settings"
-    | "store-online"
-    | "paint-brush-round"
-    | "text-block"
-    | "refresh"
-    | "button"
-    | "variant"
-    | "apps"
-    | "inventory"
-    | "adjust"
-    | "notification"
-    | "dns-settings"
-    | "wrench";
+        | "settings"
+        | "store-online"
+        | "paint-brush-round"
+        | "text-block"
+        | "refresh"
+        | "button"
+        | "variant"
+        | "apps"
+        | "inventory"
+        | "adjust"
+        | "notification"
+        | "dns-settings"
+        | "wrench";
     sections?: SectionConfig[];
     parentPath?: string;
+    labelSections?: SectionConfig[];
 }
 
 /**
@@ -392,7 +393,11 @@ export interface RangeFieldConfig extends BaseCustomizerFieldConfig {
  */
 export interface ButtonGroupFieldConfig extends BaseCustomizerFieldConfig {
     type: "buttonGroup";
-    options: Array<{ value: string | number | boolean; label: string; icon?: string }>;
+    options: Array<{
+        value: string | number | boolean;
+        label: string;
+        icon?: string;
+    }>;
     defaultValue?: string | number | boolean;
 }
 
@@ -455,7 +460,10 @@ export interface DividerFieldConfig {
 /**
  * Heading field - section subheading
  */
-export interface HeadingFieldConfig extends Omit<BaseCustomizerFieldConfig, "name"> {
+export interface HeadingFieldConfig extends Omit<
+    BaseCustomizerFieldConfig,
+    "name"
+> {
     type: "heading";
     label: string;
     details?: string;
