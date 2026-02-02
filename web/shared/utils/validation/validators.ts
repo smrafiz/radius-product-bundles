@@ -168,6 +168,10 @@ export function extractFieldLabelsFromConfig(
 
     config.sections.forEach((section) => {
         section.fields.forEach((field) => {
+            if (!field.name || !field.label) {
+                return;
+            }
+
             if (includeSectionTitle) {
                 labels[field.name] =
                     `${section.title}${separator}${field.label}`;

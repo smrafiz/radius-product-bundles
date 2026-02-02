@@ -96,6 +96,28 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 }
             },
 
+            clearDeviceOverride: (key: keyof CustomizerStyles) => {
+                const { activeDevice, styles } = get();
+                if (activeDevice === "desktop") {
+                    return;
+                }
+
+                const currentMap = styles[activeDevice];
+                if (!currentMap || !(key in currentMap)) {
+                    return;
+                }
+
+                const updated = { ...currentMap };
+                delete updated[key as keyof typeof updated];
+
+                set((state) => ({
+                    styles: {
+                        ...state.styles,
+                        [activeDevice]: Object.keys(updated).length > 0 ? updated : undefined,
+                    },
+                }));
+            },
+
             /**
              * Updates multiple style properties.
              */

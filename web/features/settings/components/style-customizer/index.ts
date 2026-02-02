@@ -7,4 +7,5 @@ export { CustomizerSkeleton } from "./customizer-skeletons";
 export { CustomizerBundleType } from "./customizer-bundle-type";
 export { DynamicCustomizerField } from "./dynamic-customizer-field";
 export { DynamicCustomizerPanel } from "./dynamic-customizer-panel";
+export { ResponsiveFieldIndicator } from "./responsive-field-indicator";
 export { DynamicCustomizerSection } from "./dynamic-customizer-section";

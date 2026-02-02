@@ -7,13 +7,13 @@ import {
     useCustomizerSubmit,
     useSettingsQuery,
 } from "@/features/settings";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type Resolver, useForm } from "react-hook-form";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
 import { extractFieldLabelsFromConfig, useGlobalBanner } from "@/shared";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
+import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Deep clones and merges saved styles with defaults.
@@ -60,7 +60,7 @@ export function useCustomizerPage() {
 
     // Initialize RHF with Zod resolver
     const form = useForm<CustomizerStyles>({
-        resolver: zodResolver(globalStylesSchema),
+        resolver: zodResolver(globalStylesSchema) as Resolver<CustomizerStyles>,
         defaultValues: DEFAULT_CUSTOMIZER_STYLES,
         mode: "onChange",
     });
@@ -68,7 +68,9 @@ export function useCustomizerPage() {
     // Sync form and store when settings load - capture snapshot ONCE
     useEffect(() => {
         if (settingsData !== undefined && serverSnapshotRef.current === null) {
-            const snapshot = createInitialStyles(settingsData?.globalStyles ?? {});
+            const snapshot = createInitialStyles(
+                settingsData?.globalStyles ?? {},
+            );
             serverSnapshotRef.current = snapshot;
 
             initializeStyles(snapshot);

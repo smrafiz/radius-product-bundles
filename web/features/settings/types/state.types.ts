@@ -84,6 +84,7 @@ export interface CustomizerStoreState {
         value: CustomizerStyles[K],
     ) => void;
     updateStyles: (styles: Partial<CustomizerStyles>) => void;
+    clearDeviceOverride: (key: keyof CustomizerStyles) => void;
     setActiveLayout: (layout: WidgetLayout) => void;
     setActiveDevice: (device: "desktop" | "tablet" | "mobile") => void;
     applyPreset: (presetKey: string) => void;

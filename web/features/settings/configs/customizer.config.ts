@@ -111,6 +111,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "spacing",
                     label: "Spacing",
+                    responsive: true,
                     options: [
                         { value: "compact", label: "Compact" },
                         { value: "comfortable", label: "Comfortable" },
@@ -139,6 +140,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "imageSize",
                     label: "Image size",
+                    responsive: true,
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -150,6 +152,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "imageFit",
                     label: "Image fit",
+                    responsive: true,
                     options: [
                         { value: "cover", label: "Cover" },
                         { value: "contain", label: "Contain" },
@@ -160,6 +163,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "imagePosition",
                     label: "Image position",
+                    responsive: true,
                     options: [
                         { value: "left", label: "Left" },
                         { value: "top", label: "Top" },
@@ -356,6 +360,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "range",
                     name: "boxMaxWidth",
                     label: "Widget max width",
+                    responsive: true,
                     suffix: "px",
                     min: 300,
                     max: 1200,
@@ -366,6 +371,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "boxAlignment",
                     label: "Widget alignment",
+                    responsive: true,
                     options: [
                         { value: "left", label: "Left" },
                         { value: "center", label: "Center" },
@@ -389,6 +395,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "headingSize",
                     label: "Heading size",
+                    responsive: true,
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -400,6 +407,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "bodySize",
                     label: "Body text size",
+                    responsive: true,
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -418,6 +426,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "dividerStyle",
                     label: "Divider style",
+                    responsive: true,
                     options: [
                         { value: "none", label: "None" },
                         { value: "line", label: "Line" },
@@ -437,6 +446,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "gridColumns",
                     label: "Columns",
+                    responsive: true,
                     options: [
                         { value: 2, label: "2" },
                         { value: 3, label: "3" },
@@ -456,6 +466,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "slidesPerView",
                     label: "Slides visible",
+                    responsive: true,
                     options: [
                         { value: 2, label: "2" },
                         { value: 3, label: "3" },
@@ -468,6 +479,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "carouselNavigation",
                     label: "Navigation",
+                    responsive: true,
                     options: [
                         { value: "none", label: "None" },
                         { value: "arrows", label: "Arrows" },

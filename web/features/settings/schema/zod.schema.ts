@@ -14,10 +14,7 @@ const requiredHexColor = z
     .string()
     .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color");
 
-/**
- * Global styles schema - styling focused.
- */
-export const globalStylesSchema = z.object({
+const baseStylesSchema = z.object({
     // ═══════════════════════════════════════════════════════════════════
     // APPEARANCE - COLORS
     // ═══════════════════════════════════════════════════════════════════
@@ -110,7 +107,9 @@ export const globalStylesSchema = z.object({
     buyGetTierStyle: z.enum(["cards", "list", "tabs"]).optional(),
 });
 
-/**
- * Inferred type from schema.
- */
+export const globalStylesSchema = baseStylesSchema.extend({
+    mobile: baseStylesSchema.partial().optional(),
+    tablet: baseStylesSchema.partial().optional(),
+});
+
 export type GlobalStylesFormData = z.infer<typeof globalStylesSchema>;

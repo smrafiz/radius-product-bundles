@@ -1,21 +1,14 @@
 "use client";
 
-import { RtpbRangeSlider } from "@/shared";
 import {
-    ConditionContext,
-    CustomizerFieldConfig,
+    DynamicCustomizerFieldProps,
     isFieldVisible,
+    ResponsiveFieldIndicator,
     StylePreset,
     useCustomizerField,
     useCustomizerStore,
 } from "@/features/settings";
-
-interface DynamicCustomizerFieldProps {
-    config: CustomizerFieldConfig;
-    context: ConditionContext;
-    onFieldChangeAction?: () => void;
-    resetKey?: number;
-}
+import { RtpbRangeSlider } from "@/shared";
 
 /**
  * Renders a single preset card.
@@ -92,9 +85,31 @@ export function DynamicCustomizerField({
 
     const fieldHook = isFormField
         ? useCustomizerField(config as any, onFieldChangeAction)
-        : { value: null, error: null, handleChange: () => {} };
+        : {
+              value: null,
+              error: null,
+              handleChange: () => {},
+              isInherited: false,
+              isResponsive: false,
+              clearOverride: () => {},
+              activeDevice: "desktop" as const,
+          };
 
-    const { value, error, handleChange } = fieldHook;
+    const {
+        value,
+        error,
+        handleChange,
+        isInherited,
+        isResponsive,
+        clearOverride,
+        activeDevice,
+    } = fieldHook;
+
+    const handleCreateOverride = () => {
+        if (value !== null && value !== undefined) {
+            handleChange(value as any);
+        }
+    };
 
     // Store access for presets
     const applyPreset = useCustomizerStore((state) => state.applyPreset);
@@ -224,22 +239,42 @@ export function DynamicCustomizerField({
         // ═══════════════════════════════════════════════════════════════════
         case "number":
             return (
-                <s-number-field
-                    key={fieldKey}
-                    label={config.label}
-                    details={config.details}
-                    placeholder="0"
-                    step={config.step ?? 1}
-                    min={config.min}
-                    max={config.max}
-                    value={String(value ?? 0)}
-                    error={error || undefined}
-                    onInput={(e: Event) =>
-                        handleChange(
-                            Number((e.target as HTMLInputElement).value) as any,
-                        )
-                    }
-                />
+                <s-stack gap="small-200">
+                    {isResponsive && (
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            justifyContent="center"
+                            gap="small-200"
+                        >
+                            <s-text>{config.label}</s-text>
+                            <ResponsiveFieldIndicator
+                                activeDevice={activeDevice}
+                                isInherited={isInherited}
+                                onOverride={handleCreateOverride}
+                                onClearOverride={clearOverride}
+                            />
+                        </s-stack>
+                    )}
+                    <s-number-field
+                        key={fieldKey}
+                        label={isResponsive ? undefined : config.label}
+                        details={config.details}
+                        placeholder="0"
+                        step={config.step ?? 1}
+                        min={config.min}
+                        max={config.max}
+                        value={String(value ?? 0)}
+                        error={error || undefined}
+                        onInput={(e: Event) =>
+                            handleChange(
+                                Number(
+                                    (e.target as HTMLInputElement).value,
+                                ) as any,
+                            )
+                        }
+                    />
+                </s-stack>
             );
 
         // ═══════════════════════════════════════════════════════════════════
@@ -254,7 +289,22 @@ export function DynamicCustomizerField({
                             alignItems="center"
                             justifyContent="space-between"
                         >
-                            <s-text>{config.label}</s-text>
+                            <s-stack
+                                direction="inline"
+                                alignItems="center"
+                                justifyContent="center"
+                                gap="small-200"
+                            >
+                                <s-text>{config.label}</s-text>
+                                {isResponsive && (
+                                    <ResponsiveFieldIndicator
+                                        activeDevice={activeDevice}
+                                        isInherited={isInherited}
+                                        onOverride={handleCreateOverride}
+                                        onClearOverride={clearOverride}
+                                    />
+                                )}
+                            </s-stack>
                             <s-text tone="neutral">
                                 {value}
                                 {config.suffix || ""}
@@ -298,8 +348,21 @@ export function DynamicCustomizerField({
                         gap="small-300"
                         justifyContent="space-between"
                     >
-                        <s-stack>
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            justifyContent="center"
+                            gap="small-200"
+                        >
                             <s-text>{config.label}</s-text>
+                            {isResponsive && (
+                                <ResponsiveFieldIndicator
+                                    activeDevice={activeDevice}
+                                    isInherited={isInherited}
+                                    onOverride={handleCreateOverride}
+                                    onClearOverride={clearOverride}
+                                />
+                            )}
                         </s-stack>
                         <div
                             style={{
@@ -351,30 +414,48 @@ export function DynamicCustomizerField({
         // ═══════════════════════════════════════════════════════════════════
         case "select":
             return (
-                <s-select
-                    key={fieldKey}
-                    label={config.label}
-                    details={config.details}
-                    value={String(value ?? "")}
-                    error={error || undefined}
-                    onInput={(e: Event) => {
-                        const targetValue = (e.target as HTMLSelectElement)
-                            .value;
-                        const convertedValue = config.options.find(
-                            (opt) => String(opt.value) === targetValue,
-                        )?.value;
-                        handleChange(convertedValue as any);
-                    }}
-                >
-                    {config.options.map((option) => (
-                        <s-option
-                            key={option.value}
-                            value={String(option.value)}
+                <s-stack gap="small-200">
+                    {isResponsive && (
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            justifyContent="center"
+                            gap="small-200"
                         >
-                            {option.label}
-                        </s-option>
-                    ))}
-                </s-select>
+                            <s-text>{config.label}</s-text>
+                            <ResponsiveFieldIndicator
+                                activeDevice={activeDevice}
+                                isInherited={isInherited}
+                                onOverride={handleCreateOverride}
+                                onClearOverride={clearOverride}
+                            />
+                        </s-stack>
+                    )}
+                    <s-select
+                        key={fieldKey}
+                        label={isResponsive ? undefined : config.label}
+                        details={config.details}
+                        value={String(value ?? "")}
+                        error={error || undefined}
+                        onInput={(e: Event) => {
+                            const targetValue = (e.target as HTMLSelectElement)
+                                .value;
+                            const convertedValue = config.options.find(
+                                (opt) => String(opt.value) === targetValue,
+                            )?.value;
+                            handleChange(convertedValue as any);
+                        }}
+                    >
+                        {config.options.map((option) => (
+                            <s-option
+                                key={option.value}
+                                value={String(option.value)}
+                            >
+                                {option.label}
+                            </s-option>
+                        ))}
+                    </s-select>
+                </s-stack>
             );
 
         // ═══════════════════════════════════════════════════════════════════
@@ -389,7 +470,22 @@ export function DynamicCustomizerField({
                         gap="small-300"
                         justifyContent="space-between"
                     >
-                        <s-text>{config.label}</s-text>
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            justifyContent="center"
+                            gap="small-200"
+                        >
+                            <s-text>{config.label}</s-text>
+                            {isResponsive && (
+                                <ResponsiveFieldIndicator
+                                    activeDevice={activeDevice}
+                                    isInherited={isInherited}
+                                    onOverride={handleCreateOverride}
+                                    onClearOverride={clearOverride}
+                                />
+                            )}
+                        </s-stack>
                         <s-switch
                             key={fieldKey}
                             label={config.label}
@@ -403,9 +499,9 @@ export function DynamicCustomizerField({
                         />
                     </s-stack>
                     {config.details && (
-                            <span className="text-[0.75rem] text-[#616161] -mt-2">
-                                {config.details}
-                            </span>
+                        <span className="text-[0.75rem] text-[#616161] -mt-2">
+                            {config.details}
+                        </span>
                     )}
                 </s-stack>
             );

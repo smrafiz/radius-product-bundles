@@ -330,6 +330,8 @@ interface BaseCustomizerFieldConfig {
     /** Layouts where this field applies */
     layouts?: WidgetLayout[];
     bundleTypes?: BundleType[];
+    /** Whether this field supports per-device overrides */
+    responsive?: boolean;
 }
 
 /**

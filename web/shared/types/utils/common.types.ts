@@ -32,8 +32,8 @@ export type ValidationErrors = Record<string, { _errors: string[] }>;
  * Config field structure for label extraction
  */
 export interface ConfigField {
-    name: string;
-    label: string;
+    name?: string;
+    label?: string;
 }
 
 /**
