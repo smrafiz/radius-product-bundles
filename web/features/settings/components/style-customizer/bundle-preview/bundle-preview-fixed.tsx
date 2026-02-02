@@ -90,11 +90,14 @@ export function BundlePreviewFixed() {
                               : "100%",
                     margin: "0 auto",
                     transition: "max-width 0.3s ease-in-out",
-                    border:
+                    borderLeft:
                         activeDevice !== "desktop"
                             ? "1px solid #e1e3e5"
                             : "none",
-                    borderRadius: activeDevice !== "desktop" ? "8px" : "0",
+                    borderRight:
+                        activeDevice !== "desktop"
+                            ? "1px solid #e1e3e5"
+                            : "none",
                     overflow: "hidden",
                 }}
             >
