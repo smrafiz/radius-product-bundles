@@ -170,6 +170,13 @@ declare global {
         private readonly autoplay: boolean = false;
         private readonly autoplaySpeed: number = 5;
 
+        // Responsive overrides
+        private readonly responsiveOverrides: {
+            tablet?: Record<string, string>;
+            mobile?: Record<string, string>;
+        } | null = null;
+        private readonly desktopDataAttrs: Record<string, string> = {};
+
         // Slider state
         private sliderState: SliderState = {
             currentIndex: 0,
@@ -199,18 +206,25 @@ declare global {
             // Parse display options from data attributes
             this.showImages = container.dataset.showImages !== "false";
             this.showSavings = container.dataset.showSavings !== "false";
-            this.showSavingsBadge = container.dataset.showSavingsBadge !== "false";
+            this.showSavingsBadge =
+                container.dataset.showSavingsBadge !== "false";
             this.showPrices = container.dataset.showPrices !== "false";
-            this.showComparePrices = container.dataset.showComparePrices !== "false";
+            this.showComparePrices =
+                container.dataset.showComparePrices !== "false";
             this.showQuantity = container.dataset.showQuantity !== "false";
-            this.showFreeShipping = container.dataset.showFreeShipping !== "false";
+            this.showFreeShipping =
+                container.dataset.showFreeShipping !== "false";
             this.enableHyperLink = container.dataset.enableHyperlink === "true";
 
             // Parse layout options from data attributes
             this.dividerStyle = container.dataset.dividerStyle || "plus";
-            this.carouselNavigation = container.dataset.carouselNavigation || "both";
+            this.carouselNavigation =
+                container.dataset.carouselNavigation || "both";
             this.autoplay = container.dataset.autoplay === "true";
-            this.autoplaySpeed = parseInt(container.dataset.autoplaySpeed || "5", 10);
+            this.autoplaySpeed = parseInt(
+                container.dataset.autoplaySpeed || "5",
+                10,
+            );
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -225,7 +239,80 @@ declare global {
                 }
             }
 
+            // Parse responsive overrides
+            const responsiveJson = container.dataset.responsive;
+            if (responsiveJson) {
+                try {
+                    this.responsiveOverrides = JSON.parse(responsiveJson);
+                } catch {
+                    /* ignore malformed responsive JSON */
+                }
+            }
+
+            // Store desktop defaults for reset
+            this.desktopDataAttrs = {
+                boxAlignment: container.dataset.boxAlign || "center",
+                imagePosition: container.dataset.imagePosition || "left",
+                dividerStyle: container.dataset.dividerStyle || "plus",
+                carouselNavigation:
+                    container.dataset.carouselNavigation || "both",
+            };
+
             void this.init();
+        }
+
+        private initResponsive(): void {
+            if (!this.responsiveOverrides) {
+                return;
+            }
+
+            const tabletMq = window.matchMedia("(max-width: 1024px)");
+            const mobileMq = window.matchMedia("(max-width: 768px)");
+
+            const update = () => {
+                const device = mobileMq.matches
+                    ? "mobile"
+                    : tabletMq.matches
+                      ? "tablet"
+                      : "desktop";
+                this.applyResponsiveDataAttrs(device);
+            };
+
+            tabletMq.addEventListener("change", update);
+            mobileMq.addEventListener("change", update);
+            update();
+        }
+
+        private applyResponsiveDataAttrs(device: string): void {
+            const attrMap: Record<string, string> = {
+                boxAlignment: "boxAlign",
+                imagePosition: "imagePosition",
+                dividerStyle: "dividerStyle",
+                carouselNavigation: "carouselNavigation",
+            };
+
+            for (const [key, dataKey] of Object.entries(attrMap)) {
+                let value: string | undefined;
+
+                if (device === "mobile") {
+                    // Mobile: use mobile value if set, otherwise fall back to desktop
+                    value =
+                        this.responsiveOverrides?.mobile?.[key] ??
+                        this.desktopDataAttrs[key];
+                } else if (device === "tablet") {
+                    // Tablet: use tablet value if set, otherwise fall back to desktop
+                    value =
+                        this.responsiveOverrides?.tablet?.[key] ??
+                        this.desktopDataAttrs[key];
+                } else {
+                    // Desktop: use desktop value
+                    value = this.desktopDataAttrs[key];
+                }
+
+                if (value) {
+                    this.container.dataset[dataKey] = value;
+                }
+            }
         }
 
         /**
@@ -255,6 +342,9 @@ declare global {
             if (this.getLayout() === "slider") {
                 this.initSlider();
             }
+
+            // Initialize responsive data attribute swapping
+            this.initResponsive();
         }
 
         /**
@@ -277,7 +367,9 @@ declare global {
             );
 
             // Count actual product slides
-            const slides = track.querySelectorAll(".radius-bundle__product--slider");
+            const slides = track.querySelectorAll(
+                ".radius-bundle__product--slider",
+            );
             const totalSlides = slides.length;
 
             // Update slider state
@@ -314,7 +406,8 @@ declare global {
          * Build slider pagination dots
          */
         private buildSliderDots(): void {
-            const dotsContainer = this.container.querySelector("[data-slider-dots]");
+            const dotsContainer =
+                this.container.querySelector("[data-slider-dots]");
 
             if (!dotsContainer) {
                 return;
@@ -364,13 +457,16 @@ declare global {
          * Update active dot
          */
         private updateSliderDots(): void {
-            const dotsContainer = this.container.querySelector("[data-slider-dots]");
+            const dotsContainer =
+                this.container.querySelector("[data-slider-dots]");
 
             if (!dotsContainer) {
                 return;
             }
 
-            const dots = dotsContainer.querySelectorAll(".radius-bundle__slider-dot");
+            const dots = dotsContainer.querySelectorAll(
+                ".radius-bundle__slider-dot",
+            );
             const { currentIndex } = this.sliderState;
 
             dots.forEach((dot, i) => {
@@ -551,7 +647,8 @@ declare global {
             });
 
             track.addEventListener("touchmove", (e) => {
-                const walk = (e.touches[0].pageX - this.sliderState.startX) * 1.2;
+                const walk =
+                    (e.touches[0].pageX - this.sliderState.startX) * 1.2;
                 track.scrollLeft = this.sliderState.scrollStart - walk;
             });
 
@@ -628,15 +725,21 @@ declare global {
                 switch (structure.discountType) {
                     case "PERCENTAGE":
                         badgeText = this.formatLabel(
-                            structure.labels?.savingsBadgeText ?? "Save {percent}%",
-                            { percent: structure.discountValue }
+                            structure.labels?.savingsBadgeText ??
+                                "Save {percent}%",
+                            { percent: structure.discountValue },
                         );
                         break;
 
                     case "FIXED_AMOUNT":
                         badgeText = this.formatLabel(
-                            structure.labels?.savingsBadgeText ?? "Save {amount}",
-                            { amount: this.formatMoney(structure.discountValue) }
+                            structure.labels?.savingsBadgeText ??
+                                "Save {amount}",
+                            {
+                                amount: this.formatMoney(
+                                    structure.discountValue,
+                                ),
+                            },
                         );
                         break;
 
@@ -828,10 +931,7 @@ declare global {
         }
 
         private getQuantityLabel(): string {
-            return (
-                this.bundleStructure?.labels?.quantityLabel ||
-                "Qty:"
-            );
+            return this.bundleStructure?.labels?.quantityLabel || "Qty:";
         }
 
         /**
@@ -860,9 +960,11 @@ declare global {
                 // Add divider for list layout based on divider style
                 if (layout === "list" && !isLast) {
                     if (this.dividerStyle === "plus") {
-                        html += '<div class="radius-bundle__divider radius-bundle__divider--plus"><div class="divider-position">+</div></div>';
+                        html +=
+                            '<div class="radius-bundle__divider radius-bundle__divider--plus"><div class="divider-position">+</div></div>';
                     } else if (this.dividerStyle === "line") {
-                        html += '<div class="radius-bundle__divider radius-bundle__divider--line"></div>';
+                        html +=
+                            '<div class="radius-bundle__divider radius-bundle__divider--line"></div>';
                     }
                     // 'none' - no divider added
                 }
@@ -890,8 +992,8 @@ declare global {
                 this.showImages && product.featuredImage
                     ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" loading="lazy" />`
                     : this.showImages
-                        ? `<div class="radius-bundle__product-placeholder">📦</div>`
-                        : "";
+                      ? `<div class="radius-bundle__product-placeholder">📦</div>`
+                      : "";
 
             // Calculate discounted price based on bundle discount
             const structure = this.bundleStructure;
@@ -941,9 +1043,9 @@ declare global {
                     ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
                ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
                     : discountedPrice < product.price
-                        ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
+                      ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
                    ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
-                        : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
+                      : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
 
             const imageWrapper = this.showImages
                 ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
@@ -968,14 +1070,14 @@ declare global {
                             ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                         </div>
                         ${
-                    this.showPrices
-                        ? `
+                            this.showPrices
+                                ? `
                             <div class="radius-bundle__product-price">
                                 ${priceHtml}
                             </div>
                         `
-                        : ""
-                }
+                                : ""
+                        }
                     </div>
                 `;
             }
@@ -989,10 +1091,10 @@ declare global {
                         ${imageWrapper}
                         ${productTitleHtml}
                         ${
-                    this.showPrices
-                        ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-                        : ""
-                }
+                            this.showPrices
+                                ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                                : ""
+                        }
                         ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
                     </div>
                 `;
@@ -1029,10 +1131,10 @@ declare global {
                 ${imageWrapper}
                 ${productTitleHtml}
                 ${
-                this.showPrices
-                    ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-                    : ""
-            }
+                    this.showPrices
+                        ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
+                        : ""
+                }
                 ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
             </div>`;
         }
@@ -1097,7 +1199,8 @@ declare global {
 
             if (savingsEl && savingsAmountEl) {
                 if (discountAmount > 0 && this.showSavings) {
-                    savingsAmountEl.textContent = this.formatMoney(discountAmount);
+                    savingsAmountEl.textContent =
+                        this.formatMoney(discountAmount);
                     (savingsEl as HTMLElement).style.display = "flex";
                 } else {
                     (savingsEl as HTMLElement).style.display = "none";
@@ -1212,7 +1315,7 @@ declare global {
                         .catch(() => ({}));
                     this.showToast(
                         errorData.description ||
-                        `Failed to add to cart: ${addResponse.status}`,
+                            `Failed to add to cart: ${addResponse.status}`,
                         "error",
                     );
                 }
@@ -1483,10 +1586,10 @@ declare global {
          */
         private formatLabel(
             template: string,
-            values: Record<string, string | number>
+            values: Record<string, string | number>,
         ): string {
             return template.replace(/\{(\w+)\}/g, (_, key) =>
-                values[key] !== undefined ? String(values[key]) : ""
+                values[key] !== undefined ? String(values[key]) : "",
             );
         }
     }

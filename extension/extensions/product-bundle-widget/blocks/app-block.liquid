@@ -21,6 +21,8 @@
 	{% comment %} Resolve global defaults {% endcomment %}
 	{% assign g_labels = global.labels %}
 	{% assign g_styles = global.styles %}
+	{% assign g_tablet = g_styles.tablet %}
+	{% assign g_mobile = g_styles.mobile %}
 
 	<div
 			class="radius-bundle-widget"
@@ -104,10 +106,7 @@
 					{% endcase %}
 				{% endif %}
 
-				{{ primary_color }}
-
 				{% comment %} Product card colors {% endcomment %}
-
 
 				{% if g_styles.customizeCardStyle %}
 					{% assign product_card_bg = g_styles.productCardBg
@@ -350,8 +349,10 @@
 				{% assign quantity_label = g_labels.quantityLabel
 						| default: 'Qty:' %}
 
-				{% comment %} Build JSON for JS {% endcomment %}
-				{% capture bundle_structure_json %}{
+				{% comment %} DO NOT DELETE BELOW CAPTURE {% endcomment %}
+				{% comment %}
+				{% capture bundle_structure_json %}
+				{
 					"id": "{{ bundle_id }}",
 					"status": "{{ bundle.status }}",
 					"discountType": "{{ bundle.discountType }}",
@@ -365,21 +366,124 @@
 					"productIds": {{ bundle.productIds | default: '[]' | json }},
 					"layout": "{{ layout }}",
 					"labels": {
-					"headingLabel": "{{ bundle_heading | escape }}",
-					"savingsBadgeText": "{{ savings_badge_text | escape }}",
-					"addToCartText": "{{ button_text | escape }}",
-					"regularPriceLabel": "{{ regular_price_label | escape }}",
-					"bundlePriceLabel": "{{ bundle_price_label | escape }}",
-					"youSaveLabel": "{{ you_save_label | escape }}",
-					"freeShippingLabel": "{{ free_shipping_label | escape }}",
-					"quantityLabel": "{{ quantity_label | escape }}"
+						"headingLabel": "{{ bundle_heading | escape }}",
+						"savingsBadgeText": "{{ savings_badge_text | escape }}",
+						"addToCartText": "{{ button_text | escape }}",
+						"regularPriceLabel": "{{ regular_price_label | escape }}",
+						"bundlePriceLabel": "{{ bundle_price_label | escape }}",
+						"youSaveLabel": "{{ you_save_label | escape }}",
+						"freeShippingLabel": "{{ free_shipping_label | escape }}",
+						"quantityLabel": "{{ quantity_label | escape }}"
 					}
-					}{% endcapture %}
+				}
+				{% endcapture %}
+				{% endcomment %}
+
+				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}"}}{% endcapture %}
+
+				{% comment %} DO NOT DELETE BELOW CAPTURE {% endcomment %}
+				{% comment %}
+				{% capture responsive_json %}
+				{
+					"tablet": {
+						{% if g_tablet.boxAlignment %}"boxAlignment": "{{ g_tablet.boxAlignment }}",{% endif %}
+						{% if g_tablet.imagePosition %}"imagePosition": "{{ g_tablet.imagePosition }}",{% endif %}
+						{% if g_tablet.imageFit %}"imageFit": "{{ g_tablet.imageFit }}",{% endif %}
+						{% if g_tablet.imageSize %}"imageSize": "{{ g_tablet.imageSize }}",{% endif %}
+						{% if g_tablet.dividerStyle %}"dividerStyle": "{{ g_tablet.dividerStyle }}",{% endif %}
+						{% if g_tablet.carouselNavigation %}"carouselNavigation": "{{ g_tablet.carouselNavigation }}",{% endif %}
+						{% if g_tablet.shadow %}"shadow": "{{ g_tablet.shadow }}",{% endif %}
+						{% if g_tablet.spacing %}"spacing": "{{ g_tablet.spacing }}",{% endif %}
+						{% if g_tablet.boxMaxWidth %}"boxMaxWidth": {{ g_tablet.boxMaxWidth }},{% endif %}
+						{% if g_tablet.headingSize %}"headingSize": "{{ g_tablet.headingSize }}",{% endif %}
+						{% if g_tablet.bodySize %}"bodySize": "{{ g_tablet.bodySize }}",{% endif %}
+						{% if g_tablet.gridColumns %}"gridColumns": {{ g_tablet.gridColumns }},{% endif %}
+						{% if g_tablet.slidesPerView %}"slidesPerView": {{ g_tablet.slidesPerView }},{% endif %}
+						"_end": true
+					},
+					"mobile": {
+						{% if g_mobile.boxAlignment %}"boxAlignment": "{{ g_mobile.boxAlignment }}",{% endif %}
+						{% if g_mobile.imagePosition %}"imagePosition": "{{ g_mobile.imagePosition }}",{% endif %}
+						{% if g_mobile.imageFit %}"imageFit": "{{ g_mobile.imageFit }}",{% endif %}
+						{% if g_mobile.imageSize %}"imageSize": "{{ g_mobile.imageSize }}",{% endif %}
+						{% if g_mobile.dividerStyle %}"dividerStyle": "{{ g_mobile.dividerStyle }}",{% endif %}
+						{% if g_mobile.carouselNavigation %}"carouselNavigation": "{{ g_mobile.carouselNavigation }}",{% endif %}
+						{% if g_mobile.shadow %}"shadow": "{{ g_mobile.shadow }}",{% endif %}
+						{% if g_mobile.spacing %}"spacing": "{{ g_mobile.spacing }}",{% endif %}
+						{% if g_mobile.boxMaxWidth %}"boxMaxWidth": {{ g_mobile.boxMaxWidth }},{% endif %}
+						{% if g_mobile.headingSize %}"headingSize": "{{ g_mobile.headingSize }}",{% endif %}
+						{% if g_mobile.bodySize %}"bodySize": "{{ g_mobile.bodySize }}",{% endif %}
+						{% if g_mobile.gridColumns %}"gridColumns": {{ g_mobile.gridColumns }},{% endif %}
+						{% if g_mobile.slidesPerView %}"slidesPerView": {{ g_mobile.slidesPerView }},{% endif %}
+						"_end": true
+					}
+				}
+				{% endcapture %}
+				{% endcomment %}
+
+				{% capture responsive_json %}{"tablet": { {% if g_tablet.boxAlignment %}"boxAlignment": "{{ g_tablet.boxAlignment }}",{% endif %}{% if g_tablet.imagePosition %}"imagePosition": "{{ g_tablet.imagePosition }}",{% endif %}{% if g_tablet.imageFit %}"imageFit": "{{ g_tablet.imageFit }}",{% endif %}{% if g_tablet.imageSize %}"imageSize": "{{ g_tablet.imageSize }}",{% endif %}{% if g_tablet.dividerStyle %}"dividerStyle": "{{ g_tablet.dividerStyle }}",{% endif %}{% if g_tablet.carouselNavigation %}"carouselNavigation": "{{ g_tablet.carouselNavigation }}",{% endif %}{% if g_tablet.shadow %}"shadow": "{{ g_tablet.shadow }}",{% endif %}{% if g_tablet.spacing %}"spacing": "{{ g_tablet.spacing }}",{% endif %}{% if g_tablet.boxMaxWidth %}"boxMaxWidth": {{ g_tablet.boxMaxWidth }},{% endif %}{% if g_tablet.headingSize %}"headingSize": "{{ g_tablet.headingSize }}",{% endif %}{% if g_tablet.bodySize %}"bodySize": "{{ g_tablet.bodySize }}",{% endif %}{% if g_tablet.gridColumns %}"gridColumns": {{ g_tablet.gridColumns }},{% endif %}{% if g_tablet.slidesPerView %}"slidesPerView": {{ g_tablet.slidesPerView }},{% endif %}"_end": true},"mobile": { {% if g_mobile.boxAlignment %}"boxAlignment": "{{ g_mobile.boxAlignment }}",{% endif %}{% if g_mobile.imagePosition %}"imagePosition": "{{ g_mobile.imagePosition }}",{% endif %}{% if g_mobile.imageFit %}"imageFit": "{{ g_mobile.imageFit }}",{% endif %}{% if g_mobile.imageSize %}"imageSize": "{{ g_mobile.imageSize }}",{% endif %}{% if g_mobile.dividerStyle %}"dividerStyle": "{{ g_mobile.dividerStyle }}",{% endif %}{% if g_mobile.carouselNavigation %}"carouselNavigation": "{{ g_mobile.carouselNavigation }}",{% endif %}{% if g_mobile.shadow %}"shadow": "{{ g_mobile.shadow }}",{% endif %}{% if g_mobile.spacing %}"spacing": "{{ g_mobile.spacing }}",{% endif %}{% if g_mobile.boxMaxWidth %}"boxMaxWidth": {{ g_mobile.boxMaxWidth }},{% endif %}{% if g_mobile.headingSize %}"headingSize": "{{ g_mobile.headingSize }}",{% endif %}{% if g_mobile.bodySize %}"bodySize": "{{ g_mobile.bodySize }}",{% endif %}{% if g_mobile.gridColumns %}"gridColumns": {{ g_mobile.gridColumns }},{% endif %}{% if g_mobile.slidesPerView %}"slidesPerView": {{ g_mobile.slidesPerView }},{% endif %}"_end": true}}{% endcapture %}
+
+				{% comment %} Responsive CSS variable overrides {% endcomment %}
+				{% if g_tablet.spacing %}
+					{% case g_tablet.spacing %}
+						{% when 'compact' %}{% assign tablet_box_spacing = 12 %}{% assign tablet_gap_spacing = 8 %}
+						{% when 'spacious' %}{% assign tablet_box_spacing = 28 %}{% assign tablet_gap_spacing = 16 %}
+						{% else %}{% assign tablet_box_spacing = 20 %}{% assign tablet_gap_spacing = 12 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_tablet.imageSize %}
+					{% case g_tablet.imageSize %}
+						{% when 'small' %}{% assign tablet_image_size_px = 60 %}
+						{% when 'large' %}{% assign tablet_image_size_px = 120 %}
+						{% else %}{% assign tablet_image_size_px = 80 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_tablet.headingSize %}
+					{% case g_tablet.headingSize %}
+						{% when 'small' %}{% assign tablet_heading_font_size = 16 %}
+						{% when 'large' %}{% assign tablet_heading_font_size = 24 %}
+						{% else %}{% assign tablet_heading_font_size = 20 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_tablet.bodySize %}
+					{% case g_tablet.bodySize %}
+						{% when 'small' %}{% assign tablet_body_font_size = 13 %}
+						{% when 'large' %}{% assign tablet_body_font_size = 16 %}
+						{% else %}{% assign tablet_body_font_size = 14 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_mobile.spacing %}
+					{% case g_mobile.spacing %}
+						{% when 'compact' %}{% assign mobile_box_spacing = 12 %}{% assign mobile_gap_spacing = 8 %}
+						{% when 'spacious' %}{% assign mobile_box_spacing = 28 %}{% assign mobile_gap_spacing = 16 %}
+						{% else %}{% assign mobile_box_spacing = 20 %}{% assign mobile_gap_spacing = 12 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_mobile.imageSize %}
+					{% case g_mobile.imageSize %}
+						{% when 'small' %}{% assign mobile_image_size_px = 60 %}
+						{% when 'large' %}{% assign mobile_image_size_px = 120 %}
+						{% else %}{% assign mobile_image_size_px = 80 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_mobile.headingSize %}
+					{% case g_mobile.headingSize %}
+						{% when 'small' %}{% assign mobile_heading_font_size = 16 %}
+						{% when 'large' %}{% assign mobile_heading_font_size = 24 %}
+						{% else %}{% assign mobile_heading_font_size = 20 %}
+					{% endcase %}
+				{% endif %}
+				{% if g_mobile.bodySize %}
+					{% case g_mobile.bodySize %}
+						{% when 'small' %}{% assign mobile_body_font_size = 13 %}
+						{% when 'large' %}{% assign mobile_body_font_size = 16 %}
+						{% else %}{% assign mobile_body_font_size = 14 %}
+					{% endcase %}
+				{% endif %}
 
 				{% comment %} Inject CSS variables {% endcomment %}
 				<style>
 					#radius-bundle-{{ bundle_id }} {
-						/* Colors */
 						--rb-primary-color: {{ primary_color }};
 						--rb-text-color: {{ text_color }};
 						--rb-background-color: {{ background_color }};
@@ -389,23 +493,14 @@
 						--rb-button-color: {{ button_bg_color }};
 						--rb-button-text-color: {{ button_text_color }};
 						--rb-pricing-summary-bg: {{ pricing_summary_bg }};
-
-						/* Border radius */
 						--rb-border-radius: {{ border_radius }}px;
-
-						/* Spacing */
 						--rb-box-spacing: {{ box_spacing }}px;
 						--rb-gap-spacing: {{ gap_spacing }}px;
-
-						/* Container */
 						--rb-bundle-max-width: {{ box_max_width }}px;
 						--rb-box-border-width: {% if show_border %}1px{% else %}0{% endif %};
-
-						/* Image */
 						--rb-image-size: {{ image_size_px }}px;
 						--rb-image-fit: {{ image_fit }};
 
-						/* Shadow */
 					{% case shadow %}
 					{% when 'none' %}
 						--rb-shadow: none;
@@ -418,7 +513,6 @@
 						--rb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
 					{% endcase %}
 
-						/* Card shadow */
 					{% if product_card_shadow %}
 						--rb-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 						--rb-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
@@ -427,14 +521,12 @@
 						--rb-card-shadow-hover: none;
 					{% endif %}
 
-						/* Card border */
 					{% if product_card_border %}
 						--rb-card-border: 1px solid var(--rb-border-color);
 					{% else %}
 						--rb-card-border: none;
 					{% endif %}
 
-						/* Heading size */
 					{% case heading_size %}
 					{% when 'small' %}
 						--rb-heading-font-size: 16px;
@@ -444,7 +536,6 @@
 						--rb-heading-font-size: 20px;
 					{% endcase %}
 
-						/* Body size */
 					{% case body_size %}
 					{% when 'small' %}
 						--rb-body-font-size: 13px;
@@ -454,7 +545,6 @@
 						--rb-body-font-size: 14px;
 					{% endcase %}
 
-						/* Button size */
 					{% case button_size %}
 					{% when 'small' %}
 						--rb-button-padding: 8px 16px;
@@ -467,7 +557,6 @@
 						--rb-button-font-size: 16px;
 					{% endcase %}
 
-						/* Button style */
 					{% if button_style == 'outline' %}
 						--rb-button-bg: transparent;
 						--rb-button-text: var(--rb-button-color);
@@ -478,14 +567,12 @@
 						--rb-button-border: none;
 					{% endif %}
 
-						/* Button width */
 					{% if button_width == 'full' %}
 						--rb-button-width: 100%;
 					{% else %}
 						--rb-button-width: auto;
 					{% endif %}
 
-						/* Badge style */
 					{% if badge_style == 'outline' %}
 						--rb-badge-bg: transparent;
 						--rb-badge-text: var(--rb-primary-color);
@@ -496,7 +583,6 @@
 						--rb-badge-border: none;
 					{% endif %}
 
-						/* Pricing summary style */
 					{% if pricing_summary_box %}
 					{% case pricing_summary_style %}
 					{% when 'minimal' %}
@@ -519,11 +605,40 @@
 						--rb-pricing-bg: transparent;
 						--rb-pricing-border: none;
 					{% endif %}
-
-						/* Grid columns */
 						--rb-grid-columns: {{ grid_columns }};
 						--rb-slides-per-view: {{ slides_per_view }};
 					}
+
+					{% if g_tablet %}
+					@media (max-width: 1024px) {
+						#radius-bundle-{{ bundle_id }} {
+							{% if tablet_box_spacing %}--rb-box-spacing: {{ tablet_box_spacing }}px;{% endif %}
+							{% if tablet_gap_spacing %}--rb-gap-spacing: {{ tablet_gap_spacing }}px;{% endif %}
+							{% if tablet_image_size_px %}--rb-image-size: {{ tablet_image_size_px }}px;{% endif %}
+							{% if g_tablet.imageFit %}--rb-image-fit: {{ g_tablet.imageFit }};{% endif %}
+							{% if g_tablet.boxMaxWidth %}--rb-bundle-max-width: {{ g_tablet.boxMaxWidth }}px;{% endif %}
+							{% if tablet_heading_font_size %}--rb-heading-font-size: {{ tablet_heading_font_size }}px;{% endif %}
+							{% if tablet_body_font_size %}--rb-body-font-size: {{ tablet_body_font_size }}px;{% endif %}
+							{% if g_tablet.gridColumns %}--rb-grid-columns: {{ g_tablet.gridColumns }};{% endif %}
+							{% if g_tablet.slidesPerView %}--rb-slides-per-view: {{ g_tablet.slidesPerView }};{% endif %}
+						}
+					}
+					{% endif %}
+					{% if g_mobile %}
+					@media (max-width: 768px) {
+						#radius-bundle-{{ bundle_id }} {
+							{% if mobile_box_spacing %}--rb-box-spacing: {{ mobile_box_spacing }}px;{% endif %}
+							{% if mobile_gap_spacing %}--rb-gap-spacing: {{ mobile_gap_spacing }}px;{% endif %}
+							{% if mobile_image_size_px %}--rb-image-size: {{ mobile_image_size_px }}px;{% endif %}
+							{% if g_mobile.imageFit %}--rb-image-fit: {{ g_mobile.imageFit }};{% endif %}
+							{% if g_mobile.boxMaxWidth %}--rb-bundle-max-width: {{ g_mobile.boxMaxWidth }}px;{% endif %}
+							{% if mobile_heading_font_size %}--rb-heading-font-size: {{ mobile_heading_font_size }}px;{% endif %}
+							{% if mobile_body_font_size %}--rb-body-font-size: {{ mobile_body_font_size }}px;{% endif %}
+							{% if g_mobile.gridColumns %}--rb-grid-columns: {{ g_mobile.gridColumns }};{% endif %}
+							{% if g_mobile.slidesPerView %}--rb-slides-per-view: {{ g_mobile.slidesPerView }};{% endif %}
+						}
+					}
+					{% endif %}
 				</style>
 
 				<div
@@ -537,6 +652,7 @@
 						data-autoplay="{{ autoplay }}"
 						data-autoplay-speed="{{ autoplay_speed }}"
 						data-image-position="{{ image_position }}"
+						data-responsive='{{ responsive_json | strip_newlines | strip }}'
 						data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
 						data-show-images="{{ show_images }}"
 						data-show-savings="{{ show_savings }}"

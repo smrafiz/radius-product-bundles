@@ -16,10 +16,7 @@
                             minmax(0, 1fr)
             );
 
-            @media (max-width: 1024px) {
-                grid-template-columns: repeat(min(var(--rb-grid-columns, 3), 2),minmax(0, 1fr));
-            }
-
+            // Mobile floor: single column on very small screens
             @media (max-width: 640px) {
                 grid-template-columns: repeat(1, minmax(0, 1fr));
             }

@@ -295,6 +295,24 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             }
         }
 
+        for (const device of ["mobile", "tablet"] as const) {
+            if (device in parsed && isRecord(parsed[device])) {
+                const deviceOverrides: Partial<CustomizerStyles> = {};
+                for (const key of validKeys) {
+                    if (
+                        key in (parsed[device] as Record<string, unknown>) &&
+                        key !== ("mobile" as keyof CustomizerStyles) &&
+                        key !== ("tablet" as keyof CustomizerStyles)
+                    ) {
+                        (deviceOverrides as any)[key] = (parsed[device] as Record<string, unknown>)[key];
+                    }
+                }
+                if (Object.keys(deviceOverrides).length > 0) {
+                    (result as any)[device] = deviceOverrides;
+                }
+            }
+        }
+
         return result;
     } catch {
         return {};

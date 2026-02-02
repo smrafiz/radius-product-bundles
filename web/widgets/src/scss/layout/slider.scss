@@ -37,14 +37,7 @@
                 cursor: grabbing;
             }
 
-            // Responsive slides per view
-            @media (max-width: 1024px) {
-                grid-auto-columns: calc(
-                        (100% - (var(--rb-gap-spacing) * (min(var(--rb-slides-per-view, 3), 2) - 1))) /
-                        min(var(--rb-slides-per-view, 3), 2)
-                );
-            }
-
+            // Mobile floor: single column on very small screens
             @media (max-width: 640px) {
                 grid-auto-columns: 100%;
             }
