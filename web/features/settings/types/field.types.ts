@@ -304,6 +304,30 @@ export interface CustomizerStyles {
     buyGetTierStyle: "cards" | "list" | "tabs";
 
     // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - VOLUME DISCOUNT SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    /** Active tier highlight color */
+    volumeTierHighlightColor: string;
+    /** Tier display style */
+    volumeTierStyle: "table" | "cards";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - MIX & MATCH SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    /** Group header color */
+    mixMatchGroupHeaderColor: string;
+    /** Selection indicator style */
+    mixMatchSelectionStyle: "checkbox" | "radio" | "highlight";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - FREQUENTLY BOUGHT TOGETHER SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    /** Separator style between products */
+    fbtSeparatorStyle: "plus" | "line" | "none";
+    /** Checkbox accent color */
+    fbtCheckboxColor: string;
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BREAKPOINTS
     // ═══════════════════════════════════════════════════════════════════
     /** Breakpoint preset */

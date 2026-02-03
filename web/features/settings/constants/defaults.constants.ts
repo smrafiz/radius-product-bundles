@@ -288,6 +288,24 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     buyGetTierStyle: "cards",
 
     // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - VOLUME DISCOUNT SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    volumeTierHighlightColor: "#303030",
+    volumeTierStyle: "table",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - MIX & MATCH SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    mixMatchGroupHeaderColor: "#303030",
+    mixMatchSelectionStyle: "checkbox",
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - FREQUENTLY BOUGHT TOGETHER SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    fbtSeparatorStyle: "plus",
+    fbtCheckboxColor: "#303030",
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BREAKPOINTS
     // ═══════════════════════════════════════════════════════════════════
     breakpointPreset: "standard",

@@ -1,35 +1,18 @@
 "use client";
 
 import {
-    BundlePreviewBogo,
-    BundlePreviewBuyGet,
-    BundlePreviewFixed,
     CustomizerHeader,
     CustomizerSkeleton,
     DynamicCustomizerPanel,
+    PreviewShell,
     useCustomizerPage,
     useCustomizerStore,
 } from "@/features/settings";
 import { GlobalBanner } from "@/shared";
-import type { ComponentType } from "react";
 import { FormProvider } from "react-hook-form";
+import type { BundleType } from "@/features/bundles";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
-import { BundleType } from "@/features/bundles";
 
-/**
- * Map of bundle types to their preview components.
- */
-const BUNDLE_PREVIEW_MAP: Record<string, ComponentType> = {
-    FIXED_BUNDLE: BundlePreviewFixed,
-    BUY_X_GET_Y: BundlePreviewBuyGet,
-    BOGO: BundlePreviewBogo,
-};
-
-/**
- * Main customizer page component.
- *
- * Pure JSX renderer - all logic in useCustomizerPage hook.
- */
 export function CustomizerBundleType() {
     const {
         form,
@@ -48,7 +31,6 @@ export function CustomizerBundleType() {
 
     const { activeLayout } = useCustomizerStore();
     const activeBundleType = (activeId || "FIXED_BUNDLE") as BundleType;
-    const PreviewComponent = activeId ? BUNDLE_PREVIEW_MAP[activeId] : null;
 
     return (
         <s-page heading="Style Customizer" inlineSize="large">
@@ -111,11 +93,9 @@ export function CustomizerBundleType() {
                                         onBundleTypeChangeAction={setActiveId}
                                     />
 
-                                    {PreviewComponent ? (
-                                        <PreviewComponent />
-                                    ) : (
-                                        <s-text>No preview available</s-text>
-                                    )}
+                                    <PreviewShell
+                                        bundleType={activeBundleType}
+                                    />
                                 </s-stack>
                             </div>
                         </div>

@@ -9,30 +9,23 @@ export const CUSTOMIZER_LAYOUTS_MAPPING = {
     BUY_X_GET_Y: [
         { label: "List", value: "LIST" },
         { label: "Grid", value: "GRID" },
-        { label: "Compact", value: "COMPACT" },
     ],
 
     BOGO: [
         { label: "List", value: "LIST" },
         { label: "Grid", value: "GRID" },
-        { label: "Compact", value: "COMPACT" },
     ],
 
     VOLUME_DISCOUNT: [
         { label: "List", value: "LIST" },
-        { label: "Grid", value: "GRID" },
-        { label: "Compact", value: "COMPACT" },
     ],
 
     MIX_AND_MATCH: [
         { label: "List", value: "LIST" },
         { label: "Grid", value: "GRID" },
-        { label: "Compact", value: "COMPACT" },
     ],
 
     FREQUENTLY_BOUGHT_TOGETHER: [
-        { label: "List", value: "LIST" },
         { label: "Grid", value: "GRID" },
-        { label: "Compact", value: "COMPACT" },
     ],
 } as const;

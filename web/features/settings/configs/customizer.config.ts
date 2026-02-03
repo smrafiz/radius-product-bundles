@@ -602,6 +602,86 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     defaultValue: "cards",
                     bundleTypes: ["BUY_X_GET_Y"],
                 },
+
+                // Volume Discount Specific
+                {
+                    type: "heading",
+                    label: "Volume Discount Settings",
+                    bundleTypes: ["VOLUME_DISCOUNT"],
+                },
+                {
+                    type: "color",
+                    name: "volumeTierHighlightColor",
+                    label: "Tier highlight color",
+                    details: "Color for the active/popular tier",
+                    defaultValue: "#303030",
+                    bundleTypes: ["VOLUME_DISCOUNT"],
+                },
+                {
+                    type: "buttonGroup",
+                    name: "volumeTierStyle",
+                    label: "Tier display",
+                    options: [
+                        { value: "table", label: "Table" },
+                        { value: "cards", label: "Cards" },
+                    ],
+                    defaultValue: "table",
+                    bundleTypes: ["VOLUME_DISCOUNT"],
+                },
+
+                // Mix & Match Specific
+                {
+                    type: "heading",
+                    label: "Mix & Match Settings",
+                    bundleTypes: ["MIX_AND_MATCH"],
+                },
+                {
+                    type: "color",
+                    name: "mixMatchGroupHeaderColor",
+                    label: "Group header color",
+                    details: "Color for group section headings",
+                    defaultValue: "#303030",
+                    bundleTypes: ["MIX_AND_MATCH"],
+                },
+                {
+                    type: "buttonGroup",
+                    name: "mixMatchSelectionStyle",
+                    label: "Selection style",
+                    options: [
+                        { value: "checkbox", label: "Checkbox" },
+                        { value: "radio", label: "Radio" },
+                        { value: "highlight", label: "Highlight" },
+                    ],
+                    defaultValue: "checkbox",
+                    bundleTypes: ["MIX_AND_MATCH"],
+                },
+
+                // Frequently Bought Together Specific
+                {
+                    type: "heading",
+                    label: "FBT Settings",
+                    bundleTypes: ["FREQUENTLY_BOUGHT_TOGETHER"],
+                },
+                {
+                    type: "buttonGroup",
+                    name: "fbtSeparatorStyle",
+                    label: "Separator style",
+                    options: [
+                        { value: "plus", label: "Plus" },
+                        { value: "line", label: "Line" },
+                        { value: "none", label: "None" },
+                    ],
+                    defaultValue: "plus",
+                    bundleTypes: ["FREQUENTLY_BOUGHT_TOGETHER"],
+                },
+                {
+                    type: "color",
+                    name: "fbtCheckboxColor",
+                    label: "Checkbox color",
+                    details: "Color for product selection checkboxes",
+                    defaultValue: "#303030",
+                    bundleTypes: ["FREQUENTLY_BOUGHT_TOGETHER"],
+                },
             ],
         },
     ],
