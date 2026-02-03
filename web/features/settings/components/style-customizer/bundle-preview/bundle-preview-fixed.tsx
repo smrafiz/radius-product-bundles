@@ -58,7 +58,7 @@ export function BundlePreviewFixed() {
                                 <button
                                     key={value}
                                     onClick={() => setActiveLayout(value)}
-                                    className={`text-left px-4 py-3 border-l-4 transition
+                                    className={`text-left px-4 py-3 border-l-4 transition text-[#303030]! cursor-pointer
                                         ${
                                             isActive
                                                 ? "border-current bg-gray-50 font-semibold"

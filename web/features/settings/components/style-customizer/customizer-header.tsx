@@ -34,8 +34,16 @@ export function CustomizerHeader({
                             }
                             slot="secondary-actions"
                             onClick={() => setActiveDevice("desktop")}
-                            icon="desktop"
                         >
+                            <span
+                                className={
+                                    activeDevice === "desktop"
+                                        ? "opacity-100"
+                                        : "opacity-60"
+                                }
+                            >
+                                <s-icon type="desktop"></s-icon>
+                            </span>
                         </s-button>
                         <s-button
                             tone={
@@ -45,8 +53,17 @@ export function CustomizerHeader({
                             }
                             slot="secondary-actions"
                             onClick={() => setActiveDevice("tablet")}
-                            icon="tablet"
                         >
+                            {" "}
+                            <span
+                                className={
+                                    activeDevice === "tablet"
+                                        ? "opacity-100"
+                                        : "opacity-60"
+                                }
+                            >
+                                <s-icon type="tablet"></s-icon>
+                            </span>
                         </s-button>
                         <s-button
                             tone={
@@ -56,8 +73,17 @@ export function CustomizerHeader({
                             }
                             slot="secondary-actions"
                             onClick={() => setActiveDevice("mobile")}
-                            icon="mobile"
                         >
+                            {" "}
+                            <span
+                                className={
+                                    activeDevice === "mobile"
+                                        ? "opacity-100"
+                                        : "opacity-60"
+                                }
+                            >
+                                <s-icon type="mobile"></s-icon>
+                            </span>
                         </s-button>
                     </s-button-group>
                 </s-stack>
