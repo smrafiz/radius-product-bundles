@@ -24,16 +24,25 @@
         &[data-box-align="left"] {
             margin-left: 0;
             margin-right: auto;
+            .radius-bundle__actions {
+                text-align: left;
+            }
         }
 
         &[data-box-align="center"] {
             margin-left: auto;
             margin-right: auto;
+            .radius-bundle__actions {
+                text-align: center;
+            }
         }
 
         &[data-box-align="right"] {
             margin-left: auto;
             margin-right: 0;
+            .radius-bundle__actions {
+                text-align: right;
+            }
         }
     }
 }
@@ -160,10 +169,6 @@
         font-weight: 500;
         cursor: pointer;
         transition: all var(--rb-transition);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
         min-height: 44px;
 
         &:hover:not(:disabled) {

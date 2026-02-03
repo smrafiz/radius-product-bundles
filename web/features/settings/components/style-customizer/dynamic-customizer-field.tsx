@@ -243,6 +243,7 @@ export function DynamicCustomizerField({
                     label={config.label}
                     details={config.details}
                     name={config.name}
+                    alpha
                     placeholder={
                         config.allowInherit ? "Inherit" : "Select color"
                     }

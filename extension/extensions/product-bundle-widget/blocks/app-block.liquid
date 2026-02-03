@@ -110,27 +110,7 @@
 					{% endcase %}
 				{% endif %}
 
-				{% comment %} Product card colors {% endcomment %}
-
-				{% if g_styles.customizeCardStyle %}
-					{% assign product_card_bg = g_styles.productCardBg
-						| default: '#f9fafb' %}
-				{% endif %}
-
-				{% comment %} Button colors {% endcomment %}
-				{% assign button_bg_color = block.settings.button_bg_color
-						| default: g_styles.buttonBgColor
-						| default: primary_color %}
-				{% assign button_text_color = '#ffffff' %}
-
-				{% comment %} Pricing summary colors {% endcomment %}
-				{% assign pricing_summary_bg = block.settings.pricing_summary_bg
-						| default: g_styles.pricingSummaryBg
-						| default: '#f9fafb' %}
-
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					SHAPE & DEPTH
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% comment %} CORNER, SHADOW and SPACING {% endcomment %}
 				{% if style_preset == 'custom' %}
 				  {% assign corner_style = block.settings.corner_style %}
 				{% else %}
@@ -147,14 +127,14 @@
 						{% assign border_radius = 8 %}
 				{% endcase %}
 
-				{% assign shadow = shadow | default: 'soft' %}
+				{% assign shadow = block.settings.shadow | default: 'soft' %}
 				{% if style_preset == 'custom' and block.settings.shadow != blank %}
 				  {% assign shadow = block.settings.shadow %}
 				{% else %}
 				  {% assign shadow = g_styles.shadow %}
 				{% endif %}
 
-				{% assign spacing = spacing | default: 'comfortable' %}
+				{% assign spacing = block.settings.spacing | default: 'comfortable' %}
 				{% if style_preset == 'custom' and block.settings.spacing != blank %}
 				  {% assign spacing = block.settings.spacing %}
 				{% else %}
@@ -173,78 +153,135 @@
 						{% assign gap_spacing = 12 %}
 				{% endcase %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					PRODUCT CARDS
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% assign image_size = block.settings.image_size
-						| default: g_styles.imageSize
-						| default: 'medium' %}
+				{% comment %} IMAGE CONTROLL {% endcomment %}
+				{% assign override_card_settings = block.settings.override_card_settings | default: false %}
+
+				{% if override_card_settings %}
+				  {% assign image_size = block.settings.image_size | default: g_styles.imageSize | default: 'medium' %}
+				{% else %}
+				  {% assign image_size = g_styles.imageSize | default: 'medium' %}
+				{% endif %}
 
 				{% case image_size %}
-					{% when 'small' %}
-						{% assign image_size_px = 60 %}
-					{% when 'large' %}
-						{% assign image_size_px = 120 %}
-					{% else %}
-						{% assign image_size_px = 80 %}
+				  {% when 'small' %}
+					{% assign image_size_px = 60 %}
+				  {% when 'large' %}
+					{% assign image_size_px = 120 %}
+				  {% else %}
+					{% assign image_size_px = 80 %}
 				{% endcase %}
 
-				{% assign image_fit = block.settings.image_fit
-						| default: g_styles.imageFit
-						| default: 'contain' %}
-
-				{% assign image_position = block.settings.image_position
-						| default: g_styles.imagePosition
-						| default: 'left' %}
-
-				{% if g_styles.customizeCardStyle %}
-						{% if g_styles.productCardBorder %}
-							{% assign product_card_border = g_styles.productCardBorder | default: true %}
-						{% endif %}
-
-						{% if g_styles.productCardShadow  %}
-							{% assign product_card_shadow = g_styles.productCardShadow | default: false %}
-						{% endif %}
+				{% if override_card_settings %}
+				  {% assign image_fit = block.settings.image_fit | default: g_styles.imageFit | default: 'contain' %}
+				{% else %}
+				  {% assign image_fit = g_styles.imageFit | default: 'contain' %}
 				{% endif %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					BUTTON & BADGE
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% assign button_style = block.settings.button_style
-						| default: g_styles.buttonStyle
-						| default: 'filled' %}
-
-				{% assign button_size = block.settings.button_size
-						| default: g_styles.buttonSize
-						| default: 'medium' %}
-
-				{% assign button_width = block.settings.button_width
-						| default: g_styles.buttonWidth
-						| default: 'auto' %}
-
-				{% assign badge_position = block.settings.badge_position
-						| default: g_styles.badgePosition
-						| default: 'inline' %}
-
-				{% assign badge_style = block.settings.badge_style
-						| default: g_styles.badgeStyle
-						| default: 'filled' %}
-
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					PRICING SUMMARY
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% assign pricing_summary_box = block.settings.pricing_summary_box %}
-				{% if pricing_summary_box == null %}
-					{% assign pricing_summary_box = g_styles.pricingSummaryBox | default: true %}
+				{% if override_card_settings %}
+				  {% assign image_position = block.settings.image_position | default: 'left' %}
+				{% else %}
+				  {% assign image_position = g_styles.imagePosition | default: 'left' %}
 				{% endif %}
 
-				{% assign pricing_summary_style = block.settings.pricing_summary_style
-						| default: g_styles.pricingSummaryStyle
-						| default: 'card' %}
+				{% comment %} PRODUCT CARD CONTROLL {% endcomment %}
+				{% if override_card_settings and block.settings.product_card_bg != blank %}
+				  {% assign product_card_bg = block.settings.product_card_bg %}
+				{% elsif g_styles.customizeCardStyle %}
+				  {% assign product_card_bg = g_styles.productCardBg | default: '#f9fafb' %}
+				{% else %}
+				  {% assign product_card_bg = '#f9fafb' %}
+				{% endif %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					CONTAINER
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% assign product_card_border = true %}
+				{% if override_card_settings %}
+				  {% assign product_card_border = block.settings.product_card_border %}
+				{% elsif g_styles.customizeCardStyle %}
+				  {% assign product_card_border = g_styles.productCardBorder | default: true %}
+				{% endif %}
+
+				{% assign product_card_shadow = false %}
+				{% if override_card_settings %}
+				  {% assign product_card_shadow = block.settings.product_card_shadow %}
+				{% elsif g_styles.customizeCardStyle %}
+				  {% assign product_card_shadow = g_styles.productCardShadow | default: false %}
+				{% endif %}
+
+				{% comment %} BUTTON & BADGE {% endcomment %}
+				{% assign override_button_settings = block.settings.override_button_settings | default: false %}
+
+				{% assign button_style = 'filled' %}
+				{% if override_button_settings and block.settings.button_style != blank %}
+				  {% assign button_style = block.settings.button_style %}
+				{% elsif g_styles.buttonStyle != blank %}
+				  {% assign button_style = g_styles.buttonStyle %}
+				{% endif %}
+
+				{% assign button_size = 'medium' %}
+				{% if override_button_settings and block.settings.button_size != blank %}
+				  {% assign button_size = block.settings.button_size %}
+				{% elsif g_styles.buttonSize != blank %}
+				  {% assign button_size = g_styles.buttonSize %}
+				{% endif %}
+
+				{% assign button_width = 'full' %}
+				{% if override_button_settings and block.settings.button_width != blank %}
+				  {% assign button_width = block.settings.button_width %}
+				{% elsif g_styles.buttonWidth != blank %}
+				  {% assign button_width = g_styles.buttonWidth %}
+				{% endif %}
+
+				{% assign button_bg_color = primary_color %}
+				{% if override_button_settings and block.settings.button_bg_color != blank %}
+				  {% assign button_bg_color = block.settings.button_bg_color %}
+				{% elsif g_styles.buttonBgColor != blank %}
+				  {% assign button_bg_color = g_styles.buttonBgColor %}
+				{% endif %}
+
+				{% assign override_badge_settings = block.settings.override_badge_settings | default: false %}
+
+				{% assign badge_position = 'top-right' %}
+				{% if override_badge_settings and block.settings.badge_position != blank %}
+				  {% assign badge_position = block.settings.badge_position %}
+				{% elsif g_styles.badgePosition != blank %}
+				  {% assign badge_position = g_styles.badgePosition %}
+				{% endif %}
+
+				{% assign badge_style = 'filled' %}
+				{% if override_badge_settings and block.settings.badge_style != blank %}
+				  {% assign badge_style = block.settings.badge_style %}
+				{% elsif g_styles.badgeStyle != blank %}
+				  {% assign badge_style = g_styles.badgeStyle %}
+				{% endif %}
+
+				{% comment %} PRICING SUMMARY {% endcomment %}
+				{% assign override_pricing_settings = block.settings.override_pricing_settings | default: false %}
+
+				{% assign pricing_summary_box = false %}
+				{% if override_pricing_settings %}
+				  {% assign pricing_summary_box = block.settings.pricing_summary_box | default: false %}
+				{% elsif g_styles.pricingSummaryBox != blank %}
+				  {% assign pricing_summary_box = g_styles.pricingSummaryBox %}
+				{% endif %}
+
+				{% assign pricing_summary_style = 'card' %}
+				{% if pricing_summary_box %}
+				  {% if override_pricing_settings and block.settings.pricing_summary_style != blank %}
+					{% assign pricing_summary_style = block.settings.pricing_summary_style %}
+				  {% elsif g_styles.pricingSummaryStyle != blank %}
+					{% assign pricing_summary_style = g_styles.pricingSummaryStyle %}
+				  {% endif %}
+				{% endif %}
+
+				{% assign pricing_summary_bg = '#f9fafb' %}
+				{% if pricing_summary_box %}
+				  {% if override_pricing_settings and block.settings.pricing_summary_bg != blank %}
+					{% assign pricing_summary_bg = block.settings.pricing_summary_bg %}
+				  {% elsif g_styles.pricingSummaryBg != blank %}
+					{% assign pricing_summary_bg = g_styles.pricingSummaryBg %}
+				  {% endif %}
+				{% endif %}
+
+				{% comment %} CONTAINER {% endcomment %}
 				{% assign box_max_width = block.settings.box_max_width
 						| default: g_styles.boxMaxWidth
 						| default: 600 %}
@@ -504,7 +541,6 @@
 						--rb-savings-color: {{ savings_color }};
 						--rb-product-bg-color: {{ product_card_bg }};
 						--rb-button-color: {{ button_bg_color }};
-						--rb-button-text-color: {{ button_text_color }};
 						--rb-pricing-summary-bg: {{ pricing_summary_bg }};
 						--rb-border-radius: {{ border_radius }}px;
 						--rb-box-spacing: {{ box_spacing }}px;

@@ -12,6 +12,7 @@
   - pricing_summary_box: Boolean (controls box styling via CSS vars)
 {% endcomment %}
 
+{% if pricing_summary_box %}
 <div class="radius-bundle__pricing{% if compact %} radius-bundle__pricing--compact{% endif %}" data-bundle-pricing>
 	{% comment %} Regular Price Row {% endcomment %}
 	{% unless compact %}
@@ -53,3 +54,4 @@
 		</div>
 	{% endif %}
 </div>
+{% endif %}

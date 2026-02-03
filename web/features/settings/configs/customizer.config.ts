@@ -157,7 +157,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "cover", label: "Cover" },
                         { value: "contain", label: "Contain" },
                     ],
-                    defaultValue: "cover",
+                    defaultValue: "contain",
                 },
                 {
                     type: "buttonGroup",
