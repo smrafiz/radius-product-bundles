@@ -1,12 +1,7 @@
 "use client";
 
-import {
-    DEFAULT_LABELS,
-    getBadgeRadius,
-    getHeadingFontSize,
-    useCustomizerStore,
-    useEffectiveStyles,
-} from "@/features/settings";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { getBadgeRadius, getHeadingFontSize, useEffectiveStyles, } from "@/features/settings";
 
 /**
  * Bundle header with title and savings badge.

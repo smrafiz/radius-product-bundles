@@ -35,6 +35,13 @@ export function useCustomizerPanel(
 
         onClearErrors?.(); // Clear validation errors
         onFieldChange?.(); // Trigger save bar
+
+        window.shopify?.toast?.show(
+            "Customizer settings restored to defaults",
+            {
+                duration: 3000,
+            },
+        );
     }, [resetToDefaults, setFormValue, onFieldChange, onClearErrors]);
 
     /**

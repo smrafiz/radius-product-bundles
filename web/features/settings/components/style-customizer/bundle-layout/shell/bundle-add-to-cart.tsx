@@ -1,13 +1,13 @@
 "use client";
 
 import {
-    DEFAULT_LABELS,
+    getButtonBgColor,
     getButtonFontSize,
     getButtonPadding,
     getButtonRadius,
-    getButtonBgColor,
     useCustomizerStore,
 } from "@/features/settings";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Bundle add to cart button.

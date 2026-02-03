@@ -1,11 +1,7 @@
 "use client";
 
-import {
-    DEFAULT_LABELS,
-    getFontSize,
-    getCardRadius,
-    useCustomizerStore,
-} from "@/features/settings";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { getCardRadius, getFontSize, useCustomizerStore, } from "@/features/settings";
 
 /**
  * Bundle pricing summary display.

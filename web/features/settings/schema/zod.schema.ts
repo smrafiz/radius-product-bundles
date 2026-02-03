@@ -107,6 +107,24 @@ const baseStylesSchema = z.object({
     buyGetTierStyle: z.enum(["cards", "list", "tabs"]).optional(),
 
     // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - VOLUME DISCOUNT SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    volumeTierHighlightColor: requiredHexColor.optional(),
+    volumeTierStyle: z.enum(["table", "cards"]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - MIX & MATCH SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    mixMatchGroupHeaderColor: requiredHexColor.optional(),
+    mixMatchSelectionStyle: z.enum(["checkbox", "radio", "highlight"]).optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ADVANCED - FBT SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    fbtSeparatorStyle: z.enum(["plus", "line", "none"]).optional(),
+    fbtCheckboxColor: requiredHexColor.optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BREAKPOINTS
     // ═══════════════════════════════════════════════════════════════════
     breakpointPreset: z.enum(["standard", "compact", "wide"]).optional(),
