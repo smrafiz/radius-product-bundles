@@ -5,14 +5,20 @@ import { z } from "zod";
  */
 const hexColor = z
     .string()
-    .regex(/^(#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})|)$/, "Invalid hex color");
+    .regex(
+        /^(#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})|)$/,
+        "Invalid hex color",
+    );
 
 /**
  * Required hex color validation.
  */
 const requiredHexColor = z
     .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color");
+    .regex(
+        /^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/,
+        "Invalid hex color",
+    );
 
 const baseStylesSchema = z.object({
     // ═══════════════════════════════════════════════════════════════════
@@ -116,13 +122,34 @@ const baseStylesSchema = z.object({
     // ADVANCED - MIX & MATCH SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     mixMatchGroupHeaderColor: requiredHexColor.optional(),
-    mixMatchSelectionStyle: z.enum(["checkbox", "radio", "highlight"]).optional(),
+    mixMatchSelectionStyle: z
+        .enum(["checkbox", "radio", "highlight"])
+        .optional(),
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - FBT SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     fbtSeparatorStyle: z.enum(["plus", "line", "none"]).optional(),
     fbtCheckboxColor: requiredHexColor.optional(),
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CART BANNER SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    cartBannerTextColor: requiredHexColor.optional(),
+    cartBannerBgColor: requiredHexColor.optional(),
+    cartBannerBorderColor: requiredHexColor.optional(),
+    cartBannerHighlightColor: requiredHexColor.optional(),
+    cartBannerBorderStyle: z.enum(["solid", "dashed", "dotted"]).optional(),
+    cartBannerCornerStyle: z.enum(["sharp", "modern", "rounded"]).optional(),
+    cartBannerShadow: z.enum(["none", "soft", "strong"]).optional(),
+    cartBannerSpacing: z
+        .enum(["compact", "comfortable", "spacious"])
+        .optional(),
+    cartBannerBodySize: z.enum(["small", "medium", "large"]).optional(),
+    cartBannerIconType: z
+        .enum(["tag", "percent", "gift", "sparkle", "fire", "check", "none"])
+        .optional(),
+    cartBannerIconColor: requiredHexColor.optional(),
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BREAKPOINTS

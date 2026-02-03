@@ -5,12 +5,12 @@ import {
     CustomizerSkeleton,
     DynamicCustomizerPanel,
     PreviewShell,
+    PreviewTemplateId,
     useCustomizerPage,
     useCustomizerStore,
 } from "@/features/settings";
 import { GlobalBanner } from "@/shared";
 import { FormProvider } from "react-hook-form";
-import type { BundleType } from "@/features/bundles";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
 
 export function CustomizerBundleType() {
@@ -30,7 +30,7 @@ export function CustomizerBundleType() {
     } = useCustomizerPage();
 
     const { activeLayout } = useCustomizerStore();
-    const activeBundleType = (activeId || "FIXED_BUNDLE") as BundleType;
+    const activeBundleType = (activeId || "FIXED_BUNDLE") as PreviewTemplateId;
 
     return (
         <s-page heading="Style Customizer" inlineSize="large">

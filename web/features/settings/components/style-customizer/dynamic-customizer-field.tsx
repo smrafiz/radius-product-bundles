@@ -136,7 +136,7 @@ export function DynamicCustomizerField({
         }
         // Check bundle type condition
         if (config.bundleTypes && config.bundleTypes.length > 0) {
-            if (!config.bundleTypes.includes(context.activeBundleType)) {
+            if (!(config.bundleTypes as string[]).includes(context.activeBundleType)) {
                 return null;
             }
         }

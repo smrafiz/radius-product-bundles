@@ -60,6 +60,7 @@ export function useCustomizerPanel(
 
     return {
         openSectionId,
+        setOpenSectionId,
         handleToggle,
         handleRestoreDefaults,
     };

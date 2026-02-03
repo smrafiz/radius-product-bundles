@@ -2,7 +2,10 @@ import {
     AppSettingsFormData,
     ConditionContext,
     CustomizerFieldConfig,
+    CustomizerPanelConfig,
+    PreviewTemplateId,
 } from "@/features/settings";
+import { WidgetLayout } from "@/prisma/generated/enums";
 
 /*
  * Settings form provider props
@@ -31,4 +34,16 @@ export interface ResponsiveFieldIndicatorProps {
     isInherited: boolean;
     onOverride: () => void;
     onClearOverride: () => void;
+}
+
+/*
+ * Dynamic customizer panel props
+ */
+export interface DynamicCustomizerPanelProps {
+    config: CustomizerPanelConfig;
+    onFieldChangeAction?: () => void;
+    onClearErrorsAction?: () => void;
+    resetKey?: number;
+    activeLayout?: WidgetLayout;
+    activeBundleType?: PreviewTemplateId;
 }

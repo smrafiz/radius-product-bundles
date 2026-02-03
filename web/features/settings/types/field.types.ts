@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BundleType } from "@/features/bundles";
-import { appSettingsSchema } from "@/features/settings";
 import { WidgetLayout } from "@/prisma/generated/enums";
+import { appSettingsSchema, PreviewTemplateId } from "@/features/settings";
 
 /**
  * Validation configuration
@@ -328,6 +328,32 @@ export interface CustomizerStyles {
     fbtCheckboxColor: string;
 
     // ═══════════════════════════════════════════════════════════════════
+    // CART BANNER SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    /** Banner text color */
+    cartBannerTextColor: string;
+    /** Banner background color */
+    cartBannerBgColor: string;
+    /** Banner border color */
+    cartBannerBorderColor: string;
+    /** Accent color for price/savings text */
+    cartBannerHighlightColor: string;
+    /** Border line style */
+    cartBannerBorderStyle: "solid" | "dashed" | "dotted";
+    /** Corner style */
+    cartBannerCornerStyle: CornerStyle;
+    /** Shadow depth */
+    cartBannerShadow: ShadowStyle;
+    /** Inner spacing */
+    cartBannerSpacing: SpacingPreset;
+    /** Text size */
+    cartBannerBodySize: SizePreset;
+    /** Icon type for banner lines */
+    cartBannerIconType: "tag" | "percent" | "gift" | "sparkle" | "fire" | "check" | "none";
+    /** Icon color */
+    cartBannerIconColor: string;
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BREAKPOINTS
     // ═══════════════════════════════════════════════════════════════════
     /** Breakpoint preset */
@@ -545,7 +571,7 @@ export interface CustomizerPanelConfig {
 export interface ConditionContext {
     styles: CustomizerStyles;
     activeLayout: WidgetLayout;
-    activeBundleType: BundleType;
+    activeBundleType: PreviewTemplateId;
     activeDevice: "desktop" | "tablet" | "mobile";
 }
 

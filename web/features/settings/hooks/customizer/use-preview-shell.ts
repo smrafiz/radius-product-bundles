@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    PreviewTemplateId,
     useCustomizerStore,
     useEffectiveStyles,
 } from "@/features/settings";
@@ -11,14 +12,20 @@ import { BUNDLE_TYPES } from "@/features/bundles/constants/bundle-types.constant
 import { TEMPLATE_REGISTRY } from "@/features/settings/constants/template.constants";
 import { CUSTOMIZER_LAYOUTS_MAPPING } from "@/features/settings/constants/customizer.constants";
 
-export function usePreviewShell(bundleType: BundleType) {
+export function usePreviewShell(bundleType: PreviewTemplateId) {
     const { activeLayout, activeDevice, setActiveLayout } =
         useCustomizerStore();
     const styles = useEffectiveStyles();
 
     const layouts = CUSTOMIZER_LAYOUTS_MAPPING[bundleType];
     const Template = TEMPLATE_REGISTRY[bundleType];
-    const heading = `${BUNDLE_TYPES[bundleType].label} Layout`;
+
+    const heading =
+        bundleType === "CART_BANNER"
+            ? "Cart Banner Layout"
+            : `${BUNDLE_TYPES[bundleType as BundleType].label} Layout`;
+
+    const isCartBanner = bundleType === "CART_BANNER";
 
     const validLayout = useMemo(() => {
         const layoutValues = layouts.map((l: { value: string }) => l.value);
@@ -35,6 +42,7 @@ export function usePreviewShell(bundleType: BundleType) {
         layouts,
         heading,
         Template,
+        isCartBanner,
         setActiveLayout,
     };
 }

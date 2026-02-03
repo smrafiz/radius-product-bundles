@@ -3,19 +3,6 @@ import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants"
 
 /**
  * Customizer panel configuration.
- *
- * 4-section structure focused on STYLING:
- * 1. Appearance - Colors, shape, and overall feel
- * 2. Product Cards - Card and image styling
- * 3. Button & Badge - CTA and savings styling (with visual separation)
- * 4. Advanced - Layout-specific and fine-tuning options
- *
- * Key UX principles applied:
- * - Presets at top for quick start
- * - Preset-based controls (Sharp/Modern/Rounded) prevent "ugly" values
- * - Progressive disclosure for power users
- * - Visual separators between related groups
- * - Conditional fields based on layout/bundle type
  */
 export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
     id: "style-customizer",
@@ -29,6 +16,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
             title: "Appearance",
             icon: "palette",
             defaultOpen: true,
+            showWhen: {
+                field: "_bundleType",
+                operator: "notEquals",
+                value: "CART_BANNER",
+            },
             fields: [
                 // Preset selector at the very top
                 {
@@ -130,6 +122,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
             title: "Product Cards",
             icon: "product",
             defaultOpen: false,
+            showWhen: {
+                field: "_bundleType",
+                operator: "notEquals",
+                value: "CART_BANNER",
+            },
             fields: [
                 // Image settings (always visible)
                 {
@@ -228,6 +225,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
             title: "Button & Badge",
             icon: "cart",
             defaultOpen: false,
+            showWhen: {
+                field: "_bundleType",
+                operator: "notEquals",
+                value: "CART_BANNER",
+            },
             fields: [
                 // Button group
                 {
@@ -350,6 +352,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
             title: "Advanced",
             icon: "settings",
             defaultOpen: false,
+            showWhen: {
+                field: "_bundleType",
+                operator: "notEquals",
+                value: "CART_BANNER",
+            },
             fields: [
                 // Container settings
                 {
@@ -681,6 +688,151 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     details: "Color for product selection checkboxes",
                     defaultValue: "#303030",
                     bundleTypes: ["FREQUENTLY_BOUGHT_TOGETHER"],
+                },
+
+            ],
+        },
+
+        // ═══════════════════════════════════════════════════════════════════
+        // 5. CART BANNER - Dedicated controls (visible only for CART_BANNER)
+        // ═══════════════════════════════════════════════════════════════════
+        {
+            id: "cartBanner",
+            title: "Cart Banner",
+            icon: "notification",
+            defaultOpen: true,
+            showWhen: {
+                field: "_bundleType",
+                operator: "equals",
+                value: "CART_BANNER",
+            },
+            fields: [
+                // Colors
+                {
+                    type: "heading",
+                    label: "Colors",
+                },
+                {
+                    type: "color",
+                    name: "cartBannerTextColor",
+                    label: "Text color",
+                    details: "Body text in the banner",
+                    defaultValue: "#333333",
+                },
+                {
+                    type: "color",
+                    name: "cartBannerBgColor",
+                    label: "Background",
+                    details: "Banner container background",
+                    defaultValue: "#ffffff",
+                },
+                {
+                    type: "color",
+                    name: "cartBannerBorderColor",
+                    label: "Border color",
+                    details: "Banner border accent",
+                    defaultValue: "#303030",
+                },
+                {
+                    type: "color",
+                    name: "cartBannerHighlightColor",
+                    label: "Highlight color",
+                    details: "Price and savings emphasis",
+                    defaultValue: "#303030",
+                },
+
+                // Shape & Depth
+                {
+                    type: "heading",
+                    label: "Shape & Depth",
+                },
+                {
+                    type: "buttonGroup",
+                    name: "cartBannerCornerStyle",
+                    label: "Corner roundness",
+                    options: [
+                        { value: "sharp", label: "Sharp" },
+                        { value: "modern", label: "Modern" },
+                        { value: "rounded", label: "Rounded" },
+                    ],
+                    defaultValue: "modern",
+                },
+                {
+                    type: "buttonGroup",
+                    name: "cartBannerShadow",
+                    label: "Shadow depth",
+                    options: [
+                        { value: "none", label: "None" },
+                        { value: "soft", label: "Soft" },
+                        { value: "strong", label: "Strong" },
+                    ],
+                    defaultValue: "none",
+                },
+                {
+                    type: "buttonGroup",
+                    name: "cartBannerSpacing",
+                    label: "Spacing",
+                    options: [
+                        { value: "compact", label: "Compact" },
+                        { value: "comfortable", label: "Comfortable" },
+                        { value: "spacious", label: "Spacious" },
+                    ],
+                    defaultValue: "comfortable",
+                },
+                {
+                    type: "buttonGroup",
+                    name: "cartBannerBorderStyle",
+                    label: "Border line",
+                    options: [
+                        { value: "solid", label: "Solid" },
+                        { value: "dashed", label: "Dashed" },
+                        { value: "dotted", label: "Dotted" },
+                    ],
+                    defaultValue: "solid",
+                },
+
+                // Typography
+                {
+                    type: "heading",
+                    label: "Typography",
+                },
+                {
+                    type: "buttonGroup",
+                    name: "cartBannerBodySize",
+                    label: "Text size",
+                    options: [
+                        { value: "small", label: "Small" },
+                        { value: "medium", label: "Medium" },
+                        { value: "large", label: "Large" },
+                    ],
+                    defaultValue: "medium",
+                },
+
+                // Icon
+                {
+                    type: "heading",
+                    label: "Icon",
+                },
+                {
+                    type: "select",
+                    name: "cartBannerIconType",
+                    label: "Icon",
+                    options: [
+                        { value: "tag", label: "Price Tag" },
+                        { value: "percent", label: "Percent Badge" },
+                        { value: "gift", label: "Gift" },
+                        { value: "sparkle", label: "Sparkle" },
+                        { value: "fire", label: "Hot Deal" },
+                        { value: "check", label: "Checkmark" },
+                        { value: "none", label: "No Icon" },
+                    ],
+                    defaultValue: "tag",
+                },
+                {
+                    type: "color",
+                    name: "cartBannerIconColor",
+                    label: "Icon color",
+                    defaultValue: "#303030",
                 },
             ],
         },

@@ -1,6 +1,7 @@
 import {
     TemplateBogo,
     TemplateBuyGet,
+    TemplateCartBanner,
     TemplateFbt,
     TemplateFixed,
     TemplateMixMatch,
@@ -18,4 +19,5 @@ export const TEMPLATE_REGISTRY: TemplateRegistry = {
     VOLUME_DISCOUNT: TemplateVolume,
     MIX_AND_MATCH: TemplateMixMatch,
     FREQUENTLY_BOUGHT_TOGETHER: TemplateFbt,
+    CART_BANNER: TemplateCartBanner,
 };

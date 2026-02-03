@@ -20,6 +20,7 @@ export function PreviewShell({ bundleType }: PreviewShellProps) {
         layouts,
         heading,
         Template,
+        isCartBanner,
         setActiveLayout,
     } = usePreviewShell(bundleType);
 
@@ -35,10 +36,16 @@ export function PreviewShell({ bundleType }: PreviewShellProps) {
             />
 
             <PreviewContainer activeDevice={activeDevice} styles={styles}>
-                <BundleHeader />
-                <Template activeLayout={activeLayout} />
-                <BundlePricing />
-                <BundleAddToCart />
+                {isCartBanner ? (
+                    <Template activeLayout={activeLayout} />
+                ) : (
+                    <>
+                        <BundleHeader />
+                        <Template activeLayout={activeLayout} />
+                        <BundlePricing />
+                        <BundleAddToCart />
+                    </>
+                )}
             </PreviewContainer>
         </div>
     );

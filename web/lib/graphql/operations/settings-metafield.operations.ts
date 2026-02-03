@@ -288,6 +288,25 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             // Bundle-type specific
             "bogoFreeTagColor",
             "buyGetTierStyle",
+            "volumeTierHighlightColor",
+            "volumeTierStyle",
+            "mixMatchGroupHeaderColor",
+            "mixMatchSelectionStyle",
+            "fbtSeparatorStyle",
+            "fbtCheckboxColor",
+
+            // Cart Banner
+            "cartBannerTextColor",
+            "cartBannerBgColor",
+            "cartBannerBorderColor",
+            "cartBannerHighlightColor",
+            "cartBannerBorderStyle",
+            "cartBannerCornerStyle",
+            "cartBannerShadow",
+            "cartBannerSpacing",
+            "cartBannerBodySize",
+            "cartBannerIconType",
+            "cartBannerIconColor",
 
             // Breakpoints
             "breakpointPreset",

@@ -4,8 +4,8 @@ import {
     CustomizerSectionConfig,
     CustomizerStyles,
     FieldCondition,
+    PreviewTemplateId,
 } from "@/features/settings";
-import { BundleType } from "@/features/bundles";
 import { WidgetLayout } from "@/prisma/generated/enums";
 
 /**
@@ -107,7 +107,7 @@ export function isFieldVisible(
 
     // Check bundle type restriction (shorthand)
     if (field.bundleTypes && field.bundleTypes.length > 0) {
-        if (!field.bundleTypes.includes(context.activeBundleType)) {
+        if (!(field.bundleTypes as string[]).includes(context.activeBundleType)) {
             return false;
         }
     }
@@ -136,7 +136,7 @@ export function isSectionVisible(
 
     // Check bundle type restriction (shorthand)
     if (section.bundleTypes && section.bundleTypes.length > 0) {
-        if (!section.bundleTypes.includes(context.activeBundleType)) {
+        if (!(section.bundleTypes as string[]).includes(context.activeBundleType)) {
             return false;
         }
     }
@@ -176,7 +176,7 @@ export function getVisibleSections(
 export function createConditionContext(
     styles: CustomizerStyles,
     activeLayout: WidgetLayout,
-    activeBundleType: BundleType,
+    activeBundleType: PreviewTemplateId,
     activeDevice: "desktop" | "tablet" | "mobile" = "desktop",
 ): ConditionContext {
     return {

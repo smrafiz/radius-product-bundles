@@ -4,6 +4,11 @@ import { CustomizerStyles } from "@/features/settings";
 import type { WidgetLayout } from "@/prisma/generated/enums";
 
 /**
+ * Extended template identifier — BundleType + UI-only templates.
+ */
+export type PreviewTemplateId = BundleType | "CART_BANNER";
+
+/**
  * Props for per-bundle-type template components
  */
 export interface BundleTemplateProps {
@@ -18,7 +23,7 @@ export interface LayoutSidebarProps {
     activeLayout: WidgetLayout;
     onLayoutChange: (layout: WidgetLayout) => void;
     primaryColor: string;
-    bundleType: BundleType;
+    bundleType: PreviewTemplateId;
 }
 
 /**
@@ -34,14 +39,14 @@ export interface PreviewContainerProps {
  * Props for the unified PreviewShell wrapper.
  */
 export interface PreviewShellProps {
-    bundleType: BundleType;
+    bundleType: PreviewTemplateId;
 }
 
 /**
- * Maps each BundleType to its corresponding template component.
+ * Maps each template to its corresponding component.
  */
 export type TemplateRegistry = Record<
-    BundleType,
+    PreviewTemplateId,
     ComponentType<BundleTemplateProps>
 >;
 

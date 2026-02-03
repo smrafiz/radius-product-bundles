@@ -306,6 +306,21 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     fbtCheckboxColor: "#303030",
 
     // ═══════════════════════════════════════════════════════════════════
+    // CART BANNER SPECIFIC
+    // ═══════════════════════════════════════════════════════════════════
+    cartBannerTextColor: "#333333",
+    cartBannerBgColor: "#ffffff",
+    cartBannerBorderColor: "#303030",
+    cartBannerHighlightColor: "#303030",
+    cartBannerBorderStyle: "solid",
+    cartBannerCornerStyle: "modern",
+    cartBannerShadow: "none",
+    cartBannerSpacing: "comfortable",
+    cartBannerBodySize: "medium",
+    cartBannerIconType: "tag",
+    cartBannerIconColor: "#303030",
+
+    // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BREAKPOINTS
     // ═══════════════════════════════════════════════════════════════════
     breakpointPreset: "standard",

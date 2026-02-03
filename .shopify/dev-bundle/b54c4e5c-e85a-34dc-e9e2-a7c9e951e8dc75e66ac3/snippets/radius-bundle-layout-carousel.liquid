@@ -1,0 +1,112 @@
+{% comment %}
+  Radius Bundle - Carousel/Slider Template
+
+  Parameters:
+  - bundle_id, name, savings_badge_text, product_count
+  - show_images, show_savings, show_savings_badge
+  - show_product_prices, show_compare_at_price, show_quantity
+  - show_free_shipping, enable_hyperlink
+  - button_text, regular_price_label, bundle_price_label
+  - you_save_label, free_shipping_label, quantity_label
+  - slides_per_view: Number (2-4)
+  - carousel_navigation: 'none' | 'arrows' | 'dots' | 'both'
+  - autoplay: Boolean
+  - autoplay_speed: Number (seconds)
+  - pricing_summary_box: Boolean
+{% endcomment %}
+
+{% assign show_arrows = false %}
+{% assign show_dots = false %}
+
+{% if carousel_navigation == 'arrows' or carousel_navigation == 'both' %}
+    {% assign show_arrows = true %}
+{% endif %}
+
+{% if carousel_navigation == 'dots' or carousel_navigation == 'both' %}
+    {% assign show_dots = true %}
+{% endif %}
+
+<div class="radius-bundle__inner">
+    {% comment %} Header {% endcomment %}
+    {% render 'radius-bundle-header',
+            name: name,
+            show_savings_badge: show_savings_badge
+    %}
+
+    {% comment %} Slider Container {% endcomment %}
+    <div class="radius-bundle__slider-wrapper">
+        {% comment %} PREV Button {% endcomment %}
+        {% if show_arrows %}
+            <button
+                    class="radius-bundle__slider-nav radius-bundle__slider-nav--prev"
+                    aria-label="Previous product"
+                    data-slider-prev
+                    disabled
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        {% endif %}
+
+        {% comment %} SLIDER {% endcomment %}
+        <div class="radius-bundle__slider-container">
+            <div
+                    class="radius-bundle__products radius-bundle__products--slider"
+                    data-bundle-products
+                    data-slider-track
+                    data-autoplay="{{ autoplay }}"
+                    data-autoplay-speed="{{ autoplay_speed | default: 5 }}"
+                    style="--slides-per-view: {{ slides_per_view | default: 3 }};"
+            >
+                {% for i in (1..product_count) %}
+                    <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
+                        {% if show_images %}
+                            <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
+                        {% endif %}
+                        <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+                        <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+                        {% if show_quantity %}
+                            <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% comment %} NEXT Button {% endcomment %}
+        {% if show_arrows %}
+            <button
+                    class="radius-bundle__slider-nav radius-bundle__slider-nav--next"
+                    aria-label="Next product"
+                    data-slider-next
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </button>
+        {% endif %}
+    </div>
+
+    {% comment %} Pagination Dots {% endcomment %}
+    {% if show_dots %}
+        <div class="radius-bundle__slider-dots" data-slider-dots></div>
+    {% endif %}
+
+    {% comment %} Pricing Section {% endcomment %}
+    {% render 'radius-bundle-pricing',
+            show_savings: show_savings,
+            show_free_shipping: show_free_shipping,
+            regular_price_label: regular_price_label,
+            bundle_price_label: bundle_price_label,
+            you_save_label: you_save_label,
+            free_shipping_label: free_shipping_label,
+            pricing_summary_box: pricing_summary_box
+    %}
+
+    {% comment %} Add to Cart Button {% endcomment %}
+    {% render 'radius-bundle-add-to-cart',
+            bundle_id: bundle_id,
+            button_text: button_text
+    %}
+</div>
