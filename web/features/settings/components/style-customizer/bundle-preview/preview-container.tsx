@@ -9,6 +9,7 @@ import {
 export function PreviewContainer({
     activeDevice,
     styles,
+    isCartBanner,
     children,
 }: PreviewContainerProps) {
     return (
@@ -32,7 +33,7 @@ export function PreviewContainer({
         >
             <div className="radius-bundle-widget radius-bundle-widget--customizer">
                 <div
-                    className="radius-bundle"
+                    className={`radius-bundle${isCartBanner ? " radius-bundle--cart-banner" : ""}`}
                     style={{
                         maxWidth: styles.boxMaxWidth
                             ? `${styles.boxMaxWidth}px`

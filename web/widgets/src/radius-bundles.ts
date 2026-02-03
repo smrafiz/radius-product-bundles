@@ -483,7 +483,13 @@ import "./scss/radius-bundles.scss";
                 }
 
                 const bundleItemCounts = this.countBundleItems(cart.items);
-                const messages = this.buildMessages(bundles, bundleItemCounts);
+                const highlightColor =
+                    container.dataset.highlightColor || "#303030";
+                const messages = this.buildMessages(
+                    bundles,
+                    bundleItemCounts,
+                    highlightColor,
+                );
 
                 if (messages.length > 0) {
                     this.showBanner(container, messages);
@@ -523,6 +529,7 @@ import "./scss/radius-bundles.scss";
         private buildMessages(
             bundles: DiscountConfig[],
             itemCounts: Record<string, number>,
+            highlightColor: string,
         ): string[] {
             const messages: string[] = [];
 
@@ -536,7 +543,11 @@ import "./scss/radius-bundles.scss";
                     this.cartCleanup.isBundleActive(bundle.bundleId)
                 ) {
                     const name = bundle.bundleName || "this bundle";
-                    const message = this.formatBundleMessage(bundle, name);
+                    const message = this.formatBundleHtml(
+                        bundle,
+                        name,
+                        highlightColor,
+                    );
 
                     if (message) {
                         messages.push(message);
@@ -547,23 +558,28 @@ import "./scss/radius-bundles.scss";
             return messages;
         }
 
-        private formatBundleMessage(
+        private formatBundleHtml(
             bundle: DiscountConfig,
             name: string,
+            highlightColor: string,
         ): string | null {
+            const escapedName = this.escapeHtml(name);
+            const hl = (text: string) =>
+                `<strong style="color:${highlightColor}">${text}</strong>`;
+
             switch (bundle.discountType) {
                 case "PERCENTAGE":
-                    return `You're saving ${bundle.discountValue}% with ${name}`;
+                    return `You're saving ${hl(bundle.discountValue + "%")} with ${escapedName}`;
 
                 case "FIXED_AMOUNT":
-                    return `You're saving $${bundle.discountValue.toFixed(2)} with ${name}`;
+                    return `You're saving ${hl("$" + bundle.discountValue.toFixed(2))} with ${escapedName}`;
 
                 case "CUSTOM_PRICE":
-                    return `Special price: $${bundle.discountValue.toFixed(2)} for ${name}`;
+                    return `Special price: ${hl("$" + bundle.discountValue.toFixed(2))} for ${escapedName}`;
 
                 case "NO_DISCOUNT":
                     if (bundle.freeShipping) {
-                        return `${name} qualifies for free shipping!`;
+                        return `${escapedName} qualifies for ${hl("free shipping")}!`;
                     }
                     return null;
 
@@ -580,9 +596,9 @@ import "./scss/radius-bundles.scss";
 
             let html =
                 messages.length === 1
-                    ? this.escapeHtml(messages[0])
+                    ? messages[0]
                     : `<ul class="radius-savings-banner__list">${messages
-                          .map((m) => `<li>${this.escapeHtml(m)}</li>`)
+                          .map((m) => `<li>${m}</li>`)
                           .join("")}</ul>`;
 
             const hasFreeShipping = messages.some((m) =>

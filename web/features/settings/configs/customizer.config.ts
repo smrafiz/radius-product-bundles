@@ -772,6 +772,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "cartBannerSpacing",
                     label: "Spacing",
+                    responsive: true,
                     options: [
                         { value: "compact", label: "Compact" },
                         { value: "comfortable", label: "Comfortable" },
@@ -800,6 +801,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "cartBannerBodySize",
                     label: "Text size",
+                    responsive: true,
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },

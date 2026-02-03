@@ -35,7 +35,7 @@ export function PreviewShell({ bundleType }: PreviewShellProps) {
                 heading={heading}
             />
 
-            <PreviewContainer activeDevice={activeDevice} styles={styles}>
+            <PreviewContainer activeDevice={activeDevice} styles={styles} isCartBanner={isCartBanner}>
                 {isCartBanner ? (
                     <Template activeLayout={activeLayout} />
                 ) : (

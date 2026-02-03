@@ -43,7 +43,7 @@ export function WidgetLayout() {
                                                 <s-text>{label}</s-text>
                                             </s-tooltip>
                                             <div
-                                                className={`flex items-center justify-between border rounded-xl w-full h-[100px] p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[#f1f1f1]" : "border-[#e3e3e3] bg-[#f1f1f1] hover:border-blue-600"}`}
+                                                className={`flex items-center justify-between border rounded-xl w-full h-25 p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[#f1f1f1]" : "border-[#e3e3e3] bg-[#f1f1f1] hover:border-blue-600"}`}
                                                 onClick={() =>
                                                     updateDisplaySettings(
                                                         "layout",
