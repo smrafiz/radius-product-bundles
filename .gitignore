@@ -92,6 +92,7 @@ shopify.app.toml
 shopify.app.app-next-vercel.toml
 .shopify-cli.yml
 .shopify-cli-*.json
+.shopify/
 
 # ──────────────────────────────────────────────
 # 🧠 Generated GraphQL / Types / SDKs
