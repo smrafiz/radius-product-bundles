@@ -23,10 +23,15 @@ export function BundleHeader() {
             className="radius-bundle__header"
             style={{
                 display: "flex",
-                justifyContent: "space-between",
-                alignItems: isInline ? "center" : "flex-start",
+                alignItems: "center",
                 flexWrap: "wrap",
-                gap: "8px",
+                gap: "20px",
+                flexDirection:
+                    styles.badgePosition === "top-left" ? "row-reverse" : undefined,
+                justifyContent:
+                    styles.badgePosition === "inline"
+                        ? "flex-start"
+                        : "space-between",
             }}
         >
             <div className="radius-bundle__title-wrapper">

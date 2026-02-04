@@ -12,7 +12,7 @@ export function BundleList() {
     const showDivider = styles.dividerStyle !== "none";
 
     return (
-        <div className="radius-bundle__product--list"
+        <div
             style={{
                 display: "flex",
                 flexDirection: "column",
@@ -33,7 +33,7 @@ export function BundleList() {
                     />
 
                     {showDivider && index < 3 && (
-                        <div
+                        <div className="radius-bundle__divider"
                             style={{
                                 display: "flex",
                                 justifyContent: "center",

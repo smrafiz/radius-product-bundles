@@ -49,6 +49,18 @@
 }
 
 .radius-bundle__product--list {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow .25s;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
 
     .radius-bundle__product-image {
         width: 70px;
@@ -77,6 +89,7 @@
         text-align: right;
         flex-shrink: 0;
     }
+
     .divider-position {
         z-index: 1;
         border-radius: 50%;
@@ -87,21 +100,20 @@
         position: absolute;
         line-height: 22px;
     }
-}
 
+}
 /* grid layout */
 .radius-bundle__product--grid {
-    background-color: #f7f7f7;
-    border: 1px solid #e3e3e3;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 16px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow .25s;
 
     &:hover {
-        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
 
     .radius-bundle__product-image {
@@ -142,8 +154,8 @@
         scroll-snap-align: start;
         width: 100%;
         padding: 16px;
-        background: #f7f7f7;
-        border: 1px solid #e3e3e3;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
         border-radius: 12px;
     }
 
@@ -250,8 +262,7 @@
     white-space: nowrap;
     flex-shrink: 0;
     text-align: center;
-    min-height: 32px;
-    line-height: 1.2;
+    min-height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -265,7 +276,17 @@
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    margin-top: 12px;
+    .divider-position {
+        z-index: 1;
+        border-radius: 50%;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        position: absolute;
+        line-height: 22px;
+        font-size: 15px;
+    }
 }
 .radius-bundle__divider-plus {
     display: flex;
@@ -274,19 +295,6 @@
     flex-shrink: 0;
     font-size: 1.5rem;
     font-weight: 300;
-
-    .divider-position {
-        position: absolute;
-        width: 24px;
-        height: 24px;
-        line-height: 23px;
-        text-align: center;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
-    }
 }
 
 /* add to cart button */

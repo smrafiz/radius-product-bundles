@@ -15,7 +15,6 @@ import {
 export function BundleLayoutList() {
     const { selectedItems, displaySettings, bundleData } = useBundleStore();
     const [showAll, setShowAll] = useState(false);
-
     const visibleItems = showAll ? selectedItems : selectedItems.slice(0, 4);
 
     if (!selectedItems.length) {
@@ -108,8 +107,16 @@ export function BundleLayoutList() {
 
                             {/* Divider */}
                             {index < visibleItems.length - 1 && (
-                                <div className="radius-bundle__divider-plus">
-                                    <div className="divider-position">+</div>
+                                <div className="radius-bundle__divider"
+                                     style={{
+                                         display: "flex",
+                                         justifyContent: "center",
+                                         alignItems: "center",
+                                     }}
+                                >
+                                    <div className="radius-bundle__divider-plus">
+                                        <div className="divider-position">+</div>
+                                    </div>
                                 </div>
                             )}
                         </Fragment>
