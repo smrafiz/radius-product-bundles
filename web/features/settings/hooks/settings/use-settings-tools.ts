@@ -1,22 +1,27 @@
 "use client";
 
-import { useRef } from "react";
 import {
     downloadSettingsFile,
     readSettingsFile,
-    useSettingsStore,
+    SyncMetafieldResult,
     useRefetchSettings,
+    useSettingsStore,
+    WebhookCheckResult,
+    WebhookRegisterResult,
 } from "@/features/settings";
+import { useRef, useState } from "react";
 import { useModalStore } from "@/shared";
+import {
+    checkWebhooksAction,
+    forceRegisterWebhooksAction,
+    syncMetafieldsAction,
+} from "@/features/settings/actions/tools.action";
 import {
     getSettingsAction,
     saveSettingsAction,
 } from "@/features/settings/actions/settings.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-/**
- * Hook to manage settings tools (Export, Import, Sync, Reset, Clear)
- */
 export function useSettingsTools(onImportSuccess?: () => void) {
     const app = useAppBridge();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,25 +32,31 @@ export function useSettingsTools(onImportSuccess?: () => void) {
         setExporting,
         isImporting,
         isSyncing,
-        isResetting,
-        isClearing,
-        syncMetafields,
-        resetApp,
-        clearWidgetCache,
+        setSyncing,
+        isCheckingWebhooks,
+        setCheckingWebhooks,
+        isRegisteringWebhooks,
+        setRegisteringWebhooks,
     } = useSettingsStore();
 
-    /**
-     * Trigger file selection for import
-     */
+    const [syncResult, setSyncResult] = useState<SyncMetafieldResult | null>(
+        null,
+    );
+    const [webhookCheckResult, setWebhookCheckResult] =
+        useState<WebhookCheckResult | null>(null);
+    const [webhookRegisterResult, setWebhookRegisterResult] =
+        useState<WebhookRegisterResult | null>(null);
+
+    const syncModalTriggerRef = useRef<any>(null);
+    const webhookCheckModalTriggerRef = useRef<any>(null);
+    const webhookRegisterModalTriggerRef = useRef<any>(null);
+
     function triggerImport() {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
     }
 
-    /**
-     * Handles exporting settings to JSON file
-     */
     const handleExport = async () => {
         setExporting(true);
         try {
@@ -84,9 +95,6 @@ export function useSettingsTools(onImportSuccess?: () => void) {
         }
     };
 
-    /**
-     * Handles settings import from file
-     */
     const handleImport = (file: File) => {
         if (!file) return;
 
@@ -108,14 +116,9 @@ export function useSettingsTools(onImportSuccess?: () => void) {
                     } else {
                         window.shopify?.toast?.show(
                             "Settings imported successfully",
-                            {
-                                duration: 3000,
-                            },
+                            { duration: 3000 },
                         );
-
-                        // Reset settings to force reload with skeleton
                         await resetSettings();
-
                         onImportSuccess?.();
                     }
                 } catch (error) {
@@ -129,47 +132,125 @@ export function useSettingsTools(onImportSuccess?: () => void) {
                         duration: 5000,
                         isError: true,
                     });
-                    // Re-throw to ensure modal shows error if needed,
-                    // though we are handling it with toast here.
-                    // ModalHost implementation swallows errors if we don't throw,
-                    // but it also has setError.
-                    // Let's rely on Toast for consistency with other actions.
                 }
             },
         });
     };
 
-    /**
-     * Handles file selection change
-     */
     async function onFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
         if (!file) return;
-
-        // Reset file input so same file can be selected again if needed
         event.target.value = "";
-
         handleImport(file);
     }
 
+    const handleSyncMetafields = async () => {
+        setSyncing(true);
+        setSyncResult(null);
+        try {
+            const token = await app.idToken();
+            const result = await syncMetafieldsAction(token);
+
+            if (result.status === "error") {
+                window.shopify?.toast?.show(result.message || "Sync failed", {
+                    duration: 5000,
+                    isError: true,
+                });
+                return;
+            }
+
+            setSyncResult(result.data ?? null);
+            syncModalTriggerRef.current?.click();
+        } catch (error) {
+            console.error("Sync error:", error);
+            window.shopify?.toast?.show("An unexpected error occurred", {
+                duration: 5000,
+                isError: true,
+            });
+        } finally {
+            setSyncing(false);
+        }
+    };
+
+    const handleCheckWebhooks = async () => {
+        setCheckingWebhooks(true);
+        setWebhookCheckResult(null);
+        try {
+            const token = await app.idToken();
+            const result = await checkWebhooksAction(token);
+
+            if (result.status === "error") {
+                window.shopify?.toast?.show(
+                    result.message || "Failed to check webhooks",
+                    { duration: 5000, isError: true },
+                );
+                return;
+            }
+
+            setWebhookCheckResult(result.data ?? null);
+            webhookCheckModalTriggerRef.current?.click();
+        } catch (error) {
+            console.error("Webhook check error:", error);
+            window.shopify?.toast?.show("An unexpected error occurred", {
+                duration: 5000,
+                isError: true,
+            });
+        } finally {
+            setCheckingWebhooks(false);
+        }
+    };
+
+    const handleForceRegister = async () => {
+        setRegisteringWebhooks(true);
+        setWebhookRegisterResult(null);
+        try {
+            const token = await app.idToken();
+            const result = await forceRegisterWebhooksAction(token);
+
+            if (result.status === "error") {
+                window.shopify?.toast?.show(
+                    result.message || "Failed to register webhooks",
+                    { duration: 5000, isError: true },
+                );
+                return;
+            }
+
+            setWebhookRegisterResult(result.data ?? null);
+            webhookRegisterModalTriggerRef.current?.click();
+        } catch (error) {
+            console.error("Webhook register error:", error);
+            window.shopify?.toast?.show("An unexpected error occurred", {
+                duration: 5000,
+                isError: true,
+            });
+        } finally {
+            setRegisteringWebhooks(false);
+        }
+    };
+
     return {
-        // UI States
         isExporting,
         isImporting,
         isSyncing,
-        isResetting,
-        isClearing,
+        isCheckingWebhooks,
+        isRegisteringWebhooks,
 
-        // Actions
         handleExport,
         handleImport,
         triggerImport,
         onFileSelected,
-        syncMetafields,
-        resetApp,
-        clearWidgetCache,
+        handleSyncMetafields,
+        handleCheckWebhooks,
+        handleForceRegister,
 
-        // Refs
+        syncResult,
+        webhookCheckResult,
+        webhookRegisterResult,
+
+        syncModalTriggerRef,
+        webhookCheckModalTriggerRef,
+        webhookRegisterModalTriggerRef,
+
         fileInputRef,
     };
 }

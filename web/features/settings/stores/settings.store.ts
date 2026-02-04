@@ -22,6 +22,8 @@ export const useSettingsStore = create(
         isSyncing: false,
         isResetting: false,
         isClearing: false,
+        isCheckingWebhooks: false,
+        isRegisteringWebhooks: false,
         isDirty: false,
         error: null,
         toast: { active: false, message: "" },
@@ -127,6 +129,24 @@ export const useSettingsStore = create(
         setImporting: (importing) => {
             set((state) => {
                 state.isImporting = importing;
+            });
+        },
+
+        setSyncing: (syncing) => {
+            set((state) => {
+                state.isSyncing = syncing;
+            });
+        },
+
+        setCheckingWebhooks: (checking) => {
+            set((state) => {
+                state.isCheckingWebhooks = checking;
+            });
+        },
+
+        setRegisteringWebhooks: (registering) => {
+            set((state) => {
+                state.isRegisteringWebhooks = registering;
             });
         },
 

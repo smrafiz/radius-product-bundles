@@ -10,6 +10,10 @@ export function CustomizerHeader({
     onBundleTypeChangeAction: (id: string) => void;
 }) {
     const { activeDevice, setActiveDevice } = useCustomizerStore();
+    const tone =
+        activeDevice === "desktop"
+            ? "info"
+            : "auto";
 
     return (
         <div className="w-full border border-[#e3e3e3] rounded-xl overflow-hidden">
@@ -27,11 +31,6 @@ export function CustomizerHeader({
 
                     <s-button-group gap="none">
                         <s-button
-                            tone={
-                                activeDevice === "desktop"
-                                    ? "critical"
-                                    : "neutral"
-                            }
                             slot="secondary-actions"
                             onClick={() => setActiveDevice("desktop")}
                         >
@@ -39,18 +38,20 @@ export function CustomizerHeader({
                                 className={
                                     activeDevice === "desktop"
                                         ? "opacity-100"
-                                        : "opacity-60"
+                                        : "opacity-50"
                                 }
                             >
-                                <s-icon type="desktop"></s-icon>
+                                <s-icon
+                                    type="desktop"
+                                    tone={
+                                        activeDevice === "desktop"
+                                            ? "info"
+                                            : "auto"
+                                    }
+                                />
                             </span>
                         </s-button>
                         <s-button
-                            tone={
-                                activeDevice === "tablet"
-                                    ? "critical"
-                                    : "neutral"
-                            }
                             slot="secondary-actions"
                             onClick={() => setActiveDevice("tablet")}
                         >
@@ -59,18 +60,20 @@ export function CustomizerHeader({
                                 className={
                                     activeDevice === "tablet"
                                         ? "opacity-100"
-                                        : "opacity-60"
+                                        : "opacity-50"
                                 }
                             >
-                                <s-icon type="tablet"></s-icon>
+                                <s-icon
+                                    type="tablet"
+                                    tone={
+                                        activeDevice === "tablet"
+                                            ? "info"
+                                            : "auto"
+                                    }
+                                />
                             </span>
                         </s-button>
                         <s-button
-                            tone={
-                                activeDevice === "mobile"
-                                    ? "critical"
-                                    : "neutral"
-                            }
                             slot="secondary-actions"
                             onClick={() => setActiveDevice("mobile")}
                         >
@@ -79,10 +82,17 @@ export function CustomizerHeader({
                                 className={
                                     activeDevice === "mobile"
                                         ? "opacity-100"
-                                        : "opacity-60"
+                                        : "opacity-50"
                                 }
                             >
-                                <s-icon type="mobile"></s-icon>
+                                <s-icon
+                                    type="mobile"
+                                    tone={
+                                        activeDevice === "mobile"
+                                            ? "info"
+                                            : "auto"
+                                    }
+                                />
                             </span>
                         </s-button>
                     </s-button-group>

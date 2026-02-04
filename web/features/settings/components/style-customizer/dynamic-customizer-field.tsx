@@ -429,7 +429,7 @@ export function DynamicCustomizerField({
                                         <span
                                             className={
                                                 value === option.value
-                                                    ? "opacity-100 text-[#004BFF]"
+                                                    ? "opacity-100 text-[#0094d5]"
                                                     : "opacity-50"
                                             }
                                         >

@@ -12,6 +12,8 @@ export type SettingsStoreState = {
     isSyncing: boolean;
     isResetting: boolean;
     isClearing: boolean;
+    isCheckingWebhooks: boolean;
+    isRegisteringWebhooks: boolean;
     isDirty: boolean;
 
     error: string | null;
@@ -48,6 +50,9 @@ export type SettingsStoreState = {
     setSaving: (saving: boolean) => void;
     setExporting: (exporting: boolean) => void;
     setImporting: (importing: boolean) => void;
+    setSyncing: (syncing: boolean) => void;
+    setCheckingWebhooks: (checking: boolean) => void;
+    setRegisteringWebhooks: (registering: boolean) => void;
 
     setError: (error: string | null) => void;
 

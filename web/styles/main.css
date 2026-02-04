@@ -78,7 +78,7 @@
     }
 
     .rtpb-left-setting {
-        width: 380px;
+        width: 450px;
         @media (max-width: 1039px) {
             width: auto;
         }

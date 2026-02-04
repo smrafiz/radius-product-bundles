@@ -1,28 +1,28 @@
-import {
-    useSettingsStore,
-    useSettingsTools
-} from "@/features/settings";
+import { useSettingsStore, useSettingsTools } from "@/features/settings";
 
-/**
- * Tools settings component
- */
 export function SettingsTools() {
-    const {
-        isSyncing,
-        isResetting,
-        isClearing,
-        syncMetafields,
-        resetApp,
-        clearWidgetCache,
-    } = useSettingsStore();
+    const { isResetting, resetApp, clearWidgetCache, isClearing } =
+        useSettingsStore();
 
     const {
         isExporting,
         isImporting,
+        isSyncing,
+        isCheckingWebhooks,
+        isRegisteringWebhooks,
         handleExport,
         triggerImport,
         onFileSelected,
-        fileInputRef
+        handleSyncMetafields,
+        handleCheckWebhooks,
+        handleForceRegister,
+        syncResult,
+        webhookCheckResult,
+        webhookRegisterResult,
+        syncModalTriggerRef,
+        webhookCheckModalTriggerRef,
+        webhookRegisterModalTriggerRef,
+        fileInputRef,
     } = useSettingsTools();
 
     return (
@@ -140,7 +140,7 @@ export function SettingsTools() {
                         <s-button
                             variant="secondary"
                             icon="refresh"
-                            onClick={syncMetafields}
+                            onClick={handleSyncMetafields}
                             loading={isSyncing}
                         >
                             Sync
@@ -169,6 +169,77 @@ export function SettingsTools() {
                             loading={isClearing}
                         >
                             Clear
+                        </s-button>
+                    </s-stack>
+                </s-stack>
+            </s-section>
+
+            {/* Webhook Management Section */}
+            <s-section>
+                <s-stack gap="base">
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <s-heading>Webhook Management</s-heading>
+                        <s-tooltip id="webhook-management-tooltip">
+                            <s-text>
+                                Check or re-register webhook subscriptions with
+                                Shopify from Radius product bundles app.
+                            </s-text>
+                        </s-tooltip>
+                        <s-icon
+                            tone="neutral"
+                            type="info"
+                            interestFor="webhook-management-tooltip"
+                        />
+                    </s-stack>
+
+                    {/* Check Webhooks */}
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <s-stack gap="small-200">
+                            <s-heading>Check webhooks</s-heading>
+                            <s-paragraph color="subdued">
+                                View all currently registered webhook
+                                subscriptions from Radius product bundles app.
+                            </s-paragraph>
+                        </s-stack>
+                        <s-button
+                            variant="secondary"
+                            icon="search"
+                            onClick={handleCheckWebhooks}
+                            loading={isCheckingWebhooks}
+                        >
+                            Check
+                        </s-button>
+                    </s-stack>
+
+                    <s-divider />
+
+                    {/* Force Register Webhooks */}
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <s-stack gap="small-200">
+                            <s-heading>Force register webhooks</s-heading>
+                            <s-paragraph color="subdued">
+                                Reset and re-register all webhooks with Shopify.
+                            </s-paragraph>
+                        </s-stack>
+                        <s-button
+                            variant="secondary"
+                            icon="refresh"
+                            onClick={handleForceRegister}
+                            loading={isRegisteringWebhooks}
+                        >
+                            Register
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -249,6 +320,302 @@ export function SettingsTools() {
                     loading={isResetting}
                 >
                     Reset all settings
+                </s-button>
+            </s-modal>
+
+            {/* Hidden modal triggers — s-modal opens via s-button commandFor click */}
+            <div style={{ display: "none" }}>
+                <s-button
+                    ref={syncModalTriggerRef}
+                    commandFor="sync-result-modal"
+                />
+                <s-button
+                    ref={webhookCheckModalTriggerRef}
+                    commandFor="webhook-check-modal"
+                />
+                <s-button
+                    ref={webhookRegisterModalTriggerRef}
+                    commandFor="webhook-register-modal"
+                />
+            </div>
+
+            {/* Sync Result Modal */}
+            <s-modal id="sync-result-modal" heading="Metafield Sync Results">
+                {syncResult ? (
+                    <s-stack gap="base">
+                        <s-stack
+                            direction="inline"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <s-heading>Status</s-heading>
+                            <s-badge
+                                tone={
+                                    syncResult.success ? "success" : "critical"
+                                }
+                            >
+                                {syncResult.success
+                                    ? "Sync complete"
+                                    : "Sync failed"}
+                            </s-badge>
+                        </s-stack>
+
+                        <s-divider />
+
+                        {syncResult.success ? (
+                            <>
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="start"
+                                >
+                                    <s-heading>Synced</s-heading>
+                                    <s-stack gap="small-200" alignItems="end">
+                                        {syncResult.syncedItems.map((item) => (
+                                            <s-text key={item}>{item}</s-text>
+                                        ))}
+                                    </s-stack>
+                                </s-stack>
+                            </>
+                        ) : (
+                            <s-stack
+                                direction="inline"
+                                justifyContent="space-between"
+                                alignItems="center"
+                            >
+                                <s-heading>Error</s-heading>
+                                <s-text>
+                                    {syncResult.error ||
+                                        "An unknown error occurred"}
+                                </s-text>
+                            </s-stack>
+                        )}
+                    </s-stack>
+                ) : (
+                    <s-text color="subdued">No results yet.</s-text>
+                )}
+
+                <s-button
+                    slot="primary-action"
+                    command="--hide"
+                    commandFor="sync-result-modal"
+                >
+                    Close
+                </s-button>
+            </s-modal>
+
+            {/* Webhook Check Modal */}
+            <s-modal id="webhook-check-modal" heading="Registered Webhooks">
+                {webhookCheckResult ? (
+                    <s-stack gap="base">
+                        <s-stack
+                            direction="inline"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <s-heading>Status</s-heading>
+                            {webhookCheckResult.missingTopics.length === 0 ? (
+                                <s-badge tone="success">
+                                    All webhooks registered
+                                </s-badge>
+                            ) : (
+                                <s-badge tone="warning">
+                                    {webhookCheckResult.missingTopics.length}{" "}
+                                    missing webhook(s)
+                                </s-badge>
+                            )}
+                        </s-stack>
+
+                        <s-divider />
+
+                        <s-stack
+                            direction="inline"
+                            justifyContent="space-between"
+                            alignItems="start"
+                        >
+                            <s-heading>
+                                Registered ({webhookCheckResult.totalCount})
+                            </s-heading>
+                            <s-stack
+                                gap="small-200"
+                                alignItems="end"
+                                direction="inline"
+                            >
+                                {webhookCheckResult.webhooks.map((wh) => (
+                                    <s-stack key={wh.id} gap="small-100">
+                                        <s-badge key={wh.topic} tone="success">
+                                            {wh.topic}
+                                        </s-badge>
+                                    </s-stack>
+                                ))}
+                            </s-stack>
+                        </s-stack>
+
+                        {webhookCheckResult.missingTopics.length > 0 && (
+                            <>
+                                <s-divider />
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="start"
+                                >
+                                    <s-heading>Missing</s-heading>
+                                    <s-stack
+                                        gap="small-200"
+                                        alignItems="end"
+                                        direction="inline"
+                                    >
+                                        {webhookCheckResult.missingTopics.map(
+                                            (topic) => (
+                                                <s-badge
+                                                    key={topic}
+                                                    tone="warning"
+                                                >
+                                                    {topic}
+                                                </s-badge>
+                                            ),
+                                        )}
+                                    </s-stack>
+                                </s-stack>
+                            </>
+                        )}
+
+                        <s-divider />
+
+                        <s-stack
+                            direction="inline"
+                            justifyContent="space-between"
+                            alignItems="start"
+                        >
+                            <s-stack gap="small-200">
+                                <s-heading>
+                                    GDPR (
+                                    {webhookCheckResult.gdprTopics.length})
+                                </s-heading>
+                            </s-stack>
+                            <s-stack
+                                gap="small-200"
+                                alignItems="end"
+                                direction="inline"
+                            >
+                                {webhookCheckResult.gdprTopics.map((topic) => (
+                                    <s-badge key={topic} tone="info">
+                                        {topic}
+                                    </s-badge>
+                                ))}
+                            </s-stack>
+                        </s-stack>
+                    </s-stack>
+                ) : (
+                    <s-text color="subdued">No results yet.</s-text>
+                )}
+
+                <s-button
+                    slot="primary-action"
+                    command="--hide"
+                    commandFor="webhook-check-modal"
+                >
+                    Close
+                </s-button>
+            </s-modal>
+
+            {/* Webhook Register Modal */}
+            <s-modal
+                id="webhook-register-modal"
+                heading="Webhook Registration Results"
+            >
+                {webhookRegisterResult ? (
+                    <s-stack gap="base">
+                        <s-stack
+                            direction="inline"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <s-heading>Status</s-heading>
+                            <s-badge
+                                tone={
+                                    webhookRegisterResult.success
+                                        ? "success"
+                                        : webhookRegisterResult.failed.length >
+                                            0
+                                          ? "warning"
+                                          : "critical"
+                                }
+                            >
+                                {webhookRegisterResult.success
+                                    ? "All registered successfully"
+                                    : webhookRegisterResult.failed.length > 0
+                                      ? "Partial success"
+                                      : "Registration failed"}
+                            </s-badge>
+                        </s-stack>
+
+                        {webhookRegisterResult.registered.length > 0 && (
+                            <>
+                                <s-divider />
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="start"
+                                >
+                                    <s-heading>Registered</s-heading>
+                                    <s-stack gap="small-200" alignItems="end" direction="inline">
+                                        {webhookRegisterResult.registered.map(
+                                            (topic) => (
+                                                <s-badge
+                                                    key={topic}
+                                                    tone="success"
+                                                >
+                                                    {topic}
+                                                </s-badge>
+                                            ),
+                                        )}
+                                    </s-stack>
+                                </s-stack>
+                            </>
+                        )}
+
+                        {webhookRegisterResult.failed.length > 0 && (
+                            <>
+                                <s-divider />
+                                <s-stack
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="start"
+                                >
+                                    <s-heading>Failed</s-heading>
+                                    <s-stack gap="small-200" alignItems="end">
+                                        {webhookRegisterResult.failed.map(
+                                            (f, i) => (
+                                                <s-stack
+                                                    key={i}
+                                                    gap="small-100"
+                                                    alignItems="end"
+                                                >
+                                                    <s-badge tone="critical">
+                                                        {f.topic}
+                                                    </s-badge>
+                                                    <s-text color="subdued">
+                                                        {f.error}
+                                                    </s-text>
+                                                </s-stack>
+                                            ),
+                                        )}
+                                    </s-stack>
+                                </s-stack>
+                            </>
+                        )}
+                    </s-stack>
+                ) : (
+                    <s-text color="subdued">No results yet.</s-text>
+                )}
+
+                <s-button
+                    slot="primary-action"
+                    command="--hide"
+                    commandFor="webhook-register-modal"
+                >
+                    Close
                 </s-button>
             </s-modal>
         </s-stack>
