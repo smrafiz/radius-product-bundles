@@ -14,43 +14,61 @@ export function setupGDPRWebHooks(path: string) {
             deliveryMethod: DeliveryMethod.Http,
             callbackUrl: path,
             callback: async (topic, shop, body) => {
-                console.log(`📋 GDPR: Customer data request from ${shop}`);
+                console.log(`[GDPR] Customer data request from ${shop}`);
                 try {
                     const payload = JSON.parse(body);
+                    const rawCustomerId = payload.customer?.id;
+                    const customerEmail = payload.customer?.email;
+                    const dataRequestId = payload.data_request?.id;
 
-                    // Payload has the following shape:
-                    // {
-                    //   "shop_id": 954889,
-                    //   "shop_domain": "{shop}.myshopify.com",
-                    //   "orders_requested": [
-                    //     299938,
-                    //     280263,
-                    //     220458
-                    //   ],
-                    //   "customer": {
-                    //     "id": 191167,
-                    //     "email": "john@example.com",
-                    //     "phone": "555-625-1199"
-                    //   },
-                    //   "data_request": {
-                    //     "id": 9999
-                    //   }
-                    // }
+                    if (!rawCustomerId) {
+                        console.warn("[GDPR] No customer ID in data request payload");
+                        return;
+                    }
 
-                    // Log the request for compliance
+                    const customerId = String(rawCustomerId);
+
                     console.log(
-                        `🔍 Data request ID: ${payload.data_request?.id} for customer: ${payload.customer?.email}`,
+                        `[GDPR] Data request ID: ${dataRequestId} for customer: ${customerEmail} (${customerId})`,
                     );
 
-                    // In a real app, you would:
-                    // 1. Extract customer data from your database
-                    // 2. Compile it into the required format
-                    // 3. Send it to the customer or make it available for download
+                    // Extract all customer-specific data from our database
+                    // BundleView is the only model that stores customer-identifiable data
+                    const customerViews = await prisma.bundleView.findMany({
+                        where: { customerId },
+                        select: {
+                            bundleId: true,
+                            date: true,
+                            timestamp: true,
+                        },
+                    });
 
-                    // For this app, we primarily store bundle and session data
-                    // Customer-specific data would be minimal
+                    // Compile customer data summary
+                    const customerData = {
+                        customer_id: customerId,
+                        shop,
+                        data_request_id: dataRequestId,
+                        data: {
+                            bundle_views: customerViews.map((view) => ({
+                                bundle_id: view.bundleId,
+                                date: view.date,
+                                timestamp: view.timestamp.toISOString(),
+                            })),
+                        },
+                        note: "This app stores bundle view tracking data only. No personal information (name, email, address) is stored by this app.",
+                    };
+
+                    // Log the compiled data for merchant retrieval
+                    // The merchant is responsible for delivering this to the customer
+                    console.log(
+                        `[GDPR] Customer data compiled for ${customerEmail}:`,
+                        JSON.stringify(customerData),
+                    );
+                    console.log(
+                        `[GDPR] Found ${customerViews.length} bundle view records for customer ${customerId}`,
+                    );
                 } catch (error) {
-                    console.error("❌ GDPR data request error:", error);
+                    console.error("[GDPR] Data request error:", error);
                     throw error;
                 }
             },
@@ -60,51 +78,39 @@ export function setupGDPRWebHooks(path: string) {
             callbackUrl: path,
             callback: async (topic, shop, body) => {
                 console.log(
-                    `🗑️ GDPR: Customer data redaction request from ${shop}`,
+                    `[GDPR] Customer data redaction request from ${shop}`,
                 );
                 try {
                     const payload = JSON.parse(body);
-                    const customerId = payload.customer?.id;
+                    const rawCustomerId = payload.customer?.id;
 
-                    // Payload has the following shape:
-                    // {
-                    //   "shop_id": 954889,
-                    //   "shop_domain": "{shop}.myshopify.com",
-                    //   "customer": {
-                    //     "id": 191167,
-                    //     "email": "john@example.com",
-                    //     "phone": "555-625-1199"
-                    //   },
-                    //   "orders_to_redact": [
-                    //     299938,
-                    //     280263,
-                    //     220458
-                    //   ]
-                    // }
-
-                    if (customerId) {
-                        // Remove any customer-specific data from our database
-                        // For this app, we would remove any analytics or tracking data
-                        // that might be tied to specific customers
-
-                        // Example: Remove customer-specific analytics
-                        await prisma.bundleAnalytics.deleteMany({
-                            where: {
-                                // Note: You'd need to add customer tracking fields to your schema
-                                // This is just an example of how you'd handle it
-                                bundle: {
-                                    shop: shop,
-                                },
-                                // customerId: customerId (if you track this)
-                            },
-                        });
-
-                        console.log(
-                            `✅ Customer data redacted for customer ID: ${customerId}`,
-                        );
+                    if (!rawCustomerId) {
+                        console.warn("[GDPR] No customer ID in redaction payload");
+                        return;
                     }
+
+                    const customerId = String(rawCustomerId);
+
+                    console.log(
+                        `[GDPR] Redacting data for customer ${customerId} from shop ${shop}`,
+                    );
+
+                    // Delete all BundleView records for this customer
+                    // BundleView stores: customerId, sessionId, bundleId, date, timestamp
+                    const deletedViews = await prisma.bundleView.deleteMany({
+                        where: {
+                            customerId,
+                            bundle: { shop },
+                        },
+                    });
+
+                    // BundleAnalytics is aggregated (no customer-level data) — nothing to redact
+
+                    console.log(
+                        `[GDPR] Redacted ${deletedViews.count} bundle view records for customer ${customerId}`,
+                    );
                 } catch (error) {
-                    console.error("❌ GDPR redaction error:", error);
+                    console.error("[GDPR] Redaction error:", error);
                     throw error;
                 }
             },
@@ -113,74 +119,44 @@ export function setupGDPRWebHooks(path: string) {
             deliveryMethod: DeliveryMethod.Http,
             callbackUrl: path,
             callback: async (topic, shop, body) => {
-                console.log(`🏪 GDPR: Shop data redaction request for ${shop}`);
+                console.log(`[GDPR] Shop data redaction request for ${shop}`);
                 try {
-                    const payload = JSON.parse(body);
+                    // Remove ALL data associated with this shop.
+                    // Bundle deletion cascades to: BundleProduct, BundleProductGroup,
+                    // BundleSettings, BundleAnalytics, BundleView (via onDelete: Cascade)
+                    console.log(`[GDPR] Removing all data for shop: ${shop}`);
 
-                    // Payload has the following shape:
-                    // {
-                    //   "shop_id": 954889,
-                    //   "shop_domain": "{shop}.myshopify.com"
-                    // }
+                    // Find the shop record first to get its ID for relational models
+                    const shopRecord = await prisma.shop.findUnique({
+                        where: { domain: shop },
+                        select: { id: true }
+                    });
 
-                    // When a shop uninstalls and requests data deletion,
-                    // remove ALL data associated with that shop
+                    if (!shopRecord) {
+                        console.warn(`[GDPR] Shop record not found for domain: ${shop}`);
+                        return;
+                    }
 
-                    console.log(`🗑️ Removing all data for shop: ${shop}`);
-
-                    // Delete all shop-related data
                     await Promise.all([
-                        // Delete sessions
                         prisma.session.deleteMany({ where: { shop } }),
-                        // Delete bundles
                         prisma.bundle.deleteMany({ where: { shop } }),
-                        // Delete automations
-                        prisma.automation.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
-                        // Delete pricing rules
-                        prisma.pricingRule.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
-                        // Delete AI insights
-                        prisma.aIInsight.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
-                        // Delete notifications
-                        prisma.notification.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
-                        // Delete alert rules
-                        prisma.alertRule.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
-                        // Delete app settings
-                        prisma.appSettings.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
-                        // Delete A/B tests
-                        prisma.aBTest.deleteMany({
-                            where: {
-                                shop: { equals: shop },
-                            },
-                        }),
+                        prisma.automation.deleteMany({ where: { shop } }),
+                        prisma.pricingRule.deleteMany({ where: { shop } }),
+                        prisma.aIInsight.deleteMany({ where: { shop } }),
+                        prisma.notification.deleteMany({ where: { shop } }),
+                        prisma.alertRule.deleteMany({ where: { shop } }),
+                        prisma.appSettings.deleteMany({ where: { shopId: shopRecord.id } }),
+                        prisma.aBTest.deleteMany({ where: { shop } }),
                     ]);
 
-                    console.log(`✅ All data removed for shop: ${shop}`);
+                    // Delete the shop record itself last
+                    await prisma.shop.deleteMany({ where: { domain: shop } });
+
+                    console.log(
+                        `[GDPR] All data removed for shop: ${shop}`,
+                    );
                 } catch (error) {
-                    console.error("❌ GDPR shop redaction error:", error);
+                    console.error("[GDPR] Shop redaction error:", error);
                     throw error;
                 }
             },
