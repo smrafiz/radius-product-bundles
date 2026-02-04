@@ -25,9 +25,8 @@ export function useProtectedSession() {
 
     const isThemeExtension =
         typeof window !== "undefined" &&
-        (window.parent !== window ||
-            document.referrer.includes("admin.shopify.com") ||
-            document.referrer.includes("myshopify.com/admin/themes"));
+        window.parent !== window &&
+        !document.referrer.includes("admin.shopify.com");
 
     useEffect(() => {
         if (isThemeExtension || isRefreshing || refreshAttempted) return;

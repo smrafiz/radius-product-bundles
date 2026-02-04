@@ -29,6 +29,14 @@ export default function proxy(request: NextRequest) {
         "/extensions/",
     ];
 
+    // Redirect root path to dashboard (preserves all query params)
+    if (pathname === "/") {
+        const url = request.nextUrl.clone();
+        url.pathname = "/dashboard";
+
+        return NextResponse.redirect(url);
+    }
+
     const shop = detectShop(request, searchParams);
 
     // Dev-only logs for debugging

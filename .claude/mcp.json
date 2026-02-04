@@ -1,0 +1,56 @@
+{
+    "mcpServers": {
+        "shopify-dev": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/shopify-dev-mcp"],
+            "env": {},
+            "description": "Shopify GraphQL schema introspection, docs search, query/component validation"
+        },
+        "postgres": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/mcp-postgres"],
+            "env": {
+                "DATABASE_URL": "${DATABASE_URL}"
+            },
+            "description": "Direct PostgreSQL database access for queries and debugging"
+        },
+        "next-devtools": {
+            "command": "npx",
+            "args": ["-y", "next-devtools-mcp@latest"],
+            "env": {},
+            "description": "Next.js development tools - error detection, live state queries, app router insights"
+        },
+        "sequential-thinking": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+            "env": {},
+            "description": "Dynamic and reflective problem-solving through thought sequences"
+        },
+        "puppeteer": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+            "env": {},
+            "description": "Browser automation for testing storefront widget and web scraping"
+        },
+        "memory": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-memory"],
+            "env": {},
+            "description": "Knowledge graph-based persistent memory system for project context"
+        },
+        "fetch": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-fetch"],
+            "env": {},
+            "description": "Web content fetching and conversion for API docs and resources"
+        },
+        "prisma": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/mcp-prisma"],
+            "env": {
+                "DATABASE_URL": "${DATABASE_URL}"
+            },
+            "description": "Prisma database management - migrations, queries, schema introspection"
+        }
+    }
+}
