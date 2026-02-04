@@ -1,5 +1,6 @@
 import { AnalyticsEventPayload } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { trackAnalyticsEventAction } from "@/features/analytics/actions";
 
 /**
@@ -9,15 +10,14 @@ import { trackAnalyticsEventAction } from "@/features/analytics/actions";
  */
 export async function POST(request: NextRequest) {
     try {
-        const { searchParams } = request.nextUrl;
-        const shop = searchParams.get("shop");
+        // Verify Shopify App Proxy signature
+        const proxyResult = verifyProxyRequest(request);
 
-        if (!shop) {
-            return NextResponse.json(
-                { error: "Missing shop parameter" },
-                { status: 400 },
-            );
+        if (proxyResult instanceof NextResponse) {
+            return proxyResult;
         }
+
+        const { shop } = proxyResult;
 
         // Parse request body
         const body: AnalyticsEventPayload = await request.json();
@@ -144,21 +144,19 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
     try {
-        const { searchParams } = request.nextUrl;
-        const shop = searchParams.get("shop");
+        // Verify Shopify App Proxy signature
+        const proxyResult = verifyProxyRequest(request);
 
-        if (!shop) {
-            return NextResponse.json(
-                { error: "Missing shop parameter" },
-                { status: 400 },
-            );
+        if (proxyResult instanceof NextResponse) {
+            return proxyResult;
         }
 
-        // Could return analytics summary or health check
+        const { shop } = proxyResult;
+
         return NextResponse.json({
             success: true,
             message: "Analytics endpoint is active",
-            shop: shop,
+            shop,
             timestamp: new Date().toISOString(),
         });
     } catch (error) {

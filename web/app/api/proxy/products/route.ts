@@ -5,6 +5,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { getShop } from "@/shared/repositories/shop.queries";
 import { findOfflineSessionByShop } from "@/shared/repositories";
+import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
 import { findBundlesByProductId } from "@/features/bundles/repositories";
 
@@ -40,17 +41,18 @@ async function fetchProductDetails(
 
 export async function GET(request: NextRequest) {
     try {
+        // Verify Shopify App Proxy signature
+        const proxyResult = verifyProxyRequest(request);
+
+        if (proxyResult instanceof NextResponse) {
+            return proxyResult;
+        }
+
+        const { shop } = proxyResult;
+
         const { searchParams } = request.nextUrl;
-        const shop = searchParams.get("shop");
         const productId = searchParams.get("productId");
         const ids = searchParams.get("ids");
-
-        if (!shop) {
-            return NextResponse.json(
-                { error: "Missing shop parameter" },
-                { status: 400 },
-            );
-        }
 
         const shopRecord = await getShop(shop);
         const ttl = shopRecord?.appSettings?.cacheTtl ?? 300;
