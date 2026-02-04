@@ -136,7 +136,11 @@ export function DynamicCustomizerField({
         }
         // Check bundle type condition
         if (config.bundleTypes && config.bundleTypes.length > 0) {
-            if (!(config.bundleTypes as string[]).includes(context.activeBundleType)) {
+            if (
+                !(config.bundleTypes as string[]).includes(
+                    context.activeBundleType,
+                )
+            ) {
                 return null;
             }
         }
@@ -377,7 +381,27 @@ export function DynamicCustomizerField({
                             justifyContent="center"
                             gap="small-200"
                         >
-                            <s-text>{config.label}</s-text>
+                            <s-stack
+                                direction="inline"
+                                gap="small-400"
+                                alignItems="center"
+                            >
+                                <s-text>{config.label}</s-text>
+                                {config.details && (
+                                    <>
+                                        <s-icon
+                                            tone="neutral"
+                                            type="info"
+                                            interestFor={`${config.name}-group-tooltip`}
+                                        />
+                                        <s-tooltip
+                                            id={`${config.name}-group-tooltip`}
+                                        >
+                                            <s-text>{config.details}</s-text>
+                                        </s-tooltip>
+                                    </>
+                                )}
+                            </s-stack>
                             {isResponsive && (
                                 <ResponsiveFieldIndicator
                                     activeDevice={activeDevice}
@@ -398,11 +422,6 @@ export function DynamicCustomizerField({
                                     <s-button
                                         key={String(option.value)}
                                         slot="secondary-actions"
-                                        tone={
-                                            value === option.value
-                                                ? "critical"
-                                                : "neutral"
-                                        }
                                         onClick={() =>
                                             handleChange(option.value as any)
                                         }
@@ -410,8 +429,8 @@ export function DynamicCustomizerField({
                                         <span
                                             className={
                                                 value === option.value
-                                                    ? "opacity-100"
-                                                    : "opacity-60"
+                                                    ? "opacity-100 text-[#004BFF]"
+                                                    : "opacity-50"
                                             }
                                         >
                                             {option.label}
@@ -420,13 +439,6 @@ export function DynamicCustomizerField({
                                 ))}
                             </s-button-group>
                         </div>
-                        {config.details && (
-                            <s-text tone="neutral">
-                                <span className="block text-[0.75rem] text-[#616161] -mt-1">
-                                    {config.details}
-                                </span>
-                            </s-text>
-                        )}
                     </s-stack>
                     {renderError()}
                 </s-stack>
