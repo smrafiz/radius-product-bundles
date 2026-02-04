@@ -106,6 +106,11 @@ import "./scss/radius-bundles.scss";
                 return;
             }
 
+            if ((window as any).Shopify?.designMode) {
+                console.log('designmode');
+                return;
+            }
+
             if (!this.config.shop) {
                 console.error("[RadiusBundles] Missing shop configuration");
                 return;

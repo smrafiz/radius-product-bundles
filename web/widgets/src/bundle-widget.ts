@@ -773,6 +773,10 @@ declare global {
          * Track bundle view event
          */
         private trackBundleView(): void {
+            if ((window as any).Shopify?.designMode) {
+                return;
+            }
+
             let viewTimeout: number;
 
             try {
