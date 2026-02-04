@@ -5,7 +5,9 @@ import {
     resetSetupStatus,
 } from "@/features/webhooks/repositories/webhook.repository";
 import { initializeApp } from "@/features/webhooks/services/webhook.service";
+import { revalidatePath } from "next/cache";
 import {
+    ClearCacheResult,
     SyncMetafieldResult,
     WebhookCheckResult,
     WebhookRegisterResult,
@@ -22,6 +24,29 @@ const GDPR_COMPLIANCE_TOPICS = [
     "CUSTOMERS_REDACT",
     "SHOP_REDACT",
 ];
+
+export async function clearCacheService(
+    sessionToken: string,
+    shop: string,
+): Promise<ClearCacheResult> {
+    try {
+        revalidatePath("/bundles");
+        revalidatePath("/dashboard");
+        revalidatePath("/settings");
+
+        await syncAllSettingsToMetafields(sessionToken, shop);
+
+        return { success: true };
+    } catch (error) {
+        return {
+            success: false,
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to clear server cache",
+        };
+    }
+}
 
 export async function syncMetafieldsService(
     sessionToken: string,

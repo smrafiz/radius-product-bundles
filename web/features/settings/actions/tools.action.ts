@@ -1,6 +1,7 @@
 "use server";
 
 import {
+    ClearCacheResult,
     SyncMetafieldResult,
     WebhookCheckResult,
     WebhookRegisterResult,
@@ -8,10 +9,34 @@ import {
 import { ApiResponse } from "@/shared";
 import { handleSessionToken } from "@/lib/shopify";
 import {
+    clearCacheService,
     checkWebhooksService,
     forceRegisterWebhooksService,
     syncMetafieldsService,
 } from "@/features/settings/services/tools.service";
+
+export async function clearCacheAction(
+    sessionToken: string,
+): Promise<ApiResponse<ClearCacheResult>> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const data = await clearCacheService(sessionToken, shop);
+
+        return { status: "success", data };
+    } catch (error) {
+        console.error("[clearCache] Error:", error);
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to clear cache",
+        };
+    }
+}
 
 export async function syncMetafieldsAction(
     sessionToken: string,

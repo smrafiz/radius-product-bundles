@@ -51,6 +51,7 @@ export type SettingsStoreState = {
     setExporting: (exporting: boolean) => void;
     setImporting: (importing: boolean) => void;
     setSyncing: (syncing: boolean) => void;
+    setClearing: (clearing: boolean) => void;
     setCheckingWebhooks: (checking: boolean) => void;
     setRegisteringWebhooks: (registering: boolean) => void;
 

@@ -1,19 +1,20 @@
 import { useSettingsStore, useSettingsTools } from "@/features/settings";
 
 export function SettingsTools() {
-    const { isResetting, resetApp, clearWidgetCache, isClearing } =
-        useSettingsStore();
+    const { isResetting, resetApp } = useSettingsStore();
 
     const {
         isExporting,
         isImporting,
         isSyncing,
+        isClearing,
         isCheckingWebhooks,
         isRegisteringWebhooks,
         handleExport,
         triggerImport,
         onFileSelected,
         handleSyncMetafields,
+        handleClearCache,
         handleCheckWebhooks,
         handleForceRegister,
         syncResult,
@@ -156,16 +157,16 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Clear cache</s-heading>
+                            <s-heading>Clear app cache</s-heading>
                             <s-paragraph color="subdued">
-                                Clear cached widget data. Use if changes are not
-                                appearing on your store.
+                                Clear all cached data including bundles, analytics,
+                                and settings
                             </s-paragraph>
                         </s-stack>
                         <s-button
                             variant="secondary"
                             icon="delete"
-                            onClick={clearWidgetCache}
+                            onClick={handleClearCache}
                             loading={isClearing}
                         >
                             Clear

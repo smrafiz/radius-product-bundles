@@ -138,6 +138,12 @@ export const useSettingsStore = create(
             });
         },
 
+        setClearing: (clearing) => {
+            set((state) => {
+                state.isClearing = clearing;
+            });
+        },
+
         setCheckingWebhooks: (checking) => {
             set((state) => {
                 state.isCheckingWebhooks = checking;

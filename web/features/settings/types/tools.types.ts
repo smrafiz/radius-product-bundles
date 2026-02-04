@@ -25,3 +25,8 @@ export interface WebhookRegisterResult {
     registered: string[];
     failed: { topic: string; error: string }[];
 }
+
+export interface ClearCacheResult {
+    success: boolean;
+    error?: string;
+}
