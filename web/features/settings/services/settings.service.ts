@@ -131,6 +131,9 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         currencyFormat: settings.currencyFormat,
         customCssClass: settings.customCssClass,
         customCss: settings.customCss,
+
+        // Performance
+        cacheTtl: String(settings.cacheTtl ?? 300),
     };
 }
 
@@ -168,6 +171,9 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         currencyFormat: data.currencyFormat ?? "",
         customCssClass: data.customCssClass ?? "",
         customCss: data.customCss ?? "",
+
+        // Performance
+        cacheTtl: parseInt(data.cacheTtl ?? "300", 10),
     };
 }
 

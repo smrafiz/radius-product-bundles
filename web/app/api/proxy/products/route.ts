@@ -3,6 +3,7 @@ import {
     GetBundleProductsQuery,
 } from "@/lib/graphql/generated/graphql";
 import { NextRequest, NextResponse } from "next/server";
+import { getShop } from "@/shared/repositories/shop.queries";
 import { findOfflineSessionByShop } from "@/shared/repositories";
 import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
 import { findBundlesByProductId } from "@/features/bundles/repositories";
@@ -50,6 +51,12 @@ export async function GET(request: NextRequest) {
                 { status: 400 },
             );
         }
+
+        const shopRecord = await getShop(shop);
+        const ttl = shopRecord?.appSettings?.cacheTtl ?? 300;
+        const cacheHeaders: HeadersInit = ttl > 0
+            ? { "Cache-Control": `public, max-age=${ttl}` }
+            : { "Cache-Control": "no-store" };
 
         // ⭐ NEW: Optimized route - fetch only product details by IDs
         if (ids) {
@@ -104,7 +111,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 products: transformedProducts,
-            });
+            }, { headers: cacheHeaders });
         }
 
         // OLD route: Full bundle data (requires productId)
@@ -264,7 +271,7 @@ export async function GET(request: NextRequest) {
             success: true,
             bundles: transformedBundles.filter((b) => b.status === "ACTIVE"),
             count: transformedBundles.length,
-        });
+        }, { headers: cacheHeaders });
     } catch (error) {
         console.error("Bundle Proxy API Error:", error);
         return NextResponse.json(

@@ -521,6 +521,9 @@ model AppSettings {
     customCssClass String @default("")
     customCss      String @default("")
 
+    // Performance
+    cacheTtl Int @default(300)
+
     // Metadata
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

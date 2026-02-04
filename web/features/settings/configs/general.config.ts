@@ -197,5 +197,32 @@ export const GENERAL_TAB: SettingsTabConfig = {
                 },
             ],
         },
+
+        // ─────────────────────────────────────────────────────────────────
+        // PERFORMANCE SECTION
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: "performance",
+            title: "Performance",
+            tooltip:
+                "Control how storefront data is cached for faster page loads.",
+            fields: [
+                {
+                    type: "select",
+                    name: "cacheTtl",
+                    label: "Storefront cache duration",
+                    details:
+                        "How long browsers cache product data. Longer = faster pages, but price/availability changes take longer to appear.",
+                    defaultValue: "300",
+                    options: [
+                        { value: "0", label: "No cache" },
+                        { value: "60", label: "1 minute" },
+                        { value: "300", label: "5 minutes (recommended)" },
+                        { value: "900", label: "15 minutes" },
+                        { value: "3600", label: "1 hour" },
+                    ],
+                },
+            ],
+        },
     ],
 };
