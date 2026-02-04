@@ -52,6 +52,7 @@ export type SettingsStoreState = {
     setImporting: (importing: boolean) => void;
     setSyncing: (syncing: boolean) => void;
     setClearing: (clearing: boolean) => void;
+    setResetting: (resetting: boolean) => void;
     setCheckingWebhooks: (checking: boolean) => void;
     setRegisteringWebhooks: (registering: boolean) => void;
 
@@ -61,8 +62,6 @@ export type SettingsStoreState = {
     hideToast: () => void;
 
     syncMetafields: () => Promise<void>;
-    resetApp: () => Promise<void>;
-    clearWidgetCache: () => Promise<void>;
 
     getEffectiveData: () => AppSettingsFormData;
 };

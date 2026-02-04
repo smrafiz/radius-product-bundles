@@ -4,11 +4,19 @@
  * Settings Service - Business Logic Layer
  */
 
-import { prisma } from "@/shared/repositories/prisma-connect";
-import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
-import { AppSettingsFormData, GetSettingsInput, SaveSettingsInput, } from "@/features/settings";
-import { findSettingsByShopDomain, findShopByDomain, upsertSettings, } from "@/features/settings/repositories";
+import {
+    deleteSettingsByShopId,
+    findSettingsByShopDomain,
+    findShopByDomain,
+    upsertSettings,
+} from "@/features/settings/repositories";
 import { formatValidationErrorsAsString } from "@/shared";
+import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
+import {
+    AppSettingsFormData,
+    GetSettingsInput,
+    SaveSettingsInput,
+} from "@/features/settings";
 
 /**
  * Get app settings for a shop
@@ -84,14 +92,7 @@ export async function resetSettingsService(
         throw new Error(`Shop not found: ${shop}`);
     }
 
-    // Delete existing settings and let defaults apply
-    await prisma.appSettings
-        .delete({
-            where: { shopId: shopRecord.id },
-        })
-        .catch(() => {
-            // Ignore if settings don't exist
-        });
+    await deleteSettingsByShopId(shopRecord.id).catch(() => {});
 
     // Return null to indicate defaults should be used
     return null as any;
@@ -173,7 +174,7 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         customCss: data.customCss ?? "",
 
         // Performance
-        cacheTtl: parseInt(data.cacheTtl ?? "300", 10),
+        cacheTtl: parseInt(String(data.cacheTtl ?? "300"), 10),
     };
 }
 

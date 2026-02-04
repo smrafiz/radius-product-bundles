@@ -1,13 +1,12 @@
-import { useSettingsStore, useSettingsTools } from "@/features/settings";
+import { useSettingsTools } from "@/features/settings";
 
 export function SettingsTools() {
-    const { isResetting, resetApp } = useSettingsStore();
-
     const {
         isExporting,
         isImporting,
         isSyncing,
         isClearing,
+        isResetting,
         isCheckingWebhooks,
         isRegisteringWebhooks,
         handleExport,
@@ -15,6 +14,7 @@ export function SettingsTools() {
         onFileSelected,
         handleSyncMetafields,
         handleClearCache,
+        handleResetSettings,
         handleCheckWebhooks,
         handleForceRegister,
         syncResult,
@@ -159,8 +159,8 @@ export function SettingsTools() {
                         <s-stack gap="small-200">
                             <s-heading>Clear app cache</s-heading>
                             <s-paragraph color="subdued">
-                                Clear all cached data including bundles, analytics,
-                                and settings
+                                Clear all cached data including bundles,
+                                analytics, and settings.
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -308,19 +308,21 @@ export function SettingsTools() {
                 </s-stack>
 
                 <s-button
+                    slot="primary-action"
+                    onClick={handleResetSettings}
+                    tone="critical"
+                    variant="primary"
+                    loading={isResetting}
+                >
+                    Reset all settings
+                </s-button>
+
+                <s-button
                     slot="secondary-actions"
                     command="--hide"
                     commandFor="reset-confirm-modal"
                 >
                     Cancel
-                </s-button>
-
-                <s-button
-                    slot="primary-action"
-                    onClick={resetApp}
-                    loading={isResetting}
-                >
-                    Reset all settings
                 </s-button>
             </s-modal>
 
@@ -490,8 +492,8 @@ export function SettingsTools() {
                         >
                             <s-stack gap="small-200">
                                 <s-heading>
-                                    GDPR (
-                                    {webhookCheckResult.gdprTopics.length})
+                                    GDPR ({webhookCheckResult.gdprTopics.length}
+                                    )
                                 </s-heading>
                             </s-stack>
                             <s-stack
@@ -560,7 +562,11 @@ export function SettingsTools() {
                                     alignItems="start"
                                 >
                                     <s-heading>Registered</s-heading>
-                                    <s-stack gap="small-200" alignItems="end" direction="inline">
+                                    <s-stack
+                                        gap="small-200"
+                                        alignItems="end"
+                                        direction="inline"
+                                    >
                                         {webhookRegisterResult.registered.map(
                                             (topic) => (
                                                 <s-badge

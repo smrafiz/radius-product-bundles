@@ -16,13 +16,14 @@ import { broadcastInvalidation, useModalStore } from "@/shared";
 import { bundlesQueryKeys } from "@/features/bundles/api";
 import { analyticsQueryKeys } from "@/features/analytics/api";
 import {
-    clearCacheAction,
     checkWebhooksAction,
+    clearCacheAction,
     forceRegisterWebhooksAction,
     syncMetafieldsAction,
 } from "@/features/settings/actions/tools.action";
 import {
     getSettingsAction,
+    resetSettingsAction,
     saveSettingsAction,
 } from "@/features/settings/actions/settings.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -41,10 +42,13 @@ export function useSettingsTools(onImportSuccess?: () => void) {
         setSyncing,
         isClearing,
         setClearing,
+        isResetting,
+        setResetting,
         isCheckingWebhooks,
         setCheckingWebhooks,
         isRegisteringWebhooks,
         setRegisteringWebhooks,
+        resetToDefaults,
     } = useSettingsStore();
 
     const [syncResult, setSyncResult] = useState<SyncMetafieldResult | null>(
@@ -221,7 +225,8 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             if (result.status === "error") {
                 window.shopify?.toast?.show(
-                    result.message || "Server cache clear failed, client caches cleared",
+                    result.message ||
+                        "Server cache clear failed, client caches cleared",
                     { duration: 5000, isError: true },
                 );
                 return;
@@ -238,6 +243,40 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             });
         } finally {
             setClearing(false);
+        }
+    };
+
+    const handleResetSettings = async () => {
+        setResetting(true);
+        try {
+            const token = await app.idToken();
+            const result = await resetSettingsAction(token);
+
+            if (result.status === "error") {
+                window.shopify?.toast?.show(
+                    result.message || "Failed to reset settings",
+                    { duration: 5000, isError: true },
+                );
+                return;
+            }
+
+            resetToDefaults();
+            await resetSettings();
+
+            const resetModal = document.getElementById("reset-confirm-modal") as any;
+            resetModal?.hideOverlay?.();
+
+            window.shopify?.toast?.show("Settings reset to defaults", {
+                duration: 3000,
+            });
+        } catch (error) {
+            console.error("Reset settings error:", error);
+            window.shopify?.toast?.show("An unexpected error occurred", {
+                duration: 5000,
+                isError: true,
+            });
+        } finally {
+            setResetting(false);
         }
     };
 
@@ -274,11 +313,13 @@ export function useSettingsTools(onImportSuccess?: () => void) {
         isImporting,
         isSyncing,
         isClearing,
+        isResetting,
         isCheckingWebhooks,
         isRegisteringWebhooks,
 
         handleExport,
         handleImport,
+        handleResetSettings,
         triggerImport,
         onFileSelected,
         handleSyncMetafields,

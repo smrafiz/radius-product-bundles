@@ -144,6 +144,12 @@ export const useSettingsStore = create(
             });
         },
 
+        setResetting: (resetting) => {
+            set((state) => {
+                state.isResetting = resetting;
+            });
+        },
+
         setCheckingWebhooks: (checking) => {
             set((state) => {
                 state.isCheckingWebhooks = checking;
@@ -191,44 +197,6 @@ export const useSettingsStore = create(
             } finally {
                 set((state) => {
                     state.isSyncing = false;
-                });
-            }
-        },
-
-        resetApp: async () => {
-            set((state) => {
-                state.isResetting = true;
-            });
-            try {
-                // TODO: Implement reset logic
-                console.log("Resetting settings...");
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                get().showToast("App reset successfully");
-            } catch (error) {
-                console.error("Reset error:", error);
-                get().showToast("Failed to reset app", true);
-            } finally {
-                set((state) => {
-                    state.isResetting = false;
-                });
-            }
-        },
-
-        clearWidgetCache: async () => {
-            set((state) => {
-                state.isClearing = true;
-            });
-            try {
-                // TODO: Implement clear cache logic
-                console.log("Clearing cache...");
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                get().showToast("Cache cleared successfully");
-            } catch (error) {
-                console.error("Cache clear error:", error);
-                get().showToast("Failed to clear cache", true);
-            } finally {
-                set((state) => {
-                    state.isClearing = false;
                 });
             }
         },
