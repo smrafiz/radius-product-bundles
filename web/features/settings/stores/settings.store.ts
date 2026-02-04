@@ -204,9 +204,15 @@ export const useSettingsStore = create(
         // Get effective data (local or defaults)
         getEffectiveData: () => {
             const state = get();
+
             if (state.localData) {
                 return state.localData;
             }
+
+            if (state.serverData) {
+                return state.serverData;
+            }
+
             return getDefaultValuesFromConfig() as AppSettingsFormData;
         },
     })),

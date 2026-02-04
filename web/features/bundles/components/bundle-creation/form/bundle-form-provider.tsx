@@ -7,6 +7,7 @@ import {
     setStoreInitializing,
     useBundleStore,
 } from "@/features/bundles";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import type { z } from "zod";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +32,9 @@ export function BundleFormProvider({
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
+    const settings = useSettingsStore.getState().getEffectiveData();
+
+    console.log(settings);
 
     const form = useForm<z.infer<typeof bundleSchema>>({
         resolver: zodResolver(bundleSchema) as Resolver<
@@ -42,8 +46,8 @@ export function BundleFormProvider({
             type: bundleType,
             status: initialData?.status || "DRAFT",
             products: initialData?.products || [],
-            discountType: initialData?.discountType,
-            discountValue: initialData?.discountValue ?? 0,
+            discountType: initialData?.discountType ?? settings.defaultDiscountType,
+            discountValue: initialData?.discountValue ?? settings.defaultDiscountValue ?? 0,
             minOrderValue: initialData?.minOrderValue || undefined,
             maxDiscountAmount: initialData?.maxDiscountAmount || undefined,
             startDate: initialData?.startDate || undefined,

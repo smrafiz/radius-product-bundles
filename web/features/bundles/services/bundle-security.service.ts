@@ -243,26 +243,26 @@ export async function canCreateBundle(shop: string): Promise<{
     const shopSettings = await getShop(shop);
 
     // If no limit configured, allow creation
-    if (!shopSettings?.appSettings?.maxBundleProducts) {
+    if (!shopSettings?.appSettings?.maxBundlesPerShop) {
         return { allowed: true };
     }
 
     // Check the current bundle count
     const currentCount = await countBundlesByShop(shop);
 
-    if (currentCount >= shopSettings?.appSettings?.maxBundleProducts) {
+    if (currentCount >= shopSettings?.appSettings?.maxBundlesPerShop) {
         return {
             allowed: false,
-            reason: `Shop has reached maximum bundle limit (${shopSettings?.appSettings?.maxBundleProducts})`,
+            reason: `Shop has reached maximum bundle limit (${shopSettings?.appSettings?.maxBundlesPerShop})`,
             current: currentCount,
-            limit: shopSettings?.appSettings?.maxBundleProducts,
+            limit: shopSettings?.appSettings?.maxBundlesPerShop,
         };
     }
 
     return {
         allowed: true,
         current: currentCount,
-        limit: shopSettings?.appSettings?.maxBundleProducts,
+        limit: shopSettings?.appSettings?.maxBundlesPerShop,
     };
 }
 

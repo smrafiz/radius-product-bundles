@@ -7,9 +7,7 @@ import {
     useSettingsSubmit,
     useSettingsQuery,
 } from "@/features/settings";
-import { GlobalForm, LoadingSpinner } from "@/shared";
-import { useEffect } from "react";
-import { useSettingsStore } from "@/features/settings/stores/settings.store";
+import { GlobalForm } from "@/shared";
 import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 
 /**
@@ -39,21 +37,7 @@ function SettingsPageContent() {
  * Fetches settings from API and wraps content with form provider.
  */
 export function SettingsPage() {
-    // Fetch settings from API
     const { data: settingsData, isLoading, error } = useSettingsQuery();
-    const { setServerData, setLoading } = useSettingsStore();
-
-    // Sync React Query data with Zustand store
-    useEffect(() => {
-        if (settingsData) {
-            setServerData(settingsData);
-        }
-    }, [settingsData, setServerData]);
-
-    // Sync loading state
-    useEffect(() => {
-        setLoading(isLoading);
-    }, [isLoading, setLoading]);
 
     // Show loading state
     if (isLoading) {
