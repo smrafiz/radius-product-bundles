@@ -14,14 +14,14 @@
     &__products--compact {
         display: flex;
         flex-direction: column;
-        gap: var(--rb-spacing-sm);
     }
 
     &__product--compact {
         display: flex;
         align-items: center;
         gap: var(--rb-gap-spacing);
-        padding: var(--rb-spacing-sm) 0;
+        padding-bottom: var(--rb-gap-spacing);
+        margin-bottom: var(--rb-gap-spacing);
         border-bottom: var(--rb-card-border);
 
         &:last-child {

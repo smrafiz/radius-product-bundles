@@ -19,8 +19,8 @@
     &__product--list {
         display: flex;
         align-items: center;
-        gap: var(--rb-spacing);
-        padding: var(--rb-spacing);
+        gap: var(--rb-gap-spacing);
+        padding: var(--rb-gap-spacing);
         background: var(--rb-product-bg-color);
         border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
@@ -105,8 +105,30 @@
 
 // Plus divider
 .radius-bundle[data-divider-style="plus"] {
+
+    .radius-bundle__divider {
+        position: relative;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .radius-bundle__divider--plus {
         display: flex;
+        font-size: 1.5rem;
+        font-weight: 300;
+        .divider-position {
+            width: 24px;
+            height: 24px;
+            background: var(--rb-primary-color);
+            color: var(--rb-button-text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 1;
+            position: absolute;
+        }
     }
 
     .radius-bundle__divider--line {
@@ -122,6 +144,9 @@
 
     .radius-bundle__divider--line {
         display: block;
+        height: 1px;
+        background: var(--rb-border-color);
+        margin: var(--rb-spacing-sm) 0;
     }
 }
 

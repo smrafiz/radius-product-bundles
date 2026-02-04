@@ -153,7 +153,7 @@
 						{% assign gap_spacing = 12 %}
 				{% endcase %}
 
-				{% comment %} IMAGE CONTROLL {% endcomment %}
+				{% comment %} IMAGE CONTROL {% endcomment %}
 				{% assign override_card_settings = block.settings.override_card_settings | default: false %}
 
 				{% if override_card_settings %}
@@ -183,7 +183,7 @@
 				  {% assign image_position = g_styles.imagePosition | default: 'left' %}
 				{% endif %}
 
-				{% comment %} PRODUCT CARD CONTROLL {% endcomment %}
+				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
 				{% if override_card_settings and block.settings.product_card_bg != blank %}
 				  {% assign product_card_bg = block.settings.product_card_bg %}
 				{% elsif g_styles.customizeCardStyle %}
@@ -282,33 +282,67 @@
 				{% endif %}
 
 				{% comment %} CONTAINER {% endcomment %}
-				{% assign box_max_width = block.settings.box_max_width
-						| default: g_styles.boxMaxWidth
-						| default: 600 %}
+				{% assign override_container_settings = block.settings.override_container_settings | default: false %}
 
-				{% assign box_alignment = block.settings.box_alignment
-						| default: g_styles.boxAlignment
-						| default: 'center' %}
-
-				{% assign show_border = block.settings.show_border %}
-				{% if show_border == null %}
-					{% assign show_border = g_styles.showBorder | default: true %}
+				{% assign box_max_width = 600 %}
+				{% if override_container_settings %}
+				  {% assign box_max_width = block.settings.box_max_width | default: box_max_width %}
+				{% elsif g_styles.boxMaxWidth != blank %}
+				  {% assign box_max_width = g_styles.boxMaxWidth %}
 				{% endif %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					TYPOGRAPHY
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% assign heading_size = block.settings.heading_size
-						| default: g_styles.headingSize
-						| default: 'medium' %}
+				{% assign box_alignment = 'center' %}
+				{% if override_container_settings and block.settings.box_alignment != blank %}
+				  {% assign box_alignment = block.settings.box_alignment %}
+				{% elsif g_styles.boxAlignment != blank %}
+				  {% assign box_alignment = g_styles.boxAlignment %}
+				{% endif %}
 
-				{% assign body_size = block.settings.body_size
-						| default: g_styles.bodySize
-						| default: 'medium' %}
+				{% assign show_border = true %}
+				{% if override_container_settings %}
+				  {% assign show_border = block.settings.show_border %}
+				{% elsif g_styles.showBorder != blank %}
+				  {% assign show_border = g_styles.showBorder %}
+				{% endif %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					LAYOUT
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% comment %} TYPOGRAPHY {% endcomment %}
+				{% assign override_typography_settings = block.settings.override_typography_settings | default: false %}
+
+				{% assign heading_size = 'medium' %}
+				{% if override_typography_settings and block.settings.heading_size != blank %}
+				  {% assign heading_size = block.settings.heading_size %}
+				{% elsif g_styles.headingSize != blank %}
+				  {% assign heading_size = g_styles.headingSize %}
+				{% endif %}
+
+				{% assign body_size = 'medium' %}
+				{% if override_typography_settings and block.settings.body_size != blank %}
+				  {% assign body_size = block.settings.body_size %}
+				{% elsif g_styles.bodySize != blank %}
+				  {% assign body_size = g_styles.bodySize %}
+				{% endif %}
+
+				{% comment %} LAYOUT {% endcomment %}
+				{% assign override_layout_settings = block.settings.override_layout_settings | default: false %}
+
+				{% assign layout = 'list' %}
+				{% if override_layout_settings and block.settings.layout != blank %}
+				  {% assign layout = block.settings.layout %}
+				{% elsif g_styles.layout != blank %}
+				  {% assign layout = g_styles.layout %}
+				{% endif %}
+
+				{% assign divider_style = 'plus' %}
+				{% if layout == 'list' %}
+				  {% if override_layout_settings and block.settings.divider_style != blank %}
+					{% assign divider_style = block.settings.divider_style %}
+				  {% elsif g_styles.dividerStyle != blank %}
+					{% assign divider_style = g_styles.dividerStyle %}
+				  {% endif %}
+				{% endif %}
+
+
+
 
 				{% assign layout_override = block.settings.override_layout_settings
 						| default: false %}
@@ -319,10 +353,6 @@
 				{% if layout_override %}
 					{% assign layout = block.settings.layout %}
 				{% endif %}
-
-				{% assign divider_style = block.settings.divider_style
-						| default: g_styles.dividerStyle
-						| default: 'plus' %}
 
 				{% assign grid_columns = block.settings.grid_columns
 						| default: g_styles.gridColumns
