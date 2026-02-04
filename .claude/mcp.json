@@ -1,56 +1,46 @@
 {
     "mcpServers": {
-        "shopify-dev": {
+        "shopify-dev-mcp": {
             "command": "npx",
-            "args": ["-y", "@anthropic-ai/shopify-dev-mcp"],
-            "env": {},
-            "description": "Shopify GraphQL schema introspection, docs search, query/component validation"
+            "args": ["-y", "@shopify/dev-mcp@latest"],
+            "env": {
+                "OPT_OUT_INSTRUMENTATION": "true",
+                "LIQUID_VALIDATION_MODE": "full"
+            }
         },
         "postgres": {
             "command": "npx",
             "args": ["-y", "@anthropic-ai/mcp-postgres"],
             "env": {
-                "DATABASE_URL": "${DATABASE_URL}"
-            },
-            "description": "Direct PostgreSQL database access for queries and debugging"
+                "DATABASE_URL": "postgresql://neondb_owner:npg_6AcEMdLYDr8N@ep-flat-cloud-a1c9fbe2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+            }
         },
         "next-devtools": {
             "command": "npx",
-            "args": ["-y", "next-devtools-mcp@latest"],
-            "env": {},
-            "description": "Next.js development tools - error detection, live state queries, app router insights"
+            "args": ["-y", "next-devtools-mcp@latest"]
         },
         "sequential-thinking": {
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-            "env": {},
-            "description": "Dynamic and reflective problem-solving through thought sequences"
+            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
         },
         "puppeteer": {
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-            "env": {},
-            "description": "Browser automation for testing storefront widget and web scraping"
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
         },
         "memory": {
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-memory"],
-            "env": {},
-            "description": "Knowledge graph-based persistent memory system for project context"
+            "args": ["-y", "@modelcontextprotocol/server-memory"]
         },
         "fetch": {
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-fetch"],
-            "env": {},
-            "description": "Web content fetching and conversion for API docs and resources"
+            "args": ["-y", "@modelcontextprotocol/server-fetch"]
         },
         "prisma": {
             "command": "npx",
             "args": ["-y", "@anthropic-ai/mcp-prisma"],
             "env": {
-                "DATABASE_URL": "${DATABASE_URL}"
-            },
-            "description": "Prisma database management - migrations, queries, schema introspection"
+                "DATABASE_URL": "postgresql://neondb_owner:npg_6AcEMdLYDr8N@ep-flat-cloud-a1c9fbe2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+            }
         }
     }
 }
