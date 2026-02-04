@@ -96,11 +96,11 @@ export function ProductCard({
                     {imageEl}
                 </div>
 
-                <div style={{ fontWeight: 500, marginBottom: "4px" }}>
+                <div style={{ fontWeight: 500, marginBottom: "8px" }}>
                     {label}
                 </div>
 
-                <div style={{ marginBottom: "4px" }}>
+                <div style={{ marginBottom: "8px" }}>
                     <span
                         style={{ fontWeight: 600, marginRight: "6px" }}
                     >

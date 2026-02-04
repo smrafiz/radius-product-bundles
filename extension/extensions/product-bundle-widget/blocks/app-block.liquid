@@ -184,25 +184,27 @@
 				{% endif %}
 
 				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
-				{% if override_card_settings and block.settings.product_card_bg != blank %}
-				  {% assign product_card_bg = block.settings.product_card_bg %}
-				{% elsif g_styles.customizeCardStyle %}
+				{% assign override_card_settings = block.settings.override_card_settings | default: false %}
+				{% assign global_customize_card = g_styles.customizeCardStyle | default: false %}
+
+				{% assign product_card_bg = '#f9fafb' %}
+				{% if override_card_settings %}
+				  {% assign product_card_bg = block.settings.product_card_bg | default: '#f9fafb' %}
+				{% elsif global_customize_card %}
 				  {% assign product_card_bg = g_styles.productCardBg | default: '#f9fafb' %}
-				{% else %}
-				  {% assign product_card_bg = '#f9fafb' %}
 				{% endif %}
 
 				{% assign product_card_border = true %}
 				{% if override_card_settings %}
 				  {% assign product_card_border = block.settings.product_card_border %}
-				{% elsif g_styles.customizeCardStyle %}
+				{% elsif global_customize_card %}
 				  {% assign product_card_border = g_styles.productCardBorder | default: true %}
 				{% endif %}
 
 				{% assign product_card_shadow = false %}
 				{% if override_card_settings %}
 				  {% assign product_card_shadow = block.settings.product_card_shadow %}
-				{% elsif g_styles.customizeCardStyle %}
+				{% elsif global_customize_card %}
 				  {% assign product_card_shadow = g_styles.productCardShadow | default: false %}
 				{% endif %}
 
@@ -731,6 +733,7 @@
 						data-autoplay="{{ autoplay }}"
 						data-autoplay-speed="{{ autoplay_speed }}"
 						data-image-position="{{ image_position }}"
+						data-pricing-summary="{{ pricing_summary_style }}"
 						data-responsive='{{ responsive_json | strip_newlines | strip }}'
 						data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
 						data-show-images="{{ show_images }}"

@@ -152,8 +152,6 @@ export function BundlePricing() {
                     alignItems: "center",
                     gap: "4px",
                     marginTop: "4px",
-                    fontSize: "12px",
-                    color: highlightColor,
                 }}
             >
                 <svg

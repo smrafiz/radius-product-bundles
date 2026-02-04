@@ -49,6 +49,10 @@
         margin-bottom: var(--rb-spacing);
     }
 
+    &[data-pricing-summary="minimal"] {
+        .radius-bundle__pricing {border-radius: 0;}
+    }
+
     &__pricing-row {
         display: flex;
         justify-content: space-between;
@@ -151,11 +155,6 @@
     // -------------------------------------------------------------------------
 
     &__pricing--compact {
-        padding: var(--rb-spacing-sm);
-        background: transparent;
-        border: none;
-        border-radius: 0;
-        margin-bottom: 0;
 
         .radius-bundle__savings {
             padding: var(--rb-spacing-sm);

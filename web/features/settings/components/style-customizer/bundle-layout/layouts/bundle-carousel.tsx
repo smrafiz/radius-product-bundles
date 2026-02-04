@@ -110,7 +110,7 @@ export function BundleCarousel() {
                         display: "flex",
                         justifyContent: "center",
                         gap: "8px",
-                        marginTop: "12px",
+                        marginTop: "20px",
                     }}
                 >
                     {Array.from({ length: 4 }).map((_, i) => (

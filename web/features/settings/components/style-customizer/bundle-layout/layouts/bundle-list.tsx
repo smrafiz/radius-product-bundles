@@ -12,15 +12,15 @@ export function BundleList() {
     const showDivider = styles.dividerStyle !== "none";
 
     return (
-        <div
+        <div className="radius-bundle__product--list"
             style={{
                 display: "flex",
                 flexDirection: "column",
-                gap,
+                gap: `calc( ${gap} + 8px)`,
             }}
         >
             {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index}>
+                <div className="relative" key={index}>
                     <ProductCard
                         variant={
                             styles.imagePosition === "top"
@@ -38,18 +38,25 @@ export function BundleList() {
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                padding: "8px 0",
+                                paddingTop: `calc(${gap} + 8px)`,
                             }}
                         >
                             {styles.dividerStyle === "plus" ? (
-                                <div
+                                <div className="flex justify-center"
                                     style={{
-                                        color: styles.primaryColor,
                                         fontSize: "20px",
                                         fontWeight: 600,
                                     }}
                                 >
-                                    +
+                                    <div
+                                        className="divider-position"
+                                        style={{
+                                            backgroundColor: styles.primaryColor,
+                                            color: "#fff",
+                                            bottom: `calc(-1 * ${gap} / 2 - 8px)`,
+                                            marginBottom: `calc( ${gap} / 2 - 4px)`,
+                                        }}
+                                    >+</div>
                                 </div>
                             ) : (
                                 <div
