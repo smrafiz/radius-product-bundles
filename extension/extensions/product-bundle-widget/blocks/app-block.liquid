@@ -394,6 +394,7 @@
 				{% assign show_free_shipping = bundle.showFreeShipping %}
 				{% assign show_savings_badge = bundle.showSavingsBadge %}
 				{% assign enable_hyperlink = bundle.enableHyperLink %}
+				{% assign enable_stock_validation = global.cart.enableStockValidation %}
 
 				{% if show_images == null %}{% assign show_images = true %}{% endif %}
 				{% if show_savings == null %}{% assign show_savings = true %}{% endif %}
@@ -404,6 +405,9 @@
 				{% if show_savings_badge == null %}{% assign show_savings_badge = true %}{% endif %}
 				{% unless enable_hyperlink == true or enable_hyperlink == false %}
 					{% assign enable_hyperlink = false %}
+				{% endunless %}
+				{% unless enable_stock_validation == true or enable_stock_validation == false %}
+					{% assign enable_stock_validation = false %}
 				{% endunless %}
 
 				{% comment %} ═══════════════════════════════════════════════════════════════════
@@ -752,6 +756,7 @@
 						data-show-savings-badge="{{ show_savings_badge }}"
 						data-enable-hyperlink="{{ enable_hyperlink }}"
 						data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}"
+						data-enable-stock-validation="{{ enable_stock_validation }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 

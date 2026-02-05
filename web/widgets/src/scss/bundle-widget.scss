@@ -151,6 +151,16 @@
                 display: flex;
             }
         }
+
+        &.is-out-of-stock {
+            background-color: #9ca3af;
+            border-color: #9ca3af;
+            cursor: not-allowed;
+
+            &:hover {
+                background-color: #9ca3af;
+            }
+        }
     }
 
     &__button-text {

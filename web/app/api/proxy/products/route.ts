@@ -81,17 +81,19 @@ export async function GET(request: NextRequest) {
                     return item !== null && item !== undefined;
                 })
                 .map((item) => {
-                    // Type assertion for the product
-                    const product = item as any; // Use 'any' to avoid complex type issues
-
+                    const product = item as any;
                     // Get variant - handle both possible structures
                     const variant =
                         product.variants?.nodes?.[0] || product.variants?.[0];
 
                     // Parse prices safely
                     const parsePrice = (price: any): number => {
-                        if (!price) return 0;
+                        if (!price) {
+                            return 0;
+                        }
+
                         const parsed = parseFloat(String(price));
+
                         return isNaN(parsed) ? 0 : parsed * 100; // Convert to cents
                     };
 
@@ -224,6 +226,7 @@ export async function GET(request: NextRequest) {
                                 shopifyProduct?.featuredMedia?.image?.url ||
                                 null,
                             handle: shopifyProduct?.handle || "",
+                            available: variant?.availableForSale ?? true,
                         };
                     }) || [];
 

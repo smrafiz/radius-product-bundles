@@ -22,6 +22,7 @@ interface MetafieldGlobalSettings {
         redirectAfterCart: string;
         hidePaymentButtons: boolean;
         disableCartLocale: boolean;
+        enableStockValidation: boolean;
     };
 
     // Required for custom styling
@@ -174,6 +175,7 @@ export function buildGlobalSettingsMetafieldValue(
             redirectAfterCart: appSettings?.redirectAfterCart || "default",
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
             disableCartLocale: appSettings?.disableCartLocale ?? false,
+            enableStockValidation: appSettings?.enableStockValidation ?? true,
         },
 
         // Custom CSS for Liquid

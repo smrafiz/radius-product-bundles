@@ -111,7 +111,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     name: "hidePaymentButtons",
                     label: "Hide third-party payment buttons",
                     details:
-                        "Hides PayPal, Apple Pay, etc. in cart since bundle discounts only apply through standard checkout.",
+                        "Hides PayPal, Apple Pay, etc. on product and cart pages. Does not affect checkout page.",
                     defaultValue: false,
                 },
                 {

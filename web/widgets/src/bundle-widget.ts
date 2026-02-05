@@ -37,6 +37,7 @@ declare global {
         compareAtPrice: number;
         featuredImage: string | null;
         handle: string;
+        available: boolean;
     }
 
     /**
@@ -166,6 +167,7 @@ declare global {
 
         // Cart behavior
         private readonly redirectAfterCart: string = "cart";
+        private readonly enableStockValidation: boolean = true;
 
         // Layout options
         private readonly dividerStyle: string = "plus";
@@ -223,6 +225,8 @@ declare global {
             // Parse cart behavior
             this.redirectAfterCart =
                 container.dataset.redirectAfterCart || "cart";
+            this.enableStockValidation =
+                container.dataset.enableStockValidation === "true";
 
             console.log(
                 "[RadiusBundle] Init - redirectAfterCart:",
@@ -887,6 +891,7 @@ declare global {
 
                 this.renderProducts(this.bundle);
                 this.updatePricing(this.bundle);
+                this.validateStock();
             } catch (error) {
                 console.error("[RadiusBundle] Load error:", error);
                 this.showError("Failed to load bundle");
@@ -920,6 +925,7 @@ declare global {
                     compareAtPrice: product?.compareAtPrice || 0,
                     featuredImage: product?.image || null,
                     handle: product?.handle || "",
+                    available: product?.available ?? true,
                 };
             });
         }
@@ -953,6 +959,7 @@ declare global {
 
                 this.renderProducts(this.bundle);
                 this.updatePricing(this.bundle);
+                this.validateStock();
             } catch (error) {
                 console.error("[RadiusBundle] Legacy fetch error:", error);
                 this.showError("Failed to load bundle");
@@ -1247,6 +1254,46 @@ declare global {
                     (freeShippingEl as HTMLElement).style.display = "none";
                 }
             }
+        }
+
+        /**
+         * Validates stock availability and disables button if any product is out of stock
+         */
+        private validateStock(): void {
+            if (!this.enableStockValidation || !this.bundle) {
+                return;
+            }
+
+            const unavailableProducts = this.bundle.products.filter(
+                (p) => !p.available,
+            );
+
+            if (unavailableProducts.length === 0) {
+                return;
+            }
+
+            const button = this.container.querySelector(
+                "[data-bundle-add-to-cart]",
+            ) as HTMLButtonElement;
+
+            if (button) {
+                button.disabled = true;
+                button.classList.add("is-out-of-stock");
+
+                const buttonText = button.querySelector(
+                    "[data-button-text]",
+                ) as HTMLElement;
+                if (buttonText) {
+                    buttonText.textContent = "Out of Stock";
+                } else {
+                    button.textContent = "Out of Stock";
+                }
+            }
+
+            console.log(
+                "[RadiusBundle] Bundle unavailable - out of stock products:",
+                unavailableProducts.map((p) => p.title),
+            );
         }
 
         /**

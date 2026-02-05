@@ -87,6 +87,7 @@ query GetBundleProducts($ids: [ID!]!) {
                     title
                     price
                     compareAtPrice
+                    availableForSale
                 }
             }
         }
