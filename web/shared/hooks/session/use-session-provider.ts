@@ -36,8 +36,9 @@ export function useSessionProvider() {
 
     const isThemeExtension =
         typeof window !== "undefined" &&
-        window.parent !== window &&
-        !document.referrer.includes("admin.shopify.com");
+        (window.parent !== window ||
+            document.referrer.includes("admin.shopify.com") ||
+            document.referrer.includes("myshopify.com/admin/themes"));
 
     /**
      * Handle session token retrieval and webhook registration on app load

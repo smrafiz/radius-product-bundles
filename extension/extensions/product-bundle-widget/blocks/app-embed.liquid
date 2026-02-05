@@ -230,7 +230,8 @@
         customerId: getCustomerId(),
         pageType: "{{ request.page_type }}",
         template: "{{ template.name }}",
-        enableAnalytics: {{ block.settings.enable_analytics | default: true | json }},
+        enableAnalytics: {{ global.privacy.enableAnalytics | default: true | json }},
+        maxBundlesPerOrder: {{ global.cart.maxBundlesPerOrder | default: 0 | json }},
         showSavingsBanner: {{ block.settings.show_savings_banner | default: true | json }},
         activeBundles: {{ active_bundles_raw | json }},
         bannerIcon: `{{ icon_svg | strip_newlines | replace: '"', '\\"' }}`

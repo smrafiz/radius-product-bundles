@@ -223,7 +223,13 @@ export function PageSkeleton({
                     {children}
                 </s-stack>
             ) : (
-                children
+                <s-stack
+                    gap="large"
+                    paddingBlockStart="large"
+                    paddingBlockEnd="large"
+                >
+                    {children}
+                </s-stack>
             )}
         </s-page>
     );

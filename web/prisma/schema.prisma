@@ -501,14 +501,10 @@ model AppSettings {
     redirectAfterCart     String  @default("cart")
     hidePaymentButtons    Boolean @default(false)
     enableStockValidation Boolean @default(true)
+    maxBundlesPerOrder    Int     @default(0)
 
-    // Discount Section
-    discountTitle              String  @default("Bundle Discount")
-    trackOrdersWithoutDiscount Boolean @default(true)
-
-    // Localization Section
-    currencyDisplay   String  @default("store")
-    disableCartLocale Boolean @default(false)
+    // Privacy Section
+    enableAnalytics Boolean @default(true)
 
     // Labels
     labels Json?

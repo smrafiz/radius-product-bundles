@@ -129,11 +129,6 @@ export interface AppSettingsGlobalStyles {
 export type RedirectAfterCart = "default" | "cart" | "checkout" | "none";
 
 /**
- * Currency display options
- */
-export type CurrencyDisplay = "store" | "code" | "symbol";
-
-/**
  * Complete AppSettings type (matches Prisma model)
  */
 export interface AppSettings {
@@ -150,14 +145,10 @@ export interface AppSettings {
     redirectAfterCart: RedirectAfterCart;
     hidePaymentButtons: boolean;
     enableStockValidation: boolean;
+    maxBundlesPerOrder: number;
 
-    // General - Discount
-    discountTitle: string;
-    trackOrdersWithoutDiscount: boolean;
-
-    // General - Localization
-    currencyDisplay: CurrencyDisplay;
-    disableCartLocale: boolean;
+    // General - Privacy
+    enableAnalytics: boolean;
 
     // Labels (JSON)
     labels: AppSettingsLabels | null;
@@ -173,38 +164,4 @@ export interface AppSettings {
     // Metadata
     createdAt: Date;
     updatedAt: Date;
-}
-
-/**
- * AppSettings input for create/update operations
- */
-export interface AppSettingsInput {
-    // General - Defaults
-    defaultDiscountType?: DiscountType;
-    defaultDiscountValue?: number;
-    maxBundleProducts?: number;
-
-    // General - Cart Behavior
-    redirectAfterCart?: RedirectAfterCart;
-    hidePaymentButtons?: boolean;
-    enableStockValidation?: boolean;
-
-    // General - Discount
-    discountTitle?: string;
-    trackOrdersWithoutDiscount?: boolean;
-
-    // General - Localization
-    currencyDisplay?: CurrencyDisplay;
-    disableCartLocale?: boolean;
-
-    // Labels
-    labels?: Partial<AppSettingsLabels>;
-
-    // Style
-    globalStyles?: Partial<AppSettingsGlobalStyles>;
-
-    // Advanced
-    currencyFormat?: string;
-    customCssClass?: string;
-    customCss?: string;
 }

@@ -114,13 +114,8 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         hidePaymentButtons: settings.hidePaymentButtons,
         enableStockValidation: settings.enableStockValidation,
 
-        // General - Discount
-        discountTitle: settings.discountTitle,
-        trackOrdersWithoutDiscount: settings.trackOrdersWithoutDiscount,
-
-        // General - Localization
-        currencyDisplay: settings.currencyDisplay,
-        disableCartLocale: settings.disableCartLocale,
+        // General - Privacy
+        enableAnalytics: settings.enableAnalytics,
 
         // Labels (JSON field)
         labels: settings.labels ?? undefined,
@@ -154,13 +149,8 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         hidePaymentButtons: data.hidePaymentButtons,
         enableStockValidation: data.enableStockValidation,
 
-        // General - Discount
-        discountTitle: data.discountTitle,
-        trackOrdersWithoutDiscount: data.trackOrdersWithoutDiscount,
-
-        // General - Localization
-        currencyDisplay: data.currencyDisplay,
-        disableCartLocale: data.disableCartLocale,
+        // General - Privacy
+        enableAnalytics: data.enableAnalytics,
 
         // Labels (JSON field)
         labels: data.labels ?? null,

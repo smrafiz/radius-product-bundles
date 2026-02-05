@@ -1,7 +1,12 @@
 "use client";
 
+import {
+    BundleSkeleton,
+    BundleTable,
+    BundleTableSkeleton,
+    useBundlesPage,
+} from "@/features/bundles";
 import { GlobalBanner, MetricCard } from "@/shared";
-import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
 
 /**
  * Bundle listing page
@@ -15,9 +20,12 @@ export function BundleListingPage() {
         onBundleStudio,
         isButtonLoading,
         setIsButtonLoading,
+        isLoading,
     } = useBundlesPage();
 
-    return (
+    return isLoading ? (
+        <BundleSkeleton />
+    ) : (
         <s-page heading="Bundle Management">
             <s-button
                 slot="primary-action"

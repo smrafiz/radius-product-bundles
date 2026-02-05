@@ -757,6 +757,7 @@
 						data-enable-hyperlink="{{ enable_hyperlink }}"
 						data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}"
 						data-enable-stock-validation="{{ enable_stock_validation }}"
+						data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 

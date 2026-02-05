@@ -90,6 +90,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
         {
             id: "cart-behavior",
             title: "Cart Behavior",
+            columns: 2,
             tooltip:
                 "Control how the app interacts with the cart and checkout.",
             fields: [
@@ -97,13 +98,17 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     type: "select",
                     name: "redirectAfterCart",
                     label: "After add to cart",
-                    details: "What happens after a customer adds a bundle to cart",
+                    details:
+                        "Select what should happen after a customer adds a bundle to the cart.",
                     defaultValue: "default",
                     options: [
                         { value: "default", label: "Default theme behavior" },
                         { value: "cart", label: "Redirect to cart page" },
                         { value: "checkout", label: "Redirect to checkout" },
-                        { value: "none", label: "Stay on page (show notification)" },
+                        {
+                            value: "none",
+                            label: "Stay on page (show notification)",
+                        },
                     ],
                 },
                 {
@@ -120,6 +125,45 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     label: "Enable stock validation",
                     details:
                         "Disables the bundle button when any product in the bundle is out of stock.",
+                    defaultValue: true,
+                },
+                {
+                    type: "number",
+                    name: "maxBundlesPerOrder",
+                    label: "Max bundles per order",
+                    details:
+                        "Limit how many bundles a customer can add to their cart. Prevents discount abuse. 0 = unlimited.",
+                    defaultValue: 0,
+                    min: 0,
+                    max: 10,
+                    validation: {
+                        min: {
+                            value: 0,
+                            message: "Value must be 0 or greater",
+                        },
+                        max: {
+                            value: 10,
+                            message: "Maximum limit is 10",
+                        },
+                    },
+                },
+            ],
+        },
+
+        // ─────────────────────────────────────────────────────────────────
+        // PRIVACY SECTION
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: "privacy",
+            title: "Privacy",
+            tooltip: "Control data collection and tracking behavior.",
+            fields: [
+                {
+                    type: "switch",
+                    name: "enableAnalytics",
+                    label: "Enable analytics tracking",
+                    details:
+                        "Track bundle views, add-to-carts, and purchases. Disable for GDPR compliance or if you use external analytics.",
                     defaultValue: true,
                 },
             ],

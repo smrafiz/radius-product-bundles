@@ -21,20 +21,19 @@ interface MetafieldGlobalSettings {
     cart: {
         redirectAfterCart: string;
         hidePaymentButtons: boolean;
-        disableCartLocale: boolean;
         enableStockValidation: boolean;
+        maxBundlesPerOrder: number;
+    };
+
+    // Privacy settings
+    privacy: {
+        enableAnalytics: boolean;
     };
 
     // Required for custom styling
     custom: {
         cssClass: string;
         css: string;
-    };
-
-    // Optional: currency formatting
-    currency?: {
-        display: string;
-        format: string;
     };
 }
 
@@ -174,20 +173,19 @@ export function buildGlobalSettingsMetafieldValue(
         cart: {
             redirectAfterCart: appSettings?.redirectAfterCart || "default",
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
-            disableCartLocale: appSettings?.disableCartLocale ?? false,
             enableStockValidation: appSettings?.enableStockValidation ?? true,
+            maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
+        },
+
+        // Privacy settings
+        privacy: {
+            enableAnalytics: appSettings?.enableAnalytics ?? true,
         },
 
         // Custom CSS for Liquid
         custom: {
             cssClass: appSettings?.customCssClass || "",
             css: appSettings?.customCss || "",
-        },
-
-        // Currency for JS
-        currency: {
-            display: appSettings?.currencyDisplay || "symbol",
-            format: appSettings?.currencyFormat || "standard",
         },
     };
 

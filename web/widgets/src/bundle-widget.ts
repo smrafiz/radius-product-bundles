@@ -171,6 +171,7 @@ declare global {
         // Cart behavior
         private readonly redirectAfterCart: string = "cart";
         private readonly enableStockValidation: boolean = true;
+        private readonly maxBundlesPerOrder: number = 0;
 
         // Layout options
         private readonly dividerStyle: string = "plus";
@@ -230,6 +231,10 @@ declare global {
                 container.dataset.redirectAfterCart || "cart";
             this.enableStockValidation =
                 container.dataset.enableStockValidation === "true";
+            this.maxBundlesPerOrder = parseInt(
+                container.dataset.maxBundlesPerOrder || "0",
+                10,
+            );
 
             console.log(
                 "[RadiusBundle] Init - redirectAfterCart:",
@@ -1363,6 +1368,22 @@ declare global {
             button.disabled = true;
 
             try {
+                // Check max bundles per order limit
+                if (this.maxBundlesPerOrder > 0) {
+                    const currentCart = await fetch(this.getLocalePath("/cart.js")).then((r) => r.json());
+                    const bundleCount = this.countBundlesInCart(currentCart.items || []);
+
+                    if (bundleCount >= this.maxBundlesPerOrder) {
+                        this.showToast(
+                            `Maximum ${this.maxBundlesPerOrder} bundle${this.maxBundlesPerOrder > 1 ? 's' : ''} per order allowed`,
+                            "error"
+                        );
+                        button.classList.remove("is-loading");
+                        button.disabled = false;
+                        return;
+                    }
+                }
+
                 const cartItems: CartAddItem[] = this.bundle.products
                     .filter(
                         (p) => p.role === "INCLUDED" || p.role === "OPTIONAL",
@@ -1888,6 +1909,22 @@ declare global {
             return template.replace(/\{(\w+)\}/g, (_, key) =>
                 values[key] !== undefined ? String(values[key]) : "",
             );
+        }
+
+        /**
+         * Counts unique bundles in cart items
+         */
+        private countBundlesInCart(items: Array<{ properties?: Record<string, string> }>): number {
+            const bundleIds = new Set<string>();
+
+            for (const item of items) {
+                const bundleId = item.properties?._bundle_id;
+                if (bundleId) {
+                    bundleIds.add(bundleId);
+                }
+            }
+
+            return bundleIds.size;
         }
     }
 
