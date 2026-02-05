@@ -9,7 +9,7 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { getCurrencySymbol, triggerSaveBar, useShopSettings } from "@/shared";
 
 /**
@@ -20,7 +20,6 @@ export function useDiscountSettings() {
     const { markDirty, bundleData, setBundleData } = useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
     const { watch, setValue } = useBundleFormMethods();
-    const isInitialized = useRef(false);
 
     // Watch form fields directly
     const discountType = watch("discountType") as string | undefined;
@@ -40,25 +39,6 @@ export function useDiscountSettings() {
             ? getDiscountTypesForBundle(bundleType)
             : Object.values(DISCOUNT_TYPES);
     }, [bundleType]);
-
-    /**
-     * Set default discount type and value on mount (without triggering save bar).
-     */
-    useEffect(() => {
-        if (isInitialized.current) return;
-        isInitialized.current = true;
-
-        // Set defaults silently - don't trigger save bar
-        if (!discountType) {
-            setValue("discountType", "PERCENTAGE", { shouldDirty: false });
-            setBundleData({ discountType: "PERCENTAGE" });
-        }
-
-        if (discountValue === undefined || discountValue === 0) {
-            setValue("discountValue", 10, { shouldDirty: false });
-            setBundleData({ discountValue: 10 });
-        }
-    }, [discountType, discountValue, setValue, setBundleData]);
 
     /**
      * Handle discount type change.

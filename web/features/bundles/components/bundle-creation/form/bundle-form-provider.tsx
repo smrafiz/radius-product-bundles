@@ -4,16 +4,16 @@ import {
     BundleFormData,
     BundleFormProviderProps,
     bundleSchema,
+    DiscountType,
     setStoreInitializing,
     useBundleStore,
 } from "@/features/bundles";
-import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import type { z } from "zod";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSettingsStore } from "@/features/settings";
 import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
-import type { DiscountType } from "@/features/bundles";
 
 /**
  * Provides form context for bundle creation and editing.
@@ -33,9 +33,20 @@ export function BundleFormProvider({
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
+
+    const serverData = useSettingsStore((s) => s.serverData);
+    const isSettingsLoading = useSettingsStore((s) => s.isLoading);
     const settings = useSettingsStore.getState().getEffectiveData();
 
-    console.log(settings);
+    // For new bundles, wait for settings to load before initializing form
+    const isNewBundle = !initialData;
+    if (isNewBundle && isSettingsLoading && !serverData) {
+        return (
+            <div className="flex items-center justify-center min-h-50">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+            </div>
+        );
+    }
 
     const form = useForm<z.infer<typeof bundleSchema>>({
         resolver: zodResolver(bundleSchema) as Resolver<
@@ -47,8 +58,12 @@ export function BundleFormProvider({
             type: bundleType,
             status: initialData?.status || "DRAFT",
             products: initialData?.products || [],
-            discountType: (initialData?.discountType ?? settings.defaultDiscountType) as DiscountType,
-            discountValue: initialData?.discountValue ?? (settings.defaultDiscountValue as number) ?? 0,
+            discountType: (initialData?.discountType ??
+                settings.defaultDiscountType) as DiscountType,
+            discountValue:
+                initialData?.discountValue ??
+                (settings.defaultDiscountValue as number) ??
+                0,
             minOrderValue: initialData?.minOrderValue || undefined,
             maxDiscountAmount: initialData?.maxDiscountAmount || undefined,
             startDate: initialData?.startDate || undefined,

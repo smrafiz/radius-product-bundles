@@ -1,6 +1,7 @@
 "use client";
 
 import { DehydratedState } from "@tanstack/react-query";
+import { AppSettingsProvider } from "@/features/settings";
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import { Navigation, ProtectedRoute, SessionProvider, TanstackProvider, } from "@/shared";
 
@@ -39,7 +40,9 @@ export function Providers({
                     }
                 >
                     <SessionProvider>
-                        <ProtectedRoute>{children}</ProtectedRoute>
+                        <AppSettingsProvider>
+                            <ProtectedRoute>{children}</ProtectedRoute>
+                        </AppSettingsProvider>
                     </SessionProvider>
                 </Suspense>
             </TanstackProvider>
