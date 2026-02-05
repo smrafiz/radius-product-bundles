@@ -126,7 +126,7 @@ export interface AppSettingsGlobalStyles {
 /**
  * Redirect after cart options
  */
-export type RedirectAfterCart = "cart" | "checkout" | "none" | "drawer";
+export type RedirectAfterCart = "default" | "cart" | "checkout" | "none";
 
 /**
  * Currency display options

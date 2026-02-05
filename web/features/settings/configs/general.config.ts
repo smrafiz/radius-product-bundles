@@ -96,14 +96,14 @@ export const GENERAL_TAB: SettingsTabConfig = {
                 {
                     type: "select",
                     name: "redirectAfterCart",
-                    label: "Redirect after add to cart",
-                    details: "Where customers go after adding a bundle to cart",
-                    defaultValue: "cart",
+                    label: "After add to cart",
+                    details: "What happens after a customer adds a bundle to cart",
+                    defaultValue: "default",
                     options: [
-                        { value: "cart", label: "Cart page" },
-                        { value: "checkout", label: "Checkout" },
-                        { value: "none", label: "Stay on page (no redirect)" },
-                        { value: "drawer", label: "Open cart drawer" },
+                        { value: "default", label: "Default theme behavior" },
+                        { value: "cart", label: "Redirect to cart page" },
+                        { value: "checkout", label: "Redirect to checkout" },
+                        { value: "none", label: "Stay on page (show notification)" },
                     ],
                 },
                 {

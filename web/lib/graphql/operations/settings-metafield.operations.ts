@@ -171,7 +171,7 @@ export function buildGlobalSettingsMetafieldValue(
 
         // Cart behavior for JS
         cart: {
-            redirectAfterCart: appSettings?.redirectAfterCart || "cart",
+            redirectAfterCart: appSettings?.redirectAfterCart || "default",
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
             disableCartLocale: appSettings?.disableCartLocale ?? false,
         },
