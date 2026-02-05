@@ -1,7 +1,12 @@
 "use client";
 
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
-import { getCardRadius, getFontSize, useCustomizerStore, } from "@/features/settings";
+import {
+    getCardRadius,
+    getFontSize,
+    getSpacing,
+    useCustomizerStore,
+} from "@/features/settings";
 
 /**
  * Bundle pricing summary display.
@@ -26,6 +31,7 @@ export function BundlePricing() {
     const savingsColor = styles.savingsColor || "#16a34a";
     const borderColor = styles.borderColor || "#e5e7eb";
     const summaryBg = styles.pricingSummaryBg || "#f9fafb";
+    const padding = getSpacing(styles.spacing);
 
     /**
      * Gets container styles based on pricingSummaryBox and pricingSummaryStyle.
@@ -54,21 +60,21 @@ export function BundlePricing() {
                 return {
                     backgroundColor: summaryBg,
                     borderRadius,
-                    padding: "16px",
+                    padding: padding,
                     border: `1px solid ${borderColor}`,
                 };
             case "highlight":
                 return {
                     backgroundColor: summaryBg,
                     borderRadius,
-                    padding: "16px",
+                    padding: padding,
                     borderLeft: `4px solid ${highlightColor}`,
                 };
             default:
                 return {
                     backgroundColor: summaryBg,
                     borderRadius,
-                    padding: "16px",
+                    padding: padding,
                 };
         }
     };
@@ -134,6 +140,7 @@ export function BundlePricing() {
                     color: savingsColor,
                     fontWeight: 600,
                     marginBottom: "8px",
+                    padding: padding,
                 }}
             >
                 <span className="radius-bundle__savings-label">
@@ -151,7 +158,8 @@ export function BundlePricing() {
                     display: "flex",
                     alignItems: "center",
                     gap: "4px",
-                    marginTop: "4px",
+                    marginTop: "8px",
+                    padding: padding,
                 }}
             >
                 <svg

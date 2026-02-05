@@ -46,7 +46,8 @@
 				{% comment %} ═══════════════════════════════════════════════════════════════════
 					COLORS
 				═══════════════════════════════════════════════════════════════════ {% endcomment %}
-				{% if style_preset == 'custom' or style_preset == blank %}
+				{% assign style_preset = block.settings.style_preset | default: '' %}
+				{% if style_preset == 'custom' %}
 					{% assign primary_color = block.settings.primary_color
 							| default: g_styles.primaryColor
 							| default: '#303030' %}
@@ -184,29 +185,37 @@
 				{% endif %}
 
 				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
-				{% assign override_card_settings = block.settings.override_card_settings | default: false %}
-				{% assign global_customize_card = g_styles.customizeCardStyle | default: false %}
-
 				{% assign product_card_bg = '#f9fafb' %}
-				{% if override_card_settings %}
-				  {% assign product_card_bg = block.settings.product_card_bg | default: '#f9fafb' %}
-				{% elsif global_customize_card %}
-				  {% assign product_card_bg = g_styles.productCardBg | default: '#f9fafb' %}
+				{% if override_card_settings and block.settings.product_card_bg != blank %}
+					{% assign product_card_bg = block.settings.product_card_bg %}
+				{% elsif g_styles.customizeCardStyle == true %}
+					{% if g_styles.productCardBg != blank %}
+						{% assign product_card_bg = g_styles.productCardBg %}
+					{% endif %}
 				{% endif %}
 
 				{% assign product_card_border = true %}
 				{% if override_card_settings %}
-				  {% assign product_card_border = block.settings.product_card_border %}
-				{% elsif global_customize_card %}
-				  {% assign product_card_border = g_styles.productCardBorder | default: true %}
+					{% assign product_card_border = block.settings.product_card_border %}
+				{% elsif g_styles.customizeCardStyle == true %}
+					{% if g_styles.productCardBorder == false %}
+						{% assign product_card_border = false %}
+					{% elsif g_styles.productCardBorder == true %}
+						{% assign product_card_border = true %}
+					{% endif %}
 				{% endif %}
 
 				{% assign product_card_shadow = false %}
 				{% if override_card_settings %}
-				  {% assign product_card_shadow = block.settings.product_card_shadow %}
-				{% elsif global_customize_card %}
-				  {% assign product_card_shadow = g_styles.productCardShadow | default: false %}
+					{% assign product_card_shadow = block.settings.product_card_shadow %}
+				{% elsif g_styles.customizeCardStyle == true %}
+					{% if g_styles.productCardShadow == true %}
+						{% assign product_card_shadow = true %}
+					{% elsif g_styles.productCardShadow == false %}
+						{% assign product_card_shadow = false %}
+					{% endif %}
 				{% endif %}
+
 
 				{% comment %} BUTTON & BADGE {% endcomment %}
 				{% assign override_button_settings = block.settings.override_button_settings | default: false %}
@@ -686,6 +695,7 @@
 						--rb-grid-columns: {{ grid_columns }};
 						--rb-slides-per-view: {{ slides_per_view }};
 					}
+
 
 					{% if g_tablet %}
 					@media (max-width: {{ tablet_bp }}px) {
@@ -1474,7 +1484,7 @@
 			"type": "range",
 			"id": "grid_columns",
 			"label": "Grid columns",
-			"info": "Applies to grid layout",
+			"info": "Applies only to desktop devices",
 			"min": 2,
 			"max": 4,
 			"step": 1,
@@ -1485,7 +1495,7 @@
 			"type": "range",
 			"id": "slides_per_view",
 			"label": "Slides visible",
-			"info": "Applies to carousel layout",
+			"info": "Applies only to desktop devices",
 			"min": 2,
 			"max": 4,
 			"step": 1,

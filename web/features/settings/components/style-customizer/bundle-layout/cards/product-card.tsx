@@ -34,7 +34,7 @@ export function ProductCard({
                   ? `1px solid ${styles.borderColor}`
                   : "none",
               boxShadow: styles.productCardShadow
-                  ? "0 2px 8px rgba(0, 0, 0, 0.08) hover: 0 2px 12px rgba(0, 0, 0, 0.12)"
+                  ? "0 2px 8px rgba(0, 0, 0, 0.08)"
                   : "none",
               padding: gap,
           }

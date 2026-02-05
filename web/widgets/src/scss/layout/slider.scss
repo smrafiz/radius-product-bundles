@@ -37,10 +37,6 @@
             &.is-dragging {
                 cursor: grabbing;
             }
-
-            .rb--mobile & {
-                grid-auto-columns: 100%;
-            }
         }
     }
 

@@ -11,7 +11,7 @@ export function BundleGrid() {
     const gap = getSpacing(styles.spacing);
 
     return (
-        <div className="radius-bundle__product--grid"
+        <div
             style={{
                 display: "grid",
                 gridTemplateColumns: `repeat(${styles.gridColumns ?? 3}, minmax(0, 1fr))`,

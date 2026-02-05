@@ -17,7 +17,7 @@
             );
 
             .rb--mobile & {
-                grid-template-columns: repeat(1, minmax(0, 1fr));
+                grid-template-columns: repeat(var(--rb-grid-columns, 2), minmax(0, 1fr));
             }
         }
     }

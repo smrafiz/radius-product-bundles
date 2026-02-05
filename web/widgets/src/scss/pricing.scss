@@ -106,7 +106,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: var(--rb-spacing);
+        padding: var(--rb-gap-spacing);
         background: color-mix(in srgb, var(--rb-savings-color) 15%, transparent);
         border-radius: var(--rb-border-radius);
         margin-top: var(--rb-spacing-sm);
@@ -137,7 +137,7 @@
         display: flex;
         align-items: center;
         gap: var(--rb-spacing-sm);
-        padding: var(--rb-spacing);
+        padding: var(--rb-gap-spacing);
         background: #dbeafe;
         border-radius: var(--rb-border-radius);
         margin-top: var(--rb-spacing-sm);
