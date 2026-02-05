@@ -164,6 +164,11 @@
 <!-- Load CSS -->
 {{ 'radius-bundles.css' | asset_url | stylesheet_tag }}
 
+{% comment %} Hide third-party payment buttons if enabled {% endcomment %}
+{% if global.cart.hidePaymentButtons %}
+<script>document.documentElement.classList.add('radius-hide-payment-buttons');</script>
+{% endif %}
+
 <!-- Initialize Configuration -->
 <script>
     /**

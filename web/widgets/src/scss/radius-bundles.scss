@@ -2,6 +2,23 @@
  * Radius Bundles - Styles
  */
 
+/**
+ * Hide third-party payment buttons when enabled
+ * Applied via body class from app-embed.liquid
+ */
+.radius-hide-payment-buttons {
+    .shopify-payment-button,
+    .additional-checkout-buttons,
+    [data-shopify="payment-button"],
+    .shopify-accelerated-checkout-buttons,
+    .dynamic-checkout__buttons,
+    .cart__dynamic-checkout-buttons,
+    .shopify-payment-button__button--unbranded,
+    .shopify-payment-button__more-options {
+        display: none !important;
+    }
+}
+
 .radius-savings-banner {
     background: var(--radius-banner-bg, #f0f8ff);
     border: 1px solid var(--radius-banner-border, #4caf50);
