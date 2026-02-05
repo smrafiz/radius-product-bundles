@@ -18,6 +18,7 @@ import "./scss/radius-bundles.scss";
         enableAnalytics: boolean;
         showSavingsBanner: boolean;
         activeBundles: Record<string, BundleMetafieldData> | null;
+        bannerIcon?: string;
     }
 
     /**
@@ -599,12 +600,18 @@ import "./scss/radius-bundles.scss";
             );
             if (!contentEl) return;
 
-            let html =
-                messages.length === 1
-                    ? messages[0]
-                    : `<ul class="radius-savings-banner__list">${messages
-                          .map((m) => `<li>${m}</li>`)
-                          .join("")}</ul>`;
+            // Get the icon from config
+            const icon = this.config.bannerIcon || '';
+
+            let html: string;
+
+            if (messages.length === 1) {
+                html = messages[0];
+            } else {
+                html = `<ul class="radius-savings-banner__list">${messages
+                    .map((m) => `<li>${icon ? `<span class="radius-savings-banner__list-icon">${icon}</span>` : ''}${m}</li>`)
+                    .join("")}</ul>`;
+            }
 
             const hasFreeShipping = messages.some((m) =>
                 m.includes("free shipping"),
