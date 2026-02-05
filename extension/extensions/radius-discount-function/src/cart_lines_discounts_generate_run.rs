@@ -258,10 +258,10 @@ fn cart_lines_discounts_generate_run(
             .unwrap_or_else(|| "Bundle".to_string());
         let message = match bundle_settings.discount_type.as_str() {
             "PERCENTAGE" => format!(
-                "{} bundle: {}% off",
+                "{}: {}% off",
                 bundle_name, bundle_settings.discount_value
             ),
-            "FIXED_AMOUNT" => format!("{} bundle discount", bundle_name),
+            "FIXED_AMOUNT" => format!("{} discount", bundle_name),
             "CUSTOM_PRICE" => format!("{}: Special price", bundle_name),
             _ => format!("{} discount", bundle_name),
         };
