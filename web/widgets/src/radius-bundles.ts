@@ -8,6 +8,15 @@ import "./scss/radius-bundles.scss";
     "use strict";
 
     /**
+     * Gets locale-aware path using Shopify's routes API
+     * Handles multi-language stores where paths need locale prefix (e.g., /fr/cart)
+     */
+    function getLocalePath(path: string): string {
+        const root = (window as any).Shopify?.routes?.root || "/";
+        return `${root}${path.replace(/^\//, "")}`;
+    }
+
+    /**
      * Radius Bundles Configuration Interface
      */
     interface RadiusBundlesConfig {
@@ -342,14 +351,14 @@ import "./scss/radius-bundles.scss";
         }
 
         private async fetchCart(): Promise<CartResponse> {
-            const response = await fetch("/cart.js");
+            const response = await fetch(getLocalePath("/cart.js"));
             return response.json();
         }
 
         private async updateAttributes(
             attributes: Record<string, string>,
         ): Promise<void> {
-            await fetch("/cart/update.js", {
+            await fetch(getLocalePath("/cart/update.js"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ attributes }),
@@ -515,7 +524,7 @@ import "./scss/radius-bundles.scss";
         }
 
         private async fetchCart(): Promise<CartResponse> {
-            const response = await fetch("/cart.js");
+            const response = await fetch(getLocalePath("/cart.js"));
             return response.json();
         }
 

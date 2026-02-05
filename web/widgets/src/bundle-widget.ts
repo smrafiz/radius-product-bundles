@@ -15,6 +15,9 @@ declare global {
     interface Window {
         Shopify?: {
             formatMoney?: (cents: number) => string;
+            routes?: {
+                root?: string;
+            };
         };
     }
 }
@@ -148,7 +151,7 @@ declare global {
      * Radius Bundle Widget Class
      */
     class RadiusBundleWidget {
-        private container: HTMLElement;
+        private readonly container: HTMLElement;
         private readonly bundleId: string;
         private readonly productId: string;
         private readonly shop: string;
@@ -1379,7 +1382,7 @@ declare global {
                     this.showToast("No valid products to add to cart", "error");
                 }
 
-                const addResponse = await fetch("/cart/add.js", {
+                const addResponse = await fetch(this.getLocalePath("/cart/add.js"), {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ items: cartItems }),
@@ -1396,7 +1399,7 @@ declare global {
                     );
                 }
 
-                const cart = await fetch("/cart.js").then((r) => r.json());
+                const cart = await fetch(this.getLocalePath("/cart.js")).then((r) => r.json());
 
                 let existingDiscounts: DiscountConfig[] = [];
 
@@ -1433,7 +1436,7 @@ declare global {
                 );
                 existingDiscounts.push(newDiscount);
 
-                await fetch("/cart/update.js", {
+                await fetch(this.getLocalePath("/cart/update.js"), {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -1526,7 +1529,7 @@ declare global {
          */
         private async updateCartCount(): Promise<void> {
             try {
-                const cart = await fetch("/cart.js").then((r) => r.json());
+                const cart = await fetch(this.getLocalePath("/cart.js")).then((r) => r.json());
                 const cartLink = document.querySelector("#cart-icon-bubble");
 
                 if (cartLink && cart.item_count > 0) {
@@ -1572,10 +1575,10 @@ declare global {
                     this.openCartDrawerOrRedirect();
                     break;
                 case "cart":
-                    window.location.href = "/cart";
+                    window.location.href = this.getLocalePath("/cart");
                     break;
                 case "checkout":
-                    window.location.href = "/checkout";
+                    window.location.href = this.getLocalePath("/checkout");
                     break;
                 case "none":
                     // Stay on page - toast notification already shown
@@ -1629,9 +1632,9 @@ declare global {
 
             // Fallback: Theme has "Page" selected - redirect to cart page
             console.log(
-                "[RadiusBundle] No drawer/notification found - redirecting to /cart",
+                "[RadiusBundle] No drawer/notification found - redirecting to cart",
             );
-            window.location.href = "/cart";
+            window.location.href = this.getLocalePath("/cart");
         }
 
         /**
@@ -1640,7 +1643,7 @@ declare global {
         private openDawnCartDrawer(
             cartDrawerEl: HTMLElement & { open?: () => void },
         ): void {
-            fetch("/cart?section_id=cart-drawer")
+            fetch(this.getLocalePath("/cart?section_id=cart-drawer"))
                 .then((r) => r.text())
                 .then((html) => {
                     console.log("[RadiusBundle] Fetched cart-drawer section");
@@ -1741,7 +1744,7 @@ declare global {
             }
 
             // Update the view cart button with current count
-            fetch("/cart.js")
+            fetch(this.getLocalePath("/cart.js"))
                 .then((r) => r.json())
                 .then((cart) => {
                     const cartButton = document.getElementById(
@@ -1843,6 +1846,16 @@ declare global {
                 return window.Shopify.formatMoney(cents);
             }
             return `$${(cents / 100).toFixed(2)}`;
+        }
+
+        /**
+         * Gets locale-aware path using Shopify's routes API
+         * Handles multi-language stores where paths need locale prefix (e.g., /fr/cart)
+         */
+        private getLocalePath(path: string): string {
+            const root = window.Shopify?.routes?.root || "/";
+            // Ensure no double slashes: root is "/" or "/fr/", path starts with "/"
+            return `${root}${path.replace(/^\//, "")}`;
         }
 
         /**
