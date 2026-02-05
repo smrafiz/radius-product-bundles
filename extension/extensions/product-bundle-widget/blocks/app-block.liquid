@@ -741,6 +741,7 @@
 						data-show-free-shipping="{{ show_free_shipping }}"
 						data-show-savings-badge="{{ show_savings_badge }}"
 						data-enable-hyperlink="{{ enable_hyperlink }}"
+						data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'cart' }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 

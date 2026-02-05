@@ -164,6 +164,9 @@ declare global {
         private readonly showFreeShipping: boolean = true;
         private readonly enableHyperLink: boolean = false;
 
+        // Cart behavior
+        private readonly redirectAfterCart: string = "cart";
+
         // Layout options
         private readonly dividerStyle: string = "plus";
         private readonly carouselNavigation: string = "both";
@@ -217,6 +220,16 @@ declare global {
                 container.dataset.showFreeShipping !== "false";
             this.enableHyperLink = container.dataset.enableHyperlink === "true";
 
+            // Parse cart behavior
+            this.redirectAfterCart =
+                container.dataset.redirectAfterCart || "cart";
+
+            console.log(
+                "[RadiusBundle] Init - redirectAfterCart:",
+                this.redirectAfterCart,
+                "| raw:",
+                container.dataset.redirectAfterCart,
+            );
             // Parse layout options from data attributes
             this.dividerStyle = container.dataset.dividerStyle || "plus";
             this.carouselNavigation =
@@ -1425,8 +1438,11 @@ declare global {
                     discountValue: discountValue,
                 });
 
-                document.dispatchEvent(new CustomEvent("cart:refresh"));
+                // Update cart count in header
                 await this.updateCartCount();
+
+                // Handle redirect based on settings
+                this.handleCartRedirect();
             } catch (error) {
                 console.error("[RadiusBundle] Add to cart error:", error);
                 const errorMessage =
@@ -1497,6 +1513,119 @@ declare global {
                 console.warn("[RadiusBundle] Could not update cart count:", e);
             }
         }
+
+        private handleCartRedirect(): void {
+            console.log("[RadiusBundle] Redirect setting:", this.redirectAfterCart);
+
+            switch (this.redirectAfterCart) {
+                case "cart":
+                    window.location.href = "/cart";
+                    break;
+                case "checkout":
+                    window.location.href = "/checkout";
+                    break;
+                case "drawer":
+                    this.openCartDrawer();
+                    break;
+                case "none":
+                default:
+                    break;
+            }
+        }
+
+
+        private openCartDrawer(): void {
+            console.log("[RadiusBundle] Attempting to open cart drawer...");
+
+            const cartDrawerEl = document.querySelector("cart-drawer") as HTMLElement & {
+                open?: () => void;
+            };
+
+            if (cartDrawerEl) {
+                // Fetch fresh cart drawer section
+                fetch("/cart?section_id=cart-drawer")
+                    .then((r) => r.text())
+                    .then((html) => {
+                        console.log("[RadiusBundle] Fetched cart-drawer section");
+
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+
+                        // Try to find and update #CartDrawer content
+                        const newCartDrawer = doc.querySelector("#CartDrawer");
+                        const currentCartDrawer = document.querySelector("#CartDrawer");
+
+                        if (newCartDrawer && currentCartDrawer) {
+                            console.log("[RadiusBundle] ✓ Updating #CartDrawer content");
+                            currentCartDrawer.innerHTML = newCartDrawer.innerHTML;
+                        } else {
+                            // Fallback: try updating cart-drawer element itself
+                            const newDrawerContent = doc.querySelector("cart-drawer");
+                            if (newDrawerContent) {
+                                console.log("[RadiusBundle] ✓ Updating cart-drawer content");
+                                cartDrawerEl.innerHTML = newDrawerContent.innerHTML;
+                            } else {
+                                // Last resort: use the entire response
+                                const sectionContent = doc.querySelector(".shopify-section");
+                                if (sectionContent) {
+                                    console.log("[RadiusBundle] ✓ Using .shopify-section content");
+                                    const innerDrawer = sectionContent.querySelector("#CartDrawer");
+                                    if (innerDrawer && currentCartDrawer) {
+                                        currentCartDrawer.innerHTML = innerDrawer.innerHTML;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Remove empty state
+                        cartDrawerEl.classList.remove("is-empty");
+                        const drawerInner = cartDrawerEl.querySelector(".drawer__inner");
+                        if (drawerInner) {
+                            drawerInner.classList.remove("is-empty");
+                        }
+
+                        // Re-attach overlay click handler (gets lost when innerHTML is replaced)
+                        const overlay = cartDrawerEl.querySelector("#CartDrawer-Overlay");
+                        if (overlay) {
+                            overlay.addEventListener("click", () => {
+                                (cartDrawerEl as any).close?.();
+                            });
+                        }
+
+                        // Open the drawer
+                        if (typeof cartDrawerEl.open === "function") {
+                            console.log("[RadiusBundle] ✓ Opening cart drawer");
+                            cartDrawerEl.open();
+                        }
+                    })
+                    .catch((e) => {
+                        console.error("[RadiusBundle] Failed to fetch cart section:", e);
+                        if (typeof cartDrawerEl.open === "function") {
+                            cartDrawerEl.open();
+                        }
+                    });
+
+                return;
+            }
+
+            // Fallback: Click cart icon if drawer handler exists
+            const cartIconBubble = document.querySelector("#cart-icon-bubble") as HTMLElement;
+            if (cartIconBubble && cartIconBubble.getAttribute("role") === "button") {
+                console.log("[RadiusBundle] ✓ Clicking #cart-icon-bubble");
+                cartIconBubble.click();
+                return;
+            }
+
+            // Fallback: Horizon theme
+            const drawerCart = document.querySelector('[data-drawer="drawer-cart"]');
+            if (drawerCart) {
+                drawerCart.dispatchEvent(new CustomEvent("theme:drawer:open", { bubbles: false }));
+                return;
+            }
+
+            console.log("[RadiusBundle] ✗ No cart drawer available");
+        }
+
 
         /**
          * Shows toast notification
