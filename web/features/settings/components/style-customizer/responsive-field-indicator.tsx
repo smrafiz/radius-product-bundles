@@ -48,7 +48,7 @@ export function ResponsiveFieldIndicator({
                 <button
                     type="button"
                     onClick={onClearOverride}
-                    className="inline-flex items-center gap-0.5 text-[#8e0b21] hover:text-[#8e0b21] transition-colors cursor-pointer bg-transparent border-0 p-0"
+                    className="inline-flex items-center gap-0.5 text-[#0094d5] hover:text-[#0094d5] transition-colors cursor-pointer bg-transparent border-0 p-0"
                     aria-label={`Reset to Desktop value`}
                 >
                     <s-icon

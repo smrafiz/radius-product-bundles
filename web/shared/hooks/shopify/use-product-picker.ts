@@ -1,10 +1,11 @@
-import { useCallback } from "react";
-import { useAppBridge } from "@shopify/app-bridge-react";
 import {
     createSelectedItem,
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
+import { useCallback } from "react";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { useSettingsStore } from "@/features/settings";
 
 export function useProductPicker() {
     const app = useAppBridge();
@@ -58,13 +59,24 @@ export function useProductPicker() {
                 type: "product",
                 multiple: true,
                 selectionIds: existingSelections,
+                filter: {
+                    hidden: true,
+                    variants: true,
+                    draft: false,
+                    archived: false,
+                },
             });
 
             if (!result || result.length === 0) {
                 return;
             }
 
-            const normalizedItems = result.map((p: any, index: number) =>
+            const state = useSettingsStore.getState();
+            const settingsData = state.localData ?? state.serverData;
+            const maxProducts = (settingsData?.maxBundleProducts as number) ?? 10;
+            const limitedResult = result.slice(0, maxProducts);
+
+            const normalizedItems = limitedResult.map((p: any, index: number) =>
                 createSelectedItem(p, { displayOrder: index }),
             );
 
@@ -79,7 +91,9 @@ export function useProductPicker() {
 
     const editProductVariants = useCallback(
         async (product: SelectedItem) => {
-            if (!app) return;
+            if (!app) {
+                return;
+            }
 
             try {
                 const currentPosition = selectedItems.findIndex(

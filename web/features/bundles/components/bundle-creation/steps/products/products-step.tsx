@@ -10,6 +10,7 @@ import {
 import { useEffect } from "react";
 import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
+import { useSettingsStore } from "@/features/settings";
 
 export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const { selectedItems, setSelectedItems, validationAttempted } =
@@ -17,6 +18,10 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
     const { clearErrors } = useFormContext();
+
+    const settingsData = useSettingsStore((state) => state.localData ?? state.serverData);
+    const maxProducts = (settingsData?.maxBundleProducts as number) ?? 10;
+    const isAtLimit = selectedItems.length >= maxProducts;
 
     const handleClearAll = () => {
         setSelectedItems([]);
@@ -68,6 +73,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                     icon="plus"
                                     onClick={openProductPicker}
                                     loading={isLoading}
+                                    disabled={isAtLimit}
                                     tone={
                                         hasProductError ? "critical" : undefined
                                     }
@@ -94,6 +100,12 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                         <s-banner tone="info">
                             Add at least one more product to create a bundle. (
                             {selectedItems.length}/2 minimum)
+                        </s-banner>
+                    )}
+                    {isAtLimit && (
+                        <s-banner tone="warning">
+                            Maximum {maxProducts} products reached for this
+                            bundle.
                         </s-banner>
                     )}
                     <ProductList />
