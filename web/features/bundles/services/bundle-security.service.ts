@@ -280,12 +280,6 @@ export async function validateShopPermissions(
     // Get shop settings
     const shopSettings = await getShop(shop);
 
-    // Check if beta features are required
-    if (operation === "create" && !shopSettings?.appSettings?.betaFeatures) {
-        // If bundle creation requires beta access (example)
-        // Adjust based on your business rules
-    }
-
     // Add more permission checks as needed
     // Example: plan-based restrictions, feature flags, etc.
 

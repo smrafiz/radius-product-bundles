@@ -4,7 +4,6 @@ import { LABELS_TAB } from "./labels.config";
 import { GENERAL_TAB } from "./general.config";
 import { ADVANCED_TAB } from "./advanced.config";
 import { SettingsTabConfig } from "@/features/settings";
-import { NOTIFICATIONS_TAB } from "@/features/settings/configs/notifications.config";
 
 /**
  * All settings tabs configuration

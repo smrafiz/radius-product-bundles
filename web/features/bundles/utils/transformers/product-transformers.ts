@@ -59,6 +59,7 @@ export function createSelectedItem(
         title: product.title,
         price: defaultVariant?.price || "0.00",
         compareAtPrice: defaultVariant?.compareAtPrice || null,
+        url: product.url || "",
         image:
             product.images?.[0]?.originalSrc ||
             product.featuredImage?.url ||

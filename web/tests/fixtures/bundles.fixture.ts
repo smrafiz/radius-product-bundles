@@ -30,6 +30,8 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         volumeTiers: null,
         allowMixAndMatch: false,
         mixAndMatchPrice: null,
+        discountedProductIds: [],
+        freeShipping: false,
         images: [],
         marketingCopy: null,
         seoTitle: null,
@@ -45,6 +47,8 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         aiScore: null,
         createdAt: new Date("2024-01-01"),
         updatedAt: new Date("2024-01-01"),
+        deletedAt: null,
+        shopId: null,
         ...overrides,
     };
 }

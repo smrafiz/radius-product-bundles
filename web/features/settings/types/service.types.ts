@@ -1,3 +1,5 @@
+import { AppSettingsFormData } from "@/features/settings";
+
 /**
  * Input for getting settings
  */

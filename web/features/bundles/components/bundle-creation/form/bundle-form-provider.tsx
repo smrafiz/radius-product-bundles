@@ -13,6 +13,7 @@ import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
+import type { DiscountType } from "@/features/bundles";
 
 /**
  * Provides form context for bundle creation and editing.
@@ -46,8 +47,8 @@ export function BundleFormProvider({
             type: bundleType,
             status: initialData?.status || "DRAFT",
             products: initialData?.products || [],
-            discountType: initialData?.discountType ?? settings.defaultDiscountType,
-            discountValue: initialData?.discountValue ?? settings.defaultDiscountValue ?? 0,
+            discountType: (initialData?.discountType ?? settings.defaultDiscountType) as DiscountType,
+            discountValue: initialData?.discountValue ?? (settings.defaultDiscountValue as number) ?? 0,
             minOrderValue: initialData?.minOrderValue || undefined,
             maxDiscountAmount: initialData?.maxDiscountAmount || undefined,
             startDate: initialData?.startDate || undefined,

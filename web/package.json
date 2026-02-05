@@ -33,7 +33,7 @@
         "@prisma/client": "^7.3.0",
         "@shopify/api-codegen-preset": "^1.2.2",
         "@shopify/app-bridge": "^3.7.11",
-        "@shopify/app-bridge-react": "^4.2.8",
+        "@shopify/app-bridge-react": "^4.2.10",
         "@shopify/app-bridge-types": "^0.5.3",
         "@shopify/app-bridge-ui-types": "^0.3.3",
         "@shopify/cli-kit": "^3.90.0",
@@ -69,7 +69,7 @@
         "@types/jest": "^30.0.0",
         "@types/node": "^25.2.0",
         "@types/nprogress": "^0.2.3",
-        "@types/react": "19.2.10",
+        "@types/react": "19.2.11",
         "@types/react-dom": "19.2.3",
         "@types/validator": "^13.15.10",
         "autoprefixer": "^10.4.24",
@@ -94,7 +94,7 @@
     ],
     "pnpm": {
         "overrides": {
-            "@types/react": "19.2.10",
+            "@types/react": "19.2.11",
             "@types/react-dom": "19.2.3"
         }
     }

@@ -230,7 +230,11 @@ export async function updateBundleWithRelations(
             });
 
             if (existingSettings) {
-                await updateBundleSettings(tx, data.bundleId, data.settings);
+                await updateBundleSettings(
+                    tx,
+                    data.bundleId,
+                    data.settings as Prisma.BundleSettingsUpdateInput,
+                );
             } else {
                 await createBundleSettings(tx, data.bundleId, data.settings);
             }
