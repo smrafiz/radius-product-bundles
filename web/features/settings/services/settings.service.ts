@@ -113,6 +113,7 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         redirectAfterCart: settings.redirectAfterCart,
         hidePaymentButtons: settings.hidePaymentButtons,
         enableStockValidation: settings.enableStockValidation,
+        maxBundlesPerOrder: settings.maxBundlesPerOrder,
 
         // General - Privacy
         enableAnalytics: settings.enableAnalytics,
@@ -148,6 +149,7 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         redirectAfterCart: data.redirectAfterCart,
         hidePaymentButtons: data.hidePaymentButtons,
         enableStockValidation: data.enableStockValidation,
+        maxBundlesPerOrder: data.maxBundlesPerOrder,
 
         // General - Privacy
         enableAnalytics: data.enableAnalytics,
