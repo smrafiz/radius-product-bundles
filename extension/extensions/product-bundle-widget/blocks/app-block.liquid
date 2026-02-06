@@ -445,6 +445,15 @@
 				{% assign quantity_label = g_labels.quantityLabel
 						| default: 'Qty:' %}
 
+				{% assign adding_text = g_labels.addingText
+						| default: 'Adding...' %}
+
+				{% assign added_text = g_labels.addedText
+						| default: 'Added!' %}
+
+				{% assign out_of_stock_text = g_labels.outOfStockText
+						| default: 'Out of Stock' %}
+
 				{% comment %} DO NOT DELETE BELOW CAPTURE {% endcomment %}
 				{% comment %}
 				{% capture bundle_structure_json %}
@@ -469,13 +478,16 @@
 						"bundlePriceLabel": "{{ bundle_price_label | escape }}",
 						"youSaveLabel": "{{ you_save_label | escape }}",
 						"freeShippingLabel": "{{ free_shipping_label | escape }}",
-						"quantityLabel": "{{ quantity_label | escape }}"
+						"quantityLabel": "{{ quantity_label | escape }}",
+						"addingText": "{{ adding_text | escape }}",
+						"addedText": "{{ added_text | escape }}",
+						"outOfStockText": "{{ out_of_stock_text | escape }}"
 					}
 				}
 				{% endcapture %}
 				{% endcomment %}
 
-				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle.title | default: 'Bundle' | escape }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}"}}{% endcapture %}
+				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle.title | default: 'Bundle' | escape }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}","addingText": "{{ adding_text | escape }}","addedText": "{{ added_text | escape }}","outOfStockText": "{{ out_of_stock_text | escape }}"}}{% endcapture %}
 
 				{% comment %} DO NOT DELETE BELOW CAPTURE {% endcomment %}
 				{% comment %}

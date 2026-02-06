@@ -7,17 +7,21 @@
 {% endcomment %}
 
 <div class="radius-bundle__actions">
-	<button
-			type="button"
-			class="radius-bundle__add-to-cart"
-			data-bundle-add-to-cart
-			data-bundle-id="{{ bundle_id }}"
-	>
-        <span class="radius-bundle__button-text">
+    <button
+            type="button"
+            class="radius-bundle__add-to-cart"
+            data-bundle-add-to-cart
+            data-bundle-id="{{ bundle_id }}"
+    >
+        <span class="radius-bundle__button-loading">
+			<svg aria-hidden="true" focusable="false" class="radius-bundle__spinner" viewBox="0 0 66 66"
+                 xmlns="http://www.w3.org/2000/svg">
+				<circle class="radius-bundle__spinner-path" fill="none" stroke-width="6" cx="33" cy="33"
+                        r="30"></circle>
+			</svg>
+        </span>
+        <span class="radius-bundle__button-text" data-button-text>
             {{ button_text | default: 'Add bundle to cart' }}
         </span>
-		<span class="radius-bundle__button-loading">
-            <span class="radius-bundle__spinner"></span>
-        </span>
-	</button>
+    </button>
 </div>

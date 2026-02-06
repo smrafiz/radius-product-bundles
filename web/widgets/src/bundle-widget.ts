@@ -77,6 +77,9 @@ declare global {
             freeShippingLabel: string;
             quantityLabel: string;
             savingsBadgeText: string;
+            addingText: string;
+            addedText: string;
+            outOfStockText: string;
         };
     }
 
@@ -1590,13 +1593,15 @@ declare global {
                 button.disabled = true;
                 button.classList.add("is-out-of-stock");
 
+                const outOfStockLabel =
+                    this.bundleStructure?.labels?.outOfStockText ?? "Out of Stock";
                 const buttonText = button.querySelector(
                     "[data-button-text]",
                 ) as HTMLElement;
                 if (buttonText) {
-                    buttonText.textContent = "Out of Stock";
+                    buttonText.textContent = outOfStockLabel;
                 } else {
-                    button.textContent = "Out of Stock";
+                    button.textContent = outOfStockLabel;
                 }
             }
 
@@ -1668,6 +1673,19 @@ declare global {
 
             button.classList.add("is-loading");
             button.disabled = true;
+
+            const buttonTextEl = button.querySelector(
+                "[data-button-text]",
+            ) as HTMLElement;
+            const originalText = buttonTextEl
+                ? buttonTextEl.textContent || ""
+                : button.textContent || "";
+            const addingLabel =
+                this.bundleStructure?.labels?.addingText ?? "Adding...";
+
+            if (buttonTextEl) {
+                buttonTextEl.textContent = addingLabel;
+            }
 
             try {
                 // Check max bundles per order limit
@@ -1827,7 +1845,21 @@ declare global {
                 this.showToast(errorMessage, "error");
             } finally {
                 button.classList.remove("is-loading");
-                button.disabled = false;
+
+                const addedLabel =
+                    this.bundleStructure?.labels?.addedText ?? "Added!";
+                if (buttonTextEl) {
+                    buttonTextEl.textContent = addedLabel;
+                }
+                button.classList.add("is-added");
+
+                setTimeout(() => {
+                    if (buttonTextEl) {
+                        buttonTextEl.textContent = originalText;
+                    }
+                    button.classList.remove("is-added");
+                    button.disabled = false;
+                }, 1500);
             }
         }
 

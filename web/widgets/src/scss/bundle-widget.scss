@@ -143,12 +143,8 @@
         }
 
         &.is-loading {
-            .radius-bundle__button-text {
-                display: none;
-            }
-
             .radius-bundle__button-loading {
-                display: flex;
+                display: inline-flex;
             }
         }
 
@@ -164,22 +160,33 @@
     }
 
     &__button-text {
-        display: block;
+        display: inline;
     }
 
     &__button-loading {
         display: none;
         align-items: center;
-        gap: 8px;
+        vertical-align: middle;
+        margin-right: 6px;
     }
 
+    // Dawn theme spinner
     &__spinner {
-        width: 18px;
-        height: 18px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top-color: currentColor;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
+        width: 1.8rem;
+        display: inline-block;
+        animation: rb-spinner-rotator 1.4s linear infinite;
+    }
+
+    &__spinner-path {
+        stroke: currentColor;
+        stroke-dasharray: 280;
+        stroke-dashoffset: 0;
+        transform-origin: center;
+        animation: rb-spinner-dash 1.4s ease-in-out infinite;
+
+        @media screen and (forced-colors: active) {
+            stroke: CanvasText;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -222,9 +229,26 @@
 // Animations
 // ==========================================================================
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+@keyframes rb-spinner-rotator {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(270deg);
+    }
+}
+
+@keyframes rb-spinner-dash {
+    0% {
+        stroke-dashoffset: 280;
+    }
+    50% {
+        stroke-dashoffset: 75;
+        transform: rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: 280;
+        transform: rotate(450deg);
     }
 }
 
