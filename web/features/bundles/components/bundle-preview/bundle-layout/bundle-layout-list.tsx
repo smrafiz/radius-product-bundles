@@ -6,6 +6,11 @@ import {
     formatPrice,
     useBundleStore,
 } from "@/features/bundles";
+import {
+    CustomizerStyles,
+    getSpacing,
+    useSettingsStore,
+} from "@/features/settings";
 
 /**
  * List layout for bundle product preview
@@ -16,6 +21,12 @@ export function BundleLayoutList() {
     const { selectedItems, displaySettings, bundleData } = useBundleStore();
     const [showAll, setShowAll] = useState(false);
     const visibleItems = showAll ? selectedItems : selectedItems.slice(0, 4);
+
+    const settings = useSettingsStore.getState().getEffectiveData();
+    const styles = settings.globalStyles as CustomizerStyles;
+
+    const gap = getSpacing(styles?.spacing);
+    const showDivider = styles?.dividerStyle !== "none";
 
     if (!selectedItems.length) {
         return (
@@ -32,7 +43,14 @@ export function BundleLayoutList() {
 
     return (
         <Fragment>
-            <div className="radius-bundle__products radius-bundle__products--list">
+            <div
+                className="radius-bundle__products radius-bundle__products--list"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: `calc( ${gap} + 8px)`,
+                }}
+            >
                 {visibleItems.map((item, index) => {
                     const originalPrice =
                         parseFloat(item.price) * item.quantity;
@@ -106,7 +124,7 @@ export function BundleLayoutList() {
                             </div>
 
                             {/* Divider */}
-                            {index < visibleItems.length - 1 && (
+                            {showDivider && index < visibleItems.length - 1 && (
                                 <div className="radius-bundle__divider"
                                      style={{
                                          display: "flex",
@@ -114,9 +132,32 @@ export function BundleLayoutList() {
                                          alignItems: "center",
                                      }}
                                 >
-                                    <div className="radius-bundle__divider-plus">
-                                        <div className="divider-position">+</div>
-                                    </div>
+                                    {styles.dividerStyle === "plus" ? (
+                                        <div className="flex justify-center"
+                                             style={{
+                                                 fontSize: "20px",
+                                                 fontWeight: 600,
+                                             }}
+                                        >
+                                            <div
+                                                className="divider-position"
+                                                style={{
+                                                    backgroundColor: styles.primaryColor,
+                                                    color: "#fff",
+                                                    bottom: `calc(-1 * ${gap} / 2 - 8px)`,
+                                                    marginBottom: `calc( ${gap} / 2 - 4px)`,
+                                                }}
+                                            >+</div>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            style={{
+                                                width: "100%",
+                                                height: "1px",
+                                                backgroundColor: styles.borderColor,
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             )}
                         </Fragment>
