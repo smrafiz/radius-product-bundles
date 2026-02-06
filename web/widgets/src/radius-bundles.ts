@@ -614,13 +614,10 @@ import "./scss/radius-bundles.scss";
 
             let html: string;
 
-            if (messages.length === 1) {
-                html = messages[0];
-            } else {
-                html = `<ul class="radius-savings-banner__list">${messages
-                    .map((m) => `<li>${icon ? `<span class="radius-savings-banner__list-icon">${icon}</span>` : ''}${m}</li>`)
-                    .join("")}</ul>`;
-            }
+            html = `<ul class="radius-savings-banner__list">${messages
+                .map((m) => `<li>${icon ? `<span class="radius-savings-banner__list-icon">${icon}</span>` : ''}${m}</li>`)
+                .join("")}</ul>`;
+
 
             const hasFreeShipping = messages.some((m) =>
                 m.includes("free shipping"),
