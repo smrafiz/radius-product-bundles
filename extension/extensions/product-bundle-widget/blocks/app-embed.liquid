@@ -12,10 +12,6 @@
 {% assign tablet_bp = styles.tabletBreakpoint | default: 1024 %}
 {% assign mobile_bp = styles.mobileBreakpoint | default: 768 %}
 
-<script>
-    console.log({{ styles | json }});
-</script>
-
 {% assign text_color = styles.cartBannerTextColor | default: '#333333' %}
 {% assign bg_color = styles.cartBannerBgColor | default: '#ffffff' %}
 {% assign border_color = styles.cartBannerBorderColor | default: '#303030' %}
@@ -27,6 +23,16 @@
 {% assign body_size = styles.cartBannerBodySize | default: 'medium' %}
 {% assign icon_type = styles.cartBannerIconType | default: 'tag' %}
 {% assign icon_color = styles.cartBannerIconColor | default: '#303030' %}
+
+{% assign hide_payment_buttons = global.cart.hidePaymentButtons %}
+{% assign enable_analytics = global.privacy.enableAnalytics %}
+
+{% unless hide_payment_buttons == true or hide_payment_buttons == false %}
+    {% assign hide_payment_buttons = false %}
+{% endunless %}
+{% unless enable_analytics == true or enable_analytics == false %}
+    {% assign enable_analytics = false %}
+{% endunless %}
 
 {% case corner_style %}
     {% when 'sharp' %}
@@ -165,7 +171,7 @@
 {{ 'radius-bundles.css' | asset_url | stylesheet_tag }}
 
 {% comment %} Hide third-party payment buttons if enabled {% endcomment %}
-{% if global.cart.hidePaymentButtons %}
+{% if hide_payment_buttons %}
 <script>document.documentElement.classList.add('radius-hide-payment-buttons');</script>
 {% endif %}
 
@@ -230,7 +236,7 @@
         customerId: getCustomerId(),
         pageType: "{{ request.page_type }}",
         template: "{{ template.name }}",
-        enableAnalytics: {{ global.privacy.enableAnalytics | default: true | json }},
+        enableAnalytics: {{ enable_analytics | json }},
         maxBundlesPerOrder: {{ global.cart.maxBundlesPerOrder | default: 0 | json }},
         showSavingsBanner: {{ block.settings.show_savings_banner | default: true | json }},
         activeBundles: {{ active_bundles_raw | json }},

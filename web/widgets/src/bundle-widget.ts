@@ -177,6 +177,7 @@ declare global {
         private readonly redirectAfterCart: string = "cart";
         private readonly enableStockValidation: boolean = true;
         private readonly maxBundlesPerOrder: number = 0;
+        private readonly enableAnalytics: boolean = true;
 
         // Layout options
         private readonly dividerStyle: string = "plus";
@@ -240,6 +241,8 @@ declare global {
                 container.dataset.maxBundlesPerOrder || "0",
                 10,
             );
+            this.enableAnalytics =
+                container.dataset.enableAnalytics !== "false";
 
             console.log(
                 "[RadiusBundle] Init - redirectAfterCart:",
@@ -852,6 +855,10 @@ declare global {
          */
         private trackBundleView(): void {
             if ((window as any).Shopify?.designMode) {
+                return;
+            }
+
+            if (!this.enableAnalytics) {
                 return;
             }
 
@@ -1781,21 +1788,23 @@ declare global {
                     discountValue = newDiscount.discountValue;
                 }
 
-                // ✅ Dispatch enhanced event with tracking data
-                this.container.dispatchEvent(
-                    new CustomEvent("bundle:addedToCart", {
-                        detail: {
-                            bundleId: this.bundleId,
-                            productIds: cartItems.map((item) => item.id),
-                            totalValue: totalValue,
-                            discountValue: discountValue,
-                            bundle: this.bundle,
-                            cartItems,
-                            discountConfig: newDiscount,
-                        },
-                        bubbles: true,
-                    }),
-                );
+                // ✅ Dispatch enhanced event with tracking data (if analytics enabled)
+                if (this.enableAnalytics) {
+                    this.container.dispatchEvent(
+                        new CustomEvent("bundle:addedToCart", {
+                            detail: {
+                                bundleId: this.bundleId,
+                                productIds: cartItems.map((item) => item.id),
+                                totalValue: totalValue,
+                                discountValue: discountValue,
+                                bundle: this.bundle,
+                                cartItems,
+                                discountConfig: newDiscount,
+                            },
+                            bubbles: true,
+                        }),
+                    );
+                }
 
                 console.log("[RadiusBundle] Bundle added to cart:", {
                     bundleId: this.bundleId,

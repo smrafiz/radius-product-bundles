@@ -395,6 +395,7 @@
 				{% assign show_savings_badge = bundle.showSavingsBadge %}
 				{% assign enable_hyperlink = bundle.enableHyperLink %}
 				{% assign enable_stock_validation = global.cart.enableStockValidation %}
+				{% assign enable_analytics = global.privacy.enableAnalytics %}
 
 				{% if show_images == null %}{% assign show_images = true %}{% endif %}
 				{% if show_savings == null %}{% assign show_savings = true %}{% endif %}
@@ -408,6 +409,9 @@
 				{% endunless %}
 				{% unless enable_stock_validation == true or enable_stock_validation == false %}
 					{% assign enable_stock_validation = false %}
+				{% endunless %}
+				{% unless enable_analytics == true or enable_analytics == false %}
+					{% assign enable_analytics = false %}
 				{% endunless %}
 
 				{% comment %} ═══════════════════════════════════════════════════════════════════
@@ -758,6 +762,7 @@
 						data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}"
 						data-enable-stock-validation="{{ enable_stock_validation }}"
 						data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
+						data-enable-analytics="{{ enable_analytics }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 

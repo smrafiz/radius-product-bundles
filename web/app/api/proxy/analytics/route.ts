@@ -2,6 +2,7 @@ import { AnalyticsEventPayload } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { trackAnalyticsEventAction } from "@/features/analytics/actions";
+import { findSettingsByShopDomain } from "@/features/settings/repositories";
 
 /**
  * Analytics Proxy API
@@ -18,6 +19,15 @@ export async function POST(request: NextRequest) {
         }
 
         const { shop } = proxyResult;
+
+        // Check if analytics is enabled for this shop
+        const settings = await findSettingsByShopDomain(shop);
+        if (settings?.enableAnalytics === false) {
+            return NextResponse.json({
+                success: false,
+                message: "Analytics tracking is disabled",
+            });
+        }
 
         // Parse request body
         const body: AnalyticsEventPayload = await request.json();
