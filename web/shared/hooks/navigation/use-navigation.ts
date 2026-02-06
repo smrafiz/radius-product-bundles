@@ -36,7 +36,7 @@ export function useAppNavigation() {
         },
 
         analytics: () => withLoader(() => router.push(ROUTES.ANALYTICS))(),
-        settings: () => goTo(ROUTES.SETTINGS),
+        settings: () => goTo(ROUTES.SETTINGS)(),
 
         // Utilities
         goBack: (custom?: string | (() => void)) => {

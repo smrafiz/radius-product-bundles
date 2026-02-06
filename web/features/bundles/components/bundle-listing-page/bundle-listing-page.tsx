@@ -8,6 +8,8 @@ import {
 } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
+import { useSettingsStore } from "@/features/settings";
+import { AnalyticsDisabledBanner } from "@/features/analytics";
 
 /**
  * Bundle listing page
@@ -21,6 +23,11 @@ export function BundleListingPage() {
         onBundleStudio,
     } = useBundlesPage();
     const { analytics } = useAppNavigation();
+
+    const isAnalyticsDisabled = useSettingsStore((state) => {
+        const settings = state.getEffectiveData();
+        return settings?.enableAnalytics === false;
+    });
 
     const { actions, isLoading } = useNavigationActions({
         create: onCreateBundle,
@@ -92,6 +99,9 @@ export function BundleListingPage() {
                 <s-stack gap="base">
                     {/* Banner */}
                     <GlobalBanner />
+
+                    {/* Analytics Disabled Warning */}
+                    {isAnalyticsDisabled && <AnalyticsDisabledBanner />}
 
                     {/* Metrics overview */}
                     <s-stack gap="base">

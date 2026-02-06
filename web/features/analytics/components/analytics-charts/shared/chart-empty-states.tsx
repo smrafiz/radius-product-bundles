@@ -4,7 +4,8 @@
  * Empty State Components for Analytics Charts
  */
 
-import { ChartEmptyStateProps } from "@/features/analytics";
+import { useAppNavigation } from "@/shared";
+import { ChartEmptyStateProps } from "@/features/analytics/types";
 
 /**
  * Generic Empty State Component
@@ -194,6 +195,33 @@ export function InfoDuringTimePeriod({ message }: { message: string }) {
     return (
         <s-banner tone="info">
             <s-text>{message}</s-text>
+        </s-banner>
+    );
+}
+
+/**
+ * Analytics Disabled Banner
+ *
+ * Warning when tracking is paused in settings
+ */
+export function AnalyticsDisabledBanner() {
+    const { settings } = useAppNavigation();
+
+    return (
+        <s-banner tone="warning" heading="Analytics tracking is paused">
+            <s-paragraph>
+                Tracking is currently paused. New events are not being
+                collected, so recent bundle interactions will not appear in
+                these reports. All data displayed here reflects activity
+                recorded before tracking was disabled.
+            </s-paragraph>
+            <s-button
+                slot="secondary-actions"
+                variant="secondary"
+                onClick={() => settings()}
+            >
+                Enable tracking
+            </s-button>
         </s-banner>
     );
 }

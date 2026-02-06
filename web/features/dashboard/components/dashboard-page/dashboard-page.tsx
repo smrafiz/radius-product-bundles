@@ -13,6 +13,8 @@ import {
 } from "@/features/dashboard";
 import { useBundlesPage } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
+import { AnalyticsDisabledBanner } from "@/features/analytics";
+import { useSettingsStore } from "@/features/settings";
 import { GlobalBanner, useAppNavigation, useNavigationActions } from "@/shared";
 
 /**
@@ -21,13 +23,17 @@ import { GlobalBanner, useAppNavigation, useNavigationActions } from "@/shared";
 export function DashboardPage() {
     const { analytics } = useAppNavigation();
     const { onCreateBundle } = useBundlesPage();
+    const isAnalyticsDisabled = useSettingsStore((state) => {
+        const settings = state.getEffectiveData();
+        return settings?.enableAnalytics === false;
+    });
 
     const { actions, isLoading } = useNavigationActions({
         create: onCreateBundle,
         analytics: analytics,
     });
 
-    const bundlesLoading = isLoading("create")  ;
+    const bundlesLoading = isLoading("create");
     const analyticsLoading = isLoading("analytics");
 
     return (
@@ -82,6 +88,9 @@ export function DashboardPage() {
 
                     {/* Setup Guide */}
                     <DashboardSetUpGuide />
+
+                    {/* Analytics Disabled Warning */}
+                    {isAnalyticsDisabled && <AnalyticsDisabledBanner />}
 
                     {/* Metrics overview */}
                     <DashboardMetrics />
