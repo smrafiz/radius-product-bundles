@@ -90,6 +90,9 @@
         border: var(--rb-card-border);
         border-radius: var(--rb-border-radius);
         box-shadow: var(--rb-card-shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
     }
 
     // -------------------------------------------------------------------------
@@ -106,7 +109,7 @@
         &--large {
             width: 100%;
             height: calc(var(--rb-image-size) + 40px);
-            margin-bottom: var(--rb-spacing);
+            margin-bottom: var(--rb-gap-spacing);
         }
 
         &--box {
@@ -154,7 +157,6 @@
         &--qty {
             width: 40px;
             height: 14px;
-            margin-top: var(--rb-spacing-xs);
         }
 
         &--badge {

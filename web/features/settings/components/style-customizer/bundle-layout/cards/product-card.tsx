@@ -88,7 +88,7 @@ export function ProductCard({
                     style={{
                         height: imageSizePx,
                         borderRadius: cardRadius,
-                        marginBottom: "8px",
+                        marginBottom: gap,
                         backgroundColor: "#f3f4f6",
                         overflow: "hidden",
                     }}

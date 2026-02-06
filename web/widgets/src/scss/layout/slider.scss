@@ -51,7 +51,7 @@
         .radius-bundle__product-image {
             width: 100%;
             height: calc(var(--rb-image-size) + 40px);
-            margin-bottom: var(--rb-spacing);
+            margin-bottom: var(--rb-gap-spacing);;
 
             img {
                 width: 100%;
