@@ -16,8 +16,6 @@ import { useAnalytics } from "@/features/analytics";
  * Manages bundle listing page state and data fetching.
  */
 export function useBundlesPage() {
-    const [isButtonLoading, setIsButtonLoading] = useState(false);
-
     const { isLoading } = useBundlesData();
     const { metrics: analyticsMetrics, isMetricsFetching } = useAnalytics();
     const { bundleData } = useAppNavigation();
@@ -44,10 +42,6 @@ export function useBundlesPage() {
     }, [analyticsMetrics]);
 
     useEffect(() => {
-        return () => setIsButtonLoading(false);
-    }, []);
-
-    useEffect(() => {
         if (
             toast.active &&
             typeof shopify !== "undefined" &&
@@ -69,7 +63,5 @@ export function useBundlesPage() {
         onCreateBundle: bundleData.create(),
         onBundleStudio: bundleData.studio(),
         onDismissToast: hideToast,
-        isButtonLoading,
-        setIsButtonLoading,
     };
 }

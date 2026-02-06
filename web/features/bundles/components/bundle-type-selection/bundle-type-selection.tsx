@@ -1,17 +1,23 @@
 "use client";
-import { MediaCard } from "@/shared";
+
 import {
     BUNDLE_TYPES,
     BundleSelectionHelp,
     BundleTypeCard,
 } from "@/features/bundles";
-import { useAppNavigation } from "@/shared";
+import { TitleBar } from "@shopify/app-bridge-react";
+import { MediaCard, useAppNavigation } from "@/shared";
 
 export function BundleTypeSelection() {
-    const { goBack } = useAppNavigation();
+    const { goBack, bundleData } = useAppNavigation();
 
     return (
-        <s-page heading="Select Bundle Type">
+        <s-page>
+            <TitleBar>
+                <button variant="breadcrumb" onClick={bundleData.list()}>
+                    Bundles
+                </button>
+            </TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"

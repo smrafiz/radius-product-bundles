@@ -35,7 +35,7 @@ export function useAppNavigation() {
             studio: () => goTo(ROUTES.BUNDLE_STUDIO),
         },
 
-        analytics: () => goTo(ROUTES.ANALYTICS),
+        analytics: () => withLoader(() => router.push(ROUTES.ANALYTICS))(),
         settings: () => goTo(ROUTES.SETTINGS),
 
         // Utilities

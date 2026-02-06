@@ -1,7 +1,8 @@
 "use client";
 
-import { PricingCard, PricingFaq, PricingStore } from "@/features/pricing";
 import { useAppNavigation } from "@/shared";
+import { TitleBar } from "@shopify/app-bridge-react";
+import { PricingCard, PricingFaq, PricingStore } from "@/features/pricing";
 
 /**
  * Pricing Page Component
@@ -11,6 +12,7 @@ export function PricingPage() {
 
     return (
         <s-page>
+            <TitleBar></TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"

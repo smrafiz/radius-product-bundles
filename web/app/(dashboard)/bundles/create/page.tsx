@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { BundleTypeSelection } from "@/features/bundles";
 
 export const metadata: Metadata = {
-    title: "Select Bundle Type | Create Bundle",
+    title: "Bundle Creation - Select Bundle Type",
     description:
         "Choose the perfect bundle type for your products. Create fixed bundles, volume discounts, mix & match, BOGO offers, and more to increase sales and average order value.",
 };

@@ -6,7 +6,7 @@ import { EditBundlePage } from "@/features/bundles";
  */
 export async function generateMetadata(): Promise<Metadata> {
     return {
-        title: "Edit Bundle | Bundle Builder",
+        title: "Bundle Builder - Edit Bundle",
         description: "Edit your existing product bundle.",
     };
 }

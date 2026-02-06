@@ -11,12 +11,14 @@ import {
     useEditBundleTransform,
     BUNDLE_STEP_FIELD_MAP,
 } from "@/features/bundles";
-import { DashboardSkeleton, GlobalForm } from "@/shared";
+import { DashboardSkeleton, GlobalForm, useAppNavigation } from "@/shared";
+import { TitleBar } from "@shopify/app-bridge-react";
 
 export function EditBundlePage({ params }: { params: { id: string } }) {
     const { id: bundleId } = params;
     const { bundleData, isLoading, isError, errorMessage } =
         useEditBundle(bundleId);
+    const { bundleData: navigationData } = useAppNavigation();
 
     const { handleSubmit, resetDirty } = useBundleSubmit("edit", bundleId);
     const { setStep, setValidationAttempted } = useBundleStore();
@@ -34,7 +36,19 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
     };
 
     if (isLoading) {
-        return <DashboardSkeleton />;
+        return (
+            <>
+                <TitleBar>
+                    <button
+                        variant="breadcrumb"
+                        onClick={navigationData.list()}
+                    >
+                        Bundles
+                    </button>
+                </TitleBar>
+                <DashboardSkeleton />
+            </>
+        );
     }
 
     if (isError || !bundleData) {

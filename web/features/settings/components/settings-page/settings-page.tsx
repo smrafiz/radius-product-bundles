@@ -9,6 +9,7 @@ import {
 } from "@/features/settings";
 import { GlobalForm } from "@/shared";
 import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
+import { TitleBar } from "@shopify/app-bridge-react";
 
 /**
  * Settings page content component.
@@ -22,7 +23,8 @@ function SettingsPageContent() {
             onSubmit={handleSubmit}
             resetDirty={resetDirty}
         >
-            <s-page heading="Settings">
+            <s-page>
+                <TitleBar></TitleBar>
                 <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
                     <SettingsTab />
                 </s-stack>

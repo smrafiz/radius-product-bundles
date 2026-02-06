@@ -25,7 +25,7 @@ export async function generateMetadata({
     }
 
     return {
-        title: `Create ${bundleConfig.label} | Bundle Builder`,
+        title: `Bundle Builder - Create ${bundleConfig.label}`,
         description: `Create a ${bundleConfig.label.toLowerCase()} to boost your sales. ${bundleConfig.description} Configure products, set pricing, and launch in minutes.`,
     };
 }

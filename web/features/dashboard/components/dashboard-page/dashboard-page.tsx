@@ -2,39 +2,74 @@
 
 import {
     AIInsights,
-    DashboardVideo,
-    DashboardBundles,
-    DashboardMetrics,
-    DashboardMediaCard,
-    DashboardSetUpGuide,
-    DashboardQuickActions,
-    DashboardCalloutCards,
     DashboardBuilderAddons,
+    DashboardBundles,
+    DashboardCalloutCards,
+    DashboardMediaCard,
+    DashboardMetrics,
+    DashboardQuickActions,
+    DashboardSetUpGuide,
+    DashboardVideo,
 } from "@/features/dashboard";
-import { GlobalBanner, useAppNavigation } from "@/shared";
+import { useBundlesPage } from "@/features/bundles";
+import { TitleBar } from "@shopify/app-bridge-react";
+import { GlobalBanner, useAppNavigation, useNavigationActions } from "@/shared";
 
 /**
  * Main Dashboard Page Component
  */
 export function DashboardPage() {
-    const { bundleData, analytics } = useAppNavigation();
+    const { analytics } = useAppNavigation();
+    const { onCreateBundle } = useBundlesPage();
+
+    const { actions, isLoading } = useNavigationActions({
+        create: onCreateBundle,
+        analytics: analytics,
+    });
+
+    const bundlesLoading = isLoading("create")  ;
+    const analyticsLoading = isLoading("analytics");
 
     return (
-        <s-page heading="Product Bundle">
-            <s-button
-                slot="secondary-actions"
-                variant="secondary"
-                onClick={analytics()}
-            >
-                View Analytics
-            </s-button>
-            <s-button
-                slot="primary-action"
-                variant="primary"
-                onClick={bundleData.create()}
-            >
-                Create Bundle
-            </s-button>
+        <s-page>
+            <TitleBar>
+                {bundlesLoading || analyticsLoading ? (
+                    <>
+                        <s-button
+                            slot="primary-action"
+                            variant="primary"
+                            disabled={analyticsLoading}
+                            loading={bundlesLoading}
+                        >
+                            Create Bundle
+                        </s-button>
+                        <s-button
+                            slot="secondary-actions"
+                            variant="secondary"
+                            disabled={bundlesLoading}
+                            loading={analyticsLoading}
+                        >
+                            View Analytics
+                        </s-button>
+                    </>
+                ) : (
+                    <>
+                        <button
+                            variant="primary"
+                            onClick={actions.create}
+                            disabled={bundlesLoading}
+                        >
+                            Create Bundle
+                        </button>
+                        <button
+                            onClick={actions.analytics}
+                            disabled={analyticsLoading}
+                        >
+                            View Analytics
+                        </button>
+                    </>
+                )}
+            </TitleBar>
 
             <s-stack
                 gap="large"
@@ -58,7 +93,7 @@ export function DashboardPage() {
                     <DashboardQuickActions />
 
                     {/* Builder Addons */}
-                    <DashboardBuilderAddons/>
+                    <DashboardBuilderAddons />
 
                     {/* Guidance */}
                     <DashboardMediaCard />

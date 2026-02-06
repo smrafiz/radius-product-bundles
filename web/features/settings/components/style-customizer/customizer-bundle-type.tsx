@@ -33,7 +33,7 @@ export function CustomizerBundleType() {
     const activeBundleType = (activeId || "FIXED_BUNDLE") as PreviewTemplateId;
 
     return (
-        <s-page heading="Style Customizer" inlineSize="large">
+        <s-page heading="Customizer - Manage Bundle Styles" inlineSize="large">
             <s-button
                 slot="primary-action"
                 type="submit"

@@ -1,8 +1,10 @@
 import { AnalyticsTabs } from "@/features/analytics";
+import { TitleBar } from "@shopify/app-bridge-react";
 
 export function AnalyticsPage() {
     return (
-        <s-page heading="Analytics">
+        <s-page>
+            <TitleBar></TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"

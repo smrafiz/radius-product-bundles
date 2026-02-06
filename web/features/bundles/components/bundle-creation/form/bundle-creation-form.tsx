@@ -7,7 +7,8 @@ import {
     StepContent,
     useBundleFormManager,
 } from "@/features/bundles";
-import { GlobalBanner } from "@/shared";
+import { GlobalBanner, useAppNavigation } from "@/shared";
+import { TitleBar } from "@shopify/app-bridge-react";
 
 /**
  * Bundle Creation Form
@@ -16,6 +17,7 @@ export function BundleCreationForm({
     bundleType,
     bundleName,
 }: BundleCreationFormProps) {
+    const { bundleData } = useAppNavigation();
     const { pageProps, isEditMode } = useBundleFormManager({
         bundleType,
         bundleName,
@@ -23,6 +25,11 @@ export function BundleCreationForm({
 
     return (
         <s-page>
+            <TitleBar>
+                <button variant="breadcrumb" onClick={bundleData.list()}>
+                    Bundles
+                </button>
+            </TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"
