@@ -16,8 +16,8 @@ export const LABELS_TAB: SettingsTabConfig = {
         // ─────────────────────────────────────────────────────────────────
         {
             id: "widget-text",
-            title: "Widget Text",
-            tooltip: "Customize the main text displayed in bundle widgets.",
+            title: "Widget Texts",
+            tooltip: "Customize the main texts displayed in bundle widgets.",
             columns: 1,
             fields: [
                 {
@@ -241,7 +241,7 @@ export const LABELS_TAB: SettingsTabConfig = {
         // ─────────────────────────────────────────────────────────────────
         {
             id: "cart-banner",
-            title: "Cart Banner",
+            title: "Cart Page Savings Banner",
             tooltip:
                 "Text displayed in the cart page savings banner.",
             columns: 2,
