@@ -170,6 +170,12 @@
 <!-- Load CSS -->
 {{ 'radius-bundles.css' | asset_url | stylesheet_tag }}
 
+{% comment %} Inject custom CSS from app settings {% endcomment %}
+{% assign custom_css = global.custom.css | default: '' %}
+{% if custom_css != blank %}
+	<style>{{ custom_css }}</style>
+{% endif %}
+
 {% comment %} Hide third-party payment buttons if enabled {% endcomment %}
 {% if hide_payment_buttons %}
 <script>document.documentElement.classList.add('radius-hide-payment-buttons');</script>

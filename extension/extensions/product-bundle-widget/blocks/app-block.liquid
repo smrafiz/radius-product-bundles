@@ -28,8 +28,13 @@
 	{% assign tablet_bp = g_styles.tabletBreakpoint | default: 1024 %}
 	{% assign mobile_bp = g_styles.mobileBreakpoint | default: 768 %}
 
+	{% comment %} Resolve custom CSS settings {% endcomment %}
+	{% assign g_custom = global.custom %}
+	{% assign custom_css_class = g_custom.cssClass | default: '' %}
+	{% assign custom_css = g_custom.css | default: '' %}
+
 	<div
-			class="radius-bundle-widget"
+			class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}"
 			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
 			data-shop="{{ shop.permanent_domain }}"
 	>
@@ -888,6 +893,10 @@
 			{% endif %}
 		{% endfor %}
 	</div>
+
+	{% if custom_css != blank %}
+		<style>{{ custom_css }}</style>
+	{% endif %}
 
 	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
 	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
