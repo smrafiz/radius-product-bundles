@@ -9,33 +9,6 @@ export const ADVANCED_TAB: SettingsTabConfig = {
     icon: "dns-settings",
     sections: [
         // ─────────────────────────────────────────────────────────────────
-        // CURRENCY SECTION
-        // ─────────────────────────────────────────────────────────────────
-        {
-            id: "currency",
-            title: "Currency",
-            tooltip: "Advanced currency formatting options.",
-            fields: [
-                {
-                    type: "text",
-                    name: "currencyFormat",
-                    label: "Currency format",
-                    placeholder: "",
-                    details:
-                        "Custom currency format. Use {{amount}}, {{amount_no_decimals}}, or {{currency_symbol}}. Leave blank to use store default.",
-                    defaultValue: "",
-                    validation: {
-                        maxLength: {
-                            value: 50,
-                            message:
-                                "Currency format cannot exceed 50 characters",
-                        },
-                    },
-                },
-            ],
-        },
-
-        // ─────────────────────────────────────────────────────────────────
         // CUSTOM CSS SECTION
         // ─────────────────────────────────────────────────────────────────
         {

@@ -125,7 +125,6 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         globalStyles: settings.globalStyles ?? undefined,
 
         // Advanced
-        currencyFormat: settings.currencyFormat,
         customCssClass: settings.customCssClass,
         customCss: settings.customCss,
 
@@ -161,7 +160,6 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         globalStyles: data.globalStyles ?? null,
 
         // Advanced
-        currencyFormat: data.currencyFormat ?? "",
         customCssClass: data.customCssClass ?? "",
         customCss: data.customCss ?? "",
 

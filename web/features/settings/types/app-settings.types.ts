@@ -157,7 +157,6 @@ export interface AppSettings {
     globalStyles: AppSettingsGlobalStyles | null;
 
     // Advanced
-    currencyFormat: string;
     customCssClass: string;
     customCss: string;
 

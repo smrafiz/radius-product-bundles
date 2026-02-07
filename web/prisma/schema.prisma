@@ -513,7 +513,6 @@ model AppSettings {
     globalStyles Json?
 
     // Advanced
-    currencyFormat String @default("")
     customCssClass String @default("")
     customCss      String @default("")
 

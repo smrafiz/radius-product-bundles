@@ -75,7 +75,6 @@
     "customizeCardStyle": false,
     "pricingSummaryStyle": "card"
   },
-  "currencyFormat": "",
   "customCssClass": "",
   "customCss": ""
 }
