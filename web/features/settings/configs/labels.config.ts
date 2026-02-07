@@ -235,5 +235,82 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
             ],
         },
+
+        // ─────────────────────────────────────────────────────────────────
+        // CART BANNER SECTION
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: "cart-banner",
+            title: "Cart Banner",
+            tooltip:
+                "Text displayed in the cart page savings banner.",
+            columns: 2,
+            fields: [
+                {
+                    type: "text",
+                    name: "bannerSavingText",
+                    label: "Savings message",
+                    placeholder: "You're saving {discount} with {name}",
+                    details:
+                        "Use {discount} for savings value and {name} for bundle name.",
+                    defaultValue: "You're saving {discount} with {name}",
+                    validation: {
+                        maxLength: {
+                            value: 100,
+                            message:
+                                "Cannot exceed 100 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bannerCustomPriceText",
+                    label: "Custom price message",
+                    placeholder: "Special price: {price} for {name}",
+                    details:
+                        "Use {price} for bundle price and {name} for bundle name.",
+                    defaultValue: "Special price: {price} for {name}",
+                    validation: {
+                        maxLength: {
+                            value: 100,
+                            message:
+                                "Cannot exceed 100 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bannerFreeShippingQualifyText",
+                    label: "Free shipping qualify message",
+                    placeholder: "{name} qualifies for free shipping!",
+                    details:
+                        "Use {name} for bundle name. Shown for bundles with free shipping only.",
+                    defaultValue: "{name} qualifies for free shipping!",
+                    validation: {
+                        maxLength: {
+                            value: 100,
+                            message:
+                                "Cannot exceed 100 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bannerFreeShippingText",
+                    label: "Free shipping included message",
+                    placeholder: "Free shipping included!",
+                    details:
+                        "Additional message when bundle includes free shipping.",
+                    defaultValue: "Free shipping included!",
+                    validation: {
+                        maxLength: {
+                            value: 100,
+                            message:
+                                "Cannot exceed 100 characters",
+                        },
+                    },
+                },
+            ],
+        },
     ],
 };

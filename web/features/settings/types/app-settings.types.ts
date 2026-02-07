@@ -27,6 +27,12 @@ export interface AppSettingsLabels {
     // Shipping Labels
     freeShippingLabel: string;
     freeShippingMethodTitle: string;
+
+    // Cart Banner
+    bannerSavingText: string;
+    bannerCustomPriceText: string;
+    bannerFreeShippingQualifyText: string;
+    bannerFreeShippingText: string;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

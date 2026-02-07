@@ -28,6 +28,12 @@ import "./scss/radius-bundles.scss";
         showSavingsBanner: boolean;
         activeBundles: Record<string, BundleMetafieldData> | null;
         bannerIcon?: string;
+        bannerLabels?: {
+            savingText: string;
+            customPriceText: string;
+            freeShippingQualifyText: string;
+            freeShippingText: string;
+        };
     }
 
     /**
@@ -582,19 +588,28 @@ import "./scss/radius-bundles.scss";
             const hl = (text: string) =>
                 `<strong style="color:${highlightColor}">${text}</strong>`;
 
+            const labels = this.config.bannerLabels;
+
             switch (bundle.discountType) {
-                case "PERCENTAGE":
-                    return `You're saving ${hl(bundle.discountValue + "%")} with ${escapedName}`;
+                case "PERCENTAGE": {
+                    const template = labels?.savingText || "You're saving {discount} with {name}";
+                    return template.replace("{discount}", hl(bundle.discountValue + "%")).replace("{name}", escapedName);
+                }
 
-                case "FIXED_AMOUNT":
-                    return `You're saving ${hl("$" + bundle.discountValue.toFixed(2))} with ${escapedName}`;
+                case "FIXED_AMOUNT": {
+                    const template = labels?.savingText || "You're saving {discount} with {name}";
+                    return template.replace("{discount}", hl("$" + bundle.discountValue.toFixed(2))).replace("{name}", escapedName);
+                }
 
-                case "CUSTOM_PRICE":
-                    return `Special price: ${hl("$" + bundle.discountValue.toFixed(2))} for ${escapedName}`;
+                case "CUSTOM_PRICE": {
+                    const template = labels?.customPriceText || "Special price: {price} for {name}";
+                    return template.replace("{price}", hl("$" + bundle.discountValue.toFixed(2))).replace("{name}", escapedName);
+                }
 
                 case "NO_DISCOUNT":
                     if (bundle.freeShipping) {
-                        return `${escapedName} qualifies for ${hl("free shipping")}!`;
+                        const template = labels?.freeShippingQualifyText || "{name} qualifies for free shipping!";
+                        return template.replace("{name}", escapedName);
                     }
                     return null;
 
@@ -619,15 +634,13 @@ import "./scss/radius-bundles.scss";
                 .join("")}</ul>`;
 
 
+            const freeShippingText = this.config.bannerLabels?.freeShippingText || "Free shipping included!";
             const hasFreeShipping = messages.some((m) =>
-                m.includes("free shipping"),
+                m.includes("free shipping") || m.includes("Free shipping"),
             );
-            if (
-                hasFreeShipping &&
-                !messages.some((m) => m.includes("Free shipping"))
-            ) {
+            if (hasFreeShipping) {
                 html +=
-                    '<div class="radius-savings-banner--free-shipping">🚚 Free shipping included!</div>';
+                    `<div class="radius-savings-banner--free-shipping">${freeShippingText}</div>`;
             }
 
             contentEl.innerHTML = html;

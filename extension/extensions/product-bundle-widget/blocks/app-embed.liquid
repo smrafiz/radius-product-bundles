@@ -38,6 +38,16 @@
     {% assign show_savings_banner = false %}
 {% endunless %}
 
+{% assign banner_saving_text = global.labels.bannerSavingText %}
+{% assign banner_custom_price_text = global.labels.bannerCustomPriceText %}
+{% assign banner_free_shipping_qualify_text = global.labels.bannerFreeShippingQualifyText %}
+{% assign banner_free_shipping_text = global.labels.bannerFreeShippingText %}
+
+{% if banner_saving_text == blank %}{% assign banner_saving_text = "You're saving {discount} with {name}" %}{% endif %}
+{% if banner_custom_price_text == blank %}{% assign banner_custom_price_text = "Special price: {price} for {name}" %}{% endif %}
+{% if banner_free_shipping_qualify_text == blank %}{% assign banner_free_shipping_qualify_text = "{name} qualifies for free shipping!" %}{% endif %}
+{% if banner_free_shipping_text == blank %}{% assign banner_free_shipping_text = "Free shipping included!" %}{% endif %}
+
 {% case corner_style %}
     {% when 'sharp' %}
         {% assign border_radius = '0px' %}
@@ -250,7 +260,13 @@
         maxBundlesPerOrder: {{ global.cart.maxBundlesPerOrder | default: 0 | json }},
         showSavingsBanner: {{ show_savings_banner | json }},
         activeBundles: {{ active_bundles_raw | json }},
-        bannerIcon: `{{ icon_svg | strip_newlines | replace: '"', '\\"' }}`
+        bannerIcon: `{{ icon_svg | strip_newlines | replace: '"', '\\"' }}`,
+        bannerLabels: {
+            savingText: {{ banner_saving_text | json }},
+            customPriceText: {{ banner_custom_price_text | json }},
+            freeShippingQualifyText: {{ banner_free_shipping_qualify_text | json }},
+            freeShippingText: {{ banner_free_shipping_text | json }}
+        }
     };
 
     console.log("[RadiusBundles] Customer ID:", window.RadiusBundles.config.customerId);

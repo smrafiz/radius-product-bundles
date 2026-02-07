@@ -120,6 +120,12 @@ export const DEFAULT_LABELS = {
     // Shipping Labels
     freeShippingLabel: "Free Shipping",
     freeShippingMethodTitle: "Free Shipping",
+
+    // Cart Banner
+    bannerSavingText: "You're saving {discount} with {name}",
+    bannerCustomPriceText: "Special price: {price} for {name}",
+    bannerFreeShippingQualifyText: "{name} qualifies for free shipping!",
+    bannerFreeShippingText: "Free shipping included!",
 } as const;
 
 /**
