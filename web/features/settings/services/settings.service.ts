@@ -114,6 +114,7 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         hidePaymentButtons: settings.hidePaymentButtons,
         enableStockValidation: settings.enableStockValidation,
         maxBundlesPerOrder: settings.maxBundlesPerOrder,
+        showSavingsBanner: settings.showSavingsBanner,
 
         // General - Privacy
         enableAnalytics: settings.enableAnalytics,
@@ -149,6 +150,7 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         hidePaymentButtons: data.hidePaymentButtons,
         enableStockValidation: data.enableStockValidation,
         maxBundlesPerOrder: data.maxBundlesPerOrder,
+        showSavingsBanner: data.showSavingsBanner,
 
         // General - Privacy
         enableAnalytics: data.enableAnalytics,

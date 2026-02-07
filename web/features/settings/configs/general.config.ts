@@ -147,6 +147,14 @@ export const GENERAL_TAB: SettingsTabConfig = {
                         },
                     },
                 },
+                {
+                    type: "switch",
+                    name: "showSavingsBanner",
+                    label: "Show savings banner in cart",
+                    details:
+                        "Display a banner on the cart page showing how much customers save with their bundles.",
+                    defaultValue: true,
+                },
             ],
         },
 

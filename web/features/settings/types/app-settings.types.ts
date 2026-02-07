@@ -146,6 +146,7 @@ export interface AppSettings {
     hidePaymentButtons: boolean;
     enableStockValidation: boolean;
     maxBundlesPerOrder: number;
+    showSavingsBanner: boolean;
 
     // General - Privacy
     enableAnalytics: boolean;

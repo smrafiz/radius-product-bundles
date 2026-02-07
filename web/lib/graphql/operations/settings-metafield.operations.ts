@@ -23,6 +23,7 @@ interface MetafieldGlobalSettings {
         hidePaymentButtons: boolean;
         enableStockValidation: boolean;
         maxBundlesPerOrder: number;
+        showSavingsBanner: boolean;
     };
 
     // Privacy settings
@@ -175,6 +176,7 @@ export function buildGlobalSettingsMetafieldValue(
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
             enableStockValidation: appSettings?.enableStockValidation ?? true,
             maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
+            showSavingsBanner: appSettings?.showSavingsBanner ?? true,
         },
 
         // Privacy settings

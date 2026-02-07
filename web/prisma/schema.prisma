@@ -502,6 +502,7 @@ model AppSettings {
     hidePaymentButtons    Boolean @default(false)
     enableStockValidation Boolean @default(true)
     maxBundlesPerOrder    Int     @default(0)
+    showSavingsBanner     Boolean @default(true)
 
     // Privacy Section
     enableAnalytics Boolean @default(true)

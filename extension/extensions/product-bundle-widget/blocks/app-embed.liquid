@@ -26,12 +26,16 @@
 
 {% assign hide_payment_buttons = global.cart.hidePaymentButtons %}
 {% assign enable_analytics = global.privacy.enableAnalytics %}
+{% assign show_savings_banner = global.cart.showSavingsBanner %}
 
 {% unless hide_payment_buttons == true or hide_payment_buttons == false %}
     {% assign hide_payment_buttons = false %}
 {% endunless %}
 {% unless enable_analytics == true or enable_analytics == false %}
     {% assign enable_analytics = false %}
+{% endunless %}
+{% unless show_savings_banner == true or show_savings_banner == false %}
+    {% assign show_savings_banner = false %}
 {% endunless %}
 
 {% case corner_style %}
@@ -244,7 +248,7 @@
         template: "{{ template.name }}",
         enableAnalytics: {{ enable_analytics | json }},
         maxBundlesPerOrder: {{ global.cart.maxBundlesPerOrder | default: 0 | json }},
-        showSavingsBanner: {{ block.settings.show_savings_banner | default: true | json }},
+        showSavingsBanner: {{ show_savings_banner | json }},
         activeBundles: {{ active_bundles_raw | json }},
         bannerIcon: `{{ icon_svg | strip_newlines | replace: '"', '\\"' }}`
     };
