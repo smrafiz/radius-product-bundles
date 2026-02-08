@@ -222,14 +222,15 @@ export const LABELS_TAB: SettingsTabConfig = {
                     type: "text",
                     name: "freeShippingMethodTitle",
                     label: "Free shipping method title",
-                    placeholder: "Free Shipping",
-                    details: "Shipping method name shown at checkout.",
-                    defaultValue: "Free Shipping",
+                    placeholder: "Free shipping with {name}",
+                    details:
+                        "Shipping discount message shown at checkout. Use {name} for bundle name.",
+                    defaultValue: "Free shipping with {name}",
                     validation: {
                         maxLength: {
-                            value: 50,
+                            value: 80,
                             message:
-                                "Shipping method title cannot exceed 50 characters",
+                                "Shipping method title cannot exceed 80 characters",
                         },
                     },
                 },

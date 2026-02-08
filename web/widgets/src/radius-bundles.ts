@@ -633,16 +633,6 @@ import "./scss/radius-bundles.scss";
                 .map((m) => `<li>${icon ? `<span class="radius-savings-banner__list-icon">${icon}</span>` : ''}${m}</li>`)
                 .join("")}</ul>`;
 
-
-            const freeShippingText = this.config.bannerLabels?.freeShippingText || "Free shipping included!";
-            const hasFreeShipping = messages.some((m) =>
-                m.includes("free shipping") || m.includes("Free shipping"),
-            );
-            if (hasFreeShipping) {
-                html +=
-                    `<div class="radius-savings-banner--free-shipping">${freeShippingText}</div>`;
-            }
-
             contentEl.innerHTML = html;
             container.style.display = "block";
 

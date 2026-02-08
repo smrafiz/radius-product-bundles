@@ -29,6 +29,7 @@ struct CartBundleConfig {
 struct MetafieldBundleConfig {
     status: Option<String>,
     free_shipping: Option<bool>,
+    free_shipping_method_title: Option<String>,
 }
 
 #[shopify_function]
@@ -117,6 +118,13 @@ fn cart_delivery_options_discounts_generate_run(
         .clone()
         .unwrap_or_else(|| "Bundle".to_string());
 
+    let message_template = active_bundles
+        .get(&bundle_with_free_shipping.bundle_id)
+        .and_then(|s| s.free_shipping_method_title.clone())
+        .unwrap_or_else(|| "Free shipping with {name}".to_string());
+
+    let message = message_template.replace("{name}", &bundle_name);
+
     Ok(CartDeliveryOptionsDiscountsGenerateRunResult {
         operations: vec![DeliveryOperation::DeliveryDiscountsAdd(
             DeliveryDiscountsAddOperation {
@@ -130,7 +138,7 @@ fn cart_delivery_options_discounts_generate_run(
                     value: DeliveryDiscountCandidateValue::Percentage(Percentage {
                         value: Decimal(100.0),
                     }),
-                    message: Some(format!("Free shipping with {}", bundle_name)),
+                    message: Some(message),
                     associated_discount_code: None,
                 }],
             },

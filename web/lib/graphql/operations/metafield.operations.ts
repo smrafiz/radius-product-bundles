@@ -385,6 +385,7 @@ async function getShopId(sessionToken: string): Promise<string | null> {
  */
 function buildActiveBundlesMetafieldValue(
     bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
+    freeShippingMethodTitle?: string,
 ): string {
     const bundleMap: Record<string, any> = {};
 
@@ -403,6 +404,10 @@ function buildActiveBundlesMetafieldValue(
             maxDiscountAmount: bundle.maxDiscountAmount || 0,
             discountApplication: bundle.discountApplication || "bundle",
             discountedProductIds: bundle.discountedProductIds || [],
+
+            // Labels (for Rust function)
+            freeShippingMethodTitle:
+                freeShippingMethodTitle || "Free shipping with {name}",
 
             // Bundle info (for Liquid display)
             title: bundle.settings?.title ?? bundle.name,
@@ -456,11 +461,21 @@ export async function syncActiveBundlesToMetafield(
             };
         }
 
-        // Fetch all active bundles from database
-        const activeBundles = await findActiveBundlesByShop(shop);
+        // Fetch all active bundles and app settings from database
+        const [activeBundles, appSettings] = await Promise.all([
+            findActiveBundlesByShop(shop),
+            findAppSettingsByShop(shop),
+        ]);
+
+        // Extract freeShippingMethodTitle from labels JSON
+        const labels = appSettings?.labels as Record<string, string> | null;
+        const freeShippingMethodTitle = labels?.freeShippingMethodTitle;
 
         // Build metafield value
-        const metafieldValue = buildActiveBundlesMetafieldValue(activeBundles);
+        const metafieldValue = buildActiveBundlesMetafieldValue(
+            activeBundles,
+            freeShippingMethodTitle,
+        );
 
         // Set BOTH metafields in a single mutation
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({
@@ -553,10 +568,16 @@ export async function syncAllSettingsToMetafields(
             findActiveBundlesByShop(shop),
         ]);
 
+        // Extract freeShippingMethodTitle from labels JSON
+        const labels = globalSettings?.labels as Record<string, string> | null;
+        const freeShippingMethodTitle = labels?.freeShippingMethodTitle;
+
         const globalSettingsValue =
             buildGlobalSettingsMetafieldValue(globalSettings);
-        const activeBundlesValue =
-            buildActiveBundlesMetafieldValue(activeBundles);
+        const activeBundlesValue = buildActiveBundlesMetafieldValue(
+            activeBundles,
+            freeShippingMethodTitle,
+        );
 
         // Update shop and discount metafields
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({

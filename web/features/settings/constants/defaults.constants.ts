@@ -119,7 +119,7 @@ export const DEFAULT_LABELS = {
 
     // Shipping Labels
     freeShippingLabel: "Free Shipping",
-    freeShippingMethodTitle: "Free Shipping",
+    freeShippingMethodTitle: "Free shipping with {name}",
 
     // Cart Banner
     bannerSavingText: "You're saving {discount} with {name}",
