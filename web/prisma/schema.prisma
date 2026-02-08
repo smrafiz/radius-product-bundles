@@ -519,7 +519,8 @@ model AppSettings {
     customCss      String @default("")
 
     // Performance
-    cacheTtl Int @default(300)
+    cacheTtl       Int     @default(300)
+    lazyLoadImages Boolean @default(true)
 
     // Metadata
     createdAt DateTime @default(now())

@@ -176,6 +176,7 @@ declare global {
         private readonly showQuantity: boolean = true;
         private readonly showFreeShipping: boolean = true;
         private readonly enableHyperLink: boolean = false;
+        private readonly lazyLoadImages: boolean = true;
 
         // Cart behavior
         private readonly redirectAfterCart: string = "cart";
@@ -235,6 +236,7 @@ declare global {
             this.showFreeShipping =
                 container.dataset.showFreeShipping !== "false";
             this.enableHyperLink = container.dataset.enableHyperlink === "true";
+            this.lazyLoadImages = container.dataset.lazyLoadImages !== "false";
 
             // Parse cart behavior
             this.redirectAfterCart =
@@ -1252,9 +1254,10 @@ declare global {
             product: BundleProduct,
             layout: string,
         ): string {
+            const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : '';
             const imageHtml =
                 this.showImages && product.featuredImage
-                    ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" loading="lazy" />`
+                    ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}"${imgLoading} />`
                     : this.showImages
                         ? `<div class="radius-bundle__product-placeholder">📦</div>`
                         : "";
@@ -2075,7 +2078,7 @@ declare global {
                             <div class="cart-notification-product__image global-media-settings">
                                 ${
                                     product.featuredImage
-                                        ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" width="70" height="70" loading="lazy">`
+                                        ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" width="70" height="70"${this.lazyLoadImages ? ' loading="lazy"' : ''}>`
                                         : ""
                                 }
                             </div>

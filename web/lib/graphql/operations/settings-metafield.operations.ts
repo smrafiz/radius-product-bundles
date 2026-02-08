@@ -25,6 +25,7 @@ interface MetafieldGlobalSettings {
         maxBundlesPerOrder: number;
         showSavingsBanner: boolean;
         allowDiscountStacking: boolean;
+        lazyLoadImages: boolean;
     };
 
     // Privacy settings
@@ -179,6 +180,7 @@ export function buildGlobalSettingsMetafieldValue(
             maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
             showSavingsBanner: appSettings?.showSavingsBanner ?? true,
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
+            lazyLoadImages: appSettings?.lazyLoadImages ?? true,
         },
 
         // Privacy settings

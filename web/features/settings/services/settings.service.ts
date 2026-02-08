@@ -120,6 +120,9 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         // General - Privacy
         enableAnalytics: settings.enableAnalytics,
 
+        // General - Performance
+        lazyLoadImages: settings.lazyLoadImages,
+
         // Labels (JSON field)
         labels: settings.labels ?? undefined,
 
@@ -156,6 +159,9 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
 
         // General - Privacy
         enableAnalytics: data.enableAnalytics,
+
+        // General - Performance
+        lazyLoadImages: data.lazyLoadImages,
 
         // Labels (JSON field)
         labels: data.labels ?? null,

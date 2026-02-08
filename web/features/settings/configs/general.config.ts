@@ -209,6 +209,14 @@ export const GENERAL_TAB: SettingsTabConfig = {
                         { value: "3600", label: "1 hour" },
                     ],
                 },
+                {
+                    type: "switch",
+                    name: "lazyLoadImages",
+                    label: "Lazy load product images",
+                    details:
+                        "Defer loading of product images until they are visible on screen. Improves initial page load speed.",
+                    defaultValue: true,
+                },
             ],
         },
     ],

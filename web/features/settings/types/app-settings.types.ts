@@ -161,6 +161,9 @@ export interface AppSettings {
     // General - Privacy
     enableAnalytics: boolean;
 
+    // General - Performance
+    lazyLoadImages: boolean;
+
     // Labels (JSON)
     labels: AppSettingsLabels | null;
 
