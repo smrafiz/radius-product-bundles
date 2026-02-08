@@ -28,6 +28,9 @@ export interface AppSettingsLabels {
     freeShippingLabel: string;
     freeShippingMethodTitle: string;
 
+    // Cart Limits
+    maxBundlesReachedText: string;
+
     // Cart Banner
     bannerSavingText: string;
     bannerCustomPriceText: string;

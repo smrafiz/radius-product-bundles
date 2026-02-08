@@ -121,6 +121,9 @@ export const DEFAULT_LABELS = {
     freeShippingLabel: "Free Shipping",
     freeShippingMethodTitle: "Free shipping with {name}",
 
+    // Cart Limits
+    maxBundlesReachedText: "Maximum {count} bundle(s) per order allowed",
+
     // Cart Banner
     bannerSavingText: "You're saving {discount} with {name}",
     bannerCustomPriceText: "Special price: {price} for {name}",

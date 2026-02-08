@@ -80,6 +80,7 @@ declare global {
             addingText: string;
             addedText: string;
             outOfStockText: string;
+            maxBundlesReachedText: string;
         };
     }
 
@@ -1694,10 +1695,9 @@ declare global {
                     const bundleCount = this.countBundlesInCart(currentCart.items || []);
 
                     if (bundleCount >= this.maxBundlesPerOrder) {
-                        this.showToast(
-                            `Maximum ${this.maxBundlesPerOrder} bundle${this.maxBundlesPerOrder > 1 ? 's' : ''} per order allowed`,
-                            "error"
-                        );
+                        const maxBundlesMsg = (this.bundleStructure?.labels?.maxBundlesReachedText ?? "Maximum {count} bundle(s) per order allowed")
+                            .replace("{count}", String(this.maxBundlesPerOrder));
+                        this.showToast(maxBundlesMsg, "error");
                         button.classList.remove("is-loading");
                         button.disabled = false;
                         return;
