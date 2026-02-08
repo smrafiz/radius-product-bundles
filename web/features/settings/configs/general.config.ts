@@ -155,6 +155,14 @@ export const GENERAL_TAB: SettingsTabConfig = {
                         "Display a banner on the cart page showing how much customers save with their bundles.",
                     defaultValue: true,
                 },
+                {
+                    type: "switch",
+                    name: "allowDiscountStacking",
+                    label: "Allow discount stacking",
+                    details:
+                        "Let bundle discounts combine with other store discounts (coupon codes, automatic discounts, shipping discounts).",
+                    defaultValue: false,
+                },
             ],
         },
 

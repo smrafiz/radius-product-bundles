@@ -115,6 +115,7 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         enableStockValidation: settings.enableStockValidation,
         maxBundlesPerOrder: settings.maxBundlesPerOrder,
         showSavingsBanner: settings.showSavingsBanner,
+        allowDiscountStacking: settings.allowDiscountStacking,
 
         // General - Privacy
         enableAnalytics: settings.enableAnalytics,
@@ -151,6 +152,7 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         enableStockValidation: data.enableStockValidation,
         maxBundlesPerOrder: data.maxBundlesPerOrder,
         showSavingsBanner: data.showSavingsBanner,
+        allowDiscountStacking: data.allowDiscountStacking,
 
         // General - Privacy
         enableAnalytics: data.enableAnalytics,

@@ -23,6 +23,8 @@ import {
     GetShopIdQuery,
     MetafieldsSetDocument,
     MetafieldsSetMutation,
+    UpdateBundleDiscountCombinesWithDocument,
+    UpdateBundleDiscountCombinesWithMutation,
 } from "@/lib/graphql/generated/graphql";
 import {
     findActiveBundlesByShop,
@@ -535,6 +537,41 @@ export async function syncActiveBundlesToMetafield(
             error: error instanceof Error ? error.message : "Unknown error",
         };
     }
+}
+
+/**
+ * Updates the discount's combinesWith setting to allow or disallow stacking.
+ */
+export async function updateDiscountCombinesWith(
+    sessionToken: string,
+    allowStacking: boolean,
+): Promise<{ success: boolean; error?: string }> {
+    const discountId = await getBundleDiscountId(sessionToken);
+    if (!discountId) {
+        return { success: false, error: "Bundle discount not found" };
+    }
+
+    const result =
+        await executeGraphQLMutation<UpdateBundleDiscountCombinesWithMutation>({
+            query: UpdateBundleDiscountCombinesWithDocument,
+            variables: {
+                id: discountId,
+                combinesWith: {
+                    productDiscounts: allowStacking,
+                    orderDiscounts: allowStacking,
+                    shippingDiscounts: allowStacking,
+                },
+            },
+            sessionToken,
+        });
+
+    const userErrors =
+        result.data?.discountAutomaticAppUpdate?.userErrors || [];
+    if (userErrors.length > 0) {
+        return { success: false, error: userErrors[0].message };
+    }
+
+    return { success: true };
 }
 
 /**

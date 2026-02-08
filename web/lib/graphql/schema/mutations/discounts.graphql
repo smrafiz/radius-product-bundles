@@ -13,6 +13,25 @@ mutation CreateBundleAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
     }
 }
 
+mutation UpdateBundleDiscountCombinesWith(
+    $id: ID!
+    $combinesWith: DiscountCombinesWithInput!
+) {
+    discountAutomaticAppUpdate(
+        id: $id
+        automaticAppDiscount: { combinesWith: $combinesWith }
+    ) {
+        automaticAppDiscount {
+            discountId
+        }
+        userErrors {
+            field
+            message
+            code
+        }
+    }
+}
+
 mutation UpdateBundleDiscountMetafield(
     $id: ID!
     $metafields: [MetafieldInput!]!

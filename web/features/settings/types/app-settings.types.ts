@@ -153,6 +153,7 @@ export interface AppSettings {
     enableStockValidation: boolean;
     maxBundlesPerOrder: number;
     showSavingsBanner: boolean;
+    allowDiscountStacking: boolean;
 
     // General - Privacy
     enableAnalytics: boolean;

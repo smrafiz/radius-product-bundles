@@ -24,6 +24,7 @@ interface MetafieldGlobalSettings {
         enableStockValidation: boolean;
         maxBundlesPerOrder: number;
         showSavingsBanner: boolean;
+        allowDiscountStacking: boolean;
     };
 
     // Privacy settings
@@ -177,6 +178,7 @@ export function buildGlobalSettingsMetafieldValue(
             enableStockValidation: appSettings?.enableStockValidation ?? true,
             maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
             showSavingsBanner: appSettings?.showSavingsBanner ?? true,
+            allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
         },
 
         // Privacy settings

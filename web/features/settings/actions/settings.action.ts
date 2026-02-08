@@ -7,7 +7,7 @@
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify";
-import { syncAllSettingsToMetafields } from "@/lib";
+import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
 import {
     getSettingsService,
     resetSettingsService,
@@ -76,6 +76,20 @@ export async function saveSettingsAction(
                 syncResult.error,
             );
             // Don't fail the whole operation, just log warning
+        }
+
+        // Update discount stacking if setting exists
+        if (data.allowDiscountStacking !== undefined && data.allowDiscountStacking !== null) {
+            const stackingResult = await updateDiscountCombinesWith(
+                sessionToken,
+                Boolean(data.allowDiscountStacking),
+            );
+            if (!stackingResult.success) {
+                console.warn(
+                    "[saveSettings] Discount stacking update warning:",
+                    stackingResult.error,
+                );
+            }
         }
 
         // Revalidate cached pages

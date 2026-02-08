@@ -503,6 +503,7 @@ model AppSettings {
     enableStockValidation Boolean @default(true)
     maxBundlesPerOrder    Int     @default(0)
     showSavingsBanner     Boolean @default(true)
+    allowDiscountStacking Boolean @default(false)
 
     // Privacy Section
     enableAnalytics Boolean @default(true)
