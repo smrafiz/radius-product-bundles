@@ -109,6 +109,7 @@ export function ConversionRatesChart() {
                         label: "Avg Cart-to-Purchase",
                         value: `${avgCartToPurchase}%`,
                     },
+                    { label: ".", value: "" },
                 ]}
             >
                 <ResponsiveContainer width="100%" height={240}>

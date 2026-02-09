@@ -68,23 +68,32 @@ export function ChartWrapper({
                 {/* Summary Stats */}
                 {summaryStats && summaryStats.length > 0 && (
                     <s-stack gap="small-200">
-                        {summaryStats.map((stat) => (
-                            <s-stack
-                                key={stat.label}
-                                direction="inline"
-                                justifyContent="space-between"
-                                alignItems="center"
-                            >
-                                <s-text>{stat.label}</s-text>
-                                <s-text type="strong" tone="info">
-                                    <span className="font-medium">
-                                        {typeof stat.value === "number"
-                                            ? stat.value.toLocaleString()
-                                            : stat.value}
-                                    </span>
-                                </s-text>
-                            </s-stack>
-                        ))}
+                        {summaryStats.map((stat, i) => {
+                            // Special case: dot means "empty line"
+                            if (stat.label === ".") {
+                                return (
+                                    <div key={`spacer-${i}`} className="h-5" />
+                                );
+                            }
+
+                            return (
+                                <s-stack
+                                    key={stat.label}
+                                    direction="inline"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                >
+                                    <s-text>{stat.label}</s-text>
+                                    <s-text type="strong" tone="info">
+                                        <span className="font-medium">
+                                            {typeof stat.value === "number"
+                                                ? stat.value.toLocaleString()
+                                                : stat.value}
+                                        </span>
+                                    </s-text>
+                                </s-stack>
+                            );
+                        })}
                     </s-stack>
                 )}
 

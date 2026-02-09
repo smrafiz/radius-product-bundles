@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    ConversionRatesChart,
-    FunnelPerformanceChart,
-    RevenueAOVChart,
-} from "@/features/analytics";
+import { ConversionRatesChart, FunnelPerformanceChart, RevenueAOVChart, } from "@/features/analytics";
 
 /**
  * Analytics Comparison Charts
@@ -12,8 +8,15 @@ import {
 export function AnalyticsComparisonCharts() {
     return (
         <s-stack gap="base">
-            <FunnelPerformanceChart />
-            <ConversionRatesChart />
+            <s-grid gap="base" gridTemplateColumns="repeat(2, 1fr)">
+                <s-grid-item>
+                    <FunnelPerformanceChart />
+                </s-grid-item>
+
+                <s-grid-item>
+                    <ConversionRatesChart />
+                </s-grid-item>
+            </s-grid>
             <RevenueAOVChart />
         </s-stack>
     );
