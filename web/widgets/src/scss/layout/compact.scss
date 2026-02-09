@@ -21,18 +21,14 @@
         align-items: center;
         gap: var(--rb-gap-spacing);
         padding-bottom: var(--rb-gap-spacing);
-        margin-bottom: var(--rb-gap-spacing);
-        border-bottom: var(--rb-card-border);
 
         &:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
             padding-bottom: 0;
         }
 
         .radius-bundle__product-image {
-            width: calc(var(--rb-image-size) - 30px);
-            height: calc(var(--rb-image-size) - 30px);
+            width: var(--rb-image-size);
+            height: var(--rb-image-size);
             flex-shrink: 0;
 
             img {

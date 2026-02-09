@@ -60,22 +60,18 @@
 
         &--compact {
             padding: 0 0 var(--rb-gap-spacing);
-            margin: 0 0 var(--rb-gap-spacing);
             background: transparent;
             border: none;
-            border-bottom: var(--rb-card-border);
             border-radius: 0;
             align-items: center;
 
             &:last-child {
-                margin-bottom: 0;
                 padding-bottom: 0;
-                border-bottom: none;
             }
 
             .radius-bundle__skeleton-image {
-                width: calc(var(--rb-image-size) - 30px);
-                height: calc(var(--rb-image-size) - 30px);
+                width: var(--rb-image-size);
+                height: var(--rb-image-size);
             }
         }
     }
@@ -108,13 +104,13 @@
 
         &--large {
             width: 100%;
-            height: calc(var(--rb-image-size) + 40px);
+            height: var(--rb-image-size);
             margin-bottom: var(--rb-gap-spacing);
         }
 
         &--box {
-            width: calc(var(--rb-image-size) - 20px);
-            height: calc(var(--rb-image-size) - 20px);
+            width: var(--rb-image-size);
+            height: var(--rb-image-size);
         }
     }
 

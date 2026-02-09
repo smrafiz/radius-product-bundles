@@ -84,7 +84,7 @@
 
         .radius-bundle__product-image {
             width: 100%;
-            height: calc(var(--rb-image-size) + 40px);
+            height: var(--rb-image-size);
             margin-bottom: var(--rb-spacing-sm);
         }
 
@@ -94,7 +94,6 @@
 
         .radius-bundle__product-price {
             text-align: center;
-            margin-top: var(--rb-spacing-sm);
         }
     }
 }
