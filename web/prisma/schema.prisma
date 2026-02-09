@@ -466,9 +466,11 @@ model Shop {
     metafieldSetupDone Boolean    @default(false)
 
     // Setup tracking
-    setupComplete      Boolean   @default(false)
-    webhooksRegistered Boolean   @default(false)
-    lastSetupCheck     DateTime?
+    setupComplete        Boolean   @default(false)
+    setupGuideDismissed  Boolean   @default(false)
+    setupProgress        Json?     @default("{}")
+    webhooksRegistered   Boolean   @default(false)
+    lastSetupCheck       DateTime?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

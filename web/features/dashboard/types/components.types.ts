@@ -53,6 +53,7 @@ export interface DashboardCalloutCardsItem {
 
 export interface DashboardSetupConfig {
     id: number;
+    stepKey: string;
     title: string;
     description: string;
     image?: {
@@ -60,6 +61,14 @@ export interface DashboardSetupConfig {
         alt?: string;
     };
     complete: boolean;
-    primaryButton?: CalloutButtonProps | null;
-    secondaryButton?: CalloutButtonProps | null;
+    primaryButton?: {
+        content: string;
+        internalUrl?: string;
+        props?: Record<string, any>;
+    } | null;
+    secondaryButton?: {
+        content: string;
+        internalUrl?: string;
+        props?: Record<string, any>;
+    } | null;
 }

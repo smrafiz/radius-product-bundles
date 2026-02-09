@@ -1,11 +1,28 @@
 import {
-    DashboardSetupConfig,
     DashboardVideoConfig,
     DashboardMetricConfig,
     DashboardQuickActionItem,
     DashboardCalloutCardsItem,
 } from "@/features/dashboard/types";
 import { ACTION_THEMES, ROUTES } from "@/shared/constants";
+import { SETUP_STEP_KEYS } from "./setup-guide.constants";
+import type { SetupStepKey } from "../types/setup-guide.types";
+
+export interface SetupGuideStep {
+    id: number;
+    stepKey: SetupStepKey;
+    title: string;
+    description: string;
+    image?: { url: string; alt: string };
+    primaryButton: {
+        content: string;
+        internalUrl?: string;
+    };
+    secondaryButton?: {
+        content: string;
+        internalUrl?: string;
+    };
+}
 
 /*
  * Metric card SVGs
@@ -174,68 +191,73 @@ export const DASHBOARD_CALLOUT_CARDS: DashboardCalloutCardsItem[] = [
 ];
 
 /*
- * Dashboard Setup Guide
+ * Setup Guide Steps
  */
-export const DASHBOARD_SETUP_ITEMS: DashboardSetupConfig[] = [
+export const SETUP_GUIDE_STEPS: SetupGuideStep[] = [
     {
         id: 0,
+        stepKey: SETUP_STEP_KEYS.APP_EMBED,
         title: "Enable app embed",
         description:
-            "For your bundles to appear on your storefront, enable Bundles app embed and click Save on your theme.",
+            "For your bundles to appear on your storefront, enable the Bundles app embed in your theme editor and click Save.",
         image: {
             url: "/assets/setup-guide-step-one.svg",
             alt: "Enable app embed",
         },
-        complete: false,
-        primaryButton: {
-            content: "Enable in theme editor",
-            props: {
-                url: "https://www.example.com",
-                external: true,
-            },
-        },
+        primaryButton: { content: "Enable in theme editor" },
+        secondaryButton: { content: "Verify activation" },
     },
     {
         id: 1,
-        title: "Create your first bundle campaign",
+        stepKey: SETUP_STEP_KEYS.FIRST_BUNDLE,
+        title: "Create your first bundle",
         description:
-            "Pick a bundle type, customize it to fit your products and brand, and preview it live on your store.",
+            "Choose a bundle type, add your products, set a discount, and publish it to your storefront.",
         image: {
             url: "/assets/setup-guide-step-two.svg",
-            alt: "Create your first bundle campaign",
+            alt: "Create your first bundle",
         },
-        complete: false,
         primaryButton: {
-            content: "Create a bundle campaign",
-            props: {
-                url: "https://www.example.com",
-                external: true,
-            },
+            content: "Create a bundle",
+            internalUrl: ROUTES.BUNDLE_CREATE,
         },
         secondaryButton: {
-            content: "Learn more",
-            props: {
-                url: "https://www.example.com",
-                external: true,
-            },
+            content: "Browse templates",
+            internalUrl: ROUTES.BUNDLE_STUDIO,
         },
     },
     {
         id: 2,
-        title: "Start tracking your bundle campaign performance",
+        stepKey: SETUP_STEP_KEYS.WIDGET_CUSTOMIZED,
+        title: "Customize widget appearance",
         description:
-            "You're all set! Click Finish setup and start monitoring how your bundles are performing.",
+            "Match the bundle widget to your store's branding — adjust colors, fonts, layout, and button styles.",
         image: {
             url: "/assets/setup-guide-step-three.svg",
-            alt: "Start tracking your bundle campaign performance",
+            alt: "Customize widget",
         },
-        complete: false,
         primaryButton: {
-            content: "Finish setup",
-            props: {
-                url: "https://www.example.com",
-                external: true,
-            },
+            content: "Open customizer",
+            internalUrl: ROUTES.CUSTOMIZER,
+        },
+    },
+    {
+        id: 3,
+        stepKey: SETUP_STEP_KEYS.STOREFRONT_PREVIEW,
+        title: "Preview on your storefront",
+        description:
+            "Visit your online store to see how your bundles look to customers.",
+        primaryButton: { content: "Preview store" },
+    },
+    {
+        id: 4,
+        stepKey: SETUP_STEP_KEYS.ANALYTICS_VIEWED,
+        title: "Track bundle performance",
+        description:
+            "Monitor views, add-to-carts, conversions, and revenue from your bundle campaigns.",
+        primaryButton: {
+            content: "View analytics",
+            internalUrl: ROUTES.ANALYTICS,
         },
     },
 ];

@@ -1,43 +1,24 @@
 "use client";
 
-import {
-    DASHBOARD_SETUP_ITEMS,
-    DashboardSetupConfig,
-    DashboardSetupSteps,
-} from "@/features/dashboard";
-import { useState } from "react";
 import { SkeletonLines } from "@/shared";
-import { useAnalytics } from "@/features/analytics";
+import { useSetupGuide } from "@/features/dashboard/hooks/use-setup-guide";
+import { DashboardSetupSteps } from "@/features/dashboard";
 
-/**
- * Dashboard setup guide component
- */
 export function DashboardSetUpGuide() {
-    const { isLoading } = useAnalytics();
-    const [showGuide, setShowGuide] = useState(true);
-    const [items, setItems] = useState<DashboardSetupConfig[]>(
-        DASHBOARD_SETUP_ITEMS,
-    );
-
-    /**
-     * Handle step completion
-     */
-    const onStepComplete = async (id: number): Promise<void> => {
-        try {
-            // Simulate API call
-            await new Promise<void>((res) => setTimeout(res, 1000));
-
-            setItems((prev) =>
-                prev.map((item) =>
-                    item.id === id
-                        ? { ...item, complete: !item.complete }
-                        : item,
-                ),
-            );
-        } catch (e) {
-            console.error(e);
-        }
-    };
+    const {
+        items,
+        isLoading,
+        dismissed,
+        shopDomain,
+        allComplete,
+        completeStep,
+        verifyAppEmbed,
+        dismissGuide,
+        showGuide,
+        isVerifying,
+        isDismissing,
+        isShowing,
+    } = useSetupGuide();
 
     if (isLoading) {
         return (
@@ -49,22 +30,23 @@ export function DashboardSetUpGuide() {
         );
     }
 
-    if (!showGuide) {
+    if (dismissed) {
         return (
-            <s-button onClick={() => setShowGuide(true)}>
-                Show Setup Guide
+            <s-button onClick={showGuide} disabled={isShowing} loading={isShowing}>
+                Show setup guide
             </s-button>
         );
     }
 
     return (
         <DashboardSetupSteps
-            items={items as any}
-            onDismiss={() => {
-                setShowGuide(false);
-                setItems(DASHBOARD_SETUP_ITEMS);
-            }}
-            onStepComplete={onStepComplete}
+            items={items}
+            shopDomain={shopDomain}
+            onDismiss={dismissGuide}
+            onStepComplete={completeStep}
+            onVerifyAppEmbed={verifyAppEmbed}
+            isVerifying={isVerifying}
+            isDismissing={isDismissing}
         />
     );
 }

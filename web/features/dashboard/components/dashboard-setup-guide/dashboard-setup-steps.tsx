@@ -1,33 +1,46 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useId, useState } from "react";
+import { useAppNavigation } from "@/shared";
+import { SETUP_STEP_KEYS } from "../../constants/setup-guide.constants";
+import type { SetupStepKey } from "../../types/setup-guide.types";
 import styles from "./setupguide.module.css";
 
 interface SetupItemButton {
     content: string;
+    internalUrl?: string;
     props?: Record<string, any>;
 }
 
 interface SetupItemData {
     id: number;
+    stepKey: string;
     title: string;
     description?: string;
     image?: { url: string; alt: string };
     complete: boolean;
-    primaryButton?: SetupItemButton;
-    secondaryButton?: SetupItemButton;
+    primaryButton?: SetupItemButton | null;
+    secondaryButton?: SetupItemButton | null;
 }
 
 interface DashboardSetupGuideProps {
     onDismiss: () => void;
-    onStepComplete: (id: number) => Promise<void> | void;
+    onStepComplete: (key: SetupStepKey, value: boolean) => Promise<void> | void;
+    onVerifyAppEmbed: () => Promise<boolean>;
+    isVerifying: boolean;
+    isDismissing: boolean;
     items: SetupItemData[];
+    shopDomain: string;
 }
 
 export function DashboardSetupSteps({
     onDismiss,
     onStepComplete,
+    onVerifyAppEmbed,
+    isVerifying,
+    isDismissing,
     items,
+    shopDomain,
 }: DashboardSetupGuideProps) {
     const [expanded, setExpanded] = useState<number>(
         items.findIndex((item) => !item.complete),
@@ -45,7 +58,7 @@ export function DashboardSetupSteps({
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Setup Guide</s-heading>
+                        <s-heading>Setup guide</s-heading>
 
                         <s-stack direction="inline" gap="base">
                             <s-button
@@ -58,16 +71,12 @@ export function DashboardSetupSteps({
                                 id="setup-guide-menu"
                                 accessibilityLabel="Setup guide options"
                             >
-                                <s-button onClick={onDismiss}>
-                                    <s-stack
-                                        direction="inline"
-                                        gap="small"
-                                        alignItems="center"
-                                    >
-                                        <div className="w-4 h-4 pt-[0.05rem]"></div>
-                                        <s-icon type="x" tone="neutral" />
-                                        <span>Dismiss</span>
-                                    </s-stack>
+                                <s-button
+                                    onClick={onDismiss}
+                                    disabled={isDismissing}
+                                    loading={isDismissing}
+                                >
+                                    Dismiss
                                 </s-button>
                             </s-menu>
 
@@ -169,6 +178,9 @@ export function DashboardSetupSteps({
                                     expanded={expanded === item.id}
                                     setExpanded={() => setExpanded(item.id)}
                                     onComplete={onStepComplete}
+                                    onVerifyAppEmbed={onVerifyAppEmbed}
+                                    isVerifying={isVerifying}
+                                    shopDomain={shopDomain}
                                     {...item}
                                 />
                             ))}
@@ -185,7 +197,9 @@ export function DashboardSetupSteps({
                     padding="base"
                 >
                     <s-stack direction="inline" justifyContent="end">
-                        <s-button onClick={onDismiss}>Dismiss Guide</s-button>
+                        <s-button onClick={onDismiss} disabled={isDismissing} loading={isDismissing}>
+                            Dismiss guide
+                        </s-button>
                     </s-stack>
                 </s-box>
             ) : null}
@@ -196,12 +210,17 @@ export function DashboardSetupSteps({
 interface SetupItemProps extends SetupItemData {
     expanded: boolean;
     setExpanded: () => void;
-    onComplete: (id: number) => Promise<void> | void;
+    onComplete: (key: SetupStepKey, value: boolean) => Promise<void> | void;
+    onVerifyAppEmbed: () => Promise<boolean>;
+    isVerifying: boolean;
+    shopDomain: string;
 }
 
 const SetupItem = ({
     complete,
     onComplete,
+    onVerifyAppEmbed,
+    isVerifying,
     expanded,
     setExpanded,
     title,
@@ -210,13 +229,36 @@ const SetupItem = ({
     primaryButton,
     secondaryButton,
     id,
+    stepKey,
+    shopDomain,
 }: SetupItemProps) => {
     const [loading, setLoading] = useState(false);
+    const { goTo } = useAppNavigation();
 
     const completeItem = async () => {
         setLoading(true);
-        await onComplete(id);
+        await onComplete(stepKey as SetupStepKey, !complete);
         setLoading(false);
+    };
+
+    const handlePrimaryClick = () => {
+        if (stepKey === SETUP_STEP_KEYS.APP_EMBED) {
+            const url = `https://${shopDomain}/admin/themes/current/editor?context=apps`;
+            window.open(url, "_blank");
+        } else if (stepKey === SETUP_STEP_KEYS.STOREFRONT_PREVIEW) {
+            window.open(`https://${shopDomain}`, "_blank");
+            onComplete(stepKey as SetupStepKey, true);
+        } else if (primaryButton?.internalUrl) {
+            goTo(primaryButton.internalUrl)();
+        }
+    };
+
+    const handleSecondaryClick = async () => {
+        if (stepKey === SETUP_STEP_KEYS.APP_EMBED) {
+            await onVerifyAppEmbed();
+        } else if (secondaryButton?.internalUrl) {
+            goTo(secondaryButton.internalUrl)();
+        }
     };
 
     return (
@@ -234,12 +276,12 @@ const SetupItem = ({
                     columnGap="small"
                 >
                     <s-grid-item>
-                        <s-tooltip id="complete-tooltip">
+                        <s-tooltip id={`complete-tooltip-${id}`}>
                             {complete ? "Mark as not done" : "Mark as done"}
                         </s-tooltip>
                         <s-clickable
                             onClick={completeItem}
-                            interestFor="complete-tooltip"
+                            interestFor={`complete-tooltip-${id}`}
                         >
                             <div className={styles.completeButton}>
                                 {loading ? (
@@ -289,7 +331,9 @@ const SetupItem = ({
                                                         {primaryButton && (
                                                             <s-button
                                                                 variant="primary"
-                                                                {...primaryButton.props}
+                                                                onClick={
+                                                                    handlePrimaryClick
+                                                                }
                                                             >
                                                                 {
                                                                     primaryButton.content
@@ -299,11 +343,20 @@ const SetupItem = ({
                                                         {secondaryButton && (
                                                             <s-button
                                                                 variant="tertiary"
-                                                                {...secondaryButton.props}
-                                                            >
-                                                                {
-                                                                    secondaryButton.content
+                                                                onClick={
+                                                                    handleSecondaryClick
                                                                 }
+                                                                disabled={
+                                                                    stepKey ===
+                                                                        SETUP_STEP_KEYS.APP_EMBED &&
+                                                                    isVerifying
+                                                                }
+                                                            >
+                                                                {stepKey ===
+                                                                    SETUP_STEP_KEYS.APP_EMBED &&
+                                                                isVerifying
+                                                                    ? "Verifying..."
+                                                                    : secondaryButton.content}
                                                             </s-button>
                                                         )}
                                                     </s-stack>
