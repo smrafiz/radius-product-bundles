@@ -29,6 +29,7 @@ export function WidgetList({
     return (
         <Fragment>
             <div
+                className="list-layout"
                 style={{
                     display: "flex",
                     flexDirection: "column",
@@ -41,7 +42,11 @@ export function WidgetList({
                             product={product}
                             styles={styles}
                             displayOptions={displayOptions}
-                            variant={styles.imagePosition === "top" ? "vertical" : "horizontal"}
+                            variant={
+                                styles.imagePosition === "top"
+                                    ? "vertical"
+                                    : "horizontal"
+                            }
                         />
 
                         {showDivider && index < visibleItems.length - 1 && (
@@ -55,11 +60,18 @@ export function WidgetList({
                                 }}
                             >
                                 {styles.dividerStyle === "plus" ? (
-                                    <div className="flex justify-center" style={{ fontSize: "20px", fontWeight: 600 }}>
+                                    <div
+                                        className="flex justify-center"
+                                        style={{
+                                            fontSize: "20px",
+                                            fontWeight: 600,
+                                        }}
+                                    >
                                         <div
                                             className="divider-position"
                                             style={{
-                                                backgroundColor: styles.primaryColor,
+                                                backgroundColor:
+                                                    styles.primaryColor,
                                                 color: "#fff",
                                                 bottom: `calc(-1 * ${gap} / 2 - 8px)`,
                                                 marginBottom: `calc(${gap} / 2 - 4px)`,
@@ -88,7 +100,9 @@ export function WidgetList({
                     className="mt-2 text-[12px] underline cursor-pointer"
                     onClick={() => setShowAll(!showAll)}
                 >
-                    {showAll ? "Show less" : `+ ${products.length - initialVisibleCount} more products`}
+                    {showAll
+                        ? "Show less"
+                        : `+ ${products.length - initialVisibleCount} more products`}
                 </button>
             )}
         </Fragment>

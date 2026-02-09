@@ -58,58 +58,52 @@ export function CustomizerBundleType() {
                                 className="rtpb-left-setting"
                             >
                                 <div className="rtpb-blur-top" />
-                                    <FormProvider {...form}>
-                                        <form
-                                            id="customizer-form"
-                                            data-save-bar
-                                            data-discard-confirmation
-                                            onSubmit={handleSubmit}
-                                            onReset={handleReset}
-                                            style={{ display: "contents" }}
-                                        >
-                                            <input
-                                                ref={hiddenInputRef}
-                                                type="hidden"
-                                                name="_dirty"
-                                                defaultValue=""
-                                            />
-                                            <DynamicCustomizerPanel
-                                                config={CUSTOMIZER_CONFIG}
-                                                onFieldChangeAction={
-                                                    triggerSaveBar
-                                                }
-                                                onClearErrorsAction={
-                                                    handleClearErrors
-                                                }
-                                                resetKey={resetCounter}
-                                                activeLayout={activeLayout}
-                                                activeBundleType={
-                                                    activeBundleType
-                                                }
-                                            />
-                                        </form>
-                                    </FormProvider>
+                                <FormProvider {...form}>
+                                    <form
+                                        id="customizer-form"
+                                        data-save-bar
+                                        data-discard-confirmation
+                                        onSubmit={handleSubmit}
+                                        onReset={handleReset}
+                                        style={{ display: "contents" }}
+                                    >
+                                        <input
+                                            ref={hiddenInputRef}
+                                            type="hidden"
+                                            name="_dirty"
+                                            defaultValue=""
+                                        />
+                                        <DynamicCustomizerPanel
+                                            config={CUSTOMIZER_CONFIG}
+                                            onFieldChangeAction={triggerSaveBar}
+                                            onClearErrorsAction={
+                                                handleClearErrors
+                                            }
+                                            resetKey={resetCounter}
+                                            activeLayout={activeLayout}
+                                            activeBundleType={activeBundleType}
+                                        />
+                                    </form>
+                                </FormProvider>
                                 <div className="rtpb-blur-bottom" />
                             </div>
 
                             <div className="rtpb-right-review">
-                                <s-stack gap="base">
-                                    <div className="rtpb-right-header">
-                                        <GlobalBanner />
-                                        <CustomizerHeader
-                                            activeBundleType={activeId}
-                                            onBundleTypeChangeAction={
-                                                setActiveId
-                                            }
-                                        />
-                                    </div>
-                                    <PreviewShell
-                                        bundleType={activeBundleType}
-                                        scrollRef={
-                                            rightPanelScroll.containerRef
+                                <div className="rtpb-right-header">
+                                    <GlobalBanner />
+                                    <CustomizerHeader
+                                        activeBundleType={activeId}
+                                        onBundleTypeChangeAction={
+                                            setActiveId
                                         }
                                     />
-                                </s-stack>
+                                </div>
+                                <PreviewShell
+                                    bundleType={activeBundleType}
+                                    scrollRef={
+                                        rightPanelScroll.containerRef
+                                    }
+                                />
                             </div>
                         </div>
                     </div>

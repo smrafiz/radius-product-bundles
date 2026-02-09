@@ -39,7 +39,10 @@ export function WidgetCarousel({
     const slideWidth = `calc(${100 / (styles.slidesPerView || 3)}% - ${gap})`;
 
     return (
-        <div style={{ position: "relative", width: "100%" }}>
+        <div
+            className="slider-layout"
+            style={{ position: "relative", width: "100%" }}
+        >
             {showArrows && (
                 <>
                     <button
@@ -127,7 +130,8 @@ export function WidgetCarousel({
                                 width: "8px",
                                 height: "8px",
                                 borderRadius: "50%",
-                                backgroundColor: i === 0 ? styles.primaryColor : "#d1d5db",
+                                backgroundColor:
+                                    i === 0 ? styles.primaryColor : "#d1d5db",
                             }}
                         />
                     ))}

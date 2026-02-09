@@ -37,10 +37,7 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                 heading={heading}
             />
 
-            <div
-                ref={scrollRef}
-                className="rtpb-preview-scroll"
-            >
+            <div ref={scrollRef} className="rtpb-preview-scroll">
                 <div className="rtpb-blur-top" />
                 <PreviewContainer
                     activeDevice={activeDevice}

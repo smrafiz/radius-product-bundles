@@ -27,7 +27,10 @@ export function WidgetCompact({
 
     return (
         <Fragment>
-            <div style={{ display: "flex", flexDirection: "column", gap }}>
+            <div
+                className="compact-layout"
+                style={{ display: "flex", flexDirection: "column", gap }}
+            >
                 {visibleItems.map((product) => (
                     <WidgetProductCard
                         key={product.id}
@@ -44,7 +47,9 @@ export function WidgetCompact({
                     className="mt-2 text-[12px] underline cursor-pointer"
                     onClick={() => setShowAll(!showAll)}
                 >
-                    {showAll ? "Show less" : `+ ${products.length - initialVisibleCount} more products`}
+                    {showAll
+                        ? "Show less"
+                        : `+ ${products.length - initialVisibleCount} more products`}
                 </button>
             )}
         </Fragment>

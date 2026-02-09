@@ -28,6 +28,7 @@ export function WidgetGrid({
     return (
         <Fragment>
             <div
+                className="grid-layout"
                 style={{
                     display: "grid",
                     gridTemplateColumns: `repeat(${styles.gridColumns ?? 3}, minmax(0, 1fr))`,
