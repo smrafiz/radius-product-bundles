@@ -33,7 +33,6 @@ export function WidgetPricingDisplay({
             case "minimal":
                 return {
                     padding: "16px 0",
-                    borderTop: `1px solid ${borderColor}`,
                     backgroundColor: "transparent",
                     borderRadius: 0,
                 };
@@ -95,7 +94,9 @@ export function WidgetPricingDisplay({
                     justifyContent: "space-between",
                     color: highlightColor,
                     fontWeight: 600,
-                    marginBottom: "8px",
+                    marginBottom: "10px",
+                    borderTop: `1px dashed ${borderColor}`,
+                    borderBottom: `1px dashed ${borderColor}`,
                 }}
             >
                 <span className="radius-bundle__pricing-label">
