@@ -40,17 +40,23 @@
     // -------------------------------------------------------------------------
 
     &__pricing {
-        padding: var(--rb-pricing-padding);
+        padding: var(--rb-gap-spacing);
         background: var(--rb-pricing-bg);
         border: var(--rb-pricing-border);
-        border-top: var(--rb-pricing-border-top);
-        border-left: var(--rb-pricing-border-left);
         border-radius: var(--rb-border-radius);
         margin-bottom: var(--rb-spacing);
     }
 
     &[data-pricing-summary="minimal"] {
-        .radius-bundle__pricing {border-radius: 0;}
+        .radius-bundle__pricing {
+            border-radius: 0;
+        }
+    }
+
+    &[data-pricing-summary="highlight"] {
+        .radius-bundle__pricing {
+            border-left: var(--rb-pricing-border-left);
+        }
     }
 
     &__pricing-row {
@@ -58,11 +64,12 @@
         justify-content: space-between;
         align-items: center;
         padding: var(--rb-spacing-xs) 0;
+        margin-bottom: var(--rb-spacing-xs);
 
         &--highlight {
             padding: var(--rb-spacing-sm) 0;
             border-top: 1px dashed var(--rb-border-color);
-            margin-top: var(--rb-spacing-xs);
+            border-bottom: 1px dashed var(--rb-border-color);
         }
 
         &--compact {
