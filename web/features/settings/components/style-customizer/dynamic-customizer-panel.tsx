@@ -19,6 +19,7 @@ export function DynamicCustomizerPanel({
     config,
     onFieldChangeAction,
     onClearErrorsAction,
+    onAccordionChange,
     resetKey = 0,
     activeLayout = "LIST",
     activeBundleType = "FIXED_BUNDLE",
@@ -30,6 +31,11 @@ export function DynamicCustomizerPanel({
         handleToggle,
         handleRestoreDefaults,
     } = useCustomizerPanel(config, onFieldChangeAction, onClearErrorsAction);
+
+    useEffect(() => {
+        onAccordionChange?.(openSectionId !== null);
+    }, [openSectionId, onAccordionChange]);
+
     const { openModal } = useModalStore();
 
     // Create condition context

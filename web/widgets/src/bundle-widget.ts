@@ -817,31 +817,42 @@ declare global {
 
             let badgeText = "";
 
+            console.log(structure);
+
             if (structure.discountValue && structure.discountValue > 0) {
                 switch (structure.discountType) {
                     case "PERCENTAGE":
                         badgeText = this.formatLabel(
-                            structure.labels?.savingsBadgeText ?? "Save {percent}%",
-                            { percent: structure.discountValue },
+                            structure.labels?.savingsBadgeText ??
+                                "Save {amount}",
+                            { amount: `${structure.discountValue}%` },
                         );
                         break;
 
                     case "FIXED_AMOUNT":
                         // ✅ Convert dollars to cents for formatMoney
                         badgeText = this.formatLabel(
-                            structure.labels?.savingsBadgeText ?? "Save {amount}",
+                            structure.labels?.savingsBadgeText ??
+                                "Save {amount}",
                             {
-                                amount: this.formatMoney(structure.discountValue * 100),
+                                amount: this.trimMoney(
+                                    this.formatMoney(
+                                        structure.discountValue * 100,
+                                    ),
+                                ),
                             },
                         );
                         break;
 
                     case "CUSTOM_PRICE":
-                        // ✅ Show the custom price in the badge (convert dollars to cents)
                         badgeText = this.formatLabel(
-                            structure.labels?.savingsBadgeText ?? "Only {amount}",
+                            "Only {amount}",
                             {
-                                amount: this.formatMoney(structure.discountValue * 100),
+                                amount: this.trimMoney(
+                                    this.formatMoney(
+                                        structure.discountValue * 100,
+                                    ),
+                                ),
                             },
                         );
                         break;
@@ -1249,18 +1260,17 @@ declare global {
         //     </div>`;
         // }
 
-
         private renderProductCard(
             product: BundleProduct,
             layout: string,
         ): string {
-            const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : '';
+            const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : "";
             const imageHtml =
                 this.showImages && product.featuredImage
                     ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}"${imgLoading} />`
                     : this.showImages
-                        ? `<div class="radius-bundle__product-placeholder">📦</div>`
-                        : "";
+                      ? `<div class="radius-bundle__product-placeholder">📦</div>`
+                      : "";
 
             const structure = this.bundleStructure;
             let discountedPrice = product.price;
@@ -1271,24 +1281,24 @@ declare global {
 
                 // Total bundle price in cents
                 const totalBundlePrice = products.reduce(
-                    (sum, p) => sum + (p.price * (p.quantity || 1)),
-                    0
+                    (sum, p) => sum + p.price * (p.quantity || 1),
+                    0,
                 );
 
                 // This product's contribution
                 const productTotal = product.price * (product.quantity || 1);
 
                 // Proportion of bundle
-                const proportion = totalBundlePrice > 0
-                    ? productTotal / totalBundlePrice
-                    : 0;
+                const proportion =
+                    totalBundlePrice > 0 ? productTotal / totalBundlePrice : 0;
 
                 const discountValue = structure.discountValue || 0;
 
                 switch (structure.discountType) {
                     case "PERCENTAGE":
                         if (discountValue > 0 && discountValue <= 100) {
-                            discountedPrice = product.price * (1 - discountValue / 100);
+                            discountedPrice =
+                                product.price * (1 - discountValue / 100);
                             hasDiscount = true;
                         }
                         break;
@@ -1298,10 +1308,15 @@ declare global {
                             // ✅ Convert dollars to cents
                             const discountInCents = discountValue * 100;
 
-                            const productLineDiscount = discountInCents * proportion;
-                            const perUnitDiscount = productLineDiscount / (product.quantity || 1);
+                            const productLineDiscount =
+                                discountInCents * proportion;
+                            const perUnitDiscount =
+                                productLineDiscount / (product.quantity || 1);
 
-                            discountedPrice = Math.max(0, product.price - perUnitDiscount);
+                            discountedPrice = Math.max(
+                                0,
+                                product.price - perUnitDiscount,
+                            );
                             hasDiscount = discountedPrice < product.price;
                         }
                         break;
@@ -1311,8 +1326,10 @@ declare global {
                             // ✅ Convert dollars to cents
                             const customPriceInCents = discountValue * 100;
 
-                            const productLinePrice = customPriceInCents * proportion;
-                            discountedPrice = productLinePrice / (product.quantity || 1);
+                            const productLinePrice =
+                                customPriceInCents * proportion;
+                            discountedPrice =
+                                productLinePrice / (product.quantity || 1);
                             hasDiscount = discountedPrice < product.price;
                         }
                         break;
@@ -1334,7 +1351,10 @@ declare global {
             <span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
             ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""}
         `;
-            } else if (product.compareAtPrice && product.compareAtPrice > product.price) {
+            } else if (
+                product.compareAtPrice &&
+                product.compareAtPrice > product.price
+            ) {
                 priceHtml = `
             <span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>
             ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.compareAtPrice)}</span>` : ""}
@@ -1347,7 +1367,9 @@ declare global {
                 ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
                 : "";
 
-            const productUrl = product.handle ? `/products/${product.handle}` : "#";
+            const productUrl = product.handle
+                ? `/products/${product.handle}`
+                : "#";
             const productTitleHtml = this.enableHyperLink
                 ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
                 : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
@@ -1505,7 +1527,8 @@ declare global {
 
             switch (structure.discountType) {
                 case "PERCENTAGE":
-                    discountAmount = originalTotal * (structure.discountValue / 100);
+                    discountAmount =
+                        originalTotal * (structure.discountValue / 100);
                     bundleTotal = originalTotal - discountAmount;
                     break;
 
@@ -1553,7 +1576,8 @@ declare global {
 
             if (savingsEl && savingsAmountEl) {
                 if (discountAmount > 0 && this.showSavings) {
-                    savingsAmountEl.textContent = this.formatMoney(discountAmount);
+                    savingsAmountEl.textContent =
+                        this.formatMoney(discountAmount);
                     (savingsEl as HTMLElement).style.display = "flex";
                 } else {
                     (savingsEl as HTMLElement).style.display = "none";
@@ -1598,7 +1622,8 @@ declare global {
                 button.classList.add("is-out-of-stock");
 
                 const outOfStockLabel =
-                    this.bundleStructure?.labels?.outOfStockText ?? "Out of Stock";
+                    this.bundleStructure?.labels?.outOfStockText ??
+                    "Out of Stock";
                 const buttonText = button.querySelector(
                     "[data-button-text]",
                 ) as HTMLElement;
@@ -1694,12 +1719,19 @@ declare global {
             try {
                 // Check max bundles per order limit
                 if (this.maxBundlesPerOrder > 0) {
-                    const currentCart = await fetch(this.getLocalePath("/cart.js")).then((r) => r.json());
-                    const bundleCount = this.countBundlesInCart(currentCart.items || []);
+                    const currentCart = await fetch(
+                        this.getLocalePath("/cart.js"),
+                    ).then((r) => r.json());
+                    const bundleCount = this.countBundlesInCart(
+                        currentCart.items || [],
+                    );
 
                     if (bundleCount >= this.maxBundlesPerOrder) {
-                        const maxBundlesMsg = (this.bundleStructure?.labels?.maxBundlesReachedText ?? "Maximum {count} bundle(s) per order allowed")
-                            .replace("{count}", String(this.maxBundlesPerOrder));
+                        const maxBundlesMsg = (
+                            this.bundleStructure?.labels
+                                ?.maxBundlesReachedText ??
+                            "Maximum {count} bundle(s) per order allowed"
+                        ).replace("{count}", String(this.maxBundlesPerOrder));
                         this.showToast(maxBundlesMsg, "error");
                         button.classList.remove("is-loading");
                         button.disabled = false;
@@ -1726,11 +1758,14 @@ declare global {
                     this.showToast("No valid products to add to cart", "error");
                 }
 
-                const addResponse = await fetch(this.getLocalePath("/cart/add.js"), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ items: cartItems }),
-                });
+                const addResponse = await fetch(
+                    this.getLocalePath("/cart/add.js"),
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ items: cartItems }),
+                    },
+                );
 
                 if (!addResponse.ok) {
                     const errorData = await addResponse
@@ -1743,7 +1778,9 @@ declare global {
                     );
                 }
 
-                const cart = await fetch(this.getLocalePath("/cart.js")).then((r) => r.json());
+                const cart = await fetch(this.getLocalePath("/cart.js")).then(
+                    (r) => r.json(),
+                );
 
                 let existingDiscounts: DiscountConfig[] = [];
 
@@ -1889,7 +1926,9 @@ declare global {
          */
         private async updateCartCount(): Promise<void> {
             try {
-                const cart = await fetch(this.getLocalePath("/cart.js")).then((r) => r.json());
+                const cart = await fetch(this.getLocalePath("/cart.js")).then(
+                    (r) => r.json(),
+                );
                 const cartLink = document.querySelector("#cart-icon-bubble");
 
                 if (cartLink && cart.item_count > 0) {
@@ -1951,9 +1990,7 @@ declare global {
         }
 
         private openCartDrawerOrRedirect(): void {
-            console.log(
-                "[RadiusBundle] Following theme cart behavior...",
-            );
+            console.log("[RadiusBundle] Following theme cart behavior...");
 
             // Method 1: Dawn cart-drawer (slide-in drawer)
             const cartDrawerEl = document.querySelector(
@@ -2078,7 +2115,7 @@ declare global {
                             <div class="cart-notification-product__image global-media-settings">
                                 ${
                                     product.featuredImage
-                                        ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" width="70" height="70"${this.lazyLoadImages ? ' loading="lazy"' : ''}>`
+                                        ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" width="70" height="70"${this.lazyLoadImages ? ' loading="lazy"' : ""}>`
                                         : ""
                                 }
                             </div>
@@ -2280,7 +2317,9 @@ declare global {
         /**
          * Counts unique bundles in cart items
          */
-        private countBundlesInCart(items: Array<{ properties?: Record<string, string> }>): number {
+        private countBundlesInCart(
+            items: Array<{ properties?: Record<string, string> }>,
+        ): number {
             const bundleIds = new Set<string>();
 
             for (const item of items) {
@@ -2291,6 +2330,13 @@ declare global {
             }
 
             return bundleIds.size;
+        }
+
+        /*
+         * trim value
+         */
+        private trimMoney(value: string) {
+            return value.endsWith(".00") ? value.replace(".00", "") : value;
         }
     }
 

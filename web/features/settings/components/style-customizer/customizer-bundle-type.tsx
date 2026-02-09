@@ -79,6 +79,7 @@ export function CustomizerBundleType() {
                                             onClearErrorsAction={
                                                 handleClearErrors
                                             }
+                                            onAccordionChange={leftPanelScroll.handleAccordionChange}
                                             resetKey={resetCounter}
                                             activeLayout={activeLayout}
                                             activeBundleType={activeBundleType}

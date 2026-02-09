@@ -1,17 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback, useRef } from "react";
-
-interface ScrollBlurState {
-    isScrolledTop: boolean;
-    isScrolledBottom: boolean;
-    scrollProgress: number;
-}
-
-interface UseScrollBlurOptions {
-    threshold?: number;
-    onScrollChange?: (state: ScrollBlurState) => void;
-}
+import { ScrollBlurState, UseScrollBlurOptions } from "@/features/settings";
 
 /**
  * Hook to detect scroll position and apply blur effect classes.
@@ -24,12 +14,17 @@ export function useScrollBlur(options: UseScrollBlurOptions = {}) {
     const { threshold = 10, onScrollChange } = options;
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const cleanupRef = useRef<(() => void) | null>(null);
+    const [accordionOpen, setAccordionOpen] = useState(true);
 
     const [scrollState, setScrollState] = useState<ScrollBlurState>({
         isScrolledTop: false,
         isScrolledBottom: false,
         scrollProgress: 0,
     });
+
+    const handleAccordionChange = useCallback((isOpen: boolean) => {
+        setAccordionOpen(isOpen);
+    }, []);
 
     // Callback ref - called when element mounts/unmounts
     const containerRef = useCallback((node: HTMLDivElement | null) => {
@@ -62,8 +57,9 @@ export function useScrollBlur(options: UseScrollBlurOptions = {}) {
             onScrollChange?.(newState);
 
             // Apply classes directly for performance
-            container.classList.toggle("is-scrolled-top", newState.isScrolledTop);
-            container.classList.toggle("is-scrolled-bottom", newState.isScrolledBottom);
+            container.classList.toggle("is-scrolled-top", newState.isScrolledTop && accordionOpen);
+            container.classList.toggle("is-scrolled-bottom", newState.isScrolledBottom && accordionOpen);
+            container.classList.toggle("accordion-closed", !accordionOpen);
         };
 
         // Initial check with small delay to ensure content is rendered
@@ -89,10 +85,11 @@ export function useScrollBlur(options: UseScrollBlurOptions = {}) {
         };
 
         return cleanupRef.current;
-    }, [container, threshold, onScrollChange]);
+    }, [container, threshold, onScrollChange, accordionOpen]);
 
     return {
         containerRef,
+        handleAccordionChange,
         ...scrollState,
     };
 }

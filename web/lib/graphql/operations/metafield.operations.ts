@@ -2,16 +2,9 @@
 
 /**
  * Product & Shop Metafield Operations
- *
- * Manages bundle ID metafields on products for storefront display.
- * Manages active bundles metafield on discount AND shop for validation.
  */
 
-import {
-    executeGraphQLMutation,
-    executeGraphQLQuery,
-    fetchProductsFromShopify,
-} from "@/lib";
+import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 import {
     GetBundleDiscountIdDocument,
     GetBundleDiscountIdQuery,
@@ -27,14 +20,12 @@ import {
     UpdateBundleDiscountCombinesWithMutation,
 } from "@/lib/graphql/generated/graphql";
 import {
-    findActiveBundlesByShop,
-    findAppSettingsByShop,
-} from "@/features/bundles/repositories";
-import {
     METAFIELD_KEYS,
     METAFIELD_NAMESPACE,
 } from "@/shared/constants/metafields.constants";
 import { AppSettingsFormData } from "@/features/settings";
+import { findActiveBundlesByShop } from "@/features/bundles/repositories";
+import { findSettingsByShopDomain } from "@/features/settings/repositories";
 import { buildGlobalSettingsMetafieldValue } from "@/lib/graphql/operations";
 import { transformFormDataToAppSettings } from "@/features/settings/services/settings.service";
 
@@ -466,7 +457,7 @@ export async function syncActiveBundlesToMetafield(
         // Fetch all active bundles and app settings from database
         const [activeBundles, appSettings] = await Promise.all([
             findActiveBundlesByShop(shop),
-            findAppSettingsByShop(shop),
+            findSettingsByShopDomain(shop),
         ]);
 
         // Extract freeShippingMethodTitle from labels JSON
@@ -601,7 +592,7 @@ export async function syncAllSettingsToMetafields(
         const [globalSettings, activeBundles] = await Promise.all([
             savedSettings
                 ? Promise.resolve(transformFormDataToAppSettings(savedSettings))
-                : findAppSettingsByShop(shop),
+                : findSettingsByShopDomain(shop),
             findActiveBundlesByShop(shop),
         ]);
 

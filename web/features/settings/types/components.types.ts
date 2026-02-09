@@ -43,7 +43,19 @@ export interface DynamicCustomizerPanelProps {
     config: CustomizerPanelConfig;
     onFieldChangeAction?: () => void;
     onClearErrorsAction?: () => void;
+    onAccordionChange?: (isOpen: boolean) => void;
     resetKey?: number;
     activeLayout?: WidgetLayout;
     activeBundleType?: PreviewTemplateId;
+}
+
+export interface ScrollBlurState {
+    isScrolledTop: boolean;
+    isScrolledBottom: boolean;
+    scrollProgress: number;
+}
+
+export interface UseScrollBlurOptions {
+    threshold?: number;
+    onScrollChange?: (state: ScrollBlurState) => void;
 }

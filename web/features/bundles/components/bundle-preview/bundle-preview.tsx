@@ -144,73 +144,85 @@ export function BundlePreview() {
             <BundlePreviewStatus />
             <BundlePriority />
 
-            <div className="radius-bundle-widget">
-                <div className="radius-bundle">
-                    <div
-                        className="radius-bundle__inner"
-                        style={{
-                            backgroundColor: styles.backgroundColor,
-                            borderRadius,
-                            borderStyle: styles.showBorder ? "solid" : "none",
-                            borderWidth: styles.showBorder ? "1px" : 0,
-                            borderColor: styles.borderColor,
-                            boxShadow: shadow,
-                            padding,
-                        }}
+            <s-section>
+                <s-stack>
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        paddingBlockEnd="small-200"
                     >
-                        <s-stack paddingBlockEnd="base">
-                            <s-stack
-                                direction="inline"
-                                justifyContent="space-between"
-                                alignItems="center"
-                                paddingBlockEnd="small-200"
-                            >
-                                <s-heading>Preview</s-heading>
-                                <s-stack
-                                    direction="inline"
-                                    alignItems="center"
-                                    gap="small-500"
-                                >
-                                    <s-button
-                                        variant="tertiary"
-                                        onClick={() => router.push("/settings")}
-                                    >
-                                        Customization
-                                    </s-button>
-                                    <s-tooltip id="customization-tooltip">
-                                        <s-text>
-                                            Customize bundle display settings,
-                                            colors, and styling to match your
-                                            store's branding.
-                                        </s-text>
-                                    </s-tooltip>
-                                    <s-icon
-                                        tone="neutral"
-                                        type="info"
-                                        interestFor="customization-tooltip"
-                                    />
-                                </s-stack>
-                            </s-stack>
-                            <s-divider />
-                        </s-stack>
-
-                        <BundleWidget
-                            styles={styles}
-                            displayOptions={displayOptions}
-                            pricing={pricing}
-                            title={displaySettings.title}
-                            cartButtonText={displaySettings.cartButtonText}
+                        <s-heading>Preview</s-heading>
+                        <s-stack
+                            direction="inline"
+                            alignItems="center"
+                            gap="small-500"
                         >
-                            <RenderLayout
-                                layout={displaySettings.layout}
-                                products={products}
-                                styles={styles}
-                                displayOptions={displayOptions}
+                            <s-button
+                                variant="tertiary"
+                                onClick={() => router.push("/settings")}
+                            >
+                                Customization
+                            </s-button>
+                            <s-tooltip id="customization-tooltip">
+                                <s-text>
+                                    Customize bundle display settings, colors,
+                                    and styling to match your store's branding.
+                                </s-text>
+                            </s-tooltip>
+                            <s-icon
+                                tone="neutral"
+                                type="info"
+                                interestFor="customization-tooltip"
                             />
-                        </BundleWidget>
+                        </s-stack>
+                    </s-stack>
+                    <div className="radius-bundle-widget">
+                        <div className="radius-bundle">
+                            <div
+                                className="radius-bundle__inner"
+                                style={{
+                                    backgroundColor: styles.backgroundColor,
+                                    borderRadius,
+                                    borderStyle: styles.showBorder
+                                        ? "solid"
+                                        : "none",
+                                    borderWidth: styles.showBorder ? "1px" : 0,
+                                    borderColor: styles.borderColor,
+                                    boxShadow: shadow,
+                                    padding,
+                                    marginLeft: styles.showBorder
+                                        ? "-17px"
+                                        : "-16px",
+                                    marginRight: styles.showBorder
+                                        ? "-17px"
+                                        : "-16px",
+                                    marginBottom: styles.showBorder
+                                        ? "-17px"
+                                        : "-16px",
+                                }}
+                            >
+                                <BundleWidget
+                                    styles={styles}
+                                    displayOptions={displayOptions}
+                                    pricing={pricing}
+                                    title={displaySettings.title}
+                                    cartButtonText={
+                                        displaySettings.cartButtonText
+                                    }
+                                >
+                                    <RenderLayout
+                                        layout={displaySettings.layout}
+                                        products={products}
+                                        styles={styles}
+                                        displayOptions={displayOptions}
+                                    />
+                                </BundleWidget>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </s-stack>
+            </s-section>
         </div>
     );
 }

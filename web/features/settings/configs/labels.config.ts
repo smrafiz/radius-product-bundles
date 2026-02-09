@@ -179,10 +179,10 @@ export const LABELS_TAB: SettingsTabConfig = {
                     type: "text",
                     name: "savingsBadgeText",
                     label: "Savings badge text",
-                    placeholder: "Save {percent}%",
+                    placeholder: "Save {amount}",
                     details:
-                        "Text on savings badge. Use {percent} for dynamic value.",
-                    defaultValue: "Save {percent}%",
+                        "Text on savings badge. Use {amount} for the discount value.",
+                    defaultValue: "Save {amount}",
                     validation: {
                         maxLength: {
                             value: 30,

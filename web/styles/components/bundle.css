@@ -333,6 +333,11 @@
     opacity: 1;
 }
 
+.accordion-closed .rtpb-blur-top,
+.accordion-closed .rtpb-blur-bottom {
+    opacity: 0 !important;
+}
+
 /* ===========================================
    Alternative: CSS-only Blur with Masks
    =========================================== */

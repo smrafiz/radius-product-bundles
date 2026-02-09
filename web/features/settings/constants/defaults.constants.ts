@@ -115,7 +115,7 @@ export const DEFAULT_LABELS = {
     regularPriceLabel: "Regular Price:",
     bundlePriceLabel: "Bundle Price:",
     youSaveLabel: "You Save:",
-    savingsBadgeText: "Save {percent}%",
+    savingsBadgeText: "Save {amount}",
 
     // Shipping Labels
     freeShippingLabel: "Free Shipping",
