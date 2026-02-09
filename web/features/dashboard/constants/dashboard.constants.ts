@@ -21,7 +21,7 @@ export interface SetupGuideStep {
     secondaryButton?: {
         content: string;
         internalUrl?: string;
-    };
+    } | null;
 }
 
 /*
@@ -205,7 +205,6 @@ export const SETUP_GUIDE_STEPS: SetupGuideStep[] = [
             alt: "Enable app embed",
         },
         primaryButton: { content: "Enable in theme editor" },
-        secondaryButton: { content: "Verify activation" },
     },
     {
         id: 1,
@@ -247,6 +246,10 @@ export const SETUP_GUIDE_STEPS: SetupGuideStep[] = [
         title: "Preview on your storefront",
         description:
             "Visit your online store to see how your bundles look to customers.",
+        image: {
+            url: "/assets/setup-guide-step-four.svg",
+            alt: "Preview storefront",
+        },
         primaryButton: { content: "Preview store" },
     },
     {
@@ -255,6 +258,10 @@ export const SETUP_GUIDE_STEPS: SetupGuideStep[] = [
         title: "Track bundle performance",
         description:
             "Monitor views, add-to-carts, conversions, and revenue from your bundle campaigns.",
+        image: {
+            url: "/assets/setup-guide-step-five.svg",
+            alt: "View analytics",
+        },
         primaryButton: {
             content: "View analytics",
             internalUrl: ROUTES.ANALYTICS,

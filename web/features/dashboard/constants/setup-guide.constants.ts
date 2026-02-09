@@ -15,5 +15,3 @@ export const DEFAULT_SETUP_PROGRESS: SetupProgress = {
     storefrontPreviewed: false,
     analyticsViewed: false,
 };
-
-export const APP_EXTENSION_UID = "b54c4e5c-e85a-34dc-e9e2-a7c9e951e8dc75e66ac3";

@@ -15,4 +15,5 @@ export interface SetupGuideData {
     dismissed: boolean;
     progress: SetupProgress;
     shopDomain: string;
+    apiKey: string;
 }

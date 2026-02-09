@@ -1,8 +1,6 @@
 "use server";
 
 import prisma from "@/shared/repositories/prisma-connect";
-import { handleSessionToken } from "@/lib/shopify";
-import { APP_EXTENSION_UID } from "../constants/setup-guide.constants";
 import {
     getSetupProgress,
     updateSetupStep,
@@ -13,10 +11,8 @@ import type { SetupGuideData, SetupProgress, SetupStepKey } from "../types/setup
 
 export async function getSetupGuideService({
     shop,
-    sessionToken,
 }: {
     shop: string;
-    sessionToken: string;
 }): Promise<SetupGuideData> {
     const persisted = await getSetupProgress(shop);
 
@@ -26,7 +22,7 @@ export async function getSetupGuideService({
         appEmbedEnabled: persisted.progress.appEmbedEnabled,
         firstBundleCreated: persisted.progress.firstBundleCreated || autoDetected.firstBundleCreated,
         widgetCustomized: persisted.progress.widgetCustomized || autoDetected.widgetCustomized,
-        storefrontPreviewed: persisted.progress.storefrontPreviewed,
+        storefrontPreviewed: persisted.progress.storefrontPreviewed || autoDetected.storefrontPreviewed,
         analyticsViewed: persisted.progress.analyticsViewed,
     };
 
@@ -45,17 +41,21 @@ export async function getSetupGuideService({
         dismissed: persisted.dismissed,
         progress: merged,
         shopDomain: persisted.shopDomain,
+        apiKey: process.env.SHOPIFY_API_KEY ?? "",
     };
 }
 
 async function autoDetectProgress(shop: string) {
-    const [bundleCount, appSettings] = await Promise.all([
+    const [bundleCount, appSettings, viewCount] = await Promise.all([
         prisma.bundle.count({
             where: { shop },
         }),
         prisma.appSettings.findFirst({
             where: { shop: { domain: shop } },
             select: { globalStyles: true },
+        }),
+        prisma.bundleView.count({
+            where: { bundle: { shop } },
         }),
     ]);
 
@@ -64,69 +64,9 @@ async function autoDetectProgress(shop: string) {
     const widgetCustomized = appSettings?.globalStyles != null &&
         JSON.stringify(appSettings.globalStyles) !== "{}";
 
-    return { firstBundleCreated, widgetCustomized };
-}
+    const storefrontPreviewed = viewCount > 0;
 
-export async function checkAppEmbedEnabled({
-    sessionToken,
-    shop,
-}: {
-    sessionToken: string;
-    shop: string;
-}): Promise<boolean> {
-    try {
-        const { session } = await handleSessionToken(sessionToken, false, false);
-        if (!session?.accessToken) return false;
-
-        const accessToken = session.accessToken;
-        const apiVersion = "2025-10";
-
-        const themesRes = await fetch(
-            `https://${shop}/admin/api/${apiVersion}/themes.json?role=main`,
-            {
-                headers: {
-                    "X-Shopify-Access-Token": accessToken,
-                    "Content-Type": "application/json",
-                },
-            },
-        );
-
-        if (!themesRes.ok) return false;
-
-        const themesData = await themesRes.json();
-        const mainTheme = themesData.themes?.[0];
-        if (!mainTheme?.id) return false;
-
-        const assetRes = await fetch(
-            `https://${shop}/admin/api/${apiVersion}/themes/${mainTheme.id}/assets.json?asset[key]=config/settings_data.json`,
-            {
-                headers: {
-                    "X-Shopify-Access-Token": accessToken,
-                    "Content-Type": "application/json",
-                },
-            },
-        );
-
-        if (!assetRes.ok) return false;
-
-        const assetData = await assetRes.json();
-        const settingsJson = JSON.parse(assetData.asset?.value ?? "{}");
-
-        const blocks = settingsJson?.current?.blocks ?? {};
-        for (const block of Object.values(blocks) as any[]) {
-            if (
-                block?.type?.includes(APP_EXTENSION_UID) &&
-                block?.disabled !== true
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    } catch (error) {
-        console.error("[checkAppEmbedEnabled] Error:", error);
-        return false;
-    }
+    return { firstBundleCreated, widgetCustomized, storefrontPreviewed };
 }
 
 export async function updateSetupStepService({

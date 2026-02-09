@@ -5,11 +5,9 @@ import { handleSessionToken } from "@/lib/shopify";
 import {
     getSetupGuideService,
     updateSetupStepService,
-    checkAppEmbedEnabled,
     dismissSetupGuideService,
     showSetupGuideService,
 } from "../services/setup-guide.service";
-import { updateSetupStep } from "../repositories/setup-guide.repository";
 import type { SetupGuideData, SetupProgress, SetupStepKey } from "../types/setup-guide.types";
 
 export async function getSetupGuideAction(
@@ -20,7 +18,7 @@ export async function getSetupGuideAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const data = await getSetupGuideService({ shop, sessionToken });
+        const data = await getSetupGuideService({ shop });
 
         return { status: "success", data };
     } catch (error) {
@@ -50,30 +48,6 @@ export async function updateSetupStepAction(
         return {
             status: "error",
             message: error instanceof Error ? error.message : "Failed to update step",
-        };
-    }
-}
-
-export async function verifyAppEmbedAction(
-    sessionToken: string,
-): Promise<ApiResponse<boolean>> {
-    try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
-
-        const enabled = await checkAppEmbedEnabled({ sessionToken, shop });
-
-        if (enabled) {
-            await updateSetupStep(shop, "appEmbedEnabled", true);
-        }
-
-        return { status: "success", data: enabled };
-    } catch (error) {
-        console.error("[verifyAppEmbed] Error:", error);
-        return {
-            status: "error",
-            message: error instanceof Error ? error.message : "Failed to verify app embed",
         };
     }
 }

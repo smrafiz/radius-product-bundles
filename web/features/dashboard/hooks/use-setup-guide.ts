@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
     setupGuideKeys,
     setupGuideQueries,
@@ -9,7 +10,6 @@ import {
     dismissSetupGuideAction,
     showSetupGuideAction,
     updateSetupStepAction,
-    verifyAppEmbedAction,
 } from "@/features/dashboard/actions/setup-guide.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -40,16 +40,6 @@ export function useSetupGuide() {
         onSuccess: invalidate,
     });
 
-    const verifyAppEmbedMutation = useMutation({
-        mutationFn: async () => {
-            const token = await app.idToken();
-            const result = await verifyAppEmbedAction(token);
-            if (result.status === "error") throw new Error(result.message);
-            return result.data!;
-        },
-        onSuccess: invalidate,
-    });
-
     const dismissMutation = useMutation({
         mutationFn: async () => {
             const token = await app.idToken();
@@ -68,6 +58,27 @@ export function useSetupGuide() {
         onSuccess: invalidate,
     });
 
+    // Auto-detect app embed status via App Bridge
+    useEffect(() => {
+        if (!data || data.dismissed || data.progress.appEmbedEnabled) return;
+
+        (shopify as any).app.extensions().then((extensions: any[]) => {
+            const themeExt = extensions.find(
+                (e: any) => e.type === "theme_app_extension",
+            );
+            if (!themeExt) return;
+            const isActive = themeExt.activations.some(
+                (a: any) => a.status === "active",
+            );
+            if (isActive) {
+                completeStepMutation.mutate({
+                    key: "appEmbedEnabled",
+                    value: true,
+                });
+            }
+        });
+    }, [data]);
+
     const progress = data?.progress;
 
     const items = SETUP_GUIDE_STEPS.map((step) => ({
@@ -84,13 +95,12 @@ export function useSetupGuide() {
         isLoading,
         dismissed: data?.dismissed ?? false,
         shopDomain: data?.shopDomain ?? "",
+        apiKey: data?.apiKey ?? "",
         allComplete,
         completeStep: (key: SetupStepKey, value: boolean) =>
             completeStepMutation.mutateAsync({ key, value }),
-        verifyAppEmbed: () => verifyAppEmbedMutation.mutateAsync(),
         dismissGuide: () => dismissMutation.mutateAsync(),
         showGuide: () => showMutation.mutateAsync(),
-        isVerifying: verifyAppEmbedMutation.isPending,
         isDismissing: dismissMutation.isPending,
         isShowing: showMutation.isPending,
     };

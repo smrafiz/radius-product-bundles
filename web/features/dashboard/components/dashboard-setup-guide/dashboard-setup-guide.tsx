@@ -10,12 +10,10 @@ export function DashboardSetUpGuide() {
         isLoading,
         dismissed,
         shopDomain,
-        allComplete,
+        apiKey,
         completeStep,
-        verifyAppEmbed,
         dismissGuide,
         showGuide,
-        isVerifying,
         isDismissing,
         isShowing,
     } = useSetupGuide();
@@ -42,10 +40,9 @@ export function DashboardSetUpGuide() {
         <DashboardSetupSteps
             items={items}
             shopDomain={shopDomain}
+            apiKey={apiKey}
             onDismiss={dismissGuide}
             onStepComplete={completeStep}
-            onVerifyAppEmbed={verifyAppEmbed}
-            isVerifying={isVerifying}
             isDismissing={isDismissing}
         />
     );

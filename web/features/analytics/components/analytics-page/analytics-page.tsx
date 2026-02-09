@@ -1,10 +1,21 @@
 "use client";
 
-import { TitleBar } from "@shopify/app-bridge-react";
+import { useEffect } from "react";
+import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { useSettingsStore } from "@/features/settings";
 import { AnalyticsDisabledBanner, AnalyticsTabs } from "@/features/analytics";
+import { updateSetupStepAction } from "@/features/dashboard/actions/setup-guide.action";
 
 export function AnalyticsPage() {
+    const app = useAppBridge();
+
+    // Mark "analyticsViewed" setup step as complete on mount
+    useEffect(() => {
+        app.idToken().then((token) => {
+            updateSetupStepAction(token, "analyticsViewed", true);
+        });
+    }, []);
+
     const isAnalyticsDisabled = useSettingsStore((state) => {
         const settings = state.getEffectiveData();
         return settings?.enableAnalytics === false;

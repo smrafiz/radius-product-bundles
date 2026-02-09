@@ -1,10 +1,9 @@
 "use client";
 
-import { useId, useState } from "react";
+import { Fragment, useState } from "react";
 import { useAppNavigation } from "@/shared";
 import { SETUP_STEP_KEYS } from "../../constants/setup-guide.constants";
 import type { SetupStepKey } from "../../types/setup-guide.types";
-import styles from "./setupguide.module.css";
 
 interface SetupItemButton {
     content: string;
@@ -26,183 +25,140 @@ interface SetupItemData {
 interface DashboardSetupGuideProps {
     onDismiss: () => void;
     onStepComplete: (key: SetupStepKey, value: boolean) => Promise<void> | void;
-    onVerifyAppEmbed: () => Promise<boolean>;
-    isVerifying: boolean;
     isDismissing: boolean;
     items: SetupItemData[];
     shopDomain: string;
+    apiKey: string;
 }
 
 export function DashboardSetupSteps({
     onDismiss,
     onStepComplete,
-    onVerifyAppEmbed,
-    isVerifying,
     isDismissing,
     items,
     shopDomain,
+    apiKey,
 }: DashboardSetupGuideProps) {
     const [expanded, setExpanded] = useState<number>(
         items.findIndex((item) => !item.complete),
     );
     const [isGuideOpen, setIsGuideOpen] = useState(true);
-    const accessId = useId();
     const completedItemsLength = items.filter((item) => item.complete).length;
 
     return (
         <s-section padding="none">
             <s-box padding="base" paddingBlockEnd="none">
-                <s-stack direction="block" gap="none">
-                    <s-stack
-                        direction="inline"
-                        justifyContent="space-between"
+                <s-grid gap="small-200">
+                    <s-grid
+                        gridTemplateColumns="1fr auto auto"
+                        gap="small-300"
                         alignItems="center"
                     >
                         <s-heading>Setup guide</s-heading>
-
-                        <s-stack direction="inline" gap="base">
-                            <s-button
-                                commandFor="setup-guide-menu"
-                                variant="tertiary"
-                                icon="menu-horizontal"
-                                accessibilityLabel="menu icon"
-                            />
-                            <s-menu
-                                id="setup-guide-menu"
-                                accessibilityLabel="Setup guide options"
-                            >
-                                <s-button
-                                    onClick={onDismiss}
-                                    disabled={isDismissing}
-                                    loading={isDismissing}
-                                >
-                                    Dismiss
-                                </s-button>
-                            </s-menu>
-
-                            <s-button
-                                variant="tertiary"
-                                accessibilityLabel="icon"
-                                aria-controls={accessId}
-                                icon={
-                                    isGuideOpen ? "chevron-up" : "chevron-down"
-                                }
-                                onClick={() => {
-                                    setIsGuideOpen((prev) => {
-                                        if (!prev)
-                                            setExpanded(
-                                                items.findIndex(
-                                                    (item) => !item.complete,
-                                                ),
-                                            );
-                                        return !prev;
-                                    });
-                                }}
-                                aria-expanded={isGuideOpen}
-                            />
-                        </s-stack>
-                    </s-stack>
-
-                    <s-text>
+                        <s-button
+                            accessibilityLabel="Dismiss setup guide"
+                            variant="tertiary"
+                            tone="neutral"
+                            icon="x"
+                            onClick={onDismiss}
+                            disabled={isDismissing}
+                            loading={isDismissing}
+                        />
+                        <s-button
+                            accessibilityLabel="Toggle setup guide"
+                            variant="tertiary"
+                            tone="neutral"
+                            icon={isGuideOpen ? "chevron-up" : "chevron-down"}
+                            onClick={() => {
+                                setIsGuideOpen((prev) => {
+                                    if (!prev)
+                                        setExpanded(
+                                            items.findIndex(
+                                                (item) => !item.complete,
+                                            ),
+                                        );
+                                    return !prev;
+                                });
+                            }}
+                        />
+                    </s-grid>
+                    <s-paragraph>
                         Use this personalized guide to get your app up and
                         running.
-                    </s-text>
+                    </s-paragraph>
 
-                    <div className="mt-[.8rem]">
-                        <s-stack
-                            direction="inline"
-                            alignItems="center"
-                            gap="small-300"
-                            paddingBlockEnd={!isGuideOpen ? "small" : "none"}
-                        >
-                            <div className="flex gap-4 w-full items-center">
-                                {completedItemsLength === items.length ? (
-                                    <div className="max-h-4">
-                                        <s-stack
-                                            direction="inline"
-                                            gap="small-200"
-                                        >
-                                            <div>
-                                                <s-icon
-                                                    type="check"
-                                                    tone="success"
-                                                />
-                                            </div>
-                                            <s-text color="subdued">
-                                                Done
-                                            </s-text>
-                                        </s-stack>
-                                    </div>
-                                ) : (
-                                    <s-text color="subdued">
-                                        <div className="min-w-[100px]">
-                                            {`${completedItemsLength} / ${items.length} completed`}
-                                        </div>
-                                    </s-text>
-                                )}
-
-                                {completedItemsLength !== items.length ? (
-                                    <div className="w-full">
-                                        <div className="w-full h-2 bg-[#ebebeb] rounded-md overflow-hidden">
-                                            <div
-                                                className="h-full bg-[#1a1a1a] rounded-[4px] transition-all duration-300 ease-in-out"
-                                                style={{
-                                                    width: `${
-                                                        (items.filter(
-                                                            (i) => i.complete,
-                                                        ).length /
-                                                            items.length) *
-                                                        100
-                                                    }%`,
-                                                }}
+                    <s-stack
+                        direction="inline"
+                        alignItems="center"
+                        gap="small-300"
+                        paddingBlockEnd={!isGuideOpen ? "small" : "none"}
+                    >
+                        <div className="flex gap-4 w-full items-center">
+                            {completedItemsLength === items.length ? (
+                                <div className="max-h-4">
+                                    <s-stack
+                                        direction="inline"
+                                        gap="small-200"
+                                    >
+                                        <div>
+                                            <s-icon
+                                                type="check"
+                                                tone="success"
                                             />
                                         </div>
+                                        <s-text color="subdued">Done</s-text>
+                                    </s-stack>
+                                </div>
+                            ) : (
+                                <s-text color="subdued">
+                                    <div className="min-w-[100px]">
+                                        {`${completedItemsLength} / ${items.length} completed`}
                                     </div>
-                                ) : null}
-                            </div>
-                        </s-stack>
-                    </div>
-                </s-stack>
+                                </s-text>
+                            )}
+
+                            {completedItemsLength !== items.length ? (
+                                <div className="w-full">
+                                    <div className="w-full h-2 bg-[#ebebeb] rounded-md overflow-hidden">
+                                        <div
+                                            className="h-full bg-[#1a1a1a] rounded-[4px] transition-all duration-300 ease-in-out"
+                                            style={{
+                                                width: `${
+                                                    (completedItemsLength /
+                                                        items.length) *
+                                                    100
+                                                }%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            ) : null}
+                        </div>
+                    </s-stack>
+                </s-grid>
             </s-box>
 
-            <div
-                className={`grid transition-all duration-100 ease-out ${isGuideOpen ? "[grid-template-rows:1fr] pt-[20px]" : "[grid-template-rows:0fr] pt-0"} `}
-                id={accessId}
+            <s-box
+                borderRadius="base"
+                display={isGuideOpen ? "auto" : "none"}
+                paddingBlockStart="base"
             >
-                <div className="overflow-hidden">
-                    <s-box padding="small-300">
-                        <s-stack direction="block" gap="small-400">
-                            {items.map((item) => (
-                                <SetupItem
-                                    key={item.id}
-                                    expanded={expanded === item.id}
-                                    setExpanded={() => setExpanded(item.id)}
-                                    onComplete={onStepComplete}
-                                    onVerifyAppEmbed={onVerifyAppEmbed}
-                                    isVerifying={isVerifying}
-                                    shopDomain={shopDomain}
-                                    {...item}
-                                />
-                            ))}
-                        </s-stack>
-                    </s-box>
-                </div>
-            </div>
-
-            {completedItemsLength === items.length ? (
-                <s-box
-                    background="subdued"
-                    borderWidth="small"
-                    borderColor="base"
-                    padding="base"
-                >
-                    <s-stack direction="inline" justifyContent="end">
-                        <s-button onClick={onDismiss} disabled={isDismissing} loading={isDismissing}>
-                            Dismiss guide
-                        </s-button>
-                    </s-stack>
+                <s-box padding="small-300">
+                    {items.map((item, index) => (
+                        <Fragment key={item.id}>
+                            {index > 0 && <s-divider />}
+                            <SetupItem
+                                expanded={expanded === item.id}
+                                setExpanded={() => setExpanded(item.id)}
+                                onComplete={onStepComplete}
+                                shopDomain={shopDomain}
+                                apiKey={apiKey}
+                                {...item}
+                            />
+                        </Fragment>
+                    ))}
                 </s-box>
-            ) : null}
+            </s-box>
         </s-section>
     );
 }
@@ -211,16 +167,13 @@ interface SetupItemProps extends SetupItemData {
     expanded: boolean;
     setExpanded: () => void;
     onComplete: (key: SetupStepKey, value: boolean) => Promise<void> | void;
-    onVerifyAppEmbed: () => Promise<boolean>;
-    isVerifying: boolean;
     shopDomain: string;
+    apiKey: string;
 }
 
 const SetupItem = ({
     complete,
     onComplete,
-    onVerifyAppEmbed,
-    isVerifying,
     expanded,
     setExpanded,
     title,
@@ -228,9 +181,9 @@ const SetupItem = ({
     image,
     primaryButton,
     secondaryButton,
-    id,
     stepKey,
     shopDomain,
+    apiKey,
 }: SetupItemProps) => {
     const [loading, setLoading] = useState(false);
     const { goTo } = useAppNavigation();
@@ -243,7 +196,7 @@ const SetupItem = ({
 
     const handlePrimaryClick = () => {
         if (stepKey === SETUP_STEP_KEYS.APP_EMBED) {
-            const url = `https://${shopDomain}/admin/themes/current/editor?context=apps`;
+            const url = `https://${shopDomain}/admin/themes/current/editor?context=apps&appEmbed=${encodeURIComponent(`${apiKey}/app-embed`)}`;
             window.open(url, "_blank");
         } else if (stepKey === SETUP_STEP_KEYS.STOREFRONT_PREVIEW) {
             window.open(`https://${shopDomain}`, "_blank");
@@ -253,185 +206,78 @@ const SetupItem = ({
         }
     };
 
-    const handleSecondaryClick = async () => {
-        if (stepKey === SETUP_STEP_KEYS.APP_EMBED) {
-            await onVerifyAppEmbed();
-        } else if (secondaryButton?.internalUrl) {
+    const handleSecondaryClick = () => {
+        if (secondaryButton?.internalUrl) {
             goTo(secondaryButton.internalUrl)();
         }
     };
 
     return (
-        <s-clickable borderRadius="small">
-            <s-box
-                borderRadius="small"
-                background={expanded ? "subdued" : undefined}
-                paddingBlockStart="small-400"
-                paddingInline="small-300"
-                paddingBlockEnd="small-400"
+        <s-box paddingBlock="small-200">
+            <s-grid
+                gridTemplateColumns="1fr auto"
+                gap="base"
+                padding="small-200"
             >
-                <s-grid
-                    gridTemplateColumns="auto 1fr"
-                    alignItems="start"
-                    columnGap="small"
+                <s-checkbox
+                    label={title}
+                    checked={complete}
+                    onChange={completeItem}
+                />
+                <s-button
+                    accessibilityLabel={`Toggle ${title} details`}
+                    variant="tertiary"
+                    icon={expanded ? "chevron-up" : "chevron-down"}
+                    onClick={expanded ? undefined : setExpanded}
+                />
+            </s-grid>
+
+            <s-box
+                padding="small"
+                paddingBlockStart="none"
+                display={expanded ? "auto" : "none"}
+            >
+                <s-box
+                    padding="base"
+                    background="subdued"
+                    borderRadius="base"
                 >
-                    <s-grid-item>
-                        <s-tooltip id={`complete-tooltip-${id}`}>
-                            {complete ? "Mark as not done" : "Mark as done"}
-                        </s-tooltip>
-                        <s-clickable
-                            onClick={completeItem}
-                            interestFor={`complete-tooltip-${id}`}
-                        >
-                            <div className={styles.completeButton}>
-                                {loading ? (
-                                    <s-spinner size="base" />
-                                ) : complete ? (
-                                    <div className="w-5 h-5 rounded-full bg-[#303030] flex justify-center items-center fill-white text-white">
-                                        {checkSvg}
-                                    </div>
-                                ) : (
-                                    outlineSvg
-                                )}
-                            </div>
-                        </s-clickable>
-                    </s-grid-item>
-
-                    <s-grid-item>
-                        <div
-                            className={`${styles.itemContent} pt-[2px] ${expanded ? "cursor-default" : "cursor-pointer"}`}
-                            onClick={expanded ? undefined : setExpanded}
-                        >
-                            <s-stack direction="block" id={String(id)}>
-                                {expanded ? (
-                                    <s-heading>{title}</s-heading>
-                                ) : (
-                                    <s-text>{title}</s-text>
-                                )}
-
-                                <div
-                                    className={`grid transition-all duration-100 ease-out ${expanded ? "[grid-template-rows:1fr]" : "[grid-template-rows:0fr]"} `}
-                                >
-                                    <div className="overflow-hidden">
-                                        <s-box
-                                            paddingBlockStart="small"
-                                            paddingBlockEnd="small"
+                    <s-grid
+                        gridTemplateColumns={image ? "1fr auto" : "1fr"}
+                        gap="base"
+                        alignItems="center"
+                    >
+                        <s-grid gap="small-200">
+                            <s-paragraph>{description}</s-paragraph>
+                            {(primaryButton || secondaryButton) && (
+                                <s-stack direction="inline" gap="small-200">
+                                    {primaryButton && (
+                                        <s-button
+                                            variant="primary"
+                                            onClick={handlePrimaryClick}
                                         >
-                                            <s-stack
-                                                direction="block"
-                                                gap="large"
-                                            >
-                                                <s-text>{description}</s-text>
-                                                {(primaryButton ||
-                                                    secondaryButton) && (
-                                                    <s-stack
-                                                        direction="inline"
-                                                        gap="base"
-                                                    >
-                                                        {primaryButton && (
-                                                            <s-button
-                                                                variant="primary"
-                                                                onClick={
-                                                                    handlePrimaryClick
-                                                                }
-                                                            >
-                                                                {
-                                                                    primaryButton.content
-                                                                }
-                                                            </s-button>
-                                                        )}
-                                                        {secondaryButton && (
-                                                            <s-button
-                                                                variant="tertiary"
-                                                                onClick={
-                                                                    handleSecondaryClick
-                                                                }
-                                                                disabled={
-                                                                    stepKey ===
-                                                                        SETUP_STEP_KEYS.APP_EMBED &&
-                                                                    isVerifying
-                                                                }
-                                                            >
-                                                                {stepKey ===
-                                                                    SETUP_STEP_KEYS.APP_EMBED &&
-                                                                isVerifying
-                                                                    ? "Verifying..."
-                                                                    : secondaryButton.content}
-                                                            </s-button>
-                                                        )}
-                                                    </s-stack>
-                                                )}
-                                            </s-stack>
-                                        </s-box>
-                                    </div>
-                                </div>
-                            </s-stack>
-
-                            {image && expanded ? (
-                                <img
-                                    className={`${styles.itemImage} max-h-[7.75rem]`}
-                                    src={image.url}
-                                    alt={image.alt}
-                                />
-                            ) : null}
-                        </div>
-                    </s-grid-item>
-                </s-grid>
+                                            {primaryButton.content}
+                                        </s-button>
+                                    )}
+                                    {secondaryButton && (
+                                        <s-button
+                                            variant="tertiary"
+                                            onClick={handleSecondaryClick}
+                                        >
+                                            {secondaryButton.content}
+                                        </s-button>
+                                    )}
+                                </s-stack>
+                            )}
+                        </s-grid>
+                        {image && (
+                            <s-box maxBlockSize="80px" maxInlineSize="80px">
+                                <s-image src={image.url} alt={image.alt} />
+                            </s-box>
+                        )}
+                    </s-grid>
+                </s-box>
             </s-box>
-        </s-clickable>
+        </s-box>
     );
 };
-
-const outlineSvg = (
-    <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M21.9147 13.3062L19.9315 13.0475C19.9761 12.7056 19.9993 12.3561 19.9993 12.0001C19.9993 11.6442 19.9761 11.2946 19.9315 10.9527L21.9147 10.694C21.9705 11.1215 21.9993 11.5575 21.9993 12.0001C21.9993 12.4428 21.9705 12.8787 21.9147 13.3062ZM21.2405 8.17224L19.393 8.93835C19.1238 8.28906 18.7709 7.68206 18.3474 7.13093L19.9333 5.91228C20.4621 6.6004 20.9033 7.35927 21.2405 8.17224ZM18.0871 4.06613L16.8685 5.65197C16.3173 5.22845 15.7103 4.87563 15.061 4.60638L15.8271 2.75893C16.6401 3.09605 17.399 3.53734 18.0871 4.06613ZM13.3054 2.08464L13.0467 4.06784C12.7048 4.02324 12.3552 4.00012 11.9993 4.00012C11.6433 4.00012 11.2938 4.02324 10.9519 4.06784L10.6932 2.08464C11.1206 2.02889 11.5566 2.00012 11.9993 2.00012C12.4419 2.00012 12.8779 2.02889 13.3054 2.08464ZM8.17139 2.75893L8.9375 4.60638C8.2882 4.87563 7.6812 5.22845 7.13008 5.65197L5.91143 4.06613C6.59954 3.53734 7.35841 3.09606 8.17139 2.75893ZM4.06527 5.91228L5.65111 7.13093C5.22759 7.68206 4.87478 8.28906 4.60552 8.93835L2.75807 8.17225C3.0952 7.35927 3.53648 6.6004 4.06527 5.91228ZM2.08379 10.694C2.02803 11.1215 1.99927 11.5575 1.99927 12.0001C1.99927 12.4428 2.02803 12.8787 2.08379 13.3062L4.06699 13.0475C4.02239 12.7056 3.99927 12.3561 3.99927 12.0001C3.99927 11.6442 4.02239 11.2946 4.06699 10.9527L2.08379 10.694ZM2.75807 15.828L4.60553 15.0619C4.87478 15.7112 5.22759 16.3182 5.65111 16.8693L4.06527 18.088C3.53648 17.3998 3.0952 16.641 2.75807 15.828ZM5.91143 19.9341L7.13008 18.3483C7.68121 18.7718 8.28821 19.1246 8.9375 19.3939L8.17139 21.2413C7.35841 20.9042 6.59955 20.4629 5.91143 19.9341ZM10.6932 21.9156L10.9519 19.9324C11.2938 19.977 11.6433 20.0001 11.9993 20.0001C12.3552 20.0001 12.7048 19.977 13.0467 19.9324L13.3054 21.9156C12.8779 21.9714 12.4419 22.0001 11.9993 22.0001C11.5566 22.0001 11.1206 21.9714 10.6932 21.9156ZM15.8271 21.2413L15.061 19.3939C15.7103 19.1246 16.3173 18.7718 16.8685 18.3483L18.0871 19.9341C17.399 20.4629 16.6401 20.9042 15.8271 21.2413ZM19.9333 18.088L18.3474 16.8693C18.7709 16.3182 19.1238 15.7112 19.393 15.0619L21.2405 15.828C20.9033 16.641 20.4621 17.3998 19.9333 18.088Z"
-            fill="#8C9196"
-            className="hidden"
-        ></path>
-        <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M10.5334 2.10692C11.0126 2.03643 11.5024 2 12 2C12.4976 2 12.9874 2.03643 13.4666 2.10692C14.013 2.18729 14.3908 2.6954 14.3104 3.2418C14.23 3.78821 13.7219 4.166 13.1755 4.08563C12.7924 4.02927 12.3999 4 12 4C11.6001 4 11.2076 4.02927 10.8245 4.08563C10.2781 4.166 9.76995 3.78821 9.68958 3.2418C9.6092 2.6954 9.987 2.18729 10.5334 2.10692ZM7.44122 4.17428C7.77056 4.61763 7.67814 5.24401 7.23479 5.57335C6.603 6.04267 6.04267 6.603 5.57335 7.23479C5.24401 7.67814 4.61763 7.77056 4.17428 7.44122C3.73094 7.11188 3.63852 6.4855 3.96785 6.04216C4.55386 5.25329 5.25329 4.55386 6.04216 3.96785C6.4855 3.63852 7.11188 3.73094 7.44122 4.17428ZM16.5588 4.17428C16.8881 3.73094 17.5145 3.63852 17.9578 3.96785C18.7467 4.55386 19.4461 5.25329 20.0321 6.04216C20.3615 6.4855 20.2691 7.11188 19.8257 7.44122C19.3824 7.77056 18.756 7.67814 18.4267 7.23479C17.9573 6.603 17.397 6.04267 16.7652 5.57335C16.3219 5.24401 16.2294 4.61763 16.5588 4.17428ZM3.2418 9.68958C3.78821 9.76995 4.166 10.2781 4.08563 10.8245C4.02927 11.2076 4 11.6001 4 12C4 12.3999 4.02927 12.7924 4.08563 13.1755C4.166 13.7219 3.78821 14.23 3.2418 14.3104C2.6954 14.3908 2.18729 14.013 2.10692 13.4666C2.03643 12.9874 2 12.4976 2 12C2 11.5024 2.03643 11.0126 2.10692 10.5334C2.18729 9.987 2.6954 9.6092 3.2418 9.68958ZM20.7582 9.68958C21.3046 9.6092 21.8127 9.987 21.8931 10.5334C21.9636 11.0126 22 11.5024 22 12C22 12.4976 21.9636 12.9874 21.8931 13.4666C21.8127 14.013 21.3046 14.3908 20.7582 14.3104C20.2118 14.23 19.834 13.7219 19.9144 13.1755C19.9707 12.7924 20 12.3999 20 12C20 11.6001 19.9707 11.2076 19.9144 10.8245C19.834 10.2781 20.2118 9.76995 20.7582 9.68958ZM4.17428 16.5588C4.61763 16.2294 5.24401 16.3219 5.57335 16.7652C6.04267 17.397 6.603 17.9573 7.23479 18.4267C7.67814 18.756 7.77056 19.3824 7.44122 19.8257C7.11188 20.2691 6.4855 20.3615 6.04216 20.0321C5.25329 19.4461 4.55386 18.7467 3.96785 17.9578C3.63852 17.5145 3.73094 16.8881 4.17428 16.5588ZM19.8257 16.5588C20.2691 16.8881 20.3615 17.5145 20.0321 17.9578C19.4461 18.7467 18.7467 19.4461 17.9578 20.0321C17.5145 20.3615 16.8881 20.2691 16.5588 19.8257C16.2294 19.3824 16.3219 18.756 16.7652 18.4267C17.397 17.9573 17.9573 17.397 18.4267 16.7652C18.756 16.3219 19.3824 16.2294 19.8257 16.5588ZM9.68958 20.7582C9.76995 20.2118 10.2781 19.834 10.8245 19.9144C11.2076 19.9707 11.6001 20 12 20C12.3999 20 12.7924 19.9707 13.1755 19.9144C13.7219 19.834 14.23 20.2118 14.3104 20.7582C14.3908 21.3046 14.013 21.8127 13.4666 21.8931C12.9874 21.9636 12.4976 22 12 22C11.5024 22 11.0126 21.9636 10.5334 21.8931C9.987 21.8127 9.6092 21.3046 9.68958 20.7582Z"
-            fill="#8A8A8A"
-        ></path>
-        <circle
-            cx="12"
-            cy="12"
-            r="12"
-            fill="#DBDDDF"
-            className="hidden"
-        ></circle>
-        <circle
-            cx="12"
-            cy="12"
-            r="9"
-            fill="#F6F6F7"
-            stroke="#999EA4"
-            strokeWidth="2"
-            className="hidden"
-        ></circle>
-    </svg>
-);
-
-const checkSvg = (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="12"
-        width="12"
-        viewBox="0 0 16 16"
-    >
-        <path
-            fillRule="evenodd"
-            d="M13.71 3.156a.75.75 0 0 1 .128 1.053l-6.929 8.846-.01.013c-.045.057-.104.134-.163.197a1 1 0 0 1-.382.263 1 1 0 0 1-.714-.005 1 1 0 0 1-.38-.268 6 6 0 0 1-.17-.212l-2.932-3.84a.75.75 0 1 1 1.193-.91l2.657 3.48 6.65-8.489a.75.75 0 0 1 1.052-.128"
-        ></path>
-    </svg>
-);
