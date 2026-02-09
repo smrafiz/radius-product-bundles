@@ -1,43 +1,25 @@
 "use client";
 
+import { WidgetPricingProps } from "@/shared";
+import { getCardRadius, getFontSize, getSpacing } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
-import {
-    getCardRadius,
-    getFontSize,
-    getSpacing,
-    useCustomizerStore,
-} from "@/features/settings";
 
-/**
- * Bundle pricing summary display.
- *
- * Respects these customizer settings:
- * - pricingSummaryBox: Show/hide the box container styling
- * - pricingSummaryBg: Background color of the box
- * - pricingSummaryStyle: minimal | card | highlight
- * - bodySize: Font size preset
- * - textColor, primaryColor, savingsColor, borderColor
- * - cornerStyle: For border radius
- */
-export function BundlePricing() {
-    const { styles } = useCustomizerStore();
-    const showSummaryBox = styles.pricingSummaryBox;
-
+export function WidgetPricingDisplay({
+    styles,
+    displayOptions,
+    pricing,
+}: WidgetPricingProps) {
     const fontSize = getFontSize(styles.bodySize);
     const borderRadius = getCardRadius(styles.cornerStyle);
+    const padding = getSpacing(styles.spacing);
 
     const textColor = styles.textColor || "#333333";
     const highlightColor = styles.primaryColor || "#303030";
     const savingsColor = styles.savingsColor || "#16a34a";
     const borderColor = styles.borderColor || "#e5e7eb";
     const summaryBg = styles.pricingSummaryBg || "#f9fafb";
-    const padding = getSpacing(styles.spacing);
 
-    /**
-     * Gets container styles based on pricingSummaryBox and pricingSummaryStyle.
-     */
     const getContainerStyles = (): React.CSSProperties => {
-        // If box is disabled, return plain styling (no background, no border, no special padding)
         if (!styles.pricingSummaryBox) {
             return {
                 padding: "8px 0",
@@ -47,7 +29,6 @@ export function BundlePricing() {
             };
         }
 
-        // Box is enabled - apply style based on pricingSummaryStyle
         switch (styles.pricingSummaryStyle) {
             case "minimal":
                 return {
@@ -60,39 +41,34 @@ export function BundlePricing() {
                 return {
                     backgroundColor: summaryBg,
                     borderRadius,
-                    padding: padding,
+                    padding,
                     border: `1px solid ${borderColor}`,
                 };
             case "highlight":
                 return {
                     backgroundColor: summaryBg,
                     borderRadius,
-                    padding: padding,
+                    padding,
                     borderLeft: `4px solid ${highlightColor}`,
                 };
             default:
                 return {
                     backgroundColor: summaryBg,
                     borderRadius,
-                    padding: padding,
+                    padding,
                 };
         }
     };
 
-    if (!showSummaryBox) {
+    if (!styles.pricingSummaryBox) {
         return null;
     }
 
     return (
         <div
             className="radius-bundle__pricing"
-            style={{
-                fontSize,
-                color: textColor,
-                ...getContainerStyles(),
-            }}
+            style={{ fontSize, color: textColor, ...getContainerStyles() }}
         >
-            {/* Regular price */}
             <div
                 className="radius-bundle__pricing-row"
                 style={{
@@ -108,11 +84,10 @@ export function BundlePricing() {
                     className="radius-bundle__price-original"
                     style={{ textDecoration: "line-through", opacity: 0.7 }}
                 >
-                    $2,899.96
+                    {pricing.originalPrice}
                 </span>
             </div>
 
-            {/* Bundle discounted price */}
             <div
                 className="radius-bundle__pricing-row radius-bundle__pricing-row--highlight"
                 style={{
@@ -127,55 +102,57 @@ export function BundlePricing() {
                     {DEFAULT_LABELS.bundlePriceLabel}
                 </span>
                 <span className="radius-bundle__price-discounted">
-                    $1,899.96
+                    {pricing.finalPrice}
                 </span>
             </div>
 
-            {/* Savings */}
-            <div
-                className="radius-bundle__pricing-row radius-bundle__savings"
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    color: savingsColor,
-                    fontWeight: 600,
-                    marginBottom: "8px",
-                    padding: padding,
-                }}
-            >
-                <span className="radius-bundle__savings-label">
-                    {DEFAULT_LABELS.youSaveLabel}
-                </span>
-                <span className="radius-bundle__savings-amount">
-                    $474.99 (20%)
-                </span>
-            </div>
-
-            {/* Free shipping badge */}
-            <div
-                className="radius-bundle__free-shipping"
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    marginTop: "8px",
-                    padding: padding,
-                }}
-            >
-                <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
+            {displayOptions.showSavings && pricing.hasDiscount && (
+                <div
+                    className="radius-bundle__pricing-row radius-bundle__savings"
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        color: savingsColor,
+                        fontWeight: 600,
+                        marginBottom: "8px",
+                        padding,
+                    }}
                 >
-                    <path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
-                    <circle cx="7" cy="18" r="2" />
-                    <circle cx="17" cy="18" r="2" />
-                </svg>
-                <span>{DEFAULT_LABELS.freeShippingLabel}</span>
-            </div>
+                    <span className="radius-bundle__savings-label">
+                        {DEFAULT_LABELS.youSaveLabel}
+                    </span>
+                    <span className="radius-bundle__savings-amount">
+                        {pricing.savingsAmount} ({pricing.savingsPercentage}%)
+                    </span>
+                </div>
+            )}
+
+            {displayOptions.showFreeShipping && (
+                <div
+                    className="radius-bundle__free-shipping"
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        marginTop: "8px",
+                        padding,
+                    }}
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                    >
+                        <path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
+                        <circle cx="7" cy="18" r="2" />
+                        <circle cx="17" cy="18" r="2" />
+                    </svg>
+                    <span>{DEFAULT_LABELS.freeShippingLabel}</span>
+                </div>
+            )}
         </div>
     );
 }

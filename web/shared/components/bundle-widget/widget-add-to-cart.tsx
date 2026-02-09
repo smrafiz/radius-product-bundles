@@ -1,20 +1,21 @@
 "use client";
 
 import {
+    CustomizerStyles,
     getButtonBgColor,
     getButtonFontSize,
     getButtonPadding,
     getButtonRadius,
-    useCustomizerStore,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
-/**
- * Bundle add to cart button.
- */
-export function BundleAddToCart() {
-    const { styles } = useCustomizerStore();
-
+export function WidgetAddToCart({
+    styles,
+    cartButtonText,
+}: {
+    styles: CustomizerStyles;
+    cartButtonText?: string;
+}) {
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
@@ -44,7 +45,7 @@ export function BundleAddToCart() {
                     border: isOutline ? `2px solid ${bgColor}` : "none",
                 }}
             >
-                {DEFAULT_LABELS.addToCartText}
+                {cartButtonText || DEFAULT_LABELS.addToCartText}
             </button>
         </div>
     );

@@ -1,14 +1,16 @@
 "use client";
 
 import {
-    BundleAddToCart,
-    BundleHeader,
-    BundlePricing,
     LayoutSidebar,
     PreviewContainer,
     PreviewShellProps,
     usePreviewShell,
 } from "@/features/settings";
+import { BundleWidget } from "@/shared";
+import {
+    DEFAULT_DISPLAY_OPTIONS,
+    PLACEHOLDER_PRICING,
+} from "@/shared/constants/bundle-widget.constants";
 
 import "@/styles/components/bundle.css";
 
@@ -40,16 +42,21 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                 className="rtpb-preview-scroll"
             >
                 <div className="rtpb-blur-top" />
-                <PreviewContainer activeDevice={activeDevice} styles={styles} isCartBanner={isCartBanner}>
+                <PreviewContainer
+                    activeDevice={activeDevice}
+                    styles={styles}
+                    isCartBanner={isCartBanner}
+                >
                     {isCartBanner ? (
                         <Template activeLayout={activeLayout} />
                     ) : (
-                        <>
-                            <BundleHeader />
+                        <BundleWidget
+                            styles={styles}
+                            displayOptions={DEFAULT_DISPLAY_OPTIONS}
+                            pricing={PLACEHOLDER_PRICING}
+                        >
                             <Template activeLayout={activeLayout} />
-                            <BundlePricing />
-                            <BundleAddToCart />
-                        </>
+                        </BundleWidget>
                     )}
                 </PreviewContainer>
                 <div className="rtpb-blur-bottom" />

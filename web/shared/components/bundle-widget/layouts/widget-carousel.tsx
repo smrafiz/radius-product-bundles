@@ -1,23 +1,31 @@
 "use client";
 
-import {
-    getSpacing,
-    ProductCard,
-    useCustomizerStore,
-} from "@/features/settings";
 import { useRef } from "react";
+import { getSpacing } from "@/features/settings";
+import { WidgetLayoutProps, WidgetProductCard } from "@/shared";
 
-export function BundleCarousel() {
-    const { styles } = useCustomizerStore();
+export function WidgetCarousel({
+    products,
+    styles,
+    displayOptions,
+    showEmptyState = true,
+}: WidgetLayoutProps) {
     const carouselRef = useRef<HTMLDivElement>(null);
     const gap = getSpacing(styles.spacing);
 
     const showArrows =
-        styles.carouselNavigation === "arrows" ||
-        styles.carouselNavigation === "both";
+        styles.carouselNavigation === "arrows" || styles.carouselNavigation === "both";
     const showDots =
-        styles.carouselNavigation === "dots" ||
-        styles.carouselNavigation === "both";
+        styles.carouselNavigation === "dots" || styles.carouselNavigation === "both";
+
+    if (!products.length && showEmptyState) {
+        return (
+            <div className="min-h-96 flex flex-col items-center justify-around gap-3">
+                <img src="/assets/not-found.svg" alt="No products" className="w-1/2" />
+                <span>Please choose product to see the bundle preview</span>
+            </div>
+        );
+    }
 
     const scroll = (direction: "left" | "right") => {
         if (!carouselRef.current) return;
@@ -56,7 +64,6 @@ export function BundleCarousel() {
                     >
                         ‹
                     </button>
-
                     <button
                         onClick={() => scroll("right")}
                         style={{
@@ -92,13 +99,13 @@ export function BundleCarousel() {
                     scrollbarWidth: "none",
                 }}
             >
-                {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} style={{ flex: `0 0 ${slideWidth}` }}>
-                        <ProductCard
+                {products.map((product) => (
+                    <div key={product.id} style={{ flex: `0 0 ${slideWidth}` }}>
+                        <WidgetProductCard
+                            product={product}
+                            styles={styles}
+                            displayOptions={displayOptions}
                             variant="vertical"
-                            label="Bundle product"
-                            price="$300.33"
-                            comparePrice="$600.00"
                         />
                     </div>
                 ))}
@@ -113,15 +120,14 @@ export function BundleCarousel() {
                         marginTop: "20px",
                     }}
                 >
-                    {Array.from({ length: 4 }).map((_, i) => (
+                    {products.map((product, i) => (
                         <div
-                            key={i}
+                            key={product.id}
                             style={{
                                 width: "8px",
                                 height: "8px",
                                 borderRadius: "50%",
-                                backgroundColor:
-                                    i === 0 ? styles.primaryColor : "#d1d5db",
+                                backgroundColor: i === 0 ? styles.primaryColor : "#d1d5db",
                             }}
                         />
                     ))}

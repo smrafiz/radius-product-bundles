@@ -12,8 +12,8 @@ import type { z } from "zod";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSettingsStore } from "@/features/settings";
-import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
+import { blockSaveBar, DashboardSkeleton, VALIDATION_ERROR } from "@/shared";
 
 /**
  * Provides form context for bundle creation and editing.
@@ -38,15 +38,9 @@ export function BundleFormProvider({
     const isSettingsLoading = useSettingsStore((s) => s.isLoading);
     const settings = useSettingsStore.getState().getEffectiveData();
 
-    // For new bundles, wait for settings to load before initializing form
     const isNewBundle = !initialData;
-    if (isNewBundle && isSettingsLoading && !serverData) {
-        return (
-            <div className="flex items-center justify-center min-h-50">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-            </div>
-        );
-    }
+    const isWaitingForSettings =
+        isNewBundle && isSettingsLoading && !serverData;
 
     const form = useForm<z.infer<typeof bundleSchema>>({
         resolver: zodResolver(bundleSchema) as Resolver<
@@ -194,6 +188,10 @@ export function BundleFormProvider({
         });
         return () => subscription.unsubscribe();
     }, [watch, setBundleData, bundleType]);
+
+    if (isWaitingForSettings) {
+        return <DashboardSkeleton />;
+    }
 
     return <FormProvider {...form}>{children}</FormProvider>;
 }
