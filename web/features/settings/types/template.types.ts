@@ -41,6 +41,7 @@ export interface PreviewContainerProps {
  */
 export interface PreviewShellProps {
     bundleType: PreviewTemplateId;
+    scrollRef?: (node: HTMLDivElement | null) => void;
 }
 
 /**

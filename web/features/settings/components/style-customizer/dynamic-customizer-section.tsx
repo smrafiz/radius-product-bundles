@@ -63,7 +63,7 @@ export function DynamicCustomizerSection({
     return (
         <s-stack>
             <div
-                className={`cursor-pointer z-30 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7] ${isOpen ? "bg-[#f7f7f7]" : ""}`}
+                className={`cursor-pointer z-3 border-b border-[#e3e3e3] p-4 hover:bg-[#f7f7f7] ${isOpen ? "bg-[#f7f7f7]" : ""}`}
                 onClick={onToggleAction}
             >
                 <s-stack

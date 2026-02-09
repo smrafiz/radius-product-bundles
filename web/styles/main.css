@@ -72,7 +72,6 @@
 
     .rtpb-right-review {
         flex-direction: column;
-        overflow: hidden;
         flex: 1;
         min-width: 350px;
     }

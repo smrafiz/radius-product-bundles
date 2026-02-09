@@ -371,3 +371,246 @@
     margin-top: 8px;
     color: #004BFF;
 }
+
+/* ===========================================
+   Customizer Modal - Sticky Sidebars with Blur
+   =========================================== */
+
+.rtpb-full-modal-content {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    height: calc(100vh - 16px);
+    overflow: hidden;
+}
+
+/* Left Settings Panel - Sticky */
+.rtpb-left-setting {
+    flex: 0 0 380px;
+    max-width: 380px;
+    height: calc(100vh - 16px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e3e3e3 transparent;
+    scroll-behavior: smooth;
+}
+
+/* Right Preview Panel - Flex Column */
+.rtpb-right-review {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    height: calc(100vh - 16px);
+    overflow: hidden;
+}
+
+/* Fixed Header in Right Panel */
+.rtpb-right-header {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Preview Shell - Contains LayoutSidebar + Scrollable Preview */
+.rtpb-preview-shell {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+/* Scrollable Preview Area */
+.rtpb-preview-scroll {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e3e3e3 transparent;
+    scroll-behavior: smooth;
+}
+
+/* ===========================================
+   Blur Fade Effect - Top & Bottom Edges
+   =========================================== */
+
+.rtpb-blur-top,
+.rtpb-blur-bottom {
+    display: block;
+    position: sticky;
+    width: 100%;
+    height: 40px;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    flex-shrink: 0;
+}
+
+/* Top blur gradient */
+.rtpb-blur-top {
+    top: 0;
+    background: linear-gradient(
+            to bottom,
+            #979797 0%,
+            rgba(255, 255, 255, 0) 100%
+    );
+    margin-bottom: -40px;
+}
+
+/* Bottom blur gradient */
+.rtpb-blur-bottom {
+    bottom: 0;
+    background: linear-gradient(
+            to top,
+            #979797 0%,
+            rgba(255, 255, 255, 0) 100%
+    );
+    margin-top: -40px;
+}
+
+/* Active states - controlled via JS */
+.is-scrolled-top .rtpb-blur-top {
+    opacity: 1;
+}
+
+.is-scrolled-bottom .rtpb-blur-bottom {
+    opacity: 1;
+}
+
+/* ===========================================
+   Alternative: CSS-only Blur with Masks
+   =========================================== */
+
+.rtpb-scroll-container {
+    position: relative;
+}
+
+.rtpb-scroll-container .rtpb-scroll-content {
+    height: 100%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    mask-image: linear-gradient(
+            to bottom,
+            transparent 0,
+            black 40px,
+            black calc(100% - 40px),
+            transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0,
+            black 40px,
+            black calc(100% - 40px),
+            transparent 100%
+    );
+}
+
+/* When at top - no top fade */
+.rtpb-scroll-container.at-top .rtpb-scroll-content {
+    mask-image: linear-gradient(
+            to bottom,
+            black 0,
+            black calc(100% - 40px),
+            transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+            to bottom,
+            black 0,
+            black calc(100% - 40px),
+            transparent 100%
+    );
+}
+
+/* When at bottom - no bottom fade */
+.rtpb-scroll-container.at-bottom .rtpb-scroll-content {
+    mask-image: linear-gradient(
+            to bottom,
+            transparent 0,
+            black 40px,
+            black 100%
+    );
+    -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0,
+            black 40px,
+            black 100%
+    );
+}
+
+/* When at both top and bottom (content fits) - no fade */
+.rtpb-scroll-container.at-top.at-bottom .rtpb-scroll-content {
+    mask-image: none;
+    -webkit-mask-image: none;
+}
+
+/* ===========================================
+   Scrollbar Styling
+   =========================================== */
+
+.rtpb-left-setting::-webkit-scrollbar,
+.rtpb-preview-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rtpb-left-setting::-webkit-scrollbar-track,
+.rtpb-preview-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rtpb-left-setting::-webkit-scrollbar-thumb,
+.rtpb-preview-scroll::-webkit-scrollbar-thumb {
+    background-color: #e3e3e3;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.rtpb-left-setting::-webkit-scrollbar-thumb:hover,
+.rtpb-preview-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #c9cccf;
+}
+
+/* ===========================================
+   Responsive Adjustments
+   =========================================== */
+
+@media (max-width: 1200px) {
+    .rtpb-left-setting {
+        flex: 0 0 320px;
+        max-width: 320px;
+    }
+}
+
+@media (max-width: 900px) {
+    .rtpb-full-modal-content {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .rtpb-left-setting {
+        position: relative;
+        flex: 1 1 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: 50vh;
+    }
+
+    .rtpb-right-review {
+        flex: 1 1 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .rtpb-preview-shell {
+        flex-direction: column;
+    }
+
+    .rtpb-preview-scroll {
+        max-height: 50vh;
+    }
+}

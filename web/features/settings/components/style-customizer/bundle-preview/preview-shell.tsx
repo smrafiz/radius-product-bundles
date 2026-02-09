@@ -12,7 +12,7 @@ import {
 
 import "@/styles/components/bundle.css";
 
-export function PreviewShell({ bundleType }: PreviewShellProps) {
+export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
     const {
         activeLayout,
         activeDevice,
@@ -25,7 +25,7 @@ export function PreviewShell({ bundleType }: PreviewShellProps) {
     } = usePreviewShell(bundleType);
 
     return (
-        <div className="md:flex border border-gray-200 rounded-xl overflow-hidden min-h-75">
+        <div className="rtpb-preview-shell">
             <LayoutSidebar
                 layouts={layouts}
                 activeLayout={activeLayout}
@@ -35,18 +35,25 @@ export function PreviewShell({ bundleType }: PreviewShellProps) {
                 heading={heading}
             />
 
-            <PreviewContainer activeDevice={activeDevice} styles={styles} isCartBanner={isCartBanner}>
-                {isCartBanner ? (
-                    <Template activeLayout={activeLayout} />
-                ) : (
-                    <>
-                        <BundleHeader />
+            <div
+                ref={scrollRef}
+                className="rtpb-preview-scroll"
+            >
+                <div className="rtpb-blur-top" />
+                <PreviewContainer activeDevice={activeDevice} styles={styles} isCartBanner={isCartBanner}>
+                    {isCartBanner ? (
                         <Template activeLayout={activeLayout} />
-                        <BundlePricing />
-                        <BundleAddToCart />
-                    </>
-                )}
-            </PreviewContainer>
+                    ) : (
+                        <>
+                            <BundleHeader />
+                            <Template activeLayout={activeLayout} />
+                            <BundlePricing />
+                            <BundleAddToCart />
+                        </>
+                    )}
+                </PreviewContainer>
+                <div className="rtpb-blur-bottom" />
+            </div>
         </div>
     );
 }

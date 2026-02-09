@@ -5,6 +5,7 @@ import {
     CustomizerSkeleton,
     DynamicCustomizerPanel,
     PreviewShell,
+    useScrollBlur,
     PreviewTemplateId,
     useCustomizerPage,
     useCustomizerStore,
@@ -32,6 +33,9 @@ export function CustomizerBundleType() {
     const { activeLayout } = useCustomizerStore();
     const activeBundleType = (activeId || "FIXED_BUNDLE") as PreviewTemplateId;
 
+    const leftPanelScroll = useScrollBlur();
+    const rightPanelScroll = useScrollBlur();
+
     return (
         <s-page heading="Customizer - Manage Bundle Styles" inlineSize="large">
             <s-button
@@ -49,8 +53,11 @@ export function CustomizerBundleType() {
                 <s-stack paddingBlock="base large-300">
                     <div className="rtpb-full-modal-editor">
                         <div className="rtpb-full-modal-content flex flex-wrap gap-6">
-                            <div className="rtpb-left-setting">
-                                <div className="sticky top-0">
+                            <div
+                                ref={leftPanelScroll.containerRef}
+                                className="rtpb-left-setting"
+                            >
+                                <div className="rtpb-blur-top" />
                                     <FormProvider {...form}>
                                         <form
                                             id="customizer-form"
@@ -82,19 +89,25 @@ export function CustomizerBundleType() {
                                             />
                                         </form>
                                     </FormProvider>
-                                </div>
+                                <div className="rtpb-blur-bottom" />
                             </div>
 
                             <div className="rtpb-right-review">
                                 <s-stack gap="base">
-                                    <GlobalBanner />
-                                    <CustomizerHeader
-                                        activeBundleType={activeId}
-                                        onBundleTypeChangeAction={setActiveId}
-                                    />
-
+                                    <div className="rtpb-right-header">
+                                        <GlobalBanner />
+                                        <CustomizerHeader
+                                            activeBundleType={activeId}
+                                            onBundleTypeChangeAction={
+                                                setActiveId
+                                            }
+                                        />
+                                    </div>
                                     <PreviewShell
                                         bundleType={activeBundleType}
+                                        scrollRef={
+                                            rightPanelScroll.containerRef
+                                        }
                                     />
                                 </s-stack>
                             </div>

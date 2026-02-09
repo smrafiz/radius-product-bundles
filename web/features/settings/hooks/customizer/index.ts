@@ -6,3 +6,4 @@ export { useCustomizerPanel } from "./use-customizer-panel";
 export { useCustomizerSubmit } from "./use-customizer-submit";
 export { useEffectiveStyles } from "./use-effective-styles";
 export { usePreviewShell } from "./use-preview-shell";
+export { useScrollBlur } from "./use-scroll-blur";
