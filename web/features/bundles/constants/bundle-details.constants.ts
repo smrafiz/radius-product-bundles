@@ -83,7 +83,7 @@ export const BUNDLE_STEPS = [
     },
     {
         number: 3,
-        title: "Appearance",
+        title: "Display",
         description: "Customize appearance and layout",
     },
     {

@@ -14,11 +14,13 @@ import {
     getCardRadius,
     getPadding,
     getShadow,
+    useCustomizerModal,
     useSettingsStore,
 } from "@/features/settings";
 import {
     BundleWidget,
     PreviewProduct,
+    ROUTES,
     WidgetCarousel,
     WidgetCompact,
     WidgetDisplayOptions,
@@ -27,7 +29,6 @@ import {
     WidgetPricing,
 } from "@/shared";
 import { useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
 
 import "@/styles/components/bundle.css";
@@ -128,7 +129,7 @@ function RenderLayout({
 }
 
 export function BundlePreview() {
-    const router = useRouter();
+    const { appWindowRef } = useCustomizerModal();
     const { displaySettings } = useBundleStore();
     const styles = useWidgetStyles();
     const products = usePreviewProducts();
@@ -158,16 +159,24 @@ export function BundlePreview() {
                             alignItems="center"
                             gap="small-500"
                         >
+                            <s-app-window
+                                ref={appWindowRef}
+                                id="rtpb-preview-window"
+                                src={ROUTES.CUSTOMIZER}
+                            />
                             <s-button
                                 variant="tertiary"
-                                onClick={() => router.push("/settings")}
+                                command="--show"
+                                commandFor="rtpb-preview-window"
                             >
-                                Customization
+                                Global customizer
                             </s-button>
                             <s-tooltip id="customization-tooltip">
                                 <s-text>
-                                    Customize bundle display settings, colors,
-                                    and styling to match your store's branding.
+                                    Use the global customization settings to
+                                    style your bundle display, including colors
+                                    and visual elements, to align with your
+                                    store’s branding.
                                 </s-text>
                             </s-tooltip>
                             <s-icon
