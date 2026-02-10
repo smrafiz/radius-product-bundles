@@ -25,8 +25,24 @@
             data-bundle-products
             style="--grid-columns: {{ grid_columns | default: 3 }};"
     >
+        {% if more_product_settings %}
+            {% assign initial_visible = more_product_count %}
+        {% else %}
+            {% assign initial_visible = product_count %}
+        {% endif %}
+
         {% for i in (1..product_count) %}
-            <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
+            {% assign item_index = forloop.index0 %}
+            {% assign is_hidden = false %}
+            {% if item_index >= initial_visible %}
+                {% assign is_hidden = true %}
+            {% endif %}
+
+            <div class="radius-bundle__skeleton-card radius-bundle__loading{% if is_hidden %} radius-bundle__product--hidden{% endif %}"
+                 data-bundle-loading
+                 data-product-index="{{ item_index }}"
+                 {% if is_hidden %}style="display: none;"{% endif %}
+            >
                 {% if show_images %}
                     <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
                 {% endif %}

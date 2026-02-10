@@ -23,8 +23,24 @@
 	<div class="radius-bundle__products radius-bundle__products--list" data-bundle-products>
 		<div class="radius-bundle__loading" data-bundle-loading>
 			<div class="radius-bundle__skeleton radius-bundle__skeleton--list">
+				{% if more_product_settings %}
+					{% assign initial_visible = more_product_count %}
+				{% else %}
+					{% assign initial_visible = product_count %}
+				{% endif %}
+				{% assign divider_threshold = initial_visible | minus: 1 %}
+
 				{% for i in (1..product_count) %}
-					<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--list">
+					{% assign item_index = forloop.index0 %}
+					{% assign is_hidden = false %}
+					{% if item_index >= initial_visible %}
+						{% assign is_hidden = true %}
+					{% endif %}
+
+					<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--list{% if is_hidden %} radius-bundle__product--hidden{% endif %}"
+						 data-product-index="{{ item_index }}"
+						 {% if is_hidden %}style="display: none;"{% endif %}
+					>
 						{% if show_images %}
 							<div class="radius-bundle__skeleton-image"></div>
 						{% endif %}
@@ -37,13 +53,25 @@
 							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
 						</div>
 					</div>
+
 					{% unless forloop.last %}
+						{% assign divider_hidden = false %}
+						{% if item_index >= divider_threshold %}
+							{% assign divider_hidden = true %}
+						{% endif %}
+
 						{% if divider_style == 'plus' %}
-							<div class="radius-bundle__divider radius-bundle__divider--plus">
+							<div class="radius-bundle__divider radius-bundle__divider--plus{% if divider_hidden %} radius-bundle__divider--hidden{% endif %}"
+								 data-divider-index="{{ item_index }}"
+								 {% if divider_hidden %}style="display: none;"{% endif %}
+							>
 								<div class="divider-position">+</div>
 							</div>
 						{% elsif divider_style == 'line' %}
-							<div class="radius-bundle__divider radius-bundle__divider--line"></div>
+							<div class="radius-bundle__divider radius-bundle__divider--line{% if divider_hidden %} radius-bundle__divider--hidden{% endif %}"
+								 data-divider-index="{{ item_index }}"
+								 {% if divider_hidden %}style="display: none;"{% endif %}
+							></div>
 						{% endif %}
 					{% endunless %}
 				{% endfor %}

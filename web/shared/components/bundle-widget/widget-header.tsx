@@ -1,7 +1,10 @@
 "use client";
 
 import { WidgetHeaderProps } from "@/shared";
-import { getBadgeRadius, getHeadingFontSize } from "@/features/settings";
+import {
+    getBadgeRadius,
+    getHeadingFontSize,
+} from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 export function WidgetHeader({
@@ -26,6 +29,7 @@ export function WidgetHeader({
                 alignItems: "center",
                 flexWrap: "wrap",
                 gap: "20px",
+                borderColor: styles.borderColor,
                 flexDirection:
                     styles.badgePosition === "top-left"
                         ? "row-reverse"

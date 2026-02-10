@@ -190,7 +190,6 @@
 				{% endif %}
 
 				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
-				{% assign product_card_bg = '#f9fafb' %}
 				{% if override_card_settings and block.settings.product_card_bg != blank %}
 					{% assign product_card_bg = block.settings.product_card_bg %}
 				{% elsif g_styles.customizeCardStyle == true %}
@@ -203,22 +202,13 @@
 				{% if override_card_settings %}
 					{% assign product_card_border = block.settings.product_card_border %}
 				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardBorder == false %}
-						{% assign product_card_border = false %}
-					{% elsif g_styles.productCardBorder == true %}
-						{% assign product_card_border = true %}
-					{% endif %}
+					{% assign product_card_border = g_styles.productCardBorder %}
 				{% endif %}
 
-				{% assign product_card_shadow = false %}
 				{% if override_card_settings %}
 					{% assign product_card_shadow = block.settings.product_card_shadow %}
 				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardShadow == true %}
-						{% assign product_card_shadow = true %}
-					{% elsif g_styles.productCardShadow == false %}
-						{% assign product_card_shadow = false %}
-					{% endif %}
+					{% assign product_card_shadow = g_styles.productCardShadow %}
 				{% endif %}
 
 
@@ -337,6 +327,15 @@
 				{% elsif g_styles.bodySize != blank %}
 				  {% assign body_size = g_styles.bodySize %}
 				{% endif %}
+
+				{% comment %}{% assign more_product_settings = block.settings.more_product_settings | default: true %}{% endcomment %}
+				{% comment %}{% assign more_product_count = block.settings.more_product_count | default: 4 %}{% endcomment %}
+				{% if more_product_settings %}
+					{% assign initial_visible = more_product_count %}
+				{% else %}
+					{% assign initial_visible = product_count %}
+				{% endif %}
+				{% assign divider_threshold = initial_visible | minus: 1 %}
 
 				{% comment %} LAYOUT {% endcomment %}
 				{% assign override_layout_settings = block.settings.override_layout_settings | default: false %}
@@ -658,11 +657,11 @@
 
 					{% case body_size %}
 					{% when 'small' %}
-						--rb-body-font-size: 13px;
-					{% when 'large' %}
-						--rb-body-font-size: 16px;
-					{% else %}
 						--rb-body-font-size: 14px;
+					{% when 'large' %}
+						--rb-body-font-size: 18px;
+					{% else %}
+						--rb-body-font-size: 16px;
 					{% endcase %}
 
 					{% case button_size %}
@@ -789,6 +788,8 @@
 						data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
 						data-enable-analytics="{{ enable_analytics }}"
 						data-lazy-load-images="{{ lazy_load_images }}"
+						data-more-product-settings="{{ block.settings.more_product_settings }}"
+						data-more-product-count="{{ block.settings.more_product_count }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 
@@ -824,7 +825,9 @@
 									free_shipping_label: free_shipping_label,
 									quantity_label: quantity_label,
 									grid_columns: grid_columns,
-									pricing_summary_box: pricing_summary_box
+									pricing_summary_box: pricing_summary_box,
+									more_product_settings: block.settings.more_product_settings,
+    								more_product_count: block.settings.more_product_count
 							%}
 						{% when 'carousel' %}
 							{% render 'radius-bundle-layout-carousel',
@@ -872,7 +875,9 @@
 									you_save_label: you_save_label,
 									free_shipping_label: free_shipping_label,
 									quantity_label: quantity_label,
-									pricing_summary_box: pricing_summary_box
+									pricing_summary_box: pricing_summary_box,
+									more_product_settings: block.settings.more_product_settings,
+    								more_product_count: block.settings.more_product_count
 							%}
 						{% else %}
 							{% render 'radius-bundle-layout-list',
@@ -895,7 +900,9 @@
 									free_shipping_label: free_shipping_label,
 									quantity_label: quantity_label,
 									divider_style: divider_style,
-									pricing_summary_box: pricing_summary_box
+									pricing_summary_box: pricing_summary_box,
+									more_product_settings: block.settings.more_product_settings,
+    								more_product_count: block.settings.more_product_count
 							%}
 					{% endcase %}
 				</div>
@@ -1453,6 +1460,22 @@
 			],
 			"default": "",
 			"visible_if": "{{ block.settings.override_typography_settings }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "more_product_settings",
+			"label": "More product settings",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "more_product_count",
+			"label": "Product count",
+			"min": 2,
+			"max": 10,
+			"step": 1,
+			"default": 4,
+			"visible_if": "{{ block.settings.more_product_settings }}"
 		},
 		{
 			"type": "header",

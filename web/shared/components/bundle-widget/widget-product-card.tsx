@@ -138,6 +138,7 @@ export function WidgetProductCard({
                             marginBottom: gap,
                             backgroundColor: "#f3f4f6",
                             overflow: "hidden",
+                            border: `1px solid ${styles.borderColor}`,
                         }}
                     >
                         {imageEl}
@@ -182,6 +183,7 @@ export function WidgetProductCard({
                         flexShrink: 0,
                         backgroundColor: "#f3f4f6",
                         overflow: "hidden",
+                        border: `1px solid ${styles.borderColor}`,
                     }}
                 >
                     {imageEl}

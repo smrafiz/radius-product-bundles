@@ -563,9 +563,9 @@ export const IMAGE_SIZE_VALUES = {
  * Maps text size presets to pixel values.
  */
 export const TEXT_SIZE_VALUES = {
-    small: { heading: 16, body: 13 },
-    medium: { heading: 20, body: 14 },
-    large: { heading: 24, body: 16 },
+    small: { heading: 16, body: 14 },
+    medium: { heading: 20, body: 16 },
+    large: { heading: 24, body: 18 },
 } as const;
 
 /**
