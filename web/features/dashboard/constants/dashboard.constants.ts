@@ -197,73 +197,70 @@ export const SETUP_GUIDE_STEPS: SetupGuideStep[] = [
     {
         id: 0,
         stepKey: SETUP_STEP_KEYS.APP_EMBED,
-        title: "Enable app embed",
+        title: "Enable the app embed",
         description:
-            "For your bundles to appear on your storefront, enable the Bundles app embed in your theme editor and click Save.",
+            "Activate the Product Bundles app embed in your theme editor. This is required for bundle widgets, analytics tracking, and storefront functionality to work on your store.",
         image: {
             url: "/assets/setup-guide-step-one.svg",
-            alt: "Enable app embed",
+            alt: "Enable app embed in theme editor",
         },
-        primaryButton: { content: "Enable in theme editor" },
+        primaryButton: { content: "Open theme editor" },
+        secondaryButton: { content: "Check status" },
     },
     {
         id: 1,
         stepKey: SETUP_STEP_KEYS.FIRST_BUNDLE,
-        title: "Create your first bundle",
+        title: "Create your first product bundle",
         description:
-            "Choose a bundle type, add your products, set a discount, and publish it to your storefront.",
+            "Select a bundle type — Fixed Bundle, BOGO, Volume Discount, or Mix & Match — add products, configure pricing, and publish to start selling.",
         image: {
             url: "/assets/setup-guide-step-two.svg",
-            alt: "Create your first bundle",
+            alt: "Create a product bundle",
         },
         primaryButton: {
-            content: "Create a bundle",
+            content: "Create bundle",
             internalUrl: ROUTES.BUNDLE_CREATE,
-        },
-        secondaryButton: {
-            content: "Browse templates",
-            internalUrl: ROUTES.BUNDLE_STUDIO,
         },
     },
     {
         id: 2,
         stepKey: SETUP_STEP_KEYS.WIDGET_CUSTOMIZED,
-        title: "Customize widget appearance",
+        title: "Customize your settings",
         description:
-            "Match the bundle widget to your store's branding — adjust colors, fonts, layout, and button styles.",
+            "Configure your global display preferences and style the bundle widget to match your store's branding — adjust layout, colors, typography, and button styles.",
         image: {
             url: "/assets/setup-guide-step-three.svg",
-            alt: "Customize widget",
+            alt: "Configure settings and style customizer",
         },
         primaryButton: {
-            content: "Open customizer",
-            internalUrl: ROUTES.CUSTOMIZER,
+            content: "Go to settings",
+            internalUrl: ROUTES.SETTINGS,
         },
     },
     {
         id: 3,
         stepKey: SETUP_STEP_KEYS.STOREFRONT_PREVIEW,
-        title: "Preview on your storefront",
+        title: "Preview your live storefront",
         description:
-            "Visit your online store to see how your bundles look to customers.",
+            "Visit your online store to verify how bundles appear to customers. Check the widget layout, discount display, and add-to-cart experience on a real product page.",
         image: {
             url: "/assets/setup-guide-step-four.svg",
-            alt: "Preview storefront",
+            alt: "Preview bundle on storefront",
         },
-        primaryButton: { content: "Preview store" },
+        primaryButton: { content: "View storefront" },
     },
     {
         id: 4,
         stepKey: SETUP_STEP_KEYS.ANALYTICS_VIEWED,
-        title: "Track bundle performance",
+        title: "Monitor bundle analytics",
         description:
-            "Monitor views, add-to-carts, conversions, and revenue from your bundle campaigns.",
+            "Track key metrics like bundle views, add-to-cart rate, conversion rate, and revenue generated across all your bundles from the analytics dashboard.",
         image: {
             url: "/assets/setup-guide-step-five.svg",
-            alt: "View analytics",
+            alt: "Bundle analytics dashboard",
         },
         primaryButton: {
-            content: "View analytics",
+            content: "Go to analytics",
             internalUrl: ROUTES.ANALYTICS,
         },
     },

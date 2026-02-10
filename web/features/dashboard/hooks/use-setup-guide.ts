@@ -14,6 +14,7 @@ import {
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SETUP_GUIDE_STEPS } from "@/features/dashboard/constants/dashboard.constants";
+import { AUTO_DETECTED_STEPS } from "@/features/dashboard/constants/setup-guide.constants";
 
 export function useSetupGuide() {
     const app = useAppBridge();
@@ -62,15 +63,27 @@ export function useSetupGuide() {
     useEffect(() => {
         if (!data || data.dismissed || data.progress.appEmbedEnabled) return;
 
-        (shopify as any).app.extensions().then((extensions: any[]) => {
+        shopify.app.extensions().then((extensions) => {
             const themeExt = extensions.find(
-                (e: any) => e.type === "theme_app_extension",
+                (e) => e.type === "theme_app_extension",
             );
-            if (!themeExt) return;
-            const isActive = themeExt.activations.some(
-                (a: any) => a.status === "active",
+
+            if (!themeExt) {
+                return;
+            }
+
+            const activations = themeExt.activations as Array<{
+                handle: string;
+                target: string;
+                status: string;
+            }>;
+            const embedActive = activations.some(
+                (a) =>
+                    a.handle === "app-embed" &&
+                    a.target !== "section" &&
+                    a.status === "active",
             );
-            if (isActive) {
+            if (embedActive) {
                 completeStepMutation.mutate({
                     key: "appEmbedEnabled",
                     value: true,
@@ -84,6 +97,7 @@ export function useSetupGuide() {
     const items = SETUP_GUIDE_STEPS.map((step) => ({
         ...step,
         complete: progress ? progress[step.stepKey] : false,
+        autoDetected: AUTO_DETECTED_STEPS.has(step.stepKey),
     }));
 
     const allComplete = progress

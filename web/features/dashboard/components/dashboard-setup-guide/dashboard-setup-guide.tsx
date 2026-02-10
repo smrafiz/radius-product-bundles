@@ -1,8 +1,7 @@
 "use client";
 
 import { SkeletonLines } from "@/shared";
-import { useSetupGuide } from "@/features/dashboard/hooks/use-setup-guide";
-import { DashboardSetupSteps } from "@/features/dashboard";
+import { DashboardSetupSteps, useSetupGuide } from "@/features/dashboard";
 
 export function DashboardSetUpGuide() {
     const {
@@ -30,7 +29,11 @@ export function DashboardSetUpGuide() {
 
     if (dismissed) {
         return (
-            <s-button onClick={showGuide} disabled={isShowing} loading={isShowing}>
+            <s-button
+                onClick={showGuide}
+                disabled={isShowing}
+                loading={isShowing}
+            >
                 Show setup guide
             </s-button>
         );
