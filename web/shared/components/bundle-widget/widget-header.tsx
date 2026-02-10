@@ -29,6 +29,7 @@ export function WidgetHeader({
                 alignItems: "center",
                 flexWrap: "wrap",
                 gap: "20px",
+                borderColor: styles.borderColor,
                 flexDirection:
                     styles.badgePosition === "top-left"
                         ? "row-reverse"

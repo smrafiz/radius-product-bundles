@@ -190,6 +190,9 @@ declare global {
         private readonly autoplay: boolean = false;
         private readonly autoplaySpeed: number = 5;
 
+        private readonly moreProductSettings: boolean = false;
+        private readonly moreProductCount: number = 4;
+
         // Responsive overrides
         private readonly responsiveOverrides: {
             tablet?: Record<string, string>;
@@ -265,6 +268,9 @@ declare global {
                 container.dataset.autoplaySpeed || "5",
                 10,
             );
+
+            this.moreProductSettings = container.dataset.moreProductSettings === 'true';
+            this.moreProductCount = parseInt(container.dataset.moreProductCount || '4', 10);
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -761,6 +767,14 @@ declare global {
         }
 
         /**
+         * Get the initial visible product count based on settings.
+         * Returns Infinity when show more is disabled (show all products).
+         */
+        private getInitialVisibleCount(): number {
+            return this.moreProductSettings ? this.moreProductCount : Infinity;
+        }
+
+        /**
          * Shows badge from structure.
          */
         // private updateBadgeFromStructure(structure: BundleStructure): void {
@@ -1080,7 +1094,7 @@ declare global {
 
                 // Add divider for list layout based on divider style
                 if (layout === "list" && !isLast) {
-                    const initialVisibleCount = 4;
+                    const initialVisibleCount = this.getInitialVisibleCount();
                     const isDividerHidden = index >= initialVisibleCount - 1;
                     const dividerHiddenAttr = isDividerHidden ? ' style="display: none;"' : '';
                     const dividerHiddenClass = isDividerHidden ? ' radius-bundle__divider--hidden' : '';
@@ -1389,7 +1403,7 @@ declare global {
 
             // List layout
             if (layout === "list") {
-                const initialVisibleCount = 4;
+                const initialVisibleCount = this.getInitialVisibleCount();
                 const isHidden = index >= initialVisibleCount;
                 return `
                     <div class="radius-bundle__product radius-bundle__product--list${isHidden ? ' radius-bundle__product--hidden' : ''}" 
@@ -1409,7 +1423,7 @@ declare global {
 
             // Grid layout
             if (layout === "grid") {
-                const initialVisibleCount = 4;
+                const initialVisibleCount = this.getInitialVisibleCount();
                 const isHidden = index >= initialVisibleCount;
                 return `
                     <div class="radius-bundle__product radius-bundle__product--grid${isHidden ? ' radius-bundle__product--hidden' : ''}" 
@@ -1427,7 +1441,7 @@ declare global {
 
             // Compact layout
             if (layout === "compact") {
-                const initialVisibleCount = 4;
+                const initialVisibleCount = this.getInitialVisibleCount();
                 const isHidden = index >= initialVisibleCount;
                 return `
                     <div class="radius-bundle__product radius-bundle__product--compact${isHidden ? ' radius-bundle__product--hidden' : ''}" 
@@ -1626,10 +1640,10 @@ declare global {
          * Generate the show more/less toggle button for list layout.
          *
          * @param {number} totalProducts - Total number of products in the bundle.
-         * @param {number} initialVisibleCount - Number of initially visible products.
          * @returns {string} HTML string for the toggle button, or empty string if not needed.
          */
-        private getShowMoreButton(totalProducts: number, initialVisibleCount: number = 4): string {
+        private getShowMoreButton(totalProducts: number): string {
+            const initialVisibleCount = this.getInitialVisibleCount();
             if (totalProducts <= initialVisibleCount) {
                 return "";
             }
@@ -1645,12 +1659,13 @@ declare global {
                     data-expanded="false"
                     style="
                         margin-top: 8px;
-                        font-size: 12px;
+                        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
                         text-decoration: underline;
                         cursor: pointer;
                         background: none;
                         border: none;
                         padding: 0;
+                        text-align: left;
                         color: var(--rb-text-color);
                     "
                 >+ ${extraCount} more products</button>

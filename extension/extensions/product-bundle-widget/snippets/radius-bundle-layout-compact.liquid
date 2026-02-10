@@ -22,9 +22,14 @@
 	<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
 		<div class="radius-bundle__loading" data-bundle-loading>
 			<div class="radius-bundle__skeleton radius-bundle__skeleton--compact">
+				{% if more_product_settings %}
+					{% assign initial_visible = more_product_count %}
+				{% else %}
+					{% assign initial_visible = product_count %}
+				{% endif %}
+
 				{% for i in (1..product_count) %}
 					{% assign item_index = forloop.index0 %}
-					{% assign initial_visible = 4 %}
 					{% assign is_hidden = false %}
 					{% if item_index >= initial_visible %}
 						{% assign is_hidden = true %}

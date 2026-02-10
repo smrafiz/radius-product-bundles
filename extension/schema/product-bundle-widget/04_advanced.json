@@ -71,5 +71,22 @@
         ],
         "default": "",
         "visible_if": "{{ block.settings.override_typography_settings }}"
+    },
+
+    {
+        "type": "checkbox",
+        "id": "more_product_settings",
+        "label": "More product settings",
+        "default": true
+    },
+    {
+        "type": "range",
+        "id": "more_product_count",
+        "label": "Product count",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "default": 4,
+        "visible_if": "{{ block.settings.more_product_settings }}"
     }
 ]
