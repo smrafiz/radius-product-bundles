@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/shared/repositories/prisma-connect";
-import { SetupProgress, SetupStepKey } from "@/features/dashboard";
+import { SetupProgress } from "@/features/dashboard";
 import { DEFAULT_SETUP_PROGRESS } from "@/features/dashboard/constants/setup-guide.constants";
 
 export async function getSetupProgress(domain: string) {
@@ -32,36 +32,39 @@ export async function getSetupProgress(domain: string) {
     };
 }
 
-export async function updateSetupStep(
-    domain: string,
-    stepKey: SetupStepKey,
-    value: boolean,
-) {
-    const shop = await prisma.shop.findUnique({
-        where: { domain },
-        select: { setupProgress: true },
-    });
+export async function getAutoDetectData(domain: string) {
+    const [bundleCount, appSettings, viewCount] = await Promise.all([
+        prisma.bundle.count({
+            where: { shop: domain },
+        }),
+        prisma.appSettings.findFirst({
+            where: { shop: { domain } },
+            select: { globalStyles: true },
+        }),
+        prisma.bundleView.count({
+            where: { bundle: { shop: domain } },
+        }),
+    ]);
 
-    if (!shop) throw new Error(`Shop not found: ${domain}`);
-
-    const current: SetupProgress = {
-        ...DEFAULT_SETUP_PROGRESS,
-        ...((shop.setupProgress as Record<string, boolean>) ?? {}),
+    return {
+        bundleCount,
+        globalStyles: appSettings?.globalStyles ?? null,
+        viewCount,
     };
+}
 
-    const updated = { ...current, [stepKey]: value };
-
-    const allComplete = Object.values(updated).every(Boolean);
-
+export async function updateSetupProgress(
+    domain: string,
+    progress: SetupProgress,
+    allComplete: boolean,
+) {
     await prisma.shop.update({
         where: { domain },
         data: {
-            setupProgress: updated as any,
+            setupProgress: progress as any,
             setupComplete: allComplete,
         },
     });
-
-    return updated;
 }
 
 export async function dismissSetupGuide(domain: string) {

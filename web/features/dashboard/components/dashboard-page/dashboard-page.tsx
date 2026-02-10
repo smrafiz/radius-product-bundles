@@ -10,19 +10,17 @@ import {
     DashboardQuickActions,
     DashboardSetUpGuide,
     DashboardVideo,
+    useSetupGuide,
 } from "@/features/dashboard";
 import { useBundlesPage } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { AnalyticsDisabledBanner } from "@/features/analytics";
 import { useSettingsStore } from "@/features/settings";
-import { GlobalBanner, useAppNavigation, useNavigationActions } from "@/shared";
+import { GlobalBanner, useNavigationActions } from "@/shared";
 
-/**
- * Main Dashboard Page Component
- */
 export function DashboardPage() {
-    const { analytics } = useAppNavigation();
     const { onCreateBundle } = useBundlesPage();
+    const setupGuide = useSetupGuide();
     const isAnalyticsDisabled = useSettingsStore((state) => {
         const settings = state.getEffectiveData();
         return settings?.enableAnalytics === false;
@@ -30,32 +28,31 @@ export function DashboardPage() {
 
     const { actions, isLoading } = useNavigationActions({
         create: onCreateBundle,
-        analytics: analytics,
     });
 
     const bundlesLoading = isLoading("create");
-    const analyticsLoading = isLoading("analytics");
+    const guideVisible = !setupGuide.dismissed && !setupGuide.isLoading;
 
     return (
         <s-page>
             <TitleBar>
-                {bundlesLoading || analyticsLoading ? (
+                {bundlesLoading || setupGuide.isShowing ? (
                     <>
                         <s-button
                             slot="primary-action"
                             variant="primary"
-                            disabled={analyticsLoading}
                             loading={bundlesLoading}
+                            disabled={setupGuide.isShowing}
                         >
                             Create Bundle
                         </s-button>
                         <s-button
                             slot="secondary-actions"
                             variant="secondary"
-                            disabled={bundlesLoading}
-                            loading={analyticsLoading}
+                            disabled={guideVisible || bundlesLoading}
+                            loading={setupGuide.isShowing}
                         >
-                            View Analytics
+                            Setup guide
                         </s-button>
                     </>
                 ) : (
@@ -68,10 +65,10 @@ export function DashboardPage() {
                             Create Bundle
                         </button>
                         <button
-                            onClick={actions.analytics}
-                            disabled={analyticsLoading}
+                            onClick={setupGuide.showGuide}
+                            disabled={guideVisible || setupGuide.isShowing}
                         >
-                            View Analytics
+                            Setup guide
                         </button>
                     </>
                 )}
@@ -87,7 +84,7 @@ export function DashboardPage() {
                     <GlobalBanner />
 
                     {/* Setup Guide */}
-                    <DashboardSetUpGuide />
+                    <DashboardSetUpGuide {...setupGuide} />
 
                     {/* Analytics Disabled Warning */}
                     {isAnalyticsDisabled && <AnalyticsDisabledBanner />}

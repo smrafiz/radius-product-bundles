@@ -83,6 +83,13 @@ export interface DashboardSetupGuideProps {
     onSecondaryClick: (itemId: number) => void;
 }
 
+export interface DashboardSetUpGuideProps extends DashboardSetupGuideProps {
+    isLoading: boolean;
+    dismissed: boolean;
+    isShowing: boolean;
+    showGuide: () => void;
+}
+
 export interface SetupItemProps extends SetupItemData {
     expanded: boolean;
     checkboxLoading: boolean;

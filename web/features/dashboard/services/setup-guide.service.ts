@@ -1,13 +1,17 @@
 "use server";
 
-import prisma from "@/shared/repositories/prisma-connect";
+import {
+    SetupGuideData,
+    SetupProgress,
+    SetupStepKey,
+} from "@/features/dashboard";
 import {
     getSetupProgress,
-    updateSetupStep,
+    getAutoDetectData,
+    updateSetupProgress,
     dismissSetupGuide,
     showSetupGuide,
-} from "../repositories/setup-guide.repository";
-import type { SetupGuideData, SetupProgress, SetupStepKey } from "../types/setup-guide.types";
+} from "@/features/dashboard/repositories/setup-guide.repository";
 
 export async function getSetupGuideService({
     shop,
@@ -15,7 +19,6 @@ export async function getSetupGuideService({
     shop: string;
 }): Promise<SetupGuideData> {
     const persisted = await getSetupProgress(shop);
-
     const autoDetected = await autoDetectProgress(shop);
 
     const merged: SetupProgress = {
@@ -28,13 +31,7 @@ export async function getSetupGuideService({
 
     if (JSON.stringify(merged) !== JSON.stringify(persisted.progress)) {
         const allComplete = Object.values(merged).every(Boolean);
-        await prisma.shop.update({
-            where: { domain: shop },
-            data: {
-                setupProgress: merged as any,
-                setupComplete: allComplete,
-            },
-        });
+        await updateSetupProgress(shop, merged, allComplete);
     }
 
     return {
@@ -46,24 +43,10 @@ export async function getSetupGuideService({
 }
 
 async function autoDetectProgress(shop: string) {
-    const [bundleCount, appSettings, viewCount] = await Promise.all([
-        prisma.bundle.count({
-            where: { shop },
-        }),
-        prisma.appSettings.findFirst({
-            where: { shop: { domain: shop } },
-            select: { globalStyles: true },
-        }),
-        prisma.bundleView.count({
-            where: { bundle: { shop } },
-        }),
-    ]);
+    const { bundleCount, globalStyles, viewCount } = await getAutoDetectData(shop);
 
     const firstBundleCreated = bundleCount > 0;
-
-    const widgetCustomized = appSettings?.globalStyles != null &&
-        JSON.stringify(appSettings.globalStyles) !== "{}";
-
+    const widgetCustomized = globalStyles != null && JSON.stringify(globalStyles) !== "{}";
     const storefrontPreviewed = viewCount > 0;
 
     return { firstBundleCreated, widgetCustomized, storefrontPreviewed };
@@ -78,7 +61,11 @@ export async function updateSetupStepService({
     stepKey: SetupStepKey;
     value: boolean;
 }) {
-    return updateSetupStep(shop, stepKey, value);
+    const { progress } = await getSetupProgress(shop);
+    const updated: SetupProgress = { ...progress, [stepKey]: value };
+    const allComplete = Object.values(updated).every(Boolean);
+    await updateSetupProgress(shop, updated, allComplete);
+    return updated;
 }
 
 export async function dismissSetupGuideService({ shop }: { shop: string }) {

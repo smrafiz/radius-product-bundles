@@ -242,7 +242,7 @@ export function useSetupGuide() {
         checkboxLoadingId,
         buttonLoading,
 
-        dismissGuide: () => dismissMutation.mutateAsync(),
+        onDismiss: () => dismissMutation.mutateAsync(),
         showGuide: () => showMutation.mutateAsync(),
         toggleGuide,
         setExpanded: handleSetExpanded,
