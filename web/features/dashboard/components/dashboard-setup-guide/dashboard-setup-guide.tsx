@@ -8,13 +8,20 @@ export function DashboardSetUpGuide() {
         items,
         isLoading,
         dismissed,
-        shopDomain,
-        apiKey,
-        completeStep,
-        dismissGuide,
-        showGuide,
         isDismissing,
         isShowing,
+        isGuideOpen,
+        expanded,
+        completedItemsLength,
+        checkboxLoadingId,
+        buttonLoading,
+        dismissGuide,
+        showGuide,
+        toggleGuide,
+        setExpanded,
+        onItemComplete,
+        onPrimaryClick,
+        onSecondaryClick,
     } = useSetupGuide();
 
     if (isLoading) {
@@ -42,11 +49,18 @@ export function DashboardSetUpGuide() {
     return (
         <DashboardSetupSteps
             items={items}
-            shopDomain={shopDomain}
-            apiKey={apiKey}
-            onDismiss={dismissGuide}
-            onStepComplete={completeStep}
+            isGuideOpen={isGuideOpen}
+            completedItemsLength={completedItemsLength}
+            expanded={expanded}
             isDismissing={isDismissing}
+            checkboxLoadingId={checkboxLoadingId}
+            buttonLoading={buttonLoading}
+            onDismiss={dismissGuide}
+            toggleGuide={toggleGuide}
+            setExpanded={setExpanded}
+            onItemComplete={onItemComplete}
+            onPrimaryClick={onPrimaryClick}
+            onSecondaryClick={onSecondaryClick}
         />
     );
 }

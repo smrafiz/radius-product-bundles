@@ -1,8 +1,8 @@
 "use server";
 
 import prisma from "@/shared/repositories/prisma-connect";
-import { DEFAULT_SETUP_PROGRESS } from "../constants/setup-guide.constants";
-import type { SetupProgress, SetupStepKey } from "../types/setup-guide.types";
+import { SetupProgress, SetupStepKey } from "@/features/dashboard";
+import { DEFAULT_SETUP_PROGRESS } from "@/features/dashboard/constants/setup-guide.constants";
 
 export async function getSetupProgress(domain: string) {
     const shop = await prisma.shop.findUnique({
@@ -15,7 +15,9 @@ export async function getSetupProgress(domain: string) {
         },
     });
 
-    if (!shop) throw new Error(`Shop not found: ${domain}`);
+    if (!shop) {
+        throw new Error(`Shop not found: ${domain}`);
+    }
 
     const progress: SetupProgress = {
         ...DEFAULT_SETUP_PROGRESS,

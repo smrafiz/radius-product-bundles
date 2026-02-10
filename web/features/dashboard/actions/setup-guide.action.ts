@@ -1,14 +1,18 @@
 "use server";
 
+import {
+    SetupGuideData,
+    SetupProgress,
+    SetupStepKey,
+} from "@/features/dashboard";
 import { ApiResponse } from "@/shared";
-import { handleSessionToken } from "@/lib/shopify";
 import {
     getSetupGuideService,
     updateSetupStepService,
     dismissSetupGuideService,
     showSetupGuideService,
 } from "../services/setup-guide.service";
-import type { SetupGuideData, SetupProgress, SetupStepKey } from "../types/setup-guide.types";
+import { handleSessionToken } from "@/lib/shopify";
 
 export async function getSetupGuideAction(
     sessionToken: string,

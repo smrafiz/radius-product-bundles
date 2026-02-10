@@ -1,91 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { useAppNavigation } from "@/shared";
-import { SetupItemProps, SetupStepKey } from "@/features/dashboard";
-import { SETUP_STEP_KEYS } from "@/features/dashboard/constants/setup-guide.constants";
+import { SetupItemProps } from "@/features/dashboard";
 
 export const DashboardSetupItem = ({
     complete,
     autoDetected,
-    onComplete,
     expanded,
     setExpanded,
+    checkboxLoading,
+    buttonLoading,
+    onCheckboxChange,
+    onPrimaryClick,
+    onSecondaryClick,
     title,
     description,
     image,
     primaryButton,
     secondaryButton,
-    stepKey,
-    shopDomain,
-    apiKey,
 }: SetupItemProps) => {
-    const [loading, setLoading] = useState(false);
-    const [btnLoading, setBtnLoading] = useState<
-        "primary" | "secondary" | null
-    >(null);
-    const { goTo } = useAppNavigation();
     const isDisabled = autoDetected && complete;
-
-    const completeItem = async () => {
-        if (isDisabled) {
-            return;
-        }
-
-        setLoading(true);
-        await onComplete(stepKey as SetupStepKey, !complete);
-        setLoading(false);
-    };
-
-    const handlePrimaryClick = async () => {
-        setBtnLoading("primary");
-        if (stepKey === SETUP_STEP_KEYS.APP_EMBED) {
-            const url = `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`;
-            window.open(url, "_blank");
-            setBtnLoading(null);
-        } else if (stepKey === SETUP_STEP_KEYS.STOREFRONT_PREVIEW) {
-            window.open(`https://${shopDomain}`, "_blank");
-            await onComplete(stepKey as SetupStepKey, true);
-            setBtnLoading(null);
-        } else if (primaryButton?.internalUrl) {
-            goTo(primaryButton.internalUrl)();
-        }
-    };
-
-    const handleSecondaryClick = async () => {
-        setBtnLoading("secondary");
-        if (stepKey === SETUP_STEP_KEYS.APP_EMBED) {
-            const extensions = await shopify.app.extensions();
-            const themeExt = extensions.find(
-                (e) => e.type === "theme_app_extension",
-            );
-            const activations = (themeExt?.activations ?? []) as Array<{
-                handle: string;
-                target: string;
-                status: string;
-            }>;
-            const embedActive = activations.some(
-                (a) =>
-                    a.handle === "app-embed" &&
-                    a.target !== "section" &&
-                    a.status === "active",
-            );
-            if (embedActive) {
-                await onComplete(stepKey as SetupStepKey, true);
-                shopify.toast.show("App embed is active");
-            } else {
-                if (complete) {
-                    await onComplete(stepKey as SetupStepKey, false);
-                }
-                shopify.toast.show("App embed is not enabled yet", {
-                    isError: true,
-                });
-            }
-        } else if (secondaryButton?.internalUrl) {
-            goTo(secondaryButton.internalUrl)();
-        }
-        setBtnLoading(null);
-    };
 
     return (
         <s-box paddingBlock="small-200">
@@ -94,8 +27,12 @@ export const DashboardSetupItem = ({
                 gap="base"
                 padding="small-200"
             >
-                <div className="flex items-center gap-2 min-h-8">
-                    {loading ? (
+                <div
+                    className="flex items-center gap-2 min-h-8"
+                    onClick={!expanded ? setExpanded : undefined}
+                    style={!expanded ? { cursor: "pointer" } : undefined}
+                >
+                    {checkboxLoading ? (
                         <>
                             <div className="w-4 h-5 block">
                                 <s-spinner size="base" />
@@ -106,7 +43,7 @@ export const DashboardSetupItem = ({
                         <s-checkbox
                             label={title}
                             checked={complete}
-                            onChange={completeItem}
+                            onChange={onCheckboxChange}
                             disabled={isDisabled}
                         />
                     )}
@@ -146,13 +83,12 @@ export const DashboardSetupItem = ({
                                             {primaryButton && (
                                                 <s-button
                                                     variant="primary"
-                                                    onClick={handlePrimaryClick}
+                                                    onClick={onPrimaryClick}
                                                     loading={
-                                                        btnLoading ===
-                                                        "primary"
+                                                        buttonLoading === "primary"
                                                     }
                                                     disabled={
-                                                        btnLoading !== null
+                                                        buttonLoading !== null
                                                     }
                                                 >
                                                     {primaryButton.content}
@@ -161,15 +97,12 @@ export const DashboardSetupItem = ({
                                             {secondaryButton && (
                                                 <s-button
                                                     variant="tertiary"
-                                                    onClick={
-                                                        handleSecondaryClick
-                                                    }
+                                                    onClick={onSecondaryClick}
                                                     loading={
-                                                        btnLoading ===
-                                                        "secondary"
+                                                        buttonLoading === "secondary"
                                                     }
                                                     disabled={
-                                                        btnLoading !== null
+                                                        buttonLoading !== null
                                                     }
                                                 >
                                                     {secondaryButton.content}

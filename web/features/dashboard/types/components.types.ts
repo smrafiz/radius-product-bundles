@@ -68,19 +68,27 @@ export interface SetupItemData {
 }
 
 export interface DashboardSetupGuideProps {
-    onDismiss: () => void;
-    onStepComplete: (key: SetupStepKey, value: boolean) => Promise<void> | void;
-    isDismissing: boolean;
     items: SetupItemData[];
-    shopDomain: string;
-    apiKey: string;
+    isGuideOpen: boolean;
+    completedItemsLength: number;
+    expanded: number;
+    isDismissing: boolean;
+    checkboxLoadingId: number | null;
+    buttonLoading: { itemId: number; type: "primary" | "secondary" } | null;
+    onDismiss: () => void;
+    toggleGuide: () => void;
+    setExpanded: (id: number) => void;
+    onItemComplete: (itemId: number) => void;
+    onPrimaryClick: (itemId: number) => void;
+    onSecondaryClick: (itemId: number) => void;
 }
 
 export interface SetupItemProps extends SetupItemData {
     expanded: boolean;
+    checkboxLoading: boolean;
+    buttonLoading: "primary" | "secondary" | null;
     setExpanded: () => void;
-    onComplete: (key: SetupStepKey, value: boolean) => Promise<void> | void;
-    shopDomain: string;
-    apiKey: string;
-    autoDetected: boolean;
+    onCheckboxChange: () => void;
+    onPrimaryClick: () => void;
+    onSecondaryClick: () => void;
 }
