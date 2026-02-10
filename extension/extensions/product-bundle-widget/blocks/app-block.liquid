@@ -33,6 +33,26 @@
 	{% assign custom_css_class = g_custom.cssClass | default: '' %}
 	{% assign custom_css = g_custom.css | default: '' %}
 
+	{% comment %} ═══════════════════════════════════════════════════════════════════
+		PRIORITY: Find highest-priority active bundle for this product
+	═══════════════════════════════════════════════════════════════════ {% endcomment %}
+	{% assign best_bundle_id = null %}
+	{% assign best_score = -1 %}
+	{% for bid in bundle_ids %}
+		{% assign b = bundles[bid] %}
+		{% if b and b.status == 'ACTIVE' %}
+			{% if b.priorityType == 'discount_based' %}
+				{% assign this_score = b.discountValue | default: 0 | times: 1 %}
+			{% else %}
+				{% assign this_score = b.priority | default: 0 | times: 1 %}
+			{% endif %}
+			{% if best_bundle_id == null or this_score > best_score %}
+				{% assign best_score = this_score %}
+				{% assign best_bundle_id = bid %}
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+
 	<div
 			class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}"
 			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
@@ -41,7 +61,7 @@
 		{% for bundle_id in bundle_ids %}
 			{% assign bundle = bundles[bundle_id] %}
 
-			{% if bundle and bundle.status == 'ACTIVE' %}
+			{% if bundle_id == best_bundle_id %}
 				{% comment %} ═══════════════════════════════════════════════════════════════════
 					STYLE PRESET HANDLING
 					If a preset is selected (not custom), apply preset values
@@ -906,6 +926,7 @@
 							%}
 					{% endcase %}
 				</div>
+				{% break %}
 			{% endif %}
 		{% endfor %}
 	</div>

@@ -206,6 +206,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         data.discountApplication = storeData.discountApplication ?? "bundle";
         data.discountedProductIds = storeData.discountedProductIds ?? [];
         data.freeShipping = storeData.freeShipping ?? false;
+        data.priority = storeData.priority ?? 0;
+        data.priorityType = storeData.priorityType ?? "index_based";
     };
 
     /**

@@ -52,6 +52,10 @@ export function useBundleDataSync(bundleData: any | undefined) {
                 startDate: bundleData.startDate,
                 endDate: bundleData.endDate,
 
+                // Priority
+                priority: bundleData.priority ?? 0,
+                priorityType: bundleData.priorityType ?? "index_based",
+
                 // Images
                 images: bundleData.images || [],
             });

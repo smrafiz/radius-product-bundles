@@ -58,6 +58,8 @@ export async function createBundle(
             discountApplication: data.discountApplication ?? "bundle",
             discountedProductIds: data.discountedProductIds ?? [],
             freeShipping: data.freeShipping ?? false,
+            priority: data.priority ?? 0,
+            priorityType: data.priorityType ?? "index_based",
             marketingCopy: data.marketingCopy,
             seoTitle: data.seoTitle,
             seoDescription: data.seoDescription,
@@ -204,6 +206,8 @@ export async function updateBundleWithRelations(
             discountApplication: data.discountApplication || "bundle",
             discountedProductIds: data.discountedProductIds ?? [],
             freeShipping: data.freeShipping ?? false,
+            priority: data.priority ?? 0,
+            priorityType: data.priorityType ?? "index_based",
         });
 
         // Delete all existing products

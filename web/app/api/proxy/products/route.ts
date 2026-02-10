@@ -137,7 +137,15 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // Step 2: Get access token for GraphQL calls
+        // Step 2: Sort by effective priority and keep only top bundle
+        const sortedBundles = bundles.sort((a, b) => {
+            const aScore = a.priorityType === "discount_based" ? a.discountValue : (a.priority ?? 0);
+            const bScore = b.priorityType === "discount_based" ? b.discountValue : (b.priority ?? 0);
+            return bScore - aScore; // higher score = higher priority
+        });
+        const topBundles = sortedBundles.slice(0, 1);
+
+        // Step 3: Get access token for GraphQL calls
         const accessToken = await getAccessTokenForShop(shop);
         if (!accessToken) {
             return NextResponse.json(
@@ -146,9 +154,9 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // Step 3: Transform bundles with GraphQL product data
+        // Step 4: Transform bundles with GraphQL product data
         const transformedBundles = await Promise.all(
-            bundles.map(async (bundle) => {
+            topBundles.map(async (bundle) => {
                 // Extract all unique product IDs from bundle
                 const productIds = Array.from(
                     new Set([

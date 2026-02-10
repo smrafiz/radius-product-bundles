@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BUNDLE_PRIORITY } from "@/features/bundles";
+import { BUNDLE_PRIORITY, useBundleStore } from "@/features/bundles";
 
 export function BundlePriority() {
     const [isOpen, setIsOpen] = useState(false);
-    const [priorityType, setPriorityType] = useState<
-        "index_based" | "discount_based"
-    >("index_based");
+    const { bundleData, updateBundleField } = useBundleStore();
+
+    const priorityType = bundleData.priorityType ?? "index_based";
 
     useEffect(() => {
         const popover = document.getElementById("status-popover");
@@ -87,7 +87,7 @@ export function BundlePriority() {
                     </div>
 
                     <s-popover id="bundle-discount-popover">
-                        <div className="p-2 w-[355px]">
+                        <div className="p-2 w-88.75">
                             <s-stack gap="small-400">
                                 {/*loop here*/}
                                 {BUNDLE_PRIORITY.map((priority) => (
@@ -97,7 +97,8 @@ export function BundlePriority() {
                                         commandFor="bundle-discount-popover"
                                         borderRadius="base"
                                         onClick={() => {
-                                            setPriorityType(
+                                            updateBundleField(
+                                                "priorityType",
                                                 priority.id as
                                                     | "index_based"
                                                     | "discount_based",
@@ -105,7 +106,10 @@ export function BundlePriority() {
                                             setIsOpen(false);
                                         }}
                                     >
-                                        <div className="py-1 px-2 rounded-md transition-colors">
+                                        <div
+                                            className={`py-1 px-2 rounded-md transition-colors
+                                                ${priorityType === priority.id ? "bg-[#ebebeb]" : "hover:bg-[#f7f7f7]"}`}
+                                        >
                                             <s-stack gap="none">
                                                 <s-heading>
                                                     {priority.title}
@@ -132,6 +136,11 @@ export function BundlePriority() {
                             step={1}
                             min={0}
                             max={500}
+                            value={String(bundleData.priority ?? 0)}
+                            onChange={(e: any) => {
+                                const val = Number(e.target.value);
+                                updateBundleField("priority", isNaN(val) ? 0 : val);
+                            }}
                         />
                     </s-stack>
                 )}

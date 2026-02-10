@@ -79,6 +79,8 @@ model Bundle {
     discountApplication  String?              @default("bundle")
     discountedProductIds String[]             @default([])
     freeShipping         Boolean              @default(false)
+    priority             Int                  @default(0)
+    priorityType         String               @default("index_based")
     images               String[]
     marketingCopy        String?
     seoTitle             String?

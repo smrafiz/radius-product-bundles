@@ -298,6 +298,8 @@ export interface ExtendedBundleFormData extends BundleFormData {
     discountApplication?: "bundle" | "products";
     discountedProductIds?: string[];
     freeShipping?: boolean;
+    priority?: number;
+    priorityType?: "index_based" | "discount_based";
     displaySettings?: DisplaySettings;
 }
 

@@ -402,6 +402,10 @@ function buildActiveBundlesMetafieldValue(
             freeShippingMethodTitle:
                 freeShippingMethodTitle || "Free shipping with {name}",
 
+            // Priority (for Liquid display — determines which bundle wins)
+            priority: bundle.priority ?? 0,
+            priorityType: bundle.priorityType ?? "index_based",
+
             // Bundle info (for Liquid display)
             title: bundle.settings?.title ?? bundle.name,
             productCount: productIds.length,

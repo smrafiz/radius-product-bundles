@@ -101,6 +101,8 @@ export function transformBundle(
         discountApplication: bundle.discountApplication ?? "bundle",
         discountedProductIds: bundle.discountedProductIds ?? [],
         freeShipping: bundle.freeShipping ?? false,
+        priority: bundle.priority ?? 0,
+        priorityType: bundle.priorityType ?? "index_based",
         settings: bundle.settings ?? undefined,
     };
 }

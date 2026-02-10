@@ -201,6 +201,9 @@ export const bundleSchema = z
         discountedProductIds: z.array(z.string()).optional(),
         freeShipping: z.boolean().default(false).optional(),
 
+        priority: z.number().int().min(0).max(500).default(0).optional(),
+        priorityType: z.enum(["index_based", "discount_based"]).default("index_based").optional(),
+
         marketingCopy: z.string().max(1000).transform(sanitizeHtml).optional(),
         seoTitle: z.string().max(60).transform(sanitizeHtml).optional(),
         seoDescription: z.string().max(160).transform(sanitizeHtml).optional(),
