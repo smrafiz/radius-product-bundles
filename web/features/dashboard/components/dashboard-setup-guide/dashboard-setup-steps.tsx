@@ -103,7 +103,7 @@ export function DashboardSetupSteps({
                 borderRadius="base"
                 display={isGuideOpen ? "auto" : "none"}
             >
-                <s-box padding="small-300">
+                <s-box paddingBlockStart="base">
                     {items.map((item, index) => (
                         <Fragment key={item.id}>
                             {index > 0 && <s-divider />}

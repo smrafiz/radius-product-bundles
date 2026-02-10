@@ -25,7 +25,7 @@ export const DashboardSetupItem = ({
             <s-grid
                 gridTemplateColumns="1fr auto"
                 gap="base"
-                padding="small-200"
+                paddingInline="base"
             >
                 <div
                     className="flex items-center gap-2 min-h-8"
@@ -61,7 +61,7 @@ export const DashboardSetupItem = ({
                 style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}
             >
                 <div className="overflow-hidden">
-                    <s-box padding="small" paddingBlockStart="none">
+                    <s-box padding="base" paddingBlockEnd="small-200">
                         <s-box
                             padding="base"
                             background="subdued"
