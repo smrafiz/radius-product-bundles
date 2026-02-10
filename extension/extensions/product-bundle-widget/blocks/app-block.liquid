@@ -190,7 +190,6 @@
 				{% endif %}
 
 				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
-				{% assign product_card_bg = '#f9fafb' %}
 				{% if override_card_settings and block.settings.product_card_bg != blank %}
 					{% assign product_card_bg = block.settings.product_card_bg %}
 				{% elsif g_styles.customizeCardStyle == true %}
@@ -203,22 +202,13 @@
 				{% if override_card_settings %}
 					{% assign product_card_border = block.settings.product_card_border %}
 				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardBorder == false %}
-						{% assign product_card_border = false %}
-					{% elsif g_styles.productCardBorder == true %}
-						{% assign product_card_border = true %}
-					{% endif %}
+					{% assign product_card_border = g_styles.productCardBorder %}
 				{% endif %}
 
-				{% assign product_card_shadow = false %}
 				{% if override_card_settings %}
 					{% assign product_card_shadow = block.settings.product_card_shadow %}
 				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardShadow == true %}
-						{% assign product_card_shadow = true %}
-					{% elsif g_styles.productCardShadow == false %}
-						{% assign product_card_shadow = false %}
-					{% endif %}
+					{% assign product_card_shadow = g_styles.productCardShadow %}
 				{% endif %}
 
 
@@ -658,11 +648,11 @@
 
 					{% case body_size %}
 					{% when 'small' %}
-						--rb-body-font-size: 13px;
-					{% when 'large' %}
-						--rb-body-font-size: 16px;
-					{% else %}
 						--rb-body-font-size: 14px;
+					{% when 'large' %}
+						--rb-body-font-size: 18px;
+					{% else %}
+						--rb-body-font-size: 16px;
 					{% endcase %}
 
 					{% case button_size %}

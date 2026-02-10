@@ -46,6 +46,9 @@ export function WidgetCompact({
                 <button
                     className="mt-2 text-[12px] underline cursor-pointer"
                     onClick={() => setShowAll(!showAll)}
+                    style={{
+                        color: styles.textColor,
+                    }}
                 >
                     {showAll
                         ? "Show less"

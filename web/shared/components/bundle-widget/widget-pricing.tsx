@@ -116,6 +116,7 @@ export function WidgetPricingDisplay({
                         color: savingsColor,
                         fontWeight: 600,
                         marginBottom: "8px",
+                        borderRadius: borderRadius,
                         padding,
                     }}
                 >
@@ -136,6 +137,7 @@ export function WidgetPricingDisplay({
                         alignItems: "center",
                         gap: "4px",
                         marginTop: "8px",
+                        borderRadius: borderRadius,
                         padding,
                     }}
                 >

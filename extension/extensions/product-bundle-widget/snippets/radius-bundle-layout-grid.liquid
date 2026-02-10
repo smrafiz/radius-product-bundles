@@ -26,7 +26,18 @@
             style="--grid-columns: {{ grid_columns | default: 3 }};"
     >
         {% for i in (1..product_count) %}
-            <div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
+            {% assign item_index = forloop.index0 %}
+            {% assign initial_visible = 4 %}
+            {% assign is_hidden = false %}
+            {% if item_index >= initial_visible %}
+                {% assign is_hidden = true %}
+            {% endif %}
+
+            <div class="radius-bundle__skeleton-card radius-bundle__loading{% if is_hidden %} radius-bundle__product--hidden{% endif %}"
+                 data-bundle-loading
+                 data-product-index="{{ item_index }}"
+                 {% if is_hidden %}style="display: none;"{% endif %}
+            >
                 {% if show_images %}
                     <div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>
                 {% endif %}

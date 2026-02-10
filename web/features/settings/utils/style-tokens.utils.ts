@@ -31,7 +31,7 @@ export function getCardRadius(cornerStyle: CornerStyle): string {
  */
 export function getBadgeRadius(cornerStyle: CornerStyle): string {
     const px = CORNER_STYLE_VALUES[cornerStyle] ?? CORNER_STYLE_VALUES.modern;
-    return `${Math.max(px, 4)}px`;
+    return `${px}px`;
 }
 
 /**
@@ -52,6 +52,11 @@ export function getButtonRadius(cornerStyle: CornerStyle): string {
 export function getSpacing(spacing: SpacingPreset): string {
     const values = SPACING_VALUES[spacing] ?? SPACING_VALUES.comfortable;
     return `${values.gap}px`;
+}
+
+export function getPadding(spacing: SpacingPreset): string {
+    const values = SPACING_VALUES[spacing] ?? SPACING_VALUES.comfortable;
+    return `${values.padding}px`;
 }
 
 // ═══════════════════════════════════════════════════════════════════

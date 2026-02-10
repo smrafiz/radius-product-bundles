@@ -1076,22 +1076,34 @@ declare global {
 
             sortedProducts.forEach((product, index) => {
                 const isLast = index === sortedProducts.length - 1;
-                html += this.renderProductCard(product, layout);
+                html += this.renderProductCard(product, layout, index);
 
                 // Add divider for list layout based on divider style
                 if (layout === "list" && !isLast) {
+                    const initialVisibleCount = 4;
+                    const isDividerHidden = index >= initialVisibleCount - 1;
+                    const dividerHiddenAttr = isDividerHidden ? ' style="display: none;"' : '';
+                    const dividerHiddenClass = isDividerHidden ? ' radius-bundle__divider--hidden' : '';
+
                     if (this.dividerStyle === "plus") {
                         html +=
-                            '<div class="radius-bundle__divider radius-bundle__divider--plus"><div class="divider-position">+</div></div>';
+                            `<div class="radius-bundle__divider radius-bundle__divider--plus${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}><div class="divider-position">+</div></div>`;
                     } else if (this.dividerStyle === "line") {
                         html +=
-                            '<div class="radius-bundle__divider radius-bundle__divider--line"></div>';
+                            `<div class="radius-bundle__divider radius-bundle__divider--line${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}></div>`;
                     }
-                    // 'none' - no divider added
                 }
             });
 
+            if (layout === "list" || layout === "grid" || layout === "compact") {
+                html += this.getShowMoreButton(sortedProducts.length);
+            }
+
             productsContainer.innerHTML = html;
+
+            if (layout === "list" || layout === "grid" || layout === "compact") {
+                this.initShowMoreToggle();
+            }
 
             // Re-initialize slider after rendering products
             if (layout === "slider") {
@@ -1263,6 +1275,7 @@ declare global {
         private renderProductCard(
             product: BundleProduct,
             layout: string,
+            index: number = 0,
         ): string {
             const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : "";
             const imageHtml =
@@ -1376,61 +1389,73 @@ declare global {
 
             // List layout
             if (layout === "list") {
+                const initialVisibleCount = 4;
+                const isHidden = index >= initialVisibleCount;
                 return `
-            <div class="radius-bundle__product radius-bundle__product--list" 
-                 data-product-id="${product.id}" 
-                 data-variant-id="${product.variantId}">
-                ${imageWrapper}
-                <div class="radius-bundle__product-info">
-                    ${productTitleHtml}
-                    ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-                </div>
-                ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
-            </div>
-        `;
+                    <div class="radius-bundle__product radius-bundle__product--list${isHidden ? ' radius-bundle__product--hidden' : ''}" 
+                         data-product-id="${product.id}" 
+                         data-variant-id="${product.variantId}"
+                         data-product-index="${index}"
+                         ${isHidden ? 'style="display: none;"' : ''}>
+                        ${imageWrapper}
+                        <div class="radius-bundle__product-info">
+                            ${productTitleHtml}
+                            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
+                        </div>
+                        ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
+                    </div>
+                `;
             }
 
             // Grid layout
             if (layout === "grid") {
+                const initialVisibleCount = 4;
+                const isHidden = index >= initialVisibleCount;
                 return `
-            <div class="radius-bundle__product radius-bundle__product--grid" 
-                 data-product-id="${product.id}" 
-                 data-variant-id="${product.variantId}">
-                ${imageWrapper}
-                ${productTitleHtml}
-                ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
-                ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-            </div>
-        `;
+                    <div class="radius-bundle__product radius-bundle__product--grid${isHidden ? ' radius-bundle__product--hidden' : ''}" 
+                         data-product-id="${product.id}" 
+                         data-variant-id="${product.variantId}"
+                         data-product-index="${index}"
+                         ${isHidden ? 'style="display: none;"' : ''}>
+                        ${imageWrapper}
+                        ${productTitleHtml}
+                        ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
+                        ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
+                    </div>
+                `;
             }
 
             // Compact layout
             if (layout === "compact") {
+                const initialVisibleCount = 4;
+                const isHidden = index >= initialVisibleCount;
                 return `
-            <div class="radius-bundle__product radius-bundle__product--compact" 
-                 data-product-id="${product.id}" 
-                 data-variant-id="${product.variantId}">
-                ${imageWrapper}
-                <div class="radius-bundle__product-info radius-bundle__product-info--compact">
-                    ${productTitleHtml}
-                    ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-                </div>
-                ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
-            </div>
-        `;
+                    <div class="radius-bundle__product radius-bundle__product--compact${isHidden ? ' radius-bundle__product--hidden' : ''}" 
+                         data-product-id="${product.id}" 
+                         data-variant-id="${product.variantId}"
+                         data-product-index="${index}"
+                         ${isHidden ? 'style="display: none;"' : ''}>
+                        ${imageWrapper}
+                        <div class="radius-bundle__product-info radius-bundle__product-info--compact">
+                            ${productTitleHtml}
+                            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
+                        </div>
+                        ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
+                    </div>
+                `;
             }
 
             // Slider layout (default)
             return `
-        <div class="radius-bundle__product radius-bundle__product--slider" 
-             data-product-id="${product.id}" 
-             data-variant-id="${product.variantId}">
-            ${imageWrapper}
-            ${productTitleHtml}
-            ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
-            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-        </div>
-    `;
+                <div class="radius-bundle__product radius-bundle__product--slider" 
+                     data-product-id="${product.id}" 
+                     data-variant-id="${product.variantId}">
+                    ${imageWrapper}
+                    ${productTitleHtml}
+                    ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
+                    ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
+                </div>
+            `;
         }
 
         /**
@@ -1595,6 +1620,86 @@ declare global {
                     (freeShippingEl as HTMLElement).style.display = "none";
                 }
             }
+        }
+
+        /**
+         * Generate the show more/less toggle button for list layout.
+         *
+         * @param {number} totalProducts - Total number of products in the bundle.
+         * @param {number} initialVisibleCount - Number of initially visible products.
+         * @returns {string} HTML string for the toggle button, or empty string if not needed.
+         */
+        private getShowMoreButton(totalProducts: number, initialVisibleCount: number = 4): string {
+            if (totalProducts <= initialVisibleCount) {
+                return "";
+            }
+
+            const extraCount = totalProducts - initialVisibleCount;
+
+            return `
+                <button
+                    class="radius-bundle__show-more-btn"
+                    type="button"
+                    data-initial-count="${initialVisibleCount}"
+                    data-total-count="${totalProducts}"
+                    data-expanded="false"
+                    style="
+                        margin-top: 8px;
+                        font-size: 12px;
+                        text-decoration: underline;
+                        cursor: pointer;
+                        background: none;
+                        border: none;
+                        padding: 0;
+                        color: var(--rb-text-color);
+                    "
+                >+ ${extraCount} more products</button>
+            `;
+        }
+
+        /**
+         * Initialize the show more/less toggle for list layout products.
+         * Binds click event to toggle visibility of products beyond initial count.
+         */
+        private initShowMoreToggle(): void {
+            const btn = this.container.querySelector('.radius-bundle__show-more-btn') as HTMLButtonElement | null;
+
+            if (!btn) {
+                return;
+            }
+
+            const initialCount = parseInt(btn.dataset.initialCount || '4', 10);
+            const totalCount = parseInt(btn.dataset.totalCount || '0', 10);
+            const products = this.container.querySelectorAll<HTMLElement>('.radius-bundle__product[data-product-index]');
+
+            function handleToggleClick(): void {
+                const isExpanded = btn!.dataset.expanded === 'true';
+
+                products.forEach(function toggleVisibility(product: HTMLElement) {
+                    const idx = parseInt(product.dataset.productIndex || '0', 10);
+
+                    if (idx >= initialCount) {
+                        product.style.display = isExpanded ? 'none' : '';
+                    }
+                });
+
+                const dividers = btn!.closest('[data-bundle-products]')?.querySelectorAll<HTMLElement>('.radius-bundle__divider[data-divider-index]');
+
+                dividers?.forEach(function toggleDividerVisibility(divider: HTMLElement) {
+                    const dividerIdx = parseInt(divider.dataset.dividerIndex || '0', 10);
+
+                    if (dividerIdx >= initialCount - 1) {
+                        divider.style.display = isExpanded ? 'none' : '';
+                    }
+                });
+
+                btn!.dataset.expanded = isExpanded ? 'false' : 'true';
+                btn!.textContent = isExpanded
+                    ? `+ ${totalCount - initialCount} more products`
+                    : 'Show less';
+            }
+
+            btn.addEventListener('click', handleToggleClick);
         }
 
         /**

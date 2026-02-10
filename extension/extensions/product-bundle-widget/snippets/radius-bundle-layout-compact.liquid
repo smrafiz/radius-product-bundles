@@ -23,7 +23,17 @@
 		<div class="radius-bundle__loading" data-bundle-loading>
 			<div class="radius-bundle__skeleton radius-bundle__skeleton--compact">
 				{% for i in (1..product_count) %}
-					<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--compact">
+					{% assign item_index = forloop.index0 %}
+					{% assign initial_visible = 4 %}
+					{% assign is_hidden = false %}
+					{% if item_index >= initial_visible %}
+						{% assign is_hidden = true %}
+					{% endif %}
+
+					<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--compact{% if is_hidden %} radius-bundle__product--hidden{% endif %}"
+						 data-product-index="{{ item_index }}"
+						 {% if is_hidden %}style="display: none;"{% endif %}
+					>
 						{% if show_images %}
 							<div class="radius-bundle__skeleton-image"></div>
 						{% endif %}

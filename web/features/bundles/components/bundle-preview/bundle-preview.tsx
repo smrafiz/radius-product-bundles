@@ -12,8 +12,8 @@ import {
 import {
     CustomizerStyles,
     getCardRadius,
+    getPadding,
     getShadow,
-    getSpacing,
     useSettingsStore,
 } from "@/features/settings";
 import {
@@ -137,7 +137,7 @@ export function BundlePreview() {
 
     const borderRadius = getCardRadius(styles.cornerStyle);
     const shadow = getShadow(styles.shadow);
-    const padding = getSpacing(styles.spacing);
+    const padding = getPadding(styles.spacing);
 
     return (
         <div className="flex flex-col gap-4">

@@ -33,7 +33,7 @@ export function WidgetList({
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: `calc(${gap} + 8px)`,
+                    gap: gap,
                 }}
             >
                 {visibleItems.map((product, index) => (
@@ -56,7 +56,7 @@ export function WidgetList({
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    paddingTop: `calc(${gap} + 8px)`,
+                                    paddingTop: gap,
                                 }}
                             >
                                 {styles.dividerStyle === "plus" ? (
@@ -99,6 +99,9 @@ export function WidgetList({
                 <button
                     className="mt-2 text-[12px] underline cursor-pointer"
                     onClick={() => setShowAll(!showAll)}
+                    style={{
+                        color: styles.textColor,
+                    }}
                 >
                     {showAll
                         ? "Show less"

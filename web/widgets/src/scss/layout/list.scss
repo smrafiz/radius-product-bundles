@@ -86,7 +86,6 @@
         .radius-bundle__product-image {
             width: 100%;
             height: var(--rb-image-size);
-            margin-bottom: var(--rb-spacing-sm);
         }
 
         .radius-bundle__product-info {
@@ -146,7 +145,6 @@
         display: block;
         height: 1px;
         background: var(--rb-border-color);
-        margin: var(--rb-spacing-sm) 0;
     }
 }
 
