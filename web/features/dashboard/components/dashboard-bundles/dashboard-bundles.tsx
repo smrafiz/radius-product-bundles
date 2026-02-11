@@ -5,30 +5,34 @@ import {
     DashboardBundlesHeader,
     DashboardBundlesList,
 } from "@/features/dashboard";
-import { BundleTableSkeleton, useBundlesData } from "@/features/bundles";
-import { useAnalytics } from "@/features/analytics";
+import { BundleTableSkeleton } from "@/features/bundles";
+import { useTopBundles, useAnalyticsStore } from "@/features/analytics";
+import { useEffect } from "react";
 
-/**
- * Dashboard Bundles Component
- */
 export function DashboardBundles() {
-    const { isLoading, error, bundles } = useBundlesData();
+    useEffect(() => {
+        const { startDate, endDate, setDays } = useAnalyticsStore.getState();
+        if (!startDate || !endDate) {
+            setDays(7);
+        }
+    }, []);
+
+    const { data: bundles, isLoading, error } = useTopBundles(5);
 
     if (isLoading) {
         return <BundleTableSkeleton />;
     }
 
-    const recentBundles = bundles.slice(0, 5);
+    const activeBundles = (bundles ?? []).filter(
+        (b) => b.status.toUpperCase() === "ACTIVE",
+    );
 
     return (
         <s-section padding="none">
-            {recentBundles.length > 0 ? (
+            {activeBundles.length > 0 ? (
                 <>
-                    {/* Header */}
                     <DashboardBundlesHeader />
-
-                    {/* Bundle list */}
-                    <DashboardBundlesList bundles={recentBundles} />
+                    <DashboardBundlesList bundles={activeBundles} />
                 </>
             ) : (
                 <DashboardBundlesEmpty error={error?.message || null} />

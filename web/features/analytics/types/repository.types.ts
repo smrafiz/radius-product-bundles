@@ -46,10 +46,12 @@ export interface TopBundleStats {
 
 export interface TopBundleDetails extends TopBundleStats {
     title: string;
+    type: string;
     status: string;
     discountType: string | null;
     discountValue: number | null;
     createdAt: Date;
+    images: string[];
 }
 
 export interface TopBundleTrend {

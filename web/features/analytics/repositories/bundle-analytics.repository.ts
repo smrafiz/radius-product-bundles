@@ -81,10 +81,12 @@ export async function getBundleDetails(bundleIds: string[]) {
         select: {
             id: true,
             name: true,
+            type: true,
             status: true,
             discountType: true,
             discountValue: true,
             createdAt: true,
+            images: true,
         },
     });
 }

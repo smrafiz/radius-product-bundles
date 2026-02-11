@@ -88,10 +88,12 @@ export async function getTopBundlesService(
             return {
                 bundleId: stats.bundleId,
                 title: details.name,
+                type: details.type,
                 status: details.status,
                 discountType: details.discountType,
                 discountValue: details.discountValue,
                 createdAt: details.createdAt,
+                images: details.images,
                 revenue: stats.revenue,
                 purchases: stats.purchases,
                 views: stats.views,

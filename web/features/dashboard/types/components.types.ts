@@ -2,15 +2,14 @@
  * Dashboard component types
  */
 
-import { Bundle } from "@/features/bundles";
 import { CalloutButtonProps } from "@/shared";
-import { SetupStepKey } from "@/features/dashboard";
+import { TopBundle } from "@/features/analytics";
 
 /**
  * Dashboard bundles list props
  */
 export interface DashboardBundlesListProps {
-    bundles: Bundle[];
+    bundles: TopBundle[];
 }
 
 /**

@@ -6,6 +6,7 @@ import { BundleWithAnalytics } from "@/features/analytics";
 export interface TopBundle {
     bundleId: string;
     title: string;
+    type: string;
     status: string;
     discountType: string | null;
     discountValue: number | null;
@@ -17,6 +18,7 @@ export interface TopBundle {
     conversionRate: number;
     addToCartRate: number;
     revenuePerView: number;
+    images: string[];
     trendPercentage: number;
     badges: Array<{
         icon: string;

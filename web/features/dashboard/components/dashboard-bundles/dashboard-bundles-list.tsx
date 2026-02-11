@@ -22,28 +22,32 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
             <s-table-body>
                 {bundles.map((bundle) => (
                     <s-table-row
-                        key={bundle.id}
+                        key={bundle.bundleId}
                         clickDelegate="mountain-view-checkbox"
                     >
                         <s-table-cell>
                             <s-clickable
-                                accessibilityLabel={bundle.name}
+                                accessibilityLabel={bundle.title}
                                 border="base"
                                 borderRadius="base"
                                 overflow="hidden"
                                 inlineSize="40px"
                                 blockSize="40px"
-                                onClick={() => bundleData.edit(bundle.id)}
+                                onClick={() => bundleData.edit(bundle.bundleId)}
                             >
-                                <s-stack alignItems="center">
-                                    <s-icon type="image" color="subdued"/>
-                                </s-stack>
+                                {bundle.images?.[0] ? (
+                                    <s-image src={bundle.images[0]} alt={bundle.title} aspectRatio="1/1" objectFit="cover" />
+                                ) : (
+                                    <s-stack alignItems="center">
+                                        <s-icon type="image" color="subdued"/>
+                                    </s-stack>
+                                )}
                             </s-clickable>
                         </s-table-cell>
                         <s-table-cell>
-                            <s-link onClick={() => bundleData.edit(bundle.id)}>
+                            <s-link onClick={() => bundleData.edit(bundle.bundleId)}>
                                 <s-text>
-                                    <span className="block w-55 font-semibold">{bundle.name}</span>
+                                    <span className="block w-55 font-semibold">{bundle.title}</span>
                                 </s-text>
                             </s-link>
                         </s-table-cell>

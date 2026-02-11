@@ -1,12 +1,9 @@
 "use client";
 
-import { useAppNavigation } from "@/shared";
+import { ROUTES, useAppNavigation } from "@/shared";
 
-/*
- * Dashboard bundles header
- */
 export function DashboardBundlesHeader() {
-    const { bundleData } = useAppNavigation();
+    const { goTo } = useAppNavigation();
 
     return (
         <s-grid
@@ -14,8 +11,9 @@ export function DashboardBundlesHeader() {
             gridTemplateColumns="1fr auto"
             padding="base"
             paddingBlockEnd="large"
+            alignItems="center"
         >
-            <s-stack>
+            <s-stack gap="small-300">
                 <s-heading>Top Performing Bundles</s-heading>
                 <s-text>
                     Check out the top performing bundles across your store.
@@ -25,10 +23,8 @@ export function DashboardBundlesHeader() {
                 <s-button
                     icon="view"
                     variant="secondary"
-                    interestFor="sort-tooltip"
-                    commandFor="sort-actions"
                     accessibilityLabel="View All"
-                    onClick={bundleData.list()}
+                    onClick={goTo(ROUTES.ANALYTICS + "?tab=bundle-performance")}
                 >
                     View All
                 </s-button>
