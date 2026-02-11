@@ -287,8 +287,8 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     name: "badgePosition",
                     label: "Badge position",
                     options: [
-                        { value: "top-left", label: "Top Left" },
-                        { value: "top-right", label: "Top Right" },
+                        { value: "top-left", label: "Left" },
+                        { value: "top-right", label: "Right" },
                         { value: "inline", label: "Inline" },
                     ],
                     defaultValue: "top-right",

@@ -1076,6 +1076,12 @@ declare global {
                 this.initShowMoreToggle();
             }
 
+            // Enable the add to cart button after products are loaded
+            const addToCartBtn = this.container.querySelector('[data-bundle-add-to-cart]') as HTMLButtonElement | null;
+            if (addToCartBtn) {
+                addToCartBtn.disabled = false;
+            }
+
             // Re-initialize slider after rendering products
             if (layout === "slider") {
                 // Use setTimeout to ensure DOM is updated

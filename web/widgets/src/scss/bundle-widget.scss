@@ -137,7 +137,6 @@
         font-weight: 500;
         cursor: pointer;
         transition: all var(--rb-transition);
-        min-height: 44px;
 
         &:hover:not(:disabled) {
             opacity: 0.9;
@@ -149,7 +148,7 @@
         }
 
         &:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
