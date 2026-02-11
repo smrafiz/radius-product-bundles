@@ -167,7 +167,6 @@ export const initialBundleData: Partial<ExtendedBundleFormData> = {
     mainProductId: undefined,
     mainVariantId: undefined,
     priority: 0,
-    priorityType: "index_based",
 };
 
 export const initialConfiguration: BundleConfiguration = {

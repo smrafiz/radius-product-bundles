@@ -81,6 +81,25 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     max: 500,
                     readOnly: true,
                 },
+                {
+                    type: "select",
+                    name: "bundlePriorityType",
+                    label: "Bundle priority strategy",
+                    details:
+                        "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the highest discount.",
+                    defaultValue: "index_based",
+                    fullWidth: true,
+                    options: [
+                        {
+                            value: "index_based",
+                            label: "Index based (manual priority)",
+                        },
+                        {
+                            value: "discount_based",
+                            label: "Discount based (highest discount wins)",
+                        },
+                    ],
+                },
             ],
         },
 

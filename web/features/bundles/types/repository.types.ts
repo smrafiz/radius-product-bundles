@@ -36,7 +36,6 @@ export interface CreateBundleInput {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
-    priorityType?: string;
     marketingCopy?: string | null;
     seoTitle?: string | null;
     seoDescription?: string | null;
@@ -71,7 +70,6 @@ export interface UpdateBundleInput {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
-    priorityType?: string;
     mainProductId?: string | null;
     mainVariantId?: string | null;
 }
@@ -103,7 +101,6 @@ export interface UpdateBundleInputWithRelations {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
-    priorityType?: string;
     marketingCopy?: string | null;
     seoTitle?: string | null;
     seoDescription?: string | null;

@@ -54,7 +54,6 @@ export function useBundleDataSync(bundleData: any | undefined) {
 
                 // Priority
                 priority: bundleData.priority ?? 0,
-                priorityType: bundleData.priorityType ?? "index_based",
 
                 // Images
                 images: bundleData.images || [],

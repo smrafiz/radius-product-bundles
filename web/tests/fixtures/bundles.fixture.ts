@@ -32,6 +32,8 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         mixAndMatchPrice: null,
         discountedProductIds: [],
         freeShipping: false,
+        priority: 0,
+        priorityType: "index_based",
         images: [],
         marketingCopy: null,
         seoTitle: null,

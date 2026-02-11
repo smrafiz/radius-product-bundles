@@ -22,6 +22,8 @@ export const BUNDLE_STEP_FIELD_MAP: Record<string, number> = {
     createProduct: 3,
     productTitle: 3,
     productDescription: 3,
+
+    priority: 4,
 };
 
 export const WIDGET_LAYOUTS = [

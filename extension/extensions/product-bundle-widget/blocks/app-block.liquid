@@ -36,19 +36,23 @@
 	{% comment %} ═══════════════════════════════════════════════════════════════════
 		PRIORITY: Find highest-priority active bundle for this product
 	═══════════════════════════════════════════════════════════════════ {% endcomment %}
+	{% assign global_priority_type = global.cart.bundlePriorityType | default: 'index_based' %}
 	{% assign best_bundle_id = null %}
 	{% assign best_score = -1 %}
+	{% assign best_created = 0 %}
 	{% for bid in bundle_ids %}
 		{% assign b = bundles[bid] %}
 		{% if b and b.status == 'ACTIVE' %}
-			{% if b.priorityType == 'discount_based' %}
-				{% assign this_score = b.discountValue | default: 0 | times: 1 %}
+			{% if global_priority_type == 'discount_based' %}
+				{% assign this_score = b.effectiveSavings | default: 0 | times: 1 %}
 			{% else %}
 				{% assign this_score = b.priority | default: 0 | times: 1 %}
 			{% endif %}
-			{% if best_bundle_id == null or this_score > best_score %}
+			{% assign this_created = b.createdAtTs | default: 0 | times: 1 %}
+			{% if best_bundle_id == null or this_score > best_score or this_score == best_score and this_created > best_created %}
 				{% assign best_score = this_score %}
 				{% assign best_bundle_id = bid %}
+				{% assign best_created = this_created %}
 			{% endif %}
 		{% endif %}
 	{% endfor %}

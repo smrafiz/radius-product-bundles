@@ -108,6 +108,7 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         defaultDiscountValue: settings.defaultDiscountValue,
         maxBundleProducts: settings.maxBundleProducts,
         maxBundlesPerShop: settings.maxBundlesPerShop,
+        bundlePriorityType: settings.bundlePriorityType,
 
         // General - Cart Behavior
         redirectAfterCart: settings.redirectAfterCart,
@@ -148,6 +149,7 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         defaultDiscountValue: data.defaultDiscountValue,
         maxBundleProducts: data.maxBundleProducts,
         maxBundlesPerShop: data.maxBundlesPerShop,
+        bundlePriorityType: data.bundlePriorityType,
 
         // General - Cart Behavior
         redirectAfterCart: data.redirectAfterCart,

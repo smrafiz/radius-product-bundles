@@ -18,7 +18,7 @@ export const DashboardSetupItem = ({
     primaryButton,
     secondaryButton,
 }: SetupItemProps) => {
-    const isDisabled = autoDetected && complete;
+    const isDisabled = autoDetected || complete;
 
     return (
         <s-box paddingBlock="small-200">

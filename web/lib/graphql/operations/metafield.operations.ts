@@ -4,7 +4,10 @@
  * Product & Shop Metafield Operations
  */
 
-import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
+import {
+    buildGlobalSettingsMetafieldValue,
+    fetchProductsFromShopify,
+} from "@/lib/graphql/operations";
 import {
     GetBundleDiscountIdDocument,
     GetBundleDiscountIdQuery,
@@ -24,10 +27,11 @@ import {
     METAFIELD_NAMESPACE,
 } from "@/shared/constants/metafields.constants";
 import { AppSettingsFormData } from "@/features/settings";
+import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 import { findActiveBundlesByShop } from "@/features/bundles/repositories";
 import { findSettingsByShopDomain } from "@/features/settings/repositories";
-import { buildGlobalSettingsMetafieldValue } from "@/lib/graphql/operations";
 import { transformFormDataToAppSettings } from "@/features/settings/services/settings.service";
+import { calculateDiscountAmount } from "@/features/bundles/utils/calculators/bundle-calculations";
 
 const METAFIELD_KEY = METAFIELD_KEYS["BUNDLE_IDS"];
 const METAFIELD_TYPE = "list.single_line_text_field";
@@ -379,6 +383,7 @@ async function getShopId(sessionToken: string): Promise<string | null> {
 function buildActiveBundlesMetafieldValue(
     bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
     freeShippingMethodTitle?: string,
+    priceMap?: Map<string, number>,
 ): string {
     const bundleMap: Record<string, any> = {};
 
@@ -386,6 +391,21 @@ function buildActiveBundlesMetafieldValue(
         // Extract product IDs from bundle
         const productIds =
             bundle.bundleProducts?.map((bp) => bp.productId) || [];
+
+        const bundlePrice = priceMap
+            ? bundle.bundleProducts?.reduce((sum, bp) => {
+                  return sum + (priceMap.get(bp.productId) || 0) * bp.quantity;
+              }, 0) || 0
+            : 0;
+
+        const effectiveSavings = priceMap
+            ? calculateDiscountAmount(
+                  bundlePrice,
+                  bundle.discountType || "PERCENTAGE",
+                  bundle.discountValue || 0,
+                  bundle.maxDiscountAmount || 0,
+              )
+            : 0;
 
         bundleMap[bundle.id] = {
             // Discount config (for Rust function)
@@ -404,7 +424,10 @@ function buildActiveBundlesMetafieldValue(
 
             // Priority (for Liquid display — determines which bundle wins)
             priority: bundle.priority ?? 0,
-            priorityType: bundle.priorityType ?? "index_based",
+            createdAtTs: Math.floor(
+                new Date(bundle.createdAt).getTime() / 1000,
+            ),
+            effectiveSavings: Math.round(effectiveSavings * 100) / 100,
 
             // Bundle info (for Liquid display)
             title: bundle.settings?.title ?? bundle.name,
@@ -431,6 +454,32 @@ function buildActiveBundlesMetafieldValue(
 /**
  * Syncs all active bundles to BOTH discount metafield AND shop metafield.
  */
+async function buildPriceMapForBundles(
+    sessionToken: string,
+    bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
+): Promise<Map<string, number>> {
+    const allProductIds = new Set<string>();
+    bundles.forEach((b) =>
+        b.bundleProducts?.forEach((bp) => allProductIds.add(bp.productId)),
+    );
+
+    const priceMap = new Map<string, number>();
+    if (allProductIds.size === 0) return priceMap;
+
+    const { productMap } = await fetchProductsFromShopify(sessionToken, [
+        ...allProductIds,
+    ]);
+
+    productMap.forEach((product, productId) => {
+        const variants =
+            (product as any).variants?.nodes || (product as any).variants || [];
+        const price = parseFloat(variants[0]?.price || "0");
+        priceMap.set(productId, price);
+    });
+
+    return priceMap;
+}
+
 export async function syncActiveBundlesToMetafield(
     sessionToken: string,
     shop: string,
@@ -464,6 +513,12 @@ export async function syncActiveBundlesToMetafield(
             findSettingsByShopDomain(shop),
         ]);
 
+        // Fetch product prices for effective savings calculation
+        const priceMap = await buildPriceMapForBundles(
+            sessionToken,
+            activeBundles,
+        );
+
         // Extract freeShippingMethodTitle from labels JSON
         const labels = appSettings?.labels as Record<string, string> | null;
         const freeShippingMethodTitle = labels?.freeShippingMethodTitle;
@@ -472,6 +527,7 @@ export async function syncActiveBundlesToMetafield(
         const metafieldValue = buildActiveBundlesMetafieldValue(
             activeBundles,
             freeShippingMethodTitle,
+            priceMap,
         );
 
         // Set BOTH metafields in a single mutation
@@ -600,6 +656,12 @@ export async function syncAllSettingsToMetafields(
             findActiveBundlesByShop(shop),
         ]);
 
+        // Fetch product prices for effective savings calculation
+        const priceMap = await buildPriceMapForBundles(
+            sessionToken,
+            activeBundles,
+        );
+
         // Extract freeShippingMethodTitle from labels JSON
         const labels = globalSettings?.labels as Record<string, string> | null;
         const freeShippingMethodTitle = labels?.freeShippingMethodTitle;
@@ -609,6 +671,7 @@ export async function syncAllSettingsToMetafields(
         const activeBundlesValue = buildActiveBundlesMetafieldValue(
             activeBundles,
             freeShippingMethodTitle,
+            priceMap,
         );
 
         // Update shop and discount metafields

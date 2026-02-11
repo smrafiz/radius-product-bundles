@@ -26,6 +26,7 @@ interface MetafieldGlobalSettings {
         showSavingsBanner: boolean;
         allowDiscountStacking: boolean;
         lazyLoadImages: boolean;
+        bundlePriorityType: string;
     };
 
     // Privacy settings
@@ -181,6 +182,7 @@ export function buildGlobalSettingsMetafieldValue(
             showSavingsBanner: appSettings?.showSavingsBanner ?? true,
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
             lazyLoadImages: appSettings?.lazyLoadImages ?? true,
+            bundlePriorityType: appSettings?.bundlePriorityType ?? "index_based",
         },
 
         // Privacy settings

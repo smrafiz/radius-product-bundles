@@ -5,4 +5,3 @@ export * from "./discount-types.constants";
 export * from "./bundle-filters.constants";
 export * from "./bundle-details.constants";
 export * from "./bundle-statuses.constants";
-export * from "./bundle-priority.constants";

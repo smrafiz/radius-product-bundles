@@ -299,7 +299,6 @@ export interface ExtendedBundleFormData extends BundleFormData {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
-    priorityType?: "index_based" | "discount_based";
     displaySettings?: DisplaySettings;
 }
 
@@ -439,8 +438,3 @@ export type PendingMediaItem =
     | { type: "file"; file: File; id: string }
     | { type: "url"; url: string; id: string };
 
-export interface BundlePriorityInfo {
-    id: string;
-    title?: string;
-    description?: string;
-}

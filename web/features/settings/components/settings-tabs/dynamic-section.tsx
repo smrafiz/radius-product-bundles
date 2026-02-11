@@ -14,9 +14,9 @@ export function DynamicSection({
 }) {
     const { id, title, tooltip, fields, columns = 1 } = config;
 
-    // Separate switch fields (rendered in stack) from other fields (rendered in grid)
     const switchFields = fields.filter((f) => f.type === "switch");
-    const otherFields = fields.filter((f) => f.type !== "switch");
+    const gridFields = fields.filter((f) => f.type !== "switch" && !f.fullWidth);
+    const fullWidthFields = fields.filter((f) => f.type !== "switch" && f.fullWidth);
     const gridClass = getGridClass(columns);
 
     const tooltipId = `${id}-tooltip`;
@@ -46,9 +46,9 @@ export function DynamicSection({
                 </s-stack>
 
                 {/* Grid Fields (text, number, select, textarea) */}
-                {otherFields.length > 0 && (
+                {gridFields.length > 0 && (
                     <div className={gridClass}>
-                        {otherFields.map((field) => (
+                        {gridFields.map((field) => (
                             <DynamicField
                                 key={String(field.name)}
                                 config={field}
@@ -57,6 +57,15 @@ export function DynamicSection({
                         ))}
                     </div>
                 )}
+
+                {/* Full-Width Fields (break out of grid) */}
+                {fullWidthFields.map((field) => (
+                    <DynamicField
+                        key={String(field.name)}
+                        config={field}
+                        parentPath={parentPath}
+                    />
+                ))}
 
                 {/* Switch Fields (stacked) */}
                 {switchFields.length > 0 && (

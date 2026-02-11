@@ -500,6 +500,7 @@ model AppSettings {
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
     maxBundlesPerShop    Int          @default(5)
+    bundlePriorityType   String       @default("index_based")
 
     // Cart Behavior Section
     redirectAfterCart     String  @default("cart")

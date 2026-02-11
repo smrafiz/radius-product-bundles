@@ -43,7 +43,6 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         discountedProductIds: bundleData.discountedProductIds || [],
         freeShipping: bundleData.freeShipping ?? false,
         priority: bundleData.priority ?? 0,
-        priorityType: bundleData.priorityType ?? "index_based",
 
         // Handle volumeTiers type conversion - ensure it's always an array of { quantity: number, discount: number } or undefined
         volumeTiers: (() => {

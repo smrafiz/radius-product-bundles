@@ -24,6 +24,7 @@ interface BaseFieldConfig {
     details?: string;
     placeholder?: string;
     validation?: FieldValidation;
+    fullWidth?: boolean;
 }
 
 /**
