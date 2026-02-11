@@ -21,7 +21,7 @@ export function DashboardSetupSteps({
     return (
         <s-section padding="none">
             <s-box padding="base" paddingBlockEnd="none">
-                <s-grid gap="small-200">
+                <s-grid gap="small-500">
                     <s-grid
                         gridTemplateColumns="1fr auto auto"
                         gap="small-300"

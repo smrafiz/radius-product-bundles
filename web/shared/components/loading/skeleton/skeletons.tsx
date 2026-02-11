@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
     MetricCardSkeletonProps,
     PageHeaderSkeletonProps,
@@ -12,13 +13,9 @@ import {
 } from "@/shared";
 
 /**
- * Configuration for skeleton animation widths
+ * Default fallback configs (used when not in random mode)
  */
 const SKELETON_WIDTHS = [75, 90, 65, 85, 95, 70, 80, 88];
-
-/**
- * Configuration for skeleton animation durations
- */
 const SKELETON_DURATIONS = [1.5, 2.0, 1.8, 2.2, 1.7, 2.1, 1.9, 2.3];
 
 /**
@@ -27,9 +24,10 @@ const SKELETON_DURATIONS = [1.5, 2.0, 1.8, 2.2, 1.7, 2.1, 1.9, 2.3];
 export function SkeletonLine({
     width,
     duration,
+    delay,
     height = "h-2",
     index = 0,
-}: SkeletonLineProps) {
+}: SkeletonLineProps & { delay?: string | number }) {
     const finalWidth = width ?? SKELETON_WIDTHS[index % SKELETON_WIDTHS.length];
     const finalDuration =
         duration ?? SKELETON_DURATIONS[index % SKELETON_DURATIONS.length];
@@ -39,14 +37,19 @@ export function SkeletonLine({
             className={`${height} bg-[#f3f3f3] rounded overflow-hidden relative`}
         >
             <div
-                className={`absolute inset-0 bg-linear-to-r from-bg-[#f3f3f3] via-[#f7f7f7] to-bg-[#f3f3f3] animate-shimmer [width:${finalWidth}%] [animation-duration:${finalDuration}s]`}
+                className="absolute inset-0 bg-linear-to-r from-bg-[#f3f3f3] via-[#f7f7f7] to-bg-[#f3f3f3] animate-shimmer"
+                style={{
+                    width: `${finalWidth}%`,
+                    animationDuration: `${finalDuration}s`,
+                    animationDelay: delay ? `${delay}s` : undefined,
+                }}
             />
         </div>
     );
 }
 
 /**
- * Multiple skeleton lines with consistent spacing
+ * Multiple skeleton lines with advanced random animation control
  */
 export function SkeletonLines({
     lines = 8,
@@ -55,26 +58,41 @@ export function SkeletonLines({
     height = "h-2",
     random = false,
 }: SkeletonLinesProps) {
+    const randomConfig = useMemo(() => {
+        if (!random) return [];
+
+        return Array.from({ length: lines }).map(() => ({
+            width: Math.floor(Math.random() * 40) + 50, // 50% → 90%
+            duration: (Math.random() * 1.2 + 0.8).toFixed(2), // 0.8s → 2s
+            delay: (Math.random() * 1.6).toFixed(2), // 0s → 1.6s
+        }));
+    }, [lines, random]);
+
     return (
         <s-stack gap={gap}>
             {Array.from({ length: lines }).map((_, i) => {
                 const lineIndex = startIndex + i;
 
                 if (random) {
+                    const config = randomConfig[i];
+
                     return (
                         <SkeletonLine
-                            key={i}
-                            width={
-                                Math.floor(Math.random() * (100 - 60 + 1)) + 60
-                            }
-                            duration={1 + Math.random() * 1.5}
+                            key={`random-${i}`}
+                            width={config.width}
+                            duration={Number(config.duration)}
+                            delay={config.delay}
                             height={height}
                         />
                     );
                 }
 
                 return (
-                    <SkeletonLine key={i} index={lineIndex} height={height} />
+                    <SkeletonLine
+                        key={`fixed-${i}`}
+                        index={lineIndex}
+                        height={height}
+                    />
                 );
             })}
         </s-stack>
@@ -214,23 +232,13 @@ export function PageSkeleton({
                     {secondaryActionText}
                 </s-button>
             )}
-            {withPadding ? (
-                <s-stack
-                    gap="large"
-                    paddingBlockStart="large-300"
-                    paddingBlockEnd="large"
-                >
-                    {children}
-                </s-stack>
-            ) : (
-                <s-stack
-                    gap="large"
-                    paddingBlockStart="large"
-                    paddingBlockEnd="large"
-                >
-                    {children}
-                </s-stack>
-            )}
+            <s-stack
+                gap="large"
+                paddingBlockStart={withPadding ? "large-300" : "large"}
+                paddingBlockEnd="large"
+            >
+                {children}
+            </s-stack>
         </s-page>
     );
 }
@@ -244,7 +252,7 @@ export function MetricCardSkeleton({ title, icon }: MetricCardSkeletonProps) {
             <s-stack>
                 <s-stack direction="inline" gap="base" alignItems="center">
                     {icon && (
-                        <div className="w-[40px]">
+                        <div className="w-10">
                             <s-image
                                 src={`/assets/${icon}.svg`}
                                 alt={title || "Loading"}
