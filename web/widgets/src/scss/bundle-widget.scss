@@ -74,6 +74,17 @@
         color: var(--rb-text-color);
         line-height: 1.3;
     }
+    &__show-more-btn {
+        margin-top: 8px;
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        text-align: left;
+        color: var(--rb-text-color);
+    }
 
     // -------------------------------------------------------------------------
     // Product Title Link

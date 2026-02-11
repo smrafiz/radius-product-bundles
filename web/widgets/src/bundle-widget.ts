@@ -192,6 +192,8 @@ declare global {
 
         private readonly moreProductSettings: boolean = false;
         private readonly moreProductCount: number = 4;
+        private readonly moreProductsText: string = "+ {count} more products";
+        private readonly showLessText: string = "Show less";
 
         // Responsive overrides
         private readonly responsiveOverrides: {
@@ -271,6 +273,8 @@ declare global {
 
             this.moreProductSettings = container.dataset.moreProductSettings === 'true';
             this.moreProductCount = parseInt(container.dataset.moreProductCount || '4', 10);
+            this.moreProductsText = container.dataset.moreProductsText || "+ {count} more products";
+            this.showLessText = container.dataset.showLessText || "Show less";
 
             // Parse structure from Liquid
             const structureJson = container.dataset.bundleStructure;
@@ -767,8 +771,7 @@ declare global {
         }
 
         /**
-         * Get the initial visible product count based on settings.
-         * Returns Infinity when show more is disabled (show all products).
+         * get Initial Visible Count
          */
         private getInitialVisibleCount(): number {
             return this.moreProductSettings ? this.moreProductCount : Infinity;
@@ -777,51 +780,6 @@ declare global {
         /**
          * Shows badge from structure.
          */
-        // private updateBadgeFromStructure(structure: BundleStructure): void {
-        //     const badgeEl = this.container.querySelector("[data-bundle-badge]");
-        //
-        //     if (!badgeEl) {
-        //         return;
-        //     }
-        //
-        //     let badgeText = "";
-        //
-        //     if (structure.discountValue && structure.discountValue > 0) {
-        //         switch (structure.discountType) {
-        //             case "PERCENTAGE":
-        //                 badgeText = this.formatLabel(
-        //                     structure.labels?.savingsBadgeText ??
-        //                         "Save {percent}%",
-        //                     { percent: structure.discountValue },
-        //                 );
-        //                 break;
-        //
-        //             case "FIXED_AMOUNT":
-        //                 badgeText = this.formatLabel(
-        //                     structure.labels?.savingsBadgeText ??
-        //                         "Save {amount}",
-        //                     {
-        //                         amount: this.formatMoney(
-        //                             structure.discountValue,
-        //                         ),
-        //                     },
-        //                 );
-        //                 break;
-        //
-        //             case "CUSTOM_PRICE":
-        //                 badgeText = "Special Price";
-        //                 break;
-        //         }
-        //     }
-        //
-        //     if (badgeText && this.showSavingsBadge) {
-        //         badgeEl.textContent = badgeText;
-        //         badgeEl.classList.add("radius-bundle__badge--visible");
-        //     } else {
-        //         (badgeEl as HTMLElement).style.display = "none";
-        //     }
-        // }
-
         private updateBadgeFromStructure(structure: BundleStructure): void {
             const badgeEl = this.container.querySelector("[data-bundle-badge]");
 
@@ -844,7 +802,6 @@ declare global {
                         break;
 
                     case "FIXED_AMOUNT":
-                        // ✅ Convert dollars to cents for formatMoney
                         badgeText = this.formatLabel(
                             structure.labels?.savingsBadgeText ??
                                 "Save {amount}",
@@ -1131,160 +1088,6 @@ declare global {
         /**
          * Renders a single product card.
          */
-        // private renderProductCard(
-        //     product: BundleProduct,
-        //     layout: string,
-        // ): string {
-        //     const imageHtml =
-        //         this.showImages && product.featuredImage
-        //             ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}" loading="lazy" />`
-        //             : this.showImages
-        //               ? `<div class="radius-bundle__product-placeholder">📦</div>`
-        //               : "";
-        //
-        //     // Calculate discounted price based on bundle discount
-        //     const structure = this.bundleStructure;
-        //     let discountedPrice = product.price;
-        //
-        //     if (structure && structure.discountValue > 0) {
-        //         switch (structure.discountType) {
-        //             case "PERCENTAGE":
-        //                 discountedPrice =
-        //                     product.price * (1 - structure.discountValue / 100);
-        //                 break;
-        //             case "FIXED_AMOUNT":
-        //                 // For a fixed amount, distribute proportionally across products
-        //                 const totalPrice =
-        //                     this.bundle?.products.reduce(
-        //                         (sum, p) => sum + p.price,
-        //                         0,
-        //                     ) || product.price;
-        //                 const proportion = product.price / totalPrice;
-        //                 const productDiscount =
-        //                     structure.discountValue * proportion;
-        //                 discountedPrice = Math.max(
-        //                     0,
-        //                     product.price - productDiscount,
-        //                 );
-        //                 break;
-        //             case "CUSTOM_PRICE":
-        //                 // For custom price, distribute proportionally
-        //                 const totalRegular =
-        //                     this.bundle?.products.reduce(
-        //                         (sum, p) => sum + p.price,
-        //                         0,
-        //                     ) || product.price;
-        //                 const priceRatio = product.price / totalRegular;
-        //                 discountedPrice = structure.discountValue * priceRatio;
-        //                 break;
-        //             default:
-        //                 discountedPrice = product.price;
-        //         }
-        //     }
-        //
-        //     // Round to the nearest cent
-        //     discountedPrice = Math.round(discountedPrice);
-        //
-        //     const priceHtml =
-        //         product.compareAtPrice > product.price
-        //             ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
-        //        ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
-        //             : discountedPrice < product.price
-        //               ? `<span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
-        //            ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""} `
-        //               : `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
-        //
-        //     const imageWrapper = this.showImages
-        //         ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
-        //         : "";
-        //
-        //     const productUrl = product.handle
-        //         ? `/products/${product.handle}`
-        //         : "#";
-        //     const productTitleHtml = this.enableHyperLink
-        //         ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
-        //         : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
-        //
-        //     // List layout
-        //     if (layout === "list") {
-        //         return `
-        //             <div class="radius-bundle__product radius-bundle__product--list"
-        //             data-product-id="${product.id}"
-        //             data-variant-id="${product.variantId}">
-        //                 ${imageWrapper}
-        //                 <div class="radius-bundle__product-info">
-        //                     ${productTitleHtml}
-        //                     ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-        //                 </div>
-        //                 ${
-        //                     this.showPrices
-        //                         ? `
-        //                     <div class="radius-bundle__product-price">
-        //                         ${priceHtml}
-        //                     </div>
-        //                 `
-        //                         : ""
-        //                 }
-        //             </div>
-        //         `;
-        //     }
-        //
-        //     // Grid layout
-        //     if (layout === "grid") {
-        //         return `
-        //             <div class="radius-bundle__product radius-bundle__product--grid"
-        //                  data-product-id="${product.id}"
-        //                  data-variant-id="${product.variantId}">
-        //                 ${imageWrapper}
-        //                 ${productTitleHtml}
-        //                 ${
-        //                     this.showPrices
-        //                         ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-        //                         : ""
-        //                 }
-        //                 ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-        //             </div>
-        //         `;
-        //     }
-        //
-        //     // Compact layout
-        //     if (layout === "compact") {
-        //         return `
-        //     <div class="radius-bundle__product radius-bundle__product--compact"
-        //         data-product-id="${product.id}"
-        //         data-variant-id="${product.variantId}">
-        //         ${imageWrapper}
-        //         <div class="radius-bundle__product-info radius-bundle__product-info--compact">
-        //             ${productTitleHtml}
-        //             ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-        //         </div>
-        //         ${
-        //             this.showPrices
-        //                 ? `
-        //                 <div class="radius-bundle__product-price">
-        //                     ${priceHtml}
-        //                 </div>
-        //             `
-        //                 : ""
-        //         }
-        //     </div>`;
-        //     }
-        //
-        //     // Slider layout
-        //     return `
-        //     <div class="radius-bundle__product radius-bundle__product--slider"
-        //         data-product-id="${product.id}"
-        //         data-variant-id="${product.variantId}">
-        //         ${imageWrapper}
-        //         ${productTitleHtml}
-        //         ${
-        //             this.showPrices
-        //                 ? `<div class="radius-bundle__product-price">${priceHtml}</div>`
-        //                 : ""
-        //         }
-        //         ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
-        //     </div>`;
-        // }
 
         private renderProductCard(
             product: BundleProduct,
@@ -1332,7 +1135,6 @@ declare global {
 
                     case "FIXED_AMOUNT":
                         if (discountValue > 0 && totalBundlePrice > 0) {
-                            // ✅ Convert dollars to cents
                             const discountInCents = discountValue * 100;
 
                             const productLineDiscount =
@@ -1350,7 +1152,6 @@ declare global {
 
                     case "CUSTOM_PRICE":
                         if (discountValue > 0 && totalBundlePrice > 0) {
-                            // ✅ Convert dollars to cents
                             const customPriceInCents = discountValue * 100;
 
                             const productLinePrice =
@@ -1475,83 +1276,6 @@ declare global {
         /**
          * Updates pricing display
          */
-        // private updatePricing(bundle: Bundle): void {
-        //     const originalTotal = bundle.products.reduce(
-        //         (sum, product) => sum + product.price * product.quantity,
-        //         0,
-        //     );
-        //
-        //     let discountAmount: number;
-        //     let bundleTotal: number;
-        //
-        //     const structure = this.bundleStructure || bundle;
-        //
-        //     switch (structure.discountType) {
-        //         case "PERCENTAGE":
-        //             discountAmount =
-        //                 originalTotal * (structure.discountValue / 100);
-        //             bundleTotal = originalTotal - discountAmount;
-        //             break;
-        //         case "FIXED_AMOUNT":
-        //             discountAmount = structure.discountValue;
-        //             bundleTotal = originalTotal - discountAmount;
-        //             break;
-        //         case "CUSTOM_PRICE":
-        //             bundleTotal = structure.discountValue;
-        //             discountAmount = originalTotal - bundleTotal;
-        //             break;
-        //         default:
-        //             discountAmount = 0;
-        //             bundleTotal = originalTotal;
-        //     }
-        //
-        //     bundleTotal = Math.max(0, bundleTotal);
-        //     discountAmount = Math.max(0, discountAmount);
-        //
-        //     // Update regular price
-        //     const regularPriceEl = this.container.querySelector(
-        //         "[data-regular-price]",
-        //     );
-        //     if (regularPriceEl) {
-        //         regularPriceEl.textContent = this.formatMoney(originalTotal);
-        //     }
-        //
-        //     // Update bundle price
-        //     const bundlePriceEl = this.container.querySelector(
-        //         "[data-bundle-price]",
-        //     );
-        //     if (bundlePriceEl) {
-        //         bundlePriceEl.textContent = this.formatMoney(bundleTotal);
-        //     }
-        //
-        //     // Update savings
-        //     const savingsEl = this.container.querySelector("[data-savings]");
-        //     const savingsAmountEl = this.container.querySelector(
-        //         "[data-savings-amount]",
-        //     );
-        //
-        //     if (savingsEl && savingsAmountEl) {
-        //         if (discountAmount > 0 && this.showSavings) {
-        //             savingsAmountEl.textContent =
-        //                 this.formatMoney(discountAmount);
-        //             (savingsEl as HTMLElement).style.display = "flex";
-        //         } else {
-        //             (savingsEl as HTMLElement).style.display = "none";
-        //         }
-        //     }
-        //
-        //     // Update free shipping badge
-        //     const freeShippingEl = this.container.querySelector(
-        //         "[data-free-shipping]",
-        //     );
-        //     if (freeShippingEl) {
-        //         if (structure.freeShipping && this.showFreeShipping) {
-        //             (freeShippingEl as HTMLElement).style.display = "flex";
-        //         } else {
-        //             (freeShippingEl as HTMLElement).style.display = "none";
-        //         }
-        //     }
-        // }
 
         private updatePricing(bundle: Bundle): void {
             const originalTotal = bundle.products.reduce(
@@ -1572,13 +1296,11 @@ declare global {
                     break;
 
                 case "FIXED_AMOUNT":
-                    // ✅ Convert dollars to cents (discountValue is in dollars, prices are in cents)
                     discountAmount = structure.discountValue * 100;
                     bundleTotal = originalTotal - discountAmount;
                     break;
 
                 case "CUSTOM_PRICE":
-                    // ✅ Convert dollars to cents (discountValue is the custom price in dollars)
                     bundleTotal = structure.discountValue * 100;
                     discountAmount = originalTotal - bundleTotal;
                     break;
@@ -1637,10 +1359,7 @@ declare global {
         }
 
         /**
-         * Generate the show more/less toggle button for list layout.
-         *
-         * @param {number} totalProducts - Total number of products in the bundle.
-         * @returns {string} HTML string for the toggle button, or empty string if not needed.
+         * Generate the show more/less toggle button for list/compact layout.
          */
         private getShowMoreButton(totalProducts: number): string {
             const initialVisibleCount = this.getInitialVisibleCount();
@@ -1649,6 +1368,7 @@ declare global {
             }
 
             const extraCount = totalProducts - initialVisibleCount;
+            const buttonText = this.moreProductsText.replace('{count}', String(extraCount));
 
             return `
                 <button
@@ -1657,23 +1377,12 @@ declare global {
                     data-initial-count="${initialVisibleCount}"
                     data-total-count="${totalProducts}"
                     data-expanded="false"
-                    style="
-                        margin-top: 8px;
-                        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
-                        text-decoration: underline;
-                        cursor: pointer;
-                        background: none;
-                        border: none;
-                        padding: 0;
-                        text-align: left;
-                        color: var(--rb-text-color);
-                    "
-                >+ ${extraCount} more products</button>
+                >${buttonText}</button>
             `;
         }
 
         /**
-         * Initialize the show more/less toggle for list layout products.
+         * Initialize the show more/less toggle for list/compact layout products.
          * Binds click event to toggle visibility of products beyond initial count.
          */
         private initShowMoreToggle(): void {
@@ -1685,8 +1394,15 @@ declare global {
 
             const initialCount = parseInt(btn.dataset.initialCount || '4', 10);
             const totalCount = parseInt(btn.dataset.totalCount || '0', 10);
+            const extraCount = totalCount - initialCount;
+            const moreText = this.moreProductsText.replace('{count}', String(extraCount));
+            const lessText = this.showLessText;
             const products = this.container.querySelectorAll<HTMLElement>('.radius-bundle__product[data-product-index]');
 
+            /**
+             * Handle click on the show more/less button.
+             * Toggles hidden product visibility and updates button text.
+             */
             function handleToggleClick(): void {
                 const isExpanded = btn!.dataset.expanded === 'true';
 
@@ -1709,9 +1425,7 @@ declare global {
                 });
 
                 btn!.dataset.expanded = isExpanded ? 'false' : 'true';
-                btn!.textContent = isExpanded
-                    ? `+ ${totalCount - initialCount} more products`
-                    : 'Show less';
+                btn!.textContent = isExpanded ? moreText : lessText;
             }
 
             btn.addEventListener('click', handleToggleClick);
@@ -1949,7 +1663,6 @@ declare global {
 
                 this.showToast("Bundle added to cart!", "success");
 
-                // ✅ Calculate totals for tracking
                 const totalValue = cartItems.reduce((sum, item) => {
                     const product = this.bundle?.products.find(
                         (p) => this.extractNumericId(p.variantId) === item.id,
@@ -1957,7 +1670,6 @@ declare global {
                     return sum + (product?.price || 0) * item.quantity;
                 }, 0);
 
-                // ✅ Calculate discount/savings
                 let discountValue = 0;
                 if (newDiscount.discountType === "PERCENTAGE") {
                     discountValue =
@@ -1966,7 +1678,6 @@ declare global {
                     discountValue = newDiscount.discountValue;
                 }
 
-                // ✅ Dispatch enhanced event with tracking data (if analytics enabled)
                 if (this.enableAnalytics) {
                     this.container.dispatchEvent(
                         new CustomEvent("bundle:addedToCart", {
@@ -2100,10 +1811,8 @@ declare global {
                     window.location.href = this.getLocalePath("/checkout");
                     break;
                 case "none":
-                    // Stay on page - toast notification already shown
                     break;
                 default:
-                    // Fallback to default theme behavior
                     this.openCartDrawerOrRedirect();
                     break;
             }
@@ -2356,38 +2065,23 @@ declare global {
         }
 
         /**
-         * Formats money
-         */
-        // private formatMoney(cents: number): string {
-        //     if (typeof window.Shopify?.formatMoney === "function") {
-        //         return window.Shopify.formatMoney(cents);
-        //     }
-        //     return `$${(cents / 100).toFixed(2)}`;
-        // }
-
-        /**
          * Formats money using Shopify's currency settings
          */
         private formatMoney(cents: number): string {
-            // Use Shopify's formatMoney if available
             if (typeof window.Shopify?.formatMoney === "function") {
                 return window.Shopify.formatMoney(cents);
             }
 
             const amount = cents / 100;
-
-            // Get currency from Shopify global object
             const currency = window.Shopify?.currency?.active || "USD";
             const locale = window.Shopify?.locale || "en";
 
-            // Use Intl.NumberFormat for proper currency formatting
             try {
                 return new Intl.NumberFormat(locale, {
                     style: "currency",
                     currency: currency,
                 }).format(amount);
             } catch {
-                // Final fallback
                 return `${currency} ${amount.toFixed(2)}`;
             }
         }

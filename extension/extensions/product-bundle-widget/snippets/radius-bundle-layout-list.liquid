@@ -23,18 +23,17 @@
 	<div class="radius-bundle__products radius-bundle__products--list" data-bundle-products>
 		<div class="radius-bundle__loading" data-bundle-loading>
 			<div class="radius-bundle__skeleton radius-bundle__skeleton--list">
-				{% if more_product_settings and more_product_count > 0 %}
+				{% if more_product_settings %}
 					{% assign initial_visible = more_product_count %}
-					{% assign divider_threshold = initial_visible | minus: 1 %}
 				{% else %}
-					{% assign initial_visible = product_count | default: 4 %}
-					{% assign divider_threshold = initial_visible | minus: 1 %}
+					{% assign initial_visible = product_count %}
 				{% endif %}
+				{% assign divider_threshold = initial_visible | minus: 1 %}
 
 				{% for i in (1..product_count) %}
 					{% assign item_index = forloop.index0 %}
 					{% assign is_hidden = false %}
-					{% if item_index >= initial_visible %}
+					{% if item_index >= more_product_count %}
 						{% assign is_hidden = true %}
 					{% endif %}
 

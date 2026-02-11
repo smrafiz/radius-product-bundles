@@ -348,8 +348,12 @@
 				  {% assign body_size = g_styles.bodySize %}
 				{% endif %}
 
-				{% assign more_product_settings = block.settings.more_product_settings | default: true %}
-				{% assign more_product_count = block.settings.more_product_count | default: 4 %}
+				{% assign more_product_settings = block.settings.more_product_settings %}
+				{% assign more_product_count = block.settings.more_product_count %}
+				{% assign product_count = bundle.productCount %}
+				{% unless more_product_settings %}
+					{% assign more_product_count = product_count %}
+				{% endunless %}
 
 				{% comment %} LAYOUT {% endcomment %}
 				{% assign override_layout_settings = block.settings.override_layout_settings | default: false %}
@@ -478,6 +482,11 @@
 
 				{% assign max_bundles_reached_text = g_labels.maxBundlesReachedText
 						| default: 'Maximum {count} bundle(s) per order allowed' %}
+
+				{% assign more_products_text = block.settings.more_products_text
+						| default: '+ {count} more products' %}
+				{% assign show_less_text = block.settings.show_less_text
+						| default: 'Show less' %}
 
 				{% comment %} DO NOT DELETE BELOW CAPTURE {% endcomment %}
 				{% comment %}
@@ -804,6 +813,8 @@
 						data-lazy-load-images="{{ lazy_load_images }}"
 						data-more-product-settings="{{ more_product_settings }}"
 						data-more-product-count="{{ more_product_count }}"
+						data-more-products-text="{{ more_products_text }}"
+						data-show-less-text="{{ show_less_text }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 
@@ -1490,6 +1501,20 @@
 			"max": 10,
 			"step": 1,
 			"default": 4,
+			"visible_if": "{{ block.settings.more_product_settings }}"
+		},
+		{
+			"type": "text",
+			"id": "more_products_text",
+			"label": "More products text",
+			"default": "+ {count} more products",
+			"visible_if": "{{ block.settings.more_product_settings }}"
+		},
+		{
+			"type": "text",
+			"id": "show_less_text",
+			"label": "Show less text",
+			"default": "Show less",
 			"visible_if": "{{ block.settings.more_product_settings }}"
 		},
 		{

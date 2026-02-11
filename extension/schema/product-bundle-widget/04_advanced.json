@@ -88,5 +88,19 @@
         "step": 1,
         "default": 4,
         "visible_if": "{{ block.settings.more_product_settings }}"
+    },
+    {
+        "type": "text",
+        "id": "more_products_text",
+        "label": "More products text",
+        "default": "+ {count} more products",
+        "visible_if": "{{ block.settings.more_product_settings }}"
+    },
+    {
+        "type": "text",
+        "id": "show_less_text",
+        "label": "Show less text",
+        "default": "Show less",
+        "visible_if": "{{ block.settings.more_product_settings }}"
     }
 ]
