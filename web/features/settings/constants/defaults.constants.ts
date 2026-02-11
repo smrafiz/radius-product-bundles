@@ -453,6 +453,7 @@ export const STYLE_PRESETS: StylePresetsMap = {
             productCardBorder: true,
             productCardShadow: false,
             buttonStyle: "filled",
+            pricingSummaryBg: "#D2B2B212",
         },
     },
     nature: {

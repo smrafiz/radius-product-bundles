@@ -33,9 +33,7 @@
 	{% assign custom_css_class = g_custom.cssClass | default: '' %}
 	{% assign custom_css = g_custom.css | default: '' %}
 
-	{% comment %} ═══════════════════════════════════════════════════════════════════
-		PRIORITY: Find highest-priority active bundle for this product
-	═══════════════════════════════════════════════════════════════════ {% endcomment %}
+	{% comment %} PRIORITY: Find highest-priority active bundle for this product {% endcomment %}
 	{% assign global_priority_type = global.cart.bundlePriorityType | default: 'index_based' %}
 	{% assign best_bundle_id = null %}
 	{% assign best_score = -1 %}
@@ -72,9 +70,7 @@
 				═══════════════════════════════════════════════════════════════════ {% endcomment %}
 				{% assign style_preset = block.settings.style_preset %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					COLORS
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% comment %} COLORS {% endcomment %}
 				{% assign style_preset = block.settings.style_preset | default: '' %}
 				{% if style_preset == 'custom' %}
 					{% assign primary_color = block.settings.primary_color
@@ -409,9 +405,7 @@
 						| default: g_styles.autoplaySpeed
 						| default: 5 %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					BUNDLE DISPLAY OPTIONS
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% comment %} BUNDLE DISPLAY OPTIONS {% endcomment %}
 				{% assign show_images = bundle.showImages %}
 				{% assign show_savings = bundle.showSavings %}
 				{% assign show_product_prices = bundle.showPrices %}
@@ -444,9 +438,7 @@
 					{% assign lazy_load_images = true %}
 				{% endunless %}
 
-				{% comment %} ═══════════════════════════════════════════════════════════════════
-					LABELS
-				═══════════════════════════════════════════════════════════════════ {% endcomment %}
+				{% comment %} LABELS {% endcomment %}
 				{% assign bundle_heading = bundle.title
 						| default: g_labels.headingLabel
 						| default: 'Bundle & Save'
@@ -754,7 +746,6 @@
 						--rb-grid-columns: {{ grid_columns }};
 						--rb-slides-per-view: {{ slides_per_view }};
 					}
-
 
 					{% if g_tablet %}
 					@media (max-width: {{ tablet_bp }}px) {
