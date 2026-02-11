@@ -188,6 +188,7 @@ export function TopBundlesTable() {
                                         direction="inline"
                                         gap="small-200"
                                         alignItems="center"
+                                        padding="small-300"
                                     >
                                         <s-heading>
                                             <s-text

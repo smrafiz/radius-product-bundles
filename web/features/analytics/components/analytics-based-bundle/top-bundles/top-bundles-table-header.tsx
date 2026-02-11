@@ -5,32 +5,32 @@ export function TopBundlesTableHeader() {
     return (
         <s-table-header-row>
             <s-table-header listSlot="primary">
-                <s-stack paddingInline="none" paddingBlock="small-400">
+                <s-stack padding="small-300">
                     Bundle
                 </s-stack>
             </s-table-header>
             <s-table-header listSlot="inline">
-                <s-stack paddingInline="none" paddingBlock="small-400">
+                <s-stack paddingBlock="small-300">
                     Assessment
                 </s-stack>
             </s-table-header>
-            <s-table-header listSlot="labeled">
-                <s-stack paddingInline="none" paddingBlock="small-400">
+            <s-table-header>
+                <s-stack paddingBlock="small-300">
                     Revenue + AOV
                 </s-stack>
             </s-table-header>
-            <s-table-header listSlot="labeled">
-                <s-stack paddingInline="none" paddingBlock="small-400">
+            <s-table-header>
+                <s-stack paddingBlock="small-300">
                     Orders
                 </s-stack>
             </s-table-header>
-            <s-table-header listSlot="labeled">
-                <s-stack paddingInline="none" paddingBlock="small-400">
+            <s-table-header>
+                <s-stack paddingBlock="small-300">
                     Views
                 </s-stack>
             </s-table-header>
-            <s-table-header listSlot="labeled">
-                <s-stack paddingInline="none" paddingBlock="small-400">
+            <s-table-header>
+                <s-stack paddingBlock="small-300">
                     Conversion
                 </s-stack>
             </s-table-header>

@@ -1,6 +1,9 @@
 "use client";
 
-import { DashboardBundlesListProps } from "@/features/dashboard";
+import {
+    DashboardBundlesListProps,
+    DashboardBundlesTableHeader,
+} from "@/features/dashboard";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
 
@@ -10,54 +13,47 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     return (
         <div className="relative overflow-hidden">
             <s-table>
-                <s-table-header-row>
-                    <s-table-header listSlot="primary">
-                        <s-stack padding="small-300">Item</s-stack>
-                    </s-table-header>
-                    <s-table-header listSlot="labeled">Name</s-table-header>
-                    <s-table-header listSlot="inline">Type</s-table-header>
-                    <s-table-header>Views</s-table-header>
-                    <s-table-header>Conversion</s-table-header>
-                    <s-table-header>Revenue</s-table-header>
-                    <s-table-header listSlot="primary">Status</s-table-header>
-                </s-table-header-row>
+                <DashboardBundlesTableHeader />
                 <s-table-body>
-                    {bundles.slice(0, 5).map((bundle) => (
+                    {bundles.map((bundle) => (
                         <s-table-row
                             key={bundle.bundleId}
-                            clickDelegate="mountain-view-checkbox"
+                            clickDelegate={`dashboard-bundle-item-${bundle.bundleId}`}
                         >
                             <s-table-cell>
-                                <s-clickable
-                                    accessibilityLabel={bundle.title}
-                                    border="base"
-                                    borderRadius="base"
-                                    overflow="hidden"
-                                    inlineSize="40px"
-                                    blockSize="40px"
-                                    onClick={() =>
-                                        bundleData.edit(bundle.bundleId)
-                                    }
-                                >
-                                    {bundle.images?.[0] ? (
-                                        <s-image
-                                            src={bundle.images[0]}
-                                            alt={bundle.title}
-                                            aspectRatio="1/1"
-                                            objectFit="cover"
-                                        />
-                                    ) : (
-                                        <s-stack alignItems="center">
-                                            <s-icon
-                                                type="image"
-                                                color="subdued"
+                                <s-stack padding="small-300">
+                                    <s-clickable
+                                        accessibilityLabel={bundle.title}
+                                        border="base"
+                                        borderRadius="base"
+                                        overflow="hidden"
+                                        inlineSize="40px"
+                                        blockSize="40px"
+                                        onClick={() =>
+                                            bundleData.edit(bundle.bundleId)
+                                        }
+                                    >
+                                        {bundle.images?.[0] ? (
+                                            <s-image
+                                                src={bundle.images[0]}
+                                                alt={bundle.title}
+                                                aspectRatio="1/1"
+                                                objectFit="cover"
                                             />
-                                        </s-stack>
-                                    )}
-                                </s-clickable>
+                                        ) : (
+                                            <s-stack alignItems="center">
+                                                <s-icon
+                                                    type="image"
+                                                    color="subdued"
+                                                />
+                                            </s-stack>
+                                        )}
+                                    </s-clickable>
+                                </s-stack>
                             </s-table-cell>
                             <s-table-cell>
                                 <s-link
+                                    id={`dashboard-bundle-item-${bundle.bundleId}`}
                                     onClick={() =>
                                         bundleData.edit(bundle.bundleId)
                                     }

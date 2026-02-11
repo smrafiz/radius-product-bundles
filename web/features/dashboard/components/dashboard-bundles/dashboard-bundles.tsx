@@ -1,26 +1,35 @@
 "use client";
 
 import {
+    useTopBundles,
+    useAnalyticsStore,
+} from "@/features/analytics";
+import {
     DashboardBundlesEmpty,
     DashboardBundlesHeader,
     DashboardBundlesList,
+    DashboardBundlesTableHeader,
+    DashboardTopBundlesSkeleton,
 } from "@/features/dashboard";
-import { BundleTableSkeleton } from "@/features/bundles";
-import { useTopBundles, useAnalyticsStore } from "@/features/analytics";
 import { useEffect } from "react";
 
 export function DashboardBundles() {
     useEffect(() => {
         const { startDate, endDate, setDays } = useAnalyticsStore.getState();
         if (!startDate || !endDate) {
-            setDays(7);
+            setDays(30);
         }
     }, []);
 
     const { data: bundles, isLoading, error } = useTopBundles(5);
 
     if (isLoading) {
-        return <BundleTableSkeleton />;
+        return (
+            <DashboardTopBundlesSkeleton
+                Header={DashboardBundlesHeader}
+                TableHeader={DashboardBundlesTableHeader}
+            />
+        );
     }
 
     const activeBundles = (bundles ?? []).filter(

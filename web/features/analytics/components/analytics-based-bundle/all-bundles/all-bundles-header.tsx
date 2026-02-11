@@ -28,7 +28,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
 
     return (
         <s-stack>
-            <s-stack gap="base" padding="small">
+            <s-stack gap="base" padding="base">
                 <s-grid
                     gap="small-200"
                     gridTemplateColumns={

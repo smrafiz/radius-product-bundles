@@ -7,7 +7,13 @@ import {
     useAllBundlesTableWithPagination,
 } from "@/features/analytics";
 import { getBundleStatusBadge } from "@/features/bundles";
-import { EmptyState, formatCurrencyCompact, formatNumber, TablePagination, useAppNavigation, } from "@/shared";
+import {
+    EmptyState,
+    formatCurrencyCompact,
+    formatNumber,
+    TablePagination,
+    useAppNavigation,
+} from "@/shared";
 
 /**
  * Get health status badge config
@@ -245,19 +251,23 @@ export function AllBundlesTable() {
                             <s-table-row key={bundle.id}>
                                 {/* Bundle name */}
                                 <s-table-cell>
-                                    <s-heading>
-                                        <s-text>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleBundleClick(bundle.id)
-                                                }
-                                                className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
-                                            >
-                                                {bundle.title}
-                                            </button>
-                                        </s-text>
-                                    </s-heading>
+                                    <s-stack padding="small-300">
+                                        <s-heading>
+                                            <s-text>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleBundleClick(
+                                                            bundle.id,
+                                                        )
+                                                    }
+                                                    className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
+                                                >
+                                                    {bundle.title}
+                                                </button>
+                                            </s-text>
+                                        </s-heading>
+                                    </s-stack>
                                 </s-table-cell>
 
                                 {/* Status badge */}
