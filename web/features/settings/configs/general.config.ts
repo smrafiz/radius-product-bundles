@@ -81,25 +81,6 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     max: 500,
                     readOnly: true,
                 },
-                {
-                    type: "select",
-                    name: "bundlePriorityType",
-                    label: "Bundle priority strategy",
-                    details:
-                        "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the highest discount.",
-                    defaultValue: "index_based",
-                    fullWidth: true,
-                    options: [
-                        {
-                            value: "index_based",
-                            label: "Index based (manual priority)",
-                        },
-                        {
-                            value: "discount_based",
-                            label: "Discount based (highest discount wins)",
-                        },
-                    ],
-                },
             ],
         },
 
@@ -113,6 +94,25 @@ export const GENERAL_TAB: SettingsTabConfig = {
             tooltip:
                 "Control how the app interacts with the cart and checkout.",
             fields: [
+                {
+                    type: "select",
+                    name: "bundlePriorityType",
+                    label: "Bundle priority strategy",
+                    details:
+                        "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
+                    defaultValue: "index_based",
+                    fullWidth: true,
+                    options: [
+                        {
+                            value: "index_based",
+                            label: "Index based (manual priority)",
+                        },
+                        {
+                            value: "discount_based",
+                            label: "Discount based (highest savings wins)",
+                        },
+                    ],
+                },
                 {
                     type: "select",
                     name: "redirectAfterCart",
