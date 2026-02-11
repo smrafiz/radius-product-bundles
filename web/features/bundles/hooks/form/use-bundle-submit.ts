@@ -257,7 +257,10 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                         data.mainProductId = productData.mainProductId;
                         data.mainVariantId = productData.mainVariantId;
-                        data.images = productData.mediaUrls;
+                        data.images =
+                            productData.mediaUrls.length > 0
+                                ? [productData.mediaUrls[0]]
+                                : [];
                     }
 
                     result = await createBundleAction(token, data);
@@ -428,18 +431,35 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             currentMainProductId,
                             data.productTitle,
                         );
+
+                        // Update existingMedia store so grid stays consistent
+                        if (uploadedUrls.length > 0) {
+                            const currentStore = useBundleStore.getState();
+                            const newMediaItems = uploadedUrls.map((url, i) => ({
+                                id: `uploaded-${Date.now()}-${i}`,
+                                url,
+                            }));
+                            currentStore.setExistingMedia([
+                                ...currentStore.existingMedia,
+                                ...newMediaItems,
+                            ]);
+                        }
                     }
 
-                    // Collect kept existing media URLs + newly uploaded URLs
+                    // Save only the featured image (first URL) to DB
                     const preStore = useBundleStore.getState();
                     const keptExistingUrls = preStore.existingMedia.map(
                         (m) => m.url,
                     );
-                    data.images = [...keptExistingUrls, ...uploadedUrls];
+                    const allUrls = [...keptExistingUrls, ...uploadedUrls];
+                    data.images = allUrls.length > 0 ? [allUrls[0]] : [];
 
                     // For new product creation, images come from createShopifyProduct
                     if (needsProductCreation) {
-                        data.images = uploadedUrls;
+                        data.images =
+                            uploadedUrls.length > 0
+                                ? [uploadedUrls[0]]
+                                : [];
                     }
 
                     // Update bundle in database
@@ -519,6 +539,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                 // Handle success
                 if (result.status === "success") {
                     await invalidateBundleCache(queryClient);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
 
                     if (mode === "create") {
                         showSuccess("Bundle created successfully!", {
@@ -547,7 +568,10 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             } finally {
                 setIsSubmitting(false);
                 setSaving(false);
-                setStep(1);
+
+                if (mode === "create") {
+                    setStep(1);
+                }
             }
         },
     );
