@@ -348,14 +348,13 @@
 				  {% assign body_size = g_styles.bodySize %}
 				{% endif %}
 
-				{% comment %}{% assign more_product_settings = block.settings.more_product_settings | default: true %}{% endcomment %}
-				{% comment %}{% assign more_product_count = block.settings.more_product_count | default: 4 %}{% endcomment %}
+				{% assign more_product_settings = block.settings.more_product_settings | default: true %}
+				{% assign more_product_count = block.settings.more_product_count | default: 4 %}
 				{% if more_product_settings %}
 					{% assign initial_visible = more_product_count %}
 				{% else %}
 					{% assign initial_visible = product_count %}
 				{% endif %}
-				{% assign divider_threshold = initial_visible | minus: 1 %}
 
 				{% comment %} LAYOUT {% endcomment %}
 				{% assign override_layout_settings = block.settings.override_layout_settings | default: false %}
