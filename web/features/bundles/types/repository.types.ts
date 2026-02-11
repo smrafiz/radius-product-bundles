@@ -70,6 +70,7 @@ export interface UpdateBundleInput {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
+    images?: string[];
     mainProductId?: string | null;
     mainVariantId?: string | null;
 }

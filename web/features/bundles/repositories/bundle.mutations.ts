@@ -206,6 +206,7 @@ export async function updateBundleWithRelations(
             discountedProductIds: data.discountedProductIds ?? [],
             freeShipping: data.freeShipping ?? false,
             priority: data.priority ?? 0,
+            images: data.images || [],
         });
 
         // Delete all existing products

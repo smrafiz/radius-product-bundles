@@ -414,11 +414,29 @@ export const useBundleStore = create(
 
         addPendingFiles: (files: File[]) => {
             set((state) => {
-                const newItems: PendingMediaItem[] = files.map((file) => ({
-                    type: "file" as const,
-                    file,
-                    id: generateMediaId(),
-                }));
+                const existingKeys = new Set(
+                    state.pendingMedia
+                        .filter(
+                            (item): item is PendingMediaItem & { type: "file" } =>
+                                item.type === "file",
+                        )
+                        .map(
+                            (item) =>
+                                `${item.file.name}_${item.file.size}_${item.file.lastModified}`,
+                        ),
+                );
+                const newItems: PendingMediaItem[] = files
+                    .filter(
+                        (file) =>
+                            !existingKeys.has(
+                                `${file.name}_${file.size}_${file.lastModified}`,
+                            ),
+                    )
+                    .map((file) => ({
+                        type: "file" as const,
+                        file,
+                        id: generateMediaId(),
+                    }));
                 state.pendingMedia.push(...newItems);
             });
             get().markDirty();

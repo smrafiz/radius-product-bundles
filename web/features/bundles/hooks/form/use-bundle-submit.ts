@@ -93,9 +93,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         token: string,
         productId: string,
         productTitle?: string,
-    ) => {
+    ): Promise<string[]> => {
         if (pendingMedia.length === 0) {
-            return;
+            return [];
         }
 
         console.log(
@@ -158,6 +158,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         }
 
         clearPendingMedia();
+
+        return orderedUrls;
     };
 
     /**
@@ -166,7 +168,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const createShopifyProduct = async (
         token: string,
         data: ExtendedBundleFormData,
-    ): Promise<{ mainProductId: string; mainVariantId?: string } | null> => {
+    ): Promise<{ mainProductId: string; mainVariantId?: string; mediaUrls: string[] } | null> => {
         console.log("Creating Shopify product...");
 
         const { bundlePrice, originalPrice } = calculateBundlePricing(data);
@@ -186,7 +188,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
         console.log("✅ Product created:", productData);
 
-        await processMediaForProduct(
+        const mediaUrls = await processMediaForProduct(
             token,
             productData.mainProductId,
             data.productTitle || data.name,
@@ -195,6 +197,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         return {
             mainProductId: productData.mainProductId,
             mainVariantId: productData.mainVariantId,
+            mediaUrls,
         };
     };
 
@@ -254,6 +257,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                         data.mainProductId = productData.mainProductId;
                         data.mainVariantId = productData.mainVariantId;
+                        data.images = productData.mediaUrls;
                     }
 
                     result = await createBundleAction(token, data);
@@ -394,6 +398,50 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         data.mainVariantId = currentMainVariantId;
                     }
 
+                    // Process media BEFORE saving bundle so data.images is populated
+                    let uploadedUrls: string[] = [];
+                    if (
+                        currentMainProductId &&
+                        !needsProductCreation &&
+                        !productWasDeleted
+                    ) {
+                        // Delete removed media from Shopify
+                        if (removedMediaIds.length > 0) {
+                            try {
+                                const deleteResult =
+                                    await deleteMedia.mutateAsync({
+                                        productId: currentMainProductId,
+                                        mediaIds: removedMediaIds,
+                                    });
+                                console.log(
+                                    `✅ Media processed: ${deleteResult.deletedMediaIds.length} deleted`,
+                                );
+                                clearRemovedMediaIds();
+                            } catch (error) {
+                                console.error("Media deletion failed:", error);
+                            }
+                        }
+
+                        // Upload + attach pending media
+                        uploadedUrls = await processMediaForProduct(
+                            token,
+                            currentMainProductId,
+                            data.productTitle,
+                        );
+                    }
+
+                    // Collect kept existing media URLs + newly uploaded URLs
+                    const preStore = useBundleStore.getState();
+                    const keptExistingUrls = preStore.existingMedia.map(
+                        (m) => m.url,
+                    );
+                    data.images = [...keptExistingUrls, ...uploadedUrls];
+
+                    // For new product creation, images come from createShopifyProduct
+                    if (needsProductCreation) {
+                        data.images = uploadedUrls;
+                    }
+
                     // Update bundle in database
                     result = await updateBundleAction(token, bundleId, data);
 
@@ -413,7 +461,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         );
                     }
 
-                    // Update existing Shopify product (if exists and wasn't just created/deleted)
+                    // Update existing Shopify product title/price/status
                     if (
                         result.status === "success" &&
                         currentMainProductId &&
@@ -447,38 +495,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         } else {
                             console.log("✅ Product updated");
                         }
-
-                        // Delete removed media
-                        if (removedMediaIds.length > 0) {
-                            try {
-                                const deleteResult =
-                                    await deleteMedia.mutateAsync({
-                                        productId: currentMainProductId,
-                                        mediaIds: removedMediaIds,
-                                    });
-
-                                console.log(
-                                    `✅ Media processed: ${deleteResult.deletedMediaIds.length} deleted`,
-                                );
-
-                                if (deleteResult.sharedCount > 0) {
-                                    console.log(
-                                        `   ↳ ${deleteResult.sharedCount} file(s) shared with other products`,
-                                    );
-                                }
-
-                                clearRemovedMediaIds();
-                            } catch (error) {
-                                console.error("Media deletion failed:", error);
-                            }
-                        }
-
-                        // Process pending media
-                        await processMediaForProduct(
-                            token,
-                            currentMainProductId,
-                            data.productTitle,
-                        );
                     }
                 } else {
                     showError("Unexpected error", {

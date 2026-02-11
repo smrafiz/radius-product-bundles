@@ -11,12 +11,12 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
         <div className="relative overflow-hidden">
         <s-table>
             <s-table-header-row>
-                <s-table-header listSlot="primary">Item</s-table-header>
+                <s-table-header listSlot="primary"><s-stack padding="small-300">Item</s-stack></s-table-header>
                 <s-table-header listSlot="labeled">Name</s-table-header>
                 <s-table-header listSlot="inline">Type</s-table-header>
-                <s-table-header format="numeric">Views</s-table-header>
-                <s-table-header format="numeric">Conversion</s-table-header>
-                <s-table-header format="numeric">Revenue</s-table-header>
+                <s-table-header>Views</s-table-header>
+                <s-table-header>Conversion</s-table-header>
+                <s-table-header>Revenue</s-table-header>
                 <s-table-header listSlot="primary">Status</s-table-header>
             </s-table-header-row>
             <s-table-body>
