@@ -350,11 +350,6 @@
 
 				{% assign more_product_settings = block.settings.more_product_settings | default: true %}
 				{% assign more_product_count = block.settings.more_product_count | default: 4 %}
-				{% if more_product_settings %}
-					{% assign initial_visible = more_product_count %}
-				{% else %}
-					{% assign initial_visible = product_count %}
-				{% endif %}
 
 				{% comment %} LAYOUT {% endcomment %}
 				{% assign override_layout_settings = block.settings.override_layout_settings | default: false %}
@@ -807,8 +802,8 @@
 						data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
 						data-enable-analytics="{{ enable_analytics }}"
 						data-lazy-load-images="{{ lazy_load_images }}"
-						data-more-product-settings="{{ block.settings.more_product_settings }}"
-						data-more-product-count="{{ block.settings.more_product_count }}"
+						data-more-product-settings="{{ more_product_settings }}"
+						data-more-product-count="{{ more_product_count }}"
 				>
 					{% assign layout = layout | default: 'list' | downcase %}
 
@@ -845,8 +840,8 @@
 									quantity_label: quantity_label,
 									grid_columns: grid_columns,
 									pricing_summary_box: pricing_summary_box,
-									more_product_settings: block.settings.more_product_settings,
-    								more_product_count: block.settings.more_product_count
+									more_product_settings: more_product_settings,
+    								more_product_count: more_product_count
 							%}
 						{% when 'carousel' %}
 							{% render 'radius-bundle-layout-carousel',
@@ -895,8 +890,8 @@
 									free_shipping_label: free_shipping_label,
 									quantity_label: quantity_label,
 									pricing_summary_box: pricing_summary_box,
-									more_product_settings: block.settings.more_product_settings,
-    								more_product_count: block.settings.more_product_count
+									more_product_settings: more_product_settings,
+    								more_product_count: more_product_count
 							%}
 						{% else %}
 							{% render 'radius-bundle-layout-list',
@@ -920,8 +915,8 @@
 									quantity_label: quantity_label,
 									divider_style: divider_style,
 									pricing_summary_box: pricing_summary_box,
-									more_product_settings: block.settings.more_product_settings,
-    								more_product_count: block.settings.more_product_count
+									more_product_settings: more_product_settings,
+    								more_product_count: more_product_count
 							%}
 					{% endcase %}
 				</div>
