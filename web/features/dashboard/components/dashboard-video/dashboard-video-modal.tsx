@@ -77,23 +77,27 @@ export function DashboardVideoModal({
             id={MODAL_ID}
             ref={modalRef as any}
             heading={video?.title || "Video Tutorial"}
+            accessibilityLabel={video?.title || "Video Tutorial"}
         >
-            {video && (
-                <ReactPlayer
-                    ref={playerRef as any}
-                    src={video.videoUrl}
-                    playing={playing}
-                    muted={true}
-                    controls={true}
-                    playsInline
-                    width="100%"
-                    height="auto"
-                    style={{ aspectRatio: "16/9" }}
-                    className="rounded-lg overflow-hidden"
-                    onTimeUpdate={handleTimeUpdate}
-                    onCanPlay={handleCanPlay}
-                />
-            )}
+            <div
+                className="rounded-lg overflow-hidden"
+                style={{ aspectRatio: "16/9", width: "100%" }}
+            >
+                {video && (
+                    <ReactPlayer
+                        ref={playerRef as any}
+                        src={video.videoUrl}
+                        playing={playing}
+                        muted={true}
+                        controls={true}
+                        playsInline
+                        width="100%"
+                        height="100%"
+                        onTimeUpdate={handleTimeUpdate}
+                        onCanPlay={handleCanPlay}
+                    />
+                )}
+            </div>
 
             <s-button
                 slot="primary-action"
