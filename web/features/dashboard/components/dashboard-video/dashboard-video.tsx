@@ -1,16 +1,41 @@
 "use client";
 
-import React from "react";
+import {
+    DashboardVideoItem,
+    DashboardVideoConfig,
+    DashboardVideoModal,
+} from "@/features/dashboard";
 import { SkeletonLines } from "@/shared";
 import { useAnalytics } from "@/features/analytics";
-import { DashboardVideoItem } from "@/features/dashboard";
-import { DASHBOARD_VIDEO_ITEMS } from "@/features/dashboard";
+import React, { useCallback, useRef, useState } from "react";
+import { DASHBOARD_VIDEO_ITEMS } from "@/features/dashboard/constants/dashboard.constants";
 
 /**
  * Dashboard video grid section displaying multiple video items
  */
 export function DashboardVideo({ lines = 8 }: { lines?: number }) {
     const { isLoading } = useAnalytics();
+    const [activeVideo, setActiveVideo] = useState<DashboardVideoConfig | null>(
+        null,
+    );
+    const positionsRef = useRef<Record<number, number>>({});
+
+    const handlePlay = useCallback((video: DashboardVideoConfig) => {
+        setActiveVideo(video);
+    }, []);
+
+    const handleClose = useCallback(() => {
+        setActiveVideo(null);
+    }, []);
+
+    const handleTimeUpdate = useCallback(
+        (seconds: number) => {
+            if (activeVideo) {
+                positionsRef.current[activeVideo.id] = seconds;
+            }
+        },
+        [activeVideo],
+    );
 
     if (isLoading) {
         return (
@@ -33,10 +58,21 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
             >
                 {DASHBOARD_VIDEO_ITEMS.map((video) => (
                     <s-grid-item key={video.id} gridColumn="auto">
-                        <DashboardVideoItem video={video} />
+                        <DashboardVideoItem video={video} onPlayAction={handlePlay} />
                     </s-grid-item>
                 ))}
             </s-grid>
+
+            <DashboardVideoModal
+                video={activeVideo}
+                savedTime={
+                    activeVideo
+                        ? (positionsRef.current[activeVideo.id] ?? 0)
+                        : 0
+                }
+                onClose={handleClose}
+                onTimeUpdate={handleTimeUpdate}
+            />
         </s-section>
     );
 }

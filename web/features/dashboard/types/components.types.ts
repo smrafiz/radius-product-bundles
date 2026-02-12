@@ -98,3 +98,20 @@ export interface SetupItemProps extends SetupItemData {
     onPrimaryClick: () => void;
     onSecondaryClick: () => void;
 }
+
+/**
+ * Dashboard video item links
+ */
+export interface DashboardVideoConfig {
+    id: number;
+    videoUrl: string;
+    title?: string;
+    description?: string;
+}
+
+export interface DashboardVideoModalProps {
+    video: DashboardVideoConfig | null;
+    savedTime: number;
+    onClose: () => void;
+    onTimeUpdate: (seconds: number) => void;
+}

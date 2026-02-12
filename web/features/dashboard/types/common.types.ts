@@ -54,13 +54,3 @@ export interface DashboardError {
     message: string;
     details?: Record<string, any>;
 }
-
-/**
- * Dashboard video item links
- */
-export interface DashboardVideoConfig {
-    id: number;
-    videoUrl: string;
-    title?: string;
-    description?: string;
-}
