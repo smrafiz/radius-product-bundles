@@ -235,6 +235,9 @@ export function useSetupGuide() {
         allComplete,
         isDismissing: dismissMutation.isPending,
         isShowing: showMutation.isPending,
+        appEmbedEnabled: progress?.appEmbedEnabled ?? false,
+        shopDomain,
+        apiKey,
 
         isGuideOpen,
         expanded,

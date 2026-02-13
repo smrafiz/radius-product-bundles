@@ -1,7 +1,7 @@
+export * from "./dashboard-page";
 export * from "./dashboard-video";
 export * from "./dashboard-bundles";
 export * from "./dashboard-setup-guide";
-export { DashboardPage } from "./dashboard-page/dashboard-page";
 export { DashboardMetrics } from "./dashboard-metrics/dashboard-metrics";
 export { DashboardMediaCard } from "./dashboard-media-card/dashboard-media-card";
 export { DashboardQuickActions } from "./dashboard-quick-actions/dashboard-quick-actions";

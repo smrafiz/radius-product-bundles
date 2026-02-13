@@ -126,14 +126,13 @@ export const DASHBOARD_QUICK_ACTIONS: DashboardQuickActionItem[] = [
         },
     },
     {
-        id: "studio",
-        title: "Bundle studio",
-        description: "Create just like the templates",
+        id: "settings",
+        title: "App settings",
+        description: "Customize your preferences",
         icon: "database",
         tone: "info",
-        url: ROUTES.BUNDLE_STUDIO,
+        url: ROUTES.SETTINGS,
         ...ACTION_THEMES.info,
-        badge: "New",
         enabled: true,
         img: {
             svg: DASHBOARD_QUICK_ACTIONS_SVG["bundleStudio"],

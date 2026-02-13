@@ -7,13 +7,16 @@ export function MediaCard() {
         <s-section>
             <div className="flex flex-col sm:flex-row gap-4 items-center">
                 {/* LEFT SIDE: Video Thumbnail */}
-                <s-stack gap="small">
-                    <s-heading>Update your plan</s-heading>
-                    <s-text>
-                        WooCommerce unknown printer took a galley of type and
-                        scrambledmake a type specimen book. It has survived not
-                        only five centuriestypesetting, remaining essentially
-                    </s-text>
+                <s-stack gap="base">
+                    <s-stack gap="small-300">
+                        <s-heading>Update your plan</s-heading>
+                        <s-text>
+                            WooCommerce unknown printer took a galley of type
+                            and scrambledmake a type specimen book. It has
+                            survived not only five centuriestypesetting,
+                            remaining essentially
+                        </s-text>
+                    </s-stack>
                     <s-button
                         variant="secondary"
                         tone="auto"

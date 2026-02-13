@@ -13,7 +13,7 @@ export const DashboardQuickActions = () => {
     return (
         <s-section>
             <s-grid paddingBlockEnd="large">
-                <s-stack>
+                <s-stack gap="small-300">
                     <s-heading>Quick Actions</s-heading>
                     <s-text>
                         Common tasks and shortcuts for managing your product

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    AppEmbedStatusBanner,
     DashboardBuilderAddons,
     DashboardBundles,
     DashboardCalloutCards,
@@ -84,6 +85,9 @@ export function DashboardPage() {
 
                     {/* Setup Guide */}
                     <DashboardSetUpGuide {...setupGuide} />
+
+                    {/* App Embed Status */}
+                    <AppEmbedStatusBanner {...setupGuide} />
 
                     {/* Analytics Disabled Warning */}
                     {isAnalyticsDisabled && <AnalyticsDisabledBanner />}
