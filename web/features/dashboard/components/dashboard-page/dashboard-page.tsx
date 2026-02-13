@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    AIInsights,
     DashboardBuilderAddons,
     DashboardBundles,
     DashboardCalloutCards,
@@ -109,9 +108,6 @@ export function DashboardPage() {
 
                     {/* Useful links */}
                     <DashboardCalloutCards />
-
-                    {/* AI insights */}
-                    <AIInsights />
                 </s-stack>
             </s-stack>
         </s-page>
