@@ -3,10 +3,10 @@ import {
     DashboardMetricConfig,
     DashboardQuickActionItem,
     DashboardCalloutCardsItem,
+    SetupStepKey,
 } from "@/features/dashboard/types";
 import { ACTION_THEMES, ROUTES } from "@/shared/constants";
-import { SETUP_STEP_KEYS } from "./setup-guide.constants";
-import type { SetupStepKey } from "../types/setup-guide.types";
+import { SETUP_STEP_KEYS } from "@/features/dashboard/constants/setup-guide.constants";
 
 export interface SetupGuideStep {
     id: number;
@@ -46,6 +46,7 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
         key: "activeBundles",
         title: "Active bundles",
         format: "number",
+        action: { label: "View details", url: ROUTES.BUNDLES },
         img: {
             svg: DASHBOARD_METRICS_SVG["activeBundles"],
         },
@@ -56,6 +57,7 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
         format: "currency",
         tone: "success",
         icon: "arrow-up",
+        action: { label: "View details", url: ROUTES.ANALYTICS },
         img: {
             svg: DASHBOARD_METRICS_SVG["totalRevenue"],
         },
@@ -66,6 +68,7 @@ export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
         format: "percentage",
         tone: "warning",
         icon: "arrow-up",
+        action: { label: "View details", url: ROUTES.ANALYTICS },
         img: {
             svg: DASHBOARD_METRICS_SVG["conversionRate"],
         },
@@ -175,8 +178,7 @@ export const DASHBOARD_CALLOUT_CARDS: DashboardCalloutCardsItem[] = [
     },
     {
         title: "Help docs",
-        description:
-            "Explore app features with video & documentation guides.",
+        description: "Explore app features with video & documentation guides.",
         primaryButton: {
             content: "See help doc",
             props: {

@@ -31,6 +31,7 @@ export function DashboardMetrics() {
             img: cfg.img,
             value: formatByType(metricsData[cfg.key], cfg.format),
             growth: growthData[cfg.key],
+            action: cfg.action,
         }));
     }, [metrics]);
 
