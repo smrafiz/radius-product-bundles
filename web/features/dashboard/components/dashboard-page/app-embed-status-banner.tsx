@@ -21,9 +21,9 @@ export function AppEmbedStatusBanner({
     return (
         <s-banner tone="warning" heading="App embed is not enabled">
             <s-paragraph>
-                The bundle functionalities won&apos;t work correctly on your
-                storefront until the app embed is activated in your theme
-                editor.
+                The bundle functionalities and analytics won&apos;t work
+                correctly on your storefront until the app embed is activated in
+                your theme editor.
             </s-paragraph>
             <s-button
                 slot="secondary-actions"

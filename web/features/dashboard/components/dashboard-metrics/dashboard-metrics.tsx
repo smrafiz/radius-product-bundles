@@ -19,12 +19,18 @@ export function DashboardMetrics() {
             totalViews: metrics?.totals?.views ?? 0,
         };
 
+        const growthData: Record<string, number | undefined> = {
+            totalRevenue: metrics?.growth?.revenue,
+            avgConversionRate: metrics?.growth?.conversion,
+        };
+
         return DASHBOARD_METRICS.map((cfg) => ({
             title: cfg.title,
             icon: cfg.icon,
             tone: cfg.tone,
             img: cfg.img,
             value: formatByType(metricsData[cfg.key], cfg.format),
+            growth: growthData[cfg.key],
         }));
     }, [metrics]);
 
