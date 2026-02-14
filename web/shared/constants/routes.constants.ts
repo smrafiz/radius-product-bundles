@@ -9,6 +9,7 @@ export const ROUTES = {
     ANALYTICS: "/analytics",
     SETTINGS: "/settings",
     CUSTOMIZER: "/settings/customizer",
+    PRICING: "/pricing",
 
     // Bundle operations
     BUNDLE_CREATE: "/bundles/create",

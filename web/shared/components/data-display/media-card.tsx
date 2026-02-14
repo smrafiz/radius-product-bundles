@@ -1,194 +1,44 @@
-/**
- * Media Card Component
- */
+import { MediaCardProps } from "@/shared";
 
-export function MediaCard() {
+export function MediaCard({
+    title,
+    description,
+    buttonLabel,
+    buttonHref,
+    onButtonClick,
+    icon,
+}: MediaCardProps) {
     return (
         <s-section>
-            <div className="flex flex-col sm:flex-row gap-4 items-center">
-                {/* LEFT SIDE: Video Thumbnail */}
+            <s-grid
+                gap="base"
+                gridTemplateColumns={icon ? "1fr auto" : "1fr"}
+                alignItems="center"
+                justifyContent="space-between"
+            >
                 <s-stack gap="base">
                     <s-stack gap="small-300">
-                        <s-heading>Update your plan</s-heading>
-                        <s-text>
-                            WooCommerce unknown printer took a galley of type
-                            and scrambledmake a type specimen book. It has
-                            survived not only five centuriestypesetting,
-                            remaining essentially
-                        </s-text>
+                        <s-heading>{title}</s-heading>
+                        <s-text>{description}</s-text>
                     </s-stack>
-                    <s-button
-                        variant="secondary"
-                        tone="auto"
-                        href="https://www.example.com"
-                        target="_blank"
-                    >
-                        See details
-                    </s-button>
+                    {buttonLabel && (
+                        <s-button
+                            variant="secondary"
+                            tone="auto"
+                            {...(buttonHref
+                                ? { href: buttonHref, target: "_blank" }
+                                : {})}
+                            {...(onButtonClick
+                                ? { onClick: onButtonClick }
+                                : {})}
+                        >
+                            {buttonLabel}
+                        </s-button>
+                    )}
                 </s-stack>
 
-                {/* RIGHT SIDE: Info */}
-                <div className="relative sm:max-w-[100px] w-full">
-                    <svg
-                        fill="none"
-                        height="70"
-                        viewBox="0 0 70 70"
-                        width="70"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <clipPath id="a">
-                            <path
-                                d="m0 0h7.78v7.42h-7.78z"
-                                transform="matrix(.99576531 -.09193177 .09193177 .99576531 16.048 27.3728)"
-                            />
-                        </clipPath>
-                        <rect fill="#91d1ff" height="70" rx="35" width="70" />
-                        <rect
-                            fill="#fff"
-                            height="27"
-                            rx="2.5"
-                            transform="matrix(.99422533 .10731257 -.10731257 .99422533 2.570424 -4.435446)"
-                            width="17"
-                            x="42.4979"
-                            y="21.6658"
-                        />
-                        <rect
-                            height="27"
-                            rx="2.5"
-                            stroke="#5c9df2"
-                            transform="matrix(.99422533 .10731257 -.10731257 .99422533 2.570424 -4.435446)"
-                            width="17"
-                            x="42.4979"
-                            y="21.6658"
-                        />
-                        <g fill="#67a9ff">
-                            <rect
-                                height="1.05"
-                                rx=".525"
-                                transform="matrix(.99422533 .10731257 -.10731257 .99422533 4.371619 -4.496264)"
-                                width="10.5"
-                                x="43.9636"
-                                y="38.3715"
-                            />
-                            <rect
-                                height="1.05"
-                                rx=".525"
-                                transform="matrix(.99422533 .10731257 -.10731257 .99422533 4.654456 -4.531918)"
-                                width="9"
-                                x="44.4363"
-                                y="40.9817"
-                            />
-                            <rect
-                                height="1.05"
-                                rx=".525"
-                                transform="matrix(.99422533 .10731257 -.10731257 .99422533 4.937292 -4.56755)"
-                                width="7.5"
-                                x="44.9088"
-                                y="43.5919"
-                            />
-                        </g>
-                        <path
-                            d="m54.3414 30.7499c-.0293.2959-.1184.5828-.2622.8435-.1438.2608-.3392.4901-.5746.6742l-3.3657 2.6815c-.0382.0318-.0826.0556-.1304.0701-.0478.0144-.0981.0192-.1478.014-.0513-.0049-.1011-.0202-.1464-.0447-.0452-.0245-.0851-.0578-.117-.0979l-2.716-3.3379c-.3776-.4689-.5548-1.0654-.4936-1.6613.0693-.5946.3693-1.1387.8367-1.5176.477-.3616 1.0766-.5272 1.6746-.4627.598.0646 1.1484.3544 1.5373.8093l.0944.1054.1052-.0838c.2316-.1865.4982-.3258.7845-.4101.5816-.1652 1.2059-.0978 1.7389.1877.2639.1447.4975.3378.6885.5691.1863.2346.3271.5015.4149.7869.0839.2836.1106.5807.0787.8743z"
-                            fill="#005bd3"
-                        />
-                        <rect
-                            fill="#fff"
-                            height="27"
-                            rx="2.5"
-                            transform="matrix(.99576531 -.09193177 .09193177 .99576531 -2.099846 1.091217)"
-                            width="17"
-                            x="10.7948"
-                            y="23.3386"
-                        />
-                        <rect
-                            height="27"
-                            rx="2.5"
-                            stroke="#5c9df2"
-                            transform="matrix(.99576531 -.09193177 .09193177 .99576531 -2.099846 1.091217)"
-                            width="17"
-                            x="10.7948"
-                            y="23.3386"
-                        />
-                        <rect
-                            fill="#67a9ff"
-                            height="1.05"
-                            rx=".525"
-                            transform="matrix(.99576531 -.09193177 .09193177 .99576531 -3.558321 1.595882)"
-                            width="10.5"
-                            x="15.5435"
-                            y="39.4221"
-                        />
-                        <rect
-                            fill="#67a9ff"
-                            height="1.05"
-                            rx=".525"
-                            transform="matrix(.99576531 -.09193177 .09193177 .99576531 -3.780753 1.696477)"
-                            width="9"
-                            x="16.5242"
-                            y="41.8868"
-                        />
-                        <rect
-                            fill="#67a9ff"
-                            height="1.05"
-                            rx=".525"
-                            transform="matrix(.99576531 -.09193177 .09193177 .99576531 -4.003193 1.797072)"
-                            width="7.5"
-                            x="17.5049"
-                            y="44.3516"
-                        />
-                        <g clipPath="url(#a)">
-                            <path
-                                d="m23.9697 29.8551-1.4498 1.7005.5843 2.1955c.0168.0722.0142.1474-.0075.2182s-.0617.1346-.1159.1849c-.0582.0468-.1289.0755-.2033.0823-.0744.0069-.1492-.0083-.215-.0437l-2.0834-.8119-1.8996 1.1796c-.0593.0446-.1298.0718-.2037.0787-.0738.0068-.1481-.0071-.2145-.04-.0559-.0442-.0982-.1032-.1221-.1702s-.0286-.1395-.0134-.209l.1671-2.2147-1.7312-1.4571c-.062-.0437-.1099-.1046-.1379-.1751-.0279-.0706-.0346-.1478-.0193-.2221.0155-.0725.0514-.1391.1035-.1919.052-.0528.118-.0897.1903-.1064l2.1613-.5209.8119-2.0834c.0314-.0653.0793-.1214.1388-.1627s.1287-.0666.2009-.0732c.0722-.0067.1449.0054.211.0352.0661.0297.1233.0761.1662.1345l1.1796 1.8996 2.2301.1155c.0738.0043.1449.0289.2056.0712.0606.0422.1083.1005.1379.1682.0297.0692.0387.1456.026.2198-.0128.0743-.0468.1432-.0979.1986z"
-                                fill="#005bd3"
-                            />
-                        </g>
-                        <rect
-                            fill="#fff"
-                            height="27"
-                            rx="2.5"
-                            width="17"
-                            x="27"
-                            y="18.5"
-                        />
-                        <rect
-                            height="27"
-                            rx="2.5"
-                            stroke="#5c9df2"
-                            width="17"
-                            x="27"
-                            y="18.5"
-                        />
-                        <rect
-                            fill="#67a9ff"
-                            height="1.05"
-                            rx=".525"
-                            width="10.5"
-                            x="30.25"
-                            y="34.9519"
-                        />
-                        <rect
-                            fill="#67a9ff"
-                            height="1.05"
-                            rx=".525"
-                            width="9"
-                            x="31"
-                            y="37.4963"
-                        />
-                        <rect
-                            fill="#67a9ff"
-                            height="1.05"
-                            rx=".525"
-                            width="7.5"
-                            x="31.75"
-                            y="40.0408"
-                        />
-                        <path
-                            d="m39.485 25.6199v3c-.0034.1993-.0549.3948-.15.57-.1029.1727-.2473.317-.42.42l-2.6 1.44c-.1697.0996-.3632.1514-.56.15-.2031.0011-.4029-.0506-.58-.15l-2.58-1.48c-.1772-.0972-.3229-.2429-.42-.42-.1026-.1726-.1578-.3693-.16-.57v-3c.0022-.2008.0574-.3974.16-.57.0991-.1723.2402-.3168.41-.42l2.6-1.44c.1721-.0982.3669-.1499.565-.1499.1982 0 .3929.0517.565.1499l2.6 1.48c.1699.1032.3109.2477.41.42.1026.1726.1578.3692.16.57z"
-                            fill="#005bd3"
-                        />
-                    </svg>
-                </div>
-            </div>
+                {icon && <s-stack>{icon}</s-stack>}
+            </s-grid>
         </s-section>
     );
 }

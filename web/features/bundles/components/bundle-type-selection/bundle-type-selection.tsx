@@ -5,11 +5,12 @@ import {
     BundleSelectionHelp,
     BundleTypeCard,
 } from "@/features/bundles";
+import { PlanIcon } from "@/features/dashboard";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { MediaCard, useAppNavigation } from "@/shared";
+import { MediaCard, useAppNavigation, ROUTES } from "@/shared";
 
 export function BundleTypeSelection() {
-    const { goBack, bundleData } = useAppNavigation();
+    const { goBack, goTo, bundleData } = useAppNavigation();
 
     return (
         <s-page>
@@ -54,7 +55,13 @@ export function BundleTypeSelection() {
                     </s-grid>
                 </s-stack>
                 <s-stack>
-                    <MediaCard />
+                    <MediaCard
+                        title="Update your plan"
+                        description="Unlock advanced features and priority support. Upgrade today to get the most out of your bundles."
+                        buttonLabel="See details"
+                        onButtonClick={goTo(ROUTES.PRICING)}
+                        icon={<PlanIcon />}
+                    />
                 </s-stack>
                 <s-stack>
                     <BundleSelectionHelp />

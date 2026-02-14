@@ -290,3 +290,38 @@ export const DASHBOARD_VIDEO_ITEMS: DashboardVideoConfig[] = [
         description: "Bundles are a great way to increase average order value.",
     },
 ];
+
+/*
+ * Dashboard Review Messages
+ */
+export const RATING_MESSAGES = {
+    0: {
+        title: "How would you rate our app?",
+        description:
+            "Your feedback helps us improve the experience for everyone. It will take you less than a minute.",
+    },
+    1: {
+        title: "We're sorry to hear that!",
+        description: "Help us improve by telling us what went wrong.",
+    },
+    2: {
+        title: "We can do better!",
+        description:
+            "Let us know what we can improve to make your experience better.",
+    },
+    3: {
+        title: "Thanks for the feedback!",
+        description:
+            "We'd love to know how we can make this even better for you.",
+    },
+    4: {
+        title: "Great to hear!",
+        description:
+            "What did you like most? Your feedback helps us keep improving.",
+    },
+    5: {
+        title: "Awesome!",
+        description:
+            "We're thrilled you love our app! Consider sharing your experience.",
+    },
+} as const;

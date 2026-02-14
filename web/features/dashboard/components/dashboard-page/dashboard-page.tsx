@@ -2,21 +2,22 @@
 
 import {
     AppEmbedStatusBanner,
-    DashboardBuilderAddons,
     DashboardBundles,
     DashboardCalloutCards,
+    DashboardFeatures,
     DashboardMediaCard,
     DashboardMetrics,
     DashboardQuickActions,
+    DashboardReviewBanner,
     DashboardSetUpGuide,
     DashboardVideo,
     useSetupGuide,
 } from "@/features/dashboard";
 import { useBundlesPage } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { AnalyticsDisabledBanner } from "@/features/analytics";
 import { useSettingsStore } from "@/features/settings";
 import { GlobalBanner, useNavigationActions } from "@/shared";
+import { AnalyticsDisabledBanner } from "@/features/analytics";
 
 export function DashboardPage() {
     const { onCreateBundle } = useBundlesPage();
@@ -101,11 +102,22 @@ export function DashboardPage() {
                     {/* Quick actions */}
                     <DashboardQuickActions />
 
-                    {/* Builder Addons */}
-                    <DashboardBuilderAddons />
+                    {/* Features */}
+                    <DashboardFeatures />
 
-                    {/* Guidance */}
-                    <DashboardMediaCard />
+                    {/* Guidance + Review */}
+                    <s-grid
+                        gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))"
+                        gap="base"
+                        alignItems="stretch"
+                    >
+                        <s-grid-item gridColumn="auto">
+                            <DashboardMediaCard />
+                        </s-grid-item>
+                        <s-grid-item gridColumn="auto">
+                            <DashboardReviewBanner />
+                        </s-grid-item>
+                    </s-grid>
 
                     {/* Video overview */}
                     <DashboardVideo />

@@ -125,3 +125,12 @@ export interface WidgetProductCardProps {
     variant?: "horizontal" | "vertical";
     showCardStyle?: boolean;
 }
+
+export interface MediaCardProps {
+    title: string;
+    description: string;
+    buttonLabel?: string;
+    buttonHref?: string;
+    onButtonClick?: () => void;
+    icon?: ReactNode;
+}
