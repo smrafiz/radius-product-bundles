@@ -1,13 +1,35 @@
 "use client";
 
-import { ReactNode } from "react";
-import { MODAL_CONTENT, useModalStore } from "@/shared";
+import { ReactNode, useState, useEffect } from "react";
+import { formatDateLong, MODAL_CONTENT, useModalStore } from "@/shared";
 
 /**
  * Modal Host - Single Reusable Modal
  */
 export function ModalHost() {
     const { modal, closeModal, setLoading, setError } = useModalStore();
+    const [dateRange, setDateRange] = useState("");
+
+    const isScheduledModal =
+        modal.type === "status" &&
+        "newStatus" in modal &&
+        modal.newStatus === "SCHEDULED";
+
+    // Reset date range when modal changes
+    useEffect(() => {
+        setDateRange("");
+    }, [modal.type]);
+
+    // Yesterday's date for disallowing past dates
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const disallowPast = `--${yesterday.toISOString().split("T")[0]}`;
+
+    // Parse range value "YYYY-MM-DD--YYYY-MM-DD"
+    const [startDate, endDate] = dateRange.includes("--")
+        ? dateRange.split("--")
+        : ["", ""];
+    const hasValidDates = Boolean(startDate && endDate);
 
     const handleConfirm = async () => {
         if (!modal || modal.type === null || !("onConfirm" in modal)) {
@@ -18,7 +40,12 @@ export function ModalHost() {
             setError(null);
             setLoading(true);
 
-            await modal.onConfirm?.();
+            const data =
+                isScheduledModal && hasValidDates
+                    ? { startDate, endDate }
+                    : undefined;
+
+            await modal.onConfirm?.(data);
 
             const modalElement = document.getElementById(
                 "radius-bundles-app-modal",
@@ -69,7 +96,12 @@ export function ModalHost() {
 
     // Always render the modal
     return (
-        <s-modal id="radius-bundles-app-modal" accessibilityLabel="bundle app modal" heading={heading}>
+        <s-modal
+            id="radius-bundles-app-modal"
+            accessibilityLabel="bundle app modal"
+            heading={heading}
+            size={isScheduledModal ? "small" : "base"}
+        >
             {hasActiveModal && modal.error && (
                 <s-banner tone="critical">
                     <s-text>{modal.error}</s-text>
@@ -77,6 +109,49 @@ export function ModalHost() {
             )}
 
             <s-text>{renderMessage(message)}</s-text>
+
+            {isScheduledModal && (
+                <s-box paddingBlockStart="base">
+                    <s-stack gap="base">
+                        <div className="flex flex-col items-center gap-4">
+                            {hasValidDates ? (
+                                <s-stack
+                                    direction="inline"
+                                    alignItems="center"
+                                    gap="small-300"
+                                >
+                                    <s-icon type="calendar" />
+                                    {formatDateLong(startDate)}
+                                    <s-icon type="arrow-right" />
+                                    <s-icon type="calendar" />
+                                    {formatDateLong(endDate)}
+                                </s-stack>
+                            ) : (
+                                <s-stack
+                                    direction="inline"
+                                    alignItems="center"
+                                    gap="small-300"
+                                >
+                                    <s-icon type="calendar" />
+                                    <s-text color="subdued">
+                                        Select schedule dates
+                                    </s-text>
+                                </s-stack>
+                            )}
+                            <s-date-picker
+                                type="range"
+                                disallow={disallowPast}
+                                value={dateRange}
+                                onChange={(event: any) =>
+                                    setDateRange(
+                                        event.currentTarget.value ?? "",
+                                    )
+                                }
+                            />
+                        </div>
+                    </s-stack>
+                </s-box>
+            )}
 
             {/* Secondary Action (Close) */}
             <s-button
@@ -97,9 +172,13 @@ export function ModalHost() {
                 tone={destructive ? "critical" : undefined}
                 onClick={handleConfirm}
                 loading={hasActiveModal && modal.loading}
-                disabled={hasActiveModal && modal.loading}
+                disabled={
+                    (hasActiveModal && modal.loading) ||
+                    (isScheduledModal && !hasValidDates)
+                }
             >
-                {(hasActiveModal && modal.confirmText) || (destructive ? "Delete" : "Confirm")}
+                {(hasActiveModal && modal.confirmText) ||
+                    (destructive ? "Delete" : "Confirm")}
             </s-button>
         </s-modal>
     );

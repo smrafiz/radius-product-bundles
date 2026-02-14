@@ -260,18 +260,26 @@ export async function updateBundleStatusById(
     id: string,
     shop: string,
     status: BundleStatus,
+    startDate?: Date,
+    endDate?: Date,
 ) {
     // Verify ownership first
     await verifyBundleOwnership(id, shop);
 
-    // Update status
+    // Update status (include dates for SCHEDULED)
     return prisma.bundle.update({
         where: { id },
-        data: { status },
+        data: {
+            status,
+            ...(startDate !== undefined && { startDate }),
+            ...(endDate !== undefined && { endDate }),
+        },
         select: {
             id: true,
             name: true,
             status: true,
+            startDate: true,
+            endDate: true,
             updatedAt: true,
         },
     });

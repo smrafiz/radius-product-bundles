@@ -68,6 +68,8 @@ export interface UpdateBundleStatusInput {
     bundleId: string;
     shop: string;
     status: BundleStatus;
+    startDate?: Date;
+    endDate?: Date;
 }
 
 /*

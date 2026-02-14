@@ -38,8 +38,12 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
             type: "status",
             bundle,
             newStatus: status,
-            onConfirm: async () => {
-                await actions.status(status);
+            onConfirm: async (data) => {
+                await actions.status(
+                    status,
+                    data?.startDate,
+                    data?.endDate,
+                );
             },
         });
     };

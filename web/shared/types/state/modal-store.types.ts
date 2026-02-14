@@ -38,7 +38,7 @@ export interface ModalPayload {
     productTitle?: string;
     newStatus?: BundleStatus;
     confirmText?: string;
-    onConfirm?: () => Promise<void> | void;
+    onConfirm?: (data?: Record<string, any>) => Promise<void> | void;
     onError?: (error: string) => void;
     loading?: boolean;
     error?: string;

@@ -117,7 +117,11 @@ export function useBundleActions(
                 }
             },
 
-            status: async (status: BundleStatus) => {
+            status: async (
+                status: BundleStatus,
+                startDate?: string,
+                endDate?: string,
+            ) => {
                 if (!bundle) {
                     throw new Error("Bundle not found");
                 }
@@ -128,6 +132,8 @@ export function useBundleActions(
                         token,
                         bundle.id,
                         status,
+                        startDate,
+                        endDate,
                     );
 
                     if (result.status === "success") {

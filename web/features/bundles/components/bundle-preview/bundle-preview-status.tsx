@@ -154,7 +154,7 @@ export function BundlePreviewStatus() {
                 </div>
 
                 <s-popover id="status-popover">
-                    <div className="p-2 w-[355px]">
+                    <div className="p-2 w-88.75">
                         <s-stack gap="small-400">
                             {availableStatuses.map((key) => (
                                 <s-clickable

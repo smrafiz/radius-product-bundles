@@ -42,6 +42,8 @@ export async function updateBundleStatusAction(
     sessionToken: string,
     bundleId: string,
     status: BundleStatus,
+    startDate?: string,
+    endDate?: string,
 ): Promise<ApiResponse> {
     try {
         const {
@@ -52,6 +54,8 @@ export async function updateBundleStatusAction(
             bundleId,
             shop,
             status,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
         });
 
         revalidatePath("/bundles");

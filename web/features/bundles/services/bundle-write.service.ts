@@ -171,14 +171,20 @@ export async function createBundleService(
 export async function updateBundleStatusService(
     input: UpdateBundleStatusInput,
 ): Promise<UpdateBundleStatusResult> {
-    const { bundleId, shop, status } = input;
+    const { bundleId, shop, status, startDate, endDate } = input;
 
     // Validate status
     if (!BUNDLE_STATUSES[status]) {
         throw new Error("Invalid bundle status");
     }
 
-    const updatedBundle = await updateBundleStatusById(bundleId, shop, status);
+    const updatedBundle = await updateBundleStatusById(
+        bundleId,
+        shop,
+        status,
+        startDate,
+        endDate,
+    );
 
     if (!updatedBundle) {
         throw new Error("Bundle not found");
