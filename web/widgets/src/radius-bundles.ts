@@ -24,6 +24,7 @@ import "./scss/radius-bundles.scss";
         customerId: string;
         pageType: string;
         template: string;
+        currentProductId: string;
         enableAnalytics: boolean;
         showSavingsBanner: boolean;
         activeBundles: Record<string, BundleMetafieldData> | null;
@@ -48,6 +49,7 @@ import "./scss/radius-bundles.scss";
         maxDiscountAmount: number;
         discountApplication: string;
         discountedProductIds: string[];
+        productIds: string[];
     }
 
     /**
@@ -703,7 +705,7 @@ import "./scss/radius-bundles.scss";
                 analyticsEnabled: this.config.enableAnalytics,
             });
 
-            if (this.config.enableAnalytics) {
+            if (this.config.enableAnalytics && this.isAnalyticsRelevantPage()) {
                 if (document.readyState === "loading") {
                     document.addEventListener("DOMContentLoaded", () => {
                         this.analytics.trackPageView();
@@ -726,6 +728,32 @@ import "./scss/radius-bundles.scss";
             (window as any).RadiusBundles.savingsBanner = this.savingsBanner;
 
             console.log("[RadiusBundles] Initialized successfully");
+        }
+
+        private isAnalyticsRelevantPage(): boolean {
+            const pageType = this.config.pageType;
+
+            if (pageType === "cart") {
+                console.log("cart page");
+                return true;
+            }
+
+            if (pageType === "product") {
+                const productId = this.config.currentProductId;
+
+                if (!productId || !this.config.activeBundles) {
+                    return false;
+                }
+
+                const gid = `gid://shopify/Product/${productId}`;
+                return Object.values(this.config.activeBundles).some(
+                    (bundle) =>
+                        bundle.productIds?.includes(productId) ||
+                        bundle.productIds?.includes(gid),
+                );
+            }
+
+            return false;
         }
 
         private attachBundleEventListeners(): void {

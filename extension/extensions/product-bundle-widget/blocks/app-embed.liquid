@@ -260,6 +260,7 @@
         customerId: getCustomerId(),
         pageType: "{{ request.page_type }}",
         template: "{{ template.name }}",
+        currentProductId: "{{ product.id | default: '' }}",
         enableAnalytics: {{ enable_analytics | json }},
         maxBundlesPerOrder: {{ global.cart.maxBundlesPerOrder | default: 0 | json }},
         showSavingsBanner: {{ show_savings_banner | json }},
