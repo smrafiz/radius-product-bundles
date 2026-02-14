@@ -926,12 +926,14 @@ declare global {
 
                 if (!response.ok) {
                     this.showToast(`API error: ${response.status}`, "error");
+                    return;
                 }
 
                 const data: ProductDetailsResponse = await response.json();
 
                 if (!data.success || !data.products) {
                     this.showToast("No products returned", "error");
+                    return;
                 }
 
                 // Build bundle from structure + product details
@@ -996,12 +998,14 @@ declare global {
 
                 if (!response.ok) {
                     this.showToast(`API error: ${response.status}`, "error");
+                    return;
                 }
 
                 const data: BundleResponse = await response.json();
 
                 if (!data.success || !data.bundles?.length) {
                     this.showToast("No bundles returned", "error");
+                    return;
                 }
 
                 this.bundle =
@@ -1596,6 +1600,7 @@ declare global {
 
                 if (cartItems.length === 0) {
                     this.showToast("No valid products to add to cart", "error");
+                    return;
                 }
 
                 const addResponse = await fetch(
@@ -1616,6 +1621,7 @@ declare global {
                             `Failed to add to cart: ${addResponse.status}`,
                         "error",
                     );
+                    return;
                 }
 
                 const cart = await fetch(this.getLocalePath("/cart.js")).then(
