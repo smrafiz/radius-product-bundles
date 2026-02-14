@@ -33,6 +33,7 @@ import {
     BundleStatus,
     CreateBundleActionInput,
 } from "@/features/bundles";
+import { handleZodValidationError } from "@/shared/utils/error/error-handlers";
 
 /**
  * Update bundle status
@@ -340,25 +341,7 @@ export async function createBundleAction(
 
         if (!schemaValidation.success) {
             console.log("[Action] Schema validation failed");
-
-            // Format Zod errors
-            const formattedErrors: Record<string, { _errors: string[] }> = {};
-
-            schemaValidation.error.issues.forEach((issue) => {
-                const path = issue.path.join(".");
-                if (!formattedErrors[path]) {
-                    formattedErrors[path] = { _errors: [] };
-                }
-                formattedErrors[path]._errors.push(issue.message);
-            });
-
-            return {
-                status: "error",
-                message: "Invalid bundle data format",
-                errors: Object.values(formattedErrors).flatMap(
-                    (e) => e._errors,
-                ),
-            };
+            return handleZodValidationError(schemaValidation.error);
         }
 
         console.log("[Action] Schema validation passed");
@@ -500,25 +483,7 @@ export async function updateBundleAction(
 
         if (!schemaValidation.success) {
             console.log("[updateBundleAction] Schema validation failed");
-
-            // Format Zod errors for client
-            const formattedErrors: Record<string, { _errors: string[] }> = {};
-
-            schemaValidation.error.issues.forEach((issue) => {
-                const path = issue.path.join(".");
-                if (!formattedErrors[path]) {
-                    formattedErrors[path] = { _errors: [] };
-                }
-                formattedErrors[path]._errors.push(issue.message);
-            });
-
-            return {
-                status: "error",
-                message: "Invalid bundle data format",
-                errors: Object.values(formattedErrors).flatMap(
-                    (e) => e._errors,
-                ),
-            };
+            return handleZodValidationError(schemaValidation.error);
         }
 
         console.log("[updateBundleAction] Schema validation passed");

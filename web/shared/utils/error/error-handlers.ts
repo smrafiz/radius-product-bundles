@@ -3,6 +3,7 @@
  */
 
 import { ApiError } from "@/shared/types";
+import type { ZodError } from "zod";
 
 /**
  * Handle bundle operation errors
@@ -85,6 +86,19 @@ export function handleApiError(
     return {
         status: "error",
         message: defaultMessage,
+    };
+}
+
+/**
+ * Handle Zod schema validation errors (multiple issues)
+ */
+export function handleZodValidationError(zodError: ZodError): ApiError {
+    const errors = zodError.issues.map((issue) => issue.message);
+
+    return {
+        status: "error",
+        message: errors.join(". "),
+        errors,
     };
 }
 
