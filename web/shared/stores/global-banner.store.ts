@@ -20,13 +20,7 @@ export const useGlobalBannerStore = create(
             };
 
             set((state) => {
-                // If message has a key, remove any existing message with the same key
-                if (message.key) {
-                    state.messages = state.messages.filter(
-                        (msg: GlobalMessage) => msg.key !== message.key,
-                    );
-                }
-                state.messages.push(newMessage);
+                state.messages = [newMessage];
             });
 
             // Auto-hide if enabled
