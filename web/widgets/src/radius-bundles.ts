@@ -581,6 +581,24 @@ import "./scss/radius-bundles.scss";
             return messages;
         }
 
+        private formatMoney(amount: number): string {
+            const cents = Math.round(amount * 100);
+            if (typeof (window as any).Shopify?.formatMoney === "function") {
+                return (window as any).Shopify.formatMoney(cents);
+            }
+            const currency = (window as any).Shopify?.currency?.active || "USD";
+            const locale = (window as any).Shopify?.locale || "en";
+            try {
+                return new Intl.NumberFormat(locale, {
+                    style: "currency",
+                    currency,
+                    currencyDisplay: "narrowSymbol",
+                }).format(amount);
+            } catch {
+                return `${currency} ${amount.toFixed(2)}`;
+            }
+        }
+
         private formatBundleHtml(
             bundle: DiscountConfig,
             name: string,
@@ -609,7 +627,7 @@ import "./scss/radius-bundles.scss";
                     return template
                         .replace(
                             "{discount}",
-                            hl("$" + bundle.discountValue.toFixed(2)),
+                            hl(this.formatMoney(bundle.discountValue)),
                         )
                         .replace("{name}", escapedName);
                 }
@@ -621,7 +639,7 @@ import "./scss/radius-bundles.scss";
                     return template
                         .replace(
                             "{price}",
-                            hl("$" + bundle.discountValue.toFixed(2)),
+                            hl(this.formatMoney(bundle.discountValue)),
                         )
                         .replace("{name}", escapedName);
                 }

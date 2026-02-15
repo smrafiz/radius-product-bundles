@@ -2178,6 +2178,7 @@ declare global {
                 return new Intl.NumberFormat(locale, {
                     style: "currency",
                     currency: currency,
+                    currencyDisplay: "narrowSymbol",
                 }).format(amount);
             } catch {
                 return `${currency} ${amount.toFixed(2)}`;
