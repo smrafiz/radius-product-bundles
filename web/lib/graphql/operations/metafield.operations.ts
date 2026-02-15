@@ -50,6 +50,27 @@ interface SyncResult extends MetafieldResult {
     bundleCount?: number;
 }
 
+/**
+ * Auth context for metafield operations.
+ * Accepts either a JWT sessionToken (from server actions) or
+ * direct shop + accessToken (from cron/background jobs).
+ */
+export type MetafieldAuth =
+    | string
+    | { shop: string; accessToken: string };
+
+/** Converts MetafieldAuth to GraphQL request auth fields. */
+function resolveAuth(auth: MetafieldAuth): {
+    sessionToken?: string;
+    shop?: string;
+    accessToken?: string;
+} {
+    if (typeof auth === "string") {
+        return { sessionToken: auth };
+    }
+    return { shop: auth.shop, accessToken: auth.accessToken };
+}
+
 // ============================================================================
 // PRODUCT METAFIELD FUNCTIONS (existing)
 // ============================================================================
@@ -326,7 +347,7 @@ export async function syncBundleProductMetafields(
  * Gets the discount node ID for the bundle discount.
  */
 async function getBundleDiscountId(
-    sessionToken: string,
+    auth: MetafieldAuth,
 ): Promise<string | null> {
     try {
         const result = await executeGraphQLQuery<GetBundleDiscountIdQuery>({
@@ -334,7 +355,7 @@ async function getBundleDiscountId(
             variables: {
                 query: `title:"${BUNDLE_DISCOUNT_TITLE}"`,
             },
-            sessionToken,
+            ...resolveAuth(auth),
         });
 
         return result.data?.discountNodes?.edges?.[0]?.node?.id || null;
@@ -347,12 +368,12 @@ async function getBundleDiscountId(
 /**
  * Gets the shop ID for metafield ownership.
  */
-async function getShopId(sessionToken: string): Promise<string | null> {
+async function getShopId(auth: MetafieldAuth): Promise<string | null> {
     try {
         const result = await executeGraphQLQuery<GetShopIdQuery>({
             query: GetShopIdDocument,
             variables: {},
-            sessionToken,
+            ...resolveAuth(auth),
         });
 
         return result.data?.shop?.id || null;
@@ -467,7 +488,7 @@ function buildDiscountBundlesMetafieldValue(
  * Syncs all active bundles to BOTH discount metafield AND shop metafield.
  */
 async function buildPriceMapForBundles(
-    sessionToken: string,
+    auth: MetafieldAuth,
     bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
 ): Promise<Map<string, number>> {
     const allProductIds = new Set<string>();
@@ -478,7 +499,7 @@ async function buildPriceMapForBundles(
     const priceMap = new Map<string, number>();
     if (allProductIds.size === 0) return priceMap;
 
-    const { productMap } = await fetchProductsFromShopify(sessionToken, [
+    const { productMap } = await fetchProductsFromShopify(auth, [
         ...allProductIds,
     ]);
 
@@ -493,12 +514,12 @@ async function buildPriceMapForBundles(
 }
 
 export async function syncActiveBundlesToMetafield(
-    sessionToken: string,
+    auth: MetafieldAuth,
     shop: string,
 ): Promise<SyncResult> {
     try {
         // Get discount ID (for Rust function)
-        const discountId = await getBundleDiscountId(sessionToken);
+        const discountId = await getBundleDiscountId(auth);
 
         if (!discountId) {
             console.error("[Metafield] Bundle discount not found");
@@ -509,7 +530,7 @@ export async function syncActiveBundlesToMetafield(
         }
 
         // Get shop ID (for Liquid/storefront)
-        const shopId = await getShopId(sessionToken);
+        const shopId = await getShopId(auth);
 
         if (!shopId) {
             console.error("[Metafield] Shop ID not found");
@@ -526,10 +547,7 @@ export async function syncActiveBundlesToMetafield(
         ]);
 
         // Fetch product prices for effective savings calculation
-        const priceMap = await buildPriceMapForBundles(
-            sessionToken,
-            activeBundles,
-        );
+        const priceMap = await buildPriceMapForBundles(auth, activeBundles);
 
         // Extract freeShippingMethodTitle from labels JSON
         const labels = appSettings?.labels as Record<string, string> | null;
@@ -565,7 +583,7 @@ export async function syncActiveBundlesToMetafield(
                     },
                 ],
             },
-            sessionToken,
+            ...resolveAuth(auth),
         });
 
         if (result.errors?.length) {
@@ -606,10 +624,10 @@ export async function syncActiveBundlesToMetafield(
  * Updates the discount's combinesWith setting to allow or disallow stacking.
  */
 export async function updateDiscountCombinesWith(
-    sessionToken: string,
+    auth: MetafieldAuth,
     allowStacking: boolean,
 ): Promise<{ success: boolean; error?: string }> {
-    const discountId = await getBundleDiscountId(sessionToken);
+    const discountId = await getBundleDiscountId(auth);
     if (!discountId) {
         return { success: false, error: "Bundle discount not found" };
     }
@@ -625,7 +643,7 @@ export async function updateDiscountCombinesWith(
                     shippingDiscounts: allowStacking,
                 },
             },
-            sessionToken,
+            ...resolveAuth(auth),
         });
 
     const userErrors =
@@ -641,16 +659,16 @@ export async function updateDiscountCombinesWith(
  * Syncs all data (global settings + active bundles) to shop and discount metafields.
  */
 export async function syncAllSettingsToMetafields(
-    sessionToken: string,
+    auth: MetafieldAuth,
     shop: string,
     savedSettings?: AppSettingsFormData,
 ): Promise<SyncResult> {
     try {
-        console.log("[Metafield] 🔄 Starting full sync for:", shop);
+        console.log("[Metafield] Starting full sync for:", shop);
 
         const [discountId, shopId] = await Promise.all([
-            getBundleDiscountId(sessionToken),
-            getShopId(sessionToken),
+            getBundleDiscountId(auth),
+            getShopId(auth),
         ]);
 
         if (!discountId || !shopId) {
@@ -669,10 +687,7 @@ export async function syncAllSettingsToMetafields(
         ]);
 
         // Fetch product prices for effective savings calculation
-        const priceMap = await buildPriceMapForBundles(
-            sessionToken,
-            activeBundles,
-        );
+        const priceMap = await buildPriceMapForBundles(auth, activeBundles);
 
         // Extract freeShippingMethodTitle from labels JSON
         const labels = globalSettings?.labels as Record<string, string> | null;
@@ -717,7 +732,7 @@ export async function syncAllSettingsToMetafields(
                     },
                 ],
             },
-            sessionToken,
+            ...resolveAuth(auth),
         });
 
         if (result.data?.metafieldsSet?.userErrors?.length) {

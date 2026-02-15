@@ -13,6 +13,7 @@ import {
     showSetupGuideService,
 } from "../services/setup-guide.service";
 import { handleSessionToken } from "@/lib/shopify";
+import { processScheduledBundles } from "@/features/bundles/services";
 
 export async function getSetupGuideAction(
     sessionToken: string,
@@ -21,6 +22,11 @@ export async function getSetupGuideAction(
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
+
+        // Process any pending scheduled bundle transitions on dashboard load
+        processScheduledBundles().catch((err) =>
+            console.error("[Dashboard] Scheduler check failed:", err),
+        );
 
         const data = await getSetupGuideService({ shop });
 

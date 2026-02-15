@@ -8,7 +8,7 @@ import { executeGraphQLQuery } from "@/lib";
 import { Product, ProductVariant } from "@/shared";
 
 export async function fetchProductsFromShopify(
-    sessionToken: string,
+    auth: string | { shop: string; accessToken: string },
     allProductIds: string[],
 ) {
     const productMap = new Map<string, Product>();
@@ -18,10 +18,15 @@ export async function fetchProductsFromShopify(
         return { productMap, variantMap };
     }
 
+    const authFields =
+        typeof auth === "string"
+            ? { sessionToken: auth }
+            : { shop: auth.shop, accessToken: auth.accessToken };
+
     const result = await executeGraphQLQuery<GetBundleProductsQuery>({
         query: GetBundleProductsDocument,
         variables: { ids: allProductIds },
-        sessionToken,
+        ...authFields,
     });
 
     if (!result.data?.nodes) {

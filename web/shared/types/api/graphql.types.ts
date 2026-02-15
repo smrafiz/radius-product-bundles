@@ -3,7 +3,11 @@ import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 export interface GraphQLRequest<TResult = any, TVariables = any> {
     query: string | TypedDocumentNode<TResult, TVariables>;
     variables?: TVariables;
-    sessionToken: string;
+    sessionToken?: string;
+    /** Direct auth: shop domain (e.g. "mystore.myshopify.com") — used by cron/background jobs */
+    shop?: string;
+    /** Direct auth: offline access token — used by cron/background jobs */
+    accessToken?: string;
 }
 
 export interface GraphQLResponse<T = any> {

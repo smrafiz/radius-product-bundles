@@ -13,21 +13,7 @@ export async function executeGraphQLQuery<T = any>(
     request: GraphQLRequest,
 ): Promise<GraphQLResponse<T>> {
     try {
-        const { query, variables = {}, sessionToken } = request;
-
-        if (!sessionToken) {
-            return {
-                errors: [
-                    {
-                        message: "Session token is required",
-                        extensions: {
-                            code: "MISSING_SESSION_TOKEN",
-                            timestamp: new Date().toISOString(),
-                        },
-                    },
-                ],
-            } as GraphQLResponse<T>;
-        }
+        const { query, variables = {} } = request;
 
         if (!query) {
             return {
@@ -43,35 +29,46 @@ export async function executeGraphQLQuery<T = any>(
             } as GraphQLResponse<T>;
         }
 
-        const { shop, session } = await handleSessionToken(
-            sessionToken,
-            false,
-            false,
-        );
+        let shop: string;
+        let accessToken: string;
 
-        if (!session?.accessToken) {
-            return {
-                errors: [
-                    {
-                        message: "No access token found in session",
-                        extensions: {
-                            code: "MISSING_ACCESS_TOKEN",
-                            timestamp: new Date().toISOString(),
-                        },
-                    },
-                ],
-            } as GraphQLResponse<T>;
+        // Direct auth path: shop + accessToken provided (cron/background jobs)
+        if (request.shop && request.accessToken) {
+            shop = request.shop;
+            accessToken = request.accessToken;
         }
+        // JWT session token path (existing flow)
+        else if (request.sessionToken) {
+            const sessionResult = await handleSessionToken(
+                request.sessionToken,
+                false,
+                false,
+            );
 
-        const accessToken = session.accessToken;
+            if (!sessionResult.session?.accessToken) {
+                return {
+                    errors: [
+                        {
+                            message: "No access token found in session",
+                            extensions: {
+                                code: "MISSING_ACCESS_TOKEN",
+                                timestamp: new Date().toISOString(),
+                            },
+                        },
+                    ],
+                } as GraphQLResponse<T>;
+            }
 
-        if (!accessToken) {
+            shop = sessionResult.shop;
+            accessToken = sessionResult.session.accessToken;
+        } else {
             return {
                 errors: [
                     {
-                        message: "Access token is undefined",
+                        message:
+                            "Authentication required: provide sessionToken or shop + accessToken",
                         extensions: {
-                            code: "INVALID_ACCESS_TOKEN",
+                            code: "MISSING_AUTH",
                             timestamp: new Date().toISOString(),
                         },
                     },

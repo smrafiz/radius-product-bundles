@@ -363,3 +363,64 @@ export async function findAppSettingsByShop(
         where: { shopId },
     });
 }
+
+// ==========================================
+// SCHEDULING Queries
+// ==========================================
+
+/**
+ * Finds SCHEDULED bundles where startDate has arrived.
+ */
+export async function findBundlesReadyToActivate() {
+    return prisma.bundle.findMany({
+        where: {
+            status: "SCHEDULED",
+            startDate: { not: null, lte: new Date() },
+        },
+        select: { id: true, shop: true, name: true, startDate: true },
+    });
+}
+
+/**
+ * Finds ACTIVE bundles where endDate has passed.
+ */
+export async function findBundlesReadyToDeactivate() {
+    return prisma.bundle.findMany({
+        where: {
+            status: "ACTIVE",
+            endDate: { not: null, lte: new Date() },
+        },
+        select: { id: true, shop: true, name: true, endDate: true },
+    });
+}
+
+/**
+ * Returns distinct shops that have bundles needing scheduling transitions.
+ */
+export async function findShopsWithPendingTransitions(): Promise<string[]> {
+    const [toActivate, toDeactivate] = await Promise.all([
+        prisma.bundle.findMany({
+            where: {
+                status: "SCHEDULED",
+                startDate: { not: null, lte: new Date() },
+            },
+            select: { shop: true },
+            distinct: ["shop"],
+        }),
+        prisma.bundle.findMany({
+            where: {
+                status: "ACTIVE",
+                endDate: { not: null, lte: new Date() },
+            },
+            select: { shop: true },
+            distinct: ["shop"],
+        }),
+    ]);
+
+    const shops = new Set([
+        ...toActivate.map((b) => b.shop),
+        ...toDeactivate.map((b) => b.shop),
+    ]);
+
+    return [...shops];
+}
