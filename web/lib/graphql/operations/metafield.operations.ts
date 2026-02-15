@@ -373,8 +373,9 @@ function buildShopBundlesMetafieldValue(
     const bundleMap: Record<string, any> = {};
 
     for (const bundle of bundles) {
-        const productIds =
-            bundle.bundleProducts?.map((bp) => bp.productId) || [];
+        const bundleProducts = bundle.bundleProducts || [];
+        const productIds = bundleProducts.map((bp) => bp.productId);
+        const productQuantities = bundleProducts.map((bp) => bp.quantity);
 
         const bundlePrice = priceMap
             ? bundle.bundleProducts?.reduce((sum, bp) => {
@@ -410,6 +411,7 @@ function buildShopBundlesMetafieldValue(
             title: bundle.settings?.title ?? bundle.name,
             productCount: productIds.length,
             productIds: productIds,
+            productQuantities: productQuantities,
             layout: bundle.settings?.layout || "list",
             buttonText: bundle.settings?.cartButtonText || "",
             showSavings: bundle.settings?.showSavings ?? true,

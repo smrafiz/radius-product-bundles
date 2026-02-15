@@ -68,6 +68,7 @@ declare global {
         discountedProductIds: string[];
         productCount: number;
         productIds: string[];
+        productQuantities?: number[];
         layout: string;
         labels: {
             buttonText: string;
@@ -1018,13 +1019,14 @@ declare global {
 
             const productMap = new Map(products.map((p) => [p.id, p]));
 
+            const quantities = this.bundleStructure.productQuantities;
             return this.bundleStructure.productIds.map((productId, index) => {
                 const product = productMap.get(productId);
 
                 return {
                     id: productId,
                     variantId: product?.variantId || "",
-                    quantity: 1,
+                    quantity: quantities?.[index] || 1,
                     role: "INCLUDED" as const,
                     displayOrder: index,
                     isRequired: true,
