@@ -3,7 +3,6 @@
 import {
     BundlePreviewStatus,
     BundlePriority,
-    calculateDiscountedPrice,
     DisplaySettings,
     formatPrice,
     useBundlePreviewPricing,
@@ -21,6 +20,7 @@ import {
     BundleWidget,
     PreviewProduct,
     ROUTES,
+    useShopSettings,
     WidgetCarousel,
     WidgetCompact,
     WidgetDisplayOptions,
@@ -41,39 +41,65 @@ function useWidgetStyles(): CustomizerStyles {
     };
 }
 
-function usePreviewProducts(): PreviewProduct[] {
+function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
     const { selectedItems, bundleData } = useBundleStore();
 
-    return useMemo(
-        () =>
-            selectedItems.map((item) => {
-                const originalPrice = parseFloat(item.price) * item.quantity;
-                const discountedPrice = calculateDiscountedPrice(
-                    originalPrice,
-                    bundleData.discountType,
-                    bundleData.discountValue,
-                    bundleData.maxDiscountAmount,
-                );
-                return {
-                    id: item.id,
-                    title: item.title,
-                    image: item.image,
-                    price: formatPrice(discountedPrice),
-                    compareAtPrice:
-                        discountedPrice < originalPrice
-                            ? formatPrice(originalPrice)
-                            : undefined,
-                    quantity: item.quantity,
-                    url: item.url,
-                };
-            }),
-        [
-            selectedItems,
-            bundleData.discountType,
-            bundleData.discountValue,
-            bundleData.maxDiscountAmount,
-        ],
-    );
+    return useMemo(() => {
+        const totalBundlePrice = selectedItems.reduce(
+            (sum, item) => sum + (parseFloat(item.price) || 0) * item.quantity,
+            0,
+        );
+
+        return selectedItems.map((item) => {
+            const unitPrice = parseFloat(item.price) || 0;
+            const discountType = bundleData.discountType;
+            const discountValue = bundleData.discountValue ?? 0;
+            let discountedUnitPrice = unitPrice;
+
+            if (discountType && discountValue > 0 && totalBundlePrice > 0) {
+                const lineTotal = unitPrice * item.quantity;
+                const proportion = lineTotal / totalBundlePrice;
+
+                switch (discountType) {
+                    case "PERCENTAGE":
+                        discountedUnitPrice = unitPrice * (1 - discountValue / 100);
+                        break;
+                    case "FIXED_AMOUNT": {
+                        const lineDiscount = discountValue * proportion;
+                        discountedUnitPrice = Math.max(
+                            0,
+                            unitPrice - lineDiscount / item.quantity,
+                        );
+                        break;
+                    }
+                    case "CUSTOM_PRICE": {
+                        const linePrice = discountValue * proportion;
+                        discountedUnitPrice = linePrice / item.quantity;
+                        break;
+                    }
+                }
+            }
+
+            const hasDiscount = discountedUnitPrice < unitPrice;
+            return {
+                id: item.id,
+                title: item.title,
+                image: item.image,
+                price: formatPrice(discountedUnitPrice, currencyCode),
+                compareAtPrice: hasDiscount
+                    ? formatPrice(unitPrice, currencyCode)
+                    : undefined,
+                quantity: item.quantity,
+                url: item.url,
+            };
+        });
+    }, [
+        selectedItems,
+        bundleData.discountType,
+        bundleData.discountValue,
+        bundleData.maxDiscountAmount,
+        currencyCode,
+    ]);
 }
 
 function useWidgetDisplayOptions(): WidgetDisplayOptions {
@@ -90,12 +116,12 @@ function useWidgetDisplayOptions(): WidgetDisplayOptions {
     };
 }
 
-function useWidgetPricing(): WidgetPricing {
+function useWidgetPricing(currencyCode?: string): WidgetPricing {
     const pricing = useBundlePreviewPricing();
     return {
-        originalPrice: formatPrice(pricing.originalPrice),
-        finalPrice: formatPrice(pricing.finalPrice),
-        savingsAmount: formatPrice(pricing.discountAmount),
+        originalPrice: formatPrice(pricing.originalPrice, currencyCode),
+        finalPrice: formatPrice(pricing.finalPrice, currencyCode),
+        savingsAmount: formatPrice(pricing.discountAmount, currencyCode),
         savingsPercentage: pricing.savingsPercentage,
         hasDiscount: pricing.hasDiscount,
     };
@@ -131,10 +157,11 @@ function RenderLayout({
 export function BundlePreview() {
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings } = useBundleStore();
+    const { currencyCode } = useShopSettings();
     const styles = useWidgetStyles();
-    const products = usePreviewProducts();
+    const products = usePreviewProducts(currencyCode);
     const displayOptions = useWidgetDisplayOptions();
-    const pricing = useWidgetPricing();
+    const pricing = useWidgetPricing(currencyCode);
 
     const borderRadius = getCardRadius(styles.cornerStyle);
     const shadow = getShadow(styles.shadow);

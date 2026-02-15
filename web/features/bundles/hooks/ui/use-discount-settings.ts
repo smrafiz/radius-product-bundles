@@ -117,7 +117,10 @@ export function useDiscountSettings() {
      * Get currency symbol with loading state.
      */
     const getCurrency = useCallback(() => {
-        if (isLoading && !currencyCode) return "•";
+        if (isLoading && !currencyCode) {
+            return "•";
+        }
+
         return currencySymbol;
     }, [isLoading, currencyCode, currencySymbol]);
 

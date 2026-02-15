@@ -83,11 +83,12 @@ export function formatDiscountFromValues(
 }
 
 /**
- * Format price for display
+ * Format price for display using shop currency
  */
-export function formatPrice(price: number): string {
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-    }).format(price);
+export function formatPrice(price: number, currencyCode?: string): string {
+    if (!currencyCode) {
+        return `• ${price.toFixed(2)}`;
+    }
+
+    return formatCurrency(price, currencyCode);
 }
