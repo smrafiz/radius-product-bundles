@@ -38,6 +38,13 @@ struct MetafieldBundleConfig {
     max_discount_amount: Option<f64>,
     discount_application: Option<String>,
     discounted_product_ids: Option<Vec<String>>,
+    product_quantities: Option<HashMap<String, i32>>,
+}
+
+/// Info about a bundle cart line needed for quantity validation.
+struct BundleLineInfo<'a> {
+    line: &'a schema::cart_lines_discounts_generate_run::input::cart::Lines,
+    product_id: Option<String>,
 }
 
 #[shopify_function]
@@ -46,7 +53,6 @@ fn cart_lines_discounts_generate_run(
 ) -> Result<CartLinesDiscountsGenerateRunResult> {
     let no_discount = CartLinesDiscountsGenerateRunResult { operations: vec![] };
 
-    // Check if discount applies to products
     if !input
         .discount()
         .discount_classes()
@@ -55,7 +61,6 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    // Get cart attribute (untrusted - only for bundle IDs)
     let cart_attr = match input.cart().attribute() {
         Some(attr) => attr,
         None => return Ok(no_discount),
@@ -75,16 +80,13 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    // Get metafield (trusted - source of truth for discount values)
     let metafield = match input.discount().metafield() {
         Some(mf) => mf,
         None => return Ok(no_discount),
     };
 
-    // metafield.value() returns &String directly
     let metafield_value = metafield.value();
 
-    // Check if metafield value is empty
     if metafield_value.is_empty() {
         return Ok(no_discount);
     }
@@ -99,7 +101,6 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    // Calculate total cart value for minimum order check
     let cart_total: f64 = input
         .cart()
         .lines()
@@ -110,26 +111,23 @@ fn cart_lines_discounts_generate_run(
     let mut candidates: Vec<ProductDiscountCandidate> = vec![];
 
     for cart_config in cart_configs {
-        // Look up bundle in metafield (source of truth)
         let bundle_settings = match active_bundles.get(&cart_config.bundle_id) {
             Some(settings) => settings,
-            None => continue, // Bundle not found = deleted or inactive
+            None => continue,
         };
 
-        // Check if bundle is active
         if bundle_settings.status.as_deref() != Some("ACTIVE") {
             continue;
         }
 
-        // Check minimum order value (from metafield)
         if let Some(min_order) = bundle_settings.min_order_value {
             if min_order > 0.0 && cart_total < min_order {
                 continue;
             }
         }
 
-        // Find cart lines for this bundle
-        let bundle_lines: Vec<_> = input
+        // Find cart lines for this bundle with their product IDs
+        let bundle_lines: Vec<BundleLineInfo> = input
             .cart()
             .lines()
             .iter()
@@ -139,9 +137,15 @@ fn cart_lines_discounts_generate_run(
                     .map(|v| *v == cart_config.bundle_id)
                     .unwrap_or(false)
             })
+            .map(|line| {
+                let product_id = line
+                    .product_id()
+                    .and_then(|a| a.value())
+                    .map(|v| v.to_string());
+                BundleLineInfo { line, product_id }
+            })
             .collect();
 
-        // Validate completeness (from cart config - customer added these)
         if let Some(required) = cart_config.required_line_count {
             if bundle_lines.len() < required {
                 continue;
@@ -152,7 +156,60 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
-        // Check if discount applies to specific products only (from metafield)
+        // --- Quantity validation: calculate complete bundle sets ---
+        let product_quantities = bundle_settings
+            .product_quantities
+            .as_ref();
+
+        let complete_sets: i32 = if let Some(qty_map) = product_quantities {
+            if qty_map.is_empty() {
+                1
+            } else {
+                let mut min_sets: Option<i32> = None;
+
+                for (expected_product_id, expected_qty) in qty_map.iter() {
+                    if *expected_qty <= 0 {
+                        continue;
+                    }
+
+                    // Find the cart line for this product
+                    let cart_qty = bundle_lines
+                        .iter()
+                        .filter(|bl| {
+                            bl.product_id
+                                .as_ref()
+                                .map(|pid| pid == expected_product_id)
+                                .unwrap_or(false)
+                        })
+                        .map(|bl| *bl.line.quantity())
+                        .sum::<i32>();
+
+                    let sets = cart_qty / expected_qty;
+
+                    min_sets = Some(match min_sets {
+                        Some(current_min) => {
+                            if sets < current_min {
+                                sets
+                            } else {
+                                current_min
+                            }
+                        }
+                        None => sets,
+                    });
+                }
+
+                min_sets.unwrap_or(0)
+            }
+        } else {
+            // No quantity map = legacy behavior, no quantity limiting
+            1
+        };
+
+        if complete_sets < 1 {
+            continue;
+        }
+
+        // Check if discount applies to specific products only
         let apply_to_specific =
             bundle_settings.discount_application.as_deref() == Some("products");
         let discounted_ids = bundle_settings
@@ -160,24 +217,32 @@ fn cart_lines_discounts_generate_run(
             .clone()
             .unwrap_or_default();
 
-        // Build targets
+        // Build targets with quantity limits
         let targets: Vec<ProductDiscountCandidateTarget> = bundle_lines
             .iter()
-            .filter(|line| {
+            .filter(|bl| {
                 if apply_to_specific && !discounted_ids.is_empty() {
-                    if let Some(product_attr) = line.product_id() {
-                        if let Some(product_id) = product_attr.value() {
-                            return discounted_ids.contains(&product_id.to_string());
-                        }
+                    if let Some(ref pid) = bl.product_id {
+                        return discounted_ids.contains(pid);
                     }
                     return false;
                 }
                 true
             })
-            .map(|line| {
+            .map(|bl| {
+                // Calculate the quantity to discount for this line
+                let target_qty = if let Some(qty_map) = product_quantities {
+                    bl.product_id
+                        .as_ref()
+                        .and_then(|pid| qty_map.get(pid))
+                        .map(|expected_qty| complete_sets * expected_qty)
+                } else {
+                    None
+                };
+
                 ProductDiscountCandidateTarget::CartLine(CartLineTarget {
-                    id: line.id().clone(),
-                    quantity: None,
+                    id: bl.line.id().clone(),
+                    quantity: target_qty,
                 })
             })
             .collect();
@@ -186,21 +251,40 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
-        // Calculate bundle total
+        // Calculate bundle total for discountable quantities only
         let bundle_total: f64 = bundle_lines
             .iter()
-            .filter(|line| {
+            .filter(|bl| {
                 if apply_to_specific && !discounted_ids.is_empty() {
-                    if let Some(product_attr) = line.product_id() {
-                        if let Some(product_id) = product_attr.value() {
-                            return discounted_ids.contains(&product_id.to_string());
-                        }
+                    if let Some(ref pid) = bl.product_id {
+                        return discounted_ids.contains(pid);
                     }
                     return false;
                 }
                 true
             })
-            .map(|line| line.cost().subtotal_amount().amount().0)
+            .map(|bl| {
+                let subtotal = bl.line.cost().subtotal_amount().amount().0;
+                let line_qty = *bl.line.quantity();
+
+                if let Some(qty_map) = product_quantities {
+                    if line_qty > 0 {
+                        let discountable_qty = bl
+                            .product_id
+                            .as_ref()
+                            .and_then(|pid| qty_map.get(pid))
+                            .map(|expected_qty| complete_sets * expected_qty)
+                            .unwrap_or(line_qty);
+
+                        let per_unit = subtotal / line_qty as f64;
+                        per_unit * discountable_qty as f64
+                    } else {
+                        0.0
+                    }
+                } else {
+                    subtotal
+                }
+            })
             .sum();
 
         // Build discount value using METAFIELD values (trusted)
@@ -214,24 +298,32 @@ fn cart_lines_discounts_generate_run(
                     }),
                 )
             }
-            "FIXED_AMOUNT" => (
-                bundle_settings.discount_value,
-                ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
-                    amount: Decimal(bundle_settings.discount_value),
-                    applies_to_each_item: None,
-                }),
-            ),
+            "FIXED_AMOUNT" => {
+                let amount = bundle_settings.discount_value * complete_sets as f64;
+                (
+                    amount,
+                    ProductDiscountCandidateValue::FixedAmount(
+                        ProductDiscountCandidateFixedAmount {
+                            amount: Decimal(amount),
+                            applies_to_each_item: None,
+                        },
+                    ),
+                )
+            }
             "CUSTOM_PRICE" => {
-                let discount_needed = bundle_total - bundle_settings.discount_value;
+                let custom_total = bundle_settings.discount_value * complete_sets as f64;
+                let discount_needed = bundle_total - custom_total;
                 if discount_needed <= 0.0 {
                     continue;
                 }
                 (
                     discount_needed,
-                    ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
-                        amount: Decimal(discount_needed),
-                        applies_to_each_item: None,
-                    }),
+                    ProductDiscountCandidateValue::FixedAmount(
+                        ProductDiscountCandidateFixedAmount {
+                            amount: Decimal(discount_needed),
+                            applies_to_each_item: None,
+                        },
+                    ),
                 )
             }
             "NO_DISCOUNT" => continue,
@@ -252,7 +344,6 @@ fn cart_lines_discounts_generate_run(
             value
         };
 
-        // Build message
         let bundle_name = cart_config
             .bundle_name
             .unwrap_or_else(|| "Bundle".to_string());

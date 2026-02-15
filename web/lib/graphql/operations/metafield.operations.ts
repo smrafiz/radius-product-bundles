@@ -439,6 +439,12 @@ function buildDiscountBundlesMetafieldValue(
     const bundleMap: Record<string, any> = {};
 
     for (const bundle of bundles) {
+        const bundleProducts = bundle.bundleProducts || [];
+        const productQuantityMap: Record<string, number> = {};
+        for (const bp of bundleProducts) {
+            productQuantityMap[bp.productId] = bp.quantity;
+        }
+
         bundleMap[bundle.id] = {
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
@@ -448,6 +454,7 @@ function buildDiscountBundlesMetafieldValue(
             maxDiscountAmount: bundle.maxDiscountAmount || 0,
             discountApplication: bundle.discountApplication || "bundle",
             discountedProductIds: bundle.discountedProductIds || [],
+            productQuantities: productQuantityMap,
             freeShippingMethodTitle:
                 freeShippingMethodTitle || "Free shipping with {name}",
         };
