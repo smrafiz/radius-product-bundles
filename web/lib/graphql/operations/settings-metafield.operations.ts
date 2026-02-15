@@ -242,7 +242,7 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
          */
         const validKeys: (keyof CustomizerStyles)[] = [
             // Preset
-            // "stylePreset",
+            "stylePreset",
 
             // Appearance
             "primaryColor",

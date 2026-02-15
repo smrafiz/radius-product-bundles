@@ -148,6 +148,12 @@
 					{% endcase %}
 				{% endif %}
 
+				{% if block.settings.style_preset != blank %}
+					{% assign style_preset = block.settings.style_preset %}
+				{% else %}
+					{% assign style_preset = g_styles.stylePreset | default: 'minimal' %}
+				{% endif %}
+
 				{% comment %} CORNER, SHADOW and SPACING {% endcomment %}
 				{% if style_preset == 'custom' %}
 				  {% assign corner_style = block.settings.corner_style %}
@@ -755,6 +761,11 @@
 						--rb-badge-border: none;
 					{% endif %}
 
+
+					{% if style_preset == 'dark' %}
+						--rb-skeleton-text: #2f3b4c;
+					{% endif %}
+
 					{% if pricing_summary_box %}
 					{% case pricing_summary_style %}
 					{% when 'minimal' %}
@@ -817,6 +828,7 @@
 						id="radius-bundle-{{ bundle_id }}"
 						class="radius-bundle radius-bundle--{{ layout | downcase }}"
 						data-bundle-id="{{ bundle_id }}"
+						data-style-preset="{{ style_preset }}"
 						data-box-align="{{ box_alignment }}"
 						data-badge-position="{{ badge_position }}"
 						data-divider-style="{{ divider_style }}"
