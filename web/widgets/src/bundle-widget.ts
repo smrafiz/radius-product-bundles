@@ -947,6 +947,9 @@ declare global {
                     return;
                 }
 
+                // Fetch tax-inclusive storefront prices via Shopify Ajax API
+                await this.fetchStorefrontPrices(this.bundle.products);
+
                 this.renderProducts(this.bundle);
                 this.updatePricing(this.bundle);
                 this.validateStock();
@@ -954,6 +957,53 @@ declare global {
                 console.error("[RadiusBundle] Load error:", error);
                 this.showError("Failed to load bundle");
             }
+        }
+
+        /**
+         * Fetches tax-inclusive prices from Shopify's storefront Ajax API.
+         * The Admin API returns raw prices without tax, but the storefront
+         * Ajax API (/products/{handle}.js) returns prices in the customer's
+         * context (tax-inclusive for tax-inclusive markets).
+         */
+        private async fetchStorefrontPrices(
+            products: BundleProduct[],
+        ): Promise<void> {
+            const fetchPromises = products
+                .filter((p) => p.handle)
+                .map(async (product) => {
+                    try {
+                        const response = await fetch(
+                            this.getLocalePath(
+                                `/products/${product.handle}.js`,
+                            ),
+                        );
+                        if (!response.ok) {
+                            return;
+                        }
+
+                        const data = await response.json();
+                        const variantNumericId = this.extractNumericId(
+                            product.variantId,
+                        );
+
+                        // Match exact variant, fallback to first
+                        const variant =
+                            data.variants?.find(
+                                (v: any) =>
+                                    String(v.id) === variantNumericId,
+                            ) || data.variants?.[0];
+
+                        if (variant) {
+                            product.price = variant.price;
+                            product.compareAtPrice =
+                                variant.compare_at_price || 0;
+                        }
+                    } catch {
+                        // Silently fall back to Admin API prices
+                    }
+                });
+
+            await Promise.all(fetchPromises);
         }
 
         /**
@@ -1017,6 +1067,7 @@ declare global {
                     return;
                 }
 
+                await this.fetchStorefrontPrices(this.bundle.products);
                 this.renderProducts(this.bundle);
                 this.updatePricing(this.bundle);
                 this.validateStock();
@@ -1194,6 +1245,11 @@ declare global {
             discountedPrice = Math.round(discountedPrice);
 
             // Build price HTML
+            // compareAtPrice = original "was" price (tax-inclusive via Ajax API)
+            // product.price = current selling price (tax-inclusive via Ajax API)
+            // discountedPrice = after bundle discount (applied to product.price)
+            const hasCompareAt =
+                product.compareAtPrice && product.compareAtPrice > product.price;
             let priceHtml: string;
 
             if (hasDiscount && discountedPrice < product.price) {
@@ -1201,10 +1257,7 @@ declare global {
             <span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
             ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""}
         `;
-            } else if (
-                product.compareAtPrice &&
-                product.compareAtPrice > product.price
-            ) {
+            } else if (hasCompareAt) {
                 priceHtml = `
             <span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>
             ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.compareAtPrice)}</span>` : ""}
@@ -1300,11 +1353,10 @@ declare global {
          */
 
         private updatePricing(bundle: Bundle): void {
-            const originalTotal = bundle.products.reduce(
+            const sellingTotal = bundle.products.reduce(
                 (sum, product) => sum + product.price * product.quantity,
                 0,
             );
-
             let discountAmount: number;
             let bundleTotal: number;
 
@@ -1312,35 +1364,31 @@ declare global {
 
             switch (structure.discountType) {
                 case "PERCENTAGE":
-                    discountAmount =
-                        originalTotal * (structure.discountValue / 100);
-                    bundleTotal = originalTotal - discountAmount;
+                    bundleTotal =
+                        sellingTotal * (1 - structure.discountValue / 100);
                     break;
 
                 case "FIXED_AMOUNT":
-                    discountAmount = structure.discountValue * 100;
-                    bundleTotal = originalTotal - discountAmount;
+                    bundleTotal = sellingTotal - structure.discountValue * 100;
                     break;
 
                 case "CUSTOM_PRICE":
                     bundleTotal = structure.discountValue * 100;
-                    discountAmount = originalTotal - bundleTotal;
                     break;
 
                 default:
-                    discountAmount = 0;
-                    bundleTotal = originalTotal;
+                    bundleTotal = sellingTotal;
             }
 
             bundleTotal = Math.max(0, bundleTotal);
-            discountAmount = Math.max(0, discountAmount);
+            discountAmount = Math.max(0, sellingTotal - bundleTotal);
 
             // Update regular price
             const regularPriceEl = this.container.querySelector(
                 "[data-regular-price]",
             );
             if (regularPriceEl) {
-                regularPriceEl.textContent = this.formatMoney(originalTotal);
+                regularPriceEl.textContent = this.formatMoney(sellingTotal);
             }
 
             // Update bundle price
