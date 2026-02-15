@@ -2,7 +2,10 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { WidgetLayout } from "@/prisma/generated/enums";
 import { CustomizerStoreState, CustomizerStyles } from "@/features/settings";
-import { DEFAULT_CUSTOMIZER_STYLES, STYLE_PRESETS, } from "@/features/settings/constants/defaults.constants";
+import {
+    DEFAULT_CUSTOMIZER_STYLES,
+    STYLE_PRESETS,
+} from "@/features/settings/constants/defaults.constants";
 
 /**
  * Deep clones an object to prevent mutation.
@@ -113,7 +116,10 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 set((state) => ({
                     styles: {
                         ...state.styles,
-                        [activeDevice]: Object.keys(updated).length > 0 ? updated : undefined,
+                        [activeDevice]:
+                            Object.keys(updated).length > 0
+                                ? updated
+                                : undefined,
                     },
                 }));
             },

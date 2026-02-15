@@ -1,7 +1,7 @@
 query GetProductBundleMetafield($productId: ID!) {
     product(id: $productId) {
         id
-        metafield(namespace: "radius_bundles", key: "bundle_ids") {
+        metafield(namespace: "$app", key: "bundle_ids") {
             id
             value
         }
@@ -12,7 +12,7 @@ query GetProductsBundleMetafields($productIds: [ID!]!) {
     nodes(ids: $productIds) {
         ... on Product {
             id
-            metafield(namespace: "radius_bundles", key: "bundle_ids") {
+            metafield(namespace: "$app", key: "bundle_ids") {
                 id
                 value
             }
@@ -24,7 +24,7 @@ query CheckMetafieldDefinition {
     metafieldDefinitions(
         first: 1
         ownerType: PRODUCT
-        namespace: "radius_bundles"
+        namespace: "$app"
         key: "bundle_ids"
     ) {
         edges {
@@ -62,21 +62,14 @@ query GetBundleDiscountId($query: String!) {
     }
 }
 
-# Get shop-level metafields (active bundles and global settings)
 query GetShopMetafields {
     shop {
         id
-        activeBundles: metafield(
-            namespace: "radius_bundles"
-            key: "active_bundles"
-        ) {
+        activeBundles: metafield(namespace: "$app", key: "active_bundles") {
             id
             value
         }
-        globalSettings: metafield(
-            namespace: "radius_bundles"
-            key: "global_settings"
-        ) {
+        globalSettings: metafield(namespace: "$app", key: "global_settings") {
             id
             value
         }

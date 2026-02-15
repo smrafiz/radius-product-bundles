@@ -39,11 +39,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
             bundle,
             newStatus: status,
             onConfirm: async (data) => {
-                await actions.status(
-                    status,
-                    data?.startDate,
-                    data?.endDate,
-                );
+                await actions.status(status, data?.startDate, data?.endDate);
             },
         });
     };

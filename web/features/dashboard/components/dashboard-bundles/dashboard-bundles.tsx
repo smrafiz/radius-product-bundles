@@ -1,9 +1,6 @@
 "use client";
 
-import {
-    useTopBundles,
-    useAnalyticsStore,
-} from "@/features/analytics";
+import { useTopBundles, useAnalyticsStore } from "@/features/analytics";
 import {
     DashboardBundlesEmpty,
     DashboardBundlesHeader,

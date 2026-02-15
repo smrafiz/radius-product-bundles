@@ -182,7 +182,8 @@ export function buildGlobalSettingsMetafieldValue(
             showSavingsBanner: appSettings?.showSavingsBanner ?? true,
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
             lazyLoadImages: appSettings?.lazyLoadImages ?? true,
-            bundlePriorityType: appSettings?.bundlePriorityType ?? "index_based",
+            bundlePriorityType:
+                appSettings?.bundlePriorityType ?? "index_based",
         },
 
         // Privacy settings
@@ -344,7 +345,9 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
                         key !== ("mobile" as keyof CustomizerStyles) &&
                         key !== ("tablet" as keyof CustomizerStyles)
                     ) {
-                        (deviceOverrides as any)[key] = (parsed[device] as Record<string, unknown>)[key];
+                        (deviceOverrides as any)[key] = (
+                            parsed[device] as Record<string, unknown>
+                        )[key];
                     }
                 }
                 if (Object.keys(deviceOverrides).length > 0) {

@@ -129,10 +129,10 @@ export function HorizontalStepIndicator() {
                                                 "completed"
                                                     ? "success"
                                                     : getStepStatus(
-                                                        step.number,
-                                                    ) === "current"
-                                                        ? "info"
-                                                        : undefined
+                                                            step.number,
+                                                        ) === "current"
+                                                      ? "info"
+                                                      : undefined
                                             }
                                         />
                                     )}

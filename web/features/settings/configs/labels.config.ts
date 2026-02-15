@@ -243,8 +243,7 @@ export const LABELS_TAB: SettingsTabConfig = {
         {
             id: "cart-limits",
             title: "Cart Limits",
-            tooltip:
-                "Text shown when cart bundle limits are reached.",
+            tooltip: "Text shown when cart bundle limits are reached.",
             columns: 1,
             fields: [
                 {
@@ -254,13 +253,11 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Maximum {count} bundle(s) per order allowed",
                     details:
                         "Shown when customer tries to exceed the max bundles per order limit. Use {count} for the limit number.",
-                    defaultValue:
-                        "Maximum {count} bundle(s) per order allowed",
+                    defaultValue: "Maximum {count} bundle(s) per order allowed",
                     validation: {
                         maxLength: {
                             value: 100,
-                            message:
-                                "Cannot exceed 100 characters",
+                            message: "Cannot exceed 100 characters",
                         },
                     },
                 },
@@ -273,8 +270,7 @@ export const LABELS_TAB: SettingsTabConfig = {
         {
             id: "cart-banner",
             title: "Cart Page Savings Banner",
-            tooltip:
-                "Text displayed in the cart page savings banner.",
+            tooltip: "Text displayed in the cart page savings banner.",
             columns: 2,
             fields: [
                 {
@@ -288,8 +284,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     validation: {
                         maxLength: {
                             value: 100,
-                            message:
-                                "Cannot exceed 100 characters",
+                            message: "Cannot exceed 100 characters",
                         },
                     },
                 },
@@ -304,8 +299,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     validation: {
                         maxLength: {
                             value: 100,
-                            message:
-                                "Cannot exceed 100 characters",
+                            message: "Cannot exceed 100 characters",
                         },
                     },
                 },
@@ -320,8 +314,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     validation: {
                         maxLength: {
                             value: 100,
-                            message:
-                                "Cannot exceed 100 characters",
+                            message: "Cannot exceed 100 characters",
                         },
                     },
                 },
@@ -336,8 +329,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     validation: {
                         maxLength: {
                             value: 100,
-                            message:
-                                "Cannot exceed 100 characters",
+                            message: "Cannot exceed 100 characters",
                         },
                     },
                 },

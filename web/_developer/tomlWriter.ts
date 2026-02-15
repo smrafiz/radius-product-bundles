@@ -84,6 +84,23 @@ try {
         embedded: process.env.POS_EMBEDDED === "true",
     };
 
+    // Product metafield definitions (app-owned, declared via TOML)
+    config.product = {
+        metafields: {
+            app: {
+                bundle_ids: {
+                    type: "list.single_line_text_field",
+                    name: "Bundle IDs",
+                    description: "List of bundle IDs that include this product",
+                    access: {
+                        admin: "merchant_read",
+                        storefront: "public_read",
+                    },
+                },
+            },
+        },
+    };
+
     // === Write TOML Files ===
 
     const addHeader = (str: string) =>

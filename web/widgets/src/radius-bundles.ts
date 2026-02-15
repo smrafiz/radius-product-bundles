@@ -125,7 +125,7 @@ import "./scss/radius-bundles.scss";
             }
 
             if ((window as any).Shopify?.designMode) {
-                console.log('designmode');
+                console.log("designmode");
                 return;
             }
 
@@ -594,23 +594,43 @@ import "./scss/radius-bundles.scss";
 
             switch (bundle.discountType) {
                 case "PERCENTAGE": {
-                    const template = labels?.savingText || "You're saving {discount} with {name}";
-                    return template.replace("{discount}", hl(bundle.discountValue + "%")).replace("{name}", escapedName);
+                    const template =
+                        labels?.savingText ||
+                        "You're saving {discount} with {name}";
+                    return template
+                        .replace("{discount}", hl(bundle.discountValue + "%"))
+                        .replace("{name}", escapedName);
                 }
 
                 case "FIXED_AMOUNT": {
-                    const template = labels?.savingText || "You're saving {discount} with {name}";
-                    return template.replace("{discount}", hl("$" + bundle.discountValue.toFixed(2))).replace("{name}", escapedName);
+                    const template =
+                        labels?.savingText ||
+                        "You're saving {discount} with {name}";
+                    return template
+                        .replace(
+                            "{discount}",
+                            hl("$" + bundle.discountValue.toFixed(2)),
+                        )
+                        .replace("{name}", escapedName);
                 }
 
                 case "CUSTOM_PRICE": {
-                    const template = labels?.customPriceText || "Special price: {price} for {name}";
-                    return template.replace("{price}", hl("$" + bundle.discountValue.toFixed(2))).replace("{name}", escapedName);
+                    const template =
+                        labels?.customPriceText ||
+                        "Special price: {price} for {name}";
+                    return template
+                        .replace(
+                            "{price}",
+                            hl("$" + bundle.discountValue.toFixed(2)),
+                        )
+                        .replace("{name}", escapedName);
                 }
 
                 case "NO_DISCOUNT":
                     if (bundle.freeShipping) {
-                        const template = labels?.freeShippingQualifyText || "{name} qualifies for free shipping!";
+                        const template =
+                            labels?.freeShippingQualifyText ||
+                            "{name} qualifies for free shipping!";
                         return template.replace("{name}", escapedName);
                     }
                     return null;
@@ -627,12 +647,15 @@ import "./scss/radius-bundles.scss";
             if (!contentEl) return;
 
             // Get the icon from config
-            const icon = this.config.bannerIcon || '';
+            const icon = this.config.bannerIcon || "";
 
             let html: string;
 
             html = `<ul class="radius-savings-banner__list">${messages
-                .map((m) => `<li>${icon ? `<span class="radius-savings-banner__list-icon">${icon}</span>` : ''}${m}</li>`)
+                .map(
+                    (m) =>
+                        `<li>${icon ? `<span class="radius-savings-banner__list-icon">${icon}</span>` : ""}${m}</li>`,
+                )
                 .join("")}</ul>`;
 
             contentEl.innerHTML = html;

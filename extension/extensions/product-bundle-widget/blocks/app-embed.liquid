@@ -3,8 +3,8 @@
   Loads external JS/CSS assets and initializes configuration
 {% endcomment %}
 
-{% assign active_bundles_raw = shop.metafields.radius_bundles.active_bundles.value %}
-{% assign global = shop.metafields.radius_bundles.global_settings.value %}
+{% assign active_bundles_raw = shop.metafields['$app'].active_bundles.value %}
+{% assign global = shop.metafields['$app'].global_settings.value %}
 
 {% assign styles = global.styles %}
 {% assign g_tablet = styles.tablet %}

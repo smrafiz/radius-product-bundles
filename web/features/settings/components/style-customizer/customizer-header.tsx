@@ -10,10 +10,7 @@ export function CustomizerHeader({
     onBundleTypeChangeAction: (id: string) => void;
 }) {
     const { activeDevice, setActiveDevice } = useCustomizerStore();
-    const tone =
-        activeDevice === "desktop"
-            ? "info"
-            : "auto";
+    const tone = activeDevice === "desktop" ? "info" : "auto";
 
     return (
         <div className="w-full border border-[#e3e3e3] rounded-xl overflow-hidden">

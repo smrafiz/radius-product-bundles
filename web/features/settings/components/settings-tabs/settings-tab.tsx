@@ -3,7 +3,12 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
-import { AnimatedTabPanel, DynamicSettingsTab, SettingsTabConfig, SettingsTabId, } from "@/features/settings";
+import {
+    AnimatedTabPanel,
+    DynamicSettingsTab,
+    SettingsTabConfig,
+    SettingsTabId,
+} from "@/features/settings";
 
 /**
  * Dynamic settings tabs component.

@@ -79,7 +79,10 @@ export async function saveSettingsAction(
         }
 
         // Update discount stacking if setting exists
-        if (data.allowDiscountStacking !== undefined && data.allowDiscountStacking !== null) {
+        if (
+            data.allowDiscountStacking !== undefined &&
+            data.allowDiscountStacking !== null
+        ) {
             const stackingResult = await updateDiscountCombinesWith(
                 sessionToken,
                 Boolean(data.allowDiscountStacking),

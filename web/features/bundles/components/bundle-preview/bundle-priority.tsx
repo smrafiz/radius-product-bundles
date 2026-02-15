@@ -37,8 +37,7 @@ export function BundlePriority() {
                         <s-text>
                             {globalPriorityType === "index_based"
                                 ? "The bundle with the highest priority is displayed when multiple bundles apply to a product."
-                                : "The bundle with the highest discount value is displayed when multiple bundles apply to a product."
-                            }
+                                : "The bundle with the highest discount value is displayed when multiple bundles apply to a product."}
                         </s-text>
                     </s-tooltip>
                     <s-icon
@@ -78,7 +77,9 @@ export function BundlePriority() {
                             onChange={(e: any) => {
                                 const val = Number(e.target.value);
                                 const numVal = isNaN(val) ? 0 : val;
-                                setValue("priority", numVal, { shouldDirty: true });
+                                setValue("priority", numVal, {
+                                    shouldDirty: true,
+                                });
                                 updateBundleField("priority", numVal);
                                 markDirty();
                                 triggerSaveBar();

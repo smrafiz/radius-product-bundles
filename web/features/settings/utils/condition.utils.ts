@@ -107,7 +107,9 @@ export function isFieldVisible(
 
     // Check bundle type restriction (shorthand)
     if (field.bundleTypes && field.bundleTypes.length > 0) {
-        if (!(field.bundleTypes as string[]).includes(context.activeBundleType)) {
+        if (
+            !(field.bundleTypes as string[]).includes(context.activeBundleType)
+        ) {
             return false;
         }
     }
@@ -136,7 +138,11 @@ export function isSectionVisible(
 
     // Check bundle type restriction (shorthand)
     if (section.bundleTypes && section.bundleTypes.length > 0) {
-        if (!(section.bundleTypes as string[]).includes(context.activeBundleType)) {
+        if (
+            !(section.bundleTypes as string[]).includes(
+                context.activeBundleType,
+            )
+        ) {
             return false;
         }
     }

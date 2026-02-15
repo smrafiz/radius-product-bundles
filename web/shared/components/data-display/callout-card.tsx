@@ -22,7 +22,11 @@ export function CalloutCard({
                                 tone="auto"
                                 icon={icon as any}
                                 href={primaryButton.props.url}
-                                target={primaryButton.props.external ? "_blank" : "_self"}
+                                target={
+                                    primaryButton.props.external
+                                        ? "_blank"
+                                        : "_self"
+                                }
                             >
                                 {primaryButton.content}
                             </s-button>

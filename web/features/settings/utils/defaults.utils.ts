@@ -37,7 +37,7 @@ export function getDefaultValuesFromConfig(): Record<string, any> {
  * Merges initial data with defaults from config.
  */
 export function mergeWithDefaults(
-    initialData?: Partial<Record<string, any>>
+    initialData?: Partial<Record<string, any>>,
 ): Record<string, any> {
     const defaults = getDefaultValuesFromConfig();
 

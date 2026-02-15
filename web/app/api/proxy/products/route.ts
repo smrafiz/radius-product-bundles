@@ -57,9 +57,10 @@ export async function GET(request: NextRequest) {
 
         const shopRecord = await getShop(shop);
         const ttl = shopRecord?.appSettings?.cacheTtl ?? 300;
-        const cacheHeaders: HeadersInit = ttl > 0
-            ? { "Cache-Control": `public, max-age=${ttl}` }
-            : { "Cache-Control": "no-store" };
+        const cacheHeaders: HeadersInit =
+            ttl > 0
+                ? { "Cache-Control": `public, max-age=${ttl}` }
+                : { "Cache-Control": "no-store" };
 
         // ⭐ NEW: Optimized route - fetch only product details by IDs
         if (ids) {
@@ -113,10 +114,13 @@ export async function GET(request: NextRequest) {
                     };
                 });
 
-            return NextResponse.json({
-                success: true,
-                products: transformedProducts,
-            }, { headers: cacheHeaders });
+            return NextResponse.json(
+                {
+                    success: true,
+                    products: transformedProducts,
+                },
+                { headers: cacheHeaders },
+            );
         }
 
         // OLD route: Full bundle data (requires productId)
@@ -139,30 +143,42 @@ export async function GET(request: NextRequest) {
         }
 
         // Step 2: Sort by effective priority and keep only top bundle
-        const globalPriorityType = shopRecord?.appSettings?.bundlePriorityType ?? "index_based";
+        const globalPriorityType =
+            shopRecord?.appSettings?.bundlePriorityType ?? "index_based";
 
         let savingsMap: Map<string, number> | null = null;
         if (globalPriorityType === "discount_based") {
             const allProductIds = new Set<string>();
-            bundles.forEach(b =>
-                b.bundleProducts?.forEach(bp => allProductIds.add(bp.productId))
+            bundles.forEach((b) =>
+                b.bundleProducts?.forEach((bp) =>
+                    allProductIds.add(bp.productId),
+                ),
             );
 
-            const allProducts = await fetchProductDetails([...allProductIds], shop);
+            const allProducts = await fetchProductDetails(
+                [...allProductIds],
+                shop,
+            );
             const priceMap = new Map<string, number>();
             allProducts.forEach((item) => {
                 const product = item as any;
                 if (product?.id) {
-                    const price = parseFloat(product.variants?.nodes?.[0]?.price || "0");
+                    const price = parseFloat(
+                        product.variants?.nodes?.[0]?.price || "0",
+                    );
                     priceMap.set(product.id, price);
                 }
             });
 
             savingsMap = new Map<string, number>();
-            bundles.forEach(b => {
-                const bundlePrice = b.bundleProducts?.reduce((sum, bp) => {
-                    return sum + (priceMap.get(bp.productId) || 0) * bp.quantity;
-                }, 0) || 0;
+            bundles.forEach((b) => {
+                const bundlePrice =
+                    b.bundleProducts?.reduce((sum, bp) => {
+                        return (
+                            sum +
+                            (priceMap.get(bp.productId) || 0) * bp.quantity
+                        );
+                    }, 0) || 0;
                 const savings = calculateDiscountAmount(
                     bundlePrice,
                     b.discountType || "PERCENTAGE",
@@ -174,15 +190,20 @@ export async function GET(request: NextRequest) {
         }
 
         const sortedBundles = bundles.sort((a, b) => {
-            const aScore = globalPriorityType === "discount_based"
-                ? (savingsMap?.get(a.id) ?? a.discountValue)
-                : (a.priority ?? 0);
-            const bScore = globalPriorityType === "discount_based"
-                ? (savingsMap?.get(b.id) ?? b.discountValue)
-                : (b.priority ?? 0);
+            const aScore =
+                globalPriorityType === "discount_based"
+                    ? (savingsMap?.get(a.id) ?? a.discountValue)
+                    : (a.priority ?? 0);
+            const bScore =
+                globalPriorityType === "discount_based"
+                    ? (savingsMap?.get(b.id) ?? b.discountValue)
+                    : (b.priority ?? 0);
 
             if (bScore !== aScore) return bScore - aScore;
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            );
         });
         const topBundles = sortedBundles.slice(0, 1);
 
@@ -321,11 +342,16 @@ export async function GET(request: NextRequest) {
             }),
         );
 
-        return NextResponse.json({
-            success: true,
-            bundles: transformedBundles.filter((b) => b.status === "ACTIVE"),
-            count: transformedBundles.length,
-        }, { headers: cacheHeaders });
+        return NextResponse.json(
+            {
+                success: true,
+                bundles: transformedBundles.filter(
+                    (b) => b.status === "ACTIVE",
+                ),
+                count: transformedBundles.length,
+            },
+            { headers: cacheHeaders },
+        );
     } catch (error) {
         console.error("Bundle Proxy API Error:", error);
         return NextResponse.json(

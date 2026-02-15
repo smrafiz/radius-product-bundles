@@ -5,7 +5,7 @@ import { useMemo } from "react";
 
 /**
  * Hook to resolve effective styles considering active device overrides.
- * Used by preview components to ensure the visual widget reflects 
+ * Used by preview components to ensure the visual widget reflects
  * what the user is currently editing.
  */
 export function useEffectiveStyles() {

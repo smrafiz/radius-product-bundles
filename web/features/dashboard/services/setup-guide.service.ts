@@ -23,9 +23,15 @@ export async function getSetupGuideService({
 
     const merged: SetupProgress = {
         appEmbedEnabled: persisted.progress.appEmbedEnabled,
-        firstBundleCreated: persisted.progress.firstBundleCreated || autoDetected.firstBundleCreated,
-        widgetCustomized: persisted.progress.widgetCustomized || autoDetected.widgetCustomized,
-        storefrontPreviewed: persisted.progress.storefrontPreviewed || autoDetected.storefrontPreviewed,
+        firstBundleCreated:
+            persisted.progress.firstBundleCreated ||
+            autoDetected.firstBundleCreated,
+        widgetCustomized:
+            persisted.progress.widgetCustomized ||
+            autoDetected.widgetCustomized,
+        storefrontPreviewed:
+            persisted.progress.storefrontPreviewed ||
+            autoDetected.storefrontPreviewed,
         analyticsViewed: persisted.progress.analyticsViewed,
     };
 
@@ -43,10 +49,12 @@ export async function getSetupGuideService({
 }
 
 async function autoDetectProgress(shop: string) {
-    const { bundleCount, globalStyles, viewCount } = await getAutoDetectData(shop);
+    const { bundleCount, globalStyles, viewCount } =
+        await getAutoDetectData(shop);
 
     const firstBundleCreated = bundleCount > 0;
-    const widgetCustomized = globalStyles != null && JSON.stringify(globalStyles) !== "{}";
+    const widgetCustomized =
+        globalStyles != null && JSON.stringify(globalStyles) !== "{}";
     const storefrontPreviewed = viewCount > 0;
 
     return { firstBundleCreated, widgetCustomized, storefrontPreviewed };

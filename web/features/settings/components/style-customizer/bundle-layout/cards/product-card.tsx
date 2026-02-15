@@ -101,9 +101,7 @@ export function ProductCard({
                 </div>
 
                 <div style={{ marginBottom: "8px" }}>
-                    <span
-                        style={{ fontWeight: 600, marginRight: "6px" }}
-                    >
+                    <span style={{ fontWeight: 600, marginRight: "6px" }}>
                         {price}
                     </span>
                     {comparePrice && (

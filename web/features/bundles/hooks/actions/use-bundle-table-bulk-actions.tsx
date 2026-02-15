@@ -1,7 +1,11 @@
 "use client";
 
 import { useGlobalBanner, useModalStore, withLoader } from "@/shared";
-import { BundleStatus, invalidateBundleCache, useBundleListingStore, } from "@/features/bundles";
+import {
+    BundleStatus,
+    invalidateBundleCache,
+    useBundleListingStore,
+} from "@/features/bundles";
 import {
     bulkToggleBundleStatusAction,
     deleteBundlesAction,

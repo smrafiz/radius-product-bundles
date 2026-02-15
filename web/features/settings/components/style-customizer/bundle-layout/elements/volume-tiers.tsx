@@ -6,10 +6,7 @@ import {
     VolumeTiersProps,
 } from "@/features/settings";
 
-export function VolumeTiers({
-    tiers,
-    highlightColor,
-}: VolumeTiersProps) {
+export function VolumeTiers({ tiers, highlightColor }: VolumeTiersProps) {
     const { styles } = useCustomizerStore();
     const cardRadius = getCardRadius(styles.cornerStyle);
     const tierStyle = styles.volumeTierStyle || "table";
@@ -32,9 +29,7 @@ export function VolumeTiers({
                             padding: "12px 8px",
                             textAlign: "center",
                             backgroundColor:
-                                i === 1
-                                    ? `${highlightColor}08`
-                                    : "transparent",
+                                i === 1 ? `${highlightColor}08` : "transparent",
                             position: "relative",
                         }}
                     >
@@ -63,9 +58,7 @@ export function VolumeTiers({
                                 fontSize: "18px",
                                 fontWeight: 700,
                                 color:
-                                    i === 1
-                                        ? highlightColor
-                                        : styles.textColor,
+                                    i === 1 ? highlightColor : styles.textColor,
                             }}
                         >
                             {tier.qty}+
@@ -110,18 +103,13 @@ export function VolumeTiers({
                                 ? `1px solid ${styles.borderColor}`
                                 : "none",
                         backgroundColor:
-                            i === 1
-                                ? `${highlightColor}08`
-                                : "transparent",
+                            i === 1 ? `${highlightColor}08` : "transparent",
                     }}
                 >
                     <div
                         style={{
                             fontWeight: i === 1 ? 600 : 400,
-                            color:
-                                i === 1
-                                    ? highlightColor
-                                    : styles.textColor,
+                            color: i === 1 ? highlightColor : styles.textColor,
                         }}
                     >
                         Buy {tier.qty}+

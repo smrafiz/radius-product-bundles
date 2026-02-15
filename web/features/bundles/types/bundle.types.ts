@@ -437,4 +437,3 @@ export interface ExistingMedia {
 export type PendingMediaItem =
     | { type: "file"; file: File; id: string }
     | { type: "url"; url: string; id: string };
-

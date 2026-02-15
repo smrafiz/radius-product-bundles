@@ -53,13 +53,9 @@ export function MetricCard({
 
                             {tone && growth !== null && growth !== 0 && (
                                 <s-badge
-                                    tone={
-                                        growth > 0 ? "success" : "critical"
-                                    }
+                                    tone={growth > 0 ? "success" : "critical"}
                                     icon={
-                                        growth > 0
-                                            ? "arrow-up"
-                                            : "arrow-down"
+                                        growth > 0 ? "arrow-up" : "arrow-down"
                                     }
                                 >
                                     {Math.abs(growth).toFixed(1)}%

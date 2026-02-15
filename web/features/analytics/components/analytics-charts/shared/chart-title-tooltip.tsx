@@ -18,9 +18,7 @@ export function ChartTitleTooltip({
 
             {description && (
                 <s-paragraph>
-                    <span className="text-[12px]">
-                        {description}
-                    </span>
+                    <span className="text-[12px]">{description}</span>
                 </s-paragraph>
             )}
 
@@ -40,8 +38,7 @@ export function ChartTitleTooltip({
                 <s-heading>
                     <span
                         style={{
-                            borderBottom:
-                                ".125rem dotted #cccccc",
+                            borderBottom: ".125rem dotted #cccccc",
                             cursor: "help",
                             display: "inline-block",
                         }}

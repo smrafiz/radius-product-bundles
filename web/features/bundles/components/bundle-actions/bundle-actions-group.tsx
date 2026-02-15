@@ -122,7 +122,7 @@ export function BundleActionsGroup({
                             <s-stack gap="small-200">
                                 <s-heading>Included products</s-heading>
                                 {bundle.products?.length ? (
-                                    bundle.products.map((product,index) => (
+                                    bundle.products.map((product, index) => (
                                         <s-stack key={`${product.id}-${index}`}>
                                             <a
                                                 href={`https://${shopDomain}/products/${product.handle}`}

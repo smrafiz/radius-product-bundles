@@ -104,7 +104,9 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                             <s-unordered-list>
                                                 {bundleType.features.map(
                                                     (feature, index) => (
-                                                        <s-list-item key={index}>
+                                                        <s-list-item
+                                                            key={index}
+                                                        >
                                                             {feature}
                                                         </s-list-item>
                                                     ),

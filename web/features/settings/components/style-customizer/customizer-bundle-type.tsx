@@ -79,7 +79,9 @@ export function CustomizerBundleType() {
                                             onClearErrorsAction={
                                                 handleClearErrors
                                             }
-                                            onAccordionChange={leftPanelScroll.handleAccordionChange}
+                                            onAccordionChange={
+                                                leftPanelScroll.handleAccordionChange
+                                            }
                                             resetKey={resetCounter}
                                             activeLayout={activeLayout}
                                             activeBundleType={activeBundleType}
@@ -94,16 +96,12 @@ export function CustomizerBundleType() {
                                     <GlobalBanner />
                                     <CustomizerHeader
                                         activeBundleType={activeId}
-                                        onBundleTypeChangeAction={
-                                            setActiveId
-                                        }
+                                        onBundleTypeChangeAction={setActiveId}
                                     />
                                 </div>
                                 <PreviewShell
                                     bundleType={activeBundleType}
-                                    scrollRef={
-                                        rightPanelScroll.containerRef
-                                    }
+                                    scrollRef={rightPanelScroll.containerRef}
                                 />
                             </div>
                         </div>

@@ -17,18 +17,26 @@ export function WidgetCompact({
     if (!products.length && showEmptyState) {
         return (
             <div className="min-h-96 flex flex-col items-center justify-around gap-3">
-                <img src="/assets/not-found.svg" alt="No products selected" className="w-1/2" />
+                <img
+                    src="/assets/not-found.svg"
+                    alt="No products selected"
+                    className="w-1/2"
+                />
                 <span
                     style={{
                         color: styles.textColor,
                         fontSize: styles.bodySize,
                     }}
-                >Please choose product to see the bundle preview</span>
+                >
+                    Please choose product to see the bundle preview
+                </span>
             </div>
         );
     }
 
-    const visibleItems = showAll ? products : products.slice(0, initialVisibleCount);
+    const visibleItems = showAll
+        ? products
+        : products.slice(0, initialVisibleCount);
 
     return (
         <Fragment>

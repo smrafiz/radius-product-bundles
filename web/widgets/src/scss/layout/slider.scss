@@ -15,7 +15,13 @@
 
             grid-auto-flow: column;
             grid-auto-columns: calc(
-                    (100% - (var(--rb-gap-spacing) * (var(--rb-slides-per-view, 3) - 1))) /
+                (
+                        100% -
+                            (
+                                var(--rb-gap-spacing) *
+                                    (var(--rb-slides-per-view, 3) - 1)
+                            )
+                    ) /
                     var(--rb-slides-per-view, 3)
             );
 
@@ -51,7 +57,7 @@
         .radius-bundle__product-image {
             width: 100%;
             height: var(--rb-image-size);
-            margin-bottom: var(--rb-gap-spacing);;
+            margin-bottom: var(--rb-gap-spacing);
 
             img {
                 width: 100%;
@@ -77,7 +83,6 @@
         .radius-bundle__product-price-compare {
             margin-left: 5px;
         }
-
     }
 
     &__loading {
@@ -254,7 +259,8 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
         transform: scale(1.2);
     }
     50% {

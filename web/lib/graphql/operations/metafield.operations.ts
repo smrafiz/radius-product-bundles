@@ -323,21 +323,6 @@ export async function syncBundleProductMetafields(
 // ============================================================================
 
 /**
- * Bundle configuration stored in metafield.
- * This is the authoritative source for discount calculations.
- */
-interface MetafieldBundleConfig {
-    status: string;
-    discountType: string;
-    discountValue: number;
-    freeShipping: boolean;
-    minOrderValue: number;
-    maxDiscountAmount: number;
-    discountApplication: string;
-    discountedProductIds: string[];
-}
-
-/**
  * Gets the discount node ID for the bundle discount.
  */
 async function getBundleDiscountId(
@@ -378,9 +363,9 @@ async function getShopId(sessionToken: string): Promise<string | null> {
 }
 
 /**
- * Builds the metafield value from active bundles.
+ * Builds the SHOP metafield value (full payload for Liquid/storefront).
  */
-function buildActiveBundlesMetafieldValue(
+function buildShopBundlesMetafieldValue(
     bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
     freeShippingMethodTitle?: string,
     priceMap?: Map<string, number>,
@@ -388,7 +373,6 @@ function buildActiveBundlesMetafieldValue(
     const bundleMap: Record<string, any> = {};
 
     for (const bundle of bundles) {
-        // Extract product IDs from bundle
         const productIds =
             bundle.bundleProducts?.map((bp) => bp.productId) || [];
 
@@ -408,7 +392,6 @@ function buildActiveBundlesMetafieldValue(
             : 0;
 
         bundleMap[bundle.id] = {
-            // Discount config (for Rust function)
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
             discountValue: bundle.discountValue || 0,
@@ -417,24 +400,16 @@ function buildActiveBundlesMetafieldValue(
             maxDiscountAmount: bundle.maxDiscountAmount || 0,
             discountApplication: bundle.discountApplication || "bundle",
             discountedProductIds: bundle.discountedProductIds || [],
-
-            // Labels (for Rust function)
             freeShippingMethodTitle:
                 freeShippingMethodTitle || "Free shipping with {name}",
-
-            // Priority (for Liquid display — determines which bundle wins)
             priority: bundle.priority ?? 0,
             createdAtTs: Math.floor(
                 new Date(bundle.createdAt).getTime() / 1000,
             ),
             effectiveSavings: Math.round(effectiveSavings * 100) / 100,
-
-            // Bundle info (for Liquid display)
             title: bundle.settings?.title ?? bundle.name,
             productCount: productIds.length,
             productIds: productIds,
-
-            // Settings (for Liquid)
             layout: bundle.settings?.layout || "list",
             buttonText: bundle.settings?.cartButtonText || "",
             showSavings: bundle.settings?.showSavings ?? true,
@@ -445,6 +420,34 @@ function buildActiveBundlesMetafieldValue(
             showQuantity: bundle.settings?.showQuantity ?? true,
             showFreeShipping: bundle.settings?.showFreeShipping ?? true,
             enableHyperLink: bundle.settings?.enableHyperLink ?? false,
+        };
+    }
+
+    return JSON.stringify(bundleMap);
+}
+
+/**
+ * Builds the DISCOUNT node metafield value (minimal payload for Rust function).
+ * Kept small to stay under the 10KB Function input metafield limit.
+ */
+function buildDiscountBundlesMetafieldValue(
+    bundles: Awaited<ReturnType<typeof findActiveBundlesByShop>>,
+    freeShippingMethodTitle?: string,
+): string {
+    const bundleMap: Record<string, any> = {};
+
+    for (const bundle of bundles) {
+        bundleMap[bundle.id] = {
+            status: bundle.status,
+            discountType: bundle.discountType || "PERCENTAGE",
+            discountValue: bundle.discountValue || 0,
+            freeShipping: bundle.freeShipping || false,
+            minOrderValue: bundle.minOrderValue || 0,
+            maxDiscountAmount: bundle.maxDiscountAmount || 0,
+            discountApplication: bundle.discountApplication || "bundle",
+            discountedProductIds: bundle.discountedProductIds || [],
+            freeShippingMethodTitle:
+                freeShippingMethodTitle || "Free shipping with {name}",
         };
     }
 
@@ -523,33 +526,33 @@ export async function syncActiveBundlesToMetafield(
         const labels = appSettings?.labels as Record<string, string> | null;
         const freeShippingMethodTitle = labels?.freeShippingMethodTitle;
 
-        // Build metafield value
-        const metafieldValue = buildActiveBundlesMetafieldValue(
+        const shopValue = buildShopBundlesMetafieldValue(
             activeBundles,
             freeShippingMethodTitle,
             priceMap,
         );
+        const discountValue = buildDiscountBundlesMetafieldValue(
+            activeBundles,
+            freeShippingMethodTitle,
+        );
 
-        // Set BOTH metafields in a single mutation
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({
             query: MetafieldsSetDocument,
             variables: {
                 metafields: [
-                    // For Rust discount function (on Discount node)
                     {
                         ownerId: discountId,
                         namespace: METAFIELD_NAMESPACE,
                         key: ACTIVE_BUNDLES_KEY,
                         type: JSON_TYPE,
-                        value: metafieldValue,
+                        value: discountValue,
                     },
-                    // For Liquid/storefront (on Shop)
                     {
                         ownerId: shopId,
                         namespace: METAFIELD_NAMESPACE,
                         key: ACTIVE_BUNDLES_KEY,
                         type: JSON_TYPE,
-                        value: metafieldValue,
+                        value: shopValue,
                     },
                 ],
             },
@@ -668,18 +671,20 @@ export async function syncAllSettingsToMetafields(
 
         const globalSettingsValue =
             buildGlobalSettingsMetafieldValue(globalSettings);
-        const activeBundlesValue = buildActiveBundlesMetafieldValue(
+        const shopBundlesValue = buildShopBundlesMetafieldValue(
             activeBundles,
             freeShippingMethodTitle,
             priceMap,
         );
+        const discountBundlesValue = buildDiscountBundlesMetafieldValue(
+            activeBundles,
+            freeShippingMethodTitle,
+        );
 
-        // Update shop and discount metafields
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({
             query: MetafieldsSetDocument,
             variables: {
                 metafields: [
-                    // Global settings (shop)
                     {
                         ownerId: shopId,
                         namespace: METAFIELD_NAMESPACE,
@@ -687,21 +692,19 @@ export async function syncAllSettingsToMetafields(
                         type: "json",
                         value: globalSettingsValue,
                     },
-                    // Active bundles (shop - for Liquid)
                     {
                         ownerId: shopId,
                         namespace: METAFIELD_NAMESPACE,
                         key: METAFIELD_KEYS["ACTIVE_BUNDLES"],
                         type: "json",
-                        value: activeBundlesValue,
+                        value: shopBundlesValue,
                     },
-                    // Active bundles (discount - for Rust)
                     {
                         ownerId: discountId,
                         namespace: METAFIELD_NAMESPACE,
                         key: METAFIELD_KEYS["ACTIVE_BUNDLES"],
                         type: "json",
-                        value: activeBundlesValue,
+                        value: discountBundlesValue,
                     },
                 ],
             },

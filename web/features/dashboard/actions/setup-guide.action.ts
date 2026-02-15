@@ -29,7 +29,10 @@ export async function getSetupGuideAction(
         console.error("[getSetupGuide] Error:", error);
         return {
             status: "error",
-            message: error instanceof Error ? error.message : "Failed to fetch setup guide",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to fetch setup guide",
         };
     }
 }
@@ -51,7 +54,10 @@ export async function updateSetupStepAction(
         console.error("[updateSetupStep] Error:", error);
         return {
             status: "error",
-            message: error instanceof Error ? error.message : "Failed to update step",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to update step",
         };
     }
 }
@@ -71,7 +77,10 @@ export async function dismissSetupGuideAction(
         console.error("[dismissSetupGuide] Error:", error);
         return {
             status: "error",
-            message: error instanceof Error ? error.message : "Failed to dismiss guide",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to dismiss guide",
         };
     }
 }
@@ -91,7 +100,8 @@ export async function showSetupGuideAction(
         console.error("[showSetupGuide] Error:", error);
         return {
             status: "error",
-            message: error instanceof Error ? error.message : "Failed to show guide",
+            message:
+                error instanceof Error ? error.message : "Failed to show guide",
         };
     }
 }

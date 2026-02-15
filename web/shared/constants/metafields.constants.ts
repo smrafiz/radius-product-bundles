@@ -1,9 +1,4 @@
-/**
- * Metafield Definitions for Radius Product Bundles
- * Defines all metafield structures needed for the bundle system
- */
-
-export const METAFIELD_NAMESPACE = "radius_bundles";
+export const METAFIELD_NAMESPACE = "$app";
 
 export const METAFIELD_KEYS = {
     ACTIVE_BUNDLES: "active_bundles",
@@ -12,17 +7,7 @@ export const METAFIELD_KEYS = {
 } as const;
 
 export const METAFIELD_DEFINITIONS = [
-    // Product-level metafields
-    {
-        name: "Bundle IDs",
-        namespace: METAFIELD_NAMESPACE,
-        key: METAFIELD_KEYS["BUNDLE_IDS"],
-        type: "list.single_line_text_field",
-        ownerType: "PRODUCT" as const,
-        description: "List of bundle IDs that include this product",
-    },
-
-    // Shop-level metafields
+    // Shop-level metafields (PRODUCT metafield is now declared in shopify.app.toml)
     {
         name: "Active Bundles",
         namespace: METAFIELD_NAMESPACE,

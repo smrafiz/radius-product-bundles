@@ -15,8 +15,12 @@ export function DynamicSection({
     const { id, title, tooltip, fields, columns = 1 } = config;
 
     const switchFields = fields.filter((f) => f.type === "switch");
-    const gridFields = fields.filter((f) => f.type !== "switch" && !f.fullWidth);
-    const fullWidthFields = fields.filter((f) => f.type !== "switch" && f.fullWidth);
+    const gridFields = fields.filter(
+        (f) => f.type !== "switch" && !f.fullWidth,
+    );
+    const fullWidthFields = fields.filter(
+        (f) => f.type !== "switch" && f.fullWidth,
+    );
     const gridClass = getGridClass(columns);
 
     const tooltipId = `${id}-tooltip`;

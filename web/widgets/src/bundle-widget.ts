@@ -271,9 +271,14 @@ declare global {
                 10,
             );
 
-            this.moreProductSettings = container.dataset.moreProductSettings === 'true';
-            this.moreProductCount = parseInt(container.dataset.moreProductCount || '4', 10);
-            this.moreProductsText = container.dataset.moreProductsText || "+ {count} more products";
+            this.moreProductSettings =
+                container.dataset.moreProductSettings === "true";
+            this.moreProductCount = parseInt(
+                container.dataset.moreProductCount || "4",
+                10,
+            );
+            this.moreProductsText =
+                container.dataset.moreProductsText || "+ {count} more products";
             this.showLessText = container.dataset.showLessText || "Show less";
 
             // Parse structure from Liquid
@@ -816,16 +821,11 @@ declare global {
                         break;
 
                     case "CUSTOM_PRICE":
-                        badgeText = this.formatLabel(
-                            "Only {amount}",
-                            {
-                                amount: this.trimMoney(
-                                    this.formatMoney(
-                                        structure.discountValue * 100,
-                                    ),
-                                ),
-                            },
-                        );
+                        badgeText = this.formatLabel("Only {amount}", {
+                            amount: this.trimMoney(
+                                this.formatMoney(structure.discountValue * 100),
+                            ),
+                        });
                         break;
                 }
             }
@@ -1057,31 +1057,43 @@ declare global {
                 if (layout === "list" && !isLast) {
                     const initialVisibleCount = this.getInitialVisibleCount();
                     const isDividerHidden = index >= initialVisibleCount - 1;
-                    const dividerHiddenAttr = isDividerHidden ? ' style="display: none;"' : '';
-                    const dividerHiddenClass = isDividerHidden ? ' radius-bundle__divider--hidden' : '';
+                    const dividerHiddenAttr = isDividerHidden
+                        ? ' style="display: none;"'
+                        : "";
+                    const dividerHiddenClass = isDividerHidden
+                        ? " radius-bundle__divider--hidden"
+                        : "";
 
                     if (this.dividerStyle === "plus") {
-                        html +=
-                            `<div class="radius-bundle__divider radius-bundle__divider--plus${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}><div class="divider-position">+</div></div>`;
+                        html += `<div class="radius-bundle__divider radius-bundle__divider--plus${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}><div class="divider-position">+</div></div>`;
                     } else if (this.dividerStyle === "line") {
-                        html +=
-                            `<div class="radius-bundle__divider radius-bundle__divider--line${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}></div>`;
+                        html += `<div class="radius-bundle__divider radius-bundle__divider--line${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}></div>`;
                     }
                 }
             });
 
-            if (layout === "list" || layout === "grid" || layout === "compact") {
+            if (
+                layout === "list" ||
+                layout === "grid" ||
+                layout === "compact"
+            ) {
                 html += this.getShowMoreButton(sortedProducts.length);
             }
 
             productsContainer.innerHTML = html;
 
-            if (layout === "list" || layout === "grid" || layout === "compact") {
+            if (
+                layout === "list" ||
+                layout === "grid" ||
+                layout === "compact"
+            ) {
                 this.initShowMoreToggle();
             }
 
             // Enable the add to cart button after products are loaded
-            const addToCartBtn = this.container.querySelector('[data-bundle-add-to-cart]') as HTMLButtonElement | null;
+            const addToCartBtn = this.container.querySelector(
+                "[data-bundle-add-to-cart]",
+            ) as HTMLButtonElement | null;
             if (addToCartBtn) {
                 addToCartBtn.disabled = false;
             }
@@ -1217,11 +1229,11 @@ declare global {
                 const initialVisibleCount = this.getInitialVisibleCount();
                 const isHidden = index >= initialVisibleCount;
                 return `
-                    <div class="radius-bundle__product radius-bundle__product--list${isHidden ? ' radius-bundle__product--hidden' : ''}" 
+                    <div class="radius-bundle__product radius-bundle__product--list${isHidden ? " radius-bundle__product--hidden" : ""}" 
                          data-product-id="${product.id}" 
                          data-variant-id="${product.variantId}"
                          data-product-index="${index}"
-                         ${isHidden ? 'style="display: none;"' : ''}>
+                         ${isHidden ? 'style="display: none;"' : ""}>
                         ${imageWrapper}
                         <div class="radius-bundle__product-info">
                             ${productTitleHtml}
@@ -1237,11 +1249,11 @@ declare global {
                 const initialVisibleCount = this.getInitialVisibleCount();
                 const isHidden = index >= initialVisibleCount;
                 return `
-                    <div class="radius-bundle__product radius-bundle__product--grid${isHidden ? ' radius-bundle__product--hidden' : ''}" 
+                    <div class="radius-bundle__product radius-bundle__product--grid${isHidden ? " radius-bundle__product--hidden" : ""}" 
                          data-product-id="${product.id}" 
                          data-variant-id="${product.variantId}"
                          data-product-index="${index}"
-                         ${isHidden ? 'style="display: none;"' : ''}>
+                         ${isHidden ? 'style="display: none;"' : ""}>
                         ${imageWrapper}
                         ${productTitleHtml}
                         ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
@@ -1255,11 +1267,11 @@ declare global {
                 const initialVisibleCount = this.getInitialVisibleCount();
                 const isHidden = index >= initialVisibleCount;
                 return `
-                    <div class="radius-bundle__product radius-bundle__product--compact${isHidden ? ' radius-bundle__product--hidden' : ''}" 
+                    <div class="radius-bundle__product radius-bundle__product--compact${isHidden ? " radius-bundle__product--hidden" : ""}" 
                          data-product-id="${product.id}" 
                          data-variant-id="${product.variantId}"
                          data-product-index="${index}"
-                         ${isHidden ? 'style="display: none;"' : ''}>
+                         ${isHidden ? 'style="display: none;"' : ""}>
                         ${imageWrapper}
                         <div class="radius-bundle__product-info radius-bundle__product-info--compact">
                             ${productTitleHtml}
@@ -1378,7 +1390,10 @@ declare global {
             }
 
             const extraCount = totalProducts - initialVisibleCount;
-            const buttonText = this.moreProductsText.replace('{count}', String(extraCount));
+            const buttonText = this.moreProductsText.replace(
+                "{count}",
+                String(extraCount),
+            );
 
             return `
                 <button
@@ -1396,49 +1411,70 @@ declare global {
          * Binds click event to toggle visibility of products beyond initial count.
          */
         private initShowMoreToggle(): void {
-            const btn = this.container.querySelector('.radius-bundle__show-more-btn') as HTMLButtonElement | null;
+            const btn = this.container.querySelector(
+                ".radius-bundle__show-more-btn",
+            ) as HTMLButtonElement | null;
 
             if (!btn) {
                 return;
             }
 
-            const initialCount = parseInt(btn.dataset.initialCount || '4', 10);
-            const totalCount = parseInt(btn.dataset.totalCount || '0', 10);
+            const initialCount = parseInt(btn.dataset.initialCount || "4", 10);
+            const totalCount = parseInt(btn.dataset.totalCount || "0", 10);
             const extraCount = totalCount - initialCount;
-            const moreText = this.moreProductsText.replace('{count}', String(extraCount));
+            const moreText = this.moreProductsText.replace(
+                "{count}",
+                String(extraCount),
+            );
             const lessText = this.showLessText;
-            const products = this.container.querySelectorAll<HTMLElement>('.radius-bundle__product[data-product-index]');
+            const products = this.container.querySelectorAll<HTMLElement>(
+                ".radius-bundle__product[data-product-index]",
+            );
 
             /**
              * Handle click on the show more/less button.
              * Toggles hidden product visibility and updates button text.
              */
             function handleToggleClick(): void {
-                const isExpanded = btn!.dataset.expanded === 'true';
+                const isExpanded = btn!.dataset.expanded === "true";
 
-                products.forEach(function toggleVisibility(product: HTMLElement) {
-                    const idx = parseInt(product.dataset.productIndex || '0', 10);
+                products.forEach(function toggleVisibility(
+                    product: HTMLElement,
+                ) {
+                    const idx = parseInt(
+                        product.dataset.productIndex || "0",
+                        10,
+                    );
 
                     if (idx >= initialCount) {
-                        product.style.display = isExpanded ? 'none' : '';
+                        product.style.display = isExpanded ? "none" : "";
                     }
                 });
 
-                const dividers = btn!.closest('[data-bundle-products]')?.querySelectorAll<HTMLElement>('.radius-bundle__divider[data-divider-index]');
+                const dividers = btn!
+                    .closest("[data-bundle-products]")
+                    ?.querySelectorAll<HTMLElement>(
+                        ".radius-bundle__divider[data-divider-index]",
+                    );
 
-                dividers?.forEach(function toggleDividerVisibility(divider: HTMLElement) {
-                    const dividerIdx = parseInt(divider.dataset.dividerIndex || '0', 10);
+                dividers?.forEach(function toggleDividerVisibility(
+                    divider: HTMLElement,
+                ) {
+                    const dividerIdx = parseInt(
+                        divider.dataset.dividerIndex || "0",
+                        10,
+                    );
 
                     if (dividerIdx >= initialCount - 1) {
-                        divider.style.display = isExpanded ? 'none' : '';
+                        divider.style.display = isExpanded ? "none" : "";
                     }
                 });
 
-                btn!.dataset.expanded = isExpanded ? 'false' : 'true';
+                btn!.dataset.expanded = isExpanded ? "false" : "true";
                 btn!.textContent = isExpanded ? moreText : lessText;
             }
 
-            btn.addEventListener('click', handleToggleClick);
+            btn.addEventListener("click", handleToggleClick);
         }
 
         /**

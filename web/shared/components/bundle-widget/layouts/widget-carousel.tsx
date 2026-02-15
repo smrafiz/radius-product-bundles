@@ -14,21 +14,29 @@ export function WidgetCarousel({
     const gap = getSpacing(styles.spacing);
 
     const showArrows =
-        styles.carouselNavigation === "arrows" || styles.carouselNavigation === "both";
+        styles.carouselNavigation === "arrows" ||
+        styles.carouselNavigation === "both";
     const showDots =
-        styles.carouselNavigation === "dots" || styles.carouselNavigation === "both";
+        styles.carouselNavigation === "dots" ||
+        styles.carouselNavigation === "both";
 
     if (!products.length && showEmptyState) {
         return (
             <div className="min-h-96 flex flex-col items-center justify-around gap-3">
-                <img src="/assets/not-found.svg" alt="No products" className="w-1/2" />
+                <img
+                    src="/assets/not-found.svg"
+                    alt="No products"
+                    className="w-1/2"
+                />
                 <s-icon type="empty" />
                 <span
                     style={{
                         color: styles.textColor,
                         fontSize: styles.bodySize,
                     }}
-                >Please choose product to see the bundle preview</span>
+                >
+                    Please choose product to see the bundle preview
+                </span>
             </div>
         );
     }

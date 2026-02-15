@@ -115,7 +115,11 @@
         justify-content: space-between;
         align-items: center;
         padding: var(--rb-gap-spacing);
-        background: color-mix(in srgb, var(--rb-savings-color) 15%, transparent);
+        background: color-mix(
+            in srgb,
+            var(--rb-savings-color) 15%,
+            transparent
+        );
         border-radius: var(--rb-border-radius);
         margin-top: var(--rb-spacing-sm);
         color: var(--rb-savings-color);
@@ -163,7 +167,6 @@
     // -------------------------------------------------------------------------
 
     &__pricing--compact {
-
         .radius-bundle__savings {
             padding: var(--rb-spacing-sm);
             margin-top: var(--rb-spacing-xs);

@@ -168,7 +168,11 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     const createShopifyProduct = async (
         token: string,
         data: ExtendedBundleFormData,
-    ): Promise<{ mainProductId: string; mainVariantId?: string; mediaUrls: string[] } | null> => {
+    ): Promise<{
+        mainProductId: string;
+        mainVariantId?: string;
+        mediaUrls: string[];
+    } | null> => {
         console.log("Creating Shopify product...");
 
         const { bundlePrice, originalPrice } = calculateBundlePricing(data);
@@ -435,10 +439,12 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         // Update existingMedia store so grid stays consistent
                         if (uploadedUrls.length > 0) {
                             const currentStore = useBundleStore.getState();
-                            const newMediaItems = uploadedUrls.map((url, i) => ({
-                                id: `uploaded-${Date.now()}-${i}`,
-                                url,
-                            }));
+                            const newMediaItems = uploadedUrls.map(
+                                (url, i) => ({
+                                    id: `uploaded-${Date.now()}-${i}`,
+                                    url,
+                                }),
+                            );
                             currentStore.setExistingMedia([
                                 ...currentStore.existingMedia,
                                 ...newMediaItems,
@@ -457,9 +463,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     // For new product creation, images come from createShopifyProduct
                     if (needsProductCreation) {
                         data.images =
-                            uploadedUrls.length > 0
-                                ? [uploadedUrls[0]]
-                                : [];
+                            uploadedUrls.length > 0 ? [uploadedUrls[0]] : [];
                     }
 
                     // Update bundle in database

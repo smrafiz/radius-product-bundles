@@ -11,12 +11,12 @@
   Performance: ~50ms first paint, ~250ms fully interactive
 {% endcomment %}
 
-{% assign bundle_ids = product.metafields.radius_bundles.bundle_ids.value %}
+{% assign bundle_ids = product.metafields['$app'].bundle_ids.value %}
 
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
 	{% comment %} Load settings from shop metafields (single source of truth) {% endcomment %}
-	{% assign global = shop.metafields.radius_bundles.global_settings.value %}
-	{% assign bundles = shop.metafields.radius_bundles.active_bundles.value %}
+	{% assign global = shop.metafields['$app'].global_settings.value %}
+	{% assign bundles = shop.metafields['$app'].active_bundles.value %}
 
 	{% comment %} Resolve global defaults {% endcomment %}
 	{% assign g_labels = global.labels %}

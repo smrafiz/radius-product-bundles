@@ -19,7 +19,9 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const { openProductPicker, isLoading } = useProductPicker();
     const { clearErrors } = useFormContext();
 
-    const settingsData = useSettingsStore((state) => state.localData ?? state.serverData);
+    const settingsData = useSettingsStore(
+        (state) => state.localData ?? state.serverData,
+    );
     const maxProducts = (settingsData?.maxBundleProducts as number) ?? 10;
     const isAtLimit = selectedItems.length >= maxProducts;
 

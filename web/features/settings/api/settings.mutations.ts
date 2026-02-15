@@ -1,7 +1,10 @@
 import { MutationOptions } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { AppSettingsFormData } from "@/features/settings";
-import { resetSettingsAction, saveSettingsAction, } from "@/features/settings/actions/settings.action";
+import {
+    resetSettingsAction,
+    saveSettingsAction,
+} from "@/features/settings/actions/settings.action";
 
 /**
  * Settings mutation options factory.

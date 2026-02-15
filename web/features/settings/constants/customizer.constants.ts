@@ -22,18 +22,14 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
         { label: "Grid", value: "GRID" },
     ],
 
-    VOLUME_DISCOUNT: [
-        { label: "List", value: "LIST" },
-    ],
+    VOLUME_DISCOUNT: [{ label: "List", value: "LIST" }],
 
     MIX_AND_MATCH: [
         { label: "List", value: "LIST" },
         { label: "Grid", value: "GRID" },
     ],
 
-    FREQUENTLY_BOUGHT_TOGETHER: [
-        { label: "Grid", value: "GRID" },
-    ],
+    FREQUENTLY_BOUGHT_TOGETHER: [{ label: "Grid", value: "GRID" }],
 
     CART_BANNER: [
         { label: "Detailed", value: "LIST" },
@@ -42,7 +38,13 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
     ],
 } as const;
 
-export const PREVIEW_TEMPLATE_OPTIONS: ReadonlyArray<{ id: PreviewTemplateId; label: string }> = [
-    ...Object.values(BUNDLE_TYPES).map((t) => ({ id: t.id as PreviewTemplateId, label: t.label })),
+export const PREVIEW_TEMPLATE_OPTIONS: ReadonlyArray<{
+    id: PreviewTemplateId;
+    label: string;
+}> = [
+    ...Object.values(BUNDLE_TYPES).map((t) => ({
+        id: t.id as PreviewTemplateId,
+        label: t.label,
+    })),
     { id: "CART_BANNER", label: "Cart page banner" },
 ];

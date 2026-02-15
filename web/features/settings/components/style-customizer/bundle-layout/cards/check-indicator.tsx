@@ -24,12 +24,7 @@ export function CheckIndicator({
             }}
         >
             {checked && (
-                <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                     <path
                         d="M2 5L4 7L8 3"
                         stroke="#fff"

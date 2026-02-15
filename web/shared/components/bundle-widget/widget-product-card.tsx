@@ -88,16 +88,19 @@ export function WidgetProductCard({
         <div
             className="radius-bundle__product-price"
             style={{
-                textAlign: styles.imagePosition === "top"
-                    ? "center"
-                    : undefined
+                textAlign:
+                    styles.imagePosition === "top" ? "center" : undefined,
             }}
         >
-            <span className="radius-bundle__product-price-current" style={{ fontWeight: 600 }}>
+            <span
+                className="radius-bundle__product-price-current"
+                style={{ fontWeight: 600 }}
+            >
                 {product.price}
             </span>
             {displayOptions.showComparePrices && product.compareAtPrice && (
-                <span className="radius-bundle__product-price-compare"
+                <span
+                    className="radius-bundle__product-price-compare"
                     style={{
                         textDecoration: "line-through",
                         opacity: 0.6,
@@ -124,14 +127,14 @@ export function WidgetProductCard({
                     position: product.badge ? "relative" : undefined,
                     fontSize,
                     color: styles.textColor,
-                    textAlign: styles.imagePosition === "top"
-                        ? "center"
-                        : undefined
+                    textAlign:
+                        styles.imagePosition === "top" ? "center" : undefined,
                 }}
             >
                 {badgeEl}
                 {displayOptions.showImages && (
-                    <div className="radius-bundle__product-image"
+                    <div
+                        className="radius-bundle__product-image"
                         style={{
                             height: imageSizePx,
                             borderRadius: cardRadius,
@@ -148,10 +151,11 @@ export function WidgetProductCard({
                     style={{
                         fontWeight: 500,
                         marginBottom: "8px",
-                        textAlign: styles.imagePosition === "top"
-                            ? "center"
-                            : undefined
-                }}
+                        textAlign:
+                            styles.imagePosition === "top"
+                                ? "center"
+                                : undefined,
+                    }}
                 >
                     {titleEl}
                 </div>
@@ -175,7 +179,8 @@ export function WidgetProductCard({
         >
             {badgeEl}
             {displayOptions.showImages && (
-                <div className="radius-bundle__product-image"
+                <div
+                    className="radius-bundle__product-image"
                     style={{
                         width: imageSizePx,
                         height: imageSizePx,

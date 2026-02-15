@@ -1,6 +1,11 @@
 "use client";
 
-import { CustomizerStyles, useCustomizerStore, useSettingsQuery, useSettingsSubmit, } from "@/features/settings";
+import {
+    CustomizerStyles,
+    useCustomizerStore,
+    useSettingsQuery,
+    useSettingsSubmit,
+} from "@/features/settings";
 
 /**
  * Hook for handling customizer form submission.

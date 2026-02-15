@@ -213,7 +213,7 @@
 
 .radius-bundle__savings {
     padding: 12px;
-    background: rgba(22,163,74, 0.15);
+    background: rgba(22, 163, 74, 0.15);
     border-radius: 8px;
 }
 
@@ -229,7 +229,7 @@
     background: #dbeafe;
     border-radius: 8px;
     margin-top: 8px;
-    color: #004BFF;
+    color: #004bff;
 }
 
 /* ===========================================
@@ -351,50 +351,50 @@
     overflow-y: auto;
     scroll-behavior: smooth;
     mask-image: linear-gradient(
-            to bottom,
-            transparent 0,
-            black 40px,
-            black calc(100% - 40px),
-            transparent 100%
+        to bottom,
+        transparent 0,
+        black 40px,
+        black calc(100% - 40px),
+        transparent 100%
     );
     -webkit-mask-image: linear-gradient(
-            to bottom,
-            transparent 0,
-            black 40px,
-            black calc(100% - 40px),
-            transparent 100%
+        to bottom,
+        transparent 0,
+        black 40px,
+        black calc(100% - 40px),
+        transparent 100%
     );
 }
 
 /* When at top - no top fade */
 .rtpb-scroll-container.at-top .rtpb-scroll-content {
     mask-image: linear-gradient(
-            to bottom,
-            black 0,
-            black calc(100% - 40px),
-            transparent 100%
+        to bottom,
+        black 0,
+        black calc(100% - 40px),
+        transparent 100%
     );
     -webkit-mask-image: linear-gradient(
-            to bottom,
-            black 0,
-            black calc(100% - 40px),
-            transparent 100%
+        to bottom,
+        black 0,
+        black calc(100% - 40px),
+        transparent 100%
     );
 }
 
 /* When at bottom - no bottom fade */
 .rtpb-scroll-container.at-bottom .rtpb-scroll-content {
     mask-image: linear-gradient(
-            to bottom,
-            transparent 0,
-            black 40px,
-            black 100%
+        to bottom,
+        transparent 0,
+        black 40px,
+        black 100%
     );
     -webkit-mask-image: linear-gradient(
-            to bottom,
-            transparent 0,
-            black 40px,
-            black 100%
+        to bottom,
+        transparent 0,
+        black 40px,
+        black 100%
     );
 }
 

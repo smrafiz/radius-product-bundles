@@ -24,6 +24,23 @@ export interface AppConfig {
     pos: POSConfig;
     preferences: PreferencesConfig;
     build: BuildConfig;
+    product: ProductConfig;
+}
+
+interface MetafieldDefinition {
+    type: string;
+    name: string;
+    description?: string;
+    access: {
+        admin?: "merchant_read" | "merchant_read_write";
+        storefront?: "public_read" | "none";
+    };
+}
+
+interface ProductConfig {
+    metafields: {
+        app: Record<string, MetafieldDefinition>;
+    };
 }
 
 /**

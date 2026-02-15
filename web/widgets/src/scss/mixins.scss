@@ -8,10 +8,10 @@
 
 @mixin skeleton-gradient {
     background: linear-gradient(
-                    90deg,
-                    var(--rb-skeleton-base) 25%,
-                    var(--rb-skeleton-shine) 50%,
-                    var(--rb-skeleton-base) 75%
+        90deg,
+        var(--rb-skeleton-base) 25%,
+        var(--rb-skeleton-shine) 50%,
+        var(--rb-skeleton-base) 75%
     );
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s ease-in-out infinite;
@@ -23,8 +23,8 @@
 
 @mixin card-hover {
     transition:
-            box-shadow var(--rb-transition),
-            transform var(--rb-transition);
+        box-shadow var(--rb-transition),
+        transform var(--rb-transition);
 
     &:hover {
         box-shadow: var(--rb-shadow-hover, var(--rb-card-shadow));

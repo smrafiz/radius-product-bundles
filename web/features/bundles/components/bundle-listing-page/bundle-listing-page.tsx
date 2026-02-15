@@ -7,7 +7,11 @@ import {
     useNavigationActions,
 } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { BundleTable, BundleTableSkeleton, useBundlesPage, } from "@/features/bundles";
+import {
+    BundleTable,
+    BundleTableSkeleton,
+    useBundlesPage,
+} from "@/features/bundles";
 import { useSettingsStore } from "@/features/settings";
 import { AnalyticsDisabledBanner } from "@/features/analytics";
 

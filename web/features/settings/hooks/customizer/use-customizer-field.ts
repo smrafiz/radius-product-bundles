@@ -3,7 +3,11 @@
 import { useCallback } from "react";
 import { Path, useFormContext } from "react-hook-form";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
-import { CustomizerFieldConfig, CustomizerStyles, useCustomizerStore, } from "@/features/settings";
+import {
+    CustomizerFieldConfig,
+    CustomizerStyles,
+    useCustomizerStore,
+} from "@/features/settings";
 
 /**
  * Hook for managing a single customizer field.

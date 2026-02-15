@@ -25,7 +25,10 @@ type TabKey = (typeof TABS)[number]["key"];
 export function AnalyticsTabs() {
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab") as TabKey | null;
-    const initialTab = tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : "overview";
+    const initialTab =
+        tabParam && TABS.some((t) => t.key === tabParam)
+            ? tabParam
+            : "overview";
     const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
     const shouldReduceMotion = useReducedMotion();
 

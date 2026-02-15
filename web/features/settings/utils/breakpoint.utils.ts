@@ -1,9 +1,10 @@
 import { BreakpointPreset, CustomizerStyles } from "@/features/settings";
 import { BREAKPOINT_PRESET_VALUES } from "@/features/settings/constants/defaults.constants";
 
-export function resolveBreakpoints(
-    styles: Partial<CustomizerStyles>,
-): { tablet: number; mobile: number } {
+export function resolveBreakpoints(styles: Partial<CustomizerStyles>): {
+    tablet: number;
+    mobile: number;
+} {
     if (styles.customBreakpoints) {
         const tablet = styles.tabletBreakpoint ?? 1024;
         const mobile = styles.mobileBreakpoint ?? 768;

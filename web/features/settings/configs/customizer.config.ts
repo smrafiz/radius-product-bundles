@@ -415,8 +415,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "switch",
                     name: "customBreakpoints",
                     label: "Use custom values",
-                    details:
-                        "Override preset with exact pixel values",
+                    details: "Override preset with exact pixel values",
                     defaultValue: false,
                 },
                 {
@@ -689,7 +688,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     defaultValue: "#303030",
                     bundleTypes: ["FREQUENTLY_BOUGHT_TOGETHER"],
                 },
-
             ],
         },
 

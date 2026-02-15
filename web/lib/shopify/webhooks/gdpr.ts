@@ -22,7 +22,9 @@ export function setupGDPRWebHooks(path: string) {
                     const dataRequestId = payload.data_request?.id;
 
                     if (!rawCustomerId) {
-                        console.warn("[GDPR] No customer ID in data request payload");
+                        console.warn(
+                            "[GDPR] No customer ID in data request payload",
+                        );
                         return;
                     }
 
@@ -85,7 +87,9 @@ export function setupGDPRWebHooks(path: string) {
                     const rawCustomerId = payload.customer?.id;
 
                     if (!rawCustomerId) {
-                        console.warn("[GDPR] No customer ID in redaction payload");
+                        console.warn(
+                            "[GDPR] No customer ID in redaction payload",
+                        );
                         return;
                     }
 
@@ -129,11 +133,13 @@ export function setupGDPRWebHooks(path: string) {
                     // Find the shop record first to get its ID for relational models
                     const shopRecord = await prisma.shop.findUnique({
                         where: { domain: shop },
-                        select: { id: true }
+                        select: { id: true },
                     });
 
                     if (!shopRecord) {
-                        console.warn(`[GDPR] Shop record not found for domain: ${shop}`);
+                        console.warn(
+                            `[GDPR] Shop record not found for domain: ${shop}`,
+                        );
                         return;
                     }
 
@@ -145,16 +151,16 @@ export function setupGDPRWebHooks(path: string) {
                         prisma.aIInsight.deleteMany({ where: { shop } }),
                         prisma.notification.deleteMany({ where: { shop } }),
                         prisma.alertRule.deleteMany({ where: { shop } }),
-                        prisma.appSettings.deleteMany({ where: { shopId: shopRecord.id } }),
+                        prisma.appSettings.deleteMany({
+                            where: { shopId: shopRecord.id },
+                        }),
                         prisma.aBTest.deleteMany({ where: { shop } }),
                     ]);
 
                     // Delete the shop record itself last
                     await prisma.shop.deleteMany({ where: { domain: shop } });
 
-                    console.log(
-                        `[GDPR] All data removed for shop: ${shop}`,
-                    );
+                    console.log(`[GDPR] All data removed for shop: ${shop}`);
                 } catch (error) {
                     console.error("[GDPR] Shop redaction error:", error);
                     throw error;

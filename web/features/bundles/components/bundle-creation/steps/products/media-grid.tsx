@@ -27,9 +27,7 @@ function MediaItem({
         >
             <div
                 className={`w-full h-full rounded-md border overflow-hidden transition-colors ${
-                    isHovered
-                        ? "border-[#005bd3]"
-                        : "border-[#e3e3e3]"
+                    isHovered ? "border-[#005bd3]" : "border-[#e3e3e3]"
                 }`}
             >
                 <s-image

@@ -119,7 +119,9 @@ export function useEditBundle(bundleId: string) {
                         quantity: bp.quantity || 1,
                         type: "product" as const,
                         title: shopifyProduct?.title || `Product ${index + 1}`,
-                        url: shopifyProduct?.handle ? `/products/${shopifyProduct.handle}` : "",
+                        url: shopifyProduct?.handle
+                            ? `/products/${shopifyProduct.handle}`
+                            : "",
                         price: firstVariant?.price || "0.00",
                         compareAtPrice: firstVariant?.compareAtPrice || null,
                         image: shopifyProduct?.featuredMedia?.image?.url || "",

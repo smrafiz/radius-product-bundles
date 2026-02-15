@@ -13,11 +13,14 @@
             gap: var(--rb-gap-spacing);
             grid-template-columns: repeat(
                 var(--rb-grid-columns, 3),
-                            minmax(0, 1fr)
+                minmax(0, 1fr)
             );
 
             .rb--mobile & {
-                grid-template-columns: repeat(var(--rb-grid-columns, 2), minmax(0, 1fr));
+                grid-template-columns: repeat(
+                    var(--rb-grid-columns, 2),
+                    minmax(0, 1fr)
+                );
             }
         }
     }
@@ -62,6 +65,5 @@
         .radius-bundle__product-price-compare {
             margin-left: 5px;
         }
-
     }
 }

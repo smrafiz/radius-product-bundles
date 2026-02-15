@@ -47,9 +47,7 @@ export function verifyAppProxySignature(
     const message = params.map(([key, value]) => `${key}=${value}`).join("");
 
     // Compute HMAC-SHA256
-    const computed = createHmac("sha256", secret)
-        .update(message)
-        .digest("hex");
+    const computed = createHmac("sha256", secret).update(message).digest("hex");
 
     return computed === signature;
 }
@@ -75,10 +73,7 @@ export function verifyProxyRequest(
         console.warn(
             `[Proxy] Invalid signature for shop: ${shop}, path: ${request.nextUrl.pathname}`,
         );
-        return NextResponse.json(
-            { error: "Unauthorized" },
-            { status: 401 },
-        );
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     return { shop };

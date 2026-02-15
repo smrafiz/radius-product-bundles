@@ -19,7 +19,11 @@ import {
 } from "@/features/bundles/services";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
-import { ensureMetafieldDefinition, ensureBundleDiscount, handleSessionToken } from "@/lib/shopify";
+import {
+    ensureMetafieldDefinition,
+    ensureBundleDiscount,
+    handleSessionToken,
+} from "@/lib/shopify";
 import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
 import {
     addBundleIdToProducts,
@@ -351,7 +355,8 @@ export async function createBundleAction(
         console.log("[Action] Schema validation passed");
 
         // Ensure metafield definitions exist before creating bundle
-        const metafieldSetupResult = await ensureMetafieldDefinition(sessionToken);
+        const metafieldSetupResult =
+            await ensureMetafieldDefinition(sessionToken);
         if (!metafieldSetupResult.success) {
             console.error(
                 "[createBundleAction] Failed to ensure metafield definitions:",
@@ -402,7 +407,6 @@ export async function createBundleAction(
             (p) => p.productId,
         );
         if (productIds.length > 0 && result.bundle?.id) {
-
             console.log(
                 `[Action] Adding metafields to ${productIds.length} products`,
             );
@@ -501,7 +505,8 @@ export async function updateBundleAction(
             existingBundle?.bundleProducts?.map((bp) => bp.productId) || [];
 
         // Ensure metafield definitions exist before updating bundle
-        const metafieldSetupResult = await ensureMetafieldDefinition(sessionToken);
+        const metafieldSetupResult =
+            await ensureMetafieldDefinition(sessionToken);
         if (!metafieldSetupResult.success) {
             console.error(
                 "[updateBundleAction] Failed to ensure metafield definitions:",

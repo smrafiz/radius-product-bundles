@@ -1,7 +1,10 @@
 "use client";
 
 import { Fragment } from "react";
-import { DashboardSetupGuideProps, DashboardSetupItem } from "@/features/dashboard";
+import {
+    DashboardSetupGuideProps,
+    DashboardSetupItem,
+} from "@/features/dashboard";
 
 export function DashboardSetupSteps({
     items,
@@ -28,7 +31,9 @@ export function DashboardSetupSteps({
                         alignItems="center"
                     >
                         <s-heading>Setup guide</s-heading>
-                        <s-tooltip id="dismiss-guide-tooltip">Dismiss</s-tooltip>
+                        <s-tooltip id="dismiss-guide-tooltip">
+                            Dismiss
+                        </s-tooltip>
                         <s-button
                             interestFor="dismiss-guide-tooltip"
                             accessibilityLabel="Dismiss setup guide"
@@ -66,7 +71,8 @@ export function DashboardSetupSteps({
                             <div className="flex gap-4 w-full items-center">
                                 <s-text color="subdued">
                                     <div className="min-w-25">
-                                        {completedItemsLength === items.length ? (
+                                        {completedItemsLength ===
+                                        items.length ? (
                                             <s-stack
                                                 direction="inline"
                                                 gap="small-200"
@@ -99,10 +105,7 @@ export function DashboardSetupSteps({
                 </s-grid>
             </s-box>
 
-            <s-box
-                borderRadius="base"
-                display={isGuideOpen ? "auto" : "none"}
-            >
+            <s-box borderRadius="base" display={isGuideOpen ? "auto" : "none"}>
                 <s-box paddingBlockStart="base">
                     {items.map((item, index) => (
                         <Fragment key={item.id}>
@@ -118,7 +121,9 @@ export function DashboardSetupSteps({
                                 }
                                 onCheckboxChange={() => onItemComplete(item.id)}
                                 onPrimaryClick={() => onPrimaryClick(item.id)}
-                                onSecondaryClick={() => onSecondaryClick(item.id)}
+                                onSecondaryClick={() =>
+                                    onSecondaryClick(item.id)
+                                }
                                 {...item}
                             />
                         </Fragment>

@@ -28,11 +28,15 @@ export function BundleTableRow({
         formatBundleDiscount(bundle, currencyFormatter);
 
     return (
-        <s-table-row id={bundle.id}>
+        <s-table-row
+            id={bundle.id}
+            clickDelegate={`bundle-listing-item-${bundle.id}`}
+        >
             {/* Bundle name */}
             <s-table-cell>
                 <s-stack direction="inline" gap="small" alignItems="center">
                     <s-checkbox
+                        id={`bundle-listing-item-${bundle.id}`}
                         checked={isSelected}
                         onChange={(e: Event) => {
                             e.stopPropagation();

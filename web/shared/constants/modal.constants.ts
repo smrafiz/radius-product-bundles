@@ -37,10 +37,11 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }) => {
                 heading: modal.title || "Confirm Status Change",
                 message:
                     modal.message ||
-                    `Change the status of <strong>${modal.bundle?.name}</strong> to <strong>${modal.newStatus
-                        ? BUNDLE_STATUSES[modal.newStatus as BundleStatus]
-                            ?.text
-                        : ""
+                    `Change the status of <strong>${modal.bundle?.name}</strong> to <strong>${
+                        modal.newStatus
+                            ? BUNDLE_STATUSES[modal.newStatus as BundleStatus]
+                                  ?.text
+                            : ""
                     }</strong>?`,
                 destructive: false,
             };

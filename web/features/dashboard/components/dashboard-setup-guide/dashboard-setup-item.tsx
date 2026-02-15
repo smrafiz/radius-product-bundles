@@ -85,7 +85,8 @@ export const DashboardSetupItem = ({
                                                     variant="primary"
                                                     onClick={onPrimaryClick}
                                                     loading={
-                                                        buttonLoading === "primary"
+                                                        buttonLoading ===
+                                                        "primary"
                                                     }
                                                     disabled={
                                                         buttonLoading !== null
@@ -99,7 +100,8 @@ export const DashboardSetupItem = ({
                                                     variant="tertiary"
                                                     onClick={onSecondaryClick}
                                                     loading={
-                                                        buttonLoading === "secondary"
+                                                        buttonLoading ===
+                                                        "secondary"
                                                     }
                                                     disabled={
                                                         buttonLoading !== null

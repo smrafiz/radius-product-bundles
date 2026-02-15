@@ -417,7 +417,9 @@ export const useBundleStore = create(
                 const existingKeys = new Set(
                     state.pendingMedia
                         .filter(
-                            (item): item is PendingMediaItem & { type: "file" } =>
+                            (
+                                item,
+                            ): item is PendingMediaItem & { type: "file" } =>
                                 item.type === "file",
                         )
                         .map(

@@ -350,7 +350,14 @@ export interface CustomizerStyles {
     /** Text size */
     cartBannerBodySize: SizePreset;
     /** Icon type for banner lines */
-    cartBannerIconType: "tag" | "percent" | "gift" | "sparkle" | "fire" | "check" | "none";
+    cartBannerIconType:
+        | "tag"
+        | "percent"
+        | "gift"
+        | "sparkle"
+        | "fire"
+        | "check"
+        | "none";
     /** Icon color */
     cartBannerIconColor: string;
 

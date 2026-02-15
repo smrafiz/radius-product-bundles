@@ -263,7 +263,9 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             resetToDefaults();
             await resetSettings();
 
-            const resetModal = document.getElementById("reset-confirm-modal") as any;
+            const resetModal = document.getElementById(
+                "reset-confirm-modal",
+            ) as any;
             resetModal?.hideOverlay?.();
 
             window.shopify?.toast?.show("Settings reset to defaults", {

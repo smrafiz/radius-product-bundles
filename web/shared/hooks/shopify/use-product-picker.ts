@@ -73,7 +73,8 @@ export function useProductPicker() {
 
             const state = useSettingsStore.getState();
             const settingsData = state.localData ?? state.serverData;
-            const maxProducts = (settingsData?.maxBundleProducts as number) ?? 10;
+            const maxProducts =
+                (settingsData?.maxBundleProducts as number) ?? 10;
             const limitedResult = result.slice(0, maxProducts);
 
             const normalizedItems = limitedResult.map((p: any, index: number) =>

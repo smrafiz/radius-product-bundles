@@ -58,7 +58,10 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
             >
                 {DASHBOARD_VIDEO_ITEMS.map((video) => (
                     <s-grid-item key={video.id} gridColumn="auto">
-                        <DashboardVideoItem video={video} onPlayAction={handlePlay} />
+                        <DashboardVideoItem
+                            video={video}
+                            onPlayAction={handlePlay}
+                        />
                     </s-grid-item>
                 ))}
             </s-grid>

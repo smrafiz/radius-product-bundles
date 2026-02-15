@@ -15,13 +15,10 @@ export function DashboardReviewBanner() {
     const modalMessage =
         RATING_MESSAGES[currentRating as keyof typeof RATING_MESSAGES];
 
-    const openModal = useCallback(
-        (star: number) => {
-            setCurrentRating(star);
-            (modalRef.current as any)?.showOverlay?.();
-        },
-        [],
-    );
+    const openModal = useCallback((star: number) => {
+        setCurrentRating(star);
+        (modalRef.current as any)?.showOverlay?.();
+    }, []);
 
     const handleClose = useCallback(() => {
         setCurrentRating(0);

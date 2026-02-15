@@ -30,7 +30,7 @@ export interface DashboardMetricConfig {
     key: keyof DashboardMetricsData;
     title: string;
     format: MetricFormat;
-    img?: { url?: string; alt?: string; svg?:string };
+    img?: { url?: string; alt?: string; svg?: string };
     icon?: "arrow-up" | "arrow-down" | "work-list";
     tone?:
         | "success"

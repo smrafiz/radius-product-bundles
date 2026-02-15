@@ -51,7 +51,9 @@ export function GlobalBanner() {
                 >
                     {message.isHtml && message.content ? (
                         <div
-                            dangerouslySetInnerHTML={{ __html: message.content }}
+                            dangerouslySetInnerHTML={{
+                                __html: message.content,
+                            }}
                         />
                     ) : (
                         message.content

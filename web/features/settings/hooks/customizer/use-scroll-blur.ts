@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ScrollBlurState, UseScrollBlurOptions } from "@/features/settings";
@@ -49,7 +49,8 @@ export function useScrollBlur(options: UseScrollBlurOptions = {}) {
                 // Only show top blur if there's scrollable content AND user has scrolled down
                 isScrolledTop: hasScrollableContent && scrollTop > threshold,
                 // Only show bottom blur if there's scrollable content AND user hasn't reached bottom
-                isScrolledBottom: hasScrollableContent && scrollTop < maxScroll - threshold,
+                isScrolledBottom:
+                    hasScrollableContent && scrollTop < maxScroll - threshold,
                 scrollProgress,
             };
 
@@ -57,8 +58,14 @@ export function useScrollBlur(options: UseScrollBlurOptions = {}) {
             onScrollChange?.(newState);
 
             // Apply classes directly for performance
-            container.classList.toggle("is-scrolled-top", newState.isScrolledTop && accordionOpen);
-            container.classList.toggle("is-scrolled-bottom", newState.isScrolledBottom && accordionOpen);
+            container.classList.toggle(
+                "is-scrolled-top",
+                newState.isScrolledTop && accordionOpen,
+            );
+            container.classList.toggle(
+                "is-scrolled-bottom",
+                newState.isScrolledBottom && accordionOpen,
+            );
             container.classList.toggle("accordion-closed", !accordionOpen);
         };
 
