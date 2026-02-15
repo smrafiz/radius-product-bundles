@@ -62,7 +62,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
 
                 switch (discountType) {
                     case "PERCENTAGE":
-                        discountedUnitPrice = unitPrice * (1 - discountValue / 100);
+                        discountedUnitPrice =
+                            unitPrice * (1 - discountValue / 100);
                         break;
                     case "FIXED_AMOUNT": {
                         const lineDiscount = discountValue * proportion;

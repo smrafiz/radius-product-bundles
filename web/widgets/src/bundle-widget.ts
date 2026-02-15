@@ -990,8 +990,7 @@ declare global {
                         // Match exact variant, fallback to first
                         const variant =
                             data.variants?.find(
-                                (v: any) =>
-                                    String(v.id) === variantNumericId,
+                                (v: any) => String(v.id) === variantNumericId,
                             ) || data.variants?.[0];
 
                         if (variant) {
@@ -1251,7 +1250,8 @@ declare global {
             // product.price = current selling price (tax-inclusive via Ajax API)
             // discountedPrice = after bundle discount (applied to product.price)
             const hasCompareAt =
-                product.compareAtPrice && product.compareAtPrice > product.price;
+                product.compareAtPrice &&
+                product.compareAtPrice > product.price;
             let priceHtml: string;
 
             if (hasDiscount && discountedPrice < product.price) {

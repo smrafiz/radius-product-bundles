@@ -180,7 +180,9 @@ export function DynamicCustomizerField({
                                     applyPreset(key);
 
                                     // Save the preset name itself
-                                    setFormValue("stylePreset", key, { shouldDirty: true });
+                                    setFormValue("stylePreset", key, {
+                                        shouldDirty: true,
+                                    });
 
                                     // Sync preset values to React Hook Form so they persist on save
                                     const presetValues =
