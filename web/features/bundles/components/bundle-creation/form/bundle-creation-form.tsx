@@ -1,11 +1,12 @@
 "use client";
 
 import {
-    BundleCreationFormProps,
-    BundlePreview,
-    HorizontalStepIndicator,
     StepContent,
+    BundlePreview,
     useBundleFormManager,
+    BundleCreationSkeleton,
+    HorizontalStepIndicator,
+    BundleCreationFormProps,
 } from "@/features/bundles";
 import { GlobalBanner, useAppNavigation } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
@@ -30,6 +31,8 @@ export function BundleCreationForm({
                     Bundles
                 </button>
             </TitleBar>
+            {/*<BundleCreationSkeleton />*/}
+
             <s-stack
                 gap="large"
                 paddingBlockStart="large"

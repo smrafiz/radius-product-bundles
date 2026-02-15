@@ -178,6 +178,8 @@ export type CarouselNavigation = "none" | "arrows" | "dots" | "both";
  * Customizer style state - flat structure for easy UI binding
  */
 export interface CustomizerStyles {
+    /** Active style preset name */
+    stylePreset: string;
     // ═══════════════════════════════════════════════════════════════════
     // APPEARANCE - COLORS
     // ═══════════════════════════════════════════════════════════════════

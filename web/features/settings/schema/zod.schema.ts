@@ -21,6 +21,7 @@ const requiredHexColor = z
     );
 
 const baseStylesSchema = z.object({
+    stylePreset: z.enum(["minimal", "soft", "bold", "elegant", "dark", "nature", "warm", "professional" ]).optional(),
     // ═══════════════════════════════════════════════════════════════════
     // APPEARANCE - COLORS
     // ═══════════════════════════════════════════════════════════════════
