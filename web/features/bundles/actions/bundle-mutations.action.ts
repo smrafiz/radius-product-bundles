@@ -62,6 +62,9 @@ export async function updateBundleStatusAction(
             endDate: endDate ? new Date(endDate) : undefined,
         });
 
+        // Sync metafields so storefront reflects the status change
+        await syncAllSettingsToMetafields(sessionToken, shop);
+
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
 
@@ -101,6 +104,9 @@ export async function bulkToggleBundleStatusAction(
             currentStatus === "ACTIVE"
                 ? await bulkActivateBundlesService({ bundleIds, shop })
                 : await bulkDraftBundlesService({ bundleIds, shop });
+
+        // Sync metafields so storefront reflects the status changes
+        await syncAllSettingsToMetafields(sessionToken, shop);
 
         revalidatePath("/bundles");
 
