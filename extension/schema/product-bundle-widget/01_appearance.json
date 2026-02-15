@@ -19,6 +19,8 @@
             { "value": "elegant", "label": "Elegant" },
             { "value": "dark", "label": "Dark" },
             { "value": "nature", "label": "Nature" },
+            { "value": "warm", "label": "Warm" },
+            { "value": "professional", "label": "Professional" },
             { "value": "custom", "label": "Custom (use settings below)" }
         ],
         "default": ""

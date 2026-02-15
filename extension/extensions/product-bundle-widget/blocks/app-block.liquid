@@ -127,6 +127,18 @@
 							{% assign background_color = '#f0fdf4' %}
 							{% assign border_color = '#bbf7d0' %}
 							{% assign savings_color = '#16a34a' %}
+						{% when 'warm' %}
+							{% assign primary_color = '#f97316' %}
+							{% assign text_color = '#431407' %}
+							{% assign background_color = '#fff7ed' %}
+							{% assign border_color = '#fed7aa' %}
+							{% assign savings_color = '#ea580c' %}
+						{% when 'professional' %}
+							{% assign primary_color = '#2563eb' %}
+							{% assign text_color = '#1f2937' %}
+							{% assign background_color = '#f8fafc' %}
+							{% assign border_color = '#d1d5db' %}
+							{% assign savings_color = '#2563eb' %}
 						{% else %}
 							{% assign primary_color = g_styles.primaryColor | default: '#303030' %}
 							{% assign text_color = g_styles.textColor | default: '#333333' %}
@@ -210,6 +222,7 @@
 				{% endif %}
 
 				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
+				{% comment %} -- Background -- {% endcomment %}
 				{% if override_card_settings and block.settings.product_card_bg != blank %}
 					{% assign product_card_bg = block.settings.product_card_bg %}
 				{% elsif g_styles.customizeCardStyle == true %}
@@ -218,17 +231,38 @@
 					{% endif %}
 				{% endif %}
 
+				{% comment %} -- Border -- {% endcomment %}
 				{% assign product_card_border = true %}
 				{% if override_card_settings %}
 					{% assign product_card_border = block.settings.product_card_border %}
 				{% elsif g_styles.customizeCardStyle == true %}
-					{% assign product_card_border = g_styles.productCardBorder %}
+					{% if g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
+						{% assign product_card_border = false %}
+					{% else %}
+						{% assign product_card_border = true %}
+					{% endif %}
+				{% else %}
+					{% comment %} Use preset default: check active preset values {% endcomment %}
+					{% if g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
+						{% assign product_card_border = false %}
+					{% endif %}
 				{% endif %}
 
+				{% comment %} -- Shadow -- {% endcomment %}
+				{% assign product_card_shadow = false %}
 				{% if override_card_settings %}
 					{% assign product_card_shadow = block.settings.product_card_shadow %}
 				{% elsif g_styles.customizeCardStyle == true %}
-					{% assign product_card_shadow = g_styles.productCardShadow %}
+					{% if g_styles.productCardShadow == true or g_styles.productCardShadow == 'true' %}
+						{% assign product_card_shadow = true %}
+					{% else %}
+						{% assign product_card_shadow = false %}
+					{% endif %}
+				{% else %}
+					{% comment %} Use preset default: check active preset values {% endcomment %}
+					{% if g_styles.productCardShadow == true or g_styles.productCardShadow == 'true' %}
+						{% assign product_card_shadow = true %}
+					{% endif %}
 				{% endif %}
 
 
@@ -984,6 +1018,14 @@
 				{
 					"value": "nature",
 					"label": "Nature"
+				},
+				{
+					"value": "warm",
+					"label": "Warm"
+				},
+				{
+					"value": "professional",
+					"label": "Professional"
 				},
 				{
 					"value": "custom",

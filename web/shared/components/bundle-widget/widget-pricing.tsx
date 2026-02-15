@@ -117,6 +117,7 @@ export function WidgetPricingDisplay({
                         fontWeight: 600,
                         marginBottom: "8px",
                         borderRadius: borderRadius,
+                        background: `color-mix(in srgb, ${savingsColor} 15%, transparent)`,
                         padding,
                     }}
                 >
