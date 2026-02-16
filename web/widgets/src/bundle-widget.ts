@@ -69,6 +69,7 @@ declare global {
         productCount: number;
         productIds: string[];
         productQuantities?: number[];
+        mainProductId?: string;
         layout: string;
         labels: {
             buttonText: string;
@@ -184,6 +185,7 @@ declare global {
         private readonly enableStockValidation: boolean = true;
         private readonly maxBundlesPerOrder: number = 0;
         private readonly enableAnalytics: boolean = true;
+        private readonly isStandalone: boolean = false;
 
         // Layout options
         private readonly dividerStyle: string = "plus";
@@ -305,6 +307,9 @@ declare global {
                 }
             }
 
+            // Detect standalone mode
+            this.isStandalone = container.dataset.isStandalone === "true";
+
             // Store desktop defaults for reset
             this.desktopDataAttrs = {
                 boxAlignment: container.dataset.boxAlign || "center",
@@ -391,6 +396,11 @@ declare global {
                 return;
             }
 
+            if (this.isStandalone) {
+                this.initStandaloneMode();
+                return;
+            }
+
             // Show the badge immediately from structure
             if (this.bundleStructure) {
                 this.updateBadgeFromStructure(this.bundleStructure);
@@ -412,6 +422,148 @@ declare global {
 
             // Initialize responsive data attribute swapping
             this.initResponsive();
+        }
+
+        private initStandaloneMode(): void {
+            this.container.style.display = "none";
+            this.trackBundleView();
+
+            const form = document.querySelector(
+                'form[action*="/cart/add"]',
+            ) as HTMLFormElement | null;
+
+            if (form) {
+                const bundleName =
+                    this.bundleStructure?.name || "Bundle";
+                this.injectHiddenInput(
+                    form,
+                    "properties[_bundle_id]",
+                    this.bundleId,
+                );
+                this.injectHiddenInput(
+                    form,
+                    "properties[_bundle_name]",
+                    bundleName,
+                );
+                this.injectHiddenInput(
+                    form,
+                    "properties[_product_id]",
+                    this.productId,
+                );
+            }
+
+            this.interceptStandaloneAddToCart();
+        }
+
+        private injectHiddenInput(
+            form: HTMLFormElement,
+            name: string,
+            value: string,
+        ): void {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        }
+
+        private interceptStandaloneAddToCart(): void {
+            const originalFetch = window.fetch;
+            const self = this;
+
+            window.fetch = function (
+                ...args: Parameters<typeof fetch>
+            ): ReturnType<typeof fetch> {
+                const [input] = args;
+                const url =
+                    typeof input === "string"
+                        ? input
+                        : input instanceof URL
+                          ? input.href
+                          : (input as Request).url;
+
+                const result = originalFetch.apply(window, args);
+
+                if (url.includes("/cart/add")) {
+                    result
+                        .then(async (response) => {
+                            if (response.ok) {
+                                await self.updateStandaloneCartAttributes();
+
+                                if (self.enableAnalytics) {
+                                    document.dispatchEvent(
+                                        new CustomEvent("bundle:addedToCart", {
+                                            detail: {
+                                                bundleId: self.bundleId,
+                                                productId: self.productId,
+                                                isStandalone: true,
+                                            },
+                                            bubbles: true,
+                                        }),
+                                    );
+                                }
+                            }
+                        })
+                        .catch(() => {});
+                }
+
+                return result;
+            };
+        }
+
+        private async updateStandaloneCartAttributes(): Promise<void> {
+            try {
+                const cart = await fetch(
+                    this.getLocalePath("/cart.js"),
+                ).then((r) => r.json());
+
+                let existingDiscounts: DiscountConfig[] = [];
+
+                if (cart.attributes?._radiusDiscounts) {
+                    try {
+                        existingDiscounts = JSON.parse(
+                            cart.attributes._radiusDiscounts,
+                        );
+                    } catch {
+                        existingDiscounts = [];
+                    }
+                }
+
+                const structure = this.bundleStructure;
+                const newDiscount: DiscountConfig = {
+                    bundleId: this.bundleId,
+                    bundleName: structure?.name || "Bundle",
+                    discountType: "NO_DISCOUNT",
+                    discountValue: 0,
+                    requiredLineCount: 1,
+                    minOrderValue: structure?.minOrderValue || 0,
+                    maxDiscountAmount: 0,
+                    discountApplication: "bundle",
+                    discountedProductIds: [],
+                    freeShipping: structure?.freeShipping || false,
+                };
+
+                existingDiscounts = existingDiscounts.filter(
+                    (d) => d.bundleId !== this.bundleId,
+                );
+                existingDiscounts.push(newDiscount);
+
+                await fetch(this.getLocalePath("/cart/update.js"), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        attributes: {
+                            _radiusDiscounts:
+                                JSON.stringify(existingDiscounts),
+                        },
+                    }),
+                });
+            } catch (error) {
+                console.error(
+                    "[RadiusBundle] Standalone cart attribute update failed:",
+                    error,
+                );
+            }
         }
 
         /**

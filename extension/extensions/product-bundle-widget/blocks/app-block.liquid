@@ -64,6 +64,12 @@
 			{% assign bundle = bundles[bundle_id] %}
 
 			{% if bundle_id == best_bundle_id %}
+				{% assign current_product_gid = product.id | prepend: 'gid://shopify/Product/' %}
+				{% assign is_standalone = false %}
+				{% if bundle.mainProductId and current_product_gid == bundle.mainProductId %}
+					{% assign is_standalone = true %}
+				{% endif %}
+
 				{% comment %} ═══════════════════════════════════════════════════════════════════
 					STYLE PRESET HANDLING
 					If a preset is selected (not custom), apply preset values
@@ -558,7 +564,7 @@
 				{% endcapture %}
 				{% endcomment %}
 
-				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle.title | default: 'Bundle' | escape }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"productQuantities": {{ bundle.productQuantities | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}","addingText": "{{ adding_text | escape }}","addedText": "{{ added_text | escape }}","outOfStockText": "{{ out_of_stock_text | escape }}","maxBundlesReachedText": "{{ max_bundles_reached_text | escape }}"}}{% endcapture %}
+				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle.title | default: 'Bundle' | escape }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"productQuantities": {{ bundle.productQuantities | default: '[]' | json }},"mainProductId": "{{ bundle.mainProductId | default: '' }}","layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}","addingText": "{{ adding_text | escape }}","addedText": "{{ added_text | escape }}","outOfStockText": "{{ out_of_stock_text | escape }}","maxBundlesReachedText": "{{ max_bundles_reached_text | escape }}"}}{% endcapture %}
 
 				{% comment %} DO NOT DELETE BELOW CAPTURE {% endcomment %}
 				{% comment %}
@@ -839,6 +845,7 @@
 						data-pricing-summary="{{ pricing_summary_style }}"
 						data-responsive='{{ responsive_json | strip_newlines | strip }}'
 						data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
+						data-is-standalone="{{ is_standalone }}"
 						data-show-images="{{ show_images }}"
 						data-show-savings="{{ show_savings }}"
 						data-show-prices="{{ show_product_prices }}"

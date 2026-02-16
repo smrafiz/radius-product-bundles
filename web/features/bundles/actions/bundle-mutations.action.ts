@@ -505,8 +505,14 @@ export async function createBundleAction(
                     "[createBundleAction] Metafield warning:",
                     metafieldResult.error,
                 );
-                // Don't fail the whole operation, just log warning
             }
+        }
+
+        // Attach bundle ID to standalone product metafield
+        if (result.bundle?.mainProductId) {
+            await addBundleIdToProducts(sessionToken, result.bundle.id, [
+                result.bundle.mainProductId,
+            ]);
         }
 
         revalidatePath("/bundles");
@@ -659,6 +665,13 @@ export async function updateBundleAction(
                 "[updateBundleAction] Metafield sync warning:",
                 metafieldResult.error,
             );
+        }
+
+        // Attach bundle ID to standalone product metafield
+        if (result.bundle?.mainProductId) {
+            await addBundleIdToProducts(sessionToken, bundleId, [
+                result.bundle.mainProductId,
+            ]);
         }
 
         revalidatePath("/bundles");

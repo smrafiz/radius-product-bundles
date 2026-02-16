@@ -442,6 +442,8 @@ function buildShopBundlesMetafieldValue(
             showQuantity: bundle.settings?.showQuantity ?? true,
             showFreeShipping: bundle.settings?.showFreeShipping ?? true,
             enableHyperLink: bundle.settings?.enableHyperLink ?? false,
+            mainProductId: bundle.mainProductId || null,
+            mainVariantId: bundle.mainVariantId || null,
         };
     }
 
