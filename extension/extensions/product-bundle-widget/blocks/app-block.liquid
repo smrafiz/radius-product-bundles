@@ -833,6 +833,7 @@
 				<div
 						id="radius-bundle-{{ bundle_id }}"
 						class="radius-bundle radius-bundle--{{ layout | downcase }}"
+						{% if is_standalone %}style="display: none;"{% endif %}
 						data-bundle-id="{{ bundle_id }}"
 						data-style-preset="{{ style_preset }}"
 						data-box-align="{{ box_alignment }}"
@@ -864,6 +865,7 @@
 						data-more-products-text="{{ more_products_text }}"
 						data-show-less-text="{{ show_less_text }}"
 				>
+					{% unless is_standalone %}
 					{% assign layout = layout | default: 'list' | downcase %}
 
 					{% comment %} Get product count for accurate skeleton {% endcomment %}
@@ -978,6 +980,7 @@
     								more_product_count: more_product_count
 							%}
 					{% endcase %}
+					{% endunless %}
 				</div>
 				{% break %}
 			{% endif %}

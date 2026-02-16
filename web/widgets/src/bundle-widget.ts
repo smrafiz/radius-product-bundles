@@ -426,7 +426,24 @@ declare global {
 
         private initStandaloneMode(): void {
             this.container.style.display = "none";
-            this.trackBundleView();
+
+            if (
+                this.enableAnalytics &&
+                !(window as any).Shopify?.designMode
+            ) {
+                document.dispatchEvent(
+                    new CustomEvent("bundle:viewed", {
+                        detail: {
+                            bundleId: this.bundleId,
+                            productId: this.extractNumericId(
+                                this.productId,
+                            ),
+                            isStandalone: true,
+                        },
+                        bubbles: true,
+                    }),
+                );
+            }
 
             const form = document.querySelector(
                 'form[action*="/cart/add"]',
@@ -485,26 +502,30 @@ declare global {
                 const result = originalFetch.apply(window, args);
 
                 if (url.includes("/cart/add")) {
-                    result
-                        .then(async (response) => {
-                            if (response.ok) {
-                                await self.updateStandaloneCartAttributes();
+                    return result.then(async (response) => {
+                        if (response.ok) {
+                            await self.updateStandaloneCartAttributes();
 
-                                if (self.enableAnalytics) {
-                                    document.dispatchEvent(
-                                        new CustomEvent("bundle:addedToCart", {
+                            if (self.enableAnalytics) {
+                                document.dispatchEvent(
+                                    new CustomEvent(
+                                        "bundle:addedToCart",
+                                        {
                                             detail: {
-                                                bundleId: self.bundleId,
-                                                productId: self.productId,
+                                                bundleId:
+                                                    self.bundleId,
+                                                productId:
+                                                    self.productId,
                                                 isStandalone: true,
                                             },
                                             bubbles: true,
-                                        }),
-                                    );
-                                }
+                                        },
+                                    ),
+                                );
                             }
-                        })
-                        .catch(() => {});
+                        }
+                        return response;
+                    });
                 }
 
                 return result;
