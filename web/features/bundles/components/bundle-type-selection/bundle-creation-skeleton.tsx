@@ -1,45 +1,70 @@
-import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
+import {
+    PageHeaderSkeleton,
+    PageSkeleton,
+    SkeletonLine,
+    SkeletonLines,
+} from "@/shared";
 
 /**
  * Bundle creation page skeleton
  */
-export function BundleCreationSkeleton() {
+export function BundleCreationSkeleton({
+    mode = "create",
+}: {
+    mode: "create" | "edit";
+}) {
     return (
-        <PageSkeleton withPadding={true}>
+        <PageSkeleton withPadding={false}>
             <PageHeaderSkeleton
                 showBackButton={true}
-                heading="Create Fixed bundle"
+                heading={mode === "create" ? "Create bundle" : "Edit bundle"}
             />
 
             <s-stack gap="base">
                 <s-section>
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        <div className="md:col-span-3">
+                    <div className="flex justify-between w-full">
+                        <div className="w-22.5">
                             <SkeletonLines
                                 lines={1}
                                 random={true}
-                                height="h-6.5"
+                                height="h-7"
                             />
                         </div>
-                        <div className="md:col-span-3">
-                            <SkeletonLines
-                                lines={1}
-                                random={true}
-                                height="h-6.5"
-                            />
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 w-118.75">
+                            <div className="md:col-span-3">
+                                <SkeletonLines
+                                    lines={1}
+                                    random={true}
+                                    height="h-7"
+                                />
+                            </div>
+                            <div className="md:col-span-3">
+                                <SkeletonLines
+                                    lines={1}
+                                    random={true}
+                                    height="h-7"
+                                />
+                            </div>
+                            <div className="md:col-span-3">
+                                <SkeletonLines
+                                    lines={1}
+                                    random={true}
+                                    height="h-7"
+                                />
+                            </div>
+                            <div className="md:col-span-3">
+                                <SkeletonLines
+                                    lines={1}
+                                    random={true}
+                                    height="h-7"
+                                />
+                            </div>
                         </div>
-                        <div className="md:col-span-3">
+                        <div className="w-22.5">
                             <SkeletonLines
                                 lines={1}
                                 random={true}
-                                height="h-6.5"
-                            />
-                        </div>
-                        <div className="md:col-span-3">
-                            <SkeletonLines
-                                lines={1}
-                                random={true}
-                                height="h-6.5"
+                                height="h-7"
                             />
                         </div>
                     </div>
@@ -49,43 +74,58 @@ export function BundleCreationSkeleton() {
                         <div className="md:col-span-7">
                             <s-stack gap="base">
                                 <s-section>
-                                    <SkeletonLines
-                                        lines={5}
-                                        random={true}
-                                        height="h-4"
-                                    />
+                                    <div className="w-35 mb-5">
+                                        <SkeletonLine
+                                            height="h-6"
+                                            width={100}
+                                            duration={1.5}
+                                        />
+                                    </div>
+                                    <SkeletonLines lines={9} random={true} />
                                 </s-section>
                                 <s-section>
-                                    <SkeletonLines
-                                        lines={13}
-                                        random={true}
-                                        height="h-5"
-                                    />
+                                    <div className="w-35 mb-5">
+                                        <SkeletonLine
+                                            height="h-6"
+                                            width={100}
+                                            duration={1.5}
+                                        />
+                                    </div>
+                                    <SkeletonLines lines={4} random={true} />
                                 </s-section>
                             </s-stack>
                         </div>
                         <div className="md:col-span-5">
                             <s-stack gap="base">
                                 <s-section>
-                                    <SkeletonLines
-                                        lines={1}
-                                        random={true}
-                                        height="h-15"
-                                    />
+                                    <div className="w-35 mb-5">
+                                        <SkeletonLine
+                                            height="h-6"
+                                            width={100}
+                                            duration={1.5}
+                                        />
+                                    </div>
+                                    <SkeletonLines lines={1} random={true} />
                                 </s-section>
                                 <s-section>
-                                    <SkeletonLines
-                                        lines={5}
-                                        random={true}
-                                        height="h-4"
-                                    />
+                                    <div className="w-35 mb-5">
+                                        <SkeletonLine
+                                            height="h-6"
+                                            width={100}
+                                            duration={1.5}
+                                        />
+                                    </div>
+                                    <SkeletonLines lines={1} random={true} />
                                 </s-section>
                                 <s-section>
-                                    <SkeletonLines
-                                        lines={10}
-                                        random={true}
-                                        height="h-5"
-                                    />
+                                    <div className="w-35 mb-5">
+                                        <SkeletonLine
+                                            height="h-6"
+                                            width={100}
+                                            duration={1.5}
+                                        />
+                                    </div>
+                                    <SkeletonLines lines={10} random={true} />
                                 </s-section>
                             </s-stack>
                         </div>

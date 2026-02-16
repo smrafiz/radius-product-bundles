@@ -1,18 +1,19 @@
 "use client";
 
 import {
+    BUNDLE_STEP_FIELD_MAP,
     BundleCreationForm,
+    BundleCreationSkeleton,
     BundleFormData,
     BundleFormProvider,
     useBundleDataSync,
-    useBundleSubmit,
     useBundleStore,
+    useBundleSubmit,
     useEditBundle,
     useEditBundleTransform,
-    BUNDLE_STEP_FIELD_MAP,
 } from "@/features/bundles";
-import { DashboardSkeleton, GlobalForm, useAppNavigation } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
+import { GlobalForm, useAppNavigation } from "@/shared";
 
 export function EditBundlePage({ params }: { params: { id: string } }) {
     const { id: bundleId } = params;
@@ -46,7 +47,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                         Bundles
                     </button>
                 </TitleBar>
-                <DashboardSkeleton />
+                <BundleCreationSkeleton mode="edit" />
             </>
         );
     }

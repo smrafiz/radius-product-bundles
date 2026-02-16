@@ -133,3 +133,24 @@ export function prepareMediaInput(
         mediaContentType: "IMAGE",
     }));
 }
+
+/**
+ * Detect if a GraphQL response indicates the target product no longer exists.
+ */
+export function isProductNotFoundError<T>(result: {
+    data?: T;
+    errors?: Array<{ message: string }>;
+}): boolean {
+    const patterns = ["product does not exist", "product not found", "could not find"];
+    const matches = (msg: string) =>
+        patterns.some((p) => msg.toLowerCase().includes(p));
+
+    if (result.errors?.some((e) => matches(e.message))) return true;
+
+    const userErrors =
+        (result.data as any)?.productUpdate?.userErrors ??
+        (result.data as any)?.productDelete?.userErrors ??
+        [];
+
+    return userErrors.some((e: { message: string }) => matches(e.message));
+}

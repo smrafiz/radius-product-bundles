@@ -699,3 +699,17 @@ export async function unpublishBundle(bundleId: string, shop: string) {
         },
     });
 }
+
+/**
+ * Clear mainProductId/mainVariantId for all bundles referencing a deleted Shopify product.
+ */
+export async function clearMainProductByGid(
+    shop: string,
+    mainProductId: string,
+): Promise<number> {
+    const result = await prisma.bundle.updateMany({
+        where: { shop, mainProductId },
+        data: { mainProductId: null, mainVariantId: null },
+    });
+    return result.count;
+}

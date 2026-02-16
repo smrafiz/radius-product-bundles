@@ -1,10 +1,10 @@
 "use client";
 
-import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
+import { BundleCreationSkeleton } from "@/features/bundles";
 
 /**
  * Bundle creation page skeleton
  */
 export default function BundleCreateSkeleton() {
-    return <h1>Hello</h1>;
+    return <BundleCreationSkeleton mode="edit" />;
 }

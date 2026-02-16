@@ -411,10 +411,10 @@ export function SettingsTools() {
             <s-modal id="webhook-check-modal" heading="Registered Webhooks">
                 {webhookCheckResult ? (
                     <s-stack gap="base">
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
-                            alignItems="center"
+                        <s-grid
+                            gridTemplateColumns="1fr auto"
+                            alignItems="start"
+                            gap="large-400"
                         >
                             <s-heading>Status</s-heading>
                             {webhookCheckResult.missingTopics.length === 0 ? (
@@ -427,46 +427,43 @@ export function SettingsTools() {
                                     missing webhook(s)
                                 </s-badge>
                             )}
-                        </s-stack>
+                        </s-grid>
 
                         <s-divider />
 
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
+                        <s-grid
+                            gridTemplateColumns="1fr auto"
                             alignItems="start"
+                            gap="large-400"
                         >
                             <s-heading>
                                 Registered ({webhookCheckResult.totalCount})
                             </s-heading>
-                            <s-stack
+
+                            <s-grid
+                                gridTemplateColumns="repeat(3, auto)"
                                 gap="small-200"
-                                alignItems="end"
-                                direction="inline"
                             >
                                 {webhookCheckResult.webhooks.map((wh) => (
-                                    <s-stack key={wh.id} gap="small-100">
-                                        <s-badge key={wh.topic} tone="success">
-                                            {wh.topic}
-                                        </s-badge>
-                                    </s-stack>
+                                    <s-badge key={wh.id} tone="success">
+                                        {wh.topic}
+                                    </s-badge>
                                 ))}
-                            </s-stack>
-                        </s-stack>
+                            </s-grid>
+                        </s-grid>
 
                         {webhookCheckResult.missingTopics.length > 0 && (
                             <>
                                 <s-divider />
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
+                                <s-grid
+                                    gridTemplateColumns="1fr auto"
                                     alignItems="start"
+                                    gap="large-400"
                                 >
                                     <s-heading>Missing</s-heading>
-                                    <s-stack
-                                        gap="small-200"
-                                        alignItems="end"
-                                        direction="inline"
+                                    <s-grid
+                                        gridTemplateColumns="repeat(3, auto)"
+                                        gap="small"
                                     >
                                         {webhookCheckResult.missingTopics.map(
                                             (topic) => (
@@ -478,36 +475,32 @@ export function SettingsTools() {
                                                 </s-badge>
                                             ),
                                         )}
-                                    </s-stack>
-                                </s-stack>
+                                    </s-grid>
+                                </s-grid>
                             </>
                         )}
 
                         <s-divider />
 
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
+                        <s-grid
+                            gridTemplateColumns="1fr auto"
                             alignItems="start"
+                            gap="large-400"
                         >
-                            <s-stack gap="small-200">
-                                <s-heading>
-                                    GDPR ({webhookCheckResult.gdprTopics.length}
-                                    )
-                                </s-heading>
-                            </s-stack>
-                            <s-stack
+                            <s-heading>
+                                GDPR ({webhookCheckResult.gdprTopics.length})
+                            </s-heading>
+                            <s-grid
+                                gridTemplateColumns="repeat(3, auto)"
                                 gap="small-200"
-                                alignItems="end"
-                                direction="inline"
                             >
                                 {webhookCheckResult.gdprTopics.map((topic) => (
                                     <s-badge key={topic} tone="info">
                                         {topic}
                                     </s-badge>
                                 ))}
-                            </s-stack>
-                        </s-stack>
+                            </s-grid>
+                        </s-grid>
                     </s-stack>
                 ) : (
                     <s-text color="subdued">No results yet.</s-text>
@@ -529,10 +522,10 @@ export function SettingsTools() {
             >
                 {webhookRegisterResult ? (
                     <s-stack gap="base">
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
-                            alignItems="center"
+                        <s-grid
+                            gridTemplateColumns="1fr auto"
+                            alignItems="start"
+                            gap="large-400"
                         >
                             <s-heading>Status</s-heading>
                             <s-badge
@@ -551,21 +544,20 @@ export function SettingsTools() {
                                       ? "Partial success"
                                       : "Registration failed"}
                             </s-badge>
-                        </s-stack>
+                        </s-grid>
 
                         {webhookRegisterResult.registered.length > 0 && (
                             <>
                                 <s-divider />
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
+                                <s-grid
+                                    gridTemplateColumns="1fr auto"
                                     alignItems="start"
+                                    gap="large-400"
                                 >
                                     <s-heading>Registered</s-heading>
-                                    <s-stack
+                                    <s-grid
+                                        gridTemplateColumns="repeat(3, auto)"
                                         gap="small-200"
-                                        alignItems="end"
-                                        direction="inline"
                                     >
                                         {webhookRegisterResult.registered.map(
                                             (topic) => (
@@ -577,18 +569,18 @@ export function SettingsTools() {
                                                 </s-badge>
                                             ),
                                         )}
-                                    </s-stack>
-                                </s-stack>
+                                    </s-grid>
+                                </s-grid>
                             </>
                         )}
 
                         {webhookRegisterResult.failed.length > 0 && (
                             <>
                                 <s-divider />
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
+                                <s-grid
+                                    gridTemplateColumns="1fr auto"
                                     alignItems="start"
+                                    gap="large-400"
                                 >
                                     <s-heading>Failed</s-heading>
                                     <s-stack gap="small-200" alignItems="end">
@@ -609,7 +601,7 @@ export function SettingsTools() {
                                             ),
                                         )}
                                     </s-stack>
-                                </s-stack>
+                                </s-grid>
                             </>
                         )}
                     </s-stack>

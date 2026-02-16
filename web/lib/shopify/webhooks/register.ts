@@ -4,6 +4,7 @@ import { setupGDPRWebHooks } from "@/lib/shopify";
 import {
     handleAppUninstalled,
     handleOrdersCreate,
+    handleProductsDelete,
     handleShopUpdate,
 } from "@/features/webhooks/handlers";
 
@@ -45,6 +46,16 @@ export function addHandlers() {
                         `[Webhooks] ORDERS_CREATE received for ${shop}`,
                     );
                     await handleOrdersCreate(shop, body);
+                },
+            },
+            PRODUCTS_DELETE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop, body) => {
+                    console.log(
+                        `[Webhooks] PRODUCTS_DELETE received for ${shop}`,
+                    );
+                    await handleProductsDelete(shop, body);
                 },
             },
         });

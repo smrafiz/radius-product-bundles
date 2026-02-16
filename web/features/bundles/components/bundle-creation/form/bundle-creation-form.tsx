@@ -31,7 +31,6 @@ export function BundleCreationForm({
                     Bundles
                 </button>
             </TitleBar>
-            {/*<BundleCreationSkeleton />*/}
 
             <s-stack
                 gap="large"

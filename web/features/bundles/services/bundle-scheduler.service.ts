@@ -8,6 +8,7 @@
  */
 
 import {
+    clearMainProductByGid,
     findBundlesReadyToActivate,
     findBundlesReadyToDeactivate,
     findShopsWithPendingTransitions,
@@ -21,9 +22,10 @@ import {
     findOfflineSessionByShop,
     NoSessionFoundError,
 } from "@/shared/repositories/session-storage";
-import { getShopifyProductStatus, SchedulerResult } from "@/features/bundles";
 import { syncAllSettingsToMetafields } from "@/lib/graphql/operations";
 import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
+import { getShopifyProductStatus, SchedulerResult } from "@/features/bundles";
+import { isProductNotFoundError } from "@/features/bundles/services/shopify-operation.service";
 
 async function updateShopifyProductStatus(
     shop: string,
@@ -38,6 +40,14 @@ async function updateShopifyProductStatus(
         shop,
         accessToken,
     });
+    if (isProductNotFoundError(result)) {
+        console.warn(
+            `[Scheduler] Product ${productId} no longer exists, clearing reference`,
+        );
+        await clearMainProductByGid(shop, productId);
+        return;
+    }
+
     if (result.errors?.length) {
         console.error(
             `[Scheduler] Product ${productId} status update failed:`,

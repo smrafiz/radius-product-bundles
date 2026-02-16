@@ -27,6 +27,7 @@ import {
     deleteMultipleBundles,
     deleteSingleBundleService,
     duplicateBundleService,
+    isProductNotFoundError,
     updateBundleService,
     updateBundleStatusService,
 } from "@/features/bundles/services";
@@ -40,12 +41,8 @@ import {
 import { revalidatePath } from "next/cache";
 import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
 import { handleZodValidationError } from "@/shared/utils/error/error-handlers";
-import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
-import {
-    ensureBundleDiscount,
-    ensureMetafieldDefinition,
-    handleSessionToken,
-} from "@/lib/shopify";
+import { ensureBundleDiscount, ensureMetafieldDefinition, handleSessionToken, } from "@/lib/shopify";
+import { clearMainProductByGid, findBundleByIdWithAllRelations, } from "@/features/bundles/repositories";
 
 /**
  * Update bundle status
@@ -72,14 +69,21 @@ export async function updateBundleStatusAction(
 
         // Sync Shopify product status
         if (result.bundle?.mainProductId) {
-            await executeGraphQLMutation<ProductUpdateMutation>({
-                query: ProductUpdateDocument,
-                variables: {
-                    id: result.bundle.mainProductId,
-                    status: getShopifyProductStatus(status),
-                },
-                sessionToken,
-            });
+            const updateResult =
+                await executeGraphQLMutation<ProductUpdateMutation>({
+                    query: ProductUpdateDocument,
+                    variables: {
+                        id: result.bundle.mainProductId,
+                        status: getShopifyProductStatus(status),
+                    },
+                    sessionToken,
+                });
+            if (isProductNotFoundError(updateResult)) {
+                console.warn(
+                    `[updateBundleStatus] Product ${result.bundle.mainProductId} no longer exists, clearing reference`,
+                );
+                await clearMainProductByGid(shop, result.bundle.mainProductId);
+            }
         }
 
         // Sync metafields so storefront reflects the status change
@@ -128,11 +132,18 @@ export async function bulkToggleBundleStatusAction(
         // Sync Shopify product statuses
         const productStatus = getShopifyProductStatus(currentStatus);
         for (const productId of result.mainProductIds ?? []) {
-            await executeGraphQLMutation<ProductUpdateMutation>({
-                query: ProductUpdateDocument,
-                variables: { id: productId, status: productStatus },
-                sessionToken,
-            });
+            const updateResult =
+                await executeGraphQLMutation<ProductUpdateMutation>({
+                    query: ProductUpdateDocument,
+                    variables: { id: productId, status: productStatus },
+                    sessionToken,
+                });
+            if (isProductNotFoundError(updateResult)) {
+                console.warn(
+                    `[bulkToggleStatus] Product ${productId} no longer exists, clearing reference`,
+                );
+                await clearMainProductByGid(shop, productId);
+            }
         }
 
         // Sync metafields so storefront reflects the status changes
