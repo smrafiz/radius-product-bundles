@@ -12,8 +12,9 @@ import type { z } from "zod";
 import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSettingsStore } from "@/features/settings";
+import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
+import { BundleCreationSkeleton } from "@/features/bundles";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
-import { blockSaveBar, DashboardSkeleton, VALIDATION_ERROR } from "@/shared";
 
 /**
  * Provides form context for bundle creation and editing.
@@ -190,7 +191,7 @@ export function BundleFormProvider({
     }, [watch, setBundleData, bundleType]);
 
     if (isWaitingForSettings) {
-        return <DashboardSkeleton />;
+        return <BundleCreationSkeleton mode="create" />;
     }
 
     return <FormProvider {...form}>{children}</FormProvider>;

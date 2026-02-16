@@ -41,8 +41,9 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
 
                     {bundleType.bundleImage && (
                         <s-box>
-                            <div className="flex items-center py-8 px-6 justify-center bg-[#f7f7f7] rounded-md min-h-[145px] w-full">
-                                <img
+                            <div className="flex items-center py-8 px-6 justify-center bg-[#f7f7f7] rounded-md min-h-36.25 w-full">
+                                <s-image
+                                    aspectRatio="16/9"
                                     src={bundleType.bundleImage}
                                     alt={bundleType.label}
                                 />
