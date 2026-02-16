@@ -19,11 +19,7 @@ import {
 } from "@/features/bundles/services";
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
-import {
-    ensureMetafieldDefinition,
-    ensureBundleDiscount,
-    handleSessionToken,
-} from "@/lib/shopify";
+import { ensureBundleDiscount, ensureMetafieldDefinition, handleSessionToken, } from "@/lib/shopify";
 import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
 import {
     addBundleIdToProducts,
@@ -36,8 +32,11 @@ import {
     bundleSchema,
     BundleStatus,
     CreateBundleActionInput,
+    getShopifyProductStatus,
 } from "@/features/bundles";
+import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
 import { handleZodValidationError } from "@/shared/utils/error/error-handlers";
+import { ProductUpdateDocument, ProductUpdateMutation, } from "@/lib/graphql/generated/graphql";
 
 /**
  * Update bundle status
@@ -61,6 +60,18 @@ export async function updateBundleStatusAction(
             startDate: startDate ? new Date(startDate) : undefined,
             endDate: endDate ? new Date(endDate) : undefined,
         });
+
+        // Sync Shopify product status
+        if (result.bundle?.mainProductId) {
+            await executeGraphQLMutation<ProductUpdateMutation>({
+                query: ProductUpdateDocument,
+                variables: {
+                    id: result.bundle.mainProductId,
+                    status: getShopifyProductStatus(status),
+                },
+                sessionToken,
+            });
+        }
 
         // Sync metafields so storefront reflects the status change
         await syncAllSettingsToMetafields(sessionToken, shop);
@@ -104,6 +115,16 @@ export async function bulkToggleBundleStatusAction(
             currentStatus === "ACTIVE"
                 ? await bulkActivateBundlesService({ bundleIds, shop })
                 : await bulkDraftBundlesService({ bundleIds, shop });
+
+        // Sync Shopify product statuses
+        const productStatus = getShopifyProductStatus(currentStatus);
+        for (const productId of result.mainProductIds ?? []) {
+            await executeGraphQLMutation<ProductUpdateMutation>({
+                query: ProductUpdateDocument,
+                variables: { id: productId, status: productStatus },
+                sessionToken,
+            });
+        }
 
         // Sync metafields so storefront reflects the status changes
         await syncAllSettingsToMetafields(sessionToken, shop);

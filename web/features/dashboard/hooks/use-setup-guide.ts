@@ -19,6 +19,7 @@ import {
     AUTO_DETECTED_STEPS,
     SETUP_STEP_KEYS,
 } from "@/features/dashboard/constants/setup-guide.constants";
+import { invalidateBundleCache } from "@/features/bundles/utils/bundle-cache";
 
 export function useSetupGuide() {
     const app = useAppBridge();
@@ -73,6 +74,12 @@ export function useSetupGuide() {
         },
         onSuccess: invalidate,
     });
+
+    useEffect(() => {
+        if (data?.bundlesTransitioned) {
+            void invalidateBundleCache(queryClient);
+        }
+    }, [data?.bundlesTransitioned]);
 
     useEffect(() => {
         if (!data || data.dismissed || data.progress.appEmbedEnabled) return;

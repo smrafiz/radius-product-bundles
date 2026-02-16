@@ -68,6 +68,7 @@ function resolveAuth(auth: MetafieldAuth): {
     if (typeof auth === "string") {
         return { sessionToken: auth };
     }
+
     return { shop: auth.shop, accessToken: auth.accessToken };
 }
 

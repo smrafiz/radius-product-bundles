@@ -185,6 +185,27 @@ export async function findBundlesByIds(
 }
 
 /**
+ * Find mainProductIds for given bundle IDs
+ */
+export async function findMainProductIdsByBundleIds(
+    bundleIds: string[],
+    tx?: Prisma.TransactionClient,
+): Promise<string[]> {
+    if (!bundleIds.length) return [];
+
+    const client = tx || prisma;
+
+    const bundles = await client.bundle.findMany({
+        where: { id: { in: bundleIds } },
+        select: { mainProductId: true },
+    });
+
+    return bundles
+        .map((b) => b.mainProductId)
+        .filter((id): id is string => id !== null);
+}
+
+/**
  * Find bundles by shop with filters and pagination
  */
 export async function findBundlesByShop(
@@ -371,26 +392,28 @@ export async function findAppSettingsByShop(
 /**
  * Finds SCHEDULED bundles where startDate has arrived.
  */
-export async function findBundlesReadyToActivate() {
+export async function findBundlesReadyToActivate(shop?: string) {
     return prisma.bundle.findMany({
         where: {
             status: "SCHEDULED",
             startDate: { not: null, lte: new Date() },
+            ...(shop && { shop }),
         },
-        select: { id: true, shop: true, name: true, startDate: true },
+        select: { id: true, shop: true, name: true, startDate: true, mainProductId: true },
     });
 }
 
 /**
  * Finds ACTIVE bundles where endDate has passed.
  */
-export async function findBundlesReadyToDeactivate() {
+export async function findBundlesReadyToDeactivate(shop?: string) {
     return prisma.bundle.findMany({
         where: {
             status: "ACTIVE",
             endDate: { not: null, lte: new Date() },
+            ...(shop && { shop }),
         },
-        select: { id: true, shop: true, name: true, endDate: true },
+        select: { id: true, shop: true, name: true, endDate: true, mainProductId: true },
     });
 }
 

@@ -16,4 +16,5 @@ export interface SetupGuideData {
     progress: SetupProgress;
     shopDomain: string;
     apiKey: string;
+    bundlesTransitioned?: boolean;
 }

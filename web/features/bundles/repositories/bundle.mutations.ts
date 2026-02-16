@@ -13,6 +13,8 @@ import {
 } from "@/features/bundles";
 import {
     findBundleByIdWithAllRelations,
+    findBundlesByIds,
+    findMainProductIdsByBundleIds,
     verifyBundleOwnership,
     verifyBundleOwnershipTx,
     verifyMultipleBundlesOwnershipTx,
@@ -281,6 +283,7 @@ export async function updateBundleStatusById(
             startDate: true,
             endDate: true,
             updatedAt: true,
+            mainProductId: true,
         },
     });
 }
@@ -297,6 +300,49 @@ export async function updateBundlesStatusByIds(
         where: { id: { in: bundleIds } },
         data: { status },
     });
+}
+
+/**
+ * Bulk update bundle statuses in a single atomic transaction.
+ * Verifies ownership, fetches mainProductIds, updates statuses.
+ */
+export async function bulkUpdateBundleStatuses(
+    bundleIds: string[],
+    shop: string,
+    status: BundleStatus,
+) {
+    return prisma.$transaction(
+        async (tx) => {
+            const existingBundles = await findBundlesByIds(bundleIds, shop, tx);
+
+            if (existingBundles.length === 0) {
+                return {
+                    updatedCount: 0,
+                    failedCount: bundleIds.length,
+                    mainProductIds: [] as string[],
+                };
+            }
+
+            const foundIds = existingBundles.map((b) => b.id);
+            const notFoundIds = bundleIds.filter(
+                (id) => !foundIds.includes(id),
+            );
+
+            const mainProductIds = await findMainProductIdsByBundleIds(
+                foundIds,
+                tx,
+            );
+
+            await updateBundlesStatusByIds(tx, foundIds, status);
+
+            return {
+                updatedCount: foundIds.length,
+                failedCount: notFoundIds.length,
+                mainProductIds,
+            };
+        },
+        { timeout: 15000 },
+    );
 }
 
 /*

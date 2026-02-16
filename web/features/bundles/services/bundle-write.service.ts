@@ -29,20 +29,17 @@ import {
     validateBundleData,
 } from "@/features/bundles/services";
 import {
+    bulkUpdateBundleStatuses,
     checkNameConflict,
     createBundleWithRelations,
     deleteBundlesWithRelations,
     deleteBundleWithRelations,
     findBundleByIdWithAllRelations,
-    findBundlesByIds,
     generateUniqueBundleName,
-    updateBundlesStatusByIds,
     updateBundleStatusById,
     updateBundleWithRelations,
 } from "@/features/bundles/repositories";
 import { formatValidationErrorsAsString } from "@/shared";
-import { prisma } from "@/shared/repositories/prisma-connect";
-
 // ==========================================
 // CREATE Operations
 // ==========================================
@@ -229,42 +226,7 @@ export async function bulkUpdateBundleStatusService(
         };
     }
 
-    // Single atomic transaction for all updates
-    const result = await prisma.$transaction(
-        async (tx) => {
-            // Verify all bundles belong to the shop
-            const existingBundles = await findBundlesByIds(bundleIds, shop, tx);
-
-            // Check if all bundles were found
-            if (existingBundles.length === 0) {
-                return {
-                    updatedBundles: [],
-                    updatedCount: 0,
-                    failedCount: bundleIds.length,
-                };
-            }
-
-            const foundIds = existingBundles.map((b) => b.id);
-            const notFoundIds = bundleIds.filter(
-                (id) => !foundIds.includes(id),
-            );
-
-            // Update all found bundles
-            await updateBundlesStatusByIds(tx, foundIds, status);
-
-            // Fetch updated bundles
-            const updatedBundles = await findBundlesByIds(foundIds, shop, tx);
-
-            return {
-                updatedBundles,
-                updatedCount: updatedBundles.length,
-                failedCount: notFoundIds.length,
-            };
-        },
-        {
-            timeout: 15000, // 15 seconds for bulk operations
-        },
-    );
+    const result = await bulkUpdateBundleStatuses(bundleIds, shop, status);
 
     // Generate message
     const message =
@@ -275,6 +237,7 @@ export async function bulkUpdateBundleStatusService(
     return {
         success: true,
         message,
+        mainProductIds: result.mainProductIds,
     };
 }
 

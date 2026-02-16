@@ -187,6 +187,7 @@ export interface BulkUpdateBundleStatusInput {
 export interface BulkUpdateBundleStatusResult {
     success: boolean;
     message: string;
+    mainProductIds?: string[];
 }
 
 /*
@@ -271,4 +272,14 @@ export interface UpdateBundleServiceResponse {
     message: string;
     errors?: Record<string, { _errors: string[] }> | null;
     bundle?: TransformedBundle | null;
+}
+
+/*
+ * Schedule result
+ */
+export interface SchedulerResult {
+    processedShops: number;
+    activated: number;
+    deactivated: number;
+    errors: Array<{ shop: string; error: string }>;
 }

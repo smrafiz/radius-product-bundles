@@ -8,19 +8,108 @@
  */
 
 import {
-    findShopsWithPendingTransitions,
     findBundlesReadyToActivate,
     findBundlesReadyToDeactivate,
+    findShopsWithPendingTransitions,
     updateBundleStatusById,
 } from "@/features/bundles/repositories";
-import { findOfflineSessionByShop } from "@/shared/repositories/session-storage";
+import {
+    ProductUpdateDocument,
+    ProductUpdateMutation,
+} from "@/lib/graphql/generated/graphql";
+import {
+    findOfflineSessionByShop,
+    NoSessionFoundError,
+} from "@/shared/repositories/session-storage";
+import { getShopifyProductStatus, SchedulerResult } from "@/features/bundles";
 import { syncAllSettingsToMetafields } from "@/lib/graphql/operations";
+import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
 
-export interface SchedulerResult {
-    processedShops: number;
-    activated: number;
-    deactivated: number;
-    errors: Array<{ shop: string; error: string }>;
+async function updateShopifyProductStatus(
+    shop: string,
+    accessToken: string,
+    productId: string,
+    bundleStatus: "ACTIVE" | "PAUSED",
+) {
+    const productStatus = getShopifyProductStatus(bundleStatus);
+    const result = await executeGraphQLMutation<ProductUpdateMutation>({
+        query: ProductUpdateDocument,
+        variables: { id: productId, status: productStatus },
+        shop,
+        accessToken,
+    });
+    if (result.errors?.length) {
+        console.error(
+            `[Scheduler] Product ${productId} status update failed:`,
+            result.errors[0].message,
+        );
+    }
+}
+
+export async function processScheduledBundlesForShop(
+    shop: string,
+    accessToken: string,
+): Promise<SchedulerResult> {
+    const result: SchedulerResult = {
+        processedShops: 0,
+        activated: 0,
+        deactivated: 0,
+        errors: [],
+    };
+
+    try {
+        const auth = { shop, accessToken };
+        let transitioned = false;
+
+        const toActivate = await findBundlesReadyToActivate(shop);
+        for (const bundle of toActivate) {
+            await updateBundleStatusById(bundle.id, shop, "ACTIVE");
+            if (bundle.mainProductId) {
+                await updateShopifyProductStatus(
+                    shop,
+                    accessToken,
+                    bundle.mainProductId,
+                    "ACTIVE",
+                );
+            }
+            result.activated++;
+            transitioned = true;
+        }
+
+        const toDeactivate = await findBundlesReadyToDeactivate(shop);
+        for (const bundle of toDeactivate) {
+            await updateBundleStatusById(bundle.id, shop, "PAUSED");
+            if (bundle.mainProductId) {
+                await updateShopifyProductStatus(
+                    shop,
+                    accessToken,
+                    bundle.mainProductId,
+                    "PAUSED",
+                );
+            }
+            result.deactivated++;
+            transitioned = true;
+        }
+
+        if (transitioned) {
+            const syncResult = await syncAllSettingsToMetafields(auth, shop);
+            if (!syncResult.success) {
+                result.errors.push({
+                    shop,
+                    error: `Metafield sync failed: ${syncResult.error}`,
+                });
+            }
+        }
+
+        result.processedShops = 1;
+    } catch (error) {
+        const message =
+            error instanceof Error ? error.message : "Unknown error";
+        console.error(`[Scheduler] Error processing shop ${shop}:`, error);
+        result.errors.push({ shop, error: message });
+    }
+
+    return result;
 }
 
 export async function processScheduledBundles(): Promise<SchedulerResult> {
@@ -44,12 +133,24 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
 
         for (const shop of shops) {
             try {
-                // Get offline access token for this shop
-                const session = await findOfflineSessionByShop(shop);
-                if (!session?.accessToken) {
+                let session;
+                try {
+                    session = await findOfflineSessionByShop(shop);
+                } catch (error) {
+                    if (error instanceof NoSessionFoundError) {
+                        result.errors.push({
+                            shop,
+                            error: "No offline session found",
+                        });
+                        continue;
+                    }
+                    throw error;
+                }
+
+                if (!session.accessToken) {
                     result.errors.push({
                         shop,
-                        error: "No offline access token found",
+                        error: "Offline session has no access token",
                     });
                     continue;
                 }
@@ -58,12 +159,18 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
                 let transitioned = false;
 
                 // Activate SCHEDULED bundles whose startDate has arrived
-                const toActivate = (
-                    await findBundlesReadyToActivate()
-                ).filter((b) => b.shop === shop);
+                const toActivate = await findBundlesReadyToActivate(shop);
 
                 for (const bundle of toActivate) {
                     await updateBundleStatusById(bundle.id, shop, "ACTIVE");
+                    if (bundle.mainProductId) {
+                        await updateShopifyProductStatus(
+                            shop,
+                            session.accessToken,
+                            bundle.mainProductId,
+                            "ACTIVE",
+                        );
+                    }
                     console.log(
                         `[Scheduler] Activated bundle ${bundle.id} (${bundle.name}) for ${shop}`,
                     );
@@ -72,12 +179,18 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
                 }
 
                 // Deactivate ACTIVE bundles whose endDate has passed
-                const toDeactivate = (
-                    await findBundlesReadyToDeactivate()
-                ).filter((b) => b.shop === shop);
+                const toDeactivate = await findBundlesReadyToDeactivate(shop);
 
                 for (const bundle of toDeactivate) {
                     await updateBundleStatusById(bundle.id, shop, "PAUSED");
+                    if (bundle.mainProductId) {
+                        await updateShopifyProductStatus(
+                            shop,
+                            session.accessToken,
+                            bundle.mainProductId,
+                            "PAUSED",
+                        );
+                    }
                     console.log(
                         `[Scheduler] Paused expired bundle ${bundle.id} (${bundle.name}) for ${shop}`,
                     );
@@ -106,9 +219,7 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
                 result.processedShops++;
             } catch (error) {
                 const message =
-                    error instanceof Error
-                        ? error.message
-                        : "Unknown error";
+                    error instanceof Error ? error.message : "Unknown error";
                 console.error(
                     `[Scheduler] Error processing shop ${shop}:`,
                     error,
@@ -121,9 +232,7 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
         result.errors.push({
             shop: "global",
             error:
-                error instanceof Error
-                    ? error.message
-                    : "Unknown fatal error",
+                error instanceof Error ? error.message : "Unknown fatal error",
         });
     }
 

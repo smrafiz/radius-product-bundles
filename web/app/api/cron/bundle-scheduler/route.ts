@@ -7,7 +7,7 @@ import { processScheduledBundles } from "@/features/bundles/services";
  * and pauses ACTIVE bundles whose endDate has passed.
  *
  * Protected by CRON_SECRET bearer token.
- * Schedule: every 5 minutes (configured in vercel.json or external cron).
+ * Schedule: Once per day (configured in vercel.json or external cron).
  */
 export async function GET(request: Request) {
     const authHeader = request.headers.get("authorization");
