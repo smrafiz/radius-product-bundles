@@ -18,6 +18,8 @@ import {
 } from "@/features/bundles/services";
 import { ApiResponse } from "@/shared";
 import {
+    GetPublicationsDocument,
+    GetPublicationsQuery,
     ProductCreateDocument,
     ProductCreateMutation,
     ProductCreateMutationVariables,
@@ -27,11 +29,14 @@ import {
     ProductUpdateMutation,
     ProductVariantsBulkUpdateDocument,
     ProductVariantsBulkUpdateMutation,
+    PublishablePublishDocument,
+    PublishablePublishMutation,
     StagedUploadsCreateDocument,
     StagedUploadsCreateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
+import { executeGraphQLQuery } from "@/lib/graphql/client/server-action";
 
 /**
  * Create a Shopify product for a bundle.
@@ -128,6 +133,9 @@ export async function createBundleProductAction(
                 }
             }
         }
+
+        // Publish to Online Store sales channel
+        await publishProductToOnlineStore(sessionToken, product.id);
 
         const productData = formatProductForStorage(product);
 
@@ -623,5 +631,49 @@ export async function deleteBundleProductAction(
                     : "Failed to delete product",
             data: null,
         };
+    }
+}
+
+async function publishProductToOnlineStore(
+    sessionToken: string,
+    productId: string,
+) {
+    try {
+        const pubResult = await executeGraphQLQuery<GetPublicationsQuery>({
+            query: GetPublicationsDocument,
+            variables: { first: 20 },
+            sessionToken,
+        });
+
+        const publications = pubResult.data?.publications?.nodes ?? [];
+        const onlineStore = publications.find(
+            (p) => p.supportsFuturePublishing,
+        );
+
+        if (!onlineStore) {
+            console.warn(
+                "[publishProduct] Online Store publication not found",
+            );
+            return;
+        }
+
+        const publishResult =
+            await executeGraphQLMutation<PublishablePublishMutation>({
+                query: PublishablePublishDocument,
+                variables: {
+                    id: productId,
+                    input: [{ publicationId: onlineStore.id }],
+                },
+                sessionToken,
+            });
+
+        if (publishResult.errors?.length) {
+            console.warn(
+                "[publishProduct] Publish warning:",
+                publishResult.errors[0].message,
+            );
+        }
+    } catch (error) {
+        console.warn("[publishProduct] Failed to publish:", error);
     }
 }

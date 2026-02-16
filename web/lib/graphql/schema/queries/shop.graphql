@@ -19,3 +19,12 @@ query GetShopInfo {
         ianaTimezone
     }
 }
+
+query GetPublications($first: Int!) {
+    publications(first: $first) {
+        nodes {
+            id
+            supportsFuturePublishing
+        }
+    }
+}

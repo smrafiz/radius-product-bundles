@@ -55,9 +55,7 @@ interface SyncResult extends MetafieldResult {
  * Accepts either a JWT sessionToken (from server actions) or
  * direct shop + accessToken (from cron/background jobs).
  */
-export type MetafieldAuth =
-    | string
-    | { shop: string; accessToken: string };
+export type MetafieldAuth = string | { shop: string; accessToken: string };
 
 /** Converts MetafieldAuth to GraphQL request auth fields. */
 function resolveAuth(auth: MetafieldAuth): {

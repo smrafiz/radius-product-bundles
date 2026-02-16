@@ -8,20 +8,6 @@
  */
 
 import {
-    bulkActivateBundlesService,
-    bulkDraftBundlesService,
-    createBundleService,
-    deleteMultipleBundles,
-    deleteSingleBundleService,
-    duplicateBundleService,
-    updateBundleService,
-    updateBundleStatusService,
-} from "@/features/bundles/services";
-import { ApiResponse } from "@/shared";
-import { revalidatePath } from "next/cache";
-import { ensureBundleDiscount, ensureMetafieldDefinition, handleSessionToken, } from "@/lib/shopify";
-import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
-import {
     addBundleIdToProducts,
     removeBundleIdFromProducts,
     syncAllSettingsToMetafields,
@@ -34,9 +20,32 @@ import {
     CreateBundleActionInput,
     getShopifyProductStatus,
 } from "@/features/bundles";
+import {
+    bulkActivateBundlesService,
+    bulkDraftBundlesService,
+    createBundleService,
+    deleteMultipleBundles,
+    deleteSingleBundleService,
+    duplicateBundleService,
+    updateBundleService,
+    updateBundleStatusService,
+} from "@/features/bundles/services";
+import { ApiResponse } from "@/shared";
+import {
+    ProductDeleteDocument,
+    ProductDeleteMutation,
+    ProductUpdateDocument,
+    ProductUpdateMutation,
+} from "@/lib/graphql/generated/graphql";
+import { revalidatePath } from "next/cache";
 import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
 import { handleZodValidationError } from "@/shared/utils/error/error-handlers";
-import { ProductUpdateDocument, ProductUpdateMutation, } from "@/lib/graphql/generated/graphql";
+import { findBundleByIdWithAllRelations } from "@/features/bundles/repositories";
+import {
+    ensureBundleDiscount,
+    ensureMetafieldDefinition,
+    handleSessionToken,
+} from "@/lib/shopify";
 
 /**
  * Update bundle status
@@ -193,6 +202,22 @@ export async function deleteBundleAction(
             }
         }
 
+        // Delete Shopify standalone product if one was created
+        if (bundle?.mainProductId) {
+            const deleteResult =
+                await executeGraphQLMutation<ProductDeleteMutation>({
+                    query: ProductDeleteDocument,
+                    variables: { productId: bundle.mainProductId },
+                    sessionToken,
+                });
+            if (deleteResult.errors?.length) {
+                console.warn(
+                    "[deleteBundle] Shopify product cleanup warning:",
+                    deleteResult.errors[0].message,
+                );
+            }
+        }
+
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
 
@@ -235,8 +260,9 @@ export async function deleteBundlesAction(
             };
         }
 
-        // Get all product IDs from all bundles before deletion
+        // Get all product IDs and mainProductIds from all bundles before deletion
         const bundleProductMap = new Map<string, string[]>();
+        const mainProductIds: string[] = [];
         for (const bundleId of bundleIds) {
             const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
             if (bundle?.bundleProducts) {
@@ -244,6 +270,9 @@ export async function deleteBundlesAction(
                     bundleId,
                     bundle.bundleProducts.map((bp) => bp.productId),
                 );
+            }
+            if (bundle?.mainProductId) {
+                mainProductIds.push(bundle.mainProductId);
             }
         }
 
@@ -269,6 +298,22 @@ export async function deleteBundlesAction(
                         metafieldResult.error,
                     );
                 }
+            }
+        }
+
+        // Delete Shopify standalone products
+        for (const productId of mainProductIds) {
+            const deleteResult =
+                await executeGraphQLMutation<ProductDeleteMutation>({
+                    query: ProductDeleteDocument,
+                    variables: { productId },
+                    sessionToken,
+                });
+            if (deleteResult.errors?.length) {
+                console.warn(
+                    `[deleteBundles] Shopify product cleanup warning for ${productId}:`,
+                    deleteResult.errors[0].message,
+                );
             }
         }
 

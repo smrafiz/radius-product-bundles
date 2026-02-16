@@ -399,7 +399,13 @@ export async function findBundlesReadyToActivate(shop?: string) {
             startDate: { not: null, lte: new Date() },
             ...(shop && { shop }),
         },
-        select: { id: true, shop: true, name: true, startDate: true, mainProductId: true },
+        select: {
+            id: true,
+            shop: true,
+            name: true,
+            startDate: true,
+            mainProductId: true,
+        },
     });
 }
 
@@ -413,7 +419,13 @@ export async function findBundlesReadyToDeactivate(shop?: string) {
             endDate: { not: null, lte: new Date() },
             ...(shop && { shop }),
         },
-        select: { id: true, shop: true, name: true, endDate: true, mainProductId: true },
+        select: {
+            id: true,
+            shop: true,
+            name: true,
+            endDate: true,
+            mainProductId: true,
+        },
     });
 }
 
