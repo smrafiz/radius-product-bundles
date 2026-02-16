@@ -427,17 +427,12 @@ declare global {
         private initStandaloneMode(): void {
             this.container.style.display = "none";
 
-            if (
-                this.enableAnalytics &&
-                !(window as any).Shopify?.designMode
-            ) {
+            if (this.enableAnalytics && !(window as any).Shopify?.designMode) {
                 document.dispatchEvent(
                     new CustomEvent("bundle:viewed", {
                         detail: {
                             bundleId: this.bundleId,
-                            productId: this.extractNumericId(
-                                this.productId,
-                            ),
+                            productId: this.extractNumericId(this.productId),
                             isStandalone: true,
                         },
                         bubbles: true,
@@ -450,8 +445,7 @@ declare global {
             ) as HTMLFormElement | null;
 
             if (form) {
-                const bundleName =
-                    this.bundleStructure?.name || "Bundle";
+                const bundleName = this.bundleStructure?.name || "Bundle";
                 this.injectHiddenInput(
                     form,
                     "properties[_bundle_id]",
@@ -499,28 +493,37 @@ declare global {
                           ? input.href
                           : (input as Request).url;
 
-                const result = originalFetch.apply(window, args);
-
                 if (url.includes("/cart/add")) {
+                    // Inject bundle properties into the request body before sending
+                    // so _bundle_id is set on line items regardless of theme implementation
+                    const init = args[1] as RequestInit | undefined;
+                    const modifiedInit = init?.body
+                        ? {
+                              ...init,
+                              body: self.injectLineItemProperties(init.body),
+                          }
+                        : init;
+
+                    const result = originalFetch.call(
+                        window,
+                        input,
+                        modifiedInit,
+                    );
+
                     return result.then(async (response) => {
                         if (response.ok) {
                             await self.updateStandaloneCartAttributes();
 
                             if (self.enableAnalytics) {
                                 document.dispatchEvent(
-                                    new CustomEvent(
-                                        "bundle:addedToCart",
-                                        {
-                                            detail: {
-                                                bundleId:
-                                                    self.bundleId,
-                                                productId:
-                                                    self.productId,
-                                                isStandalone: true,
-                                            },
-                                            bubbles: true,
+                                    new CustomEvent("bundle:addedToCart", {
+                                        detail: {
+                                            bundleId: self.bundleId,
+                                            productId: self.productId,
+                                            isStandalone: true,
                                         },
-                                    ),
+                                        bubbles: true,
+                                    }),
                                 );
                             }
                         }
@@ -528,15 +531,61 @@ declare global {
                     });
                 }
 
-                return result;
+                return originalFetch.apply(window, args);
             };
+        }
+
+        private injectLineItemProperties(body: BodyInit): BodyInit {
+            const properties: Record<string, string> = {
+                _bundle_id: this.bundleId,
+                _bundle_name: this.bundleStructure?.name || "Bundle",
+                _product_id: this.productId,
+            };
+
+            if (typeof body === "string") {
+                try {
+                    const data = JSON.parse(body);
+                    if (Array.isArray(data.items)) {
+                        for (const item of data.items) {
+                            item.properties = {
+                                ...item.properties,
+                                ...properties,
+                            };
+                        }
+                    } else if (data.id) {
+                        data.properties = {
+                            ...data.properties,
+                            ...properties,
+                        };
+                    }
+                    return JSON.stringify(data);
+                } catch {
+                    return body;
+                }
+            }
+
+            if (body instanceof FormData) {
+                for (const [key, value] of Object.entries(properties)) {
+                    body.set(`properties[${key}]`, value);
+                }
+                return body;
+            }
+
+            if (body instanceof URLSearchParams) {
+                for (const [key, value] of Object.entries(properties)) {
+                    body.set(`properties[${key}]`, value);
+                }
+                return body;
+            }
+
+            return body;
         }
 
         private async updateStandaloneCartAttributes(): Promise<void> {
             try {
-                const cart = await fetch(
-                    this.getLocalePath("/cart.js"),
-                ).then((r) => r.json());
+                const cart = await fetch(this.getLocalePath("/cart.js")).then(
+                    (r) => r.json(),
+                );
 
                 let existingDiscounts: DiscountConfig[] = [];
 
@@ -574,8 +623,7 @@ declare global {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         attributes: {
-                            _radiusDiscounts:
-                                JSON.stringify(existingDiscounts),
+                            _radiusDiscounts: JSON.stringify(existingDiscounts),
                         },
                     }),
                 });

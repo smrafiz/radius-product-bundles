@@ -141,7 +141,11 @@ export function isProductNotFoundError<T>(result: {
     data?: T;
     errors?: Array<{ message: string }>;
 }): boolean {
-    const patterns = ["product does not exist", "product not found", "could not find"];
+    const patterns = [
+        "product does not exist",
+        "product not found",
+        "could not find",
+    ];
     const matches = (msg: string) =>
         patterns.some((p) => msg.toLowerCase().includes(p));
 

@@ -32,6 +32,42 @@ struct MetafieldBundleConfig {
     free_shipping_method_title: Option<String>,
 }
 
+/// Identified bundle: (bundle_id, bundle_name).
+/// Collected from cart attribute and/or line item properties.
+struct IdentifiedBundle {
+    bundle_id: String,
+    bundle_name: Option<String>,
+}
+
+/// Extract bundles from cart line item `_bundle_id` properties.
+/// Deduplicates by bundle_id, keeping the first bundle_name found.
+fn extract_bundles_from_lines(
+    lines: &[schema::cart_delivery_options_discounts_generate_run::input::cart::Lines],
+) -> Vec<IdentifiedBundle> {
+    let mut seen: HashMap<String, Option<String>> = HashMap::new();
+
+    for line in lines {
+        let bundle_id = match line.attribute().and_then(|a| a.value()) {
+            Some(id) if !id.is_empty() => id.to_string(),
+            _ => continue,
+        };
+
+        let bundle_name = line
+            .bundle_name()
+            .and_then(|a| a.value())
+            .map(|v| v.to_string());
+
+        seen.entry(bundle_id).or_insert(bundle_name);
+    }
+
+    seen.into_iter()
+        .map(|(bundle_id, bundle_name)| IdentifiedBundle {
+            bundle_id,
+            bundle_name,
+        })
+        .collect()
+}
+
 #[shopify_function]
 fn cart_delivery_options_discounts_generate_run(
     input: schema::cart_delivery_options_discounts_generate_run::Input,
@@ -47,23 +83,32 @@ fn cart_delivery_options_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    // Get cart attribute (untrusted - only for bundle IDs)
-    let cart_attr = match input.cart().attribute() {
-        Some(attr) => attr,
-        None => return Ok(no_discount),
-    };
+    // Collect bundles from cart attribute (if available)
+    let mut bundles_by_id: HashMap<String, Option<String>> = HashMap::new();
 
-    let cart_attr_value = match cart_attr.value() {
-        Some(v) => v,
-        None => return Ok(no_discount),
-    };
+    if let Some(attr) = input.cart().attribute() {
+        if let Some(attr_value) = attr.value() {
+            if let Ok(cart_configs) =
+                serde_json::from_str::<Vec<CartBundleConfig>>(attr_value)
+            {
+                for config in cart_configs {
+                    bundles_by_id
+                        .entry(config.bundle_id)
+                        .or_insert(config.bundle_name);
+                }
+            }
+        }
+    }
 
-    let cart_configs: Vec<CartBundleConfig> = match serde_json::from_str(cart_attr_value) {
-        Ok(c) => c,
-        Err(_) => return Ok(no_discount),
-    };
+    // Also collect bundles from line item properties (handles standalone products,
+    // Buy Now, XMLHttpRequest themes, and form submissions)
+    let line_bundles = extract_bundles_from_lines(input.cart().lines());
+    for lb in line_bundles {
+        bundles_by_id.entry(lb.bundle_id).or_insert(lb.bundle_name);
+    }
 
-    if cart_configs.is_empty() {
+    // Need at least one identified bundle
+    if bundles_by_id.is_empty() {
         return Ok(no_discount);
     }
 
@@ -92,9 +137,9 @@ fn cart_delivery_options_discounts_generate_run(
     }
 
     // Find first bundle with free shipping enabled (validated against metafield)
-    let free_shipping_bundle = cart_configs.iter().find(|cart_config| {
+    let free_shipping_bundle = bundles_by_id.iter().find(|(bundle_id, _)| {
         active_bundles
-            .get(&cart_config.bundle_id)
+            .get(*bundle_id)
             .map(|settings| {
                 settings.status.as_deref() == Some("ACTIVE")
                     && settings.free_shipping.unwrap_or(false)
@@ -102,8 +147,8 @@ fn cart_delivery_options_discounts_generate_run(
             .unwrap_or(false)
     });
 
-    let bundle_with_free_shipping = match free_shipping_bundle {
-        Some(b) => b,
+    let (matched_bundle_id, matched_bundle_name) = match free_shipping_bundle {
+        Some((id, name)) => (id, name),
         None => return Ok(no_discount),
     };
 
@@ -113,13 +158,12 @@ fn cart_delivery_options_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    let bundle_name = bundle_with_free_shipping
-        .bundle_name
+    let bundle_name = matched_bundle_name
         .clone()
         .unwrap_or_else(|| "Bundle".to_string());
 
     let message_template = active_bundles
-        .get(&bundle_with_free_shipping.bundle_id)
+        .get(matched_bundle_id)
         .and_then(|s| s.free_shipping_method_title.clone())
         .unwrap_or_else(|| "Free shipping with {name}".to_string());
 

@@ -651,9 +651,7 @@ async function publishProductToOnlineStore(
         );
 
         if (!onlineStore) {
-            console.warn(
-                "[publishProduct] Online Store publication not found",
-            );
+            console.warn("[publishProduct] Online Store publication not found");
             return;
         }
 
