@@ -428,16 +428,20 @@ declare global {
             this.container.style.display = "none";
 
             if (this.enableAnalytics && !(window as any).Shopify?.designMode) {
-                document.dispatchEvent(
-                    new CustomEvent("bundle:viewed", {
-                        detail: {
-                            bundleId: this.bundleId,
-                            productId: this.extractNumericId(this.productId),
-                            isStandalone: true,
-                        },
-                        bubbles: true,
-                    }),
-                );
+                // Defer dispatch so radius-bundles.js listener is attached first
+                // (bundle-widget.js runs before radius-bundles.js due to defer order)
+                setTimeout(() => {
+                    document.dispatchEvent(
+                        new CustomEvent("bundle:viewed", {
+                            detail: {
+                                bundleId: this.bundleId,
+                                productId: this.extractNumericId(this.productId),
+                                isStandalone: true,
+                            },
+                            bubbles: true,
+                        }),
+                    );
+                }, 0);
             }
 
             const form = document.querySelector(
@@ -464,6 +468,7 @@ declare global {
             }
 
             this.interceptStandaloneAddToCart();
+            this.interceptBuyNowButton();
         }
 
         private injectHiddenInput(
@@ -579,6 +584,109 @@ declare global {
             }
 
             return body;
+        }
+
+        private interceptBuyNowButton(): void {
+            const self = this;
+
+            function hijackContainer(container: Element): void {
+                container.addEventListener(
+                    "click",
+                    async (e) => {
+                        const button = (e.target as HTMLElement).closest(
+                            'button, [role="button"]',
+                        );
+                        if (!button) return;
+
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+
+                        const form = document.querySelector(
+                            'form[action*="/cart/add"]',
+                        ) as HTMLFormElement | null;
+
+                        const variantId = (
+                            form?.querySelector(
+                                '[name="id"]',
+                            ) as HTMLInputElement | null
+                        )?.value;
+
+                        const quantity = parseInt(
+                            (
+                                form?.querySelector(
+                                    '[name="quantity"]',
+                                ) as HTMLInputElement | null
+                            )?.value || "1",
+                            10,
+                        );
+
+                        if (!variantId) return;
+
+                        try {
+                            await fetch(
+                                self.getLocalePath("/cart/add.js"),
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        items: [
+                                            {
+                                                id: parseInt(variantId, 10),
+                                                quantity,
+                                                properties: {
+                                                    _bundle_id: self.bundleId,
+                                                    _bundle_name:
+                                                        self.bundleStructure
+                                                            ?.name || "Bundle",
+                                                    _product_id:
+                                                        self.productId,
+                                                },
+                                            },
+                                        ],
+                                    }),
+                                },
+                            );
+
+                            window.location.href =
+                                self.getLocalePath("/checkout");
+                        } catch (error) {
+                            console.error(
+                                "[RadiusBundle] Buy now failed:",
+                                error,
+                            );
+                        }
+                    },
+                    true,
+                );
+            }
+
+            // Check if Buy Now container already exists
+            const existing = document.querySelector(
+                '[data-shopify="payment-button"]',
+            );
+            if (existing) {
+                hijackContainer(existing);
+                return;
+            }
+
+            // Watch for dynamically rendered Buy Now button
+            const observer = new MutationObserver(() => {
+                const container = document.querySelector(
+                    '[data-shopify="payment-button"]',
+                );
+                if (container) {
+                    observer.disconnect();
+                    hijackContainer(container);
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+            });
         }
 
         private async updateStandaloneCartAttributes(): Promise<void> {
