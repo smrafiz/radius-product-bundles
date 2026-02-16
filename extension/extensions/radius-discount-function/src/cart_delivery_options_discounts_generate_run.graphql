@@ -11,6 +11,14 @@ query Input {
             bundleName: attribute(key: "_bundle_name") {
                 value
             }
+            merchandise {
+                __typename
+                ... on ProductVariant {
+                    product {
+                        id
+                    }
+                }
+            }
         }
         deliveryGroups {
             id

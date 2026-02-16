@@ -479,6 +479,7 @@ function buildDiscountBundlesMetafieldValue(
             productQuantities: productQuantityMap,
             freeShippingMethodTitle:
                 freeShippingMethodTitle || "Free shipping with {name}",
+            mainProductId: bundle.mainProductId || null,
         };
     }
 

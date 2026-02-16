@@ -11,6 +11,7 @@ use crate::schema::ProductDiscountSelectionStrategy;
 use crate::schema::ProductDiscountsAddOperation;
 
 use super::schema;
+use schema::cart_lines_discounts_generate_run::input::cart::lines::Merchandise;
 use serde::Deserialize;
 use shopify_function::prelude::*;
 use shopify_function::Result;
@@ -39,6 +40,30 @@ struct MetafieldBundleConfig {
     discount_application: Option<String>,
     discounted_product_ids: Option<Vec<String>>,
     product_quantities: Option<HashMap<String, i32>>,
+    main_product_id: Option<String>,
+}
+
+/// Checks if a Shopify product GID belongs to this bundle.
+fn is_product_in_bundle(product_gid: &str, settings: &MetafieldBundleConfig) -> bool {
+    if let Some(ref main_id) = settings.main_product_id {
+        if main_id == product_gid {
+            return true;
+        }
+    }
+    if let Some(ref qty_map) = settings.product_quantities {
+        return qty_map.contains_key(product_gid);
+    }
+    false
+}
+
+/// Extracts the Shopify product GID from a line's merchandise (tamper-proof).
+fn get_product_gid(
+    line: &schema::cart_lines_discounts_generate_run::input::cart::Lines,
+) -> Option<String> {
+    match line.merchandise() {
+        Merchandise::ProductVariant(variant) => Some(variant.product().id().to_string()),
+        _ => None,
+    }
 }
 
 /// Info about a bundle cart line needed for quantity validation.
@@ -126,7 +151,8 @@ fn cart_lines_discounts_generate_run(
             }
         }
 
-        // Find cart lines for this bundle with their product IDs
+        // Find cart lines for this bundle using tamper-proof merchandise product ID.
+        // SECURITY: Only include lines whose actual product is in the bundle.
         let bundle_lines: Vec<BundleLineInfo> = input
             .cart()
             .lines()
@@ -137,12 +163,15 @@ fn cart_lines_discounts_generate_run(
                     .map(|v| *v == cart_config.bundle_id)
                     .unwrap_or(false)
             })
-            .map(|line| {
-                let product_id = line
-                    .product_id()
-                    .and_then(|a| a.value())
-                    .map(|v| v.to_string());
-                BundleLineInfo { line, product_id }
+            .filter_map(|line| {
+                let product_id = get_product_gid(line);
+                // Verify this product actually belongs to the bundle
+                match &product_id {
+                    Some(pid) if is_product_in_bundle(pid, bundle_settings) => {
+                        Some(BundleLineInfo { line, product_id })
+                    }
+                    _ => None,
+                }
             })
             .collect();
 

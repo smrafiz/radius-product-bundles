@@ -10,6 +10,7 @@ use crate::schema::DiscountClass;
 use crate::schema::Percentage;
 
 use super::schema;
+use schema::cart_delivery_options_discounts_generate_run::input::cart::lines::Merchandise;
 use serde::Deserialize;
 use shopify_function::prelude::*;
 use shopify_function::Result;
@@ -30,6 +31,31 @@ struct MetafieldBundleConfig {
     status: Option<String>,
     free_shipping: Option<bool>,
     free_shipping_method_title: Option<String>,
+    product_quantities: Option<HashMap<String, i32>>,
+    main_product_id: Option<String>,
+}
+
+/// Checks if a Shopify product GID belongs to this bundle.
+fn is_product_in_bundle(product_gid: &str, settings: &MetafieldBundleConfig) -> bool {
+    if let Some(ref main_id) = settings.main_product_id {
+        if main_id == product_gid {
+            return true;
+        }
+    }
+    if let Some(ref qty_map) = settings.product_quantities {
+        return qty_map.contains_key(product_gid);
+    }
+    false
+}
+
+/// Extracts the Shopify product GID from a line's merchandise (tamper-proof).
+fn get_product_gid(
+    line: &schema::cart_delivery_options_discounts_generate_run::input::cart::Lines,
+) -> Option<String> {
+    match line.merchandise() {
+        Merchandise::ProductVariant(variant) => Some(variant.product().id().to_string()),
+        _ => None,
+    }
 }
 
 /// Identified bundle: (bundle_id, bundle_name).
@@ -37,14 +63,17 @@ struct MetafieldBundleConfig {
 struct IdentifiedBundle {
     bundle_id: String,
     bundle_name: Option<String>,
+    /// Actual product GIDs from merchandise (tamper-proof) for lines tagged with this bundle.
+    product_gids: Vec<String>,
 }
 
 /// Extract bundles from cart line item `_bundle_id` properties.
 /// Deduplicates by bundle_id, keeping the first bundle_name found.
+/// Also captures actual product GIDs from merchandise for validation.
 fn extract_bundles_from_lines(
     lines: &[schema::cart_delivery_options_discounts_generate_run::input::cart::Lines],
 ) -> Vec<IdentifiedBundle> {
-    let mut seen: HashMap<String, Option<String>> = HashMap::new();
+    let mut seen: HashMap<String, (Option<String>, Vec<String>)> = HashMap::new();
 
     for line in lines {
         let bundle_id = match line.attribute().and_then(|a| a.value()) {
@@ -57,13 +86,22 @@ fn extract_bundles_from_lines(
             .and_then(|a| a.value())
             .map(|v| v.to_string());
 
-        seen.entry(bundle_id).or_insert(bundle_name);
+        let product_gid = get_product_gid(line);
+
+        let entry = seen
+            .entry(bundle_id)
+            .or_insert_with(|| (bundle_name, Vec::new()));
+
+        if let Some(gid) = product_gid {
+            entry.1.push(gid);
+        }
     }
 
     seen.into_iter()
-        .map(|(bundle_id, bundle_name)| IdentifiedBundle {
+        .map(|(bundle_id, (bundle_name, product_gids))| IdentifiedBundle {
             bundle_id,
             bundle_name,
+            product_gids,
         })
         .collect()
 }
@@ -84,7 +122,7 @@ fn cart_delivery_options_discounts_generate_run(
     }
 
     // Collect bundles from cart attribute (if available)
-    let mut bundles_by_id: HashMap<String, Option<String>> = HashMap::new();
+    let mut bundles_by_id: HashMap<String, (Option<String>, Vec<String>)> = HashMap::new();
 
     if let Some(attr) = input.cart().attribute() {
         if let Some(attr_value) = attr.value() {
@@ -94,7 +132,7 @@ fn cart_delivery_options_discounts_generate_run(
                 for config in cart_configs {
                     bundles_by_id
                         .entry(config.bundle_id)
-                        .or_insert(config.bundle_name);
+                        .or_insert_with(|| (config.bundle_name, Vec::new()));
                 }
             }
         }
@@ -104,7 +142,11 @@ fn cart_delivery_options_discounts_generate_run(
     // Buy Now, XMLHttpRequest themes, and form submissions)
     let line_bundles = extract_bundles_from_lines(input.cart().lines());
     for lb in line_bundles {
-        bundles_by_id.entry(lb.bundle_id).or_insert(lb.bundle_name);
+        let entry = bundles_by_id
+            .entry(lb.bundle_id)
+            .or_insert_with(|| (lb.bundle_name, Vec::new()));
+        // Merge product GIDs from line items
+        entry.1.extend(lb.product_gids);
     }
 
     // Need at least one identified bundle
@@ -137,18 +179,20 @@ fn cart_delivery_options_discounts_generate_run(
     }
 
     // Find first bundle with free shipping enabled (validated against metafield)
-    let free_shipping_bundle = bundles_by_id.iter().find(|(bundle_id, _)| {
+    // SECURITY: Also verify that at least one line's actual product belongs to the bundle
+    let free_shipping_bundle = bundles_by_id.iter().find(|(bundle_id, (_, product_gids))| {
         active_bundles
             .get(*bundle_id)
             .map(|settings| {
                 settings.status.as_deref() == Some("ACTIVE")
                     && settings.free_shipping.unwrap_or(false)
+                    && product_gids.iter().any(|gid| is_product_in_bundle(gid, settings))
             })
             .unwrap_or(false)
     });
 
-    let (matched_bundle_id, matched_bundle_name) = match free_shipping_bundle {
-        Some((id, name)) => (id, name),
+    let (matched_bundle_id, (matched_bundle_name, _)) = match free_shipping_bundle {
+        Some((id, data)) => (id, data),
         None => return Ok(no_discount),
     };
 
