@@ -27,7 +27,24 @@ export function DiscountSettings() {
 
     return (
         <s-stack gap="base">
-            <s-heading>Discount Settings</s-heading>
+            <s-stack
+                direction="inline"
+                justifyContent="space-between"
+                alignItems="center"
+            >
+                <s-heading>Discount Settings</s-heading>
+                <s-tooltip id="discount-settings-tooltip">
+                    <s-text>
+                        Configure the discount type and value applied when
+                        customers purchase this bundle.
+                    </s-text>
+                </s-tooltip>
+                <s-icon
+                    tone="neutral"
+                    type="info"
+                    interestFor="discount-settings-tooltip"
+                />
+            </s-stack>
 
             <s-select
                 label="Discount Type"

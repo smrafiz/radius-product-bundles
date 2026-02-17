@@ -20,8 +20,8 @@ export function WidgetDisplaySettings() {
                     <s-heading>Display Settings</s-heading>
                     <s-tooltip id="product-page-settings-display-tooltip">
                         <s-text>
-                            Choose how you want to display the bundle widget on
-                            product pages.
+                            Toggle visual features of the bundle widget, such as
+                            images, prices, and savings badges.
                         </s-text>
                     </s-tooltip>
                     <s-icon

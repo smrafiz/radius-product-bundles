@@ -1,24 +1,25 @@
 "use client";
 
-import { useCallback } from "react";
 import {
     BUNDLE_STEP_FIELD_MAP,
     BundleCreationForm,
     BundleCreationSkeleton,
     BundleFormData,
     BundleFormProvider,
+    DisplaySettings,
     useBundleDataSync,
     useBundleStore,
     useBundleSubmit,
     useEditBundle,
     useEditBundleTransform,
 } from "@/features/bundles";
+import { useCallback } from "react";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { GlobalForm, useAppNavigation } from "@/shared";
 
 export function EditBundlePage({ params }: { params: { id: string } }) {
     const { id: bundleId } = params;
-    const { bundleData, isLoading, isError, errorMessage } =
+    const { bundleData, isLoading, isError, errorMessage, productsQuery } =
         useEditBundle(bundleId);
     const { bundleData: navigationData } = useAppNavigation();
 
@@ -27,8 +28,11 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
         setStep,
         setValidationAttempted,
         setBundleData,
+        setDisplaySettings,
+        setSelectedItems,
         clearPendingMedia,
         clearRemovedMediaIds,
+        clearTouchedFields,
     } = useBundleStore();
     const initialData = useEditBundleTransform(bundleData);
     useBundleDataSync(bundleData);
@@ -40,6 +44,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                 id: bundleData.id,
                 name: bundleData.name,
                 type: bundleData.type,
+                status: bundleData.status,
                 description: bundleData.description,
                 mainProductId: bundleData.mainProductId,
                 mainVariantId: bundleData.mainVariantId,
@@ -63,16 +68,106 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                 priority: bundleData.priority ?? 0,
                 images: bundleData.images || [],
             } as any);
+
+            // Restore display settings
+            if (bundleData.settings) {
+                setDisplaySettings(bundleData.settings as DisplaySettings);
+            }
+
+            // Re-derive selectedItems from original bundle products + Shopify data
+            const bundleProducts = bundleData.products || [];
+            const products: any[] = productsQuery?.data?.nodes || [];
+
+            if (bundleProducts.length > 0 && products.length > 0) {
+                const isProductNode = (node: any) =>
+                    typeof node?.id === "string" &&
+                    node.id.includes("Product") &&
+                    typeof node?.title === "string";
+
+                const grouped = bundleProducts.reduce(
+                    (acc: Record<string, any>, bp: any) => {
+                        const productId = bp.id;
+                        const variantId = bp.selectedVariant?.id;
+                        if (!productId) return acc;
+                        if (!acc[productId]) {
+                            acc[productId] = {
+                                ...bp,
+                                variantIds: variantId ? [variantId] : [],
+                            };
+                        } else if (
+                            variantId &&
+                            !acc[productId].variantIds.includes(variantId)
+                        ) {
+                            acc[productId].variantIds.push(variantId);
+                        }
+                        return acc;
+                    },
+                    {},
+                );
+
+                const restoredItems = Object.values(grouped).map(
+                    (bp: any, index: number) => {
+                        const productNodes = (products || []).filter(
+                            isProductNode,
+                        );
+                        const shopifyProduct = productNodes.find(
+                            (p: any) => p.id === bp.id,
+                        );
+                        const firstVariant =
+                            shopifyProduct?.variants?.nodes?.[0];
+
+                        return {
+                            id: `product-${bp.id}`,
+                            productId: bp.id,
+                            variantIds: bp.variantIds || [],
+                            quantity: bp.quantity || 1,
+                            type: "product" as const,
+                            title:
+                                shopifyProduct?.title ||
+                                `Product ${index + 1}`,
+                            url: shopifyProduct?.handle
+                                ? `/products/${shopifyProduct.handle}`
+                                : "",
+                            price: firstVariant?.price || "0.00",
+                            compareAtPrice:
+                                firstVariant?.compareAtPrice || null,
+                            image:
+                                shopifyProduct?.featuredMedia?.image?.url || "",
+                            sku: firstVariant?.sku || "",
+                            handle: shopifyProduct?.handle || "",
+                            vendor: shopifyProduct?.vendor || "",
+                            productType: shopifyProduct?.productType || "",
+                            totalVariants:
+                                shopifyProduct?.variants?.nodes?.length || 1,
+                            displayOrder: bp.displayOrder || index,
+                            isRequired: bp.isRequired !== false,
+                            inventoryQuantity:
+                                firstVariant?.inventoryQuantity || 0,
+                            availableForSale:
+                                firstVariant?.availableForSale || false,
+                        };
+                    },
+                );
+
+                setSelectedItems(restoredItems);
+            }
         }
         setValidationAttempted(false);
+        clearTouchedFields();
         clearPendingMedia();
         clearRemovedMediaIds();
+        resetDirty();
     }, [
         bundleData,
+        productsQuery?.data,
         setBundleData,
+        setDisplaySettings,
+        setSelectedItems,
         setValidationAttempted,
+        clearTouchedFields,
         clearPendingMedia,
         clearRemovedMediaIds,
+        resetDirty,
     ]);
 
     /**
@@ -129,6 +224,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                 <BundleCreationForm
                     bundleType={bundleData.type}
                     bundleName={bundleData.name}
+                    bundleId={bundleId}
                 />
             </GlobalForm>
         </BundleFormProvider>

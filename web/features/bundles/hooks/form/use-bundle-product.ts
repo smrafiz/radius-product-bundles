@@ -51,6 +51,8 @@ export function useBundleProduct(mode: "create" | "edit") {
 
     // Track if product data has been loaded to prevent re-fetching
     const hasLoadedProductRef = useRef<boolean>(false);
+    // Track if user has manually edited the product title
+    const hasManuallyEditedTitle = useRef<boolean>(false);
 
     // Sync isEnabled with form value when it changes
     useEffect(() => {
@@ -127,9 +129,14 @@ export function useBundleProduct(mode: "create" | "edit") {
         }
     }, [createProduct, setValue, mode, mainProductId]);
 
-    // Auto-sync title in creation mode only
+    // Auto-sync title in creation mode only (unless user has manually edited)
     useEffect(() => {
-        if (mode === "create" && isEnabled && bundleName) {
+        if (
+            mode === "create" &&
+            isEnabled &&
+            bundleName &&
+            !hasManuallyEditedTitle.current
+        ) {
             setValue("productTitle", bundleName, {
                 shouldValidate: false,
                 shouldDirty: true,
@@ -145,6 +152,7 @@ export function useBundleProduct(mode: "create" | "edit") {
             clearPendingMedia();
             setExistingMedia([]);
             hasLoadedProductRef.current = false;
+            hasManuallyEditedTitle.current = false;
         }
     }, [isEnabled, setValue, clearPendingMedia, setExistingMedia]);
 
@@ -208,6 +216,7 @@ export function useBundleProduct(mode: "create" | "edit") {
      */
     const handleTitleChange = useCallback(
         (value: string) => {
+            hasManuallyEditedTitle.current = true;
             const truncated = value.slice(0, 120);
             setValue("productTitle", truncated, {
                 shouldValidate: true,
@@ -244,19 +253,45 @@ export function useBundleProduct(mode: "create" | "edit") {
             setIsUploading(true);
 
             try {
+                // Check for duplicates before adding
+                const existingKeys = new Set(
+                    pendingMedia
+                        .filter(
+                            (item): item is (typeof item) & { type: "file" } =>
+                                item.type === "file",
+                        )
+                        .map(
+                            (item) =>
+                                `${item.file.name}_${item.file.size}_${item.file.lastModified}`,
+                        ),
+                );
+                const duplicateCount = files.filter((file) =>
+                    existingKeys.has(
+                        `${file.name}_${file.size}_${file.lastModified}`,
+                    ),
+                ).length;
+
                 await new Promise((resolve) => setTimeout(resolve, 300));
                 addPendingFiles(files);
-                console.log(
-                    `Added ${files.length} new files to pending media.`,
-                );
-                // Note: addPendingFiles in store already calls triggerSaveBar
+
+                if (duplicateCount > 0) {
+                    if (
+                        typeof shopify !== "undefined" &&
+                        shopify.toast?.show
+                    ) {
+                        shopify.toast.show(
+                            "Duplicate image(s) already added",
+                            { isError: true, duration: 3000 },
+                        );
+                    }
+                }
             } catch (error) {
                 console.error("Failed to add media:", error);
             } finally {
                 setIsUploading(false);
             }
         },
-        [addPendingFiles],
+        [addPendingFiles, pendingMedia],
     );
 
     /**
@@ -319,7 +354,7 @@ export function useBundleProduct(mode: "create" | "edit") {
     return {
         isEnabled,
         bundleName,
-        productTitle: productTitle || bundleName,
+        productTitle: productTitle || "",
         productDescription: productDescription || "",
         pendingMedia,
         existingMedia: visibleExistingMedia,

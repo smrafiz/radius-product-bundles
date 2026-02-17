@@ -13,8 +13,7 @@ export function HorizontalStepIndicator() {
         steps,
         getStepStatus,
         getProgressLineColor,
-        canNavigateToStep,
-        navigateToStep,
+        navigateToStepWithValidation,
     } = useStepIndicator();
 
     const { currentStep, totalSteps, prevStep, canGoPrevious, isSaving } =
@@ -38,9 +37,7 @@ export function HorizontalStepIndicator() {
             return;
         }
 
-        if (canNavigateToStep(stepNumber)) {
-            navigateToStep(stepNumber);
-        }
+        void navigateToStepWithValidation(stepNumber);
     };
 
     const getNextButtonText = () => {

@@ -67,6 +67,7 @@ export interface StatusPopoverProps {
 export interface BundleCreationFormProps {
     bundleType: BundleType;
     bundleName?: string;
+    bundleId?: string;
 }
 
 /*
@@ -76,15 +77,6 @@ export interface BundleFormProviderProps {
     children: ReactNode;
     bundleType: BundleType;
     initialData?: Partial<BundleFormData>;
-}
-
-/*
- * Step heading components
- */
-export interface StepHeadingProps {
-    title: string;
-    description?: string;
-    gap?: "050" | "100" | "200" | "300" | "400" | "500";
 }
 
 /*

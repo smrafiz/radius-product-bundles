@@ -53,8 +53,8 @@ export function WidgetPosition() {
                     <s-heading>Product page</s-heading>
                     <s-tooltip id="product-page-display-tooltip">
                         <s-text>
-                            Choose where the bundle widget appears on product
-                            pages
+                            Customize the widget title and button text shown on
+                            product pages where this bundle appears.
                         </s-text>
                     </s-tooltip>
                     <s-icon
@@ -74,6 +74,7 @@ export function WidgetPosition() {
                     onBlur={handleTitleBlur}
                     error={getFieldError("settings.title")}
                     maxLength={100}
+                    required
                 />
 
                 <s-text-field
@@ -86,6 +87,7 @@ export function WidgetPosition() {
                     onBlur={handleCartButtonTextBlur}
                     error={getFieldError("settings.cartButtonText")}
                     maxLength={50}
+                    required
                 />
             </s-stack>
         </s-section>

@@ -97,7 +97,14 @@ export function BundleFormProvider({
                 setStep(1);
             } else {
                 resetBundle();
-                setBundleData({ type: bundleType });
+                setBundleData({
+                    type: bundleType,
+                    discountType:
+                        (settings?.defaultDiscountType as DiscountType) ??
+                        "PERCENTAGE",
+                    discountValue:
+                        (settings?.defaultDiscountValue as number) ?? 0,
+                });
                 setStep(1);
             }
 

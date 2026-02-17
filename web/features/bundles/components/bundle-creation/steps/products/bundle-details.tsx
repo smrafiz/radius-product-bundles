@@ -22,7 +22,24 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
 
     return (
         <s-stack gap="base">
-            <s-heading>Bundle details</s-heading>
+            <s-stack
+                direction="inline"
+                justifyContent="space-between"
+                alignItems="center"
+            >
+                <s-heading>Bundle details</s-heading>
+                <s-tooltip id="bundle-details-tooltip">
+                    <s-text>
+                        Name and describe your bundle. These fields are used
+                        internally to identify this bundle in your admin.
+                    </s-text>
+                </s-tooltip>
+                <s-icon
+                    tone="neutral"
+                    type="info"
+                    interestFor="bundle-details-tooltip"
+                />
+            </s-stack>
             <s-stack>
                 <s-text-field
                     label="Bundle name"

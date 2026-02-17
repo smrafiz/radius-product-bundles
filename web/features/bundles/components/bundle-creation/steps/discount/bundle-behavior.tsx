@@ -25,7 +25,24 @@ export function BundleBehavior() {
 
     return (
         <s-stack gap="base">
-            <s-heading>Bundle Behavior</s-heading>
+            <s-stack
+                direction="inline"
+                justifyContent="space-between"
+                alignItems="center"
+            >
+                <s-heading>Bundle Behavior</s-heading>
+                <s-tooltip id="bundle-behavior-tooltip">
+                    <s-text>
+                        Control how the discount is distributed across products
+                        and whether free shipping is included.
+                    </s-text>
+                </s-tooltip>
+                <s-icon
+                    tone="neutral"
+                    type="info"
+                    interestFor="bundle-behavior-tooltip"
+                />
+            </s-stack>
 
             {/* Discount Application */}
             <s-stack gap="small-200">
