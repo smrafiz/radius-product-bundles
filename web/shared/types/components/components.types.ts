@@ -33,6 +33,7 @@ export interface GlobalFormProps<T extends FieldValues> {
     children: React.ReactNode;
     onSubmit: (data: T) => Promise<void>;
     resetDirty?: () => void;
+    onDiscard?: () => void;
     /** Unique form identifier for multiple forms */
     formId?: string;
     /** Maps field names to step numbers (for multi-step forms) */

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import {
     BUNDLE_STEP_FIELD_MAP,
     BundleCreationForm,
@@ -21,7 +22,14 @@ export function CreateBundlePage({
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
 
     const { handleSubmit, resetDirty } = useBundleSubmit("create");
-    const { setStep, setValidationAttempted } = useBundleStore();
+    const { setStep, setValidationAttempted, resetBundle, setBundleData } =
+        useBundleStore();
+
+    const handleDiscard = useCallback(() => {
+        resetBundle();
+        setBundleData({ type: bundleType });
+        setStep(1);
+    }, [resetBundle, setBundleData, setStep, bundleType]);
 
     /**
      * Handles validation errors by navigating to the step with the error.
@@ -39,6 +47,7 @@ export function CreateBundlePage({
                 formId="bundle"
                 onSubmit={handleSubmit}
                 resetDirty={resetDirty}
+                onDiscard={handleDiscard}
                 stepFieldMap={BUNDLE_STEP_FIELD_MAP}
                 onValidationError={handleValidationError}
             >

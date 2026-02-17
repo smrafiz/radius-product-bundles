@@ -20,6 +20,7 @@ export function GlobalForm<T extends FieldValues>({
     children,
     onSubmit,
     resetDirty,
+    onDiscard,
     formId = DEFAULT_FORM_ID,
     stepFieldMap,
     onValidationError,
@@ -112,6 +113,7 @@ export function GlobalForm<T extends FieldValues>({
      * Handles discard action.
      */
     const handleDiscard = () => {
+        onDiscard?.();
         form?.reset();
         resetDirty?.();
         setShowSaveBar(false);
