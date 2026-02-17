@@ -29,6 +29,11 @@ export const BUNDLE_STATUSES = {
         tone: "critical",
         desc: "Permanently deactivated and hidden",
     },
+    DELETED: {
+        text: "Deleted",
+        tone: "neutral",
+        desc: "Permanently removed",
+    },
 } as const satisfies Record<BundleStatus, BundleStatusBadge>;
 
 /**

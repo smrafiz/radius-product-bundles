@@ -6,7 +6,7 @@ import {
     AllBundlesTableHeader,
     useAllBundlesTableWithPagination,
 } from "@/features/analytics";
-import { getBundleStatusBadge } from "@/features/bundles";
+import { getBundleStatusBadge, stripDeletedSuffix } from "@/features/bundles";
 import {
     EmptyState,
     formatCurrencyCompact,
@@ -254,17 +254,23 @@ export function AllBundlesTable() {
                                     <s-stack padding="small-300">
                                         <s-heading>
                                             <s-text>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleBundleClick(
-                                                            bundle.id,
-                                                        )
-                                                    }
-                                                    className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
-                                                >
-                                                    {bundle.title}
-                                                </button>
+                                                {bundle.status === "DELETED" ? (
+                                                    <span className="text-left font-semibold max-w-50">
+                                                        {stripDeletedSuffix(bundle.title)}
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleBundleClick(
+                                                                bundle.id,
+                                                            )
+                                                        }
+                                                        className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0 max-w-50"
+                                                    >
+                                                        {bundle.title}
+                                                    </button>
+                                                )}
                                             </s-text>
                                         </s-heading>
                                     </s-stack>

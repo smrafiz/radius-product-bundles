@@ -21,6 +21,13 @@ import { BUNDLE_TYPES } from "@/features/bundles/constants";
 import { Bundle, BundleProduct } from "@/prisma/generated/client";
 
 /*
+ * Strip deleted suffix
+ */
+export function stripDeletedSuffix(name: string): string {
+    return name.replace(/\s*\[deleted-\d+]$/, "");
+}
+
+/*
  * Bundle status badge
  */
 export const getBundleStatusBadge = (status: string): BundleStatusBadge => {

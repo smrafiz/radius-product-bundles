@@ -25,6 +25,7 @@ import {
     getTopPerformingBundles,
 } from "@/features/analytics/repositories";
 import { formatCurrencyCompact } from "@/shared";
+import { stripDeletedSuffix } from "@/features/bundles";
 
 /**
  * Get top performing bundles with all enhancements
@@ -87,7 +88,7 @@ export async function getTopBundlesService(
 
             return {
                 bundleId: stats.bundleId,
-                title: details.name,
+                title: stripDeletedSuffix(details.name),
                 type: details.type,
                 status: details.status,
                 discountType: details.discountType,

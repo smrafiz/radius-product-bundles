@@ -538,7 +538,8 @@ export async function deleteAllBundleRelations(
         deleteBundleProducts(tx, bundleId),
         deleteBundleProductGroups(tx, bundleId),
         deleteBundleSettings(tx, bundleId),
-        deleteBundleAnalytics(tx, bundleId),
+        tx.automationBundle.deleteMany({ where: { bundleId } }),
+        tx.pricingRuleBundle.deleteMany({ where: { bundleId } }),
     ]);
 }
 
@@ -557,7 +558,10 @@ export async function deleteAllBundleRelationsForMany(
         tx.bundleSettings.deleteMany({
             where: { bundleId: { in: bundleIds } },
         }),
-        tx.bundleAnalytics.deleteMany({
+        tx.automationBundle.deleteMany({
+            where: { bundleId: { in: bundleIds } },
+        }),
+        tx.pricingRuleBundle.deleteMany({
             where: { bundleId: { in: bundleIds } },
         }),
     ]);
@@ -577,27 +581,32 @@ export async function deleteBundleWithRelations(
 ): Promise<DeleteBundleResult> {
     return prisma.$transaction(
         async (tx) => {
-            // Step 1: Verify ownership
             const existingBundle = await verifyBundleOwnershipTx(
                 tx,
                 bundleId,
                 shop,
             );
 
-            // Step 2: Delete all related records in parallel
             await deleteAllBundleRelations(tx, bundleId);
 
-            // Step 3: Delete bundle
-            await tx.bundle.delete({ where: { id: bundleId } });
+            const timestamp = Date.now();
+            await tx.bundle.update({
+                where: { id: bundleId },
+                data: {
+                    status: "DELETED",
+                    deletedAt: new Date(),
+                    name: `${existingBundle.name} [deleted-${timestamp}]`,
+                    isPublished: false,
+                },
+            });
 
-            // Step 4: Return deleted bundle info
             return {
                 id: existingBundle.id,
                 name: existingBundle.name,
             };
         },
         {
-            timeout: 10000, // 10-second timeout
+            timeout: 10000,
         },
     );
 }
@@ -611,25 +620,33 @@ export async function deleteBundlesWithRelations(
 ): Promise<DeleteBundleResult[]> {
     return prisma.$transaction(
         async (tx) => {
-            // Verify all bundles exist and are owned
             const bundles = await verifyMultipleBundlesOwnershipTx(
                 tx,
                 bundleIds,
                 shop,
             );
 
-            // Delete all related records in parallel
             await deleteAllBundleRelationsForMany(tx, bundleIds);
 
-            // Delete all bundles
-            await tx.bundle.deleteMany({
-                where: { id: { in: bundleIds } },
-            });
+            const baseTimestamp = Date.now();
+            await Promise.all(
+                bundles.map((bundle, i) =>
+                    tx.bundle.update({
+                        where: { id: bundle.id },
+                        data: {
+                            status: "DELETED",
+                            deletedAt: new Date(),
+                            name: `${bundle.name} [deleted-${baseTimestamp + i}]`,
+                            isPublished: false,
+                        },
+                    }),
+                ),
+            );
 
             return bundles;
         },
         {
-            timeout: 15000, // 15-second timeout
+            timeout: 15000,
         },
     );
 }

@@ -133,7 +133,7 @@ export const bundleSchema = z
         ]),
 
         status: z
-            .enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED", "SCHEDULED"])
+            .enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED", "SCHEDULED", "DELETED"])
             .default("DRAFT")
             .optional(),
 

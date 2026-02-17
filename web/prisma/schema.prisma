@@ -327,7 +327,7 @@ model BundleAnalytics {
     crossSellPurchases         Int      @default(0)
     newCustomerPurchases       Int      @default(0)
     returningCustomerPurchases Int      @default(0)
-    bundle                     Bundle   @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    bundle                     Bundle   @relation(fields: [bundleId], references: [id], onDelete: Restrict)
 
     @@unique([bundleId, date, hour])
     @@index([bundleId, date])
@@ -342,7 +342,7 @@ model BundleView {
     date       String
     timestamp  DateTime @default(now())
 
-    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)
 
     // One view per customer per bundle per day
     @@unique([bundleId, customerId, date], name: "unique_customer_view")
@@ -555,6 +555,7 @@ enum BundleStatus {
     PAUSED
     ARCHIVED
     SCHEDULED
+    DELETED
 }
 
 enum DiscountType {

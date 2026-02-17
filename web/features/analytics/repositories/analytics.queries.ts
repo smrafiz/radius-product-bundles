@@ -17,6 +17,15 @@ export async function trackBundleView(
     customerId?: string,
     sessionId?: string,
 ) {
+    const bundle = await prisma.bundle.findUnique({
+        where: { id: bundleId },
+        select: { status: true },
+    });
+
+    if (!bundle || bundle.status === "DELETED") {
+        return;
+    }
+
     const dateObj =
         typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
@@ -108,6 +117,15 @@ export async function trackAddToCart(
     bundleId: string,
     timestamp: Date = new Date(),
 ) {
+    const bundle = await prisma.bundle.findUnique({
+        where: { id: bundleId },
+        select: { status: true },
+    });
+
+    if (!bundle || bundle.status === "DELETED") {
+        return;
+    }
+
     const dateObj =
         typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
@@ -143,6 +161,15 @@ export async function trackBundlePurchase(params: {
     isNewCustomer?: boolean;
     timestamp?: Date;
 }) {
+    const bundle = await prisma.bundle.findUnique({
+        where: { id: params.bundleId },
+        select: { status: true },
+    });
+
+    if (!bundle || bundle.status === "DELETED") {
+        return;
+    }
+
     const timestampObj = params.timestamp
         ? typeof params.timestamp === "string"
             ? new Date(params.timestamp)
@@ -239,8 +266,10 @@ export async function aggregateBundleMetrics(
             _sum: { bundleRevenue: true },
         }),
 
-        // Total bundles count
-        prisma.bundle.count({ where: { shop } }),
+        // Total bundles count (exclude deleted)
+        prisma.bundle.count({
+            where: { shop, status: { not: "DELETED" as const } },
+        }),
 
         // Active bundles count
         prisma.bundle.count({ where: { shop, status: "ACTIVE" } }),
@@ -313,8 +342,10 @@ export async function aggregateBundleMetricsByRange(
             _sum: { bundleRevenue: true },
         }),
 
-        // Total bundles count
-        prisma.bundle.count({ where: { shop } }),
+        // Total bundles count (exclude deleted)
+        prisma.bundle.count({
+            where: { shop, status: { not: "DELETED" as const } },
+        }),
 
         // Active bundles count
         prisma.bundle.count({ where: { shop, status: "ACTIVE" } }),
@@ -386,7 +417,7 @@ export async function getTopBundlesByRevenue(
     startDate?: Date,
 ) {
     const where: any = {
-        bundle: { shop },
+        bundle: { shop, status: { not: "DELETED" } },
     };
 
     if (startDate) {

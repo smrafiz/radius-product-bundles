@@ -1,6 +1,10 @@
 "use client";
 
-import { useTopBundles, useAnalyticsStore } from "@/features/analytics";
+import {
+    useAnalyticsMetrics,
+    useAnalyticsStore,
+    useTopBundles,
+} from "@/features/analytics";
 import {
     DashboardBundlesEmpty,
     DashboardBundlesHeader,
@@ -19,6 +23,7 @@ export function DashboardBundles() {
     }, []);
 
     const { data: bundles, isLoading, error } = useTopBundles(5);
+    const { metrics } = useAnalyticsMetrics(30);
 
     if (isLoading) {
         return (
@@ -33,6 +38,8 @@ export function DashboardBundles() {
         (b) => b.status.toUpperCase() === "ACTIVE",
     );
 
+    const hasBundles = (metrics?.totals?.totalBundles ?? 0) > 0;
+
     return (
         <s-section padding="none">
             {activeBundles.length > 0 ? (
@@ -41,7 +48,10 @@ export function DashboardBundles() {
                     <DashboardBundlesList bundles={activeBundles} />
                 </>
             ) : (
-                <DashboardBundlesEmpty error={error?.message || null} />
+                <DashboardBundlesEmpty
+                    error={error?.message || null}
+                    hasBundles={hasBundles}
+                />
             )}
         </s-section>
     );

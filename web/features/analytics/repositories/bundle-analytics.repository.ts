@@ -14,6 +14,7 @@ import {
     TopBundleTrend,
 } from "@/features/analytics";
 import { prisma } from "@/shared/repositories";
+import { stripDeletedSuffix } from "@/features/bundles";
 
 /**
  * Get top performing bundles with comprehensive metrics
@@ -28,7 +29,7 @@ export async function getTopPerformingBundles(
     const bundleStats = await prisma.bundleAnalytics.groupBy({
         by: ["bundleId"],
         where: {
-            bundle: { shop },
+            bundle: { shop, status: { not: "DELETED" as const } },
             date: { gte: startDate, lte: endDate },
         },
         _sum: {
@@ -226,7 +227,7 @@ export async function getBundleStatusCounts(shop: string) {
         by: ["status"],
         where: {
             shop,
-            deletedAt: null,
+            status: { not: "DELETED" as const },
         },
         _count: {
             id: true,
@@ -253,7 +254,6 @@ export async function fetchBundlesWithAnalyticsCore(
     // Build the where clause for bundles
     const bundleWhereClause: any = {
         shop,
-        deletedAt: null,
     };
 
     // Add search filter if provided
@@ -344,7 +344,7 @@ export function transformBundleWithAnalytics(
 
     return {
         id: bundle.id,
-        title: bundle.name,
+        title: stripDeletedSuffix(bundle.name),
         status: bundle.status,
         type: bundle.type,
         discountType: bundle.discountType,

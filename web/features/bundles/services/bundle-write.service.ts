@@ -170,9 +170,17 @@ export async function updateBundleStatusService(
 ): Promise<UpdateBundleStatusResult> {
     const { bundleId, shop, status, startDate, endDate } = input;
 
-    // Validate status
     if (!BUNDLE_STATUSES[status]) {
         throw new Error("Invalid bundle status");
+    }
+
+    if (status === "DELETED") {
+        throw new Error("Use the delete action to delete bundles");
+    }
+
+    const currentBundle = await findBundleByIdWithAllRelations(bundleId, shop);
+    if (currentBundle?.status === "DELETED") {
+        throw new Error("Cannot modify a deleted bundle");
     }
 
     const updatedBundle = await updateBundleStatusById(

@@ -126,6 +126,7 @@ export async function findBundlesByNamePattern(
     return client.bundle.findMany({
         where: {
             shop,
+            status: { not: "DELETED" as const },
             name: {
                 startsWith: namePattern,
             },
@@ -212,7 +213,10 @@ export async function findBundlesByShop(
     shop: string,
     options?: FindByShopOptions,
 ) {
-    const where: Prisma.BundleWhereInput = { shop };
+    const where: Prisma.BundleWhereInput = {
+        shop,
+        status: { not: "DELETED" as const },
+    };
 
     // Search filter
     if (options?.search) {
@@ -266,7 +270,10 @@ export async function countBundlesByShop(
     shop: string,
     filters?: FindByShopFilters,
 ) {
-    const where: Prisma.BundleWhereInput = { shop };
+    const where: Prisma.BundleWhereInput = {
+        shop,
+        status: { not: "DELETED" as const },
+    };
 
     if (filters?.search) {
         where.name = {
@@ -318,6 +325,7 @@ export async function countRecentBundles(shop: string, minutesAgo: Date) {
     return prisma.bundle.count({
         where: {
             shop,
+            status: { not: "DELETED" as const },
             createdAt: { gte: minutesAgo },
         },
     });
@@ -332,26 +340,21 @@ export async function getBundleActivity(
 ) {
     const since = new Date(Date.now() - hoursToCheck * 60 * 60 * 1000);
 
-    // Count new bundles created in the given timeframe
     const createdCount = await prisma.bundle.count({
         where: {
             shop,
+            status: { not: "DELETED" as const },
             createdAt: { gte: since },
         },
     });
 
-    // Count soft-deleted bundles (if `deletedAt` exists)
-    let deletedCount = 0;
-    try {
-        deletedCount = await prisma.bundle.count({
-            where: {
-                shop,
-                deletedAt: { gte: since },
-            },
-        });
-    } catch {
-        // ignore if schema doesn't have deletedAt
-    }
+    const deletedCount = await prisma.bundle.count({
+        where: {
+            shop,
+            status: "DELETED",
+            deletedAt: { gte: since },
+        },
+    });
 
     return {
         created: createdCount,
