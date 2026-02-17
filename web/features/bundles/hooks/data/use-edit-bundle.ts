@@ -13,8 +13,8 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ProductNode, useGraphQL } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { ProductNode, useAppNavigation, useGraphQL } from "@/shared";
 
 const isProductNode = (node: any): node is ProductNode => {
     const hasId = typeof node.id === "string" && node.id.includes("Product");
@@ -28,7 +28,6 @@ const isProductNode = (node: any): node is ProductNode => {
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
     const { setDisplaySettings, setSelectedItems } = useBundleStore();
-    const { goTo } = useAppNavigation();
 
     // Bundle detail query
     const {
@@ -37,13 +36,6 @@ export function useEditBundle(bundleId: string) {
         isError,
         error,
     } = useQuery(bundlesQueries(app).detail(bundleId));
-
-    // Redirect if bundle is deleted
-    useEffect(() => {
-        if (bundleData && bundleData.status === "DELETED") {
-            goTo("/bundles")();
-        }
-    }, [bundleData, goTo]);
 
     // Extract product IDs (deduplicated)
     const productIds = useMemo(() => {

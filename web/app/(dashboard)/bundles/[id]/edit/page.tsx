@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { EditBundlePage } from "@/features/bundles";
+import { checkBundleExists } from "@/features/bundles/services";
+import { EditBundlePage, BundleRedirect } from "@/features/bundles";
 
 /**
  * Generate metadata
@@ -18,5 +19,11 @@ export default async function EditBundleByIdPage(props: {
     params: Promise<{ id: string }>;
 }) {
     const params = await props.params;
+    const { exists, isDeleted } = await checkBundleExists(params.id);
+
+    if (!exists || isDeleted) {
+        return <BundleRedirect to="/bundles" />;
+    }
+
     return <EditBundlePage params={params} />;
 }

@@ -8,6 +8,7 @@ import {
     findBundleByIdWithAllRelations,
     findBundlesByNamePattern,
     findBundlesByShop,
+    findBundleStatusById,
 } from "../repositories";
 import {
     BUNDLE_NAME_PATTERNS,
@@ -24,6 +25,18 @@ import { shuffleArray } from "@/shared";
 import { fetchProductsFromShopify } from "@/lib";
 import { getBundlesAction } from "@/features/bundles/actions";
 import { transformBundle, transformBundles } from "@/features/bundles/services";
+
+/**
+ * Check if a bundle exists and whether it's deleted
+ */
+export async function checkBundleExists(bundleId: string) {
+    const bundle = await findBundleStatusById(bundleId);
+
+    return {
+        exists: !!bundle,
+        isDeleted: bundle?.status === "DELETED",
+    };
+}
 
 /**
  * Get the bundle list with filters and pagination

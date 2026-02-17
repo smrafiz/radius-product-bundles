@@ -24,6 +24,16 @@ import {
 // ==========================================
 
 /**
+ * Find bundle status by ID (lightweight query for access checks)
+ */
+export async function findBundleStatusById(id: string) {
+    return prisma.bundle.findUnique({
+        where: { id },
+        select: { id: true, status: true },
+    });
+}
+
+/**
  * Find bundle by ID
  */
 export async function findBundleById(
