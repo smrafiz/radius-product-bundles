@@ -236,7 +236,7 @@ export function BundleIndexFilters({
                                                     )
                                                 }
                                                 icon={iconName}
-                                                type="reset"
+                                                type="button"
                                             >
                                                 {option.directionLabel}
                                             </s-button>
