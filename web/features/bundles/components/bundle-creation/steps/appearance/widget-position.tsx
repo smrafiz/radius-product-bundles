@@ -1,10 +1,46 @@
 "use client";
 
-import React from "react";
-import { DisplaySettings, useBundleStore } from "@/features/bundles";
+import React, { useCallback } from "react";
+import { useFormContext } from "react-hook-form";
+import { useBundleStore, useBundleValidation } from "@/features/bundles";
 
 export function WidgetPosition() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
+    const { displaySettings, updateDisplaySettings, markFieldTouched } =
+        useBundleStore();
+    const { getFieldError } = useBundleValidation();
+    const { setValue, trigger } = useFormContext();
+
+    const handleTitleChange = useCallback(
+        (value: string) => {
+            updateDisplaySettings("title", value);
+            setValue("settings.title", value, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        },
+        [updateDisplaySettings, setValue],
+    );
+
+    const handleCartButtonTextChange = useCallback(
+        (value: string) => {
+            updateDisplaySettings("cartButtonText", value);
+            setValue("settings.cartButtonText", value, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        },
+        [updateDisplaySettings, setValue],
+    );
+
+    const handleTitleBlur = useCallback(() => {
+        markFieldTouched("settings.title");
+        void trigger("settings.title");
+    }, [markFieldTouched, trigger]);
+
+    const handleCartButtonTextBlur = useCallback(() => {
+        markFieldTouched("settings.cartButtonText");
+        void trigger("settings.cartButtonText");
+    }, [markFieldTouched, trigger]);
 
     return (
         <s-section>
@@ -33,8 +69,11 @@ export function WidgetPosition() {
                     value={displaySettings.title || ""}
                     onChange={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
-                        updateDisplaySettings("title", target.value);
+                        handleTitleChange(target.value);
                     }}
+                    onBlur={handleTitleBlur}
+                    error={getFieldError("settings.title")}
+                    maxLength={100}
                 />
 
                 <s-text-field
@@ -42,8 +81,11 @@ export function WidgetPosition() {
                     value={displaySettings.cartButtonText || ""}
                     onChange={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
-                        updateDisplaySettings("cartButtonText", target.value);
+                        handleCartButtonTextChange(target.value);
                     }}
+                    onBlur={handleCartButtonTextBlur}
+                    error={getFieldError("settings.cartButtonText")}
+                    maxLength={50}
                 />
             </s-stack>
         </s-section>

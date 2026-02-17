@@ -10,6 +10,7 @@ import {
     useBundleValidation,
 } from "@/features/bundles";
 import { useCallback, useMemo } from "react";
+import { useFormContext } from "react-hook-form";
 import { getCurrencySymbol, triggerSaveBar, useShopSettings } from "@/shared";
 
 /**
@@ -17,9 +18,11 @@ import { getCurrencySymbol, triggerSaveBar, useShopSettings } from "@/shared";
  */
 export function useDiscountSettings() {
     const { getFieldError } = useBundleValidation();
-    const { markDirty, bundleData, setBundleData } = useBundleStore();
+    const { markDirty, bundleData, setBundleData, markFieldTouched } =
+        useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
     const { watch, setValue } = useBundleFormMethods();
+    const { trigger } = useFormContext();
 
     // Watch form fields directly
     const discountType = watch("discountType") as string | undefined;
@@ -143,6 +146,17 @@ export function useDiscountSettings() {
         discountType !== "NO_DISCOUNT" &&
         discountType !== undefined;
 
+    /**
+     * Create a blur handler for a specific field.
+     */
+    const createBlurHandler = useCallback(
+        (fieldName: string) => () => {
+            markFieldTouched(fieldName);
+            void trigger(fieldName);
+        },
+        [markFieldTouched, trigger],
+    );
+
     return {
         // Field values
         discountType,
@@ -158,6 +172,7 @@ export function useDiscountSettings() {
         handleDiscountValueChange,
         handleMinOrderValueChange,
         handleMaxDiscountAmountChange,
+        createBlurHandler,
 
         // Helpers
         getDiscountValueLabel,

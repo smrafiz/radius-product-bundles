@@ -27,6 +27,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
         mainProductId,
         handleToggle,
         handleTitleChange,
+        handleTitleBlur,
         handleMediaUpload,
         handleRemoveExistingMedia,
         setHoveredItem,
@@ -148,6 +149,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                             const target = event.target as HTMLInputElement;
                             handleTitleChange(target.value);
                         }}
+                        onBlur={handleTitleBlur}
                         maxLength={120}
                         error={getFieldError("productTitle")}
                         details={

@@ -10,7 +10,7 @@ import Editor, { ContentEditableEvent } from "react-simple-wysiwyg";
  * Editor WYSIWYG component
  */
 export function EditorWysiwyg({ mode }: { mode: "create" | "edit" }) {
-    const { handleDescriptionChange, productDescription } =
+    const { handleDescriptionChange, handleDescriptionBlur, productDescription } =
         useBundleProduct(mode);
 
     const [focused, setFocused] = useState(false);
@@ -28,7 +28,10 @@ export function EditorWysiwyg({ mode }: { mode: "create" | "edit" }) {
                         handleDescriptionChange(event.target.value);
                     }}
                     onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
+                    onBlur={() => {
+                        setFocused(false);
+                        handleDescriptionBlur();
+                    }}
                 />
             </s-stack>
         </div>

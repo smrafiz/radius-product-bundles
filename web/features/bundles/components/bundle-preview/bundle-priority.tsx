@@ -10,8 +10,9 @@ import {
 import { useSettingsStore } from "@/features/settings";
 
 export function BundlePriority() {
-    const { bundleData, updateBundleField, markDirty } = useBundleStore();
-    const { setValue } = useBundleFormMethods();
+    const { bundleData, updateBundleField, markDirty, markFieldTouched } =
+        useBundleStore();
+    const { setValue, trigger } = useBundleFormMethods();
     const { getFieldError } = useBundleValidation();
     const { settings } = useAppNavigation();
 
@@ -83,6 +84,10 @@ export function BundlePriority() {
                                 updateBundleField("priority", numVal);
                                 markDirty();
                                 triggerSaveBar();
+                            }}
+                            onBlur={() => {
+                                markFieldTouched("priority");
+                                void trigger("priority");
                             }}
                         />
                     )}

@@ -16,6 +16,7 @@ export function DiscountSettings() {
         handleDiscountValueChange,
         handleMinOrderValueChange,
         handleMaxDiscountAmountChange,
+        createBlurHandler,
         getDiscountValueLabel,
         getCurrency,
         getSuffix,
@@ -36,6 +37,7 @@ export function DiscountSettings() {
                     const target = event.target as HTMLSelectElement;
                     handleDiscountTypeChange(target.value);
                 }}
+                onBlur={createBlurHandler("discountType")}
             >
                 <s-option value="">Select discount type</s-option>
                 {availableDiscountTypes.map((config) => (
@@ -58,6 +60,7 @@ export function DiscountSettings() {
                         const target = event.target as HTMLInputElement;
                         handleDiscountValueChange(target.value);
                     }}
+                    onBlur={createBlurHandler("discountValue")}
                     error={getFieldError("discountValue")}
                 />
             )}
@@ -75,6 +78,7 @@ export function DiscountSettings() {
                             const target = event.target as HTMLInputElement;
                             handleMinOrderValueChange(target.value);
                         }}
+                        onBlur={createBlurHandler("minOrderValue")}
                         error={getFieldError("minOrderValue")}
                     />
                 </div>
@@ -92,6 +96,7 @@ export function DiscountSettings() {
                                 const target = event.target as HTMLInputElement;
                                 handleMaxDiscountAmountChange(target.value);
                             }}
+                            onBlur={createBlurHandler("maxDiscountAmount")}
                             error={getFieldError("maxDiscountAmount")}
                         />
                     </div>

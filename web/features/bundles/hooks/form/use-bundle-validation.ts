@@ -11,8 +11,13 @@ import { BundleProductRole } from "@/prisma/generated/client";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();
-    const { currentStep, validationAttempted, getGroupedItems, selectedItems } =
-        useBundleStore();
+    const {
+        currentStep,
+        validationAttempted,
+        getGroupedItems,
+        selectedItems,
+        isFieldTouched,
+    } = useBundleStore();
 
     if (!form) {
         throw new Error(
@@ -141,18 +146,35 @@ export function useBundleValidation() {
         });
     }, [currentStep, getValues, getGroupedItems]);
 
-    // Get field error message (only show if validation was attempted)
-    const getFieldError = (
-        fieldName: keyof BundleFormData,
-    ): string | undefined => {
-        if (!validationAttempted) return undefined;
-        return errors[fieldName]?.message;
+    // Get field error message (show if field is touched or validation was attempted)
+    const getFieldError = (fieldName: string): string | undefined => {
+        if (!validationAttempted && !isFieldTouched(fieldName)) return undefined;
+
+        // Support nested paths like "settings.title"
+        const error = fieldName.includes(".")
+            ? fieldName
+                  .split(".")
+                  .reduce((obj: any, key) => obj?.[key], errors)
+            : errors[fieldName as keyof BundleFormData];
+
+        return error?.message;
     };
 
-    // Get all current errors (only if validation was attempted)
+    // Get all current errors (touched fields + all if validation attempted)
     const getAllErrors = () => {
-        if (!validationAttempted) return [];
-        return Object.entries(errors).map(([field, error]) => ({
+        const entries = Object.entries(errors);
+
+        if (!validationAttempted) {
+            return entries
+                .filter(([field]) => isFieldTouched(field))
+                .map(([field, error]) => ({
+                    field,
+                    path: field,
+                    message: error?.message || "Invalid value",
+                }));
+        }
+
+        return entries.map(([field, error]) => ({
             field,
             path: field,
             message: error?.message || "Invalid value",
@@ -164,7 +186,13 @@ export function useBundleValidation() {
         canProceedToNextStep,
         getFieldError,
         getAllErrors,
-        errors: validationAttempted ? errors : {},
+        errors: validationAttempted
+            ? errors
+            : Object.fromEntries(
+                  Object.entries(errors).filter(([key]) =>
+                      isFieldTouched(key),
+                  ),
+              ),
         isValid: Object.keys(errors).length === 0,
     };
 }

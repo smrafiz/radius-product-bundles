@@ -109,6 +109,12 @@ export interface BundleState {
     isSaving: boolean;
     validationAttempted: boolean;
 
+    // Touched field tracking (blur validation)
+    touchedFields: Record<string, true>;
+    markFieldTouched: (fieldName: string) => void;
+    clearTouchedFields: () => void;
+    isFieldTouched: (fieldName: string) => boolean;
+
     // Dirty tracking
     isDirty: boolean;
     markDirty: () => void;

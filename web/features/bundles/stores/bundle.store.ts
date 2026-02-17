@@ -50,6 +50,7 @@ export const useBundleStore = create(
         isLoading: false,
         isSaving: false,
         validationAttempted: false,
+        touchedFields: {},
         pendingProductDeletion: false,
         isDirty: false,
 
@@ -75,6 +76,19 @@ export const useBundleStore = create(
             set((state) => {
                 state.validationAttempted = attempted;
             }),
+
+        // Touched field tracking (blur validation)
+        markFieldTouched: (fieldName) =>
+            set((state) => {
+                state.touchedFields[fieldName] = true;
+            }),
+        clearTouchedFields: () =>
+            set((state) => {
+                state.touchedFields = {};
+            }),
+        isFieldTouched: (fieldName) => {
+            return !!get().touchedFields[fieldName];
+        },
 
         nextStep: () =>
             set((state) => {
@@ -582,6 +596,7 @@ export const useBundleStore = create(
                 state.isLoading = false;
                 state.isSaving = false;
                 state.validationAttempted = false;
+                state.touchedFields = {};
                 state.pendingProductDeletion = false;
                 state.isDirty = false;
             });

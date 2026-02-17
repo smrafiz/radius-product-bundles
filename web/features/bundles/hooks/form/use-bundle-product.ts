@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormContext } from "react-hook-form";
 import { triggerSaveBar, useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -23,7 +24,9 @@ export function useBundleProduct(mode: "create" | "edit") {
         clearPendingMedia,
         setPendingProductDeletion,
         markDirty,
+        markFieldTouched,
     } = useBundleStore();
+    const { trigger } = useFormContext();
     const { openModal } = useModalStore();
     const app = useAppBridge();
 
@@ -297,6 +300,22 @@ export function useBundleProduct(mode: "create" | "edit") {
         (media) => !removedMediaIds.includes(media.id),
     );
 
+    /**
+     * Handle title blur — marks field as touched and triggers validation.
+     */
+    const handleTitleBlur = useCallback(() => {
+        markFieldTouched("productTitle");
+        void trigger("productTitle");
+    }, [markFieldTouched, trigger]);
+
+    /**
+     * Handle description blur — marks field as touched and triggers validation.
+     */
+    const handleDescriptionBlur = useCallback(() => {
+        markFieldTouched("productDescription");
+        void trigger("productDescription");
+    }, [markFieldTouched, trigger]);
+
     return {
         isEnabled,
         bundleName,
@@ -312,6 +331,8 @@ export function useBundleProduct(mode: "create" | "edit") {
         toggleEnabled,
         handleTitleChange,
         handleDescriptionChange,
+        handleTitleBlur,
+        handleDescriptionBlur,
         handleMediaUpload,
         handleRemoveExistingMedia,
         removePendingMedia,

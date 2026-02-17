@@ -133,7 +133,14 @@ export const bundleSchema = z
         ]),
 
         status: z
-            .enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED", "SCHEDULED", "DELETED"])
+            .enum([
+                "DRAFT",
+                "ACTIVE",
+                "PAUSED",
+                "ARCHIVED",
+                "SCHEDULED",
+                "DELETED",
+            ])
             .default("DRAFT")
             .optional(),
 
@@ -185,8 +192,8 @@ export const bundleSchema = z
         ]),
 
         discountValue: z.number().min(0).max(999999.99).default(0),
-        minOrderValue: z.number().min(0).optional(),
-        maxDiscountAmount: z.number().min(0).optional(),
+        minOrderValue: z.number().min(0).max(999999.99).optional(),
+        maxDiscountAmount: z.number().min(0).max(999999.99).optional(),
 
         volumeTiers: z.array(volumeTierSchema).optional(),
 

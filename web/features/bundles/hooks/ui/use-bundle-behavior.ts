@@ -2,14 +2,24 @@
 
 import { triggerSaveBar } from "@/shared";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { DiscountApplication, useBundleStore } from "@/features/bundles";
+import {
+    DiscountApplication,
+    useBundleFormMethods,
+    useBundleStore,
+} from "@/features/bundles";
 
 /**
  * Hook for managing bundle behavior state and actions
  */
 export function useBundleBehavior() {
-    const { selectedItems, bundleData, setBundleData, markDirty } =
-        useBundleStore();
+    const {
+        selectedItems,
+        bundleData,
+        setBundleData,
+        markDirty,
+        markFieldTouched,
+    } = useBundleStore();
+    const { setValue } = useBundleFormMethods();
 
     const [discountApplication, setDiscountApplication] =
         useState<DiscountApplication>(
@@ -62,8 +72,12 @@ export function useBundleBehavior() {
                 discountApplication: "bundle",
                 discountedProductIds: [],
             });
+            setValue("discountApplication", "bundle", {
+                shouldValidate: true,
+            });
+            setValue("discountedProductIds", [], { shouldValidate: true });
         }
-    }, [isDiscountDisabled, discountApplication, setBundleData]);
+    }, [isDiscountDisabled, discountApplication, setBundleData, setValue]);
 
     /**
      * Get unique products for the modal
@@ -116,17 +130,27 @@ export function useBundleBehavior() {
                 discountApplication: "bundle",
                 discountedProductIds: [],
             });
+            setValue("discountApplication", "bundle", {
+                shouldValidate: true,
+            });
+            setValue("discountedProductIds", [], { shouldValidate: true });
         } else {
+            const ids = Array.from(selectedProducts);
             setDiscountedProductIds(new Set(selectedProducts));
             setBundleData({
                 discountApplication: "products",
-                discountedProductIds: Array.from(selectedProducts),
+                discountedProductIds: ids,
             });
+            setValue("discountApplication", "products", {
+                shouldValidate: true,
+            });
+            setValue("discountedProductIds", ids, { shouldValidate: true });
         }
         setSelectedProducts(new Set());
+        markFieldTouched("discountApplication");
         markDirty();
         triggerSaveBar();
-    }, [selectedProducts, setBundleData, markDirty]);
+    }, [selectedProducts, setBundleData, setValue, markFieldTouched, markDirty]);
 
     /**
      * Reset on modal close
@@ -152,6 +176,10 @@ export function useBundleBehavior() {
 
             const newValue = value as DiscountApplication;
             setDiscountApplication(newValue);
+            setValue("discountApplication", newValue, {
+                shouldValidate: true,
+            });
+            markFieldTouched("discountApplication");
 
             if (newValue === "bundle") {
                 setDiscountedProductIds(new Set());
@@ -159,11 +187,14 @@ export function useBundleBehavior() {
                     discountApplication: "bundle",
                     discountedProductIds: [],
                 });
+                setValue("discountedProductIds", [], {
+                    shouldValidate: true,
+                });
             }
             markDirty();
             triggerSaveBar();
         },
-        [isDiscountDisabled, setBundleData, markDirty],
+        [isDiscountDisabled, setBundleData, setValue, markFieldTouched, markDirty],
     );
 
     /**
@@ -173,10 +204,12 @@ export function useBundleBehavior() {
         (checked: boolean) => {
             setFreeShipping(checked);
             setBundleData({ freeShipping: checked });
+            setValue("freeShipping", checked, { shouldValidate: true });
+            markFieldTouched("freeShipping");
             markDirty();
             triggerSaveBar();
         },
-        [setBundleData, markDirty],
+        [setBundleData, setValue, markFieldTouched, markDirty],
     );
 
     /**

@@ -1,10 +1,13 @@
 "use client";
 
-import { ADVANCED_OPTIONS, useBundleStore } from "@/features/bundles";
 import React from "react";
+import { useFormContext } from "react-hook-form";
+import { ADVANCED_OPTIONS, useBundleStore } from "@/features/bundles";
 
 export function WidgetDisplaySettings() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
+    const { displaySettings, updateDisplaySettings, markFieldTouched } =
+        useBundleStore();
+    const { setValue } = useFormContext();
 
     return (
         <s-section>
@@ -39,6 +42,15 @@ export function WidgetDisplaySettings() {
                                     const target =
                                         event.target as HTMLInputElement;
                                     updateDisplaySettings(key, target.checked);
+                                    setValue(
+                                        `settings.${key}`,
+                                        target.checked,
+                                        {
+                                            shouldValidate: true,
+                                            shouldDirty: true,
+                                        },
+                                    );
+                                    markFieldTouched(`settings.${key}`);
                                 }}
                             />
                             {index < ADVANCED_OPTIONS.length - 1 && (

@@ -31,6 +31,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                         const target = event.target as HTMLInputElement;
                         nameField.handleChange(target.value);
                     }}
+                    onBlur={nameField.handleBlur}
                     placeholder={
                         isGeneratingName
                             ? "Generating unique name..."
@@ -39,6 +40,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                     details="Unique identifier for your bundle."
                     error={getFieldError("name")}
                     disabled={isGeneratingName}
+                    maxLength={100}
                     required
                 ></s-text-field>
             </s-stack>
@@ -50,10 +52,12 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                     const target = event.target as HTMLTextAreaElement;
                     descriptionField.handleChange(target.value);
                 }}
+                onBlur={descriptionField.handleBlur}
                 rows={3}
                 placeholder="Describe your bundle offer"
                 details="Used internally to describe the bundle."
                 error={getFieldError("description")}
+                maxLength={300}
             />
         </s-stack>
     );
