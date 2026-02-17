@@ -82,9 +82,15 @@ export const extractProductIds = (
 ): string[] => {
     return Array.from(
         new Set(
-            bundles.flatMap((bundle) =>
-                bundle.bundleProducts.map((bp) => bp.productId),
-            ),
+            bundles.flatMap((bundle) => {
+                const ids = bundle.bundleProducts.map((bp) => bp.productId);
+
+                if (bundle.mainProductId) {
+                    ids.push(bundle.mainProductId);
+                }
+
+                return ids;
+            }),
         ),
     );
 };

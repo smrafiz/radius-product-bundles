@@ -47,6 +47,7 @@ export interface TransformedBundleBase {
     discountType: DiscountType;
     discountValue: number;
     products: TransformedProduct[];
+    mainProduct?: { id: string; title: string; handle: string } | null;
 }
 
 /*

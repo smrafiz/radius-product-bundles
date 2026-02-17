@@ -137,8 +137,22 @@ export function BundleActionsGroup({
                                 ) : (
                                     <s-text>No products in this bundle</s-text>
                                 )}
-                                <s-divider />
-                                <s-heading>Bundle product</s-heading>
+                                {bundle.mainProduct && (
+                                    <>
+                                        <s-divider />
+                                        <s-heading>Bundle product</s-heading>
+                                        <a
+                                            href={`https://${shopDomain}/products/${bundle.mainProduct.handle}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hover:underline"
+                                        >
+                                            <s-text>
+                                                {bundle.mainProduct.title}
+                                            </s-text>
+                                        </a>
+                                    </>
+                                )}
                             </s-stack>
                         </div>
                     </s-stack>

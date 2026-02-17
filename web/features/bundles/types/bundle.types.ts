@@ -58,6 +58,7 @@ export interface BundleListItem {
         featuredImage?: string;
         handle: string;
     }>;
+    mainProduct?: { id: string; title: string; handle: string } | null;
 }
 
 /**

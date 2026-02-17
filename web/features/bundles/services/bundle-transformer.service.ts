@@ -60,6 +60,14 @@ export function transformBundleCore(
                 };
             })
             .filter((p): p is NonNullable<typeof p> => p !== null),
+        mainProduct: (() => {
+            const mp = bundle.mainProductId
+                ? productMap?.get(bundle.mainProductId)
+                : null;
+            return mp
+                ? { id: mp.id, title: mp.title, handle: mp.handle }
+                : null;
+        })(),
     };
 }
 
