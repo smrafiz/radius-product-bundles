@@ -1,11 +1,21 @@
 import shopify from "../config/initialize-context";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
-import { findOfflineSessionByShop, storeSession } from "@/shared/repositories";
+import {
+    findOfflineSessionByShop,
+    storeSession,
+    upsertShop,
+} from "@/shared/repositories";
 import {
     extractBearerToken,
     isSessionExpired,
     normalizeShopDomain,
 } from "@/shared";
+import { runAppSetup } from "../setup/app-setup";
+import { registerWebhooks } from "../webhooks/register";
+import {
+    markSetupComplete,
+    markWebhooksRegistered,
+} from "@/features/webhooks";
 
 /**
  * Verify the request and return the shop and session
@@ -89,6 +99,40 @@ export async function handleSessionToken(
         online,
         store: store !== false,
     });
+
+    // Ensure Shop record exists and run first-time setup if needed
+    if (store !== false) {
+        try {
+            const shopRecord = await upsertShop(shop);
+
+            if (!shopRecord.setupComplete && session.accessToken) {
+                console.log(
+                    "[Auth] First-time setup via token exchange for:",
+                    shop,
+                );
+
+                const setupResult = await runAppSetup(
+                    session.accessToken,
+                    shop,
+                );
+                if (setupResult.success) {
+                    await markSetupComplete(shop);
+                }
+
+                try {
+                    await registerWebhooks(session);
+                    await markWebhooksRegistered(shop);
+                } catch (webhookErr) {
+                    console.error(
+                        "[Auth] Webhook registration failed:",
+                        webhookErr,
+                    );
+                }
+            }
+        } catch (err) {
+            console.error("[Auth] Shop upsert/setup failed:", err);
+        }
+    }
 
     return { shop, session };
 }

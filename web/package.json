@@ -45,7 +45,6 @@
         "date-fns": "^4.1.0",
         "framer-motion": "^12.34.1",
         "graphql-request": "^7.4.0",
-        "isomorphic-dompurify": "^2.36.0",
         "nanoid": "^5.1.6",
         "next": "16.1.6",
         "nprogress": "^0.2.0",

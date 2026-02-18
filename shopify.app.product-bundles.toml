@@ -1,20 +1,47 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+# Avoid writing to toml directly. Use your .env file instead
 
-client_id = "b1cd6f12e536f4d86d04231d69a1fb35"
 name = "Product Bundles"
-application_url = "https://example.com"
+handle = "product-bundles-111"
+client_id = "b1cd6f12e536f4d86d04231d69a1fb35"
+application_url = "https://radius-product-bundles-cs9v.vercel.app"
 embedded = true
+extension_directories = [ "./extension/extensions/**" ]
+
+[app_proxy]
+url = "https://radius-product-bundles-cs9v.vercel.app/api/proxy"
+subpath = "bundles"
+prefix = "apps"
 
 [build]
 automatically_update_urls_on_dev = true
-include_config_on_deploy = true
+dev_store_url = "bundles47.myshopify.com"
 
 [webhooks]
-api_version = "2026-04"
+api_version = "2025-10"
+
+[access.admin]
+direct_api_mode = "offline"
+embedded_app_direct_api_access = true
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_customers,read_orders,read_price_rules,read_products,read_themes,write_app_proxy,write_discounts,write_files,write_price_rules,write_products,write_publications,write_script_tags"
+scopes = "read_customers,read_orders,read_price_rules,read_products,read_themes,write_files,write_app_proxy,write_price_rules,write_products,write_publications,write_script_tags,write_discounts"
+optional_scopes = [ ]
+use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://radius-product-bundles-cs9v.vercel.app/api/auth/callback",
+  "https://radius-product-bundles-cs9v.vercel.app/api/auth/oauth/callback"
+]
+
+[pos]
+embedded = false
+
+[product.metafields.app.bundle_ids]
+type = "list.single_line_text_field"
+name = "Bundle IDs"
+description = "List of bundle IDs that include this product"
+
+  [product.metafields.app.bundle_ids.access]
+  admin = "merchant_read"
+  storefront = "public_read"

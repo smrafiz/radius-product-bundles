@@ -2,7 +2,6 @@
  * Format validation errors into user-friendly messages
  */
 
-import DOMPurify from "isomorphic-dompurify";
 import { Config, ExtractLabelsOptions, ValidationErrors } from "@/shared";
 
 /**
@@ -150,10 +149,7 @@ export function getFieldErrorMessage(
  * Sanitizes HTML content by removing all tags and attributes.
  */
 export const sanitizeHtml = (value: string) => {
-    return DOMPurify.sanitize(value, {
-        ALLOWED_TAGS: [],
-        ALLOWED_ATTR: [],
-    }).trim();
+    return value.replace(/<[^>]*>/g, "").trim();
 };
 
 /**
