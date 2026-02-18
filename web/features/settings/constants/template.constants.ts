@@ -1,3 +1,4 @@
+import type { TemplateRegistry } from "@/features/settings/types";
 import {
     TemplateBogo,
     TemplateBuyGet,
@@ -5,9 +6,8 @@ import {
     TemplateFbt,
     TemplateFixed,
     TemplateMixMatch,
-    TemplateRegistry,
     TemplateVolume,
-} from "@/features/settings";
+} from "@/features/settings/components/style-customizer/bundle-preview/templates";
 
 /*
  * Template registry

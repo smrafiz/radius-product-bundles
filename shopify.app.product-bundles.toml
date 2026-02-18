@@ -1,0 +1,20 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "b1cd6f12e536f4d86d04231d69a1fb35"
+name = "Product Bundles"
+application_url = "https://example.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2026-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_orders,read_price_rules,read_products,read_themes,write_app_proxy,write_discounts,write_files,write_price_rules,write_products,write_publications,write_script_tags"
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
