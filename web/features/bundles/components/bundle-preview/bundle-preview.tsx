@@ -34,11 +34,15 @@ import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/default
 import "@/styles/components/bundle.css";
 
 function useWidgetStyles(): CustomizerStyles {
-    const settings = useSettingsStore.getState().getEffectiveData();
-    return {
-        ...DEFAULT_CUSTOMIZER_STYLES,
-        ...(settings.globalStyles as Partial<CustomizerStyles>),
-    };
+    const serverData = useSettingsStore((s) => s.serverData);
+
+    return useMemo(
+        () => ({
+            ...DEFAULT_CUSTOMIZER_STYLES,
+            ...(serverData?.globalStyles as Partial<CustomizerStyles>),
+        }),
+        [serverData],
+    );
 }
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {

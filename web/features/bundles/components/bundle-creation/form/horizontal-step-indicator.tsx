@@ -66,7 +66,7 @@ export function HorizontalStepIndicator() {
                 <s-stack>
                     <s-button
                         onClick={prevStep}
-                        disabled={!canGoPrev || (isLastStep && isSaving)}
+                        disabled={!canGoPrev || isSaving}
                         variant="secondary"
                         accessibilityLabel="Back"
                     >
@@ -158,7 +158,7 @@ export function HorizontalStepIndicator() {
                         onClick={
                             isLastStep ? handleFinalSubmit : handleNextStep
                         }
-                        loading={isLastStep && isSaving}
+                        loading={isSaving}
                         variant="primary"
                         accessibilityLabel="Next"
                     >

@@ -132,7 +132,7 @@ export function BundleCreationForm({
                                 loading={isDeleting}
                                 accessibilityLabel="Delete bundle"
                             >
-                                Delete
+                                Delete bundle
                             </s-button>
                         )}
                     </div>
