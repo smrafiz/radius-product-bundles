@@ -2,10 +2,10 @@
 
 import {
     BundleTemplateProps,
-    FbtProductCard,
-    FbtSeparator,
     useCustomizerStore,
 } from "@/features/settings";
+import { FbtProductCard } from "../../bundle-layout/cards/fbt-product-card";
+import { FbtSeparator } from "../../bundle-layout/elements/fbt-separator";
 
 const FBT_PRODUCTS: ReadonlyArray<{
     name: string;

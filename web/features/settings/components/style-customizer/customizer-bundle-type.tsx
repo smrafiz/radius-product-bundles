@@ -1,15 +1,15 @@
 "use client";
 
 import {
-    CustomizerHeader,
-    CustomizerSkeleton,
-    DynamicCustomizerPanel,
-    PreviewShell,
     useScrollBlur,
     PreviewTemplateId,
     useCustomizerPage,
     useCustomizerStore,
 } from "@/features/settings";
+import { CustomizerHeader } from "./customizer-header";
+import { CustomizerSkeleton } from "./customizer-skeletons";
+import { DynamicCustomizerPanel } from "./dynamic-customizer-panel";
+import { PreviewShell } from "./bundle-preview/preview-shell";
 import { GlobalBanner } from "@/shared";
 import { FormProvider } from "react-hook-form";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";

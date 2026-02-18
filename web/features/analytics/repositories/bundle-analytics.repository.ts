@@ -93,57 +93,65 @@ export async function getBundleDetails(bundleIds: string[]) {
 }
 
 /**
- * Get bundle trend data (compare with the previous period)
+ * Get trend data for multiple bundles in batch (2 queries instead of 2N)
  */
-export async function getBundleTrend(
+export async function getBundleTrendsBatch(
     shop: string,
-    bundleId: string,
+    bundleIds: string[],
     currentStart: Date,
     currentEnd: Date,
     previousStart: Date,
     previousEnd: Date,
-): Promise<TopBundleTrend> {
-    // Get current period revenue
-    const currentResult = await prisma.bundleAnalytics.aggregate({
-        where: {
-            bundleId,
-            bundle: { shop },
-            date: { gte: currentStart, lte: currentEnd },
-        },
-        _sum: {
-            bundleRevenue: true,
-        },
-    });
+): Promise<Map<string, TopBundleTrend>> {
+    const [currentResults, previousResults] = await Promise.all([
+        prisma.bundleAnalytics.groupBy({
+            by: ["bundleId"],
+            where: {
+                bundleId: { in: bundleIds },
+                bundle: { shop },
+                date: { gte: currentStart, lte: currentEnd },
+            },
+            _sum: { bundleRevenue: true },
+        }),
+        prisma.bundleAnalytics.groupBy({
+            by: ["bundleId"],
+            where: {
+                bundleId: { in: bundleIds },
+                bundle: { shop },
+                date: { gte: previousStart, lt: previousEnd },
+            },
+            _sum: { bundleRevenue: true },
+        }),
+    ]);
 
-    // Get previous period revenue
-    const previousResult = await prisma.bundleAnalytics.aggregate({
-        where: {
-            bundleId,
-            bundle: { shop },
-            date: { gte: previousStart, lt: previousEnd },
-        },
-        _sum: {
-            bundleRevenue: true,
-        },
-    });
+    const currentMap = new Map(
+        currentResults.map((r) => [r.bundleId, r._sum.bundleRevenue || 0]),
+    );
+    const previousMap = new Map(
+        previousResults.map((r) => [r.bundleId, r._sum.bundleRevenue || 0]),
+    );
 
-    const currentRevenue = currentResult._sum.bundleRevenue || 0;
-    const previousRevenue = previousResult._sum.bundleRevenue || 0;
+    const trends = new Map<string, TopBundleTrend>();
+    for (const id of bundleIds) {
+        const currentRevenue = currentMap.get(id) || 0;
+        const previousRevenue = previousMap.get(id) || 0;
 
-    // Calculate trend percentage
-    let trendPercentage = 0;
-    if (previousRevenue > 0) {
-        trendPercentage =
-            ((currentRevenue - previousRevenue) / previousRevenue) * 100;
-    } else if (currentRevenue > 0) {
-        trendPercentage = 100; // If no previous revenue, it's 100% growth
+        let trendPercentage = 0;
+        if (previousRevenue > 0) {
+            trendPercentage =
+                ((currentRevenue - previousRevenue) / previousRevenue) * 100;
+        } else if (currentRevenue > 0) {
+            trendPercentage = 100;
+        }
+
+        trends.set(id, {
+            currentRevenue,
+            previousRevenue,
+            trendPercentage: Number(trendPercentage.toFixed(2)),
+        });
     }
 
-    return {
-        currentRevenue,
-        previousRevenue,
-        trendPercentage: Number(trendPercentage.toFixed(2)),
-    };
+    return trends;
 }
 
 /**

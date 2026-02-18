@@ -1,6 +1,7 @@
 "use client";
 
-import { DynamicField, getGridClass, SectionConfig } from "@/features/settings";
+import { getGridClass, SectionConfig } from "@/features/settings";
+import { DynamicField } from "./dynamic-field";
 
 /**
  * Universal section renderer - renders ANY section from config.

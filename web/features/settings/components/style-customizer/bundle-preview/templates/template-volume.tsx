@@ -3,12 +3,12 @@
 import {
     BundleTemplateProps,
     getSpacing,
-    ProductCard,
-    SectionDivider,
     useCustomizerStore,
     VolumeTier,
-    VolumeTiers,
 } from "@/features/settings";
+import { ProductCard } from "../../bundle-layout/cards/product-card";
+import { SectionDivider } from "../../bundle-layout/elements/section-divider";
+import { VolumeTiers } from "../../bundle-layout/elements/volume-tiers";
 
 const VOLUME_TIERS: ReadonlyArray<VolumeTier> = [
     { qty: 2, discount: 10, price: "$27.00" },

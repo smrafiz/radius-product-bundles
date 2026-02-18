@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CustomizerBundleType } from "@/features/settings";
+import { CustomizerBundleType } from "@/features/settings/components/style-customizer";
 export const metadata: Metadata = {
     title: "Customizer - Manage Your Bundle Customization",
     description:

@@ -4,11 +4,11 @@ import {
     ConditionContext,
     createConditionContext,
     DynamicCustomizerPanelProps,
-    DynamicCustomizerSection,
     getVisibleSections,
     useCustomizerPanel,
     useCustomizerStore,
 } from "@/features/settings";
+import { DynamicCustomizerSection } from "./dynamic-customizer-section";
 import { useModalStore } from "@/shared";
 import { useEffect, useMemo, useRef } from "react";
 

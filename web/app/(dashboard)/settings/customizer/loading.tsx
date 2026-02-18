@@ -1,6 +1,6 @@
 "use client";
 
-import { CustomizerSkeleton } from "@/features/settings";
+import { CustomizerSkeleton } from "@/features/settings/components/style-customizer";
 
 /**
  * Customizer page loading skeleton

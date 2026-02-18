@@ -20,7 +20,7 @@ import {
     getAllBundlesWithAnalytics,
     getBundleDetails,
     getBundleStatusCounts,
-    getBundleTrend,
+    getBundleTrendsBatch,
     getPaginatedBundlesWithAnalytics,
     getTopPerformingBundles,
 } from "@/features/analytics/repositories";
@@ -60,30 +60,28 @@ export async function getTopBundlesService(
         return [];
     }
 
-    // Get bundle details
+    // Get bundle details and trends in parallel (3 queries total)
     const bundleIds = bundleStats.map((b) => b.bundleId);
-    const bundleDetails = await getBundleDetails(bundleIds);
+    const [bundleDetails, trendsMap] = await Promise.all([
+        getBundleDetails(bundleIds),
+        getBundleTrendsBatch(
+            shop,
+            bundleIds,
+            currentStart,
+            currentEnd,
+            previousStart,
+            previousEnd,
+        ),
+    ]);
 
-    // Get trend data for each bundle
-    const bundlesWithTrends = await Promise.all(
-        bundleStats.map(async (stats) => {
+    const defaultTrend = { currentRevenue: 0, previousRevenue: 0, trendPercentage: 0 };
+
+    return bundleStats
+        .map((stats) => {
             const details = bundleDetails.find((b) => b.id === stats.bundleId);
+            if (!details) return null;
 
-            if (!details) {
-                return null;
-            }
-
-            // Get trend
-            const trend = await getBundleTrend(
-                shop,
-                stats.bundleId,
-                currentStart,
-                currentEnd,
-                previousStart,
-                previousEnd,
-            );
-
-            // Generate badges
+            const trend = trendsMap.get(stats.bundleId) || defaultTrend;
             const badges = generateBundleBadges(stats, trend);
 
             return {
@@ -105,10 +103,8 @@ export async function getTopBundlesService(
                 trendPercentage: trend.trendPercentage,
                 badges,
             };
-        }),
-    );
-
-    return bundlesWithTrends.filter((b) => b !== null) as TopBundleWithTrend[];
+        })
+        .filter((b) => b !== null) as TopBundleWithTrend[];
 }
 
 /**

@@ -1,7 +1,7 @@
 "use client";
 
 import { DehydratedState } from "@tanstack/react-query";
-import { AppSettingsProvider } from "@/features/settings";
+import { AppSettingsProvider } from "@/features/settings/components/app-settings-provider";
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import {
     Navigation,

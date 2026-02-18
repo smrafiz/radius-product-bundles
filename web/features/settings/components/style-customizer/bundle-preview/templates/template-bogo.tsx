@@ -3,11 +3,11 @@
 import {
     BundleTemplateProps,
     getSpacing,
-    ProductCard,
-    SectionDivider,
-    SectionLabel,
     useCustomizerStore,
 } from "@/features/settings";
+import { ProductCard } from "../../bundle-layout/cards/product-card";
+import { SectionDivider } from "../../bundle-layout/elements/section-divider";
+import { SectionLabel } from "../../bundle-layout/elements/section-label";
 
 export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
     const { styles } = useCustomizerStore();

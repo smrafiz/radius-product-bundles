@@ -2,11 +2,11 @@
 
 import {
     AppSettingsFormData,
-    SettingsFormProvider,
-    SettingsTab,
     useSettingsSubmit,
     useSettingsQuery,
 } from "@/features/settings";
+import { SettingsFormProvider } from "../settings-form/settings-form-provider";
+import { SettingsTab } from "../settings-tabs/settings-tab";
 import { GlobalForm } from "@/shared";
 import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 import { TitleBar } from "@shopify/app-bridge-react";

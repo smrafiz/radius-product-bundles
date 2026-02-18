@@ -1,6 +1,7 @@
 "use client";
 
-import { BundleTypeTab, useCustomizerStore } from "@/features/settings";
+import { useCustomizerStore } from "@/features/settings";
+import { BundleTypeTab } from "./bundle-type-tab";
 
 export function CustomizerHeader({
     activeBundleType,

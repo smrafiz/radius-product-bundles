@@ -4,11 +4,11 @@ import {
     BundleTemplateProps,
     BuyGetTier,
     getSpacing,
-    MiniProductCard,
-    TierCard,
-    TierTabs,
     useCustomizerStore,
 } from "@/features/settings";
+import { MiniProductCard } from "../../bundle-layout/cards/mini-product-card";
+import { TierCard } from "../../bundle-layout/elements/tier-card";
+import { TierTabs } from "../../bundle-layout/elements/tier-tabs";
 
 const TIERS: ReadonlyArray<BuyGetTier> = [
     { buy: 2, get: 1, label: "Buy 2, Get 1 Free" },

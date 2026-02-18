@@ -1,12 +1,10 @@
 "use client";
 
-import {
-    CustomizerModal,
-    DynamicSection,
-    SectionHeader,
-    SettingsTabConfig,
-    SettingsTools,
-} from "@/features/settings";
+import { SettingsTabConfig } from "@/features/settings";
+import { CustomizerModal } from "../style-customizer/customizer-modal";
+import { DynamicSection } from "./dynamic-section";
+import { SectionHeader } from "./section-header";
+import { SettingsTools } from "./settings-tools";
 
 /**
  * Universal tab renderer - renders any tab from config.

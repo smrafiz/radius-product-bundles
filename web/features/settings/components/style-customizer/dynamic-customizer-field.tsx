@@ -4,11 +4,11 @@ import {
     CustomizerStyles,
     DynamicCustomizerFieldProps,
     isFieldVisible,
-    ResponsiveFieldIndicator,
     StylePreset,
     useCustomizerField,
     useCustomizerStore,
 } from "@/features/settings";
+import { ResponsiveFieldIndicator } from "./responsive-field-indicator";
 import { RtpbRangeSlider } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants";

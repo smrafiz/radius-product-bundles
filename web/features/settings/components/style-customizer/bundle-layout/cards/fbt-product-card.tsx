@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    CheckIndicator,
     FbtProductCardProps,
     getCardBgColor,
     getCardRadius,
@@ -10,6 +9,7 @@ import {
     getSpacing,
     useCustomizerStore,
 } from "@/features/settings";
+import { CheckIndicator } from "./check-indicator";
 
 export function FbtProductCard({
     name,

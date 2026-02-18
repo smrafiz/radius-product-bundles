@@ -19,6 +19,17 @@ export async function getSetupGuideService({
     shop: string;
 }): Promise<SetupGuideData> {
     const persisted = await getSetupProgress(shop);
+
+    // Skip auto-detection when guide is dismissed or all steps complete
+    if (persisted.dismissed || persisted.setupComplete) {
+        return {
+            dismissed: persisted.dismissed,
+            progress: persisted.progress,
+            shopDomain: persisted.shopDomain,
+            apiKey: process.env.SHOPIFY_API_KEY ?? "",
+        };
+    }
+
     const autoDetected = await autoDetectProgress(shop);
 
     const merged: SetupProgress = {

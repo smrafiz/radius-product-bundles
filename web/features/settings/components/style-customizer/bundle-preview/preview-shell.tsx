@@ -1,11 +1,11 @@
 "use client";
 
 import {
-    LayoutSidebar,
-    PreviewContainer,
     PreviewShellProps,
     usePreviewShell,
 } from "@/features/settings";
+import { LayoutSidebar } from "./layout-sidebar";
+import { PreviewContainer } from "./preview-container";
 import { BundleWidget } from "@/shared";
 import {
     DEFAULT_DISPLAY_OPTIONS,

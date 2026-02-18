@@ -5,12 +5,12 @@ import {
     ConditionContext,
     CustomizerSectionConfig,
     CustomizerStyles,
-    DynamicCustomizerField,
     getGridClass,
     getVisibleFields,
     groupFieldsByType,
     isSectionVisible,
 } from "@/features/settings";
+import { DynamicCustomizerField } from "./dynamic-customizer-field";
 
 interface DynamicCustomizerSectionProps {
     config: CustomizerSectionConfig;

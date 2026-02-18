@@ -22,22 +22,21 @@ export async function getSetupGuideAction(
         const { session } = await handleSessionToken(sessionToken);
         const { shop } = session;
 
-        let bundlesTransitioned = false;
-        if (session.accessToken) {
-            try {
-                const schedulerResult = await processScheduledBundlesForShop(
-                    shop,
-                    session.accessToken,
-                );
-                bundlesTransitioned =
-                    schedulerResult.activated > 0 ||
-                    schedulerResult.deactivated > 0;
-            } catch (err) {
-                console.error("[Dashboard] Scheduler check failed:", err);
-            }
-        }
+        // Run scheduler and guide fetch in parallel
+        const [schedulerResult, data] = await Promise.all([
+            session.accessToken
+                ? processScheduledBundlesForShop(shop, session.accessToken).catch(
+                      (err) => {
+                          console.error("[Dashboard] Scheduler check failed:", err);
+                          return { activated: 0, deactivated: 0 };
+                      },
+                  )
+                : Promise.resolve({ activated: 0, deactivated: 0 }),
+            getSetupGuideService({ shop }),
+        ]);
 
-        const data = await getSetupGuideService({ shop });
+        const bundlesTransitioned =
+            schedulerResult.activated > 0 || schedulerResult.deactivated > 0;
 
         return {
             status: "success",

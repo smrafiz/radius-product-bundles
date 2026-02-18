@@ -8,8 +8,8 @@ import {
     getCardBgColor,
     useCustomizerStore,
     SelectableProductCardProps,
-    CheckIndicator,
 } from "@/features/settings";
+import { CheckIndicator } from "./check-indicator";
 
 export function SelectableProductCard({
     selected,

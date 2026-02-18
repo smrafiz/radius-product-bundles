@@ -3,12 +3,12 @@
 import {
     BundleTemplateProps,
     getSpacing,
-    GroupHeader,
     MixMatchGroup,
-    SectionDivider,
-    SelectableProductCard,
     useCustomizerStore,
 } from "@/features/settings";
+import { GroupHeader } from "../../bundle-layout/elements/group-header";
+import { SectionDivider } from "../../bundle-layout/elements/section-divider";
+import { SelectableProductCard } from "../../bundle-layout/cards/selectable-product-card";
 
 const GROUPS: ReadonlyArray<MixMatchGroup> = [
     { name: "Choose a Top", min: 1, max: 2, count: 3 },
