@@ -20,6 +20,7 @@ export function DiscountSettings() {
         getDiscountValueLabel,
         getCurrency,
         getSuffix,
+        getPrefix,
         getFieldError,
         showDiscountValue,
         showMaxDiscountAmount,
@@ -71,6 +72,7 @@ export function DiscountSettings() {
                     step={1}
                     min={0}
                     placeholder="0"
+                    prefix={getPrefix()}
                     suffix={getSuffix()}
                     max={discountType === "PERCENTAGE" ? 100 : undefined}
                     onChange={(event: Event) => {

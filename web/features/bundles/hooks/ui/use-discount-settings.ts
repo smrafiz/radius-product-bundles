@@ -127,12 +127,21 @@ export function useDiscountSettings() {
         return currencySymbol;
     }, [isLoading, currencyCode, currencySymbol]);
 
+    const isPercentage = discountType === "PERCENTAGE";
+
     /**
-     * Get suffix for discount value field.
+     * Get suffix for discount value field (percentage only).
      */
     const getSuffix = useCallback(() => {
-        return discountType === "PERCENTAGE" ? "%" : getCurrency();
-    }, [discountType, getCurrency]);
+        return isPercentage ? "%" : undefined;
+    }, [isPercentage]);
+
+    /**
+     * Get prefix for discount value field (amount types only).
+     */
+    const getPrefix = useCallback(() => {
+        return isPercentage ? undefined : getCurrency();
+    }, [isPercentage, getCurrency]);
 
     // Visibility flags
     const showDiscountValue = [
@@ -178,6 +187,7 @@ export function useDiscountSettings() {
         getDiscountValueLabel,
         getCurrency,
         getSuffix,
+        getPrefix,
         getFieldError,
 
         // Visibility
