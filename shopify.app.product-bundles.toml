@@ -14,7 +14,7 @@ prefix = "apps"
 
 [build]
 automatically_update_urls_on_dev = true
-dev_store_url = "bundles47.myshopify.com"
+dev_store_url = "bundlestesting-2.myshopify.com"
 
 [webhooks]
 api_version = "2025-10"
