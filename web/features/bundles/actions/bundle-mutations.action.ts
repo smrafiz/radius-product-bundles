@@ -50,6 +50,7 @@ import {
     clearMainProductByGid,
     findBundleByIdWithAllRelations,
 } from "@/features/bundles/repositories";
+import { invalidateDashboardCache } from "@/lib/cache";
 
 /**
  * Update bundle status
@@ -98,6 +99,7 @@ export async function updateBundleStatusAction(
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
+        invalidateDashboardCache(shop);
 
         return {
             status: "success" as const,
@@ -157,6 +159,7 @@ export async function bulkToggleBundleStatusAction(
         await syncAllSettingsToMetafields(sessionToken, shop);
 
         revalidatePath("/bundles");
+        invalidateDashboardCache(shop);
 
         return {
             status: "success" as const,
@@ -238,6 +241,7 @@ export async function deleteBundleAction(
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
+        invalidateDashboardCache(shop);
 
         return {
             status: "success",
@@ -298,8 +302,8 @@ export async function deleteBundlesAction(
             bundleIds,
             shop,
         });
-        // await syncActiveBundlesToMetafield(sessionToken, shop);
         await syncAllSettingsToMetafields(sessionToken, shop);
+        invalidateDashboardCache(shop);
 
         // Remove bundle IDs from product metafields
         for (const [bundleId, productIds] of bundleProductMap) {
@@ -401,6 +405,7 @@ export async function duplicateBundleAction(
         }
 
         revalidatePath("/bundles");
+        invalidateDashboardCache(shop);
 
         return {
             status: "success" as const,
@@ -524,6 +529,7 @@ export async function createBundleAction(
 
         revalidatePath("/bundles");
         revalidatePath("/dashboard");
+        invalidateDashboardCache(shop);
 
         return {
             status: "success",
@@ -684,6 +690,7 @@ export async function updateBundleAction(
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
         revalidatePath("/dashboard");
+        invalidateDashboardCache(shop);
 
         console.log("[updateBundleAction] Cache revalidated");
 

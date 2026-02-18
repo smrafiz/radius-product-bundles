@@ -3,7 +3,8 @@
 /**
  * Bundle Analytics Actions - Auth Layer
  *
- * Handles authentication and calls service layer
+ * Handles authentication and calls service layer.
+ * Uses unstable_cache for server-side caching on Vercel.
  */
 
 import { ApiResponse } from "@/shared";
@@ -18,9 +19,11 @@ import {
     SortField,
     SortOrder,
 } from "@/features/analytics";
+import { unstable_cache } from "next/cache";
+import { cacheTags, cacheDurations } from "@/lib/cache";
 
 /**
- * Get top-performing bundles with all enhancements
+ * Get top-performing bundles with all enhancements (cached: 10 min)
  */
 export async function getTopBundlesAction(
     sessionToken: string,
@@ -33,12 +36,16 @@ export async function getTopBundlesAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const topBundles = await getTopBundlesService(
-            shop,
-            startDate,
-            endDate,
-            limit,
+        const getCachedTopBundles = unstable_cache(
+            async () => getTopBundlesService(shop, startDate, endDate, limit),
+            ["top-bundles", shop, startDate, endDate, String(limit)],
+            {
+                revalidate: cacheDurations.long,
+                tags: [cacheTags.topBundles(shop)],
+            },
         );
+
+        const topBundles = await getCachedTopBundles();
 
         return {
             status: "success",

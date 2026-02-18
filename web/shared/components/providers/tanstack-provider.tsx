@@ -30,7 +30,19 @@ export function TanstackProvider({
     dehydratedState?: DehydratedState | null;
 }) {
     // useState ensures a single QueryClient per app lifecycle
-    const [queryClient] = useState(() => new QueryClient());
+    const [queryClient] = useState(
+        () =>
+            new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        staleTime: 60 * 1000, // 1 min default
+                        gcTime: 10 * 60 * 1000, // 10 min garbage collection
+                        retry: 1,
+                        refetchOnWindowFocus: false,
+                    },
+                },
+            }),
+    );
 
     return (
         <QueryClientProvider client={queryClient}>

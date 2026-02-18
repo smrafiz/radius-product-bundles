@@ -14,6 +14,8 @@ import {
 } from "../services/setup-guide.service";
 import { handleSessionToken } from "@/lib/shopify";
 import { processScheduledBundlesForShop } from "@/features/bundles/services/bundle-scheduler.service";
+import { unstable_cache } from "next/cache";
+import { cacheTags, cacheDurations, invalidateSetupGuideCache } from "@/lib/cache";
 
 export async function getSetupGuideAction(
     sessionToken: string,
@@ -22,17 +24,29 @@ export async function getSetupGuideAction(
         const { session } = await handleSessionToken(sessionToken);
         const { shop } = session;
 
-        // Run scheduler and guide fetch in parallel
+        // Scheduler is a side-effect — never cache it
+        const schedulerPromise = session.accessToken
+            ? processScheduledBundlesForShop(shop, session.accessToken).catch(
+                  (err) => {
+                      console.error("[Dashboard] Scheduler check failed:", err);
+                      return { activated: 0, deactivated: 0 };
+                  },
+              )
+            : Promise.resolve({ activated: 0, deactivated: 0 });
+
+        // Setup guide data is cached (10 min)
+        const getCachedGuide = unstable_cache(
+            async () => getSetupGuideService({ shop }),
+            ["setup-guide", shop],
+            {
+                revalidate: cacheDurations.long,
+                tags: [cacheTags.setupGuide(shop)],
+            },
+        );
+
         const [schedulerResult, data] = await Promise.all([
-            session.accessToken
-                ? processScheduledBundlesForShop(shop, session.accessToken).catch(
-                      (err) => {
-                          console.error("[Dashboard] Scheduler check failed:", err);
-                          return { activated: 0, deactivated: 0 };
-                      },
-                  )
-                : Promise.resolve({ activated: 0, deactivated: 0 }),
-            getSetupGuideService({ shop }),
+            schedulerPromise,
+            getCachedGuide(),
         ]);
 
         const bundlesTransitioned =
@@ -66,6 +80,9 @@ export async function updateSetupStepAction(
 
         const progress = await updateSetupStepService({ shop, stepKey, value });
 
+        // Bust the setup guide cache after update
+        invalidateSetupGuideCache(shop);
+
         return { status: "success", data: progress };
     } catch (error) {
         console.error("[updateSetupStep] Error:", error);
@@ -89,6 +106,9 @@ export async function dismissSetupGuideAction(
 
         await dismissSetupGuideService({ shop });
 
+        // Bust the setup guide cache after dismiss
+        invalidateSetupGuideCache(shop);
+
         return { status: "success", data: null };
     } catch (error) {
         console.error("[dismissSetupGuide] Error:", error);
@@ -111,6 +131,9 @@ export async function showSetupGuideAction(
         } = await handleSessionToken(sessionToken);
 
         await showSetupGuideService({ shop });
+
+        // Bust the setup guide cache after show
+        invalidateSetupGuideCache(shop);
 
         return { status: "success", data: null };
     } catch (error) {

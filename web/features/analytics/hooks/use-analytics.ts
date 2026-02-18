@@ -19,16 +19,12 @@ export function useAnalytics() {
 
     const metricsQuery = useQuery({
         ...queries.metrics(days, startDate, endDate),
-        staleTime: 2 * 60 * 1000,
-        gcTime: 10 * 60 * 1000,
-        refetchOnWindowFocus: false,
+        staleTime: 10 * 60 * 1000, // 10 min (server-side cached for 5 min)
     });
 
     const chartQuery = useQuery({
         ...queries.chart(days, startDate, endDate),
-        staleTime: 2 * 60 * 1000,
-        gcTime: 10 * 60 * 1000,
-        refetchOnWindowFocus: false,
+        staleTime: 5 * 60 * 1000, // 5 min (server-side cached for 5 min)
     });
 
     return {
@@ -73,9 +69,7 @@ export function useAnalyticsMetrics(overrideDays?: number) {
 
     const metricsQuery = useQuery({
         ...queries.metrics(days, startDate, endDate),
-        staleTime: 2 * 60 * 1000,
-        gcTime: 10 * 60 * 1000,
-        refetchOnWindowFocus: false,
+        staleTime: 10 * 60 * 1000, // 10 min (server-side cached for 5 min)
     });
 
     return {
