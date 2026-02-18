@@ -15,7 +15,7 @@ export const setupGuideQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
             return result.data!;
         },
-        staleTime: 5 * 60 * 1000, // 5 min (server-side cached for 10 min)
+        staleTime: 10 * 60 * 1000, // Match dashboard-long server cache (10 min)
         gcTime: 10 * 60 * 1000,
     }),
 });

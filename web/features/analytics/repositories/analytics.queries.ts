@@ -8,6 +8,24 @@ import { format, startOfDay } from "date-fns";
 import { prisma } from "@/shared/repositories/prisma-connect";
 import { AnalyticsMetricsRepository } from "@/features/analytics";
 
+/** Raw SQL result shape for aggregated analytics */
+interface RawAnalyticsRow {
+    currentViews: bigint;
+    currentPurchases: bigint;
+    currentRevenue: number;
+    currentAddToCarts: bigint;
+    prevViews: bigint;
+    prevPurchases: bigint;
+    prevRevenue: number;
+    alltimeRevenue: number;
+}
+
+/** Raw SQL result shape for bundle counts */
+interface RawBundleCountRow {
+    totalBundles: bigint;
+    activeBundles: bigint;
+}
+
 /**
  * Track bundle view event
  */
@@ -214,78 +232,70 @@ export async function trackBundlePurchase(params: {
 /**
  * Aggregate metrics for the dashboard
  *
- * Fetches current period, previous period, and totals in parallel.
+ * Uses raw SQL to combine 5 queries into 2 for fewer DB round-trips.
  */
 export async function aggregateBundleMetrics(
     shop: string,
     thirtyDaysAgo: Date,
     sixtyDaysAgo: Date,
 ): Promise<AnalyticsMetricsRepository> {
-    const [
-        currentPeriod,
-        previousPeriod,
-        totalRevenueAllTime,
-        totalBundles,
-        activeBundles,
-    ] = await Promise.all([
-        // Current period (last 30 days)
-        prisma.bundleAnalytics.aggregate({
-            where: {
-                bundle: { shop },
-                date: { gte: thirtyDaysAgo },
-            },
-            _sum: {
-                bundleViews: true,
-                bundlePurchases: true,
-                bundleRevenue: true,
-                bundleAddToCarts: true,
-            },
-        }),
-
-        // Previous period (30-60 days ago)
-        prisma.bundleAnalytics.aggregate({
-            where: {
-                bundle: { shop },
-                date: {
-                    gte: sixtyDaysAgo,
-                    lt: thirtyDaysAgo,
-                },
-            },
-            _sum: {
-                bundleViews: true,
-                bundlePurchases: true,
-                bundleRevenue: true,
-            },
-        }),
-
-        // All-time revenue
-        prisma.bundleAnalytics.aggregate({
-            where: {
-                bundle: { shop },
-            },
-            _sum: { bundleRevenue: true },
-        }),
-
-        // Total bundles count (exclude deleted)
-        prisma.bundle.count({
-            where: { shop, status: { not: "DELETED" as const } },
-        }),
-
-        // Active bundles count
-        prisma.bundle.count({ where: { shop, status: "ACTIVE" } }),
+    const [analyticsRows, countRows] = await Promise.all([
+        // Single query: current period + previous period + all-time revenue
+        prisma.$queryRaw<RawAnalyticsRow[]>`
+            SELECT
+                COALESCE(SUM(CASE WHEN ba.date >= ${thirtyDaysAgo} THEN ba."bundleViews" ELSE 0 END), 0) AS "currentViews",
+                COALESCE(SUM(CASE WHEN ba.date >= ${thirtyDaysAgo} THEN ba."bundlePurchases" ELSE 0 END), 0) AS "currentPurchases",
+                COALESCE(SUM(CASE WHEN ba.date >= ${thirtyDaysAgo} THEN ba."bundleRevenue" ELSE 0 END), 0) AS "currentRevenue",
+                COALESCE(SUM(CASE WHEN ba.date >= ${thirtyDaysAgo} THEN ba."bundleAddToCarts" ELSE 0 END), 0) AS "currentAddToCarts",
+                COALESCE(SUM(CASE WHEN ba.date >= ${sixtyDaysAgo} AND ba.date < ${thirtyDaysAgo} THEN ba."bundleViews" ELSE 0 END), 0) AS "prevViews",
+                COALESCE(SUM(CASE WHEN ba.date >= ${sixtyDaysAgo} AND ba.date < ${thirtyDaysAgo} THEN ba."bundlePurchases" ELSE 0 END), 0) AS "prevPurchases",
+                COALESCE(SUM(CASE WHEN ba.date >= ${sixtyDaysAgo} AND ba.date < ${thirtyDaysAgo} THEN ba."bundleRevenue" ELSE 0 END), 0) AS "prevRevenue",
+                COALESCE(SUM(ba."bundleRevenue"), 0) AS "alltimeRevenue"
+            FROM bundle_analytics ba
+            JOIN bundles b ON ba."bundleId" = b.id
+            WHERE b.shop = ${shop}
+        `,
+        // Single query: total + active bundle counts
+        prisma.$queryRaw<RawBundleCountRow[]>`
+            SELECT
+                COUNT(*) FILTER (WHERE status != 'DELETED') AS "totalBundles",
+                COUNT(*) FILTER (WHERE status = 'ACTIVE') AS "activeBundles"
+            FROM bundles
+            WHERE shop = ${shop}
+        `,
     ]);
 
+    const a = analyticsRows[0];
+    const c = countRows[0];
+
     return {
-        currentPeriod,
-        previousPeriod,
-        totalRevenueAllTime,
-        totalBundles,
-        activeBundles,
+        currentPeriod: {
+            _sum: {
+                bundleViews: Number(a.currentViews),
+                bundlePurchases: Number(a.currentPurchases),
+                bundleRevenue: Number(a.currentRevenue),
+                bundleAddToCarts: Number(a.currentAddToCarts),
+            },
+        },
+        previousPeriod: {
+            _sum: {
+                bundleViews: Number(a.prevViews),
+                bundlePurchases: Number(a.prevPurchases),
+                bundleRevenue: Number(a.prevRevenue),
+            },
+        },
+        totalRevenueAllTime: {
+            _sum: { bundleRevenue: Number(a.alltimeRevenue) },
+        },
+        totalBundles: Number(c.totalBundles),
+        activeBundles: Number(c.activeBundles),
     };
 }
 
 /**
  * Aggregate bundle metrics by date range
+ *
+ * Uses raw SQL to combine 5 queries into 2 for fewer DB round-trips.
  */
 export async function aggregateBundleMetricsByRange(
     shop: string,
@@ -294,69 +304,54 @@ export async function aggregateBundleMetricsByRange(
     previousStart: Date,
     previousEnd: Date,
 ): Promise<AnalyticsMetricsRepository> {
-    const [
-        currentPeriod,
-        previousPeriod,
-        totalRevenueAllTime,
-        totalBundles,
-        activeBundles,
-    ] = await Promise.all([
-        // Current period (selected date range)
-        prisma.bundleAnalytics.aggregate({
-            where: {
-                bundle: { shop },
-                date: {
-                    gte: currentStart,
-                    lte: currentEnd,
-                },
-            },
-            _sum: {
-                bundleViews: true,
-                bundlePurchases: true,
-                bundleRevenue: true,
-                bundleAddToCarts: true,
-            },
-        }),
-
-        // Previous period (for comparison)
-        prisma.bundleAnalytics.aggregate({
-            where: {
-                bundle: { shop },
-                date: {
-                    gte: previousStart,
-                    lt: previousEnd,
-                },
-            },
-            _sum: {
-                bundleViews: true,
-                bundlePurchases: true,
-                bundleRevenue: true,
-            },
-        }),
-
-        // All-time revenue
-        prisma.bundleAnalytics.aggregate({
-            where: {
-                bundle: { shop },
-            },
-            _sum: { bundleRevenue: true },
-        }),
-
-        // Total bundles count (exclude deleted)
-        prisma.bundle.count({
-            where: { shop, status: { not: "DELETED" as const } },
-        }),
-
-        // Active bundles count
-        prisma.bundle.count({ where: { shop, status: "ACTIVE" } }),
+    const [analyticsRows, countRows] = await Promise.all([
+        prisma.$queryRaw<RawAnalyticsRow[]>`
+            SELECT
+                COALESCE(SUM(CASE WHEN ba.date >= ${currentStart} AND ba.date <= ${currentEnd} THEN ba."bundleViews" ELSE 0 END), 0) AS "currentViews",
+                COALESCE(SUM(CASE WHEN ba.date >= ${currentStart} AND ba.date <= ${currentEnd} THEN ba."bundlePurchases" ELSE 0 END), 0) AS "currentPurchases",
+                COALESCE(SUM(CASE WHEN ba.date >= ${currentStart} AND ba.date <= ${currentEnd} THEN ba."bundleRevenue" ELSE 0 END), 0) AS "currentRevenue",
+                COALESCE(SUM(CASE WHEN ba.date >= ${currentStart} AND ba.date <= ${currentEnd} THEN ba."bundleAddToCarts" ELSE 0 END), 0) AS "currentAddToCarts",
+                COALESCE(SUM(CASE WHEN ba.date >= ${previousStart} AND ba.date < ${previousEnd} THEN ba."bundleViews" ELSE 0 END), 0) AS "prevViews",
+                COALESCE(SUM(CASE WHEN ba.date >= ${previousStart} AND ba.date < ${previousEnd} THEN ba."bundlePurchases" ELSE 0 END), 0) AS "prevPurchases",
+                COALESCE(SUM(CASE WHEN ba.date >= ${previousStart} AND ba.date < ${previousEnd} THEN ba."bundleRevenue" ELSE 0 END), 0) AS "prevRevenue",
+                COALESCE(SUM(ba."bundleRevenue"), 0) AS "alltimeRevenue"
+            FROM bundle_analytics ba
+            JOIN bundles b ON ba."bundleId" = b.id
+            WHERE b.shop = ${shop}
+        `,
+        prisma.$queryRaw<RawBundleCountRow[]>`
+            SELECT
+                COUNT(*) FILTER (WHERE status != 'DELETED') AS "totalBundles",
+                COUNT(*) FILTER (WHERE status = 'ACTIVE') AS "activeBundles"
+            FROM bundles
+            WHERE shop = ${shop}
+        `,
     ]);
 
+    const a = analyticsRows[0];
+    const c = countRows[0];
+
     return {
-        currentPeriod,
-        previousPeriod,
-        totalRevenueAllTime,
-        totalBundles,
-        activeBundles,
+        currentPeriod: {
+            _sum: {
+                bundleViews: Number(a.currentViews),
+                bundlePurchases: Number(a.currentPurchases),
+                bundleRevenue: Number(a.currentRevenue),
+                bundleAddToCarts: Number(a.currentAddToCarts),
+            },
+        },
+        previousPeriod: {
+            _sum: {
+                bundleViews: Number(a.prevViews),
+                bundlePurchases: Number(a.prevPurchases),
+                bundleRevenue: Number(a.prevRevenue),
+            },
+        },
+        totalRevenueAllTime: {
+            _sum: { bundleRevenue: Number(a.alltimeRevenue) },
+        },
+        totalBundles: Number(c.totalBundles),
+        activeBundles: Number(c.activeBundles),
     };
 }
 

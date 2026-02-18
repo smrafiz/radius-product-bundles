@@ -1,5 +1,10 @@
 /// <reference types="@shopify/app-bridge-types" />
 
+// Register custom cacheLife profiles from next.config.js
+declare module "next/cache" {
+    export function cacheLife(profile: "dashboard" | "dashboard-long"): void;
+}
+
 import type {
     SAppNavAttributes,
     SAppWindowAttributes,

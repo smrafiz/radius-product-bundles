@@ -3,25 +3,25 @@
 /**
  * Analytics Actions - Auth Layer
  *
- * Handles authentication and calls service layer.
- * Uses unstable_cache for server-side caching on Vercel.
+ * Handles authentication and delegates to cached service layer.
+ * Caching via `use cache` directive in analytics.cached.ts.
  */
 
 import {
-    getAnalyticsMetrics,
     getBundleStats,
-    getChartData,
     trackAnalyticsEvent,
     validateTrackingEvent,
 } from "@/features/analytics/services";
 import { ApiResponse } from "@/shared";
 import { handleSessionToken } from "@/lib/shopify";
 import { TrackingEvent } from "@/features/analytics";
-import { unstable_cache } from "next/cache";
-import { cacheTags, cacheDurations } from "@/lib/cache";
+import {
+    getCachedAnalyticsMetrics,
+    getCachedChartData,
+} from "@/features/analytics/services/analytics.cached";
 
 /**
- * Get analytics metrics (cached: 5 min)
+ * Get analytics metrics (cached via use cache: 5 min)
  */
 export async function getAnalyticsMetricsAction(
     sessionToken: string,
@@ -34,16 +34,12 @@ export async function getAnalyticsMetricsAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const getCachedMetrics = unstable_cache(
-            async () => getAnalyticsMetrics(shop, days, startDate, endDate),
-            ["analytics-metrics", shop, String(days), startDate ?? "", endDate ?? ""],
-            {
-                revalidate: cacheDurations.metrics,
-                tags: [cacheTags.analyticsMetrics(shop)],
-            },
+        const metrics = await getCachedAnalyticsMetrics(
+            shop,
+            days,
+            startDate,
+            endDate,
         );
-
-        const metrics = await getCachedMetrics();
 
         return {
             status: "success",
@@ -96,7 +92,7 @@ export async function getBundleStatsAction(
 }
 
 /**
- * Get chart data (cached: 5 min)
+ * Get chart data (cached via use cache: 5 min)
  */
 export async function getChartDataAction(
     sessionToken: string,
@@ -109,16 +105,12 @@ export async function getChartDataAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const getCachedChartData = unstable_cache(
-            async () => getChartData(shop, days, startDate, endDate),
-            ["chart-data", shop, String(days), startDate ?? "", endDate ?? ""],
-            {
-                revalidate: cacheDurations.metrics,
-                tags: [cacheTags.chartData(shop)],
-            },
+        const chartData = await getCachedChartData(
+            shop,
+            days,
+            startDate,
+            endDate,
         );
-
-        const chartData = await getCachedChartData();
 
         return {
             status: "success",
@@ -139,14 +131,13 @@ export async function getChartDataAction(
 }
 
 /**
- * Track analytics event (for storefront via proxy)
+ * Track analytics event (for storefront via proxy — NOT cached)
  */
 export async function trackAnalyticsEventAction(
     shop: string,
     event: any,
 ): Promise<ApiResponse> {
     try {
-        // Validate event
         if (!validateTrackingEvent(event)) {
             return {
                 status: "error",

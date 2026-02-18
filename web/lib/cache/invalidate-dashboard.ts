@@ -1,12 +1,12 @@
 /**
  * Dashboard cache invalidation helpers.
  *
- * Call these in mutation actions to bust stale dashboard caches.
- * Uses { expire: 0 } for immediate expiration so the next request
- * fetches fresh data after a mutation.
+ * Call these from server actions to bust stale dashboard caches.
+ * Uses `updateTag` for read-your-own-writes semantics — the response
+ * from the same server action will already reflect the fresh data.
  */
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { cacheTags } from "./cache-tags";
 
 /**
@@ -15,7 +15,7 @@ import { cacheTags } from "./cache-tags";
  */
 export function invalidateDashboardCache(shop: string) {
     for (const tag of cacheTags.allAnalytics(shop)) {
-        revalidateTag(tag, { expire: 0 });
+        updateTag(tag);
     }
 }
 
@@ -24,5 +24,5 @@ export function invalidateDashboardCache(shop: string) {
  * Call after setup step updates or guide dismiss/show.
  */
 export function invalidateSetupGuideCache(shop: string) {
-    revalidateTag(cacheTags.setupGuide(shop), { expire: 0 });
+    updateTag(cacheTags.setupGuide(shop));
 }

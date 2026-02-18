@@ -331,6 +331,7 @@ model BundleAnalytics {
 
     @@unique([bundleId, date, hour])
     @@index([bundleId, date])
+    @@index([date, bundleId])
     @@map("bundle_analytics")
 }
 

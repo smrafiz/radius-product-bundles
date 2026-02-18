@@ -3,27 +3,25 @@
 /**
  * Bundle Analytics Actions - Auth Layer
  *
- * Handles authentication and calls service layer.
- * Uses unstable_cache for server-side caching on Vercel.
+ * Handles authentication and delegates to cached service layer.
+ * Caching via `use cache` directive in analytics.cached.ts.
  */
 
 import { ApiResponse } from "@/shared";
-import {
-    getAllBundlesAnalytics,
-    getPaginatedBundlesAnalytics,
-    getTopBundlesService,
-} from "@/features/analytics/services";
 import { handleSessionToken } from "@/lib/shopify";
 import {
     GetPaginatedBundlesParams,
     SortField,
     SortOrder,
 } from "@/features/analytics";
-import { unstable_cache } from "next/cache";
-import { cacheTags, cacheDurations } from "@/lib/cache";
+import {
+    getCachedTopBundles,
+    getCachedAllBundlesAnalytics,
+    getCachedPaginatedBundlesAnalytics,
+} from "@/features/analytics/services/analytics.cached";
 
 /**
- * Get top-performing bundles with all enhancements (cached: 10 min)
+ * Get top-performing bundles (cached via use cache: 10 min)
  */
 export async function getTopBundlesAction(
     sessionToken: string,
@@ -36,16 +34,12 @@ export async function getTopBundlesAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const getCachedTopBundles = unstable_cache(
-            async () => getTopBundlesService(shop, startDate, endDate, limit),
-            ["top-bundles", shop, startDate, endDate, String(limit)],
-            {
-                revalidate: cacheDurations.long,
-                tags: [cacheTags.topBundles(shop)],
-            },
+        const topBundles = await getCachedTopBundles(
+            shop,
+            startDate,
+            endDate,
+            limit,
         );
-
-        const topBundles = await getCachedTopBundles();
 
         return {
             status: "success",
@@ -66,7 +60,7 @@ export async function getTopBundlesAction(
 }
 
 /**
- * Get all bundles with analytics data
+ * Get all bundles with analytics data (cached via use cache: 5 min)
  */
 export async function getAllBundlesAction(
     sessionToken: string,
@@ -80,7 +74,7 @@ export async function getAllBundlesAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const data = await getAllBundlesAnalytics(
+        const data = await getCachedAllBundlesAnalytics(
             shop,
             startDate,
             endDate,
@@ -107,7 +101,7 @@ export async function getAllBundlesAction(
 }
 
 /**
- * Get paginated bundles with analytics, search, and sorting
+ * Get paginated bundles with analytics (cached via use cache: 5 min)
  */
 export async function getPaginatedBundlesAction(
     params: GetPaginatedBundlesParams,
@@ -128,7 +122,7 @@ export async function getPaginatedBundlesAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const data = await getPaginatedBundlesAnalytics({
+        const data = await getCachedPaginatedBundlesAnalytics({
             shop,
             startDateStr: startDate,
             endDateStr: endDate,

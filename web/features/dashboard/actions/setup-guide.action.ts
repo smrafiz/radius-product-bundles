@@ -7,15 +7,14 @@ import {
 } from "@/features/dashboard";
 import { ApiResponse } from "@/shared";
 import {
-    getSetupGuideService,
     updateSetupStepService,
     dismissSetupGuideService,
     showSetupGuideService,
 } from "../services/setup-guide.service";
 import { handleSessionToken } from "@/lib/shopify";
 import { processScheduledBundlesForShop } from "@/features/bundles/services/bundle-scheduler.service";
-import { unstable_cache } from "next/cache";
-import { cacheTags, cacheDurations, invalidateSetupGuideCache } from "@/lib/cache";
+import { getCachedSetupGuide } from "@/features/dashboard/services/setup-guide.cached";
+import { invalidateSetupGuideCache } from "@/lib/cache";
 
 export async function getSetupGuideAction(
     sessionToken: string,
@@ -34,19 +33,10 @@ export async function getSetupGuideAction(
               )
             : Promise.resolve({ activated: 0, deactivated: 0 });
 
-        // Setup guide data is cached (10 min)
-        const getCachedGuide = unstable_cache(
-            async () => getSetupGuideService({ shop }),
-            ["setup-guide", shop],
-            {
-                revalidate: cacheDurations.long,
-                tags: [cacheTags.setupGuide(shop)],
-            },
-        );
-
+        // Setup guide data cached via `use cache` (10 min)
         const [schedulerResult, data] = await Promise.all([
             schedulerPromise,
-            getCachedGuide(),
+            getCachedSetupGuide(shop),
         ]);
 
         const bundlesTransitioned =
@@ -80,7 +70,6 @@ export async function updateSetupStepAction(
 
         const progress = await updateSetupStepService({ shop, stepKey, value });
 
-        // Bust the setup guide cache after update
         invalidateSetupGuideCache(shop);
 
         return { status: "success", data: progress };
@@ -105,8 +94,6 @@ export async function dismissSetupGuideAction(
         } = await handleSessionToken(sessionToken);
 
         await dismissSetupGuideService({ shop });
-
-        // Bust the setup guide cache after dismiss
         invalidateSetupGuideCache(shop);
 
         return { status: "success", data: null };
@@ -131,8 +118,6 @@ export async function showSetupGuideAction(
         } = await handleSessionToken(sessionToken);
 
         await showSetupGuideService({ shop });
-
-        // Bust the setup guide cache after show
         invalidateSetupGuideCache(shop);
 
         return { status: "success", data: null };
