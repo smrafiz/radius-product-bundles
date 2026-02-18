@@ -3,7 +3,7 @@
 import { useFormContext } from "react-hook-form";
 import { triggerSaveBar, useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchProductByIdAction } from "@/features/bundles/actions";
 import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
 
@@ -23,6 +23,10 @@ export function useBundleProduct(mode: "create" | "edit") {
         removePendingMedia,
         clearPendingMedia,
         setPendingProductDeletion,
+        hasLoadedProduct,
+        hasManuallyEditedTitle,
+        setHasLoadedProduct,
+        setHasManuallyEditedTitle,
         markDirty,
         markFieldTouched,
     } = useBundleStore();
@@ -49,10 +53,6 @@ export function useBundleProduct(mode: "create" | "edit") {
     const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
     const [shopDomain, setShopDomain] = useState<string>("");
 
-    // Track if product data has been loaded to prevent re-fetching
-    const hasLoadedProductRef = useRef<boolean>(false);
-    // Track if user has manually edited the product title
-    const hasManuallyEditedTitle = useRef<boolean>(false);
 
     // Sync isEnabled with form value when it changes
     useEffect(() => {
@@ -69,11 +69,9 @@ export function useBundleProduct(mode: "create" | "edit") {
         }
     }, [app]);
 
-    // Fetch product data in edit mode
+    // Fetch product data in edit mode (once, persists across step changes)
     useEffect(() => {
-        if (hasLoadedProductRef.current) {
-            return;
-        }
+        if (hasLoadedProduct) return;
 
         if (mode === "edit" && mainProductId && isEnabled) {
             const loadProduct = async () => {
@@ -104,7 +102,7 @@ export function useBundleProduct(mode: "create" | "edit") {
                             setExistingMedia(product.media);
                         }
 
-                        hasLoadedProductRef.current = true;
+                        setHasLoadedProduct(true);
                     }
                 } catch (error) {
                     console.error("Failed to fetch product:", error);
@@ -115,7 +113,7 @@ export function useBundleProduct(mode: "create" | "edit") {
 
             void loadProduct();
         }
-    }, [mode, mainProductId, isEnabled, app, setValue, setExistingMedia]);
+    }, [hasLoadedProduct, mode, mainProductId, isEnabled, app, setValue, setExistingMedia, setHasLoadedProduct]);
 
     // Initialize createProduct field on mount
     useEffect(() => {
@@ -135,14 +133,14 @@ export function useBundleProduct(mode: "create" | "edit") {
             mode === "create" &&
             isEnabled &&
             bundleName &&
-            !hasManuallyEditedTitle.current
+            !hasManuallyEditedTitle
         ) {
             setValue("productTitle", bundleName, {
                 shouldValidate: false,
                 shouldDirty: true,
             });
         }
-    }, [mode, bundleName, isEnabled, setValue]);
+    }, [mode, bundleName, isEnabled, hasManuallyEditedTitle, setValue]);
 
     // Clear fields when disabled
     useEffect(() => {
@@ -151,10 +149,10 @@ export function useBundleProduct(mode: "create" | "edit") {
             setValue("productDescription", "", { shouldValidate: false });
             clearPendingMedia();
             setExistingMedia([]);
-            hasLoadedProductRef.current = false;
-            hasManuallyEditedTitle.current = false;
+            setHasLoadedProduct(false);
+            setHasManuallyEditedTitle(false);
         }
-    }, [isEnabled, setValue, clearPendingMedia, setExistingMedia]);
+    }, [isEnabled, setValue, clearPendingMedia, setExistingMedia, setHasLoadedProduct, setHasManuallyEditedTitle]);
 
     /**
      * Toggle bundle as a product
@@ -216,7 +214,7 @@ export function useBundleProduct(mode: "create" | "edit") {
      */
     const handleTitleChange = useCallback(
         (value: string) => {
-            hasManuallyEditedTitle.current = true;
+            setHasManuallyEditedTitle(true);
             const truncated = value.slice(0, 120);
             setValue("productTitle", truncated, {
                 shouldValidate: true,
@@ -225,7 +223,7 @@ export function useBundleProduct(mode: "create" | "edit") {
             markDirty();
             triggerSaveBar();
         },
-        [setValue, markDirty],
+        [setValue, markDirty, setHasManuallyEditedTitle],
     );
 
     /**

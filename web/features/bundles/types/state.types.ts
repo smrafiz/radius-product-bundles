@@ -179,6 +179,12 @@ export interface BundleState {
     pendingProductDeletion: boolean;
     setPendingProductDeletion: (pending: boolean) => void;
 
+    // Bundle-as-product flags (persist across step changes)
+    hasLoadedProduct: boolean;
+    hasManuallyEditedTitle: boolean;
+    setHasLoadedProduct: (loaded: boolean) => void;
+    setHasManuallyEditedTitle: (edited: boolean) => void;
+
     // Display settings
     setDisplaySettings: (settings: Partial<DisplaySettings>) => void;
     updateDisplaySettings: <K extends keyof DisplaySettings>(

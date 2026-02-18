@@ -52,6 +52,8 @@ export const useBundleStore = create(
         validationAttempted: false,
         touchedFields: {},
         pendingProductDeletion: false,
+        hasLoadedProduct: false,
+        hasManuallyEditedTitle: false,
         isDirty: false,
 
         markDirty: () =>
@@ -393,6 +395,18 @@ export const useBundleStore = create(
             });
         },
 
+        setHasLoadedProduct: (loaded: boolean) => {
+            set((state) => {
+                state.hasLoadedProduct = loaded;
+            });
+        },
+
+        setHasManuallyEditedTitle: (edited: boolean) => {
+            set((state) => {
+                state.hasManuallyEditedTitle = edited;
+            });
+        },
+
         setExistingMedia: (media: ExistingMedia[]) => {
             set((state) => {
                 state.existingMedia = media;
@@ -598,6 +612,8 @@ export const useBundleStore = create(
                 state.validationAttempted = false;
                 state.touchedFields = {};
                 state.pendingProductDeletion = false;
+                state.hasLoadedProduct = false;
+                state.hasManuallyEditedTitle = false;
                 state.isDirty = false;
             });
         },
