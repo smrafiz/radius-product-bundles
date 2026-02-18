@@ -1,7 +1,7 @@
 "use client";
 
 import ReactPlayer from "react-player";
-import type { DashboardVideoModalProps } from "@/features/dashboard";
+import type { DashboardVideoModalProps } from "@/features/dashboard/types/components.types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const MODAL_ID = "dashboard-video-modal";

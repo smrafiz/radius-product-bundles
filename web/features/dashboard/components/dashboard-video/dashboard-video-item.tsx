@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { DashboardVideoConfig } from "@/features/dashboard";
+import type { DashboardVideoConfig } from "@/features/dashboard/types/components.types";
 
 /**
  * Extracts YouTube video ID from various URL formats

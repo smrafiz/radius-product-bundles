@@ -3,12 +3,12 @@
 name = "Product Bundles"
 handle = "product-bundles-111"
 client_id = "b1cd6f12e536f4d86d04231d69a1fb35"
-application_url = "https://radius-product-bundles-cs9v.vercel.app"
+application_url = "https://radius-product-bundles.vercel.app"
 embedded = true
 extension_directories = [ "./extension/extensions/**" ]
 
 [app_proxy]
-url = "https://radius-product-bundles-cs9v.vercel.app/api/proxy"
+url = "https://radius-product-bundles.vercel.app/api/proxy"
 subpath = "bundles"
 prefix = "apps"
 
@@ -30,8 +30,8 @@ use_legacy_install_flow = false
 
 [auth]
 redirect_urls = [
-  "https://radius-product-bundles-cs9v.vercel.app/api/auth/callback",
-  "https://radius-product-bundles-cs9v.vercel.app/api/auth/oauth/callback"
+  "https://radius-product-bundles.vercel.app/api/auth/callback",
+  "https://radius-product-bundles.vercel.app/api/auth/oauth/callback"
 ]
 
 [pos]

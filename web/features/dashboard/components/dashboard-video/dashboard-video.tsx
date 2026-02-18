@@ -1,10 +1,8 @@
 "use client";
 
-import {
-    DashboardVideoItem,
-    DashboardVideoConfig,
-    DashboardVideoModal,
-} from "@/features/dashboard";
+import { DashboardVideoItem } from "./dashboard-video-item";
+import { DashboardVideoModal } from "./dashboard-video-modal";
+import type { DashboardVideoConfig } from "@/features/dashboard/types/components.types";
 import { SkeletonLines } from "@/shared";
 import { useAnalytics } from "@/features/analytics";
 import React, { useCallback, useRef, useState } from "react";
