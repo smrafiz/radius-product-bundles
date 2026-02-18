@@ -91,6 +91,9 @@
         "prisma",
         "template"
     ],
+    "overrides": {
+        "mux-embed": "^5.16.1"
+    },
     "pnpm": {
         "overrides": {
             "@types/react": "19.2.14",
