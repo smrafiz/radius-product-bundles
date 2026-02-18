@@ -38,6 +38,8 @@ export interface GlobalFormProps<T extends FieldValues> {
     formId?: string;
     /** Maps field names to step numbers (for multi-step forms) */
     stepFieldMap?: Record<string, number>;
+    /** Maps field names to human-readable labels for error banners */
+    fieldLabels?: Record<string, string>;
     /** Custom validation error handler */
     onValidationError?: (error: {
         step?: number;

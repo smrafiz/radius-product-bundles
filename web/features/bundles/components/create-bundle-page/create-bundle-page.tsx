@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import {
-    BUNDLE_STEP_FIELD_MAP,
     BundleCreationForm,
     BundleFormData,
     BundleFormProvider,
@@ -12,6 +11,10 @@ import {
     useBundleSubmit,
 } from "@/features/bundles";
 import { GlobalForm } from "@/shared";
+import {
+    BUNDLE_FIELD_LABELS,
+    BUNDLE_STEP_FIELD_MAP,
+} from "@/features/bundles/constants/bundle-details.constants";
 
 export function CreateBundlePage({
     params,
@@ -49,6 +52,7 @@ export function CreateBundlePage({
                 resetDirty={resetDirty}
                 onDiscard={handleDiscard}
                 stepFieldMap={BUNDLE_STEP_FIELD_MAP}
+                fieldLabels={BUNDLE_FIELD_LABELS}
                 onValidationError={handleValidationError}
             >
                 <BundleCreationForm bundleType={bundleType} />

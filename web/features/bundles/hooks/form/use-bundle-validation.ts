@@ -16,6 +16,7 @@ export function useBundleValidation() {
         validationAttempted,
         getGroupedItems,
         selectedItems,
+        displaySettings,
         isFieldTouched,
     } = useBundleStore();
 
@@ -33,18 +34,16 @@ export function useBundleValidation() {
     } = form;
 
     // Get current step validation rules
-    const getStepFields = (step: number): (keyof BundleFormData)[] => {
+    const getStepFields = (step: number): string[] => {
         switch (step) {
             case 1:
                 return ["name", "products"];
             case 2:
                 return ["discountType", "discountValue"];
             case 3:
-                return []; // Display step has no form validation
+                return ["settings.title", "settings.cartButtonText"];
             case 4:
-                return Object.keys(
-                    bundleSchema.shape,
-                ) as (keyof BundleFormData)[];
+                return Object.keys(bundleSchema.shape);
             default:
                 return [];
         }
@@ -96,7 +95,7 @@ export function useBundleValidation() {
             });
         }
 
-        return await trigger(fields);
+        return await trigger(fields as any);
     };
 
     // Check if the current step can proceed
@@ -121,7 +120,7 @@ export function useBundleValidation() {
 
         // For other steps, check field values
         return fields.every((field) => {
-            const value = getValues(field);
+            const value = getValues(field as any);
 
             // Special handling for discountValue based on discountType
             if (field === "discountValue") {
@@ -144,7 +143,7 @@ export function useBundleValidation() {
 
             return value !== undefined && value !== "";
         });
-    }, [currentStep, getValues, getGroupedItems]);
+    }, [currentStep, getValues, getGroupedItems, displaySettings]);
 
     // Get field error message (show if field is touched or validation was attempted)
     const getFieldError = (fieldName: string): string | undefined => {

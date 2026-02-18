@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    BUNDLE_STEP_FIELD_MAP,
     BundleCreationForm,
     BundleCreationSkeleton,
     BundleFormData,
@@ -16,6 +15,10 @@ import {
 import { useCallback } from "react";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { GlobalForm, useAppNavigation } from "@/shared";
+import {
+    BUNDLE_FIELD_LABELS,
+    BUNDLE_STEP_FIELD_MAP,
+} from "@/features/bundles/constants/bundle-details.constants";
 
 export function EditBundlePage({ params }: { params: { id: string } }) {
     const { id: bundleId } = params;
@@ -123,8 +126,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                             quantity: bp.quantity || 1,
                             type: "product" as const,
                             title:
-                                shopifyProduct?.title ||
-                                `Product ${index + 1}`,
+                                shopifyProduct?.title || `Product ${index + 1}`,
                             url: shopifyProduct?.handle
                                 ? `/products/${shopifyProduct.handle}`
                                 : "",
@@ -219,6 +221,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                 resetDirty={resetDirty}
                 onDiscard={handleDiscard}
                 stepFieldMap={BUNDLE_STEP_FIELD_MAP}
+                fieldLabels={BUNDLE_FIELD_LABELS}
                 onValidationError={handleValidationError}
             >
                 <BundleCreationForm

@@ -6,6 +6,7 @@ import {
     GlobalFormProps,
     SUBMIT_FORM,
     TRIGGER_SAVE_BAR,
+    useGlobalBannerStore,
     VALIDATION_ERROR,
     withLoader,
 } from "@/shared";
@@ -23,6 +24,7 @@ export function GlobalForm<T extends FieldValues>({
     onDiscard,
     formId = DEFAULT_FORM_ID,
     stepFieldMap,
+    fieldLabels,
     onValidationError,
 }: GlobalFormProps<T>) {
     const formRef = useRef<HTMLFormElement>(null);
@@ -40,8 +42,18 @@ export function GlobalForm<T extends FieldValues>({
         return stepFieldMap[fieldName];
     };
 
+    const validationBannerKey = `${formId}-validation`;
+
     /**
-     * Handle validation errors.
+     * Formats a field name into a readable label.
+     */
+    const formatFieldLabel = (field: string): string => {
+        if (fieldLabels?.[field]) return fieldLabels[field];
+        return field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1");
+    };
+
+    /**
+     * Handle validation errors — shows GlobalBanner matching customizer format.
      */
     const handleValidationErrors = (errors: FieldErrors<T>) => {
         const errorFields = Object.keys(errors);
@@ -55,10 +67,6 @@ export function GlobalForm<T extends FieldValues>({
         const errorMessage =
             (firstError?.message as string) || "Please fix the errors";
         const stepNumber = getStepForField(firstField);
-
-        console.log("First field:", firstField);
-        console.log("Step number:", stepNumber);
-        console.log("stepFieldMap:", stepFieldMap);
 
         // Call custom error handler if provided
         if (onValidationError) {
@@ -77,8 +85,29 @@ export function GlobalForm<T extends FieldValues>({
             }),
         );
 
-        // Show toast
-        window.shopify?.toast?.show(errorMessage, { isError: true });
+        // Show validation error banner (matching customizer format)
+        const errorItems = errorFields
+            .map((field) => {
+                const label = formatFieldLabel(field);
+                const error = errors[field as keyof typeof errors];
+                const message = (error?.message as string) || "Invalid value";
+                return `<s-list-item><strong>${label}:</strong> ${message}</s-list-item>`;
+            })
+            .join("");
+
+        const errorCount = errorFields.length;
+        const errorContent = `<s-unordered-list>${errorItems}</s-unordered-list>`;
+
+        useGlobalBannerStore.getState().removeMessageByKey(validationBannerKey);
+        useGlobalBannerStore.getState().addMessage({
+            type: "error",
+            title: `Validation Failed (${errorCount} ${errorCount === 1 ? "error" : "errors"})`,
+            key: validationBannerKey,
+            content: errorContent,
+            isHtml: true,
+            autoHide: true,
+            duration: 15000,
+        });
     };
 
     /**
@@ -91,6 +120,7 @@ export function GlobalForm<T extends FieldValues>({
 
         await form.handleSubmit(
             async (data) => {
+                useGlobalBannerStore.getState().removeMessageByKey(validationBannerKey);
                 withLoader(async () => {
                     await onSubmit(data);
                     window.shopify?.loading(false);

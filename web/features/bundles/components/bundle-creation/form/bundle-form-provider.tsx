@@ -5,6 +5,7 @@ import {
     BundleFormProviderProps,
     bundleSchema,
     DiscountType,
+    initialDisplaySettings,
     setStoreInitializing,
     useBundleStore,
 } from "@/features/bundles";
@@ -34,6 +35,7 @@ export function BundleFormProvider({
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
+    const settingsApplied = useRef(false);
 
     const serverData = useSettingsStore((s) => s.serverData);
     const isSettingsLoading = useSettingsStore((s) => s.isLoading);
@@ -76,7 +78,7 @@ export function BundleFormProvider({
             seoDescription: initialData?.seoDescription || undefined,
             images: initialData?.images || [],
             productGroups: initialData?.productGroups || undefined,
-            settings: initialData?.settings || undefined,
+            settings: initialData?.settings || initialDisplaySettings,
         },
         mode: "onChange",
     });
@@ -135,6 +137,23 @@ export function BundleFormProvider({
             window.removeEventListener(VALIDATION_ERROR, handleValidationError);
         };
     }, [setStep, setValidationAttempted]);
+
+    // Sync discount defaults from app settings once loaded (create mode only)
+    useEffect(() => {
+        if (isEditMode || settingsApplied.current || !serverData) return;
+
+        const saved = useSettingsStore.getState().getEffectiveData();
+        const discountType =
+            (saved.defaultDiscountType as DiscountType) ?? "PERCENTAGE";
+        const discountValue =
+            (saved.defaultDiscountValue as number) ?? 0;
+
+        setValue("discountType", discountType, { shouldDirty: false });
+        setValue("discountValue", discountValue, { shouldDirty: false });
+        setBundleData({ discountType, discountValue });
+
+        settingsApplied.current = true;
+    }, [serverData, isEditMode, setValue, setBundleData]);
 
     // Set the bundle type in form
     useEffect(() => {

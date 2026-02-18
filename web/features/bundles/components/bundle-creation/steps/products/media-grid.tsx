@@ -87,6 +87,7 @@ export function MediaGrid({
         const input = event.currentTarget as HTMLInputElement;
         const files = input.files ? Array.from(input.files) : [];
         onUpload(files);
+        input.value = "";
     };
 
     const totalMedia = existingMedia.length + pendingMedia.length;

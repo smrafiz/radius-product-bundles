@@ -22,8 +22,28 @@ export const BUNDLE_STEP_FIELD_MAP: Record<string, number> = {
     createProduct: 3,
     productTitle: 3,
     productDescription: 3,
+    "settings.title": 3,
+    "settings.cartButtonText": 3,
 
     priority: 4,
+};
+
+export const BUNDLE_FIELD_LABELS: Record<string, string> = {
+    name: "Bundle Name",
+    products: "Products",
+    discountType: "Discount Type",
+    discountValue: "Discount Value",
+    minOrderValue: "Minimum Order Value",
+    maxDiscountAmount: "Maximum Discount",
+    discountApplication: "Discount Application",
+    freeShipping: "Free Shipping",
+    createProduct: "Create Product",
+    productTitle: "Product Title",
+    productDescription: "Product Description",
+    "settings.title": "Offer Title",
+    "settings.cartButtonText": "Cart Button Text",
+    settings: "Display Settings",
+    priority: "Priority",
 };
 
 export const WIDGET_LAYOUTS = [
@@ -46,29 +66,6 @@ export const WIDGET_LAYOUTS = [
         label: "Compact",
         value: "COMPACT" as const,
         widgetLayout: "/assets/widget-compact-layout.png",
-    },
-];
-
-export const COLOR_THEMES = [
-    {
-        label: "Brand",
-        value: "brand" as const,
-        background: "bg-fill-brand" as const,
-    },
-    {
-        label: "Success",
-        value: "success" as const,
-        background: "bg-fill-success" as const,
-    },
-    {
-        label: "Warning",
-        value: "warning" as const,
-        background: "bg-fill-warning" as const,
-    },
-    {
-        label: "Critical",
-        value: "critical" as const,
-        background: "bg-fill-critical" as const,
     },
 ];
 
