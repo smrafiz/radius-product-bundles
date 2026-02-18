@@ -2,6 +2,15 @@ import { Metadata } from "next";
 import { BUNDLE_TYPES, BundleType, CreateBundlePage } from "@/features/bundles";
 
 /**
+ * Pre-generate all bundle type pages at build time
+ */
+export function generateStaticParams() {
+    return Object.values(BUNDLE_TYPES).map((type) => ({
+        bundleType: type.slug,
+    }));
+}
+
+/**
  * Generate metadata dynamically based on the bundle type
  */
 export async function generateMetadata({
