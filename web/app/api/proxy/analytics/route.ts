@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
                 );
         }
     } catch (error) {
-        if (error instanceof Error && error.digest === "NEXT_PRERENDER_INTERRUPTED") {
+        if (error instanceof Error && (error as any).digest === "NEXT_PRERENDER_INTERRUPTED") {
             throw error;
         }
         console.error("[Analytics Proxy] Error:", error);
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString(),
         });
     } catch (error) {
-        if (error instanceof Error && error.digest === "NEXT_PRERENDER_INTERRUPTED") {
+        if (error instanceof Error && (error as any).digest === "NEXT_PRERENDER_INTERRUPTED") {
             throw error;
         }
         console.error("[Analytics Proxy] GET Error:", error);
