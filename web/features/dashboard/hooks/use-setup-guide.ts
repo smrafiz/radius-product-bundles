@@ -181,6 +181,7 @@ export function useSetupGuide() {
                 });
                 setButtonLoading(null);
             } else if (item.primaryButton?.internalUrl) {
+                setButtonLoading(null);
                 goTo(item.primaryButton.internalUrl)();
             }
         },
@@ -228,7 +229,9 @@ export function useSetupGuide() {
                     });
                 }
             } else if (item.secondaryButton?.internalUrl) {
+                setButtonLoading(null);
                 goTo(item.secondaryButton.internalUrl)();
+                return;
             }
             setButtonLoading(null);
         },
