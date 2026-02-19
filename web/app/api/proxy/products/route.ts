@@ -3,6 +3,8 @@ import {
     GetBundleProductsQuery,
 } from "@/lib/graphql/generated/graphql";
 import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { getShop } from "@/shared/repositories/shop.queries";
 import { findOfflineSessionByShop } from "@/shared/repositories";
 import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
