@@ -3,14 +3,14 @@ import {
     GetBundleProductsQuery,
 } from "@/lib/graphql/generated/graphql";
 import { NextRequest, NextResponse } from "next/server";
-
-export const dynamic = "force-dynamic";
 import { getShop } from "@/shared/repositories/shop.queries";
 import { findOfflineSessionByShop } from "@/shared/repositories";
 import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
 import { findBundlesByProductId } from "@/features/bundles/repositories";
 import { calculateDiscountAmount } from "@/features/bundles/utils/calculators/bundle-calculations";
+
+export const dynamic = "force-dynamic";
 
 async function getAccessTokenForShop(shop: string): Promise<string | null> {
     try {

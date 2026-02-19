@@ -1,10 +1,10 @@
 import { AnalyticsEventPayload } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
-
-export const dynamic = "force-dynamic";
 import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { trackAnalyticsEventAction } from "@/features/analytics/actions";
 import { findSettingsByShopDomain } from "@/features/settings/repositories";
+
+export const dynamic = "force-dynamic";
 
 /**
  * Analytics Proxy API
