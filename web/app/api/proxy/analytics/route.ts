@@ -4,8 +4,6 @@ import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { trackAnalyticsEventAction } from "@/features/analytics/actions";
 import { findSettingsByShopDomain } from "@/features/settings/repositories";
 
-export const dynamic = "force-dynamic";
-
 /**
  * Analytics Proxy API
  *
@@ -136,6 +134,9 @@ export async function POST(request: NextRequest) {
                 );
         }
     } catch (error) {
+        if (error instanceof Error && error.digest === "NEXT_PRERENDER_INTERRUPTED") {
+            throw error;
+        }
         console.error("[Analytics Proxy] Error:", error);
 
         return NextResponse.json(
@@ -172,6 +173,9 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString(),
         });
     } catch (error) {
+        if (error instanceof Error && error.digest === "NEXT_PRERENDER_INTERRUPTED") {
+            throw error;
+        }
         console.error("[Analytics Proxy] GET Error:", error);
         return NextResponse.json(
             { success: false, error: "Failed to process request" },

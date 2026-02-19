@@ -10,8 +10,6 @@ import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
 import { findBundlesByProductId } from "@/features/bundles/repositories";
 import { calculateDiscountAmount } from "@/features/bundles/utils/calculators/bundle-calculations";
 
-export const dynamic = "force-dynamic";
-
 async function getAccessTokenForShop(shop: string): Promise<string | null> {
     try {
         const session = await findOfflineSessionByShop(shop);
@@ -355,6 +353,9 @@ export async function GET(request: NextRequest) {
             { headers: cacheHeaders },
         );
     } catch (error) {
+        if (error instanceof Error && error.digest === "NEXT_PRERENDER_INTERRUPTED") {
+            throw error;
+        }
         console.error("Bundle Proxy API Error:", error);
         return NextResponse.json(
             { success: false, error: "Failed to fetch bundle data" },
