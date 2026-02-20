@@ -247,9 +247,18 @@ fn cart_lines_discounts_generate_run(
             .unwrap_or_default();
 
         // Build targets with quantity limits
+        // Exclude the standalone product (main_product_id) from discount targets —
+        // its price is already set to the bundle price, so discounting it would double-discount.
+        let main_product_id = bundle_settings.main_product_id.as_deref();
         let targets: Vec<ProductDiscountCandidateTarget> = bundle_lines
             .iter()
             .filter(|bl| {
+                // Never discount the standalone product itself
+                if let Some(ref pid) = bl.product_id {
+                    if main_product_id == Some(pid.as_str()) {
+                        return false;
+                    }
+                }
                 if apply_to_specific && !discounted_ids.is_empty() {
                     if let Some(ref pid) = bl.product_id {
                         return discounted_ids.contains(pid);
@@ -281,9 +290,15 @@ fn cart_lines_discounts_generate_run(
         }
 
         // Calculate bundle total for discountable quantities only
+        // Exclude the standalone product from the total (same filter as targets)
         let bundle_total: f64 = bundle_lines
             .iter()
             .filter(|bl| {
+                if let Some(ref pid) = bl.product_id {
+                    if main_product_id == Some(pid.as_str()) {
+                        return false;
+                    }
+                }
                 if apply_to_specific && !discounted_ids.is_empty() {
                     if let Some(ref pid) = bl.product_id {
                         return discounted_ids.contains(pid);

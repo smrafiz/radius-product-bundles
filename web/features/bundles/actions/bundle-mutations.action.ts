@@ -384,8 +384,16 @@ export async function duplicateBundleAction(
             shop,
         });
 
+        if (!result.success) {
+            return {
+                status: "error" as const,
+                message: result.message || "Failed to duplicate bundle",
+                data: null,
+            };
+        }
+
         // Add metafields for duplicated bundle's products
-        if (result.success && result.data?.bundle?.id) {
+        if (result.data?.bundle?.id) {
             const newBundleId = result.data.bundle.id;
             const productIds =
                 result.data.bundle.products?.map((p: any) => p.productId) || [];

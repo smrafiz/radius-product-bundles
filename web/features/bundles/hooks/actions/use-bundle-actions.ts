@@ -13,9 +13,9 @@ import {
     updateBundleStatusAction,
 } from "@/features/bundles/actions";
 import { useRouter } from "next/navigation";
-import { useAppNavigation } from "@/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useAppNavigation, useGlobalBanner } from "@/shared";
 
 /**
  * Get bundle actions
@@ -28,6 +28,7 @@ export function useBundleActions(
     const { bundleData } = useAppNavigation();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const { showError } = useGlobalBanner();
 
     const showToast = useBundleListingStore((s) => s.showToast);
     const removeBundleFromStore = useBundleListingStore(
@@ -81,13 +82,15 @@ export function useBundleActions(
                             );
                         }
                     } else {
-                        showToast(
-                            result.message ?? "Failed to duplicate bundle",
-                        );
+                        showError("Failed to duplicate bundle", {
+                            content:
+                                result.message ??
+                                "Something went wrong. Please try again.",
+                        });
                     }
                 } catch (error) {
                     console.error("Error duplicating bundle:", error);
-                    showToast("Failed to duplicate bundle");
+                    showError("Failed to duplicate bundle");
                 }
             },
 
@@ -109,11 +112,13 @@ export function useBundleActions(
                             result.message ?? "Bundle deleted successfully",
                         );
                     } else {
-                        showToast(result.message ?? "Failed to delete bundle");
+                        showError(
+                            result.message ?? "Failed to delete bundle",
+                        );
                     }
                 } catch (error) {
-                    showToast("Failed to delete bundle");
                     console.error("Error deleting bundle:", error);
+                    showError("Failed to delete bundle");
                 }
             },
 
@@ -146,13 +151,13 @@ export function useBundleActions(
                                 "Bundle status updated successfully",
                         );
                     } else {
-                        showToast(
+                        showError(
                             result.message ?? "Failed to update bundle status",
                         );
                     }
                 } catch (error) {
-                    showToast("Failed to update bundle status");
                     console.error("Error updating bundle status:", error);
+                    showError("Failed to update bundle status");
                 }
             },
         }),

@@ -489,6 +489,14 @@ export async function duplicateBundleService(
         data: duplicateData,
     });
 
+    if (!newBundle.success) {
+        return {
+            success: false,
+            data: null,
+            message: newBundle.message || "Failed to duplicate bundle",
+        };
+    }
+
     return {
         success: true,
         data: { ...newBundle, hadStandaloneProduct },
