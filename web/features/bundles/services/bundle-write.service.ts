@@ -482,7 +482,8 @@ export async function duplicateBundleService(
     }
 
     const newName = await generateUniqueBundleName(shop, original.name);
-    const duplicateData = transformBundleForDuplication(original, newName);
+    const { data: duplicateData, hadStandaloneProduct } =
+        transformBundleForDuplication(original, newName);
     const newBundle = await createBundleService({
         shop,
         data: duplicateData,
@@ -490,7 +491,7 @@ export async function duplicateBundleService(
 
     return {
         success: true,
-        data: newBundle,
+        data: { ...newBundle, hadStandaloneProduct },
         message: `Bundle duplicated as "${newName}"`,
     };
 }

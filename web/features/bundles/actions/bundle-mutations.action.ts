@@ -39,6 +39,8 @@ import {
     ProductUpdateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { revalidatePath } from "next/cache";
+import { prisma } from "@/shared/repositories";
+import { invalidateDashboardCache } from "@/lib/cache";
 import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
 import { handleZodValidationError } from "@/shared/utils/error/error-handlers";
 import {
@@ -50,7 +52,7 @@ import {
     clearMainProductByGid,
     findBundleByIdWithAllRelations,
 } from "@/features/bundles/repositories";
-import { invalidateDashboardCache } from "@/lib/cache";
+import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
 
 /**
  * Update bundle status
@@ -399,6 +401,45 @@ export async function duplicateBundleAction(
                     console.warn(
                         "[duplicateBundle] Metafield warning:",
                         metafieldResult.error,
+                    );
+                }
+            }
+
+            // Create a new standalone Shopify product if the original had one
+            if (result.data.hadStandaloneProduct) {
+                const newBundle = result.data.bundle;
+                const productResult = await createBundleProductAction(
+                    sessionToken,
+                    {
+                        bundleName: newBundle.name,
+                        bundleDescription: newBundle.description || "",
+                        bundleType: newBundle.type,
+                        bundleStatus: "DRAFT",
+                    },
+                );
+
+                if (
+                    productResult.status === "success" &&
+                    productResult.data
+                ) {
+                    await prisma.bundle.update({
+                        where: { id: newBundleId },
+                        data: {
+                            mainProductId:
+                                productResult.data.mainProductId,
+                            mainVariantId:
+                                productResult.data.mainVariantId,
+                        },
+                    });
+
+                    // Attach bundle ID metafield to the new standalone product
+                    await addBundleIdToProducts(sessionToken, newBundleId, [
+                        productResult.data.mainProductId,
+                    ]);
+                } else {
+                    console.warn(
+                        "[duplicateBundle] Failed to create standalone product:",
+                        productResult.message,
                     );
                 }
             }

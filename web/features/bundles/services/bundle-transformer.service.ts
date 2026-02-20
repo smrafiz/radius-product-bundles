@@ -139,8 +139,12 @@ export function transformBundleForDuplication(
         status,
         startDate,
         endDate,
+        mainProductId: _mainProductId,
+        mainVariantId: _mainVariantId,
         ...bundleData
     } = original;
+
+    const hadStandaloneProduct = !!_mainProductId;
 
     const transformedProducts =
         bundleProducts?.map(
@@ -181,8 +185,12 @@ export function transformBundleForDuplication(
         endDate: undefined,
         isPublished: false,
         publishedAt: null,
+        mainProductId: undefined,
+        mainVariantId: undefined,
     };
 
-    // Remove null values
-    return removeNulls(duplicateData);
+    return {
+        data: removeNulls(duplicateData),
+        hadStandaloneProduct,
+    };
 }
