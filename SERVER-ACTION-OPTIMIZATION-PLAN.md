@@ -448,3 +448,234 @@ discountSetupDone Boolean @default(false)
 - [Next.js Caching](https://nextjs.org/docs/app/building-your-application/caching) — Data Cache, React `cache()`, `revalidateTag`
 - [Prisma Query Optimization](https://www.prisma.io/docs/orm/prisma-client/queries/query-optimization-performance) — `findMany` with `in`, batching, indexes
 - [Neon Serverless Pooling](https://neon.tech/docs/connect/connection-pooling) — Default 25 connections
+
+---
+
+## MCP-Verified Audit Report (2026-02-22)
+
+> **Sources consulted**: Shopify Dev MCP (GraphQL schema introspection, `metafieldsSet` docs), Next.js DevTools MCP (`use cache` directive, `cacheTag`, `cacheLife`, React.cache isolation), Sequential Thinking MCP (5-step deep analysis), Neon MCP (live schema inspection of `bundles`, `bundle_analytics`, `bundle_views` tables + indexes), Prisma MCP (migration status)
+
+### Overall Verdict: ~80% Sound — 3 Errors, 6 Missing Items
+
+---
+
+### Errors Found (3)
+
+#### 1. `BundleAnalytics @@index([bundleId])` — REDUNDANT, REMOVE FROM PLAN
+
+Neon live DB already has:
+- `bundle_analytics_bundleId_date_idx` → composite `(bundleId, date)`
+- `bundle_analytics_bundleId_date_hour_key` → unique `(bundleId, date, hour)`
+
+PostgreSQL uses leftmost prefix of composite indexes. A standalone `(bundleId)` index adds write overhead with zero read benefit for `groupBy(["bundleId"])` queries.
+
+#### 2. `TestResult @@index([testId])` — REDUNDANT, REMOVE FROM PLAN
+
+Schema line 230: `@@unique([testId, variant, date])` already creates an index with `testId` as the leading column. A standalone `@@index([testId])` is a duplicate.
+
+#### 3. `BundleView @@index([bundleId, date])` — MARGINAL, LOW PRIORITY
+
+Already has:
+- `bundle_views_bundleId_idx` (standalone)
+- `bundle_views_bundleId_customerId_date_key` (unique)
+- `bundle_views_bundleId_sessionId_date_key` (unique)
+
+Most dedup queries filter by `(bundleId, customerId, date)` or `(bundleId, sessionId, date)`. A standalone `(bundleId, date)` provides minimal benefit. Skip unless proven necessary by `EXPLAIN ANALYZE`.
+
+---
+
+### Corrected Database Changes
+
+```
+REMOVE from plan (wrong):
+  - @@index([bundleId]) on BundleAnalytics — already covered by composite
+  - @@index([testId]) on TestResult — already covered by unique constraint
+  - @@index([bundleId, date]) on BundleView — marginal, skip
+
+KEEP (correct):
+  - REMOVE @@index([layout]) from BundleSettings
+  - REMOVE @@index([theme]) from BundleSettings
+  - ADD discountSetupDone Boolean @default(false) to Shop model
+```
+
+---
+
+### Valid Items Confirmed (11)
+
+| Item | Source Verified | Risk |
+|------|---------------|------|
+| 1.1 Parallelize `ensureMetafieldDefinition` + `ensureBundleDiscount` | Source code (lines 501-528), Shopify MCP (independent resources) | Low |
+| 1.2 Parallelize post-create metafield syncs | Source code (lines 546-577), Shopify MCP (different metafield owners) | Low |
+| 1.3 Parallelize post-update metafield syncs | Source code (lines 711-737) | Low |
+| 1.4 Parallelize settings save ops | Source code (lines 67-96), confirmed different Shopify resources | Low |
+| 1.5 Batch bulk toggle (groups of 4) | Shopify MCP: 4×10pts = 40pts/s, within 50pts/s limit | Medium |
+| 2.1 Batch delete N+1 elimination | Source code (lines 288-342), confirmed 3 sequential loops | Medium |
+| 2.2 Add `getCachedBundleStats` | `analytics.cached.ts` confirmed missing, siblings all cached | Low |
+| 2.3 `take()` limits (`findBundlesByProductId` only) | Storefront display limit, safe at take:50 | Low |
+| 2.4 Parallelize add/remove metafields | Mutually exclusive product sets confirmed | Low |
+| 3.1 In-memory ID cache | Saves ~400ms/call, valid for warm serverless instances | Low |
+| 3.2 DB flag for `ensureBundleDiscount` | `ensureMetafieldDefinition` already uses exact same pattern (line 43) | Low |
+| 3.3 React `cache()` for request dedup | Next.js 16 docs confirm it works in server action context | Low |
+
+---
+
+### Missing Items / Risks (6)
+
+#### 1. `Promise.all` Error Handling Strategy — HIGH PRIORITY
+
+Plan shows `Promise.all` but doesn't address partial failure. If one parallel op fails, `Promise.all` rejects immediately while the other may still be in-flight.
+
+**Recommendation**: Use `Promise.allSettled()` for non-critical ops (metafield syncs are already treated as warnings in the codebase). Use `Promise.all` only when both results are required to proceed.
+
+#### 2. Rate Limit Retry Logic — MEDIUM PRIORITY
+
+Batch-of-4 `ProductUpdate` mutations are within limits, but no 429/THROTTLED retry-with-backoff is included. Shopify returns `THROTTLED` errors under concurrent load.
+
+**Recommendation**: Add exponential backoff (200ms → 400ms → 800ms, max 3 retries) to the batched mutation helper.
+
+#### 3. `take:200` on `findActiveBundlesByShop` — HIGH PRIORITY
+
+This could silently drop bundles from metafield sync. If a shop has 201+ active bundles, storefront rendering breaks for bundle #201+. A log warning does not fix the data integrity issue.
+
+**Recommendation**: Use cursor-based pagination to sync all bundles, or at minimum return a total count alongside the results so truncation is detectable and can trigger a follow-up fetch.
+
+#### 4. `ensureAppSetup()` Also Sequential — LOW PRIORITY
+
+Lines 195-216 in `ensure-setup.ts` call `ensureMetafieldDefinition` then `ensureBundleDiscount` sequentially. This is the app-load entry point and should also be parallelized for consistency with Phase 1.1.
+
+#### 5. `cacheComponents` Flag Required — BLOCKING for Phase 2.2
+
+Next.js 16 docs confirm: `use cache` directive requires `cacheComponents: true` in `next.config.ts`. The `getCachedBundleStats` addition (Phase 2.2) will silently not cache if this flag is missing. Verify it is configured before implementing.
+
+#### 6. Serverless Cold Start Impact on In-Memory Cache — INFO
+
+In-memory TTL cache (Phase 3.1) resets on each cold start. Neon project `old-fog-27925863` is on `aws-ap-southeast-1` with autoscaling 0.25-2 CU and `suspend_timeout_seconds: 0` (always-on compute), so DB latency is stable (~5ms). The in-memory cache helps within warm instances but provides zero benefit on cold starts. This is acceptable — just don't rely on it as a guaranteed optimization.
+
+---
+
+### Shopify API Detail (from MCP Schema Introspection)
+
+`metafieldsSet` mutation constraints verified:
+- **Max 25 metafields per call** (atomic operation — no partial writes)
+- **Max 10MB total request payload**
+- **`compareDigest` support** (since API version 2024-07): Enables compare-and-set for concurrent writes. The plan's parallel metafield syncs would benefit from using `compareDigest` to prevent race conditions when multiple mutations target the same metafield owner simultaneously. Consider adding this in Phase 1.2/1.3.
+
+---
+
+### Recommended Execution Order (revised)
+
+| Priority | Item | Risk | Notes |
+|----------|------|------|-------|
+| 1 | Phase 1 (all 5 items) | Low | Biggest payoff, minimal risk |
+| 2 | Phase 2.2 (cached bundle stats) | Low | Verify `cacheComponents` flag first |
+| 3 | Phase 2.1 (batch delete) | Medium | Test with 10+ bundles |
+| 4 | Phase 2.4 (parallel metafield sync) | Low | Straightforward |
+| 5 | Phase 3.2 (DB flag for discount) | Low | Schema change, run `prisma:push` |
+| 6 | Phase 3.1 (in-memory cache) | Low | New file, test in serverless context |
+| 7 | Phase 3.3 (React cache) | Low | Test carefully in server action context |
+| 8 | DB index cleanup | Low | Remove BundleSettings indexes only |
+| — | Phase 2.3 (`take:200`) | **HIGH** | **SKIP** until pagination strategy designed |
+
+---
+
+## Artiforge Deep Analysis (2026-02-22)
+
+> **Tool**: Artiforge MCP (codebase-scanner + task-planner) | Full report: `.artiforge/plan-server-action-optimization-audit.md`
+
+### Additional Issues Found (8 new items beyond MCP audit)
+
+#### AF-1. Hard-coded batch size — LOW
+
+Batch size of `4` in Phase 1.5 is a magic number. Should be a named constant:
+```typescript
+// web/shared/constants/shopify.constants.ts
+export const SHOPIFY_MUTATION_BATCH_SIZE = 4;
+```
+
+#### AF-2. Console.error without structured logging — MEDIUM
+
+All 6 server actions use `console.error("[actionName] Error:", error)`. Production observability requires structured logging with shop context, request ID, and error classification. Consider a lightweight logger wrapper.
+
+#### AF-3. Non-null assertions on GraphQL results — MEDIUM
+
+Callers use `result.bundle!.id` (non-null assertion) after checking `result.success`. If the service layer contract changes, these become runtime crashes. Add type-guards or use optional chaining with fallback.
+
+#### AF-4. Fire-and-forget metafield syncs — INFO (accepted trade-off)
+
+When metafield sync fails, the action still returns `"success"`. This is intentional (metafields are non-critical), but should be documented as an accepted trade-off so future developers don't "fix" it.
+
+#### AF-5. Module-level mutable Map (Phase 3.1) — LOW
+
+`const ID_CACHE = new Map()` is global mutable state. In serverless with concurrent requests, reads are safe but cache invalidation could race. Accept eventual consistency or add a simple mutex.
+
+#### AF-6. Missing `compareDigest` for concurrent shop metafield writes — MEDIUM
+
+Phase 1.2/1.3 parallelize metafield writes to the same shop owner. If two users trigger actions simultaneously (two browser tabs), shop metafields could overwrite each other. Shopify's `compareDigest` (API 2024-07+) provides compare-and-set semantics to prevent this.
+
+**Recommendation**: Add `compareDigest` to shop-level `metafieldsSet` calls in `syncAllSettingsToMetafields()`.
+
+#### AF-7. Redundant `revalidatePath` calls — LOW
+
+`createBundleAction` calls:
+1. `revalidatePath("/bundles")`
+2. `revalidatePath("/dashboard")`
+3. `invalidateDashboardCache(shop)` (which calls `revalidateTag`)
+
+Items 2 and 3 likely overlap. Audit whether `invalidateDashboardCache` already covers `/dashboard` revalidation to remove the duplicate.
+
+#### AF-8. 200ms sleep in metafield definition creation — LOW
+
+Line 96 in `ensure-setup.ts` has `await new Promise(resolve => setTimeout(resolve, 200))` inside a loop creating metafield definitions. This only runs on first setup but adds ~1s for 5 definitions. Replace with the proposed rate-limit utility (Step 5) or batch with `metafieldsSet` which handles up to 25 definitions atomically.
+
+---
+
+### Artiforge Architectural Assessment
+
+#### Proposed Rate-Limit Utility
+
+Artiforge recommends centralizing all Shopify GraphQL concurrency control into a single utility:
+
+```
+web/lib/shopify/rateLimiter.ts
+├── executeWithRateLimit<T>(tasks, opts) — token bucket + batching
+├── runMutations(tasks) — typed wrapper, auto-groups by cost
+└── ShopifyRateLimitError — custom error class
+```
+
+**Features**: Token bucket (50pts/s, 1000 burst), exponential backoff (200→400→800ms), throttle logging with shop context. All Phase 1.5 / Phase 2.1 batch operations would use this instead of ad-hoc `for` loops with `Promise.all`.
+
+#### Cache Strategy Evaluation
+
+| Strategy | Latency | Serverless Persistence | Complexity | Verdict |
+|----------|---------|----------------------|------------|---------|
+| In-memory Map + TTL (Phase 3.1) | 0ms | No (cold start resets) | Low | **Keep** — values are stable, Neon is always-on |
+| DB-backed CacheEntry table | ~5ms | Yes | Medium | Over-engineered for shopId/discountId |
+| Redis/KV external cache | ~1-2ms | Yes | High | Overkill for current scale |
+| `use cache: remote` (Next.js 16) | ~1-5ms | Platform-dependent | Medium | Future option when scale demands it |
+
+**Verdict**: In-memory TTL cache is the right choice. Cold start adds one extra API call (~200ms) which only happens once per instance lifecycle.
+
+---
+
+### Artiforge Implementation Dependency Graph
+
+```
+Week 1:
+  ├── [R1] Verify cacheComponents flag ─────→ [R3] getCachedBundleStats
+  └── [R2] Phase 1: All 5 parallelizations
+
+Week 2:
+  ├── [R4] Phase 2.1: Batch delete
+  ├── [R5] Phase 2.4: Parallel metafield sync
+  └── [R6] Phase 3.2: DB flag for discount ──→ prisma:push
+
+Week 3:
+  ├── [R7] Phase 3.1: In-memory TTL cache
+  ├── [R8] Phase 3.3: React cache() dedup
+  ├── [R9] Remove BundleSettings indexes
+  └── [R10] Rate-limit retry utility (optional enhancement)
+
+SKIP: Phase 2.3 (take:200) — requires pagination design first
+```
+
+**Total estimated effort**: ~3 weeks, 8 items + 1 optional enhancement

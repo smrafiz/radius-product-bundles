@@ -140,24 +140,32 @@ export async function bulkToggleBundleStatusAction(
                 ? await bulkActivateBundlesService({ bundleIds, shop })
                 : await bulkDraftBundlesService({ bundleIds, shop });
 
-        // Sync Shopify product statuses
         const productStatus = getShopifyProductStatus(currentStatus);
-        for (const productId of result.mainProductIds ?? []) {
-            const updateResult =
-                await executeGraphQLMutation<ProductUpdateMutation>({
-                    query: ProductUpdateDocument,
-                    variables: { id: productId, status: productStatus },
-                    sessionToken,
-                });
-            if (isProductNotFoundError(updateResult)) {
-                console.warn(
-                    `[bulkToggleStatus] Product ${productId} no longer exists, clearing reference`,
-                );
-                await clearMainProductByGid(shop, productId);
-            }
+        const BATCH_SIZE = 4;
+        const ids = result.mainProductIds ?? [];
+        for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+            const batch = ids.slice(i, i + BATCH_SIZE);
+            await Promise.all(
+                batch.map(async (productId) => {
+                    const updateResult =
+                        await executeGraphQLMutation<ProductUpdateMutation>({
+                            query: ProductUpdateDocument,
+                            variables: {
+                                id: productId,
+                                status: productStatus,
+                            },
+                            sessionToken,
+                        });
+                    if (isProductNotFoundError(updateResult)) {
+                        console.warn(
+                            `[bulkToggleStatus] Product ${productId} not found`,
+                        );
+                        await clearMainProductByGid(shop, productId);
+                    }
+                }),
+            );
         }
 
-        // Sync metafields so storefront reflects the status changes
         await syncAllSettingsToMetafields(sessionToken, shop);
 
         revalidatePath("/bundles");
@@ -498,14 +506,12 @@ export async function createBundleAction(
 
         console.log("[Action] Schema validation passed");
 
-        // Ensure metafield definitions exist before creating bundle
-        const metafieldSetupResult =
-            await ensureMetafieldDefinition(sessionToken);
+        const [metafieldSetupResult, discountSetupResult] = await Promise.all([
+            ensureMetafieldDefinition(sessionToken),
+            ensureBundleDiscount(sessionToken),
+        ]);
+
         if (!metafieldSetupResult.success) {
-            console.error(
-                "[createBundleAction] Failed to ensure metafield definitions:",
-                metafieldSetupResult.error,
-            );
             return {
                 status: "error",
                 message: "Failed to setup required metafield definitions",
@@ -513,13 +519,7 @@ export async function createBundleAction(
             };
         }
 
-        // Ensure discount function exists before creating bundle
-        const discountSetupResult = await ensureBundleDiscount(sessionToken);
         if (!discountSetupResult.success) {
-            console.error(
-                "[createBundleAction] Failed to ensure discount function:",
-                discountSetupResult.error,
-            );
             return {
                 status: "error",
                 message: "Failed to setup required discount function",
@@ -543,41 +543,25 @@ export async function createBundleAction(
             };
         }
 
-        // Sync metafields AFTER successful creation
-        await syncAllSettingsToMetafields(sessionToken, shop);
-
-        // Add bundle ID to product metafields
-        const productIds = schemaValidation.data.products.map(
+        const allProductIds = schemaValidation.data.products.map(
             (p) => p.productId,
         );
-        if (productIds.length > 0 && result.bundle?.id) {
-            console.log(
-                `[Action] Adding metafields to ${productIds.length} products`,
-            );
-
-            const metafieldResult = await addBundleIdToProducts(
-                sessionToken,
-                result.bundle.id,
-                productIds,
-            );
-
-            if (!metafieldResult.success) {
-                console.warn(
-                    "[createBundleAction] Metafield warning:",
-                    metafieldResult.error,
-                );
-            }
-        }
-
-        // Attach bundle ID to standalone product metafield
         if (result.bundle?.mainProductId) {
-            await addBundleIdToProducts(sessionToken, result.bundle.id, [
-                result.bundle.mainProductId,
-            ]);
+            allProductIds.push(result.bundle.mainProductId);
         }
+
+        await Promise.allSettled([
+            syncAllSettingsToMetafields(sessionToken, shop),
+            allProductIds.length > 0 && result.bundle?.id
+                ? addBundleIdToProducts(
+                      sessionToken,
+                      result.bundle.id,
+                      allProductIds,
+                  )
+                : Promise.resolve(),
+        ]);
 
         revalidatePath("/bundles");
-        revalidatePath("/dashboard");
         invalidateDashboardCache(shop);
 
         return {
@@ -655,14 +639,12 @@ export async function updateBundleAction(
         const oldProductIds =
             existingBundle?.bundleProducts?.map((bp) => bp.productId) || [];
 
-        // Ensure metafield definitions exist before updating bundle
-        const metafieldSetupResult =
-            await ensureMetafieldDefinition(sessionToken);
+        const [metafieldSetupResult, discountSetupResult] = await Promise.all([
+            ensureMetafieldDefinition(sessionToken),
+            ensureBundleDiscount(sessionToken),
+        ]);
+
         if (!metafieldSetupResult.success) {
-            console.error(
-                "[updateBundleAction] Failed to ensure metafield definitions:",
-                metafieldSetupResult.error,
-            );
             return {
                 status: "error",
                 message: "Failed to setup required metafield definitions",
@@ -670,13 +652,7 @@ export async function updateBundleAction(
             };
         }
 
-        // Ensure discount function exists before updating bundle
-        const discountSetupResult = await ensureBundleDiscount(sessionToken);
         if (!discountSetupResult.success) {
-            console.error(
-                "[updateBundleAction] Failed to ensure discount function:",
-                discountSetupResult.error,
-            );
             return {
                 status: "error",
                 message: "Failed to setup required discount function",
@@ -708,40 +684,26 @@ export async function updateBundleAction(
             `[updateBundleAction] Bundle updated successfully: ${result.bundle!.id}`,
         );
 
-        // Sync metafields AFTER successful update
-        await syncAllSettingsToMetafields(sessionToken, shop);
-
-        // Sync metafields for changed products
         const newProductIds = schemaValidation.data.products.map(
             (p) => p.productId,
         );
-        const metafieldResult = await syncBundleProductMetafields(
-            sessionToken,
-            bundleId,
-            oldProductIds,
-            newProductIds,
-        );
+        const adjustedNewIds = result.bundle?.mainProductId
+            ? [...newProductIds, result.bundle.mainProductId]
+            : newProductIds;
 
-        if (!metafieldResult.success) {
-            console.warn(
-                "[updateBundleAction] Metafield sync warning:",
-                metafieldResult.error,
-            );
-        }
-
-        // Attach bundle ID to standalone product metafield
-        if (result.bundle?.mainProductId) {
-            await addBundleIdToProducts(sessionToken, bundleId, [
-                result.bundle.mainProductId,
-            ]);
-        }
+        await Promise.allSettled([
+            syncAllSettingsToMetafields(sessionToken, shop),
+            syncBundleProductMetafields(
+                sessionToken,
+                bundleId,
+                oldProductIds,
+                adjustedNewIds,
+            ),
+        ]);
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
-        revalidatePath("/dashboard");
         invalidateDashboardCache(shop);
-
-        console.log("[updateBundleAction] Cache revalidated");
 
         return {
             status: "success",

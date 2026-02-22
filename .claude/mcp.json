@@ -41,6 +41,11 @@
             "env": {
                 "DATABASE_URL": "postgresql://neondb_owner:npg_6AcEMdLYDr8N@ep-flat-cloud-a1c9fbe2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
             }
+        },
+        "Artiforge": {
+            "url": "https://tools.artiforge.ai/mcp?pat=QjfTzZHsijtseIJxMQ52uAVzB0Wf5Oja",
+            "type": "http",
+            "description": "Artiforge - Build with AI without frictions"
         }
     }
 }

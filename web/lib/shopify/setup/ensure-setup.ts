@@ -195,16 +195,15 @@ export async function ensureBundleDiscount(
 export async function ensureAppSetup(
     sessionToken: string,
 ): Promise<{ success: boolean; errors: string[] }> {
-    const errors: string[] = [];
+    const [metafieldResult, discountResult] = await Promise.all([
+        ensureMetafieldDefinition(sessionToken),
+        ensureBundleDiscount(sessionToken),
+    ]);
 
-    // Ensure metafield definitions
-    const metafieldResult = await ensureMetafieldDefinition(sessionToken);
+    const errors: string[] = [];
     if (!metafieldResult.success && metafieldResult.error) {
         errors.push(`Metafield: ${metafieldResult.error}`);
     }
-
-    // Ensure bundle discount (single discount for both product and shipping)
-    const discountResult = await ensureBundleDiscount(sessionToken);
     if (!discountResult.success && discountResult.error) {
         errors.push(`Discount: ${discountResult.error}`);
     }

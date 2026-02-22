@@ -63,37 +63,21 @@ export async function saveSettingsAction(
         // Save to database
         const savedSettings = await saveSettingsService({ shop, data });
 
-        // Sync to Shopify metafields (pass saved settings directly)
-        const syncResult = await syncAllSettingsToMetafields(
-            sessionToken,
-            shop,
-            savedSettings,
-        );
-
-        if (!syncResult.success) {
-            console.warn(
-                "[saveSettings] Metafield sync warning:",
-                syncResult.error,
-            );
-            // Don't fail the whole operation, just log warning
-        }
-
-        // Update discount stacking if setting exists
+        const syncOps: Promise<any>[] = [
+            syncAllSettingsToMetafields(sessionToken, shop, savedSettings),
+        ];
         if (
             data.allowDiscountStacking !== undefined &&
             data.allowDiscountStacking !== null
         ) {
-            const stackingResult = await updateDiscountCombinesWith(
-                sessionToken,
-                Boolean(data.allowDiscountStacking),
+            syncOps.push(
+                updateDiscountCombinesWith(
+                    sessionToken,
+                    Boolean(data.allowDiscountStacking),
+                ),
             );
-            if (!stackingResult.success) {
-                console.warn(
-                    "[saveSettings] Discount stacking update warning:",
-                    stackingResult.error,
-                );
-            }
         }
+        await Promise.allSettled(syncOps);
 
         // Revalidate cached pages
         revalidatePath("/settings");

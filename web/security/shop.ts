@@ -34,7 +34,7 @@ export function detectShop(
         }
     }
 
-    // Fallback
+    // Wildcard fallback
     return "*.myshopify.com";
 }
 
