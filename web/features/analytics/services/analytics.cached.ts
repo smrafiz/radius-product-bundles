@@ -8,21 +8,22 @@
  * They MUST NOT be in a "use server" file.
  */
 
-import { cacheLife, cacheTag } from "next/cache";
-import {
-    getAnalyticsMetrics,
-    getChartData,
-} from "@/features/analytics/services/analytics.service";
-import { getTopBundlesService } from "@/features/analytics/services/bundle-analytics.service";
-import {
-    getAllBundlesAnalytics,
-    getPaginatedBundlesAnalytics,
-} from "@/features/analytics/services/bundle-analytics.service";
 import type {
     PaginatedBundlesServiceParams,
     SortField,
     SortOrder,
 } from "@/features/analytics";
+import { cacheLife, cacheTag } from "next/cache";
+import {
+    getAnalyticsMetrics,
+    getBundleStats,
+    getChartData,
+} from "@/features/analytics/services/analytics.service";
+import {
+    getAllBundlesAnalytics,
+    getPaginatedBundlesAnalytics,
+} from "@/features/analytics/services/bundle-analytics.service";
+import { getTopBundlesService } from "@/features/analytics/services/bundle-analytics.service";
 
 /**
  * Cached: analytics metrics (dashboard cards)
@@ -56,6 +57,14 @@ export async function getCachedChartData(
     cacheTag(`chart-data-${shop}`);
 
     return getChartData(shop, days, startDate, endDate);
+}
+
+export async function getCachedBundleStats(shop: string, days: number) {
+    "use cache";
+    cacheLife("dashboard");
+    cacheTag(`bundle-stats-${shop}`);
+
+    return getBundleStats(shop, days);
 }
 
 /**

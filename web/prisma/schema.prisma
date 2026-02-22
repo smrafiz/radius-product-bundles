@@ -183,8 +183,6 @@ model BundleSettings {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([layout])
-    @@index([theme])
     @@map("bundle_settings")
 }
 
@@ -469,6 +467,7 @@ model Shop {
     plan               String?
     trialEndsAt        DateTime?
     metafieldSetupDone Boolean    @default(false)
+    discountSetupDone  Boolean    @default(false)
 
     // Setup tracking
     setupComplete        Boolean   @default(false)

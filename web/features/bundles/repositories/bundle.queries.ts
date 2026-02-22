@@ -196,6 +196,24 @@ export async function findBundlesByIds(
 }
 
 /**
+ * Find multiple bundles by IDs with all relations (batch version)
+ */
+export async function findBundlesByIdsWithAllRelations(
+    bundleIds: string[],
+    shop: string,
+    tx?: Prisma.TransactionClient,
+) {
+    if (!bundleIds.length) return [];
+
+    const client = tx || prisma;
+
+    return client.bundle.findMany({
+        where: { id: { in: bundleIds }, shop },
+        include: INCLUDE_BUNDLE_FULL,
+    });
+}
+
+/**
  * Find mainProductIds for given bundle IDs
  */
 export async function findMainProductIdsByBundleIds(

@@ -10,6 +10,8 @@
 import {
     isMetafieldSetupDone,
     markMetafieldSetupDone,
+    isDiscountSetupDone,
+    markDiscountSetupDone,
 } from "@/shared/repositories";
 import {
     CheckMetafieldDefinitionDocument,
@@ -116,7 +118,14 @@ export async function ensureBundleDiscount(
     sessionToken: string,
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        // Check if discount already exists
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        if (await isDiscountSetupDone(shop)) {
+            return { success: true };
+        }
+
         const checkResult =
             await executeGraphQLQuery<CheckBundleDiscountExistsQuery>({
                 query: CheckBundleDiscountExistsDocument,
@@ -130,7 +139,7 @@ export async function ensureBundleDiscount(
             checkResult.data?.discountNodes?.edges?.[0]?.node;
 
         if (existingDiscount) {
-            // Discount already exists
+            await markDiscountSetupDone(shop);
             return { success: true };
         }
 
@@ -175,6 +184,7 @@ export async function ensureBundleDiscount(
         }
 
         console.log("[EnsureSetup] Created bundle discount");
+        await markDiscountSetupDone(shop);
         return { success: true };
     } catch (error) {
         console.error("[EnsureSetup] Error ensuring bundle discount:", error);

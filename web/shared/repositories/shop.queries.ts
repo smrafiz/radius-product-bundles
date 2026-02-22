@@ -65,3 +65,22 @@ export async function markMetafieldSetupDone(domain: string): Promise<void> {
         },
     });
 }
+
+export async function isDiscountSetupDone(domain: string): Promise<boolean> {
+    const shop = await prisma.shop.findUnique({
+        where: { domain },
+        select: { discountSetupDone: true },
+    });
+    return shop?.discountSetupDone === true;
+}
+
+export async function markDiscountSetupDone(domain: string): Promise<void> {
+    await prisma.shop.upsert({
+        where: { domain },
+        update: { discountSetupDone: true },
+        create: {
+            domain,
+            discountSetupDone: true,
+        },
+    });
+}

@@ -74,6 +74,7 @@ export async function saveSettingsAction(
                 updateDiscountCombinesWith(
                     sessionToken,
                     Boolean(data.allowDiscountStacking),
+                    shop,
                 ),
             );
         }

@@ -51,6 +51,7 @@ import {
 import {
     clearMainProductByGid,
     findBundleByIdWithAllRelations,
+    findBundlesByIdsWithAllRelations,
 } from "@/features/bundles/repositories";
 import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
 
@@ -292,61 +293,44 @@ export async function deleteBundlesAction(
             };
         }
 
-        // Get all product IDs and mainProductIds from all bundles before deletion
+        const bundles = await findBundlesByIdsWithAllRelations(bundleIds, shop);
+
         const bundleProductMap = new Map<string, string[]>();
         const mainProductIds: string[] = [];
-        for (const bundleId of bundleIds) {
-            const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
-            if (bundle?.bundleProducts) {
+        for (const bundle of bundles) {
+            if (bundle.bundleProducts?.length) {
                 bundleProductMap.set(
-                    bundleId,
+                    bundle.id,
                     bundle.bundleProducts.map((bp) => bp.productId),
                 );
             }
-            if (bundle?.mainProductId) {
+            if (bundle.mainProductId) {
                 mainProductIds.push(bundle.mainProductId);
             }
         }
 
-        const result = await deleteMultipleBundles({
-            bundleIds,
-            shop,
-        });
-        await syncAllSettingsToMetafields(sessionToken, shop);
+        const result = await deleteMultipleBundles({ bundleIds, shop });
+
+        await Promise.allSettled([
+            syncAllSettingsToMetafields(sessionToken, shop),
+            ...[...bundleProductMap.entries()].map(([bundleId, productIds]) =>
+                removeBundleIdFromProducts(sessionToken, bundleId, productIds),
+            ),
+        ]);
         invalidateDashboardCache(shop);
 
-        // Remove bundle IDs from product metafields
-        for (const [bundleId, productIds] of bundleProductMap) {
-            if (productIds.length > 0) {
-                const metafieldResult = await removeBundleIdFromProducts(
-                    sessionToken,
-                    bundleId,
-                    productIds,
-                );
-
-                if (!metafieldResult.success) {
-                    console.warn(
-                        `[deleteBundles] Metafield cleanup warning for ${bundleId}:`,
-                        metafieldResult.error,
-                    );
-                }
-            }
-        }
-
-        // Delete Shopify standalone products
-        for (const productId of mainProductIds) {
-            const deleteResult =
-                await executeGraphQLMutation<ProductDeleteMutation>({
-                    query: ProductDeleteDocument,
-                    variables: { productId },
-                    sessionToken,
-                });
-            if (deleteResult.errors?.length) {
-                console.warn(
-                    `[deleteBundles] Shopify product cleanup warning for ${productId}:`,
-                    deleteResult.errors[0].message,
-                );
-            }
+        const BATCH_SIZE = 4;
+        for (let i = 0; i < mainProductIds.length; i += BATCH_SIZE) {
+            const batch = mainProductIds.slice(i, i + BATCH_SIZE);
+            await Promise.allSettled(
+                batch.map((productId) =>
+                    executeGraphQLMutation<ProductDeleteMutation>({
+                        query: ProductDeleteDocument,
+                        variables: { productId },
+                        sessionToken,
+                    }),
+                ),
+            );
         }
 
         revalidatePath("/bundles");

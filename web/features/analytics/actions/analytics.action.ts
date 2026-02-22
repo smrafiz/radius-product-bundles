@@ -8,7 +8,6 @@
  */
 
 import {
-    getBundleStats,
     trackAnalyticsEvent,
     validateTrackingEvent,
 } from "@/features/analytics/services";
@@ -17,6 +16,7 @@ import { handleSessionToken } from "@/lib/shopify";
 import { TrackingEvent } from "@/features/analytics";
 import {
     getCachedAnalyticsMetrics,
+    getCachedBundleStats,
     getCachedChartData,
 } from "@/features/analytics/services/analytics.cached";
 
@@ -71,7 +71,7 @@ export async function getBundleStatsAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const stats = await getBundleStats(shop, days);
+        const stats = await getCachedBundleStats(shop, days);
 
         return {
             status: "success",

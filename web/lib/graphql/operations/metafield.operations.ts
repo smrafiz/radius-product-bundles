@@ -313,25 +313,26 @@ export async function syncBundleProductMetafields(
         removed: removedProducts.length,
     });
 
+    const ops: Promise<MetafieldResult>[] = [];
+
     if (addedProducts.length > 0) {
-        const addResult = await addBundleIdToProducts(
-            sessionToken,
-            bundleId,
-            addedProducts,
-        );
-        if (!addResult.success) {
-            return addResult;
-        }
+        ops.push(addBundleIdToProducts(sessionToken, bundleId, addedProducts));
+    }
+    if (removedProducts.length > 0) {
+        ops.push(removeBundleIdFromProducts(sessionToken, bundleId, removedProducts));
     }
 
-    if (removedProducts.length > 0) {
-        const removeResult = await removeBundleIdFromProducts(
-            sessionToken,
-            bundleId,
-            removedProducts,
-        );
-        if (!removeResult.success) {
-            return removeResult;
+    if (ops.length === 0) {
+        return { success: true };
+    }
+
+    const results = await Promise.allSettled(ops);
+    for (const r of results) {
+        if (r.status === "fulfilled" && !r.value.success) {
+            return r.value;
+        }
+        if (r.status === "rejected") {
+            return { success: false, error: String(r.reason) };
         }
     }
 
@@ -342,12 +343,32 @@ export async function syncBundleProductMetafields(
 // ACTIVE BUNDLES METAFIELD FUNCTIONS (for discount validation)
 // ============================================================================
 
-/**
- * Gets the discount node ID for the bundle discount.
- */
+// Module-level ID cache — avoids redundant Shopify GQL calls for static IDs.
+// Safe in serverless (one request per container) and Node (Map ops are atomic in event loop).
+const ID_CACHE_TTL = 5 * 60 * 1000; // 5 min
+const idCache = new Map<string, { value: string; expires: number }>();
+
+function getCachedId(key: string): string | null {
+    const entry = idCache.get(key);
+    if (entry && Date.now() < entry.expires) return entry.value;
+    if (entry) idCache.delete(key);
+    return null;
+}
+
+function setCachedId(key: string, value: string): void {
+    idCache.set(key, { value, expires: Date.now() + ID_CACHE_TTL });
+}
+
 async function getBundleDiscountId(
     auth: MetafieldAuth,
+    shopDomain?: string,
 ): Promise<string | null> {
+    const cacheKey = shopDomain ? `discount:${shopDomain}` : null;
+    if (cacheKey) {
+        const cached = getCachedId(cacheKey);
+        if (cached) return cached;
+    }
+
     try {
         const result = await executeGraphQLQuery<GetBundleDiscountIdQuery>({
             query: GetBundleDiscountIdDocument,
@@ -357,17 +378,25 @@ async function getBundleDiscountId(
             ...resolveAuth(auth),
         });
 
-        return result.data?.discountNodes?.edges?.[0]?.node?.id || null;
+        const id = result.data?.discountNodes?.edges?.[0]?.node?.id || null;
+        if (id && cacheKey) setCachedId(cacheKey, id);
+        return id;
     } catch (error) {
         console.error("[Metafield] Failed to get discount ID:", error);
         return null;
     }
 }
 
-/**
- * Gets the shop ID for metafield ownership.
- */
-async function getShopId(auth: MetafieldAuth): Promise<string | null> {
+async function getShopId(
+    auth: MetafieldAuth,
+    shopDomain?: string,
+): Promise<string | null> {
+    const cacheKey = shopDomain ? `shop:${shopDomain}` : null;
+    if (cacheKey) {
+        const cached = getCachedId(cacheKey);
+        if (cached) return cached;
+    }
+
     try {
         const result = await executeGraphQLQuery<GetShopIdQuery>({
             query: GetShopIdDocument,
@@ -375,7 +404,9 @@ async function getShopId(auth: MetafieldAuth): Promise<string | null> {
             ...resolveAuth(auth),
         });
 
-        return result.data?.shop?.id || null;
+        const id = result.data?.shop?.id || null;
+        if (id && cacheKey) setCachedId(cacheKey, id);
+        return id;
     } catch (error) {
         console.error("[Metafield] Failed to get shop ID:", error);
         return null;
@@ -520,8 +551,10 @@ export async function syncActiveBundlesToMetafield(
     shop: string,
 ): Promise<SyncResult> {
     try {
-        // Get discount ID (for Rust function)
-        const discountId = await getBundleDiscountId(auth);
+        const [discountId, shopId] = await Promise.all([
+            getBundleDiscountId(auth, shop),
+            getShopId(auth, shop),
+        ]);
 
         if (!discountId) {
             console.error("[Metafield] Bundle discount not found");
@@ -530,9 +563,6 @@ export async function syncActiveBundlesToMetafield(
                 error: "Bundle discount not found. Please reinstall the app.",
             };
         }
-
-        // Get shop ID (for Liquid/storefront)
-        const shopId = await getShopId(auth);
 
         if (!shopId) {
             console.error("[Metafield] Shop ID not found");
@@ -628,8 +658,9 @@ export async function syncActiveBundlesToMetafield(
 export async function updateDiscountCombinesWith(
     auth: MetafieldAuth,
     allowStacking: boolean,
+    shopDomain?: string,
 ): Promise<{ success: boolean; error?: string }> {
-    const discountId = await getBundleDiscountId(auth);
+    const discountId = await getBundleDiscountId(auth, shopDomain);
     if (!discountId) {
         return { success: false, error: "Bundle discount not found" };
     }
@@ -669,8 +700,8 @@ export async function syncAllSettingsToMetafields(
         console.log("[Metafield] Starting full sync for:", shop);
 
         const [discountId, shopId] = await Promise.all([
-            getBundleDiscountId(auth),
-            getShopId(auth),
+            getBundleDiscountId(auth, shop),
+            getShopId(auth, shop),
         ]);
 
         if (!discountId || !shopId) {
