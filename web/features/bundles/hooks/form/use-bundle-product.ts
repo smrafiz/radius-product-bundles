@@ -53,7 +53,6 @@ export function useBundleProduct(mode: "create" | "edit") {
     const [isLoadingProduct, setIsLoadingProduct] = useState<boolean>(false);
     const [shopDomain, setShopDomain] = useState<string>("");
 
-
     // Sync isEnabled with form value when it changes
     useEffect(() => {
         if (createProduct !== undefined) {
@@ -99,7 +98,10 @@ export function useBundleProduct(mode: "create" | "edit") {
                         );
 
                         // Update snapshot with actual Shopify product title/description
-                        const { savedProductSnapshot, setSavedProductSnapshot } = useBundleStore.getState();
+                        const {
+                            savedProductSnapshot,
+                            setSavedProductSnapshot,
+                        } = useBundleStore.getState();
                         if (savedProductSnapshot) {
                             setSavedProductSnapshot({
                                 ...savedProductSnapshot,
@@ -123,7 +125,16 @@ export function useBundleProduct(mode: "create" | "edit") {
 
             void loadProduct();
         }
-    }, [hasLoadedProduct, mode, mainProductId, isEnabled, app, setValue, setExistingMedia, setHasLoadedProduct]);
+    }, [
+        hasLoadedProduct,
+        mode,
+        mainProductId,
+        isEnabled,
+        app,
+        setValue,
+        setExistingMedia,
+        setHasLoadedProduct,
+    ]);
 
     // Initialize createProduct field on mount
     useEffect(() => {
@@ -162,7 +173,14 @@ export function useBundleProduct(mode: "create" | "edit") {
             setHasLoadedProduct(false);
             setHasManuallyEditedTitle(false);
         }
-    }, [isEnabled, setValue, clearPendingMedia, setExistingMedia, setHasLoadedProduct, setHasManuallyEditedTitle]);
+    }, [
+        isEnabled,
+        setValue,
+        clearPendingMedia,
+        setExistingMedia,
+        setHasLoadedProduct,
+        setHasManuallyEditedTitle,
+    ]);
 
     /**
      * Toggle bundle as a product
@@ -265,7 +283,7 @@ export function useBundleProduct(mode: "create" | "edit") {
                 const existingKeys = new Set(
                     pendingMedia
                         .filter(
-                            (item): item is (typeof item) & { type: "file" } =>
+                            (item): item is typeof item & { type: "file" } =>
                                 item.type === "file",
                         )
                         .map(
@@ -283,14 +301,11 @@ export function useBundleProduct(mode: "create" | "edit") {
                 addPendingFiles(files);
 
                 if (duplicateCount > 0) {
-                    if (
-                        typeof shopify !== "undefined" &&
-                        shopify.toast?.show
-                    ) {
-                        shopify.toast.show(
-                            "Duplicate image(s) already added",
-                            { isError: true, duration: 3000 },
-                        );
+                    if (typeof shopify !== "undefined" && shopify.toast?.show) {
+                        shopify.toast.show("Duplicate image(s) already added", {
+                            isError: true,
+                            duration: 3000,
+                        });
                     }
                 }
             } catch (error) {

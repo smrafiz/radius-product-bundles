@@ -4,6 +4,7 @@ import { print } from "graphql";
 import { GraphQLClient } from "graphql-request";
 import { handleSessionToken } from "@/lib/shopify";
 import { GraphQLRequest, GraphQLResponse } from "@/shared";
+import { SHOPIFY_API_VERSION } from "@/shared/constants";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 /**
@@ -76,7 +77,7 @@ export async function executeGraphQLQuery<T = any>(
             } as GraphQLResponse<T>;
         }
 
-        const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
+        const endpoint = `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
         const client = new GraphQLClient(endpoint, {
             headers: {
                 "X-Shopify-Access-Token": accessToken,

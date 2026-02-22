@@ -4,6 +4,7 @@ import path from "path";
 import toml from "@iarna/toml";
 import setupCheck from "./setupCheck";
 import type { AppConfig } from "@/_developer/types/toml";
+import { SHOPIFY_API_VERSION } from "../shared/constants/shopify.constants";
 
 // Initialize config
 const config: AppConfig = {} as AppConfig;
@@ -42,7 +43,7 @@ try {
 
     // Webhooks
     config.webhooks = {
-        api_version: process.env.SHOPIFY_API_VERSION!,
+        api_version: SHOPIFY_API_VERSION,
     };
 
     // Access

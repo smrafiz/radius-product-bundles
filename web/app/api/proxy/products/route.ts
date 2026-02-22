@@ -353,7 +353,10 @@ export async function GET(request: NextRequest) {
             { headers: cacheHeaders },
         );
     } catch (error) {
-        if (error instanceof Error && (error as any).digest === "NEXT_PRERENDER_INTERRUPTED") {
+        if (
+            error instanceof Error &&
+            (error as any).digest === "NEXT_PRERENDER_INTERRUPTED"
+        ) {
             throw error;
         }
         console.error("Bundle Proxy API Error:", error);

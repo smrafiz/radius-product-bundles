@@ -92,7 +92,10 @@ export const BUNDLE_TAB_STRINGS = [
 /**
  * Map tab index to status filter value
  */
-export const TAB_STATUS_MAP = ["ALL", ...LISTING_STATUSES.map(([key]) => key)] as const;
+export const TAB_STATUS_MAP = [
+    "ALL",
+    ...LISTING_STATUSES.map(([key]) => key),
+] as const;
 
 /**
  * Search configuration

@@ -435,7 +435,9 @@ declare global {
                         new CustomEvent("bundle:viewed", {
                             detail: {
                                 bundleId: this.bundleId,
-                                productId: this.extractNumericId(this.productId),
+                                productId: this.extractNumericId(
+                                    this.productId,
+                                ),
                                 isStandalone: true,
                             },
                             bubbles: true,
@@ -624,31 +626,27 @@ declare global {
                         if (!variantId) return;
 
                         try {
-                            await fetch(
-                                self.getLocalePath("/cart/add.js"),
-                                {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                        items: [
-                                            {
-                                                id: parseInt(variantId, 10),
-                                                quantity,
-                                                properties: {
-                                                    _bundle_id: self.bundleId,
-                                                    _bundle_name:
-                                                        self.bundleStructure
-                                                            ?.name || "Bundle",
-                                                    _product_id:
-                                                        self.productId,
-                                                },
-                                            },
-                                        ],
-                                    }),
+                            await fetch(self.getLocalePath("/cart/add.js"), {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
                                 },
-                            );
+                                body: JSON.stringify({
+                                    items: [
+                                        {
+                                            id: parseInt(variantId, 10),
+                                            quantity,
+                                            properties: {
+                                                _bundle_id: self.bundleId,
+                                                _bundle_name:
+                                                    self.bundleStructure
+                                                        ?.name || "Bundle",
+                                                _product_id: self.productId,
+                                            },
+                                        },
+                                    ],
+                                }),
+                            });
 
                             window.location.href =
                                 self.getLocalePath("/checkout");

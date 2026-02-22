@@ -1,17 +1,13 @@
 {
-  "mcpServers": {
-    "Prisma-Local": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "prisma",
-        "mcp"
-      ],
-      "env": {}
-    },
-    "Prisma-Remote": {
-      "url": "https://mcp.prisma.io/mcp"
+    "mcpServers": {
+        "Prisma-Local": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "prisma", "mcp"],
+            "env": {}
+        },
+        "Prisma-Remote": {
+            "url": "https://mcp.prisma.io/mcp"
+        }
     }
-  }
 }

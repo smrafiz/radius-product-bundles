@@ -8,10 +8,10 @@
 
 Your project has two `.env` files with overlapping and duplicated values:
 
-| File | Purpose | Runtime |
-|------|---------|---------|
+| File           | Purpose                    | Runtime                      |
+| -------------- | -------------------------- | ---------------------------- |
 | `/.env` (root) | Shopify CLI + root scripts | `shopify app dev` reads this |
-| `/web/.env` | Next.js app | Next.js reads this |
+| `/web/.env`    | Next.js app                | Next.js reads this           |
 
 ---
 
@@ -42,12 +42,12 @@ DEV_STORE_URL="bundles47.myshopify.com"               # ⚠️ REDUNDANT — dev
 
 ### Root `.env` Issues
 
-| Issue | Severity | Details |
-|-------|----------|---------|
-| 7 values duplicated from TOML | Low | `SCOPES`, `APP_NAME`, `APP_HANDLE`, `SHOPIFY_API_VERSION`, `POS_EMBEDDED`, `DIRECT_API_MODE`, `EMBEDDED_APP_DIRECT_API_ACCESS`, `AUTO_UPDATE_URL` all exist in `shopify.app.toml`. Shopify CLI reads the TOML, not these env vars. |
-| `DATABASE_URL` duplicated | Medium | Same connection string exists in both `/.env` and `/web/.env`. Single source of truth should be `/web/.env` since only Next.js/Prisma uses it. |
-| `DEV_STORE_URL` redundant | Low | Already `dev_store_url` in TOML `[build]` section |
-| API secret exposed | High | `SHOPIFY_API_SECRET` is in the root `.env` but this file is not in `/web/`. Make sure it's in `.gitignore`. |
+| Issue                         | Severity | Details                                                                                                                                                                                                                            |
+| ----------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7 values duplicated from TOML | Low      | `SCOPES`, `APP_NAME`, `APP_HANDLE`, `SHOPIFY_API_VERSION`, `POS_EMBEDDED`, `DIRECT_API_MODE`, `EMBEDDED_APP_DIRECT_API_ACCESS`, `AUTO_UPDATE_URL` all exist in `shopify.app.toml`. Shopify CLI reads the TOML, not these env vars. |
+| `DATABASE_URL` duplicated     | Medium   | Same connection string exists in both `/.env` and `/web/.env`. Single source of truth should be `/web/.env` since only Next.js/Prisma uses it.                                                                                     |
+| `DEV_STORE_URL` redundant     | Low      | Already `dev_store_url` in TOML `[build]` section                                                                                                                                                                                  |
+| API secret exposed            | High     | `SHOPIFY_API_SECRET` is in the root `.env` but this file is not in `/web/`. Make sure it's in `.gitignore`.                                                                                                                        |
 
 ---
 
@@ -74,6 +74,7 @@ CRON_SECRET="c7f3a9e2-..."            # ✅ Needed for cron route protection
 `NEXT_PUBLIC_SHOP` is used in exactly **one place** at runtime:
 
 **`web/security/shop.ts:38-39`** — as the 3rd fallback in `detectShop()`:
+
 ```
 1. ?shop= query parameter
 2. shopify-shop cookie / shopify-session cookie
@@ -82,18 +83,19 @@ CRON_SECRET="c7f3a9e2-..."            # ✅ Needed for cron route protection
 ```
 
 `detectShop()` is called from **`web/proxy.ts:40`** (your middleware) to build the CSP `frame-ancestors` header:
+
 ```
 frame-ancestors https://{shop} https://admin.shopify.com;
 ```
 
 ### Why It's Wrong
 
-| Problem | Impact |
-|---------|--------|
-| **Hardcoded to one shop** | Multi-tenant apps serve many shops. This env var locks CSP to a single store. |
+| Problem                                                   | Impact                                                                                                                                                    |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hardcoded to one shop**                                 | Multi-tenant apps serve many shops. This env var locks CSP to a single store.                                                                             |
 | **`NEXT_PUBLIC_` prefix exposes it to the client bundle** | The shop domain gets baked into your JS bundle at build time. Every client downloads `bundles47.myshopify.com` in the JavaScript — unnecessary data leak. |
-| **Must change per deployment** | As you noted, deploying to a new server requires updating this value. |
-| **Not actually needed** | Your server actions already get the shop from the session token (see below). The middleware just needs a different approach. |
+| **Must change per deployment**                            | As you noted, deploying to a new server requires updating this value.                                                                                     |
+| **Not actually needed**                                   | Your server actions already get the shop from the session token (see below). The middleware just needs a different approach.                              |
 
 ### Why You Don't Need It
 
@@ -118,6 +120,7 @@ Per [Shopify App Bridge docs](https://shopify.dev/docs/api/app-bridge-library):
 > `/my-app-path?embedded=1&shop={SHOP}&host={HOST}&id_token={ID_TOKEN}&...`
 
 Shopify **always** provides the `shop` parameter in the URL query string when loading your embedded app. Your middleware already checks this as priority #1 in `detectShop()`. The env var fallback is only hit when:
+
 - The request has no `?shop=` param (rare — only direct URL access)
 - No cookies are set (first load scenario)
 
@@ -134,6 +137,7 @@ The `*.myshopify.com` wildcard is the standard Shopify approach for CSP when the
 **Changes needed:**
 
 1. **`web/security/shop.ts`** — Remove the env var fallback:
+
 ```typescript
 export function detectShop(
     request?: NextRequest,
@@ -163,6 +167,7 @@ export function detectShop(
 ```
 
 2. **`web/next.config.js`** — Remove from env mapping:
+
 ```javascript
 env: {
     NEXT_PUBLIC_HOST: process.env.HOST,
@@ -172,6 +177,7 @@ env: {
 ```
 
 3. **`web/.env`** — Remove the line:
+
 ```diff
 - NEXT_PUBLIC_SHOP=bundles47.myshopify.com
 ```
@@ -193,12 +199,12 @@ But this still has the "must change per deployment" problem, so **Option A is st
 
 ## 6. Other `NEXT_PUBLIC_` Variables Audit
 
-| Variable | Set In | Used In | Assessment |
-|----------|--------|---------|-----------|
-| `NEXT_PUBLIC_HOST` | `next.config.js` (from root `HOST`) | `layout.tsx` for `shopify-app-origins` meta tag | ✅ OK — needed for App Bridge |
-| `NEXT_PUBLIC_SHOPIFY_API_KEY` | `next.config.js` (from root `SHOPIFY_API_KEY`) | `layout.tsx` for `shopify-api-key` meta tag | ✅ OK — needed for App Bridge |
-| `NEXT_PUBLIC_SHOP` | `next.config.js` + `web/.env` | `security/shop.ts` only | ❌ Remove — not needed |
-| `NEXT_PUBLIC_SHOPIFY_APP_URL` | Dev scripts update it | Not found in app code | ⚠️ Unused — clean up from dev scripts |
+| Variable                      | Set In                                         | Used In                                         | Assessment                            |
+| ----------------------------- | ---------------------------------------------- | ----------------------------------------------- | ------------------------------------- |
+| `NEXT_PUBLIC_HOST`            | `next.config.js` (from root `HOST`)            | `layout.tsx` for `shopify-app-origins` meta tag | ✅ OK — needed for App Bridge         |
+| `NEXT_PUBLIC_SHOPIFY_API_KEY` | `next.config.js` (from root `SHOPIFY_API_KEY`) | `layout.tsx` for `shopify-api-key` meta tag     | ✅ OK — needed for App Bridge         |
+| `NEXT_PUBLIC_SHOP`            | `next.config.js` + `web/.env`                  | `security/shop.ts` only                         | ❌ Remove — not needed                |
+| `NEXT_PUBLIC_SHOPIFY_APP_URL` | Dev scripts update it                          | Not found in app code                           | ⚠️ Unused — clean up from dev scripts |
 
 ---
 
@@ -234,13 +240,13 @@ Everything else (`SCOPES`, `APP_NAME`, `APP_HANDLE`, `SHOPIFY_API_VERSION`, `POS
 
 ## 9. Summary
 
-| # | Action | Priority | Files |
-|---|--------|----------|-------|
-| 1 | **Remove `NEXT_PUBLIC_SHOP`** from env, next.config.js, and shop.ts | High | `web/.env`, `web/.env.example`, `web/next.config.js`, `web/security/shop.ts` |
-| 2 | **Remove redundant root env vars** (SCOPES, APP_NAME, APP_HANDLE, etc.) | Medium | `/.env` |
-| 3 | **Remove duplicate `DATABASE_URL`** from root `.env` | Medium | `/.env` |
-| 4 | **Clean up `NEXT_PUBLIC_SHOPIFY_APP_URL`** from dev scripts (unused) | Low | `scripts/update-env-host.js`, `scripts/update-and-generate.js`, `scripts/dev-with-auto-host.sh` |
-| 5 | **Update `.env.example`** to reflect minimal required vars | Low | `web/.env.example` |
+| #   | Action                                                                  | Priority | Files                                                                                           |
+| --- | ----------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| 1   | **Remove `NEXT_PUBLIC_SHOP`** from env, next.config.js, and shop.ts     | High     | `web/.env`, `web/.env.example`, `web/next.config.js`, `web/security/shop.ts`                    |
+| 2   | **Remove redundant root env vars** (SCOPES, APP_NAME, APP_HANDLE, etc.) | Medium   | `/.env`                                                                                         |
+| 3   | **Remove duplicate `DATABASE_URL`** from root `.env`                    | Medium   | `/.env`                                                                                         |
+| 4   | **Clean up `NEXT_PUBLIC_SHOPIFY_APP_URL`** from dev scripts (unused)    | Low      | `scripts/update-env-host.js`, `scripts/update-and-generate.js`, `scripts/dev-with-auto-host.sh` |
+| 5   | **Update `.env.example`** to reflect minimal required vars              | Low      | `web/.env.example`                                                                              |
 
 ---
 

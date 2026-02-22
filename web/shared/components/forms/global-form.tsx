@@ -49,7 +49,10 @@ export function GlobalForm<T extends FieldValues>({
      */
     const formatFieldLabel = (field: string): string => {
         if (fieldLabels?.[field]) return fieldLabels[field];
-        return field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1");
+        return (
+            field.charAt(0).toUpperCase() +
+            field.slice(1).replace(/([A-Z])/g, " $1")
+        );
     };
 
     /**
@@ -120,7 +123,9 @@ export function GlobalForm<T extends FieldValues>({
 
         await form.handleSubmit(
             async (data) => {
-                useGlobalBannerStore.getState().removeMessageByKey(validationBannerKey);
+                useGlobalBannerStore
+                    .getState()
+                    .removeMessageByKey(validationBannerKey);
                 withLoader(async () => {
                     await onSubmit(data);
                     window.shopify?.loading(false);

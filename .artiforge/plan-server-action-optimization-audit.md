@@ -15,6 +15,7 @@
 **Action**: Read all 11 critical files for exact baseline analysis.
 
 **Files**:
+
 - `web/features/bundles/actions/bundle-mutations.action.ts`
 - `web/features/bundles/repositories/bundle.queries.ts`
 - `web/features/settings/actions/settings.action.ts`
@@ -34,6 +35,7 @@
 **Action**: Detect N+1 queries, missing error handling, rate-limit-unsafe patterns.
 
 **Detection targets**:
+
 - Direct `await` inside loops → should be `Promise.all`
 - `findMany` without `take`/`skip` pagination
 - GraphQL mutations without retry/backoff
@@ -53,6 +55,7 @@
 |------|-------------|-------------------|----------------|---------------------|-----------------|
 
 **Calculations**:
+
 - Phase 1.1: ensureMetafieldDefinition (~5pts) + ensureBundleDiscount (~10pts) = 15pts/s → SAFE
 - Phase 1.5: 4 × ProductUpdate (~10pts) = 40pts/s → SAFE but tight
 - Phase 2.1: batched ProductDelete groups of 4 = 40pts/s → SAFE
@@ -66,6 +69,7 @@
 **Action**: Identify issues NOT caught by previous MCP audit.
 
 **Check for**:
+
 - String interpolation in GraphQL queries (injection risk)
 - Unparameterized Prisma raw SQL calls
 - Missing `await` on async DB calls (fire-and-forget bugs)
@@ -86,11 +90,12 @@
 ```typescript
 export async function executeWithRateLimit<T>(
     tasks: (() => Promise<T>)[],
-    opts?: { maxPointsPerSec?: number; batchSize?: number }
-): Promise<T[]>
+    opts?: { maxPointsPerSec?: number; batchSize?: number },
+): Promise<T[]>;
 ```
 
 **Features**:
+
 - Token bucket algorithm (50pts/s, 1000-point burst)
 - Exponential backoff: 200ms → 400ms → 800ms (max 3 retries)
 - Throttle event logging with shopId context
@@ -104,11 +109,13 @@ export async function executeWithRateLimit<T>(
 **Action**: Evaluate cache implementations for serverless compatibility.
 
 **Option A (plan's proposal)**: In-memory Map with 5-min TTL
+
 - Pro: Zero overhead, sub-ms reads
 - Con: Resets on cold start
 - Verdict: Acceptable for warm instances, document the limitation
 
 **Option B (Artiforge suggestion)**: DB-backed cache table
+
 - New Prisma model: `CacheEntry { key, value Json, expiresAt DateTime }`
 - Pro: Persists across cold starts
 - Con: ~5ms read overhead (vs 0ms in-memory), adds DB load
@@ -139,19 +146,19 @@ flowchart TD
 
 **Roadmap table**:
 
-| ID | Description | Phase | Effort | Impact | Risk | Dependencies | Week |
-|----|-------------|-------|--------|--------|------|--------------|------|
-| R1 | Verify cacheComponents flag | Pre-req | 1 | Blocking | Low | None | W1 |
-| R2 | Phase 1: All 5 parallelizations | Quick Win | 3 | 40% latency reduction | Low | None | W1 |
-| R3 | Phase 2.2: getCachedBundleStats | Medium | 1 | Dashboard perf | Low | R1 | W1 |
-| R4 | Phase 2.1: Batch delete N+1 | Medium | 3 | 75% delete latency | Medium | None | W2 |
-| R5 | Phase 2.4: Parallel metafield sync | Medium | 2 | 300-600ms savings | Low | None | W2 |
-| R6 | Phase 3.2: DB flag for discount | Large | 2 | 200-300ms/call | Low | Schema push | W2 |
-| R7 | Phase 3.1: In-memory TTL cache | Large | 2 | 400ms/call | Low | None | W3 |
-| R8 | Phase 3.3: React cache() dedup | Large | 2 | Request dedup | Low | R1 | W3 |
-| R9 | Remove useless BundleSettings indexes | DB | 1 | Write perf | Low | None | W3 |
-| R10 | Add rate-limit retry utility | Enhancement | 3 | Reliability | Medium | None | W3 |
-| — | Phase 2.3: take:200 | SKIP | — | — | HIGH | Pagination design | — |
+| ID  | Description                           | Phase       | Effort | Impact                | Risk   | Dependencies      | Week |
+| --- | ------------------------------------- | ----------- | ------ | --------------------- | ------ | ----------------- | ---- |
+| R1  | Verify cacheComponents flag           | Pre-req     | 1      | Blocking              | Low    | None              | W1   |
+| R2  | Phase 1: All 5 parallelizations       | Quick Win   | 3      | 40% latency reduction | Low    | None              | W1   |
+| R3  | Phase 2.2: getCachedBundleStats       | Medium      | 1      | Dashboard perf        | Low    | R1                | W1   |
+| R4  | Phase 2.1: Batch delete N+1           | Medium      | 3      | 75% delete latency    | Medium | None              | W2   |
+| R5  | Phase 2.4: Parallel metafield sync    | Medium      | 2      | 300-600ms savings     | Low    | None              | W2   |
+| R6  | Phase 3.2: DB flag for discount       | Large       | 2      | 200-300ms/call        | Low    | Schema push       | W2   |
+| R7  | Phase 3.1: In-memory TTL cache        | Large       | 2      | 400ms/call            | Low    | None              | W3   |
+| R8  | Phase 3.3: React cache() dedup        | Large       | 2      | Request dedup         | Low    | R1                | W3   |
+| R9  | Remove useless BundleSettings indexes | DB          | 1      | Write perf            | Low    | None              | W3   |
+| R10 | Add rate-limit retry utility          | Enhancement | 3      | Reliability           | Medium | None              | W3   |
+| —   | Phase 2.3: take:200                   | SKIP        | —      | —                     | HIGH   | Pagination design | —    |
 
 ---
 
@@ -160,6 +167,7 @@ flowchart TD
 **Action**: Update project docs with new patterns.
 
 **Additions needed**:
+
 - Rate-limit management guidelines
 - Caching strategy (in-memory TTL + "use cache" + cacheTag)
 - Promise.all vs Promise.allSettled decision matrix

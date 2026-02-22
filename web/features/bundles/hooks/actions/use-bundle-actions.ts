@@ -112,9 +112,7 @@ export function useBundleActions(
                             result.message ?? "Bundle deleted successfully",
                         );
                     } else {
-                        showError(
-                            result.message ?? "Failed to delete bundle",
-                        );
+                        showError(result.message ?? "Failed to delete bundle");
                     }
                 } catch (error) {
                     console.error("Error deleting bundle:", error);

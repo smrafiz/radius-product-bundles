@@ -57,10 +57,10 @@ export function useStepIndicator() {
 
             if (!isValid) {
                 if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                    shopify.toast.show(
-                        "Please fill in all required fields",
-                        { duration: 3000, isError: true },
-                    );
+                    shopify.toast.show("Please fill in all required fields", {
+                        duration: 3000,
+                        isError: true,
+                    });
                 }
                 return;
             }

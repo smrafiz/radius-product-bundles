@@ -27,24 +27,24 @@ Each Shopify API call adds **~200-400ms** latency. A typical `createBundleAction
 
 ### Key Bottlenecks Identified
 
-| Action | Sequential Calls | Parallelizable | Wasted Time |
-|--------|-----------------|----------------|-------------|
-| `createBundleAction` | 6 sequential (ensure metafield → ensure discount → create → sync settings → add product metafields → add standalone metafield) | 4 of 6 | ~800-1200ms |
-| `updateBundleAction` | 7 sequential (fetch old → ensure metafield → ensure discount → update → sync settings → sync products → add standalone) | 5 of 7 | ~1000-1500ms |
-| `deleteBundlesAction` (N) | 3N sequential loops (fetch each → remove metafields each → delete product each) | All 3 loops | ~200ms × 3N |
-| `bulkToggleStatus` (N) | N sequential `ProductUpdate` mutations + sync | All N mutations | ~300ms × N |
-| `saveSettingsAction` | 3 sequential (save DB → sync metafields → update discount stacking) | 2 of 3 | ~400-600ms |
+| Action                    | Sequential Calls                                                                                                               | Parallelizable  | Wasted Time  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------- | ------------ |
+| `createBundleAction`      | 6 sequential (ensure metafield → ensure discount → create → sync settings → add product metafields → add standalone metafield) | 4 of 6          | ~800-1200ms  |
+| `updateBundleAction`      | 7 sequential (fetch old → ensure metafield → ensure discount → update → sync settings → sync products → add standalone)        | 5 of 7          | ~1000-1500ms |
+| `deleteBundlesAction` (N) | 3N sequential loops (fetch each → remove metafields each → delete product each)                                                | All 3 loops     | ~200ms × 3N  |
+| `bulkToggleStatus` (N)    | N sequential `ProductUpdate` mutations + sync                                                                                  | All N mutations | ~300ms × N   |
+| `saveSettingsAction`      | 3 sequential (save DB → sync metafields → update discount stacking)                                                            | 2 of 3          | ~400-600ms   |
 
 ### Database Gaps Found
 
-| Issue | Location | Impact |
-|-------|----------|--------|
-| Missing `@@index([bundleId])` on `BundleAnalytics` | schema.prisma | Slow `groupBy(["bundleId"])` at scale |
-| Missing `@@index([bundleId, date])` on `BundleView` | schema.prisma | Slow deduplication queries |
+| Issue                                                                  | Location              | Impact                                  |
+| ---------------------------------------------------------------------- | --------------------- | --------------------------------------- |
+| Missing `@@index([bundleId])` on `BundleAnalytics`                     | schema.prisma         | Slow `groupBy(["bundleId"])` at scale   |
+| Missing `@@index([bundleId, date])` on `BundleView`                    | schema.prisma         | Slow deduplication queries              |
 | Useless `@@index([layout])` and `@@index([theme])` on `BundleSettings` | schema.prisma:186-187 | 4-value enums, PostgreSQL ignores these |
-| Unbounded `findActiveBundlesByShop()` | bundle.queries.ts:321 | Loads ALL active bundles into memory |
-| Unbounded `findBundlesByProductId()` | bundle.queries.ts:153 | Popular products → 100+ bundles loaded |
-| Missing `@@index([testId])` on `TestResult` | schema.prisma | Slow test result lookups |
+| Unbounded `findActiveBundlesByShop()`                                  | bundle.queries.ts:321 | Loads ALL active bundles into memory    |
+| Unbounded `findBundlesByProductId()`                                   | bundle.queries.ts:153 | Popular products → 100+ bundles loaded  |
+| Missing `@@index([testId])` on `TestResult`                            | schema.prisma         | Slow test result lookups                |
 
 ---
 
@@ -87,15 +87,16 @@ Three sequential operations after bundle creation write to different metafield o
 
 ```typescript
 // Before (lines 547-577):
-await syncAllSettingsToMetafields(sessionToken, shop);           // shop metafields
+await syncAllSettingsToMetafields(sessionToken, shop); // shop metafields
 const metafieldResult = await addBundleIdToProducts(...productIds); // product metafields
 if (result.bundle?.mainProductId) {
-    await addBundleIdToProducts(...[mainProductId]);              // product metafield
+    await addBundleIdToProducts(...[mainProductId]); // product metafield
 }
 
 // After:
 const allProductIds = [...productIds];
-if (result.bundle?.mainProductId) allProductIds.push(result.bundle.mainProductId);
+if (result.bundle?.mainProductId)
+    allProductIds.push(result.bundle.mainProductId);
 
 await Promise.all([
     syncAllSettingsToMetafields(sessionToken, shop),
@@ -208,10 +209,12 @@ for (let i = 0; i < ids.length; i += 4) {
 ### 2.1 Batch `deleteBundlesAction` — eliminate N+1 queries
 
 **Files**:
+
 - `web/features/bundles/actions/bundle-mutations.action.ts` (lines 288-342)
 - `web/features/bundles/repositories/bundle.queries.ts` (new function)
 
 **Problem**: Three sequential for-loops:
+
 1. Lines 290-301: `findBundleByIdWithAllRelations()` per bundle (**N DB queries**)
 2. Lines 311-326: `removeBundleIdFromProducts()` per bundle (**N × 2 API calls**)
 3. Lines 329-342: `executeGraphQLMutation(ProductDelete)` per product (**N API calls**)
@@ -219,8 +222,12 @@ for (let i = 0; i < ids.length; i += 4) {
 **Solution**:
 
 **Step A** — Add batch query to `bundle.queries.ts`:
+
 ```typescript
-export async function findBundlesByIdsWithAllRelations(ids: string[], shop: string) {
+export async function findBundlesByIdsWithAllRelations(
+    ids: string[],
+    shop: string,
+) {
     return prisma.bundle.findMany({
         where: { id: { in: ids }, shop },
         include: INCLUDE_BUNDLE_FULL,
@@ -241,6 +248,7 @@ export async function findBundlesByIdsWithAllRelations(ids: string[], shop: stri
 ### 2.2 Cache `getBundleStats` (missing from cache layer)
 
 **Files**:
+
 - `web/features/analytics/services/analytics.cached.ts` (add wrapper)
 - `web/features/analytics/actions/analytics.action.ts` (line ~74)
 
@@ -259,10 +267,10 @@ All other analytics actions use cached wrappers (`getCachedAnalyticsMetrics`, `g
 Two queries load ALL matching results without limits:
 
 1. **`findActiveBundlesByShop()`** (line ~321) — Called by `syncAllSettingsToMetafields()` on every bundle mutation. If a shop has 500+ active bundles, this loads all of them with products + settings.
-   - **Fix**: Add `take: 200` with `orderBy: { priority: "desc" }`, log warning when limit hit.
+    - **Fix**: Add `take: 200` with `orderBy: { priority: "desc" }`, log warning when limit hit.
 
 2. **`findBundlesByProductId()`** (line ~153) — Called by app proxy for storefront. Popular products could match 100+ bundles.
-   - **Fix**: Add `take: 50`.
+    - **Fix**: Add `take: 50`.
 
 ---
 
@@ -294,6 +302,7 @@ if (ops.length > 0) {
 ### 3.1 Module-level ID cache for `shopId` and `discountId`
 
 **Files**:
+
 - `web/lib/graphql/operations/metafield.operations.ts`
 - New: `web/lib/graphql/operations/metafield-cache.ts`
 
@@ -330,6 +339,7 @@ Wrap `getBundleDiscountId` and `getShopId` to check cache first.
 ### 3.2 DB flag fast-path for `ensureBundleDiscount`
 
 **Files**:
+
 - `web/prisma/schema.prisma` — Add `discountSetupDone Boolean @default(false)` to Shop model
 - `web/lib/shopify/setup/ensure-setup.ts`
 - `web/shared/repositories/shop.queries.ts` — Add `isDiscountSetupDone` / `markDiscountSetupDone`
@@ -400,14 +410,14 @@ discountSetupDone Boolean @default(false)
 
 ## Expected Impact Summary
 
-| Action | Current | After Phase 1 | After All Phases |
-|--------|---------|---------------|------------------|
-| `createBundleAction` | ~2.5-4.0s | ~1.5-2.5s | ~1.0-1.5s |
-| `updateBundleAction` | ~2.5-4.0s | ~1.5-2.5s | ~1.0-1.5s |
-| `deleteBundlesAction` (5 bundles) | ~4-6s | ~3-4s | ~1.5-2s |
-| `bulkToggleStatus` (5 bundles) | ~2-3s | ~1-1.5s | ~0.8-1.2s |
-| `saveSettingsAction` | ~1.5-2s | ~0.8-1.2s | ~0.8-1.2s |
-| Dashboard load | ~0.5-1s | ~0.3-0.5s (cached) | ~0.3-0.5s |
+| Action                            | Current   | After Phase 1      | After All Phases |
+| --------------------------------- | --------- | ------------------ | ---------------- |
+| `createBundleAction`              | ~2.5-4.0s | ~1.5-2.5s          | ~1.0-1.5s        |
+| `updateBundleAction`              | ~2.5-4.0s | ~1.5-2.5s          | ~1.0-1.5s        |
+| `deleteBundlesAction` (5 bundles) | ~4-6s     | ~3-4s              | ~1.5-2s          |
+| `bulkToggleStatus` (5 bundles)    | ~2-3s     | ~1-1.5s            | ~0.8-1.2s        |
+| `saveSettingsAction`              | ~1.5-2s   | ~0.8-1.2s          | ~0.8-1.2s        |
+| Dashboard load                    | ~0.5-1s   | ~0.3-0.5s (cached) | ~0.3-0.5s        |
 
 **Overall improvement**: **40-60% faster** across all server actions.
 
@@ -415,17 +425,17 @@ discountSetupDone Boolean @default(false)
 
 ## Critical Files to Modify
 
-| # | File | Changes |
-|---|------|---------|
-| 1 | `web/features/bundles/actions/bundle-mutations.action.ts` | Promise.all in create/update/delete/bulk-toggle |
-| 2 | `web/features/settings/actions/settings.action.ts` | Promise.all for sync + stacking |
-| 3 | `web/lib/graphql/operations/metafield.operations.ts` | Parallel add/remove, ID caching |
-| 4 | `web/features/bundles/repositories/bundle.queries.ts` | New batch query, take() limits |
-| 5 | `web/features/analytics/services/analytics.cached.ts` | Add getCachedBundleStats |
-| 6 | `web/features/analytics/actions/analytics.action.ts` | Use cached bundle stats |
-| 7 | `web/prisma/schema.prisma` | Remove weak indexes, add missing indexes, add discountSetupDone |
-| 8 | `web/lib/shopify/setup/ensure-setup.ts` | React cache(), DB flag fast-path |
-| 9 | NEW: `web/lib/graphql/operations/metafield-cache.ts` | Simple TTL cache for shopId/discountId |
+| #   | File                                                      | Changes                                                         |
+| --- | --------------------------------------------------------- | --------------------------------------------------------------- |
+| 1   | `web/features/bundles/actions/bundle-mutations.action.ts` | Promise.all in create/update/delete/bulk-toggle                 |
+| 2   | `web/features/settings/actions/settings.action.ts`        | Promise.all for sync + stacking                                 |
+| 3   | `web/lib/graphql/operations/metafield.operations.ts`      | Parallel add/remove, ID caching                                 |
+| 4   | `web/features/bundles/repositories/bundle.queries.ts`     | New batch query, take() limits                                  |
+| 5   | `web/features/analytics/services/analytics.cached.ts`     | Add getCachedBundleStats                                        |
+| 6   | `web/features/analytics/actions/analytics.action.ts`      | Use cached bundle stats                                         |
+| 7   | `web/prisma/schema.prisma`                                | Remove weak indexes, add missing indexes, add discountSetupDone |
+| 8   | `web/lib/shopify/setup/ensure-setup.ts`                   | React cache(), DB flag fast-path                                |
+| 9   | NEW: `web/lib/graphql/operations/metafield-cache.ts`      | Simple TTL cache for shopId/discountId                          |
 
 ---
 
@@ -464,6 +474,7 @@ discountSetupDone Boolean @default(false)
 #### 1. `BundleAnalytics @@index([bundleId])` — REDUNDANT, REMOVE FROM PLAN
 
 Neon live DB already has:
+
 - `bundle_analytics_bundleId_date_idx` → composite `(bundleId, date)`
 - `bundle_analytics_bundleId_date_hour_key` → unique `(bundleId, date, hour)`
 
@@ -476,6 +487,7 @@ Schema line 230: `@@unique([testId, variant, date])` already creates an index wi
 #### 3. `BundleView @@index([bundleId, date])` — MARGINAL, LOW PRIORITY
 
 Already has:
+
 - `bundle_views_bundleId_idx` (standalone)
 - `bundle_views_bundleId_customerId_date_key` (unique)
 - `bundle_views_bundleId_sessionId_date_key` (unique)
@@ -502,20 +514,20 @@ KEEP (correct):
 
 ### Valid Items Confirmed (11)
 
-| Item | Source Verified | Risk |
-|------|---------------|------|
-| 1.1 Parallelize `ensureMetafieldDefinition` + `ensureBundleDiscount` | Source code (lines 501-528), Shopify MCP (independent resources) | Low |
-| 1.2 Parallelize post-create metafield syncs | Source code (lines 546-577), Shopify MCP (different metafield owners) | Low |
-| 1.3 Parallelize post-update metafield syncs | Source code (lines 711-737) | Low |
-| 1.4 Parallelize settings save ops | Source code (lines 67-96), confirmed different Shopify resources | Low |
-| 1.5 Batch bulk toggle (groups of 4) | Shopify MCP: 4×10pts = 40pts/s, within 50pts/s limit | Medium |
-| 2.1 Batch delete N+1 elimination | Source code (lines 288-342), confirmed 3 sequential loops | Medium |
-| 2.2 Add `getCachedBundleStats` | `analytics.cached.ts` confirmed missing, siblings all cached | Low |
-| 2.3 `take()` limits (`findBundlesByProductId` only) | Storefront display limit, safe at take:50 | Low |
-| 2.4 Parallelize add/remove metafields | Mutually exclusive product sets confirmed | Low |
-| 3.1 In-memory ID cache | Saves ~400ms/call, valid for warm serverless instances | Low |
-| 3.2 DB flag for `ensureBundleDiscount` | `ensureMetafieldDefinition` already uses exact same pattern (line 43) | Low |
-| 3.3 React `cache()` for request dedup | Next.js 16 docs confirm it works in server action context | Low |
+| Item                                                                 | Source Verified                                                       | Risk   |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------- | ------ |
+| 1.1 Parallelize `ensureMetafieldDefinition` + `ensureBundleDiscount` | Source code (lines 501-528), Shopify MCP (independent resources)      | Low    |
+| 1.2 Parallelize post-create metafield syncs                          | Source code (lines 546-577), Shopify MCP (different metafield owners) | Low    |
+| 1.3 Parallelize post-update metafield syncs                          | Source code (lines 711-737)                                           | Low    |
+| 1.4 Parallelize settings save ops                                    | Source code (lines 67-96), confirmed different Shopify resources      | Low    |
+| 1.5 Batch bulk toggle (groups of 4)                                  | Shopify MCP: 4×10pts = 40pts/s, within 50pts/s limit                  | Medium |
+| 2.1 Batch delete N+1 elimination                                     | Source code (lines 288-342), confirmed 3 sequential loops             | Medium |
+| 2.2 Add `getCachedBundleStats`                                       | `analytics.cached.ts` confirmed missing, siblings all cached          | Low    |
+| 2.3 `take()` limits (`findBundlesByProductId` only)                  | Storefront display limit, safe at take:50                             | Low    |
+| 2.4 Parallelize add/remove metafields                                | Mutually exclusive product sets confirmed                             | Low    |
+| 3.1 In-memory ID cache                                               | Saves ~400ms/call, valid for warm serverless instances                | Low    |
+| 3.2 DB flag for `ensureBundleDiscount`                               | `ensureMetafieldDefinition` already uses exact same pattern (line 43) | Low    |
+| 3.3 React `cache()` for request dedup                                | Next.js 16 docs confirm it works in server action context             | Low    |
 
 ---
 
@@ -556,6 +568,7 @@ In-memory TTL cache (Phase 3.1) resets on each cold start. Neon project `old-fog
 ### Shopify API Detail (from MCP Schema Introspection)
 
 `metafieldsSet` mutation constraints verified:
+
 - **Max 25 metafields per call** (atomic operation — no partial writes)
 - **Max 10MB total request payload**
 - **`compareDigest` support** (since API version 2024-07): Enables compare-and-set for concurrent writes. The plan's parallel metafield syncs would benefit from using `compareDigest` to prevent race conditions when multiple mutations target the same metafield owner simultaneously. Consider adding this in Phase 1.2/1.3.
@@ -564,17 +577,17 @@ In-memory TTL cache (Phase 3.1) resets on each cold start. Neon project `old-fog
 
 ### Recommended Execution Order (revised)
 
-| Priority | Item | Risk | Notes |
-|----------|------|------|-------|
-| 1 | Phase 1 (all 5 items) | Low | Biggest payoff, minimal risk |
-| 2 | Phase 2.2 (cached bundle stats) | Low | Verify `cacheComponents` flag first |
-| 3 | Phase 2.1 (batch delete) | Medium | Test with 10+ bundles |
-| 4 | Phase 2.4 (parallel metafield sync) | Low | Straightforward |
-| 5 | Phase 3.2 (DB flag for discount) | Low | Schema change, run `prisma:push` |
-| 6 | Phase 3.1 (in-memory cache) | Low | New file, test in serverless context |
-| 7 | Phase 3.3 (React cache) | Low | Test carefully in server action context |
-| 8 | DB index cleanup | Low | Remove BundleSettings indexes only |
-| — | Phase 2.3 (`take:200`) | **HIGH** | **SKIP** until pagination strategy designed |
+| Priority | Item                                | Risk     | Notes                                       |
+| -------- | ----------------------------------- | -------- | ------------------------------------------- |
+| 1        | Phase 1 (all 5 items)               | Low      | Biggest payoff, minimal risk                |
+| 2        | Phase 2.2 (cached bundle stats)     | Low      | Verify `cacheComponents` flag first         |
+| 3        | Phase 2.1 (batch delete)            | Medium   | Test with 10+ bundles                       |
+| 4        | Phase 2.4 (parallel metafield sync) | Low      | Straightforward                             |
+| 5        | Phase 3.2 (DB flag for discount)    | Low      | Schema change, run `prisma:push`            |
+| 6        | Phase 3.1 (in-memory cache)         | Low      | New file, test in serverless context        |
+| 7        | Phase 3.3 (React cache)             | Low      | Test carefully in server action context     |
+| 8        | DB index cleanup                    | Low      | Remove BundleSettings indexes only          |
+| —        | Phase 2.3 (`take:200`)              | **HIGH** | **SKIP** until pagination strategy designed |
 
 ---
 
@@ -587,6 +600,7 @@ In-memory TTL cache (Phase 3.1) resets on each cold start. Neon project `old-fog
 #### AF-1. Hard-coded batch size — LOW
 
 Batch size of `4` in Phase 1.5 is a magic number. Should be a named constant:
+
 ```typescript
 // web/shared/constants/shopify.constants.ts
 export const SHOPIFY_MUTATION_BATCH_SIZE = 4;
@@ -617,6 +631,7 @@ Phase 1.2/1.3 parallelize metafield writes to the same shop owner. If two users 
 #### AF-7. Redundant `revalidatePath` calls — LOW
 
 `createBundleAction` calls:
+
 1. `revalidatePath("/bundles")`
 2. `revalidatePath("/dashboard")`
 3. `invalidateDashboardCache(shop)` (which calls `revalidateTag`)
@@ -646,12 +661,12 @@ web/lib/shopify/rateLimiter.ts
 
 #### Cache Strategy Evaluation
 
-| Strategy | Latency | Serverless Persistence | Complexity | Verdict |
-|----------|---------|----------------------|------------|---------|
-| In-memory Map + TTL (Phase 3.1) | 0ms | No (cold start resets) | Low | **Keep** — values are stable, Neon is always-on |
-| DB-backed CacheEntry table | ~5ms | Yes | Medium | Over-engineered for shopId/discountId |
-| Redis/KV external cache | ~1-2ms | Yes | High | Overkill for current scale |
-| `use cache: remote` (Next.js 16) | ~1-5ms | Platform-dependent | Medium | Future option when scale demands it |
+| Strategy                         | Latency | Serverless Persistence | Complexity | Verdict                                         |
+| -------------------------------- | ------- | ---------------------- | ---------- | ----------------------------------------------- |
+| In-memory Map + TTL (Phase 3.1)  | 0ms     | No (cold start resets) | Low        | **Keep** — values are stable, Neon is always-on |
+| DB-backed CacheEntry table       | ~5ms    | Yes                    | Medium     | Over-engineered for shopId/discountId           |
+| Redis/KV external cache          | ~1-2ms  | Yes                    | High       | Overkill for current scale                      |
+| `use cache: remote` (Next.js 16) | ~1-5ms  | Platform-dependent     | Medium     | Future option when scale demands it             |
 
 **Verdict**: In-memory TTL cache is the right choice. Cold start adds one extra API call (~200ms) which only happens once per instance lifecycle.
 

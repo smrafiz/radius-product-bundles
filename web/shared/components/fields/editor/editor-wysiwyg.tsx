@@ -10,8 +10,11 @@ import Editor, { ContentEditableEvent } from "react-simple-wysiwyg";
  * Editor WYSIWYG component
  */
 export function EditorWysiwyg({ mode }: { mode: "create" | "edit" }) {
-    const { handleDescriptionChange, handleDescriptionBlur, productDescription } =
-        useBundleProduct(mode);
+    const {
+        handleDescriptionChange,
+        handleDescriptionBlur,
+        productDescription,
+    } = useBundleProduct(mode);
 
     const [focused, setFocused] = useState(false);
 

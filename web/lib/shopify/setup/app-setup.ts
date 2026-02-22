@@ -23,6 +23,7 @@ import {
     MetafieldDefinitionCreateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { DocumentNode, print } from "graphql";
+import { SHOPIFY_API_VERSION } from "@/shared/constants";
 import { METAFIELD_DEFINITIONS } from "@/shared/constants/metafields.constants";
 
 /**
@@ -58,7 +59,7 @@ async function executeGraphQLWithToken<T = unknown>(
     accessToken: string,
     shop: string,
 ): Promise<{ data?: T; errors?: Array<{ message: string }> }> {
-    const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
+    const endpoint = `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
     const query = typeof document === "string" ? document : print(document);
 
     const response = await fetch(endpoint, {

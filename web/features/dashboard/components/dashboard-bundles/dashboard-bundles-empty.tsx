@@ -35,9 +35,15 @@ export function DashboardBundlesEmpty({
                     />
                 </s-box>
                 <s-grid justifyItems="center" maxInlineSize="450px" gap="base">
-                    <s-stack alignItems="center" justifyContent="center" gap="small-300">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="center"
+                        gap="small-300"
+                    >
                         <s-heading>{heading}</s-heading>
-                        <s-paragraph><div className="text-center">{description}</div></s-paragraph>
+                        <s-paragraph>
+                            <div className="text-center">{description}</div>
+                        </s-paragraph>
                     </s-stack>
                     {!hasBundles && !error && (
                         <s-button

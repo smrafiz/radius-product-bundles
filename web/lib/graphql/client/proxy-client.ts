@@ -1,6 +1,7 @@
 import { print } from "graphql";
 import { GraphQLClient } from "graphql-request";
 import { ProxyGraphQLResponse } from "@/shared";
+import { SHOPIFY_API_VERSION } from "@/shared/constants";
 import { findOfflineSessionByShop } from "@/shared/repositories";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
@@ -40,7 +41,7 @@ export async function executeProxyGraphQL<
         }
 
         // Make GraphQL request
-        const endpoint = `https://${shop}/admin/api/2025-10/graphql.json`;
+        const endpoint = `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
         const client = new GraphQLClient(endpoint, {
             headers: {
                 "X-Shopify-Access-Token": accessToken,

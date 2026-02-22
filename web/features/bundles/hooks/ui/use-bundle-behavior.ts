@@ -150,7 +150,13 @@ export function useBundleBehavior() {
         markFieldTouched("discountApplication");
         markDirty();
         triggerSaveBar();
-    }, [selectedProducts, setBundleData, setValue, markFieldTouched, markDirty]);
+    }, [
+        selectedProducts,
+        setBundleData,
+        setValue,
+        markFieldTouched,
+        markDirty,
+    ]);
 
     /**
      * Reset on modal close
@@ -194,7 +200,13 @@ export function useBundleBehavior() {
             markDirty();
             triggerSaveBar();
         },
-        [isDiscountDisabled, setBundleData, setValue, markFieldTouched, markDirty],
+        [
+            isDiscountDisabled,
+            setBundleData,
+            setValue,
+            markFieldTouched,
+            markDirty,
+        ],
     );
 
     /**

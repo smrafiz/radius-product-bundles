@@ -2,14 +2,14 @@
 
 ## Prerequisites
 
-| Tool | Version | Install |
-|------|---------|---------|
-| Node.js | ≥ 22.x | [nodejs.org](https://nodejs.org/) |
-| pnpm | ≥ 9.x | `npm install -g pnpm` |
-| Bun | ≥ 1.1.x | `curl -fsSL https://bun.sh/install \| bash` |
-| Rust | ≥ 1.85+ | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
-| Shopify CLI | latest | `npm install -g @shopify/cli` |
-| PostgreSQL | 15+ | [Neon](https://neon.tech/) (cloud) or local install |
+| Tool        | Version | Install                                                           |
+| ----------- | ------- | ----------------------------------------------------------------- |
+| Node.js     | ≥ 22.x  | [nodejs.org](https://nodejs.org/)                                 |
+| pnpm        | ≥ 9.x   | `npm install -g pnpm`                                             |
+| Bun         | ≥ 1.1.x | `curl -fsSL https://bun.sh/install \| bash`                       |
+| Rust        | ≥ 1.85+ | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
+| Shopify CLI | latest  | `npm install -g @shopify/cli`                                     |
+| PostgreSQL  | 15+     | [Neon](https://neon.tech/) (cloud) or local install               |
 
 > **Note**: **pnpm** is used for package management (installing dependencies). **Bun** is used as the runtime for watching, bundling, and running scripts.
 
@@ -145,11 +145,13 @@ bun run dev
 ```
 
 This starts concurrently:
+
 - **Shopify CLI dev server** (Next.js app + tunnel)
 - **Vite widget watcher** (storefront JS/CSS)
 - **Schema watcher** (extension schema auto-rebuild)
 
 On first run, Shopify CLI will:
+
 1. Prompt you to log in to your Partner account
 2. Ask you to select/create a dev store
 3. Generate a tunnel URL and update your app URLs
@@ -188,7 +190,7 @@ bun run deploy
 ## Common Commands
 
 | Command                         | Description                               |
-|---------------------------------|-------------------------------------------|
+| ------------------------------- | ----------------------------------------- |
 | `bun run dev`                   | Start full dev environment                |
 | `bun run build`                 | Build app for deployment                  |
 | `bun run deploy`                | Deploy to Shopify                         |
@@ -204,16 +206,21 @@ bun run deploy
 ## Troubleshooting
 
 ### `next build` fails with missing env vars
+
 Expected in local dev without full Shopify context. Use `bun run dev` (via Shopify CLI) instead.
 
 ### Prisma client not found
+
 Run `cd web && bun prepare` to regenerate the client.
 
 ### Rust/WASM build fails
+
 Ensure the WASM target is installed: `rustup target add wasm32-unknown-unknown`
 
 ### Shopify CLI not detecting app
+
 Run `bun run update:config` to regenerate `shopify.app.toml` from your `.env` values. Ensure `SHOPIFY_API_KEY` is set correctly.
 
 ### Port conflicts
+
 Shopify CLI defaults to port 3000. Kill any existing processes or set a custom port via Shopify CLI flags.

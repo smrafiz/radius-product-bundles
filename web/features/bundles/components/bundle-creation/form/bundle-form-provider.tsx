@@ -145,8 +145,7 @@ export function BundleFormProvider({
         const saved = useSettingsStore.getState().getEffectiveData();
         const discountType =
             (saved.defaultDiscountType as DiscountType) ?? "PERCENTAGE";
-        const discountValue =
-            (saved.defaultDiscountValue as number) ?? 0;
+        const discountValue = (saved.defaultDiscountValue as number) ?? 0;
 
         setValue("discountType", discountType, { shouldDirty: false });
         setValue("discountValue", discountValue, { shouldDirty: false });

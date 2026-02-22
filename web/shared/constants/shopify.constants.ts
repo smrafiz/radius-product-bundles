@@ -1,3 +1,3 @@
 import { ApiVersion } from "@shopify/shopify-api";
 
-export const SHOPIFY_API_VERSION = ApiVersion.October25;
+export const SHOPIFY_API_VERSION = ApiVersion.January26;

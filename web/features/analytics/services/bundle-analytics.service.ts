@@ -74,7 +74,11 @@ export async function getTopBundlesService(
         ),
     ]);
 
-    const defaultTrend = { currentRevenue: 0, previousRevenue: 0, trendPercentage: 0 };
+    const defaultTrend = {
+        currentRevenue: 0,
+        previousRevenue: 0,
+        trendPercentage: 0,
+    };
 
     return bundleStats
         .map((stats) => {

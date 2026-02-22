@@ -1,8 +1,9 @@
 import { CodegenConfig } from "@graphql-codegen/cli";
 import { ApiType, preset } from "@shopify/api-codegen-preset";
+import { SHOPIFY_API_VERSION } from "./shared/constants/shopify.constants";
 
 const config: CodegenConfig = {
-    schema: "https://shopify.dev/admin-graphql-direct-proxy/2025-10",
+    schema: `https://shopify.dev/admin-graphql-direct-proxy/${SHOPIFY_API_VERSION}`,
     documents: ["./lib/graphql/schema/**/*.graphql"],
     generates: {
         "./lib/graphql/generated/": {

@@ -147,13 +147,12 @@ export function useBundleValidation() {
 
     // Get field error message (show if field is touched or validation was attempted)
     const getFieldError = (fieldName: string): string | undefined => {
-        if (!validationAttempted && !isFieldTouched(fieldName)) return undefined;
+        if (!validationAttempted && !isFieldTouched(fieldName))
+            return undefined;
 
         // Support nested paths like "settings.title"
         const error = fieldName.includes(".")
-            ? fieldName
-                  .split(".")
-                  .reduce((obj: any, key) => obj?.[key], errors)
+            ? fieldName.split(".").reduce((obj: any, key) => obj?.[key], errors)
             : errors[fieldName as keyof BundleFormData];
 
         return error?.message;
@@ -188,9 +187,7 @@ export function useBundleValidation() {
         errors: validationAttempted
             ? errors
             : Object.fromEntries(
-                  Object.entries(errors).filter(([key]) =>
-                      isFieldTouched(key),
-                  ),
+                  Object.entries(errors).filter(([key]) => isFieldTouched(key)),
               ),
         isValid: Object.keys(errors).length === 0,
     };

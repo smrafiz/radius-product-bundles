@@ -417,17 +417,12 @@ export async function duplicateBundleAction(
                     },
                 );
 
-                if (
-                    productResult.status === "success" &&
-                    productResult.data
-                ) {
+                if (productResult.status === "success" && productResult.data) {
                     await prisma.bundle.update({
                         where: { id: newBundleId },
                         data: {
-                            mainProductId:
-                                productResult.data.mainProductId,
-                            mainVariantId:
-                                productResult.data.mainVariantId,
+                            mainProductId: productResult.data.mainProductId,
+                            mainVariantId: productResult.data.mainVariantId,
                         },
                     });
 

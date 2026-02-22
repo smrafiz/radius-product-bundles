@@ -15,16 +15,27 @@ import {
 } from "@/features/bundles/repositories";
 
 export interface PreflightResult {
-    security: { success: boolean; message?: string; errors?: Record<string, { _errors: string[] }> };
+    security: {
+        success: boolean;
+        message?: string;
+        errors?: Record<string, { _errors: string[] }>;
+    };
     context: BundleOperationContext;
-    quota: { allowed: boolean; reason?: string; current?: number; limit?: number };
+    quota: {
+        allowed: boolean;
+        reason?: string;
+        current?: number;
+        limit?: number;
+    };
 }
 
 /**
  * Runs security checks, shop context fetch, and quota check in parallel.
  * Replaces sequential checkBundleSecurity → fetchOperationContext → canCreateBundle.
  */
-export async function fetchBundlePreflight(shop: string): Promise<PreflightResult> {
+export async function fetchBundlePreflight(
+    shop: string,
+): Promise<PreflightResult> {
     const oneHourAgo = new Date(Date.now() - 3600000);
 
     const [shopData, recentCount, activity, bundleCount] = await Promise.all([
@@ -46,7 +57,13 @@ export async function fetchBundlePreflight(shop: string): Promise<PreflightResul
             security: {
                 success: false,
                 message: `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour. Please try again later.`,
-                errors: { security: { _errors: [`Rate limit exceeded. Maximum ${maxPerHour} bundles per hour.`] } },
+                errors: {
+                    security: {
+                        _errors: [
+                            `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour.`,
+                        ],
+                    },
+                },
             },
             context: makeContext(),
             quota: { allowed: false },
@@ -55,11 +72,18 @@ export async function fetchBundlePreflight(shop: string): Promise<PreflightResul
 
     // Evaluate shop status
     const status = shopData?.status;
-    if (status === "SUSPENDED" || status === "TRIAL_EXPIRED" || status === "NOT_CONFIGURED") {
+    if (
+        status === "SUSPENDED" ||
+        status === "TRIAL_EXPIRED" ||
+        status === "NOT_CONFIGURED"
+    ) {
         const messages: Record<string, string> = {
-            SUSPENDED: "Shop account is suspended. Please contact support for assistance.",
-            TRIAL_EXPIRED: "Trial period has expired. Please upgrade your plan.",
-            NOT_CONFIGURED: "Shop is not properly configured. Please complete setup.",
+            SUSPENDED:
+                "Shop account is suspended. Please contact support for assistance.",
+            TRIAL_EXPIRED:
+                "Trial period has expired. Please upgrade your plan.",
+            NOT_CONFIGURED:
+                "Shop is not properly configured. Please complete setup.",
         };
         return {
             security: {
@@ -79,7 +103,13 @@ export async function fetchBundlePreflight(shop: string): Promise<PreflightResul
             security: {
                 success: false,
                 message: `Excessive bundle creation detected (${activity.created} in 24h)`,
-                errors: { security: { _errors: [`Excessive bundle creation detected (${activity.created} in 24h)`] } },
+                errors: {
+                    security: {
+                        _errors: [
+                            `Excessive bundle creation detected (${activity.created} in 24h)`,
+                        ],
+                    },
+                },
             },
             context: makeContext(),
             quota: { allowed: false },
@@ -94,8 +124,17 @@ export async function fetchBundlePreflight(shop: string): Promise<PreflightResul
         security: { success: true },
         context: makeContext(),
         quota: quotaExceeded
-            ? { allowed: false, reason: `Shop has reached maximum bundle limit (${maxBundles})`, current: bundleCount, limit: maxBundles }
-            : { allowed: true, current: bundleCount, limit: maxBundles ?? undefined },
+            ? {
+                  allowed: false,
+                  reason: `Shop has reached maximum bundle limit (${maxBundles})`,
+                  current: bundleCount,
+                  limit: maxBundles,
+              }
+            : {
+                  allowed: true,
+                  current: bundleCount,
+                  limit: maxBundles ?? undefined,
+              },
     };
 }
 

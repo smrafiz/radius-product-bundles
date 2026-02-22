@@ -12,10 +12,7 @@ import {
 } from "@/shared";
 import { runAppSetup } from "../setup/app-setup";
 import { registerWebhooks } from "../webhooks/register";
-import {
-    markSetupComplete,
-    markWebhooksRegistered,
-} from "@/features/webhooks";
+import { markSetupComplete, markWebhooksRegistered } from "@/features/webhooks";
 
 /**
  * Verify the request and return the shop and session

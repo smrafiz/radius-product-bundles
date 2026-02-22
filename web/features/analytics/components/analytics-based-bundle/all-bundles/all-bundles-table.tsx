@@ -256,7 +256,9 @@ export function AllBundlesTable() {
                                             <s-text>
                                                 {bundle.status === "DELETED" ? (
                                                     <span className="text-left font-semibold max-w-50">
-                                                        {stripDeletedSuffix(bundle.title)}
+                                                        {stripDeletedSuffix(
+                                                            bundle.title,
+                                                        )}
                                                     </span>
                                                 ) : (
                                                     <button

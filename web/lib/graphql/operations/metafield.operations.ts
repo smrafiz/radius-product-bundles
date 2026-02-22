@@ -319,7 +319,9 @@ export async function syncBundleProductMetafields(
         ops.push(addBundleIdToProducts(sessionToken, bundleId, addedProducts));
     }
     if (removedProducts.length > 0) {
-        ops.push(removeBundleIdFromProducts(sessionToken, bundleId, removedProducts));
+        ops.push(
+            removeBundleIdFromProducts(sessionToken, bundleId, removedProducts),
+        );
     }
 
     if (ops.length === 0) {

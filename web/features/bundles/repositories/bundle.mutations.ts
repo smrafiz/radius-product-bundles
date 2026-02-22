@@ -145,11 +145,17 @@ export async function createBundleWithRelations(data: CreateBundleInput) {
     return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // Check name uniqueness inside transaction (prevents TOCTOU race)
         const existing = await tx.bundle.findFirst({
-            where: { shop: data.shop, name: data.name, status: { not: "DELETED" as const } },
+            where: {
+                shop: data.shop,
+                name: data.name,
+                status: { not: "DELETED" as const },
+            },
             select: { id: true },
         });
         if (existing) {
-            throw new Error(`A bundle with the name "${data.name}" already exists`);
+            throw new Error(
+                `A bundle with the name "${data.name}" already exists`,
+            );
         }
 
         const bundle = await createBundle(tx, data);
@@ -201,8 +207,11 @@ async function diffUpdateProducts(
         },
     });
 
-    const makeKey = (p: { productId: string; variantId?: string | null; role?: string }) =>
-        `${p.productId}:${p.variantId || ""}:${p.role || "INCLUDED"}`;
+    const makeKey = (p: {
+        productId: string;
+        variantId?: string | null;
+        role?: string;
+    }) => `${p.productId}:${p.variantId || ""}:${p.role || "INCLUDED"}`;
 
     const existingMap = new Map(existing.map((p) => [makeKey(p), p]));
     const newMap = new Map(
@@ -221,11 +230,23 @@ async function diffUpdateProducts(
         .filter((p) => !existingMap.has(makeKey(p)));
 
     // Products to update: in both, but fields changed
-    const toUpdate: Array<{ id: string; quantity: number; displayOrder: number }> = [];
+    const toUpdate: Array<{
+        id: string;
+        quantity: number;
+        displayOrder: number;
+    }> = [];
     for (const [key, newP] of newMap) {
         const existP = existingMap.get(key);
-        if (existP && (existP.quantity !== newP.quantity || existP.displayOrder !== newP.displayOrder)) {
-            toUpdate.push({ id: existP.id, quantity: newP.quantity, displayOrder: newP.displayOrder });
+        if (
+            existP &&
+            (existP.quantity !== newP.quantity ||
+                existP.displayOrder !== newP.displayOrder)
+        ) {
+            toUpdate.push({
+                id: existP.id,
+                quantity: newP.quantity,
+                displayOrder: newP.displayOrder,
+            });
         }
     }
 
@@ -305,7 +326,9 @@ export async function updateBundleWithRelations(
                 select: { id: true },
             });
             if (existing) {
-                throw new Error(`A bundle with the name "${data.name}" already exists`);
+                throw new Error(
+                    `A bundle with the name "${data.name}" already exists`,
+                );
             }
         }
 

@@ -502,18 +502,63 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             .map((p) => p.productId)
                             .sort();
                         // productTitle/productDescription live in React Hook Form (set via setValue in useBundleProduct)
-                        const currentTitle = data.productTitle ?? data.name ?? "";
-                        const currentDescription = data.productDescription ?? "";
+                        const currentTitle =
+                            data.productTitle ?? data.name ?? "";
+                        const currentDescription =
+                            data.productDescription ?? "";
                         // Debug: log each field comparison
                         console.log("[ProductSync] Snapshot comparison:", {
                             hasSnapshot: !!snapshot,
-                            title: { snapshot: snapshot?.title, current: currentTitle, match: snapshot?.title === currentTitle },
-                            description: { snapshot: snapshot?.description, current: currentDescription, match: snapshot?.description === currentDescription },
-                            status: { snapshot: snapshot?.status, current: data.status || "DRAFT", match: snapshot?.status === (data.status || "DRAFT") },
-                            discountType: { snapshot: snapshot?.discountType, current: data.discountType || "PERCENTAGE", match: snapshot?.discountType === (data.discountType || "PERCENTAGE") },
-                            discountValue: { snapshot: snapshot?.discountValue, current: data.discountValue ?? 0, match: snapshot?.discountValue === (data.discountValue ?? 0) },
-                            maxDiscountAmount: { snapshot: snapshot?.maxDiscountAmount, current: data.maxDiscountAmount, snapshotNorm: snapshot?.maxDiscountAmount ?? null, currentNorm: data.maxDiscountAmount ?? null, match: (snapshot?.maxDiscountAmount ?? null) === (data.maxDiscountAmount ?? null) },
-                            productIds: { snapshot: snapshot?.productIds?.join(","), current: currentProductIds.join(","), match: snapshot?.productIds?.join(",") === currentProductIds.join(",") },
+                            title: {
+                                snapshot: snapshot?.title,
+                                current: currentTitle,
+                                match: snapshot?.title === currentTitle,
+                            },
+                            description: {
+                                snapshot: snapshot?.description,
+                                current: currentDescription,
+                                match:
+                                    snapshot?.description ===
+                                    currentDescription,
+                            },
+                            status: {
+                                snapshot: snapshot?.status,
+                                current: data.status || "DRAFT",
+                                match:
+                                    snapshot?.status ===
+                                    (data.status || "DRAFT"),
+                            },
+                            discountType: {
+                                snapshot: snapshot?.discountType,
+                                current: data.discountType || "PERCENTAGE",
+                                match:
+                                    snapshot?.discountType ===
+                                    (data.discountType || "PERCENTAGE"),
+                            },
+                            discountValue: {
+                                snapshot: snapshot?.discountValue,
+                                current: data.discountValue ?? 0,
+                                match:
+                                    snapshot?.discountValue ===
+                                    (data.discountValue ?? 0),
+                            },
+                            maxDiscountAmount: {
+                                snapshot: snapshot?.maxDiscountAmount,
+                                current: data.maxDiscountAmount,
+                                snapshotNorm:
+                                    snapshot?.maxDiscountAmount ?? null,
+                                currentNorm: data.maxDiscountAmount ?? null,
+                                match:
+                                    (snapshot?.maxDiscountAmount ?? null) ===
+                                    (data.maxDiscountAmount ?? null),
+                            },
+                            productIds: {
+                                snapshot: snapshot?.productIds?.join(","),
+                                current: currentProductIds.join(","),
+                                match:
+                                    snapshot?.productIds?.join(",") ===
+                                    currentProductIds.join(","),
+                            },
                         });
 
                         const hasProductChanges =
@@ -531,7 +576,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                 currentProductIds.join(",");
 
                         if (hasProductChanges) {
-                            console.log("[ProductSync] Changes detected, updating Shopify product...");
+                            console.log(
+                                "[ProductSync] Changes detected, updating Shopify product...",
+                            );
 
                             const productResult =
                                 await updateBundleProductAction(token, {
@@ -559,8 +606,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                         status: data.status || "DRAFT",
                                         discountType:
                                             data.discountType || "PERCENTAGE",
-                                        discountValue:
-                                            data.discountValue ?? 0,
+                                        discountValue: data.discountValue ?? 0,
                                         maxDiscountAmount:
                                             data.maxDiscountAmount ?? null,
                                         productIds: currentProductIds,

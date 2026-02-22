@@ -1,9 +1,6 @@
 "use client";
 
-import {
-    PreviewShellProps,
-    usePreviewShell,
-} from "@/features/settings";
+import { PreviewShellProps, usePreviewShell } from "@/features/settings";
 import { LayoutSidebar } from "./layout-sidebar";
 import { PreviewContainer } from "./preview-container";
 import { BundleWidget } from "@/shared";

@@ -11,7 +11,6 @@ const setupCheck = (): void => {
             SHOPIFY_API_KEY,
             SHOPIFY_API_SECRET,
             SCOPES,
-            SHOPIFY_API_VERSION,
             DATABASE_URL,
             APP_NAME,
             APP_HANDLE,
@@ -37,10 +36,6 @@ const setupCheck = (): void => {
 
         if (!appUrl.includes("https://")) {
             console.error("---> Please use HTTPS for SHOPIFY_APP_URL.");
-        }
-
-        if (!SHOPIFY_API_VERSION) {
-            throw new Error("---> API Version is undefined.");
         }
 
         if (!DATABASE_URL) {

@@ -23,77 +23,77 @@
 
 ### Core Framework
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | Next.js (App Router) | 16.1.6 |
-| UI Library | React | 19.2.4 |
-| Language | TypeScript | 5.9.3 |
-| Runtime / Package Manager | Bun | Latest |
-| Database | PostgreSQL (Neon Serverless) | — |
-| ORM | Prisma + Neon Adapter | 7.4.1 |
-| Hosting | Vercel | — |
-| Shopify CLI | `@shopify/cli-kit` | 3.91.0 |
+| Layer                     | Technology                   | Version |
+| ------------------------- | ---------------------------- | ------- |
+| Framework                 | Next.js (App Router)         | 16.1.6  |
+| UI Library                | React                        | 19.2.4  |
+| Language                  | TypeScript                   | 5.9.3   |
+| Runtime / Package Manager | Bun                          | Latest  |
+| Database                  | PostgreSQL (Neon Serverless) | —       |
+| ORM                       | Prisma + Neon Adapter        | 7.4.1   |
+| Hosting                   | Vercel                       | —       |
+| Shopify CLI               | `@shopify/cli-kit`           | 3.91.0  |
 
 ### Frontend
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| @shopify/polaris (types) | 1.0.1 | Shopify UI component types |
-| @shopify/app-bridge-react | 4.2.10 | Embedded app bridge |
-| tailwindcss | 4.2.0 | Utility-first CSS |
-| tailwind-merge | 3.5.0 | Merge Tailwind classes |
-| framer-motion | 12.34.3 | Animation |
-| recharts | 3.7.0 | Charting |
-| @dnd-kit/core | 6.3.1 | Drag & drop |
-| @dnd-kit/sortable | 10.0.0 | Sortable lists |
-| react-hook-form | 7.71.2 | Form management |
-| @hookform/resolvers | 5.2.2 | Zod integration |
-| zod | 4.3.6 | Schema validation |
-| react-simple-wysiwyg | 3.4.1 | Rich text editor |
-| react-player | 3.4.0 | Media player |
-| react-range | 1.10.0 | Range slider |
-| nprogress | 0.2.0 | Progress bar |
+| Package                   | Version | Purpose                    |
+| ------------------------- | ------- | -------------------------- |
+| @shopify/polaris (types)  | 1.0.1   | Shopify UI component types |
+| @shopify/app-bridge-react | 4.2.10  | Embedded app bridge        |
+| tailwindcss               | 4.2.0   | Utility-first CSS          |
+| tailwind-merge            | 3.5.0   | Merge Tailwind classes     |
+| framer-motion             | 12.34.3 | Animation                  |
+| recharts                  | 3.7.0   | Charting                   |
+| @dnd-kit/core             | 6.3.1   | Drag & drop                |
+| @dnd-kit/sortable         | 10.0.0  | Sortable lists             |
+| react-hook-form           | 7.71.2  | Form management            |
+| @hookform/resolvers       | 5.2.2   | Zod integration            |
+| zod                       | 4.3.6   | Schema validation          |
+| react-simple-wysiwyg      | 3.4.1   | Rich text editor           |
+| react-player              | 3.4.0   | Media player               |
+| react-range               | 1.10.0  | Range slider               |
+| nprogress                 | 0.2.0   | Progress bar               |
 
 ### Server State & Data Fetching
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| @tanstack/react-query | 5.90.21 | Server state management |
-| zustand | 5.0.11 | Client state (w/ Immer) |
-| @apollo/client | 4.1.5 | Apollo GraphQL client |
-| graphql-request | 7.4.0 | Lightweight GraphQL client |
+| Package               | Version | Purpose                    |
+| --------------------- | ------- | -------------------------- |
+| @tanstack/react-query | 5.90.21 | Server state management    |
+| zustand               | 5.0.11  | Client state (w/ Immer)    |
+| @apollo/client        | 4.1.5   | Apollo GraphQL client      |
+| graphql-request       | 7.4.0   | Lightweight GraphQL client |
 
 ### Shopify API & GraphQL
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| @shopify/shopify-api | 12.3.0 | Admin API SDK |
-| @graphql-codegen/cli | 6.1.1 | Type generation |
-| @shopify/api-codegen-preset | 1.2.2 | Shopify-specific codegen |
-| API version | 2025-10 | Shopify Admin API |
+| Package                     | Version | Purpose                  |
+| --------------------------- | ------- | ------------------------ |
+| @shopify/shopify-api        | 12.3.0  | Admin API SDK            |
+| @graphql-codegen/cli        | 6.1.1   | Type generation          |
+| @shopify/api-codegen-preset | 1.2.2   | Shopify-specific codegen |
+| API version                 | 2025-10 | Shopify Admin API        |
 
 ### Dev & Build Tools
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| vite | 7.3.1 | Widget build tool |
-| eslint | 10.0.1 | Linting |
-| prettier | 3.8.1 | Formatting |
-| jest | 30.2.0 | Testing |
-| ts-jest | 29.4.6 | TypeScript test transforms |
-| @testing-library/react | 16.3.2 | Component testing |
-| concurrently | 9.2.1 | Parallel script runner |
-| nodemon | 3.1.14 | Dev file watcher |
-| postcss | 8.5.6 | CSS processing |
-| sass-embedded | 1.97.3 | SCSS compilation |
+| Package                | Version | Purpose                    |
+| ---------------------- | ------- | -------------------------- |
+| vite                   | 7.3.1   | Widget build tool          |
+| eslint                 | 10.0.1  | Linting                    |
+| prettier               | 3.8.1   | Formatting                 |
+| jest                   | 30.2.0  | Testing                    |
+| ts-jest                | 29.4.6  | TypeScript test transforms |
+| @testing-library/react | 16.3.2  | Component testing          |
+| concurrently           | 9.2.1   | Parallel script runner     |
+| nodemon                | 3.1.14  | Dev file watcher           |
+| postcss                | 8.5.6   | CSS processing             |
+| sass-embedded          | 1.97.3  | SCSS compilation           |
 
 ### Rust Discount Function
 
-| Crate | Version | Purpose |
-|-------|---------|---------|
-| shopify_function | 2.0.2 | Shopify Function runtime |
-| serde | 1.0 | Serialization |
-| serde_json | 1.0 | JSON handling |
+| Crate            | Version | Purpose                  |
+| ---------------- | ------- | ------------------------ |
+| shopify_function | 2.0.2   | Shopify Function runtime |
+| serde            | 1.0     | Serialization            |
+| serde_json       | 1.0     | JSON handling            |
 
 Release profile: LTO enabled, opt-level `z` (size), symbols stripped.
 
@@ -266,11 +266,11 @@ BundleAnalytics table (purchases + revenue)
 
 ### GraphQL Execution Paths
 
-| Path | Auth Source | Use Case |
-|------|-----------|----------|
-| Server Action | JWT session token | Dashboard mutations/queries |
-| Proxy Client | Offline session from DB | Storefront product fetching |
-| Cron Job | Direct shop + accessToken | Scheduled bundle activation |
+| Path          | Auth Source               | Use Case                    |
+| ------------- | ------------------------- | --------------------------- |
+| Server Action | JWT session token         | Dashboard mutations/queries |
+| Proxy Client  | Offline session from DB   | Storefront product fetching |
+| Cron Job      | Direct shop + accessToken | Scheduled bundle activation |
 
 ---
 
@@ -390,60 +390,60 @@ features/<name>/
 
 #### Core Models
 
-| Model | Purpose | Key Fields |
-|-------|---------|------------|
-| **Bundle** | Product bundle definition | name, type, status, discountType, discountValue, aiOptimized, aiScore, seoTitle, seoDescription, marketingCopy, volumeTiers (JSON), images, startDate/endDate, deletedAt |
-| **BundleProduct** | Products within a bundle | productId, variantId, quantity, role (TRIGGER/REWARD/INCLUDED/OPTIONAL/GROUP_OPTION), customPrice |
-| **BundleProductGroup** | Groups for mix-and-match | min/max selection constraints |
-| **BundleSettings** | Widget display configuration | layout, theme, widgetJson, responsiveJson, styleJson, display toggles |
+| Model                  | Purpose                      | Key Fields                                                                                                                                                               |
+| ---------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Bundle**             | Product bundle definition    | name, type, status, discountType, discountValue, aiOptimized, aiScore, seoTitle, seoDescription, marketingCopy, volumeTiers (JSON), images, startDate/endDate, deletedAt |
+| **BundleProduct**      | Products within a bundle     | productId, variantId, quantity, role (TRIGGER/REWARD/INCLUDED/OPTIONAL/GROUP_OPTION), customPrice                                                                        |
+| **BundleProductGroup** | Groups for mix-and-match     | min/max selection constraints                                                                                                                                            |
+| **BundleSettings**     | Widget display configuration | layout, theme, widgetJson, responsiveJson, styleJson, display toggles                                                                                                    |
 
 #### Analytics Models
 
-| Model | Purpose | Key Fields |
-|-------|---------|------------|
-| **BundleAnalytics** | Time-series metrics | bundleId + date + hour (unique), views, carts, purchases, revenue, cross-sell metrics, customer type splits |
-| **BundleView** | Per-view event tracking | bundleId, customerId, sessionId, date (unique on customer+date and session+date for dedup) |
+| Model               | Purpose                 | Key Fields                                                                                                  |
+| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **BundleAnalytics** | Time-series metrics     | bundleId + date + hour (unique), views, carts, purchases, revenue, cross-sell metrics, customer type splits |
+| **BundleView**      | Per-view event tracking | bundleId, customerId, sessionId, date (unique on customer+date and session+date for dedup)                  |
 
 #### Testing & Automation
 
-| Model | Purpose | Key Fields |
-|-------|---------|------------|
-| **ABTest** | A/B test experiments | hypothesis, type, status, trafficSplit, duration, minSampleSize, controlBundleId, variantConfig (JSON) |
-| **TestResult** | Test metric results | variant, date, views, conversions, revenue |
-| **Automation** | Automation rules | triggerType, triggerConfig/conditions/actions (JSON), execution counters |
-| **AutomationBundle** | Bundle-automation junction | — |
-| **AutomationLog** | Execution logs | event, success, data, error |
+| Model                | Purpose                    | Key Fields                                                                                             |
+| -------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **ABTest**           | A/B test experiments       | hypothesis, type, status, trafficSplit, duration, minSampleSize, controlBundleId, variantConfig (JSON) |
+| **TestResult**       | Test metric results        | variant, date, views, conversions, revenue                                                             |
+| **Automation**       | Automation rules           | triggerType, triggerConfig/conditions/actions (JSON), execution counters                               |
+| **AutomationBundle** | Bundle-automation junction | —                                                                                                      |
+| **AutomationLog**    | Execution logs             | event, success, data, error                                                                            |
 
 #### Pricing & AI
 
-| Model | Purpose | Key Fields |
-|-------|---------|------------|
-| **PricingRule** | Dynamic pricing rules | priority, conditions (JSON), discount config, revenueImpact |
-| **PricingRuleBundle** | Pricing-bundle junction | — |
-| **AIInsight** | AI recommendations | type, category, confidence (Float), impact, actionable, actionType, actionData (JSON), expiresAt |
+| Model                 | Purpose                 | Key Fields                                                                                       |
+| --------------------- | ----------------------- | ------------------------------------------------------------------------------------------------ |
+| **PricingRule**       | Dynamic pricing rules   | priority, conditions (JSON), discount config, revenueImpact                                      |
+| **PricingRuleBundle** | Pricing-bundle junction | —                                                                                                |
+| **AIInsight**         | AI recommendations      | type, category, confidence (Float), impact, actionable, actionType, actionData (JSON), expiresAt |
 
 #### App Infrastructure
 
-| Model | Purpose | Key Fields |
-|-------|---------|------------|
-| **Shop** | Merchant shop data | domain (PK), status, plan, trialEndsAt, setupComplete, metafieldSetupDone, setupGuideDismissed, setupProgress (JSON) |
-| **AppSettings** | App-wide defaults | defaults, displayConfig, labels/globalStyles (JSON), customCSS, cacheTtl |
-| **Session** | OAuth sessions | id, shop, accessToken, scope, isOnline, expires, state, apiKey |
-| **OnlineAccessInfo** | Online access token data | sessionId (FK), expiresIn, associatedUserScope |
-| **AssociatedUser** | Shopify merchant user | — |
-| **Notification** | User notifications | type, priority |
-| **AlertRule** | Alert conditions | conditions (JSON), threshold, comparison, frequency |
-| **Template** | Reusable bundle templates | — |
-| **TemplateReview** | Template ratings | — |
+| Model                | Purpose                   | Key Fields                                                                                                           |
+| -------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Shop**             | Merchant shop data        | domain (PK), status, plan, trialEndsAt, setupComplete, metafieldSetupDone, setupGuideDismissed, setupProgress (JSON) |
+| **AppSettings**      | App-wide defaults         | defaults, displayConfig, labels/globalStyles (JSON), customCSS, cacheTtl                                             |
+| **Session**          | OAuth sessions            | id, shop, accessToken, scope, isOnline, expires, state, apiKey                                                       |
+| **OnlineAccessInfo** | Online access token data  | sessionId (FK), expiresIn, associatedUserScope                                                                       |
+| **AssociatedUser**   | Shopify merchant user     | —                                                                                                                    |
+| **Notification**     | User notifications        | type, priority                                                                                                       |
+| **AlertRule**        | Alert conditions          | conditions (JSON), threshold, comparison, frequency                                                                  |
+| **Template**         | Reusable bundle templates | —                                                                                                                    |
+| **TemplateReview**   | Template ratings          | —                                                                                                                    |
 
 ### Enums
 
-| Enum | Values |
-|------|--------|
-| BundleType | FIXED_BUNDLE, BUY_X_GET_Y, BOGO, VOLUME_DISCOUNT, MIX_AND_MATCH, FREQUENTLY_BOUGHT_TOGETHER |
-| BundleStatus | DRAFT, ACTIVE, PAUSED, ARCHIVED, SCHEDULED |
-| DiscountType | PERCENTAGE, FIXED_AMOUNT, CUSTOM_PRICE, NO_DISCOUNT, BUY_X_GET_Y, QUANTITY_BREAKS |
-| BundleProductRole | TRIGGER, REWARD, INCLUDED, OPTIONAL, GROUP_OPTION |
+| Enum              | Values                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| BundleType        | FIXED_BUNDLE, BUY_X_GET_Y, BOGO, VOLUME_DISCOUNT, MIX_AND_MATCH, FREQUENTLY_BOUGHT_TOGETHER |
+| BundleStatus      | DRAFT, ACTIVE, PAUSED, ARCHIVED, SCHEDULED                                                  |
+| DiscountType      | PERCENTAGE, FIXED_AMOUNT, CUSTOM_PRICE, NO_DISCOUNT, BUY_X_GET_Y, QUANTITY_BREAKS           |
+| BundleProductRole | TRIGGER, REWARD, INCLUDED, OPTIONAL, GROUP_OPTION                                           |
 
 ### Key Database Indexes
 
@@ -521,10 +521,10 @@ Return { session, shop }
 
 ### Token Types
 
-| Type | Lifetime | Use Case | Storage |
-|------|----------|----------|---------|
-| Session Token (JWT) | Short-lived | App Bridge requests | Client memory |
-| Online Access Token | ~24 hours | User-scoped API calls | PostgreSQL |
+| Type                 | Lifetime      | Use Case               | Storage                           |
+| -------------------- | ------------- | ---------------------- | --------------------------------- |
+| Session Token (JWT)  | Short-lived   | App Bridge requests    | Client memory                     |
+| Online Access Token  | ~24 hours     | User-scoped API calls  | PostgreSQL                        |
 | Offline Access Token | Until revoked | Server-to-server calls | PostgreSQL (ID: `offline_{shop}`) |
 
 ### Session Validation API
@@ -545,18 +545,18 @@ Body: { shop }
 
 ### Route Map
 
-| Route | Method | Auth | Purpose |
-|-------|--------|------|---------|
-| `/api/auth` | GET | None | OAuth initiation |
-| `/api/auth/callback` | GET | OAuth code | Token exchange |
-| `/api/webhooks` | POST | HMAC signature | Webhook handler |
-| `/api/proxy/products` | GET | App Proxy HMAC | Storefront product data |
-| `/api/proxy/analytics` | POST | App Proxy HMAC | Storefront event tracking |
-| `/api/session/validate` | POST | Bearer JWT | Session validation |
-| `/api/session/refresh` | POST | Shop domain | Session retrieval |
-| `/api/upload` | POST | Bearer + CORS | File upload proxy |
-| `/api/cron/bundle-scheduler` | GET | Bearer CRON_SECRET | Scheduled bundle activation |
-| `/api/cron/keep-alive` | GET | Bearer CRON_SECRET | Serverless warm-up |
+| Route                        | Method | Auth               | Purpose                     |
+| ---------------------------- | ------ | ------------------ | --------------------------- |
+| `/api/auth`                  | GET    | None               | OAuth initiation            |
+| `/api/auth/callback`         | GET    | OAuth code         | Token exchange              |
+| `/api/webhooks`              | POST   | HMAC signature     | Webhook handler             |
+| `/api/proxy/products`        | GET    | App Proxy HMAC     | Storefront product data     |
+| `/api/proxy/analytics`       | POST   | App Proxy HMAC     | Storefront event tracking   |
+| `/api/session/validate`      | POST   | Bearer JWT         | Session validation          |
+| `/api/session/refresh`       | POST   | Shop domain        | Session retrieval           |
+| `/api/upload`                | POST   | Bearer + CORS      | File upload proxy           |
+| `/api/cron/bundle-scheduler` | GET    | Bearer CRON_SECRET | Scheduled bundle activation |
+| `/api/cron/keep-alive`       | GET    | Bearer CRON_SECRET | Serverless warm-up          |
 
 ### App Proxy Signature Verification
 
@@ -573,10 +573,12 @@ All `/api/proxy/*` requests are signed by Shopify:
 ### Products Proxy — Two Query Modes
 
 **Mode A: By IDs** (`?ids=gid1,gid2,...`)
+
 - Returns lightweight product list (id, title, price, image, handle, available)
 - Cache-Control: `public, max-age={ttl}` (configurable per shop)
 
 **Mode B: By Product** (`?productId=gid://...`)
+
 - Returns ACTIVE bundles containing that product
 - Sorts by priority or savings amount
 - Fetches Shopify product details via GraphQL
@@ -594,11 +596,11 @@ All `/api/proxy/*` requests are signed by Shopify:
 
 ### Registered Topics
 
-| Topic | Handler | Purpose |
-|-------|---------|---------|
-| `APP_UNINSTALLED` | `handleAppUninstalled()` | Clean up Shop record |
-| `SHOP_UPDATE` | `handleShopUpdate()` | Log currency/timezone changes |
-| `ORDERS_CREATE` | `handleOrdersCreate()` | Parse bundles in orders → track revenue |
+| Topic             | Handler                  | Purpose                                   |
+| ----------------- | ------------------------ | ----------------------------------------- |
+| `APP_UNINSTALLED` | `handleAppUninstalled()` | Clean up Shop record                      |
+| `SHOP_UPDATE`     | `handleShopUpdate()`     | Log currency/timezone changes             |
+| `ORDERS_CREATE`   | `handleOrdersCreate()`   | Parse bundles in orders → track revenue   |
 | `PRODUCTS_DELETE` | `handleProductsDelete()` | Soft-delete bundles with deleted products |
 
 ### Cold-Start Recovery
@@ -667,14 +669,16 @@ target = "cart.delivery-options.discounts.generate.run"
 ```
 
 **Capabilities**:
+
 - Line-item discounts: Percentage, fixed amount, custom price, quantity breaks
 - Delivery discounts: Free shipping per bundle
 - Reads bundle config from cart line attributes (`_bundle_id`, `_bundle_discount_*`)
 - Validates product GIDs from merchandise (tamper-proof)
 
 **Performance Profile**:
+
 - LTO + opt-level `z` + strip → minimal WASM binary
-- O(n*m) complexity: n = cart lines, m = bundles (typical <500 ops)
+- O(n\*m) complexity: n = cart lines, m = bundles (typical <500 ops)
 - Zero allocations on happy path (empty cart, no bundles)
 - Single JSON parse per invocation
 - No caching (real-time accuracy required)
@@ -686,24 +690,25 @@ target = "cart.delivery-options.discounts.generate.run"
 
 ### Three Layers
 
-| Layer | Technology | Scope | Persistence |
-|-------|-----------|-------|-------------|
-| Server State | React Query (TanStack) | API data | In-memory + HTTP cache |
-| Feature State | Zustand + Immer | Per-feature UI state | Transient (no persistence) |
-| Form State | React Hook Form + Zod | Form inputs | Component lifecycle |
+| Layer         | Technology             | Scope                | Persistence                |
+| ------------- | ---------------------- | -------------------- | -------------------------- |
+| Server State  | React Query (TanStack) | API data             | In-memory + HTTP cache     |
+| Feature State | Zustand + Immer        | Per-feature UI state | Transient (no persistence) |
+| Form State    | React Hook Form + Zod  | Form inputs          | Component lifecycle        |
 
 ### Global Zustand Stores (`/web/shared/stores/`)
 
-| Store | Key State |
-|-------|-----------|
-| `session.store` | shop, host, sessionToken, hasValidSession, isValidating |
-| `shop-settings.store` | settings (ShopSettings), isInitialized |
-| `modal.store` | openModals (stack-based) |
-| `global-banner.store` | banners (queue-based) |
+| Store                 | Key State                                               |
+| --------------------- | ------------------------------------------------------- |
+| `session.store`       | shop, host, sessionToken, hasValidSession, isValidating |
+| `shop-settings.store` | settings (ShopSettings), isInitialized                  |
+| `modal.store`         | openModals (stack-based)                                |
+| `global-banner.store` | banners (queue-based)                                   |
 
 ### React Query Configuration
 
 **Global Defaults**:
+
 ```
 staleTime: 60s
 gcTime: 10min
@@ -713,24 +718,24 @@ refetchOnWindowFocus: false
 
 **Per-Feature Overrides**:
 
-| Feature | staleTime | gcTime | Notes |
-|---------|-----------|--------|-------|
-| Bundle list | 5 min | 10 min | refetchOnWindowFocus: false |
-| Bundle detail | 5 min | 10 min | enabled: !!bundleId |
-| Analytics metrics | 2 min | 10 min | — |
-| Analytics chart | 2 min | 10 min | — |
-| Top bundles | 5 min | 10 min | — |
-| Paginated bundles | 5 min | 10 min | placeholderData: previous |
-| Settings | 5 min | 10 min | refetchOnMount: true, retry: 2 |
-| Setup guide | 10 min | 10 min | Matches server cache |
+| Feature           | staleTime | gcTime | Notes                          |
+| ----------------- | --------- | ------ | ------------------------------ |
+| Bundle list       | 5 min     | 10 min | refetchOnWindowFocus: false    |
+| Bundle detail     | 5 min     | 10 min | enabled: !!bundleId            |
+| Analytics metrics | 2 min     | 10 min | —                              |
+| Analytics chart   | 2 min     | 10 min | —                              |
+| Top bundles       | 5 min     | 10 min | —                              |
+| Paginated bundles | 5 min     | 10 min | placeholderData: previous      |
+| Settings          | 5 min     | 10 min | refetchOnMount: true, retry: 2 |
+| Setup guide       | 10 min    | 10 min | Matches server cache           |
 
 ### Cross-Tab Synchronization
 
 **Implementation**: `BroadcastChannel` API
 
-| Message | Effect |
-|---------|--------|
-| `INVALIDATE_BUNDLES` | Invalidates bundle queries across all tabs |
+| Message                | Effect                                        |
+| ---------------------- | --------------------------------------------- |
+| `INVALIDATE_BUNDLES`   | Invalidates bundle queries across all tabs    |
 | `INVALIDATE_ANALYTICS` | Invalidates analytics queries across all tabs |
 
 ---
@@ -762,6 +767,7 @@ refetchOnWindowFocus: false
 ### Next.js Cache Components
 
 **Config** (`next.config.js`):
+
 ```javascript
 cacheComponents: true,
 cacheLife: {
@@ -780,19 +786,19 @@ cacheLife: {
 
 ### Cache Tags (Multi-Tenant Isolation)
 
-| Tag Pattern | TTL | Invalidation Trigger |
-|-------------|-----|---------------------|
-| `analytics-metrics-{shop}` | 5 min | Bundle create/update/delete |
-| `top-bundles-{shop}` | 10 min | Bundle status change |
-| `chart-data-{shop}` | 5 min | Analytics data change |
-| `setup-guide-{shop}` | 10 min | Setup step completion |
+| Tag Pattern                | TTL    | Invalidation Trigger        |
+| -------------------------- | ------ | --------------------------- |
+| `analytics-metrics-{shop}` | 5 min  | Bundle create/update/delete |
+| `top-bundles-{shop}`       | 10 min | Bundle status change        |
+| `chart-data-{shop}`        | 5 min  | Analytics data change       |
+| `setup-guide-{shop}`       | 10 min | Setup step completion       |
 
 ### Cache Invalidation
 
 ```typescript
 // /web/lib/cache/invalidate-dashboard.ts
-invalidateDashboardCache(shop)     // All analytics tags
-invalidateSetupGuideCache(shop)    // Setup guide tag
+invalidateDashboardCache(shop); // All analytics tags
+invalidateSetupGuideCache(shop); // Setup guide tag
 ```
 
 Uses Next.js `updateTag()` for read-your-own-writes semantics.
@@ -816,13 +822,13 @@ Uses Next.js `updateTag()` for read-your-own-writes semantics.
 
 ### Authentication Matrix
 
-| Endpoint | Mechanism | Verification |
-|----------|-----------|--------------|
-| Dashboard (embedded) | Shopify App Bridge JWT | SDK `decodeSessionToken()` |
-| App Proxy routes | HMAC-SHA256 signature | Custom `verifyProxyRequest()` |
-| Webhook routes | HMAC-SHA256 on body | SDK `webhooks.process()` |
-| Cron jobs | Bearer token | `CRON_SECRET` comparison |
-| Upload API | Bearer token + CORS | Auth header extraction |
+| Endpoint             | Mechanism              | Verification                  |
+| -------------------- | ---------------------- | ----------------------------- |
+| Dashboard (embedded) | Shopify App Bridge JWT | SDK `decodeSessionToken()`    |
+| App Proxy routes     | HMAC-SHA256 signature  | Custom `verifyProxyRequest()` |
+| Webhook routes       | HMAC-SHA256 on body    | SDK `webhooks.process()`      |
+| Cron jobs            | Bearer token           | `CRON_SECRET` comparison      |
+| Upload API           | Bearer token + CORS    | Auth header extraction        |
 
 ### Content Security Policy
 
@@ -891,10 +897,10 @@ Delegated to Shopify SDK's `webhooks.process()` — HMAC-SHA256 on raw request b
 
 ### Scheduled Jobs (Vercel Crons)
 
-| Schedule | Path | Purpose |
-|----------|------|---------|
+| Schedule                         | Path                         | Purpose                               |
+| -------------------------------- | ---------------------------- | ------------------------------------- |
 | `0 0 * * *` (daily midnight UTC) | `/api/cron/bundle-scheduler` | Activate/deactivate scheduled bundles |
-| `*/4 * * * *` (every 4 min) | `/api/cron/keep-alive` | Prevent cold starts |
+| `*/4 * * * *` (every 4 min)      | `/api/cron/keep-alive`       | Prevent cold starts                   |
 
 ### Shopify Extension Deployment
 
@@ -906,32 +912,32 @@ bun run build:widgets       # Vite build storefront widgets
 
 ### Development Commands
 
-| Command | Purpose |
-|---------|---------|
-| `bun run dev` | Concurrent: app + widgets + schema watcher |
-| `bun run dev:app` | Shopify CLI dev server only |
-| `bun run dev:widgets` | Vite watch-build for storefront widgets |
-| `bun run dev:full` | Auto-update env host + codegen then dev |
+| Command               | Purpose                                    |
+| --------------------- | ------------------------------------------ |
+| `bun run dev`         | Concurrent: app + widgets + schema watcher |
+| `bun run dev:app`     | Shopify CLI dev server only                |
+| `bun run dev:widgets` | Vite watch-build for storefront widgets    |
+| `bun run dev:full`    | Auto-update env host + codegen then dev    |
 
 ### Database Commands (run from `/web`)
 
-| Command | Purpose |
-|---------|---------|
-| `bun run migrate` | `prisma migrate dev` |
-| `bun run prisma:push` | Push schema without migration |
-| `bun run prisma:pull` | Pull schema from DB |
-| `bun run prisma:studio` | Open Prisma Studio GUI |
+| Command                 | Purpose                       |
+| ----------------------- | ----------------------------- |
+| `bun run migrate`       | `prisma migrate dev`          |
+| `bun run prisma:push`   | Push schema without migration |
+| `bun run prisma:pull`   | Pull schema from DB           |
+| `bun run prisma:studio` | Open Prisma Studio GUI        |
 
 ### Code Quality
 
-| Command | Purpose |
-|---------|---------|
+| Command                   | Purpose                                       |
+| ------------------------- | --------------------------------------------- |
 | `bun run graphql-codegen` | Generate types from Shopify Admin API 2025-10 |
-| `bun run test` | Jest test suite |
-| `bun run test:watch` | Jest watch mode |
-| `bun run test:coverage` | Jest with coverage report |
-| `bun run pretty` | Prettier on entire repo |
-| `npx tsc --noEmit` | Type checking |
+| `bun run test`            | Jest test suite                               |
+| `bun run test:watch`      | Jest watch mode                               |
+| `bun run test:coverage`   | Jest with coverage report                     |
+| `bun run pretty`          | Prettier on entire repo                       |
+| `npx tsc --noEmit`        | Type checking                                 |
 
 ---
 
@@ -939,17 +945,17 @@ bun run build:widgets       # Vite build storefront widgets
 
 ### Required Variables
 
-| Variable | Location | Purpose |
-|----------|----------|---------|
-| `SHOPIFY_API_KEY` | Root `.env` | OAuth client ID |
-| `SHOPIFY_API_SECRET` | Root `.env` | OAuth secret + HMAC key |
-| `SCOPES` | Root `.env` | Comma-separated OAuth scopes |
-| `HOST` | Root `.env` | Public app URL (auto-updated by CLI) |
-| `SHOPIFY_API_VERSION` | Root `.env` | API version (2025-10) |
-| `DATABASE_URL` | Web `.env` | PostgreSQL connection (Neon pooled) |
-| `DIRECT_DATABASE_URL` | Web `.env` | Direct DB connection (migrations) |
-| `NEXT_PUBLIC_SHOP` | Web `.env` | Shop domain (client-side fallback) |
-| `CRON_SECRET` | Web `.env` | Vercel cron bearer token |
+| Variable              | Location    | Purpose                              |
+| --------------------- | ----------- | ------------------------------------ |
+| `SHOPIFY_API_KEY`     | Root `.env` | OAuth client ID                      |
+| `SHOPIFY_API_SECRET`  | Root `.env` | OAuth secret + HMAC key              |
+| `SCOPES`              | Root `.env` | Comma-separated OAuth scopes         |
+| `HOST`                | Root `.env` | Public app URL (auto-updated by CLI) |
+| `SHOPIFY_API_VERSION` | Root `.env` | API version (2025-10)                |
+| `DATABASE_URL`        | Web `.env`  | PostgreSQL connection (Neon pooled)  |
+| `DIRECT_DATABASE_URL` | Web `.env`  | Direct DB connection (migrations)    |
+| `NEXT_PUBLIC_SHOP`    | Web `.env`  | Shop domain (client-side fallback)   |
+| `CRON_SECRET`         | Web `.env`  | Vercel cron bearer token             |
 
 ### Next.js Configuration Highlights
 
@@ -980,20 +986,20 @@ bun run build:widgets       # Vite build storefront widgets
 
 ## Feature Maturity Matrix
 
-| Feature | Status | Schema | Logic | UI |
-|---------|--------|--------|-------|----|
-| Bundle CRUD (6 types) | Done | Yes | Yes | Yes |
-| Analytics | Done | Yes | Yes | Yes |
-| Settings/Customizer | Done | Yes | Yes | Yes |
-| Discount Function (Rust) | Done | N/A | Yes | N/A |
-| Theme Widget (Liquid) | Done | N/A | Yes | Yes |
-| Dashboard + Setup Guide | Done | Yes | Yes | Yes |
-| A/B Testing | Schema only | Yes | No | Placeholder |
-| Automation | Schema only | Yes | No | Types only |
-| Dynamic Pricing | Partial | Yes | No | Static cards |
-| AI Insights | Schema only | Yes | No | Placeholder |
-| FBT (Frequently Bought) | Label only | Enum | No | No |
+| Feature                  | Status      | Schema | Logic | UI           |
+| ------------------------ | ----------- | ------ | ----- | ------------ |
+| Bundle CRUD (6 types)    | Done        | Yes    | Yes   | Yes          |
+| Analytics                | Done        | Yes    | Yes   | Yes          |
+| Settings/Customizer      | Done        | Yes    | Yes   | Yes          |
+| Discount Function (Rust) | Done        | N/A    | Yes   | N/A          |
+| Theme Widget (Liquid)    | Done        | N/A    | Yes   | Yes          |
+| Dashboard + Setup Guide  | Done        | Yes    | Yes   | Yes          |
+| A/B Testing              | Schema only | Yes    | No    | Placeholder  |
+| Automation               | Schema only | Yes    | No    | Types only   |
+| Dynamic Pricing          | Partial     | Yes    | No    | Static cards |
+| AI Insights              | Schema only | Yes    | No    | Placeholder  |
+| FBT (Frequently Bought)  | Label only  | Enum   | No    | No           |
 
 ---
 
-*Generated for Radius Product Bundles — Next.js 16 + React 19 + Prisma 7 + Shopify 2025-10*
+_Generated for Radius Product Bundles — Next.js 16 + React 19 + Prisma 7 + Shopify 2025-10_

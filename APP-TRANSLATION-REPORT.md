@@ -24,6 +24,7 @@
 The Radius Product Bundles app currently has **no internationalization infrastructure**. All admin UI strings are hardcoded in English, the storefront widget uses English-only label defaults, and there is no mechanism to detect the merchant's locale.
 
 Shopify provides the merchant's locale to embedded apps via two mechanisms:
+
 1. **`locale` query parameter** — sent with the initial GET request when Shopify loads your app
 2. **`shopify.config.locale`** — available client-side via the App Bridge global variable (default: `'en-US'`)
 
@@ -41,26 +42,26 @@ When using **Polaris web components** (loaded via CDN `polaris.js`), **Shopify h
 
 ### What Exists
 
-| Item | File | Status |
-|------|------|--------|
-| Theme extension locale file | `extension/.../locales/en.default.json` | Only English, 2 translation keys |
-| Currency formatter with locale | `web/shared/utils/formatters/currency.ts:31` | Uses `Intl.NumberFormat(locale, ...)` |
-| Currency locale constants | `web/shared/constants/currency.constants.ts` | 18 locale mappings (en-US, fr-FR, de-DE, etc.) |
-| Number formatter with locale | `web/shared/utils/formatters/number.ts:38` | Uses `toLocaleString(locale)` |
-| Storefront locale path helper | `web/widgets/src/radius-bundles.ts:14` | Reads `window.Shopify.routes.root` for `/fr/` prefix |
+| Item                           | File                                         | Status                                               |
+| ------------------------------ | -------------------------------------------- | ---------------------------------------------------- |
+| Theme extension locale file    | `extension/.../locales/en.default.json`      | Only English, 2 translation keys                     |
+| Currency formatter with locale | `web/shared/utils/formatters/currency.ts:31` | Uses `Intl.NumberFormat(locale, ...)`                |
+| Currency locale constants      | `web/shared/constants/currency.constants.ts` | 18 locale mappings (en-US, fr-FR, de-DE, etc.)       |
+| Number formatter with locale   | `web/shared/utils/formatters/number.ts:38`   | Uses `toLocaleString(locale)`                        |
+| Storefront locale path helper  | `web/widgets/src/radius-bundles.ts:14`       | Reads `window.Shopify.routes.root` for `/fr/` prefix |
 
 ### What's Missing
 
-| Item | Impact | Priority |
-|------|--------|----------|
-| **i18n library** (next-intl / i18next) | No string externalization possible | High |
-| **Admin translation files** (`locales/en.json`, etc.) | All strings hardcoded | High |
-| **Merchant locale detection** from `shopify.config.locale` or `?locale=` param | Always renders English | High |
-| **`<html lang="en">` is hardcoded** in `web/app/layout.tsx:27` | Screen readers, SEO | High |
-| **Date formatting** uses hardcoded `"en-US"` | `web/features/analytics/utils/date-range.ts:44,231` | Medium |
-| **Extension locale files** for other languages | Theme extension shows English only | Medium |
-| **Database column** for merchant locale preference | Can't persist locale server-side | Medium |
-| **Polaris React AppProvider** not used | N/A — using CDN web components (correct) | None |
+| Item                                                                           | Impact                                              | Priority |
+| ------------------------------------------------------------------------------ | --------------------------------------------------- | -------- |
+| **i18n library** (next-intl / i18next)                                         | No string externalization possible                  | High     |
+| **Admin translation files** (`locales/en.json`, etc.)                          | All strings hardcoded                               | High     |
+| **Merchant locale detection** from `shopify.config.locale` or `?locale=` param | Always renders English                              | High     |
+| **`<html lang="en">` is hardcoded** in `web/app/layout.tsx:27`                 | Screen readers, SEO                                 | High     |
+| **Date formatting** uses hardcoded `"en-US"`                                   | `web/features/analytics/utils/date-range.ts:44,231` | Medium   |
+| **Extension locale files** for other languages                                 | Theme extension shows English only                  | Medium   |
+| **Database column** for merchant locale preference                             | Can't persist locale server-side                    | Medium   |
+| **Polaris React AppProvider** not used                                         | N/A — using CDN web components (correct)            | None     |
 
 ---
 
@@ -73,6 +74,7 @@ Shopify provides the merchant's locale to your embedded app in two ways:
 #### Server-Side: `locale` Query Parameter
 
 When Shopify loads your app in an iframe, the initial request URL includes:
+
 ```
 https://your-app.com/?shop=store.myshopify.com&host=xxx&locale=fr
 ```
@@ -91,17 +93,17 @@ const merchantLocale = shopify.config.locale;
 
 ### 3.2 Two Layers of Translation
 
-| Layer | What Gets Translated | Who Translates |
-|-------|---------------------|---------------|
+| Layer                            | What Gets Translated                                                                 | Who Translates                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
 | **Polaris web components** (CDN) | Built-in component strings ("Save", "Cancel", pagination labels, date pickers, etc.) | **Shopify automatically** — based on the admin's language setting |
-| **Your app's custom strings** | Page titles, form labels, error messages, descriptions, button text, etc. | **You** — using an i18n library + translation files |
+| **Your app's custom strings**    | Page titles, form labels, error messages, descriptions, button text, etc.            | **You** — using an i18n library + translation files               |
 
 ### 3.3 Polaris React vs Polaris Web Components (CDN)
 
-| Approach | How to Set Locale | Current App |
-|----------|------------------|-------------|
-| **React `@shopify/polaris`** (npm) | Pass `i18n={require('@shopify/polaris/locales/fr.json')}` to `<AppProvider>` | NOT used |
-| **Polaris Web Components** (CDN) | **Automatic** — Shopify admin handles it. No config needed. | ✅ **Currently used** |
+| Approach                           | How to Set Locale                                                            | Current App           |
+| ---------------------------------- | ---------------------------------------------------------------------------- | --------------------- |
+| **React `@shopify/polaris`** (npm) | Pass `i18n={require('@shopify/polaris/locales/fr.json')}` to `<AppProvider>` | NOT used              |
+| **Polaris Web Components** (CDN)   | **Automatic** — Shopify admin handles it. No config needed.                  | ✅ **Currently used** |
 
 Since this app loads Polaris via CDN (`<script src="https://cdn.shopify.com/shopifycloud/polaris.js">`), Polaris component translations are handled automatically by Shopify. You only need to handle your own strings.
 
@@ -128,6 +130,7 @@ cd web && bun add next-intl
 ```
 
 **Why `next-intl`**:
+
 - First-class Next.js App Router support
 - Server Components + Client Components support
 - Type-safe translation keys
@@ -155,85 +158,85 @@ web/
 
 ```json
 {
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "create": "Create",
-    "back": "Back",
-    "loading": "Loading...",
-    "error": "Something went wrong",
-    "retry": "Try again",
-    "noResults": "No results found",
-    "search": "Search"
-  },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "bundles": "Bundles",
-    "analytics": "Analytics",
-    "settings": "Settings",
-    "abTesting": "A/B Testing",
-    "automation": "Automation",
-    "pricing": "Pricing",
-    "templates": "Templates",
-    "integrations": "Integrations"
-  },
-  "dashboard": {
-    "title": "Dashboard",
-    "welcomeTitle": "Welcome to Radius Bundles",
-    "totalBundles": "Total Bundles",
-    "totalRevenue": "Total Revenue",
-    "conversionRate": "Conversion Rate",
-    "activeBundles": "Active Bundles"
-  },
-  "bundles": {
-    "title": "Bundles",
-    "createBundle": "Create Bundle",
-    "editBundle": "Edit Bundle",
-    "bundleName": "Bundle name",
-    "bundleNamePlaceholder": "e.g., Summer Essentials Pack",
-    "status": {
-      "active": "Active",
-      "draft": "Draft",
-      "paused": "Paused",
-      "archived": "Archived",
-      "scheduled": "Scheduled"
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "back": "Back",
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "retry": "Try again",
+        "noResults": "No results found",
+        "search": "Search"
     },
-    "type": {
-      "fixedBundle": "Fixed Bundle",
-      "buyXGetY": "Buy X Get Y",
-      "bogo": "BOGO",
-      "volumeDiscount": "Volume Discount",
-      "mixAndMatch": "Mix & Match",
-      "frequentlyBoughtTogether": "Frequently Bought Together"
+    "navigation": {
+        "dashboard": "Dashboard",
+        "bundles": "Bundles",
+        "analytics": "Analytics",
+        "settings": "Settings",
+        "abTesting": "A/B Testing",
+        "automation": "Automation",
+        "pricing": "Pricing",
+        "templates": "Templates",
+        "integrations": "Integrations"
     },
-    "emptyState": {
-      "title": "Create your first bundle",
-      "description": "Bundles help increase your average order value by grouping products together."
+    "dashboard": {
+        "title": "Dashboard",
+        "welcomeTitle": "Welcome to Radius Bundles",
+        "totalBundles": "Total Bundles",
+        "totalRevenue": "Total Revenue",
+        "conversionRate": "Conversion Rate",
+        "activeBundles": "Active Bundles"
+    },
+    "bundles": {
+        "title": "Bundles",
+        "createBundle": "Create Bundle",
+        "editBundle": "Edit Bundle",
+        "bundleName": "Bundle name",
+        "bundleNamePlaceholder": "e.g., Summer Essentials Pack",
+        "status": {
+            "active": "Active",
+            "draft": "Draft",
+            "paused": "Paused",
+            "archived": "Archived",
+            "scheduled": "Scheduled"
+        },
+        "type": {
+            "fixedBundle": "Fixed Bundle",
+            "buyXGetY": "Buy X Get Y",
+            "bogo": "BOGO",
+            "volumeDiscount": "Volume Discount",
+            "mixAndMatch": "Mix & Match",
+            "frequentlyBoughtTogether": "Frequently Bought Together"
+        },
+        "emptyState": {
+            "title": "Create your first bundle",
+            "description": "Bundles help increase your average order value by grouping products together."
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "general": "General",
+        "labels": "Labels",
+        "appearance": "Appearance",
+        "advanced": "Advanced",
+        "savedSuccessfully": "Settings saved successfully"
+    },
+    "analytics": {
+        "title": "Analytics",
+        "views": "Views",
+        "addedToCart": "Added to Cart",
+        "purchases": "Purchases",
+        "revenue": "Revenue",
+        "period": {
+            "today": "Today",
+            "last7Days": "Last 7 days",
+            "last30Days": "Last 30 days",
+            "last90Days": "Last 90 days"
+        }
     }
-  },
-  "settings": {
-    "title": "Settings",
-    "general": "General",
-    "labels": "Labels",
-    "appearance": "Appearance",
-    "advanced": "Advanced",
-    "savedSuccessfully": "Settings saved successfully"
-  },
-  "analytics": {
-    "title": "Analytics",
-    "views": "Views",
-    "addedToCart": "Added to Cart",
-    "purchases": "Purchases",
-    "revenue": "Revenue",
-    "period": {
-      "today": "Today",
-      "last7Days": "Last 7 days",
-      "last30Days": "Last 30 days",
-      "last90Days": "Last 90 days"
-    }
-  }
 }
 ```
 
@@ -245,33 +248,44 @@ The `locale` query parameter is sent by Shopify when loading the app. In Next.js
 
 ```typescript
 // web/lib/i18n/get-locale.ts
-import { headers } from 'next/headers';
+import { headers } from "next/headers";
 
-const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'es', 'ja', 'pt-BR', 'it', 'nl', 'ko', 'zh-CN'] as const;
-const DEFAULT_LOCALE = 'en';
+const SUPPORTED_LOCALES = [
+    "en",
+    "fr",
+    "de",
+    "es",
+    "ja",
+    "pt-BR",
+    "it",
+    "nl",
+    "ko",
+    "zh-CN",
+] as const;
+const DEFAULT_LOCALE = "en";
 
-export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export function getLocaleFromRequest(request?: Request): SupportedLocale {
-  // 1. Check URL search params (Shopify sends ?locale=fr)
-  if (request) {
-    const url = new URL(request.url);
-    const locale = url.searchParams.get('locale');
-    if (locale && SUPPORTED_LOCALES.includes(locale as SupportedLocale)) {
-      return locale as SupportedLocale;
+    // 1. Check URL search params (Shopify sends ?locale=fr)
+    if (request) {
+        const url = new URL(request.url);
+        const locale = url.searchParams.get("locale");
+        if (locale && SUPPORTED_LOCALES.includes(locale as SupportedLocale)) {
+            return locale as SupportedLocale;
+        }
     }
-  }
 
-  // 2. Fallback: check Accept-Language header
-  const headersList = headers();
-  const acceptLang = headersList.get('accept-language');
-  if (acceptLang) {
-    for (const supported of SUPPORTED_LOCALES) {
-      if (acceptLang.startsWith(supported)) return supported;
+    // 2. Fallback: check Accept-Language header
+    const headersList = headers();
+    const acceptLang = headersList.get("accept-language");
+    if (acceptLang) {
+        for (const supported of SUPPORTED_LOCALES) {
+            if (acceptLang.startsWith(supported)) return supported;
+        }
     }
-  }
 
-  return DEFAULT_LOCALE;
+    return DEFAULT_LOCALE;
 }
 ```
 
@@ -279,15 +293,15 @@ export function getLocaleFromRequest(request?: Request): SupportedLocale {
 
 ```typescript
 // web/shared/hooks/use-locale.ts
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 export function useLocale(): string {
-  return useMemo(() => {
-    if (typeof window !== 'undefined' && window.shopify?.config?.locale) {
-      return window.shopify.config.locale;
-    }
-    return 'en';
-  }, []);
+    return useMemo(() => {
+        if (typeof window !== "undefined" && window.shopify?.config?.locale) {
+            return window.shopify.config.locale;
+        }
+        return "en";
+    }, []);
 }
 ```
 
@@ -297,16 +311,16 @@ export function useLocale(): string {
 
 ```typescript
 // web/i18n/request.ts
-import { getRequestConfig } from 'next-intl/server';
-import { getLocaleFromRequest } from '@/lib/i18n/get-locale';
+import { getRequestConfig } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/get-locale";
 
 export default getRequestConfig(async () => {
-  const locale = getLocaleFromRequest();
+    const locale = getLocaleFromRequest();
 
-  return {
-    locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
-  };
+    return {
+        locale,
+        messages: (await import(`../messages/${locale}.json`)).default,
+    };
 });
 ```
 
@@ -341,20 +355,20 @@ export default async function RootLayout({ children }) {
 ```tsx
 // Before (hardcoded)
 <Page title="Bundles">
-  <Button onClick={handleCreate}>Create Bundle</Button>
-</Page>
+    <Button onClick={handleCreate}>Create Bundle</Button>
+</Page>;
 
 // After (translated)
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 
 function BundlesPage() {
-  const t = useTranslations('bundles');
+    const t = useTranslations("bundles");
 
-  return (
-    <Page title={t('title')}>
-      <Button onClick={handleCreate}>{t('createBundle')}</Button>
-    </Page>
-  );
+    return (
+        <Page title={t("title")}>
+            <Button onClick={handleCreate}>{t("createBundle")}</Button>
+        </Page>
+    );
 }
 ```
 
@@ -396,33 +410,33 @@ extension/extensions/product-bundle-widget/
 
 ```json
 {
-  "ratings": {
-    "stars": { "label": "Ratings" },
-    "home": { "recommendationText": "Recommended Product!" }
-  },
-  "bundle": {
-    "heading": "Bundle & Save",
-    "addToCart": "Add Bundle to Cart",
-    "adding": "Adding...",
-    "added": "Added!",
-    "outOfStock": "Out of Stock",
-    "selectOption": "Select an option",
-    "showMore": "Show {count} more",
-    "showLess": "Show less",
-    "quantityLabel": "Quantity",
-    "originalPrice": "Original price",
-    "bundlePrice": "Bundle price",
-    "youSave": "You save {amount}",
-    "savingsPercent": "Save {percent}%",
-    "maxBundlesReached": "Maximum bundles reached",
-    "freeShipping": "Free Shipping"
-  },
-  "savingsBanner": {
-    "savingText": "You're saving {discount} with {name}",
-    "customPriceText": "Special price: {price} for {name}",
-    "freeShippingQualify": "Add {amount} more to qualify for free shipping",
-    "freeShippingText": "You've qualified for free shipping!"
-  }
+    "ratings": {
+        "stars": { "label": "Ratings" },
+        "home": { "recommendationText": "Recommended Product!" }
+    },
+    "bundle": {
+        "heading": "Bundle & Save",
+        "addToCart": "Add Bundle to Cart",
+        "adding": "Adding...",
+        "added": "Added!",
+        "outOfStock": "Out of Stock",
+        "selectOption": "Select an option",
+        "showMore": "Show {count} more",
+        "showLess": "Show less",
+        "quantityLabel": "Quantity",
+        "originalPrice": "Original price",
+        "bundlePrice": "Bundle price",
+        "youSave": "You save {amount}",
+        "savingsPercent": "Save {percent}%",
+        "maxBundlesReached": "Maximum bundles reached",
+        "freeShipping": "Free Shipping"
+    },
+    "savingsBanner": {
+        "savingText": "You're saving {discount} with {name}",
+        "customPriceText": "Special price: {price} for {name}",
+        "freeShippingQualify": "Add {amount} more to qualify for free shipping",
+        "freeShippingText": "You've qualified for free shipping!"
+    }
 }
 ```
 
@@ -430,29 +444,29 @@ extension/extensions/product-bundle-widget/
 
 ```json
 {
-  "bundle": {
-    "heading": "Lot & Économisez",
-    "addToCart": "Ajouter le lot au panier",
-    "adding": "Ajout en cours...",
-    "added": "Ajouté !",
-    "outOfStock": "Rupture de stock",
-    "selectOption": "Sélectionner une option",
-    "showMore": "Afficher {count} de plus",
-    "showLess": "Afficher moins",
-    "quantityLabel": "Quantité",
-    "originalPrice": "Prix d'origine",
-    "bundlePrice": "Prix du lot",
-    "youSave": "Vous économisez {amount}",
-    "savingsPercent": "Économisez {percent} %",
-    "maxBundlesReached": "Nombre maximum de lots atteint",
-    "freeShipping": "Livraison gratuite"
-  },
-  "savingsBanner": {
-    "savingText": "Vous économisez {discount} avec {name}",
-    "customPriceText": "Prix spécial : {price} pour {name}",
-    "freeShippingQualify": "Ajoutez {amount} de plus pour bénéficier de la livraison gratuite",
-    "freeShippingText": "Vous bénéficiez de la livraison gratuite !"
-  }
+    "bundle": {
+        "heading": "Lot & Économisez",
+        "addToCart": "Ajouter le lot au panier",
+        "adding": "Ajout en cours...",
+        "added": "Ajouté !",
+        "outOfStock": "Rupture de stock",
+        "selectOption": "Sélectionner une option",
+        "showMore": "Afficher {count} de plus",
+        "showLess": "Afficher moins",
+        "quantityLabel": "Quantité",
+        "originalPrice": "Prix d'origine",
+        "bundlePrice": "Prix du lot",
+        "youSave": "Vous économisez {amount}",
+        "savingsPercent": "Économisez {percent} %",
+        "maxBundlesReached": "Nombre maximum de lots atteint",
+        "freeShipping": "Livraison gratuite"
+    },
+    "savingsBanner": {
+        "savingText": "Vous économisez {discount} avec {name}",
+        "customPriceText": "Prix spécial : {price} pour {name}",
+        "freeShippingQualify": "Ajoutez {amount} de plus pour bénéficier de la livraison gratuite",
+        "freeShippingText": "Vous bénéficiez de la livraison gratuite !"
+    }
 }
 ```
 
@@ -543,55 +557,55 @@ let discount_message = match locale.as_str() {
 
 ### Phase 1: Infrastructure (Must Do First)
 
-| # | File | Change | Effort |
-|---|------|--------|--------|
-| 1 | `web/package.json` | Add `next-intl` dependency | 1 min |
-| 2 | `web/messages/en.json` | Create default English translation file | 2-4 hrs |
-| 3 | `web/i18n/request.ts` | Create next-intl request config | 15 min |
-| 4 | `web/app/layout.tsx` | Dynamic `lang` attribute, wrap with `NextIntlClientProvider` | 30 min |
-| 5 | `web/lib/i18n/get-locale.ts` | Create locale detection utility | 30 min |
-| 6 | `web/next.config.js` | Add `next-intl` plugin config | 15 min |
+| #   | File                         | Change                                                       | Effort  |
+| --- | ---------------------------- | ------------------------------------------------------------ | ------- |
+| 1   | `web/package.json`           | Add `next-intl` dependency                                   | 1 min   |
+| 2   | `web/messages/en.json`       | Create default English translation file                      | 2-4 hrs |
+| 3   | `web/i18n/request.ts`        | Create next-intl request config                              | 15 min  |
+| 4   | `web/app/layout.tsx`         | Dynamic `lang` attribute, wrap with `NextIntlClientProvider` | 30 min  |
+| 5   | `web/lib/i18n/get-locale.ts` | Create locale detection utility                              | 30 min  |
+| 6   | `web/next.config.js`         | Add `next-intl` plugin config                                | 15 min  |
 
 ### Phase 2: Externalize Strings
 
-| # | Area | ~String Count | Files Affected |
-|---|------|--------------|----------------|
-| 7 | Navigation labels | ~9 | `navigation.tsx` |
-| 8 | Dashboard page | ~25 | `dashboard/components/*.tsx` |
-| 9 | Bundles list & creation | ~60 | `bundles/components/*.tsx` |
-| 10 | Analytics page | ~30 | `analytics/components/*.tsx` |
-| 11 | Settings page | ~40 | `settings/components/*.tsx`, configs |
-| 12 | Common components | ~20 | `shared/components/*.tsx` |
-| 13 | Error/empty states | ~15 | Various |
-| 14 | Toast messages | ~20 | Various server actions |
+| #   | Area                    | ~String Count | Files Affected                       |
+| --- | ----------------------- | ------------- | ------------------------------------ |
+| 7   | Navigation labels       | ~9            | `navigation.tsx`                     |
+| 8   | Dashboard page          | ~25           | `dashboard/components/*.tsx`         |
+| 9   | Bundles list & creation | ~60           | `bundles/components/*.tsx`           |
+| 10  | Analytics page          | ~30           | `analytics/components/*.tsx`         |
+| 11  | Settings page           | ~40           | `settings/components/*.tsx`, configs |
+| 12  | Common components       | ~20           | `shared/components/*.tsx`            |
+| 13  | Error/empty states      | ~15           | Various                              |
+| 14  | Toast messages          | ~20           | Various server actions               |
 
 **Estimated total**: ~220 unique translatable strings
 
 ### Phase 3: Storefront Widget
 
-| # | File | Change |
-|---|------|--------|
-| 15 | `extension/.../locales/en.default.json` | Expand to cover all widget strings |
-| 16 | `extension/.../locales/fr.json` | French translations |
-| 17 | `extension/.../locales/de.json` | German translations |
-| 18 | `extension/.../blocks/app-block.liquid` | Replace hardcoded defaults with `| t` filter |
-| 19 | `extension/.../blocks/app-embed.liquid` | Replace hardcoded defaults with `| t` filter |
+| #   | File                                    | Change                             |
+| --- | --------------------------------------- | ---------------------------------- | --------- |
+| 15  | `extension/.../locales/en.default.json` | Expand to cover all widget strings |
+| 16  | `extension/.../locales/fr.json`         | French translations                |
+| 17  | `extension/.../locales/de.json`         | German translations                |
+| 18  | `extension/.../blocks/app-block.liquid` | Replace hardcoded defaults with `  | t` filter |
+| 19  | `extension/.../blocks/app-embed.liquid` | Replace hardcoded defaults with `  | t` filter |
 
 ### Phase 4: Locale-Aware Formatting
 
-| # | File | Line(s) | Change |
-|---|------|---------|--------|
-| 20 | `web/features/analytics/utils/date-range.ts` | 44, 231 | Replace hardcoded `"en-US"` with dynamic locale |
-| 21 | `web/shared/utils/formatters/currency.ts` | 31 | Pass merchant locale as default |
-| 22 | `web/shared/utils/formatters/number.ts` | 38 | Pass merchant locale as default |
+| #   | File                                         | Line(s) | Change                                          |
+| --- | -------------------------------------------- | ------- | ----------------------------------------------- |
+| 20  | `web/features/analytics/utils/date-range.ts` | 44, 231 | Replace hardcoded `"en-US"` with dynamic locale |
+| 21  | `web/shared/utils/formatters/currency.ts`    | 31      | Pass merchant locale as default                 |
+| 22  | `web/shared/utils/formatters/number.ts`      | 38      | Pass merchant locale as default                 |
 
 ### Phase 5: Shopify Function
 
-| # | File | Change |
-|---|------|--------|
-| 23 | `extension/.../radius-discount-function/shopify.extension.toml` | Use `t:name` / `t:description` |
-| 24 | `extension/.../radius-discount-function/locales/en.default.json` | Create |
-| 25 | `extension/.../radius-discount-function/locales/fr.json` | Create |
+| #   | File                                                             | Change                         |
+| --- | ---------------------------------------------------------------- | ------------------------------ |
+| 23  | `extension/.../radius-discount-function/shopify.extension.toml`  | Use `t:name` / `t:description` |
+| 24  | `extension/.../radius-discount-function/locales/en.default.json` | Create                         |
+| 25  | `extension/.../radius-discount-function/locales/fr.json`         | Create                         |
 
 ---
 
@@ -599,16 +613,16 @@ let discount_message = match locale.as_str() {
 
 ### For Admin App: `next-intl`
 
-| Criteria | next-intl | i18next + react-i18next |
-|----------|-----------|------------------------|
-| App Router support | ✅ Native | ⚠️ Requires adapter |
-| Server Components | ✅ Built-in | ⚠️ Limited |
-| Bundle size | ~2KB | ~15KB |
-| Type safety | ✅ Full | ⚠️ Plugin needed |
-| ICU message format | ✅ | ✅ |
-| Pluralization | ✅ | ✅ |
-| SSR hydration | ✅ Automatic | ⚠️ Manual setup |
-| Learning curve | Low | Medium |
+| Criteria           | next-intl    | i18next + react-i18next |
+| ------------------ | ------------ | ----------------------- |
+| App Router support | ✅ Native    | ⚠️ Requires adapter     |
+| Server Components  | ✅ Built-in  | ⚠️ Limited              |
+| Bundle size        | ~2KB         | ~15KB                   |
+| Type safety        | ✅ Full      | ⚠️ Plugin needed        |
+| ICU message format | ✅           | ✅                      |
+| Pluralization      | ✅           | ✅                      |
+| SSR hydration      | ✅ Automatic | ⚠️ Manual setup         |
+| Learning curve     | Low          | Medium                  |
 
 **Recommendation**: **`next-intl`** — it's purpose-built for Next.js App Router and keeps the bundle small.
 
@@ -624,32 +638,32 @@ Based on Shopify's guidance (European markets growing 3x faster than US, 5-7% of
 
 ### Tier 1 (Highest ROI)
 
-| Language | Code | Rationale |
-|----------|------|-----------|
-| English | `en` | Default |
-| French | `fr` | France, Canada, Belgium — strong Shopify market |
-| German | `de` | Germany, Austria, Switzerland — high purchasing power |
-| Spanish | `es` | Spain, Latin America — large addressable market |
+| Language | Code | Rationale                                             |
+| -------- | ---- | ----------------------------------------------------- |
+| English  | `en` | Default                                               |
+| French   | `fr` | France, Canada, Belgium — strong Shopify market       |
+| German   | `de` | Germany, Austria, Switzerland — high purchasing power |
+| Spanish  | `es` | Spain, Latin America — large addressable market       |
 
 ### Tier 2 (High Impact)
 
-| Language | Code | Rationale |
-|----------|------|-----------|
-| Japanese | `ja` | Japan is a priority Shopify market |
+| Language            | Code    | Rationale                             |
+| ------------------- | ------- | ------------------------------------- |
+| Japanese            | `ja`    | Japan is a priority Shopify market    |
 | Portuguese (Brazil) | `pt-BR` | Brazil is a growing e-commerce market |
-| Italian | `it` | Italy is a priority European market |
+| Italian             | `it`    | Italy is a priority European market   |
 
 ### Tier 3 (Expanded Reach)
 
-| Language | Code |
-|----------|------|
-| Dutch | `nl` |
-| Korean | `ko` |
+| Language           | Code    |
+| ------------------ | ------- |
+| Dutch              | `nl`    |
+| Korean             | `ko`    |
 | Chinese Simplified | `zh-CN` |
-| Swedish | `sv` |
-| Danish | `da` |
-| Polish | `pl` |
-| Turkish | `tr` |
+| Swedish            | `sv`    |
+| Danish             | `da`    |
+| Polish             | `pl`    |
+| Turkish            | `tr`    |
 
 ### Shopify Admin Supported Languages
 
@@ -662,43 +676,43 @@ Czech, Danish, Dutch, English, Finnish, French, German, Hindi, Italian, Japanese
 
 ### Blockers (Before App Store Launch)
 
-| # | Item | Effort | Impact |
-|---|------|--------|--------|
-| 1 | **Install `next-intl`** and set up infrastructure | 2 hrs | Enables all translation work |
-| 2 | **Create `en.json`** with all ~220 externalized strings | 4 hrs | Foundation for all languages |
-| 3 | **Detect merchant locale** from `shopify.config.locale` / `?locale=` param | 1 hr | App renders in correct language |
-| 4 | **Make `<html lang>` dynamic** in `layout.tsx` | 15 min | Accessibility, SEO |
-| 5 | **Replace hardcoded `"en-US"` in date/number formatters** | 30 min | Correct formatting for all locales |
+| #   | Item                                                                       | Effort | Impact                             |
+| --- | -------------------------------------------------------------------------- | ------ | ---------------------------------- |
+| 1   | **Install `next-intl`** and set up infrastructure                          | 2 hrs  | Enables all translation work       |
+| 2   | **Create `en.json`** with all ~220 externalized strings                    | 4 hrs  | Foundation for all languages       |
+| 3   | **Detect merchant locale** from `shopify.config.locale` / `?locale=` param | 1 hr   | App renders in correct language    |
+| 4   | **Make `<html lang>` dynamic** in `layout.tsx`                             | 15 min | Accessibility, SEO                 |
+| 5   | **Replace hardcoded `"en-US"` in date/number formatters**                  | 30 min | Correct formatting for all locales |
 
 ### High Priority (First Languages)
 
-| # | Item | Effort | Impact |
-|---|------|--------|--------|
-| 6 | **Externalize strings** in all admin components (~50 files) | 8 hrs | Prerequisite for any translation |
-| 7 | **Create `fr.json`** — French translation | 3 hrs | #1 non-English Shopify market |
-| 8 | **Create `de.json`** — German translation | 3 hrs | #2 non-English Shopify market |
-| 9 | **Create `es.json`** — Spanish translation | 3 hrs | Large addressable market |
-| 10 | **Expand storefront `en.default.json`** with all widget strings | 1 hr | Foundation for storefront i18n |
-| 11 | **Create storefront `fr.json`, `de.json`, `es.json`** | 2 hrs | Buyer-facing translations |
+| #   | Item                                                            | Effort | Impact                           |
+| --- | --------------------------------------------------------------- | ------ | -------------------------------- |
+| 6   | **Externalize strings** in all admin components (~50 files)     | 8 hrs  | Prerequisite for any translation |
+| 7   | **Create `fr.json`** — French translation                       | 3 hrs  | #1 non-English Shopify market    |
+| 8   | **Create `de.json`** — German translation                       | 3 hrs  | #2 non-English Shopify market    |
+| 9   | **Create `es.json`** — Spanish translation                      | 3 hrs  | Large addressable market         |
+| 10  | **Expand storefront `en.default.json`** with all widget strings | 1 hr   | Foundation for storefront i18n   |
+| 11  | **Create storefront `fr.json`, `de.json`, `es.json`**           | 2 hrs  | Buyer-facing translations        |
 
 ### Medium Priority
 
-| # | Item | Effort |
-|---|------|--------|
-| 12 | Localize Shopify Function name/description | 1 hr |
-| 13 | Add Tier 2 languages (ja, pt-BR, it) | 9 hrs |
-| 14 | Use pseudolocalization to test UI text expansion | 2 hrs |
-| 15 | Translate App Store listing (6 languages) | 6 hrs |
+| #   | Item                                             | Effort |
+| --- | ------------------------------------------------ | ------ |
+| 12  | Localize Shopify Function name/description       | 1 hr   |
+| 13  | Add Tier 2 languages (ja, pt-BR, it)             | 9 hrs  |
+| 14  | Use pseudolocalization to test UI text expansion | 2 hrs  |
+| 15  | Translate App Store listing (6 languages)        | 6 hrs  |
 
 ### Recommended (Post-Launch)
 
-| # | Item |
-|---|------|
-| 16 | Add Tier 3 languages |
-| 17 | Machine translation pipeline with human review |
-| 18 | Store merchant locale preference in DB for server-side rendering |
-| 19 | Crowdin or similar TMS (Translation Management System) integration |
-| 20 | Pseudolocalization CI check for untranslated strings |
+| #   | Item                                                               |
+| --- | ------------------------------------------------------------------ |
+| 16  | Add Tier 3 languages                                               |
+| 17  | Machine translation pipeline with human review                     |
+| 18  | Store merchant locale preference in DB for server-side rendering   |
+| 19  | Crowdin or similar TMS (Translation Management System) integration |
+| 20  | Pseudolocalization CI check for untranslated strings               |
 
 ---
 

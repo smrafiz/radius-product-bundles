@@ -82,7 +82,9 @@ export async function createBundleService(
                 message: preflight.quota.reason || "Bundle limit reached",
                 errors: {
                     general: {
-                        _errors: [preflight.quota.reason || "Bundle limit reached"],
+                        _errors: [
+                            preflight.quota.reason || "Bundle limit reached",
+                        ],
                     },
                 },
                 bundle: null,
@@ -251,7 +253,11 @@ export async function updateBundleService(
         const [preflight, bundle] = await Promise.all([
             fetchBundlePreflight(shop),
             passedBundle
-                ? Promise.resolve(passedBundle as Awaited<ReturnType<typeof findBundleByIdWithAllRelations>>)
+                ? Promise.resolve(
+                      passedBundle as Awaited<
+                          ReturnType<typeof findBundleByIdWithAllRelations>
+                      >,
+                  )
                 : findBundleByIdWithAllRelations(bundleId, shop),
         ]);
 
