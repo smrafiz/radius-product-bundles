@@ -8,7 +8,6 @@ const nextConfig = {
     env: {
         NEXT_PUBLIC_HOST: process.env.HOST,
         NEXT_PUBLIC_SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY,
-        NEXT_PUBLIC_SHOP: process.env.NEXT_PUBLIC_SHOP,
     },
     images: {
         remotePatterns: [
@@ -67,14 +66,6 @@ const nextConfig = {
                         value: "max-age=63072000; includeSubDomains; preload",
                     },
                 ],
-            },
-        ];
-    },
-    async rewrites() {
-        return [
-            {
-                source: "/apps/bundle-api/:path*",
-                destination: "/api/bundle-api/:path*", // Next.js API route
             },
         ];
     },

@@ -7,7 +7,7 @@ export function detectShop(
     request?: NextRequest,
     searchParams?: URLSearchParams,
 ): string {
-    // 1️⃣ Query param
+    // Query param
     if (searchParams) {
         const shopParam = searchParams.get("shop");
 
@@ -16,7 +16,7 @@ export function detectShop(
         }
     }
 
-    // 2️⃣ Cookies
+    // Cookies
     if (request) {
         const shopCookie = request.cookies.get("shopify-shop")?.value;
 
@@ -34,12 +34,7 @@ export function detectShop(
         }
     }
 
-    // 3️⃣ Environment variable (frontend-safe fallback)
-    if (process.env.NEXT_PUBLIC_SHOP) {
-        return process.env.NEXT_PUBLIC_SHOP;
-    }
-
-    // 4️⃣ Fallback
+    // Fallback
     return "*.myshopify.com";
 }
 
