@@ -31,19 +31,17 @@ function createPrismaClient(): PrismaClient {
                 : [{ level: "error", emit: "event" }],
     });
 
-    // dd custom error handler to filter out P2002 (unique constraint) errors
-    client.$on("error", (e) => {
-        // Suppress unique constraint violation errors
-        if (
-            e.message.includes("P2002") ||
-            e.message.includes("Unique constraint")
-        ) {
-            return;
-        }
-
-        // Log all other errors
-        console.error("[Prisma Error]", e.message);
-    });
+    if (process.env.NODE_ENV === "development") {
+        client.$on("error", (e) => {
+            if (
+                e.message.includes("P2002") ||
+                e.message.includes("Unique constraint")
+            ) {
+                return;
+            }
+            console.error("[Prisma Error]", e.message);
+        });
+    }
 
     return client;
 }

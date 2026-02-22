@@ -135,6 +135,7 @@ export interface UpdateBundleInputWithRelations {
         allowBackorders?: boolean;
         [key: string]: any;
     } | null;
+    nameChanged?: boolean;
 }
 
 /*

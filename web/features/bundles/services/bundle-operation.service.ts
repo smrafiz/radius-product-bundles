@@ -6,7 +6,98 @@ import {
     ValidationResult,
 } from "@/features/bundles";
 import { getShop } from "@/shared/repositories";
+import { getShopWithLimits } from "@/shared/repositories/shop.queries";
 import { performSecurityChecks } from "@/features/bundles/services";
+import {
+    countBundlesByShop,
+    countRecentBundles,
+    getBundleActivity,
+} from "@/features/bundles/repositories";
+
+export interface PreflightResult {
+    security: { success: boolean; message?: string; errors?: Record<string, { _errors: string[] }> };
+    context: BundleOperationContext;
+    quota: { allowed: boolean; reason?: string; current?: number; limit?: number };
+}
+
+/**
+ * Runs security checks, shop context fetch, and quota check in parallel.
+ * Replaces sequential checkBundleSecurity → fetchOperationContext → canCreateBundle.
+ */
+export async function fetchBundlePreflight(shop: string): Promise<PreflightResult> {
+    const oneHourAgo = new Date(Date.now() - 3600000);
+
+    const [shopData, recentCount, activity, bundleCount] = await Promise.all([
+        getShopWithLimits(shop),
+        countRecentBundles(shop, oneHourAgo),
+        getBundleActivity(shop, 24),
+        countBundlesByShop(shop),
+    ]);
+
+    const appSettings = shopData?.appSettings || null;
+    const makeContext = (): BundleOperationContext => ({
+        shopSettings: { appSettings },
+    });
+
+    // Evaluate rate limit
+    const maxPerHour = 10;
+    if (recentCount >= maxPerHour) {
+        return {
+            security: {
+                success: false,
+                message: `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour. Please try again later.`,
+                errors: { security: { _errors: [`Rate limit exceeded. Maximum ${maxPerHour} bundles per hour.`] } },
+            },
+            context: makeContext(),
+            quota: { allowed: false },
+        };
+    }
+
+    // Evaluate shop status
+    const status = shopData?.status;
+    if (status === "SUSPENDED" || status === "TRIAL_EXPIRED" || status === "NOT_CONFIGURED") {
+        const messages: Record<string, string> = {
+            SUSPENDED: "Shop account is suspended. Please contact support for assistance.",
+            TRIAL_EXPIRED: "Trial period has expired. Please upgrade your plan.",
+            NOT_CONFIGURED: "Shop is not properly configured. Please complete setup.",
+        };
+        return {
+            security: {
+                success: false,
+                message: messages[status],
+                errors: { security: { _errors: [messages[status]] } },
+            },
+            context: makeContext(),
+            quota: { allowed: false },
+        };
+    }
+
+    // Evaluate abuse detection
+    const EXCESSIVE_CREATION_THRESHOLD = 50;
+    if (activity.created > EXCESSIVE_CREATION_THRESHOLD) {
+        return {
+            security: {
+                success: false,
+                message: `Excessive bundle creation detected (${activity.created} in 24h)`,
+                errors: { security: { _errors: [`Excessive bundle creation detected (${activity.created} in 24h)`] } },
+            },
+            context: makeContext(),
+            quota: { allowed: false },
+        };
+    }
+
+    // Evaluate quota
+    const maxBundles = appSettings?.maxBundlesPerShop;
+    const quotaExceeded = maxBundles && bundleCount >= maxBundles;
+
+    return {
+        security: { success: true },
+        context: makeContext(),
+        quota: quotaExceeded
+            ? { allowed: false, reason: `Shop has reached maximum bundle limit (${maxBundles})`, current: bundleCount, limit: maxBundles }
+            : { allowed: true, current: bundleCount, limit: maxBundles ?? undefined },
+    };
+}
 
 /**
  * Perform security checks (rate limit, abuse, shop status)
@@ -16,13 +107,9 @@ export async function checkBundleSecurity(shop: string): Promise<{
     message?: string;
     errors?: Record<string, { _errors: string[] }>;
 }> {
-    console.log("[Shared] Performing security checks...");
-
     const securityCheck = await performSecurityChecks(shop);
 
     if (!securityCheck.passed) {
-        console.log(`[Shared] Security check failed: ${securityCheck.reason}`);
-
         return {
             success: false,
             message: securityCheck.reason || "Security check failed",
@@ -34,7 +121,6 @@ export async function checkBundleSecurity(shop: string): Promise<{
         };
     }
 
-    console.log("[Shared] ✓ Security checks passed");
     return { success: true };
 }
 
@@ -44,22 +130,11 @@ export async function checkBundleSecurity(shop: string): Promise<{
 export async function fetchOperationContext(
     shop: string,
 ): Promise<BundleOperationContext> {
-    console.log("[Shared] Fetching shop settings...");
-
     const shopData = await getShop(shop);
 
-    // Ensure we return an object that matches the expected type
     const shopSettings = {
         appSettings: shopData?.appSettings || null,
     };
-
-    if (shopSettings.appSettings?.maxBundleProducts !== undefined) {
-        console.log(
-            `[Service] Shop settings loaded: maxProducts=${shopSettings.appSettings.maxBundleProducts}`,
-        );
-    } else {
-        console.log("[Service] No shop settings found, using defaults");
-    }
 
     return { shopSettings };
 }

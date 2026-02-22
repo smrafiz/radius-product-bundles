@@ -25,7 +25,6 @@ export function settingsQueries(app: ReturnType<typeof useAppBridge>) {
                 staleTime: 5 * 60 * 1000,
                 gcTime: 10 * 60 * 1000,
                 refetchOnWindowFocus: false,
-                refetchOnMount: true,
                 retry: 2,
             }),
     };

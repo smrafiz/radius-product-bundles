@@ -55,6 +55,7 @@ export const useBundleStore = create(
         hasLoadedProduct: false,
         hasManuallyEditedTitle: false,
         isDirty: false,
+        savedProductSnapshot: null,
 
         markDirty: () =>
             set((state) => {
@@ -395,6 +396,12 @@ export const useBundleStore = create(
             });
         },
 
+        setSavedProductSnapshot: (snapshot) => {
+            set((state) => {
+                state.savedProductSnapshot = snapshot;
+            });
+        },
+
         setHasLoadedProduct: (loaded: boolean) => {
             set((state) => {
                 state.hasLoadedProduct = loaded;
@@ -615,6 +622,7 @@ export const useBundleStore = create(
                 state.hasLoadedProduct = false;
                 state.hasManuallyEditedTitle = false;
                 state.isDirty = false;
+                state.savedProductSnapshot = null;
             });
         },
 

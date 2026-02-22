@@ -143,7 +143,15 @@ export async function createBundleProductGroups(
  */
 export async function createBundleWithRelations(data: CreateBundleInput) {
     return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        // Step 1: Create the bundle
+        // Check name uniqueness inside transaction (prevents TOCTOU race)
+        const existing = await tx.bundle.findFirst({
+            where: { shop: data.shop, name: data.name, status: { not: "DELETED" as const } },
+            select: { id: true },
+        });
+        if (existing) {
+            throw new Error(`A bundle with the name "${data.name}" already exists`);
+        }
+
         const bundle = await createBundle(tx, data);
 
         // Step 2: Create bundle products
@@ -164,6 +172,100 @@ export async function createBundleWithRelations(data: CreateBundleInput) {
         // Step 5: Return the bundle with all relations
         return await findBundleByIdWithAllRelations(bundle.id, data.shop, tx);
     });
+}
+
+/**
+ * Diff-based product update: compare existing vs new products,
+ * delete removed, update changed, create new.
+ */
+async function diffUpdateProducts(
+    tx: Prisma.TransactionClient,
+    bundleId: string,
+    newProducts: Array<{
+        productId: string;
+        variantId?: string | null;
+        quantity: number;
+        role?: string;
+        displayOrder?: number;
+    }>,
+) {
+    const existing = await tx.bundleProduct.findMany({
+        where: { bundleId },
+        select: {
+            id: true,
+            productId: true,
+            variantId: true,
+            quantity: true,
+            role: true,
+            displayOrder: true,
+        },
+    });
+
+    const makeKey = (p: { productId: string; variantId?: string | null; role?: string }) =>
+        `${p.productId}:${p.variantId || ""}:${p.role || "INCLUDED"}`;
+
+    const existingMap = new Map(existing.map((p) => [makeKey(p), p]));
+    const newMap = new Map(
+        newProducts.map((p, i) => [
+            makeKey(p),
+            { ...p, displayOrder: p.displayOrder ?? i },
+        ]),
+    );
+
+    // Products to delete: in existing but not in new
+    const toDelete = existing.filter((p) => !newMap.has(makeKey(p)));
+
+    // Products to create: in new but not in existing
+    const toCreate = newProducts
+        .map((p, i) => ({ ...p, displayOrder: p.displayOrder ?? i }))
+        .filter((p) => !existingMap.has(makeKey(p)));
+
+    // Products to update: in both, but fields changed
+    const toUpdate: Array<{ id: string; quantity: number; displayOrder: number }> = [];
+    for (const [key, newP] of newMap) {
+        const existP = existingMap.get(key);
+        if (existP && (existP.quantity !== newP.quantity || existP.displayOrder !== newP.displayOrder)) {
+            toUpdate.push({ id: existP.id, quantity: newP.quantity, displayOrder: newP.displayOrder });
+        }
+    }
+
+    const ops: Promise<unknown>[] = [];
+
+    if (toDelete.length > 0) {
+        ops.push(
+            tx.bundleProduct.deleteMany({
+                where: { id: { in: toDelete.map((p) => p.id) } },
+            }),
+        );
+    }
+
+    if (toCreate.length > 0) {
+        ops.push(
+            tx.bundleProduct.createMany({
+                data: toCreate.map((p) => ({
+                    bundleId,
+                    productId: p.productId,
+                    variantId: p.variantId || null,
+                    quantity: p.quantity,
+                    role: (p.role as BundleProductRole) || "INCLUDED",
+                    displayOrder: p.displayOrder,
+                })),
+            }),
+        );
+    }
+
+    for (const u of toUpdate) {
+        ops.push(
+            tx.bundleProduct.update({
+                where: { id: u.id },
+                data: { quantity: u.quantity, displayOrder: u.displayOrder },
+            }),
+        );
+    }
+
+    if (ops.length > 0) {
+        await Promise.all(ops);
+    }
 }
 
 // ==========================================
@@ -191,6 +293,22 @@ export async function updateBundleWithRelations(
     data: UpdateBundleInputWithRelations,
 ) {
     return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        // Check name uniqueness inside transaction (prevents TOCTOU race)
+        if (data.nameChanged) {
+            const existing = await tx.bundle.findFirst({
+                where: {
+                    shop: data.shop,
+                    name: data.name,
+                    id: { not: data.bundleId },
+                    status: { not: "DELETED" as const },
+                },
+                select: { id: true },
+            });
+            if (existing) {
+                throw new Error(`A bundle with the name "${data.name}" already exists`);
+            }
+        }
+
         await updateBundleById(tx, data.bundleId, {
             name: data.name,
             description: data.description,
@@ -211,13 +329,8 @@ export async function updateBundleWithRelations(
             images: data.images || [],
         });
 
-        // Delete all existing products
-        await deleteBundleProducts(tx, data.bundleId);
-
-        // Create new products (if any)
-        if (data.products?.length) {
-            await createBundleProducts(tx, data.bundleId, data.products);
-        }
+        // Diff-based product update: only delete removed, create new, update changed
+        await diffUpdateProducts(tx, data.bundleId, data.products || []);
 
         await deleteBundleProductGroups(tx, data.bundleId);
 
@@ -230,19 +343,11 @@ export async function updateBundleWithRelations(
         }
 
         if (data.settings) {
-            const existingSettings = await tx.bundleSettings.findUnique({
+            await tx.bundleSettings.upsert({
                 where: { bundleId: data.bundleId },
+                update: data.settings as Prisma.BundleSettingsUpdateInput,
+                create: { bundleId: data.bundleId, ...data.settings },
             });
-
-            if (existingSettings) {
-                await updateBundleSettings(
-                    tx,
-                    data.bundleId,
-                    data.settings as Prisma.BundleSettingsUpdateInput,
-                );
-            } else {
-                await createBundleSettings(tx, data.bundleId, data.settings);
-            }
         } else {
             await deleteBundleSettings(tx, data.bundleId);
         }

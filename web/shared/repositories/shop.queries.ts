@@ -31,6 +31,25 @@ export async function getShop(domain: string) {
 }
 
 /**
+ * Gets shop with only the fields needed for bundle operation limits
+ */
+export async function getShopWithLimits(domain: string) {
+    return prisma.shop.findUnique({
+        where: { domain },
+        select: {
+            id: true,
+            status: true,
+            appSettings: {
+                select: {
+                    maxBundleProducts: true,
+                    maxBundlesPerShop: true,
+                },
+            },
+        },
+    });
+}
+
+/**
  * Gets shop status
  */
 export async function getShopStatus(domain: string) {

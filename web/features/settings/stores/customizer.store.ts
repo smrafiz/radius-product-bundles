@@ -7,11 +7,8 @@ import {
     STYLE_PRESETS,
 } from "@/features/settings/constants/defaults.constants";
 
-/**
- * Deep clones an object to prevent mutation.
- */
 function deepClone<T>(obj: T): T {
-    return JSON.parse(JSON.stringify(obj));
+    return structuredClone(obj);
 }
 
 /**

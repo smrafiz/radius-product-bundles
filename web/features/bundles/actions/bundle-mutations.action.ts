@@ -10,7 +10,7 @@
 import {
     addBundleIdToProducts,
     removeBundleIdFromProducts,
-    syncAllSettingsToMetafields,
+    syncActiveBundlesToMetafield,
     syncBundleProductMetafields,
 } from "@/lib";
 import {
@@ -98,7 +98,7 @@ export async function updateBundleStatusAction(
         }
 
         // Sync metafields so storefront reflects the status change
-        await syncAllSettingsToMetafields(sessionToken, shop);
+        await syncActiveBundlesToMetafield(sessionToken, shop);
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
@@ -167,7 +167,7 @@ export async function bulkToggleBundleStatusAction(
             );
         }
 
-        await syncAllSettingsToMetafields(sessionToken, shop);
+        await syncActiveBundlesToMetafield(sessionToken, shop);
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
@@ -215,8 +215,7 @@ export async function deleteBundleAction(
             bundleId,
             shop,
         });
-        // await syncActiveBundlesToMetafield(sessionToken, shop);
-        await syncAllSettingsToMetafields(sessionToken, shop);
+        await syncActiveBundlesToMetafield(sessionToken, shop);
 
         // Remove bundle ID from product metafields
         if (productIds.length > 0) {
@@ -312,7 +311,7 @@ export async function deleteBundlesAction(
         const result = await deleteMultipleBundles({ bundleIds, shop });
 
         await Promise.allSettled([
-            syncAllSettingsToMetafields(sessionToken, shop),
+            syncActiveBundlesToMetafield(sessionToken, shop),
             ...[...bundleProductMap.entries()].map(([bundleId, productIds]) =>
                 removeBundleIdFromProducts(sessionToken, bundleId, productIds),
             ),
@@ -535,7 +534,7 @@ export async function createBundleAction(
         }
 
         await Promise.allSettled([
-            syncAllSettingsToMetafields(sessionToken, shop),
+            syncActiveBundlesToMetafield(sessionToken, shop),
             allProductIds.length > 0 && result.bundle?.id
                 ? addBundleIdToProducts(
                       sessionToken,
@@ -648,6 +647,7 @@ export async function updateBundleAction(
             shop,
             bundleId,
             data: schemaValidation.data,
+            existingBundle,
         });
 
         if (!result.success) {
@@ -676,7 +676,7 @@ export async function updateBundleAction(
             : newProductIds;
 
         await Promise.allSettled([
-            syncAllSettingsToMetafields(sessionToken, shop),
+            syncActiveBundlesToMetafield(sessionToken, shop),
             syncBundleProductMetafields(
                 sessionToken,
                 bundleId,

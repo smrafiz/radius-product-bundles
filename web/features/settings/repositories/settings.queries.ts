@@ -38,7 +38,7 @@ export async function findSettingsByShopDomain(
 }
 
 /**
- * Find shop by domain
+ * Find shop by domain (returns only id for FK lookups)
  */
 export async function findShopByDomain(
     domain: string,
@@ -47,6 +47,7 @@ export async function findShopByDomain(
     const client = tx || prisma;
     return client.shop.findUnique({
         where: { domain },
+        select: { id: true },
     });
 }
 

@@ -97,12 +97,24 @@ export interface BundleListingState {
     toggleAllSelection: (allIds: string[]) => void;
 }
 
+export interface ProductSnapshot {
+    title: string;
+    description: string;
+    status: string;
+    discountType: string;
+    discountValue: number;
+    maxDiscountAmount?: number | null;
+    productIds: string[];
+}
+
 export interface BundleState {
     totalSteps: number;
     currentStep: number;
     previousStep: number;
     bundleData: Partial<ExtendedBundleFormData>;
     selectedItems: SelectedItem[];
+    savedProductSnapshot: ProductSnapshot | null;
+    setSavedProductSnapshot: (snapshot: ProductSnapshot) => void;
     displaySettings: DisplaySettings;
     configuration: BundleConfiguration;
     isLoading: boolean;

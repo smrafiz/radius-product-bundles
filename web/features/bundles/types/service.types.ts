@@ -262,6 +262,7 @@ export interface UpdateBundleServiceInput {
     shop: string;
     bundleId: string;
     data: BundleFormData;
+    existingBundle?: unknown;
 }
 
 /*

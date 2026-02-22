@@ -108,6 +108,7 @@ model Bundle {
 
     @@unique([shop, name])
     @@index([shop, status, type])
+    @@index([shop, createdAt])
     @@index([mainProductId])
     @@index([status, startDate])
     @@index([status, endDate])
@@ -135,6 +136,7 @@ model BundleProduct {
 
     @@unique([bundleId, productId, variantId, role])
     @@index([bundleId, role])
+    @@index([bundleId, displayOrder])
     @@index([productId])
     @@map("bundle_products")
 }

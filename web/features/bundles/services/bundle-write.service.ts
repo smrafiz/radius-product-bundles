@@ -20,9 +20,7 @@ import {
     UpdateBundleStatusResult,
 } from "@/features/bundles";
 import {
-    canCreateBundle,
-    checkBundleSecurity,
-    fetchOperationContext,
+    fetchBundlePreflight,
     handleBundleOperationError,
     transformBundle,
     transformBundleForDuplication,
@@ -30,7 +28,6 @@ import {
 } from "@/features/bundles/services";
 import {
     bulkUpdateBundleStatuses,
-    checkNameConflict,
     createBundleWithRelations,
     deleteBundlesWithRelations,
     deleteBundleWithRelations,
@@ -52,27 +49,20 @@ export async function createBundleService(
 ): Promise<CreateBundleServiceResponse> {
     const { shop, data } = input;
 
-    console.log(
-        `[createBundleService] Starting bundle creation for shop: ${shop}`,
-    );
     try {
-        // Perform security checks
-        const securityResult = await checkBundleSecurity(shop);
+        // Run all preflight checks in parallel (security + context + quota)
+        const preflight = await fetchBundlePreflight(shop);
 
-        if (!securityResult.success) {
+        if (!preflight.security.success) {
             return {
                 success: false,
-                message: securityResult.message || "Security check failed",
-                errors: securityResult.errors || null,
+                message: preflight.security.message || "Security check failed",
+                errors: preflight.security.errors || null,
                 bundle: null,
             };
         }
 
-        // Fetch shop settings for validation context
-        const context = await fetchOperationContext(shop);
-
-        // Validate bundle data (security and business rules)
-        const validationResult = validateBundleData(data, context);
+        const validationResult = validateBundleData(data, preflight.context);
 
         if (!validationResult.success) {
             const errors = formatValidationErrorsAsString(
@@ -86,38 +76,13 @@ export async function createBundleService(
             };
         }
 
-        const quotaCheck = await canCreateBundle(shop);
-
-        if (!quotaCheck.allowed) {
-            console.log(
-                `[Service] ✗ Bundle limit reached: ${quotaCheck.current}/${quotaCheck.limit}`,
-            );
-
+        if (!preflight.quota.allowed) {
             return {
                 success: false,
-                message: quotaCheck.reason || "Bundle limit reached",
+                message: preflight.quota.reason || "Bundle limit reached",
                 errors: {
                     general: {
-                        _errors: [quotaCheck.reason || "Bundle limit reached"],
-                    },
-                },
-                bundle: null,
-            };
-        }
-
-        const nameExists = await checkNameConflict(shop, data.name);
-
-        if (nameExists) {
-            console.log(`[Service] ✗ Bundle name already exists: ${data.name}`);
-
-            return {
-                success: false,
-                message: `A bundle with the name "${data.name}" already exists`,
-                errors: {
-                    name: {
-                        _errors: [
-                            `A bundle with the name "${data.name}" already exists`,
-                        ],
+                        _errors: [preflight.quota.reason || "Bundle limit reached"],
                     },
                 },
                 bundle: null,
@@ -131,8 +96,6 @@ export async function createBundleService(
         });
 
         if (!bundle) {
-            console.error("[Service] ✗ Failed to create bundle");
-
             return {
                 success: false,
                 message: "Failed to create bundle in database",
@@ -281,31 +244,27 @@ export async function bulkDraftBundlesService(input: {
 export async function updateBundleService(
     input: UpdateBundleServiceInput,
 ): Promise<UpdateBundleServiceResponse> {
-    const { shop, bundleId, data } = input;
-
-    console.log(`[Update] Updating bundle: ${bundleId} for shop: ${shop}`);
-    console.log(`[Update] Bundle name: ${data.name}`);
-    console.log(`[Update] Bundle type: ${data.type}`);
+    const { shop, bundleId, data, existingBundle: passedBundle } = input;
 
     try {
-        // Perform security checks
-        const securityResult = await checkBundleSecurity(shop);
+        // Run security + context in parallel, reuse existing bundle if passed
+        const [preflight, bundle] = await Promise.all([
+            fetchBundlePreflight(shop),
+            passedBundle
+                ? Promise.resolve(passedBundle as Awaited<ReturnType<typeof findBundleByIdWithAllRelations>>)
+                : findBundleByIdWithAllRelations(bundleId, shop),
+        ]);
 
-        if (!securityResult.success) {
+        if (!preflight.security.success) {
             return {
                 success: false,
-                message: securityResult.message || "Security check failed",
-                errors: securityResult.errors || null,
+                message: preflight.security.message || "Security check failed",
+                errors: preflight.security.errors || null,
                 bundle: null,
             };
         }
 
-        // Verify bundle ownership
-        const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
-
         if (!bundle) {
-            console.log(`[Update] ✗ Bundle not found or access denied`);
-
             return {
                 success: false,
                 message:
@@ -319,13 +278,7 @@ export async function updateBundleService(
             };
         }
 
-        console.log("[Update] ✓ Bundle ownership verified");
-
-        // Fetch shop settings for validation context
-        const context = await fetchOperationContext(shop);
-
-        // Validate bundle data (security and business rules)
-        const validationResult = validateBundleData(data, context);
+        const validationResult = validateBundleData(data, preflight.context);
 
         if (!validationResult.success) {
             const errors = formatValidationErrorsAsString(
@@ -339,49 +292,14 @@ export async function updateBundleService(
             };
         }
 
-        console.log("[Update] Step 5: Checking for name conflicts...");
-
-        // Check if the new name conflicts with an existing bundle
-        if (data.name !== bundle.name) {
-            const nameExists = await checkNameConflict(shop, data.name);
-
-            if (nameExists) {
-                console.log(
-                    `[Update] ✗ Bundle name already exists: ${data.name}`,
-                );
-
-                return {
-                    success: false,
-                    message: `A bundle with the name "${data.name}" already exists`,
-                    errors: {
-                        name: {
-                            _errors: [
-                                `A bundle with the name "${data.name}" already exists`,
-                            ],
-                        },
-                    },
-                    bundle: null,
-                };
-            }
-
-            console.log("[Update] ✓ Name is unique");
-        } else {
-            console.log("[Update] ✓ Name unchanged, skipping conflict check");
-        }
-
-        console.log("[Update] Step 6: Updating bundle in database...");
-        console.log(`[Update] Updating with ${data.products.length} products`);
-
-        // Update bundle with relations (via repository)
         const updatedBundle = await updateBundleWithRelations({
             bundleId,
             shop,
             ...data,
+            nameChanged: data.name !== bundle.name,
         });
 
         if (!updatedBundle) {
-            console.error("[Update] ✗ Failed to update bundle");
-
             return {
                 success: false,
                 message: "Failed to update bundle in database",
@@ -393,10 +311,6 @@ export async function updateBundleService(
                 bundle: null,
             };
         }
-
-        console.log(
-            `[Update] ✓ Bundle updated successfully: ${updatedBundle.id}`,
-        );
 
         const transformedBundle = transformBundle(updatedBundle);
 

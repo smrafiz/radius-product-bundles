@@ -485,7 +485,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         );
                     }
 
-                    // Update existing Shopify product title/price/status
+                    // Update existing Shopify product title/price/status (skip if unchanged)
                     if (
                         result.status === "success" &&
                         currentMainProductId &&
@@ -496,28 +496,80 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         const { bundlePrice, originalPrice } =
                             calculateBundlePricing(data);
 
-                        console.log("Updating Shopify product...");
+                        const snapshot =
+                            useBundleStore.getState().savedProductSnapshot;
+                        const currentProductIds = data.products
+                            .map((p) => p.productId)
+                            .sort();
+                        // productTitle/productDescription live in React Hook Form (set via setValue in useBundleProduct)
+                        const currentTitle = data.productTitle ?? data.name ?? "";
+                        const currentDescription = data.productDescription ?? "";
+                        // Debug: log each field comparison
+                        console.log("[ProductSync] Snapshot comparison:", {
+                            hasSnapshot: !!snapshot,
+                            title: { snapshot: snapshot?.title, current: currentTitle, match: snapshot?.title === currentTitle },
+                            description: { snapshot: snapshot?.description, current: currentDescription, match: snapshot?.description === currentDescription },
+                            status: { snapshot: snapshot?.status, current: data.status || "DRAFT", match: snapshot?.status === (data.status || "DRAFT") },
+                            discountType: { snapshot: snapshot?.discountType, current: data.discountType || "PERCENTAGE", match: snapshot?.discountType === (data.discountType || "PERCENTAGE") },
+                            discountValue: { snapshot: snapshot?.discountValue, current: data.discountValue ?? 0, match: snapshot?.discountValue === (data.discountValue ?? 0) },
+                            maxDiscountAmount: { snapshot: snapshot?.maxDiscountAmount, current: data.maxDiscountAmount, snapshotNorm: snapshot?.maxDiscountAmount ?? null, currentNorm: data.maxDiscountAmount ?? null, match: (snapshot?.maxDiscountAmount ?? null) === (data.maxDiscountAmount ?? null) },
+                            productIds: { snapshot: snapshot?.productIds?.join(","), current: currentProductIds.join(","), match: snapshot?.productIds?.join(",") === currentProductIds.join(",") },
+                        });
 
-                        const productResult = await updateBundleProductAction(
-                            token,
-                            {
-                                productId: currentMainProductId,
-                                variantId: currentMainVariantId,
-                                title: data.productTitle,
-                                description: data.productDescription,
-                                status: data.status as BundleStatus,
-                                bundlePrice,
-                                originalPrice,
-                            },
-                        );
+                        const hasProductChanges =
+                            !snapshot ||
+                            snapshot.title !== currentTitle ||
+                            snapshot.description !== currentDescription ||
+                            snapshot.status !== (data.status || "DRAFT") ||
+                            snapshot.discountType !==
+                                (data.discountType || "PERCENTAGE") ||
+                            snapshot.discountValue !==
+                                (data.discountValue ?? 0) ||
+                            (snapshot.maxDiscountAmount ?? null) !==
+                                (data.maxDiscountAmount ?? null) ||
+                            snapshot.productIds.join(",") !==
+                                currentProductIds.join(",");
 
-                        if (productResult.status === "error") {
-                            console.error(
-                                "Failed to update product:",
-                                productResult.message,
-                            );
+                        if (hasProductChanges) {
+                            console.log("[ProductSync] Changes detected, updating Shopify product...");
+
+                            const productResult =
+                                await updateBundleProductAction(token, {
+                                    productId: currentMainProductId,
+                                    variantId: currentMainVariantId,
+                                    title: currentTitle,
+                                    description: currentDescription,
+                                    status: data.status as BundleStatus,
+                                    bundlePrice,
+                                    originalPrice,
+                                });
+
+                            if (productResult.status === "error") {
+                                console.error(
+                                    "Failed to update product:",
+                                    productResult.message,
+                                );
+                            } else {
+                                // Update snapshot after successful sync
+                                useBundleStore
+                                    .getState()
+                                    .setSavedProductSnapshot({
+                                        title: currentTitle,
+                                        description: currentDescription,
+                                        status: data.status || "DRAFT",
+                                        discountType:
+                                            data.discountType || "PERCENTAGE",
+                                        discountValue:
+                                            data.discountValue ?? 0,
+                                        maxDiscountAmount:
+                                            data.maxDiscountAmount ?? null,
+                                        productIds: currentProductIds,
+                                    });
+                            }
                         } else {
-                            console.log("✅ Product updated");
+                            console.log(
+                                "Skipping Shopify product update (no changes)",
+                            );
                         }
                     }
                 } else {

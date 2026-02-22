@@ -7,10 +7,26 @@ import { useBundleStore } from "@/features/bundles";
  * Hook to sync query data to Zustand store
  */
 export function useBundleDataSync(bundleData: any | undefined) {
-    const { setBundleData } = useBundleStore();
+    const { setBundleData, setSavedProductSnapshot } = useBundleStore();
 
     useEffect(() => {
         if (bundleData) {
+            // Snapshot product-relevant fields for skip-if-unchanged optimization
+            if (bundleData.mainProductId) {
+                // Preserve Shopify-sourced title/description if already loaded;
+                // only use bundleData.name as provisional fallback on first load.
+                const existing = useBundleStore.getState().savedProductSnapshot;
+                setSavedProductSnapshot({
+                    title: existing ? existing.title : (bundleData.name || ""),
+                    description: existing ? existing.description : (bundleData.description || ""),
+                    status: bundleData.status || "DRAFT",
+                    discountType: bundleData.discountType || "PERCENTAGE",
+                    discountValue: bundleData.discountValue ?? 0,
+                    maxDiscountAmount: bundleData.maxDiscountAmount ?? null,
+                    productIds: (bundleData.products || []).map((p: any) => p.id).sort(),
+                });
+            }
+
             setBundleData({
                 id: bundleData.id,
                 name: bundleData.name,

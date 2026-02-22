@@ -98,6 +98,16 @@ export function useBundleProduct(mode: "create" | "edit") {
                             },
                         );
 
+                        // Update snapshot with actual Shopify product title/description
+                        const { savedProductSnapshot, setSavedProductSnapshot } = useBundleStore.getState();
+                        if (savedProductSnapshot) {
+                            setSavedProductSnapshot({
+                                ...savedProductSnapshot,
+                                title: product.title || "",
+                                description: product.descriptionHtml || "",
+                            });
+                        }
+
                         if (product.media && product.media.length > 0) {
                             setExistingMedia(product.media);
                         }
