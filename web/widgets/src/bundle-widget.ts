@@ -1510,6 +1510,14 @@ declare global {
             if (structure && this.bundle?.products) {
                 const products = this.bundle.products;
 
+                // Check if discount applies to this specific product
+                const applyToSpecific =
+                    structure.discountApplication === "products";
+                const shouldDiscount =
+                    !applyToSpecific ||
+                    (structure.discountedProductIds?.length > 0 &&
+                        structure.discountedProductIds.includes(product.id));
+
                 // Total bundle price in cents
                 const totalBundlePrice = products.reduce(
                     (sum, p) => sum + p.price * (p.quantity || 1),
@@ -1525,7 +1533,9 @@ declare global {
 
                 const discountValue = structure.discountValue || 0;
 
-                switch (structure.discountType) {
+                if (!shouldDiscount) {
+                    // No discount for this product — skip switch
+                } else switch (structure.discountType) {
                     case "PERCENTAGE":
                         if (discountValue > 0 && discountValue <= 100) {
                             discountedPrice =
@@ -1691,18 +1701,46 @@ declare global {
 
             const structure = this.bundleStructure || bundle;
 
+            // When discounting specific products only, calculate based on discounted subset
+            const applyToSpecific =
+                structure.discountApplication === "products";
+            const discountedIds = new Set(
+                structure.discountedProductIds || [],
+            );
+
+            const discountableTotal = applyToSpecific
+                ? bundle.products
+                      .filter((p) => discountedIds.has(p.id))
+                      .reduce(
+                          (sum, p) => sum + p.price * (p.quantity || 1),
+                          0,
+                      )
+                : sellingTotal;
+
+            const nonDiscountableTotal = sellingTotal - discountableTotal;
+
             switch (structure.discountType) {
                 case "PERCENTAGE":
                     bundleTotal =
-                        sellingTotal * (1 - structure.discountValue / 100);
+                        nonDiscountableTotal +
+                        discountableTotal *
+                            (1 - structure.discountValue / 100);
                     break;
 
                 case "FIXED_AMOUNT":
-                    bundleTotal = sellingTotal - structure.discountValue * 100;
+                    bundleTotal =
+                        nonDiscountableTotal +
+                        Math.max(
+                            0,
+                            discountableTotal -
+                                structure.discountValue * 100,
+                        );
                     break;
 
                 case "CUSTOM_PRICE":
-                    bundleTotal = structure.discountValue * 100;
+                    bundleTotal =
+                        nonDiscountableTotal +
+                        structure.discountValue * 100;
                     break;
 
                 default:

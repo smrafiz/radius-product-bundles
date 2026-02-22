@@ -28,19 +28,40 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         const originalPrice = calculateBundlePrice(selectedItems);
 
+        // When applying to specific products, only discount those products
+        const applyToSpecific =
+            bundleData.discountApplication === "products";
+        const discountedIds = new Set(
+            bundleData.discountedProductIds ?? [],
+        );
+
+        const discountableItems = applyToSpecific
+            ? selectedItems.filter((item) =>
+                  discountedIds.has(item.productId),
+              )
+            : selectedItems;
+
+        const discountablePrice =
+            calculateBundlePrice(discountableItems);
+
         // Handle CUSTOM_PRICE
         if (bundleData.discountType === "CUSTOM_PRICE") {
             const customPrice = bundleData.discountValue ?? 0;
-            const discountAmount = Math.max(0, originalPrice - customPrice);
+            const nonDiscountablePrice = originalPrice - discountablePrice;
+            const finalPrice = nonDiscountablePrice + customPrice;
+            const discountAmount = Math.max(
+                0,
+                discountablePrice - customPrice,
+            );
             const savingsPercentage = calculateSavingsPercentage(
                 originalPrice,
-                customPrice,
+                finalPrice,
             );
 
             return {
                 originalPrice,
                 discountAmount,
-                finalPrice: customPrice,
+                finalPrice,
                 savingsPercentage,
                 hasDiscount: discountAmount > 0,
             };
@@ -58,7 +79,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         }
 
         const discountAmount = calculateDiscountAmount(
-            originalPrice,
+            discountablePrice,
             bundleData.discountType,
             bundleData.discountValue,
             bundleData.maxDiscountAmount,
@@ -80,6 +101,8 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         selectedItems,
         bundleData.discountType,
         bundleData.discountValue,
+        bundleData.discountApplication,
+        bundleData.discountedProductIds,
         bundleData.maxDiscountAmount,
     ]);
 }

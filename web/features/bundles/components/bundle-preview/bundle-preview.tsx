@@ -49,6 +49,12 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
     const { selectedItems, bundleData } = useBundleStore();
 
     return useMemo(() => {
+        const applyToSpecific =
+            bundleData.discountApplication === "products";
+        const discountedIds = new Set(
+            bundleData.discountedProductIds ?? [],
+        );
+
         const totalBundlePrice = selectedItems.reduce(
             (sum, item) => sum + (parseFloat(item.price) || 0) * item.quantity,
             0,
@@ -60,7 +66,16 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
             const discountValue = bundleData.discountValue ?? 0;
             let discountedUnitPrice = unitPrice;
 
-            if (discountType && discountValue > 0 && totalBundlePrice > 0) {
+            // Skip discount for products not in the discounted list
+            const shouldDiscount =
+                !applyToSpecific || discountedIds.has(item.productId);
+
+            if (
+                shouldDiscount &&
+                discountType &&
+                discountValue > 0 &&
+                totalBundlePrice > 0
+            ) {
                 const lineTotal = unitPrice * item.quantity;
                 const proportion = lineTotal / totalBundlePrice;
 
@@ -102,6 +117,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         selectedItems,
         bundleData.discountType,
         bundleData.discountValue,
+        bundleData.discountApplication,
+        bundleData.discountedProductIds,
         bundleData.maxDiscountAmount,
         currencyCode,
     ]);
