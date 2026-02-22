@@ -55,10 +55,13 @@
 		{% endif %}
 	{% endfor %}
 
+	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+
 	<div
 			class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}"
 			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
 			data-shop="{{ shop.permanent_domain }}"
+			style="opacity: 0"
 	>
 		{% for bundle_id in bundle_ids %}
 			{% assign bundle = bundles[bundle_id] %}
@@ -991,7 +994,6 @@
 		<style>{{ custom_css }}</style>
 	{% endif %}
 
-	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
 	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
 
