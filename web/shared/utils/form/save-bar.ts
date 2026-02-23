@@ -1,5 +1,6 @@
 // Custom events
 export const TRIGGER_SAVE_BAR = "form:trigger-save-bar";
+export const DISMISS_SAVE_BAR = "form:dismiss-save-bar";
 export const SUBMIT_FORM = "form:submit";
 export const VALIDATION_ERROR = "form:validation-error";
 
@@ -63,4 +64,17 @@ export function submitForm(formId = DEFAULT_FORM_ID) {
 export function resetSaveBar(formId = DEFAULT_FORM_ID) {
     const state = getFormState(formId);
     state.hasUnsavedChanges = false;
+}
+
+/**
+ * Dismisses the save bar for a form.
+ */
+export function dismissSaveBar(formId = DEFAULT_FORM_ID) {
+    const state = getFormState(formId);
+    state.hasUnsavedChanges = false;
+    if (typeof window !== "undefined") {
+        window.dispatchEvent(
+            new CustomEvent(DISMISS_SAVE_BAR, { detail: { formId } }),
+        );
+    }
 }

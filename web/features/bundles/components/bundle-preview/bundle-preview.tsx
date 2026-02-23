@@ -49,11 +49,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
     const { selectedItems, bundleData } = useBundleStore();
 
     return useMemo(() => {
-        const applyToSpecific =
-            bundleData.discountApplication === "products";
-        const discountedIds = new Set(
-            bundleData.discountedProductIds ?? [],
-        );
+        const applyToSpecific = bundleData.discountApplication === "products";
+        const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
         const totalBundlePrice = selectedItems.reduce(
             (sum, item) => sum + (parseFloat(item.price) || 0) * item.quantity,

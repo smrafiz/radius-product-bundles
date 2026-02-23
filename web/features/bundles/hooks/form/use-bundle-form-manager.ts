@@ -36,7 +36,7 @@ export function useBundleFormManager({
     useEffect(() => {
         if (!bundleData.type) {
             setBundleData({ ...bundleData, type: bundleType });
-            setValue("type", bundleType);
+            setValue("type", bundleType, { shouldDirty: false });
         }
     }, [bundleType, bundleData, setBundleData, setValue]);
 
@@ -44,7 +44,7 @@ export function useBundleFormManager({
         if (!isEditMode && generatedName && !currentName) {
             setValue("name", generatedName, {
                 shouldValidate: false,
-                shouldDirty: true,
+                shouldDirty: false,
             });
         }
     }, [generatedName, isEditMode, currentName, setValue]);

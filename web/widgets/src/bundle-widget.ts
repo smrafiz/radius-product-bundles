@@ -1535,48 +1535,50 @@ declare global {
 
                 if (!shouldDiscount) {
                     // No discount for this product — skip switch
-                } else switch (structure.discountType) {
-                    case "PERCENTAGE":
-                        if (discountValue > 0 && discountValue <= 100) {
-                            discountedPrice =
-                                product.price * (1 - discountValue / 100);
-                            hasDiscount = true;
-                        }
-                        break;
+                } else
+                    switch (structure.discountType) {
+                        case "PERCENTAGE":
+                            if (discountValue > 0 && discountValue <= 100) {
+                                discountedPrice =
+                                    product.price * (1 - discountValue / 100);
+                                hasDiscount = true;
+                            }
+                            break;
 
-                    case "FIXED_AMOUNT":
-                        if (discountValue > 0 && totalBundlePrice > 0) {
-                            const discountInCents = discountValue * 100;
+                        case "FIXED_AMOUNT":
+                            if (discountValue > 0 && totalBundlePrice > 0) {
+                                const discountInCents = discountValue * 100;
 
-                            const productLineDiscount =
-                                discountInCents * proportion;
-                            const perUnitDiscount =
-                                productLineDiscount / (product.quantity || 1);
+                                const productLineDiscount =
+                                    discountInCents * proportion;
+                                const perUnitDiscount =
+                                    productLineDiscount /
+                                    (product.quantity || 1);
 
-                            discountedPrice = Math.max(
-                                0,
-                                product.price - perUnitDiscount,
-                            );
-                            hasDiscount = discountedPrice < product.price;
-                        }
-                        break;
+                                discountedPrice = Math.max(
+                                    0,
+                                    product.price - perUnitDiscount,
+                                );
+                                hasDiscount = discountedPrice < product.price;
+                            }
+                            break;
 
-                    case "CUSTOM_PRICE":
-                        if (discountValue > 0 && totalBundlePrice > 0) {
-                            const customPriceInCents = discountValue * 100;
+                        case "CUSTOM_PRICE":
+                            if (discountValue > 0 && totalBundlePrice > 0) {
+                                const customPriceInCents = discountValue * 100;
 
-                            const productLinePrice =
-                                customPriceInCents * proportion;
-                            discountedPrice =
-                                productLinePrice / (product.quantity || 1);
-                            hasDiscount = discountedPrice < product.price;
-                        }
-                        break;
+                                const productLinePrice =
+                                    customPriceInCents * proportion;
+                                discountedPrice =
+                                    productLinePrice / (product.quantity || 1);
+                                hasDiscount = discountedPrice < product.price;
+                            }
+                            break;
 
-                    default:
-                        discountedPrice = product.price;
-                        hasDiscount = false;
-                }
+                        default:
+                            discountedPrice = product.price;
+                            hasDiscount = false;
+                    }
             }
 
             // Round to nearest cent
@@ -1704,17 +1706,12 @@ declare global {
             // When discounting specific products only, calculate based on discounted subset
             const applyToSpecific =
                 structure.discountApplication === "products";
-            const discountedIds = new Set(
-                structure.discountedProductIds || [],
-            );
+            const discountedIds = new Set(structure.discountedProductIds || []);
 
             const discountableTotal = applyToSpecific
                 ? bundle.products
                       .filter((p) => discountedIds.has(p.id))
-                      .reduce(
-                          (sum, p) => sum + p.price * (p.quantity || 1),
-                          0,
-                      )
+                      .reduce((sum, p) => sum + p.price * (p.quantity || 1), 0)
                 : sellingTotal;
 
             const nonDiscountableTotal = sellingTotal - discountableTotal;
@@ -1723,8 +1720,7 @@ declare global {
                 case "PERCENTAGE":
                     bundleTotal =
                         nonDiscountableTotal +
-                        discountableTotal *
-                            (1 - structure.discountValue / 100);
+                        discountableTotal * (1 - structure.discountValue / 100);
                     break;
 
                 case "FIXED_AMOUNT":
@@ -1732,15 +1728,13 @@ declare global {
                         nonDiscountableTotal +
                         Math.max(
                             0,
-                            discountableTotal -
-                                structure.discountValue * 100,
+                            discountableTotal - structure.discountValue * 100,
                         );
                     break;
 
                 case "CUSTOM_PRICE":
                     bundleTotal =
-                        nonDiscountableTotal +
-                        structure.discountValue * 100;
+                        nonDiscountableTotal + structure.discountValue * 100;
                     break;
 
                 default:

@@ -22,11 +22,14 @@ export function useBundleFormMethods() {
 
     const { setValue: originalSetValue, formState, ...restForm } = form;
 
-    // Wrap setValue to always mark dirty
     const setValue = useCallback(
         (name: any, value: any, options?: any) => {
-            originalSetValue(name, value, { ...options, shouldDirty: true });
-            markDirty();
+            const shouldDirty = options?.shouldDirty !== false;
+            originalSetValue(name, value, { ...options, shouldDirty });
+
+            if (shouldDirty) {
+                markDirty();
+            }
         },
         [originalSetValue, markDirty],
     );

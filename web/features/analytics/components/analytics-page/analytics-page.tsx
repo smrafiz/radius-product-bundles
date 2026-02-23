@@ -12,7 +12,7 @@ export function AnalyticsPage() {
     // Mark "analyticsViewed" setup step as complete on mount
     useEffect(() => {
         app.idToken().then((token) => {
-            updateSetupStepAction(token, "analyticsViewed", true);
+            void updateSetupStepAction(token, "analyticsViewed", true);
         });
     }, []);
 

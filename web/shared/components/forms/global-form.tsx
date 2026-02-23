@@ -2,6 +2,7 @@
 
 import {
     DEFAULT_FORM_ID,
+    DISMISS_SAVE_BAR,
     getFormState,
     GlobalFormProps,
     SUBMIT_FORM,
@@ -182,8 +183,18 @@ export function GlobalForm<T extends FieldValues>({
             }
         };
 
+        const handleDismissSaveBar = (event: Event) => {
+            const customEvent = event as CustomEvent;
+            const eventFormId = customEvent.detail?.formId || DEFAULT_FORM_ID;
+
+            if (eventFormId === formId) {
+                setShowSaveBar(false);
+            }
+        };
+
         window.addEventListener(TRIGGER_SAVE_BAR, handleTriggerSaveBar);
         window.addEventListener(SUBMIT_FORM, handleSubmitForm);
+        window.addEventListener(DISMISS_SAVE_BAR, handleDismissSaveBar);
 
         // Sync state on mount
         if (state.hasUnsavedChanges && !showSaveBar && !state.isBlocked) {
@@ -193,6 +204,7 @@ export function GlobalForm<T extends FieldValues>({
         return () => {
             window.removeEventListener(TRIGGER_SAVE_BAR, handleTriggerSaveBar);
             window.removeEventListener(SUBMIT_FORM, handleSubmitForm);
+            window.removeEventListener(DISMISS_SAVE_BAR, handleDismissSaveBar);
         };
     }, [showSaveBar, formId]);
 

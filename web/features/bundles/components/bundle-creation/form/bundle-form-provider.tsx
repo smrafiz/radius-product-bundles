@@ -29,6 +29,7 @@ export function BundleFormProvider({
         selectedItems,
         setBundleData,
         resetBundle,
+        resetDirty,
         setStep,
         setValidationAttempted,
     } = useBundleStore();
@@ -115,6 +116,7 @@ export function BundleFormProvider({
             setTimeout(() => {
                 setStoreInitializing(false);
                 blockSaveBar(false);
+                resetDirty();
             }, 300);
         }
     }, []);
@@ -156,7 +158,7 @@ export function BundleFormProvider({
 
     // Set the bundle type in form
     useEffect(() => {
-        setValue("type", bundleType, { shouldValidate: true });
+        setValue("type", bundleType, { shouldValidate: true, shouldDirty: false });
     }, [bundleType, setValue]);
 
     // Sync selectedItems with form products
