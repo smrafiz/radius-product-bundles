@@ -1,13 +1,9 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import type { BundleStatus } from "@/features/bundles";
-import {
-    BUNDLE_STATUSES,
-    getAvailableStatuses,
-    useBundleStore,
-} from "@/features/bundles";
-import { formatDateLong } from "@/shared";
-import React, { useState, useEffect } from "react";
+import { formatDateLong, getDisallowPastDates } from "@/shared";
+import { BUNDLE_STATUSES, getAvailableStatuses, useBundleStore, } from "@/features/bundles";
 
 export function BundlePreviewStatus() {
     const { bundleData, updateBundleField } = useBundleStore();
@@ -91,6 +87,7 @@ export function BundlePreviewStatus() {
         updateBundleField("endDate", undefined);
     };
 
+    const disallowPast = getDisallowPastDates();
     const hasDates = bundleData.startDate && bundleData.endDate;
 
     return (
@@ -248,6 +245,7 @@ export function BundlePreviewStatus() {
                                     <s-heading>Schedule bundle</s-heading>
                                     <s-date-picker
                                         type="range"
+                                        disallow={disallowPast}
                                         value={getDatePickerValue()}
                                         onChange={(e: any) =>
                                             handleDateChange(

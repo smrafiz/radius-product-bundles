@@ -74,8 +74,20 @@ export function getLastNDaysRange(days: number): { start: Date; end: Date } {
     };
 }
 
+/**
+ * Shopify date picker disallow string for past dates (up to yesterday).
+ */
+export function getDisallowPastDates(): string {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    return `--${yesterday.toISOString().split("T")[0]}`;
+}
+
 export function formatDateLong(dateStr: string) {
-    if (!dateStr) return "";
+    if (!dateStr) {
+        return "";
+    }
 
     const date = new Date(dateStr);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
-import { formatDateLong, MODAL_CONTENT, useModalStore } from "@/shared";
+import { formatDateLong, getDisallowPastDates, MODAL_CONTENT, useModalStore } from "@/shared";
 
 /**
  * Modal Host - Single Reusable Modal
@@ -20,10 +20,7 @@ export function ModalHost() {
         setDateRange("");
     }, [modal.type]);
 
-    // Yesterday's date for disallowing past dates
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const disallowPast = `--${yesterday.toISOString().split("T")[0]}`;
+    const disallowPast = getDisallowPastDates();
 
     // Parse range value "YYYY-MM-DD--YYYY-MM-DD"
     const [startDate, endDate] = dateRange.includes("--")
