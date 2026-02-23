@@ -15,7 +15,7 @@ export const setupGuideQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
             return result.data!;
         },
-        staleTime: 10 * 60 * 1000, // Match dashboard-long server cache (10 min)
+        staleTime: 0, // Always refetch on mount — server cache handles dedup
         gcTime: 10 * 60 * 1000,
     }),
 });

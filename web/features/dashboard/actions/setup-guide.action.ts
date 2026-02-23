@@ -13,7 +13,7 @@ import {
 } from "../services/setup-guide.service";
 import { handleSessionToken } from "@/lib/shopify";
 import { processScheduledBundlesForShop } from "@/features/bundles/services/bundle-scheduler.service";
-import { getCachedSetupGuide } from "@/features/dashboard/services/setup-guide.cached";
+import { getSetupGuideService } from "@/features/dashboard/services/setup-guide.service";
 import { invalidateSetupGuideCache } from "@/lib/cache";
 
 export async function getSetupGuideAction(
@@ -36,7 +36,7 @@ export async function getSetupGuideAction(
         // Setup guide data cached via `use cache` (10 min)
         const [schedulerResult, data] = await Promise.all([
             schedulerPromise,
-            getCachedSetupGuide(shop),
+            getSetupGuideService({ shop }),
         ]);
 
         const bundlesTransitioned =

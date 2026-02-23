@@ -76,7 +76,7 @@ function buildSchemaForExtension(extensionName) {
 
         // Create a schema object
         const schema = {
-            name: "Product Bundle",
+            name: "Radius Bundles",
             target: "section",
             settings: allSettings,
         };

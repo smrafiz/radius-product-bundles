@@ -154,7 +154,7 @@ export function BundleCreationForm({
                             disabled={isSaving || (isEditMode && !isDirty)}
                             loading={isSaving}
                         >
-                            {isEditMode ? "Update" : "Create"}
+                            {isEditMode ? "Update" : "Publish"}
                         </s-button>
                         {isEditMode && bundleId && (
                             <s-button
@@ -172,7 +172,7 @@ export function BundleCreationForm({
                             onClick={() => submitForm()}
                             disabled={!isDirty}
                         >
-                            {isEditMode ? "Update" : "Create"}
+                            {isEditMode ? "Update" : "Publish"}
                         </button>
                         {isEditMode && bundleId && (
                             <button onClick={handleDuplicate}>Duplicate</button>

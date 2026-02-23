@@ -7,13 +7,14 @@
 import { ApiResponse } from "@/shared";
 import { revalidatePath } from "next/cache";
 import { handleSessionToken } from "@/lib/shopify";
-import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
 import {
     getSettingsService,
     resetSettingsService,
     saveSettingsService,
 } from "@/features/settings/services/settings.service";
+import { invalidateSetupGuideCache } from "@/lib/cache";
 import { AppSettingsFormData } from "@/features/settings";
+import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
 
 /**
  * Get app settings for the current shop.
@@ -84,6 +85,7 @@ export async function saveSettingsAction(
         revalidatePath("/settings");
         revalidatePath("/settings/customizer");
         revalidatePath("/dashboard");
+        invalidateSetupGuideCache(shop);
 
         return {
             status: "success",

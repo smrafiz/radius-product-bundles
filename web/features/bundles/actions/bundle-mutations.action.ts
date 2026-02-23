@@ -40,7 +40,7 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/shared/repositories";
-import { invalidateDashboardCache } from "@/lib/cache";
+import { invalidateDashboardCache, invalidateSetupGuideCache } from "@/lib/cache";
 import { executeGraphQLMutation } from "@/lib/graphql/client/server-action";
 import { handleZodValidationError } from "@/shared/utils/error/error-handlers";
 import {
@@ -541,6 +541,7 @@ export async function createBundleAction(
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
+        invalidateSetupGuideCache(shop);
 
         return {
             status: "success",
