@@ -11,10 +11,16 @@ import {
  * Analytics date range store
  */
 export const useAnalyticsStore = create<AnalyticsState>((set) => {
+    // Compute initial dates so the query key is stable from first render
+    const defaultDays = 7;
+    const today = getTodayInShopTimezone();
+    const start = new Date(today);
+    start.setDate(start.getDate() - (defaultDays - 1));
+
     return {
-        startDate: "",
-        endDate: "",
-        days: 7,
+        startDate: formatDate(start),
+        endDate: formatDate(today),
+        days: defaultDays,
         preset: "last7",
 
         /**

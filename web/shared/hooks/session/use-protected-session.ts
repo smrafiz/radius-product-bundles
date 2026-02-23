@@ -1,7 +1,7 @@
 "use client";
 
 import { useSessionStore } from "@/shared";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export function useProtectedSession() {
@@ -22,6 +22,12 @@ export function useProtectedSession() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+
+    // Use refs for values only needed inside the effect body (not as triggers)
+    const pathnameRef = useRef(pathname);
+    pathnameRef.current = pathname;
+    const searchParamsRef = useRef(searchParams);
+    searchParamsRef.current = searchParams;
 
     const isThemeExtension =
         typeof window !== "undefined" &&
@@ -48,8 +54,8 @@ export function useProtectedSession() {
                     return;
                 }
 
-                const shopParam = searchParams.get("shop") || shop;
-                const hostParam = searchParams.get("host");
+                const shopParam = searchParamsRef.current.get("shop") || shop;
+                const hostParam = searchParamsRef.current.get("host");
 
                 if (!shopParam) {
                     console.error(
@@ -81,8 +87,8 @@ export function useProtectedSession() {
                 console.warn("❌ Session validation or refresh failed:", error);
                 clearSession();
 
-                const shopParam = searchParams.get("shop") || shop;
-                const authUrl = `/api/auth?returnTo=${encodeURIComponent(pathname)}${
+                const shopParam = searchParamsRef.current.get("shop") || shop;
+                const authUrl = `/api/auth?returnTo=${encodeURIComponent(pathnameRef.current)}${
                     shopParam ? `&shop=${shopParam}` : ""
                 }`;
 
@@ -98,8 +104,6 @@ export function useProtectedSession() {
         hasValidSession,
         sessionToken,
         router,
-        pathname,
-        searchParams,
         refreshAttempted,
         isThemeExtension,
         isRefreshing,
