@@ -22,6 +22,7 @@ export const TablePagination = memo(function TablePagination({
             gap="small-200"
             alignItems="center"
             justifyContent="center"
+            borderRadius="base base large large"
         >
             <s-button
                 variant="secondary"
