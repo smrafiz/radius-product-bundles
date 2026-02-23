@@ -4,8 +4,8 @@ import {
     DashboardBundlesListProps,
     DashboardBundlesTableHeader,
 } from "@/features/dashboard";
+import { formatByType, useAppNavigation } from "@/shared";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
-import { formatCurrency, formatPercentage, useAppNavigation } from "@/shared";
 
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();
@@ -72,17 +72,20 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                             </s-table-cell>
                             <s-table-cell>
                                 <span className="block w-20">
-                                    {bundle.views}
+                                    {formatByType(bundle.views, "number")}
                                 </span>
                             </s-table-cell>
                             <s-table-cell>
                                 <span className="block w-20">
-                                    {formatPercentage(bundle.conversionRate)}
+                                    {formatByType(
+                                        bundle.conversionRate,
+                                        "percentage",
+                                    )}
                                 </span>
                             </s-table-cell>
                             <s-table-cell>
                                 <span className="block w-20">
-                                    {formatCurrency(bundle.revenue)}
+                                    {formatByType(bundle.revenue, "currency")}
                                 </span>
                             </s-table-cell>
                             <s-table-cell>

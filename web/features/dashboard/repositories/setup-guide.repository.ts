@@ -10,7 +10,6 @@ export async function getSetupProgress(domain: string) {
         select: {
             setupGuideDismissed: true,
             setupProgress: true,
-            setupComplete: true,
             domain: true,
         },
     });
@@ -27,7 +26,6 @@ export async function getSetupProgress(domain: string) {
     return {
         dismissed: shop.setupGuideDismissed,
         progress,
-        setupComplete: shop.setupComplete,
         shopDomain: shop.domain,
     };
 }
@@ -39,7 +37,7 @@ export async function getAutoDetectData(domain: string) {
         }),
         prisma.appSettings.findFirst({
             where: { shop: { domain } },
-            select: { globalStyles: true },
+            select: { id: true },
         }),
         prisma.bundleView.count({
             where: { bundle: { shop: domain } },
@@ -48,7 +46,7 @@ export async function getAutoDetectData(domain: string) {
 
     return {
         bundleCount,
-        globalStyles: appSettings?.globalStyles ?? null,
+        settingsExist: appSettings !== null,
         viewCount,
     };
 }

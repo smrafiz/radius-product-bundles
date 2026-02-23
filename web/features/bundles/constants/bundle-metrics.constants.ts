@@ -2,7 +2,7 @@
  * Bundle metrics constants
  */
 
-import { formatCurrency, MetricCardProps } from "@/shared";
+import { formatByType, MetricCardProps } from "@/shared";
 
 /**
  * Bundle listing metrics
@@ -10,7 +10,10 @@ import { formatCurrency, MetricCardProps } from "@/shared";
 export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
     {
         title: "Active Bundles",
-        value: (metrics?.activeBundles ?? "").toString(),
+        value:
+            metrics?.activeBundles !== undefined
+                ? formatByType(metrics.activeBundles, "number")
+                : "",
         comparisonLabel: "Total created",
         img: {
             svg: METRIC_CARD_SVG["activeBundles"],
@@ -18,7 +21,10 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
     },
     {
         title: "Total Bundles",
-        value: (metrics?.totalBundles ?? "").toString(),
+        value:
+            metrics?.totalBundles !== undefined
+                ? formatByType(metrics.totalBundles, "number")
+                : "",
         comparisonLabel: "Total created",
         img: {
             svg: METRIC_CARD_SVG["totalBundles"],
@@ -28,10 +34,9 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
         title: "Total Views",
         value:
             metrics?.totalViews !== undefined
-                ? metrics.totalViews.toLocaleString()
+                ? formatByType(metrics.totalViews, "number")
                 : "",
         tone: "info",
-        icon: "arrow-down",
         img: {
             svg: METRIC_CARD_SVG["totalViews"],
         },
@@ -40,10 +45,9 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
         title: "Total Revenue",
         value:
             metrics?.revenueAllTime !== undefined
-                ? formatCurrency(metrics.revenueAllTime)
+                ? formatByType(metrics.revenueAllTime, "currency")
                 : "",
         tone: "info",
-        icon: "arrow-down",
         img: {
             svg: METRIC_CARD_SVG["totalRevenue"],
         },

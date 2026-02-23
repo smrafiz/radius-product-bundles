@@ -6,14 +6,13 @@ import {
     AllBundlesTableHeader,
     useAllBundlesTableWithPagination,
 } from "@/features/analytics";
-import { getBundleStatusBadge, stripDeletedSuffix } from "@/features/bundles";
 import {
     EmptyState,
-    formatCurrencyCompact,
-    formatNumber,
+    formatByType,
     TablePagination,
     useAppNavigation,
 } from "@/shared";
+import { getBundleStatusBadge, stripDeletedSuffix } from "@/features/bundles";
 
 /**
  * Get health status badge config
@@ -312,15 +311,17 @@ export function AllBundlesTable() {
                                                         : "font-normal"
                                                 }
                                             >
-                                                {formatCurrencyCompact(
+                                                {formatByType(
                                                     bundle.revenue,
+                                                    "currency",
                                                 )}
                                             </span>
                                         </s-text>
                                         {bundle.averageOrderValue > 0 && (
                                             <s-text tone="neutral">
-                                                {formatCurrencyCompact(
+                                                {formatByType(
                                                     bundle.averageOrderValue,
+                                                    "currency",
                                                 )}
                                                 /order
                                             </s-text>
@@ -331,27 +332,38 @@ export function AllBundlesTable() {
                                 {/* Orders */}
                                 <s-table-cell>
                                     <s-text type="strong">
-                                        {formatNumber(bundle.purchases)}
+                                        {formatByType(
+                                            bundle.purchases,
+                                            "number",
+                                        )}
                                     </s-text>
                                 </s-table-cell>
 
                                 {/* Views */}
                                 <s-table-cell>
                                     <s-text tone="neutral">
-                                        {formatNumber(bundle.views)}
+                                        {formatByType(bundle.views, "number")}
                                     </s-text>
                                 </s-table-cell>
 
                                 {/* Cart % (Add-to-cart rate) */}
                                 <s-table-cell>
-                                    <s-text>{bundle.addToCartRate}%</s-text>
+                                    <s-text>
+                                        {formatByType(
+                                            bundle.addToCartRate,
+                                            "percentage",
+                                        )}
+                                    </s-text>
                                 </s-table-cell>
 
                                 {/* Conversion % with color coding */}
                                 <s-table-cell>
                                     <s-stack gap="small-200">
                                         <s-badge tone={conversionBadge}>
-                                            {bundle.conversionRate}%
+                                            {formatByType(
+                                                bundle.conversionRate,
+                                                "percentage",
+                                            )}
                                         </s-badge>
                                     </s-stack>
                                 </s-table-cell>

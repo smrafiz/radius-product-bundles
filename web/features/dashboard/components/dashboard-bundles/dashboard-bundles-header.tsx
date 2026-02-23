@@ -1,8 +1,12 @@
 "use client";
 
-import { ROUTES, useAppNavigation } from "@/shared";
+import { ROUTES, SkeletonLine, useAppNavigation } from "@/shared";
 
-export function DashboardBundlesHeader() {
+export function DashboardBundlesHeader({
+    isLoading = false,
+}: {
+    isLoading?: boolean;
+}) {
     const { goTo } = useAppNavigation();
 
     return (
@@ -20,14 +24,22 @@ export function DashboardBundlesHeader() {
                 </s-text>
             </s-stack>
             <s-stack>
-                <s-button
-                    icon="view"
-                    variant="secondary"
-                    accessibilityLabel="View All"
-                    onClick={goTo(ROUTES.ANALYTICS + "?tab=bundle-performance")}
-                >
-                    View All
-                </s-button>
+                {isLoading ? (
+                    <div className="w-20">
+                        <SkeletonLine height="h-8" width={100} duration={1.8} />
+                    </div>
+                ) : (
+                    <s-button
+                        icon="view"
+                        variant="secondary"
+                        accessibilityLabel="View All"
+                        onClick={goTo(
+                            ROUTES.ANALYTICS + "?tab=bundle-performance",
+                        )}
+                    >
+                        View All
+                    </s-button>
+                )}
             </s-stack>
         </s-grid>
     );

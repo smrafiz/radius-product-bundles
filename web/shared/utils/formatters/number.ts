@@ -41,3 +41,8 @@ export const formatNumber = (
 ): string => {
     return value.toLocaleString(locale);
 };
+
+/**
+ * Format metric value based on type (compact, card-friendly)
+ */
+export { formatByType } from "./format-by-type";

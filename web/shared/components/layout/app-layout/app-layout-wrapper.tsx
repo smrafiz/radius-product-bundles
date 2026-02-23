@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 
 /**
@@ -9,10 +10,16 @@ import { ReactNode, useEffect, useState } from "react";
  */
 export function AppLayoutWrapper({ children }: { children: ReactNode }) {
     const [hasMounted, setHasMounted] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         setHasMounted(true);
     }, []);
+
+    // Scroll to top on route change
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
 
     if (!hasMounted) {
         return null;

@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import { MetricCard } from "@/shared/components";
 import { useAnalyticsMetrics } from "@/features/analytics";
-import { DASHBOARD_METRICS, formatByType } from "@/features/dashboard";
+import { DASHBOARD_METRICS } from "@/features/dashboard";
+import { formatByType } from "@/shared";
 
 /**
  * Dashboard Metrics Component

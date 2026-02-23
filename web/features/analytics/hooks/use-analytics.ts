@@ -4,8 +4,13 @@
  * Analytics Hook
  */
 
+import {
+    analyticsQueries,
+    formatDate,
+    getTodayInShopTimezone,
+} from "@/features/analytics";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { analyticsQueries } from "@/features/analytics";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useAnalyticsStore } from "@/features/analytics";
 
@@ -59,13 +64,28 @@ export function useAnalytics() {
 
 /**
  * Hook to fetch only metrics (lighter weight)
+ * When overrideDays is provided, computes its own date range independent of the store.
  */
 export function useAnalyticsMetrics(overrideDays?: number) {
     const app = useAppBridge();
-    const { days: storeDays, startDate, endDate } = useAnalyticsStore();
+    const {
+        days: storeDays,
+        startDate: storeStart,
+        endDate: storeEnd,
+    } = useAnalyticsStore();
     const queries = analyticsQueries(app);
 
+    const isOverridden = overrideDays !== undefined;
     const days = overrideDays ?? storeDays;
+
+    // Compute fixed date range when overrideDays is provided
+    const { startDate, endDate } = useMemo(() => {
+        if (!isOverridden) return { startDate: storeStart, endDate: storeEnd };
+        const today = getTodayInShopTimezone();
+        const start = new Date(today);
+        start.setDate(start.getDate() - (days - 1));
+        return { startDate: formatDate(start), endDate: formatDate(today) };
+    }, [isOverridden, days, storeStart, storeEnd]);
 
     const metricsQuery = useQuery({
         ...queries.metrics(days, startDate, endDate),

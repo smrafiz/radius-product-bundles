@@ -20,8 +20,9 @@ export async function getSetupGuideService({
 }): Promise<SetupGuideData> {
     const persisted = await getSetupProgress(shop);
 
-    // Skip auto-detection when guide is dismissed or all steps complete
-    if (persisted.dismissed || persisted.setupComplete) {
+    // Skip auto-detection when guide is dismissed or all steps already complete
+    const allPersistedComplete = Object.values(persisted.progress).every(Boolean);
+    if (persisted.dismissed || allPersistedComplete) {
         return {
             dismissed: persisted.dismissed,
             progress: persisted.progress,
@@ -60,12 +61,11 @@ export async function getSetupGuideService({
 }
 
 async function autoDetectProgress(shop: string) {
-    const { bundleCount, globalStyles, viewCount } =
+    const { bundleCount, settingsExist, viewCount } =
         await getAutoDetectData(shop);
 
     const firstBundleCreated = bundleCount > 0;
-    const widgetCustomized =
-        globalStyles != null && JSON.stringify(globalStyles) !== "{}";
+    const widgetCustomized = settingsExist;
     const storefrontPreviewed = viewCount > 0;
 
     return { firstBundleCreated, widgetCustomized, storefrontPreviewed };

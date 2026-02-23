@@ -9,14 +9,14 @@ export function DashboardTopBundlesSkeleton({
     TableHeader,
     rows = 3,
 }: {
-    Header: ComponentType;
+    Header: ComponentType<{ isLoading?: boolean }>;
     TableHeader: ComponentType;
     rows?: number;
 }) {
     return (
         <s-section padding="none">
             {/* Section title */}
-            <Header />
+            <Header isLoading />
 
             <s-table>
                 {/* Table header */}

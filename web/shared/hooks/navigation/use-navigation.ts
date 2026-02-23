@@ -10,10 +10,13 @@ import { ROUTES, withLoader } from "@/shared";
 export function useAppNavigation() {
     const router = useRouter();
 
-    // Generic navigation with loader
+    // Generic navigation with loader + scroll to top
     const goTo = useCallback(
         (path: string) => {
-            return withLoader(() => router.push(path));
+            return withLoader(() => {
+                router.push(path);
+                window.scrollTo(0, 0);
+            });
         },
         [router],
     );
@@ -35,7 +38,7 @@ export function useAppNavigation() {
             studio: () => goTo(ROUTES.BUNDLE_STUDIO),
         },
 
-        analytics: () => withLoader(() => router.push(ROUTES.ANALYTICS))(),
+        analytics: () => goTo(ROUTES.ANALYTICS)(),
         settings: () => goTo(ROUTES.SETTINGS)(),
 
         // Utilities

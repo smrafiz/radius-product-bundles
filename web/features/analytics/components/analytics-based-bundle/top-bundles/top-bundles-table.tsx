@@ -1,17 +1,12 @@
 "use client";
 
 import {
-    EmptyState,
-    formatCurrencyCompact,
-    formatNumber,
-    useAppNavigation,
-} from "@/shared";
-import {
     TopBundlesHeader,
     TopBundlesSkeleton,
     TopBundlesTableHeader,
     useTopBundles,
 } from "@/features/analytics";
+import { EmptyState, formatByType, useAppNavigation } from "@/shared";
 
 /**
  * Calculate Average Order Value
@@ -21,7 +16,7 @@ function calculateAOV(revenue: number, purchases: number): string {
         return "$0";
     }
 
-    return formatCurrencyCompact(revenue / purchases);
+    return formatByType(revenue / purchases, "currency");
 }
 
 /**
@@ -260,8 +255,9 @@ export function TopBundlesTable() {
                                         {/* Revenue (bold) */}
                                         <s-text tone="success">
                                             <span className="font-semibold">
-                                                {formatCurrencyCompact(
+                                                {formatByType(
                                                     bundle.revenue,
+                                                    "currency",
                                                 )}
                                             </span>
                                         </s-text>
@@ -283,14 +279,17 @@ export function TopBundlesTable() {
                                 {/* Orders (right-aligned) */}
                                 <s-table-cell>
                                     <s-text type="strong">
-                                        {formatNumber(bundle.purchases)}
+                                        {formatByType(
+                                            bundle.purchases,
+                                            "number",
+                                        )}
                                     </s-text>
                                 </s-table-cell>
 
                                 {/* Views (muted, right-aligned) */}
                                 <s-table-cell>
                                     <s-text tone="neutral">
-                                        {formatNumber(bundle.views)}
+                                        {formatByType(bundle.views, "number")}
                                     </s-text>
                                 </s-table-cell>
 
@@ -298,7 +297,10 @@ export function TopBundlesTable() {
                                 <s-table-cell>
                                     <s-stack gap="small-200" direction="inline">
                                         <s-badge tone={conversionTone}>
-                                            {bundle.conversionRate}%
+                                            {formatByType(
+                                                bundle.conversionRate,
+                                                "percentage",
+                                            )}
                                         </s-badge>
 
                                         {/* Show fraction for transparency */}

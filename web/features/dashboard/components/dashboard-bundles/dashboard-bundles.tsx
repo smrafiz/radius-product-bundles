@@ -1,31 +1,19 @@
 "use client";
 
 import {
-    useAnalyticsMetrics,
-    useAnalyticsStore,
-    useTopBundles,
-} from "@/features/analytics";
-import {
     DashboardBundlesEmpty,
     DashboardBundlesHeader,
     DashboardBundlesList,
     DashboardBundlesTableHeader,
     DashboardTopBundlesSkeleton,
 } from "@/features/dashboard";
-import { useEffect } from "react";
+import { useAnalyticsMetrics, useTopBundles } from "@/features/analytics";
 
 export function DashboardBundles() {
-    useEffect(() => {
-        const { startDate, endDate, setDays } = useAnalyticsStore.getState();
-        if (!startDate || !endDate) {
-            setDays(30);
-        }
-    }, []);
-
     const { data: bundles, isLoading, error } = useTopBundles(5);
-    const { metrics } = useAnalyticsMetrics(30);
+    const { metrics, isLoading: isMetricsLoading } = useAnalyticsMetrics(30);
 
-    if (isLoading) {
+    if (isLoading || isMetricsLoading) {
         return (
             <DashboardTopBundlesSkeleton
                 Header={DashboardBundlesHeader}

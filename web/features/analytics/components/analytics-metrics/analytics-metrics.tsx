@@ -6,8 +6,7 @@ import {
     useAnalyticsMetrics,
 } from "@/features/analytics";
 import { useMemo } from "react";
-import { MetricCard } from "@/shared";
-import { formatByType } from "@/features/dashboard";
+import { formatByType, MetricCard } from "@/shared";
 
 export function AnalyticsMetrics() {
     const { metrics, isFetching } = useAnalyticsMetrics();
