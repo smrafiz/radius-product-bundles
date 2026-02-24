@@ -1,9 +1,9 @@
-import { trackBundlePurchase } from "@/features/analytics/repositories";
 import {
     ShopifyOrder,
     ShopifyLineItem,
     ShopifyLineItemProperty,
 } from "@/shared";
+import { trackBundlePurchase } from "@/features/analytics/repositories";
 
 /**
  * Handle ORDERS_CREATE webhook

@@ -462,11 +462,6 @@ declare global {
                     "properties[_bundle_name]",
                     bundleName,
                 );
-                this.injectHiddenInput(
-                    form,
-                    "properties[_product_id]",
-                    this.productId,
-                );
             }
 
             this.interceptStandaloneAddToCart();
@@ -546,7 +541,6 @@ declare global {
             const properties: Record<string, string> = {
                 _bundle_id: this.bundleId,
                 _bundle_name: this.bundleStructure?.name || "Bundle",
-                _product_id: this.productId,
             };
 
             if (typeof body === "string") {
@@ -641,7 +635,6 @@ declare global {
                                                 _bundle_name:
                                                     self.bundleStructure
                                                         ?.name || "Bundle",
-                                                _product_id: self.productId,
                                             },
                                         },
                                     ],
@@ -2039,7 +2032,6 @@ declare global {
                         properties: {
                             _bundle_id: this.bundle!.id,
                             _bundle_name: this.bundle!.name,
-                            _product_id: p.id,
                         },
                     }));
 

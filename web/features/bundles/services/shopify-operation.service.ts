@@ -3,7 +3,12 @@
  * Handles Shopify product creation for bundles
  */
 
-import { BundleStatus, getShopifyProductStatus } from "@/features/bundles";
+import {
+    BundleStatus,
+    BundleType,
+    getShopifyProductStatus,
+} from "@/features/bundles";
+import { BUNDLE_TYPES } from "@/features/bundles/constants";
 
 /**
  * Transform bundle data to Shopify product mutation variables.
@@ -15,17 +20,21 @@ export function transformBundleToProductVariables(
     bundleType?: string,
     bundleStatus?: BundleStatus,
 ) {
-    // Map bundle status to Shopify product status
     const productStatus: "ACTIVE" | "DRAFT" | "ARCHIVED" = bundleStatus
         ? getShopifyProductStatus(bundleStatus)
         : "DRAFT";
 
+    const typeConfig = bundleType
+        ? BUNDLE_TYPES[bundleType as BundleType]
+        : undefined;
+    const productTypeLabel = typeConfig?.label || "Bundle";
+
     return {
         title: bundleName,
         descriptionHtml: bundleDescription ?? undefined,
-        vendor: "Bundle",
-        productType: bundleType || "Bundle",
-        tags: ["bundle", bundleType?.toLowerCase() || ""].filter(Boolean),
+        vendor: "Radius Bundles",
+        productType: productTypeLabel,
+        tags: ["bundle", productTypeLabel.toLowerCase()].filter(Boolean),
         status: productStatus,
     };
 }

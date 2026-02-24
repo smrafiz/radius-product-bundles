@@ -9,9 +9,6 @@ query Input {
             attribute(key: "_bundle_id") {
                 value
             }
-            productId: attribute(key: "_product_id") {
-                value
-            }
             cost {
                 subtotalAmount {
                     amount
