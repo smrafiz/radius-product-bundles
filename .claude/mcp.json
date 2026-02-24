@@ -46,6 +46,18 @@
             "url": "https://tools.artiforge.ai/mcp?pat=QjfTzZHsijtseIJxMQ52uAVzB0Wf5Oja",
             "type": "http",
             "description": "Artiforge - Build with AI without frictions"
+        },
+        "playwright": {
+            "command": "npx",
+            "args": ["@playwright/mcp@latest"]
+        },
+        "ddg-search": {
+            "command": "uvx",
+            "args": ["duckduckgo-mcp-server"]
+        },
+        "mcp-compass": {
+            "command": "npx",
+            "args": ["-y", "@liuyoshio/mcp-compass"]
         }
     }
 }
