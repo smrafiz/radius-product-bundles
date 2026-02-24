@@ -100,7 +100,7 @@ export function ProductMediaPicker({
                                 );
 
                                 return (
-                                    <s-grid-item key={item.imageUrl}>
+                                    <s-grid-item key={item.productId}>
                                         <div
                                             className="relative cursor-pointer"
                                             onClick={() =>

@@ -169,6 +169,8 @@ export const bundleSchema = z
 
         buyQuantity: z.number().int().min(1).optional(),
         getQuantity: z.number().int().min(1).optional(),
+        usesPerOrderLimit: z.number().int().min(1).optional().nullable(),
+        sameProductMode: z.boolean().optional(),
         minimumItems: z.number().int().min(1).optional(),
         maximumItems: z.number().int().min(1).optional(),
 
@@ -271,19 +273,60 @@ export const bundleSchema = z
             }
         }
     })
-    // Bundle-type-specific validations
-    .refine(
-        (data) => {
-            if (data.type === "BUY_X_GET_Y" || data.type === "BOGO") {
-                return data.buyQuantity != null && data.getQuantity != null;
+    // BOGO/BXGY-specific validations
+    .superRefine((data, ctx) => {
+        if (data.type !== "BUY_X_GET_Y" && data.type !== "BOGO") return;
+
+        if (data.buyQuantity == null || data.getQuantity == null) {
+            ctx.addIssue({
+                code: "custom",
+                message:
+                    "Buy X Get Y bundles require buyQuantity and getQuantity",
+                path: ["buyQuantity"],
+            });
+            return;
+        }
+
+        if (data.type === "BOGO") {
+            if (data.buyQuantity !== 1) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "BOGO buy quantity must be 1",
+                    path: ["buyQuantity"],
+                });
             }
-            return true;
-        },
-        {
-            message: "Buy X Get Y bundles require buyQuantity and getQuantity",
-            path: ["buyQuantity"],
-        },
-    )
+            if (data.getQuantity !== 1) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "BOGO get quantity must be 1",
+                    path: ["getQuantity"],
+                });
+            }
+        }
+
+        const triggerProducts = data.products.filter(
+            (p) => p.role === "TRIGGER",
+        );
+        const rewardProducts = data.products.filter(
+            (p) => p.role === "REWARD",
+        );
+
+        if (triggerProducts.length === 0) {
+            ctx.addIssue({
+                code: "custom",
+                message: "At least one trigger product is required",
+                path: ["products"],
+            });
+        }
+
+        if (rewardProducts.length === 0) {
+            ctx.addIssue({
+                code: "custom",
+                message: "At least one reward product is required",
+                path: ["products"],
+            });
+        }
+    })
     .refine(
         (data) => {
             if (data.type === "VOLUME_DISCOUNT") {

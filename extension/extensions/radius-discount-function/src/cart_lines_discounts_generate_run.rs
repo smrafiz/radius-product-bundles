@@ -41,6 +41,12 @@ struct MetafieldBundleConfig {
     discounted_product_ids: Option<Vec<String>>,
     product_quantities: Option<HashMap<String, i32>>,
     main_product_id: Option<String>,
+    // BOGO/BXGY fields
+    bundle_type: Option<String>,
+    buy_quantity: Option<i32>,
+    get_quantity: Option<i32>,
+    uses_per_order_limit: Option<i32>,
+    product_roles: Option<HashMap<String, String>>,
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -70,6 +76,221 @@ fn get_product_gid(
 struct BundleLineInfo<'a> {
     line: &'a schema::cart_lines_discounts_generate_run::input::cart::Lines,
     product_id: Option<String>,
+}
+
+/// Calculate BXGY discount candidates for a bundle.
+/// Returns Some(candidate) if discount should apply, None to skip.
+fn calculate_bxgy_discount(
+    bundle_settings: &MetafieldBundleConfig,
+    bundle_lines: &[BundleLineInfo],
+    bundle_name: &str,
+) -> Option<ProductDiscountCandidate> {
+    let roles = bundle_settings.product_roles.as_ref()?;
+    let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
+    let get_qty = bundle_settings.get_quantity.unwrap_or(1);
+
+    // Separate trigger and reward lines
+    let trigger_lines: Vec<&BundleLineInfo> = bundle_lines
+        .iter()
+        .filter(|bl| {
+            bl.product_id
+                .as_ref()
+                .and_then(|pid| roles.get(pid))
+                .map(|r| r == "TRIGGER")
+                .unwrap_or(false)
+        })
+        .collect();
+
+    let reward_lines: Vec<&BundleLineInfo> = bundle_lines
+        .iter()
+        .filter(|bl| {
+            bl.product_id
+                .as_ref()
+                .and_then(|pid| roles.get(pid))
+                .map(|r| r == "REWARD")
+                .unwrap_or(false)
+        })
+        .collect();
+
+    if trigger_lines.is_empty() || reward_lines.is_empty() {
+        return None;
+    }
+
+    // Check if same-product mode (trigger and reward share product IDs)
+    let trigger_product_ids: std::collections::HashSet<&str> = trigger_lines
+        .iter()
+        .filter_map(|bl| bl.product_id.as_deref())
+        .collect();
+    let reward_product_ids: std::collections::HashSet<&str> = reward_lines
+        .iter()
+        .filter_map(|bl| bl.product_id.as_deref())
+        .collect();
+    let is_same_product = trigger_product_ids == reward_product_ids;
+
+    // Calculate deal count
+    let deal_count: i32 = if is_same_product {
+        // Same product: items_per_deal = buy_qty + get_qty, deals = total / items_per_deal
+        let items_per_deal = buy_qty + get_qty;
+        let total_trigger_qty: i32 = trigger_lines
+            .iter()
+            .map(|bl| *bl.line.quantity())
+            .sum();
+        total_trigger_qty / items_per_deal
+    } else {
+        // Different products: deal_count = min(trigger_available / buy_qty, reward_available / get_qty)
+        let total_trigger_qty: i32 = trigger_lines
+            .iter()
+            .map(|bl| *bl.line.quantity())
+            .sum();
+        let total_reward_qty: i32 = reward_lines
+            .iter()
+            .map(|bl| *bl.line.quantity())
+            .sum();
+        let trigger_deals = total_trigger_qty / buy_qty;
+        let reward_deals = total_reward_qty / get_qty;
+        std::cmp::min(trigger_deals, reward_deals)
+    };
+
+    if deal_count < 1 {
+        return None;
+    }
+
+    // Apply uses_per_order_limit
+    let effective_deals = if let Some(limit) = bundle_settings.uses_per_order_limit {
+        if limit > 0 {
+            std::cmp::min(deal_count, limit)
+        } else {
+            deal_count
+        }
+    } else {
+        deal_count
+    };
+
+    // Total reward quantity to discount
+    let reward_qty_to_discount = effective_deals * get_qty;
+
+    // Build targets: only reward product lines
+    let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
+    let mut remaining_discount_qty = reward_qty_to_discount;
+
+    for bl in &reward_lines {
+        if remaining_discount_qty <= 0 {
+            break;
+        }
+        let line_qty = *bl.line.quantity();
+        let qty_for_this_line = std::cmp::min(remaining_discount_qty, line_qty);
+        remaining_discount_qty -= qty_for_this_line;
+
+        targets.push(ProductDiscountCandidateTarget::CartLine(CartLineTarget {
+            id: bl.line.id().clone(),
+            quantity: Some(qty_for_this_line),
+        }));
+    }
+
+    if targets.is_empty() {
+        return None;
+    }
+
+    // Calculate reward total for discount computation
+    let reward_total: f64 = reward_lines
+        .iter()
+        .map(|bl| {
+            let unit_price = bl.line.cost().amount_per_quantity().amount().0;
+            let line_qty = *bl.line.quantity();
+            let discountable = std::cmp::min(line_qty, reward_qty_to_discount);
+            unit_price * discountable as f64
+        })
+        .sum();
+
+    // Build discount value
+    let (discount_amount, value) = match bundle_settings.discount_type.as_str() {
+        "PERCENTAGE" => {
+            let calculated = reward_total * bundle_settings.discount_value / 100.0;
+            (
+                calculated,
+                ProductDiscountCandidateValue::Percentage(Percentage {
+                    value: Decimal(bundle_settings.discount_value),
+                }),
+            )
+        }
+        "FIXED_AMOUNT" => {
+            let amount = bundle_settings.discount_value * reward_qty_to_discount as f64;
+            (
+                amount,
+                ProductDiscountCandidateValue::FixedAmount(
+                    ProductDiscountCandidateFixedAmount {
+                        amount: Decimal(bundle_settings.discount_value),
+                        applies_to_each_item: Some(true),
+                    },
+                ),
+            )
+        }
+        "CUSTOM_PRICE" => {
+            // Custom price per reward item: discount = original_price - custom_price
+            let custom_price = bundle_settings.discount_value;
+            let discount_per_unit: f64 = reward_lines
+                .first()
+                .map(|bl| {
+                    let unit_price = bl.line.cost().amount_per_quantity().amount().0;
+                    (unit_price - custom_price).max(0.0)
+                })
+                .unwrap_or(0.0);
+
+            if discount_per_unit <= 0.0 {
+                return None;
+            }
+
+            let total_discount = discount_per_unit * reward_qty_to_discount as f64;
+            (
+                total_discount,
+                ProductDiscountCandidateValue::FixedAmount(
+                    ProductDiscountCandidateFixedAmount {
+                        amount: Decimal(discount_per_unit),
+                        applies_to_each_item: Some(true),
+                    },
+                ),
+            )
+        }
+        "NO_DISCOUNT" => return None,
+        _ => return None,
+    };
+
+    // Apply max discount cap
+    let final_value = if let Some(max_discount) = bundle_settings.max_discount_amount {
+        if max_discount > 0.0 && discount_amount > max_discount {
+            ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+                amount: Decimal(max_discount),
+                applies_to_each_item: None,
+            })
+        } else {
+            value
+        }
+    } else {
+        value
+    };
+
+    let message = match bundle_settings.discount_type.as_str() {
+        "PERCENTAGE" => {
+            if bundle_settings.discount_value == 100.0 {
+                format!("{}: Buy {} Get {} FREE", bundle_name, buy_qty, get_qty)
+            } else {
+                format!(
+                    "{}: Buy {} Get {} at {}% off",
+                    bundle_name, buy_qty, get_qty, bundle_settings.discount_value
+                )
+            }
+        }
+        "FIXED_AMOUNT" => format!("{}: Buy {} Get {} discount", bundle_name, buy_qty, get_qty),
+        "CUSTOM_PRICE" => format!("{}: Special deal", bundle_name),
+        _ => format!("{} discount", bundle_name),
+    };
+
+    Some(ProductDiscountCandidate {
+        targets,
+        message: Some(message),
+        value: final_value,
+        associated_discount_code: None,
+    })
 }
 
 #[shopify_function]
@@ -182,6 +403,26 @@ fn cart_lines_discounts_generate_run(
         }
 
         if bundle_lines.is_empty() {
+            continue;
+        }
+
+        // --- BOGO/BXGY: route to dedicated discount logic ---
+        let is_bxgy = bundle_settings
+            .bundle_type
+            .as_deref()
+            .map(|t| t == "BOGO" || t == "BUY_X_GET_Y")
+            .unwrap_or(false);
+
+        if is_bxgy {
+            let bxgy_bundle_name = cart_config
+                .bundle_name
+                .as_deref()
+                .unwrap_or("Bundle");
+            if let Some(candidate) =
+                calculate_bxgy_discount(bundle_settings, &bundle_lines, bxgy_bundle_name)
+            {
+                candidates.push(candidate);
+            }
             continue;
         }
 

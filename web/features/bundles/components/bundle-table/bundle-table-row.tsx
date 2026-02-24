@@ -7,6 +7,7 @@ import {
     BundleTableRowProps,
     formatBundleDiscount,
     getBundleProperty,
+    getBundleTypeBadge,
     StatusPopover,
     useBundleActions,
 } from "@/features/bundles";
@@ -73,11 +74,10 @@ export function BundleTableRow({
             {/* Bundle type */}
             <s-table-cell>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <s-text>
-                        <span className="block w-30 whitespace-normal! font-semibold">
-                            {getBundleProperty(bundle.type, "label")}
-                        </span>
-                    </s-text>
+                    {(() => {
+                        const badge = getBundleTypeBadge(bundle.type);
+                        return <s-badge tone={badge.tone}>{badge.text}</s-badge>;
+                    })()}
                 </div>
             </s-table-cell>
 

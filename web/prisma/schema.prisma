@@ -67,6 +67,7 @@ model Bundle {
     publishedAt          DateTime?
     buyQuantity          Int?
     getQuantity          Int?
+    usesPerOrderLimit    Int?
     minimumItems         Int?
     maximumItems         Int?
     discountType         DiscountType

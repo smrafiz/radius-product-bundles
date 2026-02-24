@@ -79,24 +79,27 @@ export function useEditBundle(bundleId: string) {
             products.length > 0 &&
             !productsQuery.loading
         ) {
-            // Group variants by product ID
+            // Group variants by product ID + role (role-aware for BOGO/BXGY)
             const grouped = bundleProducts.reduce(
                 (acc: Record<string, any>, bp: any) => {
                     const productId = bp.id;
                     const variantId = bp.selectedVariant?.id;
+                    const role = bp.role || "INCLUDED";
+                    const key = `${productId}:${role}`;
 
                     if (!productId) return acc;
 
-                    if (!acc[productId]) {
-                        acc[productId] = {
+                    if (!acc[key]) {
+                        acc[key] = {
                             ...bp,
+                            role,
                             variantIds: variantId ? [variantId] : [],
                         };
                     } else if (
                         variantId &&
-                        !acc[productId].variantIds.includes(variantId)
+                        !acc[key].variantIds.includes(variantId)
                     ) {
-                        acc[productId].variantIds.push(variantId);
+                        acc[key].variantIds.push(variantId);
                     }
 
                     return acc;
@@ -104,16 +107,19 @@ export function useEditBundle(bundleId: string) {
                 {},
             );
 
+            const productNodes = (products || []).filter(isProductNode);
+
             const selectedItems: SelectedItem[] = Object.values(grouped).map(
                 (bp: any, index: number) => {
-                    const productNodes = (products || []).filter(isProductNode);
                     const shopifyProduct = productNodes.find(
                         (p) => p.id === bp.id,
                     );
                     const firstVariant = shopifyProduct?.variants?.nodes?.[0];
+                    const role = bp.role || "INCLUDED";
+                    const isReward = role === "REWARD";
 
                     return {
-                        id: `product-${bp.id}`,
+                        id: isReward ? `reward-${bp.id}` : `product-${bp.id}`,
                         productId: bp.id,
                         variantIds: bp.variantIds || [],
                         quantity: bp.quantity || 1,
@@ -136,6 +142,7 @@ export function useEditBundle(bundleId: string) {
                         inventoryQuantity: firstVariant?.inventoryQuantity || 0,
                         availableForSale:
                             firstVariant?.availableForSale || false,
+                        role,
                     };
                 },
             );

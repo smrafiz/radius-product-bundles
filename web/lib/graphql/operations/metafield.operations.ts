@@ -445,8 +445,16 @@ function buildShopBundlesMetafieldValue(
               )
             : 0;
 
+        const isBxgy =
+            bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+
+        const productRoles = isBxgy
+            ? bundleProducts.map((bp) => bp.role || "INCLUDED")
+            : undefined;
+
         bundleMap[bundle.id] = {
             status: bundle.status,
+            bundleType: bundle.type,
             discountType: bundle.discountType || "PERCENTAGE",
             discountValue: bundle.discountValue || 0,
             freeShipping: bundle.freeShipping || false,
@@ -477,6 +485,12 @@ function buildShopBundlesMetafieldValue(
             enableHyperLink: bundle.settings?.enableHyperLink ?? false,
             mainProductId: bundle.mainProductId || null,
             mainVariantId: bundle.mainVariantId || null,
+            ...(isBxgy && {
+                buyQuantity: bundle.buyQuantity || 1,
+                getQuantity: bundle.getQuantity || 1,
+                usesPerOrderLimit: bundle.usesPerOrderLimit || null,
+                productRoles: productRoles,
+            }),
         };
     }
 
@@ -500,6 +514,19 @@ function buildDiscountBundlesMetafieldValue(
             productQuantityMap[bp.productId] = bp.quantity;
         }
 
+        const isBxgy =
+            bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+
+        const productRoleMap: Record<string, string> | null = isBxgy
+            ? (() => {
+                  const roles: Record<string, string> = {};
+                  for (const bp of bundleProducts) {
+                      roles[bp.productId] = bp.role || "INCLUDED";
+                  }
+                  return Object.keys(roles).length > 0 ? roles : null;
+              })()
+            : null;
+
         bundleMap[bundle.id] = {
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
@@ -513,6 +540,13 @@ function buildDiscountBundlesMetafieldValue(
             freeShippingMethodTitle:
                 freeShippingMethodTitle || "Free shipping with {name}",
             mainProductId: bundle.mainProductId || null,
+            ...(isBxgy && {
+                bundleType: bundle.type,
+                buyQuantity: bundle.buyQuantity || 1,
+                getQuantity: bundle.getQuantity || 1,
+                usesPerOrderLimit: bundle.usesPerOrderLimit || null,
+                productRoles: productRoleMap,
+            }),
         };
     }
 

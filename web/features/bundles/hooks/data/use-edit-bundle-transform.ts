@@ -32,6 +32,7 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         // Bundle mechanics
         buyQuantity: bundleData.buyQuantity ?? undefined,
         getQuantity: bundleData.getQuantity ?? undefined,
+        usesPerOrderLimit: bundleData.usesPerOrderLimit ?? null,
         maximumItems: bundleData.maximumItems ?? undefined,
 
         discountType: bundleData.discountType,

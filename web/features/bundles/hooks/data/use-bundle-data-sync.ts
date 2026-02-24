@@ -61,9 +61,29 @@ export function useBundleDataSync(bundleData: any | undefined) {
                 allowMixAndMatch: bundleData.allowMixAndMatch,
                 mixAndMatchPrice: bundleData.mixAndMatchPrice,
 
-                // Buy X Get Y
+                // Buy X Get Y / BOGO
                 buyQuantity: bundleData.buyQuantity,
                 getQuantity: bundleData.getQuantity,
+                usesPerOrderLimit: bundleData.usesPerOrderLimit ?? null,
+                sameProductMode: (() => {
+                    const products = bundleData.products || [];
+                    const triggerIds = new Set(
+                        products
+                            .filter((p: any) => p.role === "TRIGGER")
+                            .map((p: any) => p.id),
+                    );
+                    const rewardIds = new Set(
+                        products
+                            .filter((p: any) => p.role === "REWARD")
+                            .map((p: any) => p.id),
+                    );
+                    if (triggerIds.size === 0 || rewardIds.size === 0)
+                        return false;
+                    return (
+                        triggerIds.size === rewardIds.size &&
+                        [...triggerIds].every((id) => rewardIds.has(id))
+                    );
+                })(),
 
                 // Volume Discount
                 volumeTiers: bundleData.volumeTiers,

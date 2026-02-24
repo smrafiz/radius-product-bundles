@@ -198,7 +198,7 @@ export const useBundleStore = create(
                     productId: item.productId,
                     variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: "INCLUDED",
+                    role: item.role || "INCLUDED",
                 }));
             });
             get().markDirty();
@@ -218,7 +218,7 @@ export const useBundleStore = create(
                     productId: item.productId,
                     variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: "INCLUDED",
+                    role: item.role || "INCLUDED",
                 }));
             });
             get().markDirty();
@@ -236,7 +236,7 @@ export const useBundleStore = create(
                     productId: item.productId,
                     variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: "INCLUDED",
+                    role: item.role || "INCLUDED",
                 }));
             });
             get().markDirty();
@@ -254,7 +254,7 @@ export const useBundleStore = create(
                     productId: item.productId,
                     variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: "INCLUDED",
+                    role: item.role || "INCLUDED",
                 }));
             });
             get().markDirty();
@@ -278,7 +278,7 @@ export const useBundleStore = create(
                             productId: item.productId,
                             variantId: item.variantId || "",
                             quantity: item.quantity,
-                            role: "INCLUDED",
+                            role: item.role || "INCLUDED",
                         }),
                     );
                 }
@@ -306,7 +306,7 @@ export const useBundleStore = create(
                     productId: item.productId,
                     variantId: item.variantId || "",
                     quantity: item.quantity,
-                    role: "INCLUDED",
+                    role: item.role || "INCLUDED",
                 }));
             });
             get().markDirty();
@@ -357,7 +357,7 @@ export const useBundleStore = create(
                             productId: item.productId,
                             variantId: item.variantId || "",
                             quantity: item.quantity,
-                            role: "INCLUDED",
+                            role: item.role || "INCLUDED",
                         }),
                     );
                 }
@@ -561,6 +561,69 @@ export const useBundleStore = create(
 
             const originalTotal = items[0]?.totalVariants || 1;
             return { selectedCount, originalTotal };
+        },
+
+        // BOGO/BXGY: Role management
+        setProductRole: (productId: string, role: SelectedItem["role"]) => {
+            set((state) => {
+                state.selectedItems.forEach((item) => {
+                    if (item.productId === productId) {
+                        item.role = role;
+                    }
+                });
+                state.bundleData.products = state.selectedItems.map((item) => ({
+                    productId: item.productId,
+                    variantId: item.variantId || "",
+                    quantity: item.quantity,
+                    role: item.role || "INCLUDED",
+                }));
+            });
+            get().markDirty();
+            callTriggerSaveBar();
+        },
+
+        getTriggerProducts: () => {
+            return get().selectedItems.filter((item) => item.role === "TRIGGER");
+        },
+
+        getRewardProducts: () => {
+            return get().selectedItems.filter((item) => item.role === "REWARD");
+        },
+
+        setSameProductMode: (enabled: boolean) => {
+            set((state) => {
+                state.bundleData.sameProductMode = enabled;
+                if (enabled) {
+                    state.selectedItems.forEach((item) => {
+                        if (item.role === "TRIGGER") {
+                            item.role = "TRIGGER";
+                        } else if (!item.role || item.role === "INCLUDED") {
+                            item.role = "TRIGGER";
+                        }
+                    });
+                    const triggerItems = state.selectedItems.filter(
+                        (item) => item.role === "TRIGGER",
+                    );
+                    triggerItems.forEach((item) => {
+                        const alreadyReward = state.selectedItems.some(
+                            (s) =>
+                                s.productId === item.productId &&
+                                s.role === "REWARD",
+                        );
+                        if (!alreadyReward) {
+                            item.role = "TRIGGER";
+                        }
+                    });
+                }
+                state.bundleData.products = state.selectedItems.map((item) => ({
+                    productId: item.productId,
+                    variantId: item.variantId || "",
+                    quantity: item.quantity,
+                    role: item.role || "INCLUDED",
+                }));
+            });
+            get().markDirty();
+            callTriggerSaveBar();
         },
 
         setDisplaySettings: (settings) => {

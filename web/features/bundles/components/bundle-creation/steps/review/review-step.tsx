@@ -1,18 +1,25 @@
 "use client";
 
-import { BundleSummary, useBundleFormMethods } from "@/features/bundles";
+import {
+    BundleSummary,
+    BundleType,
+    BxgyReviewSection,
+    useBundleFormMethods,
+    useBundleStore,
+} from "@/features/bundles";
+
+const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
 
 export function ReviewStep() {
     const { formState } = useBundleFormMethods();
+    const bundleType = useBundleStore((s) => s.bundleData.type);
+    const isBxgy = BXGY_TYPES.includes(bundleType as BundleType);
 
     const errors = formState?.errors || {};
-    const isValid = formState?.isValid ?? false;
-
     const formErrors = Object.entries(errors).map(([field, error]) => ({
         field,
         message: error?.message || "Invalid value",
     }));
-
     const hasErrors = formErrors.length > 0;
 
     return (
@@ -33,7 +40,7 @@ export function ReviewStep() {
                 </s-banner>
             )}
 
-            <BundleSummary />
+            {isBxgy ? <BxgyReviewSection /> : <BundleSummary />}
         </s-stack>
     );
 }

@@ -45,6 +45,22 @@ export const getBundleStatusBadge = (status: string): BundleStatusBadge => {
     };
 };
 
+export const getBundleTypeBadge = (type: BundleType): { text: string; tone: BundleStatusBadge["tone"] } => {
+    const toneMap: Record<string, BundleStatusBadge["tone"]> = {
+        FIXED_BUNDLE: "info",
+        BOGO: "success",
+        BUY_X_GET_Y: "success",
+        VOLUME_DISCOUNT: "warning",
+        MIX_AND_MATCH: "caution",
+        FREQUENTLY_BOUGHT_TOGETHER: "neutral",
+    };
+    const config = BUNDLE_TYPES[type];
+    return {
+        text: config?.label ?? type,
+        tone: toneMap[type] ?? "neutral",
+    };
+};
+
 /**
  * Get bundle configuration properties
  */
@@ -178,6 +194,8 @@ export const initialBundleData: Partial<ExtendedBundleFormData> = {
     mainProductId: undefined,
     mainVariantId: undefined,
     priority: 0,
+    usesPerOrderLimit: undefined,
+    sameProductMode: false,
 };
 
 export const initialConfiguration: BundleConfiguration = {

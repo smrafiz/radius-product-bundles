@@ -25,6 +25,7 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         mainVariantId: null,
         buyQuantity: null,
         getQuantity: null,
+        usesPerOrderLimit: null,
         minimumItems: null,
         maximumItems: null,
         volumeTiers: null,

@@ -110,6 +110,9 @@ export function transformBundle(
         discountedProductIds: bundle.discountedProductIds ?? [],
         freeShipping: bundle.freeShipping ?? false,
         priority: bundle.priority ?? 0,
+        buyQuantity: bundle.buyQuantity ?? undefined,
+        getQuantity: bundle.getQuantity ?? undefined,
+        usesPerOrderLimit: bundle.usesPerOrderLimit ?? undefined,
         settings: bundle.settings ?? undefined,
     };
 }

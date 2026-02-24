@@ -178,6 +178,12 @@ export interface BundleState {
     clearRemovedMediaIds: () => void;
     getRemovedMediaIds: () => string[];
 
+    // BOGO/BXGY role management
+    setProductRole: (productId: string, role: SelectedItem["role"]) => void;
+    getTriggerProducts: () => SelectedItem[];
+    getRewardProducts: () => SelectedItem[];
+    setSameProductMode: (enabled: boolean) => void;
+
     // Computed values
     getGroupedItems: () => ProductGroup[];
     getTotalProducts: () => number;

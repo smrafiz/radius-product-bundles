@@ -13,6 +13,9 @@ query Input {
                 subtotalAmount {
                     amount
                 }
+                amountPerQuantity {
+                    amount
+                }
             }
             merchandise {
                 __typename

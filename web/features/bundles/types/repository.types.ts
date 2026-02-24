@@ -23,6 +23,7 @@ export interface CreateBundleInput {
     mainVariantId?: string | null;
     buyQuantity?: number | null;
     getQuantity?: number | null;
+    usesPerOrderLimit?: number | null;
     minimumItems?: number | null;
     maximumItems?: number | null;
     discountType: DiscountType;
@@ -64,6 +65,9 @@ export interface UpdateBundleInput {
     discountValue?: number;
     minOrderValue?: number | null;
     maxDiscountAmount?: number | null;
+    buyQuantity?: number | null;
+    getQuantity?: number | null;
+    usesPerOrderLimit?: number | null;
     startDate?: Date | null;
     endDate?: Date | null;
     discountApplication?: string;
@@ -89,6 +93,7 @@ export interface UpdateBundleInputWithRelations {
     mainVariantId?: string | null;
     buyQuantity?: number | null;
     getQuantity?: number | null;
+    usesPerOrderLimit?: number | null;
     minimumItems?: number | null;
     maximumItems?: number | null;
     discountType: DiscountType;
@@ -145,7 +150,7 @@ export interface BundleProductInput {
     productId: string;
     variantId?: string | null;
     quantity: number;
-    role?: "INCLUDED" | "OPTIONAL";
+    role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
     groupId?: string | null;
     customPrice?: number | null;
 }

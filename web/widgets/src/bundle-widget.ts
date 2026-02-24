@@ -37,7 +37,7 @@ declare global {
         id: string;
         variantId: string;
         quantity: number;
-        role: "INCLUDED" | "OPTIONAL";
+        role: "INCLUDED" | "OPTIONAL" | "TRIGGER" | "REWARD";
         displayOrder: number;
         isRequired: boolean;
         title: string;
@@ -70,6 +70,11 @@ declare global {
         productIds: string[];
         productQuantities?: number[];
         mainProductId?: string;
+        bundleType?: string;
+        buyQuantity?: number;
+        getQuantity?: number;
+        usesPerOrderLimit?: number;
+        productRoles?: string[];
         layout: string;
         labels: {
             buttonText: string;
@@ -1115,9 +1120,21 @@ declare global {
 
             let badgeText = "";
 
-            console.log(structure);
+            const isBxgy = structure.bundleType === "BOGO" || structure.bundleType === "BUY_X_GET_Y";
+            const buyQty = structure.buyQuantity || 1;
+            const getQty = structure.getQuantity || 1;
 
-            if (structure.discountValue && structure.discountValue > 0) {
+            if (isBxgy) {
+                if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+                    badgeText = `Buy ${buyQty} Get ${getQty} FREE`;
+                } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+                    badgeText = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% off`;
+                } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+                    badgeText = `Buy ${buyQty} Get ${getQty} - Save ${this.trimMoney(this.formatMoney(structure.discountValue * 100))}`;
+                } else if (structure.discountType === "CUSTOM_PRICE" && structure.discountValue > 0) {
+                    badgeText = `Buy ${buyQty} Get ${getQty} for ${this.trimMoney(this.formatMoney(structure.discountValue * 100))}`;
+                }
+            } else if (structure.discountValue && structure.discountValue > 0) {
                 switch (structure.discountType) {
                     case "PERCENTAGE":
                         badgeText = this.formatLabel(
@@ -1339,14 +1356,17 @@ declare global {
             const productMap = new Map(products.map((p) => [p.id, p]));
 
             const quantities = this.bundleStructure.productQuantities;
+            const roles = this.bundleStructure.productRoles;
             return this.bundleStructure.productIds.map((productId, index) => {
                 const product = productMap.get(productId);
+                const rawRole = roles?.[index] || "INCLUDED";
+                const role = (rawRole === "TRIGGER" || rawRole === "REWARD" || rawRole === "OPTIONAL" ? rawRole : "INCLUDED") as BundleProduct["role"];
 
                 return {
                     id: productId,
                     variantId: product?.variantId || "",
                     quantity: quantities?.[index] || 1,
-                    role: "INCLUDED" as const,
+                    role,
                     displayOrder: index,
                     isRequired: true,
                     title: product?.title || "Loading...",
@@ -1402,6 +1422,11 @@ declare global {
             return this.bundleStructure?.labels?.quantityLabel || "Qty:";
         }
 
+        private isBxgyBundle(): boolean {
+            const t = this.bundleStructure?.bundleType;
+            return t === "BOGO" || t === "BUY_X_GET_Y";
+        }
+
         /**
          * Renders products (replacing skeleton)
          */
@@ -1411,6 +1436,11 @@ declare global {
             );
 
             if (!productsContainer) {
+                return;
+            }
+
+            if (this.isBxgyBundle()) {
+                this.renderBxgyProducts(bundle, productsContainer);
                 return;
             }
 
@@ -1476,6 +1506,85 @@ declare global {
                 setTimeout(() => {
                     this.initSlider();
                 }, 0);
+            }
+        }
+
+        private renderBxgyProducts(bundle: Bundle, container: Element): void {
+            const triggers = bundle.products.filter(p => p.role === "TRIGGER").sort((a, b) => a.displayOrder - b.displayOrder);
+            const rewards = bundle.products.filter(p => p.role === "REWARD").sort((a, b) => a.displayOrder - b.displayOrder);
+            const structure = this.bundleStructure || bundle;
+            const buyQty = structure.buyQuantity || 1;
+            const getQty = structure.getQuantity || 1;
+
+            const renderBxgyCard = (product: BundleProduct, isReward: boolean): string => {
+                const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : "";
+                const imageHtml = this.showImages && product.featuredImage
+                    ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}"${imgLoading} />`
+                    : this.showImages
+                      ? `<div class="radius-bundle__product-placeholder">📦</div>`
+                      : "";
+                const imageWrapper = this.showImages ? `<div class="radius-bundle__product-image">${imageHtml}</div>` : "";
+                const productUrl = product.handle ? `/products/${product.handle}` : "#";
+                const titleHtml = this.enableHyperLink
+                    ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${this.escapeHtml(product.title)}</a></h4>`
+                    : `<h4 class="radius-bundle__product-title">${this.escapeHtml(product.title)}</h4>`;
+
+                let priceHtml: string;
+                if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
+                    const discountedPrice = this.calculateBxgyRewardPrice(product.price, structure);
+                    priceHtml = `
+                        <span class="radius-bundle__product-price-current">${this.formatMoney(discountedPrice)}</span>
+                        ${this.showComparePrices ? `<span class="radius-bundle__product-price-compare">${this.formatMoney(product.price)}</span>` : ""}
+                    `;
+                } else {
+                    priceHtml = `<span class="radius-bundle__product-price-current">${this.formatMoney(product.price)}</span>`;
+                }
+
+                return `
+                    <div class="radius-bundle__product radius-bundle__product--list"
+                         data-product-id="${product.id}"
+                         data-variant-id="${product.variantId}">
+                        ${imageWrapper}
+                        <div class="radius-bundle__product-info">
+                            ${titleHtml}
+                            ${this.showQuantity ? `<div class="radius-bundle__product-quantity">${this.getQuantityLabel()} ${product.quantity}</div>` : ""}
+                        </div>
+                        ${this.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
+                    </div>
+                `;
+            };
+
+            let html = `<div class="radius-bundle__bxgy-section radius-bundle__bxgy-trigger">`;
+            html += `<div class="radius-bundle__bxgy-label">Buy ${buyQty}</div>`;
+            triggers.forEach(p => { html += renderBxgyCard(p, false); });
+            html += `</div>`;
+
+            html += `<div class="radius-bundle__bxgy-arrow"><span>+</span></div>`;
+
+            html += `<div class="radius-bundle__bxgy-section radius-bundle__bxgy-reward">`;
+            html += `<div class="radius-bundle__bxgy-label">Get ${getQty}</div>`;
+            rewards.forEach(p => { html += renderBxgyCard(p, true); });
+            html += `</div>`;
+
+            container.innerHTML = html;
+
+            const addToCartBtn = this.container.querySelector("[data-bundle-add-to-cart]") as HTMLButtonElement | null;
+            if (addToCartBtn) {
+                addToCartBtn.disabled = false;
+            }
+        }
+
+        private calculateBxgyRewardPrice(originalPrice: number, structure: BundleStructure): number {
+            const dv = structure.discountValue || 0;
+            switch (structure.discountType) {
+                case "PERCENTAGE":
+                    return Math.round(originalPrice * (1 - dv / 100));
+                case "FIXED_AMOUNT":
+                    return Math.round(Math.max(0, originalPrice - dv * 100));
+                case "CUSTOM_PRICE":
+                    return Math.round(dv * 100);
+                default:
+                    return originalPrice;
             }
         }
 
@@ -1696,6 +1805,22 @@ declare global {
 
             const structure = this.bundleStructure || bundle;
 
+            if (this.isBxgyBundle()) {
+                const triggerTotal = bundle.products
+                    .filter(p => p.role === "TRIGGER")
+                    .reduce((sum, p) => sum + p.price * p.quantity, 0);
+                const rewardTotal = bundle.products
+                    .filter(p => p.role === "REWARD")
+                    .reduce((sum, p) => sum + p.price * p.quantity, 0);
+                const discountedRewardTotal = bundle.products
+                    .filter(p => p.role === "REWARD")
+                    .reduce((sum, p) => sum + this.calculateBxgyRewardPrice(p.price, structure) * p.quantity, 0);
+                bundleTotal = triggerTotal + discountedRewardTotal;
+                discountAmount = Math.max(0, sellingTotal - bundleTotal);
+                this.updatePricingDisplay(sellingTotal, bundleTotal, discountAmount, structure);
+                return;
+            }
+
             // When discounting specific products only, calculate based on discounted subset
             const applyToSpecific =
                 structure.discountApplication === "products";
@@ -1737,42 +1862,32 @@ declare global {
             bundleTotal = Math.max(0, bundleTotal);
             discountAmount = Math.max(0, sellingTotal - bundleTotal);
 
-            // Update regular price
-            const regularPriceEl = this.container.querySelector(
-                "[data-regular-price]",
-            );
+            this.updatePricingDisplay(sellingTotal, bundleTotal, discountAmount, structure);
+        }
+
+        private updatePricingDisplay(sellingTotal: number, bundleTotal: number, discountAmount: number, structure: BundleStructure): void {
+            const regularPriceEl = this.container.querySelector("[data-regular-price]");
             if (regularPriceEl) {
                 regularPriceEl.textContent = this.formatMoney(sellingTotal);
             }
 
-            // Update bundle price
-            const bundlePriceEl = this.container.querySelector(
-                "[data-bundle-price]",
-            );
+            const bundlePriceEl = this.container.querySelector("[data-bundle-price]");
             if (bundlePriceEl) {
                 bundlePriceEl.textContent = this.formatMoney(bundleTotal);
             }
 
-            // Update savings
             const savingsEl = this.container.querySelector("[data-savings]");
-            const savingsAmountEl = this.container.querySelector(
-                "[data-savings-amount]",
-            );
-
+            const savingsAmountEl = this.container.querySelector("[data-savings-amount]");
             if (savingsEl && savingsAmountEl) {
                 if (discountAmount > 0 && this.showSavings) {
-                    savingsAmountEl.textContent =
-                        this.formatMoney(discountAmount);
+                    savingsAmountEl.textContent = this.formatMoney(discountAmount);
                     (savingsEl as HTMLElement).style.display = "flex";
                 } else {
                     (savingsEl as HTMLElement).style.display = "none";
                 }
             }
 
-            // Update free shipping badge
-            const freeShippingEl = this.container.querySelector(
-                "[data-free-shipping]",
-            );
+            const freeShippingEl = this.container.querySelector("[data-free-shipping]");
             if (freeShippingEl) {
                 if (structure.freeShipping && this.showFreeShipping) {
                     (freeShippingEl as HTMLElement).style.display = "flex";
@@ -2021,10 +2136,11 @@ declare global {
                     }
                 }
 
+                const validRoles: BundleProduct["role"][] = this.isBxgyBundle()
+                    ? ["TRIGGER", "REWARD"]
+                    : ["INCLUDED", "OPTIONAL"];
                 const cartItems: CartAddItem[] = this.bundle.products
-                    .filter(
-                        (p) => p.role === "INCLUDED" || p.role === "OPTIONAL",
-                    )
+                    .filter((p) => validRoles.includes(p.role))
                     .filter((p) => p.variantId)
                     .map((p) => ({
                         id: this.extractNumericId(p.variantId),
@@ -2085,7 +2201,7 @@ declare global {
                     discountType: structure.discountType || "PERCENTAGE",
                     discountValue: structure.discountValue || 0,
                     requiredLineCount: this.bundle.products.filter(
-                        (p) => p.role === "INCLUDED",
+                        (p) => validRoles.includes(p.role),
                     ).length,
                     minOrderValue: structure.minOrderValue || 0,
                     maxDiscountAmount: structure.maxDiscountAmount || 0,

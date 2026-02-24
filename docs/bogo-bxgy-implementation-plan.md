@@ -1,5 +1,10 @@
 # BOGO & BXGY Integration — Complete Research Report & Implementation Plan
 
+> **Validated**: Shopify Dev MCP, Context7, Sequential Thinking MCP (Feb 2026)
+> **Decisions**: Additive metafields, BOGO-only Phase 1 (1/1 fixed), widget split first, edit flow included
+
+---
+
 ## 1. WHAT EXISTS TODAY
 
 ### Schema (Ready)
@@ -19,18 +24,24 @@
 
 ### Validation (Basic)
 - Zod superRefine checks `buyQuantity` + `getQuantity` exist for BOGO/BXGY
-- **Missing**: product role validation, uses-per-order-limit, same-product logic
+- `bundle-rules.validation.ts` already expects TRIGGER/REWARD roles but store never assigns them
+- **Missing**: uses-per-order-limit validation, same-product logic
 
 ### Rust Function (Generic, no BXGY logic)
 - Handles `PERCENTAGE`, `FIXED_AMOUNT`, `CUSTOM_PRICE`, `NO_DISCOUNT`
 - Discounts ALL bundle products equally
 - **Missing**: trigger/reward product differentiation, deal count calculation, same-product handling
+- **Missing**: `amountPerQuantity` in GraphQL input query (needed for CUSTOM_PRICE per reward item)
+
+### Store (No role management)
+- All products hardcoded as `role: "INCLUDED"` (6 locations in bundle.store.ts)
+- No `setProductRole()`, `triggerProducts`, or `rewardProducts` methods
 
 ---
 
 ## 2. SHOPIFY DISCOUNT APPROACH — RECOMMENDATION
 
-**Continue with Custom Shopify Function (Rust WASM)**
+**Continue with Custom Shopify Function (Rust WASM)** ✅ Confirmed by Shopify Dev MCP
 
 | Factor | Native BXGY API | Custom Function (Current) |
 |---|---|---|
@@ -54,6 +65,12 @@
 - Structure: `customerBuys` (trigger) + `customerGets` (reward)
 - `customerGets.value.discountOnQuantity`: `{ quantity, effect: { percentage } }`
 - Percentage range: 0.00-1.00 (1.0 = free) — different from Function API (0-100)
+
+### Validated Function API Facts (Shopify Dev MCP + Context7)
+- `CartLineTarget.quantity` is valid for limiting discount to N units of a line
+- `ProductDiscountCandidateFixedAmount.applies_to_each_item` is valid for per-item CUSTOM_PRICE
+- Percentage range 0-100 (NOT 0-1 like Admin API)
+- `cart.lines.discounts.generate.run` is the correct target
 
 ---
 
@@ -84,38 +101,44 @@
 
 For **same-product BOGO**: Single product card with "Buy 1 + Get 1 FREE" badge, quantity auto-set to 2.
 
+### Widget Architecture Decision: Split First
+Before adding BXGY templates, split `bundle-widget.ts` (~2600 lines) into modules:
+- `base-widget.ts` — shared logic (slider, toast, analytics, cart operations)
+- `fixed-bundle-renderer.ts` — existing FIXED_BUNDLE template
+- `bxgy-renderer.ts` — new BOGO/BXGY two-section template
+
 ---
 
 ## 4. BXGY DISCOUNT FEATURES (All Supported)
 
 | Scenario | Discount Type | How It Works |
 |---|---|---|
-| Buy 2 Get 1 **FREE** | `PERCENTAGE` @ 100 | 100% off reward qty |
-| Buy 2 Get 1 at **50% off** | `PERCENTAGE` @ 50 | 50% off reward qty |
-| Buy 2 Get 1 at **$10 off** | `FIXED_AMOUNT` @ 10 | $10 off per reward item |
-| Buy 2 Get 1 at **$5 flat** | `CUSTOM_PRICE` @ 5 | `original_price - $5` = discount |
-| Buy 3 Get 2 FREE | `PERCENTAGE` @ 100 | Scales: 6 trigger → 2 deals → 4 free |
+| Buy 1 Get 1 **FREE** (BOGO) | `PERCENTAGE` @ 100 | 100% off reward qty |
+| Buy 1 Get 1 at **50% off** | `PERCENTAGE` @ 50 | 50% off reward qty |
+| Buy 1 Get 1 at **$10 off** | `FIXED_AMOUNT` @ 10 | $10 off per reward item |
+| Buy 1 Get 1 at **$5 flat** | `CUSTOM_PRICE` @ 5 | `original_price - $5` = discount |
+| Buy 3 Get 2 FREE (Phase 2) | `PERCENTAGE` @ 100 | Scales: 6 trigger → 2 deals → 4 free |
 | BOGO same product | `PERCENTAGE` @ 100 | `items_per_deal = 1+1 = 2`, half discounted |
 
 ### Deal Stacking (`usesPerOrderLimit`)
 - `null` = unlimited stacking
 - `1` = deal applies once per order
-- `3` = max 3 applications (Buy 6 → Get 3 free)
+- `3` = max 3 applications (Buy 3 → Get 3 free)
 
 ### Same Product Logic
 When trigger and reward products overlap:
 ```
-total_in_cart = 5, buy_qty = 2, get_qty = 1
-items_per_deal = 2 + 1 = 3
-deal_count = 5 / 3 = 1 (integer division)
-→ 1 item discounted, 4 at full price
+total_in_cart = 4, buy_qty = 1, get_qty = 1
+items_per_deal = 1 + 1 = 2
+deal_count = 4 / 2 = 2
+→ 2 items discounted, 2 at full price
 ```
 
 ### Different Product Logic
 ```
-Product A in cart = 4, buy_qty = 2, get_qty = 1
-deal_count = 4 / 2 = 2
-→ Discount up to 2 of Product B at specified discount
+Product A (trigger) in cart = 3, buy_qty = 1, get_qty = 1
+deal_count = 3 / 1 = 3
+→ Discount up to 3 of Product B (reward) at specified discount
 ```
 
 ---
@@ -173,6 +196,7 @@ value: ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedA
 
 **Custom Price ($5 flat):**
 ```rust
+// Requires amountPerQuantity in GraphQL input query
 let unit_price = line.cost().amount_per_quantity().amount().0;
 let discount_per_unit = unit_price - 5.0;
 value: ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
@@ -183,9 +207,70 @@ value: ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedA
 
 ---
 
-## 6. IMPLEMENTATION PLAN
+## 6. METAFIELD BACKWARD COMPATIBILITY
+
+### Decision: Additive Fields (No Breaking Changes)
+
+Current metafield structure (`product_quantities`):
+```json
+{
+  "status": "ACTIVE",
+  "discount_type": "PERCENTAGE",
+  "discount_value": 10,
+  "product_quantities": {
+    "gid://shopify/Product/111": 2,
+    "gid://shopify/Product/222": 1
+  }
+}
+```
+
+New metafield structure for BOGO (additive — existing fields untouched):
+```json
+{
+  "status": "ACTIVE",
+  "discount_type": "PERCENTAGE",
+  "discount_value": 100,
+  "bundle_type": "BOGO",
+  "buy_quantity": 1,
+  "get_quantity": 1,
+  "uses_per_order_limit": null,
+  "product_quantities": {
+    "gid://shopify/Product/111": 1,
+    "gid://shopify/Product/222": 1
+  },
+  "product_roles": {
+    "gid://shopify/Product/111": "TRIGGER",
+    "gid://shopify/Product/222": "REWARD"
+  }
+}
+```
+
+**Why additive**:
+- `product_quantities` stays `HashMap<String, i32>` — zero change for existing FIXED_BUNDLE bundles
+- `product_roles` is a new `Option<HashMap<String, String>>` — only present for BOGO/BXGY
+- Rust function checks: if `product_roles.is_some() && bundle_type == "BOGO"` → use BXGY logic, else → existing logic
+- No migration needed for existing metafields
+
+### Cart Attribute (`_radiusDiscounts`) — Keep Minimal
+Cart attribute does NOT need `bundle_type`/`buy_qty`/`get_qty`. The metafield (trusted source) already has these. Cart attribute remains:
+```json
+{
+  "bundleId": "123",
+  "bundleName": "BOGO Deal",
+  "requiredLineCount": 2,
+  "discountType": "NO_DISCOUNT",
+  "discountValue": 0,
+  ...
+}
+```
+
+---
+
+## 7. IMPLEMENTATION PLAN
 
 ### Phase 1: BOGO (Priority — ships first)
+
+BOGO only: fixed buy 1 / get 1 quantities. Phase 2 unlocks arbitrary quantities.
 
 #### 1A. Schema & Constants
 | # | Task | File | Change |
@@ -224,7 +309,7 @@ value: ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedA
 | 12 | Add `sameProductMode` state | `bundle.store.ts` | Boolean + toggle action |
 | 13 | Add `usesPerOrderLimit` | `bundle.store.ts` | Number field in bundleData |
 
-#### 1D. Products Step UI (Step 1)
+#### 1D. Products Step UI (Step 1 — Create & Edit)
 | # | Task | Location | Description |
 |---|---|---|---|
 | 14 | Create `TriggerRewardProductsStep` | `steps/products/` | Conditional wrapper for BOGO/BXGY |
@@ -263,7 +348,7 @@ value: ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedA
 #### 1E. Discount Step UI (Step 2)
 | # | Task | Location | Description |
 |---|---|---|---|
-| 21 | Create `BxgyDiscountSettings` | `steps/discount/` | BOGO/BXGY-specific discount controls |
+| 21 | Create `BxgyDiscountSettings` | `steps/discount/` | BOGO-specific discount controls |
 | 22 | Add "Applies to reward products" label | `steps/discount/` | Clear context |
 | 23 | Add `usesPerOrderLimit` input | `steps/discount/` | Number field with tooltip |
 | 24 | Create `DealPreviewCard` | `steps/discount/` | "Buy 1 → Get 1 at 50% off" live preview |
@@ -277,57 +362,47 @@ value: ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedA
 | 28 | Create `DealCalculationPreview` | `steps/review/` | Full price breakdown |
 | 29 | Update `ReviewStep` | `steps/review/review-step.tsx` | BOGO/BXGY conditional rendering |
 
-#### 1G. Services & Data Layer
+#### 1G. Edit Flow
+| # | Task | File | Description |
+|---|---|---|---|
+| 30 | Load TRIGGER/REWARD roles on edit | `use-bundle-edit.ts` or equivalent | Populate store with saved roles |
+| 31 | Pre-fill sameProductMode on edit | Store initialization | Detect if trigger === reward products |
+| 32 | Reuse TriggerReward step for edit | Same components as create | No separate edit-only components |
+
+#### 1H. Services & Data Layer
 | # | Task | File | Change |
 |---|---|---|---|
-| 30 | Update `bundle-write.service.ts` | services/ | Save roles, buyQty, getQty, usesPerOrderLimit |
-| 31 | Update `bundle-transformer.service.ts` | services/ | Transform BOGO data for API/DB |
-| 32 | Update `bundle.mutations.ts` | repositories/ | Persist usesPerOrderLimit |
-| 33 | Update metafield sync | services/ | Include `bundle_type`, product roles, quantities |
+| 33 | Update `bundle-write.service.ts` | services/ | Save roles, buyQty, getQty, usesPerOrderLimit |
+| 34 | Update `bundle-transformer.service.ts` | services/ | Transform BOGO data for API/DB |
+| 35 | Update `bundle.mutations.ts` | repositories/ | Persist usesPerOrderLimit |
+| 36 | Update metafield sync | services/ | Include `bundle_type`, `product_roles`, quantities |
 
-**Metafield config structure:**
-```json
-{
-  "bundle_type": "BOGO",
-  "buy_quantity": 1,
-  "get_quantity": 1,
-  "uses_per_order_limit": null,
-  "products": {
-    "gid://shopify/Product/111": {
-      "quantity": 1,
-      "role": "TRIGGER"
-    },
-    "gid://shopify/Product/222": {
-      "quantity": 1,
-      "role": "REWARD"
-    }
-  }
-}
-```
-
-#### 1H. Rust Discount Function
+#### 1I. Rust Discount Function
 | # | Task | File | Change |
 |---|---|---|---|
-| 34 | Add fields to `MetafieldBundleConfig` | `cart_lines_discounts_generate_run.rs` | `bundle_type`, `buy_quantity`, `get_quantity`, `uses_per_order_limit` |
-| 35 | Add `role` to product config | `cart_lines_discounts_generate_run.rs` | Per-product role field |
-| 36 | Add `calculate_bxgy_discount()` | `cart_lines_discounts_generate_run.rs` | Core BXGY logic |
-| 37 | Add same-product handling | `cart_lines_discounts_generate_run.rs` | `items_per_deal` math |
-| 38 | Add reward-only targeting | `cart_lines_discounts_generate_run.rs` | Only discount REWARD products |
-| 39 | Add CUSTOM_PRICE for rewards | `cart_lines_discounts_generate_run.rs` | Per-item price calculation |
-| 40 | Add tests | `cart_lines_discounts_generate_run.rs` | All 6 scenarios |
+| 37 | Add `amountPerQuantity` to GraphQL input | `cart_lines_discounts_generate_run.graphql` | Required for CUSTOM_PRICE per reward item |
+| 38 | Add fields to `MetafieldBundleConfig` | `cart_lines_discounts_generate_run.rs` | `bundle_type`, `buy_quantity`, `get_quantity`, `uses_per_order_limit`, `product_roles` |
+| 39 | Add `calculate_bxgy_discount()` | `cart_lines_discounts_generate_run.rs` | Core BXGY logic |
+| 40 | Add same-product handling | `cart_lines_discounts_generate_run.rs` | `items_per_deal` math |
+| 41 | Add reward-only targeting | `cart_lines_discounts_generate_run.rs` | Only discount REWARD products |
+| 42 | Add CUSTOM_PRICE for rewards | `cart_lines_discounts_generate_run.rs` | Per-item price using `amountPerQuantity` |
+| 43 | Add tests | `cart_lines_discounts_generate_run.rs` | All 6 scenarios |
 
 **Rust logic pseudocode:**
 ```rust
 fn calculate_bxgy_discount(bundle: &MetafieldBundleConfig, lines: &[CartLine]) -> Vec<Candidate> {
-    let trigger_lines = lines.filter(|l| l.role == "TRIGGER");
-    let reward_lines = lines.filter(|l| l.role == "REWARD");
+    let roles = bundle.product_roles.as_ref();
+
+    // Separate trigger and reward lines using product_roles (additive field)
+    let trigger_lines = lines.filter(|l| roles.get(l.product_id) == Some("TRIGGER"));
+    let reward_lines = lines.filter(|l| roles.get(l.product_id) == Some("REWARD"));
 
     let trigger_qty: i32 = trigger_lines.sum(|l| l.quantity);
     let buy_qty = bundle.buy_quantity.unwrap_or(1);
     let get_qty = bundle.get_quantity.unwrap_or(1);
 
-    // Same-product check
-    let same_product = trigger_product_ids == reward_product_ids;
+    // Same-product check: trigger and reward product sets overlap
+    let same_product = has_overlap(trigger_product_ids, reward_product_ids);
 
     let deal_count = if same_product {
         let items_per_deal = buy_qty + get_qty;
@@ -338,23 +413,45 @@ fn calculate_bxgy_discount(bundle: &MetafieldBundleConfig, lines: &[CartLine]) -
 
     // Apply uses_per_order_limit
     let deal_count = match bundle.uses_per_order_limit {
-        Some(limit) => min(deal_count, limit),
-        None => deal_count,
+        Some(limit) if limit > 0 => min(deal_count, limit),
+        _ => deal_count,
     };
 
     let reward_discount_qty = deal_count * get_qty;
 
     // Target only reward products, up to reward_discount_qty
+    // For CUSTOM_PRICE: use amountPerQuantity to calculate per-unit discount
     build_candidates(reward_lines, reward_discount_qty, bundle.discount_type, bundle.discount_value)
 }
 ```
 
-#### 1I. Storefront Widget
+**Routing in main function:**
+```rust
+// In cart_lines_discounts_generate_run():
+if bundle_settings.bundle_type.as_deref() == Some("BOGO")
+    || bundle_settings.bundle_type.as_deref() == Some("BUY_X_GET_Y")
+{
+    // New BXGY path
+    calculate_bxgy_discount(bundle_settings, &bundle_lines)
+} else {
+    // Existing FIXED_BUNDLE path (unchanged)
+    existing_discount_logic(...)
+}
+```
+
+#### 1J. Widget Split & BOGO Template
 | # | Task | File | Change |
 |---|---|---|---|
-| 41 | Add BXGY Liquid template | `product-bundle-widget/` | Two-section layout |
-| 42 | Update widget JS | `product-bundle-widget/` | BXGY cart interaction |
-| 43 | Update `BundleWidget` React component | `shared/components/bundle-widget/` | Admin preview for BOGO |
+| 44 | Extract `base-widget.ts` | `widgets/src/` | Shared logic (slider, toast, analytics, cart ops) |
+| 45 | Extract `fixed-bundle-renderer.ts` | `widgets/src/` | Existing FIXED_BUNDLE template |
+| 46 | Create `bxgy-renderer.ts` | `widgets/src/` | New BOGO two-section template |
+| 47 | Add BXGY Liquid template | `product-bundle-widget/` | Two-section layout |
+| 48 | Update `BundleWidget` React component | `shared/components/bundle-widget/` | Admin preview for BOGO |
+
+#### 1K. Bundle Listing
+| # | Task | File | Change |
+|---|---|---|---|
+| 49 | Add bundle type badge to listing | Bundle list table | Show "BOGO" badge alongside status badge |
 
 ---
 
@@ -362,11 +459,11 @@ fn calculate_bxgy_discount(bundle: &MetafieldBundleConfig, lines: &[CartLine]) -
 
 | # | Task | Description |
 |---|---|---|
-| 44 | Unlock quantity inputs | Show qty fields when type=BUY_X_GET_Y (not BOGO) |
-| 45 | Update validation | `buyQuantity >= 1`, `getQuantity >= 1` (not fixed at 1) |
-| 46 | Update deal preview | Dynamic "Buy X → Get Y at Z% off" text |
-| 47 | Update Rust function | Already handles variable quantities from Phase 1 |
-| 48 | Update storefront widget | Variable qty display |
+| 50 | Unlock quantity inputs | Show qty fields when type=BUY_X_GET_Y (not BOGO) |
+| 51 | Update validation | `buyQuantity >= 1`, `getQuantity >= 1` (not fixed at 1) |
+| 52 | Update deal preview | Dynamic "Buy X → Get Y at Z% off" text |
+| 53 | Update Rust function | Already handles variable quantities from Phase 1 |
+| 54 | Update storefront widget | Variable qty display |
 
 **BUY_X_GET_Y adds only**: editable quantity fields. Everything else reuses BOGO infrastructure.
 
@@ -376,17 +473,17 @@ fn calculate_bxgy_discount(bundle: &MetafieldBundleConfig, lines: &[CartLine]) -
 
 | # | Task | Priority |
 |---|---|---|
-| 49 | Same-product BOGO: single card with "Buy 1 + Get 1" badge | High |
-| 50 | Multiple products per side (buy A+B, get C free) | Medium |
-| 51 | Collection-based triggers/rewards (future) | Low |
-| 52 | "Cheapest item free" variant selection | Medium |
-| 53 | E2E: create BOGO → add to cart → verify discount at checkout | Critical |
-| 54 | E2E: create BXGY → variable quantities → checkout | Critical |
-| 55 | Mobile widget layout testing | High |
+| 55 | Same-product BOGO: single card with "Buy 1 + Get 1" badge | High |
+| 56 | Multiple products per side (buy A+B, get C free) | Medium |
+| 57 | Collection-based triggers/rewards (future) | Low |
+| 58 | "Cheapest item free" variant selection | Medium |
+| 59 | E2E: create BOGO → add to cart → verify discount at checkout | Critical |
+| 60 | E2E: create BXGY → variable quantities → checkout | Critical |
+| 61 | Mobile widget layout testing | High |
 
 ---
 
-## 7. FILE IMPACT MAP
+## 8. FILE IMPACT MAP
 
 ```
 MODIFY:
@@ -399,15 +496,20 @@ MODIFY:
   web/features/bundles/services/bundle-write.service.ts       # BOGO/BXGY save
   web/features/bundles/services/bundle-transformer.service.ts # Transform
   web/features/bundles/repositories/bundle.mutations.ts       # Persist
+  web/features/bundles/hooks/.../use-bundle-edit.ts            # Load roles on edit
   web/features/bundles/components/.../step-content.tsx         # Routing
   web/features/bundles/components/.../discount-step.tsx        # Conditional
   web/features/bundles/components/.../review-step.tsx          # Conditional
   web/features/bundles/components/.../product-item.tsx         # Role badges
+  extension/.../cart_lines_discounts_generate_run.graphql      # +amountPerQuantity
   extension/.../cart_lines_discounts_generate_run.rs           # BXGY logic
   extension/.../product-bundle-widget/                         # Liquid layout
   web/shared/components/bundle-widget/                         # Admin preview
 
 CREATE:
+  web/widgets/src/base-widget.ts                               # Extracted shared logic
+  web/widgets/src/fixed-bundle-renderer.ts                     # Extracted FIXED_BUNDLE template
+  web/widgets/src/bxgy-renderer.ts                             # New BOGO/BXGY template
   web/features/bundles/components/.../trigger-reward-products-step.tsx
   web/features/bundles/components/.../trigger-section.tsx
   web/features/bundles/components/.../reward-section.tsx
@@ -421,20 +523,24 @@ CREATE:
 
 ---
 
-## 8. RISK MATRIX
+## 9. RISK MATRIX
 
 | Risk | Severity | Mitigation |
 |---|---|---|
+| Metafield backward compatibility | **Critical** | Additive `product_roles` field — zero change to existing bundles |
 | Same-product deal count math | High | Extensive unit tests in Rust |
-| Metafield size with roles | Low | Minimal overhead (~20 bytes/product) |
+| Missing `amountPerQuantity` in input query | Medium | Add to GraphQL query before CUSTOM_PRICE impl |
 | Cart attribute tampering | Low | Already mitigated — metafield is source of truth |
 | CUSTOM_PRICE per-item calculation | Medium | Use `cost.amountPerQuantity` in function |
 | Form state complexity | Medium | Reuse existing store patterns, add role layer |
+| Widget file size (2600+ lines) | Medium | Split into modules BEFORE adding BXGY code |
 | Widget layout breaking existing | Low | Conditional rendering, FIXED_BUNDLE unchanged |
+| Edit flow missing | **Critical** | Included in Phase 1 — shared components for create & edit |
+| Cart attribute bloat | Low | Keep minimal — `bundle_type`/`buy_qty`/`get_qty` stay in metafield only |
 
 ---
 
-## 9. SHOPIFY API REFERENCE
+## 10. SHOPIFY API REFERENCE
 
 ### Admin API Mutations
 - `discountAutomaticBxgyCreate` — [Docs](https://shopify.dev/docs/api/admin-graphql/latest/mutations/discountAutomaticBxgyCreate)
@@ -448,3 +554,14 @@ CREATE:
 ### Other References
 - Shopify BXGY Help — [Docs](https://help.shopify.com/en/manual/discounts/discount-types/buy-x-get-y)
 - Discounts Reference App — [GitHub](https://github.com/Shopify/discounts-reference-app)
+
+---
+
+## 11. TASK COUNT SUMMARY
+
+| Phase | Tasks | Focus |
+|---|---|---|
+| Phase 1 (BOGO) | 49 | Schema, constants, types, validation, store, UI (create+edit), services, Rust function, widget split, listing |
+| Phase 2 (BXGY) | 5 | Unlock qty inputs, update validation/preview/widget |
+| Phase 3 (Polish) | 7 | Same-product UX, multi-product, collection triggers, E2E tests |
+| **Total** | **61** | |

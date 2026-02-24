@@ -84,7 +84,7 @@ export interface BundleProduct {
     productId: string;
     variantId?: string;
     quantity: number;
-    role: "INCLUDED" | "OPTIONAL";
+    role: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
 }
 
 /**
@@ -300,6 +300,8 @@ export interface ExtendedBundleFormData extends BundleFormData {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
+    usesPerOrderLimit?: number | null;
+    sameProductMode?: boolean;
     displaySettings?: DisplaySettings;
 }
 
