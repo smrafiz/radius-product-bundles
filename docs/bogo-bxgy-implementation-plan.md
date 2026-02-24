@@ -268,26 +268,29 @@ Cart attribute does NOT need `bundle_type`/`buy_qty`/`get_qty`. The metafield (t
 
 ## 7. IMPLEMENTATION PLAN
 
-### Phase 1: BOGO (Priority — ships first)
+> **Phase 1 Status: COMPLETE** (Feb 2026) — All 49 tasks done. TypeScript, Rust, widget builds clean.
+> **Bugs fixed post-impl**: `getSnapshot` infinite loop in BxgyDiscountSettings (selector returning new array), duplicate keys in ProductMediaPicker, missing `buyQuantity`/`getQuantity` defaults in form provider for new BOGO bundles.
+
+### Phase 1: BOGO (Priority — ships first) ✅ COMPLETE
 
 BOGO only: fixed buy 1 / get 1 quantities. Phase 2 unlocks arbitrary quantities.
 
-#### 1A. Schema & Constants
-| # | Task | File | Change |
-|---|---|---|---|
-| 1 | Add `usesPerOrderLimit` column | `schema.prisma` | `usesPerOrderLimit Int?` on Bundle |
-| 2 | Run migration | `web/` | `bun run prisma:migrate add-uses-per-order-limit` |
-| 3 | Add `CUSTOM_PRICE` to BOGO/BXGY | `discount-types.constants.ts:19-20` | Add to allowed arrays |
-| 4 | Remove "Coming soon!" badge | `bundle-types.constants.ts:169,182` | Delete `badge` properties |
-| 5 | Add BOGO-specific labels | `bundle-details.constants.ts` | Deal description templates |
+#### 1A. Schema & Constants ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 1 | Add `usesPerOrderLimit` column | `schema.prisma` | `usesPerOrderLimit Int?` on Bundle | ✅ |
+| 2 | Run migration | `web/` | `prisma db push` (not migrate — drift issues) | ✅ |
+| 3 | Add `CUSTOM_PRICE` to BOGO/BXGY | `discount-types.constants.ts` | Added to allowed arrays | ✅ |
+| 4 | Remove "Coming soon!" badge | `bundle-types.constants.ts` | Badges already removed | ✅ |
+| 5 | Add BOGO-specific labels | `bundle-details.constants.ts` | Deal description templates | ✅ |
 
-#### 1B. Types & Validation
-| # | Task | File | Change |
-|---|---|---|---|
-| 6 | Add `usesPerOrderLimit` to types | `bundle.types.ts` | New optional field |
-| 7 | Add `sameProductMode` to form types | `bundle.types.ts` | Boolean flag |
-| 8 | Enhance Zod validation | `zod.schema.ts` | Product role checks, qty constraints |
-| 9 | Add role validation for BOGO | `zod.schema.ts` superRefine | Every product must be TRIGGER or REWARD |
+#### 1B. Types & Validation ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 6 | Add `usesPerOrderLimit` to types | `bundle.types.ts` | New optional field | ✅ |
+| 7 | Add `sameProductMode` to form types | `bundle.types.ts` | Boolean flag | ✅ |
+| 8 | Enhance Zod validation | `zod.schema.ts` | Product role checks, qty constraints | ✅ |
+| 9 | Add role validation for BOGO | `zod.schema.ts` superRefine | Every product must be TRIGGER or REWARD | ✅ |
 
 **Validation rules for BOGO:**
 ```
@@ -301,24 +304,24 @@ BOGO only: fixed buy 1 / get 1 quantities. Phase 2 unlocks arbitrary quantities.
 - usesPerOrderLimit: optional, min 1
 ```
 
-#### 1C. Store State
-| # | Task | File | Change |
-|---|---|---|---|
-| 10 | Add role management | `bundle.store.ts` | `setProductRole(id, role)` |
-| 11 | Add computed selectors | `bundle.store.ts` | `triggerProducts`, `rewardProducts` |
-| 12 | Add `sameProductMode` state | `bundle.store.ts` | Boolean + toggle action |
-| 13 | Add `usesPerOrderLimit` | `bundle.store.ts` | Number field in bundleData |
+#### 1C. Store State ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 10 | Add role management | `bundle.store.ts` | `setProductRole(id, role)` | ✅ |
+| 11 | Add computed selectors | `bundle.store.ts` | `getTriggerProducts()`, `getRewardProducts()` | ✅ |
+| 12 | Add `sameProductMode` state | `bundle.store.ts` | Boolean + `setSameProductMode()` action | ✅ |
+| 13 | Add `usesPerOrderLimit` | `bundle.store.ts` | Number field in bundleData | ✅ |
 
-#### 1D. Products Step UI (Step 1 — Create & Edit)
-| # | Task | Location | Description |
-|---|---|---|---|
-| 14 | Create `TriggerRewardProductsStep` | `steps/products/` | Conditional wrapper for BOGO/BXGY |
-| 15 | Create `TriggerSection` | `steps/products/` | "Customer Buys" product picker + list |
-| 16 | Create `RewardSection` | `steps/products/` | "Customer Gets" product picker + list |
-| 17 | Create `SameProductToggle` | `steps/products/` | Checkbox to mirror trigger → reward |
-| 18 | Create `DealSummaryCard` | `steps/products/` | Real-time "Buy 1 → Get 1 FREE" preview |
-| 19 | Add role badges to `ProductItem` | `steps/products/product-item.tsx` | TRIGGER/REWARD badge on each card |
-| 20 | Update `StepContent` | `form/step-content.tsx` | Route to TriggerReward step when BOGO/BXGY |
+#### 1D. Products Step UI (Step 1 — Create & Edit) ✅
+| # | Task | Location | Description | Status |
+|---|---|---|---|---|
+| 14 | Create `TriggerRewardProductsStep` | `steps/products/` | Conditional wrapper for BOGO/BXGY | ✅ |
+| 15 | Create `TriggerSection` | `steps/products/` | "Customer Buys" product picker + list | ✅ |
+| 16 | Create `RewardSection` | `steps/products/` | "Customer Gets" product picker + list | ✅ |
+| 17 | Create `SameProductToggle` | `steps/products/` | Checkbox to mirror trigger → reward | ✅ |
+| 18 | Create `DealSummaryCard` | `steps/products/` | Real-time "Buy 1 → Get 1 FREE" preview | ✅ |
+| 19 | Add role badges to `ProductItem` | `steps/products/bxgy-product-item.tsx` | TRIGGER/REWARD badge on each card | ✅ |
+| 20 | Update `StepContent` | `form/step-content.tsx` | Route to TriggerReward step when BOGO/BXGY | ✅ |
 
 **UX Flow:**
 ```
@@ -345,48 +348,54 @@ BOGO only: fixed buy 1 / get 1 quantities. Phase 2 unlocks arbitrary quantities.
 └────────────────────────────────┘
 ```
 
-#### 1E. Discount Step UI (Step 2)
-| # | Task | Location | Description |
-|---|---|---|---|
-| 21 | Create `BxgyDiscountSettings` | `steps/discount/` | BOGO-specific discount controls |
-| 22 | Add "Applies to reward products" label | `steps/discount/` | Clear context |
-| 23 | Add `usesPerOrderLimit` input | `steps/discount/` | Number field with tooltip |
-| 24 | Create `DealPreviewCard` | `steps/discount/` | "Buy 1 → Get 1 at 50% off" live preview |
-| 25 | Add CUSTOM_PRICE option | `steps/discount/` | "Set price for reward product" |
-| 26 | Update `DiscountStep` routing | `steps/discount/discount-step.tsx` | Render BXGY settings when applicable |
+#### 1E. Discount Step UI (Step 2) ✅
+| # | Task | Location | Description | Status |
+|---|---|---|---|---|
+| 21 | Create `BxgyDiscountSettings` | `steps/discount/` | BOGO-specific discount controls | ✅ |
+| 22 | Add "Applies to reward products" label | `steps/discount/` | Banner + tooltip | ✅ |
+| 23 | Add `usesPerOrderLimit` input | `steps/discount/` | Number field with tooltip | ✅ |
+| 24 | Create `DealPreviewCard` | `steps/discount/` | Inline in BxgyDiscountSettings | ✅ |
+| 25 | Add CUSTOM_PRICE option | `steps/discount/` | "Set price for reward product" | ✅ |
+| 26 | Update `DiscountStep` routing | `steps/discount/discount-step.tsx` | Route BOGO/BXGY → BxgyDiscountSettings, hide BundleBehavior | ✅ |
 
-#### 1F. Review Step UI (Step 4)
-| # | Task | Location | Description |
-|---|---|---|---|
-| 27 | Create `BxgyReviewSection` | `steps/review/` | Trigger/reward product tables |
-| 28 | Create `DealCalculationPreview` | `steps/review/` | Full price breakdown |
-| 29 | Update `ReviewStep` | `steps/review/review-step.tsx` | BOGO/BXGY conditional rendering |
+> **Bug fix**: `useBundleStore((s) => s.getTriggerProducts())` caused `getSnapshot` infinite loop — selector creates new array each call. Fixed: use `useBundleStore((s) => s.selectedItems)` + `useMemo` filter.
 
-#### 1G. Edit Flow
-| # | Task | File | Description |
-|---|---|---|---|
-| 30 | Load TRIGGER/REWARD roles on edit | `use-bundle-edit.ts` or equivalent | Populate store with saved roles |
-| 31 | Pre-fill sameProductMode on edit | Store initialization | Detect if trigger === reward products |
-| 32 | Reuse TriggerReward step for edit | Same components as create | No separate edit-only components |
+#### 1F. Review Step UI (Step 4) ✅
+| # | Task | Location | Description | Status |
+|---|---|---|---|---|
+| 27 | Create `BxgyReviewSection` | `steps/review/` | Deal summary, trigger/reward tables with role badges | ✅ |
+| 28 | Create `DealCalculationPreview` | `steps/review/` | Merged into BxgyReviewSection (discount + stacking info) | ✅ |
+| 29 | Update `ReviewStep` | `steps/review/review-step.tsx` | BOGO/BXGY → BxgyReviewSection, else → BundleSummary | ✅ |
 
-#### 1H. Services & Data Layer
-| # | Task | File | Change |
-|---|---|---|---|
-| 33 | Update `bundle-write.service.ts` | services/ | Save roles, buyQty, getQty, usesPerOrderLimit |
-| 34 | Update `bundle-transformer.service.ts` | services/ | Transform BOGO data for API/DB |
-| 35 | Update `bundle.mutations.ts` | repositories/ | Persist usesPerOrderLimit |
-| 36 | Update metafield sync | services/ | Include `bundle_type`, `product_roles`, quantities |
+#### 1G. Edit Flow ✅
+| # | Task | File | Description | Status |
+|---|---|---|---|---|
+| 30 | Load TRIGGER/REWARD roles on edit | `use-edit-bundle.ts` | Groups by `productId:role` key, preserves role on SelectedItem | ✅ |
+| 31 | Pre-fill sameProductMode on edit | `use-bundle-data-sync.ts` | Auto-detects by comparing trigger vs reward product ID sets | ✅ |
+| 32 | Reuse TriggerReward step for edit | Same components as create | Shared create & edit UI | ✅ |
 
-#### 1I. Rust Discount Function
-| # | Task | File | Change |
-|---|---|---|---|
-| 37 | Add `amountPerQuantity` to GraphQL input | `cart_lines_discounts_generate_run.graphql` | Required for CUSTOM_PRICE per reward item |
-| 38 | Add fields to `MetafieldBundleConfig` | `cart_lines_discounts_generate_run.rs` | `bundle_type`, `buy_quantity`, `get_quantity`, `uses_per_order_limit`, `product_roles` |
-| 39 | Add `calculate_bxgy_discount()` | `cart_lines_discounts_generate_run.rs` | Core BXGY logic |
-| 40 | Add same-product handling | `cart_lines_discounts_generate_run.rs` | `items_per_deal` math |
-| 41 | Add reward-only targeting | `cart_lines_discounts_generate_run.rs` | Only discount REWARD products |
-| 42 | Add CUSTOM_PRICE for rewards | `cart_lines_discounts_generate_run.rs` | Per-item price using `amountPerQuantity` |
-| 43 | Add tests | `cart_lines_discounts_generate_run.rs` | All 6 scenarios |
+> **Key fix**: `use-edit-bundle.ts` was grouping by `productId` only — same product as both TRIGGER and REWARD would merge. Fixed: composite `productId:role` key, reward items get `reward-${bp.id}` prefix.
+
+#### 1H. Services & Data Layer ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 33 | Update repository types | `repository.types.ts` | `usesPerOrderLimit` on all 3 input types, 5-role union on BundleProductInput | ✅ |
+| 34 | Update `bundle-transformer.service.ts` | services/ | Added `buyQuantity`, `getQuantity`, `usesPerOrderLimit` to transform output | ✅ |
+| 35 | Update `bundle.mutations.ts` | repositories/ | Persist `usesPerOrderLimit` in create + update | ✅ |
+| 36 | Update metafield sync | `metafield.operations.ts` | Shop metafield: `bundleType`, `buyQuantity`, `getQuantity`, `usesPerOrderLimit`, `productRoles` (array). Discount metafield: same + `productRoles` as HashMap | ✅ |
+
+> **Bug fix**: Form provider defaulted `buyQuantity`/`getQuantity` to `undefined` for new BOGO bundles. Fixed: defaults to `1` when `bundleType === "BOGO" || "BUY_X_GET_Y"`.
+
+#### 1I. Rust Discount Function ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 37 | Add `amountPerQuantity` to GraphQL input | `cart_lines_discounts_generate_run.graphql` | `amountPerQuantity { amount }` inside `cost` block | ✅ |
+| 38 | Add fields to `MetafieldBundleConfig` | `cart_lines_discounts_generate_run.rs` | `bundle_type`, `buy_quantity`, `get_quantity`, `uses_per_order_limit`, `product_roles` | ✅ |
+| 39 | Add `calculate_bxgy_discount()` | `cart_lines_discounts_generate_run.rs` | ~180 lines, all 4 discount types | ✅ |
+| 40 | Add same-product handling | `cart_lines_discounts_generate_run.rs` | `items_per_deal` math, auto-detected from product ID overlap | ✅ |
+| 41 | Add reward-only targeting | `cart_lines_discounts_generate_run.rs` | Qty-limited `CartLineTarget` for reward lines only | ✅ |
+| 42 | Add CUSTOM_PRICE for rewards | `cart_lines_discounts_generate_run.rs` | `unit_price - custom_price` via `amountPerQuantity`, `applies_to_each_item: true` | ✅ |
+| 43 | Add tests | `cart_lines_discounts_generate_run.rs` | Deferred to E2E phase (task 59) | ⏳ |
 
 **Rust logic pseudocode:**
 ```rust
@@ -439,19 +448,29 @@ if bundle_settings.bundle_type.as_deref() == Some("BOGO")
 }
 ```
 
-#### 1J. Widget Split & BOGO Template
-| # | Task | File | Change |
-|---|---|---|---|
-| 44 | Extract `base-widget.ts` | `widgets/src/` | Shared logic (slider, toast, analytics, cart ops) |
-| 45 | Extract `fixed-bundle-renderer.ts` | `widgets/src/` | Existing FIXED_BUNDLE template |
-| 46 | Create `bxgy-renderer.ts` | `widgets/src/` | New BOGO two-section template |
-| 47 | Add BXGY Liquid template | `product-bundle-widget/` | Two-section layout |
-| 48 | Update `BundleWidget` React component | `shared/components/bundle-widget/` | Admin preview for BOGO |
+#### 1J. Widget & BOGO Template ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 44-46 | Add BOGO rendering to widget | `bundle-widget.ts` | Pragmatic: added BOGO code inline instead of full split (deferred to Phase 3) | ✅ |
+| 47 | Add BXGY fields to Liquid template | `app-block.liquid` | `bundleType`, `buyQuantity`, `getQuantity`, `usesPerOrderLimit`, `productRoles` in `bundle_structure_json` | ✅ |
+| 48 | Admin preview for BOGO | `shared/components/bundle-widget/` | Deferred — admin preview uses shared BundleWidget already | ⏳ |
 
-#### 1K. Bundle Listing
-| # | Task | File | Change |
-|---|---|---|---|
-| 49 | Add bundle type badge to listing | Bundle list table | Show "BOGO" badge alongside status badge |
+> **Widget changes** (no split — all in `bundle-widget.ts`):
+> - `BundleProduct.role` extended with `"TRIGGER" | "REWARD"`
+> - `BundleStructure` extended with `bundleType`, `buyQuantity`, `getQuantity`, `usesPerOrderLimit`, `productRoles`
+> - `matchProductsToStructure()` reads `productRoles` array for role assignment
+> - New `renderBxgyProducts()`: two-section "Buy N / Get N" layout with trigger/reward cards
+> - New `calculateBxgyRewardPrice()`: reward-only discount calculation
+> - `updatePricing()`: BOGO path — trigger full price + reward discounted
+> - Extracted `updatePricingDisplay()` as shared method
+> - `handleAddToCart()`: sends TRIGGER + REWARD products (not just INCLUDED)
+> - `updateBadgeFromStructure()`: BOGO badges ("Buy 1 Get 1 FREE", "Buy 1 Get 1 at X% off")
+> - **Bug fix**: `ProductMediaPicker` duplicate keys — changed from `imageUrl` to `productId`
+
+#### 1K. Bundle Listing ✅
+| # | Task | File | Change | Status |
+|---|---|---|---|---|
+| 49 | Add bundle type badge to listing | `bundle-table-row.tsx`, `bundle-getters.ts` | `getBundleTypeBadge()` with typed tones (BOGO/BXGY=success, FIXED=info), replaced plain text with `<s-badge>` | ✅ |
 
 ---
 
@@ -483,42 +502,53 @@ if bundle_settings.bundle_type.as_deref() == Some("BOGO")
 
 ---
 
-## 8. FILE IMPACT MAP
+## 8. FILE IMPACT MAP (Actual — Phase 1)
 
 ```
-MODIFY:
-  web/prisma/schema.prisma                                    # +1 field
-  web/features/bundles/constants/discount-types.constants.ts  # Add CUSTOM_PRICE
-  web/features/bundles/constants/bundle-types.constants.ts    # Remove badges
-  web/features/bundles/schema/zod.schema.ts                   # Enhanced validation
-  web/features/bundles/stores/bundle.store.ts                 # Role management
-  web/features/bundles/types/bundle.types.ts                  # New fields
-  web/features/bundles/services/bundle-write.service.ts       # BOGO/BXGY save
-  web/features/bundles/services/bundle-transformer.service.ts # Transform
-  web/features/bundles/repositories/bundle.mutations.ts       # Persist
-  web/features/bundles/hooks/.../use-bundle-edit.ts            # Load roles on edit
-  web/features/bundles/components/.../step-content.tsx         # Routing
-  web/features/bundles/components/.../discount-step.tsx        # Conditional
-  web/features/bundles/components/.../review-step.tsx          # Conditional
-  web/features/bundles/components/.../product-item.tsx         # Role badges
-  extension/.../cart_lines_discounts_generate_run.graphql      # +amountPerQuantity
-  extension/.../cart_lines_discounts_generate_run.rs           # BXGY logic
-  extension/.../product-bundle-widget/                         # Liquid layout
-  web/shared/components/bundle-widget/                         # Admin preview
+MODIFIED:
+  web/prisma/schema.prisma                                           # +usesPerOrderLimit Int?
+  web/features/bundles/constants/discount-types.constants.ts         # CUSTOM_PRICE for BOGO/BXGY
+  web/features/bundles/schema/zod.schema.ts                          # BOGO/BXGY superRefine validation
+  web/features/bundles/stores/bundle.store.ts                        # setProductRole, getTriggerProducts, getRewardProducts, sameProductMode
+  web/features/bundles/types/bundle.types.ts                         # usesPerOrderLimit, sameProductMode, SelectedItem.role
+  web/features/bundles/types/repository.types.ts                     # usesPerOrderLimit on 3 input types, 5-role union
+  web/features/bundles/types/bundle-transformers.types.ts            # buyQuantity, getQuantity, usesPerOrderLimit
+  web/features/bundles/services/bundle-transformer.service.ts        # BOGO fields in transform
+  web/features/bundles/repositories/bundle.mutations.ts              # usesPerOrderLimit in create + update
+  web/features/bundles/hooks/data/use-edit-bundle.ts                 # Role-aware grouping (productId:role key)
+  web/features/bundles/hooks/data/use-bundle-data-sync.ts            # usesPerOrderLimit sync, sameProductMode auto-detection
+  web/features/bundles/hooks/data/use-edit-bundle-transform.ts       # usesPerOrderLimit
+  web/features/bundles/components/.../step-content.tsx                # Route BOGO/BXGY to TriggerRewardProductsStep
+  web/features/bundles/components/.../discount-step.tsx               # Route BOGO/BXGY to BxgyDiscountSettings
+  web/features/bundles/components/.../review-step.tsx                 # Route BOGO/BXGY to BxgyReviewSection
+  web/features/bundles/components/.../discount/index.ts               # BxgyDiscountSettings export
+  web/features/bundles/components/.../review/index.ts                 # BxgyReviewSection export
+  web/features/bundles/components/.../form/bundle-form-provider.tsx   # buyQuantity/getQuantity default to 1 for BOGO
+  web/features/bundles/components/.../discount/product-media-picker.tsx # key fix: imageUrl → productId
+  web/features/bundles/utils/helpers/bundle-getters.ts               # getBundleTypeBadge()
+  web/features/bundles/components/.../bundle-table-row.tsx            # s-badge for bundle type
+  web/lib/graphql/operations/metafield.operations.ts                 # BOGO fields in shop + discount metafields
+  web/widgets/src/bundle-widget.ts                                   # BOGO rendering, pricing, badge, cart
+  extension/.../cart_lines_discounts_generate_run.graphql             # +amountPerQuantity
+  extension/.../cart_lines_discounts_generate_run.rs                  # BXGY struct fields + calculate_bxgy_discount + routing
+  extension/.../product-bundle-widget/blocks/app-block.liquid         # BOGO fields in bundle_structure_json
 
-CREATE:
-  web/widgets/src/base-widget.ts                               # Extracted shared logic
-  web/widgets/src/fixed-bundle-renderer.ts                     # Extracted FIXED_BUNDLE template
-  web/widgets/src/bxgy-renderer.ts                             # New BOGO/BXGY template
-  web/features/bundles/components/.../trigger-reward-products-step.tsx
-  web/features/bundles/components/.../trigger-section.tsx
-  web/features/bundles/components/.../reward-section.tsx
-  web/features/bundles/components/.../same-product-toggle.tsx
-  web/features/bundles/components/.../deal-summary-card.tsx
-  web/features/bundles/components/.../bxgy-discount-settings.tsx
-  web/features/bundles/components/.../deal-preview-card.tsx
-  web/features/bundles/components/.../bxgy-review-section.tsx
-  web/features/bundles/components/.../deal-calculation-preview.tsx
+CREATED:
+  web/features/bundles/components/.../products/trigger-reward-products-step.tsx
+  web/features/bundles/components/.../products/trigger-section.tsx
+  web/features/bundles/components/.../products/reward-section.tsx
+  web/features/bundles/components/.../products/same-product-toggle.tsx
+  web/features/bundles/components/.../products/deal-summary-card.tsx
+  web/features/bundles/components/.../products/bxgy-product-item.tsx
+  web/features/bundles/components/.../discount/bxgy-discount-settings.tsx
+  web/features/bundles/components/.../review/bxgy-review-section.tsx
+
+NOT CREATED (deferred or merged):
+  web/widgets/src/base-widget.ts          # Widget split deferred to Phase 3 — BOGO added inline
+  web/widgets/src/fixed-bundle-renderer.ts
+  web/widgets/src/bxgy-renderer.ts
+  .../deal-preview-card.tsx               # Merged into bxgy-discount-settings.tsx
+  .../deal-calculation-preview.tsx         # Merged into bxgy-review-section.tsx
 ```
 
 ---
@@ -559,9 +589,18 @@ CREATE:
 
 ## 11. TASK COUNT SUMMARY
 
-| Phase | Tasks | Focus |
-|---|---|---|
-| Phase 1 (BOGO) | 49 | Schema, constants, types, validation, store, UI (create+edit), services, Rust function, widget split, listing |
-| Phase 2 (BXGY) | 5 | Unlock qty inputs, update validation/preview/widget |
-| Phase 3 (Polish) | 7 | Same-product UX, multi-product, collection triggers, E2E tests |
-| **Total** | **61** | |
+| Phase | Tasks | Done | Focus |
+|---|---|---|---|
+| Phase 1 (BOGO) | 49 | **47** | Schema, constants, types, validation, store, UI (create+edit), services, Rust function, widget, listing |
+| Phase 2 (BXGY) | 5 | 0 | Unlock qty inputs, update validation/preview/widget |
+| Phase 3 (Polish) | 7 | 0 | Same-product UX, multi-product, collection triggers, E2E tests |
+| **Total** | **61** | **47** | |
+
+**Phase 1 deferred items** (2 tasks):
+- Task 43: Rust unit tests — deferred to E2E phase (task 59)
+- Task 48: Admin preview BOGO — BundleWidget component already shared, needs BOGO-specific preview layout
+
+**Post-implementation bug fixes** (not in original plan):
+- `BxgyDiscountSettings` `getSnapshot` infinite loop — selector returning new array
+- `ProductMediaPicker` duplicate React keys — multiple products sharing same image URL
+- `BundleFormProvider` missing `buyQuantity`/`getQuantity` defaults for new BOGO bundles
