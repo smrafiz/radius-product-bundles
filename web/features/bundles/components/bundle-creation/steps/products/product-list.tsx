@@ -1,21 +1,112 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useDragAndDrop, useProductPicker } from "@/shared";
-import { closestCenter, DndContext } from "@dnd-kit/core";
-import { ProductItem, useBundleStore } from "@/features/bundles";
+import {
+    closestCenter,
+    DndContext,
+    DragEndEvent,
+    useSensors,
+    useSensor,
+    PointerSensor,
+} from "@dnd-kit/core";
+import {
+    ProductGroup,
+    ProductItem,
+    SelectedItem,
+    useBundleStore,
+} from "@/features/bundles";
 
-export function ProductList() {
-    const { getGroupedItems } = useBundleStore();
+function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
+    return items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        product: item,
+        variants: [],
+        originalTotalVariants: item.totalVariants || 1,
+        quantity: item.quantity || 1,
+    }));
+}
+
+export function ProductList({ isBxgy }: { isBxgy?: boolean }) {
+    const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
+        useBundleStore();
+    const sameProductMode = useBundleStore(
+        (s) => s.bundleData.sameProductMode,
+    );
     const { sensors, handleDragEnd } = useDragAndDrop();
     const { openProductPicker, isLoading } = useProductPicker();
 
+    // BOGO DnD: reorder by unique item.id
+    const bxgySensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: { distance: 8 },
+        }),
+    );
+
+    const handleBxgyDragEnd = useCallback(
+        (event: DragEndEvent) => {
+            const { active, over } = event;
+            if (!over || active.id === over.id) return;
+
+            const activeId = active.id as string;
+            const overId = over.id as string;
+
+            useBundleStore.setState((state) => {
+                const activeIndex = state.selectedItems.findIndex(
+                    (i) => i.id === activeId,
+                );
+                const overIndex = state.selectedItems.findIndex(
+                    (i) => i.id === overId,
+                );
+
+                if (activeIndex !== -1 && overIndex !== -1) {
+                    const newItems = [...state.selectedItems];
+                    const [moved] = newItems.splice(activeIndex, 1);
+                    newItems.splice(overIndex, 0, moved);
+                    state.selectedItems = newItems;
+                    state.bundleData.products = newItems.map((item) => ({
+                        productId: item.productId,
+                        variantId: item.variantId || "",
+                        quantity: item.quantity,
+                        role: item.role || "INCLUDED",
+                    }));
+                }
+            });
+        },
+        [],
+    );
+
+    // Fixed Bundle path: use grouped items as before
     const groupedItems = getGroupedItems();
 
-    if (groupedItems.length === 0) {
+    // BOGO path: build flat list from selectedItems with roles
+    const bxgyGroups = useMemo(() => {
+        if (!isBxgy) return [];
+        const triggers = selectedItems.filter((i) => i.role === "TRIGGER");
+        const rewards = selectedItems.filter((i) => i.role === "REWARD");
+        return [...buildBxgyGroups(triggers), ...buildBxgyGroups(rewards)];
+    }, [isBxgy, selectedItems]);
+
+    const items = isBxgy ? bxgyGroups : groupedItems;
+
+    const handleBxgyRemove = (itemId: string, productId: string) => {
+        if (sameProductMode) {
+            // Remove both trigger and reward copies of this product
+            const toRemove = selectedItems.filter(
+                (i) => i.productId === productId,
+            );
+            toRemove.forEach((i) => removeItemById(i.id));
+        } else {
+            removeItemById(itemId);
+        }
+    };
+
+    if (items.length === 0) {
         return (
             <s-box
                 padding="base"
@@ -37,6 +128,65 @@ export function ProductList() {
         );
     }
 
+    if (isBxgy) {
+        return (
+            <DndContext
+                sensors={bxgySensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleBxgyDragEnd}
+            >
+                <SortableContext
+                    items={bxgyGroups.map((g) => g.product.id)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <s-stack gap="small-200">
+                        {bxgyGroups.map((group) => (
+                            <ProductItem
+                                key={group.product.id}
+                                group={group}
+                                sortableId={group.product.id}
+                                role={
+                                    group.product.role as
+                                        | "TRIGGER"
+                                        | "REWARD"
+                                }
+                                onRoleChange={(newRole) => {
+                                    setItemRole(group.product.id, newRole);
+                                    // Auto-swap: if this becomes Buy, make the other Get (and vice versa)
+                                    const swappedRole =
+                                        newRole === "TRIGGER"
+                                            ? "REWARD"
+                                            : "TRIGGER";
+                                    selectedItems
+                                        .filter(
+                                            (i) =>
+                                                i.id !== group.product.id &&
+                                                i.role === newRole,
+                                        )
+                                        .forEach((i) =>
+                                            setItemRole(i.id, swappedRole),
+                                        );
+                                }}
+                                quantityLocked
+                                onRemove={
+                                    sameProductMode &&
+                                    group.product.role === "REWARD"
+                                        ? null
+                                        : () =>
+                                              handleBxgyRemove(
+                                                  group.product.id,
+                                                  group.product.productId,
+                                              )
+                                }
+                            />
+                        ))}
+                    </s-stack>
+                </SortableContext>
+            </DndContext>
+        );
+    }
+
+    // Fixed Bundle: unchanged
     return (
         <DndContext
             sensors={sensors}

@@ -261,6 +261,22 @@ export const useBundleStore = create(
             callTriggerSaveBar();
         },
 
+        removeItemById: (itemId: string) => {
+            set((state) => {
+                state.selectedItems = state.selectedItems.filter(
+                    (item) => item.id !== itemId,
+                );
+                state.bundleData.products = state.selectedItems.map((item) => ({
+                    productId: item.productId,
+                    variantId: item.variantId || "",
+                    quantity: item.quantity,
+                    role: item.role || "INCLUDED",
+                }));
+            });
+            get().markDirty();
+            callTriggerSaveBar();
+        },
+
         updateSelectedItemQuantity: (itemId, quantity) => {
             set((state) => {
                 const itemIndex = state.selectedItems.findIndex(
@@ -571,6 +587,23 @@ export const useBundleStore = create(
                         item.role = role;
                     }
                 });
+                state.bundleData.products = state.selectedItems.map((item) => ({
+                    productId: item.productId,
+                    variantId: item.variantId || "",
+                    quantity: item.quantity,
+                    role: item.role || "INCLUDED",
+                }));
+            });
+            get().markDirty();
+            callTriggerSaveBar();
+        },
+
+        setItemRole: (itemId: string, role: SelectedItem["role"]) => {
+            set((state) => {
+                const item = state.selectedItems.find((i) => i.id === itemId);
+                if (item) {
+                    item.role = role;
+                }
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
                     variantId: item.variantId || "",

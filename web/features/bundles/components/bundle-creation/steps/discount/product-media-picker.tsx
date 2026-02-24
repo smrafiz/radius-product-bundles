@@ -16,10 +16,15 @@ export function ProductMediaPicker({
         new Set(),
     );
 
-    // Get unique images from selected products
+    // Get unique images from selected products (deduplicate by productId for BOGO same-product mode)
     const productImages = useMemo(() => {
+        const seen = new Set<string>();
         return selectedItems
-            .filter((item) => item.image)
+            .filter((item) => {
+                if (!item.image || seen.has(item.productId)) return false;
+                seen.add(item.productId);
+                return true;
+            })
             .map((item) => ({
                 productId: item.productId,
                 productTitle: item.title,

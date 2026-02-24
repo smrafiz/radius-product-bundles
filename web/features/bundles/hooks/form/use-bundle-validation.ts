@@ -64,12 +64,14 @@ export function useBundleValidation() {
                 quantity: number;
                 role: BundleProductRole;
             }> = selectedItems.flatMap((item) => {
+                const itemRole = (item.role as BundleProductRole) || "INCLUDED";
+
                 if (item.variantIds && Array.isArray(item.variantIds)) {
                     return item.variantIds.map((variantId) => ({
                         productId: item.productId.replace(/^product-/, ""),
                         variantId: variantId,
                         quantity: item.quantity || 1,
-                        role: "INCLUDED",
+                        role: itemRole,
                     }));
                 }
 
@@ -79,7 +81,7 @@ export function useBundleValidation() {
                             productId: item.productId.replace(/^product-/, ""),
                             variantId: item.variantId,
                             quantity: item.quantity || 1,
-                            role: "INCLUDED",
+                            role: itemRole,
                         },
                     ];
                 }

@@ -37,7 +37,28 @@ function SortableWrapper({
     );
 }
 
-export function ProductItem({ group }: { group: ProductGroup }) {
+const ROLE_LABELS: Record<string, string> = {
+    TRIGGER: "Buy",
+    REWARD: "Get",
+};
+
+interface ProductItemProps {
+    group: ProductGroup;
+    role?: "TRIGGER" | "REWARD";
+    onRoleChange?: (role: "TRIGGER" | "REWARD") => void;
+    quantityLocked?: boolean;
+    onRemove?: (() => void) | null;
+    sortableId?: string;
+}
+
+export function ProductItem({
+    group,
+    role,
+    onRoleChange,
+    quantityLocked,
+    onRemove,
+    sortableId,
+}: ProductItemProps) {
     const {
         updateSelectedItemQuantity,
         removeProductAndAllVariants,
@@ -67,7 +88,7 @@ export function ProductItem({ group }: { group: ProductGroup }) {
     };
 
     return (
-        <SortableWrapper id={product.productId}>
+        <SortableWrapper id={sortableId ?? product.productId}>
             <s-box
                 paddingBlock="small"
                 paddingInlineStart="small-200"
@@ -76,87 +97,115 @@ export function ProductItem({ group }: { group: ProductGroup }) {
                 border="base"
                 borderRadius="base"
             >
-                <s-stack
-                    direction="inline"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    gap="small"
-                >
-                    {/* Drag handle and image */}
-                    <s-stack direction="inline" gap="small" alignItems="center">
-                        <div className="cursor-grab">
-                            <s-icon type="drag-handle" />
-                        </div>
+                <div className="flex items-center gap-2">
+                    {/* Drag handle */}
+                    <div className="cursor-grab flex-shrink-0">
+                        <s-icon type="drag-handle" />
+                    </div>
+
+                    {/* Image */}
+                    <div className="w-10 h-10 flex-shrink-0 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                         {product.image ? (
-                            <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                                <s-image
-                                    src={product.image}
-                                    alt={product.title}
-                                    aspectRatio="40/40"
-                                    inlineSize="auto"
-                                    objectFit="cover"
-                                />
-                            </div>
+                            <s-image
+                                src={product.image}
+                                alt={product.title}
+                                aspectRatio="40/40"
+                                inlineSize="auto"
+                                objectFit="cover"
+                            />
                         ) : (
-                            <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                                <s-icon type="image" tone="neutral" />
+                            <s-icon type="image" tone="neutral" />
+                        )}
+                    </div>
+
+                    {/* Product info — fills remaining space, truncates */}
+                    <div className="flex-1 min-w-0">
+                        <s-heading>
+                            {product.title.replace(/ - .+$/, "")}
+                        </s-heading>
+                        {isMultiVariant && (
+                            <s-stack
+                                direction="inline"
+                                alignItems="center"
+                                gap="small"
+                            >
+                                <s-text tone="caution">
+                                    {selectedCount} of {originalTotal} variants
+                                    selected
+                                </s-text>
+                                <s-link
+                                    tone="neutral"
+                                    onClick={handleEditVariants}
+                                >
+                                    Edit variants
+                                </s-link>
+                            </s-stack>
+                        )}
+                    </div>
+
+                    {/* Controls — fixed width, never wrap */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Role dropdown for BOGO */}
+                        {role && onRoleChange && (
+                            <div className="w-[80px]">
+                                <s-select
+                                    label="Role"
+                                    labelAccessibilityVisibility="exclusive"
+                                    value={role}
+                                    onChange={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLSelectElement;
+                                        onRoleChange(
+                                            target.value as
+                                                | "TRIGGER"
+                                                | "REWARD",
+                                        );
+                                    }}
+                                >
+                                    <s-option value="TRIGGER">
+                                        {ROLE_LABELS.TRIGGER}
+                                    </s-option>
+                                    <s-option value="REWARD">
+                                        {ROLE_LABELS.REWARD}
+                                    </s-option>
+                                </s-select>
                             </div>
                         )}
-
-                        {/* Product info */}
-                        <s-stack>
-                            <div className="w-[250px]">
-                                <s-heading>
-                                    {product.title.replace(/ - .+$/, "")}
-                                </s-heading>
-
-                                {isMultiVariant && (
-                                    <s-stack
-                                        direction="inline"
-                                        alignItems="center"
-                                        gap="small"
-                                    >
-                                        <s-text tone="caution">
-                                            {selectedCount} of {originalTotal}{" "}
-                                            variants selected
-                                        </s-text>
-                                        <s-link
-                                            tone="neutral"
-                                            onClick={handleEditVariants}
-                                        >
-                                            Edit variants
-                                        </s-link>
-                                    </s-stack>
-                                )}
+                        {/* Quantity */}
+                        {quantityLocked ? (
+                            <div className="w-[40px] text-center">
+                                <s-text tone="neutral">Qty: 1</s-text>
                             </div>
-                        </s-stack>
-                    </s-stack>
-                    <s-stack direction="inline" gap="small">
-                        {/* Quantity input */}
-                        <div className="max-w-[80px]">
-                            <s-number-field
-                                label="Quantity"
-                                labelAccessibilityVisibility="exclusive"
-                                value={(product.quantity || 1).toString()}
-                                step={1}
-                                min={1}
-                                onChange={(event: Event) => {
-                                    const target =
-                                        event.target as HTMLInputElement;
-                                    const value = target.value;
-                                    handleQuantityChange(value);
-                                }}
-                            />
-                        </div>
+                        ) : (
+                            <div className="w-[80px]">
+                                <s-number-field
+                                    label="Quantity"
+                                    labelAccessibilityVisibility="exclusive"
+                                    value={(product.quantity || 1).toString()}
+                                    step={1}
+                                    min={1}
+                                    onChange={(event: Event) => {
+                                        const target =
+                                            event.target as HTMLInputElement;
+                                        const value = target.value;
+                                        handleQuantityChange(value);
+                                    }}
+                                />
+                            </div>
+                        )}
                         {/* Remove button */}
-                        <s-button
-                            variant="tertiary"
-                            icon="delete"
-                            onClick={handleRemoveProduct}
-                            accessibilityLabel={`Remove ${product.title}`}
-                        />
-                    </s-stack>
-                </s-stack>
+                        {onRemove !== null ? (
+                            <s-button
+                                variant="tertiary"
+                                icon="delete"
+                                onClick={onRemove ?? handleRemoveProduct}
+                                accessibilityLabel={`Remove ${product.title}`}
+                            />
+                        ) : (
+                            <div className="w-7" />
+                        )}
+                    </div>
+                </div>
             </s-box>
         </SortableWrapper>
     );

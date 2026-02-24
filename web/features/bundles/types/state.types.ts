@@ -153,6 +153,7 @@ export interface BundleState {
     addSelectedItems: (items: SelectedItem[]) => void;
     removeSelectedItem: (itemId: string) => void;
     removeProductAndAllVariants: (productId: string) => void;
+    removeItemById: (itemId: string) => void;
     updateSelectedItemQuantity: (itemId: string, quantity: number) => void;
     updateProductVariants: (
         productId: string,
@@ -180,6 +181,7 @@ export interface BundleState {
 
     // BOGO/BXGY role management
     setProductRole: (productId: string, role: SelectedItem["role"]) => void;
+    setItemRole: (itemId: string, role: SelectedItem["role"]) => void;
     getTriggerProducts: () => SelectedItem[];
     getRewardProducts: () => SelectedItem[];
     setSameProductMode: (enabled: boolean) => void;

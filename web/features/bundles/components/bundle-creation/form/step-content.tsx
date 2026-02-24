@@ -6,12 +6,9 @@ import {
     DiscountStep,
     ProductsStep,
     ReviewStep,
-    TriggerRewardProductsStep,
     useBundleStore,
 } from "@/features/bundles";
 import { AnimatePresence, motion } from "framer-motion";
-
-const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
 
 export function StepContent({ bundleType }: { bundleType: BundleType }) {
     const { currentStep, previousStep } = useBundleStore();
@@ -33,16 +30,10 @@ export function StepContent({ bundleType }: { bundleType: BundleType }) {
         }),
     };
 
-    const isBxgy = BXGY_TYPES.includes(bundleType);
-
     const renderCurrentStep = () => {
         switch (currentStep) {
             case 1:
-                return isBxgy ? (
-                    <TriggerRewardProductsStep bundleType={bundleType} />
-                ) : (
-                    <ProductsStep bundleType={bundleType} />
-                );
+                return <ProductsStep bundleType={bundleType} />;
             case 2:
                 return <DiscountStep />;
             case 3:
@@ -50,11 +41,7 @@ export function StepContent({ bundleType }: { bundleType: BundleType }) {
             case 4:
                 return <ReviewStep />;
             default:
-                return isBxgy ? (
-                    <TriggerRewardProductsStep bundleType={bundleType} />
-                ) : (
-                    <ProductsStep bundleType={bundleType} />
-                );
+                return <ProductsStep bundleType={bundleType} />;
         }
     };
 
