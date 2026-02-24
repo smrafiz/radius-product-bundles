@@ -43,12 +43,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         setSaving,
         resetDirty,
         setStep,
-        pendingMedia,
-        clearPendingMedia,
-        removedMediaIds,
-        clearRemovedMediaIds,
-        selectedItems,
-        pendingProductDeletion,
         setPendingProductDeletion,
         setBundleData,
     } = useBundleStore();
@@ -64,17 +58,31 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
      * Calculate bundle pricing based on selected items and discount settings.
      */
     const calculateBundlePricing = (data: BundleFormData) => {
-        const originalPrice = calculateBundlePrice(selectedItems);
+        const storeState = useBundleStore.getState();
+        const currentItems = storeState.selectedItems;
+        const originalPrice = calculateBundlePrice(currentItems);
+
+        const { discountApplication, discountedProductIds } =
+            storeState.bundleData;
+        const applyToSpecific = discountApplication === "products";
+        const discountedIds = new Set(discountedProductIds ?? []);
+
+        const discountableItems = applyToSpecific
+            ? currentItems.filter((item) => discountedIds.has(item.productId))
+            : currentItems;
+        const discountablePrice = calculateBundlePrice(discountableItems);
 
         if (data.discountType === "CUSTOM_PRICE" && data.discountValue) {
+            const nonDiscountablePrice = originalPrice - discountablePrice;
+            const finalPrice = nonDiscountablePrice + data.discountValue;
             return {
-                bundlePrice: data.discountValue,
+                bundlePrice: finalPrice,
                 originalPrice,
             };
         }
 
         const discountAmount = calculateDiscountAmount(
-            originalPrice,
+            discountablePrice,
             data.discountType || "PERCENTAGE",
             data.discountValue || 0,
             data.maxDiscountAmount,
@@ -94,15 +102,17 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         productId: string,
         productTitle?: string,
     ): Promise<string[]> => {
-        if (pendingMedia.length === 0) {
+        const currentPendingMedia = useBundleStore.getState().pendingMedia;
+
+        if (currentPendingMedia.length === 0) {
             return [];
         }
 
         console.log(
-            `Processing ${pendingMedia.length} pending media items in order...`,
+            `Processing ${currentPendingMedia.length} pending media items in order...`,
         );
 
-        const filesToUpload = pendingMedia
+        const filesToUpload = currentPendingMedia
             .filter(
                 (item): item is PendingMediaItem & { type: "file" } =>
                     item.type === "file",
@@ -126,7 +136,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         let fileIndex = 0;
         const orderedUrls: string[] = [];
 
-        for (const item of pendingMedia) {
+        for (const item of currentPendingMedia) {
             if (item.type === "url") {
                 orderedUrls.push(item.url);
             } else if (
@@ -157,7 +167,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             }
         }
 
-        clearPendingMedia();
+        useBundleStore.getState().clearPendingMedia();
 
         return orderedUrls;
     };
@@ -284,8 +294,13 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     let needsProductCreation: undefined | false | string =
                         false;
 
+                    const {
+                        pendingProductDeletion: isPendingDeletion,
+                        removedMediaIds: currentRemovedMediaIds,
+                    } = useBundleStore.getState();
+
                     // Delete product if switch was turned OFF
-                    if (pendingProductDeletion && currentMainProductId) {
+                    if (isPendingDeletion && currentMainProductId) {
                         console.log("Deleting Shopify product...");
 
                         const deleteResult = await deleteBundleProductAction(
@@ -324,8 +339,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         });
 
                         setPendingProductDeletion(false);
-                        clearPendingMedia();
-                        clearRemovedMediaIds();
+                        useBundleStore.getState().clearPendingMedia();
+                        useBundleStore.getState().clearRemovedMediaIds();
                     }
 
                     // Check if we need to CREATE a new product
@@ -413,17 +428,17 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         !productWasDeleted
                     ) {
                         // Delete removed media from Shopify
-                        if (removedMediaIds.length > 0) {
+                        if (currentRemovedMediaIds.length > 0) {
                             try {
                                 const deleteResult =
                                     await deleteMedia.mutateAsync({
                                         productId: currentMainProductId,
-                                        mediaIds: removedMediaIds,
+                                        mediaIds: currentRemovedMediaIds,
                                     });
                                 console.log(
                                     `✅ Media processed: ${deleteResult.deletedMediaIds.length} deleted`,
                                 );
-                                clearRemovedMediaIds();
+                                useBundleStore.getState().clearRemovedMediaIds();
                             } catch (error) {
                                 console.error("Media deletion failed:", error);
                             }

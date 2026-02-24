@@ -145,6 +145,11 @@ export function GlobalForm<T extends FieldValues>({
         )();
     };
 
+    const handleSaveRef = useRef(handleSave);
+    useEffect(() => {
+        handleSaveRef.current = handleSave;
+    });
+
     /**
      * Handles discard action.
      */
@@ -159,9 +164,6 @@ export function GlobalForm<T extends FieldValues>({
     useEffect(() => {
         const state = getFormState(formId);
 
-        /**
-         * Shows the save bar (only for this form).
-         */
         const handleTriggerSaveBar = (event: Event) => {
             const customEvent = event as CustomEvent;
             const eventFormId = customEvent.detail?.formId || DEFAULT_FORM_ID;
@@ -171,15 +173,12 @@ export function GlobalForm<T extends FieldValues>({
             }
         };
 
-        /**
-         * Handles form submission (only for this form).
-         */
         const handleSubmitForm = (event: Event) => {
             const customEvent = event as CustomEvent;
             const eventFormId = customEvent.detail?.formId || DEFAULT_FORM_ID;
 
             if (eventFormId === formId) {
-                void handleSave();
+                void handleSaveRef.current();
             }
         };
 
@@ -196,7 +195,6 @@ export function GlobalForm<T extends FieldValues>({
         window.addEventListener(SUBMIT_FORM, handleSubmitForm);
         window.addEventListener(DISMISS_SAVE_BAR, handleDismissSaveBar);
 
-        // Sync state on mount
         if (state.hasUnsavedChanges && !showSaveBar && !state.isBlocked) {
             setShowSaveBar(true);
         }
