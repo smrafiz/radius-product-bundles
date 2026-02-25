@@ -1,10 +1,17 @@
 "use client";
 
-import { useBundleStore, WIDGET_LAYOUTS } from "@/features/bundles";
-import React from "react";
+import { useBundleStore, WIDGET_LAYOUTS, BundleType } from "@/features/bundles";
+import React, { useMemo } from "react";
+
+const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
 
 export function WidgetLayout() {
-    const { displaySettings, updateDisplaySettings } = useBundleStore();
+    const { displaySettings, updateDisplaySettings, bundleData } = useBundleStore();
+    const isBxgy = BXGY_TYPES.includes(bundleData.type as BundleType);
+    const layouts = useMemo(
+        () => isBxgy ? WIDGET_LAYOUTS.filter((l) => l.value !== "CAROUSEL") : WIDGET_LAYOUTS,
+        [isBxgy],
+    );
 
     return (
         <s-section>
@@ -29,10 +36,10 @@ export function WidgetLayout() {
 
                 <s-stack gap="small">
                     <s-grid
-                        gridTemplateColumns="repeat(auto-fit, minmax(110px, 1fr))"
+                        gridTemplateColumns="repeat(4, minmax(110px, 1fr))"
                         gap="base"
                     >
-                        {WIDGET_LAYOUTS.map(
+                        {layouts.map(
                             ({ label, widgetLayout, value }) => {
                                 const tooltipId = `layout-tooltip-${value}`;
 

@@ -1,10 +1,9 @@
 "use client";
 
-import { useDiscountSettings } from "@/features/bundles/hooks/ui/use-discount-settings";
-import { useBundleStore, useBundleValidation } from "@/features/bundles";
-import { useCallback, useMemo } from "react";
-import { useFormContext } from "react-hook-form";
 import { triggerSaveBar } from "@/shared";
+import { useCallback } from "react";
+import { useFormContext } from "react-hook-form";
+import { useBundleStore, useDiscountSettings } from "@/features/bundles";
 
 export function BxgyDiscountSettings() {
     const {
@@ -15,7 +14,6 @@ export function BxgyDiscountSettings() {
         handleDiscountValueChange,
         createBlurHandler,
         getDiscountValueLabel,
-        getCurrency,
         getSuffix,
         getPrefix,
         getFieldError,
@@ -25,10 +23,6 @@ export function BxgyDiscountSettings() {
     const { bundleData, setBundleData, markDirty, markFieldTouched } =
         useBundleStore();
     const { setValue } = useFormContext();
-
-    const selectedItems = useBundleStore((s) => s.selectedItems);
-    const triggerProducts = useMemo(() => selectedItems.filter((p) => p.role === "TRIGGER"), [selectedItems]);
-    const rewardProducts = useMemo(() => selectedItems.filter((p) => p.role === "REWARD"), [selectedItems]);
 
     const usesPerOrderLimit = bundleData.usesPerOrderLimit;
 
@@ -46,25 +40,6 @@ export function BxgyDiscountSettings() {
     const handleUsesPerOrderLimitBlur = useCallback(() => {
         markFieldTouched("usesPerOrderLimit");
     }, [markFieldTouched]);
-
-    const triggerNames = triggerProducts
-        .map((p) => p.title.replace(/ - .+$/, ""))
-        .join(", ");
-    const rewardNames = rewardProducts
-        .map((p) => p.title.replace(/ - .+$/, ""))
-        .join(", ");
-
-    let discountLabel = "at a discount";
-    if (discountType === "PERCENTAGE" && discountValue) {
-        discountLabel =
-            discountValue === 100 ? "FREE" : `at ${discountValue}% off`;
-    } else if (discountType === "FIXED_AMOUNT" && discountValue) {
-        discountLabel = `at $${discountValue} off`;
-    } else if (discountType === "CUSTOM_PRICE" && discountValue) {
-        discountLabel = `for $${discountValue} each`;
-    } else if (discountType === "NO_DISCOUNT") {
-        discountLabel = "at full price";
-    }
 
     return (
         <s-stack gap="base">
@@ -94,6 +69,7 @@ export function BxgyDiscountSettings() {
 
             <s-select
                 label="Discount Type"
+                placeholder="Select discount type"
                 value={discountType || ""}
                 error={getFieldError("discountType")}
                 onChange={(event: Event) => {
@@ -102,7 +78,6 @@ export function BxgyDiscountSettings() {
                 }}
                 onBlur={createBlurHandler("discountType")}
             >
-                <s-option value="">Select discount type</s-option>
                 {availableDiscountTypes.map((config) => (
                     <s-option key={config.id} value={config.id}>
                         {config.id === "CUSTOM_PRICE"
@@ -138,11 +113,7 @@ export function BxgyDiscountSettings() {
             <s-divider />
 
             <s-stack gap="small">
-                <s-stack
-                    direction="inline"
-                    alignItems="center"
-                    gap="small-200"
-                >
+                <s-stack direction="inline" alignItems="center" gap="small-200">
                     <s-heading>Deal Stacking Limit</s-heading>
                     <s-tooltip id="uses-per-order-tooltip">
                         <s-text>
@@ -172,32 +143,6 @@ export function BxgyDiscountSettings() {
                     error={getFieldError("usesPerOrderLimit")}
                 />
             </s-stack>
-
-            {triggerProducts.length > 0 && rewardProducts.length > 0 && (
-                <>
-                    <s-divider />
-                    <s-box
-                        padding="base"
-                        background="subdued"
-                        border="base"
-                        borderRadius="base"
-                    >
-                        <s-stack gap="small">
-                            <s-heading>Deal Preview</s-heading>
-                            <s-text>
-                                Buy 1 × {triggerNames} → Get 1 × {rewardNames}{" "}
-                                {discountLabel}
-                            </s-text>
-                            {usesPerOrderLimit && (
-                                <s-text tone="neutral">
-                                    Limited to {usesPerOrderLimit} use
-                                    {usesPerOrderLimit > 1 ? "s" : ""} per order
-                                </s-text>
-                            )}
-                        </s-stack>
-                    </s-box>
-                </>
-            )}
         </s-stack>
     );
 }

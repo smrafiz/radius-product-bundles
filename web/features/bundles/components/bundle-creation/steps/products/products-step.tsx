@@ -82,7 +82,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
             const trimmed = picks.slice(0, limit);
             const withRoles = trimmed.map((item, i) => ({
                 ...item,
-                role: (i === 0 ? "TRIGGER" : "REWARD") as string,
+                role: (i === 0 ? "TRIGGER" : "REWARD") as "TRIGGER" | "REWARD",
             }));
 
             // Same-product mode: mirror the trigger as reward
@@ -113,13 +113,13 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                 .filter((i) => i.role !== "REWARD")
                 .map((item, i) => ({
                     ...item,
-                    role: (i === 0 ? "TRIGGER" : "REWARD") as string,
+                    role: i === 0 ? ("TRIGGER" as const) : ("REWARD" as const),
                 }));
             // Mirror each trigger as a reward
             const triggers = updated.filter((i) => i.role === "TRIGGER");
             const mirrored = triggers.map((t) => ({
                 ...t,
-                role: "REWARD" as string,
+                role: "REWARD" as const,
                 id: `reward-${t.productId}`,
             }));
             const combined = [...updated, ...mirrored];

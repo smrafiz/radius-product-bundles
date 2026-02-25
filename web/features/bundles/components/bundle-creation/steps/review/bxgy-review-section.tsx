@@ -1,20 +1,29 @@
 "use client";
 
-import { useState } from "react";
 import {
+    BUNDLE_STATUSES,
+    bundleCurrencyFormatter,
     DISCOUNT_TYPES,
     DiscountType,
     formatDiscountFromValues,
-    bundleCurrencyFormatter,
+    useBundleField,
     useBundleStore,
 } from "@/features/bundles";
-import { useShopSettings } from "@/shared";
+import { useMemo, useState } from "react";
+import { formatDateLong, useShopSettings } from "@/shared";
 
 export function BxgyReviewSection() {
     const { bundleData, getTriggerProducts, getRewardProducts } =
         useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
     const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
+
+    const nameField = useBundleField<string>("name");
+    const descriptionField = useBundleField<string>("description");
+    const discountTypeField = useBundleField<string>("discountType");
+    const discountValueField = useBundleField<number | undefined>(
+        "discountValue",
+    );
 
     const [open, setOpen] = useState(true);
 
@@ -24,17 +33,69 @@ export function BxgyReviewSection() {
     const discountValue = bundleData.discountValue;
     const usesPerOrderLimit = bundleData.usesPerOrderLimit;
 
+    const formatDiscount = () =>
+        formatDiscountFromValues(
+            discountTypeField.value as DiscountType,
+            discountValueField.value,
+            currencyFormatter,
+        );
+
+    const toDate = (value: Date | string | undefined): Date | undefined => {
+        if (!value) return undefined;
+        return value instanceof Date ? value : new Date(value);
+    };
+
+    const formatDate = (date: Date | string | undefined): string => {
+        const dateObj = toDate(date);
+        if (!dateObj) return "Not set";
+        return formatDateLong(dateObj.toISOString().split("T")[0]);
+    };
+
+    const statusInfo = bundleData.status
+        ? BUNDLE_STATUSES[bundleData.status]
+        : BUNDLE_STATUSES.DRAFT;
+
     let discountLabel = "at a discount";
     if (discountType === "PERCENTAGE" && discountValue) {
         discountLabel =
             discountValue === 100 ? "FREE" : `at ${discountValue}% off`;
     } else if (discountType === "FIXED_AMOUNT" && discountValue) {
-        discountLabel = `at $${discountValue} off`;
+        discountLabel = `at ${currencyFormatter(discountValue)} off`;
     } else if (discountType === "CUSTOM_PRICE" && discountValue) {
-        discountLabel = `for $${discountValue} each`;
-    } else if (discountType === "NO_DISCOUNT") {
-        discountLabel = "at full price";
+        discountLabel = `for ${currencyFormatter(discountValue)} each`;
     }
+
+    const round = (n: number) => Math.round(n * 100) / 100;
+
+    const triggerTotal = useMemo(
+        () =>
+            round(triggerProducts.reduce(
+                (sum, p) => sum + (parseFloat(p.price || "0") * (p.quantity || 1)),
+                0,
+            )),
+        [triggerProducts],
+    );
+
+    const rewardTotal = useMemo(
+        () =>
+            round(rewardProducts.reduce(
+                (sum, p) => sum + (parseFloat(p.price || "0") * (p.quantity || 1)),
+                0,
+            )),
+        [rewardProducts],
+    );
+
+    const subtotal = round(triggerTotal + rewardTotal);
+
+    const discount = useMemo(() => {
+        if (!discountValue) return 0;
+        if (discountType === "PERCENTAGE") return round(rewardTotal * (discountValue / 100));
+        if (discountType === "FIXED_AMOUNT") return round(Math.min(discountValue, rewardTotal));
+        if (discountType === "CUSTOM_PRICE") return round(Math.max(0, rewardTotal - discountValue));
+        return 0;
+    }, [discountType, discountValue, rewardTotal]);
+
+    const total = round(Math.max(0, subtotal - discount));
 
     const triggerNames = triggerProducts
         .map((p) => p.title.replace(/ - .+$/, ""))
@@ -43,165 +104,104 @@ export function BxgyReviewSection() {
         .map((p) => p.title.replace(/ - .+$/, ""))
         .join(", ");
 
-    return (
-        <s-stack gap="base">
+    const getRewardPrice = (originalPrice: number) => {
+        if (!discountValue) return originalPrice;
+        if (discountType === "PERCENTAGE") return round(originalPrice * (1 - discountValue / 100));
+        if (discountType === "FIXED_AMOUNT") return round(Math.max(0, originalPrice - discountValue));
+        if (discountType === "CUSTOM_PRICE") return round(discountValue);
+        return originalPrice;
+    };
+
+    const renderProductCard = (p: (typeof triggerProducts)[0], role: "TRIGGER" | "REWARD") => {
+        const originalPrice = parseFloat(p.price || "0");
+        const isReward = role === "REWARD";
+        const finalPrice = isReward ? getRewardPrice(originalPrice) : originalPrice;
+        const hasDiscount = isReward && discountType && discountValue && finalPrice !== originalPrice;
+
+        return (
             <s-box
-                padding="base"
+                key={`${p.productId}-${role}`}
+                padding="small"
                 background="subdued"
                 border="base"
                 borderRadius="base"
             >
-                <s-stack gap="small">
-                    <s-heading>Deal Summary</s-heading>
-                    <s-text type="strong">
-                        Buy 1 × {triggerNames || "—"} → Get 1 ×{" "}
-                        {rewardNames || "—"} {discountLabel}
-                    </s-text>
-                    {usesPerOrderLimit && (
-                        <s-text tone="neutral">
-                            Limited to {usesPerOrderLimit} use
-                            {usesPerOrderLimit > 1 ? "s" : ""} per order
-                        </s-text>
-                    )}
-                    {bundleData.sameProductMode && (
-                        <s-badge tone="info">Same product deal</s-badge>
-                    )}
-                </s-stack>
-            </s-box>
-
-            <div className="cursor-pointer z-30" onClick={() => setOpen(!open)}>
                 <s-stack
                     direction="inline"
                     justifyContent="space-between"
                     alignItems="center"
-                    gap="small"
+                    gap="base"
                 >
-                    <s-heading>
-                        Products ({triggerProducts.length + rewardProducts.length}
-                        )
-                    </s-heading>
-                    <s-icon type={open ? "chevron-up" : "chevron-down"} />
-                </s-stack>
-            </div>
-
-            <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}`}
-            >
-                <s-stack gap="base" paddingBlockStart="small">
-                    {triggerProducts.length > 0 && (
-                        <s-stack gap="small-200">
-                            <s-text type="strong">Customer buys</s-text>
-                            {triggerProducts.map((p) => (
-                                <s-box
-                                    key={p.productId}
-                                    padding="small"
-                                    background="subdued"
-                                    border="base"
-                                    borderRadius="base"
-                                >
-                                    <s-stack
-                                        direction="inline"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                    >
-                                        <s-stack
-                                            direction="inline"
-                                            gap="small"
-                                            alignItems="center"
-                                        >
-                                            {p.image ? (
-                                                <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                                                    <s-image
-                                                        src={p.image}
-                                                        alt={p.title}
-                                                        aspectRatio="40/40"
-                                                        inlineSize="auto"
-                                                        objectFit="cover"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                                                    <s-icon
-                                                        type="image"
-                                                        tone="neutral"
-                                                    />
-                                                </div>
-                                            )}
-                                            <s-heading>
-                                                {p.title.replace(/ - .+$/, "")}
-                                            </s-heading>
-                                            <s-badge tone="info">
-                                                TRIGGER
-                                            </s-badge>
-                                        </s-stack>
-                                        <s-text>
-                                            {p.price ? `$${p.price}` : "—"}
-                                        </s-text>
-                                    </s-stack>
-                                </s-box>
-                            ))}
+                    <s-stack gap="base" direction="inline">
+                        {p.image ? (
+                            <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+                                <s-image
+                                    src={p.image}
+                                    alt={p.title}
+                                    aspectRatio="40/40"
+                                    inlineSize="auto"
+                                    loading="lazy"
+                                    objectFit="cover"
+                                />
+                            </div>
+                        ) : (
+                            <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+                                <s-icon type="image" tone="neutral" />
+                            </div>
+                        )}
+                        <s-stack
+                            direction="inline"
+                            gap="small"
+                            alignItems="center"
+                        >
+                            <s-heading>
+                                {p.title.replace(/ - .+$/, "")}
+                            </s-heading>
+                            <s-badge tone={role === "TRIGGER" ? "info" : "success"}>
+                                {role === "TRIGGER" ? "Customer Buys" : "Customer Gets"}
+                            </s-badge>
                         </s-stack>
-                    )}
-
-                    {rewardProducts.length > 0 && (
-                        <s-stack gap="small-200">
-                            <s-text type="strong">Customer gets</s-text>
-                            {rewardProducts.map((p) => (
-                                <s-box
-                                    key={p.productId}
-                                    padding="small"
-                                    background="subdued"
-                                    border="base"
-                                    borderRadius="base"
-                                >
-                                    <s-stack
-                                        direction="inline"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                    >
-                                        <s-stack
-                                            direction="inline"
-                                            gap="small"
-                                            alignItems="center"
-                                        >
-                                            {p.image ? (
-                                                <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                                                    <s-image
-                                                        src={p.image}
-                                                        alt={p.title}
-                                                        aspectRatio="40/40"
-                                                        inlineSize="auto"
-                                                        objectFit="cover"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
-                                                    <s-icon
-                                                        type="image"
-                                                        tone="neutral"
-                                                    />
-                                                </div>
-                                            )}
-                                            <s-heading>
-                                                {p.title.replace(/ - .+$/, "")}
-                                            </s-heading>
-                                            <s-badge tone="success">
-                                                REWARD
-                                            </s-badge>
-                                        </s-stack>
-                                        <s-text>
-                                            {p.price
-                                                ? `$${p.price} → ${discountLabel}`
-                                                : discountLabel}
-                                        </s-text>
-                                    </s-stack>
-                                </s-box>
-                            ))}
+                    </s-stack>
+                    {p.price && (
+                        <s-stack direction="inline" gap="small" alignItems="center">
+                            {hasDiscount && (
+                                <s-text tone="neutral"><s style={{ textDecoration: "line-through" }}>{currencyFormatter(originalPrice)}</s></s-text>
+                            )}
+                            <s-text type="strong">
+                                {hasDiscount
+                                    ? finalPrice === 0 ? "FREE" : currencyFormatter(finalPrice)
+                                    : currencyFormatter(originalPrice)}
+                            </s-text>
                         </s-stack>
                     )}
                 </s-stack>
-            </div>
+            </s-box>
+        );
+    };
 
+    return (
+        <s-stack gap="base">
+            {/* Title Section */}
+            <s-section>
+                <s-stack gap="small">
+                    <s-stack>
+                        <s-heading>Title</s-heading>
+                        <s-text color="subdued">
+                            {nameField.value || "Not set"}
+                        </s-text>
+                    </s-stack>
+                    <s-stack>
+                        <s-heading>Description</s-heading>
+                        <div className="block">
+                            <s-paragraph color="subdued">
+                                {descriptionField.value || "Not set"}
+                            </s-paragraph>
+                        </div>
+                    </s-stack>
+                </s-stack>
+            </s-section>
+
+            {/* Deal Summary */}
             <s-section>
                 <s-stack gap="small">
                     <s-stack
@@ -209,21 +209,52 @@ export function BxgyReviewSection() {
                         justifyContent="space-between"
                         direction="inline"
                     >
-                        <s-heading>Discount</s-heading>
-                        <s-text>
+                        <s-heading>Deal</s-heading>
+                        <s-text color="subdued">
+                            Buy 1 × {triggerNames || "—"} → Get 1 ×{" "}
+                            {rewardNames || "—"} {discountLabel}
+                        </s-text>
+                    </s-stack>
+                    {bundleData.sameProductMode && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                        >
+                            <s-heading>Mode</s-heading>
+                            <s-badge tone="info">Same product deal</s-badge>
+                        </s-stack>
+                    )}
+                </s-stack>
+            </s-section>
+
+            {/* Discount Section */}
+            <s-section>
+                <s-stack gap="small-300">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                        gap="small-300"
+                    >
+                        <s-heading>Discount type</s-heading>
+                        <s-text color="subdued">
                             {discountType
                                 ? DISCOUNT_TYPES[
                                       discountType as keyof typeof DISCOUNT_TYPES
                                   ]?.label
-                                : "Not set"}{" "}
-                            —{" "}
-                            {isLoading
-                                ? "•"
-                                : formatDiscountFromValues(
-                                      discountType,
-                                      discountValue,
-                                      currencyFormatter,
-                                  )}
+                                : "Not set"}
+                        </s-text>
+                    </s-stack>
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                        gap="small-300"
+                    >
+                        <s-heading>Discount value</s-heading>
+                        <s-text color="subdued">
+                            {isLoading ? "•" : formatDiscount()}
                         </s-text>
                     </s-stack>
                     {usesPerOrderLimit && (
@@ -231,13 +262,123 @@ export function BxgyReviewSection() {
                             alignItems="center"
                             justifyContent="space-between"
                             direction="inline"
+                            gap="small-300"
                         >
-                            <s-text tone="neutral">Stacking limit</s-text>
-                            <s-text>
+                            <s-heading>Stacking limit</s-heading>
+                            <s-text color="subdued">
                                 {usesPerOrderLimit} per order
                             </s-text>
                         </s-stack>
                     )}
+                </s-stack>
+            </s-section>
+
+            {/* Status Section */}
+            <s-section>
+                <s-stack gap="small">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-heading>Status</s-heading>
+                        <s-badge tone={statusInfo.tone}>
+                            {statusInfo.text}
+                        </s-badge>
+                    </s-stack>
+                    {bundleData.status === "SCHEDULED" && (
+                        <s-stack gap="small-200">
+                            <s-stack
+                                alignItems="center"
+                                justifyContent="space-between"
+                                direction="inline"
+                            >
+                                <s-text color="subdued">Start Date</s-text>
+                                <s-text>
+                                    {formatDate(bundleData.startDate)}
+                                </s-text>
+                            </s-stack>
+                            <s-stack
+                                alignItems="center"
+                                justifyContent="space-between"
+                                direction="inline"
+                            >
+                                <s-text color="subdued">End Date</s-text>
+                                <s-text>
+                                    {formatDate(bundleData.endDate)}
+                                </s-text>
+                            </s-stack>
+                        </s-stack>
+                    )}
+                </s-stack>
+            </s-section>
+
+            {/* Products Section */}
+            <s-section>
+                <s-stack>
+                    <div className="cursor-pointer z-30" onClick={() => setOpen(!open)}>
+                        <s-stack
+                            direction="inline"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            gap="small"
+                            aria-expanded={open}
+                        >
+                            <s-heading>
+                                Selected products ({triggerProducts.length + rewardProducts.length})
+                            </s-heading>
+                            <s-icon type={open ? "chevron-up" : "chevron-down"} />
+                        </s-stack>
+                    </div>
+
+                    <div
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-250 opacity-100" : "max-h-0 opacity-0"}`}
+                    >
+                        <s-stack gap="small" paddingBlockStart="small">
+                            {triggerProducts.length > 0 && (
+                                <s-stack gap="small-200">
+                                    {triggerProducts.map((p) => renderProductCard(p, "TRIGGER"))}
+                                </s-stack>
+                            )}
+                            {rewardProducts.length > 0 && (
+                                <s-stack gap="small-200">
+                                    {rewardProducts.map((p) => renderProductCard(p, "REWARD"))}
+                                </s-stack>
+                            )}
+                        </s-stack>
+                    </div>
+                </s-stack>
+            </s-section>
+
+            {/* Pricing Section */}
+            <s-section>
+                <s-stack gap="small">
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text>Subtotal</s-text>
+                        <s-text>{currencyFormatter(subtotal)}</s-text>
+                    </s-stack>
+                    {discount > 0 && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                        >
+                            <s-text>Discount</s-text>
+                            <s-text>- {currencyFormatter(discount)}</s-text>
+                        </s-stack>
+                    )}
+                    <s-stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="inline"
+                    >
+                        <s-text type="strong">Total</s-text>
+                        <s-text type="strong">{currencyFormatter(total)}</s-text>
+                    </s-stack>
                 </s-stack>
             </s-section>
         </s-stack>

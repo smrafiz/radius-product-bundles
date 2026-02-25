@@ -49,6 +49,7 @@ export function DiscountSettings() {
 
             <s-select
                 label="Discount Type"
+                placeholder="Select discount type"
                 value={discountType || ""}
                 error={getFieldError("discountType")}
                 onChange={(event: Event) => {
@@ -57,7 +58,6 @@ export function DiscountSettings() {
                 }}
                 onBlur={createBlurHandler("discountType")}
             >
-                <s-option value="">Select discount type</s-option>
                 {availableDiscountTypes.map((config) => (
                     <s-option key={config.id} value={config.id}>
                         {config.label}

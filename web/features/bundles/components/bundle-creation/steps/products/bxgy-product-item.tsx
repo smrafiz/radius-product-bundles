@@ -52,7 +52,7 @@ export function BxgyProductItem({
                     )}
 
                     <s-stack>
-                        <div className="w-[250px]">
+                        <div className="w-62.5">
                             <s-stack
                                 direction="inline"
                                 gap="small"

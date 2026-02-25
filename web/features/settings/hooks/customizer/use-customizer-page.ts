@@ -7,6 +7,7 @@ import {
     useCustomizerSubmit,
     useSettingsQuery,
 } from "@/features/settings";
+import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Resolver, useForm } from "react-hook-form";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
@@ -35,7 +36,10 @@ function createInitialStyles(
  */
 export function useCustomizerPage() {
     const types = Object.values(BUNDLE_TYPES);
-    const [activeId, setActiveId] = useState<string>(types[0].id);
+    const searchParams = useSearchParams();
+    const bundleTypeParam = searchParams.get("bundleType");
+    const initialType = types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
+    const [activeId, setActiveId] = useState<string>(initialType);
     const [resetCounter, setResetCounter] = useState(0);
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 

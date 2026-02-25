@@ -47,8 +47,48 @@ function useWidgetStyles(): CustomizerStyles {
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
     const { selectedItems, bundleData } = useBundleStore();
+    const isBxgy = bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
     return useMemo(() => {
+        const discountType = bundleData.discountType;
+        const discountValue = bundleData.discountValue ?? 0;
+
+        if (isBxgy) {
+            return selectedItems.map((item) => {
+                const unitPrice = parseFloat(item.price) || 0;
+                const isReward = item.role === "REWARD";
+                let discountedUnitPrice = unitPrice;
+
+                if (isReward && discountType && discountValue > 0) {
+                    switch (discountType) {
+                        case "PERCENTAGE":
+                            discountedUnitPrice = unitPrice * (1 - discountValue / 100);
+                            break;
+                        case "FIXED_AMOUNT":
+                            discountedUnitPrice = Math.max(0, unitPrice - discountValue);
+                            break;
+                        case "CUSTOM_PRICE":
+                            discountedUnitPrice = discountValue;
+                            break;
+                    }
+                }
+
+                discountedUnitPrice = Math.round(discountedUnitPrice * 100) / 100;
+                const hasDiscount = discountedUnitPrice < unitPrice;
+                return {
+                    id: item.id,
+                    title: item.title,
+                    image: item.image,
+                    price: formatPrice(discountedUnitPrice, currencyCode),
+                    compareAtPrice: hasDiscount
+                        ? formatPrice(unitPrice, currencyCode)
+                        : undefined,
+                    quantity: item.quantity,
+                    url: item.url,
+                };
+            });
+        }
+
         const applyToSpecific = bundleData.discountApplication === "products";
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
@@ -59,11 +99,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
 
         return selectedItems.map((item) => {
             const unitPrice = parseFloat(item.price) || 0;
-            const discountType = bundleData.discountType;
-            const discountValue = bundleData.discountValue ?? 0;
             let discountedUnitPrice = unitPrice;
 
-            // Skip discount for products not in the discounted list
             const shouldDiscount =
                 !applyToSpecific || discountedIds.has(item.productId);
 
@@ -97,6 +134,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
                 }
             }
 
+            discountedUnitPrice = Math.round(discountedUnitPrice * 100) / 100;
             const hasDiscount = discountedUnitPrice < unitPrice;
             return {
                 id: item.id,
@@ -112,6 +150,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         });
     }, [
         selectedItems,
+        isBxgy,
         bundleData.discountType,
         bundleData.discountValue,
         bundleData.discountApplication,
@@ -175,8 +214,11 @@ function RenderLayout({
 
 export function BundlePreview() {
     const { appWindowRef } = useCustomizerModal();
-    const { displaySettings } = useBundleStore();
+    const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
+    const customizerSrc = bundleData.type
+        ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}`
+        : ROUTES.CUSTOMIZER;
     const styles = useWidgetStyles();
     const products = usePreviewProducts(currencyCode);
     const displayOptions = useWidgetDisplayOptions();
@@ -208,7 +250,7 @@ export function BundlePreview() {
                             <s-app-window
                                 ref={appWindowRef}
                                 id="rtpb-preview-window"
-                                src={ROUTES.CUSTOMIZER}
+                                src={customizerSrc}
                             />
                             <s-button
                                 variant="tertiary"

@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-
 import {
     calculateBundlePrice,
     calculateDiscountAmount,
@@ -13,9 +12,9 @@ import {
  */
 export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
     const { bundleData, selectedItems } = useBundleStore();
+    const isBxgy = bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
     return useMemo(() => {
-        // Return placeholder values when no items or discount configured
         if (!selectedItems.length || !bundleData.discountType) {
             return {
                 originalPrice: 0,
@@ -26,9 +25,43 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             };
         }
 
-        const originalPrice = calculateBundlePrice(selectedItems);
+        const round = (n: number) => Math.round(n * 100) / 100;
+        const originalPrice = round(calculateBundlePrice(selectedItems));
 
-        // When applying to specific products, only discount those products
+        // BOGO/BXGY: discount applies only to reward products
+        if (isBxgy) {
+            const rewardItems = selectedItems.filter((i) => i.role === "REWARD");
+            const rewardPrice = round(calculateBundlePrice(rewardItems));
+            const discountValue = bundleData.discountValue ?? 0;
+
+            let discountAmount = 0;
+            if (discountValue > 0) {
+                switch (bundleData.discountType) {
+                    case "PERCENTAGE":
+                        discountAmount = round(rewardPrice * (discountValue / 100));
+                        break;
+                    case "FIXED_AMOUNT":
+                        discountAmount = round(Math.min(discountValue, rewardPrice));
+                        break;
+                    case "CUSTOM_PRICE":
+                        discountAmount = round(Math.max(0, rewardPrice - discountValue));
+                        break;
+                }
+            }
+
+            const finalPrice = round(Math.max(0, originalPrice - discountAmount));
+            const savingsPercentage = calculateSavingsPercentage(originalPrice, finalPrice);
+
+            return {
+                originalPrice,
+                discountAmount,
+                finalPrice,
+                savingsPercentage,
+                hasDiscount: discountAmount > 0,
+            };
+        }
+
+        // FIXED_BUNDLE: existing logic
         const applyToSpecific = bundleData.discountApplication === "products";
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
@@ -38,7 +71,6 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         const discountablePrice = calculateBundlePrice(discountableItems);
 
-        // Handle CUSTOM_PRICE
         if (bundleData.discountType === "CUSTOM_PRICE") {
             const customPrice = bundleData.discountValue ?? 0;
             const nonDiscountablePrice = originalPrice - discountablePrice;
@@ -58,7 +90,6 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             };
         }
 
-        // Handle other discount types
         if (!bundleData.discountValue) {
             return {
                 originalPrice,
@@ -90,6 +121,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         };
     }, [
         selectedItems,
+        isBxgy,
         bundleData.discountType,
         bundleData.discountValue,
         bundleData.discountApplication,
