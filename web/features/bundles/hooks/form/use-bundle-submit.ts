@@ -61,6 +61,35 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         const storeState = useBundleStore.getState();
         const currentItems = storeState.selectedItems;
         const originalPrice = calculateBundlePrice(currentItems);
+        const round = (n: number) => Math.round(n * 100) / 100;
+
+        const isBxgy = data.type === "BOGO" || data.type === "BUY_X_GET_Y";
+
+        if (isBxgy) {
+            const rewardItems = currentItems.filter((i) => i.role === "REWARD");
+            const rewardPrice = calculateBundlePrice(rewardItems);
+            const discountValue = data.discountValue ?? 0;
+
+            let discountAmount = 0;
+            if (discountValue > 0) {
+                switch (data.discountType) {
+                    case "PERCENTAGE":
+                        discountAmount = round(rewardPrice * (discountValue / 100));
+                        break;
+                    case "FIXED_AMOUNT":
+                        discountAmount = round(Math.min(discountValue, rewardPrice));
+                        break;
+                    case "CUSTOM_PRICE":
+                        discountAmount = round(Math.max(0, rewardPrice - discountValue));
+                        break;
+                }
+            }
+
+            return {
+                bundlePrice: round(Math.max(0, originalPrice - discountAmount)),
+                originalPrice: round(originalPrice),
+            };
+        }
 
         const { discountApplication, discountedProductIds } =
             storeState.bundleData;
@@ -76,8 +105,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             const nonDiscountablePrice = originalPrice - discountablePrice;
             const finalPrice = nonDiscountablePrice + data.discountValue;
             return {
-                bundlePrice: finalPrice,
-                originalPrice,
+                bundlePrice: round(finalPrice),
+                originalPrice: round(originalPrice),
             };
         }
 
@@ -89,8 +118,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         );
 
         return {
-            bundlePrice: originalPrice - discountAmount,
-            originalPrice,
+            bundlePrice: round(originalPrice - discountAmount),
+            originalPrice: round(originalPrice),
         };
     };
 

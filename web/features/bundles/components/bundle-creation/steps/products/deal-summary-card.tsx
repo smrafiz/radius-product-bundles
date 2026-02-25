@@ -1,10 +1,13 @@
 "use client";
 
-import { useBundleStore } from "@/features/bundles";
+import { bundleCurrencyFormatter, useBundleStore } from "@/features/bundles";
+import { useShopSettings } from "@/shared";
 
 export function DealSummaryCard() {
     const { getTriggerProducts, getRewardProducts, bundleData } =
         useBundleStore();
+    const { currencyCode } = useShopSettings();
+    const fmt = bundleCurrencyFormatter(currencyCode);
 
     const triggerProducts = getTriggerProducts();
     const rewardProducts = getRewardProducts();
@@ -30,9 +33,9 @@ export function DealSummaryCard() {
                 ? "FREE"
                 : `at ${discountValue}% off`;
     } else if (discountType === "FIXED_AMOUNT" && discountValue) {
-        discountLabel = `at $${discountValue} off`;
+        discountLabel = `at ${fmt(discountValue)} off`;
     } else if (discountType === "CUSTOM_PRICE" && discountValue) {
-        discountLabel = `for $${discountValue}`;
+        discountLabel = `for ${fmt(discountValue)}`;
     } else if (discountType === "NO_DISCOUNT") {
         discountLabel = "at full price";
     }

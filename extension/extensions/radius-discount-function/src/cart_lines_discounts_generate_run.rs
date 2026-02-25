@@ -112,30 +112,39 @@ fn calculate_bxgy_discount(
         })
         .collect();
 
-    if trigger_lines.is_empty() || reward_lines.is_empty() {
+    if reward_lines.is_empty() {
         return None;
     }
 
-    // Check if same-product mode (trigger and reward share product IDs)
-    let trigger_product_ids: std::collections::HashSet<&str> = trigger_lines
-        .iter()
-        .filter_map(|bl| bl.product_id.as_deref())
-        .collect();
-    let reward_product_ids: std::collections::HashSet<&str> = reward_lines
-        .iter()
-        .filter_map(|bl| bl.product_id.as_deref())
-        .collect();
-    let is_same_product = trigger_product_ids == reward_product_ids;
+    // Same-product mode: when trigger and reward are the same product,
+    // the productRoles HashMap can only store one role per product ID,
+    // so TRIGGER gets overwritten by REWARD. Detect this when no triggers found.
+    let same_product_mode = trigger_lines.is_empty();
+
+    // Check if same-product mode via explicit trigger/reward overlap
+    let is_same_product = if !same_product_mode {
+        let trigger_product_ids: std::collections::HashSet<&str> = trigger_lines
+            .iter()
+            .filter_map(|bl| bl.product_id.as_deref())
+            .collect();
+        let reward_product_ids: std::collections::HashSet<&str> = reward_lines
+            .iter()
+            .filter_map(|bl| bl.product_id.as_deref())
+            .collect();
+        trigger_product_ids == reward_product_ids
+    } else {
+        true
+    };
 
     // Calculate deal count
-    let deal_count: i32 = if is_same_product {
+    let deal_count: i32 = if same_product_mode || is_same_product {
         // Same product: items_per_deal = buy_qty + get_qty, deals = total / items_per_deal
         let items_per_deal = buy_qty + get_qty;
-        let total_trigger_qty: i32 = trigger_lines
+        let total_qty: i32 = reward_lines
             .iter()
             .map(|bl| *bl.line.quantity())
             .sum();
-        total_trigger_qty / items_per_deal
+        total_qty / items_per_deal
     } else {
         // Different products: deal_count = min(trigger_available / buy_qty, reward_available / get_qty)
         let total_trigger_qty: i32 = trigger_lines
@@ -396,12 +405,6 @@ fn cart_lines_discounts_generate_run(
             })
             .collect();
 
-        if let Some(required) = cart_config.required_line_count {
-            if bundle_lines.len() < required {
-                continue;
-            }
-        }
-
         if bundle_lines.is_empty() {
             continue;
         }
@@ -412,6 +415,17 @@ fn cart_lines_discounts_generate_run(
             .as_deref()
             .map(|t| t == "BOGO" || t == "BUY_X_GET_Y")
             .unwrap_or(false);
+
+        // For non-BXGY bundles, validate required line count.
+        // Skip for BXGY because same-product BOGO merges into one cart line;
+        // calculate_bxgy_discount validates quantities instead.
+        if !is_bxgy {
+            if let Some(required) = cart_config.required_line_count {
+                if bundle_lines.len() < required {
+                    continue;
+                }
+            }
+        }
 
         if is_bxgy {
             let bxgy_bundle_name = cart_config

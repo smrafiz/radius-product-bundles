@@ -178,7 +178,7 @@ export function BundleFormProvider({
                     productId: item.productId,
                     variantId: variantId,
                     quantity: item.quantity || 1,
-                    role: "INCLUDED" as const,
+                    role: (item.role || "INCLUDED") as "INCLUDED" | "TRIGGER" | "REWARD",
                 }));
             }
 
@@ -188,7 +188,7 @@ export function BundleFormProvider({
                         productId: item.productId,
                         variantId: item.variantId,
                         quantity: item.quantity || 1,
-                        role: "INCLUDED" as const,
+                        role: (item.role || "INCLUDED") as "INCLUDED" | "TRIGGER" | "REWARD",
                     },
                 ];
             }

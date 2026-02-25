@@ -22,7 +22,7 @@ export function BxgyDiscountSettings() {
 
     const { bundleData, setBundleData, markDirty, markFieldTouched } =
         useBundleStore();
-    const { setValue } = useFormContext();
+    const { setValue, trigger } = useFormContext();
 
     const usesPerOrderLimit = bundleData.usesPerOrderLimit;
 
@@ -39,7 +39,8 @@ export function BxgyDiscountSettings() {
 
     const handleUsesPerOrderLimitBlur = useCallback(() => {
         markFieldTouched("usesPerOrderLimit");
-    }, [markFieldTouched]);
+        void trigger("usesPerOrderLimit");
+    }, [markFieldTouched, trigger]);
 
     return (
         <s-stack gap="base">
