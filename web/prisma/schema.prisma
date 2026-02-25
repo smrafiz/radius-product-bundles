@@ -163,6 +163,7 @@ model BundleSettings {
     layout         WidgetLayout @default(GRID)
     theme          WidgetTheme  @default(STORE_DEFAULT)
     title          String?
+    subtitle       String?
     cartButtonText String?
     widget         Json?
     variant        String?

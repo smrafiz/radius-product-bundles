@@ -278,21 +278,7 @@ fn calculate_bxgy_discount(
         value
     };
 
-    let message = match bundle_settings.discount_type.as_str() {
-        "PERCENTAGE" => {
-            if bundle_settings.discount_value == 100.0 {
-                format!("{}: Buy {} Get {} FREE", bundle_name, buy_qty, get_qty)
-            } else {
-                format!(
-                    "{}: Buy {} Get {} at {}% off",
-                    bundle_name, buy_qty, get_qty, bundle_settings.discount_value
-                )
-            }
-        }
-        "FIXED_AMOUNT" => format!("{}: Buy {} Get {} discount", bundle_name, buy_qty, get_qty),
-        "CUSTOM_PRICE" => format!("{}: Special deal", bundle_name),
-        _ => format!("{} discount", bundle_name),
-    };
+    let message = bundle_name.to_string();
 
     Some(ProductDiscountCandidate {
         targets,

@@ -96,6 +96,7 @@ export interface BundleWidgetProps {
     displayOptions: WidgetDisplayOptions;
     pricing: WidgetPricing;
     title?: string;
+    subtitle?: string;
     cartButtonText?: string;
     children: ReactNode;
 }
@@ -113,6 +114,7 @@ export interface WidgetHeaderProps {
     displayOptions: WidgetDisplayOptions;
     pricing: WidgetPricing;
     title?: string;
+    subtitle?: string;
 }
 
 export interface WidgetPricingProps {

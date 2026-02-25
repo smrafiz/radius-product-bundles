@@ -3,6 +3,7 @@
 
   Parameters:
   - name: Bundle title
+  - subtitle: Bundle subtitle (optional)
   - show_savings_badge: Boolean to show/hide badge
 {% endcomment %}
 
@@ -11,6 +12,11 @@
 		<h3 class="radius-bundle__title" data-bundle-title>
 			{{ name }}
 		</h3>
+		{% if subtitle != blank %}
+			<p class="radius-bundle__subtitle" data-bundle-subtitle>
+				{{ subtitle }}
+			</p>
+		{% endif %}
 	</div>
 
 	{% if show_savings_badge %}

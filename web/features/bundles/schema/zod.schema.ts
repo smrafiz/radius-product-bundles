@@ -55,6 +55,7 @@ const bundleSettingsSchema = z
             .min(1, "Offer title is required")
             .max(100)
             .default("Bundle Offers"),
+        subtitle: z.string().max(300).optional().default(""),
         cartButtonText: z
             .string()
             .min(1, "Cart button text is required")

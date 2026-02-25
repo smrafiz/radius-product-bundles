@@ -126,6 +126,7 @@ export const initialDisplaySettings: DisplaySettings = {
     layout: "LIST",
     theme: "STORE_DEFAULT",
     title: "Bundle Offers",
+    subtitle: "",
     cartButtonText: "Add bundle to cart",
     // colorTheme: "brand",
     showImages: true,

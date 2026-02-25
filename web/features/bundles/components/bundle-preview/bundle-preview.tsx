@@ -304,6 +304,7 @@ export function BundlePreview() {
                                     displayOptions={displayOptions}
                                     pricing={pricing}
                                     title={displaySettings.title}
+                                    subtitle={displaySettings.subtitle}
                                     cartButtonText={
                                         displaySettings.cartButtonText
                                     }

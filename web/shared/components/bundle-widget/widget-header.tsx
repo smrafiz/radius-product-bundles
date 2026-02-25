@@ -9,6 +9,7 @@ export function WidgetHeader({
     displayOptions,
     pricing,
     title,
+    subtitle,
 }: WidgetHeaderProps) {
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const badgeRadius = getBadgeRadius(styles.cornerStyle);
@@ -45,6 +46,19 @@ export function WidgetHeader({
                 >
                     {title || DEFAULT_LABELS.headingLabel}
                 </div>
+                {subtitle && (
+                    <p
+                        className="radius-bundle__subtitle"
+                        style={{
+                            fontSize: "14px",
+                            color: "#6b7280",
+                            fontWeight: 400,
+                            margin: "4px 0 0",
+                        }}
+                    >
+                        {subtitle}
+                    </p>
+                )}
             </div>
 
             {displayOptions.showSavingsBadge && pricing.hasDiscount && (

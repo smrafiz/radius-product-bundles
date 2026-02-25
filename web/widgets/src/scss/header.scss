@@ -45,6 +45,14 @@
         }
     }
 
+    &__subtitle {
+        font-size: calc(var(--rb-body-font-size) * 0.9);
+        color: var(--rb-muted-color);
+        font-weight: 400;
+        margin: 4px 0 0;
+        line-height: 1.4;
+    }
+
     &__title-skeleton {
         display: block;
 

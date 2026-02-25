@@ -21,6 +21,22 @@ export function WidgetPosition() {
         [updateDisplaySettings, setValue],
     );
 
+    const handleSubtitleChange = useCallback(
+        (value: string) => {
+            updateDisplaySettings("subtitle", value);
+            setValue("settings.subtitle", value, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        },
+        [updateDisplaySettings, setValue],
+    );
+
+    const handleSubtitleBlur = useCallback(() => {
+        markFieldTouched("settings.subtitle");
+        void trigger("settings.subtitle");
+    }, [markFieldTouched, trigger]);
+
     const handleCartButtonTextChange = useCallback(
         (value: string) => {
             updateDisplaySettings("cartButtonText", value);
@@ -75,6 +91,20 @@ export function WidgetPosition() {
                     error={getFieldError("settings.title")}
                     maxLength={100}
                     required
+                />
+
+                <s-text-area
+                    label="Offer subtitle"
+                    value={displaySettings.subtitle || ""}
+                    onChange={(event: Event) => {
+                        const target = event.currentTarget as HTMLInputElement;
+                        handleSubtitleChange(target.value);
+                    }}
+                    rows={3}
+                    onBlur={handleSubtitleBlur}
+                    error={getFieldError("settings.subtitle")}
+                    maxLength={300}
+                    placeholder="Optional subtitle text"
                 />
 
                 <s-text-field

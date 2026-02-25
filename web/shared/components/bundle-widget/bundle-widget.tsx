@@ -12,6 +12,7 @@ export function BundleWidget({
     displayOptions,
     pricing,
     title,
+    subtitle,
     cartButtonText,
     children,
 }: BundleWidgetProps) {
@@ -22,6 +23,7 @@ export function BundleWidget({
                 displayOptions={displayOptions}
                 pricing={pricing}
                 title={title}
+                subtitle={subtitle}
             />
             {children}
             <WidgetPricingDisplay

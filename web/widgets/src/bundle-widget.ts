@@ -55,6 +55,7 @@ declare global {
         id: string;
         status: string;
         name: string;
+        subtitle?: string;
         discountType:
             | "PERCENTAGE"
             | "FIXED_AMOUNT"

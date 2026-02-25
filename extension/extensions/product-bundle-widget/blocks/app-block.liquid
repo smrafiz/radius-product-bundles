@@ -493,6 +493,8 @@
 						| default: 'Bundle & Save'
 						| strip %}
 
+				{% assign bundle_subtitle = bundle.subtitle | default: '' | strip %}
+
 				{% assign savings_badge_text = g_labels.savingsBadgeText
 						| default: 'Save {percent}%' %}
 
@@ -886,6 +888,7 @@
 							{% render 'radius-bundle-layout-grid',
 									bundle_id: bundle_id,
 									name: bundle_heading,
+									subtitle: bundle_subtitle,
 									savings_badge_text: savings_badge_text,
 									product_count: product_count,
 									show_images: show_images,
@@ -911,6 +914,7 @@
 							{% render 'radius-bundle-layout-carousel',
 									bundle_id: bundle_id,
 									name: bundle_heading,
+									subtitle: bundle_subtitle,
 									savings_badge_text: savings_badge_text,
 									product_count: product_count,
 									show_images: show_images,
@@ -937,6 +941,7 @@
 							{% render 'radius-bundle-layout-compact',
 									bundle_id: bundle_id,
 									name: bundle_heading,
+									subtitle: bundle_subtitle,
 									savings_badge_text: savings_badge_text,
 									product_count: product_count,
 									show_images: show_images,
@@ -961,6 +966,7 @@
 							{% render 'radius-bundle-layout-list',
 									bundle_id: bundle_id,
 									name: bundle_heading,
+									subtitle: bundle_subtitle,
 									savings_badge_text: savings_badge_text,
 									product_count: product_count,
 									show_images: show_images,

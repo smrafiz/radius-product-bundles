@@ -470,6 +470,7 @@ function buildShopBundlesMetafieldValue(
             ),
             effectiveSavings: Math.round(effectiveSavings * 100) / 100,
             title: bundle.settings?.title ?? bundle.name,
+            subtitle: bundle.settings?.subtitle || "",
             productCount: productIds.length,
             productIds: productIds,
             productQuantities: productQuantities,
