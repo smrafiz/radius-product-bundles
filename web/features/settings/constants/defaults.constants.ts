@@ -124,6 +124,12 @@ export const DEFAULT_LABELS = {
     // Cart Limits
     maxBundlesReachedText: "Maximum {count} bundle(s) per order allowed",
 
+    // BOGO Labels
+    bogoYouPayLabel: "You Pay Only",
+    bogoYouSaveLabel: "You Save",
+    bogoTriggerBadgeText: "You Buy",
+    bogoRewardBadgeText: "You Get FREE",
+
     // Cart Banner
     bannerSavingText: "You're saving {discount} with {name}",
     bannerCustomPriceText: "Special price: {price} for {name}",
@@ -294,6 +300,7 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     // ADVANCED - BOGO SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     bogoFreeTagColor: "#16a34a",
+    bogoCardBorderStyle: "solid",
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BUY X GET Y SPECIFIC

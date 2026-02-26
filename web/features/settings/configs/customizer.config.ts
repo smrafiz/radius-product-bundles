@@ -166,7 +166,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "top", label: "Top" },
                     ],
                     defaultValue: "left",
-                    layouts: ["LIST"],
+                    layouts: ["LIST", "CLASSIC_CARD", "COMPACT_GRID", "MINIMALIST"],
                 },
 
                 // Card customization (opt-in)
@@ -292,6 +292,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "inline", label: "Inline" },
                     ],
                     defaultValue: "top-right",
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "buttonGroup",
@@ -335,11 +340,18 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "highlight", label: "Highlight" },
                     ],
                     defaultValue: "card",
-                    showWhen: {
-                        field: "pricingSummaryBox",
-                        operator: "equals",
-                        value: true,
-                    },
+                    showWhen: [
+                        {
+                            field: "pricingSummaryBox",
+                            operator: "equals",
+                            value: true,
+                        },
+                        {
+                            field: "_bundleType",
+                            operator: "notIn",
+                            value: ["BOGO", "BUY_X_GET_Y"],
+                        },
+                    ],
                 },
             ],
         },
@@ -484,6 +496,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "heading",
                     label: "List Layout",
                     layouts: ["LIST"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "buttonGroup",
@@ -497,6 +514,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     ],
                     defaultValue: "plus",
                     layouts: ["LIST"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
 
                 // Grid Layout Specific
@@ -504,6 +526,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "heading",
                     label: "Grid Layout",
                     layouts: ["GRID"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "buttonGroup",
@@ -517,6 +544,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     ],
                     defaultValue: 3,
                     layouts: ["GRID"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
 
                 // Carousel Layout Specific
@@ -524,6 +556,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "heading",
                     label: "Slider Layout",
                     layouts: ["CAROUSEL"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "buttonGroup",
@@ -537,6 +574,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     ],
                     defaultValue: 3,
                     layouts: ["CAROUSEL"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "buttonGroup",
@@ -551,6 +593,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     ],
                     defaultValue: "both",
                     layouts: ["CAROUSEL"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "switch",
@@ -558,6 +605,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     label: "Autoplay",
                     defaultValue: false,
                     layouts: ["CAROUSEL"],
+                    showWhen: {
+                        field: "_bundleType",
+                        operator: "notIn",
+                        value: ["BOGO", "BUY_X_GET_Y"],
+                    },
                 },
                 {
                     type: "range",
@@ -587,6 +639,18 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     label: "FREE tag color",
                     details: "Color of the FREE label",
                     defaultValue: "#16a34a",
+                    bundleTypes: ["BOGO"],
+                },
+                {
+                    type: "buttonGroup",
+                    name: "bogoCardBorderStyle",
+                    label: "Card border style",
+                    options: [
+                        { value: "solid", label: "Solid" },
+                        { value: "dashed", label: "Dashed" },
+                        { value: "dotted", label: "Dotted" },
+                    ],
+                    defaultValue: "solid",
                     bundleTypes: ["BOGO"],
                 },
 

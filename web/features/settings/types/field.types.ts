@@ -300,6 +300,8 @@ export interface CustomizerStyles {
     // ═══════════════════════════════════════════════════════════════════
     /** FREE tag color */
     bogoFreeTagColor: string;
+    /** Card border style */
+    bogoCardBorderStyle: "solid" | "dashed" | "dotted";
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BUY X GET Y SPECIFIC

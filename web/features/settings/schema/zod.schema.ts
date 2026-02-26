@@ -118,6 +118,7 @@ const baseStylesSchema = z.object({
     // ADVANCED - BOGO SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     bogoFreeTagColor: requiredHexColor.optional(),
+    bogoCardBorderStyle: z.enum(["solid", "dashed", "dotted"]).optional(),
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BUY X GET Y SPECIFIC
