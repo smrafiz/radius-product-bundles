@@ -1,11 +1,11 @@
 "use client";
 
 import { WidgetLayoutProps, PreviewProduct } from "@/shared";
-import { getButtonBgColor, getButtonRadius, getButtonFontSize } from "@/features/settings";
+import { getButtonBgColor, getButtonRadius, getButtonFontSize, getHeadingFontSize } from "@/features/settings";
 
 const TRIGGER_BADGE_BG = "#f97316";
 const REWARD_BADGE_BG = "#16a34a";
-const PRICING_BAR_BG = "#f0fdf4";
+const PRICING_BAR_BG = "#DDEDDF";
 
 function ClassicProductCard({
     product,
@@ -17,10 +17,10 @@ function ClassicProductCard({
     styles: WidgetLayoutProps["styles"];
 }) {
     const isTrigger = variant === "trigger";
-    const borderColor = isTrigger ? TRIGGER_BADGE_BG : REWARD_BADGE_BG;
-    const badgeBg = isTrigger ? TRIGGER_BADGE_BG : REWARD_BADGE_BG;
+    const borderColor = isTrigger ? styles.primaryColor : styles.savingsColor;
+    const badgeBg = isTrigger ? styles.primaryColor : styles.savingsColor;
     const badgeText = isTrigger ? "You Buy" : "You Get FREE";
-    const isFree = !isTrigger && product.price === "$0.00";
+    const isFree = !isTrigger;
 
     return (
         <div
@@ -29,7 +29,6 @@ function ClassicProductCard({
                 borderRadius: 12,
                 padding: 16,
                 position: "relative",
-                backgroundColor: "#fff",
                 flex: 1,
                 minWidth: 0,
             }}
@@ -92,21 +91,29 @@ function ClassicProductCard({
                 {product.title}
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                {product.compareAtPrice && (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    marginTop: 6,
+                }}
+            >
+                {isFree && (
                     <span
                         style={{
-                            fontSize: 12,
+                            fontSize: 13,
                             color: "#9ca3af",
                             textDecoration: "line-through",
+                            fontWeight: 500
                         }}
                     >
-                        {product.compareAtPrice}
+                        {product.price}
                     </span>
                 )}
                 <span
                     style={{
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: 700,
                         color: isFree ? REWARD_BADGE_BG : styles.textColor,
                     }}
@@ -123,9 +130,13 @@ export function WidgetClassicCard({
     styles,
     pricing,
     cartButtonText,
+    title,
+    subtitle,
+    badgeText,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
+    const headingFontSize = getHeadingFontSize(styles.headingSize);
 
     if (!products.length) {
         return (
@@ -145,8 +156,60 @@ export function WidgetClassicCard({
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ display: "flex", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 6,
+                }}
+            >
+                {badgeText && (
+                    <span
+                        style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            backgroundColor:
+                                styles.primaryColor || TRIGGER_BADGE_BG,
+                            color: "#fff",
+                            fontSize: 13,
+                            fontWeight: 600,
+                            padding: "6px 16px",
+                            borderRadius: 20,
+                            marginBottom: 10,
+                        }}
+                    >
+                        {badgeText}
+                    </span>
+                )}
+                {title && (
+                    <div
+                        style={{
+                            fontSize: headingFontSize,
+                            fontWeight: 700,
+                            color: styles.textColor,
+                            textAlign: "center",
+                        }}
+                    >
+                        {title}
+                    </div>
+                )}
+                {subtitle && (
+                    <div
+                        style={{
+                            fontSize: 14,
+                            color: "#6b7280",
+                            textAlign: "center",
+                        }}
+                    >
+                        {subtitle}
+                    </div>
+                )}
+            </div>
+
+            <div style={{ display: "flex", gap: 14 }}>
                 {triggerProducts.map((p) => (
                     <ClassicProductCard
                         key={p.id}
@@ -172,18 +235,52 @@ export function WidgetClassicCard({
                         justifyContent: "space-between",
                         alignItems: "center",
                         backgroundColor: PRICING_BAR_BG,
-                        borderRadius: 8,
-                        padding: "10px 16px",
-                        fontSize: 13,
-                        fontWeight: 600,
+                        borderRadius: 10,
+                        padding: "14px 20px",
                     }}
                 >
-                    <span style={{ color: "#166534" }}>
-                        You Pay Only: {pricing.finalPrice}
-                    </span>
-                    <span style={{ color: "#15803d" }}>
-                        You Save: {pricing.savingsAmount}
-                    </span>
+                    <div>
+                        <div
+                            style={{
+                                fontSize: 12,
+                                fontWeight: 500,
+                                color: "#166534",
+                                marginBottom: 2,
+                            }}
+                        >
+                            You Pay Only
+                        </div>
+                        <div
+                            style={{
+                                fontSize: 20,
+                                fontWeight: 700,
+                                color: "#111827",
+                            }}
+                        >
+                            {pricing.finalPrice}
+                        </div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                        <div
+                            style={{
+                                fontSize: 12,
+                                fontWeight: 500,
+                                color: "#15803d",
+                                marginBottom: 2,
+                            }}
+                        >
+                            You Save
+                        </div>
+                        <div
+                            style={{
+                                fontSize: 20,
+                                fontWeight: 700,
+                                color: "#16a34a",
+                            }}
+                        >
+                            {pricing.savingsAmount}
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -191,7 +288,7 @@ export function WidgetClassicCard({
                 <button
                     style={{
                         width: "100%",
-                        padding: "12px 24px",
+                        padding: "14px 24px",
                         backgroundColor: getButtonBgColor(styles),
                         color: "#fff",
                         border: "none",
@@ -199,8 +296,26 @@ export function WidgetClassicCard({
                         fontSize: getButtonFontSize(styles.buttonSize),
                         fontWeight: 600,
                         cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
                     }}
                 >
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
                     {cartButtonText}
                 </button>
             )}

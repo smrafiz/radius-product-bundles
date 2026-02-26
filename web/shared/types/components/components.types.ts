@@ -100,6 +100,7 @@ export interface BundleWidgetProps {
     subtitle?: string;
     cartButtonText?: string;
     hideFooter?: boolean;
+    hideHeader?: boolean;
     children: ReactNode;
 }
 
@@ -111,6 +112,9 @@ export interface WidgetLayoutProps {
     initialVisibleCount?: number;
     pricing?: WidgetPricing;
     cartButtonText?: string;
+    title?: string;
+    subtitle?: string;
+    badgeText?: string;
 }
 
 export interface WidgetHeaderProps {

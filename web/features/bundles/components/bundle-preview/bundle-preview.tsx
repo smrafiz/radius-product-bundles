@@ -201,6 +201,8 @@ function RenderLayout({
     displayOptions,
     pricing,
     cartButtonText,
+    title,
+    subtitle,
 }: {
     layout: DisplaySettings["layout"];
     products: PreviewProduct[];
@@ -208,6 +210,8 @@ function RenderLayout({
     displayOptions: WidgetDisplayOptions;
     pricing?: WidgetPricing;
     cartButtonText?: string;
+    title?: string;
+    subtitle?: string;
 }) {
     const layoutProps = { products, styles, displayOptions };
 
@@ -228,6 +232,9 @@ function RenderLayout({
                     {...layoutProps}
                     pricing={pricing}
                     cartButtonText={cartButtonText}
+                    title={title}
+                    subtitle={subtitle}
+                    badgeText="Buy 1 Get 1 Free"
                 />
             );
         default:
@@ -334,6 +341,9 @@ export function BundlePreview() {
                                     hideFooter={BOGO_LAYOUT_VALUES.includes(
                                         displaySettings.layout,
                                     )}
+                                    hideHeader={BOGO_LAYOUT_VALUES.includes(
+                                        displaySettings.layout,
+                                    )}
                                 >
                                     <RenderLayout
                                         layout={displaySettings.layout}
@@ -344,6 +354,8 @@ export function BundlePreview() {
                                         cartButtonText={
                                             displaySettings.cartButtonText
                                         }
+                                        title={displaySettings.title}
+                                        subtitle={displaySettings.subtitle}
                                     />
                                 </BundleWidget>
                             </div>

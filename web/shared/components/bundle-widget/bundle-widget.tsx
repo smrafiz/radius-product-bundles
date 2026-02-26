@@ -15,17 +15,20 @@ export function BundleWidget({
     subtitle,
     cartButtonText,
     hideFooter,
+    hideHeader,
     children,
 }: BundleWidgetProps) {
     return (
         <>
-            <WidgetHeader
-                styles={styles}
-                displayOptions={displayOptions}
-                pricing={pricing}
-                title={title}
-                subtitle={subtitle}
-            />
+            {!hideHeader && (
+                <WidgetHeader
+                    styles={styles}
+                    displayOptions={displayOptions}
+                    pricing={pricing}
+                    title={title}
+                    subtitle={subtitle}
+                />
+            )}
             {children}
             {!hideFooter && (
                 <>

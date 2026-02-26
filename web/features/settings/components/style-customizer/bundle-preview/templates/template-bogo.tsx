@@ -12,10 +12,9 @@ import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.con
 const BOGO_PRODUCTS: PreviewProduct[] = [
     {
         id: "trigger-1",
-        title: "Trigger Product A",
+        title: "Trigger Product",
         image: PLACEHOLDER_IMAGES[1],
-        price: "$300.33",
-        compareAtPrice: "$600.00",
+        price: "$300",
         quantity: 1,
         role: "TRIGGER",
     },
@@ -23,8 +22,7 @@ const BOGO_PRODUCTS: PreviewProduct[] = [
         id: "reward-1",
         title: "Reward Product",
         image: PLACEHOLDER_IMAGES[2],
-        price: "$0.00",
-        compareAtPrice: "$600.00",
+        price: "$300",
         quantity: 1,
         role: "REWARD",
     },
@@ -39,7 +37,10 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
         showEmptyState: false,
         pricing: PLACEHOLDER_PRICING,
-        cartButtonText: "Add bundle to cart",
+        cartButtonText: "Claim This Offer",
+        title: "Buy One Get One Free",
+        subtitle: "Limited time promotional offer",
+        badgeText: "BOGO OFFER",
     };
 
     switch (activeLayout) {
