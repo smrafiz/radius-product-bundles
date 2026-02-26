@@ -309,7 +309,7 @@ export interface DisplaySettings {
     layout: "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
     theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
     title: string;
-    subtitle?: string;
+    subtitle: string;
     cartButtonText: string;
     // colorTheme: "brand" | "success" | "warning" | "critical";
     showImages: boolean;

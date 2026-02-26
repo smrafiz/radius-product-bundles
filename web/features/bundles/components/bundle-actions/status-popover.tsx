@@ -58,10 +58,11 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
 
             {/* Popover */}
             <s-popover id={popoverId}>
-                <s-box padding="small">
-                    <s-stack gap="small">
-                        {Object.entries(BUNDLE_STATUSES).map(
-                            ([statusKey, status]) => {
+                <s-box padding="small-300">
+                    <s-stack gap="small-400">
+                        {Object.entries(BUNDLE_STATUSES)
+                            .filter(([key]) => key !== "DELETED")
+                            .map(([statusKey, status]) => {
                                 const isCurrentStatus =
                                     statusKey === bundle.status;
 
@@ -81,12 +82,23 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                             }
                                         }}
                                     >
-                                        <s-clickable>
+                                        <s-clickable
+                                            disabled={
+                                                isCurrentStatus || undefined
+                                            }
+                                            background={
+                                                isCurrentStatus
+                                                    ? "subdued"
+                                                    : "base"
+                                            }
+                                            padding="small-300"
+                                            borderRadius="base"
+                                        >
                                             {isCurrentStatus ? (
                                                 <s-stack direction="inline">
-                                                    <s-text type="strong">
+                                                    <span className="font-semibold">
                                                         {status.text}
-                                                    </s-text>
+                                                    </span>
                                                 </s-stack>
                                             ) : (
                                                 <s-text>{status.text}</s-text>
