@@ -1441,7 +1441,12 @@ declare global {
             }
 
             if (this.isBxgyBundle()) {
-                this.renderBxgyProducts(bundle, productsContainer);
+                const layout = this.getLayout();
+                if (layout === "classic_card" || layout === "compact_grid" || layout === "minimalist") {
+                    this.renderClassicCardProducts(bundle, productsContainer);
+                } else {
+                    this.renderBxgyProducts(bundle, productsContainer);
+                }
                 return;
             }
 
@@ -1586,6 +1591,85 @@ declare global {
                     return Math.round(dv * 100);
                 default:
                     return originalPrice;
+            }
+        }
+
+        /**
+         * Renders Classic Card layout for BOGO/BXGY bundles
+         */
+        private renderClassicCardProducts(bundle: Bundle, container: Element): void {
+            const triggers = bundle.products.filter(p => p.role === "TRIGGER").sort((a, b) => a.displayOrder - b.displayOrder);
+            const rewards = bundle.products.filter(p => p.role === "REWARD").sort((a, b) => a.displayOrder - b.displayOrder);
+            const structure = this.bundleStructure || bundle;
+            const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : "";
+
+            const renderCard = (product: BundleProduct, isReward: boolean): string => {
+                const imageHtml = this.showImages && product.featuredImage
+                    ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}"${imgLoading} />`
+                    : this.showImages
+                      ? `<div class="rb-classic__placeholder">📦</div>`
+                      : "";
+
+                const badgeText = isReward ? "You Get FREE" : "You Buy";
+                const sectionClass = isReward ? "reward" : "trigger";
+
+                let priceHtml = "";
+                if (this.showPrices) {
+                    if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
+                        const discountedPrice = this.calculateBxgyRewardPrice(product.price, structure);
+                        const isFree = discountedPrice === 0;
+                        priceHtml = `<div class="rb-classic__price">`;
+                        if (this.showComparePrices) {
+                            priceHtml += `<span class="rb-classic__price-compare">${this.formatMoney(product.price)}</span>`;
+                        }
+                        priceHtml += `<span class="rb-classic__price-current rb-classic__price-current--${sectionClass}">${isFree ? "FREE" : this.formatMoney(discountedPrice)}</span>`;
+                        priceHtml += `</div>`;
+                    } else {
+                        priceHtml = `<div class="rb-classic__price"><span class="rb-classic__price-current">${this.formatMoney(product.price)}</span></div>`;
+                    }
+                }
+
+                return `
+                    <div class="rb-classic__card rb-classic__card--${sectionClass}">
+                        <span class="rb-classic__badge rb-classic__badge--${sectionClass}">${badgeText}</span>
+                        ${this.showImages ? `<div class="rb-classic__image">${imageHtml}</div>` : ""}
+                        <h4 class="rb-classic__title">${this.escapeHtml(product.title)}</h4>
+                        ${priceHtml}
+                    </div>
+                `;
+            };
+
+            let html = `<div class="rb-classic__grid">`;
+            triggers.forEach(p => { html += renderCard(p, false); });
+            rewards.forEach(p => { html += renderCard(p, true); });
+            html += `</div>`;
+
+            // Pricing bar
+            const totalOriginal = [...triggers, ...rewards].reduce((sum, p) => sum + p.price, 0);
+            const totalDiscounted = triggers.reduce((sum, p) => sum + p.price, 0) +
+                rewards.reduce((sum, p) => sum + this.calculateBxgyRewardPrice(p.price, structure), 0);
+            const savings = totalOriginal - totalDiscounted;
+
+            if (savings > 0 && this.showSavings) {
+                html += `
+                    <div class="rb-classic__pricing-bar">
+                        <span class="rb-classic__pricing-pay">You Pay Only: ${this.formatMoney(totalDiscounted)}</span>
+                        <span class="rb-classic__pricing-save">You Save: ${this.formatMoney(savings)}</span>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            // Hide the standard pricing section (Classic Card renders its own)
+            const standardPricing = this.container.querySelector(".radius-bundle__pricing");
+            if (standardPricing) {
+                (standardPricing as HTMLElement).style.display = "none";
+            }
+
+            const addToCartBtn = this.container.querySelector("[data-bundle-add-to-cart]") as HTMLButtonElement | null;
+            if (addToCartBtn) {
+                addToCartBtn.disabled = false;
             }
         }
 
@@ -2315,6 +2399,19 @@ declare global {
             if (this.container.classList.contains("radius-bundle--compact")) {
                 return "compact";
             }
+
+            if (this.container.classList.contains("radius-bundle--classic_card")) {
+                return "classic_card";
+            }
+
+            if (this.container.classList.contains("radius-bundle--compact_grid")) {
+                return "compact_grid";
+            }
+
+            if (this.container.classList.contains("radius-bundle--minimalist")) {
+                return "minimalist";
+            }
+
             return "list";
         }
 

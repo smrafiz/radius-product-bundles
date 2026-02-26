@@ -1,0 +1,138 @@
+// ==========================================================================
+// Classic Card Layout — BOGO/BXGY
+// ==========================================================================
+
+.rb-classic {
+    &__grid {
+        display: flex;
+        gap: 12px;
+    }
+
+    &__card {
+        flex: 1;
+        min-width: 0;
+        position: relative;
+        border: 2px solid;
+        border-radius: 12px;
+        padding: 16px;
+        background: #fff;
+
+        &--trigger {
+            border-color: #f97316;
+        }
+
+        &--reward {
+            border-color: #16a34a;
+        }
+    }
+
+    &__badge {
+        position: absolute;
+        top: -10px;
+        left: 12px;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 4px;
+        line-height: 16px;
+        white-space: nowrap;
+
+        &--trigger {
+            background: #f97316;
+        }
+
+        &--reward {
+            background: #16a34a;
+        }
+    }
+
+    &__image {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 10px;
+        margin-top: 8px;
+        background: #f9fafb;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__placeholder {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: #f9fafb;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        margin-top: 8px;
+    }
+
+    &__title {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    &__price {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    &__price-compare {
+        font-size: 12px;
+        color: #9ca3af;
+        text-decoration: line-through;
+    }
+
+    &__price-current {
+        font-size: 14px;
+        font-weight: 700;
+
+        &--reward {
+            color: #16a34a;
+        }
+    }
+
+    &__pricing-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f0fdf4;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    &__pricing-pay {
+        color: #166534;
+    }
+
+    &__pricing-save {
+        color: #15803d;
+    }
+}
+
+// Responsive: stack cards vertically on narrow containers
+@container (max-width: 400px) {
+    .rb-classic__grid {
+        flex-direction: column;
+    }
+}

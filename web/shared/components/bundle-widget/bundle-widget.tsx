@@ -14,6 +14,7 @@ export function BundleWidget({
     title,
     subtitle,
     cartButtonText,
+    hideFooter,
     children,
 }: BundleWidgetProps) {
     return (
@@ -26,12 +27,16 @@ export function BundleWidget({
                 subtitle={subtitle}
             />
             {children}
-            <WidgetPricingDisplay
-                styles={styles}
-                displayOptions={displayOptions}
-                pricing={pricing}
-            />
-            <WidgetAddToCart styles={styles} cartButtonText={cartButtonText} />
+            {!hideFooter && (
+                <>
+                    <WidgetPricingDisplay
+                        styles={styles}
+                        displayOptions={displayOptions}
+                        pricing={pricing}
+                    />
+                    <WidgetAddToCart styles={styles} cartButtonText={cartButtonText} />
+                </>
+            )}
         </>
     );
 }

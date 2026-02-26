@@ -48,6 +48,7 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                             styles={styles}
                             displayOptions={DEFAULT_DISPLAY_OPTIONS}
                             pricing={PLACEHOLDER_PRICING}
+                            hideFooter={bundleType === "BOGO" || bundleType === "BUY_X_GET_Y"}
                         >
                             <Template activeLayout={activeLayout} />
                         </BundleWidget>

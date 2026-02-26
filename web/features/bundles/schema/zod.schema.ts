@@ -46,7 +46,7 @@ const productGroupSchema = z.object({
  */
 const bundleSettingsSchema = z
     .object({
-        layout: z.enum(["GRID", "CAROUSEL", "LIST", "COMPACT"]).default("GRID"),
+        layout: z.string().default("GRID"),
         theme: z
             .enum(["LIGHT", "DARK", "STORE_DEFAULT", "CUSTOM"])
             .default("STORE_DEFAULT"),

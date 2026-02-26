@@ -20,7 +20,10 @@
             { "value": "list", "label": "List" },
             { "value": "grid", "label": "Grid" },
             { "value": "carousel", "label": "Carousel" },
-            { "value": "compact", "label": "Compact" }
+            { "value": "compact", "label": "Compact" },
+            { "value": "classic_card", "label": "Classic Card (BOGO)" },
+            { "value": "compact_grid", "label": "Compact Grid (BOGO)" },
+            { "value": "minimalist", "label": "Minimalist (BOGO)" }
         ],
         "default": "",
         "visible_if": "{{ block.settings.override_layout_settings }}"

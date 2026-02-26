@@ -5,8 +5,8 @@ import {
     CustomizerStyles,
     FieldCondition,
     PreviewTemplateId,
+    WidgetLayout,
 } from "@/features/settings";
-import { WidgetLayout } from "@/prisma/generated/enums";
 
 /**
  * Gets the value to check for a condition field.

@@ -1,7 +1,6 @@
 import type { BundleType } from "@/features/bundles";
 import type { ComponentType, ReactNode } from "react";
-import { CustomizerStyles } from "@/features/settings";
-import type { WidgetLayout } from "@/prisma/generated/enums";
+import { CustomizerStyles, type WidgetLayout } from "@/features/settings";
 
 /**
  * Extended template identifier — BundleType + UI-only templates.

@@ -1,5 +1,4 @@
-import { WidgetLayout } from "@/prisma/generated/enums";
-import { AppSettingsFormData, CustomizerStyles } from "@/features/settings";
+import { AppSettingsFormData, CustomizerStyles, WidgetLayout } from "@/features/settings";
 
 export type SettingsStoreState = {
     serverData: AppSettingsFormData | null;

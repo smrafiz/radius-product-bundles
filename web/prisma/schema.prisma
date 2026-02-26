@@ -158,10 +158,10 @@ model BundleProductGroup {
 }
 
 model BundleSettings {
-    id             String       @id @default(cuid())
-    bundleId       String       @unique
-    layout         WidgetLayout @default(GRID)
-    theme          WidgetTheme  @default(STORE_DEFAULT)
+    id             String      @id @default(cuid())
+    bundleId       String      @unique
+    layout         String      @default("GRID")
+    theme          WidgetTheme @default(STORE_DEFAULT)
     title          String?
     subtitle       String?
     cartButtonText String?
@@ -474,11 +474,11 @@ model Shop {
     discountSetupDone  Boolean    @default(false)
 
     // Setup tracking
-    setupComplete        Boolean   @default(false)
-    setupGuideDismissed  Boolean   @default(false)
-    setupProgress        Json?     @default("{}")
-    webhooksRegistered   Boolean   @default(false)
-    lastSetupCheck       DateTime?
+    setupComplete       Boolean   @default(false)
+    setupGuideDismissed Boolean   @default(false)
+    setupProgress       Json?     @default("{}")
+    webhooksRegistered  Boolean   @default(false)
+    lastSetupCheck      DateTime?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -577,13 +577,6 @@ enum BundleProductRole {
     INCLUDED
     OPTIONAL
     GROUP_OPTION
-}
-
-enum WidgetLayout {
-    GRID
-    CAROUSEL
-    LIST
-    COMPACT
 }
 
 enum WidgetTheme {

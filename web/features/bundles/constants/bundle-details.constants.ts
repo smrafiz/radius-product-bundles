@@ -69,6 +69,39 @@ export const WIDGET_LAYOUTS = [
     },
 ];
 
+export const BOGO_LAYOUTS = [
+    {
+        label: "Classic Card",
+        value: "CLASSIC_CARD" as const,
+        widgetLayout: "/assets/widget-classic-card-layout.png",
+    },
+    {
+        label: "Compact Grid",
+        value: "COMPACT_GRID" as const,
+        widgetLayout: "/assets/widget-compact-grid-layout.png",
+    },
+    {
+        label: "Minimalist",
+        value: "MINIMALIST" as const,
+        widgetLayout: "/assets/widget-minimalist-layout.png",
+    },
+];
+
+export const LAYOUTS_BY_BUNDLE_TYPE: Record<
+    string,
+    typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS
+> = {
+    FIXED_BUNDLE: WIDGET_LAYOUTS,
+    BOGO: BOGO_LAYOUTS,
+    BUY_X_GET_Y: BOGO_LAYOUTS,
+};
+
+export const BOGO_LAYOUT_VALUES = [
+    "CLASSIC_CARD",
+    "COMPACT_GRID",
+    "MINIMALIST",
+];
+
 export const BUNDLE_STEPS = [
     {
         number: 1,

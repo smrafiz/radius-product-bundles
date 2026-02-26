@@ -13,13 +13,15 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
     ],
 
     BUY_X_GET_Y: [
-        { label: "List", value: "LIST" },
-        { label: "Grid", value: "GRID" },
+        { label: "Classic Card", value: "CLASSIC_CARD" },
+        { label: "Compact Grid", value: "COMPACT_GRID" },
+        { label: "Minimalist", value: "MINIMALIST" },
     ],
 
     BOGO: [
-        { label: "List", value: "LIST" },
-        { label: "Grid", value: "GRID" },
+        { label: "Classic Card", value: "CLASSIC_CARD" },
+        { label: "Compact Grid", value: "COMPACT_GRID" },
+        { label: "Minimalist", value: "MINIMALIST" },
     ],
 
     VOLUME_DISCOUNT: [{ label: "List", value: "LIST" }],
@@ -48,3 +50,8 @@ export const PREVIEW_TEMPLATE_OPTIONS: ReadonlyArray<{
     })),
     { id: "CART_BANNER", label: "Cart page banner" },
 ];
+
+export const PLACEHOLDER_IMAGES = {
+    1: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-1_large.png",
+    2: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-2_large.png",
+};

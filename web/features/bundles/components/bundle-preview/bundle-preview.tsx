@@ -1,6 +1,19 @@
 "use client";
 
 import {
+    BundleWidget,
+    PreviewProduct,
+    ROUTES,
+    useShopSettings,
+    WidgetCarousel,
+    WidgetClassicCard,
+    WidgetCompact,
+    WidgetDisplayOptions,
+    WidgetGrid,
+    WidgetList,
+    WidgetPricing,
+} from "@/shared";
+import {
     BundlePreviewStatus,
     BundlePriority,
     DisplaySettings,
@@ -16,19 +29,8 @@ import {
     useCustomizerModal,
     useSettingsStore,
 } from "@/features/settings";
-import {
-    BundleWidget,
-    PreviewProduct,
-    ROUTES,
-    useShopSettings,
-    WidgetCarousel,
-    WidgetCompact,
-    WidgetDisplayOptions,
-    WidgetGrid,
-    WidgetList,
-    WidgetPricing,
-} from "@/shared";
 import { useMemo } from "react";
+import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
 
 import "@/styles/components/bundle.css";
@@ -47,7 +49,8 @@ function useWidgetStyles(): CustomizerStyles {
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
     const { selectedItems, bundleData } = useBundleStore();
-    const isBxgy = bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
+    const isBxgy =
+        bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
     return useMemo(() => {
         const discountType = bundleData.discountType;
@@ -62,10 +65,14 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
                 if (isReward && discountType && discountValue > 0) {
                     switch (discountType) {
                         case "PERCENTAGE":
-                            discountedUnitPrice = unitPrice * (1 - discountValue / 100);
+                            discountedUnitPrice =
+                                unitPrice * (1 - discountValue / 100);
                             break;
                         case "FIXED_AMOUNT":
-                            discountedUnitPrice = Math.max(0, unitPrice - discountValue);
+                            discountedUnitPrice = Math.max(
+                                0,
+                                unitPrice - discountValue,
+                            );
                             break;
                         case "CUSTOM_PRICE":
                             discountedUnitPrice = discountValue;
@@ -73,7 +80,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
                     }
                 }
 
-                discountedUnitPrice = Math.round(discountedUnitPrice * 100) / 100;
+                discountedUnitPrice =
+                    Math.round(discountedUnitPrice * 100) / 100;
                 const hasDiscount = discountedUnitPrice < unitPrice;
                 return {
                     id: item.id,
@@ -85,6 +93,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
                         : undefined,
                     quantity: item.quantity,
                     url: item.url,
+                    role: item.role,
                 };
             });
         }
@@ -190,11 +199,15 @@ function RenderLayout({
     products,
     styles,
     displayOptions,
+    pricing,
+    cartButtonText,
 }: {
     layout: DisplaySettings["layout"];
     products: PreviewProduct[];
     styles: CustomizerStyles;
     displayOptions: WidgetDisplayOptions;
+    pricing?: WidgetPricing;
+    cartButtonText?: string;
 }) {
     const layoutProps = { products, styles, displayOptions };
 
@@ -207,6 +220,16 @@ function RenderLayout({
             return <WidgetCarousel {...layoutProps} />;
         case "COMPACT":
             return <WidgetCompact {...layoutProps} />;
+        case "CLASSIC_CARD":
+        case "COMPACT_GRID":
+        case "MINIMALIST":
+            return (
+                <WidgetClassicCard
+                    {...layoutProps}
+                    pricing={pricing}
+                    cartButtonText={cartButtonText}
+                />
+            );
         default:
             return <WidgetGrid {...layoutProps} />;
     }
@@ -308,12 +331,19 @@ export function BundlePreview() {
                                     cartButtonText={
                                         displaySettings.cartButtonText
                                     }
+                                    hideFooter={BOGO_LAYOUT_VALUES.includes(
+                                        displaySettings.layout,
+                                    )}
                                 >
                                     <RenderLayout
                                         layout={displaySettings.layout}
                                         products={products}
                                         styles={styles}
                                         displayOptions={displayOptions}
+                                        pricing={pricing}
+                                        cartButtonText={
+                                            displaySettings.cartButtonText
+                                        }
                                     />
                                 </BundleWidget>
                             </div>

@@ -2,13 +2,13 @@
  * All Bundle types
  */
 
+import { z } from "zod";
 import type {
     BundleStatus as PrismaBundleStatus,
     BundleType as PrismaBundleType,
     DiscountType as PrismaDiscountType,
     Prisma,
 } from "@/prisma/generated/client";
-import { z } from "zod";
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 
@@ -305,8 +305,12 @@ export interface ExtendedBundleFormData extends BundleFormData {
     displaySettings?: DisplaySettings;
 }
 
+export type FixedBundleLayout = "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
+export type BogoLayout = "CLASSIC_CARD" | "COMPACT_GRID" | "MINIMALIST";
+export type BundleLayoutType = FixedBundleLayout | BogoLayout;
+
 export interface DisplaySettings {
-    layout: "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
+    layout: BundleLayoutType;
     theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
     title: string;
     subtitle: string;

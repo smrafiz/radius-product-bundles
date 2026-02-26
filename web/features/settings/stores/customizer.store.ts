@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { WidgetLayout } from "@/prisma/generated/enums";
-import { CustomizerStoreState, CustomizerStyles } from "@/features/settings";
+import { CustomizerStoreState, CustomizerStyles, WidgetLayout } from "@/features/settings";
 import {
     DEFAULT_CUSTOMIZER_STYLES,
     STYLE_PRESETS,

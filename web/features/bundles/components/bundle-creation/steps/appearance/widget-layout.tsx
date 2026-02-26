@@ -1,16 +1,14 @@
 "use client";
 
-import { useBundleStore, WIDGET_LAYOUTS, BundleType } from "@/features/bundles";
-import React, { useMemo } from "react";
-
-const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
+import { useMemo } from "react";
+import { useBundleStore } from "@/features/bundles";
+import { WIDGET_LAYOUTS, LAYOUTS_BY_BUNDLE_TYPE } from "@/features/bundles/constants/bundle-details.constants";
 
 export function WidgetLayout() {
     const { displaySettings, updateDisplaySettings, bundleData } = useBundleStore();
-    const isBxgy = BXGY_TYPES.includes(bundleData.type as BundleType);
     const layouts = useMemo(
-        () => isBxgy ? WIDGET_LAYOUTS.filter((l) => l.value !== "CAROUSEL") : WIDGET_LAYOUTS,
-        [isBxgy],
+        () => LAYOUTS_BY_BUNDLE_TYPE[bundleData.type as string] ?? WIDGET_LAYOUTS,
+        [bundleData.type],
     );
 
     return (

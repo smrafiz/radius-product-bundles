@@ -1,72 +1,52 @@
 "use client";
 
+import { PreviewProduct } from "@/shared";
 import {
-    BundleTemplateProps,
-    getSpacing,
-    useCustomizerStore,
-} from "@/features/settings";
-import { ProductCard } from "../../bundle-layout/cards/product-card";
-import { SectionDivider } from "../../bundle-layout/elements/section-divider";
-import { SectionLabel } from "../../bundle-layout/elements/section-label";
+    DEFAULT_DISPLAY_OPTIONS,
+    PLACEHOLDER_PRICING,
+} from "@/shared/constants/bundle-widget.constants";
+import { WidgetClassicCard } from "@/shared/components/bundle-widget";
+import { BundleTemplateProps, useEffectiveStyles } from "@/features/settings";
+import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
+
+const BOGO_PRODUCTS: PreviewProduct[] = [
+    {
+        id: "trigger-1",
+        title: "Trigger Product A",
+        image: PLACEHOLDER_IMAGES[1],
+        price: "$300.33",
+        compareAtPrice: "$600.00",
+        quantity: 1,
+        role: "TRIGGER",
+    },
+    {
+        id: "reward-1",
+        title: "Reward Product",
+        image: PLACEHOLDER_IMAGES[2],
+        price: "$0.00",
+        compareAtPrice: "$600.00",
+        quantity: 1,
+        role: "REWARD",
+    },
+];
 
 export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
-    const { styles } = useCustomizerStore();
-    const gap = getSpacing(styles.spacing);
+    const styles = useEffectiveStyles();
 
-    return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                gap,
-            }}
-        >
-            <SectionLabel color={styles.textColor} opacity={0.7}>
-                Buy These
-            </SectionLabel>
+    const layoutProps = {
+        products: BOGO_PRODUCTS,
+        styles,
+        displayOptions: DEFAULT_DISPLAY_OPTIONS,
+        showEmptyState: false,
+        pricing: PLACEHOLDER_PRICING,
+        cartButtonText: "Add bundle to cart",
+    };
 
-            <div
-                style={{
-                    display: activeLayout === "GRID" ? "grid" : "flex",
-                    gridTemplateColumns:
-                        activeLayout === "GRID"
-                            ? `repeat(${styles.gridColumns ?? 2}, 1fr)`
-                            : undefined,
-                    flexDirection:
-                        activeLayout !== "GRID" ? "column" : undefined,
-                    gap,
-                }}
-            >
-                <ProductCard
-                    label="Trigger Product A"
-                    price="$300.33"
-                    comparePrice="$600.00"
-                />
-                <ProductCard
-                    label="Trigger Product B"
-                    price="$300.33"
-                    comparePrice="$600.00"
-                />
-            </div>
-
-            <SectionDivider
-                label="+"
-                color={styles.primaryColor}
-                borderColor={styles.borderColor}
-            />
-
-            <SectionLabel color={styles.bogoFreeTagColor}>
-                Get These Free
-            </SectionLabel>
-
-            <ProductCard
-                label="Reward Product"
-                price="$0.00"
-                badge={{
-                    text: "FREE",
-                    color: styles.bogoFreeTagColor || "#16a34a",
-                }}
-            />
-        </div>
-    );
+    switch (activeLayout) {
+        case "CLASSIC_CARD":
+        case "COMPACT_GRID":
+        case "MINIMALIST":
+        default:
+            return <WidgetClassicCard {...layoutProps} />;
+    }
 }

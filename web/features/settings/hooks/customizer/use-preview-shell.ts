@@ -4,10 +4,10 @@ import {
     PreviewTemplateId,
     useCustomizerStore,
     useEffectiveStyles,
+    type WidgetLayout,
 } from "@/features/settings";
 import { useMemo } from "react";
 import type { BundleType } from "@/features/bundles";
-import type { WidgetLayout } from "@/prisma/generated/enums";
 import { BUNDLE_TYPES } from "@/features/bundles/constants/bundle-types.constants";
 import { TEMPLATE_REGISTRY } from "@/features/settings/constants/template.constants";
 import { CUSTOMIZER_LAYOUTS_MAPPING } from "@/features/settings/constants/customizer.constants";

@@ -1,9 +1,5 @@
-import {
-    BundleDetail,
-    BundleStatus,
-    DiscountApplication,
-    initialDisplaySettings,
-} from "@/features/bundles";
+import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
+import { BundleDetail, BundleStatus, DiscountApplication, initialDisplaySettings, } from "@/features/bundles";
 
 /**
  * Transforms bundle data from the database format to the form format.
@@ -124,6 +120,14 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
             description: group.product?.title,
             _originalId: group.id,
         })),
-        displaySettings: bundleData.settings || initialDisplaySettings,
+        displaySettings: (() => {
+            const settings = bundleData.settings || initialDisplaySettings;
+            const isBxgy =
+                bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
+            if (isBxgy && !BOGO_LAYOUT_VALUES.includes(settings.layout)) {
+                return { ...settings, layout: "CLASSIC_CARD" as const };
+            }
+            return settings;
+        })(),
     };
 }

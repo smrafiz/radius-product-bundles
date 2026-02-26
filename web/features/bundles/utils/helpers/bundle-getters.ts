@@ -6,6 +6,7 @@ import {
     BUNDLE_STATUSES,
     BundleConfig,
     BundleConfiguration,
+    BundleLayoutType,
     BundleStatus,
     BundleStatusBadge,
     BundleType,
@@ -202,6 +203,17 @@ export const initialBundleData: Partial<ExtendedBundleFormData> = {
 export const initialConfiguration: BundleConfiguration = {
     discountApplication: "bundle",
 };
+
+/**
+ * Get default layout for a bundle type
+ */
+export function getDefaultLayout(bundleType?: string): BundleLayoutType {
+    if (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y") {
+        return "CLASSIC_CARD";
+    }
+
+    return "GRID";
+}
 
 /**
  * Get available statuses based on mode

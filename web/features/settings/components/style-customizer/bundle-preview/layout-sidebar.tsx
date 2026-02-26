@@ -1,7 +1,6 @@
 "use client";
 
-import type { WidgetLayout } from "@/prisma/generated/enums";
-import type { LayoutSidebarProps } from "@/features/settings";
+import type { LayoutSidebarProps, WidgetLayout } from "@/features/settings";
 
 export function LayoutSidebar({
     layouts,

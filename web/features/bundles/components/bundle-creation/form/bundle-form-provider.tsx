@@ -5,6 +5,7 @@ import {
     BundleFormProviderProps,
     bundleSchema,
     DiscountType,
+    getDefaultLayout,
     initialDisplaySettings,
     setStoreInitializing,
     useBundleStore,
@@ -79,7 +80,10 @@ export function BundleFormProvider({
             seoDescription: initialData?.seoDescription || undefined,
             images: initialData?.images || [],
             productGroups: initialData?.productGroups || undefined,
-            settings: initialData?.settings || initialDisplaySettings,
+            settings: initialData?.settings || {
+                ...initialDisplaySettings,
+                layout: getDefaultLayout(bundleType),
+            },
         },
         mode: "onChange",
     });

@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { BundleType } from "@/features/bundles";
-import { WidgetLayout } from "@/prisma/generated/enums";
 import { appSettingsSchema, PreviewTemplateId } from "@/features/settings";
+
+export type WidgetLayout = string;
 
 /**
  * Validation configuration

@@ -70,6 +70,7 @@ export interface PreviewProduct {
     quantity: number;
     url?: string;
     badge?: { text: string; color: string };
+    role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
 }
 
 export interface WidgetDisplayOptions {
@@ -98,6 +99,7 @@ export interface BundleWidgetProps {
     title?: string;
     subtitle?: string;
     cartButtonText?: string;
+    hideFooter?: boolean;
     children: ReactNode;
 }
 
@@ -107,6 +109,8 @@ export interface WidgetLayoutProps {
     displayOptions: WidgetDisplayOptions;
     showEmptyState?: boolean;
     initialVisibleCount?: number;
+    pricing?: WidgetPricing;
+    cartButtonText?: string;
 }
 
 export interface WidgetHeaderProps {

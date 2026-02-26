@@ -4,8 +4,8 @@ import {
     CustomizerFieldConfig,
     CustomizerPanelConfig,
     PreviewTemplateId,
+    WidgetLayout,
 } from "@/features/settings";
-import { WidgetLayout } from "@/prisma/generated/enums";
 
 /*
  * Settings form provider props

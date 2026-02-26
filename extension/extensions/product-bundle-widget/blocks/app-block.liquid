@@ -962,6 +962,72 @@
 									more_product_settings: more_product_settings,
     								more_product_count: more_product_count
 							%}
+						{% when 'classic_card' %}
+							{% render 'radius-bundle-layout-classic-card',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									subtitle: bundle_subtitle,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label
+							%}
+						{% when 'compact_grid' %}
+							{% render 'radius-bundle-layout-classic-card',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									subtitle: bundle_subtitle,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label
+							%}
+						{% when 'minimalist' %}
+							{% render 'radius-bundle-layout-classic-card',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									subtitle: bundle_subtitle,
+									savings_badge_text: savings_badge_text,
+									product_count: product_count,
+									show_images: show_images,
+									show_savings: show_savings,
+									show_savings_badge: show_savings_badge,
+									show_product_prices: show_product_prices,
+									show_compare_at_price: show_compare_at_price,
+									show_quantity: show_quantity,
+									show_free_shipping: show_free_shipping,
+									enable_hyperlink: enable_hyperlink,
+									button_text: button_text,
+									regular_price_label: regular_price_label,
+									bundle_price_label: bundle_price_label,
+									you_save_label: you_save_label,
+									free_shipping_label: free_shipping_label,
+									quantity_label: quantity_label
+							%}
 						{% else %}
 							{% render 'radius-bundle-layout-list',
 									bundle_id: bundle_id,
@@ -1620,6 +1686,18 @@
 				{
 					"value": "compact",
 					"label": "Compact"
+				},
+				{
+					"value": "classic_card",
+					"label": "Classic Card (BOGO)"
+				},
+				{
+					"value": "compact_grid",
+					"label": "Compact Grid (BOGO)"
+				},
+				{
+					"value": "minimalist",
+					"label": "Minimalist (BOGO)"
 				}
 			],
 			"default": "",
