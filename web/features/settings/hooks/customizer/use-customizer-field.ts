@@ -16,8 +16,14 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     config: CustomizerFieldConfig & { name: K },
     onFieldChange?: () => void,
 ) {
-    const { styles, activeDevice, updateStyle, clearDeviceOverride } =
-        useCustomizerStore();
+    const {
+        styles,
+        activeDevice,
+        activeBundleType,
+        updateStyle,
+        clearDeviceOverride,
+        clearBundleTypeOverride,
+    } = useCustomizerStore();
 
     const {
         setValue,
@@ -31,11 +37,19 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
         isResponsive &&
         styles[activeDevice]?.[fieldName] === undefined;
 
-    // Determine effective path for RHF and validation
-    const rhfPath =
-        activeDevice === "desktop"
-            ? fieldName
-            : (`${activeDevice}.${fieldName}` as Path<CustomizerStyles>);
+    const isTypeOverridden =
+        !!activeBundleType &&
+        styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName] !== undefined;
+
+    // Determine effective path for RHF
+    let rhfPath: Path<CustomizerStyles>;
+    if (activeDevice !== "desktop") {
+        rhfPath = `${activeDevice}.${fieldName}` as Path<CustomizerStyles>;
+    } else if (activeBundleType) {
+        rhfPath = `bundleTypeOverrides.${activeBundleType}.${fieldName}` as Path<CustomizerStyles>;
+    } else {
+        rhfPath = fieldName as Path<CustomizerStyles>;
+    }
 
     // Get error from the specific path
     const error = (
@@ -44,13 +58,20 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
             : (errors as any)[activeDevice]?.[fieldName]
     )?.message as string | undefined;
 
-    // Resolve value: Override -> Store Base -> Config Default -> Global Default
+    // Resolve value: base -> type override -> device override
     let resolvedValue: any = styles[fieldName];
 
+    if (activeBundleType) {
+        const typeOverride = styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName];
+        if (typeOverride !== undefined) {
+            resolvedValue = typeOverride;
+        }
+    }
+
     if (activeDevice !== "desktop") {
-        const override = styles[activeDevice]?.[fieldName];
-        if (override !== undefined) {
-            resolvedValue = override;
+        const deviceOverride = styles[activeDevice]?.[fieldName];
+        if (deviceOverride !== undefined) {
+            resolvedValue = deviceOverride;
         }
     }
 
@@ -60,7 +81,6 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
 
     const globalDefault = DEFAULT_CUSTOMIZER_STYLES[fieldName];
 
-    // Final effective value
     const value = resolvedValue ?? configDefault ?? globalDefault;
 
     const handleChange = useCallback(
@@ -92,13 +112,32 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
         onFieldChange,
     ]);
 
+    const clearTypeOverride = useCallback(() => {
+        if (!activeBundleType) return;
+        clearBundleTypeOverride(fieldName);
+        setValue(rhfPath, undefined as any, {
+            shouldDirty: true,
+        });
+        onFieldChange?.();
+    }, [
+        activeBundleType,
+        fieldName,
+        rhfPath,
+        setValue,
+        clearBundleTypeOverride,
+        onFieldChange,
+    ]);
+
     return {
         value,
         error,
         handleChange,
         isInherited,
         isResponsive,
+        isTypeOverridden,
         clearOverride,
+        clearTypeOverride,
         activeDevice,
+        activeBundleType,
     };
 }

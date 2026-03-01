@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { CustomizerStoreState, CustomizerStyles, WidgetLayout } from "@/features/settings";
+import { BundleType } from "@/features/bundles";
 import {
     DEFAULT_CUSTOMIZER_STYLES,
     STYLE_PRESETS,
@@ -27,6 +28,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             isInitialized: false,
             activeLayout: "LIST" as WidgetLayout,
             activeDevice: "desktop",
+            activeBundleType: null as BundleType | null,
             activePreset: null,
 
             /**
@@ -70,26 +72,33 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 key: K,
                 value: CustomizerStyles[K],
             ) => {
-                const { activeDevice, styles } = get();
+                const { activeDevice, activeBundleType, styles } = get();
 
-                if (activeDevice === "desktop") {
-                    set((state) => ({
-                        styles: { ...state.styles, [key]: value },
-                        activePreset: null,
-                    }));
-                } else {
-                    // Handle nested overrides
+                if (activeDevice !== "desktop") {
                     const currentMap = styles[activeDevice] || {};
-                    const updatedMap = {
-                        ...currentMap,
-                        [key]: value,
-                    };
-
                     set((state) => ({
                         styles: {
                             ...state.styles,
-                            [activeDevice]: updatedMap,
+                            [activeDevice]: { ...currentMap, [key]: value },
                         },
+                        activePreset: null,
+                    }));
+                } else if (activeBundleType) {
+                    const overrides = styles.bundleTypeOverrides || {};
+                    const typeMap = overrides[activeBundleType] || {};
+                    set((state) => ({
+                        styles: {
+                            ...state.styles,
+                            bundleTypeOverrides: {
+                                ...overrides,
+                                [activeBundleType]: { ...typeMap, [key]: value },
+                            },
+                        },
+                        activePreset: null,
+                    }));
+                } else {
+                    set((state) => ({
+                        styles: { ...state.styles, [key]: value },
                         activePreset: null,
                     }));
                 }
@@ -120,6 +129,34 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 }));
             },
 
+            clearBundleTypeOverride: (key: keyof CustomizerStyles) => {
+                const { activeBundleType, styles } = get();
+                if (!activeBundleType) return;
+
+                const typeMap = styles.bundleTypeOverrides?.[activeBundleType];
+                if (!typeMap || !(key in typeMap)) return;
+
+                const updated = { ...typeMap };
+                delete updated[key as keyof typeof updated];
+
+                const overrides = { ...styles.bundleTypeOverrides };
+                if (Object.keys(updated).length > 0) {
+                    overrides[activeBundleType] = updated;
+                } else {
+                    delete overrides[activeBundleType];
+                }
+
+                set((state) => ({
+                    styles: {
+                        ...state.styles,
+                        bundleTypeOverrides:
+                            Object.keys(overrides).length > 0
+                                ? overrides
+                                : undefined,
+                    },
+                }));
+            },
+
             /**
              * Updates multiple style properties.
              */
@@ -144,20 +181,54 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 set({ activeDevice: device });
             },
 
+            setActiveBundleType: (type: BundleType | null) => {
+                const { styles } = get();
+                let preset: string | null = null;
+                if (type) {
+                    preset = (styles.bundleTypeOverrides?.[type]?.stylePreset as string) ?? styles.stylePreset ?? null;
+                } else {
+                    preset = styles.stylePreset ?? null;
+                }
+                set({ activeBundleType: type, activePreset: preset });
+            },
+
             /**
-             * Applies a style preset.
+             * Applies a style preset (type-aware).
              */
             applyPreset: (presetKey: string) => {
                 const preset = STYLE_PRESETS[presetKey];
                 if (!preset) return;
 
-                set((state) => ({
-                    styles: {
-                        ...state.styles,
-                        ...preset.values,
-                    },
-                    activePreset: presetKey,
-                }));
+                const { activeBundleType } = get();
+
+                if (activeBundleType) {
+                    set((state) => {
+                        const overrides = state.styles.bundleTypeOverrides || {};
+                        const typeMap = overrides[activeBundleType] || {};
+                        return {
+                            styles: {
+                                ...state.styles,
+                                bundleTypeOverrides: {
+                                    ...overrides,
+                                    [activeBundleType]: {
+                                        ...typeMap,
+                                        ...preset.values,
+                                        stylePreset: presetKey,
+                                    },
+                                },
+                            },
+                            activePreset: presetKey,
+                        };
+                    });
+                } else {
+                    set((state) => ({
+                        styles: {
+                            ...state.styles,
+                            ...preset.values,
+                        },
+                        activePreset: presetKey,
+                    }));
+                }
             },
 
             /**

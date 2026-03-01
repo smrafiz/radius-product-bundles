@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type Resolver, useForm } from "react-hook-form";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
 import { extractFieldLabelsFromConfig, useGlobalBanner } from "@/shared";
+import { BundleType } from "@/features/bundles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
@@ -39,7 +40,6 @@ export function useCustomizerPage() {
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
     const initialType = types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
-    const [activeId, setActiveId] = useState<string>(initialType);
     const [resetCounter, setResetCounter] = useState(0);
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +51,15 @@ export function useCustomizerPage() {
         (state) => state.initializeStyles,
     );
     const markClean = useCustomizerStore((state) => state.markClean);
+    const activeBundleType = useCustomizerStore((state) => state.activeBundleType);
+    const setActiveBundleType = useCustomizerStore((state) => state.setActiveBundleType);
+
+    // Initialize active bundle type from URL param
+    useEffect(() => {
+        if (!activeBundleType) {
+            setActiveBundleType(initialType as BundleType);
+        }
+    }, [activeBundleType, initialType, setActiveBundleType]);
 
     const { handleSubmit: submitToServer, isLoading: isSaving } =
         useCustomizerSubmit();
@@ -178,7 +187,7 @@ export function useCustomizerPage() {
     return {
         // State
         form,
-        activeId,
+        activeId: activeBundleType ?? initialType,
         isLoading,
         isSaving,
         isDirty: form.formState.isDirty,
@@ -186,7 +195,7 @@ export function useCustomizerPage() {
         resetCounter,
 
         // Actions
-        setActiveId,
+        setActiveId: (id: string) => setActiveBundleType(id as BundleType),
         triggerSaveBar,
         handleClearErrors,
         handleSubmit,

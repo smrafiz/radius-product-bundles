@@ -9,19 +9,19 @@ import { useMemo } from "react";
  * what the user is currently editing.
  */
 export function useEffectiveStyles() {
-    const { styles, activeDevice } = useCustomizerStore();
+    const { styles, activeDevice, activeBundleType } = useCustomizerStore();
 
     return useMemo(() => {
-        if (activeDevice === "desktop") {
-            return styles;
+        let effective = { ...styles };
+
+        if (activeBundleType && styles.bundleTypeOverrides?.[activeBundleType]) {
+            effective = { ...effective, ...styles.bundleTypeOverrides[activeBundleType] };
         }
 
-        const overrides = styles[activeDevice] || {};
+        if (activeDevice !== "desktop") {
+            effective = { ...effective, ...(styles[activeDevice] || {}) };
+        }
 
-        // Merge base styles with device-specific overrides
-        return {
-            ...styles,
-            ...overrides,
-        };
-    }, [styles, activeDevice]);
+        return effective;
+    }, [styles, activeDevice, activeBundleType]);
 }

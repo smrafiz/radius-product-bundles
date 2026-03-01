@@ -16,12 +16,14 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
         { label: "Classic Card", value: "CLASSIC_CARD" },
         { label: "Compact Grid", value: "COMPACT_GRID" },
         { label: "Minimalist", value: "MINIMALIST" },
+        { label: "Sleek", value: "SLEEK" },
     ],
 
     BOGO: [
         { label: "Classic Card", value: "CLASSIC_CARD" },
         { label: "Compact Grid", value: "COMPACT_GRID" },
         { label: "Minimalist", value: "MINIMALIST" },
+        { label: "Sleek", value: "SLEEK" },
     ],
 
     VOLUME_DISCOUNT: [{ label: "List", value: "LIST" }],

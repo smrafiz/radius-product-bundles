@@ -85,6 +85,11 @@ export const BOGO_LAYOUTS = [
         value: "MINIMALIST" as const,
         widgetLayout: "/assets/widget-minimalist-layout.png",
     },
+    {
+        label: "Sleek",
+        value: "SLEEK" as const,
+        widgetLayout: "/assets/widget-sleek-layout.png",
+    },
 ];
 
 export const LAYOUTS_BY_BUNDLE_TYPE: Record<
@@ -100,6 +105,7 @@ export const BOGO_LAYOUT_VALUES = [
     "CLASSIC_CARD",
     "COMPACT_GRID",
     "MINIMALIST",
+    "SLEEK",
 ];
 
 export const BUNDLE_STEPS = [

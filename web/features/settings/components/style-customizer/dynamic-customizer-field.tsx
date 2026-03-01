@@ -117,6 +117,7 @@ export function DynamicCustomizerField({
     // Store access for presets
     const applyPreset = useCustomizerStore((state) => state.applyPreset);
     const activePreset = useCustomizerStore((state) => state.activePreset);
+    const activeBundleType = useCustomizerStore((state) => state.activeBundleType);
 
     // Form context for syncing preset values to RHF
     const { setValue: setFormValue } = useFormContext<CustomizerStyles>();
@@ -179,19 +180,23 @@ export function DynamicCustomizerField({
                                 onSelect={() => {
                                     applyPreset(key);
 
-                                    // Save the preset name itself
-                                    setFormValue("stylePreset", key, {
-                                        shouldDirty: true,
-                                    });
+                                    const pathPrefix = activeBundleType
+                                        ? `bundleTypeOverrides.${activeBundleType}.` as const
+                                        : "" as const;
 
-                                    // Sync preset values to React Hook Form so they persist on save
+                                    setFormValue(
+                                        `${pathPrefix}stylePreset` as any,
+                                        key,
+                                        { shouldDirty: true },
+                                    );
+
                                     const presetValues =
                                         STYLE_PRESETS[key]?.values;
                                     if (presetValues) {
                                         Object.entries(presetValues).forEach(
                                             ([field, value]) => {
                                                 setFormValue(
-                                                    field as keyof CustomizerStyles,
+                                                    `${pathPrefix}${field}` as any,
                                                     value as any,
                                                     { shouldDirty: true },
                                                 );
@@ -247,23 +252,25 @@ export function DynamicCustomizerField({
         // ═══════════════════════════════════════════════════════════════════
         case "color":
             return (
-                <s-color-field
-                    key={fieldKey}
-                    label={config.label}
-                    details={config.details}
-                    name={config.name}
-                    alpha
-                    placeholder={
-                        config.allowInherit ? "Inherit" : "Select color"
-                    }
-                    value={String(value ?? "")}
-                    error={error || undefined}
-                    onInput={(e: Event) =>
-                        handleChange(
-                            (e.target as HTMLInputElement).value as any,
-                        )
-                    }
-                />
+                <s-stack gap="small-200">
+                    <s-color-field
+                        key={fieldKey}
+                        label={config.label}
+                        details={config.details}
+                        name={config.name}
+                        alpha
+                        placeholder={
+                            config.allowInherit ? "Inherit" : "Select color"
+                        }
+                        value={String(value ?? "")}
+                        error={error || undefined}
+                        onInput={(e: Event) =>
+                            handleChange(
+                                (e.target as HTMLInputElement).value as any,
+                            )
+                        }
+                    />
+                </s-stack>
             );
 
         // ═══════════════════════════════════════════════════════════════════
@@ -554,20 +561,22 @@ export function DynamicCustomizerField({
         // ═══════════════════════════════════════════════════════════════════
         case "text":
             return (
-                <s-text-field
-                    key={fieldKey}
-                    label={config.label}
-                    details={config.details}
-                    name={config.name}
-                    placeholder={config.placeholder || ""}
-                    value={String(value ?? "")}
-                    error={error || undefined}
-                    onInput={(e: Event) =>
-                        handleChange(
-                            (e.target as HTMLInputElement).value as any,
-                        )
-                    }
-                />
+                <s-stack gap="small-200">
+                    <s-text-field
+                        key={fieldKey}
+                        label={config.label}
+                        details={config.details}
+                        name={config.name}
+                        placeholder={config.placeholder || ""}
+                        value={String(value ?? "")}
+                        error={error || undefined}
+                        onInput={(e: Event) =>
+                            handleChange(
+                                (e.target as HTMLInputElement).value as any,
+                            )
+                        }
+                    />
+                </s-stack>
             );
 
         default:

@@ -1,0 +1,44 @@
+{% comment %}
+  Radius Bundle - Sleek Layout (BOGO/BXGY)
+  Stacked horizontal rows with "+" divider, inline footer.
+  JS renders everything — this is the skeleton container.
+
+  Parameters:
+  - bundle_id, name, product_count
+  - show_images, button_text
+{% endcomment %}
+
+<div class="radius-bundle__inner">
+	<div class="radius-bundle__products radius-bundle__products--sleek" data-bundle-products>
+		<div class="radius-bundle__loading" data-bundle-loading>
+			<div class="radius-bundle__skeleton radius-bundle__skeleton--sleek">
+				<div class="rb-sleek__container">
+					<div class="radius-bundle__skeleton-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 1px solid #e5e7eb;">
+						{% if show_images %}
+							<div class="radius-bundle__skeleton-image" style="width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;"></div>
+						{% endif %}
+						<div class="radius-bundle__skeleton-content" style="flex: 1;">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width: 40%;"></div>
+						</div>
+					</div>
+					<div style="text-align: center; color: #9ca3af; font-size: 18px; font-weight: 600;">+</div>
+					<div class="radius-bundle__skeleton-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; background: #f0fdf4;">
+						{% if show_images %}
+							<div class="radius-bundle__skeleton-image" style="width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;"></div>
+						{% endif %}
+						<div class="radius-bundle__skeleton-content" style="flex: 1;">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width: 40%;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% render 'radius-bundle-add-to-cart',
+			bundle_id: bundle_id,
+			button_text: button_text
+	%}
+</div>

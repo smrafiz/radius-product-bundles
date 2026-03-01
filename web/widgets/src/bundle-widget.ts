@@ -1457,7 +1457,9 @@ declare global {
 
             if (this.isBxgyBundle()) {
                 const layout = this.getLayout();
-                if (layout === "classic_card" || layout === "compact_grid" || layout === "minimalist") {
+                if (layout === "sleek") {
+                    this.renderBogoSleekProducts(bundle, productsContainer);
+                } else if (layout === "classic_card" || layout === "compact_grid" || layout === "minimalist") {
                     this.renderClassicCardProducts(bundle, productsContainer);
                 } else {
                     this.renderBxgyProducts(bundle, productsContainer);
@@ -1717,9 +1719,107 @@ declare global {
             }
         }
 
-        /**
-         * Renders a single product card.
-         */
+        private renderBogoSleekProducts(bundle: Bundle, container: Element): void {
+            const triggers = bundle.products.filter(p => p.role === "TRIGGER").sort((a, b) => a.displayOrder - b.displayOrder);
+            const rewards = bundle.products.filter(p => p.role === "REWARD").sort((a, b) => a.displayOrder - b.displayOrder);
+            const structure = this.bundleStructure || bundle;
+            const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : "";
+            const labels = structure.labels;
+            const youPayLabel = labels?.bogoYouPayLabel || "You pay";
+
+            const renderCard = (product: BundleProduct, isReward: boolean): string => {
+                const imageHtml = this.showImages && product.featuredImage
+                    ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}"${imgLoading} />`
+                    : this.showImages
+                      ? `<div class="rb-sleek__placeholder">📦</div>`
+                      : "";
+
+                const imageBlock = this.showImages
+                    ? `<div class="rb-sleek__image">${imageHtml}</div>`
+                    : "";
+
+                let priceHtml = "";
+                let labelHtml = "";
+                let badgeHtml = "";
+
+                if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
+                    const discountedPrice = this.calculateBxgyRewardPrice(product.price, structure);
+                    const isFree = discountedPrice === 0;
+                    badgeHtml = isFree ? `<span class="rb-sleek__badge">FREE</span>` : "";
+                    priceHtml = `
+                        <div class="rb-sleek__price">
+                            <span class="rb-sleek__price-current rb-sleek__price-current--reward">${isFree ? this.formatMoney(0) : this.formatMoney(discountedPrice)}</span>
+                            ${this.showComparePrices ? `<span class="rb-sleek__price-compare">${this.formatMoney(product.price)}</span>` : ""}
+                        </div>
+                    `;
+                } else {
+                    labelHtml = `<span class="rb-sleek__label">${this.escapeHtml(youPayLabel)}</span>`;
+                    priceHtml = `
+                        <div class="rb-sleek__price">
+                            <span class="rb-sleek__price-current">${this.formatMoney(product.price)}</span>
+                        </div>
+                    `;
+                }
+
+                const cardClass = `rb-sleek__card rb-sleek__card--${isReward ? "reward" : "trigger"}`;
+
+                return `
+                    <div class="${cardClass}">
+                        ${imageBlock}
+                        <div class="rb-sleek__info">
+                            <h4 class="rb-sleek__title">${this.escapeHtml(product.title)}</h4>
+                            ${labelHtml}${badgeHtml}
+                        </div>
+                        ${priceHtml}
+                    </div>
+                `;
+            };
+
+            const totalDiscounted = triggers.reduce((sum, p) => sum + p.price, 0) +
+                rewards.reduce((sum, p) => sum + this.calculateBxgyRewardPrice(p.price, structure), 0);
+
+            const buttonText = this.container.querySelector("[data-bundle-add-to-cart]")?.textContent?.trim() || "Add to Cart";
+
+            let html = `<div class="rb-sleek__container">`;
+            html += `<h3 class="rb-sleek__header">${this.escapeHtml(bundle.name)}</h3>`;
+
+            triggers.forEach(p => { html += renderCard(p, false); });
+            html += `<div class="rb-sleek__divider">+</div>`;
+            rewards.forEach(p => { html += renderCard(p, true); });
+
+            html += `<div class="rb-sleek__separator"></div>`;
+            html += `
+                <div class="rb-sleek__footer">
+                    <span class="rb-sleek__total">Total: ${this.formatMoney(totalDiscounted)}</span>
+                    <button class="rb-sleek__cart-btn" data-sleek-add-to-cart>${this.escapeHtml(buttonText)}</button>
+                </div>
+            `;
+            html += `</div>`;
+
+            container.innerHTML = html;
+
+            // Hide standard pricing + add-to-cart sections (sleek renders its own)
+            const standardPricing = this.container.querySelector(".radius-bundle__pricing");
+            if (standardPricing) {
+                (standardPricing as HTMLElement).style.display = "none";
+            }
+            const standardButton = this.container.querySelector(".radius-bundle__add-to-cart");
+            if (standardButton) {
+                (standardButton as HTMLElement).style.display = "none";
+            }
+
+            // Wire up the sleek cart button to trigger the same add-to-cart logic
+            const sleekBtn = container.querySelector("[data-sleek-add-to-cart]");
+            if (sleekBtn) {
+                sleekBtn.addEventListener("click", () => {
+                    const realBtn = this.container.querySelector("[data-bundle-add-to-cart]") as HTMLButtonElement | null;
+                    if (realBtn) {
+                        realBtn.disabled = false;
+                        realBtn.click();
+                    }
+                });
+            }
+        }
 
         private renderProductCard(
             product: BundleProduct,
@@ -2454,6 +2554,10 @@ declare global {
 
             if (this.container.classList.contains("radius-bundle--minimalist")) {
                 return "minimalist";
+            }
+
+            if (this.container.classList.contains("radius-bundle--sleek")) {
+                return "sleek";
             }
 
             return "list";

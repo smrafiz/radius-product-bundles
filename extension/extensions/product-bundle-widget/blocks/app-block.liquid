@@ -73,6 +73,10 @@
 					{% assign is_standalone = true %}
 				{% endif %}
 
+				{% comment %} Per-bundle-type style overrides (inherits from base when absent) {% endcomment %}
+				{% assign bundle_type_key = bundle.bundleType | default: 'FIXED_BUNDLE' %}
+				{% assign g_type_overrides = g_styles.bundleTypeOverrides[bundle_type_key] %}
+
 				{% comment %} ═══════════════════════════════════════════════════════════════════
 					STYLE PRESET HANDLING
 					If a preset is selected (not custom), apply preset values
@@ -83,18 +87,23 @@
 				{% assign style_preset = block.settings.style_preset | default: '' %}
 				{% if style_preset == 'custom' %}
 					{% assign primary_color = block.settings.primary_color
+							| default: g_type_overrides.primaryColor
 							| default: g_styles.primaryColor
 							| default: '#303030' %}
 					{% assign text_color = block.settings.text_color
+							| default: g_type_overrides.textColor
 							| default: g_styles.textColor
 							| default: '#333333' %}
 					{% assign background_color = block.settings.background_color
+							| default: g_type_overrides.backgroundColor
 							| default: g_styles.backgroundColor
 							| default: '#ffffff' %}
 					{% assign border_color = block.settings.border_color
+							| default: g_type_overrides.borderColor
 							| default: g_styles.borderColor
 							| default: '#e5e7eb' %}
 					{% assign savings_color = block.settings.savings_color
+							| default: g_type_overrides.savingsColor
 							| default: g_styles.savingsColor
 							| default: '#16a34a' %}
 				{% else %}
@@ -149,25 +158,25 @@
 							{% assign border_color = '#d1d5db' %}
 							{% assign savings_color = '#2563eb' %}
 						{% else %}
-							{% assign primary_color = g_styles.primaryColor | default: '#303030' %}
-							{% assign text_color = g_styles.textColor | default: '#333333' %}
-							{% assign background_color = g_styles.backgroundColor | default: '#ffffff' %}
-							{% assign border_color = g_styles.borderColor | default: '#e5e7eb' %}
-							{% assign savings_color = g_styles.savingsColor | default: '#16a34a' %}
+							{% assign primary_color = g_type_overrides.primaryColor | default: g_styles.primaryColor | default: '#303030' %}
+							{% assign text_color = g_type_overrides.textColor | default: g_styles.textColor | default: '#333333' %}
+							{% assign background_color = g_type_overrides.backgroundColor | default: g_styles.backgroundColor | default: '#ffffff' %}
+							{% assign border_color = g_type_overrides.borderColor | default: g_styles.borderColor | default: '#e5e7eb' %}
+							{% assign savings_color = g_type_overrides.savingsColor | default: g_styles.savingsColor | default: '#16a34a' %}
 					{% endcase %}
 				{% endif %}
 
 				{% if block.settings.style_preset != blank %}
 					{% assign style_preset = block.settings.style_preset %}
 				{% else %}
-					{% assign style_preset = g_styles.stylePreset | default: 'minimal' %}
+					{% assign style_preset = g_type_overrides.stylePreset | default: g_styles.stylePreset | default: 'minimal' %}
 				{% endif %}
 
 				{% comment %} CORNER, SHADOW and SPACING {% endcomment %}
 				{% if style_preset == 'custom' %}
 				  {% assign corner_style = block.settings.corner_style %}
 				{% else %}
-				  {% assign corner_style = g_styles.cornerStyle %}
+				  {% assign corner_style = g_type_overrides.cornerStyle | default: g_styles.cornerStyle %}
 				{% endif %}
 
 				{% assign corner_style = corner_style | default: 'modern' %}
@@ -184,14 +193,14 @@
 				{% if style_preset == 'custom' and block.settings.shadow != blank %}
 				  {% assign shadow = block.settings.shadow %}
 				{% else %}
-				  {% assign shadow = g_styles.shadow %}
+				  {% assign shadow = g_type_overrides.shadow | default: g_styles.shadow %}
 				{% endif %}
 
 				{% assign spacing = block.settings.spacing | default: 'comfortable' %}
 				{% if style_preset == 'custom' and block.settings.spacing != blank %}
 				  {% assign spacing = block.settings.spacing %}
 				{% else %}
-				  {% assign spacing = g_styles.spacing %}
+				  {% assign spacing = g_type_overrides.spacing | default: g_styles.spacing %}
 				{% endif %}
 
 				{% case spacing %}
@@ -210,9 +219,9 @@
 				{% assign override_card_settings = block.settings.override_card_settings | default: false %}
 
 				{% if override_card_settings %}
-				  {% assign image_size = block.settings.image_size | default: g_styles.imageSize | default: 'medium' %}
+				  {% assign image_size = block.settings.image_size | default: g_type_overrides.imageSize | default: g_styles.imageSize | default: 'medium' %}
 				{% else %}
-				  {% assign image_size = g_styles.imageSize | default: 'medium' %}
+				  {% assign image_size = g_type_overrides.imageSize | default: g_styles.imageSize | default: 'medium' %}
 				{% endif %}
 
 				{% case image_size %}
@@ -225,40 +234,39 @@
 				{% endcase %}
 
 				{% if override_card_settings %}
-				  {% assign image_fit = block.settings.image_fit | default: g_styles.imageFit | default: 'contain' %}
+				  {% assign image_fit = block.settings.image_fit | default: g_type_overrides.imageFit | default: g_styles.imageFit | default: 'contain' %}
 				{% else %}
-				  {% assign image_fit = g_styles.imageFit | default: 'contain' %}
+				  {% assign image_fit = g_type_overrides.imageFit | default: g_styles.imageFit | default: 'contain' %}
 				{% endif %}
 
 				{% if override_card_settings %}
-				  {% assign image_position = block.settings.image_position | default: 'left' %}
+				  {% assign image_position = block.settings.image_position | default: g_type_overrides.imagePosition | default: 'left' %}
 				{% else %}
-				  {% assign image_position = g_styles.imagePosition | default: 'left' %}
+				  {% assign image_position = g_type_overrides.imagePosition | default: g_styles.imagePosition | default: 'left' %}
 				{% endif %}
 
 				{% comment %} PRODUCT CARD CONTROL {% endcomment %}
 				{% comment %} -- Background -- {% endcomment %}
 				{% if override_card_settings and block.settings.product_card_bg != blank %}
 					{% assign product_card_bg = block.settings.product_card_bg %}
-				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardBg != blank %}
-						{% assign product_card_bg = g_styles.productCardBg %}
-					{% endif %}
+				{% elsif g_type_overrides.customizeCardStyle == true or g_styles.customizeCardStyle == true %}
+					{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg %}
 				{% endif %}
 
 				{% comment %} -- Border -- {% endcomment %}
 				{% assign product_card_border = true %}
 				{% if override_card_settings %}
 					{% assign product_card_border = block.settings.product_card_border %}
-				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
+				{% elsif g_type_overrides.customizeCardStyle == true or g_styles.customizeCardStyle == true %}
+					{% assign resolved_card_border = g_type_overrides.productCardBorder | default: g_styles.productCardBorder %}
+					{% if resolved_card_border == false or resolved_card_border == 'false' %}
 						{% assign product_card_border = false %}
 					{% else %}
 						{% assign product_card_border = true %}
 					{% endif %}
 				{% else %}
-					{% comment %} Use preset default: check active preset values {% endcomment %}
-					{% if g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
+					{% assign resolved_card_border = g_type_overrides.productCardBorder | default: g_styles.productCardBorder %}
+					{% if resolved_card_border == false or resolved_card_border == 'false' %}
 						{% assign product_card_border = false %}
 					{% endif %}
 				{% endif %}
@@ -267,23 +275,24 @@
 				{% assign product_card_shadow = false %}
 				{% if override_card_settings %}
 					{% assign product_card_shadow = block.settings.product_card_shadow %}
-				{% elsif g_styles.customizeCardStyle == true %}
-					{% if g_styles.productCardShadow == true or g_styles.productCardShadow == 'true' %}
+				{% elsif g_type_overrides.customizeCardStyle == true or g_styles.customizeCardStyle == true %}
+					{% assign resolved_card_shadow = g_type_overrides.productCardShadow | default: g_styles.productCardShadow %}
+					{% if resolved_card_shadow == true or resolved_card_shadow == 'true' %}
 						{% assign product_card_shadow = true %}
 					{% else %}
 						{% assign product_card_shadow = false %}
 					{% endif %}
 				{% else %}
-					{% comment %} Use preset default: check active preset values {% endcomment %}
-					{% if g_styles.productCardShadow == true or g_styles.productCardShadow == 'true' %}
+					{% assign resolved_card_shadow = g_type_overrides.productCardShadow | default: g_styles.productCardShadow %}
+					{% if resolved_card_shadow == true or resolved_card_shadow == 'true' %}
 						{% assign product_card_shadow = true %}
 					{% endif %}
 				{% endif %}
 
 
 				{% comment %} BOGO SPECIFIC STYLES {% endcomment %}
-				{% assign bogo_free_tag_color = g_styles.bogoFreeTagColor | default: '#16a34a' %}
-				{% assign bogo_card_border_style = g_styles.bogoCardBorderStyle | default: 'solid' %}
+				{% assign bogo_free_tag_color = g_type_overrides.bogoFreeTagColor | default: g_styles.bogoFreeTagColor | default: '#16a34a' %}
+				{% assign bogo_card_border_style = g_type_overrides.bogoCardBorderStyle | default: g_styles.bogoCardBorderStyle | default: 'solid' %}
 
 				{% comment %} BUTTON & BADGE {% endcomment %}
 				{% assign override_button_settings = block.settings.override_button_settings | default: false %}
@@ -291,6 +300,8 @@
 				{% assign button_style = 'filled' %}
 				{% if override_button_settings and block.settings.button_style != blank %}
 				  {% assign button_style = block.settings.button_style %}
+				{% elsif g_type_overrides.buttonStyle != blank %}
+				  {% assign button_style = g_type_overrides.buttonStyle %}
 				{% elsif g_styles.buttonStyle != blank %}
 				  {% assign button_style = g_styles.buttonStyle %}
 				{% endif %}
@@ -298,6 +309,8 @@
 				{% assign button_size = 'medium' %}
 				{% if override_button_settings and block.settings.button_size != blank %}
 				  {% assign button_size = block.settings.button_size %}
+				{% elsif g_type_overrides.buttonSize != blank %}
+				  {% assign button_size = g_type_overrides.buttonSize %}
 				{% elsif g_styles.buttonSize != blank %}
 				  {% assign button_size = g_styles.buttonSize %}
 				{% endif %}
@@ -305,6 +318,8 @@
 				{% assign button_width = 'full' %}
 				{% if override_button_settings and block.settings.button_width != blank %}
 				  {% assign button_width = block.settings.button_width %}
+				{% elsif g_type_overrides.buttonWidth != blank %}
+				  {% assign button_width = g_type_overrides.buttonWidth %}
 				{% elsif g_styles.buttonWidth != blank %}
 				  {% assign button_width = g_styles.buttonWidth %}
 				{% endif %}
@@ -312,6 +327,8 @@
 				{% assign button_bg_color = primary_color %}
 				{% if override_button_settings and block.settings.button_bg_color != blank %}
 				  {% assign button_bg_color = block.settings.button_bg_color %}
+				{% elsif g_type_overrides.buttonBgColor != blank %}
+				  {% assign button_bg_color = g_type_overrides.buttonBgColor %}
 				{% elsif g_styles.buttonBgColor != blank %}
 				  {% assign button_bg_color = g_styles.buttonBgColor %}
 				{% endif %}
@@ -321,6 +338,8 @@
 				{% assign badge_position = 'top-right' %}
 				{% if override_badge_settings and block.settings.badge_position != blank %}
 				  {% assign badge_position = block.settings.badge_position %}
+				{% elsif g_type_overrides.badgePosition != blank %}
+				  {% assign badge_position = g_type_overrides.badgePosition %}
 				{% elsif g_styles.badgePosition != blank %}
 				  {% assign badge_position = g_styles.badgePosition %}
 				{% endif %}
@@ -328,6 +347,8 @@
 				{% assign badge_style = 'filled' %}
 				{% if override_badge_settings and block.settings.badge_style != blank %}
 				  {% assign badge_style = block.settings.badge_style %}
+				{% elsif g_type_overrides.badgeStyle != blank %}
+				  {% assign badge_style = g_type_overrides.badgeStyle %}
 				{% elsif g_styles.badgeStyle != blank %}
 				  {% assign badge_style = g_styles.badgeStyle %}
 				{% endif %}
@@ -338,6 +359,8 @@
 				{% assign pricing_summary_box = false %}
 				{% if override_pricing_settings %}
 				  {% assign pricing_summary_box = block.settings.pricing_summary_box | default: false %}
+				{% elsif g_type_overrides.pricingSummaryBox != blank %}
+				  {% assign pricing_summary_box = g_type_overrides.pricingSummaryBox %}
 				{% elsif g_styles.pricingSummaryBox != blank %}
 				  {% assign pricing_summary_box = g_styles.pricingSummaryBox %}
 				{% endif %}
@@ -346,6 +369,8 @@
 				{% if pricing_summary_box %}
 				  {% if override_pricing_settings and block.settings.pricing_summary_style != blank %}
 					{% assign pricing_summary_style = block.settings.pricing_summary_style %}
+				  {% elsif g_type_overrides.pricingSummaryStyle != blank %}
+					{% assign pricing_summary_style = g_type_overrides.pricingSummaryStyle %}
 				  {% elsif g_styles.pricingSummaryStyle != blank %}
 					{% assign pricing_summary_style = g_styles.pricingSummaryStyle %}
 				  {% endif %}
@@ -355,6 +380,8 @@
 				{% if pricing_summary_box %}
 				  {% if override_pricing_settings and block.settings.pricing_summary_bg != blank %}
 					{% assign pricing_summary_bg = block.settings.pricing_summary_bg %}
+				  {% elsif g_type_overrides.pricingSummaryBg != blank %}
+					{% assign pricing_summary_bg = g_type_overrides.pricingSummaryBg %}
 				  {% elsif g_styles.pricingSummaryBg != blank %}
 					{% assign pricing_summary_bg = g_styles.pricingSummaryBg %}
 				  {% endif %}
@@ -366,6 +393,8 @@
 				{% assign box_max_width = 600 %}
 				{% if override_container_settings %}
 				  {% assign box_max_width = block.settings.box_max_width | default: box_max_width %}
+				{% elsif g_type_overrides.boxMaxWidth != blank %}
+				  {% assign box_max_width = g_type_overrides.boxMaxWidth %}
 				{% elsif g_styles.boxMaxWidth != blank %}
 				  {% assign box_max_width = g_styles.boxMaxWidth %}
 				{% endif %}
@@ -373,6 +402,8 @@
 				{% assign box_alignment = 'center' %}
 				{% if override_container_settings and block.settings.box_alignment != blank %}
 				  {% assign box_alignment = block.settings.box_alignment %}
+				{% elsif g_type_overrides.boxAlignment != blank %}
+				  {% assign box_alignment = g_type_overrides.boxAlignment %}
 				{% elsif g_styles.boxAlignment != blank %}
 				  {% assign box_alignment = g_styles.boxAlignment %}
 				{% endif %}
@@ -380,6 +411,8 @@
 				{% assign show_border = true %}
 				{% if override_container_settings %}
 				  {% assign show_border = block.settings.show_border %}
+				{% elsif g_type_overrides.showBorder != blank %}
+				  {% assign show_border = g_type_overrides.showBorder %}
 				{% elsif g_styles.showBorder != blank %}
 				  {% assign show_border = g_styles.showBorder %}
 				{% endif %}
@@ -390,6 +423,8 @@
 				{% assign heading_size = 'medium' %}
 				{% if override_typography_settings and block.settings.heading_size != blank %}
 				  {% assign heading_size = block.settings.heading_size %}
+				{% elsif g_type_overrides.headingSize != blank %}
+				  {% assign heading_size = g_type_overrides.headingSize %}
 				{% elsif g_styles.headingSize != blank %}
 				  {% assign heading_size = g_styles.headingSize %}
 				{% endif %}
@@ -397,6 +432,8 @@
 				{% assign body_size = 'medium' %}
 				{% if override_typography_settings and block.settings.body_size != blank %}
 				  {% assign body_size = block.settings.body_size %}
+				{% elsif g_type_overrides.bodySize != blank %}
+				  {% assign body_size = g_type_overrides.bodySize %}
 				{% elsif g_styles.bodySize != blank %}
 				  {% assign body_size = g_styles.bodySize %}
 				{% endif %}
@@ -422,6 +459,8 @@
 				{% if layout == 'list' %}
 				  {% if override_layout_settings and block.settings.divider_style != blank %}
 					{% assign divider_style = block.settings.divider_style %}
+				  {% elsif g_type_overrides.dividerStyle != blank %}
+					{% assign divider_style = g_type_overrides.dividerStyle %}
 				  {% elsif g_styles.dividerStyle != blank %}
 					{% assign divider_style = g_styles.dividerStyle %}
 				  {% endif %}
@@ -438,23 +477,27 @@
 				{% endif %}
 
 				{% assign grid_columns = block.settings.grid_columns
+						| default: g_type_overrides.gridColumns
 						| default: g_styles.gridColumns
 						| default: 3 %}
 
 				{% assign slides_per_view = block.settings.slides_per_view
+						| default: g_type_overrides.slidesPerView
 						| default: g_styles.slidesPerView
 						| default: 3 %}
 
 				{% assign carousel_navigation = block.settings.carousel_navigation
+						| default: g_type_overrides.carouselNavigation
 						| default: g_styles.carouselNavigation
 						| default: 'both' %}
 
 				{% assign autoplay = block.settings.autoplay %}
 				{% if autoplay == null %}
-					{% assign autoplay = g_styles.autoplay | default: false %}
+					{% assign autoplay = g_type_overrides.autoplay | default: g_styles.autoplay | default: false %}
 				{% endif %}
 
 				{% assign autoplay_speed = block.settings.autoplay_speed
+						| default: g_type_overrides.autoplaySpeed
 						| default: g_styles.autoplaySpeed
 						| default: 5 %}
 
@@ -1044,6 +1087,14 @@
 									you_save_label: you_save_label,
 									free_shipping_label: free_shipping_label,
 									quantity_label: quantity_label
+							%}
+						{% when 'sleek' %}
+							{% render 'radius-bundle-layout-sleek',
+									bundle_id: bundle_id,
+									name: bundle_heading,
+									product_count: product_count,
+									show_images: show_images,
+									button_text: button_text
 							%}
 						{% else %}
 							{% render 'radius-bundle-layout-list',

@@ -44,6 +44,7 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
     };
 
     switch (activeLayout) {
+        case "SLEEK":
         case "CLASSIC_CARD":
         case "COMPACT_GRID":
         case "MINIMALIST":

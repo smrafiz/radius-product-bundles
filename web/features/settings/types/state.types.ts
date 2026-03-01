@@ -1,4 +1,5 @@
 import { AppSettingsFormData, CustomizerStyles, WidgetLayout } from "@/features/settings";
+import { BundleType } from "@/features/bundles";
 
 export type SettingsStoreState = {
     serverData: AppSettingsFormData | null;
@@ -77,6 +78,7 @@ export interface CustomizerStoreState {
     isInitialized: boolean;
     activeLayout: WidgetLayout;
     activeDevice: "desktop" | "tablet" | "mobile";
+    activeBundleType: BundleType | null;
     activePreset: string | null;
 
     initializeStyles: (styles: Partial<CustomizerStyles>) => void;
@@ -89,8 +91,10 @@ export interface CustomizerStoreState {
     ) => void;
     updateStyles: (styles: Partial<CustomizerStyles>) => void;
     clearDeviceOverride: (key: keyof CustomizerStyles) => void;
+    clearBundleTypeOverride: (key: keyof CustomizerStyles) => void;
     setActiveLayout: (layout: WidgetLayout) => void;
     setActiveDevice: (device: "desktop" | "tablet" | "mobile") => void;
+    setActiveBundleType: (type: BundleType | null) => void;
     applyPreset: (presetKey: string) => void;
     resetToDefaults: () => void;
     discardChanges: () => void;

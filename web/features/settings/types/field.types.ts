@@ -385,6 +385,12 @@ export interface CustomizerStyles {
     mobile?: Partial<CustomizerStyles>;
     /** Tablet overrides (applies 768px - 1024px) */
     tablet?: Partial<CustomizerStyles>;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PER-BUNDLE-TYPE OVERRIDES
+    // ═══════════════════════════════════════════════════════════════════
+    /** Per-bundle-type style overrides (inherits from base when absent) */
+    bundleTypeOverrides?: Partial<Record<BundleType, Partial<CustomizerStyles>>>;
 }
 
 /**

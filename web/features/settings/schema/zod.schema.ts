@@ -176,6 +176,9 @@ const baseStylesSchema = z.object({
 export const globalStylesSchema = baseStylesSchema.extend({
     mobile: baseStylesSchema.partial().optional(),
     tablet: baseStylesSchema.partial().optional(),
+    bundleTypeOverrides: z
+        .record(z.string(), baseStylesSchema.partial())
+        .optional(),
 });
 
 export type GlobalStylesFormData = z.infer<typeof globalStylesSchema>;
