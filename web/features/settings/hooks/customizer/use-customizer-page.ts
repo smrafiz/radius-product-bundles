@@ -180,6 +180,14 @@ export function useCustomizerPage() {
         // Clear any remaining form errors explicitly
         form.clearErrors();
 
+        // Reset hidden dirty input so Shopify dismisses the save bar
+        if (hiddenInputRef.current) {
+            hiddenInputRef.current.value = "";
+            hiddenInputRef.current.dispatchEvent(
+                new Event("input", { bubbles: true }),
+            );
+        }
+
         // Increment reset counter to force re-render of web components
         setResetCounter((c) => c + 1);
     }, [form, initializeStyles, removeMessageByKey]);

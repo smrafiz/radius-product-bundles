@@ -12,6 +12,9 @@ import {
     WidgetGrid,
     WidgetList,
     WidgetPricing,
+    WidgetSleek,
+    WidgetMinimalist,
+    WidgetCompactGrid,
 } from "@/shared";
 import {
     BundlePreviewStatus,
@@ -224,9 +227,38 @@ function RenderLayout({
             return <WidgetCarousel {...layoutProps} />;
         case "COMPACT":
             return <WidgetCompact {...layoutProps} />;
-        case "CLASSIC_CARD":
+        case "SLEEK":
+            return (
+                <WidgetSleek
+                    {...layoutProps}
+                    pricing={pricing}
+                    cartButtonText={cartButtonText}
+                    title={title}
+                    subtitle={subtitle}
+                />
+            );
         case "COMPACT_GRID":
+            return (
+                <WidgetCompactGrid
+                    {...layoutProps}
+                    pricing={pricing}
+                    cartButtonText={cartButtonText}
+                    title={title}
+                    badgeText="Buy 1 Get 1 Free"
+                />
+            );
         case "MINIMALIST":
+            return (
+                <WidgetMinimalist
+                    {...layoutProps}
+                    pricing={pricing}
+                    cartButtonText={cartButtonText}
+                    title={title}
+                    subtitle={subtitle}
+                    badgeText="Buy 1 Get 1 Free"
+                />
+            );
+        case "CLASSIC_CARD":
             return (
                 <WidgetClassicCard
                     {...layoutProps}

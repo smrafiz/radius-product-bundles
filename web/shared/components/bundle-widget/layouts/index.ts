@@ -3,3 +3,6 @@ export { WidgetList } from "./widget-list";
 export { WidgetCompact } from "./widget-compact";
 export { WidgetCarousel } from "./widget-carousel";
 export { WidgetClassicCard } from "./widget-classic-card";
+export { WidgetSleek } from "./widget-sleek";
+export { WidgetMinimalist } from "./widget-minimalist";
+export { WidgetCompactGrid } from "./widget-compact-grid";

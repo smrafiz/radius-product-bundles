@@ -5,7 +5,7 @@ import {
     DEFAULT_DISPLAY_OPTIONS,
     PLACEHOLDER_PRICING,
 } from "@/shared/constants/bundle-widget.constants";
-import { WidgetClassicCard } from "@/shared/components/bundle-widget";
+import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid } from "@/shared/components/bundle-widget";
 import { BundleTemplateProps, useEffectiveStyles } from "@/features/settings";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 
@@ -45,9 +45,12 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
 
     switch (activeLayout) {
         case "SLEEK":
-        case "CLASSIC_CARD":
+            return <WidgetSleek {...layoutProps} />;
         case "COMPACT_GRID":
+            return <WidgetCompactGrid {...layoutProps} />;
         case "MINIMALIST":
+            return <WidgetMinimalist {...layoutProps} />;
+        case "CLASSIC_CARD":
         default:
             return <WidgetClassicCard {...layoutProps} />;
     }
