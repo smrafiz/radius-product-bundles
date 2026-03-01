@@ -104,6 +104,59 @@
 }
 
 // ==========================================================================
+// BOGO Header — centered vertical layout (badge pill → title → subtitle)
+// ==========================================================================
+
+.radius-bundle {
+    &__header--bogo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: var(--rb-gap-spacing);
+    }
+
+    &__badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--rb-primary-color);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+        white-space: nowrap;
+
+        &--skeleton {
+            min-width: 100px;
+            min-height: 30px;
+        }
+
+        &--visible {
+            .radius-bundle__skeleton-text {
+                display: none;
+            }
+        }
+    }
+
+    &__title--bogo {
+        text-align: center;
+        font-weight: 700;
+    }
+
+    &__subtitle--bogo {
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+        margin: 0;
+    }
+}
+
+// ==========================================================================
 // Badge Positions (data-badge-position attribute)
 // ==========================================================================
 

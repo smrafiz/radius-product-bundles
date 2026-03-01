@@ -40,9 +40,12 @@ export function CustomizerBundleType() {
         <s-page heading="Customizer - Manage Bundle Styles" inlineSize="large">
             <s-button
                 slot="primary-action"
-                type="submit"
+                variant="primary"
                 disabled={!isDirty || isSaving}
                 loading={isSaving}
+                onClick={() => {
+                    (document.getElementById("customizer-form") as HTMLFormElement)?.requestSubmit();
+                }}
             >
                 Save
             </s-button>
@@ -69,9 +72,12 @@ export function CustomizerBundleType() {
                                     >
                                         <input
                                             ref={hiddenInputRef}
-                                            type="hidden"
+                                            type="text"
                                             name="_dirty"
                                             defaultValue=""
+                                            style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}
+                                            tabIndex={-1}
+                                            aria-hidden="true"
                                         />
                                         <DynamicCustomizerPanel
                                             config={CUSTOMIZER_CONFIG}

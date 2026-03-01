@@ -292,6 +292,7 @@ export function DynamicCustomizerField({
                         key={fieldKey}
                         label={isResponsive ? undefined : config.label}
                         details={config.details}
+                        name={config.name}
                         placeholder="0"
                         step={config.step ?? 1}
                         min={config.min}
@@ -475,6 +476,7 @@ export function DynamicCustomizerField({
                         key={fieldKey}
                         label={isResponsive ? undefined : config.label}
                         details={config.details}
+                        name={config.name}
                         value={String(value ?? "")}
                         error={error || undefined}
                         onInput={(e: Event) => {
@@ -529,6 +531,7 @@ export function DynamicCustomizerField({
                         <s-switch
                             key={fieldKey}
                             label={config.label}
+                            name={config.name}
                             labelAccessibilityVisibility="exclusive"
                             checked={Boolean(value)}
                             onChange={(e: Event) => {

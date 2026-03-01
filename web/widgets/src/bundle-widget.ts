@@ -89,6 +89,10 @@ declare global {
             addedText: string;
             outOfStockText: string;
             maxBundlesReachedText: string;
+            bogoYouPayLabel?: string;
+            bogoYouSaveLabel?: string;
+            bogoTriggerBadgeText?: string;
+            bogoRewardBadgeText?: string;
         };
     }
 
@@ -193,6 +197,11 @@ declare global {
         private readonly enableAnalytics: boolean = true;
         private readonly isStandalone: boolean = false;
 
+        // Style options
+        private readonly imagePosition: string = "top";
+        private readonly badgeStyle: string = "filled";
+        private readonly imageSize: string = "medium";
+
         // Layout options
         private readonly dividerStyle: string = "plus";
         private readonly carouselNavigation: string = "both";
@@ -270,6 +279,11 @@ declare global {
                 "| raw:",
                 container.dataset.redirectAfterCart,
             );
+            // Parse style options from data attributes
+            this.imagePosition = container.dataset.imagePosition || "top";
+            this.badgeStyle = container.dataset.badgeStyle || "filled";
+            this.imageSize = container.dataset.imageSize || "medium";
+
             // Parse layout options from data attributes
             this.dividerStyle = container.dataset.dividerStyle || "plus";
             this.carouselNavigation =
@@ -1171,7 +1185,8 @@ declare global {
 
             if (badgeText && this.showSavingsBadge) {
                 badgeEl.textContent = badgeText;
-                badgeEl.classList.add("radius-bundle__badge--visible");
+                const isBogoPill = badgeEl.classList.contains("radius-bundle__badge-pill");
+                badgeEl.classList.add(isBogoPill ? "radius-bundle__badge-pill--visible" : "radius-bundle__badge--visible");
             } else {
                 (badgeEl as HTMLElement).style.display = "none";
             }
@@ -1603,6 +1618,16 @@ declare global {
             const structure = this.bundleStructure || bundle;
             const imgLoading = this.lazyLoadImages ? ' loading="lazy"' : "";
 
+            const labels = structure.labels;
+            const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
+            const rewardBadge = labels?.bogoRewardBadgeText || "You Get FREE";
+            const youPayLabel = labels?.bogoYouPayLabel || "You Pay Only";
+            const youSaveLabel = labels?.bogoYouSaveLabel || "You Save";
+
+            const isHorizontal = this.imagePosition === "left";
+            const isOutlineBadge = this.badgeStyle === "outline";
+            const aspectClass = `rb-classic__image--${this.imageSize}`;
+
             const renderCard = (product: BundleProduct, isReward: boolean): string => {
                 const imageHtml = this.showImages && product.featuredImage
                     ? `<img src="${this.escapeHtml(product.featuredImage)}" alt="${this.escapeHtml(product.title)}"${imgLoading} />`
@@ -1610,8 +1635,9 @@ declare global {
                       ? `<div class="rb-classic__placeholder">📦</div>`
                       : "";
 
-                const badgeText = isReward ? "You Get FREE" : "You Buy";
+                const badgeText = isReward ? rewardBadge : triggerBadge;
                 const sectionClass = isReward ? "reward" : "trigger";
+                const outlineClass = isOutlineBadge ? " rb-classic__badge--outline" : "";
 
                 let priceHtml = "";
                 if (this.showPrices) {
@@ -1629,12 +1655,24 @@ declare global {
                     }
                 }
 
-                return `
-                    <div class="rb-classic__card rb-classic__card--${sectionClass}">
-                        <span class="rb-classic__badge rb-classic__badge--${sectionClass}">${badgeText}</span>
-                        ${this.showImages ? `<div class="rb-classic__image">${imageHtml}</div>` : ""}
+                const cardClass = `rb-classic__card rb-classic__card--${sectionClass}${isHorizontal ? " rb-classic__card--horizontal" : ""}`;
+
+                const imageBlock = this.showImages
+                    ? `<div class="rb-classic__image ${aspectClass}">${imageHtml}</div>`
+                    : "";
+
+                const textBlock = `
+                    <div class="rb-classic__text">
                         <h4 class="rb-classic__title">${this.escapeHtml(product.title)}</h4>
                         ${priceHtml}
+                    </div>
+                `;
+
+                return `
+                    <div class="${cardClass}">
+                        <span class="rb-classic__badge rb-classic__badge--${sectionClass}${outlineClass}">${this.escapeHtml(badgeText)}</span>
+                        ${imageBlock}
+                        ${textBlock}
                     </div>
                 `;
             };
@@ -1644,7 +1682,7 @@ declare global {
             rewards.forEach(p => { html += renderCard(p, true); });
             html += `</div>`;
 
-            // Pricing bar
+            // Pricing bar — 2-column layout matching customizer
             const totalOriginal = [...triggers, ...rewards].reduce((sum, p) => sum + p.price, 0);
             const totalDiscounted = triggers.reduce((sum, p) => sum + p.price, 0) +
                 rewards.reduce((sum, p) => sum + this.calculateBxgyRewardPrice(p.price, structure), 0);
@@ -1653,8 +1691,14 @@ declare global {
             if (savings > 0 && this.showSavings) {
                 html += `
                     <div class="rb-classic__pricing-bar">
-                        <span class="rb-classic__pricing-pay">You Pay Only: ${this.formatMoney(totalDiscounted)}</span>
-                        <span class="rb-classic__pricing-save">You Save: ${this.formatMoney(savings)}</span>
+                        <div class="rb-classic__pricing-col">
+                            <span class="rb-classic__pricing-label rb-classic__pricing-pay">${this.escapeHtml(youPayLabel)}</span>
+                            <span class="rb-classic__pricing-value">${this.formatMoney(totalDiscounted)}</span>
+                        </div>
+                        <div class="rb-classic__pricing-col rb-classic__pricing-col--right">
+                            <span class="rb-classic__pricing-label rb-classic__pricing-save">${this.escapeHtml(youSaveLabel)}</span>
+                            <span class="rb-classic__pricing-value rb-classic__pricing-value--savings">${this.formatMoney(savings)}</span>
+                        </div>
                     </div>
                 `;
             }

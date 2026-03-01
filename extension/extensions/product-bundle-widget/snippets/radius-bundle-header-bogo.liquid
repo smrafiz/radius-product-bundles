@@ -1,0 +1,27 @@
+{% comment %}
+  Radius Bundle BOGO Header Snippet
+  Centered vertical layout: badge pill → title → subtitle
+
+  Parameters:
+  - name: Bundle title
+  - subtitle: Bundle subtitle (optional)
+  - show_savings_badge: Boolean to show/hide badge pill
+{% endcomment %}
+
+<div class="radius-bundle__header radius-bundle__header--bogo">
+	{% if show_savings_badge %}
+		<div class="radius-bundle__badge-pill radius-bundle__badge-pill--skeleton" data-bundle-badge>
+			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
+		</div>
+	{% endif %}
+
+	<h3 class="radius-bundle__title radius-bundle__title--bogo" data-bundle-title>
+		{{ name }}
+	</h3>
+
+	{% if subtitle != blank %}
+		<p class="radius-bundle__subtitle radius-bundle__subtitle--bogo" data-bundle-subtitle>
+			{{ subtitle }}
+		</p>
+	{% endif %}
+</div>
