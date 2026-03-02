@@ -19,7 +19,7 @@ export function formatMoney(cents: number): string {
 }
 
 export function trimMoney(value: string): string {
-    return value.endsWith(".00") ? value.replace(".00", "") : value;
+    return value.replace(/[.,]00(?=\s*\D*$)/, "");
 }
 
 export function formatLabel(

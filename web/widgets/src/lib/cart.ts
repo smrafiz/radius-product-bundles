@@ -1,10 +1,26 @@
 import type { Bundle } from "./types";
 import { escapeHtml, getLocalePath } from "./utils";
 
+const CART_LINK_SELECTORS = [
+    "#cart-icon-bubble",
+    "[data-cart-count-bubble]",
+    ".site-header__cart-count",
+    ".cart-count",
+    ".js-cart-count",
+];
+
+function findCartLink(): Element | null {
+    for (const selector of CART_LINK_SELECTORS) {
+        const el = document.querySelector(selector);
+        if (el) return el;
+    }
+    return null;
+}
+
 export async function updateCartCount(): Promise<void> {
     try {
         const cart = await fetch(getLocalePath("/cart.js")).then((r) => r.json());
-        const cartLink = document.querySelector("#cart-icon-bubble");
+        const cartLink = findCartLink();
 
         if (cartLink && cart.item_count > 0) {
             let bubble = cartLink.querySelector(".cart-count-bubble");
