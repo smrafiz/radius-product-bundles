@@ -1,0 +1,173 @@
+declare global {
+    interface Window {
+        Shopify?: {
+            formatMoney?: (cents: number) => string;
+            currency?: {
+                active?: string;
+                rate?: string;
+            };
+            locale?: string;
+            routes?: {
+                root?: string;
+            };
+        };
+    }
+}
+
+export interface BundleProduct {
+    id: string;
+    variantId: string;
+    quantity: number;
+    role: "INCLUDED" | "OPTIONAL" | "TRIGGER" | "REWARD";
+    displayOrder: number;
+    isRequired: boolean;
+    title: string;
+    price: number;
+    compareAtPrice: number;
+    featuredImage: string | null;
+    handle: string;
+    available: boolean;
+}
+
+export interface BundleStructure {
+    id: string;
+    status: string;
+    name: string;
+    subtitle?: string;
+    discountType:
+        | "PERCENTAGE"
+        | "FIXED_AMOUNT"
+        | "CUSTOM_PRICE"
+        | "NO_DISCOUNT";
+    discountValue: number;
+    freeShipping: boolean;
+    minOrderValue: number;
+    maxDiscountAmount: number;
+    discountApplication: "bundle" | "products";
+    discountedProductIds: string[];
+    productCount: number;
+    productIds: string[];
+    productQuantities?: number[];
+    mainProductId?: string;
+    bundleType?: string;
+    buyQuantity?: number;
+    getQuantity?: number;
+    usesPerOrderLimit?: number;
+    productRoles?: string[];
+    layout: string;
+    labels: {
+        buttonText: string;
+        regularPriceLabel: string;
+        bundlePriceLabel: string;
+        youSaveLabel: string;
+        freeShippingLabel: string;
+        quantityLabel: string;
+        savingsBadgeText: string;
+        addingText: string;
+        addedText: string;
+        outOfStockText: string;
+        maxBundlesReachedText: string;
+        bogoYouPayLabel?: string;
+        bogoYouSaveLabel?: string;
+        bogoTriggerBadgeText?: string;
+        bogoRewardBadgeText?: string;
+    };
+}
+
+export interface Bundle extends BundleStructure {
+    products: BundleProduct[];
+}
+
+export interface BundleResponse {
+    success: boolean;
+    bundles: Bundle[];
+    count: number;
+}
+
+export interface ProductDetailsResponse {
+    success: boolean;
+    products: Array<{
+        id: string;
+        title: string;
+        price: number;
+        compareAtPrice: number;
+        image: string | null;
+        handle: string;
+        variantId: string;
+        available: boolean;
+    }>;
+}
+
+export interface CartAddItem {
+    id: string;
+    quantity: number;
+    properties?: Record<string, string>;
+}
+
+export interface DiscountConfig {
+    bundleId: string;
+    bundleName: string;
+    discountType: string;
+    discountValue: number;
+    requiredLineCount: number;
+    minOrderValue: number;
+    maxDiscountAmount: number;
+    discountApplication: string;
+    discountedProductIds: string[];
+    freeShipping: boolean;
+}
+
+export interface SliderState {
+    currentIndex: number;
+    totalSlides: number;
+    slidesPerView: number;
+    maxIndex: number;
+    autoplayInterval: number | null;
+    isDragging: boolean;
+    startX: number;
+    scrollStart: number;
+}
+
+export interface WidgetConfig {
+    container: HTMLElement;
+    bundleId: string;
+    productId: string;
+    shop: string;
+
+    showImages: boolean;
+    showSavings: boolean;
+    showSavingsBadge: boolean;
+    showPrices: boolean;
+    showComparePrices: boolean;
+    showQuantity: boolean;
+    showFreeShipping: boolean;
+    enableHyperLink: boolean;
+    lazyLoadImages: boolean;
+
+    redirectAfterCart: string;
+    enableStockValidation: boolean;
+    maxBundlesPerOrder: number;
+    enableAnalytics: boolean;
+    isStandalone: boolean;
+
+    imagePosition: string;
+    badgeStyle: string;
+    imageSize: string;
+
+    dividerStyle: string;
+    carouselNavigation: string;
+    autoplay: boolean;
+    autoplaySpeed: number;
+
+    moreProductSettings: boolean;
+    moreProductCount: number;
+    moreProductsText: string;
+    showLessText: string;
+
+    responsiveOverrides: {
+        tablet?: Record<string, string>;
+        mobile?: Record<string, string>;
+        breakpoints?: { tablet?: number; mobile?: number };
+    } | null;
+    desktopDataAttrs: Record<string, string>;
+}
