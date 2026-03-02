@@ -128,6 +128,17 @@ export interface SliderState {
     scrollStart: number;
 }
 
+export interface BaseRenderContext {
+    container: HTMLElement;
+    bundleStructure: BundleStructure | null;
+    showImages: boolean;
+    showPrices: boolean;
+    showComparePrices: boolean;
+    showQuantity: boolean;
+    lazyLoadImages: boolean;
+    enableHyperLink: boolean;
+}
+
 export interface WidgetConfig {
     container: HTMLElement;
     bundleId: string;

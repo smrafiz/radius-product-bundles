@@ -8,6 +8,7 @@ export interface SliderConfig {
 export class BundleSlider {
     private container: HTMLElement;
     private config: SliderConfig;
+    private resizeHandler: (() => void) | null = null;
     private state: SliderState = {
         currentIndex: 0,
         totalSlides: 0,
@@ -55,7 +56,8 @@ export class BundleSlider {
             this.startAutoplay();
         }
 
-        window.addEventListener("resize", () => this.handleResize());
+        this.resizeHandler = () => this.handleResize();
+        window.addEventListener("resize", this.resizeHandler);
     }
 
     private buildDots(): void {
@@ -238,6 +240,13 @@ export class BundleSlider {
         if (this.state.autoplayInterval) {
             clearInterval(this.state.autoplayInterval);
             this.state.autoplayInterval = null;
+        }
+    }
+
+    destroy(): void {
+        this.stopAutoplay();
+        if (this.resizeHandler) {
+            window.removeEventListener("resize", this.resizeHandler);
         }
     }
 }

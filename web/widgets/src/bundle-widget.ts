@@ -29,6 +29,7 @@ import {
 } from "./lib/bogo-renderer";
 import { BundleSlider } from "./lib/slider";
 import { handleCartRedirect, updateCartCount } from "./lib/cart";
+import { enqueueCartAttributeWrite } from "./lib/cart-attributes";
 import {
     type FixedContext,
     renderFixedProducts,
@@ -94,6 +95,13 @@ import {
 
         // Slider
         private slider: BundleSlider | null = null;
+
+        // Cleanup references
+        private abortController = new AbortController();
+        private buyNowObserver: MutationObserver | null = null;
+        private buyNowTimeout: number | null = null;
+        private viewObserver: IntersectionObserver | null = null;
+        private viewTimeout: number | null = null;
 
         /**
          * Constructor - Initialize widget with container element
@@ -361,256 +369,145 @@ import {
         }
 
         private interceptStandaloneAddToCart(): void {
-            const originalFetch = window.fetch;
-            const self = this;
+            const form = document.querySelector(
+                'form[action*="/cart/add"]',
+            ) as HTMLFormElement | null;
 
-            window.fetch = function (
-                ...args: Parameters<typeof fetch>
-            ): ReturnType<typeof fetch> {
-                const [input] = args;
-                const url =
-                    typeof input === "string"
-                        ? input
-                        : input instanceof URL
-                          ? input.href
-                          : (input as Request).url;
+            if (!form) {
+                return;
+            }
 
-                if (url.includes("/cart/add")) {
-                    // Inject bundle properties into the request body before sending
-                    // so _bundle_id is set on line items regardless of theme implementation
-                    const init = args[1] as RequestInit | undefined;
-                    const modifiedInit = init?.body
-                        ? {
-                              ...init,
-                              body: self.injectLineItemProperties(init.body),
-                          }
-                        : init;
+            form.addEventListener(
+                "submit",
+                async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(form);
 
-                    const result = originalFetch.call(
-                        window,
-                        input,
-                        modifiedInit,
-                    );
+                    const id = formData.get("id");
+                    const quantity = formData.get("quantity") || "1";
+                    if (!id) {
+                        form.submit();
+                        return;
+                    }
 
-                    return result.then(async (response) => {
+                    const properties: Record<string, string> = {
+                        _bundle_id: this.bundleId,
+                        _bundle_name: this.bundleStructure?.name || "Bundle",
+                    };
+
+                    for (const [key, value] of formData.entries()) {
+                        const match = key.match(/^properties\[(.+)]$/);
+                        if (match) properties[match[1]] = String(value);
+                    }
+
+                    try {
+                        const response = await fetch(
+                            getLocalePath("/cart/add.js"),
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    items: [
+                                        {
+                                            id: parseInt(String(id), 10),
+                                            quantity: parseInt(
+                                                String(quantity),
+                                                10,
+                                            ),
+                                            properties,
+                                        },
+                                    ],
+                                }),
+                            },
+                        );
+
                         if (response.ok) {
-                            await self.updateStandaloneCartAttributes();
+                            await this.updateStandaloneCartAttributes();
 
-                            if (self.enableAnalytics) {
+                            if (this.enableAnalytics) {
                                 document.dispatchEvent(
                                     new CustomEvent("bundle:addedToCart", {
                                         detail: {
-                                            bundleId: self.bundleId,
-                                            productId: self.productId,
+                                            bundleId: this.bundleId,
+                                            productId: this.productId,
                                             isStandalone: true,
                                         },
                                         bubbles: true,
                                     }),
                                 );
                             }
+
+                            await updateCartCount();
+                            handleCartRedirect(
+                                this.redirectAfterCart,
+                                null,
+                                this.lazyLoadImages,
+                            );
+                        } else {
+                            const errorData = await response
+                                .json()
+                                .catch(() => ({}));
+                            showToast(
+                                errorData.description ||
+                                    "Failed to add to cart",
+                                "error",
+                            );
                         }
-                        return response;
-                    });
-                }
-
-                return originalFetch.apply(window, args);
-            };
-        }
-
-        private injectLineItemProperties(body: BodyInit): BodyInit {
-            const properties: Record<string, string> = {
-                _bundle_id: this.bundleId,
-                _bundle_name: this.bundleStructure?.name || "Bundle",
-            };
-
-            if (typeof body === "string") {
-                try {
-                    const data = JSON.parse(body);
-                    if (Array.isArray(data.items)) {
-                        for (const item of data.items) {
-                            item.properties = {
-                                ...item.properties,
-                                ...properties,
-                            };
-                        }
-                    } else if (data.id) {
-                        data.properties = {
-                            ...data.properties,
-                            ...properties,
-                        };
+                    } catch {
+                        showToast("Failed to add to cart", "error");
                     }
-                    return JSON.stringify(data);
-                } catch {
-                    return body;
-                }
-            }
-
-            if (body instanceof FormData) {
-                for (const [key, value] of Object.entries(properties)) {
-                    body.set(`properties[${key}]`, value);
-                }
-                return body;
-            }
-
-            if (body instanceof URLSearchParams) {
-                for (const [key, value] of Object.entries(properties)) {
-                    body.set(`properties[${key}]`, value);
-                }
-                return body;
-            }
-
-            return body;
+                },
+                { signal: this.abortController.signal },
+            );
         }
 
         private interceptBuyNowButton(): void {
-            const self = this;
+            const hideBuyNow = (container: Element) => {
+                (container as HTMLElement).style.display = "none";
+            };
 
-            function hijackContainer(container: Element): void {
-                container.addEventListener(
-                    "click",
-                    async (e) => {
-                        const button = (e.target as HTMLElement).closest(
-                            'button, [role="button"]',
-                        );
-                        if (!button) return;
-
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-
-                        const form = document.querySelector(
-                            'form[action*="/cart/add"]',
-                        ) as HTMLFormElement | null;
-
-                        const variantId = (
-                            form?.querySelector(
-                                '[name="id"]',
-                            ) as HTMLInputElement | null
-                        )?.value;
-
-                        const quantity = parseInt(
-                            (
-                                form?.querySelector(
-                                    '[name="quantity"]',
-                                ) as HTMLInputElement | null
-                            )?.value || "1",
-                            10,
-                        );
-
-                        if (!variantId) return;
-
-                        try {
-                            await fetch(getLocalePath("/cart/add.js"), {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    items: [
-                                        {
-                                            id: parseInt(variantId, 10),
-                                            quantity,
-                                            properties: {
-                                                _bundle_id: self.bundleId,
-                                                _bundle_name:
-                                                    self.bundleStructure
-                                                        ?.name || "Bundle",
-                                            },
-                                        },
-                                    ],
-                                }),
-                            });
-
-                            window.location.href = getLocalePath("/checkout");
-                        } catch (error) {
-                            console.error(
-                                "[RadiusBundle] Buy now failed:",
-                                error,
-                            );
-                        }
-                    },
-                    true,
-                );
-            }
-
-            // Check if Buy Now container already exists
             const existing = document.querySelector(
                 '[data-shopify="payment-button"]',
             );
             if (existing) {
-                hijackContainer(existing);
+                hideBuyNow(existing);
                 return;
             }
 
-            // Watch for dynamically rendered Buy Now button
-            const observer = new MutationObserver(() => {
+            this.buyNowObserver = new MutationObserver(() => {
                 const container = document.querySelector(
                     '[data-shopify="payment-button"]',
                 );
                 if (container) {
-                    observer.disconnect();
-                    hijackContainer(container);
+                    this.buyNowObserver?.disconnect();
+                    hideBuyNow(container);
                 }
             });
 
-            observer.observe(document.body, {
+            this.buyNowObserver.observe(document.body, {
                 childList: true,
                 subtree: true,
             });
+
+            this.buyNowTimeout = window.setTimeout(() => {
+                this.buyNowObserver?.disconnect();
+            }, 10000);
         }
 
         private async updateStandaloneCartAttributes(): Promise<void> {
-            try {
-                const cart = await fetch(getLocalePath("/cart.js")).then((r) =>
-                    r.json(),
-                );
-
-                let existingDiscounts: DiscountConfig[] = [];
-
-                if (cart.attributes?._radiusDiscounts) {
-                    try {
-                        existingDiscounts = JSON.parse(
-                            cart.attributes._radiusDiscounts,
-                        );
-                    } catch {
-                        existingDiscounts = [];
-                    }
-                }
-
-                const structure = this.bundleStructure;
-                const newDiscount: DiscountConfig = {
-                    bundleId: this.bundleId,
-                    bundleName: structure?.name || "Bundle",
-                    discountType: "NO_DISCOUNT",
-                    discountValue: 0,
-                    requiredLineCount: 1,
-                    minOrderValue: structure?.minOrderValue || 0,
-                    maxDiscountAmount: 0,
-                    discountApplication: "bundle",
-                    discountedProductIds: [],
-                    freeShipping: structure?.freeShipping || false,
-                };
-
-                existingDiscounts = existingDiscounts.filter(
-                    (d) => d.bundleId !== this.bundleId,
-                );
-                existingDiscounts.push(newDiscount);
-
-                await fetch(getLocalePath("/cart/update.js"), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        attributes: {
-                            _radiusDiscounts: JSON.stringify(existingDiscounts),
-                        },
-                    }),
-                });
-            } catch (error) {
-                console.error(
-                    "[RadiusBundle] Standalone cart attribute update failed:",
-                    error,
-                );
-            }
+            const structure = this.bundleStructure;
+            await enqueueCartAttributeWrite(this.bundleId, {
+                bundleId: this.bundleId,
+                bundleName: structure?.name || "Bundle",
+                discountType: "NO_DISCOUNT",
+                discountValue: 0,
+                requiredLineCount: 1,
+                minOrderValue: structure?.minOrderValue || 0,
+                maxDiscountAmount: 0,
+                discountApplication: "bundle",
+                discountedProductIds: [],
+                freeShipping: structure?.freeShipping || false,
+            });
         }
 
         private initSliderInstance(): void {
@@ -720,14 +617,12 @@ import {
                 return;
             }
 
-            let viewTimeout: number;
-
             try {
-                const observer = new IntersectionObserver(
+                this.viewObserver = new IntersectionObserver(
                     (entries) => {
                         entries.forEach((entry) => {
                             if (entry.isIntersecting) {
-                                viewTimeout = window.setTimeout(() => {
+                                this.viewTimeout = window.setTimeout(() => {
                                     if (entry.isIntersecting) {
                                         document.dispatchEvent(
                                             new CustomEvent("bundle:viewed", {
@@ -740,33 +635,22 @@ import {
                                                 bubbles: true,
                                             }),
                                         );
-
-                                        console.log(
-                                            "[RadiusBundle] Bundle view triggered:",
-                                            {
-                                                bundleId: this.bundleId,
-                                                productId: this.productId,
-                                            },
+                                        this.viewObserver?.unobserve(
+                                            this.container,
                                         );
-
-                                        // Stop observing after tracking once
-                                        observer.unobserve(this.container);
                                     }
                                 }, 1000);
-                            } else {
-                                clearTimeout(viewTimeout);
+                            } else if (this.viewTimeout) {
+                                clearTimeout(this.viewTimeout);
                             }
                         });
                     },
-                    { threshold: 0.5 }, // Trigger when 50% visible
+                    { threshold: 0.5 },
                 );
 
-                observer.observe(this.container);
-            } catch (error) {
-                console.error(
-                    "[RadiusBundle] Failed to track bundle view:",
-                    error,
-                );
+                this.viewObserver.observe(this.container);
+            } catch {
+                // IntersectionObserver not supported
             }
         }
 
@@ -1015,44 +899,52 @@ import {
                 return;
             }
 
-            if (this.isBxgyBundle()) {
-                const layout = getLayout(this.container);
-                const ctx = this.getBogoContext();
-                if (layout === "sleek") {
-                    renderBogoSleekProducts(bundle, productsContainer, ctx);
-                } else if (layout === "compact_grid") {
-                    renderBogoCompactGridProducts(
-                        bundle,
-                        productsContainer,
-                        ctx,
-                    );
-                } else if (layout === "minimalist") {
-                    renderBogoMinimalistProducts(
-                        bundle,
-                        productsContainer,
-                        ctx,
-                    );
-                } else if (layout === "classic_card") {
-                    renderClassicCardProducts(bundle, productsContainer, ctx);
-                } else {
-                    renderBxgyProducts(bundle, productsContainer, ctx);
+            try {
+                if (this.isBxgyBundle()) {
+                    const layout = getLayout(this.container);
+                    const ctx = this.getBogoContext();
+
+                    if (layout === "sleek") {
+                        renderBogoSleekProducts(bundle, productsContainer, ctx);
+                    } else if (layout === "compact_grid") {
+                        renderBogoCompactGridProducts(
+                            bundle,
+                            productsContainer,
+                            ctx,
+                        );
+                    } else if (layout === "minimalist") {
+                        renderBogoMinimalistProducts(
+                            bundle,
+                            productsContainer,
+                            ctx,
+                        );
+                    } else if (layout === "classic_card") {
+                        renderClassicCardProducts(
+                            bundle,
+                            productsContainer,
+                            ctx,
+                        );
+                    } else {
+                        renderBxgyProducts(bundle, productsContainer, ctx);
+                    }
+
+                    return;
                 }
-                return;
-            }
 
-            const layout = getLayout(this.container);
-            const ctx = this.getFixedContext();
-            renderFixedProducts(
-                bundle,
-                productsContainer as HTMLElement,
-                layout,
-                ctx,
-            );
+                const layout = getLayout(this.container);
+                const ctx = this.getFixedContext();
+                renderFixedProducts(
+                    bundle,
+                    productsContainer as HTMLElement,
+                    layout,
+                    ctx,
+                );
 
-            if (layout === "slider") {
-                setTimeout(() => {
-                    this.initSliderInstance();
-                }, 0);
+                if (layout === "slider") {
+                    setTimeout(() => this.initSliderInstance(), 0);
+                }
+            } catch {
+                showError(this.container, "Failed to display bundle products");
             }
         }
 
@@ -1197,22 +1089,6 @@ import {
                     return;
                 }
 
-                const cart = await fetch(getLocalePath("/cart.js")).then((r) =>
-                    r.json(),
-                );
-
-                let existingDiscounts: DiscountConfig[] = [];
-
-                if (cart.attributes?._radiusDiscounts) {
-                    try {
-                        existingDiscounts = JSON.parse(
-                            cart.attributes._radiusDiscounts,
-                        );
-                    } catch {
-                        existingDiscounts = [];
-                    }
-                }
-
                 const structure = this.bundleStructure || this.bundle;
 
                 const newDiscount: DiscountConfig = {
@@ -1231,20 +1107,7 @@ import {
                     freeShipping: structure.freeShipping || false,
                 };
 
-                existingDiscounts = existingDiscounts.filter(
-                    (d) => d.bundleId !== this.bundle!.id,
-                );
-                existingDiscounts.push(newDiscount);
-
-                await fetch(getLocalePath("/cart/update.js"), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        attributes: {
-                            _radiusDiscounts: JSON.stringify(existingDiscounts),
-                        },
-                    }),
-                });
+                await enqueueCartAttributeWrite(this.bundle.id, newDiscount);
 
                 showToast("Bundle added to cart!", "success");
 
@@ -1279,13 +1142,6 @@ import {
                         }),
                     );
                 }
-
-                console.log("[RadiusBundle] Bundle added to cart:", {
-                    bundleId: this.bundleId,
-                    productCount: cartItems.length,
-                    totalValue: totalValue,
-                    discountValue: discountValue,
-                });
 
                 // Update cart count in header
                 await updateCartCount();
@@ -1323,9 +1179,14 @@ import {
             }
         }
 
-        /**
-         * Updates cart count
-         */
+        destroy(): void {
+            this.abortController.abort();
+            this.buyNowObserver?.disconnect();
+            this.viewObserver?.disconnect();
+            this.slider?.destroy();
+            if (this.buyNowTimeout) clearTimeout(this.buyNowTimeout);
+            if (this.viewTimeout) clearTimeout(this.viewTimeout);
+        }
     }
 
     /**

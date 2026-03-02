@@ -1,19 +1,11 @@
-import type { Bundle, BundleProduct, BundleStructure } from "./types";
+import type { BaseRenderContext, Bundle, BundleProduct, BundleStructure } from "./types";
 import { calculateBxgyRewardPrice } from "./bogo-renderer";
-import { escapeHtml, formatMoney } from "./utils";
+import { escapeHtml, formatMoney, getLocalePath } from "./utils";
 
-export interface FixedContext {
-    container: HTMLElement;
-    bundleStructure: BundleStructure | null;
+export interface FixedContext extends BaseRenderContext {
     bundle: Bundle | null;
-    showImages: boolean;
-    showPrices: boolean;
-    showComparePrices: boolean;
-    showQuantity: boolean;
     showSavings: boolean;
     showFreeShipping: boolean;
-    lazyLoadImages: boolean;
-    enableHyperLink: boolean;
     dividerStyle: string;
     moreProductSettings: boolean;
     moreProductCount: number;
@@ -122,7 +114,7 @@ export function renderProductCard(
         ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
         : "";
 
-    const productUrl = product.handle ? `/products/${product.handle}` : "#";
+    const productUrl = product.handle ? getLocalePath(`/products/${product.handle}`) : "#";
     const productTitleHtml = ctx.enableHyperLink
         ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h4>`
         : `<h4 class="radius-bundle__product-title">${escapeHtml(product.title)}</h4>`;

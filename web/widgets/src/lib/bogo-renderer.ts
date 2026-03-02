@@ -1,17 +1,9 @@
-import type { Bundle, BundleProduct, BundleStructure } from "./types";
-import { escapeHtml, formatLabel, formatMoney, trimMoney } from "./utils";
+import type { BaseRenderContext, Bundle, BundleProduct, BundleStructure } from "./types";
+import { escapeHtml, formatLabel, formatMoney, getLocalePath, trimMoney } from "./utils";
 
-export interface BogoContext {
-    container: HTMLElement;
-    bundleStructure: BundleStructure | null;
-    showImages: boolean;
-    showPrices: boolean;
-    showComparePrices: boolean;
-    showQuantity: boolean;
+export interface BogoContext extends BaseRenderContext {
     showSavings: boolean;
     showSavingsBadge: boolean;
-    lazyLoadImages: boolean;
-    enableHyperLink: boolean;
     imagePosition: string;
     badgeStyle: string;
     imageSize: string;
@@ -77,7 +69,7 @@ export function renderBxgyProducts(bundle: Bundle, container: Element, ctx: Bogo
               ? `<div class="radius-bundle__product-placeholder">📦</div>`
               : "";
         const imageWrapper = ctx.showImages ? `<div class="radius-bundle__product-image">${imageHtml}</div>` : "";
-        const productUrl = product.handle ? `/products/${product.handle}` : "#";
+        const productUrl = product.handle ? getLocalePath(`/products/${product.handle}`) : "#";
         const titleHtml = ctx.enableHyperLink
             ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h4>`
             : `<h4 class="radius-bundle__product-title">${escapeHtml(product.title)}</h4>`;

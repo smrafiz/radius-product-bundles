@@ -23,6 +23,9 @@ const inputFiles = fs
 
 export default defineConfig({
     root: widgetSrcDir,
+    esbuild: {
+        drop: ["console"],
+    },
     build: {
         outDir: assetOutputDir,
         emptyOutDir: true,
