@@ -1,9 +1,6 @@
 "use client";
 
-import { triggerSaveBar } from "@/shared";
-import { useCallback } from "react";
-import { useFormContext } from "react-hook-form";
-import { useBundleStore, useDiscountSettings } from "@/features/bundles";
+import { useDiscountSettings } from "@/features/bundles";
 
 export function BxgyDiscountSettings() {
     const {
@@ -19,28 +16,6 @@ export function BxgyDiscountSettings() {
         getFieldError,
         showDiscountValue,
     } = useDiscountSettings();
-
-    const { bundleData, setBundleData, markDirty, markFieldTouched } =
-        useBundleStore();
-    const { setValue, trigger } = useFormContext();
-
-    const usesPerOrderLimit = bundleData.usesPerOrderLimit;
-
-    const handleUsesPerOrderLimitChange = useCallback(
-        (value: string) => {
-            const numValue = value === "" ? null : parseInt(value, 10);
-            setValue("usesPerOrderLimit", numValue, { shouldDirty: true });
-            setBundleData({ usesPerOrderLimit: numValue });
-            markDirty();
-            triggerSaveBar();
-        },
-        [setValue, setBundleData, markDirty],
-    );
-
-    const handleUsesPerOrderLimitBlur = useCallback(() => {
-        markFieldTouched("usesPerOrderLimit");
-        void trigger("usesPerOrderLimit");
-    }, [markFieldTouched, trigger]);
 
     return (
         <s-stack gap="base">
@@ -110,40 +85,6 @@ export function BxgyDiscountSettings() {
                     error={getFieldError("discountValue")}
                 />
             )}
-
-            <s-divider />
-
-            <s-stack gap="small">
-                <s-stack direction="inline" alignItems="center" gap="small-200">
-                    <s-heading>Deal Stacking Limit</s-heading>
-                    <s-tooltip id="uses-per-order-tooltip">
-                        <s-text>
-                            Limits how many times this deal can apply per order.
-                            Leave empty for unlimited. E.g., set to 1 so a
-                            customer can only get 1 free item per order.
-                        </s-text>
-                    </s-tooltip>
-                    <s-icon
-                        tone="neutral"
-                        type="info"
-                        interestFor="uses-per-order-tooltip"
-                    />
-                </s-stack>
-
-                <s-number-field
-                    label="Maximum uses per order"
-                    value={usesPerOrderLimit?.toString() || ""}
-                    step={1}
-                    min={1}
-                    placeholder="Unlimited"
-                    onChange={(event: Event) => {
-                        const target = event.target as HTMLInputElement;
-                        handleUsesPerOrderLimitChange(target.value);
-                    }}
-                    onBlur={handleUsesPerOrderLimitBlur}
-                    error={getFieldError("usesPerOrderLimit")}
-                />
-            </s-stack>
         </s-stack>
     );
 }

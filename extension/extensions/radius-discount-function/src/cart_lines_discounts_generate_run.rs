@@ -45,7 +45,6 @@ struct MetafieldBundleConfig {
     bundle_type: Option<String>,
     buy_quantity: Option<i32>,
     get_quantity: Option<i32>,
-    uses_per_order_limit: Option<i32>,
     product_roles: Option<HashMap<String, String>>,
 }
 
@@ -86,8 +85,7 @@ fn calculate_bxgy_discount(
     bundle_name: &str,
 ) -> Option<ProductDiscountCandidate> {
     let roles = bundle_settings.product_roles.as_ref()?;
-    let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
-    let get_qty = bundle_settings.get_quantity.unwrap_or(1);
+    let qty_map = bundle_settings.product_quantities.as_ref();
 
     // Separate trigger and reward lines
     let trigger_lines: Vec<&BundleLineInfo> = bundle_lines
@@ -138,7 +136,9 @@ fn calculate_bxgy_discount(
 
     // Calculate deal count
     let deal_count: i32 = if same_product_mode || is_same_product {
-        // Same product: items_per_deal = buy_qty + get_qty, deals = total / items_per_deal
+        // Same product (BOGO): items_per_deal = buy + get, deals = total / items_per_deal
+        let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
+        let get_qty = bundle_settings.get_quantity.unwrap_or(1);
         let items_per_deal = buy_qty + get_qty;
         let total_qty: i32 = reward_lines
             .iter()
@@ -146,53 +146,70 @@ fn calculate_bxgy_discount(
             .sum();
         total_qty / items_per_deal
     } else {
-        // Different products: deal_count = min(trigger_available / buy_qty, reward_available / get_qty)
-        let total_trigger_qty: i32 = trigger_lines
-            .iter()
-            .map(|bl| *bl.line.quantity())
-            .sum();
-        let total_reward_qty: i32 = reward_lines
-            .iter()
-            .map(|bl| *bl.line.quantity())
-            .sum();
-        let trigger_deals = total_trigger_qty / buy_qty;
-        let reward_deals = total_reward_qty / get_qty;
-        std::cmp::min(trigger_deals, reward_deals)
+        // Different products: use per-product expected quantities from product_quantities.
+        // deal_count = min across all products of (cart_qty / expected_qty).
+        // This correctly handles "Buy 2 Get 1" by checking each product independently.
+        if let Some(qm) = qty_map {
+            let trigger_min = trigger_lines
+                .iter()
+                .filter_map(|bl| {
+                    let pid = bl.product_id.as_ref()?;
+                    let expected = *qm.get(pid).unwrap_or(&1);
+                    if expected <= 0 { return None; }
+                    Some(*bl.line.quantity() / expected)
+                })
+                .min()
+                .unwrap_or(0);
+
+            let reward_min = reward_lines
+                .iter()
+                .filter_map(|bl| {
+                    let pid = bl.product_id.as_ref()?;
+                    let expected = *qm.get(pid).unwrap_or(&1);
+                    if expected <= 0 { return None; }
+                    Some(*bl.line.quantity() / expected)
+                })
+                .min()
+                .unwrap_or(0);
+
+            std::cmp::min(trigger_min, reward_min)
+        } else {
+            // Fallback: use buy_quantity/get_quantity
+            let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
+            let get_qty = bundle_settings.get_quantity.unwrap_or(1);
+            let total_trigger: i32 = trigger_lines.iter().map(|bl| *bl.line.quantity()).sum();
+            let total_reward: i32 = reward_lines.iter().map(|bl| *bl.line.quantity()).sum();
+            std::cmp::min(total_trigger / buy_qty, total_reward / get_qty)
+        }
     };
 
     if deal_count < 1 {
         return None;
     }
 
-    // Apply uses_per_order_limit
-    let effective_deals = if let Some(limit) = bundle_settings.uses_per_order_limit {
-        if limit > 0 {
-            std::cmp::min(deal_count, limit)
-        } else {
-            deal_count
-        }
-    } else {
-        deal_count
-    };
-
-    // Total reward quantity to discount
-    let reward_qty_to_discount = effective_deals * get_qty;
-
-    // Build targets: only reward product lines
+    // Build targets and calculate reward total using per-product expected quantities
     let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
-    let mut remaining_discount_qty = reward_qty_to_discount;
+    let mut reward_total: f64 = 0.0;
 
     for bl in &reward_lines {
-        if remaining_discount_qty <= 0 {
-            break;
+        let expected = bl
+            .product_id
+            .as_ref()
+            .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
+            .copied()
+            .unwrap_or(1);
+        let qty_to_discount = std::cmp::min(deal_count * expected, *bl.line.quantity());
+
+        if qty_to_discount <= 0 {
+            continue;
         }
-        let line_qty = *bl.line.quantity();
-        let qty_for_this_line = std::cmp::min(remaining_discount_qty, line_qty);
-        remaining_discount_qty -= qty_for_this_line;
+
+        let unit_price = bl.line.cost().amount_per_quantity().amount().0;
+        reward_total += unit_price * qty_to_discount as f64;
 
         targets.push(ProductDiscountCandidateTarget::CartLine(CartLineTarget {
             id: bl.line.id().clone(),
-            quantity: Some(qty_for_this_line),
+            quantity: Some(qty_to_discount),
         }));
     }
 
@@ -200,14 +217,17 @@ fn calculate_bxgy_discount(
         return None;
     }
 
-    // Calculate reward total for discount computation
-    let reward_total: f64 = reward_lines
+    // Total reward items being discounted (sum of per-product qty_to_discount)
+    let total_reward_qty_to_discount: i32 = reward_lines
         .iter()
         .map(|bl| {
-            let unit_price = bl.line.cost().amount_per_quantity().amount().0;
-            let line_qty = *bl.line.quantity();
-            let discountable = std::cmp::min(line_qty, reward_qty_to_discount);
-            unit_price * discountable as f64
+            let expected = bl
+                .product_id
+                .as_ref()
+                .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
+                .copied()
+                .unwrap_or(1);
+            std::cmp::min(deal_count * expected, *bl.line.quantity())
         })
         .sum();
 
@@ -223,7 +243,7 @@ fn calculate_bxgy_discount(
             )
         }
         "FIXED_AMOUNT" => {
-            let amount = bundle_settings.discount_value * reward_qty_to_discount as f64;
+            let amount = bundle_settings.discount_value * total_reward_qty_to_discount as f64;
             (
                 amount,
                 ProductDiscountCandidateValue::FixedAmount(
@@ -235,7 +255,6 @@ fn calculate_bxgy_discount(
             )
         }
         "CUSTOM_PRICE" => {
-            // Custom price per reward item: discount = original_price - custom_price
             let custom_price = bundle_settings.discount_value;
             let discount_per_unit: f64 = reward_lines
                 .first()
@@ -249,7 +268,7 @@ fn calculate_bxgy_discount(
                 return None;
             }
 
-            let total_discount = discount_per_unit * reward_qty_to_discount as f64;
+            let total_discount = discount_per_unit * total_reward_qty_to_discount as f64;
             (
                 total_discount,
                 ProductDiscountCandidateValue::FixedAmount(

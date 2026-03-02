@@ -32,7 +32,6 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     );
     const isBxgy = BXGY_TYPES.includes(bundleType);
     const isBogo = bundleType === "BOGO";
-
     // BOGO: max 2 products (1 Buy + 1 Get). Same-product mode: 1 pick auto-mirrors.
     // BXGY: uses global maxProducts (future: variable quantities).
     const globalMax = (settingsData?.maxBundleProducts as number) ?? 10;
@@ -252,8 +251,8 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                 : `Maximum ${maxProducts} products reached for this bundle.`}
                         </s-banner>
                     )}
-                    <ProductList isBxgy={isBxgy} />
-                    {isBxgy && (
+                    <ProductList isBxgy={isBxgy} isBogo={isBogo} />
+                    {isBogo && (
                         <s-switch
                             label="Same product for both"
                             details="Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)"

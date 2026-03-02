@@ -32,7 +32,7 @@ function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
     }));
 }
 
-export function ProductList({ isBxgy }: { isBxgy?: boolean }) {
+export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boolean }) {
     const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
         useBundleStore();
     const sameProductMode = useBundleStore(
@@ -152,22 +152,29 @@ export function ProductList({ isBxgy }: { isBxgy?: boolean }) {
                                 }
                                 onRoleChange={(newRole) => {
                                     setItemRole(group.product.id, newRole);
-                                    // Auto-swap: if this becomes Buy, make the other Get (and vice versa)
-                                    const swappedRole =
-                                        newRole === "TRIGGER"
-                                            ? "REWARD"
-                                            : "TRIGGER";
-                                    selectedItems
-                                        .filter(
-                                            (i) =>
-                                                i.id !== group.product.id &&
-                                                i.role === newRole,
-                                        )
-                                        .forEach((i) =>
-                                            setItemRole(i.id, swappedRole),
-                                        );
+                                    if (isBogo) {
+                                        // BOGO: auto-swap (only 1 Buy + 1 Get)
+                                        const swappedRole =
+                                            newRole === "TRIGGER"
+                                                ? "REWARD"
+                                                : "TRIGGER";
+                                        selectedItems
+                                            .filter(
+                                                (i) =>
+                                                    i.id !==
+                                                        group.product.id &&
+                                                    i.role === newRole,
+                                            )
+                                            .forEach((i) =>
+                                                setItemRole(
+                                                    i.id,
+                                                    swappedRole,
+                                                ),
+                                            );
+                                    }
+                                    // BXGY: allow multiple Buy/Get, no swap
                                 }}
-                                quantityLocked
+                                quantityLocked={isBogo}
                                 onRemove={
                                     sameProductMode &&
                                     group.product.role === "REWARD"

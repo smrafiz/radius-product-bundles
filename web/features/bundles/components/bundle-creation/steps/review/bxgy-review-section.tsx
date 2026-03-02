@@ -31,7 +31,8 @@ export function BxgyReviewSection() {
     const rewardProducts = getRewardProducts();
     const discountType = bundleData.discountType as DiscountType;
     const discountValue = bundleData.discountValue;
-    const usesPerOrderLimit = bundleData.usesPerOrderLimit;
+    const buyQty = bundleData.buyQuantity ?? 1;
+    const getQty = bundleData.getQuantity ?? 1;
 
     const formatDiscount = () =>
         formatDiscountFromValues(
@@ -211,7 +212,7 @@ export function BxgyReviewSection() {
                     >
                         <s-heading>Deal</s-heading>
                         <s-text color="subdued">
-                            Buy 1 × {triggerNames || "—"} → Get 1 ×{" "}
+                            Buy {buyQty} × {triggerNames || "—"} → Get {getQty} ×{" "}
                             {rewardNames || "—"} {discountLabel}
                         </s-text>
                     </s-stack>
@@ -257,19 +258,6 @@ export function BxgyReviewSection() {
                             {isLoading ? "•" : formatDiscount()}
                         </s-text>
                     </s-stack>
-                    {usesPerOrderLimit && (
-                        <s-stack
-                            alignItems="center"
-                            justifyContent="space-between"
-                            direction="inline"
-                            gap="small-300"
-                        >
-                            <s-heading>Stacking limit</s-heading>
-                            <s-text color="subdued">
-                                {usesPerOrderLimit} per order
-                            </s-text>
-                        </s-stack>
-                    )}
                 </s-stack>
             </s-section>
 
