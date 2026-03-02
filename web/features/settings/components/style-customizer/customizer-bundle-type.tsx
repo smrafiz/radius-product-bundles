@@ -21,10 +21,8 @@ export function CustomizerBundleType() {
         isLoading,
         isSaving,
         isDirty,
-        hiddenInputRef,
         resetCounter,
         setActiveId,
-        triggerSaveBar,
         handleClearErrors,
         handleSubmit,
         handleReset,
@@ -43,12 +41,19 @@ export function CustomizerBundleType() {
                 variant="primary"
                 disabled={!isDirty || isSaving}
                 loading={isSaving}
-                onClick={() => {
-                    (document.getElementById("customizer-form") as HTMLFormElement)?.requestSubmit();
-                }}
+                onClick={() => handleSubmit()}
             >
                 Save
             </s-button>
+            {isDirty && (
+                <s-button
+                    slot="secondary-actions"
+                    onClick={handleReset}
+                    disabled={isSaving}
+                >
+                    Discard
+                </s-button>
+            )}
 
             {isLoading ? (
                 <CustomizerSkeleton />
@@ -62,37 +67,16 @@ export function CustomizerBundleType() {
                             >
                                 <div className="rtpb-blur-top" />
                                 <FormProvider {...form}>
-                                    <form
-                                        id="customizer-form"
-                                        data-save-bar
-                                        data-discard-confirmation
-                                        onSubmit={handleSubmit}
-                                        onReset={handleReset}
-                                        style={{ display: "contents" }}
-                                    >
-                                        <input
-                                            ref={hiddenInputRef}
-                                            type="text"
-                                            name="_dirty"
-                                            defaultValue=""
-                                            style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}
-                                            tabIndex={-1}
-                                            aria-hidden="true"
-                                        />
-                                        <DynamicCustomizerPanel
-                                            config={CUSTOMIZER_CONFIG}
-                                            onFieldChangeAction={triggerSaveBar}
-                                            onClearErrorsAction={
-                                                handleClearErrors
-                                            }
-                                            onAccordionChange={
-                                                leftPanelScroll.handleAccordionChange
-                                            }
-                                            resetKey={resetCounter}
-                                            activeLayout={activeLayout}
-                                            activeBundleType={activeBundleType}
-                                        />
-                                    </form>
+                                    <DynamicCustomizerPanel
+                                        config={CUSTOMIZER_CONFIG}
+                                        onClearErrorsAction={handleClearErrors}
+                                        onAccordionChange={
+                                            leftPanelScroll.handleAccordionChange
+                                        }
+                                        resetKey={resetCounter}
+                                        activeLayout={activeLayout}
+                                        activeBundleType={activeBundleType}
+                                    />
                                 </FormProvider>
                                 <div className="rtpb-blur-bottom" />
                             </div>

@@ -1,10 +1,9 @@
 // ==========================================================================
-// Compact Grid Layout — BOGO/BXGY hero card with product thumbnails
+// Compact Grid Layout — Deal showcase with gradient banner + 2-column tiles
 // ==========================================================================
 
 .radius-bundle {
-    &--compact_grid,
-    &--minimalist {
+    &--compact_grid {
         .radius-bundle__inner {
             padding: 0;
         }
@@ -14,153 +13,6 @@
         }
     }
 }
-
-.rb-compact-grid {
-    &__container {
-        position: relative;
-        background: #fff;
-        border-radius: var(--rb-border-radius, 16px);
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        padding: var(--rb-box-spacing, 20px);
-        overflow: hidden;
-    }
-
-    // ── Badge ────────────────────────────────────────────────────────
-    &__badge {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: var(--rb-primary-color, #e0598b);
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        padding: 6px 16px 6px 20px;
-        border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
-        line-height: 1.2;
-    }
-
-    // ── Hero section ─────────────────────────────────────────────────
-    &__hero {
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-        margin-bottom: 16px;
-        padding-top: 8px;
-    }
-
-    &__hero-image {
-        width: 110px;
-        height: 110px;
-        flex-shrink: 0;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #f9fafb;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: var(--rb-image-fit, cover);
-        }
-    }
-
-    &__hero-placeholder {
-        width: 110px;
-        height: 110px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 32px;
-        background: #f9fafb;
-        border-radius: 12px;
-    }
-
-    &__hero-info {
-        flex: 1;
-        min-width: 0;
-        padding-top: 4px;
-    }
-
-    &__title {
-        font-size: var(--rb-heading-font-size, 18px);
-        font-weight: 700;
-        color: var(--rb-text-color, #1a1a2e);
-        margin: 0 0 4px;
-        line-height: 1.3;
-    }
-
-    &__subtitle {
-        font-size: var(--rb-body-font-size, 14px);
-        color: #6b7280;
-        margin: 0 0 8px;
-        line-height: 1.4;
-    }
-
-    // ── Pricing ──────────────────────────────────────────────────────
-    &__pricing {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-    }
-
-    &__price {
-        font-size: 22px;
-        font-weight: 700;
-        color: var(--rb-primary-color, #e0598b);
-    }
-
-    &__price-compare {
-        font-size: 15px;
-        color: #9ca3af;
-        text-decoration: line-through;
-        font-weight: 500;
-    }
-
-    // ── CTA button ───────────────────────────────────────────────────
-    &__cta {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        width: 100%;
-        padding: 14px 24px;
-        border: none;
-        border-radius: var(--rb-button-border-radius, 12px);
-        background: var(--rb-button-bg-color, var(--rb-primary-color, #e0598b));
-        color: var(--rb-button-text-color, #fff);
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.15s ease;
-
-        &:hover {
-            opacity: 0.9;
-        }
-
-        svg {
-            flex-shrink: 0;
-        }
-    }
-}
-
-@container (max-width: 360px) {
-    .rb-compact-grid {
-        &__hero {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        &__pricing {
-            justify-content: center;
-        }
-    }
-}
-
-// ==========================================================================
-// Compact Grid V2 — Deal showcase with gradient banner + 2-column tiles
-// ==========================================================================
 
 .rb-cg {
     &__container {

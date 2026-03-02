@@ -169,6 +169,67 @@ export function WidgetMinimalist({
                 </div>
             </div>
 
+            {products.length > 0 && (
+                <div
+                    style={{
+                        display: "flex",
+                        gap: 10,
+                        marginBottom: 16,
+                    }}
+                >
+                    {products.map((product) => (
+                        <div
+                            key={product.id}
+                            style={{
+                                flex: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 10,
+                                padding: "10px 12px",
+                                background: `color-mix(in srgb, ${primaryColor} 8%, white)`,
+                                borderRadius: 10,
+                                minWidth: 0,
+                            }}
+                        >
+                            {product.image && (
+                                <div
+                                    style={{
+                                        width: 40,
+                                        height: 40,
+                                        flexShrink: 0,
+                                        borderRadius: 10,
+                                        overflow: "hidden",
+                                        background: "#f9fafb",
+                                    }}
+                                >
+                                    <img
+                                        src={product.image}
+                                        alt={product.title}
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            <span
+                                style={{
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    color: styles.textColor,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                {product.title}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             {cartButtonText && (
                 <button
                     style={{

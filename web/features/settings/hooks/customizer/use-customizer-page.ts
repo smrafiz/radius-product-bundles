@@ -41,7 +41,6 @@ export function useCustomizerPage() {
     const bundleTypeParam = searchParams.get("bundleType");
     const initialType = types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
     const [resetCounter, setResetCounter] = useState(0);
-    const hiddenInputRef = useRef<HTMLInputElement>(null);
 
     // Store the ORIGINAL server values in a ref (immutable snapshot)
     const serverSnapshotRef = useRef<CustomizerStyles | null>(null);
@@ -98,18 +97,6 @@ export function useCustomizerPage() {
         removeMessageByKey("customizer-validation");
         form.clearErrors();
     }, [form, removeMessageByKey]);
-
-    /**
-     * Triggers SaveBar by changing hidden input value.
-     */
-    const triggerSaveBar = useCallback(() => {
-        if (hiddenInputRef.current) {
-            hiddenInputRef.current.value = Date.now().toString();
-            hiddenInputRef.current.dispatchEvent(
-                new Event("input", { bubbles: true }),
-            );
-        }
-    }, []);
 
     /**
      * Handles form submission with RHF validation.
@@ -180,14 +167,6 @@ export function useCustomizerPage() {
         // Clear any remaining form errors explicitly
         form.clearErrors();
 
-        // Reset hidden dirty input so Shopify dismisses the save bar
-        if (hiddenInputRef.current) {
-            hiddenInputRef.current.value = "";
-            hiddenInputRef.current.dispatchEvent(
-                new Event("input", { bubbles: true }),
-            );
-        }
-
         // Increment reset counter to force re-render of web components
         setResetCounter((c) => c + 1);
     }, [form, initializeStyles, removeMessageByKey]);
@@ -199,12 +178,10 @@ export function useCustomizerPage() {
         isLoading,
         isSaving,
         isDirty: form.formState.isDirty,
-        hiddenInputRef,
         resetCounter,
 
         // Actions
         setActiveId: (id: string) => setActiveBundleType(id as BundleType),
-        triggerSaveBar,
         handleClearErrors,
         handleSubmit,
         handleReset,
