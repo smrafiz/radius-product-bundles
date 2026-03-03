@@ -17,6 +17,7 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
         { label: "Compact Grid", value: "COMPACT_GRID" },
         { label: "Minimalist", value: "MINIMALIST" },
         { label: "Sleek", value: "SLEEK" },
+        { label: "Unlock", value: "UNLOCK" },
     ],
 
     BOGO: [
@@ -24,6 +25,7 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
         { label: "Compact Grid", value: "COMPACT_GRID" },
         { label: "Minimalist", value: "MINIMALIST" },
         { label: "Sleek", value: "SLEEK" },
+        { label: "Unlock", value: "UNLOCK" },
     ],
 
     VOLUME_DISCOUNT: [{ label: "List", value: "LIST" }],

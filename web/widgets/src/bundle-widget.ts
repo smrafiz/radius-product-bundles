@@ -24,6 +24,7 @@ import {
     renderBogoCompactGridProducts,
     renderBogoMinimalistProducts,
     renderBogoSleekProducts,
+    renderBogoUnlockProducts,
     renderBxgyProducts,
     renderClassicCardProducts,
 } from "./lib/bogo-renderer";
@@ -924,6 +925,8 @@ import {
                             productsContainer,
                             ctx,
                         );
+                    } else if (layout === "unlock") {
+                        renderBogoUnlockProducts(bundle, productsContainer, ctx);
                     } else {
                         renderBxgyProducts(bundle, productsContainer, ctx);
                     }

@@ -533,3 +533,116 @@ export function renderBogoCompactGridProducts(bundle: Bundle, container: Element
     hideStandardButton(ctx.container);
     wireCustomCartButton(container, ctx.container, "[data-cg-add-to-cart]");
 }
+
+export function renderBogoUnlockProducts(bundle: Bundle, container: Element, ctx: BogoContext): void {
+    const { triggers, rewards } = splitByRole(bundle);
+    const structure = ctx.bundleStructure || bundle;
+    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const labels = structure.labels;
+    const freeText = labels?.bogoFreeText || "FREE";
+
+    const totalTriggers = triggers.length;
+    const progress = totalTriggers;
+    const isUnlocked = progress >= totalTriggers;
+    const progressPercent = totalTriggers > 0 ? (progress / totalTriggers) * 100 : 0;
+
+    const checkSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    const lockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+    const unlockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>`;
+
+    let rewardBadgeText: string;
+    if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+        rewardBadgeText = freeText;
+    } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+        rewardBadgeText = `${structure.discountValue}% Off`;
+    } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+        rewardBadgeText = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+    } else {
+        rewardBadgeText = labels?.bogoRewardBadgeText || "You Get";
+    }
+
+    let html = `<div class="rb-unlock__container">`;
+
+    html += `<div class="rb-unlock__progress">`;
+    html += `<div class="rb-unlock__progress-header">`;
+    html += `<h3 class="rb-unlock__progress-title">${escapeHtml(bundle.name)}</h3>`;
+    html += `<span class="rb-unlock__progress-count">${progress}/${totalTriggers} items added</span>`;
+    html += `</div>`;
+    html += `<div class="rb-unlock__progress-track"><div class="rb-unlock__progress-fill" style="width:${progressPercent}%"></div></div>`;
+    if (structure.subtitle) {
+        html += `<div class="rb-unlock__progress-text">${escapeHtml(structure.subtitle)}</div>`;
+    }
+    html += `</div>`;
+
+    html += `<div class="rb-unlock__section">`;
+    html += `<span class="rb-unlock__section-label">Buy</span>`;
+    triggers.forEach(p => {
+        const imageHtml = ctx.showImages && p.featuredImage
+            ? `<div class="rb-unlock__item-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+            : ctx.showImages
+              ? `<div class="rb-unlock__item-placeholder">📦</div>`
+              : "";
+
+        html += `<div class="rb-unlock__item rb-unlock__item--checked" data-product-id="${p.id}" data-variant-id="${p.variantId}">`;
+        html += `<div class="rb-unlock__checkbox rb-unlock__checkbox--checked">${checkSvg}</div>`;
+        html += imageHtml;
+        html += `<div class="rb-unlock__item-info">`;
+        html += `<div class="rb-unlock__item-title">${escapeHtml(p.title)}</div>`;
+        if (ctx.showPrices) {
+            html += `<div class="rb-unlock__item-price">${formatMoney(p.price)}</div>`;
+        }
+        if (ctx.showQuantity && p.quantity > 1) {
+            html += `<div class="rb-unlock__item-qty">${ctx.quantityLabel} ${p.quantity}</div>`;
+        }
+        html += `</div></div>`;
+    });
+    html += `</div>`;
+
+    const rewardStateClass = isUnlocked ? "rb-unlock__reward--unlocked" : "rb-unlock__reward--locked";
+    html += `<div class="rb-unlock__reward ${rewardStateClass}">`;
+    html += `<div class="rb-unlock__reward-header">`;
+    html += `<span class="rb-unlock__reward-label">Your Reward</span>`;
+    if (rewardBadgeText) {
+        html += `<span class="rb-unlock__reward-badge">${escapeHtml(rewardBadgeText)}</span>`;
+    }
+    html += `<span class="rb-unlock__lock-icon">${isUnlocked ? unlockSvg : lockSvg}</span>`;
+    html += `</div>`;
+    html += `<div class="rb-unlock__reward-products">`;
+    rewards.forEach(p => {
+        const imageHtml = ctx.showImages && p.featuredImage
+            ? `<div class="rb-unlock__reward-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+            : ctx.showImages
+              ? `<div class="rb-unlock__reward-placeholder">🎁</div>`
+              : "";
+
+        html += `<div class="rb-unlock__reward-item">`;
+        html += imageHtml;
+        html += `<div class="rb-unlock__reward-info">`;
+        html += `<div class="rb-unlock__reward-title">${escapeHtml(p.title)}</div>`;
+        if (ctx.showPrices) {
+            const discountedPrice = calculateBxgyRewardPrice(p.price, structure);
+            const isFree = discountedPrice === 0;
+            html += `<div class="rb-unlock__reward-price">`;
+            html += `<span class="rb-unlock__reward-price-current">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
+            if (ctx.showComparePrices && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
+                html += `<span class="rb-unlock__reward-price-compare">${formatMoney(p.price)}</span>`;
+            }
+            html += `</div>`;
+        }
+        html += `</div></div>`;
+    });
+    html += `</div></div>`;
+
+    const buttonText = ctx.container.querySelector("[data-bundle-add-to-cart]")?.textContent?.trim() || "Add to Cart";
+    const ctaClass = isUnlocked ? "rb-unlock__cta--unlocked" : "rb-unlock__cta--locked";
+    const cartSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`;
+    html += `<button class="rb-unlock__cta ${ctaClass}" data-unlock-add-to-cart${isUnlocked ? "" : " disabled"}>${cartSvg} ${escapeHtml(buttonText)}</button>`;
+
+    html += `</div>`;
+
+    container.innerHTML = html;
+    hideStandardHeader(ctx.container);
+    hideStandardPricing(ctx.container);
+    hideStandardButton(ctx.container);
+    wireCustomCartButton(container, ctx.container, "[data-unlock-add-to-cart]");
+}

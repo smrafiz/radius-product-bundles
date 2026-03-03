@@ -90,6 +90,11 @@ export const BOGO_LAYOUTS = [
         value: "SLEEK" as const,
         widgetLayout: "/assets/widget-sleek-layout.png",
     },
+    {
+        label: "Unlock",
+        value: "UNLOCK" as const,
+        widgetLayout: "/assets/widget-unlock-layout.png",
+    },
 ];
 
 export const LAYOUTS_BY_BUNDLE_TYPE: Record<
@@ -106,6 +111,7 @@ export const BOGO_LAYOUT_VALUES = [
     "COMPACT_GRID",
     "MINIMALIST",
     "SLEEK",
+    "UNLOCK",
 ];
 
 export const BUNDLE_STEPS = [

@@ -110,6 +110,7 @@ export function getLayout(container: HTMLElement): string {
     if (container.classList.contains("radius-bundle--compact_grid")) return "compact_grid";
     if (container.classList.contains("radius-bundle--minimalist")) return "minimalist";
     if (container.classList.contains("radius-bundle--sleek")) return "sleek";
+    if (container.classList.contains("radius-bundle--unlock")) return "unlock";
     return "list";
 }
 

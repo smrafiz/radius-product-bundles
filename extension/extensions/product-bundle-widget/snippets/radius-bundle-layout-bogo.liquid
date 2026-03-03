@@ -1,25 +1,3 @@
-{% doc %}
-  Shared BOGO/BXGY skeleton — JS renderers replace [data-bundle-products] innerHTML.
-  Mirrors standard layout structure: header → product skeletons → pricing → button.
-
-  @param {string} bundle_id - The bundle identifier
-  @param {string} layout - Layout key (classic_card, compact_grid, minimalist, sleek)
-  @param {string} name - Bundle heading/title
-  @param {string} subtitle - Bundle subtitle (optional)
-  @param {number} product_count - Number of products in the bundle
-  @param {boolean} show_images - Whether to show image placeholders
-  @param {boolean} show_savings - Whether to show savings/pricing bar
-  @param {boolean} show_savings_badge - Whether to show the savings badge
-  @param {boolean} show_product_prices - Whether to show price placeholders
-  @param {boolean} show_quantity - Whether to show quantity placeholders
-  @param {string} bogo_you_pay_label - "You Pay Only" label
-  @param {string} bogo_you_save_label - "You Save" label
-  @param {string} bogo_trigger_badge_text - Trigger badge label (e.g. "You Buy")
-  @param {string} bogo_reward_badge_text - Reward badge label (e.g. "You Get FREE")
-  @param {number} trigger_count - Number of trigger products (default: count - 1)
-  @param {string} button_text - Add to cart button text
-{% enddoc %}
-
 {% assign count = product_count | default: 2 %}
 {% unless trigger_count > 0 %}
 	{% assign trigger_count = count | minus: 1 %}
@@ -101,6 +79,32 @@
 						</div>
 					</div>
 				{% endif %}
+
+			{% when 'unlock' %}
+				{% assign reward_count = count | minus: trigger_count %}
+				<div class="rb-unlock__container">
+					<div class="rb-unlock__progress">
+						<div class="rb-unlock__progress-track"><div class="rb-unlock__progress-fill" style="width:0%"></div></div>
+					</div>
+					<div class="rb-unlock__section">
+						{% for i in (1..trigger_count) %}
+						<div class="rb-unlock__item">
+							<div class="rb-unlock__checkbox"></div>
+							{%- if show_images -%}<div class="radius-bundle__skeleton-image" style="width:48px;height:48px;border-radius:8px;"></div>{%- endif -%}
+							<div class="rb-unlock__item-info"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div></div>
+						</div>
+						{% endfor %}
+					</div>
+					<div class="rb-unlock__reward rb-unlock__reward--locked" style="padding:16px;">
+						{% for i in (1..reward_count) %}
+						<div class="rb-unlock__reward-item" style="display:flex;gap:8px;align-items:center;">
+							{%- if show_images -%}<div class="radius-bundle__skeleton-image" style="width:48px;height:48px;border-radius:8px;"></div>{%- endif -%}
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title" style="flex:1;"></div>
+						</div>
+						{% endfor %}
+					</div>
+					<div class="radius-bundle__skeleton-text" style="height:44px;border-radius:8px;width:100%;"></div>
+				</div>
 
 			{% else %}
 				<div class="radius-bundle__skeleton">
