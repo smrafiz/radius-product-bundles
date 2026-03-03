@@ -34,7 +34,8 @@ import {
 } from "@/features/settings";
 import { useMemo } from "react";
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
-import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
+import { DEFAULT_CUSTOMIZER_STYLES, DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import type { WidgetLabels } from "@/shared";
 
 import "@/styles/components/bundle.css";
 
@@ -197,6 +198,39 @@ function useWidgetPricing(currencyCode?: string): WidgetPricing {
     };
 }
 
+function useWidgetLabels(): WidgetLabels {
+    const serverData = useSettingsStore((s) => s.serverData);
+    return useMemo(
+        () => ({
+            ...DEFAULT_LABELS,
+            ...(serverData?.labels as Partial<typeof DEFAULT_LABELS>),
+        }),
+        [serverData],
+    );
+}
+
+function useBadgeText(labels: WidgetLabels): string {
+    const { bundleData } = useBundleStore();
+
+    if (labels.bogoBadgeText) return labels.bogoBadgeText;
+
+    const buy = bundleData.buyQuantity ?? 1;
+    const get = bundleData.getQuantity ?? 1;
+    const discountType = bundleData.discountType;
+    const discountValue = bundleData.discountValue ?? 0;
+
+    if (discountType === "PERCENTAGE" && discountValue === 100) {
+        return `Buy ${buy} Get ${get} Free`;
+    }
+    if (discountType === "PERCENTAGE" && discountValue > 0) {
+        return `Buy ${buy} Get ${get} at ${discountValue}% Off`;
+    }
+    if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
+        return `Buy ${buy} Get ${get} - $${discountValue} Off`;
+    }
+    return `Buy ${buy} Get ${get}`;
+}
+
 function RenderLayout({
     layout,
     products,
@@ -206,6 +240,8 @@ function RenderLayout({
     cartButtonText,
     title,
     subtitle,
+    badgeText,
+    labels,
 }: {
     layout: DisplaySettings["layout"];
     products: PreviewProduct[];
@@ -215,6 +251,8 @@ function RenderLayout({
     cartButtonText?: string;
     title?: string;
     subtitle?: string;
+    badgeText?: string;
+    labels?: WidgetLabels;
 }) {
     const layoutProps = { products, styles, displayOptions };
 
@@ -235,6 +273,7 @@ function RenderLayout({
                     cartButtonText={cartButtonText}
                     title={title}
                     subtitle={subtitle}
+                    labels={labels}
                 />
             );
         case "COMPACT_GRID":
@@ -244,7 +283,8 @@ function RenderLayout({
                     pricing={pricing}
                     cartButtonText={cartButtonText}
                     title={title}
-                    badgeText="Buy 1 Get 1 Free"
+                    badgeText={badgeText}
+                    labels={labels}
                 />
             );
         case "MINIMALIST":
@@ -255,7 +295,7 @@ function RenderLayout({
                     cartButtonText={cartButtonText}
                     title={title}
                     subtitle={subtitle}
-                    badgeText="Buy 1 Get 1 Free"
+                    badgeText={badgeText}
                 />
             );
         case "CLASSIC_CARD":
@@ -266,7 +306,8 @@ function RenderLayout({
                     cartButtonText={cartButtonText}
                     title={title}
                     subtitle={subtitle}
-                    badgeText="Buy 1 Get 1 Free"
+                    badgeText={badgeText}
+                    labels={labels}
                 />
             );
         default:
@@ -279,13 +320,15 @@ export function BundlePreview() {
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
     const customizerSrc = bundleData.type
-        ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}`
+        ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}`
         : ROUTES.CUSTOMIZER;
     const styles = useWidgetStyles();
     const products = usePreviewProducts(currencyCode);
     const displayOptions = useWidgetDisplayOptions();
     const pricing = useWidgetPricing(currencyCode);
 
+    const labels = useWidgetLabels();
+    const badgeText = useBadgeText(labels);
     const borderRadius = getCardRadius(styles.cornerStyle);
     const shadow = getShadow(styles.shadow);
     const padding = getPadding(styles.spacing);
@@ -388,6 +431,8 @@ export function BundlePreview() {
                                         }
                                         title={displaySettings.title}
                                         subtitle={displaySettings.subtitle}
+                                        badgeText={badgeText}
+                                        labels={labels}
                                     />
                                 </BundleWidget>
                             </div>

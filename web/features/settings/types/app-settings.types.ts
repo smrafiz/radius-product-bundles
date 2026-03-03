@@ -31,11 +31,15 @@ export interface AppSettingsLabels {
     // Cart Limits
     maxBundlesReachedText: string;
 
-    // BOGO Labels
+    // BOGO / Buy X Get Y Labels
     bogoYouPayLabel: string;
     bogoYouSaveLabel: string;
     bogoTriggerBadgeText: string;
     bogoRewardBadgeText: string;
+    bogoBadgeText: string;
+    bogoFreeText: string;
+    bogoTotalLabel: string;
+    bogoSaveText: string;
 
     // Cart Banner
     bannerSavingText: string;

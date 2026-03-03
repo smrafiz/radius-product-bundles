@@ -45,6 +45,11 @@ function hideStandardButton(widgetContainer: HTMLElement): void {
     if (el) (el as HTMLElement).style.display = "none";
 }
 
+function hideStandardHeader(widgetContainer: HTMLElement): void {
+    const el = widgetContainer.querySelector(".radius-bundle__header");
+    if (el) (el as HTMLElement).style.display = "none";
+}
+
 function wireCustomCartButton(productsContainer: Element, widgetContainer: HTMLElement, selector: string): void {
     const btn = productsContainer.querySelector(selector);
     if (btn) {
@@ -122,24 +127,33 @@ export function renderClassicCardProducts(bundle: Bundle, container: Element, ct
 
     const labels = structure.labels;
     const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
-    const rewardBadge = labels?.bogoRewardBadgeText || "You Get FREE";
     const youPayLabel = labels?.bogoYouPayLabel || "You Pay Only";
     const youSaveLabel = labels?.bogoYouSaveLabel || "You Save";
+    const freeText = labels?.bogoFreeText || "FREE";
+
+    let rewardBadge: string;
+    if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+        rewardBadge = `You Get ${freeText}`;
+    } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+        rewardBadge = `${structure.discountValue}% Off`;
+    } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+        rewardBadge = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+    } else {
+        rewardBadge = labels?.bogoRewardBadgeText || "You Get";
+    }
 
     const isHorizontal = ctx.imagePosition === "left";
     const isOutlineBadge = ctx.badgeStyle === "outline";
     const aspectClass = `rb-classic__image--${ctx.imageSize}`;
 
-    const renderCard = (product: BundleProduct, isReward: boolean): string => {
+    const renderProduct = (product: BundleProduct, isReward: boolean): string => {
         const imageHtml = ctx.showImages && product.featuredImage
             ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
             : ctx.showImages
               ? `<div class="rb-classic__placeholder">📦</div>`
               : "";
 
-        const badgeText = isReward ? rewardBadge : triggerBadge;
         const sectionClass = isReward ? "reward" : "trigger";
-        const outlineClass = isOutlineBadge ? " rb-classic__badge--outline" : "";
 
         let priceHtml = "";
         if (ctx.showPrices) {
@@ -150,37 +164,67 @@ export function renderClassicCardProducts(bundle: Bundle, container: Element, ct
                 if (ctx.showComparePrices) {
                     priceHtml += `<span class="rb-classic__price-compare">${formatMoney(product.price)}</span>`;
                 }
-                priceHtml += `<span class="rb-classic__price-current rb-classic__price-current--${sectionClass}">${isFree ? "FREE" : formatMoney(discountedPrice)}</span>`;
+                priceHtml += `<span class="rb-classic__price-current rb-classic__price-current--${sectionClass}">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
                 priceHtml += `</div>`;
             } else {
                 priceHtml = `<div class="rb-classic__price"><span class="rb-classic__price-current">${formatMoney(product.price)}</span></div>`;
             }
         }
 
-        const cardClass = `rb-classic__card rb-classic__card--${sectionClass}${isHorizontal ? " rb-classic__card--horizontal" : ""}`;
         const imageBlock = ctx.showImages
             ? `<div class="rb-classic__image ${aspectClass}">${imageHtml}</div>`
             : "";
 
-        const textBlock = `
-            <div class="rb-classic__text">
-                <h4 class="rb-classic__title">${escapeHtml(product.title)}</h4>
-                ${priceHtml}
-            </div>
-        `;
-
         return `
-            <div class="${cardClass}">
-                <span class="rb-classic__badge rb-classic__badge--${sectionClass}${outlineClass}">${escapeHtml(badgeText)}</span>
+            <div class="rb-classic__product${isHorizontal ? " rb-classic__product--horizontal" : ""}">
                 ${imageBlock}
-                ${textBlock}
+                <div class="rb-classic__text">
+                    <h4 class="rb-classic__title">${escapeHtml(product.title)}</h4>
+                    ${priceHtml}
+                </div>
             </div>
         `;
     };
 
-    let html = `<div class="rb-classic__grid">`;
-    triggers.forEach(p => { html += renderCard(p, false); });
-    rewards.forEach(p => { html += renderCard(p, true); });
+    let headerBadge = labels?.bogoBadgeText || "";
+    if (!headerBadge) {
+        const buyQty = structure.buyQuantity || 1;
+        const getQty = structure.getQuantity || 1;
+        if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+            headerBadge = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+        } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+            headerBadge = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% Off`;
+        } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+            headerBadge = `Buy ${buyQty} Get ${getQty} at ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+        }
+    }
+
+    let html = `<div class="rb-classic__header">`;
+    if (headerBadge) {
+        html += `<span class="rb-classic__header-badge">${escapeHtml(headerBadge)}</span>`;
+    }
+    html += `<div class="rb-classic__header-title">${escapeHtml(bundle.name)}</div>`;
+    if (structure.subtitle) {
+        html += `<div class="rb-classic__header-subtitle">${escapeHtml(structure.subtitle)}</div>`;
+    }
+    html += `</div>`;
+
+    const outlineClass = isOutlineBadge ? " rb-classic__badge--outline" : "";
+
+    html += `<div class="rb-classic__grid">`;
+    html += `<div class="rb-classic__card rb-classic__card--trigger">`;
+    html += `<span class="rb-classic__badge rb-classic__badge--trigger${outlineClass}">${escapeHtml(triggerBadge)}</span>`;
+    const triggerCols = triggers.length > 1 ? `grid-template-columns:repeat(${triggers.length},1fr)` : "";
+    html += `<div class="rb-classic__group-products"${triggerCols ? ` style="${triggerCols}"` : ""}>`;
+    triggers.forEach(p => { html += renderProduct(p, false); });
+    html += `</div></div>`;
+
+    html += `<div class="rb-classic__card rb-classic__card--reward">`;
+    html += `<span class="rb-classic__badge rb-classic__badge--reward${outlineClass}">${escapeHtml(rewardBadge)}</span>`;
+    const rewardCols = rewards.length > 1 ? `grid-template-columns:repeat(${rewards.length},1fr)` : "";
+    html += `<div class="rb-classic__group-products"${rewardCols ? ` style="${rewardCols}"` : ""}>`;
+    rewards.forEach(p => { html += renderProduct(p, true); });
+    html += `</div></div>`;
     html += `</div>`;
 
     const totalOriginal = [...triggers, ...rewards].reduce((sum, p) => sum + p.price, 0);
@@ -204,6 +248,7 @@ export function renderClassicCardProducts(bundle: Bundle, container: Element, ct
     }
 
     container.innerHTML = html;
+    hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
     enableCartButton(ctx.container);
 }
@@ -214,6 +259,8 @@ export function renderBogoSleekProducts(bundle: Bundle, container: Element, ctx:
     const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
     const labels = structure.labels;
     const youPayLabel = labels?.bogoYouPayLabel || "You pay";
+    const freeText = labels?.bogoFreeText || "FREE";
+    const totalLabel = labels?.bogoTotalLabel || "Total";
 
     const renderCard = (product: BundleProduct, isReward: boolean): string => {
         const imageHtml = ctx.showImages && product.featuredImage
@@ -233,7 +280,15 @@ export function renderBogoSleekProducts(bundle: Bundle, container: Element, ctx:
         if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
             const discountedPrice = calculateBxgyRewardPrice(product.price, structure);
             const isFree = discountedPrice === 0;
-            badgeHtml = isFree ? `<span class="rb-sleek__badge">FREE</span>` : "";
+            let rewardLabel = "";
+            if (isFree) {
+                rewardLabel = freeText;
+            } else if (structure.discountType === "PERCENTAGE") {
+                rewardLabel = `${structure.discountValue}% Off`;
+            } else if (structure.discountType === "FIXED_AMOUNT") {
+                rewardLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+            }
+            badgeHtml = rewardLabel ? `<span class="rb-sleek__badge">${escapeHtml(rewardLabel)}</span>` : "";
             priceHtml = `
                 <div class="rb-sleek__price">
                     <span class="rb-sleek__price-current rb-sleek__price-current--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</span>
@@ -278,13 +333,14 @@ export function renderBogoSleekProducts(bundle: Bundle, container: Element, ctx:
     html += `<div class="rb-sleek__separator"></div>`;
     html += `
         <div class="rb-sleek__footer">
-            <span class="rb-sleek__total">Total: ${formatMoney(totalDiscounted)}</span>
+            <span class="rb-sleek__total">${escapeHtml(totalLabel)}: ${formatMoney(totalDiscounted)}</span>
             <button class="rb-sleek__cart-btn" data-sleek-add-to-cart>${escapeHtml(buttonText)}</button>
         </div>
     `;
     html += `</div>`;
 
     container.innerHTML = html;
+    hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
     hideStandardButton(ctx.container);
     wireCustomCartButton(container, ctx.container, "[data-sleek-add-to-cart]");
@@ -303,15 +359,21 @@ export function renderBogoMinimalistProducts(bundle: Bundle, container: Element,
 
     const triggerProduct = triggers[0];
 
+    const minLabels = structure.labels;
     let badgeHtml = "";
     if (savings > 0 && ctx.showSavingsBadge) {
-        let badgeText = "";
-        if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
-            badgeText = "Buy 1 Get 1 FREE";
-        } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
-            badgeText = `Save ${structure.discountValue}%`;
-        } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
-            badgeText = `Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+        let badgeText = minLabels?.bogoBadgeText || "";
+        if (!badgeText) {
+            const buyQty = structure.buyQuantity || 1;
+            const getQty = structure.getQuantity || 1;
+            const freeText = minLabels?.bogoFreeText || "FREE";
+            if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+                badgeText = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+            } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+                badgeText = `Save ${structure.discountValue}%`;
+            } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+                badgeText = `Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+            }
         }
         if (badgeText) {
             badgeHtml = `<span class="rb-minimalist__badge">${escapeHtml(badgeText)}</span>`;
@@ -349,6 +411,7 @@ export function renderBogoMinimalistProducts(bundle: Bundle, container: Element,
     html += `</div>`;
 
     container.innerHTML = html;
+    hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
 
     const actionsEl = ctx.container.querySelector(".radius-bundle__actions");
@@ -390,9 +453,11 @@ export function renderBogoCompactGridProducts(bundle: Bundle, container: Element
               : "";
 
         let priceHtml = "";
-        if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
-            const discountedPrice = calculateBxgyRewardPrice(product.price, structure);
-            const isFree = discountedPrice === 0;
+        const hasRewardDiscount = isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0;
+        const discountedPrice = hasRewardDiscount ? calculateBxgyRewardPrice(product.price, structure) : product.price;
+        const isFree = hasRewardDiscount && discountedPrice === 0;
+
+        if (hasRewardDiscount) {
             priceHtml = `<div class="rb-cg__tile-price rb-cg__tile-price--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</div>`;
             if (ctx.showComparePrices) {
                 priceHtml += `<div class="rb-cg__tile-compare">${formatMoney(product.price)}</div>`;
@@ -401,7 +466,20 @@ export function renderBogoCompactGridProducts(bundle: Bundle, container: Element
             priceHtml = `<div class="rb-cg__tile-price">${formatMoney(product.price)}</div>`;
         }
 
-        const roleLabel = isReward ? "FREE" : "You Pay";
+        const cgFreeText = labels?.bogoFreeText || "FREE";
+        const cgPayLabel = labels?.bogoYouPayLabel || "You Pay";
+        let roleLabel = cgPayLabel;
+        if (isReward) {
+            if (isFree) {
+                roleLabel = cgFreeText;
+            } else if (structure.discountType === "PERCENTAGE") {
+                roleLabel = `${structure.discountValue}% Off`;
+            } else if (structure.discountType === "FIXED_AMOUNT") {
+                roleLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+            } else {
+                roleLabel = labels?.bogoRewardBadgeText || cgFreeText;
+            }
+        }
         const tileClass = `rb-cg__tile rb-cg__tile--${isReward ? "reward" : "trigger"}`;
 
         return `
@@ -426,17 +504,23 @@ export function renderBogoCompactGridProducts(bundle: Bundle, container: Element
     html += `</div>`;
 
     html += `<div class="rb-cg__tiles">`;
+    html += `<div class="rb-cg__tile-group" style="flex:${triggers.length}">`;
     triggers.forEach(p => { html += renderTile(p, false); });
+    html += `</div>`;
     html += `<div class="rb-cg__connector">+</div>`;
+    html += `<div class="rb-cg__tile-group" style="flex:${rewards.length}">`;
     rewards.forEach(p => { html += renderTile(p, true); });
+    html += `</div>`;
     html += `</div>`;
 
     html += `<div class="rb-cg__footer">`;
     html += `<div class="rb-cg__footer-pricing">`;
-    html += `<span class="rb-cg__footer-label">Total</span>`;
+    const cgTotalLabel = labels?.bogoTotalLabel || "Total";
+    const cgSaveText = labels?.bogoSaveText || "Save {amount}";
+    html += `<span class="rb-cg__footer-label">${escapeHtml(cgTotalLabel)}</span>`;
     html += `<span class="rb-cg__footer-total">${formatMoney(totalDiscounted)}`;
     if (savings > 0) {
-        html += ` <span class="rb-cg__footer-savings">Save ${formatMoney(savings)}</span>`;
+        html += ` <span class="rb-cg__footer-savings">${escapeHtml(formatLabel(cgSaveText, { amount: formatMoney(savings) }))}</span>`;
     }
     html += `</span></div>`;
     html += `<button class="rb-cg__cart-btn" data-cg-add-to-cart>${escapeHtml(buttonText)}</button>`;
@@ -444,7 +528,7 @@ export function renderBogoCompactGridProducts(bundle: Bundle, container: Element
 
     html += `</div>`;
     container.innerHTML = html;
-
+    hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
     hideStandardButton(ctx.container);
     wireCustomCartButton(container, ctx.container, "[data-cg-add-to-cart]");

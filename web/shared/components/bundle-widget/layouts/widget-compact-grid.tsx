@@ -9,23 +9,32 @@ import {
     getFontSize,
     getCardRadius,
 } from "@/features/settings";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 function ProductTile({
     product,
     variant,
     styles,
+    labels,
 }: {
     product: { title: string; image?: string; price: string; compareAtPrice?: string };
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const isTrigger = variant === "trigger";
+    const isReward = !isTrigger;
     const primaryColor = styles.primaryColor || "#e0598b";
     const savingsColor = styles.savingsColor || "#16a34a";
     const accentColor = isTrigger ? primaryColor : savingsColor;
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
+    const youPayLabel = labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel;
+    const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
+    const hasDiscount = isReward && !!product.compareAtPrice;
+    const isFreePrice = hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     return (
         <div
@@ -78,7 +87,7 @@ function ProductTile({
                     lineHeight: "14px",
                 }}
             >
-                {isTrigger ? "You Pay" : "FREE"}
+                {isTrigger ? youPayLabel : (isFreePrice ? freeText : rewardBadgeText)}
             </span>
 
             <div
@@ -102,12 +111,12 @@ function ProductTile({
                     style={{
                         fontSize: 16,
                         fontWeight: 700,
-                        color: isTrigger ? styles.textColor : freeTagColor,
+                        color: hasDiscount ? freeTagColor : styles.textColor,
                     }}
                 >
-                    {isTrigger ? product.price : product.compareAtPrice ? "$0.00" : "FREE"}
+                    {isFreePrice ? freeText : product.price}
                 </span>
-                {!isTrigger && product.compareAtPrice && (
+                {hasDiscount && product.compareAtPrice && (
                     <span
                         style={{
                             fontSize: 12,
@@ -130,6 +139,7 @@ export function WidgetCompactGrid({
     cartButtonText,
     title,
     badgeText,
+    labels,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -209,42 +219,47 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     gap: 0,
                     padding: "16px 16px 12px",
-                    position: "relative",
                 }}
             >
-                {triggerProducts.map((p) => (
-                    <ProductTile key={p.id} product={p} variant="trigger" styles={styles} />
-                ))}
+                <div style={{ display: "flex", flex: triggerProducts.length, gap: 8, minWidth: 0 }}>
+                    {triggerProducts.map((p) => (
+                        <ProductTile key={p.id} product={p} variant="trigger" styles={styles} labels={labels} />
+                    ))}
+                </div>
 
-                {/* Circular connector */}
                 <div
                     style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
                         width: 32,
-                        height: 32,
-                        borderRadius: "50%",
-                        background: "#fff",
-                        border: "2px solid #e5e7eb",
+                        flexShrink: 0,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: "#9ca3af",
-                        zIndex: 1,
                     }}
                 >
-                    +
+                    <div
+                        style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: "50%",
+                            background: "#fff",
+                            border: "2px solid #e5e7eb",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: 16,
+                            fontWeight: 700,
+                            color: "#9ca3af",
+                        }}
+                    >
+                        +
+                    </div>
                 </div>
 
-                <div style={{ width: 32, flexShrink: 0 }} />
-
-                {rewardProducts.map((p) => (
-                    <ProductTile key={p.id} product={p} variant="reward" styles={styles} />
-                ))}
+                <div style={{ display: "flex", flex: rewardProducts.length, gap: 8, minWidth: 0 }}>
+                    {rewardProducts.map((p) => (
+                        <ProductTile key={p.id} product={p} variant="reward" styles={styles} labels={labels} />
+                    ))}
+                </div>
             </div>
 
             {/* Footer */}
@@ -260,7 +275,7 @@ export function WidgetCompactGrid({
                 {pricing && (
                     <div style={{ display: "flex", flexDirection: "column" }}>
                         <span style={{ fontSize: 11, color: "#6b7280", fontWeight: 500 }}>
-                            Total
+                            {labels?.bogoTotalLabel || DEFAULT_LABELS.bogoTotalLabel}
                         </span>
                         <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                             <span style={{ fontSize: 20, fontWeight: 700, color: styles.textColor }}>
@@ -274,7 +289,7 @@ export function WidgetCompactGrid({
                                         color: savingsColor,
                                     }}
                                 >
-                                    Save {pricing.savingsAmount}
+                                    {(labels?.bogoSaveText || DEFAULT_LABELS.bogoSaveText).replace("{amount}", pricing.savingsAmount || "")}
                                 </span>
                             )}
                         </div>

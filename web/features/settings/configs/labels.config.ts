@@ -276,6 +276,36 @@ export const LABELS_TAB: SettingsTabConfig = {
             fields: [
                 {
                     type: "text",
+                    name: "bogoBadgeText",
+                    label: "Deal badge text",
+                    placeholder: "Buy 1 Get 1 Free",
+                    details:
+                        "Custom deal badge text. Leave empty to auto-generate from quantities and discount.",
+                    defaultValue: "",
+                    validation: {
+                        maxLength: {
+                            value: 50,
+                            message: "Cannot exceed 50 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bogoFreeText",
+                    label: "Free text",
+                    placeholder: "FREE",
+                    details:
+                        "Text shown on reward products when they are free (100% discount).",
+                    defaultValue: "FREE",
+                    validation: {
+                        maxLength: {
+                            value: 20,
+                            message: "Cannot exceed 20 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
                     name: "bogoYouPayLabel",
                     label: "You pay label",
                     placeholder: "You Pay Only",
@@ -327,6 +357,36 @@ export const LABELS_TAB: SettingsTabConfig = {
                     details:
                         "Badge on the reward (get) product card.",
                     defaultValue: "You Get FREE",
+                    validation: {
+                        maxLength: {
+                            value: 30,
+                            message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bogoTotalLabel",
+                    label: "Total label",
+                    placeholder: "Total",
+                    details:
+                        "Label before the total price in the footer.",
+                    defaultValue: "Total",
+                    validation: {
+                        maxLength: {
+                            value: 20,
+                            message: "Cannot exceed 20 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bogoSaveText",
+                    label: "Save text",
+                    placeholder: "Save {amount}",
+                    details:
+                        "Savings text in the footer. Use {amount} for the savings value.",
+                    defaultValue: "Save {amount}",
                     validation: {
                         maxLength: {
                             value: 30,

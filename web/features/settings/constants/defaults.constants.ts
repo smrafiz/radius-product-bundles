@@ -124,11 +124,15 @@ export const DEFAULT_LABELS = {
     // Cart Limits
     maxBundlesReachedText: "Maximum {count} bundle(s) per order allowed",
 
-    // BOGO Labels
+    // BOGO / Buy X Get Y Labels
     bogoYouPayLabel: "You Pay Only",
     bogoYouSaveLabel: "You Save",
     bogoTriggerBadgeText: "You Buy",
     bogoRewardBadgeText: "You Get FREE",
+    bogoBadgeText: "",
+    bogoFreeText: "FREE",
+    bogoTotalLabel: "Total",
+    bogoSaveText: "Save {amount}",
 
     // Cart Banner
     bannerSavingText: "You're saving {discount} with {name}",

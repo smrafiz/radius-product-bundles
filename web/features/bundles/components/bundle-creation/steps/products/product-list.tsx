@@ -95,8 +95,8 @@ export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boo
     const items = isBxgy ? bxgyGroups : groupedItems;
 
     const handleBxgyRemove = (itemId: string, productId: string) => {
-        if (sameProductMode) {
-            // Remove both trigger and reward copies of this product
+        if (isBogo && sameProductMode) {
+            // BOGO: remove both trigger and reward copies
             const toRemove = selectedItems.filter(
                 (i) => i.productId === productId,
             );
@@ -176,6 +176,7 @@ export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boo
                                 }}
                                 quantityLocked={isBogo}
                                 onRemove={
+                                    isBogo &&
                                     sameProductMode &&
                                     group.product.role === "REWARD"
                                         ? null

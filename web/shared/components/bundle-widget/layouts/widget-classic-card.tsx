@@ -10,8 +10,6 @@ import {
     getFontSize,
     getCardRadius,
     getBadgeRadius,
-    getSpacing,
-    getPadding,
     getShadow,
     getCardBgColor,
 } from "@/features/settings";
@@ -26,34 +24,21 @@ const IMAGE_ASPECT_RATIOS = {
     large: "3/4",
 } as const;
 
-function ClassicProductCard({
+function ClassicProductItem({
     product,
-    variant,
+    isReward,
     styles,
 }: {
     product: PreviewProduct;
-    variant: "trigger" | "reward";
+    isReward: boolean;
     styles: WidgetLayoutProps["styles"];
 }) {
-    const isTrigger = variant === "trigger";
-    const borderColor = isTrigger ? styles.primaryColor : styles.savingsColor;
-    const badgeBg = isTrigger ? styles.primaryColor : styles.savingsColor;
-    const badgeText = isTrigger
-        ? DEFAULT_LABELS.bogoTriggerBadgeText
-        : DEFAULT_LABELS.bogoRewardBadgeText;
-    const isFree = !isTrigger;
-    const isOutline = styles.badgeStyle === "outline";
-    const cardRadius = getCardRadius(styles.cornerStyle);
-    const badgeRadius = getBadgeRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const spacingValues = SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
-    const borderStyle = styles.bogoCardBorderStyle || "solid";
-    const showBorder = styles.customizeCardStyle ? styles.productCardBorder : true;
-    const cardBg = styles.customizeCardStyle ? getCardBgColor(styles) : undefined;
-    const cardShadow = styles.customizeCardStyle && styles.productCardShadow
-        ? getShadow("soft")
-        : undefined;
+    const cardRadius = getCardRadius(styles.cornerStyle);
     const isHorizontal = styles.imagePosition === "left";
+    const freeText = DEFAULT_LABELS.bogoFreeText;
+    const hasDiscount = isReward && !!product.compareAtPrice;
+    const isFreePrice = hasDiscount && (product.price === "$0.00" || product.price === "$0");
 
     const imageBlock = product.image && (
         <div
@@ -104,7 +89,7 @@ function ClassicProductCard({
                     marginTop: 6,
                 }}
             >
-                {isFree && (
+                {hasDiscount && (
                     <span
                         style={{
                             fontSize: 13,
@@ -113,19 +98,19 @@ function ClassicProductCard({
                             fontWeight: 500,
                         }}
                     >
-                        {product.price}
+                        {product.compareAtPrice}
                     </span>
                 )}
                 <span
                     style={{
                         fontSize: 16,
                         fontWeight: 700,
-                        color: isFree
+                        color: hasDiscount
                             ? (styles.bogoFreeTagColor || "#16a34a")
                             : styles.textColor,
                     }}
                 >
-                    {isFree ? "FREE" : product.price}
+                    {isFreePrice ? freeText : product.price}
                 </span>
             </div>
         </div>
@@ -134,39 +119,11 @@ function ClassicProductCard({
     return (
         <div
             style={{
-                border: showBorder
-                    ? `2px ${borderStyle} ${borderColor}`
-                    : "none",
-                borderRadius: cardRadius,
-                padding: spacingValues.padding,
-                position: "relative",
-                backgroundColor: cardBg,
-                flex: 1,
-                minWidth: 0,
-                boxShadow: cardShadow,
                 display: isHorizontal ? "flex" : undefined,
-                gap: isHorizontal ? spacingValues.gap : undefined,
+                gap: isHorizontal ? 12 : undefined,
                 alignItems: isHorizontal ? "center" : undefined,
             }}
         >
-            <span
-                style={{
-                    position: "absolute",
-                    top: -10,
-                    left: 12,
-                    backgroundColor: isOutline ? "transparent" : badgeBg,
-                    color: isOutline ? badgeBg : "#fff",
-                    border: isOutline ? `2px solid ${badgeBg}` : "none",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    padding: "2px 10px",
-                    borderRadius: badgeRadius,
-                    lineHeight: "16px",
-                }}
-            >
-                {badgeText}
-            </span>
-
             {isHorizontal ? (
                 <>
                     {imageBlock}
@@ -174,7 +131,7 @@ function ClassicProductCard({
                 </>
             ) : (
                 <>
-                    <div style={{ marginTop: 8, marginBottom: spacingValues.gap }}>
+                    <div style={{ marginTop: 8, marginBottom: 10 }}>
                         {imageBlock}
                     </div>
                     {textBlock}
@@ -192,17 +149,28 @@ export function WidgetClassicCard({
     title,
     subtitle,
     badgeText,
+    labels,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const spacingValues = SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
     const cardRadius = getCardRadius(styles.cornerStyle);
+    const badgeRadius = getBadgeRadius(styles.cornerStyle);
     const showPricingBar = styles.pricingSummaryBox !== false;
     const pricingBarBg = styles.pricingSummaryBg || "#DDEDDF";
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
     const isFullWidth = styles.buttonWidth !== "auto";
+    const isOutline = styles.badgeStyle === "outline";
+    const borderStyle = styles.bogoCardBorderStyle || "solid";
+    const showBorder = styles.customizeCardStyle ? styles.productCardBorder : true;
+    const cardBg = styles.customizeCardStyle ? getCardBgColor(styles) : undefined;
+    const cardShadow = styles.customizeCardStyle && styles.productCardShadow
+        ? getShadow("soft")
+        : undefined;
+    const triggerBadge = labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
+    const rewardBadge = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     if (!products.length) {
         return (
@@ -282,21 +250,55 @@ export function WidgetClassicCard({
             </div>
 
             <div style={{ display: "flex", gap: spacingValues.gap + 2 }}>
-                {triggerProducts.map((p) => (
-                    <ClassicProductCard
-                        key={p.id}
-                        product={p}
-                        variant="trigger"
-                        styles={styles}
-                    />
-                ))}
-                {rewardProducts.map((p) => (
-                    <ClassicProductCard
-                        key={p.id}
-                        product={p}
-                        variant="reward"
-                        styles={styles}
-                    />
+                {[
+                    { items: triggerProducts, variant: "trigger" as const, badge: triggerBadge, color: styles.primaryColor },
+                    { items: rewardProducts, variant: "reward" as const, badge: rewardBadge, color: styles.savingsColor },
+                ].map(({ items, variant, badge, color }) => (
+                    <div
+                        key={variant}
+                        style={{
+                            border: showBorder ? `2px ${borderStyle} ${color}` : "none",
+                            borderRadius: cardRadius,
+                            padding: spacingValues.padding,
+                            position: "relative",
+                            backgroundColor: cardBg,
+                            flex: 1,
+                            minWidth: 0,
+                            boxShadow: cardShadow,
+                        }}
+                    >
+                        <span
+                            style={{
+                                position: "absolute",
+                                top: -10,
+                                left: 12,
+                                backgroundColor: isOutline ? "transparent" : color,
+                                color: isOutline ? color : "#fff",
+                                border: isOutline ? `2px solid ${color}` : "none",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                padding: "2px 10px",
+                                borderRadius: badgeRadius,
+                                lineHeight: "16px",
+                            }}
+                        >
+                            {badge}
+                        </span>
+                        <div style={{
+                            display: "grid",
+                            gridTemplateColumns: items.length > 1 ? `repeat(${items.length}, 1fr)` : "1fr",
+                            gap: spacingValues.gap,
+                        }}>
+                            {items.map((p) => (
+                                <ClassicProductItem
+                                    key={p.id}
+                                    product={p}
+                                    isReward={variant === "reward"}
+                                    styles={styles}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 ))}
             </div>
 
@@ -320,7 +322,7 @@ export function WidgetClassicCard({
                                 marginBottom: 2,
                             }}
                         >
-                            {DEFAULT_LABELS.bogoYouPayLabel}
+                            {labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel}
                         </div>
                         <div
                             style={{
@@ -341,7 +343,7 @@ export function WidgetClassicCard({
                                 marginBottom: 2,
                             }}
                         >
-                            {DEFAULT_LABELS.bogoYouSaveLabel}
+                            {labels?.bogoYouSaveLabel || DEFAULT_LABELS.bogoYouSaveLabel}
                         </div>
                         <div
                             style={{

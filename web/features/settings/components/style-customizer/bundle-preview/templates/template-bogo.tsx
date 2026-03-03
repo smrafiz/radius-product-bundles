@@ -3,8 +3,8 @@
 import { PreviewProduct } from "@/shared";
 import {
     DEFAULT_DISPLAY_OPTIONS,
-    PLACEHOLDER_PRICING,
 } from "@/shared/constants/bundle-widget.constants";
+import type { WidgetPricing } from "@/shared";
 import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid } from "@/shared/components/bundle-widget";
 import { BundleTemplateProps, useEffectiveStyles } from "@/features/settings";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
@@ -22,11 +22,20 @@ const BOGO_PRODUCTS: PreviewProduct[] = [
         id: "reward-1",
         title: "Reward Product",
         image: PLACEHOLDER_IMAGES[2],
-        price: "$300",
+        price: "$0.00",
+        compareAtPrice: "$300",
         quantity: 1,
         role: "REWARD",
     },
 ];
+
+const BOGO_PRICING: WidgetPricing = {
+    originalPrice: "$600.00",
+    finalPrice: "$300.00",
+    savingsAmount: "$300.00",
+    savingsPercentage: 50,
+    hasDiscount: true,
+};
 
 export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
@@ -36,7 +45,7 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
         styles,
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
         showEmptyState: false,
-        pricing: PLACEHOLDER_PRICING,
+        pricing: BOGO_PRICING,
         cartButtonText: "Claim This Offer",
         title: "Buy One Get One Free",
         subtitle: "Limited time promotional offer",

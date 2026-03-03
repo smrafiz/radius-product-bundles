@@ -3,6 +3,41 @@
 // ==========================================================================
 
 .rb-classic {
+    // ── Header ──────────────────────────────────────────────────────────
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: var(--rb-gap-spacing, 12px);
+    }
+
+    &__header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--rb-primary-color, #f97316);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 20px;
+        margin-bottom: 4px;
+    }
+
+    &__header-title {
+        font-size: var(--rb-heading-font-size, 18px);
+        font-weight: 700;
+        color: var(--rb-text-color, inherit);
+        text-align: center;
+    }
+
+    &__header-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        text-align: center;
+    }
+
     &__grid {
         display: flex;
         gap: var(--rb-gap-spacing, 12px);
@@ -10,7 +45,6 @@
 
     // ── Card ──────────────────────────────────────────────────────────
     &__card {
-        flex: 1;
         min-width: 0;
         position: relative;
         border-width: 2px;
@@ -29,6 +63,34 @@
             border-color: var(--rb-savings-color, #16a34a);
         }
 
+        &--horizontal {
+            display: flex;
+            gap: var(--rb-gap-spacing, 12px);
+            align-items: center;
+
+            .rb-classic__image {
+                width: 40%;
+                flex-shrink: 0;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            .rb-classic__text {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+    }
+
+    // ── Group products (multiple products inside one card) ─────────
+    &__group-products {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: var(--rb-gap-spacing, 12px);
+    }
+
+    // ── Individual product (inside a group card) ────────────────────
+    &__product {
         &--horizontal {
             display: flex;
             gap: var(--rb-gap-spacing, 12px);

@@ -71,6 +71,10 @@ export interface BundleStructure {
         bogoYouSaveLabel?: string;
         bogoTriggerBadgeText?: string;
         bogoRewardBadgeText?: string;
+        bogoBadgeText?: string;
+        bogoFreeText?: string;
+        bogoTotalLabel?: string;
+        bogoSaveText?: string;
     };
 }
 

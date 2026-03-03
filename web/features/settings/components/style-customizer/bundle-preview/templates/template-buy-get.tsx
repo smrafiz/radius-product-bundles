@@ -1,92 +1,78 @@
 "use client";
 
+import { PreviewProduct } from "@/shared";
 import {
-    BundleTemplateProps,
-    BuyGetTier,
-    getSpacing,
-    useCustomizerStore,
-} from "@/features/settings";
-import { MiniProductCard } from "../../bundle-layout/cards/mini-product-card";
-import { TierCard } from "../../bundle-layout/elements/tier-card";
-import { TierTabs } from "../../bundle-layout/elements/tier-tabs";
+    DEFAULT_DISPLAY_OPTIONS,
+} from "@/shared/constants/bundle-widget.constants";
+import type { WidgetPricing } from "@/shared";
+import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid } from "@/shared/components/bundle-widget";
+import { BundleTemplateProps, useEffectiveStyles } from "@/features/settings";
+import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 
-const TIERS: ReadonlyArray<BuyGetTier> = [
-    { buy: 2, get: 1, label: "Buy 2, Get 1 Free" },
-    { buy: 3, get: 2, label: "Buy 3, Get 2 Free" },
+const BXGY_PRODUCTS: PreviewProduct[] = [
+    {
+        id: "trigger-1",
+        title: "Trigger Product A",
+        image: PLACEHOLDER_IMAGES[1],
+        price: "$250",
+        quantity: 1,
+        role: "TRIGGER",
+    },
+    {
+        id: "trigger-2",
+        title: "Trigger Product B",
+        image: PLACEHOLDER_IMAGES[2],
+        price: "$180",
+        quantity: 1,
+        role: "TRIGGER",
+    },
+    {
+        id: "reward-1",
+        title: "Reward Product C",
+        image: PLACEHOLDER_IMAGES[1],
+        price: "$100",
+        compareAtPrice: "$200",
+        quantity: 1,
+        role: "REWARD",
+    },
 ];
 
+const BXGY_PRICING: WidgetPricing = {
+    originalPrice: "$630.00",
+    finalPrice: "$530.00",
+    savingsAmount: "$100.00",
+    savingsPercentage: 16,
+    hasDiscount: true,
+};
+
 export function TemplateBuyGet({ activeLayout }: BundleTemplateProps) {
-    const { styles } = useCustomizerStore();
-    const gap = getSpacing(styles.spacing);
-    const tierStyle = styles.buyGetTierStyle;
+    const styles = useEffectiveStyles();
 
-    if (tierStyle === "tabs") {
-        return (
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap,
-                }}
-            >
-                <TierTabs tiers={TIERS} activeIndex={0} />
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "6px",
-                    }}
-                >
-                    {Array.from({ length: TIERS[0].buy }).map((_, j) => (
-                        <MiniProductCard key={`buy-${j}`} />
-                    ))}
-                    {Array.from({ length: TIERS[0].get }).map((_, j) => (
-                        <MiniProductCard
-                            key={`get-${j}`}
-                            isFree
-                            freeTagColor={styles.bogoFreeTagColor}
-                        />
-                    ))}
-                </div>
-            </div>
-        );
+    const layoutProps = {
+        products: BXGY_PRODUCTS,
+        styles,
+        displayOptions: DEFAULT_DISPLAY_OPTIONS,
+        showEmptyState: false,
+        pricing: BXGY_PRICING,
+        cartButtonText: "Claim This Offer",
+        title: "Buy 2 Get 1 Free",
+        subtitle: "Mix and match your favorites",
+        badgeText: "BXGY DEAL",
+        labels: {
+            bogoTriggerBadgeText: "You Buy",
+            bogoRewardBadgeText: "50% Off",
+        },
+    };
+
+    switch (activeLayout) {
+        case "SLEEK":
+            return <WidgetSleek {...layoutProps} />;
+        case "COMPACT_GRID":
+            return <WidgetCompactGrid {...layoutProps} />;
+        case "MINIMALIST":
+            return <WidgetMinimalist {...layoutProps} />;
+        case "CLASSIC_CARD":
+        default:
+            return <WidgetClassicCard {...layoutProps} />;
     }
-
-    return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                gap,
-            }}
-        >
-            {TIERS.map((tier, i) => (
-                <TierCard key={i} label={tier.label} variant={tierStyle}>
-                    <div
-                        style={{
-                            display: activeLayout === "GRID" ? "grid" : "flex",
-                            gridTemplateColumns:
-                                activeLayout === "GRID"
-                                    ? "repeat(auto-fill, minmax(120px, 1fr))"
-                                    : undefined,
-                            flexDirection:
-                                activeLayout !== "GRID" ? "column" : undefined,
-                            gap: "6px",
-                        }}
-                    >
-                        {Array.from({ length: tier.buy }).map((_, j) => (
-                            <MiniProductCard key={`buy-${j}`} />
-                        ))}
-                        {Array.from({ length: tier.get }).map((_, j) => (
-                            <MiniProductCard
-                                key={`get-${j}`}
-                                isFree
-                                freeTagColor={styles.bogoFreeTagColor}
-                            />
-                        ))}
-                    </div>
-                </TierCard>
-            ))}
-        </div>
-    );
 }

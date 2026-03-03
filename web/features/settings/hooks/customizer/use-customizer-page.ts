@@ -6,6 +6,7 @@ import {
     useCustomizerStore,
     useCustomizerSubmit,
     useSettingsQuery,
+    type WidgetLayout,
 } from "@/features/settings";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +40,7 @@ export function useCustomizerPage() {
     const types = Object.values(BUNDLE_TYPES);
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
+    const layoutParam = searchParams.get("layout");
     const initialType = types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
     const [resetCounter, setResetCounter] = useState(0);
 
@@ -52,13 +54,17 @@ export function useCustomizerPage() {
     const markClean = useCustomizerStore((state) => state.markClean);
     const activeBundleType = useCustomizerStore((state) => state.activeBundleType);
     const setActiveBundleType = useCustomizerStore((state) => state.setActiveBundleType);
+    const setActiveLayout = useCustomizerStore((state) => state.setActiveLayout);
 
-    // Initialize active bundle type from URL param
+    // Initialize active bundle type and layout from URL params
     useEffect(() => {
         if (!activeBundleType) {
             setActiveBundleType(initialType as BundleType);
+            if (layoutParam) {
+                setActiveLayout(layoutParam as WidgetLayout);
+            }
         }
-    }, [activeBundleType, initialType, setActiveBundleType]);
+    }, [activeBundleType, initialType, layoutParam, setActiveBundleType, setActiveLayout]);
 
     const { handleSubmit: submitToServer, isLoading: isSaving } =
         useCustomizerSubmit();

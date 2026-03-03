@@ -23,9 +23,17 @@ function getConditionValue(
         return context.activeBundleType;
     }
 
-    // Resolve value with responsive overrides
+    // Resolve value: base → bundle type override → device override
     const key = field as keyof CustomizerStyles;
     let value = context.styles[key];
+
+    if (context.activeBundleType) {
+        const overrides = context.styles.bundleTypeOverrides as Record<string, Partial<CustomizerStyles>> | undefined;
+        const typeOverride = overrides?.[context.activeBundleType]?.[key];
+        if (typeOverride !== undefined) {
+            value = typeOverride as any;
+        }
+    }
 
     if (context.activeDevice !== "desktop") {
         const override = context.styles[context.activeDevice]?.[key];

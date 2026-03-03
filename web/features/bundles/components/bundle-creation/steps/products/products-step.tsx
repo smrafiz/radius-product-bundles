@@ -32,15 +32,12 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     );
     const isBxgy = BXGY_TYPES.includes(bundleType);
     const isBogo = bundleType === "BOGO";
-    // BOGO: max 2 products (1 Buy + 1 Get). Same-product mode: 1 pick auto-mirrors.
-    // BXGY: uses global maxProducts (future: variable quantities).
     const globalMax = (settingsData?.maxBundleProducts as number) ?? 10;
     const bogoMaxPicks = bundleData.sameProductMode ? 1 : 2;
     const maxProducts = isBogo ? bogoMaxPicks : globalMax;
 
-    // For BOGO, count non-reward items (actual picks) vs total items
-    const actualPickCount = isBogo
-        ? selectedItems.filter((i) => i.role !== "REWARD" || !bundleData.sameProductMode).length
+    const actualPickCount = isBxgy && bundleData.sameProductMode
+        ? selectedItems.filter((i) => i.role !== "REWARD").length
         : selectedItems.length;
     const isAtLimit = actualPickCount >= maxProducts;
 
@@ -61,8 +58,9 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     useEffect(() => {
         if (!isBxgy) return;
 
-        // Only act when items were added (not removed or role-swapped)
-        if (selectedItems.length <= prevLengthRef.current) {
+        // Act when items were added OR when unassigned roles exist (e.g. picker replaced items)
+        const hasUnassigned = selectedItems.some((i) => !i.role || i.role === "INCLUDED");
+        if (selectedItems.length <= prevLengthRef.current && !hasUnassigned) {
             prevLengthRef.current = selectedItems.length;
             return;
         }
@@ -76,25 +74,27 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
             ? selectedItems.filter((i) => i.role !== "REWARD")
             : selectedItems;
 
-        if (isBogo && picks.length > limit) {
-            // Trim to limit, assign roles, and mirror if needed — all in one setState
+        if (picks.length > limit) {
             const trimmed = picks.slice(0, limit);
             const withRoles = trimmed.map((item, i) => ({
                 ...item,
                 role: (i === 0 ? "TRIGGER" : "REWARD") as "TRIGGER" | "REWARD",
             }));
 
-            // Same-product mode: mirror the trigger as reward
-            if (sameMode && withRoles.length === 1) {
-                withRoles.push({
-                    ...withRoles[0],
-                    role: "REWARD",
-                    id: `reward-${withRoles[0].productId}`,
-                });
+            if (sameMode) {
+                const triggers = withRoles.filter((i) => i.role === "TRIGGER");
+                const mirrored = triggers.map((t) => ({
+                    ...t,
+                    role: "REWARD" as const,
+                    id: `reward-${t.productId}`,
+                }));
+                const combined = [...withRoles, ...mirrored];
+                prevLengthRef.current = combined.length;
+                useBundleStore.getState().setSelectedItems(combined);
+            } else {
+                prevLengthRef.current = withRoles.length;
+                useBundleStore.getState().setSelectedItems(withRoles);
             }
-
-            prevLengthRef.current = withRoles.length;
-            useBundleStore.getState().setSelectedItems(withRoles);
             return;
         }
 
@@ -107,7 +107,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         if (unassigned.length === 0) return;
 
         // In same-product mode, assign TRIGGER then mirror as REWARD in one batch
-        if (sameMode && isBogo) {
+        if (sameMode && isBxgy) {
             const updated = selectedItems
                 .filter((i) => i.role !== "REWARD")
                 .map((item, i) => ({
@@ -183,7 +183,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         (error) => error.field === "products" || error.path === "products",
     )?.message;
     const showProductHint =
-        !isBogo && selectedItems.length === 1 && !hasProductError;
+        !isBxgy && selectedItems.length === 1 && !hasProductError;
 
     return (
         <s-stack gap="base">
@@ -252,10 +252,13 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                         </s-banner>
                     )}
                     <ProductList isBxgy={isBxgy} isBogo={isBogo} />
-                    {isBogo && (
+                    {isBxgy && (
                         <s-switch
                             label="Same product for both"
-                            details="Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)"
+                            details={isBogo
+                                ? "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)"
+                                : "Use the same products for both Buy and Get groups"
+                            }
                             checked={bundleData.sameProductMode || false}
                             onInput={(event: Event) => {
                                 const target =

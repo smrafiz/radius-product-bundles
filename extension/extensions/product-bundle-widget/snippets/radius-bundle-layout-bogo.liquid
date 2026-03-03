@@ -1,40 +1,149 @@
 {% doc %}
-  Shared BOGO/BXGY skeleton — all layout JS renderers replace container.innerHTML.
-  This provides a generic loading state until JS takes over.
+  Shared BOGO/BXGY skeleton — JS renderers replace [data-bundle-products] innerHTML.
+  Mirrors standard layout structure: header → product skeletons → pricing → button.
 
   @param {string} bundle_id - The bundle identifier
   @param {string} layout - Layout key (classic_card, compact_grid, minimalist, sleek)
+  @param {string} name - Bundle heading/title
+  @param {string} subtitle - Bundle subtitle (optional)
+  @param {number} product_count - Number of products in the bundle
   @param {boolean} show_images - Whether to show image placeholders
+  @param {boolean} show_savings - Whether to show savings/pricing bar
+  @param {boolean} show_savings_badge - Whether to show the savings badge
+  @param {boolean} show_product_prices - Whether to show price placeholders
+  @param {boolean} show_quantity - Whether to show quantity placeholders
+  @param {string} bogo_you_pay_label - "You Pay Only" label
+  @param {string} bogo_you_save_label - "You Save" label
+  @param {string} bogo_trigger_badge_text - Trigger badge label (e.g. "You Buy")
+  @param {string} bogo_reward_badge_text - Reward badge label (e.g. "You Get FREE")
+  @param {number} trigger_count - Number of trigger products (default: count - 1)
   @param {string} button_text - Add to cart button text
 {% enddoc %}
 
+{% assign count = product_count | default: 2 %}
+{% unless trigger_count > 0 %}
+	{% assign trigger_count = count | minus: 1 %}
+	{% if trigger_count < 1 %}{% assign trigger_count = 1 %}{% endif %}
+{% endunless %}
+
 <div class="radius-bundle__inner">
+	<div class="radius-bundle__header" style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px;">
+		{% if show_savings_badge %}
+			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge" style="display:inline-block;width:160px;height:28px;border-radius:20px;"></span>
+		{% endif %}
+		<h3 class="radius-bundle__title" data-bundle-title style="text-align:center;margin:0;">
+			{{ name }}
+		</h3>
+		{% if subtitle != blank %}
+			<p class="radius-bundle__subtitle" data-bundle-subtitle style="text-align:center;margin:0;font-size:14px;color:#6b7280;">
+				{{ subtitle }}
+			</p>
+		{% endif %}
+	</div>
+
 	<div class="radius-bundle__products radius-bundle__products--{{ layout }}" data-bundle-products>
 		<div class="radius-bundle__loading" data-bundle-loading>
-			<div class="radius-bundle__skeleton">
-				<div style="display:flex;gap:12px;align-items:stretch;">
-					<div class="radius-bundle__skeleton-item" style="flex:1;min-height:120px;">
-						{%- if show_images -%}
-							<div class="radius-bundle__skeleton-image" style="aspect-ratio:1/1;"></div>
-						{%- endif -%}
-						<div class="radius-bundle__skeleton-content">
-							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+			{% case layout %}
+			{% when 'classic_card' %}
+				{% assign reward_count = count | minus: trigger_count %}
+				<div class="rb-classic__grid">
+					<div class="rb-classic__card rb-classic__card--trigger" style="flex:1">
+						<span class="rb-classic__badge rb-classic__badge--trigger">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>
+						<div class="rb-classic__group-products"{% if trigger_count > 1 %} style="grid-template-columns:repeat({{ trigger_count }},1fr)"{% endif %}>
+							{% for i in (1..trigger_count) %}
+								<div class="rb-classic__product">
+									{%- if show_images -%}
+										<div class="rb-classic__image" style="margin-top:8px;">
+											<div class="radius-bundle__skeleton-image" style="width:100%;height:100%;"></div>
+										</div>
+									{%- endif -%}
+									<div class="rb-classic__text">
+										<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+										{%- if show_product_prices -%}
+											<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="margin-top:6px;"></div>
+										{%- endif -%}
+									</div>
+								</div>
+							{% endfor %}
 						</div>
 					</div>
-					<div style="display:flex;align-items:center;color:#9ca3af;font-size:18px;font-weight:600;">+</div>
-					<div class="radius-bundle__skeleton-item" style="flex:1;min-height:120px;">
-						{%- if show_images -%}
-							<div class="radius-bundle__skeleton-image" style="aspect-ratio:1/1;"></div>
-						{%- endif -%}
-						<div class="radius-bundle__skeleton-content">
-							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+					<div class="rb-classic__card rb-classic__card--reward" style="flex:1">
+						<span class="rb-classic__badge rb-classic__badge--reward">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>
+						<div class="rb-classic__group-products"{% if reward_count > 1 %} style="grid-template-columns:repeat({{ reward_count }},1fr)"{% endif %}>
+							{% for i in (1..reward_count) %}
+								<div class="rb-classic__product">
+									{%- if show_images -%}
+										<div class="rb-classic__image" style="margin-top:8px;">
+											<div class="radius-bundle__skeleton-image" style="width:100%;height:100%;"></div>
+										</div>
+									{%- endif -%}
+									<div class="rb-classic__text">
+										<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+										{%- if show_product_prices -%}
+											<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="margin-top:6px;"></div>
+										{%- endif -%}
+									</div>
+								</div>
+							{% endfor %}
 						</div>
 					</div>
 				</div>
-			</div>
+
+				{% if show_savings %}
+					<div class="rb-classic__pricing-bar">
+						<div class="rb-classic__pricing-col">
+							<span class="rb-classic__pricing-label rb-classic__pricing-pay">{{ bogo_you_pay_label }}</span>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+						</div>
+						<div class="rb-classic__pricing-col rb-classic__pricing-col--right">
+							<span class="rb-classic__pricing-label rb-classic__pricing-save">{{ bogo_you_save_label }}</span>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+						</div>
+					</div>
+				{% endif %}
+
+			{% else %}
+				<div class="radius-bundle__skeleton">
+					<div style="display:flex;gap:12px;align-items:stretch;">
+						{% for i in (1..count) %}
+							{% unless forloop.first %}
+								<div style="display:flex;align-items:center;color:#9ca3af;font-size:18px;font-weight:600;">+</div>
+							{% endunless %}
+							<div class="radius-bundle__skeleton-item" style="flex:1;min-height:120px;">
+								{%- if show_images -%}
+									<div class="radius-bundle__skeleton-image" style="aspect-ratio:1/1;"></div>
+								{%- endif -%}
+								<div class="radius-bundle__skeleton-content">
+									<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+									{%- if show_product_prices -%}
+										<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+									{%- endif -%}
+									{%- if show_quantity -%}
+										<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>
+									{%- endif -%}
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+
+				{% if show_savings %}
+					<div class="radius-bundle__skeleton" style="margin-top:12px;">
+						<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:var(--rb-border-radius,8px);background:var(--rb-pricing-summary-bg,#f0fdf4);">
+							<div>
+								<div style="font-size:12px;font-weight:500;color:#166534;margin-bottom:2px;">{{ bogo_you_pay_label }}</div>
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+							</div>
+							<div style="text-align:right;">
+								<div style="font-size:12px;font-weight:500;color:#15803d;margin-bottom:2px;">{{ bogo_you_save_label }}</div>
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			{% endcase %}
 		</div>
 	</div>
+
 	{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
 </div>

@@ -16,17 +16,23 @@ function SleekProductCard({
     product,
     variant,
     styles,
+    labels,
 }: {
     product: PreviewProduct;
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const isTrigger = variant === "trigger";
+    const isReward = !isTrigger;
     const savingsColor = styles.savingsColor || "#16a34a";
     const borderRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const isFree = !isTrigger;
     const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
+    const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
+    const hasDiscount = isReward && !!product.compareAtPrice;
+    const isFreePrice = hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     const cardStyle: React.CSSProperties = isTrigger
         ? {
@@ -34,8 +40,12 @@ function SleekProductCard({
               border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
           }
         : {
-              background: `linear-gradient(to right, ${savingsColor}1A, white)`,
-              border: `1px solid ${savingsColor}33`,
+              background: hasDiscount
+                  ? `linear-gradient(to right, ${savingsColor}1A, white)`
+                  : (styles.productCardBg || "#fff"),
+              border: hasDiscount
+                  ? `1px solid ${savingsColor}33`
+                  : `1px solid ${styles.borderColor || "#e5e7eb"}`,
           };
 
     return (
@@ -88,10 +98,10 @@ function SleekProductCard({
                 </div>
                 {isTrigger ? (
                     <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 500 }}>
-                        {DEFAULT_LABELS.bogoYouPayLabel}
+                        {labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
-                    isFree && (
+                    hasDiscount && (
                         <span
                             style={{
                                 display: "inline-block",
@@ -105,7 +115,7 @@ function SleekProductCard({
                                 width: "fit-content",
                             }}
                         >
-                            FREE
+                            {isFreePrice ? freeText : rewardBadgeText}
                         </span>
                     )
                 )}
@@ -116,12 +126,12 @@ function SleekProductCard({
                     style={{
                         fontSize: 16,
                         fontWeight: 700,
-                        color: isFree ? freeTagColor : styles.textColor,
+                        color: hasDiscount ? freeTagColor : styles.textColor,
                     }}
                 >
-                    {isFree ? product.compareAtPrice ? "$0.00" : "FREE" : product.price}
+                    {isFreePrice ? freeText : product.price}
                 </span>
-                {isFree && product.compareAtPrice && (
+                {hasDiscount && product.compareAtPrice && (
                     <span
                         style={{
                             fontSize: 13,
@@ -144,6 +154,7 @@ export function WidgetSleek({
     pricing,
     cartButtonText,
     title,
+    labels,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -185,7 +196,7 @@ export function WidgetSleek({
             )}
 
             {triggerProducts.map((p) => (
-                <SleekProductCard key={p.id} product={p} variant="trigger" styles={styles} />
+                <SleekProductCard key={p.id} product={p} variant="trigger" styles={styles} labels={labels} />
             ))}
 
             <div
@@ -202,7 +213,7 @@ export function WidgetSleek({
             </div>
 
             {rewardProducts.map((p) => (
-                <SleekProductCard key={p.id} product={p} variant="reward" styles={styles} />
+                <SleekProductCard key={p.id} product={p} variant="reward" styles={styles} labels={labels} />
             ))}
 
             <div style={{ borderTop: `1px dashed ${styles.borderColor || "#e5e7eb"}` }} />
@@ -224,7 +235,7 @@ export function WidgetSleek({
                             color: styles.textColor,
                         }}
                     >
-                        Total: {pricing.finalPrice}
+                        {labels?.bogoTotalLabel || DEFAULT_LABELS.bogoTotalLabel}: {pricing.finalPrice}
                     </span>
                 )}
 

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import type { CustomizerStyles } from "@/features/settings";
+import type { AppSettingsLabels } from "@/features/settings/types/app-settings.types";
 
 export interface CalloutButtonProps {
     content: string;
@@ -104,6 +105,8 @@ export interface BundleWidgetProps {
     children: ReactNode;
 }
 
+export interface WidgetLabels extends Partial<AppSettingsLabels> {}
+
 export interface WidgetLayoutProps {
     products: PreviewProduct[];
     styles: CustomizerStyles;
@@ -115,6 +118,7 @@ export interface WidgetLayoutProps {
     title?: string;
     subtitle?: string;
     badgeText?: string;
+    labels?: WidgetLabels;
 }
 
 export interface WidgetHeaderProps {
