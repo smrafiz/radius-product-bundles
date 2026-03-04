@@ -306,7 +306,7 @@ export interface ExtendedBundleFormData extends BundleFormData {
 }
 
 export type FixedBundleLayout = "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
-export type BogoLayout = "CLASSIC_CARD" | "COMPACT_GRID" | "MINIMALIST" | "SLEEK" | "UNLOCK";
+export type BogoLayout = "CLASSIC_CARD" | "COMPACT_GRID" | "MINIMALIST" | "SLEEK" | "CHECKLIST" | "SPLIT_DEAL";
 export type BundleLayoutType = FixedBundleLayout | BogoLayout;
 
 export interface DisplaySettings {

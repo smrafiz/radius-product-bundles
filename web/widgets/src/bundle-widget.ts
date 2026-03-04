@@ -24,9 +24,10 @@ import {
     renderBogoCompactGridProducts,
     renderBogoMinimalistProducts,
     renderBogoSleekProducts,
-    renderBogoUnlockProducts,
+    renderBogoChecklistProducts,
     renderBxgyProducts,
     renderClassicCardProducts,
+    renderSplitDealProducts,
 } from "./lib/bogo-renderer";
 import { BundleSlider } from "./lib/slider";
 import { handleCartRedirect, updateCartCount } from "./lib/cart";
@@ -926,8 +927,10 @@ import {
                             productsContainer,
                             ctx,
                         );
-                    } else if (layout === "unlock") {
-                        renderBogoUnlockProducts(bundle, productsContainer, ctx);
+                    } else if (layout === "checklist") {
+                        renderBogoChecklistProducts(bundle, productsContainer, ctx);
+                    } else if (layout === "split_deal") {
+                        renderSplitDealProducts(bundle, productsContainer, ctx);
                     } else {
                         renderBxgyProducts(bundle, productsContainer, ctx);
                     }

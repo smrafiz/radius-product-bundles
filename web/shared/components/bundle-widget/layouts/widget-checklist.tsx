@@ -43,7 +43,7 @@ const CART_SVG = (
     </svg>
 );
 
-function UnlockTriggerItem({
+function ChecklistTriggerItem({
     product,
     styles,
 }: {
@@ -137,7 +137,7 @@ function UnlockTriggerItem({
     );
 }
 
-function UnlockRewardItem({
+function ChecklistRewardItem({
     product,
     styles,
 }: {
@@ -221,7 +221,7 @@ function UnlockRewardItem({
     );
 }
 
-export function WidgetUnlock({
+export function WidgetChecklist({
     products,
     styles,
     pricing,
@@ -242,13 +242,13 @@ export function WidgetUnlock({
     const isUnlocked = false;
     const progressPercent = 0;
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
-    const lockedLabel = labels?.unlockLockedLabel || DEFAULT_LABELS.unlockLockedLabel;
-    const progressLabel = (labels?.unlockProgressText || DEFAULT_LABELS.unlockProgressText)
+    const lockedLabel = labels?.checklistLockedLabel || DEFAULT_LABELS.checklistLockedLabel;
+    const progressLabel = (labels?.checklistProgressText || DEFAULT_LABELS.checklistProgressText)
         .replace("{count}", String(progress))
         .replace("{total}", String(totalTriggers));
-    const hintLabel = (labels?.unlockHintText || DEFAULT_LABELS.unlockHintText)
+    const hintLabel = (labels?.checklistHintText || DEFAULT_LABELS.checklistHintText)
         .replace("{remaining}", String(totalTriggers));
-    const pricingLockedLabel = labels?.unlockPricingLockedText || DEFAULT_LABELS.unlockPricingLockedText;
+    const pricingLockedLabel = labels?.checklistPricingLockedText || DEFAULT_LABELS.checklistPricingLockedText;
 
     let rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
     if (pricing?.hasDiscount && pricing.savingsPercentage === 100) {
@@ -365,7 +365,7 @@ export function WidgetUnlock({
                     Buy
                 </span>
                 {triggerProducts.map((p) => (
-                    <UnlockTriggerItem
+                    <ChecklistTriggerItem
                         key={p.id}
                         product={p}
                         styles={styles}
@@ -434,7 +434,7 @@ export function WidgetUnlock({
                     }}
                 >
                     {rewardProducts.map((p) => (
-                        <UnlockRewardItem
+                        <ChecklistRewardItem
                             key={p.id}
                             product={p}
                             styles={styles}

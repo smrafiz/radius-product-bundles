@@ -533,14 +533,56 @@ export function renderBogoMinimalistProducts(
         pricingHtml += `<span class="rb-minimalist__price-compare">${formatMoney(totalOriginal)}</span>`;
     }
 
-    let itemsHtml = `<div class="rb-minimalist__items">`;
-    allProducts.forEach((p) => {
+    const freeText = minLabels?.bogoFreeText || "FREE";
+    const triggerBadge = minLabels?.bogoTriggerBadgeText || "You Buy";
+    let rewardBadge: string;
+    if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+        rewardBadge = freeText;
+    } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+        rewardBadge = `${structure.discountValue}% Off`;
+    } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+        rewardBadge = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+    } else {
+        rewardBadge = minLabels?.bogoRewardBadgeText || "You Get";
+    }
+
+    const renderMinItem = (p: BundleProduct, isReward: boolean): string => {
         const img =
             ctx.showImages && p.featuredImage
                 ? `<div class="rb-minimalist__item-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
                 : "";
-        itemsHtml += `<div class="rb-minimalist__item">${img}<span class="rb-minimalist__item-title">${escapeHtml(p.title)}</span></div>`;
-    });
+        const roleClass = isReward ? "reward" : "trigger";
+        const roleBadge = isReward ? rewardBadge : triggerBadge;
+
+        let priceHtml = "";
+        if (ctx.showPrices) {
+            if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
+                const discountedPrice = calculateBxgyRewardPrice(p.price, structure);
+                const isFree = discountedPrice === 0;
+                priceHtml = `<div class="rb-minimalist__item-price">`;
+                priceHtml += `<span class="rb-minimalist__item-price-current rb-minimalist__item-price-current--reward">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
+                if (ctx.showComparePrices) {
+                    priceHtml += `<span class="rb-minimalist__item-price-compare">${formatMoney(p.price)}</span>`;
+                }
+                priceHtml += `</div>`;
+            } else {
+                priceHtml = `<div class="rb-minimalist__item-price"><span class="rb-minimalist__item-price-current">${formatMoney(p.price)}</span></div>`;
+            }
+        }
+
+        return `<div class="rb-minimalist__item rb-minimalist__item--${roleClass}">
+            ${img}
+            <div class="rb-minimalist__item-info">
+                <span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>
+                <span class="rb-minimalist__item-title">${escapeHtml(p.title)}</span>
+                ${priceHtml}
+            </div>
+        </div>`;
+    };
+
+    let itemsHtml = `<div class="rb-minimalist__items">`;
+    triggers.forEach((p) => { itemsHtml += renderMinItem(p, false); });
+    rewards.forEach((p) => { itemsHtml += renderMinItem(p, true); });
     itemsHtml += `</div>`;
 
     let html = `<div class="rb-minimalist__container">${badgeHtml}<div class="rb-minimalist__hero">${heroImageHtml}<div class="rb-minimalist__hero-info">`;
@@ -702,7 +744,7 @@ export function renderBogoCompactGridProducts(
     wireCustomCartButton(container, ctx.container, "[data-cg-add-to-cart]");
 }
 
-export function renderBogoUnlockProducts(
+export function renderBogoChecklistProducts(
     bundle: Bundle,
     container: Element,
     ctx: BogoContext,
@@ -712,12 +754,12 @@ export function renderBogoUnlockProducts(
     const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
     const labels = structure.labels;
     const freeText = labels?.bogoFreeText || "FREE";
-    const progressText = labels?.unlockProgressText || "{count}/{total} items added";
-    const hintText = labels?.unlockHintText || "{remaining} more to unlock!";
-    const completedText = labels?.unlockCompletedText || "Unlocked!";
-    const lockedLabel = labels?.unlockLockedLabel || "Unlock by adding all items above";
-    const unlockedLabel = labels?.unlockUnlockedLabel || "Reward Unlocked";
-    const pricingLockedText = labels?.unlockPricingLockedText || "Select all items to see your price";
+    const progressText = labels?.checklistProgressText || "{count}/{total} items added";
+    const hintText = labels?.checklistHintText || "{remaining} more to unlock!";
+    const completedText = labels?.checklistCompletedText || "Unlocked!";
+    const lockedLabel = labels?.checklistLockedLabel || "Unlock by adding all items above";
+    const unlockedLabel = labels?.checklistUnlockedLabel || "Reward Unlocked";
+    const pricingLockedText = labels?.checklistPricingLockedText || "Select all items to see your price";
     const totalLabel = labels?.bogoTotalLabel || "Total";
     const discountLabel = labels?.youSaveLabel || "You Save:";
     const youPayLabel = labels?.bogoYouPayLabel || "You Pay";
@@ -751,83 +793,83 @@ export function renderBogoUnlockProducts(
         rewardBadgeText = labels?.bogoRewardBadgeText || "You Get";
     }
 
-    let html = `<div class="rb-unlock__container">`;
+    let html = `<div class="rb-checklist__container">`;
 
-    html += `<div class="rb-unlock__progress">`;
-    html += `<h3 class="rb-unlock__progress-title">${escapeHtml(bundle.name)}</h3>`;
+    html += `<div class="rb-checklist__progress">`;
+    html += `<h3 class="rb-checklist__progress-title">${escapeHtml(bundle.name)}</h3>`;
     if (structure.subtitle) {
-        html += `<p class="rb-unlock__progress-subtitle">${escapeHtml(structure.subtitle)}</p>`;
+        html += `<p class="rb-checklist__progress-subtitle">${escapeHtml(structure.subtitle)}</p>`;
     }
-    html += `<div class="rb-unlock__progress-row">`;
-    html += `<span class="rb-unlock__progress-count">${formatLabel(progressText, { count: progress, total: totalTriggers })}</span>`;
-    html += `<span class="rb-unlock__progress-hint">${formatLabel(hintText, { remaining: totalTriggers })}</span>`;
+    html += `<div class="rb-checklist__progress-row">`;
+    html += `<span class="rb-checklist__progress-count">${formatLabel(progressText, { count: progress, total: totalTriggers })}</span>`;
+    html += `<span class="rb-checklist__progress-hint">${formatLabel(hintText, { remaining: totalTriggers })}</span>`;
     html += `</div>`;
-    html += `<div class="rb-unlock__progress-track"><div class="rb-unlock__progress-fill" style="width:${progressPercent}%"></div></div>`;
+    html += `<div class="rb-checklist__progress-track"><div class="rb-checklist__progress-fill" style="width:${progressPercent}%"></div></div>`;
     html += `</div>`;
 
-    html += `<div class="rb-unlock__section">`;
+    html += `<div class="rb-checklist__section">`;
     triggers.forEach((p) => {
         const imageHtml =
             ctx.showImages && p.featuredImage
-                ? `<div class="rb-unlock__item-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+                ? `<div class="rb-checklist__item-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
                 : ctx.showImages
-                  ? `<div class="rb-unlock__item-placeholder">📦</div>`
+                  ? `<div class="rb-checklist__item-placeholder">📦</div>`
                   : "";
 
-        html += `<div class="rb-unlock__item" data-product-id="${p.id}" data-variant-id="${p.variantId}">`;
-        html += `<div class="rb-unlock__checkbox"></div>`;
+        html += `<div class="rb-checklist__item" data-product-id="${p.id}" data-variant-id="${p.variantId}">`;
+        html += `<div class="rb-checklist__checkbox"></div>`;
         html += imageHtml;
-        html += `<div class="rb-unlock__item-info">`;
-        html += `<div class="rb-unlock__item-title">${escapeHtml(p.title)}</div>`;
+        html += `<div class="rb-checklist__item-info">`;
+        html += `<div class="rb-checklist__item-title">${escapeHtml(p.title)}</div>`;
         if (ctx.showQuantity && p.quantity > 1) {
-            html += `<div class="rb-unlock__item-qty">${ctx.quantityLabel} ${p.quantity}</div>`;
+            html += `<div class="rb-checklist__item-qty">${ctx.quantityLabel} ${p.quantity}</div>`;
         }
         html += `</div>`;
         if (ctx.showPrices) {
-            html += `<div class="rb-unlock__item-price">${formatMoney(p.price)}</div>`;
+            html += `<div class="rb-checklist__item-price">${formatMoney(p.price)}</div>`;
         }
         html += `</div>`;
     });
     html += `</div>`;
 
     const rewardStateClass = isUnlocked
-        ? "rb-unlock__reward--unlocked"
-        : "rb-unlock__reward--locked";
-    html += `<div class="rb-unlock__reward ${rewardStateClass}">`;
-    html += `<div class="rb-unlock__reward-header">`;
-    html += `<span class="rb-unlock__reward-label">${escapeHtml(lockedLabel)}</span>`;
+        ? "rb-checklist__reward--unlocked"
+        : "rb-checklist__reward--locked";
+    html += `<div class="rb-checklist__reward ${rewardStateClass}">`;
+    html += `<div class="rb-checklist__reward-header">`;
+    html += `<span class="rb-checklist__reward-label">${escapeHtml(lockedLabel)}</span>`;
     if (rewardBadgeText) {
-        html += `<span class="rb-unlock__reward-badge">${escapeHtml(rewardBadgeText)}</span>`;
+        html += `<span class="rb-checklist__reward-badge">${escapeHtml(rewardBadgeText)}</span>`;
     }
-    html += `<span class="rb-unlock__lock-icon">${isUnlocked ? unlockSvg : lockSvg}</span>`;
+    html += `<span class="rb-checklist__lock-icon">${isUnlocked ? unlockSvg : lockSvg}</span>`;
     html += `</div>`;
-    html += `<div class="rb-unlock__reward-products">`;
+    html += `<div class="rb-checklist__reward-products">`;
     rewards.forEach((p) => {
         const imageHtml =
             ctx.showImages && p.featuredImage
-                ? `<div class="rb-unlock__reward-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+                ? `<div class="rb-checklist__reward-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
                 : ctx.showImages
-                  ? `<div class="rb-unlock__reward-placeholder">🎁</div>`
+                  ? `<div class="rb-checklist__reward-placeholder">🎁</div>`
                   : "";
 
-        html += `<div class="rb-unlock__reward-item">`;
+        html += `<div class="rb-checklist__reward-item">`;
         html += imageHtml;
-        html += `<div class="rb-unlock__reward-info">`;
-        html += `<div class="rb-unlock__reward-title">${escapeHtml(p.title)}</div>`;
+        html += `<div class="rb-checklist__reward-info">`;
+        html += `<div class="rb-checklist__reward-title">${escapeHtml(p.title)}</div>`;
         if (ctx.showPrices) {
             const discountedPrice = calculateBxgyRewardPrice(
                 p.price,
                 structure,
             );
             const isFree = discountedPrice === 0;
-            html += `<div class="rb-unlock__reward-price">`;
-            html += `<span class="rb-unlock__reward-price-current">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
+            html += `<div class="rb-checklist__reward-price">`;
+            html += `<span class="rb-checklist__reward-price-current">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
             if (
                 ctx.showComparePrices &&
                 structure.discountType !== "NO_DISCOUNT" &&
                 structure.discountValue > 0
             ) {
-                html += `<span class="rb-unlock__reward-price-compare">${formatMoney(p.price)}</span>`;
+                html += `<span class="rb-checklist__reward-price-compare">${formatMoney(p.price)}</span>`;
             }
             html += `</div>`;
         }
@@ -853,15 +895,15 @@ export function renderBogoUnlockProducts(
         const savingsPct =
             originalTotal > 0 ? Math.round((savings / originalTotal) * 100) : 0;
 
-        html += `<div class="rb-unlock__pricing rb-unlock__pricing--locked" data-original="${originalTotal}" data-discounted="${discountedTotal}" data-savings="${savings}" data-savings-pct="${savingsPct}">`;
-        html += `<div class="rb-unlock__pricing-locked-text">${escapeHtml(pricingLockedText)}</div>`;
-        html += `<div class="rb-unlock__pricing-details" style="display:none">`;
-        html += `<div class="rb-unlock__pricing-row"><span>${escapeHtml(totalLabel)}</span><span class="rb-unlock__pricing-original">${formatMoney(originalTotal)}</span></div>`;
+        html += `<div class="rb-checklist__pricing rb-checklist__pricing--locked" data-original="${originalTotal}" data-discounted="${discountedTotal}" data-savings="${savings}" data-savings-pct="${savingsPct}">`;
+        html += `<div class="rb-checklist__pricing-locked-text">${escapeHtml(pricingLockedText)}</div>`;
+        html += `<div class="rb-checklist__pricing-details" style="display:none">`;
+        html += `<div class="rb-checklist__pricing-row"><span>${escapeHtml(totalLabel)}</span><span class="rb-checklist__pricing-original">${formatMoney(originalTotal)}</span></div>`;
         if (savings > 0) {
-            html += `<div class="rb-unlock__pricing-row rb-unlock__pricing-discount"><span>${escapeHtml(discountLabel)}</span><span>-${formatMoney(savings)}</span></div>`;
+            html += `<div class="rb-checklist__pricing-row rb-checklist__pricing-discount"><span>${escapeHtml(discountLabel)}</span><span>-${formatMoney(savings)}</span></div>`;
         }
-        html += `<div class="rb-unlock__pricing-divider"></div>`;
-        html += `<div class="rb-unlock__pricing-row rb-unlock__pricing-total"><span>${escapeHtml(youPayLabel)}</span><span>${formatMoney(discountedTotal)}</span></div>`;
+        html += `<div class="rb-checklist__pricing-divider"></div>`;
+        html += `<div class="rb-checklist__pricing-row rb-checklist__pricing-total"><span>${escapeHtml(youPayLabel)}</span><span>${formatMoney(discountedTotal)}</span></div>`;
         html += `</div></div>`;
     }
 
@@ -874,27 +916,27 @@ export function renderBogoUnlockProducts(
     const realBtn = ctx.container.querySelector(
         "[data-bundle-add-to-cart]",
     ) as HTMLButtonElement | null;
-    const items = container.querySelectorAll(".rb-unlock__item");
+    const items = container.querySelectorAll(".rb-checklist__item");
     const fill = container.querySelector(
-        ".rb-unlock__progress-fill",
+        ".rb-checklist__progress-fill",
     ) as HTMLElement | null;
-    const countEl = container.querySelector(".rb-unlock__progress-count");
-    const hintEl = container.querySelector(".rb-unlock__progress-hint");
-    const reward = container.querySelector(".rb-unlock__reward");
-    const lockIcon = container.querySelector(".rb-unlock__lock-icon");
-    const rewardLabel = container.querySelector(".rb-unlock__reward-label");
-    const pricingBox = container.querySelector(".rb-unlock__pricing");
+    const countEl = container.querySelector(".rb-checklist__progress-count");
+    const hintEl = container.querySelector(".rb-checklist__progress-hint");
+    const reward = container.querySelector(".rb-checklist__reward");
+    const lockIcon = container.querySelector(".rb-checklist__lock-icon");
+    const rewardLabel = container.querySelector(".rb-checklist__reward-label");
+    const pricingBox = container.querySelector(".rb-checklist__pricing");
     const pricingLocked = container.querySelector(
-        ".rb-unlock__pricing-locked-text",
+        ".rb-checklist__pricing-locked-text",
     ) as HTMLElement | null;
     const pricingDetails = container.querySelector(
-        ".rb-unlock__pricing-details",
+        ".rb-checklist__pricing-details",
     ) as HTMLElement | null;
     const total = items.length;
 
     const syncState = () => {
         const checked = container.querySelectorAll(
-            ".rb-unlock__item--checked",
+            ".rb-checklist__item--checked",
         ).length;
         const pct = total > 0 ? (checked / total) * 100 : 0;
         if (fill) {
@@ -910,8 +952,8 @@ export function renderBogoUnlockProducts(
         }
         const allChecked = checked >= total;
         if (reward) {
-            reward.classList.toggle("rb-unlock__reward--locked", !allChecked);
-            reward.classList.toggle("rb-unlock__reward--unlocked", allChecked);
+            reward.classList.toggle("rb-checklist__reward--locked", !allChecked);
+            reward.classList.toggle("rb-checklist__reward--unlocked", allChecked);
         }
         if (lockIcon) {
             lockIcon.innerHTML = allChecked ? unlockSvg : lockSvg;
@@ -921,11 +963,11 @@ export function renderBogoUnlockProducts(
         }
         if (pricingBox) {
             pricingBox.classList.toggle(
-                "rb-unlock__pricing--locked",
+                "rb-checklist__pricing--locked",
                 !allChecked,
             );
             pricingBox.classList.toggle(
-                "rb-unlock__pricing--unlocked",
+                "rb-checklist__pricing--unlocked",
                 allChecked,
             );
         }
@@ -942,13 +984,209 @@ export function renderBogoUnlockProducts(
 
     items.forEach((item) => {
         item.addEventListener("click", () => {
-            const isChecked = item.classList.toggle("rb-unlock__item--checked");
-            const cb = item.querySelector(".rb-unlock__checkbox");
+            const isChecked = item.classList.toggle("rb-checklist__item--checked");
+            const cb = item.querySelector(".rb-checklist__checkbox");
             if (cb) {
-                cb.classList.toggle("rb-unlock__checkbox--checked", isChecked);
+                cb.classList.toggle("rb-checklist__checkbox--checked", isChecked);
                 cb.innerHTML = isChecked ? checkSvg : "";
             }
             syncState();
         });
     });
+}
+
+export function renderSplitDealProducts(
+    bundle: Bundle,
+    container: Element,
+    ctx: BogoContext,
+): void {
+    const { triggers, rewards } = splitByRole(bundle);
+    const structure = ctx.bundleStructure || bundle;
+    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const labels = structure.labels;
+    const triggerLabel = labels?.bogoTriggerBadgeText || "Buy";
+    const freeText = labels?.bogoFreeText || "FREE";
+    const youPayLabel = labels?.bogoYouPayLabel || "You Pay";
+    const youSaveLabel = labels?.bogoYouSaveLabel || "You Save";
+
+    let rewardLabel: string;
+    if (
+        structure.discountType === "PERCENTAGE" &&
+        structure.discountValue === 100
+    ) {
+        rewardLabel = `Get ${freeText}`;
+    } else if (
+        structure.discountType === "PERCENTAGE" &&
+        structure.discountValue > 0
+    ) {
+        rewardLabel = `Get at ${structure.discountValue}% Off`;
+    } else if (
+        structure.discountType === "FIXED_AMOUNT" &&
+        structure.discountValue > 0
+    ) {
+        rewardLabel = `Get ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+    } else {
+        rewardLabel = labels?.bogoRewardBadgeText || "Get";
+    }
+
+    let badgeText = labels?.bogoBadgeText || "";
+    if (!badgeText) {
+        const buyQty = triggers.length || structure.buyQuantity || 1;
+        const getQty = rewards.length || structure.getQuantity || 1;
+        if (
+            structure.discountType === "PERCENTAGE" &&
+            structure.discountValue === 100
+        ) {
+            badgeText = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+        } else if (
+            structure.discountType === "PERCENTAGE" &&
+            structure.discountValue > 0
+        ) {
+            badgeText = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% Off`;
+        } else if (
+            structure.discountType === "FIXED_AMOUNT" &&
+            structure.discountValue > 0
+        ) {
+            badgeText = `Buy ${buyQty} Get ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+        }
+    }
+
+    const renderProduct = (
+        product: BundleProduct,
+        isReward: boolean,
+    ): string => {
+        const imageHtml =
+            ctx.showImages && product.featuredImage
+                ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
+                : ctx.showImages
+                  ? `<div class="rb-split__product-placeholder">📦</div>`
+                  : "";
+        const imageBlock = ctx.showImages
+            ? `<div class="rb-split__product-image">${imageHtml}</div>`
+            : "";
+
+        let priceHtml = "";
+        let savingsHtml = "";
+        if (ctx.showPrices) {
+            if (
+                isReward &&
+                structure.discountType !== "NO_DISCOUNT" &&
+                structure.discountValue > 0
+            ) {
+                const discountedPrice = calculateBxgyRewardPrice(
+                    product.price,
+                    structure,
+                );
+                const isFree = discountedPrice === 0;
+                const savingsAmt = product.price - discountedPrice;
+
+                priceHtml = `<div class="rb-split__product-price">`;
+                priceHtml += `<span class="rb-split__price-current rb-split__price-current--reward">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
+                if (ctx.showComparePrices) {
+                    priceHtml += `<span class="rb-split__price-compare">${formatMoney(product.price)}</span>`;
+                }
+                priceHtml += `</div>`;
+
+                if (savingsAmt > 0 && ctx.showSavingsBadge) {
+                    const pct = Math.round(
+                        (savingsAmt / product.price) * 100,
+                    );
+                    savingsHtml = `<div class="rb-split__product-savings">Save ${pct}%</div>`;
+                }
+            } else {
+                priceHtml = `<div class="rb-split__product-price"><span class="rb-split__price-current">${formatMoney(product.price)}</span></div>`;
+            }
+        }
+
+        return `
+            <div class="rb-split__product" data-product-id="${product.id}" data-variant-id="${product.variantId}">
+                ${imageBlock}
+                <div class="rb-split__product-info">
+                    <h4 class="rb-split__product-title">${escapeHtml(product.title)}</h4>
+                    ${priceHtml}
+                    ${savingsHtml}
+                </div>
+            </div>
+        `;
+    };
+
+    let html = `<div class="rb-split__container">`;
+
+    html += `<div class="rb-split__header">`;
+    if (badgeText && ctx.showSavingsBadge) {
+        html += `<div class="rb-split__deal-badge">${escapeHtml(badgeText)}</div>`;
+    }
+    html += `<h3 class="rb-split__title">${escapeHtml(bundle.name)}</h3>`;
+    if (structure.subtitle) {
+        html += `<p class="rb-split__subtitle">${escapeHtml(structure.subtitle)}</p>`;
+    }
+    html += `</div>`;
+
+    html += `<div class="rb-split__equation">`;
+
+    html += `<div class="rb-split__column">`;
+    html += `<div class="rb-split__column-header rb-split__column-header--trigger">${escapeHtml(triggerLabel)}</div>`;
+    html += `<div class="rb-split__column-body rb-split__column-body--trigger">`;
+    triggers.forEach((p) => {
+        html += renderProduct(p, false);
+    });
+    html += `</div></div>`;
+
+    html += `<div class="rb-split__connector"><span>+</span></div>`;
+
+    html += `<div class="rb-split__column">`;
+    html += `<div class="rb-split__column-header rb-split__column-header--reward">${escapeHtml(rewardLabel)}</div>`;
+    html += `<div class="rb-split__column-body rb-split__column-body--reward">`;
+    rewards.forEach((p) => {
+        html += renderProduct(p, true);
+    });
+    html += `</div></div>`;
+
+    html += `</div>`;
+
+    const totalOriginal = [...triggers, ...rewards].reduce(
+        (sum, p) => sum + p.price,
+        0,
+    );
+    const totalDiscounted =
+        triggers.reduce((sum, p) => sum + p.price, 0) +
+        rewards.reduce(
+            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure),
+            0,
+        );
+    const savings = totalOriginal - totalDiscounted;
+
+    if (savings > 0 && ctx.showSavings) {
+        html += `
+            <div class="rb-split__summary">
+                <div class="rb-split__summary-col">
+                    <span class="rb-split__summary-label rb-split__summary-pay">${escapeHtml(youPayLabel)}</span>
+                    <span class="rb-split__summary-value">${formatMoney(totalDiscounted)}</span>
+                </div>
+                <div class="rb-split__summary-col rb-split__summary-col--right">
+                    <span class="rb-split__summary-label rb-split__summary-save">${escapeHtml(youSaveLabel)}</span>
+                    <span class="rb-split__summary-value rb-split__summary-value--savings">${formatMoney(savings)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    const buttonText =
+        ctx.container
+            .querySelector("[data-bundle-add-to-cart]")
+            ?.textContent?.trim() || "Add to Cart";
+    html += `
+        <button type="button" class="rb-split__cta" data-split-add-to-cart>
+            ${escapeHtml(buttonText)}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </button>
+    `;
+
+    html += `</div>`;
+
+    container.innerHTML = html;
+    hideStandardHeader(ctx.container);
+    hideStandardPricing(ctx.container);
+    hideStandardButton(ctx.container);
+    wireCustomCartButton(container, ctx.container, "[data-split-add-to-cart]");
 }

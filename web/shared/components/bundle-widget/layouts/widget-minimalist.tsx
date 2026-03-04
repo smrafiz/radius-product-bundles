@@ -1,6 +1,6 @@
 "use client";
 
-import { WidgetLayoutProps } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -14,6 +14,21 @@ import {
     SPACING_VALUES,
 } from "@/features/settings/constants/defaults.constants";
 
+function getRewardBadge(product: PreviewProduct, labels?: WidgetLayoutProps["labels"]): string {
+    const freeText = labels?.bogoFreeText || "FREE";
+    if (product.price === "$0.00" || product.price === "$0") return freeText;
+    if (product.compareAtPrice) {
+        const current = parseFloat(product.price.replace(/[^0-9.]/g, ""));
+        const original = parseFloat(product.compareAtPrice.replace(/[^0-9.]/g, ""));
+        if (original > 0 && current === 0) return freeText;
+        if (original > 0) {
+            const pctOff = Math.round(((original - current) / original) * 100);
+            return `${pctOff}% Off`;
+        }
+    }
+    return labels?.bogoRewardBadgeText || "You Get";
+}
+
 export function WidgetMinimalist({
     products,
     styles,
@@ -22,6 +37,7 @@ export function WidgetMinimalist({
     title,
     subtitle,
     badgeText,
+    labels,
 }: WidgetLayoutProps) {
     const triggerProduct = products.find((p) => p.role === "TRIGGER");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
@@ -33,6 +49,8 @@ export function WidgetMinimalist({
     const buttonBg = getButtonBgColor(styles);
     const spacingValues = SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
     const primaryColor = styles.primaryColor || "#e0598b";
+    const savingsColor = styles.savingsColor || "#16a34a";
+    const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
 
     if (!products.length) {
         return (
@@ -50,6 +68,10 @@ export function WidgetMinimalist({
             </div>
         );
     }
+
+    const triggers = products.filter((p) => p.role === "TRIGGER");
+    const rewards = products.filter((p) => p.role === "REWARD");
+    const sortedProducts = [...triggers, ...rewards];
 
     return (
         <div
@@ -169,64 +191,128 @@ export function WidgetMinimalist({
                 </div>
             </div>
 
-            {products.length > 0 && (
+            {sortedProducts.length > 0 && (
                 <div
                     style={{
-                        display: "flex",
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, 1fr)",
                         gap: 10,
                         marginBottom: 16,
                     }}
                 >
-                    {products.map((product) => (
-                        <div
-                            key={product.id}
-                            style={{
-                                flex: 1,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 10,
-                                padding: "10px 12px",
-                                background: `color-mix(in srgb, ${primaryColor} 8%, white)`,
-                                borderRadius: 10,
-                                minWidth: 0,
-                            }}
-                        >
-                            {product.image && (
-                                <div
-                                    style={{
-                                        width: 40,
-                                        height: 40,
-                                        flexShrink: 0,
-                                        borderRadius: 10,
-                                        overflow: "hidden",
-                                        background: "#f9fafb",
-                                    }}
-                                >
-                                    <img
-                                        src={product.image}
-                                        alt={product.title}
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                </div>
-                            )}
-                            <span
+                    {sortedProducts.map((product) => {
+                        const isReward = product.role === "REWARD";
+                        const roleColor = isReward ? savingsColor : primaryColor;
+                        const roleBadgeText = isReward
+                            ? getRewardBadge(product, labels)
+                            : triggerBadge;
+
+                        return (
+                            <div
+                                key={product.id}
                                 style={{
-                                    fontSize: 13,
-                                    fontWeight: 600,
-                                    color: styles.textColor,
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 10,
+                                    padding: 10,
+                                    background: `color-mix(in srgb, ${roleColor} 6%, white)`,
+                                    border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
+                                    borderRadius: 10,
+                                    minWidth: 0,
                                 }}
                             >
-                                {product.title}
-                            </span>
-                        </div>
-                    ))}
+                                {product.image && (
+                                    <div
+                                        style={{
+                                            width: 56,
+                                            height: 56,
+                                            flexShrink: 0,
+                                            borderRadius: 8,
+                                            overflow: "hidden",
+                                            background: "#f9fafb",
+                                        }}
+                                    >
+                                        <img
+                                            src={product.image}
+                                            alt={product.title}
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                objectFit: styles.imageFit || "cover",
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                <div
+                                    style={{
+                                        flex: 1,
+                                        minWidth: 0,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: 3,
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            fontSize: 10,
+                                            fontWeight: 700,
+                                            textTransform: "uppercase",
+                                            letterSpacing: 0.6,
+                                            padding: "2px 8px",
+                                            borderRadius: 20,
+                                            lineHeight: "14px",
+                                            alignSelf: "flex-start",
+                                            color: roleColor,
+                                            background: `color-mix(in srgb, ${roleColor} 10%, transparent)`,
+                                        }}
+                                    >
+                                        {roleBadgeText}
+                                    </span>
+                                    <span
+                                        style={{
+                                            fontSize: 13,
+                                            fontWeight: 600,
+                                            color: styles.textColor,
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        {product.title}
+                                    </span>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "baseline",
+                                            gap: 6,
+                                            flexWrap: "wrap",
+                                        }}
+                                    >
+                                        <span
+                                            style={{
+                                                fontSize: 13,
+                                                fontWeight: 700,
+                                                color: isReward ? savingsColor : styles.textColor,
+                                            }}
+                                        >
+                                            {product.price}
+                                        </span>
+                                        {product.compareAtPrice && (
+                                            <span
+                                                style={{
+                                                    fontSize: 11,
+                                                    color: "#9ca3af",
+                                                    textDecoration: "line-through",
+                                                }}
+                                            >
+                                                {product.compareAtPrice}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 

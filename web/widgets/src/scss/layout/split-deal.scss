@@ -1,0 +1,299 @@
+// ==========================================================================
+// Split Deal Layout — BXGY Only
+// Two-column "equation" layout: BUY + GET = DEAL
+// ==========================================================================
+
+.rb-split {
+    &__container {
+        container-type: inline-size;
+    }
+
+    // ── Header ──────────────────────────────────────────────────────
+    &__header {
+        text-align: center;
+        margin-bottom: var(--rb-gap-spacing, 12px);
+    }
+
+    &__title {
+        font-size: var(--rb-heading-font-size, 18px);
+        font-weight: 700;
+        color: var(--rb-text-color, inherit);
+        margin: 0;
+    }
+
+    &__subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 4px 0 0;
+    }
+
+    // ── Deal badge ──────────────────────────────────────────────────
+    &__deal-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--rb-primary-color, #303030);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 14px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    // ── Equation layout ─────────────────────────────────────────────
+    &__equation {
+        display: flex;
+        align-items: stretch;
+        gap: var(--rb-gap-spacing, 12px);
+    }
+
+    // ── Column (Buy / Get) ──────────────────────────────────────────
+    &__column {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__column-header {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 6px 12px;
+        border-radius: var(--rb-border-radius, 8px) var(--rb-border-radius, 8px) 0 0;
+        text-align: center;
+    }
+
+    &__column-header--trigger {
+        background: var(--rb-primary-color, #303030);
+        color: #fff;
+    }
+
+    &__column-header--reward {
+        background: var(--rb-savings-color, #16a34a);
+        color: #fff;
+    }
+
+    &__column-body {
+        flex: 1;
+        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border-top: none;
+        border-radius: 0 0 var(--rb-border-radius, 8px) var(--rb-border-radius, 8px);
+        padding: var(--rb-box-spacing, 12px);
+        background: var(--rb-product-bg-color, #fff);
+        display: flex;
+        flex-direction: column;
+        gap: var(--rb-gap-spacing, 10px);
+    }
+
+    &__column-body--trigger {
+        border-color: var(--rb-primary-color, #303030);
+    }
+
+    &__column-body--reward {
+        border-color: var(--rb-savings-color, #16a34a);
+    }
+
+    // ── Connector (+) ───────────────────────────────────────────────
+    &__connector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 36px;
+
+        span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--rb-primary-color, #303030);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+    }
+
+    // ── Product card ────────────────────────────────────────────────
+    &__product {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    &__product-image {
+        width: 56px;
+        height: 56px;
+        flex-shrink: 0;
+        border-radius: var(--rb-border-radius, 6px);
+        overflow: hidden;
+        background: #f3f4f6;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: var(--rb-image-fit, cover);
+        }
+    }
+
+    &__product-placeholder {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        background: #f3f4f6;
+        border-radius: var(--rb-border-radius, 6px);
+    }
+
+    &__product-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__product-title {
+        font-size: var(--rb-body-font-size, 13px);
+        font-weight: 600;
+        color: var(--rb-text-color, inherit);
+        margin: 0;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    &__product-price {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 2px;
+    }
+
+    &__price-current {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--rb-text-color, inherit);
+
+        &--reward {
+            color: var(--rb-bogo-free-tag-color, #16a34a);
+        }
+    }
+
+    &__price-compare {
+        font-size: 12px;
+        color: #9ca3af;
+        text-decoration: line-through;
+    }
+
+    &__product-savings {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--rb-savings-color, #16a34a);
+        background: rgba(22, 163, 74, 0.08);
+        padding: 1px 6px;
+        border-radius: 4px;
+        margin-top: 3px;
+    }
+
+    // ── Savings summary bar ─────────────────────────────────────────
+    &__summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--rb-pricing-summary-bg, #f0fdf4);
+        border-radius: var(--rb-border-radius, 8px);
+        padding: 12px var(--rb-box-spacing, 16px);
+        margin-top: var(--rb-gap-spacing, 12px);
+    }
+
+    &__summary-col {
+        &--right {
+            text-align: right;
+        }
+    }
+
+    &__summary-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 2px;
+    }
+
+    &__summary-pay {
+        color: #166534;
+    }
+
+    &__summary-save {
+        color: #15803d;
+    }
+
+    &__summary-value {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+
+        &--savings {
+            color: var(--rb-savings-color, #16a34a);
+        }
+    }
+
+    // ── CTA button ──────────────────────────────────────────────────
+    &__cta {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 24px;
+        margin-top: var(--rb-gap-spacing, 12px);
+        background: var(--rb-primary-color, #303030);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--rb-border-radius, 8px);
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        svg {
+            flex-shrink: 0;
+        }
+    }
+}
+
+// Responsive: stack columns vertically on narrow containers
+@container (max-width: 380px) {
+    .rb-split__equation {
+        flex-direction: column;
+    }
+
+    .rb-split__connector {
+        width: auto;
+        height: 28px;
+
+        span {
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+        }
+    }
+}

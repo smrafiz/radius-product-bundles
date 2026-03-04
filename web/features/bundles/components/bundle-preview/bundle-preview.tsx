@@ -15,7 +15,8 @@ import {
     WidgetSleek,
     WidgetMinimalist,
     WidgetCompactGrid,
-    WidgetUnlock,
+    WidgetChecklist,
+    WidgetSplitDeal,
 } from "@/shared";
 import {
     BundlePreviewStatus,
@@ -301,14 +302,26 @@ function RenderLayout({
                     badgeText={badgeText}
                 />
             );
-        case "UNLOCK":
+        case "CHECKLIST":
             return (
-                <WidgetUnlock
+                <WidgetChecklist
                     {...layoutProps}
                     pricing={pricing}
                     cartButtonText={cartButtonText}
                     title={title}
                     subtitle={subtitle}
+                    labels={labels}
+                />
+            );
+        case "SPLIT_DEAL":
+            return (
+                <WidgetSplitDeal
+                    {...layoutProps}
+                    pricing={pricing}
+                    cartButtonText={cartButtonText}
+                    title={title}
+                    subtitle={subtitle}
+                    badgeText={badgeText}
                     labels={labels}
                 />
             );

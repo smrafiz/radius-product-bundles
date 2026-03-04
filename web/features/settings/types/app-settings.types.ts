@@ -41,13 +41,13 @@ export interface AppSettingsLabels {
     bogoTotalLabel: string;
     bogoSaveText: string;
 
-    // Unlock Layout Labels
-    unlockProgressText: string;
-    unlockHintText: string;
-    unlockCompletedText: string;
-    unlockLockedLabel: string;
-    unlockUnlockedLabel: string;
-    unlockPricingLockedText: string;
+    // Checklist Layout Labels
+    checklistProgressText: string;
+    checklistHintText: string;
+    checklistCompletedText: string;
+    checklistLockedLabel: string;
+    checklistUnlockedLabel: string;
+    checklistPricingLockedText: string;
 
     // Cart Banner
     bannerSavingText: string;

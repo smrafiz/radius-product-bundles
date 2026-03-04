@@ -5,7 +5,7 @@ import {
     DEFAULT_DISPLAY_OPTIONS,
 } from "@/shared/constants/bundle-widget.constants";
 import type { WidgetPricing } from "@/shared";
-import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid, WidgetUnlock } from "@/shared/components/bundle-widget";
+import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid, WidgetChecklist } from "@/shared/components/bundle-widget";
 import { BundleTemplateProps, useEffectiveStyles, useSettingsStore } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
@@ -66,8 +66,8 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
             return <WidgetCompactGrid {...layoutProps} />;
         case "MINIMALIST":
             return <WidgetMinimalist {...layoutProps} />;
-        case "UNLOCK":
-            return <WidgetUnlock {...layoutProps} />;
+        case "CHECKLIST":
+            return <WidgetChecklist {...layoutProps} />;
         case "CLASSIC_CARD":
         default:
             return <WidgetClassicCard {...layoutProps} />;

@@ -396,8 +396,8 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
-                    name: "unlockProgressText",
-                    label: "Unlock progress text",
+                    name: "checklistProgressText",
+                    label: "Checklist progress text",
                     placeholder: "{count}/{total} items added",
                     details:
                         "Progress count text. Use {count} for checked items and {total} for total items.",
@@ -411,8 +411,8 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
-                    name: "unlockHintText",
-                    label: "Unlock hint text",
+                    name: "checklistHintText",
+                    label: "Checklist hint text",
                     placeholder: "{remaining} more to unlock!",
                     details:
                         "Hint shown when items remain. Use {remaining} for remaining count.",
@@ -426,8 +426,8 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
-                    name: "unlockCompletedText",
-                    label: "Unlock completed text",
+                    name: "checklistCompletedText",
+                    label: "Checklist completed text",
                     placeholder: "Unlocked!",
                     details:
                         "Hint shown when all items are selected.",
@@ -441,7 +441,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
-                    name: "unlockLockedLabel",
+                    name: "checklistLockedLabel",
                     label: "Locked reward label",
                     placeholder: "Unlock by adding all items above",
                     details:
@@ -456,7 +456,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
-                    name: "unlockUnlockedLabel",
+                    name: "checklistUnlockedLabel",
                     label: "Unlocked reward label",
                     placeholder: "Reward Unlocked",
                     details:
@@ -471,7 +471,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
-                    name: "unlockPricingLockedText",
+                    name: "checklistPricingLockedText",
                     label: "Pricing locked text",
                     placeholder: "Select all items to see your price",
                     details:

@@ -90,20 +90,29 @@ export const BOGO_LAYOUTS = [
         value: "SLEEK" as const,
         widgetLayout: "/assets/widget-sleek-layout.png",
     },
+];
+
+export const BXGY_LAYOUTS = [
+    ...BOGO_LAYOUTS,
     {
-        label: "Unlock",
-        value: "UNLOCK" as const,
-        widgetLayout: "/assets/widget-unlock-layout.png",
+        label: "Checklist",
+        value: "CHECKLIST" as const,
+        widgetLayout: "/assets/widget-checklist-layout.png",
+    },
+    {
+        label: "Split Deal",
+        value: "SPLIT_DEAL" as const,
+        widgetLayout: "/assets/widget-split-deal-layout.png",
     },
 ];
 
 export const LAYOUTS_BY_BUNDLE_TYPE: Record<
     string,
-    typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS
+    typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS | typeof BXGY_LAYOUTS
 > = {
     FIXED_BUNDLE: WIDGET_LAYOUTS,
     BOGO: BOGO_LAYOUTS,
-    BUY_X_GET_Y: BOGO_LAYOUTS,
+    BUY_X_GET_Y: BXGY_LAYOUTS,
 };
 
 export const BOGO_LAYOUT_VALUES = [
@@ -111,7 +120,8 @@ export const BOGO_LAYOUT_VALUES = [
     "COMPACT_GRID",
     "MINIMALIST",
     "SLEEK",
-    "UNLOCK",
+    "CHECKLIST",
+    "SPLIT_DEAL",
 ];
 
 export const BUNDLE_STEPS = [

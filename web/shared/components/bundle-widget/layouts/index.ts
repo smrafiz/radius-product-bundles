@@ -6,4 +6,5 @@ export { WidgetClassicCard } from "./widget-classic-card";
 export { WidgetSleek } from "./widget-sleek";
 export { WidgetMinimalist } from "./widget-minimalist";
 export { WidgetCompactGrid } from "./widget-compact-grid";
-export { WidgetUnlock } from "./widget-unlock";
+export { WidgetChecklist } from "./widget-checklist";
+export { WidgetSplitDeal } from "./widget-split-deal";

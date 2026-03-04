@@ -75,12 +75,12 @@ export interface BundleStructure {
         bogoFreeText?: string;
         bogoTotalLabel?: string;
         bogoSaveText?: string;
-        unlockProgressText?: string;
-        unlockHintText?: string;
-        unlockCompletedText?: string;
-        unlockLockedLabel?: string;
-        unlockUnlockedLabel?: string;
-        unlockPricingLockedText?: string;
+        checklistProgressText?: string;
+        checklistHintText?: string;
+        checklistCompletedText?: string;
+        checklistLockedLabel?: string;
+        checklistUnlockedLabel?: string;
+        checklistPricingLockedText?: string;
     };
 }
 

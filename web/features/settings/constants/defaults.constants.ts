@@ -134,13 +134,13 @@ export const DEFAULT_LABELS = {
     bogoTotalLabel: "Total",
     bogoSaveText: "Save {amount}",
 
-    // Unlock Layout Labels
-    unlockProgressText: "{count}/{total} items added",
-    unlockHintText: "{remaining} more to unlock!",
-    unlockCompletedText: "Unlocked!",
-    unlockLockedLabel: "Unlock by adding all items above",
-    unlockUnlockedLabel: "Reward Unlocked",
-    unlockPricingLockedText: "Select all items to see your price",
+    // Checklist Layout Labels
+    checklistProgressText: "{count}/{total} items added",
+    checklistHintText: "{remaining} more to unlock!",
+    checklistCompletedText: "Unlocked!",
+    checklistLockedLabel: "Unlock by adding all items above",
+    checklistUnlockedLabel: "Reward Unlocked",
+    checklistPricingLockedText: "Select all items to see your price",
 
     // Cart Banner
     bannerSavingText: "You're saving {discount} with {name}",
