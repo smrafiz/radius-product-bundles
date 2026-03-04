@@ -16,7 +16,13 @@
         gap: 8px;
     }
 
-    &__progress-header {
+    &__progress-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    &__progress-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -30,6 +36,12 @@
     }
 
     &__progress-count {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--rb-primary-color, #f97316);
+    }
+
+    &__progress-hint {
         font-size: 14px;
         font-weight: 600;
         color: var(--rb-primary-color, #f97316);
@@ -50,9 +62,10 @@
         transition: width 0.4s ease;
     }
 
-    &__progress-text {
-        font-size: 13px;
-        color: #6b7280;
+    &__progress-unlocked {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--rb-savings-color, #16a34a);
     }
 
     // ── Section (Buy / Reward) ───────────────────────────────────────
@@ -79,6 +92,8 @@
         border: 1px solid #e5e7eb;
         border-radius: var(--rb-border-radius, 8px);
         background: #fff;
+        cursor: pointer;
+        user-select: none;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
         &--checked {
@@ -88,11 +103,12 @@
     }
 
     &__checkbox {
-        width: 22px;
-        height: 22px;
-        min-width: 22px;
-        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        border-radius: 4px;
         border: 2px solid #d1d5db;
+        background: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -109,8 +125,8 @@
 
         svg {
             display: none;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             color: #fff;
         }
     }
@@ -161,6 +177,19 @@
         font-size: 14px;
         font-weight: 600;
         color: var(--rb-text-color, #374151);
+        white-space: nowrap;
+    }
+
+    &__item-chevron {
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
     }
 
     &__item-qty {
@@ -299,6 +328,77 @@
         font-size: 13px;
         color: #9ca3af;
         text-decoration: line-through;
+    }
+
+    // ── Pricing Summary Box ──────────────────────────────────────────
+    &__pricing {
+        border: 1px solid #e5e7eb;
+        border-radius: var(--rb-border-radius, 8px);
+        padding: 16px;
+        background: #fff;
+        transition: all 0.3s ease;
+
+        &--locked {
+            opacity: 0.5;
+            background: #f9fafb;
+        }
+
+        &--unlocked {
+            opacity: 1;
+            border-color: var(--rb-savings-color, #16a34a);
+        }
+    }
+
+    &__pricing-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        padding: 3px 0;
+        color: #374151;
+    }
+
+    &__pricing-original {
+        text-decoration: line-through;
+        color: #9ca3af;
+    }
+
+    &__pricing-discount {
+        color: var(--rb-savings-color, #16a34a);
+        font-weight: 600;
+    }
+
+    &__pricing-divider {
+        height: 1px;
+        background: #e5e7eb;
+        margin: 8px 0;
+    }
+
+    &__pricing-total {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--rb-text-color, #111827);
+    }
+
+    &__pricing-locked-text {
+        font-size: 13px;
+        color: #9ca3af;
+        text-align: center;
+        padding: 4px 0;
+    }
+
+    &__pricing-savings {
+        margin-top: 8px;
+    }
+
+    &__pricing-savings-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 10%, transparent);
+        color: var(--rb-savings-color, #16a34a);
     }
 
     // ── CTA Button ───────────────────────────────────────────────────

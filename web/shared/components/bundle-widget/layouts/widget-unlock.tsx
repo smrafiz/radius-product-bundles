@@ -10,22 +10,7 @@ import {
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
-const CHECK_SVG = (
-    <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <polyline points="20 6 9 17 4 12" />
-    </svg>
-);
-
-const UNLOCK_SVG = (
+const LOCK_SVG = (
     <svg
         width="20"
         height="20"
@@ -37,7 +22,7 @@ const UNLOCK_SVG = (
         strokeLinejoin="round"
     >
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-        <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
 );
 
@@ -75,27 +60,21 @@ function UnlockTriggerItem({
                 alignItems: "center",
                 gap: 12,
                 padding: 12,
-                border: `2px solid ${styles.primaryColor || "#f97316"}`,
+                border: "2px solid #d1d5db",
                 borderRadius: cardRadius,
                 background: "#fff",
-                boxShadow: `0 0 0 1px ${styles.primaryColor || "#f97316"}`,
             }}
         >
             <div
                 style={{
-                    width: 22,
-                    height: 22,
-                    minWidth: 22,
-                    borderRadius: "50%",
-                    background: styles.primaryColor || "#f97316",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#fff",
+                    width: 20,
+                    height: 20,
+                    minWidth: 20,
+                    borderRadius: 4,
+                    border: "2px solid #d1d5db",
+                    background: "#fff",
                 }}
-            >
-                {CHECK_SVG}
-            </div>
+            />
             {product.image && (
                 <div
                     style={{
@@ -131,16 +110,28 @@ function UnlockTriggerItem({
                 >
                     {product.title}
                 </div>
-                <div
-                    style={{
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: styles.textColor,
-                        marginTop: 2,
-                    }}
+            </div>
+            <div
+                style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: styles.textColor,
+                    whiteSpace: "nowrap",
+                }}
+            >
+                {product.price}
+            </div>
+            <div style={{ color: "#9ca3af", display: "flex", alignItems: "center", flexShrink: 0 }}>
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                 >
-                    {product.price}
-                </div>
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
             </div>
         </div>
     );
@@ -247,9 +238,9 @@ export function WidgetUnlock({
     const buttonRadius = getButtonRadius(styles.cornerStyle);
 
     const totalTriggers = triggerProducts.length;
-    const progress = totalTriggers;
-    const isUnlocked = progress >= totalTriggers;
-    const progressPercent = totalTriggers > 0 ? (progress / totalTriggers) * 100 : 0;
+    const progress = 0;
+    const isUnlocked = false;
+    const progressPercent = 0;
     const freeText = DEFAULT_LABELS.bogoFreeText;
 
     let rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
@@ -284,6 +275,22 @@ export function WidgetUnlock({
         >
             {/* Progress Section */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {title && (
+                    <div
+                        style={{
+                            fontSize: headingFontSize,
+                            fontWeight: 700,
+                            color: styles.textColor,
+                        }}
+                    >
+                        {title}
+                    </div>
+                )}
+                {subtitle && (
+                    <div style={{ fontSize: 14, color: "#6b7280" }}>
+                        {subtitle}
+                    </div>
+                )}
                 <div
                     style={{
                         display: "flex",
@@ -291,17 +298,6 @@ export function WidgetUnlock({
                         alignItems: "center",
                     }}
                 >
-                    {title && (
-                        <div
-                            style={{
-                                fontSize: headingFontSize,
-                                fontWeight: 700,
-                                color: styles.textColor,
-                            }}
-                        >
-                            {title}
-                        </div>
-                    )}
                     <span
                         style={{
                             fontSize: 14,
@@ -310,6 +306,15 @@ export function WidgetUnlock({
                         }}
                     >
                         {progress}/{totalTriggers} items added
+                    </span>
+                    <span
+                        style={{
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: styles.primaryColor || "#f97316",
+                        }}
+                    >
+                        {totalTriggers} more to unlock!
                     </span>
                 </div>
                 <div
@@ -331,11 +336,6 @@ export function WidgetUnlock({
                         }}
                     />
                 </div>
-                {subtitle && (
-                    <div style={{ fontSize: 13, color: "#6b7280" }}>
-                        {subtitle}
-                    </div>
-                )}
             </div>
 
             {/* Trigger Section */}
@@ -416,7 +416,7 @@ export function WidgetUnlock({
                                 : "#9ca3af",
                         }}
                     >
-                        {UNLOCK_SVG}
+                        {LOCK_SVG}
                     </span>
                 </div>
                 <div
@@ -435,6 +435,31 @@ export function WidgetUnlock({
                     ))}
                 </div>
             </div>
+
+            {/* Pricing Summary Box */}
+            {pricing && (
+                <div
+                    style={{
+                        border: "1px solid #e5e7eb",
+                        borderRadius: getCardRadius(styles.cornerStyle),
+                        padding: 16,
+                        background: "#f9fafb",
+                        opacity: 0.5,
+                        transition: "all 0.3s ease",
+                    }}
+                >
+                    <div
+                        style={{
+                            fontSize: 13,
+                            color: "#9ca3af",
+                            textAlign: "center",
+                            padding: "4px 0",
+                        }}
+                    >
+                        Select all items to see your price
+                    </div>
+                </div>
+            )}
 
             {/* CTA Button */}
             {cartButtonText && (

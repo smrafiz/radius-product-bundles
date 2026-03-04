@@ -522,7 +522,12 @@ function buildDiscountBundlesMetafieldValue(
             ? (() => {
                   const roles: Record<string, string> = {};
                   for (const bp of bundleProducts) {
-                      roles[bp.productId] = bp.role || "INCLUDED";
+                      const role = bp.role || "INCLUDED";
+                      if (roles[bp.productId] === "TRIGGER" && role === "REWARD") {
+                          roles[bp.productId] = "REWARD";
+                      } else if (!roles[bp.productId]) {
+                          roles[bp.productId] = role;
+                      }
                   }
                   return Object.keys(roles).length > 0 ? roles : null;
               })()

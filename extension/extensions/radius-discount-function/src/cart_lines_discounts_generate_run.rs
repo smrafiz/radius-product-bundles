@@ -134,17 +134,19 @@ fn calculate_bxgy_discount(
         true
     };
 
+    // BOGO quantities (used for same-product per-line deal calculation)
+    let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
+    let get_qty = bundle_settings.get_quantity.unwrap_or(1);
+    let items_per_deal = buy_qty + get_qty;
+
     // Calculate deal count
     let deal_count: i32 = if same_product_mode || is_same_product {
-        // Same product (BOGO): items_per_deal = buy + get, deals = total / items_per_deal
-        let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
-        let get_qty = bundle_settings.get_quantity.unwrap_or(1);
-        let items_per_deal = buy_qty + get_qty;
-        let total_qty: i32 = reward_lines
+        // Same product (BOGO): guard check — at least one product must have enough qty
+        reward_lines
             .iter()
-            .map(|bl| *bl.line.quantity())
-            .sum();
-        total_qty / items_per_deal
+            .map(|bl| *bl.line.quantity() / items_per_deal)
+            .max()
+            .unwrap_or(0)
     } else {
         // Different products: use per-product expected quantities from product_quantities.
         // deal_count = min across all products of (cart_qty / expected_qty).
@@ -175,8 +177,6 @@ fn calculate_bxgy_discount(
             std::cmp::min(trigger_min, reward_min)
         } else {
             // Fallback: use buy_quantity/get_quantity
-            let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
-            let get_qty = bundle_settings.get_quantity.unwrap_or(1);
             let total_trigger: i32 = trigger_lines.iter().map(|bl| *bl.line.quantity()).sum();
             let total_reward: i32 = reward_lines.iter().map(|bl| *bl.line.quantity()).sum();
             std::cmp::min(total_trigger / buy_qty, total_reward / get_qty)
@@ -192,13 +192,18 @@ fn calculate_bxgy_discount(
     let mut reward_total: f64 = 0.0;
 
     for bl in &reward_lines {
-        let expected = bl
-            .product_id
-            .as_ref()
-            .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
-            .copied()
-            .unwrap_or(1);
-        let qty_to_discount = std::cmp::min(deal_count * expected, *bl.line.quantity());
+        let qty_to_discount = if same_product_mode || is_same_product {
+            let per_product_deals = *bl.line.quantity() / items_per_deal;
+            per_product_deals * get_qty
+        } else {
+            let expected = bl
+                .product_id
+                .as_ref()
+                .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
+                .copied()
+                .unwrap_or(1);
+            std::cmp::min(deal_count * expected, *bl.line.quantity())
+        };
 
         if qty_to_discount <= 0 {
             continue;
@@ -221,13 +226,18 @@ fn calculate_bxgy_discount(
     let total_reward_qty_to_discount: i32 = reward_lines
         .iter()
         .map(|bl| {
-            let expected = bl
-                .product_id
-                .as_ref()
-                .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
-                .copied()
-                .unwrap_or(1);
-            std::cmp::min(deal_count * expected, *bl.line.quantity())
+            if same_product_mode || is_same_product {
+                let per_product_deals = *bl.line.quantity() / items_per_deal;
+                per_product_deals * get_qty
+            } else {
+                let expected = bl
+                    .product_id
+                    .as_ref()
+                    .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
+                    .copied()
+                    .unwrap_or(1);
+                std::cmp::min(deal_count * expected, *bl.line.quantity())
+            }
         })
         .sum();
 
