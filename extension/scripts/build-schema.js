@@ -93,7 +93,7 @@ function buildSchemaForExtension(extensionName) {
         }
 
         // Build a new schema section
-        const newSchemaContent = `{% schema %}\n${JSON.stringify(schema, null, "\t")}\n{% endschema %}`;
+        const newSchemaContent = `{% schema %}\n${JSON.stringify(schema)}\n{% endschema %}`;
 
         // Replace schema
         const beforeSchema = liquidContent.substring(0, schemaStart);

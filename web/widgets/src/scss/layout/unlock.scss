@@ -97,16 +97,16 @@
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
         &--checked {
-            border-color: var(--rb-primary-color, #f97316);
-            box-shadow: 0 0 0 1px var(--rb-primary-color, #f97316);
+            border-color: var(--rb-savings-color, #16a34a);
+            background: #f0fdf4;
         }
     }
 
     &__checkbox {
-        width: 20px;
-        height: 20px;
-        min-width: 20px;
-        border-radius: 4px;
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        border-radius: 50%;
         border: 2px solid #d1d5db;
         background: #fff;
         display: flex;
@@ -114,20 +114,20 @@
         justify-content: center;
         transition: all 0.2s ease;
 
-        &--checked {
-            background: var(--rb-primary-color, #f97316);
-            border-color: var(--rb-primary-color, #f97316);
-
-            svg {
-                display: block;
-            }
-        }
-
         svg {
             display: none;
             width: 12px;
             height: 12px;
             color: #fff;
+        }
+
+        &--checked {
+            background: var(--rb-savings-color, #16a34a);
+            border-color: var(--rb-savings-color, #16a34a);
+
+            svg {
+                display: block;
+            }
         }
     }
 
@@ -223,7 +223,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 20px;
     }
 
     &__reward-label {
@@ -260,7 +260,7 @@
     &__reward-products {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 15px;
     }
 
     &__reward-item {
@@ -299,6 +299,10 @@
     &__reward-info {
         flex: 1;
         min-width: 0;
+        display: flex;
+        gap: 30px;
+        justify-content: space-between;
+        align-items: center;
     }
 
     &__reward-title {
@@ -315,7 +319,6 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        margin-top: 2px;
     }
 
     &__reward-price-current {

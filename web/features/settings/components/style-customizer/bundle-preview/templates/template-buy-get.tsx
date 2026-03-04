@@ -6,7 +6,8 @@ import {
 } from "@/shared/constants/bundle-widget.constants";
 import type { WidgetPricing } from "@/shared";
 import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid, WidgetUnlock } from "@/shared/components/bundle-widget";
-import { BundleTemplateProps, useEffectiveStyles } from "@/features/settings";
+import { BundleTemplateProps, useEffectiveStyles, useSettingsStore } from "@/features/settings";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 
 const BXGY_PRODUCTS: PreviewProduct[] = [
@@ -47,6 +48,13 @@ const BXGY_PRICING: WidgetPricing = {
 
 export function TemplateBuyGet({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
+    const serverData = useSettingsStore((s) => s.serverData);
+    const labels = {
+        ...DEFAULT_LABELS,
+        ...(serverData?.labels as Partial<typeof DEFAULT_LABELS>),
+        bogoTriggerBadgeText: "You Buy",
+        bogoRewardBadgeText: "50% Off",
+    };
 
     const layoutProps = {
         products: BXGY_PRODUCTS,
@@ -58,10 +66,7 @@ export function TemplateBuyGet({ activeLayout }: BundleTemplateProps) {
         title: "Buy 2 Get 1 Free",
         subtitle: "Mix and match your favorites",
         badgeText: "BXGY DEAL",
-        labels: {
-            bogoTriggerBadgeText: "You Buy",
-            bogoRewardBadgeText: "50% Off",
-        },
+        labels,
     };
 
     switch (activeLayout) {

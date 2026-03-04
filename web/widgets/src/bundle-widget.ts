@@ -534,8 +534,9 @@ import {
             const isBxgy =
                 structure.bundleType === "BOGO" ||
                 structure.bundleType === "BUY_X_GET_Y";
-            const buyQty = structure.buyQuantity || 1;
-            const getQty = structure.getQuantity || 1;
+            const roles = structure.productRoles || [];
+            const buyQty = roles.filter((r) => r === "TRIGGER").length || structure.buyQuantity || 1;
+            const getQty = roles.filter((r) => r === "REWARD").length || structure.getQuantity || 1;
 
             if (isBxgy) {
                 if (

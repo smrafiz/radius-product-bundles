@@ -385,12 +385,102 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Save text",
                     placeholder: "Save {amount}",
                     details:
-                        "Savings text in the footer. Use {amount} for the savings value.",
+                        "Savings text in the footer. Use {amount} for the value.",
                     defaultValue: "Save {amount}",
                     validation: {
                         maxLength: {
                             value: 30,
                             message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "unlockProgressText",
+                    label: "Unlock progress text",
+                    placeholder: "{count}/{total} items added",
+                    details:
+                        "Progress count text. Use {count} for checked items and {total} for total items.",
+                    defaultValue: "{count}/{total} items added",
+                    validation: {
+                        maxLength: {
+                            value: 50,
+                            message: "Cannot exceed 50 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "unlockHintText",
+                    label: "Unlock hint text",
+                    placeholder: "{remaining} more to unlock!",
+                    details:
+                        "Hint shown when items remain. Use {remaining} for remaining count.",
+                    defaultValue: "{remaining} more to unlock!",
+                    validation: {
+                        maxLength: {
+                            value: 50,
+                            message: "Cannot exceed 50 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "unlockCompletedText",
+                    label: "Unlock completed text",
+                    placeholder: "Unlocked!",
+                    details:
+                        "Hint shown when all items are selected.",
+                    defaultValue: "Unlocked!",
+                    validation: {
+                        maxLength: {
+                            value: 30,
+                            message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "unlockLockedLabel",
+                    label: "Locked reward label",
+                    placeholder: "Unlock by adding all items above",
+                    details:
+                        "Reward section heading when items are not yet selected.",
+                    defaultValue: "Unlock by adding all items above",
+                    validation: {
+                        maxLength: {
+                            value: 60,
+                            message: "Cannot exceed 60 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "unlockUnlockedLabel",
+                    label: "Unlocked reward label",
+                    placeholder: "Reward Unlocked",
+                    details:
+                        "Reward section heading when all items are selected.",
+                    defaultValue: "Reward Unlocked",
+                    validation: {
+                        maxLength: {
+                            value: 60,
+                            message: "Cannot exceed 60 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "unlockPricingLockedText",
+                    label: "Pricing locked text",
+                    placeholder: "Select all items to see your price",
+                    details:
+                        "Text shown in pricing box before all items are selected.",
+                    defaultValue: "Select all items to see your price",
+                    validation: {
+                        maxLength: {
+                            value: 60,
+                            message: "Cannot exceed 60 characters",
                         },
                     },
                 },

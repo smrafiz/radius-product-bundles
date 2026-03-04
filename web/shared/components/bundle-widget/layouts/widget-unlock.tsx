@@ -241,7 +241,14 @@ export function WidgetUnlock({
     const progress = 0;
     const isUnlocked = false;
     const progressPercent = 0;
-    const freeText = DEFAULT_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
+    const lockedLabel = labels?.unlockLockedLabel || DEFAULT_LABELS.unlockLockedLabel;
+    const progressLabel = (labels?.unlockProgressText || DEFAULT_LABELS.unlockProgressText)
+        .replace("{count}", String(progress))
+        .replace("{total}", String(totalTriggers));
+    const hintLabel = (labels?.unlockHintText || DEFAULT_LABELS.unlockHintText)
+        .replace("{remaining}", String(totalTriggers));
+    const pricingLockedLabel = labels?.unlockPricingLockedText || DEFAULT_LABELS.unlockPricingLockedText;
 
     let rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
     if (pricing?.hasDiscount && pricing.savingsPercentage === 100) {
@@ -305,7 +312,7 @@ export function WidgetUnlock({
                             color: styles.primaryColor || "#f97316",
                         }}
                     >
-                        {progress}/{totalTriggers} items added
+                        {progressLabel}
                     </span>
                     <span
                         style={{
@@ -314,7 +321,7 @@ export function WidgetUnlock({
                             color: styles.primaryColor || "#f97316",
                         }}
                     >
-                        {totalTriggers} more to unlock!
+                        {hintLabel}
                     </span>
                 </div>
                 <div
@@ -394,7 +401,7 @@ export function WidgetUnlock({
                             color: "#374151",
                         }}
                     >
-                        Your Reward
+                        {lockedLabel}
                     </span>
                     <span
                         style={{
@@ -456,7 +463,7 @@ export function WidgetUnlock({
                             padding: "4px 0",
                         }}
                     >
-                        Select all items to see your price
+                        {pricingLockedLabel}
                     </div>
                 </div>
             )}

@@ -1,0 +1,87 @@
+{%- if more_product_settings -%}{%- assign visible = more_product_count -%}{%- else -%}{%- assign visible = product_count -%}{%- endif -%}
+<div class="radius-bundle__inner{% if layout == 'compact' %} radius-bundle__inner--compact{% endif %}">
+	{% render 'radius-bundle-header', name: name, subtitle: subtitle, show_savings_badge: show_savings_badge %}
+
+	{% if layout == 'carousel' %}
+		{%- assign show_arrows = false -%}{%- assign show_dots = false -%}
+		{%- if carousel_navigation == 'arrows' or carousel_navigation == 'both' -%}{%- assign show_arrows = true -%}{%- endif -%}
+		{%- if carousel_navigation == 'dots' or carousel_navigation == 'both' -%}{%- assign show_dots = true -%}{%- endif -%}
+		<div class="radius-bundle__slider-wrapper">
+			{% if show_arrows %}<button class="radius-bundle__slider-nav radius-bundle__slider-nav--prev" aria-label="Previous product" data-slider-prev disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>{% endif %}
+			<div class="radius-bundle__slider-container">
+				<div class="radius-bundle__products radius-bundle__products--slider" data-bundle-products data-slider-track data-autoplay="{{ autoplay }}" data-autoplay-speed="{{ autoplay_speed | default: 5 }}" style="--slides-per-view:{{ slides_per_view | default: 3 }};">
+					{% for i in (1..product_count) %}
+					<div class="radius-bundle__skeleton-card radius-bundle__loading" data-bundle-loading>
+						{%- if show_images -%}<div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>{%- endif -%}
+						<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+						<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+						{%- if show_quantity -%}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>{%- endif -%}
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+			{% if show_arrows %}<button class="radius-bundle__slider-nav radius-bundle__slider-nav--next" aria-label="Next product" data-slider-next><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>{% endif %}
+		</div>
+		{% if show_dots %}<div class="radius-bundle__slider-dots" data-slider-dots></div>{% endif %}
+
+	{% elsif layout == 'grid' %}
+		<div class="radius-bundle__products radius-bundle__skeleton--grid" data-bundle-products style="--grid-columns:{{ grid_columns | default: 3 }};">
+			{% for i in (1..product_count) %}
+				{%- assign idx = forloop.index0 -%}{%- assign hidden = false -%}{%- if idx >= visible -%}{%- assign hidden = true -%}{%- endif -%}
+				<div class="radius-bundle__skeleton-card radius-bundle__loading{% if hidden %} radius-bundle__product--hidden{% endif %}" data-bundle-loading data-product-index="{{ idx }}"{% if hidden %} style="display:none;"{% endif %}>
+					{%- if show_images -%}<div class="radius-bundle__skeleton-image radius-bundle__skeleton-image--large"></div>{%- endif -%}
+					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+					<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+					{%- if show_quantity -%}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--qty"></div>{%- endif -%}
+				</div>
+			{% endfor %}
+		</div>
+
+	{% elsif layout == 'compact' %}
+		<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
+			<div class="radius-bundle__loading" data-bundle-loading>
+				<div class="radius-bundle__skeleton radius-bundle__skeleton--compact">
+					{% for i in (1..product_count) %}
+						{%- assign idx = forloop.index0 -%}{%- assign hidden = false -%}{%- if idx >= visible -%}{%- assign hidden = true -%}{%- endif -%}
+						<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--compact{% if hidden %} radius-bundle__product--hidden{% endif %}" data-product-index="{{ idx }}"{% if hidden %} style="display:none;"{% endif %}>
+							{%- if show_images -%}<div class="radius-bundle__skeleton-image"></div>{%- endif -%}
+							<div class="radius-bundle__skeleton-content">
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+								{%- if show_quantity -%}<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--subtitle"></div>{%- endif -%}
+							</div>
+							{%- if show_product_prices -%}<div class="radius-bundle__skeleton-price-wrapper"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div></div>{%- endif -%}
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+	{% else %}
+		<div class="radius-bundle__products radius-bundle__products--list" data-bundle-products>
+			<div class="radius-bundle__loading" data-bundle-loading>
+				<div class="radius-bundle__skeleton radius-bundle__skeleton--list">
+					{%- assign div_max = visible | minus: 1 -%}
+					{% for i in (1..product_count) %}
+						{%- assign idx = forloop.index0 -%}{%- assign hidden = false -%}{%- if idx >= visible -%}{%- assign hidden = true -%}{%- endif -%}
+						<div class="radius-bundle__skeleton-item radius-bundle__skeleton-item--list{% if hidden %} radius-bundle__product--hidden{% endif %}" data-product-index="{{ idx }}"{% if hidden %} style="display:none;"{% endif %}>
+							{%- if show_images -%}<div class="radius-bundle__skeleton-image"></div>{%- endif -%}
+							<div class="radius-bundle__skeleton-content">
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--subtitle"></div>
+							</div>
+							<div class="radius-bundle__skeleton-price-wrapper">
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+							</div>
+						</div>
+						{%- unless forloop.last -%}{%- assign dh = false -%}{%- if idx >= div_max -%}{%- assign dh = true -%}{%- endif -%}{%- if divider_style == 'plus' -%}<div class="radius-bundle__divider radius-bundle__divider--plus{% if dh %} radius-bundle__divider--hidden{% endif %}" data-divider-index="{{ idx }}"{% if dh %} style="display:none;"{% endif %}><div class="divider-position">+</div></div>{%- elsif divider_style == 'line' -%}<div class="radius-bundle__divider radius-bundle__divider--line{% if dh %} radius-bundle__divider--hidden{% endif %}" data-divider-index="{{ idx }}"{% if dh %} style="display:none;"{% endif %}></div>{%- endif -%}{%- endunless -%}
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{%- assign is_compact = false -%}{%- if layout == 'compact' -%}{%- assign is_compact = true -%}{%- endif -%}
+	{% render 'radius-bundle-pricing', show_savings: show_savings, show_free_shipping: show_free_shipping, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, pricing_summary_box: pricing_summary_box, compact: is_compact %}
+	{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
+</div>

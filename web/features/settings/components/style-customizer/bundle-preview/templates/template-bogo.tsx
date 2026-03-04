@@ -6,7 +6,8 @@ import {
 } from "@/shared/constants/bundle-widget.constants";
 import type { WidgetPricing } from "@/shared";
 import { WidgetClassicCard, WidgetSleek, WidgetMinimalist, WidgetCompactGrid, WidgetUnlock } from "@/shared/components/bundle-widget";
-import { BundleTemplateProps, useEffectiveStyles } from "@/features/settings";
+import { BundleTemplateProps, useEffectiveStyles, useSettingsStore } from "@/features/settings";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 
 const BOGO_PRODUCTS: PreviewProduct[] = [
@@ -39,6 +40,11 @@ const BOGO_PRICING: WidgetPricing = {
 
 export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
+    const serverData = useSettingsStore((s) => s.serverData);
+    const labels = {
+        ...DEFAULT_LABELS,
+        ...(serverData?.labels as Partial<typeof DEFAULT_LABELS>),
+    };
 
     const layoutProps = {
         products: BOGO_PRODUCTS,
@@ -50,6 +56,7 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
         title: "Buy One Get One Free",
         subtitle: "Limited time promotional offer",
         badgeText: "BOGO OFFER",
+        labels,
     };
 
     switch (activeLayout) {

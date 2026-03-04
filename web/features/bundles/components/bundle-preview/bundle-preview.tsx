@@ -15,6 +15,7 @@ import {
     WidgetSleek,
     WidgetMinimalist,
     WidgetCompactGrid,
+    WidgetUnlock,
 } from "@/shared";
 import {
     BundlePreviewStatus,
@@ -210,12 +211,14 @@ function useWidgetLabels(): WidgetLabels {
 }
 
 function useBadgeText(labels: WidgetLabels): string {
-    const { bundleData } = useBundleStore();
+    const { bundleData, selectedItems } = useBundleStore();
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
-    const buy = bundleData.buyQuantity ?? 1;
-    const get = bundleData.getQuantity ?? 1;
+    const triggerCount = selectedItems.filter((i) => i.role === "TRIGGER").length;
+    const rewardCount = selectedItems.filter((i) => i.role === "REWARD").length;
+    const buy = triggerCount || (bundleData.buyQuantity ?? 1);
+    const get = rewardCount || (bundleData.getQuantity ?? 1);
     const discountType = bundleData.discountType;
     const discountValue = bundleData.discountValue ?? 0;
 
@@ -296,6 +299,17 @@ function RenderLayout({
                     title={title}
                     subtitle={subtitle}
                     badgeText={badgeText}
+                />
+            );
+        case "UNLOCK":
+            return (
+                <WidgetUnlock
+                    {...layoutProps}
+                    pricing={pricing}
+                    cartButtonText={cartButtonText}
+                    title={title}
+                    subtitle={subtitle}
+                    labels={labels}
                 />
             );
         case "CLASSIC_CARD":

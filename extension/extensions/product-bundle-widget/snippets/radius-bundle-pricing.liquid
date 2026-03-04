@@ -1,20 +1,5 @@
-{% comment %}
-  Radius Bundle Pricing Section
-
-  Parameters:
-  - show_savings: Boolean
-  - show_free_shipping: Boolean
-  - regular_price_label: String
-  - bundle_price_label: String
-  - you_save_label: String
-  - free_shipping_label: String
-  - compact: Boolean (for compact layout)
-  - pricing_summary_box: Boolean (controls box styling via CSS vars)
-{% endcomment %}
-
 {% if pricing_summary_box %}
 <div class="radius-bundle__pricing{% if compact %} radius-bundle__pricing--compact{% endif %}" data-bundle-pricing>
-	{% comment %} Regular Price Row {% endcomment %}
 	{% unless compact %}
 		<div class="radius-bundle__pricing-row">
 			<div class="radius-bundle__pricing-label">{{ regular_price_label }}</div>
@@ -24,7 +9,6 @@
 		</div>
 	{% endunless %}
 
-	{% comment %} Bundle Price Row {% endcomment %}
 	<div class="radius-bundle__pricing-row{% if compact %} radius-bundle__pricing-row--compact{% endif %}{% unless compact %} radius-bundle__pricing-row--highlight{% endunless %}">
 		<div class="radius-bundle__pricing-discounted-label">{{ bundle_price_label }}</div>
 		<div class="radius-bundle__price-discounted{% if compact %} radius-bundle__price-discounted--compact{% endif %}" data-bundle-price>
@@ -32,7 +16,6 @@
         </div>
 	</div>
 
-	{% comment %} Savings Row {% endcomment %}
 	{% if show_savings %}
 		<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
 			<div class="radius-bundle__savings-label">{{ you_save_label }}</div>
@@ -42,7 +25,6 @@
 		</div>
 	{% endif %}
 
-	{% comment %} Free Shipping Badge {% endcomment %}
 	{% if show_free_shipping %}
 		<div class="radius-bundle__free-shipping" data-free-shipping style="display: none;">
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
