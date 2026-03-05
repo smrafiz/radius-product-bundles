@@ -5,7 +5,7 @@
 {% endunless %}
 
 <div class="radius-bundle__inner">
-	{% unless layout == 'checklist' or layout == 'split_deal' %}
+	{% unless layout == 'classic_card' or layout == 'checklist' or layout == 'split_deal' or layout == 'compact_grid' or layout == 'sleek' or layout == 'minimalist' %}
 	<div class="radius-bundle__header" style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px;">
 		{% if show_savings_badge %}
 			<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge" style="display:inline-block;width:160px;height:28px;border-radius:20px;"></span>
@@ -26,14 +26,27 @@
 			{% case layout %}
 			{% when 'classic_card' %}
 				{% assign reward_count = count | minus: trigger_count %}
+				{% assign is_horizontal = true %}
+				{% if image_position == 'top' %}{% assign is_horizontal = false %}{% endif %}
+				{% assign outline_class = '' %}
+				{% if badge_style == 'outline' %}{% assign outline_class = ' rb-classic__badge--outline' %}{% endif %}
+				<div class="rb-classic__header">
+					{% if show_savings_badge %}
+						<span class="rb-classic__header-badge radius-bundle__skeleton-text" style="display:inline-block;width:180px;height:28px;border-radius:20px;"></span>
+					{% endif %}
+					<div class="rb-classic__header-title">{{ name }}</div>
+					{% if subtitle != blank %}
+						<div class="rb-classic__header-subtitle">{{ subtitle }}</div>
+					{% endif %}
+				</div>
 				<div class="rb-classic__grid">
 					<div class="rb-classic__card rb-classic__card--trigger" style="flex:1">
-						<span class="rb-classic__badge rb-classic__badge--trigger">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>
+						<span class="rb-classic__badge rb-classic__badge--trigger{{ outline_class }}">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>
 						<div class="rb-classic__group-products"{% if trigger_count > 1 %} style="grid-template-columns:repeat({{ trigger_count }},1fr)"{% endif %}>
 							{% for i in (1..trigger_count) %}
-								<div class="rb-classic__product">
+								<div class="rb-classic__product{% if is_horizontal %} rb-classic__product--horizontal{% endif %}">
 									{%- if show_images -%}
-										<div class="rb-classic__image" style="margin-top:8px;">
+										<div class="rb-classic__image">
 											<div class="radius-bundle__skeleton-image" style="width:100%;height:100%;"></div>
 										</div>
 									{%- endif -%}
@@ -48,12 +61,12 @@
 						</div>
 					</div>
 					<div class="rb-classic__card rb-classic__card--reward" style="flex:1">
-						<span class="rb-classic__badge rb-classic__badge--reward">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>
+						<span class="rb-classic__badge rb-classic__badge--reward{{ outline_class }}">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>
 						<div class="rb-classic__group-products"{% if reward_count > 1 %} style="grid-template-columns:repeat({{ reward_count }},1fr)"{% endif %}>
 							{% for i in (1..reward_count) %}
-								<div class="rb-classic__product">
+								<div class="rb-classic__product{% if is_horizontal %} rb-classic__product--horizontal{% endif %}">
 									{%- if show_images -%}
-										<div class="rb-classic__image" style="margin-top:8px;">
+										<div class="rb-classic__image">
 											<div class="radius-bundle__skeleton-image" style="width:100%;height:100%;"></div>
 										</div>
 									{%- endif -%}
@@ -177,6 +190,134 @@
 						</div>
 					</div>
 					{% endif %}
+				</div>
+
+			{% when 'compact_grid' %}
+				{% assign reward_count = count | minus: trigger_count %}
+				{% assign cg_trigger_flex = 2 %}
+				{% if trigger_count <= 1 and reward_count <= 1 %}{% assign cg_trigger_flex = 1 %}{% endif %}
+				<div class="rb-cg__container">
+					<div class="rb-cg__banner">
+						<div class="rb-cg__banner-text">
+							<span class="rb-cg__banner-title">{{ name }}</span>
+							{% if subtitle != blank %}<span class="rb-cg__banner-subtitle">{{ subtitle }}</span>{% endif %}
+						</div>
+						{% if show_savings_badge %}
+							<span class="rb-cg__banner-badge radius-bundle__skeleton-text" style="display:inline-block;width:80px;height:24px;border-radius:20px;"></span>
+						{% endif %}
+					</div>
+					<div class="rb-cg__tiles">
+						<div class="rb-cg__tile-group rb-cg__tile-group--trigger" style="flex:{{ cg_trigger_flex }}">
+							<div class="rb-cg__slider">
+								{% assign cg_cols = trigger_count %}
+								{% if cg_cols > 2 %}{% assign cg_cols = 2 %}{% endif %}
+								<div class="rb-cg__slide" style="grid-template-columns:repeat({{ cg_cols }},1fr)">
+									{% for i in (1..trigger_count) %}{% if i > 2 %}{% break %}{% endif %}
+									<div class="rb-cg__tile rb-cg__tile--trigger">
+										{%- if show_images -%}<div class="rb-cg__tile-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
+										<span class="rb-cg__tile-role rb-cg__tile-role--trigger">{{ bogo_you_pay_label | default: 'You Pay' }}</span>
+										<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+										<div class="rb-cg__tile-prices"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div></div>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+						<div class="rb-cg__connector">+</div>
+						<div class="rb-cg__tile-group rb-cg__tile-group--reward" style="flex:1">
+							<div class="rb-cg__slider">
+								<div class="rb-cg__slide" style="grid-template-columns:1fr">
+									{% for i in (1..reward_count) %}{% if i > 1 %}{% break %}{% endif %}
+									<div class="rb-cg__tile rb-cg__tile--reward">
+										{%- if show_images -%}<div class="rb-cg__tile-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
+										<span class="rb-cg__tile-role rb-cg__tile-role--reward">{{ bogo_free_text | default: 'FREE' }}</span>
+										<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+										<div class="rb-cg__tile-prices"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div></div>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="rb-cg__footer">
+						<div class="rb-cg__footer-pricing">
+							<span class="rb-cg__footer-label">{{ bogo_total_label | default: 'Total' }}</span>
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+						</div>
+					</div>
+				</div>
+
+			{% when 'sleek' %}
+				{% assign reward_count = count | minus: trigger_count %}
+				<div class="rb-sleek__container">
+					<h3 class="rb-sleek__header">{{ name }}</h3>
+					{% for i in (1..trigger_count) %}
+					<div class="rb-sleek__card rb-sleek__card--trigger">
+						{%- if show_images -%}<div class="rb-sleek__image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
+						<div class="rb-sleek__info">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+							<span class="rb-sleek__label">{{ bogo_you_pay_label | default: 'You pay' }}</span>
+						</div>
+						<div class="rb-sleek__price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:60px"></div></div>
+					</div>
+					{% endfor %}
+					<div class="rb-sleek__divider"><span class="rb-sleek__divider-icon">+</span></div>
+					{% for i in (1..reward_count) %}
+					<div class="rb-sleek__card rb-sleek__card--reward">
+						{%- if show_images -%}<div class="rb-sleek__image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
+						<div class="rb-sleek__info">
+							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+							<span class="rb-sleek__badge">{{ bogo_free_text | default: 'FREE' }}</span>
+						</div>
+						<div class="rb-sleek__price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:60px"></div></div>
+					</div>
+					{% endfor %}
+					<div class="rb-sleek__separator"></div>
+					<div class="rb-sleek__footer">
+						<span class="rb-sleek__total">{{ bogo_total_label | default: 'Total' }}: <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="display:inline-block;width:60px;height:16px;vertical-align:middle;"></span></span>
+					</div>
+				</div>
+
+			{% when 'minimalist' %}
+				{% assign reward_count = count | minus: trigger_count %}
+				<div class="rb-minimalist__container">
+					{% if show_savings_badge %}
+						<span class="rb-minimalist__badge radius-bundle__skeleton-text" style="display:inline-block;width:120px;height:22px;"></span>
+					{% endif %}
+					<div class="rb-minimalist__hero">
+						{%- if show_images -%}
+							<div class="rb-minimalist__hero-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>
+						{%- endif -%}
+						<div class="rb-minimalist__hero-info">
+							<div class="rb-minimalist__title">{{ name }}</div>
+							{% if subtitle != blank %}<div class="rb-minimalist__subtitle">{{ subtitle }}</div>{% endif %}
+							<div class="rb-minimalist__pricing">
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:80px;height:22px;"></div>
+							</div>
+						</div>
+					</div>
+					<div class="rb-minimalist__items">
+						{% for i in (1..trigger_count) %}
+						<div class="rb-minimalist__item rb-minimalist__item--trigger">
+							{%- if show_images -%}<div class="rb-minimalist__item-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
+							<div class="rb-minimalist__item-info">
+								<span class="rb-minimalist__item-role rb-minimalist__item-role--trigger">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+								{%- if show_product_prices -%}<div class="rb-minimalist__item-price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:50px"></div></div>{%- endif -%}
+							</div>
+						</div>
+						{% endfor %}
+						{% for i in (1..reward_count) %}
+						<div class="rb-minimalist__item rb-minimalist__item--reward">
+							{%- if show_images -%}<div class="rb-minimalist__item-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
+							<div class="rb-minimalist__item-info">
+								<span class="rb-minimalist__item-role rb-minimalist__item-role--reward">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>
+								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
+								{%- if show_product_prices -%}<div class="rb-minimalist__item-price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:50px"></div></div>{%- endif -%}
+							</div>
+						</div>
+						{% endfor %}
+					</div>
 				</div>
 
 			{% else %}
