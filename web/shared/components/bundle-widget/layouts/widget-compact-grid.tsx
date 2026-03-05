@@ -105,7 +105,7 @@ function ProductTile({
                 {product.title}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 <span
                     style={{
                         fontSize: 16,
@@ -278,6 +278,7 @@ export function WidgetCompactGrid({
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
+    const singleEach = triggerProducts.length <= 1 && rewardProducts.length <= 1;
     const primaryColor = styles.primaryColor || "#e0598b";
     const savingsColor = styles.savingsColor || "#16a34a";
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -376,7 +377,7 @@ export function WidgetCompactGrid({
                     labels={labels}
                     dotColor={primaryColor}
                     perPage={2}
-                    flexVal={2}
+                    flexVal={singleEach ? 1 : 2}
                 />
 
                 <div

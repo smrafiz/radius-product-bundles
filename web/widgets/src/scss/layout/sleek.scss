@@ -182,23 +182,28 @@
         color: var(--rb-text-color, #111827);
     }
 
-    &__cart-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px 24px;
-        border: none;
-        border-radius: var(--rb-button-border-radius, 8px);
-        background: var(--rb-button-bg-color, #111827);
-        color: var(--rb-button-text-color, #fff);
-        font-size: var(--rb-body-font-size, 14px);
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.15s ease;
-        white-space: nowrap;
+    &__actions-inline {
+        margin: 0;
+        flex-shrink: 0;
 
-        &:hover {
-            opacity: 0.9;
+        .radius-bundle__add-to-cart {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 24px;
+            border: none;
+            border-radius: var(--rb-button-border-radius, 8px);
+            background: var(--rb-button-bg-color, #111827);
+            color: var(--rb-button-text-color, #fff);
+            font-size: var(--rb-body-font-size, 14px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s ease;
+            white-space: nowrap;
+
+            &:hover {
+                opacity: 0.9;
+            }
         }
     }
 }

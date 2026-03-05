@@ -438,11 +438,6 @@ export function renderBogoSleekProducts(
             0,
         );
 
-    const buttonText =
-        ctx.container
-            .querySelector("[data-bundle-add-to-cart]")
-            ?.textContent?.trim() || "Add to Cart";
-
     let html = `<div class="rb-sleek__container">`;
     html += `<h3 class="rb-sleek__header">${escapeHtml(bundle.name)}</h3>`;
 
@@ -455,19 +450,22 @@ export function renderBogoSleekProducts(
     });
 
     html += `<div class="rb-sleek__separator"></div>`;
-    html += `
-        <div class="rb-sleek__footer">
-            <span class="rb-sleek__total">${escapeHtml(totalLabel)}: ${formatMoney(totalDiscounted)}</span>
-            <button class="rb-sleek__cart-btn" data-sleek-add-to-cart>${escapeHtml(buttonText)}</button>
-        </div>
-    `;
+    html += `<div class="rb-sleek__footer">`;
+    html += `<span class="rb-sleek__total">${escapeHtml(totalLabel)}: ${formatMoney(totalDiscounted)}</span>`;
+    html += `</div>`;
     html += `</div>`;
 
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
-    hideStandardButton(ctx.container);
-    wireCustomCartButton(container, ctx.container, "[data-sleek-add-to-cart]");
+
+    const actionsEl = ctx.container.querySelector(".radius-bundle__actions");
+    const footerEl = container.querySelector(".rb-sleek__footer");
+    if (actionsEl && footerEl) {
+        actionsEl.classList.add("rb-sleek__actions-inline");
+        footerEl.appendChild(actionsEl);
+    }
+    enableCartButton(ctx.container);
 }
 
 export function renderBogoMinimalistProducts(
@@ -661,12 +659,14 @@ export function renderBogoCompactGridProducts(
         const isFree = hasRewardDiscount && discountedPrice === 0;
 
         if (hasRewardDiscount) {
-            priceHtml = `<div class="rb-cg__tile-price rb-cg__tile-price--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</div>`;
+            priceHtml = `<div class="rb-cg__tile-prices">`;
+            priceHtml += `<div class="rb-cg__tile-price rb-cg__tile-price--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</div>`;
             if (ctx.showComparePrices) {
                 priceHtml += `<div class="rb-cg__tile-compare">${formatMoney(product.price)}</div>`;
             }
+            priceHtml += `</div>`;
         } else {
-            priceHtml = `<div class="rb-cg__tile-price">${formatMoney(product.price)}</div>`;
+            priceHtml = `<div class="rb-cg__tile-prices"><div class="rb-cg__tile-price">${formatMoney(product.price)}</div></div>`;
         }
 
         const cgFreeText = labels?.bogoFreeText || "FREE";
@@ -742,8 +742,9 @@ export function renderBogoCompactGridProducts(
         return g;
     };
 
+    const singleEach = triggers.length <= 1 && rewards.length <= 1;
     html += `<div class="rb-cg__tiles">`;
-    html += renderSliderGroup(triggers, false, "rb-cg__tile-group--trigger", 2, 2);
+    html += renderSliderGroup(triggers, false, "rb-cg__tile-group--trigger", 2, singleEach ? 1 : 2);
     html += `<div class="rb-cg__connector">+</div>`;
     html += renderSliderGroup(rewards, true, "rb-cg__tile-group--reward", 1, 1);
     html += `</div>`;
