@@ -31,18 +31,6 @@ function SplitProductCard({
     const isFreePrice =
         hasDiscount && (product.price === "$0.00" || product.price === "$0");
 
-    const savingsPct =
-        hasDiscount && product.compareAtPrice
-            ? Math.round(
-                  ((parseFloat(product.compareAtPrice.replace(/[^0-9.]/g, "")) -
-                      parseFloat(product.price.replace(/[^0-9.]/g, ""))) /
-                      parseFloat(
-                          product.compareAtPrice.replace(/[^0-9.]/g, ""),
-                      )) *
-                      100,
-              )
-            : 0;
-
     return (
         <div
             style={{
@@ -120,23 +108,6 @@ function SplitProductCard({
                         </span>
                     )}
                 </div>
-                {savingsPct > 0 && (
-                    <span
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            fontSize: 10,
-                            fontWeight: 700,
-                            color: styles.savingsColor || "#16a34a",
-                            background: "rgba(22, 163, 74, 0.08)",
-                            padding: "1px 6px",
-                            borderRadius: 4,
-                            marginTop: 3,
-                        }}
-                    >
-                        Save {savingsPct}%
-                    </span>
-                )}
             </div>
         </div>
     );
@@ -268,7 +239,9 @@ export function WidgetSplitDeal({
                     <div
                         style={{
                             flex: 1,
-                            border: `2px solid ${styles.primaryColor || "#303030"}`,
+                            borderLeft: `2px solid ${styles.primaryColor || "#303030"}`,
+                            borderRight: `2px solid ${styles.primaryColor || "#303030"}`,
+                            borderBottom: `2px solid ${styles.primaryColor || "#303030"}`,
                             borderTop: "none",
                             borderRadius: `0 0 ${cardRadius} ${cardRadius}`,
                             padding: spacingValues.padding,
@@ -338,7 +311,9 @@ export function WidgetSplitDeal({
                     <div
                         style={{
                             flex: 1,
-                            border: `2px solid ${styles.savingsColor || "#16a34a"}`,
+                            borderLeft: `2px solid ${styles.savingsColor || "#16a34a"}`,
+                            borderRight: `2px solid ${styles.savingsColor || "#16a34a"}`,
+                            borderBottom: `2px solid ${styles.savingsColor || "#16a34a"}`,
                             borderTop: "none",
                             borderRadius: `0 0 ${cardRadius} ${cardRadius}`,
                             padding: spacingValues.padding,
@@ -428,7 +403,6 @@ export function WidgetSplitDeal({
                 </div>
             )}
 
-            {/* CTA Button */}
             {cartButtonText && (
                 <button
                     style={{
@@ -454,18 +428,6 @@ export function WidgetSplitDeal({
                     }}
                 >
                     {cartButtonText}
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                    >
-                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <path d="M16 10a4 4 0 01-8 0" />
-                    </svg>
                 </button>
             )}
         </div>

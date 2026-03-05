@@ -449,7 +449,7 @@ export function renderBogoSleekProducts(
     triggers.forEach((p) => {
         html += renderCard(p, false);
     });
-    html += `<div class="rb-sleek__divider">+</div>`;
+    html += `<div class="rb-sleek__divider"><span class="rb-sleek__divider-icon">+</span></div>`;
     rewards.forEach((p) => {
         html += renderCard(p, true);
     });
@@ -695,32 +695,57 @@ export function renderBogoCompactGridProducts(
         `;
     };
 
-    const buttonText =
-        ctx.container
-            .querySelector("[data-bundle-add-to-cart]")
-            ?.textContent?.trim() || "Add to Cart";
-
     let html = `<div class="rb-cg__container">`;
 
     html += `<div class="rb-cg__banner">`;
+    html += `<div class="rb-cg__banner-text">`;
     html += `<span class="rb-cg__banner-title">${escapeHtml(bundle.name)}</span>`;
+    if (structure.subtitle) {
+        html += `<span class="rb-cg__banner-subtitle">${escapeHtml(structure.subtitle)}</span>`;
+    }
+    html += `</div>`;
     if (badgeText) {
         html += `<span class="rb-cg__banner-badge">${escapeHtml(badgeText)}</span>`;
     }
     html += `</div>`;
 
+    const renderSliderGroup = (
+        products: BundleProduct[],
+        isReward: boolean,
+        groupClass: string,
+        perPage: number,
+        flexVal: number,
+    ): string => {
+        const pages: BundleProduct[][] = [];
+        for (let i = 0; i < products.length; i += perPage) {
+            pages.push(products.slice(i, i + perPage));
+        }
+        let g = `<div class="rb-cg__tile-group ${groupClass}" style="flex:${flexVal}">`;
+        g += `<div class="rb-cg__slider" data-cg-slider>`;
+        pages.forEach((page) => {
+            const cols = page.length === 1 ? 1 : perPage;
+            g += `<div class="rb-cg__slide" style="grid-template-columns:repeat(${cols},1fr)">`;
+            page.forEach((p) => {
+                g += renderTile(p, isReward);
+            });
+            g += `</div>`;
+        });
+        g += `</div>`;
+        if (pages.length > 1) {
+            g += `<div class="rb-cg__dots">`;
+            pages.forEach((_, i) => {
+                g += `<button class="rb-cg__dot${i === 0 ? " rb-cg__dot--active" : ""}" data-cg-dot="${i}"></button>`;
+            });
+            g += `</div>`;
+        }
+        g += `</div>`;
+        return g;
+    };
+
     html += `<div class="rb-cg__tiles">`;
-    html += `<div class="rb-cg__tile-group" style="flex:${triggers.length}">`;
-    triggers.forEach((p) => {
-        html += renderTile(p, false);
-    });
-    html += `</div>`;
+    html += renderSliderGroup(triggers, false, "rb-cg__tile-group--trigger", 2, 2);
     html += `<div class="rb-cg__connector">+</div>`;
-    html += `<div class="rb-cg__tile-group" style="flex:${rewards.length}">`;
-    rewards.forEach((p) => {
-        html += renderTile(p, true);
-    });
-    html += `</div>`;
+    html += renderSliderGroup(rewards, true, "rb-cg__tile-group--reward", 1, 1);
     html += `</div>`;
 
     html += `<div class="rb-cg__footer">`;
@@ -733,15 +758,75 @@ export function renderBogoCompactGridProducts(
         html += ` <span class="rb-cg__footer-savings">${escapeHtml(formatLabel(cgSaveText, { amount: formatMoney(savings) }))}</span>`;
     }
     html += `</span></div>`;
-    html += `<button class="rb-cg__cart-btn" data-cg-add-to-cart>${escapeHtml(buttonText)}</button>`;
     html += `</div>`;
 
     html += `</div>`;
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
-    hideStandardButton(ctx.container);
-    wireCustomCartButton(container, ctx.container, "[data-cg-add-to-cart]");
+
+    const actionsEl = ctx.container.querySelector(".radius-bundle__actions");
+    const footerEl = container.querySelector(".rb-cg__footer");
+    if (actionsEl && footerEl) {
+        actionsEl.classList.add("rb-cg__actions-inline");
+        footerEl.appendChild(actionsEl);
+    }
+    enableCartButton(ctx.container);
+
+    container.querySelectorAll<HTMLElement>("[data-cg-slider]").forEach((slider) => {
+        const group = slider.parentElement;
+        if (!group) return;
+        const dots = group.querySelectorAll<HTMLButtonElement>("[data-cg-dot]");
+        const pageCount = slider.children.length;
+        let current = 0;
+
+        const sw = () => group.offsetWidth;
+
+        const goTo = (idx: number) => {
+            current = Math.max(0, Math.min(idx, pageCount - 1));
+            slider.style.transition = "transform 0.3s ease";
+            slider.style.transform = `translateX(-${current * sw()}px)`;
+            dots.forEach((d) => d.classList.remove("rb-cg__dot--active"));
+            dots[current]?.classList.add("rb-cg__dot--active");
+        };
+
+        dots.forEach((dot) => {
+            dot.addEventListener("click", () => goTo(Number(dot.dataset.cgDot || 0)));
+        });
+
+        let startX = 0;
+        let dragging = false;
+
+        const onStart = (x: number) => {
+            startX = x;
+            dragging = true;
+            slider.style.transition = "none";
+            slider.classList.add("rb-cg__slider--dragging");
+        };
+        const onMove = (x: number) => {
+            if (!dragging) return;
+            const dx = x - startX;
+            slider.style.transform = `translateX(${-current * sw() + dx}px)`;
+        };
+        const onEnd = (x: number) => {
+            if (!dragging) return;
+            dragging = false;
+            slider.classList.remove("rb-cg__slider--dragging");
+            const dx = x - startX;
+            const threshold = sw() * 0.2;
+            if (dx < -threshold && current < pageCount - 1) goTo(current + 1);
+            else if (dx > threshold && current > 0) goTo(current - 1);
+            else goTo(current);
+        };
+
+        slider.addEventListener("mousedown", (e) => { e.preventDefault(); onStart(e.clientX); });
+        slider.addEventListener("mousemove", (e) => onMove(e.clientX));
+        slider.addEventListener("mouseup", (e) => onEnd(e.clientX));
+        slider.addEventListener("mouseleave", () => { if (dragging) onEnd(startX); });
+        slider.addEventListener("touchstart", (e) => onStart(e.touches[0].clientX), { passive: true });
+        slider.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), { passive: true });
+        slider.addEventListener("touchend", (e) => onEnd(e.changedTouches[0].clientX));
+    });
 }
 
 export function renderBogoChecklistProducts(
@@ -1078,7 +1163,6 @@ export function renderSplitDealProducts(
                     structure,
                 );
                 const isFree = discountedPrice === 0;
-                const savingsAmt = product.price - discountedPrice;
 
                 priceHtml = `<div class="rb-split__product-price">`;
                 priceHtml += `<span class="rb-split__price-current rb-split__price-current--reward">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
@@ -1086,13 +1170,6 @@ export function renderSplitDealProducts(
                     priceHtml += `<span class="rb-split__price-compare">${formatMoney(product.price)}</span>`;
                 }
                 priceHtml += `</div>`;
-
-                if (savingsAmt > 0 && ctx.showSavingsBadge) {
-                    const pct = Math.round(
-                        (savingsAmt / product.price) * 100,
-                    );
-                    savingsHtml = `<div class="rb-split__product-savings">Save ${pct}%</div>`;
-                }
             } else {
                 priceHtml = `<div class="rb-split__product-price"><span class="rb-split__price-current">${formatMoney(product.price)}</span></div>`;
             }
@@ -1104,7 +1181,6 @@ export function renderSplitDealProducts(
                 <div class="rb-split__product-info">
                     <h4 class="rb-split__product-title">${escapeHtml(product.title)}</h4>
                     ${priceHtml}
-                    ${savingsHtml}
                 </div>
             </div>
         `;
@@ -1171,22 +1247,10 @@ export function renderSplitDealProducts(
         `;
     }
 
-    const buttonText =
-        ctx.container
-            .querySelector("[data-bundle-add-to-cart]")
-            ?.textContent?.trim() || "Add to Cart";
-    html += `
-        <button type="button" class="rb-split__cta" data-split-add-to-cart>
-            ${escapeHtml(buttonText)}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        </button>
-    `;
-
     html += `</div>`;
 
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
-    hideStandardButton(ctx.container);
-    wireCustomCartButton(container, ctx.container, "[data-split-add-to-cart]");
+    enableCartButton(ctx.container);
 }

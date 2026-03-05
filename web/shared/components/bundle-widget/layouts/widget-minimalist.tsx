@@ -29,6 +29,94 @@ function getRewardBadge(product: PreviewProduct, labels?: WidgetLayoutProps["lab
     return labels?.bogoRewardBadgeText || "You Get";
 }
 
+function MinimalistItem({
+    product,
+    roleColor,
+    roleBadgeText,
+    styles,
+}: {
+    product: PreviewProduct;
+    roleColor: string;
+    roleBadgeText: string;
+    styles: WidgetLayoutProps["styles"];
+}) {
+    const isReward = product.role === "REWARD";
+    const savingsColor = styles.savingsColor || "#16a34a";
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: 10,
+                background: `color-mix(in srgb, ${roleColor} 6%, white)`,
+                border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
+                borderRadius: 10,
+                minWidth: 0,
+            }}
+        >
+            {product.image && (
+                <div
+                    style={{
+                        width: 56,
+                        height: 56,
+                        flexShrink: 0,
+                        borderRadius: 8,
+                        overflow: "hidden",
+                        background: "#f9fafb",
+                    }}
+                >
+                    <img
+                        src={product.image}
+                        alt={product.title}
+                        style={{ width: "100%", height: "100%", objectFit: styles.imageFit || "cover" }}
+                    />
+                </div>
+            )}
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
+                <span
+                    style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        textTransform: "uppercase",
+                        letterSpacing: 0.6,
+                        padding: "2px 8px",
+                        borderRadius: 20,
+                        lineHeight: "14px",
+                        alignSelf: "flex-start",
+                        color: roleColor,
+                        background: `color-mix(in srgb, ${roleColor} 10%, transparent)`,
+                    }}
+                >
+                    {roleBadgeText}
+                </span>
+                <span
+                    style={{
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: styles.textColor,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                    }}
+                >
+                    {product.title}
+                </span>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: isReward ? savingsColor : styles.textColor }}>
+                        {product.price}
+                    </span>
+                    {product.compareAtPrice && (
+                        <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through" }}>
+                            {product.compareAtPrice}
+                        </span>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export function WidgetMinimalist({
     products,
     styles,
@@ -208,109 +296,13 @@ export function WidgetMinimalist({
                             : triggerBadge;
 
                         return (
-                            <div
+                            <MinimalistItem
                                 key={product.id}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 10,
-                                    padding: 10,
-                                    background: `color-mix(in srgb, ${roleColor} 6%, white)`,
-                                    border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
-                                    borderRadius: 10,
-                                    minWidth: 0,
-                                }}
-                            >
-                                {product.image && (
-                                    <div
-                                        style={{
-                                            width: 56,
-                                            height: 56,
-                                            flexShrink: 0,
-                                            borderRadius: 8,
-                                            overflow: "hidden",
-                                            background: "#f9fafb",
-                                        }}
-                                    >
-                                        <img
-                                            src={product.image}
-                                            alt={product.title}
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                objectFit: styles.imageFit || "cover",
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                                <div
-                                    style={{
-                                        flex: 1,
-                                        minWidth: 0,
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: 3,
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            fontSize: 10,
-                                            fontWeight: 700,
-                                            textTransform: "uppercase",
-                                            letterSpacing: 0.6,
-                                            padding: "2px 8px",
-                                            borderRadius: 20,
-                                            lineHeight: "14px",
-                                            alignSelf: "flex-start",
-                                            color: roleColor,
-                                            background: `color-mix(in srgb, ${roleColor} 10%, transparent)`,
-                                        }}
-                                    >
-                                        {roleBadgeText}
-                                    </span>
-                                    <span
-                                        style={{
-                                            fontSize: 13,
-                                            fontWeight: 600,
-                                            color: styles.textColor,
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                        }}
-                                    >
-                                        {product.title}
-                                    </span>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "baseline",
-                                            gap: 6,
-                                            flexWrap: "wrap",
-                                        }}
-                                    >
-                                        <span
-                                            style={{
-                                                fontSize: 13,
-                                                fontWeight: 700,
-                                                color: isReward ? savingsColor : styles.textColor,
-                                            }}
-                                        >
-                                            {product.price}
-                                        </span>
-                                        {product.compareAtPrice && (
-                                            <span
-                                                style={{
-                                                    fontSize: 11,
-                                                    color: "#9ca3af",
-                                                    textDecoration: "line-through",
-                                                }}
-                                            >
-                                                {product.compareAtPrice}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                                product={product}
+                                roleColor={roleColor}
+                                roleBadgeText={roleBadgeText}
+                                styles={styles}
+                            />
                         );
                     })}
                 </div>

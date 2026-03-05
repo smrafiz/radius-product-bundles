@@ -1,5 +1,5 @@
-import type { DiscountConfig } from "./types";
 import { getLocalePath } from "./utils";
+import type { DiscountConfig } from "./types";
 
 let pending: Promise<void> = Promise.resolve();
 

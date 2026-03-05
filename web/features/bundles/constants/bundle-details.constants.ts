@@ -93,7 +93,21 @@ export const BOGO_LAYOUTS = [
 ];
 
 export const BXGY_LAYOUTS = [
-    ...BOGO_LAYOUTS,
+    {
+        label: "Compact Grid",
+        value: "COMPACT_GRID" as const,
+        widgetLayout: "/assets/widget-compact-grid-layout.png",
+    },
+    {
+        label: "Minimalist",
+        value: "MINIMALIST" as const,
+        widgetLayout: "/assets/widget-minimalist-layout.png",
+    },
+    {
+        label: "Sleek",
+        value: "SLEEK" as const,
+        widgetLayout: "/assets/widget-sleek-layout.png",
+    },
     {
         label: "Checklist",
         value: "CHECKLIST" as const,

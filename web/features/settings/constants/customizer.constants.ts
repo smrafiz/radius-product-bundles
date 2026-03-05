@@ -13,7 +13,6 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
     ],
 
     BUY_X_GET_Y: [
-        { label: "Classic Card", value: "CLASSIC_CARD" },
         { label: "Compact Grid", value: "COMPACT_GRID" },
         { label: "Minimalist", value: "MINIMALIST" },
         { label: "Sleek", value: "SLEEK" },

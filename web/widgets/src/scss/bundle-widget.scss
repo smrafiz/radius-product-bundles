@@ -127,6 +127,10 @@
     }
 
     &__add-to-cart {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
         width: var(--rb-button-width, auto);
         padding: var(--rb-button-padding);
         background: var(--rb-button-bg);
@@ -150,6 +154,13 @@
         &:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        &.is-loading,
+        &.is-added {
+            .radius-bundle__button-icon {
+                display: none;
+            }
         }
 
         &.is-loading {

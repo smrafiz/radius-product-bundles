@@ -134,12 +134,33 @@
 
     // ── Divider ──────────────────────────────────────────────────────
     &__divider {
-        text-align: center;
-        font-size: 18px;
-        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 0;
+    }
+
+    &__divider::before,
+    &__divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #e5e7eb;
+    }
+
+    &__divider-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1.5px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 700;
         color: #9ca3af;
-        line-height: 1;
-        padding: 2px 0;
+        flex-shrink: 0;
     }
 
     // ── Separator + Footer ───────────────────────────────────────────

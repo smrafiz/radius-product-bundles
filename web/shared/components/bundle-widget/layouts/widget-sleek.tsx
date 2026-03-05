@@ -201,15 +201,32 @@ export function WidgetSleek({
 
             <div
                 style={{
-                    textAlign: "center",
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "#9ca3af",
-                    lineHeight: 1,
-                    padding: "2px 0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "4px 0",
                 }}
             >
-                +
+                <div style={{ flex: 1, height: 1, background: "#e5e7eb" }} />
+                <div
+                    style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: "50%",
+                        background: "#fff",
+                        border: "1.5px solid #e5e7eb",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 15,
+                        fontWeight: 700,
+                        color: "#9ca3af",
+                        flexShrink: 0,
+                    }}
+                >
+                    +
+                </div>
+                <div style={{ flex: 1, height: 1, background: "#e5e7eb" }} />
             </div>
 
             {rewardProducts.map((p) => (

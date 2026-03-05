@@ -1,6 +1,7 @@
 "use client";
 
-import { WidgetLayoutProps } from "@/shared";
+import { useState, useRef, useCallback } from "react";
+import { WidgetLayoutProps, PreviewProduct } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -39,8 +40,6 @@ function ProductTile({
     return (
         <div
             style={{
-                flex: 1,
-                minWidth: 0,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -132,12 +131,148 @@ function ProductTile({
     );
 }
 
+function chunk<T>(arr: T[], size: number): T[][] {
+    const pages: T[][] = [];
+    for (let i = 0; i < arr.length; i += size) {
+        pages.push(arr.slice(i, i + size));
+    }
+    return pages;
+}
+
+function TileSlider({
+    products,
+    variant,
+    styles,
+    labels,
+    dotColor,
+    perPage,
+    flexVal,
+}: {
+    products: PreviewProduct[];
+    variant: "trigger" | "reward";
+    styles: WidgetLayoutProps["styles"];
+    labels?: WidgetLayoutProps["labels"];
+    dotColor: string;
+    perPage: number;
+    flexVal: number;
+}) {
+    const pages = chunk(products, perPage);
+    const [activeSlide, setActiveSlide] = useState(0);
+    const hasDots = pages.length > 1;
+    const containerRef = useRef<HTMLDivElement>(null);
+    const dragRef = useRef({ startX: 0, dragging: false });
+    const [dragPx, setDragPx] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const sw = () => containerRef.current?.offsetWidth || 0;
+
+    const goTo = useCallback((idx: number) => {
+        setActiveSlide(Math.max(0, Math.min(idx, pages.length - 1)));
+        setDragPx(0);
+        setIsDragging(false);
+    }, [pages.length]);
+
+    const onPointerDown = useCallback((x: number) => {
+        dragRef.current = { startX: x, dragging: true };
+        setIsDragging(true);
+    }, []);
+    const onPointerMove = useCallback((x: number) => {
+        if (!dragRef.current.dragging) return;
+        setDragPx(x - dragRef.current.startX);
+    }, []);
+    const onPointerUp = useCallback((x: number) => {
+        if (!dragRef.current.dragging) return;
+        dragRef.current.dragging = false;
+        const dx = x - dragRef.current.startX;
+        const threshold = sw() * 0.2;
+        if (dx < -threshold) goTo(activeSlide + 1);
+        else if (dx > threshold) goTo(activeSlide - 1);
+        else goTo(activeSlide);
+    }, [activeSlide, goTo]);
+
+    return (
+        <div ref={containerRef} style={{ flex: flexVal, minWidth: 0, display: "grid", gridTemplateRows: "1fr auto", overflow: "hidden" }}>
+            <div
+                style={{
+                    display: "flex",
+                    transform: `translateX(${-activeSlide * sw() + dragPx}px)`,
+                    transition: isDragging ? "none" : "transform 0.3s ease",
+                    cursor: pages.length > 1 ? (isDragging ? "grabbing" : "grab") : undefined,
+                    userSelect: "none",
+                }}
+                onMouseDown={(e) => { if (pages.length > 1) { e.preventDefault(); onPointerDown(e.clientX); } }}
+                onMouseMove={(e) => onPointerMove(e.clientX)}
+                onMouseUp={(e) => onPointerUp(e.clientX)}
+                onMouseLeave={() => { if (dragRef.current.dragging) onPointerUp(dragRef.current.startX); }}
+                onTouchStart={(e) => { if (pages.length > 1) onPointerDown(e.touches[0].clientX); }}
+                onTouchMove={(e) => onPointerMove(e.touches[0].clientX)}
+                onTouchEnd={(e) => onPointerUp(e.changedTouches[0].clientX)}
+            >
+                {pages.map((page, pageIdx) => {
+                    const cols = page.length === 1 ? 1 : perPage;
+                    return (
+                        <div
+                            key={pageIdx}
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: `repeat(${cols}, 1fr)`,
+                                gap: 8,
+                                minWidth: "100%",
+                                flexShrink: 0,
+                            }}
+                        >
+                            {page.map((p) => (
+                                <ProductTile
+                                    key={p.id}
+                                    product={p}
+                                    variant={variant}
+                                    styles={styles}
+                                    labels={labels}
+                                />
+                            ))}
+                        </div>
+                    );
+                })}
+            </div>
+            {hasDots && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: 5,
+                        paddingTop: 8,
+                    }}
+                >
+                    {pages.map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setActiveSlide(i)}
+                            style={{
+                                width: 6,
+                                height: 6,
+                                borderRadius: "50%",
+                                background: i === activeSlide ? dotColor : "#d1d5db",
+                                border: "none",
+                                padding: 0,
+                                cursor: "pointer",
+                                transform: i === activeSlide ? "scale(1.3)" : "none",
+                                transition: "background 0.2s, transform 0.2s",
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export function WidgetCompactGrid({
     products,
     styles,
     pricing,
     cartButtonText,
     title,
+    subtitle,
     badgeText,
     labels,
 }: WidgetLayoutProps) {
@@ -186,15 +321,28 @@ export function WidgetCompactGrid({
                     justifyContent: "space-between",
                 }}
             >
-                <span
-                    style={{
-                        color: "#fff",
-                        fontSize: 15,
-                        fontWeight: 700,
-                    }}
-                >
-                    {title || "Special Offer"}
-                </span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+                    <span
+                        style={{
+                            color: "#fff",
+                            fontSize: 15,
+                            fontWeight: 700,
+                        }}
+                    >
+                        {title || "Special Offer"}
+                    </span>
+                    {subtitle && (
+                        <span
+                            style={{
+                                color: "rgba(255,255,255,0.8)",
+                                fontSize: 12,
+                                fontWeight: 400,
+                            }}
+                        >
+                            {subtitle}
+                        </span>
+                    )}
+                </div>
                 {badgeText && pricing?.hasDiscount && (
                     <span
                         style={{
@@ -212,20 +360,24 @@ export function WidgetCompactGrid({
                 )}
             </div>
 
-            {/* Product tiles */}
+            {/* Product tiles — 2-col slider per side */}
             <div
                 style={{
                     display: "flex",
                     alignItems: "stretch",
                     gap: 0,
-                    padding: "16px 16px 12px",
+                    padding: "16px 16px 8px",
                 }}
             >
-                <div style={{ display: "flex", flex: triggerProducts.length, gap: 8, minWidth: 0 }}>
-                    {triggerProducts.map((p) => (
-                        <ProductTile key={p.id} product={p} variant="trigger" styles={styles} labels={labels} />
-                    ))}
-                </div>
+                <TileSlider
+                    products={triggerProducts}
+                    variant="trigger"
+                    styles={styles}
+                    labels={labels}
+                    dotColor={primaryColor}
+                    perPage={2}
+                    flexVal={2}
+                />
 
                 <div
                     style={{
@@ -255,11 +407,15 @@ export function WidgetCompactGrid({
                     </div>
                 </div>
 
-                <div style={{ display: "flex", flex: rewardProducts.length, gap: 8, minWidth: 0 }}>
-                    {rewardProducts.map((p) => (
-                        <ProductTile key={p.id} product={p} variant="reward" styles={styles} labels={labels} />
-                    ))}
-                </div>
+                <TileSlider
+                    products={rewardProducts}
+                    variant="reward"
+                    styles={styles}
+                    labels={labels}
+                    dotColor={savingsColor}
+                    perPage={1}
+                    flexVal={1}
+                />
             </div>
 
             {/* Footer */}
@@ -268,7 +424,7 @@ export function WidgetCompactGrid({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "0 16px 16px",
+                    padding: "8px 16px 16px",
                     gap: 12,
                 }}
             >
