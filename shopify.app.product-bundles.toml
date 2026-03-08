@@ -20,6 +20,10 @@ dev_store_url = "bundlestesting-2.myshopify.com"
 api_version = "2026-01"
 
   [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled", "shop/update", "orders/create", "products/delete" ]
+  uri = "/api/webhooks"
+
+  [[webhooks.subscriptions]]
   compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
   uri = "/api/webhooks"
 

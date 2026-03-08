@@ -217,7 +217,32 @@ export async function deleteShopData(shop: string): Promise<void> {
         });
 
         await prisma.$transaction(async (tx) => {
-            await tx.session.deleteMany({ where: { shop } });
+            const sessionIds = (
+                await tx.session.findMany({
+                    where: { shop },
+                    select: { id: true },
+                })
+            ).map((s) => s.id);
+
+            if (sessionIds.length > 0) {
+                const oaiIds = (
+                    await tx.onlineAccessInfo.findMany({
+                        where: { sessionId: { in: sessionIds } },
+                        select: { id: true },
+                    })
+                ).map((o) => o.id);
+
+                if (oaiIds.length > 0) {
+                    await tx.associatedUser.deleteMany({
+                        where: { onlineAccessInfoId: { in: oaiIds } },
+                    });
+                    await tx.onlineAccessInfo.deleteMany({
+                        where: { id: { in: oaiIds } },
+                    });
+                }
+
+                await tx.session.deleteMany({ where: { shop } });
+            }
 
             const bundleIds = (
                 await tx.bundle.findMany({
@@ -238,6 +263,8 @@ export async function deleteShopData(shop: string): Promise<void> {
                 });
                 await tx.bundle.deleteMany({ where: { shop } });
             }
+
+            await tx.templateReview.deleteMany({ where: { shop } });
 
             if (shopRecord) {
                 const shopId = shopRecord.id;

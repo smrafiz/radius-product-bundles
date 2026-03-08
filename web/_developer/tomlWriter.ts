@@ -46,6 +46,15 @@ try {
         api_version: SHOPIFY_API_VERSION,
         subscriptions: [
             {
+                topics: [
+                    "app/uninstalled",
+                    "shop/update",
+                    "orders/create",
+                    "products/delete",
+                ],
+                uri: "/api/webhooks",
+            },
+            {
                 compliance_topics: [
                     "customers/data_request",
                     "customers/redact",
