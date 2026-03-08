@@ -99,10 +99,7 @@ export function useSessionProvider() {
                     return;
                 }
 
-                console.log(
-                    "✅ [Session Provider] Token received:",
-                    token.substring(0, 30) + "...",
-                );
+                console.log("✅ [Session Provider] Token received");
                 updateSessionToken(token);
 
                 let stored = false;

@@ -18,27 +18,12 @@ import type { InitializationStatus } from "../types";
 export async function doWebhookRegistration(
     sessionToken: string,
 ): Promise<void> {
-    console.log("━".repeat(80));
-    console.log("🎯 [Webhook Action] STARTING WEBHOOK REGISTRATION");
-    console.log("[Webhook Action] Timestamp:", new Date().toISOString());
-    console.log(
-        "[Webhook Action] Token prefix:",
-        sessionToken.substring(0, 30) + "...",
-    );
-    console.log("━".repeat(80));
+    console.log("[Webhook Action] Starting webhook registration");
 
     try {
-        // Step 1: Handle session token
-        console.log("[Webhook Action] Step 1: Getting session from token...");
         const { session, shop } = await handleSessionToken(sessionToken);
 
-        console.log("[Webhook Action] ✅ Session obtained:", {
-            shop: session.shop,
-            hasAccessToken: !!session.accessToken,
-            accessTokenPrefix: session.accessToken?.substring(0, 15) + "...",
-            isOnline: session.isOnline,
-            scope: session.scope,
-        });
+        console.log("[Webhook Action] Session obtained for:", session.shop);
 
         // Step 2: Initialize app
         console.log("[Webhook Action] Step 2: Calling initializeApp...");
@@ -55,31 +40,12 @@ export async function doWebhookRegistration(
             throw new Error(errorMessage);
         }
 
-        console.log("━".repeat(80));
-        console.log("✅ [Webhook Action] WEBHOOK REGISTRATION COMPLETE");
-        console.log("━".repeat(80));
+        console.log("[Webhook Action] Registration complete");
     } catch (error) {
-        console.error("━".repeat(80));
-        console.error("❌ [Webhook Action] WEBHOOK REGISTRATION FAILED");
-        console.error("[Webhook Action] Error type:", error?.constructor?.name);
         console.error(
-            "[Webhook Action] Error message:",
+            "[Webhook Action] Registration failed:",
             error instanceof Error ? error.message : String(error),
         );
-        console.error(
-            "[Webhook Action] Error stack:",
-            error instanceof Error ? error.stack : "No stack trace",
-        );
-
-        if (error && typeof error === "object") {
-            console.error(
-                "[Webhook Action] Full error object:",
-                JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
-            );
-        }
-        console.error("━".repeat(80));
-
-        // Re-throw to let session provider know it failed
         throw error;
     }
 }

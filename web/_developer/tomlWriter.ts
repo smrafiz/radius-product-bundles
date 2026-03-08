@@ -44,6 +44,16 @@ try {
     // Webhooks
     config.webhooks = {
         api_version: SHOPIFY_API_VERSION,
+        subscriptions: [
+            {
+                compliance_topics: [
+                    "customers/data_request",
+                    "customers/redact",
+                    "shop/redact",
+                ],
+                uri: "/api/webhooks",
+            },
+        ],
     };
 
     // Access

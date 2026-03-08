@@ -92,9 +92,7 @@ export async function registerWebhooks(session: Session) {
     console.log("[Webhooks] Session validated:", {
         shop: session.shop,
         hasAccessToken: !!session.accessToken,
-        accessTokenPrefix: session.accessToken.substring(0, 10) + "...",
         isOnline: session.isOnline,
-        state: session.state,
     });
 
     try {
@@ -102,43 +100,22 @@ export async function registerWebhooks(session: Session) {
 
         const responses = await shopify.webhooks.register({ session });
 
-        console.log("[Webhooks] ✅ Registration API call completed");
-        console.log(
-            "[Webhooks] Number of responses:",
-            Object.keys(responses).length,
-        );
+        const failed = Object.entries(responses)
+            .filter(([, results]) => results.some((r) => !r.success))
+            .map(([topic]) => topic);
 
-        // Log each webhook registration result
-        for (const [topic, results] of Object.entries(responses)) {
-            console.log(`[Webhooks] Topic: ${topic}`);
-            console.log(`[Webhooks]   - Results count: ${results.length}`);
-
-            results.forEach((result, index) => {
-                console.log(`[Webhooks]   - Result ${index}:`, {
-                    success: result.success,
-                    result: result.result,
-                });
-            });
+        if (failed.length > 0) {
+            console.warn("[Webhooks] Failed topics:", failed.join(", "));
         }
+
+        console.log("[Webhooks] ✅ Registration complete");
 
         return responses;
     } catch (error) {
-        console.error("[Webhooks] ❌ Registration failed");
-        console.error("[Webhooks] Error type:", error?.constructor?.name);
         console.error(
-            "[Webhooks] Error message:",
+            "[Webhooks] ❌ Registration failed:",
             error instanceof Error ? error.message : String(error),
         );
-
-        if (error instanceof Error) {
-            console.error("[Webhooks] Stack trace:", error.stack);
-        }
-
-        console.error(
-            "[Webhooks] Full error object:",
-            JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
-        );
-
         throw error;
     }
 }

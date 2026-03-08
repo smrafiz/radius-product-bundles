@@ -190,14 +190,9 @@ export async function initializeApp(
     const errors: string[] = [];
 
     console.log(`[Webhook Service] Starting initialization for ${shop}`);
-    console.log(
-        `[Webhook Service] Session token prefix:`,
-        sessionToken.substring(0, 20) + "...",
-    );
     console.log(`[Webhook Service] Session info:`, {
         shop: session.shop,
         hasAccessToken: !!session.accessToken,
-        accessTokenPrefix: session.accessToken?.substring(0, 15) + "...",
         isOnline: session.isOnline,
         scope: session.scope,
     });

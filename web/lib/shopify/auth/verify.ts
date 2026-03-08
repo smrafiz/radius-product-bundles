@@ -14,6 +14,8 @@ import { runAppSetup } from "../setup/app-setup";
 import { registerWebhooks } from "../webhooks/register";
 import { markSetupComplete, markWebhooksRegistered } from "@/features/webhooks";
 
+const setupInProgress = new Map<string, Promise<void>>();
+
 /**
  * Verify the request and return the shop and session
  */
@@ -104,27 +106,41 @@ export async function handleSessionToken(
             const shopRecord = await upsertShop(shop);
 
             if (!shopRecord.setupComplete && session.accessToken) {
-                console.log(
-                    "[Auth] First-time setup via token exchange for:",
-                    shop,
-                );
+                // Prevent duplicate concurrent setup for same shop
+                if (!setupInProgress.has(shop)) {
+                    const setupPromise = (async () => {
+                        console.log(
+                            "[Auth] First-time setup via token exchange for:",
+                            shop,
+                        );
 
-                const setupResult = await runAppSetup(
-                    session.accessToken,
-                    shop,
-                );
-                if (setupResult.success) {
-                    await markSetupComplete(shop);
-                }
+                        const setupResult = await runAppSetup(
+                            session.accessToken!,
+                            shop,
+                        );
+                        if (setupResult.success) {
+                            await markSetupComplete(shop);
+                        }
 
-                try {
-                    await registerWebhooks(session);
-                    await markWebhooksRegistered(shop);
-                } catch (webhookErr) {
-                    console.error(
-                        "[Auth] Webhook registration failed:",
-                        webhookErr,
-                    );
+                        try {
+                            await registerWebhooks(session);
+                            await markWebhooksRegistered(shop);
+                        } catch (webhookErr) {
+                            console.error(
+                                "[Auth] Webhook registration failed:",
+                                webhookErr,
+                            );
+                        }
+                    })();
+
+                    setupInProgress.set(shop, setupPromise);
+                    try {
+                        await setupPromise;
+                    } finally {
+                        setupInProgress.delete(shop);
+                    }
+                } else {
+                    await setupInProgress.get(shop);
                 }
             }
         } catch (err) {

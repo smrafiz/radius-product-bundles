@@ -76,16 +76,16 @@ interface AuthConfig {
  */
 interface WebhooksConfig {
     api_version: string;
-    // subscriptions: WebhookSubscription[];
-    // privacy_compliance: PrivacyComplianceConfig;
+    subscriptions?: WebhookSubscription[];
 }
 
 /**
  * Webhook subscription
  */
 interface WebhookSubscription {
-    topics: string[];
-    url: string;
+    topics?: string[];
+    compliance_topics?: string[];
+    uri: string;
     filter?: string;
     include_fields?: string[];
 }
