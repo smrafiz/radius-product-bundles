@@ -422,30 +422,26 @@
 					{% assign layout = block.settings.layout %}
 				{% endif %}
 
-				{% assign grid_columns = block.settings.grid_columns
-						| default: g_type_overrides.gridColumns
+				{% comment %}{{ g_type_overrides }}{% endcomment %}
+
+				{% assign grid_columns = g_type_overrides.gridColumns
 						| default: g_styles.gridColumns
 						| default: 3 %}
 
-				{% assign slides_per_view = block.settings.slides_per_view
-						| default: g_type_overrides.slidesPerView
+				{% assign slides_per_view = g_type_overrides.slidesPerView
 						| default: g_styles.slidesPerView
 						| default: 3 %}
 
-				{% assign carousel_navigation = block.settings.carousel_navigation
-						| default: g_type_overrides.carouselNavigation
+				{% assign carousel_navigation = g_type_overrides.carouselNavigation
 						| default: g_styles.carouselNavigation
 						| default: 'both' %}
 
-				{% assign autoplay = block.settings.autoplay %}
-				{% if autoplay == null %}
-					{% assign autoplay = g_type_overrides.autoplay | default: g_styles.autoplay | default: false %}
-				{% endif %}
+				{% assign autoplay = g_type_overrides.autoplay | default: g_styles.autoplay | default: false %}
 
-				{% assign autoplay_speed = block.settings.autoplay_speed
-						| default: g_type_overrides.autoplaySpeed
+				{% assign autoplay_speed = g_type_overrides.autoplaySpeed
 						| default: g_styles.autoplaySpeed
 						| default: 5 %}
+
 				{% assign show_images = bundle.showImages %}
 				{% assign show_savings = bundle.showSavings %}
 				{% assign show_product_prices = bundle.showPrices %}

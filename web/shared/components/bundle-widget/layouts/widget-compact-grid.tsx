@@ -9,6 +9,8 @@ import {
     getButtonPadding,
     getFontSize,
     getCardRadius,
+    getBadgeRadius,
+    getHeadingFontSize,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -75,8 +77,8 @@ function ProductTile({
 
             <span
                 style={{
-                    fontSize: 10,
-                    fontWeight: 700,
+                    fontSize: parseInt(bodyFontSize) - 6,
+                    fontWeight: 500,
                     textTransform: "uppercase",
                     letterSpacing: 0.8,
                     color: accentColor,
@@ -92,7 +94,7 @@ function ProductTile({
             <div
                 style={{
                     fontSize: bodyFontSize,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     color: styles.textColor,
                     textAlign: "center",
                     lineHeight: "1.3",
@@ -108,8 +110,8 @@ function ProductTile({
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 <span
                     style={{
-                        fontSize: 16,
-                        fontWeight: 700,
+                        fontSize: styles.bodySize,
+                        fontWeight: 500,
                         color: hasDiscount ? freeTagColor : styles.textColor,
                     }}
                 >
@@ -284,6 +286,11 @@ export function WidgetCompactGrid({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
+    const badgeRadius = getBadgeRadius(styles.cornerStyle);
+    const accentColor = styles.primaryColor || "#303030";
+    const isOutline = styles.badgeStyle === "outline";
+    const headingFontSize = getHeadingFontSize(styles.headingSize);
+
 
     if (!products.length) {
         return (
@@ -326,7 +333,7 @@ export function WidgetCompactGrid({
                     <span
                         style={{
                             color: "#fff",
-                            fontSize: 15,
+                            fontSize: headingFontSize,
                             fontWeight: 700,
                         }}
                     >
@@ -347,12 +354,17 @@ export function WidgetCompactGrid({
                 {badgeText && pricing?.hasDiscount && (
                     <span
                         style={{
-                            background: "rgba(255,255,255,0.2)",
-                            color: "#fff",
+                            backgroundColor: isOutline
+                                ? "transparent"
+                                : accentColor,
+                            color: "#ffffff",
+                            border: isOutline
+                                ? `2px solid ${accentColor}`
+                                : "none",
                             fontSize: 11,
                             fontWeight: 700,
                             padding: "4px 12px",
-                            borderRadius: 20,
+                            borderRadius: badgeRadius,
                             letterSpacing: 0.3,
                         }}
                     >

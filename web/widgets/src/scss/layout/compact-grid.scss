@@ -7,7 +7,6 @@
         .radius-bundle__inner {
             padding: 0;
         }
-
         .radius-bundle__products {
             margin-bottom: 0;
         }
@@ -41,9 +40,9 @@
     }
 
     &__banner-title {
+        font-size: var(--rb-heading-font-size);
         color: #fff;
-        font-size: 15px;
-        font-weight: 700;
+        font-weight: 600;
         line-height: 1.3;
     }
 
@@ -55,15 +54,21 @@
     }
 
     &__banner-badge {
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--rb-badge-bg);
         color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 4px 12px;
-        border-radius: 20px;
-        letter-spacing: 0.3px;
+        border: var(--rb-badge-border);
+        border-radius: var(--rb-border-radius);
+        font-size: calc(var(--rb-body-font-size) * 0.9);
+        font-weight: 500;
+        padding: 6px 12px;
         white-space: nowrap;
         flex-shrink: 0;
+        text-align: center;
+        min-height: 30px;
+        line-height: 1.2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     // ── Product tiles area ─────────────────────────────────────────
@@ -135,8 +140,8 @@
     }
 
     &__tile-role {
-        font-size: 10px;
-        font-weight: 700;
+        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.8px;
         padding: 3px 10px;
@@ -156,7 +161,7 @@
 
     &__tile-title {
         font-size: var(--rb-body-font-size, 14px);
-        font-weight: 600;
+        font-weight: 500;
         color: var(--rb-text-color, #1a1a2e);
         text-align: center;
         line-height: 1.3;
@@ -173,8 +178,8 @@
     }
 
     &__tile-price {
-        font-size: 16px;
-        font-weight: 700;
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 500;
         color: var(--rb-text-color, #1a1a2e);
 
         &--reward {
@@ -183,8 +188,9 @@
     }
 
     &__tile-compare {
-        font-size: 12px;
-        color: #9ca3af;
+        font-size: calc(var(--rb-body-font-size) - 2px);
+        color: var(--rb-text-color);
+        opacity: 0.5;
         text-decoration: line-through;
     }
 
@@ -209,7 +215,7 @@
 
     &__slide {
         display: grid;
-        gap: 0;
+        gap: 8px;
         min-width: 100%;
         flex: 1;
     }
@@ -221,6 +227,9 @@
 
     // ── Pagination dots ────────────────────────────────────────────
     &__dots {
+        position: absolute;
+        bottom: -6px;
+        right: 16%;
         display: flex;
         justify-content: center;
         gap: 5px;
@@ -269,7 +278,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 16px 16px;
+        padding: 16px 16px;
         gap: 12px;
     }
 
@@ -279,14 +288,14 @@
     }
 
     &__footer-label {
-        font-size: 11px;
+        font-size: calc(var(--rb-body-font-size) - 4px);
         color: #6b7280;
         font-weight: 500;
     }
 
     &__footer-total {
-        font-size: 20px;
-        font-weight: 700;
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 600;
         color: var(--rb-text-color, #1a1a2e);
         display: flex;
         align-items: baseline;
@@ -294,8 +303,8 @@
     }
 
     &__footer-savings {
-        font-size: 13px;
-        font-weight: 600;
+        font-size: calc(var(--rb-body-font-size) - 2px);
+        font-weight: 500;
         color: var(--rb-savings-color, #16a34a);
     }
 

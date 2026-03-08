@@ -25,7 +25,7 @@
 		{% if show_dots %}<div class="radius-bundle__slider-dots" data-slider-dots></div>{% endif %}
 
 	{% elsif layout == 'grid' %}
-		<div class="radius-bundle__products radius-bundle__skeleton--grid" data-bundle-products style="--grid-columns:{{ grid_columns | default: 3 }};">
+		<div class="radius-bundle__products radius-bundle__products--grid radius-bundle__skeleton--grid" data-bundle-products style="--rb-grid-columns:{{ grid_columns | default: 3 }};">
 			{% for i in (1..product_count) %}
 				{%- assign idx = forloop.index0 -%}{%- assign hidden = false -%}{%- if idx >= visible -%}{%- assign hidden = true -%}{%- endif -%}
 				<div class="radius-bundle__skeleton-card radius-bundle__loading{% if hidden %} radius-bundle__product--hidden{% endif %}" data-bundle-loading data-product-index="{{ idx }}"{% if hidden %} style="display:none;"{% endif %}>
