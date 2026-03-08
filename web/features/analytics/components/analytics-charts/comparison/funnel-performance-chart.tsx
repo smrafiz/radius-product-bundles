@@ -96,8 +96,8 @@ export function FunnelPerformanceChart() {
 
                     <Tooltip
                         {...CHART_TOOLTIP_CONFIG}
-                        formatter={(value: number | undefined) =>
-                            value == null ? "" : value.toLocaleString()
+                        formatter={(value) =>
+                            value == null ? "" : Number(value).toLocaleString()
                         }
                     />
 

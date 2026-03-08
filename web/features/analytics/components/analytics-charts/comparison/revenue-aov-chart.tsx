@@ -104,12 +104,9 @@ export function RevenueAOVChart() {
 
                     <Tooltip
                         {...CHART_TOOLTIP_CONFIG}
-                        formatter={(
-                            value: number | undefined,
-                            name?: string,
-                        ) => {
+                        formatter={(value, name) => {
                             if (value == null) return ["—", name ?? ""];
-                            return [formatCurrency(value), name ?? ""];
+                            return [formatCurrency(Number(value)), name ?? ""];
                         }}
                     />
 

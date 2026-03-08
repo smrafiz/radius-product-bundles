@@ -170,12 +170,12 @@ export function AnalyticsChart() {
                         {/* Tooltip */}
                         <Tooltip
                             {...CHART_TOOLTIP_CONFIG}
-                            formatter={(value: number | undefined) => {
-                                if (value === undefined) {
+                            formatter={(value) => {
+                                if (value == null) {
                                     return ["-", currentMetric.label];
                                 }
                                 return [
-                                    currentMetric.formatter(value),
+                                    currentMetric.formatter(Number(value)),
                                     currentMetric.label,
                                 ];
                             }}
