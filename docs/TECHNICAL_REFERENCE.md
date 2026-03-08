@@ -299,7 +299,6 @@ BundleAnalytics table (purchases + revenue)
 │   │   │   ├── /proxy/products     # Storefront product fetch
 │   │   │   ├── /proxy/analytics    # Storefront event tracking
 │   │   │   ├── /session/validate   # Session validation
-│   │   │   ├── /session/refresh    # Session retrieval
 │   │   │   ├── /upload             # File upload (CORS)
 │   │   │   └── /cron               # Scheduled jobs
 │   │   └── /(pages)                # App pages
@@ -534,9 +533,6 @@ POST /api/session/validate
 Authorization: Bearer {sessionToken}
 → Returns: { valid, shop, sessionId, isOnline, scope }
 
-POST /api/session/refresh
-Body: { shop }
-→ Returns: { success, session: { token, shop, expires } }
 ```
 
 ---
@@ -553,7 +549,6 @@ Body: { shop }
 | `/api/proxy/products`        | GET    | App Proxy HMAC     | Storefront product data     |
 | `/api/proxy/analytics`       | POST   | App Proxy HMAC     | Storefront event tracking   |
 | `/api/session/validate`      | POST   | Bearer JWT         | Session validation          |
-| `/api/session/refresh`       | POST   | Shop domain        | Session retrieval           |
 | `/api/upload`                | POST   | Bearer + CORS      | File upload proxy           |
 | `/api/cron/bundle-scheduler` | GET    | Bearer CRON_SECRET | Scheduled bundle activation |
 | `/api/cron/keep-alive`       | GET    | Bearer CRON_SECRET | Serverless warm-up          |

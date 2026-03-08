@@ -145,13 +145,6 @@ export function normalizeShopDomain(shop: string): string {
 }
 
 /**
- * Utility function to generate secure state parameter for OAuth
- */
-export function generateOAuthState(shop: string): string {
-    return `${shop}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
-}
-
-/**
  * Utility function to validate token format
  */
 export function isValidShopifyToken(token: string): boolean {
@@ -174,4 +167,10 @@ export function extractBearerToken(authHeader: string | null): string | null {
         return null;
     }
     return authHeader.replace("Bearer ", "");
+}
+
+const SHOP_DOMAIN_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$/;
+
+export function isValidShopDomain(shop: string): boolean {
+    return SHOP_DOMAIN_REGEX.test(shop);
 }

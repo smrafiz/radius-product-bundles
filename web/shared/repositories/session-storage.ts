@@ -1,6 +1,7 @@
 import prisma from "./prisma-connect";
 import { Session } from "@/prisma/generated/client";
 import { Session as ShopifySession } from "@shopify/shopify-api";
+import { encryptToken, decryptToken } from "@/lib/crypto";
 
 const apiKey = process.env.SHOPIFY_API_KEY || "";
 
@@ -12,7 +13,7 @@ export async function storeSession(session: ShopifySession) {
         where: { id: session.id },
         update: {
             shop: session.shop,
-            accessToken: session.accessToken,
+            accessToken: session.accessToken ? encryptToken(session.accessToken) : null,
             scope: session.scope,
             expires: session.expires,
             isOnline: session.isOnline,
@@ -22,7 +23,7 @@ export async function storeSession(session: ShopifySession) {
         create: {
             id: session.id,
             shop: session.shop,
-            accessToken: session.accessToken,
+            accessToken: session.accessToken ? encryptToken(session.accessToken) : null,
             scope: session.scope,
             expires: session.expires,
             isOnline: session.isOnline,
@@ -99,12 +100,6 @@ export async function deleteSessions(ids: string[]) {
     });
 }
 
-export async function cleanUpSession(shop: string, accessToken: string) {
-    await prisma.session.deleteMany({
-        where: { shop, accessToken, apiKey },
-    });
-}
-
 export async function findSessionsByShop(shop: string) {
     const sessions = await prisma.session.findMany({
         where: { shop, apiKey },
@@ -124,7 +119,7 @@ function generateShopifySessionFromDB(session: Session) {
     return new ShopifySession({
         id: session.id,
         shop: session.shop,
-        accessToken: session.accessToken || undefined,
+        accessToken: session.accessToken ? decryptToken(session.accessToken) : undefined,
         scope: session.scope || undefined,
         state: session.state,
         isOnline: session.isOnline,

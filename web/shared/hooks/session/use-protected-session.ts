@@ -10,20 +10,18 @@ export function useProtectedSession() {
         hasValidSession,
         sessionToken,
         validateSession,
-        updateSessionToken,
         clearSession,
         isSessionExpired,
         shop,
     } = useSessionStore();
 
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const [refreshAttempted, setRefreshAttempted] = useState(false);
+    const [isValidating, setIsValidating] = useState(false);
+    const [validateAttempted, setValidateAttempted] = useState(false);
 
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // Use refs for values only needed inside the effect body (not as triggers)
     const pathnameRef = useRef(pathname);
     pathnameRef.current = pathname;
     const searchParamsRef = useRef(searchParams);
@@ -36,80 +34,52 @@ export function useProtectedSession() {
             document.referrer.includes("myshopify.com/admin/themes"));
 
     useEffect(() => {
-        if (isThemeExtension || isRefreshing || refreshAttempted) return;
+        if (isThemeExtension || isValidating || validateAttempted) return;
 
-        const refreshSession = async () => {
+        const checkSession = async () => {
             if (!isInitialized || hasValidSession) return;
 
-            setIsRefreshing(true);
-            setRefreshAttempted(true);
+            setIsValidating(true);
+            setValidateAttempted(true);
 
             try {
                 await validateSession();
 
-                if (hasValidSession && !isSessionExpired()) {
-                    console.info("✅ Session validated successfully");
-                    setIsRefreshing(false);
-                    setRefreshAttempted(false);
+                const state = useSessionStore.getState();
+                if (state.hasValidSession && !state.isSessionExpired()) {
+                    setIsValidating(false);
+                    setValidateAttempted(false);
                     return;
                 }
 
-                const shopParam = searchParamsRef.current.get("shop") || shop;
-                const hostParam = searchParamsRef.current.get("host");
-
-                if (!shopParam) {
-                    console.error(
-                        "❌ Missing shop param, cannot refresh session",
-                    );
-                    setTimeout(() => router.push("/api/auth"), 0);
-                    return;
-                }
-
-                console.info("🔄 Attempting session refresh...");
-                const response = await fetch("/api/session/refresh", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ shop: shopParam, host: hostParam }),
-                });
-
-                const data = await response.json();
-
-                if (data.success && data.session?.token) {
-                    console.info("✅ Session refreshed successfully");
-                    updateSessionToken(data.session.token);
-                    setIsRefreshing(false);
-                    setRefreshAttempted(false);
-                    return;
-                }
-
-                throw new Error("Session refresh failed");
+                throw new Error("Session validation failed");
             } catch (error) {
-                console.warn("❌ Session validation or refresh failed:", error);
+                console.warn("Session validation failed:", error);
                 clearSession();
 
-                const shopParam = searchParamsRef.current.get("shop") || shop;
+                const shopParam =
+                    searchParamsRef.current.get("shop") || shop;
                 const authUrl = `/api/auth?returnTo=${encodeURIComponent(pathnameRef.current)}${
                     shopParam ? `&shop=${shopParam}` : ""
                 }`;
 
                 setTimeout(() => router.push(authUrl), 0);
             } finally {
-                setIsRefreshing(false);
+                setIsValidating(false);
             }
         };
 
-        void refreshSession();
+        void checkSession();
     }, [
         isInitialized,
         hasValidSession,
         sessionToken,
         router,
-        refreshAttempted,
+        validateAttempted,
         isThemeExtension,
-        isRefreshing,
+        isValidating,
         validateSession,
         clearSession,
-        updateSessionToken,
         shop,
         isSessionExpired,
     ]);
@@ -119,7 +89,7 @@ export function useProtectedSession() {
         isInitialized,
         isAuthenticated,
         sessionToken,
-        isRefreshing,
+        isRefreshing: isValidating,
         isThemeExtension,
         hasValidSession,
     };

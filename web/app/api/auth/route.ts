@@ -1,23 +1,22 @@
-import { generateOAuthState } from "@/shared";
 import { NextRequest, NextResponse } from "next/server";
+import { createOAuthState } from "@/lib/shopify/auth/oauth-state-store";
+import { isValidShopDomain } from "@/shared";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const shop = searchParams.get("shop");
     const returnTo = searchParams.get("returnTo");
 
-    if (!shop) {
+    if (!shop || !isValidShopDomain(shop)) {
         return NextResponse.json(
-            { error: "Shop parameter is required" },
+            { error: "Invalid or missing shop domain" },
             { status: 400 },
         );
     }
 
     try {
-        // Generate secure state parameter using utility function
-        const state = generateOAuthState(shop);
+        const state = await createOAuthState(shop);
 
-        // Build OAuth URL
         const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
         authUrl.searchParams.append("client_id", process.env.SHOPIFY_API_KEY!);
         authUrl.searchParams.append("scope", process.env.SCOPES!);
@@ -35,11 +34,7 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error("OAuth error:", error);
         return NextResponse.json(
-            {
-                error: "Failed to start OAuth flow",
-                details:
-                    error instanceof Error ? error.message : "Unknown error",
-            },
+            { error: "Failed to start OAuth flow" },
             { status: 500 },
         );
     }
