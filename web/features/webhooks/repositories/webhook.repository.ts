@@ -203,19 +203,62 @@ export async function getOfflineSession(shop: string) {
 
 /**
  * Delete all shop data (for uninstall)
+ *
+ * Deletes in dependency order to avoid FK constraint violations.
+ * BundleAnalytics/BundleView use onDelete:Restrict so must be deleted
+ * before their parent Bundle records.
  */
 export async function deleteShopData(shop: string): Promise<void> {
     try {
         console.log(`[Webhook Repository] Deleting data for ${shop}...`);
 
-        // Delete sessions
-        await prisma.session.deleteMany({
-            where: { shop },
+        const shopRecord = await prisma.shop.findFirst({
+            where: { domain: shop },
         });
 
-        // Delete shop record (cascades to related data)
-        await prisma.shop.deleteMany({
-            where: { domain: shop },
+        await prisma.$transaction(async (tx) => {
+            await tx.session.deleteMany({ where: { shop } });
+
+            const bundleIds = (
+                await tx.bundle.findMany({
+                    where: { shop },
+                    select: { id: true },
+                })
+            ).map((b) => b.id);
+
+            if (bundleIds.length > 0) {
+                await tx.bundleView.deleteMany({
+                    where: { bundleId: { in: bundleIds } },
+                });
+                await tx.bundleAnalytics.deleteMany({
+                    where: { bundleId: { in: bundleIds } },
+                });
+                await tx.testResult.deleteMany({
+                    where: { test: { controlBundleId: { in: bundleIds } } },
+                });
+                await tx.bundle.deleteMany({ where: { shop } });
+            }
+
+            if (shopRecord) {
+                const shopId = shopRecord.id;
+                await tx.appSettings.deleteMany({ where: { shopId } });
+                await tx.aBTest.deleteMany({ where: { shopId } });
+                await tx.automationLog.deleteMany({
+                    where: { automation: { shopId } },
+                });
+                await tx.automationBundle.deleteMany({
+                    where: { automation: { shopId } },
+                });
+                await tx.automation.deleteMany({ where: { shopId } });
+                await tx.pricingRuleBundle.deleteMany({
+                    where: { pricingRule: { shopId } },
+                });
+                await tx.pricingRule.deleteMany({ where: { shopId } });
+                await tx.aIInsight.deleteMany({ where: { shopId } });
+                await tx.notification.deleteMany({ where: { shopId } });
+                await tx.alertRule.deleteMany({ where: { shopId } });
+                await tx.shop.deleteMany({ where: { id: shopId } });
+            }
         });
 
         console.log(`[Webhook Repository] ✅ Data deleted for ${shop}`);

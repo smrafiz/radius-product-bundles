@@ -29,10 +29,7 @@ optional_scopes = [ ]
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [
-  "https://radius-product-bundles.vercel.app/api/auth/callback",
-  "https://radius-product-bundles.vercel.app/api/auth/oauth/callback"
-]
+redirect_urls = [ ]
 
 [pos]
 embedded = false

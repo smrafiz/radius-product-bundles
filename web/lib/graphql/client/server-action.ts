@@ -98,6 +98,37 @@ export async function executeGraphQLQuery<T = any>(
             data: result,
         } as GraphQLResponse<T>;
     } catch (error) {
+        // 401: stale token — force token exchange and retry once
+        if (
+            request.sessionToken &&
+            !request._retried &&
+            error &&
+            typeof error === "object" &&
+            "response" in error &&
+            (error as any).response?.status === 401
+        ) {
+            try {
+                console.warn("[GraphQL] 401 — forcing token refresh and retrying");
+                const refreshed = await handleSessionToken(
+                    request.sessionToken,
+                    false,
+                    true,
+                    true,
+                );
+
+                if (refreshed.session?.accessToken) {
+                    return executeGraphQLQuery<T>({
+                        ...request,
+                        shop: refreshed.shop,
+                        accessToken: refreshed.session.accessToken,
+                        _retried: true,
+                    } as GraphQLRequest);
+                }
+            } catch (retryError) {
+                console.warn("[GraphQL] Token refresh failed, returning original error:", retryError instanceof Error ? retryError.message : retryError);
+            }
+        }
+
         console.error("GraphQL server action error:", error);
 
         if (error && typeof error === "object" && "response" in error) {

@@ -18,7 +18,7 @@ export interface AppConfig {
     embedded: boolean;
     access_scopes: AccessScopes;
     access: AccessConfig;
-    auth: AuthConfig;
+    auth?: AuthConfig;
     webhooks: WebhooksConfig;
     app_proxy: AppProxyConfig;
     pos: POSConfig;

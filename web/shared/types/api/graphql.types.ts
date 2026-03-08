@@ -8,6 +8,8 @@ export interface GraphQLRequest<TResult = any, TVariables = any> {
     shop?: string;
     /** Direct auth: offline access token — used by cron/background jobs */
     accessToken?: string;
+    /** Internal: prevents infinite retry on 401 */
+    _retried?: boolean;
 }
 
 export interface GraphQLResponse<T = any> {

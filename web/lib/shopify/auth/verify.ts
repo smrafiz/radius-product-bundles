@@ -39,14 +39,15 @@ export async function tokenExchange({
     sessionToken,
     online,
     store,
+    forceRefresh,
 }: {
     shop: string;
     sessionToken: string;
     online?: boolean;
     store?: boolean;
+    forceRefresh?: boolean;
 }): Promise<Session> {
-    // For offline sessions, try to find an existing session by shop
-    if (!online) {
+    if (!online && !forceRefresh) {
         try {
             const existingSession = await findOfflineSessionByShop(shop);
 
@@ -60,7 +61,6 @@ export async function tokenExchange({
         }
     }
 
-    // Create a new session via token exchange
     const response = await shopify.auth.tokenExchange({
         shop,
         sessionToken,
@@ -71,8 +71,7 @@ export async function tokenExchange({
 
     const { session } = response;
 
-    // Store the new session
-    if (store) {
+    if (store || forceRefresh) {
         await storeSession(session);
     }
 
@@ -86,6 +85,7 @@ export async function handleSessionToken(
     sessionToken: string,
     online?: boolean,
     store?: boolean,
+    forceRefresh?: boolean,
 ): Promise<{ shop: string; session: Session }> {
     const payload = await shopify.session.decodeSessionToken(sessionToken);
     const shop = normalizeShopDomain(payload.dest);
@@ -95,6 +95,7 @@ export async function handleSessionToken(
         sessionToken,
         online,
         store: store !== false,
+        forceRefresh,
     });
 
     // Ensure Shop record exists and run first-time setup if needed

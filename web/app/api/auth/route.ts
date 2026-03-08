@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createOAuthState } from "@/lib/shopify/auth/oauth-state-store";
 import { isValidShopDomain } from "@/shared";
+
+const CLIENT_ID = process.env.SHOPIFY_API_KEY;
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const shop = searchParams.get("shop");
-    const returnTo = searchParams.get("returnTo");
+    const returnTo = searchParams.get("returnTo") || "/";
+
+    if (!CLIENT_ID) {
+        return NextResponse.json(
+            { error: "Authentication unavailable" },
+            { status: 500 },
+        );
+    }
 
     if (!shop || !isValidShopDomain(shop)) {
         return NextResponse.json(
@@ -14,28 +22,8 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    try {
-        const state = await createOAuthState(shop);
+    const sanitizedReturnTo = /^\/[a-zA-Z0-9/_-]*$/.test(returnTo) ? returnTo : "/";
+    const embeddedUrl = `https://${shop}/admin/apps/${CLIENT_ID}${sanitizedReturnTo}`;
 
-        const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
-        authUrl.searchParams.append("client_id", process.env.SHOPIFY_API_KEY!);
-        authUrl.searchParams.append("scope", process.env.SCOPES!);
-        authUrl.searchParams.append(
-            "redirect_uri",
-            `${process.env.HOST}/api/auth/callback`,
-        );
-        authUrl.searchParams.append("state", state);
-
-        if (returnTo) {
-            authUrl.searchParams.append("return_to", returnTo);
-        }
-
-        return NextResponse.redirect(authUrl.toString());
-    } catch (error) {
-        console.error("OAuth error:", error);
-        return NextResponse.json(
-            { error: "Failed to start OAuth flow" },
-            { status: 500 },
-        );
-    }
+    return NextResponse.redirect(embeddedUrl);
 }

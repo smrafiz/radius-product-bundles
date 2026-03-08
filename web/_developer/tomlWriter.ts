@@ -72,12 +72,9 @@ try {
         use_legacy_install_flow: false,
     };
 
-    // Auth
+    // Auth (empty — token exchange via App Bridge, no redirect URLs needed)
     config.auth = {
-        redirect_urls: [
-            `${appUrl}/api/auth/callback`,
-            `${appUrl}/api/auth/oauth/callback`,
-        ],
+        redirect_urls: [],
     };
 
     // PoS support
