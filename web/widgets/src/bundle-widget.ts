@@ -180,7 +180,18 @@ import {
             const structureJson = container.dataset.bundleStructure;
             if (structureJson) {
                 try {
-                    this.bundleStructure = JSON.parse(structureJson);
+                    const parsed = JSON.parse(structureJson);
+                    const ensureArray = (v: unknown): string[] =>
+                        Array.isArray(v) ? v : typeof v === "string" ? JSON.parse(v) : [];
+                    parsed.productIds = ensureArray(parsed.productIds);
+                    parsed.productQuantities = Array.isArray(parsed.productQuantities)
+                        ? parsed.productQuantities
+                        : typeof parsed.productQuantities === "string"
+                            ? JSON.parse(parsed.productQuantities)
+                            : [];
+                    parsed.productRoles = ensureArray(parsed.productRoles);
+                    parsed.discountedProductIds = ensureArray(parsed.discountedProductIds);
+                    this.bundleStructure = parsed;
                 } catch (e) {
                     console.warn(
                         "[RadiusBundle] Failed to parse bundle structure:",
@@ -535,7 +546,7 @@ import {
             const isBxgy =
                 structure.bundleType === "BOGO" ||
                 structure.bundleType === "BUY_X_GET_Y";
-            const roles = structure.productRoles || [];
+            const roles = Array.isArray(structure.productRoles) ? structure.productRoles : [];
             const buyQty = roles.filter((r) => r === "TRIGGER").length || structure.buyQuantity || 1;
             const getQty = roles.filter((r) => r === "REWARD").length || structure.getQuantity || 1;
 
