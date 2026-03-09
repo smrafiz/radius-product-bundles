@@ -272,12 +272,14 @@ export async function runAppSetup(
     // Task 0: Clean up stale Shopify resources from previous install
     // Safe: claimSetupLock only succeeds on fresh install or reinstall
     try {
-        const { cleanupShopifyResources } = await import(
-            "@/features/webhooks/services/shopify-cleanup.service"
-        );
+        const { cleanupShopifyResources } =
+            await import("@/features/webhooks/services/shopify-cleanup.service");
         await cleanupShopifyResources(accessToken, shop);
     } catch (error) {
-        console.warn("[Setup] Stale data cleanup failed (non-blocking):", error);
+        console.warn(
+            "[Setup] Stale data cleanup failed (non-blocking):",
+            error,
+        );
     }
 
     // Task 1: Create ALL metafield definitions

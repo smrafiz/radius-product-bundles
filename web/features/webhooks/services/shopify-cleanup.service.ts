@@ -111,7 +111,10 @@ async function deleteShopMetafields(
 
     const errors = deleteResult.data?.metafieldsDelete?.userErrors || [];
     if (errors.length > 0) {
-        console.error("[Shopify Cleanup] Shop metafield delete errors:", errors);
+        console.error(
+            "[Shopify Cleanup] Shop metafield delete errors:",
+            errors,
+        );
     } else {
         console.log(
             `[Shopify Cleanup] Deleted ${metafieldsToDelete.length} shop metafields`,
@@ -128,7 +131,10 @@ async function deleteAllProductBundleMetafields(
     let hasNextPage = true;
 
     while (hasNextPage) {
-        const result: { data?: GetProductsWithBundleMetafieldQuery; errors?: Array<{ message: string }> } = await gql<GetProductsWithBundleMetafieldQuery>(
+        const result: {
+            data?: GetProductsWithBundleMetafieldQuery;
+            errors?: Array<{ message: string }>;
+        } = await gql<GetProductsWithBundleMetafieldQuery>(
             GetProductsWithBundleMetafieldDocument,
             { cursor },
             accessToken,

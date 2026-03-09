@@ -18,7 +18,7 @@ export function useCustomizerPanel(
     onClearErrors?: () => void,
 ) {
     const { resetToDefaults } = useCustomizerStore();
-    const { setValue: setFormValue } = useFormContext<CustomizerStyles>();
+    const { reset: resetForm } = useFormContext<CustomizerStyles>();
     const defaultOpenSection =
         config.sections.find((s) => s.defaultOpen)?.id ?? null;
     const [openSectionId, setOpenSectionId] = useState<string | null>(
@@ -31,11 +31,10 @@ export function useCustomizerPanel(
     const handleRestoreDefaults = useCallback(() => {
         resetToDefaults();
 
-        // Sync default values to React Hook Form so they persist on save
-        Object.entries(DEFAULT_CUSTOMIZER_STYLES).forEach(([field, value]) => {
-            setFormValue(field as keyof CustomizerStyles, value as any, {
-                shouldDirty: true,
-            });
+        // Reset form values to defaults but keep defaultValues (server snapshot)
+        // so RHF detects the diff and marks the form dirty
+        resetForm(structuredClone(DEFAULT_CUSTOMIZER_STYLES), {
+            keepDefaultValues: true,
         });
 
         onClearErrors?.(); // Clear validation errors
@@ -47,7 +46,7 @@ export function useCustomizerPanel(
                 duration: 3000,
             },
         );
-    }, [resetToDefaults, setFormValue, onFieldChange, onClearErrors]);
+    }, [resetToDefaults, resetForm, onFieldChange, onClearErrors]);
 
     /**
      * Toggles accordion section - closes first, then opens new.

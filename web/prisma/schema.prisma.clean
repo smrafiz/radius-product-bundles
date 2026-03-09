@@ -20,6 +20,7 @@ model Session {
     updatedAt        DateTime          @updatedAt
     onlineAccessInfo OnlineAccessInfo?
 
+    @@index([shop])
     @@map("sessions")
 }
 
@@ -71,12 +72,12 @@ model Bundle {
     minimumItems         Int?
     maximumItems         Int?
     discountType         DiscountType
-    discountValue        Float
-    minOrderValue        Float?
-    maxDiscountAmount    Float?
+    discountValue        Decimal              @db.Decimal(10, 2)
+    minOrderValue        Decimal?             @db.Decimal(10, 2)
+    maxDiscountAmount    Decimal?             @db.Decimal(10, 2)
     volumeTiers          Json?
     allowMixAndMatch     Boolean              @default(false)
-    mixAndMatchPrice     Float?
+    mixAndMatchPrice     Decimal?             @db.Decimal(10, 2)
     discountApplication  String?              @default("bundle")
     discountedProductIds String[]             @default([])
     freeShipping         Boolean              @default(false)
@@ -85,18 +86,16 @@ model Bundle {
     images               String[]
     views                Int                  @default(0)
     conversions          Int                  @default(0)
-    revenue              Float                @default(0)
+    revenue              Decimal              @default(0) @db.Decimal(12, 2)
     startDate            DateTime?
     endDate              DateTime?
     createdAt            DateTime             @default(now())
     updatedAt            DateTime             @updatedAt
     deletedAt            DateTime?
-    shopId               String?
     analytics            BundleAnalytics[]
     productGroups        BundleProductGroup[]
     bundleProducts       BundleProduct[]
     settings             BundleSettings?
-    Shop                 Shop?                @relation(fields: [shopId], references: [id])
     bundleViews          BundleView[]
 
     @@unique([shop, name])
@@ -117,7 +116,7 @@ model BundleProduct {
     displayOrder    Int                 @default(0)
     role            BundleProductRole   @default(INCLUDED)
     groupId         String?
-    customPrice     Float?
+    customPrice     Decimal?            @db.Decimal(10, 2)
     discountPercent Float?
     isRequired      Boolean             @default(true)
     minQuantity     Int?
@@ -131,6 +130,7 @@ model BundleProduct {
     @@index([bundleId, role])
     @@index([bundleId, displayOrder])
     @@index([productId])
+    @@index([groupId])
     @@map("bundle_products")
 }
 
@@ -183,7 +183,7 @@ model BundleAnalytics {
     bundleViews                Int      @default(0)
     bundleAddToCarts           Int      @default(0)
     bundlePurchases            Int      @default(0)
-    bundleRevenue              Float    @default(0)
+    bundleRevenue              Decimal  @default(0) @db.Decimal(12, 2)
     crossSellViews             Int      @default(0)
     crossSellPurchases         Int      @default(0)
     newCustomerPurchases       Int      @default(0)
@@ -201,7 +201,7 @@ model BundleView {
     bundleId   String
     customerId String?
     sessionId  String?
-    date       String
+    date       DateTime @db.Date
     timestamp  DateTime @default(now())
 
     bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)
@@ -210,7 +210,6 @@ model BundleView {
     @@unique([bundleId, customerId, date], name: "unique_customer_view")
     // One view per session per bundle per day (for anonymous)
     @@unique([bundleId, sessionId, date], name: "unique_session_view")
-    @@index([bundleId])
     @@index([customerId])
     @@index([date])
     @@map("bundle_views")
@@ -236,7 +235,6 @@ model Shop {
     updatedAt DateTime @updatedAt
 
     appSettings AppSettings? @relation("ShopAppSettings")
-    bundles     Bundle[]
 
     @@index([domain, setupComplete])
     @@map("shops")
@@ -249,7 +247,7 @@ model AppSettings {
 
     // Defaults
     defaultDiscountType  DiscountType @default(PERCENTAGE)
-    defaultDiscountValue Float        @default(10)
+    defaultDiscountValue Decimal      @default(10) @db.Decimal(10, 2)
     maxBundleProducts    Int          @default(10)
     maxBundlesPerShop    Int          @default(5)
     bundlePriorityType   String       @default("index_based")

@@ -114,7 +114,10 @@ export async function handleSessionToken(
                 try {
                     await runAppSetup(session.accessToken!, shop);
                 } catch (setupErr) {
-                    console.error("[Auth] Setup failed (use Force Register to retry):", setupErr);
+                    console.error(
+                        "[Auth] Setup failed (use Force Register to retry):",
+                        setupErr,
+                    );
                 }
 
                 try {
