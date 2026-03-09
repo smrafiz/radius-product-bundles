@@ -36,7 +36,10 @@ import {
 } from "@/features/settings";
 import { useMemo } from "react";
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
-import { DEFAULT_CUSTOMIZER_STYLES, DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import {
+    DEFAULT_CUSTOMIZER_STYLES,
+    DEFAULT_LABELS,
+} from "@/features/settings/constants/defaults.constants";
 import type { WidgetLabels } from "@/shared";
 
 import "@/styles/components/bundle.css";
@@ -216,7 +219,9 @@ function useBadgeText(labels: WidgetLabels): string {
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
-    const triggerCount = selectedItems.filter((i) => i.role === "TRIGGER").length;
+    const triggerCount = selectedItems.filter(
+        (i) => i.role === "TRIGGER",
+    ).length;
     const rewardCount = selectedItems.filter((i) => i.role === "REWARD").length;
     const buy = triggerCount || (bundleData.buyQuantity ?? 1);
     const get = rewardCount || (bundleData.getQuantity ?? 1);

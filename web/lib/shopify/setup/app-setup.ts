@@ -24,13 +24,10 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { DocumentNode, print } from "graphql";
 import { SHOPIFY_API_VERSION } from "@/shared/constants";
-import { METAFIELD_DEFINITIONS } from "@/shared/constants/metafields.constants";
-
-/**
- * Title for the single automatic discount.
- * This discount handles both PRODUCT and SHIPPING classes.
- */
-const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+import {
+    BUNDLE_DISCOUNT_TITLE,
+    METAFIELD_DEFINITIONS,
+} from "@/shared/constants/metafields.constants";
 
 /**
  * Function handle defined in shopify.extension.toml.
@@ -271,6 +268,16 @@ export async function runAppSetup(
     shop: string,
 ): Promise<SetupResult> {
     console.log(`[Setup] 🚀 Running app setup for ${shop}`);
+
+    // Task 0: Clean up stale Shopify resources from previous install
+    try {
+        const { cleanupShopifyResources } = await import(
+            "@/features/webhooks/services/shopify-cleanup.service"
+        );
+        await cleanupShopifyResources(accessToken, shop);
+    } catch (error) {
+        console.warn("[Setup] Stale data cleanup failed (non-blocking):", error);
+    }
 
     // Task 1: Create ALL metafield definitions
     const metafieldResult = await createMetafieldDefinitions(accessToken, shop);

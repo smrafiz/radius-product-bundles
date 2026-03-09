@@ -28,7 +28,9 @@ function getConditionValue(
     let value = context.styles[key];
 
     if (context.activeBundleType) {
-        const overrides = context.styles.bundleTypeOverrides as Record<string, Partial<CustomizerStyles>> | undefined;
+        const overrides = context.styles.bundleTypeOverrides as
+            | Record<string, Partial<CustomizerStyles>>
+            | undefined;
         const typeOverride = overrides?.[context.activeBundleType]?.[key];
         if (typeOverride !== undefined) {
             value = typeOverride as any;

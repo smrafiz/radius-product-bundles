@@ -41,7 +41,8 @@ export function useCustomizerPage() {
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
     const layoutParam = searchParams.get("layout");
-    const initialType = types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
+    const initialType =
+        types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
     const [resetCounter, setResetCounter] = useState(0);
 
     // Store the ORIGINAL server values in a ref (immutable snapshot)
@@ -52,9 +53,15 @@ export function useCustomizerPage() {
         (state) => state.initializeStyles,
     );
     const markClean = useCustomizerStore((state) => state.markClean);
-    const activeBundleType = useCustomizerStore((state) => state.activeBundleType);
-    const setActiveBundleType = useCustomizerStore((state) => state.setActiveBundleType);
-    const setActiveLayout = useCustomizerStore((state) => state.setActiveLayout);
+    const activeBundleType = useCustomizerStore(
+        (state) => state.activeBundleType,
+    );
+    const setActiveBundleType = useCustomizerStore(
+        (state) => state.setActiveBundleType,
+    );
+    const setActiveLayout = useCustomizerStore(
+        (state) => state.setActiveLayout,
+    );
 
     // Initialize active bundle type and layout from URL params
     useEffect(() => {
@@ -64,7 +71,13 @@ export function useCustomizerPage() {
                 setActiveLayout(layoutParam as WidgetLayout);
             }
         }
-    }, [activeBundleType, initialType, layoutParam, setActiveBundleType, setActiveLayout]);
+    }, [
+        activeBundleType,
+        initialType,
+        layoutParam,
+        setActiveBundleType,
+        setActiveLayout,
+    ]);
 
     const { handleSubmit: submitToServer, isLoading: isSaving } =
         useCustomizerSubmit();

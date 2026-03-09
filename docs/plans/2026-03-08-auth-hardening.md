@@ -12,13 +12,13 @@
 
 ## Current Vulnerabilities (Severity Order)
 
-| # | Issue | Severity | File |
-|---|-------|----------|------|
-| 1 | `/api/session/refresh` returns raw `shpat_*` token to client, **unauthenticated** | **CRITICAL** | `web/app/api/session/refresh/route.ts` |
-| 2 | Access tokens stored in **plain text** in PostgreSQL | **CRITICAL** | `web/shared/repositories/session-storage.ts` |
-| 3 | OAuth callback does **not verify HMAC** from Shopify | **HIGH** | `web/app/api/auth/callback/route.ts` |
-| 4 | OAuth **state parameter never validated** (CSRF) | **HIGH** | `web/app/api/auth/route.ts` + callback |
-| 5 | `generateOAuthState` uses `Math.random()` (not crypto-secure) | **MEDIUM** | `web/shared/utils/shopify/shopify-helpers.ts` |
+| #   | Issue                                                                             | Severity     | File                                          |
+| --- | --------------------------------------------------------------------------------- | ------------ | --------------------------------------------- |
+| 1   | `/api/session/refresh` returns raw `shpat_*` token to client, **unauthenticated** | **CRITICAL** | `web/app/api/session/refresh/route.ts`        |
+| 2   | Access tokens stored in **plain text** in PostgreSQL                              | **CRITICAL** | `web/shared/repositories/session-storage.ts`  |
+| 3   | OAuth callback does **not verify HMAC** from Shopify                              | **HIGH**     | `web/app/api/auth/callback/route.ts`          |
+| 4   | OAuth **state parameter never validated** (CSRF)                                  | **HIGH**     | `web/app/api/auth/route.ts` + callback        |
+| 5   | `generateOAuthState` uses `Math.random()` (not crypto-secure)                     | **MEDIUM**   | `web/shared/utils/shopify/shopify-helpers.ts` |
 
 ## Reference: kinngh/shopify-nextjs-prisma-app Patterns
 
@@ -34,6 +34,7 @@
 This endpoint accepts `{ shop }` in the body with **zero authentication** and returns the raw `shpat_*` offline access token. Anyone who knows a shop domain can steal its access token.
 
 **Files:**
+
 - Delete: `web/app/api/session/refresh/route.ts`
 - Modify: `web/shared/hooks/session/use-protected-session.ts` — remove refresh fallback
 - Modify: `web/shared/hooks/session/use-session-provider.ts` — remove any refresh references
@@ -54,6 +55,7 @@ Find the block that calls `/api/session/refresh` and replace it:
 ```
 
 The flow becomes:
+
 1. Check if session is valid via App Bridge `idToken()`
 2. If not, call `storeToken` server action (which does token exchange server-side)
 3. If that fails, redirect to `/api/auth`
@@ -83,6 +85,7 @@ management now happens exclusively server-side via token exchange."
 Access tokens are stored as plain `String` in PostgreSQL. If the database is compromised, all merchant tokens are exposed.
 
 **Files:**
+
 - Create: `web/lib/crypto/token-encryption.ts`
 - Modify: `web/shared/repositories/session-storage.ts` — encrypt on write, decrypt on read
 
@@ -110,7 +113,9 @@ const AUTH_TAG_LENGTH = 16;
 function getKey(): Buffer {
     const key = process.env.ENCRYPTION_KEY;
     if (!key || key.length !== 64) {
-        throw new Error("ENCRYPTION_KEY must be a 64-character hex string (32 bytes)");
+        throw new Error(
+            "ENCRYPTION_KEY must be a 64-character hex string (32 bytes)",
+        );
     }
     return Buffer.from(key, "hex");
 }
@@ -118,7 +123,10 @@ function getKey(): Buffer {
 export function encryptToken(plaintext: string): string {
     const iv = randomBytes(IV_LENGTH);
     const cipher = createCipheriv(ALGORITHM, getKey(), iv);
-    const encrypted = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
+    const encrypted = Buffer.concat([
+        cipher.update(plaintext, "utf8"),
+        cipher.final(),
+    ]);
     const authTag = cipher.getAuthTag();
     // Format: iv:authTag:ciphertext (all hex)
     return `${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted.toString("hex")}`;
@@ -133,9 +141,15 @@ export function decryptToken(encrypted: string): string {
     if (!ivHex || !authTagHex || !ciphertextHex) {
         throw new Error("Invalid encrypted token format");
     }
-    const decipher = createDecipheriv(ALGORITHM, getKey(), Buffer.from(ivHex, "hex"));
+    const decipher = createDecipheriv(
+        ALGORITHM,
+        getKey(),
+        Buffer.from(ivHex, "hex"),
+    );
     decipher.setAuthTag(Buffer.from(authTagHex, "hex"));
-    return decipher.update(ciphertextHex, "hex", "utf8") + decipher.final("utf8");
+    return (
+        decipher.update(ciphertextHex, "hex", "utf8") + decipher.final("utf8")
+    );
 }
 ```
 
@@ -214,6 +228,7 @@ scripts/encrypt-existing-tokens.ts to encrypt existing tokens."
 Shopify appends an `hmac` query parameter to the callback URL. The current callback does not verify it.
 
 **Files:**
+
 - Create: `web/lib/shopify/auth/verify-hmac.ts`
 - Modify: `web/app/api/auth/callback/route.ts` — add HMAC check before code exchange
 
@@ -290,6 +305,7 @@ before processing the authorization code exchange."
 The current flow generates a state parameter but never validates it on callback. This leaves the OAuth flow vulnerable to CSRF attacks.
 
 **Files:**
+
 - Create: `web/lib/shopify/auth/oauth-state-store.ts`
 - Modify: `web/shared/utils/shopify/shopify-helpers.ts` — use `crypto.randomBytes` instead of `Math.random`
 - Modify: `web/app/api/auth/route.ts` — store state before redirect
@@ -418,6 +434,7 @@ on callback. Uses crypto.randomBytes instead of Math.random."
 The OAuth flow does not validate that the `shop` parameter is a legitimate `*.myshopify.com` domain. This could be used for SSRF attacks (the server fetches `https://{shop}/admin/oauth/access_token`).
 
 **Files:**
+
 - Modify: `web/shared/utils/shopify/shopify-helpers.ts` — add `isValidShopDomain`
 - Modify: `web/app/api/auth/route.ts` — validate before redirect
 - Modify: `web/app/api/auth/callback/route.ts` — validate before code exchange
@@ -438,10 +455,7 @@ export function isValidShopDomain(shop: string): boolean {
 
 ```ts
 if (!shop || !isValidShopDomain(shop)) {
-    return NextResponse.json(
-        { error: "Invalid shop domain" },
-        { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid shop domain" }, { status: 400 });
 }
 ```
 
@@ -463,18 +477,18 @@ server-side request forgery via crafted shop parameters."
 
 ## Comparison Summary: Your App vs Reference App
 
-| Aspect | Your App (Current) | Reference (kinngh) | After This Plan |
-|--------|-------------------|---------------------|-----------------|
-| Token storage | **Plain text** | AES encrypted (Cryptr) | AES-256-GCM encrypted |
-| Session refresh | **Leaks token to client** | No refresh endpoint | Endpoint removed |
-| OAuth HMAC | **Not verified** | N/A (no legacy OAuth) | Verified with timing-safe compare |
-| OAuth state | **Not validated** | N/A (token exchange only) | DB-stored, TTL, one-time use |
-| State randomness | `Math.random()` | N/A | `crypto.randomBytes` |
-| Proxy (middleware) | Correct (`proxy.ts` per Next.js 16) | Active (`proxy.js`) | No change needed |
-| Shop domain check | None | None | Regex validation |
-| Token exchange | Implemented | Implemented | No change needed |
-| Proxy HMAC | Implemented | Implemented | No change needed |
-| Webhook HMAC | SDK-handled | SDK-handled | No change needed |
+| Aspect             | Your App (Current)                  | Reference (kinngh)        | After This Plan                   |
+| ------------------ | ----------------------------------- | ------------------------- | --------------------------------- |
+| Token storage      | **Plain text**                      | AES encrypted (Cryptr)    | AES-256-GCM encrypted             |
+| Session refresh    | **Leaks token to client**           | No refresh endpoint       | Endpoint removed                  |
+| OAuth HMAC         | **Not verified**                    | N/A (no legacy OAuth)     | Verified with timing-safe compare |
+| OAuth state        | **Not validated**                   | N/A (token exchange only) | DB-stored, TTL, one-time use      |
+| State randomness   | `Math.random()`                     | N/A                       | `crypto.randomBytes`              |
+| Proxy (middleware) | Correct (`proxy.ts` per Next.js 16) | Active (`proxy.js`)       | No change needed                  |
+| Shop domain check  | None                                | None                      | Regex validation                  |
+| Token exchange     | Implemented                         | Implemented               | No change needed                  |
+| Proxy HMAC         | Implemented                         | Implemented               | No change needed                  |
+| Webhook HMAC       | SDK-handled                         | SDK-handled               | No change needed                  |
 
 ## Execution Order
 

@@ -148,4 +148,3 @@ export interface BaseRenderContext {
     lazyLoadImages: boolean;
     enableHyperLink: boolean;
 }
-

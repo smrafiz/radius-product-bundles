@@ -10,16 +10,19 @@ import {
     getCardRadius,
     getShadow,
 } from "@/features/settings";
-import {
-    SPACING_VALUES,
-} from "@/features/settings/constants/defaults.constants";
+import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
 
-function getRewardBadge(product: PreviewProduct, labels?: WidgetLayoutProps["labels"]): string {
+function getRewardBadge(
+    product: PreviewProduct,
+    labels?: WidgetLayoutProps["labels"],
+): string {
     const freeText = labels?.bogoFreeText || "FREE";
     if (product.price === "$0.00" || product.price === "$0") return freeText;
     if (product.compareAtPrice) {
         const current = parseFloat(product.price.replace(/[^0-9.]/g, ""));
-        const original = parseFloat(product.compareAtPrice.replace(/[^0-9.]/g, ""));
+        const original = parseFloat(
+            product.compareAtPrice.replace(/[^0-9.]/g, ""),
+        );
         if (original > 0 && current === 0) return freeText;
         if (original > 0) {
             const pctOff = Math.round(((original - current) / original) * 100);
@@ -69,11 +72,23 @@ function MinimalistItem({
                     <img
                         src={product.image}
                         alt={product.title}
-                        style={{ width: "100%", height: "100%", objectFit: styles.imageFit || "cover" }}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: styles.imageFit || "cover",
+                        }}
                     />
                 </div>
             )}
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
+            <div
+                style={{
+                    flex: 1,
+                    minWidth: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 3,
+                }}
+            >
                 <span
                     style={{
                         fontSize: 10,
@@ -102,12 +117,31 @@ function MinimalistItem({
                 >
                     {product.title}
                 </span>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: isReward ? savingsColor : styles.textColor }}>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: 6,
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: isReward ? savingsColor : styles.textColor,
+                        }}
+                    >
                         {product.price}
                     </span>
                     {product.compareAtPrice && (
-                        <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through" }}>
+                        <span
+                            style={{
+                                fontSize: 11,
+                                color: "#9ca3af",
+                                textDecoration: "line-through",
+                            }}
+                        >
                             {product.compareAtPrice}
                         </span>
                     )}
@@ -135,7 +169,8 @@ export function WidgetMinimalist({
     const buttonFontSize = getButtonFontSize(styles.buttonSize);
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
-    const spacingValues = SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
+    const spacingValues =
+        SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
     const primaryColor = styles.primaryColor || "#e0598b";
     const savingsColor = styles.savingsColor || "#16a34a";
     const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
@@ -252,7 +287,13 @@ export function WidgetMinimalist({
                         </p>
                     )}
                     {pricing && (
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "baseline",
+                                gap: 8,
+                            }}
+                        >
                             <span
                                 style={{
                                     fontSize: 22,
@@ -290,7 +331,9 @@ export function WidgetMinimalist({
                 >
                     {sortedProducts.map((product) => {
                         const isReward = product.role === "REWARD";
-                        const roleColor = isReward ? savingsColor : primaryColor;
+                        const roleColor = isReward
+                            ? savingsColor
+                            : primaryColor;
                         const roleBadgeText = isReward
                             ? getRewardBadge(product, labels)
                             : triggerBadge;
@@ -317,7 +360,9 @@ export function WidgetMinimalist({
                         gap: 8,
                         width: "100%",
                         padding: "14px 24px",
-                        border: isButtonOutline ? `2px solid ${buttonBg}` : "none",
+                        border: isButtonOutline
+                            ? `2px solid ${buttonBg}`
+                            : "none",
                         borderRadius: buttonRadius,
                         background: isButtonOutline ? "transparent" : buttonBg,
                         color: isButtonOutline ? buttonBg : "#fff",

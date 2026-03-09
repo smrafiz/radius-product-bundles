@@ -108,7 +108,9 @@ export async function executeGraphQLQuery<T = any>(
             (error as any).response?.status === 401
         ) {
             try {
-                console.warn("[GraphQL] 401 — forcing token refresh and retrying");
+                console.warn(
+                    "[GraphQL] 401 — forcing token refresh and retrying",
+                );
                 const refreshed = await handleSessionToken(
                     request.sessionToken,
                     false,
@@ -125,7 +127,12 @@ export async function executeGraphQLQuery<T = any>(
                     } as GraphQLRequest);
                 }
             } catch (retryError) {
-                console.warn("[GraphQL] Token refresh failed, returning original error:", retryError instanceof Error ? retryError.message : retryError);
+                console.warn(
+                    "[GraphQL] Token refresh failed, returning original error:",
+                    retryError instanceof Error
+                        ? retryError.message
+                        : retryError,
+                );
             }
         }
 

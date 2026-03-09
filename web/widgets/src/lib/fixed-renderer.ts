@@ -1,4 +1,9 @@
-import type { BaseRenderContext, Bundle, BundleProduct, BundleStructure } from "./types";
+import type {
+    BaseRenderContext,
+    Bundle,
+    BundleProduct,
+    BundleStructure,
+} from "./types";
 import { calculateBxgyRewardPrice } from "./bogo-renderer";
 import { escapeHtml, formatMoney, getLocalePath } from "./utils";
 
@@ -52,7 +57,8 @@ export function renderProductCard(
         );
 
         const productTotal = product.price * (product.quantity || 1);
-        const proportion = totalBundlePrice > 0 ? productTotal / totalBundlePrice : 0;
+        const proportion =
+            totalBundlePrice > 0 ? productTotal / totalBundlePrice : 0;
         const discountValue = structure.discountValue || 0;
 
         if (!shouldDiscount) {
@@ -61,7 +67,8 @@ export function renderProductCard(
             switch (structure.discountType) {
                 case "PERCENTAGE":
                     if (discountValue > 0 && discountValue <= 100) {
-                        discountedPrice = product.price * (1 - discountValue / 100);
+                        discountedPrice =
+                            product.price * (1 - discountValue / 100);
                         hasDiscount = true;
                     }
                     break;
@@ -69,9 +76,14 @@ export function renderProductCard(
                 case "FIXED_AMOUNT":
                     if (discountValue > 0 && totalBundlePrice > 0) {
                         const discountInCents = discountValue * 100;
-                        const productLineDiscount = discountInCents * proportion;
-                        const perUnitDiscount = productLineDiscount / (product.quantity || 1);
-                        discountedPrice = Math.max(0, product.price - perUnitDiscount);
+                        const productLineDiscount =
+                            discountInCents * proportion;
+                        const perUnitDiscount =
+                            productLineDiscount / (product.quantity || 1);
+                        discountedPrice = Math.max(
+                            0,
+                            product.price - perUnitDiscount,
+                        );
                         hasDiscount = discountedPrice < product.price;
                     }
                     break;
@@ -79,8 +91,10 @@ export function renderProductCard(
                 case "CUSTOM_PRICE":
                     if (discountValue > 0 && totalBundlePrice > 0) {
                         const customPriceInCents = discountValue * 100;
-                        const productLinePrice = customPriceInCents * proportion;
-                        discountedPrice = productLinePrice / (product.quantity || 1);
+                        const productLinePrice =
+                            customPriceInCents * proportion;
+                        discountedPrice =
+                            productLinePrice / (product.quantity || 1);
                         hasDiscount = discountedPrice < product.price;
                     }
                     break;
@@ -93,7 +107,8 @@ export function renderProductCard(
 
     discountedPrice = Math.round(discountedPrice);
 
-    const hasCompareAt = product.compareAtPrice && product.compareAtPrice > product.price;
+    const hasCompareAt =
+        product.compareAtPrice && product.compareAtPrice > product.price;
     let priceHtml: string;
 
     if (hasDiscount && discountedPrice < product.price) {
@@ -114,7 +129,9 @@ export function renderProductCard(
         ? `<div class="radius-bundle__product-image">${imageHtml}</div>`
         : "";
 
-    const productUrl = product.handle ? getLocalePath(`/products/${product.handle}`) : "#";
+    const productUrl = product.handle
+        ? getLocalePath(`/products/${product.handle}`)
+        : "#";
     const productTitleHtml = ctx.enableHyperLink
         ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h4>`
         : `<h4 class="radius-bundle__product-title">${escapeHtml(product.title)}</h4>`;
@@ -206,8 +223,12 @@ export function renderFixedProducts(
 
         if (layout === "list" && !isLast) {
             const isDividerHidden = index >= initialVisibleCount - 1;
-            const dividerHiddenAttr = isDividerHidden ? ' style="display: none;"' : "";
-            const dividerHiddenClass = isDividerHidden ? " radius-bundle__divider--hidden" : "";
+            const dividerHiddenAttr = isDividerHidden
+                ? ' style="display: none;"'
+                : "";
+            const dividerHiddenClass = isDividerHidden
+                ? " radius-bundle__divider--hidden"
+                : "";
 
             if (ctx.dividerStyle === "plus") {
                 html += `<div class="radius-bundle__divider radius-bundle__divider--plus${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}><div class="divider-position">+</div></div>`;
@@ -227,7 +248,9 @@ export function renderFixedProducts(
         initShowMoreToggle(ctx);
     }
 
-    const addToCartBtn = ctx.container.querySelector("[data-bundle-add-to-cart]") as HTMLButtonElement | null;
+    const addToCartBtn = ctx.container.querySelector(
+        "[data-bundle-add-to-cart]",
+    ) as HTMLButtonElement | null;
     if (addToCartBtn) {
         addToCartBtn.disabled = false;
     }
@@ -245,14 +268,25 @@ export function updatePricing(bundle: Bundle, ctx: FixedContext): void {
 
     if (ctx.isBxgy) {
         const triggerTotal = bundle.products
-            .filter(p => p.role === "TRIGGER")
+            .filter((p) => p.role === "TRIGGER")
             .reduce((sum, p) => sum + p.price * p.quantity, 0);
         const discountedRewardTotal = bundle.products
-            .filter(p => p.role === "REWARD")
-            .reduce((sum, p) => sum + calculateBxgyRewardPrice(p.price, structure) * p.quantity, 0);
+            .filter((p) => p.role === "REWARD")
+            .reduce(
+                (sum, p) =>
+                    sum +
+                    calculateBxgyRewardPrice(p.price, structure) * p.quantity,
+                0,
+            );
         bundleTotal = triggerTotal + discountedRewardTotal;
         discountAmount = Math.max(0, sellingTotal - bundleTotal);
-        updatePricingDisplay(sellingTotal, bundleTotal, discountAmount, structure, ctx);
+        updatePricingDisplay(
+            sellingTotal,
+            bundleTotal,
+            discountAmount,
+            structure,
+            ctx,
+        );
         return;
     }
 
@@ -269,10 +303,14 @@ export function updatePricing(bundle: Bundle, ctx: FixedContext): void {
 
     switch (structure.discountType) {
         case "PERCENTAGE":
-            bundleTotal = nonDiscountableTotal + discountableTotal * (1 - structure.discountValue / 100);
+            bundleTotal =
+                nonDiscountableTotal +
+                discountableTotal * (1 - structure.discountValue / 100);
             break;
         case "FIXED_AMOUNT":
-            bundleTotal = nonDiscountableTotal + Math.max(0, discountableTotal - structure.discountValue * 100);
+            bundleTotal =
+                nonDiscountableTotal +
+                Math.max(0, discountableTotal - structure.discountValue * 100);
             break;
         case "CUSTOM_PRICE":
             bundleTotal = nonDiscountableTotal + structure.discountValue * 100;
@@ -284,7 +322,13 @@ export function updatePricing(bundle: Bundle, ctx: FixedContext): void {
     bundleTotal = Math.max(0, bundleTotal);
     discountAmount = Math.max(0, sellingTotal - bundleTotal);
 
-    updatePricingDisplay(sellingTotal, bundleTotal, discountAmount, structure, ctx);
+    updatePricingDisplay(
+        sellingTotal,
+        bundleTotal,
+        discountAmount,
+        structure,
+        ctx,
+    );
 }
 
 function updatePricingDisplay(
@@ -305,7 +349,9 @@ function updatePricingDisplay(
     }
 
     const savingsEl = ctx.container.querySelector("[data-savings]");
-    const savingsAmountEl = ctx.container.querySelector("[data-savings-amount]");
+    const savingsAmountEl = ctx.container.querySelector(
+        "[data-savings-amount]",
+    );
     if (savingsEl && savingsAmountEl) {
         if (discountAmount > 0 && ctx.showSavings) {
             savingsAmountEl.textContent = formatMoney(discountAmount);
@@ -331,13 +377,18 @@ export function validateStock(ctx: FixedContext): void {
     const unavailableProducts = ctx.bundle.products.filter((p) => !p.available);
     if (unavailableProducts.length === 0) return;
 
-    const button = ctx.container.querySelector("[data-bundle-add-to-cart]") as HTMLButtonElement;
+    const button = ctx.container.querySelector(
+        "[data-bundle-add-to-cart]",
+    ) as HTMLButtonElement;
     if (button) {
         button.disabled = true;
         button.classList.add("is-out-of-stock");
 
-        const outOfStockLabel = ctx.bundleStructure?.labels?.outOfStockText ?? "Out of Stock";
-        const buttonText = button.querySelector("[data-button-text]") as HTMLElement;
+        const outOfStockLabel =
+            ctx.bundleStructure?.labels?.outOfStockText ?? "Out of Stock";
+        const buttonText = button.querySelector(
+            "[data-button-text]",
+        ) as HTMLElement;
         if (buttonText) {
             buttonText.textContent = outOfStockLabel;
         } else {
@@ -356,7 +407,10 @@ function getShowMoreButton(totalProducts: number, ctx: FixedContext): string {
     if (totalProducts <= initialVisibleCount) return "";
 
     const extraCount = totalProducts - initialVisibleCount;
-    const buttonText = ctx.moreProductsText.replace("{count}", String(extraCount));
+    const buttonText = ctx.moreProductsText.replace(
+        "{count}",
+        String(extraCount),
+    );
 
     return `
         <button
@@ -379,7 +433,10 @@ function initShowMoreToggle(ctx: FixedContext): void {
     const initialCount = parseInt(btn.dataset.initialCount || "4", 10);
     const totalCount = parseInt(btn.dataset.totalCount || "0", 10);
     const extraCount = totalCount - initialCount;
-    const moreText = ctx.moreProductsText.replace("{count}", String(extraCount));
+    const moreText = ctx.moreProductsText.replace(
+        "{count}",
+        String(extraCount),
+    );
     const lessText = ctx.showLessText;
     const products = ctx.container.querySelectorAll<HTMLElement>(
         ".radius-bundle__product[data-product-index]",
@@ -401,8 +458,13 @@ function initShowMoreToggle(ctx: FixedContext): void {
                 ".radius-bundle__divider[data-divider-index]",
             );
 
-        dividers?.forEach(function toggleDividerVisibility(divider: HTMLElement) {
-            const dividerIdx = parseInt(divider.dataset.dividerIndex || "0", 10);
+        dividers?.forEach(function toggleDividerVisibility(
+            divider: HTMLElement,
+        ) {
+            const dividerIdx = parseInt(
+                divider.dataset.dividerIndex || "0",
+                10,
+            );
             if (dividerIdx >= initialCount - 1) {
                 divider.style.display = isExpanded ? "none" : "";
             }

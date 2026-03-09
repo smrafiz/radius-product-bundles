@@ -74,13 +74,19 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             if (discountValue > 0) {
                 switch (data.discountType) {
                     case "PERCENTAGE":
-                        discountAmount = round(rewardPrice * (discountValue / 100));
+                        discountAmount = round(
+                            rewardPrice * (discountValue / 100),
+                        );
                         break;
                     case "FIXED_AMOUNT":
-                        discountAmount = round(Math.min(discountValue, rewardPrice));
+                        discountAmount = round(
+                            Math.min(discountValue, rewardPrice),
+                        );
                         break;
                     case "CUSTOM_PRICE":
-                        discountAmount = round(Math.max(0, rewardPrice - discountValue));
+                        discountAmount = round(
+                            Math.max(0, rewardPrice - discountValue),
+                        );
                         break;
                 }
             }
@@ -467,7 +473,9 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                 console.log(
                                     `✅ Media processed: ${deleteResult.deletedMediaIds.length} deleted`,
                                 );
-                                useBundleStore.getState().clearRemovedMediaIds();
+                                useBundleStore
+                                    .getState()
+                                    .clearRemovedMediaIds();
                             } catch (error) {
                                 console.error("Media deletion failed:", error);
                             }

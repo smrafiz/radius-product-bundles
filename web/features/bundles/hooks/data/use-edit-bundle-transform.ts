@@ -1,5 +1,10 @@
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
-import { BundleDetail, BundleStatus, DiscountApplication, initialDisplaySettings, } from "@/features/bundles";
+import {
+    BundleDetail,
+    BundleStatus,
+    DiscountApplication,
+    initialDisplaySettings,
+} from "@/features/bundles";
 
 /**
  * Transforms bundle data from the database format to the form format.

@@ -122,7 +122,9 @@ export function ConversionRatesChart() {
                         <Tooltip
                             {...CHART_TOOLTIP_CONFIG}
                             formatter={(value) =>
-                                value == null ? "-" : `${Number(value).toFixed(1)}%`
+                                value == null
+                                    ? "-"
+                                    : `${Number(value).toFixed(1)}%`
                             }
                         />
 

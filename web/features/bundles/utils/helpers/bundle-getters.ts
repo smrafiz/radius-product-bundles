@@ -46,7 +46,9 @@ export const getBundleStatusBadge = (status: string): BundleStatusBadge => {
     };
 };
 
-export const getBundleTypeBadge = (type: BundleType): { text: string; tone: BundleStatusBadge["tone"] } => {
+export const getBundleTypeBadge = (
+    type: BundleType,
+): { text: string; tone: BundleStatusBadge["tone"] } => {
     const toneMap: Record<string, BundleStatusBadge["tone"]> = {
         FIXED_BUNDLE: "info",
         BOGO: "success",

@@ -20,7 +20,12 @@ function ProductTile({
     styles,
     labels,
 }: {
-    product: { title: string; image?: string; price: string; compareAtPrice?: string };
+    product: {
+        title: string;
+        image?: string;
+        price: string;
+        compareAtPrice?: string;
+    };
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
     labels?: WidgetLayoutProps["labels"];
@@ -33,11 +38,14 @@ function ProductTile({
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
-    const youPayLabel = labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel;
+    const youPayLabel =
+        labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel;
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
-    const isFreePrice = hasDiscount && (product.price === "$0.00" || product.price === "$0");
-    const rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    const isFreePrice =
+        hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const rewardBadgeText =
+        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     return (
         <div
@@ -88,7 +96,11 @@ function ProductTile({
                     lineHeight: "14px",
                 }}
             >
-                {isTrigger ? youPayLabel : (isFreePrice ? freeText : rewardBadgeText)}
+                {isTrigger
+                    ? youPayLabel
+                    : isFreePrice
+                      ? freeText
+                      : rewardBadgeText}
             </span>
 
             <div
@@ -168,11 +180,14 @@ function TileSlider({
 
     const sw = () => containerRef.current?.offsetWidth || 0;
 
-    const goTo = useCallback((idx: number) => {
-        setActiveSlide(Math.max(0, Math.min(idx, pages.length - 1)));
-        setDragPx(0);
-        setIsDragging(false);
-    }, [pages.length]);
+    const goTo = useCallback(
+        (idx: number) => {
+            setActiveSlide(Math.max(0, Math.min(idx, pages.length - 1)));
+            setDragPx(0);
+            setIsDragging(false);
+        },
+        [pages.length],
+    );
 
     const onPointerDown = useCallback((x: number) => {
         dragRef.current = { startX: x, dragging: true };
@@ -182,31 +197,58 @@ function TileSlider({
         if (!dragRef.current.dragging) return;
         setDragPx(x - dragRef.current.startX);
     }, []);
-    const onPointerUp = useCallback((x: number) => {
-        if (!dragRef.current.dragging) return;
-        dragRef.current.dragging = false;
-        const dx = x - dragRef.current.startX;
-        const threshold = sw() * 0.2;
-        if (dx < -threshold) goTo(activeSlide + 1);
-        else if (dx > threshold) goTo(activeSlide - 1);
-        else goTo(activeSlide);
-    }, [activeSlide, goTo]);
+    const onPointerUp = useCallback(
+        (x: number) => {
+            if (!dragRef.current.dragging) return;
+            dragRef.current.dragging = false;
+            const dx = x - dragRef.current.startX;
+            const threshold = sw() * 0.2;
+            if (dx < -threshold) goTo(activeSlide + 1);
+            else if (dx > threshold) goTo(activeSlide - 1);
+            else goTo(activeSlide);
+        },
+        [activeSlide, goTo],
+    );
 
     return (
-        <div ref={containerRef} style={{ flex: flexVal, minWidth: 0, display: "grid", gridTemplateRows: "1fr auto", overflow: "hidden" }}>
+        <div
+            ref={containerRef}
+            style={{
+                flex: flexVal,
+                minWidth: 0,
+                display: "grid",
+                gridTemplateRows: "1fr auto",
+                overflow: "hidden",
+            }}
+        >
             <div
                 style={{
                     display: "flex",
                     transform: `translateX(${-activeSlide * sw() + dragPx}px)`,
                     transition: isDragging ? "none" : "transform 0.3s ease",
-                    cursor: pages.length > 1 ? (isDragging ? "grabbing" : "grab") : undefined,
+                    cursor:
+                        pages.length > 1
+                            ? isDragging
+                                ? "grabbing"
+                                : "grab"
+                            : undefined,
                     userSelect: "none",
                 }}
-                onMouseDown={(e) => { if (pages.length > 1) { e.preventDefault(); onPointerDown(e.clientX); } }}
+                onMouseDown={(e) => {
+                    if (pages.length > 1) {
+                        e.preventDefault();
+                        onPointerDown(e.clientX);
+                    }
+                }}
                 onMouseMove={(e) => onPointerMove(e.clientX)}
                 onMouseUp={(e) => onPointerUp(e.clientX)}
-                onMouseLeave={() => { if (dragRef.current.dragging) onPointerUp(dragRef.current.startX); }}
-                onTouchStart={(e) => { if (pages.length > 1) onPointerDown(e.touches[0].clientX); }}
+                onMouseLeave={() => {
+                    if (dragRef.current.dragging)
+                        onPointerUp(dragRef.current.startX);
+                }}
+                onTouchStart={(e) => {
+                    if (pages.length > 1) onPointerDown(e.touches[0].clientX);
+                }}
                 onTouchMove={(e) => onPointerMove(e.touches[0].clientX)}
                 onTouchEnd={(e) => onPointerUp(e.changedTouches[0].clientX)}
             >
@@ -253,11 +295,13 @@ function TileSlider({
                                 width: 6,
                                 height: 6,
                                 borderRadius: "50%",
-                                background: i === activeSlide ? dotColor : "#d1d5db",
+                                background:
+                                    i === activeSlide ? dotColor : "#d1d5db",
                                 border: "none",
                                 padding: 0,
                                 cursor: "pointer",
-                                transform: i === activeSlide ? "scale(1.3)" : "none",
+                                transform:
+                                    i === activeSlide ? "scale(1.3)" : "none",
                                 transition: "background 0.2s, transform 0.2s",
                             }}
                         />
@@ -280,7 +324,8 @@ export function WidgetCompactGrid({
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
-    const singleEach = triggerProducts.length <= 1 && rewardProducts.length <= 1;
+    const singleEach =
+        triggerProducts.length <= 1 && rewardProducts.length <= 1;
     const primaryColor = styles.primaryColor || "#e0598b";
     const savingsColor = styles.savingsColor || "#16a34a";
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -290,7 +335,6 @@ export function WidgetCompactGrid({
     const accentColor = styles.primaryColor || "#303030";
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
-
 
     if (!products.length) {
         return (
@@ -329,7 +373,14 @@ export function WidgetCompactGrid({
                     justifyContent: "space-between",
                 }}
             >
-                <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        minWidth: 0,
+                    }}
+                >
                     <span
                         style={{
                             color: "#fff",
@@ -443,11 +494,30 @@ export function WidgetCompactGrid({
             >
                 {pricing && (
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span style={{ fontSize: 11, color: "#6b7280", fontWeight: 500 }}>
-                            {labels?.bogoTotalLabel || DEFAULT_LABELS.bogoTotalLabel}
+                        <span
+                            style={{
+                                fontSize: 11,
+                                color: "#6b7280",
+                                fontWeight: 500,
+                            }}
+                        >
+                            {labels?.bogoTotalLabel ||
+                                DEFAULT_LABELS.bogoTotalLabel}
                         </span>
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                            <span style={{ fontSize: 20, fontWeight: 700, color: styles.textColor }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "baseline",
+                                gap: 6,
+                            }}
+                        >
+                            <span
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: 700,
+                                    color: styles.textColor,
+                                }}
+                            >
                                 {pricing.finalPrice}
                             </span>
                             {pricing.hasDiscount && (
@@ -458,7 +528,13 @@ export function WidgetCompactGrid({
                                         color: savingsColor,
                                     }}
                                 >
-                                    {(labels?.bogoSaveText || DEFAULT_LABELS.bogoSaveText).replace("{amount}", pricing.savingsAmount || "")}
+                                    {(
+                                        labels?.bogoSaveText ||
+                                        DEFAULT_LABELS.bogoSaveText
+                                    ).replace(
+                                        "{amount}",
+                                        pricing.savingsAmount || "",
+                                    )}
                                 </span>
                             )}
                         </div>
@@ -473,9 +549,13 @@ export function WidgetCompactGrid({
                             justifyContent: "center",
                             gap: 6,
                             padding: getButtonPadding(styles.buttonSize),
-                            border: isButtonOutline ? `2px solid ${buttonBg}` : "none",
+                            border: isButtonOutline
+                                ? `2px solid ${buttonBg}`
+                                : "none",
                             borderRadius: getButtonRadius(styles.cornerStyle),
-                            background: isButtonOutline ? "transparent" : buttonBg,
+                            background: isButtonOutline
+                                ? "transparent"
+                                : buttonBg,
                             color: isButtonOutline ? buttonBg : "#fff",
                             fontSize: getButtonFontSize(styles.buttonSize),
                             fontWeight: 600,

@@ -32,12 +32,16 @@ function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
     }));
 }
 
-export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boolean }) {
+export function ProductList({
+    isBxgy,
+    isBogo,
+}: {
+    isBxgy?: boolean;
+    isBogo?: boolean;
+}) {
     const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
         useBundleStore();
-    const sameProductMode = useBundleStore(
-        (s) => s.bundleData.sameProductMode,
-    );
+    const sameProductMode = useBundleStore((s) => s.bundleData.sameProductMode);
     const { sensors, handleDragEnd } = useDragAndDrop();
     const { openProductPicker, isLoading } = useProductPicker();
 
@@ -48,38 +52,35 @@ export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boo
         }),
     );
 
-    const handleBxgyDragEnd = useCallback(
-        (event: DragEndEvent) => {
-            const { active, over } = event;
-            if (!over || active.id === over.id) return;
+    const handleBxgyDragEnd = useCallback((event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
 
-            const activeId = active.id as string;
-            const overId = over.id as string;
+        const activeId = active.id as string;
+        const overId = over.id as string;
 
-            useBundleStore.setState((state) => {
-                const activeIndex = state.selectedItems.findIndex(
-                    (i) => i.id === activeId,
-                );
-                const overIndex = state.selectedItems.findIndex(
-                    (i) => i.id === overId,
-                );
+        useBundleStore.setState((state) => {
+            const activeIndex = state.selectedItems.findIndex(
+                (i) => i.id === activeId,
+            );
+            const overIndex = state.selectedItems.findIndex(
+                (i) => i.id === overId,
+            );
 
-                if (activeIndex !== -1 && overIndex !== -1) {
-                    const newItems = [...state.selectedItems];
-                    const [moved] = newItems.splice(activeIndex, 1);
-                    newItems.splice(overIndex, 0, moved);
-                    state.selectedItems = newItems;
-                    state.bundleData.products = newItems.map((item) => ({
-                        productId: item.productId,
-                        variantId: item.variantId || "",
-                        quantity: item.quantity,
-                        role: item.role || "INCLUDED",
-                    }));
-                }
-            });
-        },
-        [],
-    );
+            if (activeIndex !== -1 && overIndex !== -1) {
+                const newItems = [...state.selectedItems];
+                const [moved] = newItems.splice(activeIndex, 1);
+                newItems.splice(overIndex, 0, moved);
+                state.selectedItems = newItems;
+                state.bundleData.products = newItems.map((item) => ({
+                    productId: item.productId,
+                    variantId: item.variantId || "",
+                    quantity: item.quantity,
+                    role: item.role || "INCLUDED",
+                }));
+            }
+        });
+    }, []);
 
     // Fixed Bundle path: use grouped items as before
     const groupedItems = getGroupedItems();
@@ -146,9 +147,7 @@ export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boo
                                 group={group}
                                 sortableId={group.product.id}
                                 role={
-                                    group.product.role as
-                                        | "TRIGGER"
-                                        | "REWARD"
+                                    group.product.role as "TRIGGER" | "REWARD"
                                 }
                                 onRoleChange={(newRole) => {
                                     setItemRole(group.product.id, newRole);
@@ -161,15 +160,11 @@ export function ProductList({ isBxgy, isBogo }: { isBxgy?: boolean; isBogo?: boo
                                         selectedItems
                                             .filter(
                                                 (i) =>
-                                                    i.id !==
-                                                        group.product.id &&
+                                                    i.id !== group.product.id &&
                                                     i.role === newRole,
                                             )
                                             .forEach((i) =>
-                                                setItemRole(
-                                                    i.id,
-                                                    swappedRole,
-                                                ),
+                                                setItemRole(i.id, swappedRole),
                                             );
                                     }
                                     // BXGY: allow multiple Buy/Get, no swap

@@ -70,19 +70,25 @@ export function BxgyReviewSection() {
 
     const triggerTotal = useMemo(
         () =>
-            round(triggerProducts.reduce(
-                (sum, p) => sum + (parseFloat(p.price || "0") * (p.quantity || 1)),
-                0,
-            )),
+            round(
+                triggerProducts.reduce(
+                    (sum, p) =>
+                        sum + parseFloat(p.price || "0") * (p.quantity || 1),
+                    0,
+                ),
+            ),
         [triggerProducts],
     );
 
     const rewardTotal = useMemo(
         () =>
-            round(rewardProducts.reduce(
-                (sum, p) => sum + (parseFloat(p.price || "0") * (p.quantity || 1)),
-                0,
-            )),
+            round(
+                rewardProducts.reduce(
+                    (sum, p) =>
+                        sum + parseFloat(p.price || "0") * (p.quantity || 1),
+                    0,
+                ),
+            ),
         [rewardProducts],
     );
 
@@ -90,9 +96,12 @@ export function BxgyReviewSection() {
 
     const discount = useMemo(() => {
         if (!discountValue) return 0;
-        if (discountType === "PERCENTAGE") return round(rewardTotal * (discountValue / 100));
-        if (discountType === "FIXED_AMOUNT") return round(Math.min(discountValue, rewardTotal));
-        if (discountType === "CUSTOM_PRICE") return round(Math.max(0, rewardTotal - discountValue));
+        if (discountType === "PERCENTAGE")
+            return round(rewardTotal * (discountValue / 100));
+        if (discountType === "FIXED_AMOUNT")
+            return round(Math.min(discountValue, rewardTotal));
+        if (discountType === "CUSTOM_PRICE")
+            return round(Math.max(0, rewardTotal - discountValue));
         return 0;
     }, [discountType, discountValue, rewardTotal]);
 
@@ -107,17 +116,28 @@ export function BxgyReviewSection() {
 
     const getRewardPrice = (originalPrice: number) => {
         if (!discountValue) return originalPrice;
-        if (discountType === "PERCENTAGE") return round(originalPrice * (1 - discountValue / 100));
-        if (discountType === "FIXED_AMOUNT") return round(Math.max(0, originalPrice - discountValue));
+        if (discountType === "PERCENTAGE")
+            return round(originalPrice * (1 - discountValue / 100));
+        if (discountType === "FIXED_AMOUNT")
+            return round(Math.max(0, originalPrice - discountValue));
         if (discountType === "CUSTOM_PRICE") return round(discountValue);
         return originalPrice;
     };
 
-    const renderProductCard = (p: (typeof triggerProducts)[0], role: "TRIGGER" | "REWARD") => {
+    const renderProductCard = (
+        p: (typeof triggerProducts)[0],
+        role: "TRIGGER" | "REWARD",
+    ) => {
         const originalPrice = parseFloat(p.price || "0");
         const isReward = role === "REWARD";
-        const finalPrice = isReward ? getRewardPrice(originalPrice) : originalPrice;
-        const hasDiscount = isReward && discountType && discountValue && finalPrice !== originalPrice;
+        const finalPrice = isReward
+            ? getRewardPrice(originalPrice)
+            : originalPrice;
+        const hasDiscount =
+            isReward &&
+            discountType &&
+            discountValue &&
+            finalPrice !== originalPrice;
 
         return (
             <s-box
@@ -158,19 +178,37 @@ export function BxgyReviewSection() {
                             <s-heading>
                                 {p.title.replace(/ - .+$/, "")}
                             </s-heading>
-                            <s-badge tone={role === "TRIGGER" ? "info" : "success"}>
-                                {role === "TRIGGER" ? "Customer Buys" : "Customer Gets"}
+                            <s-badge
+                                tone={role === "TRIGGER" ? "info" : "success"}
+                            >
+                                {role === "TRIGGER"
+                                    ? "Customer Buys"
+                                    : "Customer Gets"}
                             </s-badge>
                         </s-stack>
                     </s-stack>
                     {p.price && (
-                        <s-stack direction="inline" gap="small" alignItems="center">
+                        <s-stack
+                            direction="inline"
+                            gap="small"
+                            alignItems="center"
+                        >
                             {hasDiscount && (
-                                <s-text tone="neutral"><s style={{ textDecoration: "line-through" }}>{currencyFormatter(originalPrice)}</s></s-text>
+                                <s-text tone="neutral">
+                                    <s
+                                        style={{
+                                            textDecoration: "line-through",
+                                        }}
+                                    >
+                                        {currencyFormatter(originalPrice)}
+                                    </s>
+                                </s-text>
                             )}
                             <s-text type="strong">
                                 {hasDiscount
-                                    ? finalPrice === 0 ? "FREE" : currencyFormatter(finalPrice)
+                                    ? finalPrice === 0
+                                        ? "FREE"
+                                        : currencyFormatter(finalPrice)
                                     : currencyFormatter(originalPrice)}
                             </s-text>
                         </s-stack>
@@ -212,8 +250,8 @@ export function BxgyReviewSection() {
                     >
                         <s-heading>Deal</s-heading>
                         <s-text color="subdued">
-                            Buy {buyQty} × {triggerNames || "—"} → Get {getQty} ×{" "}
-                            {rewardNames || "—"} {discountLabel}
+                            Buy {buyQty} × {triggerNames || "—"} → Get {getQty}{" "}
+                            × {rewardNames || "—"} {discountLabel}
                         </s-text>
                     </s-stack>
                     {bundleData.sameProductMode && (
@@ -304,7 +342,10 @@ export function BxgyReviewSection() {
             {/* Products Section */}
             <s-section>
                 <s-stack>
-                    <div className="cursor-pointer z-30" onClick={() => setOpen(!open)}>
+                    <div
+                        className="cursor-pointer z-30"
+                        onClick={() => setOpen(!open)}
+                    >
                         <s-stack
                             direction="inline"
                             justifyContent="space-between"
@@ -313,9 +354,13 @@ export function BxgyReviewSection() {
                             aria-expanded={open}
                         >
                             <s-heading>
-                                Selected products ({triggerProducts.length + rewardProducts.length})
+                                Selected products (
+                                {triggerProducts.length + rewardProducts.length}
+                                )
                             </s-heading>
-                            <s-icon type={open ? "chevron-up" : "chevron-down"} />
+                            <s-icon
+                                type={open ? "chevron-up" : "chevron-down"}
+                            />
                         </s-stack>
                     </div>
 
@@ -325,12 +370,16 @@ export function BxgyReviewSection() {
                         <s-stack gap="small" paddingBlockStart="small">
                             {triggerProducts.length > 0 && (
                                 <s-stack gap="small-200">
-                                    {triggerProducts.map((p) => renderProductCard(p, "TRIGGER"))}
+                                    {triggerProducts.map((p) =>
+                                        renderProductCard(p, "TRIGGER"),
+                                    )}
                                 </s-stack>
                             )}
                             {rewardProducts.length > 0 && (
                                 <s-stack gap="small-200">
-                                    {rewardProducts.map((p) => renderProductCard(p, "REWARD"))}
+                                    {rewardProducts.map((p) =>
+                                        renderProductCard(p, "REWARD"),
+                                    )}
                                 </s-stack>
                             )}
                         </s-stack>
@@ -365,7 +414,9 @@ export function BxgyReviewSection() {
                         direction="inline"
                     >
                         <s-text type="strong">Total</s-text>
-                        <s-text type="strong">{currencyFormatter(total)}</s-text>
+                        <s-text type="strong">
+                            {currencyFormatter(total)}
+                        </s-text>
                     </s-stack>
                 </s-stack>
             </s-section>

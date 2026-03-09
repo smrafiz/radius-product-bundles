@@ -10,12 +10,12 @@
 
 The codebase demonstrates solid architecture with well-organized feature-based modules, proper separation of concerns, and good Shopify integration patterns. However, there are **critical security vulnerabilities**, **high-priority bugs**, and numerous improvement opportunities across the stack.
 
-| Severity | Count | Impact |
-|----------|-------|--------|
-| **Critical** | 6 | Security vulnerabilities, data corruption risks |
-| **High** | 14 | Runtime errors, silent failures, type safety |
-| **Medium** | 25+ | Code quality, performance, maintainability |
-| **Low** | 15+ | Polish, documentation, best practices |
+| Severity     | Count | Impact                                          |
+| ------------ | ----- | ----------------------------------------------- |
+| **Critical** | 6     | Security vulnerabilities, data corruption risks |
+| **High**     | 14    | Runtime errors, silent failures, type safety    |
+| **Medium**   | 25+   | Code quality, performance, maintainability      |
+| **Low**      | 15+   | Polish, documentation, best practices           |
 
 ---
 
@@ -64,6 +64,7 @@ dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content) }}
 **Risk:** `'unsafe-eval'` defeats XSS protection. Critical for a Shopify app handling merchant data.
 
 **Recommendation:**
+
 - Remove `'unsafe-eval'` if possible
 - Use nonces or hashes instead of `'unsafe-inline'` for styles
 - Use external script files instead of inline scripts
@@ -84,11 +85,12 @@ const state = searchParams.get("state");
 **Risk:** Attackers can inject malicious OAuth codes into user sessions (account takeover).
 
 **Recommendation:**
+
 1. Store state in session/cookie during `/auth/` initiation
 2. Validate state matches in `/auth/callback/` before exchanging code:
 
 ```typescript
-const storedState = cookies().get('oauth_state')?.value;
+const storedState = cookies().get("oauth_state")?.value;
 if (!state || state !== storedState) {
     return NextResponse.json({ error: "Invalid state" }, { status: 403 });
 }
@@ -111,10 +113,10 @@ export function generateOAuthState(shop: string): string {
 **Recommendation:**
 
 ```typescript
-import { randomBytes } from 'crypto';
+import { randomBytes } from "crypto";
 
 export function generateOAuthState(shop: string): string {
-    return `${shop}-${randomBytes(32).toString('hex')}`;
+    return `${shop}-${randomBytes(32).toString("hex")}`;
 }
 ```
 
@@ -131,6 +133,7 @@ None => 1,  // If no productQuantities, assume 1 complete set
 **Risk:** Legacy bundles without quantity config can receive unlimited discount sets regardless of cart contents.
 
 **Recommendation:**
+
 - Add explicit validation requiring quantity config
 - Or reject bundles missing quantity configuration
 - At minimum, log warning for monitoring
@@ -150,6 +153,7 @@ if discount_needed <= 0.0 {
 **Risk:** If custom price is set above bundle total, no discount is applied without any warning or error.
 
 **Recommendation:**
+
 - Log warning when this condition occurs
 - Consider capping discount to 0 with explicit message
 - Or return error to merchant dashboard
@@ -168,12 +172,17 @@ if discount_needed <= 0.0 {
 useCustomizerField(config as any, onFieldChangeAction);
 handleChange(value as any);
 export async function createBundleSettings(tx, bundleId, settings: any);
-export async function createBundleProductGroups(tx: any, bundleId, groups: any[]);
+export async function createBundleProductGroups(
+    tx: any,
+    bundleId,
+    groups: any[],
+);
 ```
 
 **Impact:** Loss of compile-time type checking, potential runtime errors, difficult refactoring.
 
 **Recommendation:**
+
 - Create proper TypeScript interfaces for dynamic objects
 - Use generics instead of `any` where possible
 - Use discriminated unions for type-safe field handling
@@ -183,17 +192,20 @@ export async function createBundleProductGroups(tx: any, bundleId, groups: any[]
 ### 8. Inconsistent Error Handling Patterns
 
 **Pattern 1 - Throws exceptions:** `bundle-write.service.ts`
+
 ```typescript
 throw new Error("Bundle not found");
 throw new Error("Invalid bundle status");
 ```
 
 **Pattern 2 - Returns error objects:** `bundle-read.service.ts`
+
 ```typescript
 return { success: false, message: "error" };
 ```
 
 **Pattern 3 - ApiResponse format:** `analytics.action.ts`
+
 ```typescript
 return { status: "error", message: error.message };
 ```
@@ -201,6 +213,7 @@ return { status: "error", message: error.message };
 **Impact:** Unpredictable error boundaries, difficult debugging, inconsistent client handling.
 
 **Recommendation:**
+
 - Standardize on exceptions at service layer
 - Use consistent `ApiResponse` wrapper at action layer
 - Create custom error classes (e.g., `BundleNotFoundError`, `ValidationError`)
@@ -213,17 +226,21 @@ return { status: "error", message: error.message };
 
 ```typescript
 console.log(`[Security] Performing security checks for shop: ${shop}`);
-console.warn(`[Security] Rate limit exceeded for shop ${shop}: ${recentBundleCount}/${maxPerHour}`);
+console.warn(
+    `[Security] Rate limit exceeded for shop ${shop}: ${recentBundleCount}/${maxPerHour}`,
+);
 console.log("[Webhook Service] Initializing...");
 ```
 
 **Impact:**
+
 - Clutters production logs
 - No structured logging framework
 - Difficult to filter/search logs
 - Security information potentially exposed
 
 **Recommendation:**
+
 - Replace with structured logging library (e.g., pino, winston)
 - Use log levels appropriately (debug, info, warn, error)
 - Remove debug console statements
@@ -247,7 +264,8 @@ const corsHeaders = {
 
 ```typescript
 const corsHeaders = {
-    "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGINS || "https://*.myshopify.com",
+    "Access-Control-Allow-Origin":
+        process.env.ALLOWED_ORIGINS || "https://*.myshopify.com",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400",
@@ -267,11 +285,13 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 ```
 
 **Issues:**
+
 - CRON_SECRET exposed in `.env.example`
 - Simple string comparison without cryptographic validation
 - No rate limiting on cron endpoints
 
 **Recommendation:**
+
 - Use Vercel's built-in CRON authorization header verification
 - Implement IP whitelist for cron services
 - Use signed JWT tokens instead of plain bearer tokens
@@ -339,9 +359,9 @@ await prisma.$transaction(async (tx) => {
 
 ```javascript
 try {
-    this.bundleStructure = JSON.parse(e)
-} catch(s) {
-    console.warn("[RadiusBundle] Failed to parse bundle structure:", s)
+    this.bundleStructure = JSON.parse(e);
+} catch (s) {
+    console.warn("[RadiusBundle] Failed to parse bundle structure:", s);
     // bundleStructure is null, downstream calls crash
 }
 ```
@@ -352,10 +372,12 @@ try {
 
 ```javascript
 try {
-    this.bundleStructure = JSON.parse(e)
-} catch(s) {
-    console.warn("[RadiusBundle] Failed to parse bundle structure:", s)
-    this.bundleStructure = { /* default safe structure */ }
+    this.bundleStructure = JSON.parse(e);
+} catch (s) {
+    console.warn("[RadiusBundle] Failed to parse bundle structure:", s);
+    this.bundleStructure = {
+        /* default safe structure */
+    };
     return; // Exit early
 }
 ```
@@ -367,13 +389,16 @@ try {
 **Location:** `/extension/extensions/product-bundle-widget/assets/radius-bundles.js:~320`
 
 ```javascript
-switch(e.discountType) {
+switch (e.discountType) {
     case "PERCENTAGE":
-        return template.replace("{discount}", i(e.discountValue + "%"))
+        return template.replace("{discount}", i(e.discountValue + "%"));
     case "FIXED_AMOUNT":
-        return template.replace("{discount}", i(this.formatMoney(e.discountValue)))
+        return template.replace(
+            "{discount}",
+            i(this.formatMoney(e.discountValue)),
+        );
     case "NO_DISCOUNT":
-        return e.freeShipping ? template : null
+        return e.freeShipping ? template : null;
     // Missing: CUSTOM_PRICE
 }
 ```
@@ -415,11 +440,13 @@ formatValidationErrorsAsHTML() {
 **Location:** `/web/shared/hooks/session/use-session-provider.ts`
 
 **Issues:**
+
 - 25+ console statements for debugging
 - Large commented-out block (lines 121-170)
 - `tokenProcessed` ref pattern is fragile
 
 **Recommendation:**
+
 - Remove debug logs or use conditional logging based on dev flag
 - Remove commented-out code
 - Simplify token processing logic
@@ -467,14 +494,14 @@ product_gids.iter().any(|gid| is_product_in_bundle(gid, settings))
 
 ### Database Schema Issues
 
-| Issue | Location | Recommendation |
-|-------|----------|----------------|
-| Missing `@@index([shop])` on core models | Bundle, Automation, PricingRule, AlertRule | Add standalone shop indexes for common queries |
-| Dual shop/shopId fields | Bundle model has both string `shop` and UUID `shopId` | Standardize on one approach to avoid consistency issues |
-| Redundant indexes | BundleAnalytics has both `[bundleId, date]` and `[date, bundleId]` | Remove duplicate; limited additional value |
-| BundleAnalytics/BundleView use `onDelete: Restrict` | Prisma schema | Mismatches soft-delete pattern used in code |
-| N+1 risk with `.find()` in loop | `analytics.queries.ts:511` | Use Map lookup instead of Array.find() |
-| Missing indexes on junction tables | BundleProductGroup, AutomationLog | Add `@@index([bundleId])`, `@@index([automationId])` |
+| Issue                                               | Location                                                           | Recommendation                                          |
+| --------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------- |
+| Missing `@@index([shop])` on core models            | Bundle, Automation, PricingRule, AlertRule                         | Add standalone shop indexes for common queries          |
+| Dual shop/shopId fields                             | Bundle model has both string `shop` and UUID `shopId`              | Standardize on one approach to avoid consistency issues |
+| Redundant indexes                                   | BundleAnalytics has both `[bundleId, date]` and `[date, bundleId]` | Remove duplicate; limited additional value              |
+| BundleAnalytics/BundleView use `onDelete: Restrict` | Prisma schema                                                      | Mismatches soft-delete pattern used in code             |
+| N+1 risk with `.find()` in loop                     | `analytics.queries.ts:511`                                         | Use Map lookup instead of Array.find()                  |
+| Missing indexes on junction tables                  | BundleProductGroup, AutomationLog                                  | Add `@@index([bundleId])`, `@@index([automationId])`    |
 
 ---
 
@@ -487,6 +514,7 @@ product_gids.iter().any(|gid| is_product_in_bundle(gid, settings))
 3. Frontend form validation
 
 **Example:**
+
 ```typescript
 // In zod.schema.ts
 .refine(data => {
@@ -513,7 +541,7 @@ if (data.type === "VOLUME_DISCOUNT") {
 **Location:** `/web/shared/utils/form/save-bar.ts:11-14`
 
 ```typescript
-const formStates = {};  // Global object, never cleaned up
+const formStates = {}; // Global object, never cleaned up
 ```
 
 **Impact:** Memory leak if forms are dynamically created/destroyed.
@@ -554,6 +582,7 @@ startPolling() {
 **Impact:** Memory leak if cart page is never closed; also battery drain on mobile.
 
 **Recommendation:**
+
 - Add `beforeunload` handler to clear interval
 - Increase interval to 5 seconds
 - Consider using `visibilitychange` to pause when tab is hidden
@@ -563,6 +592,7 @@ startPolling() {
 ### Floating-Point Precision Issues
 
 **Locations:**
+
 - `/extension/extensions/radius-discount-function/src/cart_lines_discounts_generate_run.rs:311-331`
 - `/extension/extensions/product-bundle-widget/assets/bundle-widget.js:~500-600`
 
@@ -577,8 +607,8 @@ startPolling() {
 **Location:** `/web/shared/hooks/shopify/use-shop-settings.ts`
 
 ```typescript
-const hasInitialized = useRef(false);  // Line 8
-const [isInitialized, setIsInitialized] = useState(false);  // Implicit
+const hasInitialized = useRef(false); // Line 8
+const [isInitialized, setIsInitialized] = useState(false); // Implicit
 // Returns both hasInitialized.current and isInitialized
 ```
 
@@ -609,7 +639,7 @@ setTimeout(() => {
 
 ```typescript
 set((state) => {
-    state.messages = [newMessage];  // Always replaces, doesn't append
+    state.messages = [newMessage]; // Always replaces, doesn't append
 });
 ```
 
@@ -657,6 +687,7 @@ if (!type) {
 ```
 
 **Issues:**
+
 - `bundleId`, `productId`, `customerId` not validated for format
 - No size limits on payload
 - `data` object accepts arbitrary fields without validation
@@ -822,31 +853,31 @@ The codebase demonstrates several excellent patterns:
 1. **Feature-based module structure** - Clean separation with internal layers (actions/services/repositories/stores/components)
 
 2. **Proper Shopify integration**
-   - HMAC-SHA256 verification for webhooks
-   - App Proxy signature validation
-   - GraphQL codegen for type-safe API calls
+    - HMAC-SHA256 verification for webhooks
+    - App Proxy signature validation
+    - GraphQL codegen for type-safe API calls
 
 3. **Good transaction usage** - Most write operations wrapped in `prisma.$transaction()`
 
 4. **Comprehensive validation**
-   - Zod schemas cover most scenarios
-   - Business rule validation in separate layer
-   - GID format validation for Shopify IDs
+    - Zod schemas cover most scenarios
+    - Business rule validation in separate layer
+    - GID format validation for Shopify IDs
 
 5. **Security validation**
-   - Rate limiting implementation exists
-   - Bundle limits per shop
-   - Session expiration checks
+    - Rate limiting implementation exists
+    - Bundle limits per shop
+    - Session expiration checks
 
 6. **Rust discount function**
-   - Tamper-proof server-side calculation
-   - Dual verification (cart attribute + metafield)
-   - Product GID validation against trusted config
+    - Tamper-proof server-side calculation
+    - Dual verification (cart attribute + metafield)
+    - Product GID validation against trusted config
 
 7. **Frontend optimization**
-   - Lazy loading with IntersectionObserver
-   - React Query for server state
-   - Zustand with Immer for local state
+    - Lazy loading with IntersectionObserver
+    - React Query for server state
+    - Zustand with Immer for local state
 
 8. **Proper error boundaries** - Global error.tsx and loading.tsx in app router
 
@@ -968,4 +999,4 @@ This codebase has a solid foundation with good architectural patterns. The criti
 
 ---
 
-*Report generated by Claude Code on February 24, 2026*
+_Report generated by Claude Code on February 24, 2026_

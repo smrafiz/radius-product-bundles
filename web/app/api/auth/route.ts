@@ -22,7 +22,9 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    const sanitizedReturnTo = /^\/[a-zA-Z0-9/_-]*$/.test(returnTo) ? returnTo : "/";
+    const sanitizedReturnTo = /^\/[a-zA-Z0-9/_-]*$/.test(returnTo)
+        ? returnTo
+        : "/";
     const embeddedUrl = `https://${shop}/admin/apps/${CLIENT_ID}${sanitizedReturnTo}`;
 
     return NextResponse.redirect(embeddedUrl);

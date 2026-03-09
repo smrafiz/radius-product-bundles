@@ -12,7 +12,7 @@ const config: AppConfig = {} as AppConfig;
 try {
     setupCheck(); // Ensure all env vars are loaded
 
-    let appUrl = "https://www.app.example.com/";
+    let appUrl = "https://radiusbundles.com/";
 
     if (appUrl.endsWith("/")) {
         appUrl = appUrl.slice(0, -1);
@@ -28,8 +28,8 @@ try {
 
     // App Proxy Configuration
     config.app_proxy = {
-        url: `https://www.app.example.com/api/proxy`,
-        subpath: "bundles",
+        url: `https://radiusbundles.com/api/proxy`,
+        subpath: "radius-bundles",
         prefix: "apps",
     };
 

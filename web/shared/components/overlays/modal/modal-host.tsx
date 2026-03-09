@@ -1,7 +1,12 @@
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
-import { formatDateLong, getDisallowPastDates, MODAL_CONTENT, useModalStore } from "@/shared";
+import {
+    formatDateLong,
+    getDisallowPastDates,
+    MODAL_CONTENT,
+    useModalStore,
+} from "@/shared";
 
 /**
  * Modal Host - Single Reusable Modal

@@ -13,6 +13,7 @@
 ### Task 1: Replace `/api/auth/route.ts` with bounce redirect
 
 **Files:**
+
 - Modify: `web/app/api/auth/route.ts`
 
 **Step 1: Rewrite the auth route as an embedded bounce redirect**
@@ -59,6 +60,7 @@ git commit -m "refactor(auth): replace OAuth redirect with embedded bounce"
 ### Task 2: Update `useProtectedSession` to use bounce redirect
 
 **Files:**
+
 - Modify: `web/shared/hooks/session/use-protected-session.ts`
 
 **Step 1: Replace the OAuth redirect with embedded bounce**
@@ -66,8 +68,7 @@ git commit -m "refactor(auth): replace OAuth redirect with embedded bounce"
 In the `catch` block (around line 56-66), change the auth URL construction from:
 
 ```typescript
-const shopParam =
-    searchParamsRef.current.get("shop") || shop;
+const shopParam = searchParamsRef.current.get("shop") || shop;
 const authUrl = `/api/auth?returnTo=${encodeURIComponent(pathnameRef.current)}${
     shopParam ? `&shop=${shopParam}` : ""
 }`;
@@ -78,8 +79,7 @@ setTimeout(() => router.push(authUrl), 0);
 To:
 
 ```typescript
-const shopParam =
-    searchParamsRef.current.get("shop") || shop;
+const shopParam = searchParamsRef.current.get("shop") || shop;
 
 if (shopParam) {
     const embeddedUrl = `https://${shopParam}/admin/apps/${process.env.NEXT_PUBLIC_SHOPIFY_API_KEY}${pathnameRef.current}`;
@@ -97,14 +97,14 @@ Check if `NEXT_PUBLIC_SHOPIFY_API_KEY` is set. If not, check `.env.example` and 
 Run: `grep -r "NEXT_PUBLIC_SHOPIFY_API_KEY" /Users/radiustheme/Shopify/radius-product-bundles/web/ --include="*.ts" --include="*.tsx" --include="*.env*" | head -10`
 
 If it doesn't exist, we need to either:
+
 - Add `NEXT_PUBLIC_SHOPIFY_API_KEY` to env (duplicating `SHOPIFY_API_KEY` for client-side access)
 - OR keep the `/api/auth` bounce redirect as the fallback (simpler, no new env var needed)
 
 **Preferred approach if env var doesn't exist:** Keep the `/api/auth` route as fallback — it's now just a bounce redirect anyway:
 
 ```typescript
-const shopParam =
-    searchParamsRef.current.get("shop") || shop;
+const shopParam = searchParamsRef.current.get("shop") || shop;
 const authUrl = `/api/auth?returnTo=${encodeURIComponent(pathnameRef.current)}${
     shopParam ? `&shop=${shopParam}` : ""
 }`;
@@ -131,6 +131,7 @@ git commit -m "refactor(auth): update session fallback to use bounce redirect"
 ### Task 3: Delete OAuth callback route
 
 **Files:**
+
 - Delete: `web/app/api/auth/callback/route.ts`
 
 **Step 1: Verify no other files import from the callback route**
@@ -167,6 +168,7 @@ git commit -m "refactor(auth): remove legacy OAuth callback route"
 ### Task 4: Delete OAuth state store
 
 **Files:**
+
 - Delete: `web/lib/shopify/auth/oauth-state-store.ts`
 
 **Step 1: Verify no other files import oauth-state-store**
@@ -197,6 +199,7 @@ git commit -m "refactor(auth): remove OAuth state store (CSRF no longer needed)"
 ### Task 5: Delete OAuth HMAC verification
 
 **Files:**
+
 - Delete: `web/lib/shopify/auth/verify-hmac.ts`
 
 **Step 1: Verify no other files import verify-hmac**
@@ -229,6 +232,7 @@ git commit -m "refactor(auth): remove OAuth HMAC verification (token exchange us
 ### Task 6: Remove `createSessionConfig` and dead helper functions
 
 **Files:**
+
 - Modify: `web/shared/utils/shopify/session-helpers.ts`
 
 **Step 1: Verify nothing imports the functions being removed**
@@ -276,6 +280,7 @@ git commit -m "refactor(auth): remove dead session helper functions"
 ### Task 7: Update `tomlWriter.ts` — remove auth redirect URLs
 
 **Files:**
+
 - Modify: `web/_developer/tomlWriter.ts` (lines 75-81)
 
 **Step 1: Remove the auth config block**
@@ -283,13 +288,13 @@ git commit -m "refactor(auth): remove dead session helper functions"
 Replace lines 75-81:
 
 ```typescript
-    // Auth
-    config.auth = {
-        redirect_urls: [
-            `${appUrl}/api/auth/callback`,
-            `${appUrl}/api/auth/oauth/callback`,
-        ],
-    };
+// Auth
+config.auth = {
+    redirect_urls: [
+        `${appUrl}/api/auth/callback`,
+        `${appUrl}/api/auth/oauth/callback`,
+    ],
+};
 ```
 
 With nothing (delete the block entirely).
@@ -317,6 +322,7 @@ git commit -m "refactor(auth): remove OAuth callback URLs from TOML generator"
 ### Task 8: Update `shopify.app.toml` — remove auth section
 
 **Files:**
+
 - Modify: `shopify.app.toml` (root level)
 
 **Step 1: Remove the `[auth]` section**

@@ -31,8 +31,10 @@ function SleekProductCard({
     const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
-    const isFreePrice = hasDiscount && (product.price === "$0.00" || product.price === "$0");
-    const rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    const isFreePrice =
+        hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const rewardBadgeText =
+        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     const cardStyle: React.CSSProperties = isTrigger
         ? {
@@ -42,7 +44,7 @@ function SleekProductCard({
         : {
               background: hasDiscount
                   ? `linear-gradient(to right, ${savingsColor}1A, white)`
-                  : (styles.productCardBg || "#fff"),
+                  : styles.productCardBg || "#fff",
               border: hasDiscount
                   ? `1px solid ${savingsColor}33`
                   : `1px solid ${styles.borderColor || "#e5e7eb"}`,
@@ -82,7 +84,15 @@ function SleekProductCard({
                 </div>
             )}
 
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+            <div
+                style={{
+                    flex: 1,
+                    minWidth: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                }}
+            >
                 <div
                     style={{
                         fontSize: bodyFontSize,
@@ -97,8 +107,15 @@ function SleekProductCard({
                     {product.title}
                 </div>
                 {isTrigger ? (
-                    <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 500 }}>
-                        {labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel}
+                    <span
+                        style={{
+                            fontSize: 12,
+                            color: "#9ca3af",
+                            fontWeight: 500,
+                        }}
+                    >
+                        {labels?.bogoYouPayLabel ||
+                            DEFAULT_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
                     hasDiscount && (
@@ -121,7 +138,15 @@ function SleekProductCard({
                 )}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", flexShrink: 0, gap: 1 }}>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    flexShrink: 0,
+                    gap: 1,
+                }}
+            >
                 <span
                     style={{
                         fontSize: 16,
@@ -196,7 +221,13 @@ export function WidgetSleek({
             )}
 
             {triggerProducts.map((p) => (
-                <SleekProductCard key={p.id} product={p} variant="trigger" styles={styles} labels={labels} />
+                <SleekProductCard
+                    key={p.id}
+                    product={p}
+                    variant="trigger"
+                    styles={styles}
+                    labels={labels}
+                />
             ))}
 
             <div
@@ -230,10 +261,20 @@ export function WidgetSleek({
             </div>
 
             {rewardProducts.map((p) => (
-                <SleekProductCard key={p.id} product={p} variant="reward" styles={styles} labels={labels} />
+                <SleekProductCard
+                    key={p.id}
+                    product={p}
+                    variant="reward"
+                    styles={styles}
+                    labels={labels}
+                />
             ))}
 
-            <div style={{ borderTop: `1px dashed ${styles.borderColor || "#e5e7eb"}` }} />
+            <div
+                style={{
+                    borderTop: `1px dashed ${styles.borderColor || "#e5e7eb"}`,
+                }}
+            />
 
             <div
                 style={{
@@ -252,7 +293,9 @@ export function WidgetSleek({
                             color: styles.textColor,
                         }}
                     >
-                        {labels?.bogoTotalLabel || DEFAULT_LABELS.bogoTotalLabel}: {pricing.finalPrice}
+                        {labels?.bogoTotalLabel ||
+                            DEFAULT_LABELS.bogoTotalLabel}
+                        : {pricing.finalPrice}
                     </span>
                 )}
 
@@ -263,9 +306,13 @@ export function WidgetSleek({
                             alignItems: "center",
                             justifyContent: "center",
                             padding: getButtonPadding(styles.buttonSize),
-                            border: isButtonOutline ? `2px solid ${buttonBg}` : "none",
+                            border: isButtonOutline
+                                ? `2px solid ${buttonBg}`
+                                : "none",
                             borderRadius: getButtonRadius(styles.cornerStyle),
-                            background: isButtonOutline ? "transparent" : buttonBg,
+                            background: isButtonOutline
+                                ? "transparent"
+                                : buttonBg,
                             color: isButtonOutline ? buttonBg : "#fff",
                             fontSize: getButtonFontSize(styles.buttonSize),
                             fontWeight: 600,

@@ -534,11 +534,20 @@ export function renderBogoMinimalistProducts(
     const freeText = minLabels?.bogoFreeText || "FREE";
     const triggerBadge = minLabels?.bogoTriggerBadgeText || "You Buy";
     let rewardBadge: string;
-    if (structure.discountType === "PERCENTAGE" && structure.discountValue === 100) {
+    if (
+        structure.discountType === "PERCENTAGE" &&
+        structure.discountValue === 100
+    ) {
         rewardBadge = freeText;
-    } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
+    } else if (
+        structure.discountType === "PERCENTAGE" &&
+        structure.discountValue > 0
+    ) {
         rewardBadge = `${structure.discountValue}% Off`;
-    } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
+    } else if (
+        structure.discountType === "FIXED_AMOUNT" &&
+        structure.discountValue > 0
+    ) {
         rewardBadge = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
     } else {
         rewardBadge = minLabels?.bogoRewardBadgeText || "You Get";
@@ -554,8 +563,15 @@ export function renderBogoMinimalistProducts(
 
         let priceHtml = "";
         if (ctx.showPrices) {
-            if (isReward && structure.discountType !== "NO_DISCOUNT" && structure.discountValue > 0) {
-                const discountedPrice = calculateBxgyRewardPrice(p.price, structure);
+            if (
+                isReward &&
+                structure.discountType !== "NO_DISCOUNT" &&
+                structure.discountValue > 0
+            ) {
+                const discountedPrice = calculateBxgyRewardPrice(
+                    p.price,
+                    structure,
+                );
                 const isFree = discountedPrice === 0;
                 priceHtml = `<div class="rb-minimalist__item-price">`;
                 priceHtml += `<span class="rb-minimalist__item-price-current rb-minimalist__item-price-current--reward">${isFree ? escapeHtml(freeText) : formatMoney(discountedPrice)}</span>`;
@@ -579,8 +595,12 @@ export function renderBogoMinimalistProducts(
     };
 
     let itemsHtml = `<div class="rb-minimalist__items">`;
-    triggers.forEach((p) => { itemsHtml += renderMinItem(p, false); });
-    rewards.forEach((p) => { itemsHtml += renderMinItem(p, true); });
+    triggers.forEach((p) => {
+        itemsHtml += renderMinItem(p, false);
+    });
+    rewards.forEach((p) => {
+        itemsHtml += renderMinItem(p, true);
+    });
     itemsHtml += `</div>`;
 
     let html = `<div class="rb-minimalist__container">${badgeHtml}<div class="rb-minimalist__hero">${heroImageHtml}<div class="rb-minimalist__hero-info">`;
@@ -744,7 +764,13 @@ export function renderBogoCompactGridProducts(
 
     const singleEach = triggers.length <= 1 && rewards.length <= 1;
     html += `<div class="rb-cg__tiles">`;
-    html += renderSliderGroup(triggers, false, "rb-cg__tile-group--trigger", 2, singleEach ? 1 : 2);
+    html += renderSliderGroup(
+        triggers,
+        false,
+        "rb-cg__tile-group--trigger",
+        2,
+        singleEach ? 1 : 2,
+    );
     html += `<div class="rb-cg__connector">+</div>`;
     html += renderSliderGroup(rewards, true, "rb-cg__tile-group--reward", 1, 1);
     html += `</div>`;
@@ -774,60 +800,81 @@ export function renderBogoCompactGridProducts(
     }
     enableCartButton(ctx.container);
 
-    container.querySelectorAll<HTMLElement>("[data-cg-slider]").forEach((slider) => {
-        const group = slider.parentElement;
-        if (!group) return;
-        const dots = group.querySelectorAll<HTMLButtonElement>("[data-cg-dot]");
-        const pageCount = slider.children.length;
-        let current = 0;
+    container
+        .querySelectorAll<HTMLElement>("[data-cg-slider]")
+        .forEach((slider) => {
+            const group = slider.parentElement;
+            if (!group) return;
+            const dots =
+                group.querySelectorAll<HTMLButtonElement>("[data-cg-dot]");
+            const pageCount = slider.children.length;
+            let current = 0;
 
-        const sw = () => group.offsetWidth;
+            const sw = () => group.offsetWidth;
 
-        const goTo = (idx: number) => {
-            current = Math.max(0, Math.min(idx, pageCount - 1));
-            slider.style.transition = "transform 0.3s ease";
-            slider.style.transform = `translateX(-${current * sw()}px)`;
-            dots.forEach((d) => d.classList.remove("rb-cg__dot--active"));
-            dots[current]?.classList.add("rb-cg__dot--active");
-        };
+            const goTo = (idx: number) => {
+                current = Math.max(0, Math.min(idx, pageCount - 1));
+                slider.style.transition = "transform 0.3s ease";
+                slider.style.transform = `translateX(-${current * sw()}px)`;
+                dots.forEach((d) => d.classList.remove("rb-cg__dot--active"));
+                dots[current]?.classList.add("rb-cg__dot--active");
+            };
 
-        dots.forEach((dot) => {
-            dot.addEventListener("click", () => goTo(Number(dot.dataset.cgDot || 0)));
+            dots.forEach((dot) => {
+                dot.addEventListener("click", () =>
+                    goTo(Number(dot.dataset.cgDot || 0)),
+                );
+            });
+
+            let startX = 0;
+            let dragging = false;
+
+            const onStart = (x: number) => {
+                startX = x;
+                dragging = true;
+                slider.style.transition = "none";
+                slider.classList.add("rb-cg__slider--dragging");
+            };
+            const onMove = (x: number) => {
+                if (!dragging) return;
+                const dx = x - startX;
+                slider.style.transform = `translateX(${-current * sw() + dx}px)`;
+            };
+            const onEnd = (x: number) => {
+                if (!dragging) return;
+                dragging = false;
+                slider.classList.remove("rb-cg__slider--dragging");
+                const dx = x - startX;
+                const threshold = sw() * 0.2;
+                if (dx < -threshold && current < pageCount - 1)
+                    goTo(current + 1);
+                else if (dx > threshold && current > 0) goTo(current - 1);
+                else goTo(current);
+            };
+
+            slider.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                onStart(e.clientX);
+            });
+            slider.addEventListener("mousemove", (e) => onMove(e.clientX));
+            slider.addEventListener("mouseup", (e) => onEnd(e.clientX));
+            slider.addEventListener("mouseleave", () => {
+                if (dragging) onEnd(startX);
+            });
+            slider.addEventListener(
+                "touchstart",
+                (e) => onStart(e.touches[0].clientX),
+                { passive: true },
+            );
+            slider.addEventListener(
+                "touchmove",
+                (e) => onMove(e.touches[0].clientX),
+                { passive: true },
+            );
+            slider.addEventListener("touchend", (e) =>
+                onEnd(e.changedTouches[0].clientX),
+            );
         });
-
-        let startX = 0;
-        let dragging = false;
-
-        const onStart = (x: number) => {
-            startX = x;
-            dragging = true;
-            slider.style.transition = "none";
-            slider.classList.add("rb-cg__slider--dragging");
-        };
-        const onMove = (x: number) => {
-            if (!dragging) return;
-            const dx = x - startX;
-            slider.style.transform = `translateX(${-current * sw() + dx}px)`;
-        };
-        const onEnd = (x: number) => {
-            if (!dragging) return;
-            dragging = false;
-            slider.classList.remove("rb-cg__slider--dragging");
-            const dx = x - startX;
-            const threshold = sw() * 0.2;
-            if (dx < -threshold && current < pageCount - 1) goTo(current + 1);
-            else if (dx > threshold && current > 0) goTo(current - 1);
-            else goTo(current);
-        };
-
-        slider.addEventListener("mousedown", (e) => { e.preventDefault(); onStart(e.clientX); });
-        slider.addEventListener("mousemove", (e) => onMove(e.clientX));
-        slider.addEventListener("mouseup", (e) => onEnd(e.clientX));
-        slider.addEventListener("mouseleave", () => { if (dragging) onEnd(startX); });
-        slider.addEventListener("touchstart", (e) => onStart(e.touches[0].clientX), { passive: true });
-        slider.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), { passive: true });
-        slider.addEventListener("touchend", (e) => onEnd(e.changedTouches[0].clientX));
-    });
 }
 
 export function renderBogoChecklistProducts(
@@ -840,12 +887,16 @@ export function renderBogoChecklistProducts(
     const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
     const labels = structure.labels;
     const freeText = labels?.bogoFreeText || "FREE";
-    const progressText = labels?.checklistProgressText || "{count}/{total} items added";
+    const progressText =
+        labels?.checklistProgressText || "{count}/{total} items added";
     const hintText = labels?.checklistHintText || "{remaining} more to unlock!";
     const completedText = labels?.checklistCompletedText || "Unlocked!";
-    const lockedLabel = labels?.checklistLockedLabel || "Unlock by adding all items above";
+    const lockedLabel =
+        labels?.checklistLockedLabel || "Unlock by adding all items above";
     const unlockedLabel = labels?.checklistUnlockedLabel || "Reward Unlocked";
-    const pricingLockedText = labels?.checklistPricingLockedText || "Select all items to see your price";
+    const pricingLockedText =
+        labels?.checklistPricingLockedText ||
+        "Select all items to see your price";
     const totalLabel = labels?.bogoTotalLabel || "Total";
     const discountLabel = labels?.youSaveLabel || "You Save:";
     const youPayLabel = labels?.bogoYouPayLabel || "You Pay";
@@ -1029,17 +1080,28 @@ export function renderBogoChecklistProducts(
             fill.style.width = `${pct}%`;
         }
         if (countEl) {
-            countEl.textContent = formatLabel(progressText, { count: checked, total });
+            countEl.textContent = formatLabel(progressText, {
+                count: checked,
+                total,
+            });
         }
         const remaining = total - checked;
         if (hintEl) {
             hintEl.textContent =
-                remaining > 0 ? formatLabel(hintText, { remaining }) : completedText;
+                remaining > 0
+                    ? formatLabel(hintText, { remaining })
+                    : completedText;
         }
         const allChecked = checked >= total;
         if (reward) {
-            reward.classList.toggle("rb-checklist__reward--locked", !allChecked);
-            reward.classList.toggle("rb-checklist__reward--unlocked", allChecked);
+            reward.classList.toggle(
+                "rb-checklist__reward--locked",
+                !allChecked,
+            );
+            reward.classList.toggle(
+                "rb-checklist__reward--unlocked",
+                allChecked,
+            );
         }
         if (lockIcon) {
             lockIcon.innerHTML = allChecked ? unlockSvg : lockSvg;
@@ -1070,10 +1132,15 @@ export function renderBogoChecklistProducts(
 
     items.forEach((item) => {
         item.addEventListener("click", () => {
-            const isChecked = item.classList.toggle("rb-checklist__item--checked");
+            const isChecked = item.classList.toggle(
+                "rb-checklist__item--checked",
+            );
             const cb = item.querySelector(".rb-checklist__checkbox");
             if (cb) {
-                cb.classList.toggle("rb-checklist__checkbox--checked", isChecked);
+                cb.classList.toggle(
+                    "rb-checklist__checkbox--checked",
+                    isChecked,
+                );
                 cb.innerHTML = isChecked ? checkSvg : "";
             }
             syncState();

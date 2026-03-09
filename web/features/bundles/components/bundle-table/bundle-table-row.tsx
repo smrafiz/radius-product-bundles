@@ -76,7 +76,9 @@ export function BundleTableRow({
                 <div onClick={(e) => e.stopPropagation()}>
                     {(() => {
                         const badge = getBundleTypeBadge(bundle.type);
-                        return <s-badge tone={badge.tone}>{badge.text}</s-badge>;
+                        return (
+                            <s-badge tone={badge.tone}>{badge.text}</s-badge>
+                        );
                     })()}
                 </div>
             </s-table-cell>

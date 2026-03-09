@@ -62,6 +62,29 @@ query GetBundleDiscountId($query: String!) {
     }
 }
 
+query GetProductsWithBundleMetafield($cursor: String) {
+    products(
+        first: 50
+        after: $cursor
+        query: "metafields.namespace:'$app' AND metafields.key:'bundle_ids'"
+    ) {
+        edges {
+            node {
+                id
+                metafield(namespace: "$app", key: "bundle_ids") {
+                    id
+                    namespace
+                    key
+                }
+            }
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+    }
+}
+
 query GetShopMetafields {
     shop {
         id

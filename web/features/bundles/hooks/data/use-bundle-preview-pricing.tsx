@@ -12,7 +12,8 @@ import {
  */
 export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
     const { bundleData, selectedItems } = useBundleStore();
-    const isBxgy = bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
+    const isBxgy =
+        bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
     return useMemo(() => {
         if (!selectedItems.length || !bundleData.discountType) {
@@ -30,7 +31,9 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         // BOGO/BXGY: discount applies only to reward products
         if (isBxgy) {
-            const rewardItems = selectedItems.filter((i) => i.role === "REWARD");
+            const rewardItems = selectedItems.filter(
+                (i) => i.role === "REWARD",
+            );
             const rewardPrice = round(calculateBundlePrice(rewardItems));
             const discountValue = bundleData.discountValue ?? 0;
 
@@ -38,19 +41,30 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             if (discountValue > 0) {
                 switch (bundleData.discountType) {
                     case "PERCENTAGE":
-                        discountAmount = round(rewardPrice * (discountValue / 100));
+                        discountAmount = round(
+                            rewardPrice * (discountValue / 100),
+                        );
                         break;
                     case "FIXED_AMOUNT":
-                        discountAmount = round(Math.min(discountValue, rewardPrice));
+                        discountAmount = round(
+                            Math.min(discountValue, rewardPrice),
+                        );
                         break;
                     case "CUSTOM_PRICE":
-                        discountAmount = round(Math.max(0, rewardPrice - discountValue));
+                        discountAmount = round(
+                            Math.max(0, rewardPrice - discountValue),
+                        );
                         break;
                 }
             }
 
-            const finalPrice = round(Math.max(0, originalPrice - discountAmount));
-            const savingsPercentage = calculateSavingsPercentage(originalPrice, finalPrice);
+            const finalPrice = round(
+                Math.max(0, originalPrice - discountAmount),
+            );
+            const savingsPercentage = calculateSavingsPercentage(
+                originalPrice,
+                finalPrice,
+            );
 
             return {
                 originalPrice,

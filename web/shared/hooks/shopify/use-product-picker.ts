@@ -80,19 +80,25 @@ export function useProductPicker() {
             // Build role map from existing items (preserve BXGY roles)
             const existingRoles = new Map<string, SelectedItem["role"]>();
             selectedItems.forEach((item) => {
-                if (item.role && (!existingRoles.has(item.productId) || item.role === "TRIGGER")) {
+                if (
+                    item.role &&
+                    (!existingRoles.has(item.productId) ||
+                        item.role === "TRIGGER")
+                ) {
                     existingRoles.set(item.productId, item.role);
                 }
             });
 
-            const normalizedItems = limitedResult.map((p: any, index: number) => {
-                const item = createSelectedItem(p, { displayOrder: index });
-                const prevRole = existingRoles.get(item.productId);
-                if (prevRole) {
-                    item.role = prevRole;
-                }
-                return item;
-            });
+            const normalizedItems = limitedResult.map(
+                (p: any, index: number) => {
+                    const item = createSelectedItem(p, { displayOrder: index });
+                    const prevRole = existingRoles.get(item.productId);
+                    if (prevRole) {
+                        item.role = prevRole;
+                    }
+                    return item;
+                },
+            );
 
             setSelectedItems(normalizedItems);
         } catch (err) {

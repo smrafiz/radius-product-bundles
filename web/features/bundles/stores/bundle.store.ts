@@ -616,7 +616,9 @@ export const useBundleStore = create(
         },
 
         getTriggerProducts: () => {
-            return get().selectedItems.filter((item) => item.role === "TRIGGER");
+            return get().selectedItems.filter(
+                (item) => item.role === "TRIGGER",
+            );
         },
 
         getRewardProducts: () => {

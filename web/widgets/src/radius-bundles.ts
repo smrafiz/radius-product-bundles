@@ -109,7 +109,7 @@ import "./scss/radius-bundles.scss";
      */
     class Analytics {
         private readonly config: RadiusBundlesConfig;
-        private readonly apiEndpoint: string = "/apps/bundles/analytics";
+        private readonly apiEndpoint: string = "/apps/radius-bundles/analytics";
 
         constructor(config: RadiusBundlesConfig) {
             this.config = config;

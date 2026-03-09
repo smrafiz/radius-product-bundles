@@ -182,15 +182,23 @@ import {
                 try {
                     const parsed = JSON.parse(structureJson);
                     const ensureArray = (v: unknown): string[] =>
-                        Array.isArray(v) ? v : typeof v === "string" ? JSON.parse(v) : [];
+                        Array.isArray(v)
+                            ? v
+                            : typeof v === "string"
+                              ? JSON.parse(v)
+                              : [];
                     parsed.productIds = ensureArray(parsed.productIds);
-                    parsed.productQuantities = Array.isArray(parsed.productQuantities)
+                    parsed.productQuantities = Array.isArray(
+                        parsed.productQuantities,
+                    )
                         ? parsed.productQuantities
                         : typeof parsed.productQuantities === "string"
-                            ? JSON.parse(parsed.productQuantities)
-                            : [];
+                          ? JSON.parse(parsed.productQuantities)
+                          : [];
                     parsed.productRoles = ensureArray(parsed.productRoles);
-                    parsed.discountedProductIds = ensureArray(parsed.discountedProductIds);
+                    parsed.discountedProductIds = ensureArray(
+                        parsed.discountedProductIds,
+                    );
                     this.bundleStructure = parsed;
                 } catch (e) {
                     console.warn(
@@ -546,9 +554,17 @@ import {
             const isBxgy =
                 structure.bundleType === "BOGO" ||
                 structure.bundleType === "BUY_X_GET_Y";
-            const roles = Array.isArray(structure.productRoles) ? structure.productRoles : [];
-            const buyQty = roles.filter((r) => r === "TRIGGER").length || structure.buyQuantity || 1;
-            const getQty = roles.filter((r) => r === "REWARD").length || structure.getQuantity || 1;
+            const roles = Array.isArray(structure.productRoles)
+                ? structure.productRoles
+                : [];
+            const buyQty =
+                roles.filter((r) => r === "TRIGGER").length ||
+                structure.buyQuantity ||
+                1;
+            const getQty =
+                roles.filter((r) => r === "REWARD").length ||
+                structure.getQuantity ||
+                1;
 
             if (isBxgy) {
                 if (
@@ -577,8 +593,11 @@ import {
                     case "PERCENTAGE":
                         badgeText = formatLabel(
                             structure.labels?.savingsBadgeText ??
-                                "Save {amount}",
-                            { amount: `${structure.discountValue}%` },
+                                "Save {percent}%",
+                            {
+                                percent: structure.discountValue,
+                                amount: `${structure.discountValue}%`,
+                            },
                         );
                         break;
 
@@ -587,6 +606,7 @@ import {
                             structure.labels?.savingsBadgeText ??
                                 "Save {amount}",
                             {
+                                percent: structure.discountValue,
                                 amount: trimMoney(
                                     formatMoney(structure.discountValue * 100),
                                 ),
@@ -687,7 +707,7 @@ import {
 
                 // Fetch products by IDs only
                 const productIds = this.bundleStructure.productIds.join(",");
-                const url = `/apps/bundles/products?shop=${encodeURIComponent(this.shop)}&ids=${encodeURIComponent(productIds)}`;
+                const url = `/apps/radius-bundles/products?shop=${encodeURIComponent(this.shop)}&ids=${encodeURIComponent(productIds)}`;
 
                 const response = await fetch(url);
 
@@ -818,7 +838,7 @@ import {
          */
         private async loadBundleLegacy(): Promise<void> {
             try {
-                const url = `/apps/bundles/products?productId=${encodeURIComponent(this.productId)}&shop=${encodeURIComponent(this.shop)}&bundleId=${encodeURIComponent(this.bundleId)}`;
+                const url = `/apps/radius-bundles/products?productId=${encodeURIComponent(this.productId)}&shop=${encodeURIComponent(this.shop)}&bundleId=${encodeURIComponent(this.bundleId)}`;
                 const response = await fetch(url);
 
                 if (!response.ok) {
@@ -939,7 +959,11 @@ import {
                             ctx,
                         );
                     } else if (layout === "checklist") {
-                        renderBogoChecklistProducts(bundle, productsContainer, ctx);
+                        renderBogoChecklistProducts(
+                            bundle,
+                            productsContainer,
+                            ctx,
+                        );
                     } else if (layout === "split_deal") {
                         renderSplitDealProducts(bundle, productsContainer, ctx);
                     } else {

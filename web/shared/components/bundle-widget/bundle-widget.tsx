@@ -37,7 +37,10 @@ export function BundleWidget({
                         displayOptions={displayOptions}
                         pricing={pricing}
                     />
-                    <WidgetAddToCart styles={styles} cartButtonText={cartButtonText} />
+                    <WidgetAddToCart
+                        styles={styles}
+                        cartButtonText={cartButtonText}
+                    />
                 </>
             )}
         </>

@@ -25,9 +25,10 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { handleSessionToken } from "@/lib/shopify";
 import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
-import { METAFIELD_DEFINITIONS } from "@/shared/constants/metafields.constants";
-
-const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+import {
+    BUNDLE_DISCOUNT_TITLE,
+    METAFIELD_DEFINITIONS,
+} from "@/shared/constants/metafields.constants";
 const BUNDLE_DISCOUNT_FUNCTION_HANDLE = "radius-discount-function";
 
 /**

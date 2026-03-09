@@ -26,7 +26,9 @@ export class BundleSlider {
     }
 
     init(): void {
-        const track = this.container.querySelector("[data-slider-track]") as HTMLElement;
+        const track = this.container.querySelector(
+            "[data-slider-track]",
+        ) as HTMLElement;
         if (!track) return;
 
         const computedStyle = getComputedStyle(this.container);
@@ -35,7 +37,9 @@ export class BundleSlider {
             10,
         );
 
-        const slides = track.querySelectorAll(".radius-bundle__product--slider");
+        const slides = track.querySelectorAll(
+            ".radius-bundle__product--slider",
+        );
         const totalSlides = slides.length;
 
         this.state = {
@@ -61,7 +65,8 @@ export class BundleSlider {
     }
 
     private buildDots(): void {
-        const dotsContainer = this.container.querySelector("[data-slider-dots]");
+        const dotsContainer =
+            this.container.querySelector("[data-slider-dots]");
         if (!dotsContainer) return;
 
         const { maxIndex } = this.state;
@@ -78,8 +83,12 @@ export class BundleSlider {
     }
 
     private updateNavigation(): void {
-        const prevBtn = this.container.querySelector("[data-slider-prev]") as HTMLButtonElement;
-        const nextBtn = this.container.querySelector("[data-slider-next]") as HTMLButtonElement;
+        const prevBtn = this.container.querySelector(
+            "[data-slider-prev]",
+        ) as HTMLButtonElement;
+        const nextBtn = this.container.querySelector(
+            "[data-slider-next]",
+        ) as HTMLButtonElement;
         const { currentIndex, maxIndex } = this.state;
 
         if (prevBtn) prevBtn.disabled = currentIndex <= 0;
@@ -87,10 +96,13 @@ export class BundleSlider {
     }
 
     private updateDots(): void {
-        const dotsContainer = this.container.querySelector("[data-slider-dots]");
+        const dotsContainer =
+            this.container.querySelector("[data-slider-dots]");
         if (!dotsContainer) return;
 
-        const dots = dotsContainer.querySelectorAll(".radius-bundle__slider-dot");
+        const dots = dotsContainer.querySelectorAll(
+            ".radius-bundle__slider-dot",
+        );
         const { currentIndex } = this.state;
         dots.forEach((dot, i) => {
             dot.classList.toggle("active", i === currentIndex);
@@ -98,7 +110,9 @@ export class BundleSlider {
     }
 
     private handleScroll(): void {
-        const track = this.container.querySelector("[data-slider-track]") as HTMLElement;
+        const track = this.container.querySelector(
+            "[data-slider-track]",
+        ) as HTMLElement;
         if (!track) return;
 
         const slideWidth = this.getSlideWidth();
@@ -120,7 +134,10 @@ export class BundleSlider {
         );
 
         this.state.slidesPerView = slidesPerView;
-        this.state.maxIndex = Math.max(0, this.state.totalSlides - slidesPerView);
+        this.state.maxIndex = Math.max(
+            0,
+            this.state.totalSlides - slidesPerView,
+        );
 
         if (this.state.currentIndex > this.state.maxIndex) {
             this.goToSlide(this.state.maxIndex);
@@ -131,10 +148,14 @@ export class BundleSlider {
     }
 
     private getSlideWidth(): number {
-        const track = this.container.querySelector("[data-slider-track]") as HTMLElement;
+        const track = this.container.querySelector(
+            "[data-slider-track]",
+        ) as HTMLElement;
         if (!track) return 0;
 
-        const firstSlide = track.querySelector(".radius-bundle__product--slider") as HTMLElement;
+        const firstSlide = track.querySelector(
+            ".radius-bundle__product--slider",
+        ) as HTMLElement;
         if (!firstSlide) return 0;
 
         const gap = parseInt(getComputedStyle(track).gap || "0", 10);
@@ -142,7 +163,9 @@ export class BundleSlider {
     }
 
     goToSlide(index: number): void {
-        const track = this.container.querySelector("[data-slider-track]") as HTMLElement;
+        const track = this.container.querySelector(
+            "[data-slider-track]",
+        ) as HTMLElement;
         if (!track) return;
 
         const clampedIndex = Math.max(0, Math.min(index, this.state.maxIndex));
@@ -214,7 +237,9 @@ export class BundleSlider {
     }
 
     private snapToNearest(): void {
-        const track = this.container.querySelector("[data-slider-track]") as HTMLElement;
+        const track = this.container.querySelector(
+            "[data-slider-track]",
+        ) as HTMLElement;
         if (!track) return;
 
         const slideWidth = this.getSlideWidth();

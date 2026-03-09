@@ -39,14 +39,16 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
 
     const isTypeOverridden =
         !!activeBundleType &&
-        styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName] !== undefined;
+        styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName] !==
+            undefined;
 
     // Determine effective path for RHF
     let rhfPath: Path<CustomizerStyles>;
     if (activeDevice !== "desktop") {
         rhfPath = `${activeDevice}.${fieldName}` as Path<CustomizerStyles>;
     } else if (activeBundleType) {
-        rhfPath = `bundleTypeOverrides.${activeBundleType}.${fieldName}` as Path<CustomizerStyles>;
+        rhfPath =
+            `bundleTypeOverrides.${activeBundleType}.${fieldName}` as Path<CustomizerStyles>;
     } else {
         rhfPath = fieldName as Path<CustomizerStyles>;
     }
@@ -62,7 +64,8 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     let resolvedValue: any = styles[fieldName];
 
     if (activeBundleType) {
-        const typeOverride = styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName];
+        const typeOverride =
+            styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName];
         if (typeOverride !== undefined) {
             resolvedValue = typeOverride;
         }

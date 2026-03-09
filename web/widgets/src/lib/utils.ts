@@ -94,9 +94,7 @@ export function showToast(message: string, type: "success" | "error"): void {
 }
 
 export function showError(container: HTMLElement, message: string): void {
-    const productsContainer = container.querySelector(
-        "[data-bundle-products]",
-    );
+    const productsContainer = container.querySelector("[data-bundle-products]");
     if (productsContainer) {
         productsContainer.innerHTML = `<div class="radius-bundle__error">${escapeHtml(message)}</div>`;
     }
@@ -104,14 +102,21 @@ export function showError(container: HTMLElement, message: string): void {
 
 export function getLayout(container: HTMLElement): string {
     if (container.classList.contains("radius-bundle--grid")) return "grid";
-    if (container.classList.contains("radius-bundle--carousel")) return "slider";
-    if (container.classList.contains("radius-bundle--compact")) return "compact";
-    if (container.classList.contains("radius-bundle--classic_card")) return "classic_card";
-    if (container.classList.contains("radius-bundle--compact_grid")) return "compact_grid";
-    if (container.classList.contains("radius-bundle--minimalist")) return "minimalist";
+    if (container.classList.contains("radius-bundle--carousel"))
+        return "slider";
+    if (container.classList.contains("radius-bundle--compact"))
+        return "compact";
+    if (container.classList.contains("radius-bundle--classic_card"))
+        return "classic_card";
+    if (container.classList.contains("radius-bundle--compact_grid"))
+        return "compact_grid";
+    if (container.classList.contains("radius-bundle--minimalist"))
+        return "minimalist";
     if (container.classList.contains("radius-bundle--sleek")) return "sleek";
-    if (container.classList.contains("radius-bundle--checklist")) return "checklist";
-    if (container.classList.contains("radius-bundle--split_deal")) return "split_deal";
+    if (container.classList.contains("radius-bundle--checklist"))
+        return "checklist";
+    if (container.classList.contains("radius-bundle--split_deal"))
+        return "split_deal";
     return "list";
 }
 

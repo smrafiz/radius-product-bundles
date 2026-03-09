@@ -270,8 +270,7 @@ export const LABELS_TAB: SettingsTabConfig = {
         {
             id: "bogo-labels",
             title: "BOGO / Buy X Get Y Labels",
-            tooltip:
-                "Labels specific to BOGO and Buy X Get Y bundle layouts.",
+            tooltip: "Labels specific to BOGO and Buy X Get Y bundle layouts.",
             columns: 2,
             fields: [
                 {
@@ -309,8 +308,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     name: "bogoYouPayLabel",
                     label: "You pay label",
                     placeholder: "You Pay Only",
-                    details:
-                        "Label above the final price in the pricing bar.",
+                    details: "Label above the final price in the pricing bar.",
                     defaultValue: "You Pay Only",
                     validation: {
                         maxLength: {
@@ -339,8 +337,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     name: "bogoTriggerBadgeText",
                     label: "Trigger badge text",
                     placeholder: "You Buy",
-                    details:
-                        "Badge on the trigger (buy) product card.",
+                    details: "Badge on the trigger (buy) product card.",
                     defaultValue: "You Buy",
                     validation: {
                         maxLength: {
@@ -354,8 +351,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     name: "bogoRewardBadgeText",
                     label: "Reward badge text",
                     placeholder: "You Get FREE",
-                    details:
-                        "Badge on the reward (get) product card.",
+                    details: "Badge on the reward (get) product card.",
                     defaultValue: "You Get FREE",
                     validation: {
                         maxLength: {
@@ -369,8 +365,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     name: "bogoTotalLabel",
                     label: "Total label",
                     placeholder: "Total",
-                    details:
-                        "Label before the total price in the footer.",
+                    details: "Label before the total price in the footer.",
                     defaultValue: "Total",
                     validation: {
                         maxLength: {
@@ -429,8 +424,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     name: "checklistCompletedText",
                     label: "Checklist completed text",
                     placeholder: "Unlocked!",
-                    details:
-                        "Hint shown when all items are selected.",
+                    details: "Hint shown when all items are selected.",
                     defaultValue: "Unlocked!",
                     validation: {
                         maxLength: {

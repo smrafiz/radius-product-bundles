@@ -308,9 +308,9 @@
 				{% endif %}
 				{% assign override_pricing_settings = block.settings.override_pricing_settings | default: false %}
 
-				{% assign pricing_summary_box = false %}
+				{% assign pricing_summary_box = true %}
 				{% if override_pricing_settings %}
-				  {% assign pricing_summary_box = block.settings.pricing_summary_box | default: false %}
+				  {% assign pricing_summary_box = block.settings.pricing_summary_box | default: true %}
 				{% elsif g_type_overrides.pricingSummaryBox != blank %}
 				  {% assign pricing_summary_box = g_type_overrides.pricingSummaryBox %}
 				{% elsif g_styles.pricingSummaryBox != blank %}

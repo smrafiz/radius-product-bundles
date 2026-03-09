@@ -117,7 +117,9 @@ export function DynamicCustomizerField({
     // Store access for presets
     const applyPreset = useCustomizerStore((state) => state.applyPreset);
     const activePreset = useCustomizerStore((state) => state.activePreset);
-    const activeBundleType = useCustomizerStore((state) => state.activeBundleType);
+    const activeBundleType = useCustomizerStore(
+        (state) => state.activeBundleType,
+    );
 
     // Form context for syncing preset values to RHF
     const { setValue: setFormValue } = useFormContext<CustomizerStyles>();
@@ -181,8 +183,8 @@ export function DynamicCustomizerField({
                                     applyPreset(key);
 
                                     const pathPrefix = activeBundleType
-                                        ? `bundleTypeOverrides.${activeBundleType}.` as const
-                                        : "" as const;
+                                        ? (`bundleTypeOverrides.${activeBundleType}.` as const)
+                                        : ("" as const);
 
                                     setFormValue(
                                         `${pathPrefix}stylePreset` as any,

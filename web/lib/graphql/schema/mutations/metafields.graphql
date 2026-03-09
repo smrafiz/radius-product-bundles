@@ -14,6 +14,20 @@ mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
     }
 }
 
+mutation MetafieldsDelete($metafields: [MetafieldIdentifierInput!]!) {
+    metafieldsDelete(metafields: $metafields) {
+        deletedMetafields {
+            ownerId
+            namespace
+            key
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
+
 mutation MetafieldDefinitionCreate($definition: MetafieldDefinitionInput!) {
     metafieldDefinitionCreate(definition: $definition) {
         createdDefinition {

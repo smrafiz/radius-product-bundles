@@ -308,9 +308,7 @@ export const bundleSchema = z
         const triggerProducts = data.products.filter(
             (p) => p.role === "TRIGGER",
         );
-        const rewardProducts = data.products.filter(
-            (p) => p.role === "REWARD",
-        );
+        const rewardProducts = data.products.filter((p) => p.role === "REWARD");
 
         if (triggerProducts.length === 0) {
             ctx.addIssue({

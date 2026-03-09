@@ -24,7 +24,11 @@
 
     // ── Deal banner ─────────────────────────────────────────────────
     &__banner {
-        background: linear-gradient(135deg, var(--rb-primary-color, #e0598b), color-mix(in srgb, var(--rb-primary-color, #e0598b) 80%, black));
+        background: linear-gradient(
+            135deg,
+            var(--rb-primary-color, #e0598b),
+            color-mix(in srgb, var(--rb-primary-color, #e0598b) 80%, black)
+        );
         padding: 14px 20px;
         display: flex;
         align-items: center;
@@ -91,11 +95,21 @@
         background: #fff;
 
         &--trigger {
-            border: 1.5px solid color-mix(in srgb, var(--rb-primary-color, #e0598b) 13%, transparent);
+            border: 1.5px solid
+                color-mix(
+                    in srgb,
+                    var(--rb-primary-color, #e0598b) 13%,
+                    transparent
+                );
         }
 
         &--reward {
-            border: 1.5px solid color-mix(in srgb, var(--rb-savings-color, #16a34a) 13%, transparent);
+            border: 1.5px solid
+                color-mix(
+                    in srgb,
+                    var(--rb-savings-color, #16a34a) 13%,
+                    transparent
+                );
         }
 
         &--trigger,
@@ -132,11 +146,21 @@
     }
 
     &__tile--trigger &__tile-image {
-        border: 2px solid color-mix(in srgb, var(--rb-primary-color, #e0598b) 20%, transparent);
+        border: 2px solid
+            color-mix(
+                in srgb,
+                var(--rb-primary-color, #e0598b) 20%,
+                transparent
+            );
     }
 
     &__tile--reward &__tile-image {
-        border: 2px solid color-mix(in srgb, var(--rb-savings-color, #16a34a) 20%, transparent);
+        border: 2px solid
+            color-mix(
+                in srgb,
+                var(--rb-savings-color, #16a34a) 20%,
+                transparent
+            );
     }
 
     &__tile-role {
@@ -150,12 +174,20 @@
 
         &--trigger {
             color: var(--rb-primary-color, #e0598b);
-            background: color-mix(in srgb, var(--rb-primary-color, #e0598b) 7%, transparent);
+            background: color-mix(
+                in srgb,
+                var(--rb-primary-color, #e0598b) 7%,
+                transparent
+            );
         }
 
         &--reward {
             color: var(--rb-savings-color, #16a34a);
-            background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 7%, transparent);
+            background: color-mix(
+                in srgb,
+                var(--rb-savings-color, #16a34a) 7%,
+                transparent
+            );
         }
     }
 
@@ -183,7 +215,10 @@
         color: var(--rb-text-color, #1a1a2e);
 
         &--reward {
-            color: var(--rb-bogo-free-tag-color, var(--rb-savings-color, #16a34a));
+            color: var(
+                --rb-bogo-free-tag-color,
+                var(--rb-savings-color, #16a34a)
+            );
         }
     }
 
@@ -244,7 +279,9 @@
         border: none;
         padding: 0;
         cursor: pointer;
-        transition: background 0.2s, transform 0.2s;
+        transition:
+            background 0.2s,
+            transform 0.2s;
 
         &--active {
             background: var(--rb-primary-color, #e0598b);

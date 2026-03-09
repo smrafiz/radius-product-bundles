@@ -21,7 +21,9 @@ export async function getSetupGuideService({
     const persisted = await getSetupProgress(shop);
 
     // Skip auto-detection when guide is dismissed or all steps already complete
-    const allPersistedComplete = Object.values(persisted.progress).every(Boolean);
+    const allPersistedComplete = Object.values(persisted.progress).every(
+        Boolean,
+    );
     if (persisted.dismissed || allPersistedComplete) {
         return {
             dismissed: persisted.dismissed,

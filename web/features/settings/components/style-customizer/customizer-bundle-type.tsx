@@ -35,7 +35,10 @@ export function CustomizerBundleType() {
     const rightPanelScroll = useScrollBlur();
 
     return (
-        <s-page heading="Global Customizer - Manage Bundle Styles" inlineSize="large">
+        <s-page
+            heading="Global Customizer - Manage Bundle Styles"
+            inlineSize="large"
+        >
             <s-button
                 slot="primary-action"
                 variant="primary"

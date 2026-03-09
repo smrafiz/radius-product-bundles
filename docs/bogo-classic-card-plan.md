@@ -13,6 +13,7 @@ BOGO bundles currently bypass the layout system — the storefront widget render
 ## Phase 1: Type System & Schema
 
 ### 1.1 Widen layout type (`bundle.types.ts:309`)
+
 ```ts
 // Add new types
 export type FixedBundleLayout = "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
@@ -20,10 +21,11 @@ export type BogoLayout = "CLASSIC_CARD" | "COMPACT_GRID" | "MINIMALIST";
 export type WidgetLayout = FixedBundleLayout | BogoLayout;
 
 // Update DisplaySettings
-layout: WidgetLayout;  // was: "GRID" | "CAROUSEL" | "LIST" | "COMPACT"
+layout: WidgetLayout; // was: "GRID" | "CAROUSEL" | "LIST" | "COMPACT"
 ```
 
 ### 1.2 Relax Zod schema (`zod.schema.ts:~49`)
+
 ```ts
 // Before: z.enum(["GRID", "CAROUSEL", "LIST", "COMPACT"]).default("GRID")
 // After:
@@ -31,16 +33,20 @@ layout: z.string().default("GRID"),
 ```
 
 ### 1.3 Add `role` to `PreviewProduct` (`shared/types/components/components.types.ts:64`)
+
 ```ts
 role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
 ```
+
 Needed for Classic Card to split products by role in admin preview.
 
 ### 1.4 Add `pricing` + `cartButtonText` to `WidgetLayoutProps` (`components.types.ts:104`)
+
 ```ts
 pricing?: WidgetPricing;
 cartButtonText?: string;
 ```
+
 Classic Card renders its own pricing bar + CTA internally.
 
 ---
@@ -53,19 +59,38 @@ Keep existing `WIDGET_LAYOUTS` unchanged. Add:
 
 ```ts
 export const BOGO_LAYOUTS = [
-    { label: "Classic Card", value: "CLASSIC_CARD" as const, widgetLayout: "/assets/widget-classic-card-layout.png" },
-    { label: "Compact Grid", value: "COMPACT_GRID" as const, widgetLayout: "/assets/widget-compact-grid-layout.png" },
-    { label: "Minimalist", value: "MINIMALIST" as const, widgetLayout: "/assets/widget-minimalist-layout.png" },
+    {
+        label: "Classic Card",
+        value: "CLASSIC_CARD" as const,
+        widgetLayout: "/assets/widget-classic-card-layout.png",
+    },
+    {
+        label: "Compact Grid",
+        value: "COMPACT_GRID" as const,
+        widgetLayout: "/assets/widget-compact-grid-layout.png",
+    },
+    {
+        label: "Minimalist",
+        value: "MINIMALIST" as const,
+        widgetLayout: "/assets/widget-minimalist-layout.png",
+    },
 ];
 
-export const LAYOUTS_BY_BUNDLE_TYPE: Record<string, typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS> = {
+export const LAYOUTS_BY_BUNDLE_TYPE: Record<
+    string,
+    typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS
+> = {
     FIXED_BUNDLE: WIDGET_LAYOUTS,
     BOGO: BOGO_LAYOUTS,
     BUY_X_GET_Y: BOGO_LAYOUTS,
     // others default to WIDGET_LAYOUTS
 };
 
-export const BOGO_LAYOUT_VALUES = ["CLASSIC_CARD", "COMPACT_GRID", "MINIMALIST"];
+export const BOGO_LAYOUT_VALUES = [
+    "CLASSIC_CARD",
+    "COMPACT_GRID",
+    "MINIMALIST",
+];
 ```
 
 ### 2.2 Default layout helper (`bundle-getters.ts`)
@@ -75,6 +100,7 @@ Add `getDefaultLayout(bundleType)` → returns `"CLASSIC_CARD"` for BOGO/BUY_X_G
 ### 2.3 Placeholder thumbnail images
 
 Create 3 placeholder images in `/web/public/assets/`:
+
 - `widget-classic-card-layout.png`
 - `widget-compact-grid-layout.png`
 - `widget-minimalist-layout.png`
@@ -86,6 +112,7 @@ Create 3 placeholder images in `/web/public/assets/`:
 ### 3.1 Update `widget-layout.tsx`
 
 Replace the current BXGY filtering logic:
+
 ```ts
 // Before: filters out CAROUSEL for BOGO
 // After: uses LAYOUTS_BY_BUNDLE_TYPE to pick the right layout set
@@ -157,19 +184,28 @@ Classic Card renders its own pricing bar + CTA, so the parent `BundleWidget` she
 ### 5.1 Update `getLayout()` (`bundle-widget.ts:2306`)
 
 Add detection for new CSS classes:
+
 ```ts
-if (this.container.classList.contains("radius-bundle--classic_card")) return "classic_card";
-if (this.container.classList.contains("radius-bundle--compact_grid")) return "compact_grid";
-if (this.container.classList.contains("radius-bundle--minimalist")) return "minimalist";
+if (this.container.classList.contains("radius-bundle--classic_card"))
+    return "classic_card";
+if (this.container.classList.contains("radius-bundle--compact_grid"))
+    return "compact_grid";
+if (this.container.classList.contains("radius-bundle--minimalist"))
+    return "minimalist";
 ```
 
 ### 5.2 Update `renderProducts()` (`bundle-widget.ts:1434`)
 
 Route BOGO bundles through layout check:
+
 ```ts
 if (this.isBxgyBundle()) {
     const layout = this.getLayout();
-    if (layout === "classic_card" || layout === "compact_grid" || layout === "minimalist") {
+    if (
+        layout === "classic_card" ||
+        layout === "compact_grid" ||
+        layout === "minimalist"
+    ) {
         this.renderClassicCardProducts(bundle, productsContainer);
     } else {
         this.renderBxgyProducts(bundle, productsContainer); // legacy fallback
@@ -181,6 +217,7 @@ if (this.isBxgyBundle()) {
 ### 5.3 New method: `renderClassicCardProducts()`
 
 Generates HTML with:
+
 - `.rb-classic__grid` (2-column CSS grid)
 - `.rb-classic__section--trigger` + `.rb-classic__section--reward` (dashed border cards)
 - `.rb-classic__badge--trigger` ("You Buy") + `.rb-classic__badge--reward` ("You Get FREE")
@@ -200,6 +237,7 @@ In `updatePricingDisplay()` or via CSS: when layout is `classic_card`, the stand
 ### 6.1 New file: `web/widgets/src/scss/layout/classic-card.scss`
 
 Key styles:
+
 - `.rb-classic__grid` — 2-column grid, responsive → 1-column at `≤480px`
 - `.rb-classic__section--trigger` — `border: 2px dashed #ec4899`
 - `.rb-classic__section--reward` — `border: 2px dashed #14b8a6`
@@ -209,6 +247,7 @@ Key styles:
 - `.radius-bundle--classic_card .radius-bundle__pricing` — `display: none` (hide standard pricing)
 
 ### 6.2 Import in `index.scss`
+
 ```scss
 @use "layout/classic-card";
 ```
@@ -236,26 +275,26 @@ Add `classic_card`, `compact_grid`, `minimalist` to the `{% schema %}` layout se
 
 ## Files Summary
 
-| File | Action |
-|------|--------|
-| `web/features/bundles/types/bundle.types.ts` | Add `WidgetLayout`, `FixedBundleLayout`, `BogoLayout` types |
-| `web/features/bundles/schema/zod.schema.ts` | `z.enum(...)` → `z.string().default("GRID")` |
-| `web/shared/types/components/components.types.ts` | Add `role` to `PreviewProduct`, `pricing`+`cartButtonText` to `WidgetLayoutProps` |
-| `web/features/bundles/constants/bundle-details.constants.ts` | Add `BOGO_LAYOUTS`, `LAYOUTS_BY_BUNDLE_TYPE` |
-| `web/features/bundles/utils/helpers/bundle-getters.ts` | Add `getDefaultLayout()` helper |
-| `web/features/bundles/components/bundle-creation/steps/appearance/widget-layout.tsx` | Use `LAYOUTS_BY_BUNDLE_TYPE` |
-| `web/shared/components/bundle-widget/layouts/widget-classic-card.tsx` | **NEW** — React Classic Card component |
-| `web/shared/components/bundle-widget/layouts/index.ts` | Export new component |
-| `web/features/bundles/components/bundle-preview/bundle-preview.tsx` | Wire Classic Card into `RenderLayout`, pass `role`, `hideFooter` |
-| `web/shared/components/bundle-widget/bundle-widget.tsx` | Add `hideFooter` prop |
-| `web/widgets/src/bundle-widget.ts` | Update `getLayout()`, `renderProducts()`, add `renderClassicCardProducts()` |
-| `web/widgets/src/scss/layout/classic-card.scss` | **NEW** — Classic Card styles |
-| `web/widgets/src/scss/index.scss` | Import new SCSS |
-| `extension/.../blocks/app-block.liquid` | Add `classic_card` case + schema options |
-| `extension/.../snippets/radius-bundle-layout-classic-card.liquid` | **NEW** — Liquid skeleton |
-| `web/public/assets/widget-classic-card-layout.png` | **NEW** — Thumbnail placeholder |
-| `web/public/assets/widget-compact-grid-layout.png` | **NEW** — Thumbnail placeholder |
-| `web/public/assets/widget-minimalist-layout.png` | **NEW** — Thumbnail placeholder |
+| File                                                                                 | Action                                                                            |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `web/features/bundles/types/bundle.types.ts`                                         | Add `WidgetLayout`, `FixedBundleLayout`, `BogoLayout` types                       |
+| `web/features/bundles/schema/zod.schema.ts`                                          | `z.enum(...)` → `z.string().default("GRID")`                                      |
+| `web/shared/types/components/components.types.ts`                                    | Add `role` to `PreviewProduct`, `pricing`+`cartButtonText` to `WidgetLayoutProps` |
+| `web/features/bundles/constants/bundle-details.constants.ts`                         | Add `BOGO_LAYOUTS`, `LAYOUTS_BY_BUNDLE_TYPE`                                      |
+| `web/features/bundles/utils/helpers/bundle-getters.ts`                               | Add `getDefaultLayout()` helper                                                   |
+| `web/features/bundles/components/bundle-creation/steps/appearance/widget-layout.tsx` | Use `LAYOUTS_BY_BUNDLE_TYPE`                                                      |
+| `web/shared/components/bundle-widget/layouts/widget-classic-card.tsx`                | **NEW** — React Classic Card component                                            |
+| `web/shared/components/bundle-widget/layouts/index.ts`                               | Export new component                                                              |
+| `web/features/bundles/components/bundle-preview/bundle-preview.tsx`                  | Wire Classic Card into `RenderLayout`, pass `role`, `hideFooter`                  |
+| `web/shared/components/bundle-widget/bundle-widget.tsx`                              | Add `hideFooter` prop                                                             |
+| `web/widgets/src/bundle-widget.ts`                                                   | Update `getLayout()`, `renderProducts()`, add `renderClassicCardProducts()`       |
+| `web/widgets/src/scss/layout/classic-card.scss`                                      | **NEW** — Classic Card styles                                                     |
+| `web/widgets/src/scss/index.scss`                                                    | Import new SCSS                                                                   |
+| `extension/.../blocks/app-block.liquid`                                              | Add `classic_card` case + schema options                                          |
+| `extension/.../snippets/radius-bundle-layout-classic-card.liquid`                    | **NEW** — Liquid skeleton                                                         |
+| `web/public/assets/widget-classic-card-layout.png`                                   | **NEW** — Thumbnail placeholder                                                   |
+| `web/public/assets/widget-compact-grid-layout.png`                                   | **NEW** — Thumbnail placeholder                                                   |
+| `web/public/assets/widget-minimalist-layout.png`                                     | **NEW** — Thumbnail placeholder                                                   |
 
 ---
 

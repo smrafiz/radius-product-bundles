@@ -159,9 +159,7 @@ export function HorizontalStepIndicator() {
                             isLastStep ? handleFinalSubmit : handleNextStep
                         }
                         disabled={isSaving}
-                        variant={
-                            isLastStep ? "primary" : "secondary"
-                        }
+                        variant={isLastStep ? "primary" : "secondary"}
                         accessibilityLabel="Next"
                     >
                         {getNextButtonText()}

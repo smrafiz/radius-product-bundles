@@ -390,7 +390,9 @@ export interface CustomizerStyles {
     // PER-BUNDLE-TYPE OVERRIDES
     // ═══════════════════════════════════════════════════════════════════
     /** Per-bundle-type style overrides (inherits from base when absent) */
-    bundleTypeOverrides?: Partial<Record<BundleType, Partial<CustomizerStyles>>>;
+    bundleTypeOverrides?: Partial<
+        Record<BundleType, Partial<CustomizerStyles>>
+    >;
 }
 
 /**

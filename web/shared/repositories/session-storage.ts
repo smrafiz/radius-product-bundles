@@ -13,7 +13,9 @@ export async function storeSession(session: ShopifySession) {
         where: { id: session.id },
         update: {
             shop: session.shop,
-            accessToken: session.accessToken ? encryptToken(session.accessToken) : null,
+            accessToken: session.accessToken
+                ? encryptToken(session.accessToken)
+                : null,
             scope: session.scope,
             expires: session.expires,
             isOnline: session.isOnline,
@@ -23,7 +25,9 @@ export async function storeSession(session: ShopifySession) {
         create: {
             id: session.id,
             shop: session.shop,
-            accessToken: session.accessToken ? encryptToken(session.accessToken) : null,
+            accessToken: session.accessToken
+                ? encryptToken(session.accessToken)
+                : null,
             scope: session.scope,
             expires: session.expires,
             isOnline: session.isOnline,
@@ -119,7 +123,9 @@ function generateShopifySessionFromDB(session: Session) {
     return new ShopifySession({
         id: session.id,
         shop: session.shop,
-        accessToken: session.accessToken ? decryptToken(session.accessToken) : undefined,
+        accessToken: session.accessToken
+            ? decryptToken(session.accessToken)
+            : undefined,
         scope: session.scope || undefined,
         state: session.state,
         isOnline: session.isOnline,

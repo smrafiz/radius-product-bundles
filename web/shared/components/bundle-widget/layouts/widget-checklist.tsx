@@ -121,7 +121,14 @@ function ChecklistTriggerItem({
             >
                 {product.price}
             </div>
-            <div style={{ color: "#9ca3af", display: "flex", alignItems: "center", flexShrink: 0 }}>
+            <div
+                style={{
+                    color: "#9ca3af",
+                    display: "flex",
+                    alignItems: "center",
+                    flexShrink: 0,
+                }}
+            >
                 <svg
                     width="16"
                     height="16"
@@ -148,7 +155,8 @@ function ChecklistRewardItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = !!product.compareAtPrice;
-    const isFreePrice = hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const isFreePrice =
+        hasDiscount && (product.price === "$0.00" || product.price === "$0");
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -242,15 +250,22 @@ export function WidgetChecklist({
     const isUnlocked = false;
     const progressPercent = 0;
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
-    const lockedLabel = labels?.checklistLockedLabel || DEFAULT_LABELS.checklistLockedLabel;
-    const progressLabel = (labels?.checklistProgressText || DEFAULT_LABELS.checklistProgressText)
+    const lockedLabel =
+        labels?.checklistLockedLabel || DEFAULT_LABELS.checklistLockedLabel;
+    const progressLabel = (
+        labels?.checklistProgressText || DEFAULT_LABELS.checklistProgressText
+    )
         .replace("{count}", String(progress))
         .replace("{total}", String(totalTriggers));
-    const hintLabel = (labels?.checklistHintText || DEFAULT_LABELS.checklistHintText)
-        .replace("{remaining}", String(totalTriggers));
-    const pricingLockedLabel = labels?.checklistPricingLockedText || DEFAULT_LABELS.checklistPricingLockedText;
+    const hintLabel = (
+        labels?.checklistHintText || DEFAULT_LABELS.checklistHintText
+    ).replace("{remaining}", String(totalTriggers));
+    const pricingLockedLabel =
+        labels?.checklistPricingLockedText ||
+        DEFAULT_LABELS.checklistPricingLockedText;
 
-    let rewardBadgeText = labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    let rewardBadgeText =
+        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
     if (pricing?.hasDiscount && pricing.savingsPercentage === 100) {
         rewardBadgeText = freeText;
     }

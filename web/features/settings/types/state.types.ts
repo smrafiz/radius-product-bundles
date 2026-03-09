@@ -1,4 +1,8 @@
-import { AppSettingsFormData, CustomizerStyles, WidgetLayout } from "@/features/settings";
+import {
+    AppSettingsFormData,
+    CustomizerStyles,
+    WidgetLayout,
+} from "@/features/settings";
 import { BundleType } from "@/features/bundles";
 
 export type SettingsStoreState = {

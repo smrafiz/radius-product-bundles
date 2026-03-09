@@ -88,7 +88,16 @@ export function BundleCreationForm({
                 }
             },
         });
-    }, [bundleId, bundleName, isDirty, openModal, app, queryClient, bundleData, resetDirty]);
+    }, [
+        bundleId,
+        bundleName,
+        isDirty,
+        openModal,
+        app,
+        queryClient,
+        bundleData,
+        resetDirty,
+    ]);
 
     const handleDelete = useCallback(() => {
         if (!bundleId) return;

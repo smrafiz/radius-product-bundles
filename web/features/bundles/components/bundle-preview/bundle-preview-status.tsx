@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from "react";
 import type { BundleStatus } from "@/features/bundles";
 import { formatDateLong, getDisallowPastDates } from "@/shared";
-import { BUNDLE_STATUSES, getAvailableStatuses, useBundleStore, } from "@/features/bundles";
+import {
+    BUNDLE_STATUSES,
+    getAvailableStatuses,
+    useBundleStore,
+} from "@/features/bundles";
 
 export function BundlePreviewStatus() {
     const { bundleData, updateBundleField } = useBundleStore();

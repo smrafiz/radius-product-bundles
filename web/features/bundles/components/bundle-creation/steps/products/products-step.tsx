@@ -36,9 +36,10 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const bogoMaxPicks = bundleData.sameProductMode ? 1 : 2;
     const maxProducts = isBogo ? bogoMaxPicks : globalMax;
 
-    const actualPickCount = isBxgy && bundleData.sameProductMode
-        ? selectedItems.filter((i) => i.role !== "REWARD").length
-        : selectedItems.length;
+    const actualPickCount =
+        isBxgy && bundleData.sameProductMode
+            ? selectedItems.filter((i) => i.role !== "REWARD").length
+            : selectedItems.length;
     const isAtLimit = actualPickCount >= maxProducts;
 
     const handleClearAll = () => {
@@ -59,7 +60,9 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         if (!isBxgy) return;
 
         // Act when items were added OR when unassigned roles exist (e.g. picker replaced items)
-        const hasUnassigned = selectedItems.some((i) => !i.role || i.role === "INCLUDED");
+        const hasUnassigned = selectedItems.some(
+            (i) => !i.role || i.role === "INCLUDED",
+        );
         if (selectedItems.length <= prevLengthRef.current && !hasUnassigned) {
             prevLengthRef.current = selectedItems.length;
             return;
@@ -134,7 +137,14 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                 setItemRole(item.id, "REWARD");
             }
         });
-    }, [isBxgy, isBogo, selectedItems, setItemRole, bundleData.sameProductMode, globalMax]);
+    }, [
+        isBxgy,
+        isBogo,
+        selectedItems,
+        setItemRole,
+        bundleData.sameProductMode,
+        globalMax,
+    ]);
 
     // Same-product toggle handler
     const handleSameProductToggle = useCallback(() => {
@@ -255,14 +265,14 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                     {isBxgy && (
                         <s-switch
                             label="Same product for both"
-                            details={isBogo
-                                ? "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)"
-                                : "Use the same products for both Buy and Get groups"
+                            details={
+                                isBogo
+                                    ? "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)"
+                                    : "Use the same products for both Buy and Get groups"
                             }
                             checked={bundleData.sameProductMode || false}
                             onInput={(event: Event) => {
-                                const target =
-                                    event.target as HTMLInputElement;
+                                const target = event.target as HTMLInputElement;
                                 if (
                                     target.checked !==
                                     bundleData.sameProductMode

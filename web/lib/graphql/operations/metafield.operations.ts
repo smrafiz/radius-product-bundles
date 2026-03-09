@@ -23,6 +23,7 @@ import {
     UpdateBundleDiscountCombinesWithMutation,
 } from "@/lib/graphql/generated/graphql";
 import {
+    BUNDLE_DISCOUNT_TITLE,
     METAFIELD_KEYS,
     METAFIELD_NAMESPACE,
 } from "@/shared/constants/metafields.constants";
@@ -39,8 +40,6 @@ const METAFIELD_TYPE = "list.single_line_text_field";
 // Active bundles metafield constants
 const ACTIVE_BUNDLES_KEY = METAFIELD_KEYS["ACTIVE_BUNDLES"];
 const JSON_TYPE = "json";
-const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
-
 interface MetafieldResult {
     success: boolean;
     error?: string;
@@ -445,8 +444,7 @@ function buildShopBundlesMetafieldValue(
               )
             : 0;
 
-        const isBxgy =
-            bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+        const isBxgy = bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
 
         const productRoles = isBxgy
             ? bundleProducts.map((bp) => bp.role || "INCLUDED")
@@ -515,15 +513,17 @@ function buildDiscountBundlesMetafieldValue(
             productQuantityMap[bp.productId] = bp.quantity;
         }
 
-        const isBxgy =
-            bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+        const isBxgy = bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
 
         const productRoleMap: Record<string, string> | null = isBxgy
             ? (() => {
                   const roles: Record<string, string> = {};
                   for (const bp of bundleProducts) {
                       const role = bp.role || "INCLUDED";
-                      if (roles[bp.productId] === "TRIGGER" && role === "REWARD") {
+                      if (
+                          roles[bp.productId] === "TRIGGER" &&
+                          role === "REWARD"
+                      ) {
                           roles[bp.productId] = "REWARD";
                       } else if (!roles[bp.productId]) {
                           roles[bp.productId] = role;

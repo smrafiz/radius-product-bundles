@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { CustomizerStoreState, CustomizerStyles, WidgetLayout } from "@/features/settings";
+import {
+    CustomizerStoreState,
+    CustomizerStyles,
+    WidgetLayout,
+} from "@/features/settings";
 import { BundleType } from "@/features/bundles";
 import {
     DEFAULT_CUSTOMIZER_STYLES,
@@ -91,7 +95,10 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                             ...state.styles,
                             bundleTypeOverrides: {
                                 ...overrides,
-                                [activeBundleType]: { ...typeMap, [key]: value },
+                                [activeBundleType]: {
+                                    ...typeMap,
+                                    [key]: value,
+                                },
                             },
                         },
                         activePreset: null,
@@ -185,7 +192,11 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 const { styles } = get();
                 let preset: string | null = null;
                 if (type) {
-                    preset = (styles.bundleTypeOverrides?.[type]?.stylePreset as string) ?? styles.stylePreset ?? null;
+                    preset =
+                        (styles.bundleTypeOverrides?.[type]
+                            ?.stylePreset as string) ??
+                        styles.stylePreset ??
+                        null;
                 } else {
                     preset = styles.stylePreset ?? null;
                 }
@@ -203,7 +214,8 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
 
                 if (activeBundleType) {
                     set((state) => {
-                        const overrides = state.styles.bundleTypeOverrides || {};
+                        const overrides =
+                            state.styles.bundleTypeOverrides || {};
                         const typeMap = overrides[activeBundleType] || {};
                         return {
                             styles: {

@@ -358,19 +358,39 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
         }
 
         // Per-bundle-type overrides
-        if ("bundleTypeOverrides" in parsed && isRecord(parsed.bundleTypeOverrides)) {
+        if (
+            "bundleTypeOverrides" in parsed &&
+            isRecord(parsed.bundleTypeOverrides)
+        ) {
             const knownTypes = [
-                "FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y",
-                "VOLUME_DISCOUNT", "MIX_AND_MATCH", "FREQUENTLY_BOUGHT_TOGETHER",
+                "FIXED_BUNDLE",
+                "BOGO",
+                "BUY_X_GET_Y",
+                "VOLUME_DISCOUNT",
+                "MIX_AND_MATCH",
+                "FREQUENTLY_BOUGHT_TOGETHER",
             ];
             const typeOverrides: Record<string, Partial<CustomizerStyles>> = {};
 
             for (const type of knownTypes) {
-                if (type in (parsed.bundleTypeOverrides as Record<string, unknown>) && isRecord((parsed.bundleTypeOverrides as any)[type])) {
-                    const typeMap = (parsed.bundleTypeOverrides as any)[type] as Record<string, unknown>;
+                if (
+                    type in
+                        (parsed.bundleTypeOverrides as Record<
+                            string,
+                            unknown
+                        >) &&
+                    isRecord((parsed.bundleTypeOverrides as any)[type])
+                ) {
+                    const typeMap = (parsed.bundleTypeOverrides as any)[
+                        type
+                    ] as Record<string, unknown>;
                     const filtered: Partial<CustomizerStyles> = {};
                     for (const key of validKeys) {
-                        if (key in typeMap && typeMap[key] !== undefined && typeMap[key] !== null) {
+                        if (
+                            key in typeMap &&
+                            typeMap[key] !== undefined &&
+                            typeMap[key] !== null
+                        ) {
                             (filtered as any)[key] = typeMap[key];
                         }
                     }

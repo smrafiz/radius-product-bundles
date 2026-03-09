@@ -19,7 +19,9 @@ function findCartLink(): Element | null {
 
 export async function updateCartCount(): Promise<void> {
     try {
-        const cart = await fetch(getLocalePath("/cart.js")).then((r) => r.json());
+        const cart = await fetch(getLocalePath("/cart.js")).then((r) =>
+            r.json(),
+        );
         const cartLink = findCartLink();
 
         if (cartLink && cart.item_count > 0) {
@@ -37,7 +39,8 @@ export async function updateCartCount(): Promise<void> {
                 const countSpan = bubble.querySelector('[aria-hidden="true"]');
                 const srSpan = bubble.querySelector(".visually-hidden");
 
-                if (countSpan) countSpan.textContent = cart.item_count.toString();
+                if (countSpan)
+                    countSpan.textContent = cart.item_count.toString();
                 if (srSpan) srSpan.textContent = `${cart.item_count} items`;
 
                 (bubble as HTMLElement).style.display = "flex";
@@ -48,7 +51,11 @@ export async function updateCartCount(): Promise<void> {
     }
 }
 
-export function handleCartRedirect(redirectAfterCart: string, bundle: Bundle | null, lazyLoadImages: boolean): void {
+export function handleCartRedirect(
+    redirectAfterCart: string,
+    bundle: Bundle | null,
+    lazyLoadImages: boolean,
+): void {
     console.log("[RadiusBundle] Redirect setting:", redirectAfterCart);
 
     switch (redirectAfterCart) {
@@ -69,16 +76,23 @@ export function handleCartRedirect(redirectAfterCart: string, bundle: Bundle | n
     }
 }
 
-function openCartDrawerOrRedirect(bundle: Bundle | null, lazyLoadImages: boolean): void {
+function openCartDrawerOrRedirect(
+    bundle: Bundle | null,
+    lazyLoadImages: boolean,
+): void {
     console.log("[RadiusBundle] Following theme cart behavior...");
 
-    const cartDrawerEl = document.querySelector("cart-drawer") as HTMLElement & { open?: () => void };
+    const cartDrawerEl = document.querySelector(
+        "cart-drawer",
+    ) as HTMLElement & { open?: () => void };
     if (cartDrawerEl) {
         openDawnCartDrawer(cartDrawerEl);
         return;
     }
 
-    const cartNotificationEl = document.querySelector("cart-notification") as HTMLElement & { open?: () => void };
+    const cartNotificationEl = document.querySelector(
+        "cart-notification",
+    ) as HTMLElement & { open?: () => void };
     if (cartNotificationEl) {
         openDawnCartNotification(cartNotificationEl, bundle, lazyLoadImages);
         return;
@@ -86,15 +100,21 @@ function openCartDrawerOrRedirect(bundle: Bundle | null, lazyLoadImages: boolean
 
     const drawerCart = document.querySelector('[data-drawer="drawer-cart"]');
     if (drawerCart) {
-        drawerCart.dispatchEvent(new CustomEvent("theme:drawer:open", { bubbles: false }));
+        drawerCart.dispatchEvent(
+            new CustomEvent("theme:drawer:open", { bubbles: false }),
+        );
         return;
     }
 
-    console.log("[RadiusBundle] No drawer/notification found - redirecting to cart");
+    console.log(
+        "[RadiusBundle] No drawer/notification found - redirecting to cart",
+    );
     window.location.href = getLocalePath("/cart");
 }
 
-function openDawnCartDrawer(cartDrawerEl: HTMLElement & { open?: () => void }): void {
+function openDawnCartDrawer(
+    cartDrawerEl: HTMLElement & { open?: () => void },
+): void {
     fetch(getLocalePath("/cart?section_id=cart-drawer"))
         .then((r) => r.text())
         .then((html) => {
@@ -130,7 +150,10 @@ function openDawnCartDrawer(cartDrawerEl: HTMLElement & { open?: () => void }): 
             }
         })
         .catch((e) => {
-            console.error("[RadiusBundle] Failed to fetch cart-drawer section:", e);
+            console.error(
+                "[RadiusBundle] Failed to fetch cart-drawer section:",
+                e,
+            );
             if (typeof cartDrawerEl.open === "function") {
                 cartDrawerEl.open();
             }
@@ -144,7 +167,9 @@ function openDawnCartNotification(
 ): void {
     if (!bundle) return;
 
-    const productContainer = document.getElementById("cart-notification-product");
+    const productContainer = document.getElementById(
+        "cart-notification-product",
+    );
     if (productContainer) {
         const productsHtml = bundle.products
             .map(
@@ -173,13 +198,17 @@ function openDawnCartNotification(
                 ${productsHtml}
             </div>
         `;
-        console.log("[RadiusBundle] ✓ Updated cart-notification with bundle products");
+        console.log(
+            "[RadiusBundle] ✓ Updated cart-notification with bundle products",
+        );
     }
 
     fetch(getLocalePath("/cart.js"))
         .then((r) => r.json())
         .then((cart) => {
-            const cartButton = document.getElementById("cart-notification-button");
+            const cartButton = document.getElementById(
+                "cart-notification-button",
+            );
             if (cartButton) {
                 cartButton.textContent = `View cart (${cart.item_count})`;
             }

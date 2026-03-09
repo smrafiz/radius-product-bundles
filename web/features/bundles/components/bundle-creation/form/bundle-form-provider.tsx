@@ -68,8 +68,16 @@ export function BundleFormProvider({
             startDate: initialData?.startDate || undefined,
             endDate: initialData?.endDate || undefined,
             mainProductId: initialData?.mainProductId || undefined,
-            buyQuantity: initialData?.buyQuantity ?? (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y" ? 1 : undefined),
-            getQuantity: initialData?.getQuantity ?? (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y" ? 1 : undefined),
+            buyQuantity:
+                initialData?.buyQuantity ??
+                (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y"
+                    ? 1
+                    : undefined),
+            getQuantity:
+                initialData?.getQuantity ??
+                (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y"
+                    ? 1
+                    : undefined),
             minimumItems: initialData?.minimumItems || undefined,
             maximumItems: initialData?.maximumItems || undefined,
             volumeTiers: initialData?.volumeTiers || undefined,
@@ -162,7 +170,10 @@ export function BundleFormProvider({
 
     // Set the bundle type in form
     useEffect(() => {
-        setValue("type", bundleType, { shouldValidate: true, shouldDirty: false });
+        setValue("type", bundleType, {
+            shouldValidate: true,
+            shouldDirty: false,
+        });
     }, [bundleType, setValue]);
 
     // Sync selectedItems with form products
@@ -182,7 +193,10 @@ export function BundleFormProvider({
                     productId: item.productId,
                     variantId: variantId,
                     quantity: item.quantity || 1,
-                    role: (item.role || "INCLUDED") as "INCLUDED" | "TRIGGER" | "REWARD",
+                    role: (item.role || "INCLUDED") as
+                        | "INCLUDED"
+                        | "TRIGGER"
+                        | "REWARD",
                 }));
             }
 
@@ -192,7 +206,10 @@ export function BundleFormProvider({
                         productId: item.productId,
                         variantId: item.variantId,
                         quantity: item.quantity || 1,
-                        role: (item.role || "INCLUDED") as "INCLUDED" | "TRIGGER" | "REWARD",
+                        role: (item.role || "INCLUDED") as
+                            | "INCLUDED"
+                            | "TRIGGER"
+                            | "REWARD",
                     },
                 ];
             }

@@ -106,8 +106,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                         </s-clickable>
                                     </div>
                                 );
-                            },
-                        )}
+                            })}
                     </s-stack>
                 </s-box>
             </s-popover>

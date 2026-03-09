@@ -11,9 +11,7 @@ import {
     getCardRadius,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
-import {
-    SPACING_VALUES,
-} from "@/features/settings/constants/defaults.constants";
+import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
 
 function SplitProductCard({
     product,
@@ -90,7 +88,7 @@ function SplitProductCard({
                             fontSize: 14,
                             fontWeight: 700,
                             color: hasDiscount
-                                ? (styles.bogoFreeTagColor || "#16a34a")
+                                ? styles.bogoFreeTagColor || "#16a34a"
                                 : styles.textColor,
                         }}
                     >
@@ -165,7 +163,9 @@ export function WidgetSplitDeal({
             }}
         >
             {/* Header */}
-            <div style={{ textAlign: "center", marginBottom: spacingValues.gap }}>
+            <div
+                style={{ textAlign: "center", marginBottom: spacingValues.gap }}
+            >
                 {badgeText && (
                     <div
                         style={{
@@ -220,7 +220,14 @@ export function WidgetSplitDeal({
                 }}
             >
                 {/* Trigger Column */}
-                <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+                <div
+                    style={{
+                        flex: 1,
+                        minWidth: 0,
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
                     <div
                         style={{
                             fontSize: 11,
@@ -292,7 +299,14 @@ export function WidgetSplitDeal({
                 </div>
 
                 {/* Reward Column */}
-                <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+                <div
+                    style={{
+                        flex: 1,
+                        minWidth: 0,
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
                     <div
                         style={{
                             fontSize: 11,

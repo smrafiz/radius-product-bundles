@@ -14,8 +14,14 @@ export function useEffectiveStyles() {
     return useMemo(() => {
         let effective = { ...styles };
 
-        if (activeBundleType && styles.bundleTypeOverrides?.[activeBundleType]) {
-            effective = { ...effective, ...styles.bundleTypeOverrides[activeBundleType] };
+        if (
+            activeBundleType &&
+            styles.bundleTypeOverrides?.[activeBundleType]
+        ) {
+            effective = {
+                ...effective,
+                ...styles.bundleTypeOverrides[activeBundleType],
+            };
         }
 
         if (activeDevice !== "desktop") {

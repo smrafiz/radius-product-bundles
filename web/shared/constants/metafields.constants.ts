@@ -1,3 +1,5 @@
+export const BUNDLE_DISCOUNT_TITLE = "Radius Bundle Discounts";
+
 export const METAFIELD_NAMESPACE = "$app";
 
 export const METAFIELD_KEYS = {
