@@ -95,6 +95,24 @@ export async function areWebhooksRegistered(shop: string): Promise<boolean> {
 }
 
 /**
+ * Atomically claim setup lock — returns true only for the first caller.
+ * Sets setupComplete=true immediately so concurrent requests skip setup.
+ */
+export async function claimSetupLock(shop: string): Promise<boolean> {
+    try {
+        const result = await prisma.shop.updateMany({
+            where: { domain: shop, setupComplete: false },
+            data: { setupComplete: true, lastSetupCheck: new Date() },
+        });
+        console.log(`[Setup Lock] domain=${shop}, claimed=${result.count > 0}`);
+        return result.count > 0;
+    } catch (err) {
+        console.error("[Setup Lock] Error:", err);
+        return false;
+    }
+}
+
+/**
  * Mark setup as complete for a shop
  */
 export async function markSetupComplete(shop: string): Promise<void> {

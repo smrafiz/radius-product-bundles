@@ -36,7 +36,7 @@
     {% assign hide_payment_buttons = false %}
 {% endunless %}
 {% unless enable_analytics == true or enable_analytics == false %}
-    {% assign enable_analytics = false %}
+    {% assign enable_analytics = true %}
 {% endunless %}
 {% unless show_savings_banner == true or show_savings_banner == false %}
     {% assign show_savings_banner = false %}

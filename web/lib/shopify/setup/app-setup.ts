@@ -270,6 +270,7 @@ export async function runAppSetup(
     console.log(`[Setup] 🚀 Running app setup for ${shop}`);
 
     // Task 0: Clean up stale Shopify resources from previous install
+    // Safe: claimSetupLock only succeeds on fresh install or reinstall
     try {
         const { cleanupShopifyResources } = await import(
             "@/features/webhooks/services/shopify-cleanup.service"

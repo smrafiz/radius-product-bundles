@@ -1,20 +1,19 @@
-import shopify from "../config/initialize-context";
-import { RequestedTokenType, Session } from "@shopify/shopify-api";
-import {
-    findOfflineSessionByShop,
-    storeSession,
-    upsertShop,
-} from "@/shared/repositories";
 import {
     extractBearerToken,
     isSessionExpired,
     normalizeShopDomain,
 } from "@/shared";
+import {
+    findOfflineSessionByShop,
+    storeSession,
+    upsertShop,
+} from "@/shared/repositories";
 import { runAppSetup } from "../setup/app-setup";
+import shopify from "../config/initialize-context";
 import { registerWebhooks } from "../webhooks/register";
-import { markSetupComplete, markWebhooksRegistered } from "@/features/webhooks";
-
-const setupInProgress = new Map<string, Promise<void>>();
+import { markWebhooksRegistered } from "@/features/webhooks";
+import { RequestedTokenType, Session } from "@shopify/shopify-api";
+import { claimSetupLock } from "@/features/webhooks/repositories/webhook.repository";
 
 /**
  * Verify the request and return the shop and session
@@ -103,44 +102,29 @@ export async function handleSessionToken(
     // Ensure Shop record exists and run first-time setup if needed
     if (store !== false) {
         try {
-            const shopRecord = await upsertShop(shop);
+            await upsertShop(shop);
 
-            if (!shopRecord.setupComplete && session.accessToken) {
-                // Prevent duplicate concurrent setup for same shop
-                if (!setupInProgress.has(shop)) {
-                    const setupPromise = (async () => {
-                        console.log(
-                            "[Auth] First-time setup via token exchange for:",
-                            shop,
-                        );
+            // Atomically claim setup lock in DB to prevent concurrent/duplicate setup
+            if (session.accessToken && (await claimSetupLock(shop))) {
+                console.log(
+                    "[Auth] First-time setup via token exchange for:",
+                    shop,
+                );
 
-                        const setupResult = await runAppSetup(
-                            session.accessToken!,
-                            shop,
-                        );
-                        if (setupResult.success) {
-                            await markSetupComplete(shop);
-                        }
+                try {
+                    await runAppSetup(session.accessToken!, shop);
+                } catch (setupErr) {
+                    console.error("[Auth] Setup failed (use Force Register to retry):", setupErr);
+                }
 
-                        try {
-                            await registerWebhooks(session);
-                            await markWebhooksRegistered(shop);
-                        } catch (webhookErr) {
-                            console.error(
-                                "[Auth] Webhook registration failed:",
-                                webhookErr,
-                            );
-                        }
-                    })();
-
-                    setupInProgress.set(shop, setupPromise);
-                    try {
-                        await setupPromise;
-                    } finally {
-                        setupInProgress.delete(shop);
-                    }
-                } else {
-                    await setupInProgress.get(shop);
+                try {
+                    await registerWebhooks(session);
+                    await markWebhooksRegistered(shop);
+                } catch (webhookErr) {
+                    console.error(
+                        "[Auth] Webhook registration failed:",
+                        webhookErr,
+                    );
                 }
             }
         } catch (err) {

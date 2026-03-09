@@ -60,7 +60,7 @@ export async function updateSetupProgress(
         where: { domain },
         data: {
             setupProgress: progress as any,
-            setupComplete: allComplete,
+            setupGuideDismissed: allComplete,
         },
     });
 }

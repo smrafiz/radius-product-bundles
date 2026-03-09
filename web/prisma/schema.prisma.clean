@@ -1,0 +1,333 @@
+generator client {
+    provider = "prisma-client"
+    output   = "./generated"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Session {
+    id               String            @id @default(uuid())
+    accessToken      String?
+    expires          DateTime?
+    isOnline         Boolean
+    scope            String?
+    shop             String
+    state            String
+    apiKey           String
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+    onlineAccessInfo OnlineAccessInfo?
+
+    @@map("sessions")
+}
+
+model OnlineAccessInfo {
+    id                  String          @id @default(uuid())
+    sessionId           String?         @unique
+    expiresIn           Int
+    associatedUserScope String
+    createdAt           DateTime        @default(now())
+    updatedAt           DateTime        @updatedAt
+    associatedUser      AssociatedUser?
+    session             Session?        @relation(fields: [sessionId], references: [id])
+
+    @@map("online_access_infos")
+}
+
+model AssociatedUser {
+    id                 String            @id @default(uuid())
+    onlineAccessInfoId String?           @unique
+    createdAt          DateTime          @default(now())
+    updatedAt          DateTime          @updatedAt
+    userId             BigInt
+    firstName          String
+    lastName           String
+    email              String
+    accountOwner       Boolean
+    locale             String
+    collaborator       Boolean
+    emailVerified      Boolean
+    onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
+
+    @@map("associated_users")
+}
+
+model Bundle {
+    id                   String               @id
+    shop                 String
+    name                 String
+    description          String?
+    type                 BundleType
+    status               BundleStatus         @default(DRAFT)
+    mainProductId        String?
+    mainVariantId        String?
+    isPublished          Boolean              @default(false)
+    publishedAt          DateTime?
+    buyQuantity          Int?
+    getQuantity          Int?
+    usesPerOrderLimit    Int?
+    minimumItems         Int?
+    maximumItems         Int?
+    discountType         DiscountType
+    discountValue        Float
+    minOrderValue        Float?
+    maxDiscountAmount    Float?
+    volumeTiers          Json?
+    allowMixAndMatch     Boolean              @default(false)
+    mixAndMatchPrice     Float?
+    discountApplication  String?              @default("bundle")
+    discountedProductIds String[]             @default([])
+    freeShipping         Boolean              @default(false)
+    priority             Int                  @default(0)
+    priorityType         String               @default("index_based")
+    images               String[]
+    views                Int                  @default(0)
+    conversions          Int                  @default(0)
+    revenue              Float                @default(0)
+    startDate            DateTime?
+    endDate              DateTime?
+    createdAt            DateTime             @default(now())
+    updatedAt            DateTime             @updatedAt
+    deletedAt            DateTime?
+    shopId               String?
+    analytics            BundleAnalytics[]
+    productGroups        BundleProductGroup[]
+    bundleProducts       BundleProduct[]
+    settings             BundleSettings?
+    Shop                 Shop?                @relation(fields: [shopId], references: [id])
+    bundleViews          BundleView[]
+
+    @@unique([shop, name])
+    @@index([shop, status, type])
+    @@index([shop, createdAt])
+    @@index([mainProductId])
+    @@index([status, startDate])
+    @@index([status, endDate])
+    @@map("bundles")
+}
+
+model BundleProduct {
+    id              String              @id @default(cuid())
+    bundleId        String
+    productId       String
+    variantId       String?
+    quantity        Int                 @default(1)
+    displayOrder    Int                 @default(0)
+    role            BundleProductRole   @default(INCLUDED)
+    groupId         String?
+    customPrice     Float?
+    discountPercent Float?
+    isRequired      Boolean             @default(true)
+    minQuantity     Int?
+    maxQuantity     Int?
+    createdAt       DateTime            @default(now())
+    updatedAt       DateTime            @updatedAt
+    bundle          Bundle              @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    group           BundleProductGroup? @relation(fields: [groupId], references: [id])
+
+    @@unique([bundleId, productId, variantId, role])
+    @@index([bundleId, role])
+    @@index([bundleId, displayOrder])
+    @@index([productId])
+    @@map("bundle_products")
+}
+
+model BundleProductGroup {
+    id           String          @id @default(cuid())
+    bundleId     String
+    name         String
+    description  String?
+    minSelection Int             @default(0)
+    maxSelection Int?
+    displayOrder Int             @default(0)
+    bundle       Bundle          @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    products     BundleProduct[]
+
+    @@index([bundleId])
+    @@map("bundle_product_groups")
+}
+
+model BundleSettings {
+    id             String      @id @default(cuid())
+    bundleId       String      @unique
+    layout         String  @default("GRID")
+    title          String?
+    subtitle       String?
+    cartButtonText String?
+
+    // Display settings
+    showImages        Boolean @default(true)
+    showSavingsBadge  Boolean @default(true)
+    showPrices        Boolean @default(true)
+    showComparePrices Boolean @default(true)
+    showSavings       Boolean @default(true)
+    showFreeShipping  Boolean @default(true)
+    enableHyperLink   Boolean @default(false)
+    showQuantity      Boolean @default(true)
+
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("bundle_settings")
+}
+
+model BundleAnalytics {
+    id                         String   @id @default(cuid())
+    bundleId                   String
+    date                       DateTime
+    hour                       Int?
+    bundleViews                Int      @default(0)
+    bundleAddToCarts           Int      @default(0)
+    bundlePurchases            Int      @default(0)
+    bundleRevenue              Float    @default(0)
+    crossSellViews             Int      @default(0)
+    crossSellPurchases         Int      @default(0)
+    newCustomerPurchases       Int      @default(0)
+    returningCustomerPurchases Int      @default(0)
+    bundle                     Bundle   @relation(fields: [bundleId], references: [id], onDelete: Restrict)
+
+    @@unique([bundleId, date, hour])
+    @@index([bundleId, date])
+    @@index([date, bundleId])
+    @@map("bundle_analytics")
+}
+
+model BundleView {
+    id         String   @id @default(cuid())
+    bundleId   String
+    customerId String?
+    sessionId  String?
+    date       String
+    timestamp  DateTime @default(now())
+
+    bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)
+
+    // One view per customer per bundle per day
+    @@unique([bundleId, customerId, date], name: "unique_customer_view")
+    // One view per session per bundle per day (for anonymous)
+    @@unique([bundleId, sessionId, date], name: "unique_session_view")
+    @@index([bundleId])
+    @@index([customerId])
+    @@index([date])
+    @@map("bundle_views")
+}
+
+model Shop {
+    id                 String     @id @default(cuid())
+    domain             String     @unique
+    status             ShopStatus @default(ACTIVE)
+    plan               String?
+    trialEndsAt        DateTime?
+    metafieldSetupDone Boolean    @default(false)
+    discountSetupDone  Boolean    @default(false)
+
+    // Setup tracking
+    setupComplete       Boolean   @default(false)
+    setupGuideDismissed Boolean   @default(false)
+    setupProgress       Json?     @default("{}")
+    webhooksRegistered  Boolean   @default(false)
+    lastSetupCheck      DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    appSettings AppSettings? @relation("ShopAppSettings")
+    bundles     Bundle[]
+
+    @@index([domain, setupComplete])
+    @@map("shops")
+}
+
+model AppSettings {
+    id     String     @id @default(cuid())
+    shopId String     @unique
+    status ShopStatus @default(ACTIVE)
+
+    // Defaults
+    defaultDiscountType  DiscountType @default(PERCENTAGE)
+    defaultDiscountValue Float        @default(10)
+    maxBundleProducts    Int          @default(10)
+    maxBundlesPerShop    Int          @default(5)
+    bundlePriorityType   String       @default("index_based")
+
+    // Cart Behavior Section
+    redirectAfterCart     String  @default("cart")
+    hidePaymentButtons    Boolean @default(false)
+    enableStockValidation Boolean @default(true)
+    maxBundlesPerOrder    Int     @default(0)
+    showSavingsBanner     Boolean @default(true)
+    allowDiscountStacking Boolean @default(false)
+
+    // Privacy Section
+    enableAnalytics Boolean @default(true)
+
+    // Labels
+    labels Json?
+
+    // Styles
+    globalStyles Json?
+
+    // Advanced
+    customCssClass String @default("")
+    customCss      String @default("")
+
+    // Performance
+    cacheTtl       Int     @default(300)
+    lazyLoadImages Boolean @default(true)
+
+    // Metadata
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    shop Shop @relation("ShopAppSettings", fields: [shopId], references: [id])
+
+    @@map("app_settings")
+}
+
+/// *
+/// * Enumerations
+enum BundleType {
+    FIXED_BUNDLE
+    BUY_X_GET_Y
+    BOGO
+    VOLUME_DISCOUNT
+    MIX_AND_MATCH
+    FREQUENTLY_BOUGHT_TOGETHER
+}
+
+enum BundleStatus {
+    DRAFT
+    ACTIVE
+    PAUSED
+    ARCHIVED
+    SCHEDULED
+    DELETED
+}
+
+enum DiscountType {
+    PERCENTAGE
+    FIXED_AMOUNT
+    CUSTOM_PRICE
+    NO_DISCOUNT
+    BUY_X_GET_Y
+    QUANTITY_BREAKS
+}
+
+enum BundleProductRole {
+    TRIGGER
+    REWARD
+    INCLUDED
+    OPTIONAL
+    GROUP_OPTION
+}
+
+enum ShopStatus {
+    ACTIVE
+    SUSPENDED
+    TRIAL_EXPIRED
+    NOT_CONFIGURED
+}

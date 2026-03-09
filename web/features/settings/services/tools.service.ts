@@ -1,17 +1,14 @@
-import { Session } from "@shopify/shopify-api";
-import { syncAllSettingsToMetafields } from "@/lib";
-import {
-    getRegisteredWebhooks,
-    resetSetupStatus,
-} from "@/features/webhooks/repositories/webhook.repository";
-import { initializeApp } from "@/features/webhooks/services/webhook.service";
-import { revalidatePath } from "next/cache";
 import {
     ClearCacheResult,
     SyncMetafieldResult,
     WebhookCheckResult,
     WebhookRegisterResult,
 } from "@/features/settings";
+import { revalidatePath } from "next/cache";
+import { Session } from "@shopify/shopify-api";
+import { syncAllSettingsToMetafields } from "@/lib";
+import { initializeApp } from "@/features/webhooks/services/webhook.service";
+import { getRegisteredWebhooks } from "@/features/webhooks/repositories/webhook.repository";
 
 const SUBSCRIPTION_WEBHOOK_TOPICS = [
     "APP_UNINSTALLED",
@@ -103,8 +100,6 @@ export async function forceRegisterWebhooksService(
     session: Session,
     shop: string,
 ): Promise<WebhookRegisterResult> {
-    await resetSetupStatus(shop);
-
     const result = await initializeApp(sessionToken, session);
 
     if (result.success) {
