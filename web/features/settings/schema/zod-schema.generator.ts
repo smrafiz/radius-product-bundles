@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sanitizeHtml } from "@/shared";
+import { sanitizeText } from "@/shared";
 import { FieldConfig, globalStylesSchema } from "@/features/settings";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
 
@@ -37,7 +37,7 @@ function buildFieldSchema(field: FieldConfig): z.ZodTypeAny {
             }
 
             // Apply default and sanitize
-            let finalSchema = schema.transform(sanitizeHtml);
+            let finalSchema = schema.transform(sanitizeText);
             if (field.defaultValue !== undefined) {
                 return finalSchema.default(field.defaultValue);
             }

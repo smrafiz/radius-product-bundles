@@ -8,6 +8,7 @@ import {
     BundleType,
     getShopifyProductStatus,
 } from "@/features/bundles";
+import { sanitizeText, sanitizeRichText } from "@/shared";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
 
 /**
@@ -30,8 +31,10 @@ export function transformBundleToProductVariables(
     const productTypeLabel = typeConfig?.label || "Bundle";
 
     return {
-        title: bundleName,
-        descriptionHtml: bundleDescription ?? undefined,
+        title: sanitizeText(bundleName),
+        descriptionHtml: bundleDescription
+            ? sanitizeRichText(bundleDescription)
+            : undefined,
         vendor: "Radius Bundles",
         productType: productTypeLabel,
         tags: ["bundle", productTypeLabel.toLowerCase()].filter(Boolean),

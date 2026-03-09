@@ -1,8 +1,138 @@
 /**
- * Format validation errors into user-friendly messages
+ * Validation & Sanitization utilities
  */
 
 import { Config, ExtractLabelsOptions, ValidationErrors } from "@/shared";
+import DOMPurify from "isomorphic-dompurify";
+
+// ─── Sanitization ────────────────────────────────────────────────────
+
+const SAFE_STRUCTURAL_TAGS = [
+    "b",
+    "strong",
+    "em",
+    "i",
+    "ul",
+    "ol",
+    "li",
+    "br",
+    "span",
+    "div",
+    "s-list-item",
+    "s-unordered-list",
+    "s-text",
+];
+
+const SAFE_SVG_TAGS = [
+    "svg",
+    "path",
+    "circle",
+    "line",
+    "rect",
+    "polyline",
+    "g",
+    "defs",
+    "use",
+    "ellipse",
+    "polygon",
+];
+
+const SAFE_SVG_ATTRS = [
+    "class",
+    "style",
+    "viewBox",
+    "width",
+    "height",
+    "fill",
+    "stroke",
+    "stroke-width",
+    "stroke-linecap",
+    "stroke-linejoin",
+    "d",
+    "cx",
+    "cy",
+    "r",
+    "x",
+    "y",
+    "x1",
+    "y1",
+    "x2",
+    "y2",
+    "rx",
+    "ry",
+    "points",
+    "transform",
+    "xmlns",
+    "fill-rule",
+    "clip-rule",
+];
+
+const RICH_TEXT_TAGS = [
+    "p",
+    "br",
+    "b",
+    "strong",
+    "em",
+    "i",
+    "u",
+    "s",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "ul",
+    "ol",
+    "li",
+    "a",
+    "blockquote",
+    "code",
+    "pre",
+    "span",
+    "div",
+    "sub",
+    "sup",
+];
+
+const RICH_TEXT_ATTRS = ["href", "target", "rel", "class", "style"];
+
+export function sanitizeHtml(dirty: string): string {
+    if (!dirty) return "";
+    return DOMPurify.sanitize(dirty, {
+        ALLOWED_TAGS: [...SAFE_STRUCTURAL_TAGS, ...SAFE_SVG_TAGS],
+        ALLOWED_ATTR: ["class", "style", ...SAFE_SVG_ATTRS],
+    });
+}
+
+export function sanitizeRichText(dirty: string): string {
+    if (!dirty) return "";
+    return DOMPurify.sanitize(dirty, {
+        ALLOWED_TAGS: RICH_TEXT_TAGS,
+        ALLOWED_ATTR: RICH_TEXT_ATTRS,
+    });
+}
+
+export function sanitizeText(dirty: string): string {
+    if (!dirty) return "";
+    return DOMPurify.sanitize(dirty, {
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: [],
+    });
+}
+
+export function sanitizeCss(dirty: string): string {
+    if (!dirty) return "";
+    return dirty
+        .replace(/expression\s*\(/gi, "")
+        .replace(/javascript\s*:/gi, "")
+        .replace(/@import/gi, "")
+        .replace(/url\s*\(\s*["']?\s*data:/gi, "url(about:invalid")
+        .replace(/behavior\s*:/gi, "")
+        .replace(/-moz-binding\s*:/gi, "");
+}
+
+// ─── Validation ──────────────────────────────────────────────────────
 
 /**
  * Format errors as a single concatenated string
@@ -144,13 +274,6 @@ export function getFieldErrorMessage(
     }
     return errors[field]._errors.join(", ");
 }
-
-/**
- * Sanitizes HTML content by removing all tags and attributes.
- */
-export const sanitizeHtml = (value: string) => {
-    return value.replace(/<[^>]*>/g, "").trim();
-};
 
 /**
  * Extract field labels from a config object.

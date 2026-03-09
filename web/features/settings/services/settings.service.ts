@@ -5,18 +5,22 @@
  */
 
 import {
-    deleteSettingsByShopId,
-    findSettingsByShopDomain,
-    findShopByDomain,
-    upsertSettings,
-} from "@/features/settings/repositories";
-import { formatValidationErrorsAsString } from "@/shared";
-import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
+    formatValidationErrorsAsString,
+    sanitizeCss,
+    sanitizeText,
+} from "@/shared";
 import {
     AppSettingsFormData,
     GetSettingsInput,
     SaveSettingsInput,
 } from "@/features/settings";
+import {
+    deleteSettingsByShopId,
+    findSettingsByShopDomain,
+    findShopByDomain,
+    upsertSettings,
+} from "@/features/settings/repositories";
+import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
 
 /**
  * Get app settings for a shop
@@ -165,15 +169,22 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         // General - Performance
         lazyLoadImages: data.lazyLoadImages,
 
-        // Labels (JSON field)
-        labels: data.labels ?? null,
+        // Labels (JSON field) — sanitize all string values
+        labels: data.labels
+            ? Object.fromEntries(
+                  Object.entries(data.labels).map(([k, v]) => [
+                      k,
+                      typeof v === "string" ? sanitizeText(v) : v,
+                  ]),
+              )
+            : null,
 
         // Style (JSON field)
         globalStyles: data.globalStyles ?? null,
 
-        // Advanced
-        customCssClass: data.customCssClass ?? "",
-        customCss: data.customCss ?? "",
+        // Advanced — sanitize CSS and class names
+        customCssClass: sanitizeText(String(data.customCssClass ?? "")),
+        customCss: sanitizeCss(String(data.customCss ?? "")),
 
         // Performance
         cacheTtl: parseInt(String(data.cacheTtl ?? "300"), 10),

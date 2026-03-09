@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { MessageType, useGlobalBannerStore } from "@/shared";
+import { MessageType, useGlobalBannerStore, sanitizeHtml } from "@/shared";
 
 const getToneFromType = (
     type: MessageType,
@@ -52,7 +52,7 @@ export function GlobalBanner() {
                     {message.isHtml && message.content ? (
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: message.content,
+                                __html: sanitizeHtml(message.content),
                             }}
                         />
                     ) : (

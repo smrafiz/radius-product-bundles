@@ -16,7 +16,6 @@ import {
     transformBundleToProductVariables,
     validateProductInput,
 } from "@/features/bundles/services";
-import { ApiResponse } from "@/shared";
 import {
     GetPublicationsDocument,
     GetPublicationsQuery,
@@ -36,6 +35,7 @@ import {
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
+import { ApiResponse, sanitizeText, sanitizeRichText } from "@/shared";
 import { executeGraphQLQuery } from "@/lib/graphql/client/server-action";
 
 /**
@@ -251,8 +251,10 @@ export async function updateBundleProductAction(
 
         const variables = {
             id: input.productId,
-            title: input.title,
-            descriptionHtml: input.description ?? undefined,
+            title: input.title ? sanitizeText(input.title) : undefined,
+            descriptionHtml: input.description
+                ? sanitizeRichText(input.description)
+                : undefined,
             status: productStatus,
         };
 

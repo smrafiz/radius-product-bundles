@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sanitizeHtml } from "@/shared";
+import { sanitizeText } from "@/shared";
 import { VALIDATION_MESSAGES } from "@/shared/constants";
 
 /**
@@ -124,12 +124,12 @@ export const bundleSchema = z
             .string()
             .min(1, VALIDATION_MESSAGES.REQUIRED_FIELD)
             .max(100, "Bundle name cannot exceed 100 characters")
-            .transform(sanitizeHtml),
+            .transform(sanitizeText),
 
         description: z
             .string()
             .max(500, "Description cannot exceed 500 characters")
-            .transform(sanitizeHtml)
+            .transform(sanitizeText)
             .optional(),
 
         type: z.enum([
@@ -221,9 +221,9 @@ export const bundleSchema = z
 
         priority: z.number().int().min(0).max(500).default(0).optional(),
 
-        marketingCopy: z.string().max(1000).transform(sanitizeHtml).optional(),
-        seoTitle: z.string().max(60).transform(sanitizeHtml).optional(),
-        seoDescription: z.string().max(160).transform(sanitizeHtml).optional(),
+        marketingCopy: z.string().max(1000).transform(sanitizeText).optional(),
+        seoTitle: z.string().max(60).transform(sanitizeText).optional(),
+        seoDescription: z.string().max(160).transform(sanitizeText).optional(),
 
         startDate: z.date().optional(),
         endDate: z.date().optional(),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppNavigation } from "@/shared";
+import { useAppNavigation, sanitizeHtml } from "@/shared";
 import { MetricCardProps, SkeletonLine } from "@/shared";
 
 /**
@@ -33,7 +33,7 @@ export function MetricCard({
                     {img?.svg && (
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: img?.svg,
+                                __html: sanitizeHtml(img.svg),
                             }}
                         />
                     )}

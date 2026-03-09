@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppNavigation } from "@/shared";
+import { useAppNavigation, sanitizeHtml } from "@/shared";
 import { getEnabledQuickActions } from "@/features/dashboard";
 
 /*
@@ -56,7 +56,9 @@ export const DashboardQuickActions = () => {
                                         {action.img?.svg && (
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: action.img?.svg,
+                                                    __html: sanitizeHtml(
+                                                        action.img.svg,
+                                                    ),
                                                 }}
                                             />
                                         )}
