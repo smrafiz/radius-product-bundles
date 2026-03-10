@@ -13,5 +13,6 @@ export async function handleAppUninstalled(
         console.log(`[App Uninstall] Cleanup complete for ${shop}`);
     } catch (error) {
         console.error(`[App Uninstall] Error:`, error);
+        throw error;
     }
 }

@@ -139,6 +139,10 @@ fn calculate_bxgy_discount(
     let get_qty = bundle_settings.get_quantity.unwrap_or(1);
     let items_per_deal = buy_qty + get_qty;
 
+    if items_per_deal <= 0 || buy_qty <= 0 || get_qty <= 0 {
+        return None;
+    }
+
     // Calculate deal count
     let deal_count: i32 = if same_product_mode || is_same_product {
         // Same product (BOGO): guard check — at least one product must have enough qty
@@ -240,6 +244,11 @@ fn calculate_bxgy_discount(
             }
         })
         .sum();
+
+    // Reject negative discount values (prevents price increases via compromised data)
+    if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
 
     // Build discount value
     let (discount_amount, value) = match bundle_settings.discount_type.as_str() {
@@ -343,7 +352,10 @@ fn cart_lines_discounts_generate_run(
 
     let cart_configs: Vec<CartBundleConfig> = match serde_json::from_str(cart_attr_value) {
         Ok(c) => c,
-        Err(_) => return Ok(no_discount),
+        Err(e) => {
+            log!("[RadiusDiscount] Failed to parse cart attribute: {}", e);
+            return Ok(no_discount);
+        }
     };
 
     if cart_configs.is_empty() {
@@ -364,7 +376,10 @@ fn cart_lines_discounts_generate_run(
     let active_bundles: HashMap<String, MetafieldBundleConfig> =
         match serde_json::from_str(metafield_value) {
             Ok(v) => v,
-            Err(_) => return Ok(no_discount),
+            Err(e) => {
+                log!("[RadiusDiscount] Failed to parse metafield: {}", e);
+                return Ok(no_discount);
+            }
         };
 
     if active_bundles.is_empty() {
@@ -600,6 +615,10 @@ fn cart_lines_discounts_generate_run(
                 }
             })
             .sum();
+
+        if bundle_settings.discount_value < 0.0 {
+            continue;
+        }
 
         // Build discount value using METAFIELD values (trusted)
         let (discount_amount, value) = match bundle_settings.discount_type.as_str() {

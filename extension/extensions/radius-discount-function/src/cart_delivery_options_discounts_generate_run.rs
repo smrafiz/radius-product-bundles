@@ -171,7 +171,10 @@ fn cart_delivery_options_discounts_generate_run(
     let active_bundles: HashMap<String, MetafieldBundleConfig> =
         match serde_json::from_str(metafield_value) {
             Ok(v) => v,
-            Err(_) => return Ok(no_discount),
+            Err(e) => {
+                log!("[RadiusDiscount] Failed to parse delivery metafield: {}", e);
+                return Ok(no_discount);
+            }
         };
 
     if active_bundles.is_empty() {
