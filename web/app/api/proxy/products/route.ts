@@ -24,8 +24,6 @@ async function fetchProductDetails(
     productIds: string[],
     shop: string,
 ): Promise<GetBundleProductsQuery["nodes"]> {
-    console.log("Fetching products with IDs:", productIds);
-
     const productsQuery = await executeProxyGraphQL<GetBundleProductsQuery>(
         GetBundleProductsDocument,
         { ids: productIds },
@@ -38,6 +36,21 @@ async function fetchProductDetails(
     }
 
     return productsQuery.data.nodes || [];
+}
+
+function buildProductMap(
+    products: GetBundleProductsQuery["nodes"],
+): Map<string, any> {
+    const map = new Map<string, any>();
+    products.forEach((item) => {
+        const product = item as any;
+        if (product?.id) map.set(product.id, product);
+    });
+    return map;
+}
+
+function getPrice(product: any): number {
+    return parseFloat(product?.variants?.nodes?.[0]?.price || "0");
 }
 
 export async function GET(request: NextRequest) {
@@ -62,10 +75,8 @@ export async function GET(request: NextRequest) {
                 ? { "Cache-Control": `public, max-age=${ttl}` }
                 : { "Cache-Control": "no-store" };
 
-        // ⭐ NEW: Optimized route - fetch only product details by IDs
+        // Fetch only product details by IDs
         if (ids) {
-            console.log("[API] Optimized fetch: products by IDs");
-
             const productIds = ids.split(",").map((id) => {
                 const trimmed = id.trim();
                 if (!trimmed.includes("gid://")) {
@@ -123,7 +134,6 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // OLD route: Full bundle data (requires productId)
         if (!productId) {
             return NextResponse.json(
                 { error: "Missing productId parameter" },
@@ -131,7 +141,6 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // Step 1: Get bundles from Prisma
         const bundles = await findBundlesByProductId(productId, shop);
 
         if (!bundles?.length) {
@@ -142,41 +151,40 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // Step 2: Sort by effective priority and keep only top bundle
+        const accessToken = await getAccessTokenForShop(shop);
+        if (!accessToken) {
+            return NextResponse.json(
+                { error: "Shop authentication required" },
+                { status: 401 },
+            );
+        }
+
+        const allProductIds = new Set<string>();
+        bundles.forEach((b) => {
+            if (b.mainProductId) allProductIds.add(b.mainProductId);
+            b.bundleProducts?.forEach((bp) =>
+                allProductIds.add(bp.productId),
+            );
+        });
+
+        const allProducts = await fetchProductDetails(
+            [...allProductIds],
+            shop,
+        );
+        const productMap = buildProductMap(allProducts);
+
         const globalPriorityType =
             shopRecord?.appSettings?.bundlePriorityType ?? "index_based";
 
         let savingsMap: Map<string, number> | null = null;
         if (globalPriorityType === "discount_based") {
-            const allProductIds = new Set<string>();
-            bundles.forEach((b) =>
-                b.bundleProducts?.forEach((bp) =>
-                    allProductIds.add(bp.productId),
-                ),
-            );
-
-            const allProducts = await fetchProductDetails(
-                [...allProductIds],
-                shop,
-            );
-            const priceMap = new Map<string, number>();
-            allProducts.forEach((item) => {
-                const product = item as any;
-                if (product?.id) {
-                    const price = parseFloat(
-                        product.variants?.nodes?.[0]?.price || "0",
-                    );
-                    priceMap.set(product.id, price);
-                }
-            });
-
             savingsMap = new Map<string, number>();
             bundles.forEach((b) => {
                 const bundlePrice =
                     b.bundleProducts?.reduce((sum, bp) => {
                         return (
                             sum +
-                            (priceMap.get(bp.productId) || 0) * bp.quantity
+                            (getPrice(productMap.get(bp.productId))) * bp.quantity
                         );
                     }, 0) || 0;
                 const savings = calculateDiscountAmount(
@@ -205,115 +213,24 @@ export async function GET(request: NextRequest) {
                 new Date(a.createdAt).getTime()
             );
         });
-        const topBundles = sortedBundles.slice(0, 1);
+        const topBundle = sortedBundles[0];
 
-        // Step 3: Get access token for GraphQL calls
-        const accessToken = await getAccessTokenForShop(shop);
-        if (!accessToken) {
-            return NextResponse.json(
-                { error: "Shop authentication required" },
-                { status: 401 },
-            );
-        }
-
-        // Step 4: Transform bundles with GraphQL product data
-        const transformedBundles = await Promise.all(
-            topBundles.map(async (bundle) => {
-                // Extract all unique product IDs from bundle
-                const productIds = Array.from(
-                    new Set([
-                        bundle.mainProductId,
-                        ...(bundle.bundleProducts?.map((bp) => bp.productId) ||
-                            []),
-                    ]),
-                ).filter((id): id is string => id !== null);
-
-                // Fetch product details from Shopify
-                const shopifyProducts = await fetchProductDetails(
-                    productIds,
-                    shop,
-                );
-
-                const productMap = new Map();
-                shopifyProducts?.forEach((item) => {
-                    const product = item as any;
-                    if (product && product.id) {
-                        console.log(
-                            "Adding to map:",
-                            product.id,
-                            "->",
-                            product.title,
-                        );
-                        productMap.set(product.id, product);
-                    }
-                });
-
-                console.log("Product map size:", productMap.size);
-                console.log("Product map keys:", Array.from(productMap.keys()));
-
-                // Transform bundle products with Shopify data
-                const transformedProducts =
-                    bundle.bundleProducts?.map((bp) => {
-                        console.log(`Looking for product: ${bp.productId}`);
-                        const shopifyProduct = productMap.get(
-                            bp.productId,
-                        ) as any;
-                        console.log(
-                            "Found shopify product:",
-                            shopifyProduct?.title || "NOT FOUND",
-                        );
-
-                        const variant = shopifyProduct?.variants?.nodes?.[0];
-                        console.log("Variant data:", variant);
-
-                        const price = variant?.price
-                            ? parseFloat(variant.price)
-                            : 0;
-                        const compareAtPrice = variant?.compareAtPrice
-                            ? parseFloat(variant.compareAtPrice)
-                            : 0;
-
-                        console.log(
-                            "Parsed prices - price:",
-                            price,
-                            "compareAtPrice:",
-                            compareAtPrice,
-                        );
-
-                        return {
-                            id: bp.productId,
-                            variantId: bp.variantId || variant?.id || "",
-                            quantity: bp.quantity,
-                            role: bp.role,
-                            displayOrder: bp.displayOrder,
-                            isRequired: bp.isRequired,
-
-                            // Shopify product data
-                            title: shopifyProduct?.title || "Unknown Product",
-                            price: price,
-                            compareAtPrice: compareAtPrice,
-                            featuredImage:
-                                shopifyProduct?.featuredMedia?.image?.url ||
-                                null,
-                            handle: shopifyProduct?.handle || "",
-                            available: variant?.availableForSale ?? true,
-                        };
-                    }) || [];
-
-                console.log(
-                    "Transformed products:",
-                    transformedProducts.map((p) => ({
-                        id: p.id,
-                        title: p.title,
-                        price: p.price,
-                    })),
-                );
+        const transformedProducts =
+            topBundle.bundleProducts?.map((bp) => {
+                const shopifyProduct = productMap.get(bp.productId) as any;
+                const variant = shopifyProduct?.variants?.nodes?.[0];
+                const price = variant?.price
+                    ? parseFloat(variant.price)
+                    : 0;
+                const compareAtPrice = variant?.compareAtPrice
+                    ? parseFloat(variant.compareAtPrice)
+                    : 0;
 
                 // BOGO/BUY_X_GET_Y bundles created before role auto-assignment
                 // may have all products stored with the default "INCLUDED" role.
                 // Fall back to positional assignment so the widget renders correctly.
                 const isBxgy =
-                    bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+                    topBundle.type === "BOGO" || topBundle.type === "BUY_X_GET_Y";
                 if (isBxgy) {
                     const hasExplicitRole = transformedProducts.some(
                         (p) => p.role === "TRIGGER" || p.role === "REWARD",
@@ -326,45 +243,62 @@ export async function GET(request: NextRequest) {
                 }
 
                 return {
-                    id: bundle.id,
-                    name: bundle.name,
-                    description: bundle.description,
-                    type: bundle.type,
-                    discountType: bundle.discountType,
-                    discountValue: bundle.discountValue,
-                    minOrderValue: bundle.minOrderValue || 0,
-                    maxDiscountAmount: bundle.maxDiscountAmount || 0,
-                    discountApplication: bundle.discountApplication || "bundle",
-                    discountedProductIds: bundle.discountedProductIds || [],
-                    freeShipping: bundle.freeShipping || false,
-                    status: bundle.status,
-                    products: transformedProducts,
-                    settings: bundle.settings
-                        ? {
-                              layout: bundle.settings.layout,
-                              theme: bundle.settings.theme,
-                              showImages: bundle.settings.showImages,
-                              showComparePrices:
-                                  bundle.settings.showComparePrices,
-                              showQuantity: bundle.settings.showQuantity,
-                              showFreeShipping:
-                                  bundle.settings.showFreeShipping,
-                              showPrices: bundle.settings.showPrices,
-                              showSavings: bundle.settings.showSavings,
-                              enableHyperLink: bundle.settings.enableHyperLink,
-                          }
-                        : null,
+                    id: bp.productId,
+                    variantId: bp.variantId || variant?.id || "",
+                    quantity: bp.quantity,
+                    role: bp.role,
+                    displayOrder: bp.displayOrder,
+                    isRequired: bp.isRequired,
+                    title: shopifyProduct?.title || "Unknown Product",
+                    price,
+                    compareAtPrice,
+                    featuredImage:
+                        shopifyProduct?.featuredMedia?.image?.url || null,
+                    handle: shopifyProduct?.handle || "",
+                    available: variant?.availableForSale ?? true,
                 };
-            }),
-        );
+            }) || [];
+
+        const transformedBundle = {
+            id: topBundle.id,
+            name: topBundle.name,
+            description: topBundle.description,
+            type: topBundle.type,
+            discountType: topBundle.discountType,
+            discountValue: topBundle.discountValue,
+            minOrderValue: topBundle.minOrderValue || 0,
+            maxDiscountAmount: topBundle.maxDiscountAmount || 0,
+            discountApplication: topBundle.discountApplication || "bundle",
+            discountedProductIds: topBundle.discountedProductIds || [],
+            freeShipping: topBundle.freeShipping || false,
+            status: topBundle.status,
+            products: transformedProducts,
+            settings: topBundle.settings
+                ? {
+                      layout: topBundle.settings.layout,
+                      theme: topBundle.settings.theme,
+                      showImages: topBundle.settings.showImages,
+                      showComparePrices:
+                          topBundle.settings.showComparePrices,
+                      showQuantity: topBundle.settings.showQuantity,
+                      showFreeShipping:
+                          topBundle.settings.showFreeShipping,
+                      showPrices: topBundle.settings.showPrices,
+                      showSavings: topBundle.settings.showSavings,
+                      enableHyperLink: topBundle.settings.enableHyperLink,
+                  }
+                : null,
+        };
+
+        const activeBundles = transformedBundle.status === "ACTIVE"
+            ? [transformedBundle]
+            : [];
 
         return NextResponse.json(
             {
                 success: true,
-                bundles: transformedBundles.filter(
-                    (b) => b.status === "ACTIVE",
-                ),
-                count: transformedBundles.length,
+                bundles: activeBundles,
+                count: activeBundles.length,
             },
             { headers: cacheHeaders },
         );

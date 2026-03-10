@@ -29,7 +29,7 @@ export function CreateBundlePage({
         useBundleStore();
 
     const handleDiscard = useCallback(() => {
-        resetBundle();
+        resetBundle(bundleType);
         setBundleData({ type: bundleType });
         setStep(1);
     }, [resetBundle, setBundleData, setStep, bundleType]);

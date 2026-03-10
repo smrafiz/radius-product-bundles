@@ -210,11 +210,15 @@ export const initialConfiguration: BundleConfiguration = {
  * Get default layout for a bundle type
  */
 export function getDefaultLayout(bundleType?: string): BundleLayoutType {
-    if (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y") {
+    if (bundleType === "BOGO") {
         return "CLASSIC_CARD";
     }
 
-    return "GRID";
+    if (bundleType === "BUY_X_GET_Y"){
+        return "COMPACT_GRID";
+    }
+
+    return "LIST";
 }
 
 /**

@@ -111,7 +111,7 @@ export function BundleFormProvider({
                 } as any);
                 setStep(1);
             } else {
-                resetBundle();
+                resetBundle(bundleType);
                 setBundleData({
                     type: bundleType,
                     discountType:

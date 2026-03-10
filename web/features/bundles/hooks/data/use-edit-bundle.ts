@@ -152,8 +152,8 @@ export function useEditBundle(bundleId: string) {
             // Auto-assign TRIGGER/REWARD so the compact-grid and other BOGO
             // layouts render correctly.
             const isBxgy =
-                bundleData.type === "BOGO" ||
-                bundleData.type === "BUY_X_GET_Y";
+                bundleData?.type === "BOGO" ||
+                bundleData?.type === "BUY_X_GET_Y";
             if (isBxgy) {
                 const hasExplicitRole = selectedItems.some(
                     (i) => i.role === "TRIGGER" || i.role === "REWARD",

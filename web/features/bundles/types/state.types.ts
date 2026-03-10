@@ -223,7 +223,7 @@ export interface BundleState {
     setSaving: (saving: boolean) => void;
 
     // Reset
-    resetBundle: () => void;
+    resetBundle: (bundleType?: string) => void;
     handleActiveBundleDeletion: (bundles: any[]) => boolean;
 }
 

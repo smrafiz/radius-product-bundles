@@ -35,10 +35,10 @@ export function useBundleFormManager({
 
     useEffect(() => {
         if (!bundleData.type) {
-            setBundleData({ ...bundleData, type: bundleType });
+            setBundleData({ type: bundleType });
             setValue("type", bundleType, { shouldDirty: false });
         }
-    }, [bundleType, bundleData, setBundleData, setValue]);
+    }, [bundleType, bundleData.type, setBundleData, setValue]);
 
     useEffect(() => {
         if (!isEditMode && generatedName && !currentName) {

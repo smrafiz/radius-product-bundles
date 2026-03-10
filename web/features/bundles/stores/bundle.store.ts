@@ -5,6 +5,7 @@ import {
     BundleState,
     DiscountType,
     ExistingMedia,
+    getDefaultLayout,
     initialBundleData,
     initialConfiguration,
     initialDisplaySettings,
@@ -700,17 +701,18 @@ export const useBundleStore = create(
             }),
 
         // Reset
-        resetBundle: () => {
+        resetBundle: (bundleType?) => {
             set((state) => {
                 state.currentStep = 1;
                 state.bundleData = { ...initialBundleData };
                 state.selectedItems = [];
-                // state.mediaFiles = [];
                 state.pendingMedia = [];
                 state.existingMedia = [];
                 state.removedMediaIds = [];
-                // state.selectedProductMediaUrls = [];
-                state.displaySettings = { ...initialDisplaySettings };
+                state.displaySettings = {
+                    ...initialDisplaySettings,
+                    layout: getDefaultLayout(bundleType),
+                };
                 state.configuration = { ...initialConfiguration };
                 state.isLoading = false;
                 state.isSaving = false;
