@@ -204,6 +204,8 @@ export function WidgetMinimalist({
         );
     }
 
+    console.log('HELLOOOOO', activeDevice);
+
     const triggers = products.filter((p) => p.role === "TRIGGER");
     const rewards = products.filter((p) => p.role === "REWARD");
     const sortedProducts = [...triggers, ...rewards];
@@ -259,6 +261,7 @@ export function WidgetMinimalist({
                             height: 110,
                             flexShrink: 0,
                             borderRadius: cardRadius,
+                            border: `1px solid ${styles.borderColor}`,
                             overflow: "hidden",
                             background: "#f9fafb",
                         }}

@@ -147,6 +147,24 @@ export function useEditBundle(bundleId: string) {
                 },
             );
 
+            // For BOGO/BUY_X_GET_Y bundles loaded before role auto-assignment
+            // existed, products may have "INCLUDED" as the default DB role.
+            // Auto-assign TRIGGER/REWARD so the compact-grid and other BOGO
+            // layouts render correctly.
+            const isBxgy =
+                bundleData.type === "BOGO" ||
+                bundleData.type === "BUY_X_GET_Y";
+            if (isBxgy) {
+                const hasExplicitRole = selectedItems.some(
+                    (i) => i.role === "TRIGGER" || i.role === "REWARD",
+                );
+                if (!hasExplicitRole) {
+                    selectedItems.forEach((item, index) => {
+                        item.role = index === 0 ? "TRIGGER" : "REWARD";
+                    });
+                }
+            }
+
             setSelectedItems(selectedItems);
         }
     }, [

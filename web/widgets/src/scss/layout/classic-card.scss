@@ -1,7 +1,13 @@
 // ==========================================================================
 // Classic Card Layout — BOGO/BXGY
 // ==========================================================================
-
+.radius-bundle {
+    &--classic_card {
+        .radius-bundle__add-to-cart {
+            margin: auto;
+        }
+    }
+}
 .rb-classic {
     // ── Header ──────────────────────────────────────────────────────────
     &__header {
@@ -16,24 +22,27 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: var(--rb-primary-color, #f97316);
-        color: #fff;
-        font-size: 13px;
+        background: var(--rb-badge-bg);
+        color: var(--rb-badge-text);
+        border: var(--rb-badge-border);
+        font-size: calc(var(--rb-body-font-size) * 0.8);
         font-weight: 600;
         padding: 6px 16px;
+        margin-bottom: 6px;
         border-radius: 20px;
-        margin-bottom: 4px;
+        letter-spacing: 0.02em;
     }
 
     &__header-title {
         font-size: var(--rb-heading-font-size, 18px);
-        font-weight: 700;
+        font-weight: 600;
         color: var(--rb-text-color, inherit);
         text-align: center;
+        line-height: 1.1;
     }
 
     &__header-subtitle {
-        font-size: 14px;
+        font-size: calc(var(--rb-body-font-size) * 0.9);
         color: #6b7280;
         text-align: center;
     }
@@ -41,6 +50,7 @@
     &__grid {
         display: flex;
         gap: var(--rb-gap-spacing, 12px);
+        margin-top: calc(var(--rb-gap-spacing, 12px) * 2);
     }
 
     // ── Card ──────────────────────────────────────────────────────────
@@ -51,7 +61,7 @@
         border-style: var(--rb-bogo-card-border-style, solid);
         border-color: var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 12px);
-        padding: var(--rb-box-spacing, 16px);
+        padding: calc(var(--rb-box-spacing, 16px) - 4px);
         background: var(--rb-product-bg-color, #fff);
         box-shadow: var(--rb-card-shadow, none);
 
@@ -69,7 +79,7 @@
             align-items: center;
 
             .rb-classic__image {
-                width: 40%;
+                width: 35%;
                 flex-shrink: 0;
                 margin-top: 0;
                 margin-bottom: 0;
@@ -97,7 +107,7 @@
             align-items: center;
 
             .rb-classic__image {
-                width: 40%;
+                width: 35%;
                 flex-shrink: 0;
                 margin-top: 0;
                 margin-bottom: 0;
@@ -122,8 +132,8 @@
         top: -10px;
         left: 12px;
         color: #fff;
-        font-size: 11px;
-        font-weight: 700;
+        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-weight: 500;
         padding: 2px 10px;
         border-radius: var(--rb-border-radius, 4px);
         line-height: 16px;
@@ -218,15 +228,16 @@
     }
 
     &__price-compare {
-        font-size: 13px;
-        color: #9ca3af;
+        font-size: calc(var(--rb-body-font-size) - 2px);
+        color: var(--rb-text-color);
         text-decoration: line-through;
+        opacity: 0.5;
         font-weight: 500;
     }
 
     &__price-current {
-        font-size: 16px;
-        font-weight: 700;
+        font-size: var(--rb-body-font-size);
+        font-weight: 500;
         color: var(--rb-text-color, inherit);
 
         &--reward {
@@ -253,13 +264,13 @@
 
     &__pricing-label {
         display: block;
-        font-size: 12px;
+        font-size: calc(var(--rb-body-font-size) - 4px);
         font-weight: 500;
         margin-bottom: 2px;
     }
 
     &__pricing-pay {
-        color: #166534;
+        color: #15803d;
     }
 
     &__pricing-save {
@@ -268,9 +279,9 @@
 
     &__pricing-value {
         display: block;
-        font-size: 20px;
-        font-weight: 700;
-        color: #111827;
+        font-size: calc(var(--rb-body-font-size) + 4px);
+        font-weight: 600;
+        color: var(--rb-text-color);
 
         &--savings {
             color: var(--rb-savings-color, #16a34a);
@@ -278,7 +289,12 @@
     }
 }
 
-// Responsive: stack cards vertically on narrow containers
+// Responsive: stack columns vertically on narrow containers
+@media (max-width: 767px) {
+    .rb-classic__grid {
+        flex-direction: column;
+    }
+}
 @container (max-width: 400px) {
     .rb-classic__grid {
         flex-direction: column;

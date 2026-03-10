@@ -105,7 +105,7 @@
 
     &__badge {
         display: inline-block;
-        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-size: calc(var(--rb-body-font-size) * 0.8);
         font-weight: 500;
         color: var(--rb-savings-color, #16a34a);
         background: color-mix(

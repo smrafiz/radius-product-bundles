@@ -42,7 +42,7 @@ function ClassicProductItem({
     const imageBlock = product.image && (
         <div
             style={{
-                width: isHorizontal ? "40%" : "100%",
+                width: isHorizontal ? "35%" : "100%",
                 flexShrink: isHorizontal ? 0 : undefined,
                 aspectRatio: IMAGE_ASPECT_RATIOS[styles.imageSize] ?? "1/1",
                 borderRadius: cardRadius,
@@ -67,7 +67,7 @@ function ClassicProductItem({
             <div
                 style={{
                     fontSize: bodyFontSize,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     color: styles.textColor,
                     marginBottom: 4,
                     lineHeight: "1.3",
@@ -91,10 +91,9 @@ function ClassicProductItem({
                 {hasDiscount && (
                     <span
                         style={{
-                            fontSize: 13,
+                            fontSize: parseInt(bodyFontSize) - 2,
                             color: "#9ca3af",
                             textDecoration: "line-through",
-                            fontWeight: 500,
                         }}
                     >
                         {product.compareAtPrice}
@@ -102,8 +101,8 @@ function ClassicProductItem({
                 )}
                 <span
                     style={{
-                        fontSize: 16,
-                        fontWeight: 700,
+                        fontSize: bodyFontSize,
+                        fontWeight: 500,
                         color: hasDiscount
                             ? styles.bogoFreeTagColor || "#16a34a"
                             : styles.textColor,
@@ -149,6 +148,7 @@ export function WidgetClassicCard({
     subtitle,
     badgeText,
     labels,
+    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -163,6 +163,8 @@ export function WidgetClassicCard({
     const buttonBg = getButtonBgColor(styles);
     const isFullWidth = styles.buttonWidth !== "auto";
     const isOutline = styles.badgeStyle === "outline";
+    const accentColor = styles.primaryColor || "#303030";
+    const bodyFontSize = getFontSize(styles.bodySize);
     const borderStyle = styles.bogoCardBorderStyle || "solid";
     const showBorder = styles.customizeCardStyle
         ? styles.productCardBorder
@@ -218,9 +220,14 @@ export function WidgetClassicCard({
                             display: "inline-flex",
                             alignItems: "center",
                             gap: 6,
-                            backgroundColor: styles.primaryColor || "#f97316",
-                            color: "#fff",
-                            fontSize: 13,
+                            backgroundColor: isOutline
+                                ? "transparent"
+                                : accentColor,
+                            color: isOutline ? styles.primaryColor : "#ffffff",
+                            border: isOutline
+                                ? `2px solid ${accentColor}`
+                                : "none",
+                            fontSize: parseInt(bodyFontSize) - 4,
                             fontWeight: 600,
                             padding: "6px 16px",
                             borderRadius: 20,
@@ -234,7 +241,7 @@ export function WidgetClassicCard({
                     <div
                         style={{
                             fontSize: headingFontSize,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             color: styles.textColor,
                             textAlign: "center",
                         }}
@@ -245,8 +252,9 @@ export function WidgetClassicCard({
                 {subtitle && (
                     <div
                         style={{
-                            fontSize: 14,
-                            color: "#6b7280",
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            color: styles.textColor || "#6b7280",
+                            opacity: 0.7,
                             textAlign: "center",
                         }}
                     >
@@ -255,7 +263,12 @@ export function WidgetClassicCard({
                 )}
             </div>
 
-            <div style={{ display: "flex", gap: spacingValues.gap + 2 }}>
+            <div style={{
+                    display: "flex",
+                    gap: spacingValues.gap + 2,
+                    marginTop:10,
+                    flexDirection: activeDevice === "mobile" ? "column" : "row",
+                }}>
                 {[
                     {
                         items: triggerProducts,
@@ -297,8 +310,8 @@ export function WidgetClassicCard({
                                 border: isOutline
                                     ? `2px solid ${color}`
                                     : "none",
-                                fontSize: 11,
-                                fontWeight: 700,
+                                fontSize: parseInt(bodyFontSize) - 4,
+                                fontWeight: 600,
                                 padding: "2px 10px",
                                 borderRadius: badgeRadius,
                                 lineHeight: "16px",
@@ -343,9 +356,9 @@ export function WidgetClassicCard({
                     <div>
                         <div
                             style={{
-                                fontSize: 12,
+                                fontSize: parseInt(bodyFontSize) - 4,
                                 fontWeight: 500,
-                                color: "#166534",
+                                color: "#15803d",
                                 marginBottom: 2,
                             }}
                         >
@@ -354,9 +367,9 @@ export function WidgetClassicCard({
                         </div>
                         <div
                             style={{
-                                fontSize: 20,
-                                fontWeight: 700,
-                                color: "#111827",
+                                fontSize: parseInt(bodyFontSize) + 4,
+                                fontWeight: 600,
+                                color: styles.textColor,
                             }}
                         >
                             {pricing.finalPrice}
@@ -365,7 +378,7 @@ export function WidgetClassicCard({
                     <div style={{ textAlign: "right" }}>
                         <div
                             style={{
-                                fontSize: 12,
+                                fontSize: parseInt(bodyFontSize) - 4,
                                 fontWeight: 500,
                                 color: "#15803d",
                                 marginBottom: 2,
@@ -376,8 +389,8 @@ export function WidgetClassicCard({
                         </div>
                         <div
                             style={{
-                                fontSize: 20,
-                                fontWeight: 700,
+                                fontSize: parseInt(bodyFontSize) + 4,
+                                fontWeight: 600,
                                 color: styles.savingsColor || "#16a34a",
                             }}
                         >

@@ -28,7 +28,7 @@
         background: var(--rb-badge-bg);
         border: var(--rb-badge-border);
         border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
-        font-size: calc(var(--rb-body-font-size) * 0.9);
+        font-size: calc(var(--rb-body-font-size) * 0.8);
         color: var(--rb-badge-text);
         font-weight: 600;
         letter-spacing: 0.5px;
@@ -50,6 +50,7 @@
         width: 110px;
         height: 110px;
         flex-shrink: 0;
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
         background: #f9fafb;
@@ -157,9 +158,6 @@
                     var(--rb-bogo-free-tag-color, #16a34a) 12%,
                     transparent
                 );
-
-            //background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 6%, white);
-            //color: var(--rb-bogo-free-tag-color, var(--rb-savings-color, #16a34a));
         }
     }
 
@@ -260,6 +258,10 @@
 @media (max-width: 767px) {
     .rb-minimalist__items {
         grid-template-columns: repeat(1, 1fr);
+    }
+    .rb-minimalist__hero-image {
+        width: 85px;
+        height: 85px;
     }
 }
 @container (max-width: 360px) {

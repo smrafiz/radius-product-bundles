@@ -34,7 +34,7 @@ import {
     useCustomizerModal,
     useSettingsStore,
 } from "@/features/settings";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import {
     DEFAULT_CUSTOMIZER_STYLES,
@@ -251,6 +251,7 @@ function RenderLayout({
     subtitle,
     badgeText,
     labels,
+    activeDevice,
 }: {
     layout: DisplaySettings["layout"];
     products: PreviewProduct[];
@@ -262,6 +263,7 @@ function RenderLayout({
     subtitle?: string;
     badgeText?: string;
     labels?: WidgetLabels;
+    activeDevice?: "desktop" | "tablet" | "mobile";
 }) {
     const layoutProps = { products, styles, displayOptions };
 
@@ -294,6 +296,7 @@ function RenderLayout({
                     title={title}
                     badgeText={badgeText}
                     labels={labels}
+                    activeDevice={activeDevice}
                 />
             );
         case "MINIMALIST":
@@ -305,6 +308,7 @@ function RenderLayout({
                     title={title}
                     subtitle={subtitle}
                     badgeText={badgeText}
+                    activeDevice={activeDevice}
                 />
             );
         case "CHECKLIST":
@@ -328,6 +332,7 @@ function RenderLayout({
                     subtitle={subtitle}
                     badgeText={badgeText}
                     labels={labels}
+                    activeDevice={activeDevice}
                 />
             );
         case "CLASSIC_CARD":
@@ -340,6 +345,7 @@ function RenderLayout({
                     subtitle={subtitle}
                     badgeText={badgeText}
                     labels={labels}
+                    activeDevice={activeDevice}
                 />
             );
         default:
@@ -351,6 +357,10 @@ export function BundlePreview() {
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
+    const [activeDevice, setActiveDevice] = useState<
+        "desktop" | "tablet" | "mobile"
+    >("desktop");
+    const isBogoLayout = BOGO_LAYOUT_VALUES.includes(displaySettings.layout);
     const customizerSrc = bundleData.type
         ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}`
         : ROUTES.CUSTOMIZER;
@@ -389,6 +399,76 @@ export function BundlePreview() {
                                 id="rtpb-preview-window"
                                 src={customizerSrc}
                             />
+                            {isBogoLayout && (
+                                <s-button-group gap="none">
+                                    <s-button
+                                        onClick={() =>
+                                            setActiveDevice("desktop")
+                                        }
+                                    >
+                                        <span
+                                            className={
+                                                activeDevice === "desktop"
+                                                    ? "opacity-100"
+                                                    : "opacity-50"
+                                            }
+                                        >
+                                            <s-icon
+                                                type="desktop"
+                                                tone={
+                                                    activeDevice === "desktop"
+                                                        ? "info"
+                                                        : "auto"
+                                                }
+                                            />
+                                        </span>
+                                    </s-button>
+                                    <s-button
+                                        onClick={() =>
+                                            setActiveDevice("tablet")
+                                        }
+                                    >
+                                        <span
+                                            className={
+                                                activeDevice === "tablet"
+                                                    ? "opacity-100"
+                                                    : "opacity-50"
+                                            }
+                                        >
+                                            <s-icon
+                                                type="tablet"
+                                                tone={
+                                                    activeDevice === "tablet"
+                                                        ? "info"
+                                                        : "auto"
+                                                }
+                                            />
+                                        </span>
+                                    </s-button>
+                                    <s-button
+                                        onClick={() =>
+                                            setActiveDevice("mobile")
+                                        }
+                                    >
+                                        <span
+                                            className={
+                                                activeDevice === "mobile"
+                                                    ? "opacity-100"
+                                                    : "opacity-50"
+                                            }
+                                        >
+                                            <s-icon
+                                                type="mobile"
+                                                tone={
+                                                    activeDevice === "mobile"
+                                                        ? "info"
+                                                        : "auto"
+                                                }
+                                            />
+                                        </span>
+                                    </s-button>
+                                </s-button-group>
+                            )}
                             <s-button
                                 variant="tertiary"
                                 command="--show"
@@ -411,7 +491,31 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
-                    <div className="radius-bundle-widget">
+                    <div
+                        className="radius-bundle-widget"
+                        style={
+                            isBogoLayout
+                                ? {
+                                      maxWidth:
+                                          activeDevice === "mobile"
+                                              ? "400px"
+                                              : activeDevice === "tablet"
+                                                ? "768px"
+                                                : "100%",
+                                      margin: "0 auto",
+                                      transition: "max-width 0.3s ease-in-out",
+                                      borderLeft:
+                                          activeDevice !== "desktop"
+                                              ? "1px solid #e1e3e5"
+                                              : "none",
+                                      borderRight:
+                                          activeDevice !== "desktop"
+                                              ? "1px solid #e1e3e5"
+                                              : "none",
+                                  }
+                                : undefined
+                        }
+                    >
                         <div className="radius-bundle">
                             <div
                                 className="radius-bundle__inner"
@@ -465,6 +569,7 @@ export function BundlePreview() {
                                         subtitle={displaySettings.subtitle}
                                         badgeText={badgeText}
                                         labels={labels}
+                                        activeDevice={activeDevice}
                                     />
                                 </BundleWidget>
                             </div>

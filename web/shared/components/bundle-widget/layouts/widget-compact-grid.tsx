@@ -261,11 +261,10 @@ function TileSlider({
                             key={pageIdx}
                             style={{
                                 display: "grid",
-                                //gridTemplateColumns: `repeat(${cols}, 1fr)`,
                                 gridTemplateColumns:
                                     activeDevice === "mobile"
                                         ? "repeat(1, 1fr)"
-                                        : "repeat(2, 1fr)",
+                                        : `repeat(${cols}, 1fr)`,
                                 gap: 8,
                                 minWidth: "100%",
                                 flexShrink: 0,

@@ -309,6 +309,22 @@ export async function GET(request: NextRequest) {
                     })),
                 );
 
+                // BOGO/BUY_X_GET_Y bundles created before role auto-assignment
+                // may have all products stored with the default "INCLUDED" role.
+                // Fall back to positional assignment so the widget renders correctly.
+                const isBxgy =
+                    bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+                if (isBxgy) {
+                    const hasExplicitRole = transformedProducts.some(
+                        (p) => p.role === "TRIGGER" || p.role === "REWARD",
+                    );
+                    if (!hasExplicitRole) {
+                        transformedProducts.forEach((p, index) => {
+                            p.role = index === 0 ? "TRIGGER" : "REWARD";
+                        });
+                    }
+                }
+
                 return {
                     id: bundle.id,
                     name: bundle.name,
