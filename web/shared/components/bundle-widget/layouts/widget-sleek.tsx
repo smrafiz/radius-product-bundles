@@ -110,8 +110,9 @@ function SleekProductCard({
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 4,
-                            color: "#9ca3af",
+                            color: styles.textColor,
                             fontWeight: 500,
+                            opacity: 0.7,
                         }}
                     >
                         {labels?.bogoYouPayLabel ||

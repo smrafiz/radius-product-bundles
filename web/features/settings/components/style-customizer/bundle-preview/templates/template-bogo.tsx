@@ -46,7 +46,7 @@ const BOGO_PRICING: WidgetPricing = {
     hasDiscount: true,
 };
 
-export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
+export function TemplateBogo({ activeLayout, activeDevice }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
     const labels = {
@@ -65,6 +65,7 @@ export function TemplateBogo({ activeLayout }: BundleTemplateProps) {
         subtitle: "Limited time promotional offer",
         badgeText: "BOGO OFFER",
         labels,
+        activeDevice,
     };
 
     switch (activeLayout) {

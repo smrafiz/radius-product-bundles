@@ -99,8 +99,9 @@
 
     &__label {
         font-size: calc(var(--rb-body-font-size) - 4px);
-        color: #9ca3af;
+        color: var(--rb-text-color, #9ca3af);
         font-weight: 500;
+        opacity: 0.7;
     }
 
     &__badge {

@@ -55,7 +55,7 @@ function MinimalistItem({
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
-                padding: 10,
+                padding: "15px 10px",
                 background: `color-mix(in srgb, ${roleColor} 6%, white)`,
                 border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
                 borderRadius: cardRadius,
@@ -203,8 +203,6 @@ export function WidgetMinimalist({
             </div>
         );
     }
-
-    console.log('HELLOOOOO', activeDevice);
 
     const triggers = products.filter((p) => p.role === "TRIGGER");
     const rewards = products.filter((p) => p.role === "REWARD");

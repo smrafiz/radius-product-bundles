@@ -30,7 +30,7 @@
         border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
         font-size: calc(var(--rb-body-font-size) * 0.8);
         color: var(--rb-badge-text);
-        font-weight: 600;
+        font-weight: 500;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         padding: 6px 16px 6px 20px;
@@ -83,15 +83,16 @@
         font-size: var(--rb-heading-font-size, 18px);
         font-weight: 600;
         color: var(--rb-text-color, #1a1a2e);
-        margin: 0 0 4px;
+        margin-bottom: 4px;
         line-height: 1.3;
     }
 
     &__subtitle {
-        font-size: var(--rb-body-font-size, 14px);
-        color: #6b7280;
-        margin: 0 0 8px;
-        line-height: 1.4;
+        font-size: calc(var(--rb-body-font-size) * 0.8);
+        color: var(--rb-text-color, #6b7280);
+        margin-bottom: 8px;
+        line-height: 1.3;
+        opacity: 0.8;
     }
 
     // ── Pricing ──────────────────────────────────────────────────────
@@ -128,7 +129,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 10px;
+        padding: 15px 10px;
         border-radius: var(--rb-border-radius, 8px);
         position: relative;
 
