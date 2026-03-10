@@ -9,6 +9,7 @@ import {
     getFontSize,
     getCardRadius,
     getShadow,
+    getButtonPadding,
 } from "@/features/settings";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
 
@@ -84,7 +85,15 @@ function MinimalistItem({
                     />
                 </div>
             )}
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+            <div
+                style={{
+                    flex: 1,
+                    minWidth: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                }}
+            >
                 <span
                     style={{
                         fontSize: parseInt(bodyFontSize) - 5,
@@ -116,12 +125,31 @@ function MinimalistItem({
                 >
                     {product.title}
                 </span>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: parseInt(bodyFontSize), fontWeight: 500, color: isReward ? savingsColor : styles.textColor }}>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: 6,
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: parseInt(bodyFontSize),
+                            fontWeight: 500,
+                            color: isReward ? savingsColor : styles.textColor,
+                        }}
+                    >
                         {product.price}
                     </span>
                     {product.compareAtPrice && (
-                        <span style={{ fontSize: parseInt(bodyFontSize) - 3, color: "#9ca3af", textDecoration: "line-through" }}>
+                        <span
+                            style={{
+                                fontSize: parseInt(bodyFontSize) - 3,
+                                color: "#9ca3af",
+                                textDecoration: "line-through",
+                            }}
+                        >
                             {product.compareAtPrice}
                         </span>
                     )}
@@ -156,6 +184,8 @@ export function WidgetMinimalist({
     const savingsColor = styles.savingsColor || "#16a34a";
     const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
     const isFullWidth = styles.buttonWidth === "full";
+    const accentColor = styles.primaryColor || "#303030";
+    const isOutline = styles.badgeStyle === "outline";
 
     if (!products.length) {
         return (
@@ -195,10 +225,13 @@ export function WidgetMinimalist({
                         position: "absolute",
                         top: 0,
                         right: 0,
-                        background: primaryColor,
-                        color: "#fff",
-                        fontSize: 11,
-                        fontWeight: 700,
+                        backgroundColor: isOutline
+                            ? "transparent"
+                            : accentColor,
+                        color: isOutline ? styles.primaryColor : "#ffffff",
+                        border: isOutline ? `2px solid ${accentColor}` : "none",
+                        fontSize: parseInt(bodyFontSize) - 5,
+                        fontWeight: 600,
                         letterSpacing: 0.5,
                         textTransform: "uppercase",
                         padding: "6px 16px 6px 20px",
@@ -306,7 +339,10 @@ export function WidgetMinimalist({
                 <div
                     style={{
                         display: "grid",
-                        gridTemplateColumns: activeDevice === "mobile" ? "repeat(1, 1fr)" : "repeat(2, 1fr)",
+                        gridTemplateColumns:
+                            activeDevice === "mobile"
+                                ? "repeat(1, 1fr)"
+                                : "repeat(2, 1fr)",
                         gap: 10,
                         marginBottom: 16,
                     }}
@@ -341,7 +377,7 @@ export function WidgetMinimalist({
                         justifyContent: "center",
                         gap: 8,
                         width: isFullWidth ? "100%" : "auto",
-                        padding: "14px 24px",
+                        padding: getButtonPadding(styles.buttonSize),
                         border: isButtonOutline
                             ? `2px solid ${buttonBg}`
                             : "none",

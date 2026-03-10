@@ -42,7 +42,10 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                     isCartBanner={isCartBanner}
                 >
                     {isCartBanner ? (
-                        <Template activeLayout={activeLayout} activeDevice={activeDevice} />
+                        <Template
+                            activeLayout={activeLayout}
+                            activeDevice={activeDevice}
+                        />
                     ) : (
                         <BundleWidget
                             styles={styles}
@@ -57,7 +60,10 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                                 bundleType === "BUY_X_GET_Y"
                             }
                         >
-                            <Template activeLayout={activeLayout} activeDevice={activeDevice} />
+                            <Template
+                                activeLayout={activeLayout}
+                                activeDevice={activeDevice}
+                            />
                         </BundleWidget>
                     )}
                 </PreviewContainer>

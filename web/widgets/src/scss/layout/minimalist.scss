@@ -20,21 +20,22 @@
         overflow: hidden;
     }
 
-	// ── Badge ────────────────────────────────────────────────────────
-	&__badge {
-		position: absolute;
-		top: 0;
-		right: 0;
-		background: var(--rb-primary-color, #e0598b);
-		color: #fff;
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.5px;
-		text-transform: uppercase;
-		padding: 6px 16px 6px 20px;
-		border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
-		line-height: 1.2;
-	}
+    // ── Badge ────────────────────────────────────────────────────────
+    &__badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--rb-badge-bg);
+        border: var(--rb-badge-border);
+        border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
+        font-size: calc(var(--rb-body-font-size) * 0.9);
+        color: var(--rb-badge-text);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 6px 16px 6px 20px;
+        line-height: 1.2;
+    }
 
     // ── Hero section ─────────────────────────────────────────────────
     &__hero {
@@ -45,13 +46,13 @@
         padding-top: 8px;
     }
 
-	&__hero-image {
-		width: 110px;
-		height: 110px;
-		flex-shrink: 0;
-		border-radius: var(--rb-border-radius, 8px);
-		overflow: hidden;
-		background: #f9fafb;
+    &__hero-image {
+        width: 110px;
+        height: 110px;
+        flex-shrink: 0;
+        border-radius: var(--rb-border-radius, 8px);
+        overflow: hidden;
+        background: #f9fafb;
 
         img {
             width: 100%;
@@ -77,13 +78,13 @@
         padding-top: 4px;
     }
 
-	&__title {
-		font-size: var(--rb-heading-font-size, 18px);
-		font-weight: 600;
-		color: var(--rb-text-color, #1a1a2e);
-		margin: 0 0 4px;
-		line-height: 1.3;
-	}
+    &__title {
+        font-size: var(--rb-heading-font-size, 18px);
+        font-weight: 600;
+        color: var(--rb-text-color, #1a1a2e);
+        margin: 0 0 4px;
+        line-height: 1.3;
+    }
 
     &__subtitle {
         font-size: var(--rb-body-font-size, 14px);
@@ -99,19 +100,19 @@
         gap: 8px;
     }
 
-	&__price {
-		font-size: var(--rb-heading-font-size, 16);
-		font-weight: 600;
-		color: var(--rb-primary-color, #e0598b);
-	}
+    &__price {
+        font-size: var(--rb-heading-font-size, 16);
+        font-weight: 600;
+        color: var(--rb-primary-color, #e0598b);
+    }
 
-	&__price-compare {
-		font-size: calc(var(--rb-body-font-size) - 2px);
-		color: var(--rb-text-color);
-		text-decoration: line-through;
-		opacity: 0.5;
-		font-weight: 500;
-	}
+    &__price-compare {
+        font-size: calc(var(--rb-body-font-size) - 2px);
+        color: var(--rb-text-color);
+        text-decoration: line-through;
+        opacity: 0.5;
+        font-weight: 500;
+    }
 
     // ── Product items grid ─────────────────────────────────────────────
     &__items {
@@ -185,18 +186,18 @@
         gap: 3px;
     }
 
-	&__item-role {
-		font-size: calc(var(--rb-body-font-size) - 5px);
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: 0.6px;
-		padding: 2px 8px;
-		line-height: 14px;
-		align-self: center;
-		position: absolute;
-		top: 0;
-		right: 0;
-		border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
+    &__item-role {
+        font-size: calc(var(--rb-body-font-size) - 5px);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        padding: 2px 8px;
+        line-height: 14px;
+        align-self: center;
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-radius: 0 var(--rb-border-radius, 16px) 0 16px;
 
         &--trigger {
             color: var(--rb-primary-color, #e0598b);
@@ -220,14 +221,14 @@
         }
     }
 
-	&__item-title {
-		font-size: var(--rb-body-font-size, 14px);
-		font-weight: 500;
-		color: var(--rb-text-color, #1a1a2e);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
+    &__item-title {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 500;
+        color: var(--rb-text-color, #1a1a2e);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
     &__item-price {
         display: flex;
@@ -236,10 +237,10 @@
         flex-wrap: wrap;
     }
 
-	&__item-price-current {
-		font-size: var(--rb-body-font-size, 14px);
-		font-weight: 500;
-		color: var(--rb-text-color, #1a1a2e);
+    &__item-price-current {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 500;
+        color: var(--rb-text-color, #1a1a2e);
 
         &--reward {
             color: var(
@@ -249,18 +250,17 @@
         }
     }
 
-	&__item-price-compare {
-		font-size: calc(var(--rb-body-font-size) - 3px);
-		color: #9ca3af;
-		text-decoration: line-through;
-	}
-
+    &__item-price-compare {
+        font-size: calc(var(--rb-body-font-size) - 3px);
+        color: #9ca3af;
+        text-decoration: line-through;
+    }
 }
 
 @media (max-width: 767px) {
-	.rb-minimalist__items {
-		grid-template-columns: repeat(1, 1fr);
-	}
+    .rb-minimalist__items {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 @container (max-width: 360px) {
     .rb-minimalist {

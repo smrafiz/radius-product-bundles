@@ -55,7 +55,10 @@ const BXGY_PRICING: WidgetPricing = {
     hasDiscount: true,
 };
 
-export function TemplateBuyGet({ activeLayout, activeDevice }: BundleTemplateProps) {
+export function TemplateBuyGet({
+    activeLayout,
+    activeDevice,
+}: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
     const labels = {

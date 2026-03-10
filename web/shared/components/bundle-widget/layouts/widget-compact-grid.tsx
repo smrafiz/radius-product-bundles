@@ -262,7 +262,10 @@ function TileSlider({
                             style={{
                                 display: "grid",
                                 //gridTemplateColumns: `repeat(${cols}, 1fr)`,
-                                gridTemplateColumns: activeDevice === "mobile" ? "repeat(1, 1fr)" : "repeat(2, 1fr)",
+                                gridTemplateColumns:
+                                    activeDevice === "mobile"
+                                        ? "repeat(1, 1fr)"
+                                        : "repeat(2, 1fr)",
                                 gap: 8,
                                 minWidth: "100%",
                                 flexShrink: 0,
@@ -502,11 +505,30 @@ export function WidgetCompactGrid({
             >
                 {pricing && (
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span style={{ fontSize: parseInt(bodyFontSize) - 3, color: "#6b7280", fontWeight: 500 }}>
-                            {labels?.bogoTotalLabel || DEFAULT_LABELS.bogoTotalLabel}
+                        <span
+                            style={{
+                                fontSize: parseInt(bodyFontSize) - 3,
+                                color: "#6b7280",
+                                fontWeight: 500,
+                            }}
+                        >
+                            {labels?.bogoTotalLabel ||
+                                DEFAULT_LABELS.bogoTotalLabel}
                         </span>
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                            <span style={{ fontSize: headingFontSize, fontWeight: 600, color: styles.textColor }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "baseline",
+                                gap: 6,
+                            }}
+                        >
+                            <span
+                                style={{
+                                    fontSize: headingFontSize,
+                                    fontWeight: 600,
+                                    color: styles.textColor,
+                                }}
+                            >
                                 {pricing.finalPrice}
                             </span>
                             {pricing.hasDiscount && (

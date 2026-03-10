@@ -107,8 +107,15 @@ function SleekProductCard({
                     {product.title}
                 </div>
                 {isTrigger ? (
-                    <span style={{ fontSize: parseInt(bodyFontSize) - 4, color: "#9ca3af", fontWeight: 500 }}>
-                        {labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel}
+                    <span
+                        style={{
+                            fontSize: parseInt(bodyFontSize) - 4,
+                            color: "#9ca3af",
+                            fontWeight: 500,
+                        }}
+                    >
+                        {labels?.bogoYouPayLabel ||
+                            DEFAULT_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
                     hasDiscount && (

@@ -381,7 +381,7 @@ export function WidgetSplitDeal({
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
                                 marginBottom: 2,
-                                color:"#15803d",
+                                color: "#15803d",
                             }}
                         >
                             {labels?.bogoYouPayLabel ||
@@ -407,7 +407,7 @@ export function WidgetSplitDeal({
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
                                 marginBottom: 2,
-                                color:"#15803d",
+                                color: "#15803d",
                             }}
                         >
                             {labels?.bogoYouSaveLabel ||

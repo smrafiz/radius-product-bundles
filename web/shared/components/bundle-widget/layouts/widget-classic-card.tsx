@@ -201,7 +201,7 @@ export function WidgetClassicCard({
             style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: spacingValues.gap * 2,
+                gap: spacingValues.gap,
             }}
         >
             <div

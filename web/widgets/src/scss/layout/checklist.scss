@@ -94,7 +94,9 @@
         background: #fff;
         cursor: pointer;
         user-select: none;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
 
         &--checked {
             border-color: var(--rb-savings-color, #16a34a);
@@ -403,7 +405,11 @@
         border-radius: 12px;
         font-size: calc(var(--rb-body-font-size) - 4px);
         font-weight: 600;
-        background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 10%, transparent);
+        background: color-mix(
+            in srgb,
+            var(--rb-savings-color, #16a34a) 10%,
+            transparent
+        );
         color: var(--rb-savings-color, #16a34a);
     }
 
@@ -429,7 +435,10 @@
         }
 
         &--unlocked {
-            background: var(--rb-button-bg-color, var(--rb-primary-color, #f97316));
+            background: var(
+                --rb-button-bg-color,
+                var(--rb-primary-color, #f97316)
+            );
             color: #fff;
             cursor: pointer;
 
