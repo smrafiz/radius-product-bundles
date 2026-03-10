@@ -30,7 +30,15 @@ export async function POST(request: NextRequest) {
         }
 
         // Parse request body
-        const body: AnalyticsEventPayload = await request.json();
+        let body: AnalyticsEventPayload;
+        try {
+            body = await request.json();
+        } catch {
+            return NextResponse.json(
+                { error: "Invalid or empty request body" },
+                { status: 400 },
+            );
+        }
         const { type, bundleId, productId, customerId, ...data } = body;
 
         // Validate the event type

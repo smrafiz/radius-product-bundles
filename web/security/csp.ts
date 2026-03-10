@@ -9,7 +9,7 @@ export function generateCSP(shop: string, isDev = false): string {
 
     const csp = [
         "default-src 'self';",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.shopify.com https://*.shopify.com;",
+        "script-src 'self' 'unsafe-inline' https://cdn.shopify.com https://*.shopify.com;",
         "style-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
         "img-src 'self' data: https: blob:;",
         "font-src 'self' https://fonts.gstatic.com https://cdn.shopify.com;",

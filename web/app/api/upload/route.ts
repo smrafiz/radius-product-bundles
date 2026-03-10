@@ -4,8 +4,15 @@ import { NextRequest, NextResponse } from "next/server";
  * Proxy file uploads to Shopify's staged URLs
  */
 export async function POST(request: NextRequest) {
+    const origin = request.headers.get("origin") ?? "";
+    const allowedOrigins = [
+        "https://admin.shopify.com",
+        "https://extensions.shopifycdn.com",
+    ];
     const corsHeaders = {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": allowedOrigins.includes(origin)
+            ? origin
+            : "https://admin.shopify.com",
     };
 
     try {
