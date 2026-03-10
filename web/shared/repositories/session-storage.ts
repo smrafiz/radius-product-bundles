@@ -9,75 +9,77 @@ const apiKey = process.env.SHOPIFY_API_KEY || "";
  * Stores the session in the database
  */
 export async function storeSession(session: ShopifySession) {
-    await prisma.session.upsert({
-        where: { id: session.id },
-        update: {
-            shop: session.shop,
-            accessToken: session.accessToken
-                ? encryptToken(session.accessToken)
-                : null,
-            scope: session.scope,
-            expires: session.expires,
-            isOnline: session.isOnline,
-            state: session.state,
-            apiKey,
-        },
-        create: {
-            id: session.id,
-            shop: session.shop,
-            accessToken: session.accessToken
-                ? encryptToken(session.accessToken)
-                : null,
-            scope: session.scope,
-            expires: session.expires,
-            isOnline: session.isOnline,
-            state: session.state,
-            apiKey,
-        },
+    await prisma.$transaction(async (tx) => {
+        await tx.session.upsert({
+            where: { id: session.id },
+            update: {
+                shop: session.shop,
+                accessToken: session.accessToken
+                    ? encryptToken(session.accessToken)
+                    : null,
+                scope: session.scope,
+                expires: session.expires,
+                isOnline: session.isOnline,
+                state: session.state,
+                apiKey,
+            },
+            create: {
+                id: session.id,
+                shop: session.shop,
+                accessToken: session.accessToken
+                    ? encryptToken(session.accessToken)
+                    : null,
+                scope: session.scope,
+                expires: session.expires,
+                isOnline: session.isOnline,
+                state: session.state,
+                apiKey,
+            },
+        });
+
+        if (session.onlineAccessInfo) {
+            const onlineAccessInfo = await tx.onlineAccessInfo.upsert({
+                where: { sessionId: session.id },
+                update: {
+                    expiresIn: session.onlineAccessInfo.expires_in,
+                    associatedUserScope:
+                        session.onlineAccessInfo.associated_user_scope,
+                },
+                create: {
+                    sessionId: session.id,
+                    expiresIn: session.onlineAccessInfo.expires_in,
+                    associatedUserScope:
+                        session.onlineAccessInfo.associated_user_scope,
+                },
+            });
+
+            const { associated_user } = session.onlineAccessInfo;
+            await tx.associatedUser.upsert({
+                where: { onlineAccessInfoId: onlineAccessInfo.id },
+                update: {
+                    firstName: associated_user.first_name,
+                    lastName: associated_user.last_name,
+                    email: associated_user.email,
+                    emailVerified: associated_user.email_verified,
+                    accountOwner: associated_user.account_owner,
+                    locale: associated_user.locale,
+                    collaborator: associated_user.collaborator,
+                    userId: associated_user.id,
+                },
+                create: {
+                    onlineAccessInfoId: onlineAccessInfo.id,
+                    firstName: associated_user.first_name,
+                    lastName: associated_user.last_name,
+                    email: associated_user.email,
+                    emailVerified: associated_user.email_verified,
+                    accountOwner: associated_user.account_owner,
+                    locale: associated_user.locale,
+                    collaborator: associated_user.collaborator,
+                    userId: associated_user.id,
+                },
+            });
+        }
     });
-
-    if (session.onlineAccessInfo) {
-        const onlineAccessInfo = await prisma.onlineAccessInfo.upsert({
-            where: { sessionId: session.id },
-            update: {
-                expiresIn: session.onlineAccessInfo.expires_in,
-                associatedUserScope:
-                    session.onlineAccessInfo.associated_user_scope,
-            },
-            create: {
-                sessionId: session.id,
-                expiresIn: session.onlineAccessInfo.expires_in,
-                associatedUserScope:
-                    session.onlineAccessInfo.associated_user_scope,
-            },
-        });
-
-        const { associated_user } = session.onlineAccessInfo;
-        const associatedUser = await prisma.associatedUser.upsert({
-            where: { onlineAccessInfoId: onlineAccessInfo.id },
-            update: {
-                firstName: associated_user.first_name,
-                lastName: associated_user.last_name,
-                email: associated_user.email,
-                emailVerified: associated_user.email_verified,
-                accountOwner: associated_user.account_owner,
-                locale: associated_user.locale,
-                collaborator: associated_user.collaborator,
-                userId: associated_user.id,
-            },
-            create: {
-                onlineAccessInfoId: onlineAccessInfo.id,
-                firstName: associated_user.first_name,
-                lastName: associated_user.last_name,
-                email: associated_user.email,
-                emailVerified: associated_user.email_verified,
-                accountOwner: associated_user.account_owner,
-                locale: associated_user.locale,
-                collaborator: associated_user.collaborator,
-                userId: associated_user.id,
-            },
-        });
-    }
 }
 
 export async function loadSession(id: string) {

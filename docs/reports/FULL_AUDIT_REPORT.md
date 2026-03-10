@@ -598,10 +598,10 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 | 2        | S-2 | Remove `unsafe-eval` from CSP script-src          | 15 min | ✅ Done |
 | 3        | S-3 | Restrict CORS to Shopify origins                  | 20 min | ✅ Done |
 | 4        | W-1 | Fix app-uninstall to re-throw on failure          | 15 min | ✅ Done |
-| 5        | R-2 | Add `discount_value >= 0` validation in Rust      | 10 min | ⬜     |
-| 6        | R-1 | Add `items_per_deal > 0` guard in Rust            | 10 min | ⬜     |
-| 7        | R-5 | Add error logging to JSON parse failures in Rust  | 15 min | ⬜     |
-| 8        | D-5 | Wrap session storage in `$transaction`            | 20 min | ⬜     |
+| 5        | R-2 | Add `discount_value >= 0` validation in Rust      | 10 min | ✅ Done |
+| 6        | R-1 | Add `items_per_deal > 0` guard in Rust            | 10 min | ✅ Done |
+| 7        | R-5 | Add error logging to JSON parse failures in Rust  | 15 min | ✅ Done |
+| 8        | D-5 | Wrap session storage in `$transaction`            | 20 min | ✅ Done |
 
 ### Week 2 — High Priority Fixes
 
