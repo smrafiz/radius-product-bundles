@@ -1,7 +1,11 @@
 // ==========================================================================
 // Sleek Layout — BOGO/BXGY stacked horizontal rows
 // ==========================================================================
-
+.radius-bundle__products {
+    &--sleek {
+        margin-bottom: 0;
+    }
+}
 .rb-sleek {
     &__container {
         display: flex;
@@ -11,7 +15,7 @@
 
     &__header {
         font-size: var(--rb-heading-font-size, 18px);
-        font-weight: 700;
+        font-weight: 600;
         color: var(--rb-text-color, #111827);
         margin: 0 0 4px;
         line-height: 1.3;
@@ -51,7 +55,7 @@
         width: 48px;
         height: 48px;
         flex-shrink: 0;
-        border-radius: 8px;
+        border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
         background: #f9fafb;
 
@@ -94,15 +98,15 @@
     }
 
     &__label {
-        font-size: 12px;
+        font-size: calc(var(--rb-body-font-size) - 4px);
         color: #9ca3af;
         font-weight: 500;
     }
 
     &__badge {
         display: inline-block;
-        font-size: 11px;
-        font-weight: 700;
+        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-weight: 500;
         color: var(--rb-savings-color, #16a34a);
         background: color-mix(
             in srgb,
@@ -125,8 +129,8 @@
     }
 
     &__price-current {
-        font-size: 16px;
-        font-weight: 700;
+        font-size: var(--rb-body-font-size);
+        font-weight: 500;
         color: var(--rb-text-color, #111827);
 
         &--reward {
@@ -135,9 +139,10 @@
     }
 
     &__price-compare {
-        font-size: 13px;
-        color: #9ca3af;
+        font-size: calc(var(--rb-body-font-size) - 2px);
+        color: var(--rb-text-color, #9ca3af);
         text-decoration: line-through;
+        opacity: 0.5;
         font-weight: 500;
     }
 
@@ -190,33 +195,13 @@
     }
 
     &__total {
-        font-size: 16px;
-        font-weight: 700;
+        font-size: calc(var(--rb-heading-font-size) - 3px);
+        font-weight: 600;
         color: var(--rb-text-color, #111827);
     }
 
     &__actions-inline {
         margin: 0;
         flex-shrink: 0;
-
-        .radius-bundle__add-to-cart {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 24px;
-            border: none;
-            border-radius: var(--rb-button-border-radius, 8px);
-            background: var(--rb-button-bg-color, #111827);
-            color: var(--rb-button-text-color, #fff);
-            font-size: var(--rb-body-font-size, 14px);
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.15s ease;
-            white-space: nowrap;
-
-            &:hover {
-                opacity: 0.9;
-            }
-        }
     }
 }

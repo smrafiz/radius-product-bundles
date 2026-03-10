@@ -55,7 +55,7 @@ const BXGY_PRICING: WidgetPricing = {
     hasDiscount: true,
 };
 
-export function TemplateBuyGet({ activeLayout }: BundleTemplateProps) {
+export function TemplateBuyGet({ activeLayout, activeDevice }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
     const labels = {
@@ -76,6 +76,7 @@ export function TemplateBuyGet({ activeLayout }: BundleTemplateProps) {
         subtitle: "Mix and match your favorites",
         badgeText: "BXGY DEAL",
         labels,
+        activeDevice,
     };
 
     switch (activeLayout) {

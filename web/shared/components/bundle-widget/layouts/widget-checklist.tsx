@@ -101,7 +101,7 @@ function ChecklistTriggerItem({
                 <div
                     style={{
                         fontSize: bodyFontSize,
-                        fontWeight: 600,
+                        fontWeight: 500,
                         color: styles.textColor,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -113,8 +113,8 @@ function ChecklistTriggerItem({
             </div>
             <div
                 style={{
-                    fontSize: 14,
-                    fontWeight: 600,
+                    fontSize: bodyFontSize,
+                    fontWeight: 500,
                     color: styles.textColor,
                     whiteSpace: "nowrap",
                 }}
@@ -186,7 +186,7 @@ function ChecklistRewardItem({
                 <div
                     style={{
                         fontSize: bodyFontSize,
-                        fontWeight: 600,
+                        fontWeight: 500,
                         color: styles.textColor,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -205,8 +205,8 @@ function ChecklistRewardItem({
                 >
                     <span
                         style={{
-                            fontSize: 14,
-                            fontWeight: 700,
+                            fontSize: bodyFontSize,
+                            fontWeight: 500,
                             color: styles.savingsColor || "#16a34a",
                         }}
                     >
@@ -215,7 +215,7 @@ function ChecklistRewardItem({
                     {hasDiscount && (
                         <span
                             style={{
-                                fontSize: 13,
+                                fontSize: parseInt(bodyFontSize) - 3,
                                 color: "#9ca3af",
                                 textDecoration: "line-through",
                             }}
@@ -241,9 +241,11 @@ export function WidgetChecklist({
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
+    const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const buttonBg = getButtonBgColor(styles);
     const buttonRadius = getButtonRadius(styles.cornerStyle);
+    const isFullWidth = styles.buttonWidth === "full";
 
     const totalTriggers = triggerProducts.length;
     const progress = 0;
@@ -301,7 +303,7 @@ export function WidgetChecklist({
                     <div
                         style={{
                             fontSize: headingFontSize,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             color: styles.textColor,
                         }}
                     >
@@ -309,7 +311,7 @@ export function WidgetChecklist({
                     </div>
                 )}
                 {subtitle && (
-                    <div style={{ fontSize: 14, color: "#6b7280" }}>
+                    <div style={{ fontSize: bodyFontSize, color: "#6b7280" }}>
                         {subtitle}
                     </div>
                 )}
@@ -322,8 +324,8 @@ export function WidgetChecklist({
                 >
                     <span
                         style={{
-                            fontSize: 14,
-                            fontWeight: 600,
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            fontWeight: 500,
                             color: styles.primaryColor || "#f97316",
                         }}
                     >
@@ -331,8 +333,8 @@ export function WidgetChecklist({
                     </span>
                     <span
                         style={{
-                            fontSize: 14,
-                            fontWeight: 600,
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            fontWeight: 500,
                             color: styles.primaryColor || "#f97316",
                         }}
                     >
@@ -370,11 +372,12 @@ export function WidgetChecklist({
             >
                 <span
                     style={{
-                        fontSize: 13,
-                        fontWeight: 700,
+                        fontSize: bodyFontSize,
+                        fontWeight: 600,
                         textTransform: "uppercase",
                         letterSpacing: "0.05em",
-                        color: "#6b7280",
+                        color: styles.textColor,
+                        opacity: 0.8,
                     }}
                 >
                     Buy
@@ -411,17 +414,17 @@ export function WidgetChecklist({
                 >
                     <span
                         style={{
-                            fontSize: 14,
-                            fontWeight: 700,
-                            color: "#374151",
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            fontWeight: 500,
+                            color: styles.textColor,
                         }}
                     >
                         {lockedLabel}
                     </span>
                     <span
                         style={{
-                            fontSize: 11,
-                            fontWeight: 700,
+                            fontSize: parseInt(bodyFontSize) - 5,
+                            fontWeight: 600,
                             padding: "2px 10px",
                             borderRadius: 12,
                             color: "#fff",
@@ -487,7 +490,7 @@ export function WidgetChecklist({
             {cartButtonText && (
                 <button
                     style={{
-                        width: "100%",
+                        width: isFullWidth ? "100%" : "auto",
                         padding: "14px 24px",
                         fontSize: 15,
                         fontWeight: 700,

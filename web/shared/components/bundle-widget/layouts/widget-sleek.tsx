@@ -96,7 +96,7 @@ function SleekProductCard({
                 <div
                     style={{
                         fontSize: bodyFontSize,
-                        fontWeight: 600,
+                        fontWeight: 500,
                         color: styles.textColor,
                         lineHeight: "1.3",
                         overflow: "hidden",
@@ -107,23 +107,16 @@ function SleekProductCard({
                     {product.title}
                 </div>
                 {isTrigger ? (
-                    <span
-                        style={{
-                            fontSize: 12,
-                            color: "#9ca3af",
-                            fontWeight: 500,
-                        }}
-                    >
-                        {labels?.bogoYouPayLabel ||
-                            DEFAULT_LABELS.bogoYouPayLabel}
+                    <span style={{ fontSize: parseInt(bodyFontSize) - 4, color: "#9ca3af", fontWeight: 500 }}>
+                        {labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
                     hasDiscount && (
                         <span
                             style={{
                                 display: "inline-block",
-                                fontSize: 11,
-                                fontWeight: 700,
+                                fontSize: parseInt(bodyFontSize) - 4,
+                                fontWeight: 500,
                                 color: savingsColor,
                                 background: `${savingsColor}1F`,
                                 padding: "1px 8px",
@@ -149,8 +142,8 @@ function SleekProductCard({
             >
                 <span
                     style={{
-                        fontSize: 16,
-                        fontWeight: 700,
+                        fontSize: bodyFontSize,
+                        fontWeight: 500,
                         color: hasDiscount ? freeTagColor : styles.textColor,
                     }}
                 >
@@ -159,7 +152,7 @@ function SleekProductCard({
                 {hasDiscount && product.compareAtPrice && (
                     <span
                         style={{
-                            fontSize: 13,
+                            fontSize: parseInt(bodyFontSize) - 3,
                             color: "#9ca3af",
                             textDecoration: "line-through",
                             fontWeight: 500,
@@ -210,7 +203,7 @@ export function WidgetSleek({
                 <h3
                     style={{
                         fontSize: headingFontSize,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         color: styles.textColor,
                         margin: "0 0 4px",
                         lineHeight: "1.3",
@@ -288,8 +281,8 @@ export function WidgetSleek({
                 {pricing && (
                     <span
                         style={{
-                            fontSize: 16,
-                            fontWeight: 700,
+                            fontSize: parseInt(headingFontSize) - 3,
+                            fontWeight: 600,
                             color: styles.textColor,
                         }}
                     >

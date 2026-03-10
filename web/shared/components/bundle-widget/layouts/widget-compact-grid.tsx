@@ -85,7 +85,7 @@ function ProductTile({
 
             <span
                 style={{
-                    fontSize: parseInt(bodyFontSize) - 6,
+                    fontSize: parseInt(bodyFontSize) - 4,
                     fontWeight: 500,
                     textTransform: "uppercase",
                     letterSpacing: 0.8,
@@ -161,6 +161,7 @@ function TileSlider({
     dotColor,
     perPage,
     flexVal,
+    activeDevice,
 }: {
     products: PreviewProduct[];
     variant: "trigger" | "reward";
@@ -169,6 +170,7 @@ function TileSlider({
     dotColor: string;
     perPage: number;
     flexVal: number;
+    activeDevice?: "desktop" | "tablet" | "mobile";
 }) {
     const pages = chunk(products, perPage);
     const [activeSlide, setActiveSlide] = useState(0);
@@ -259,7 +261,8 @@ function TileSlider({
                             key={pageIdx}
                             style={{
                                 display: "grid",
-                                gridTemplateColumns: `repeat(${cols}, 1fr)`,
+                                //gridTemplateColumns: `repeat(${cols}, 1fr)`,
+                                gridTemplateColumns: activeDevice === "mobile" ? "repeat(1, 1fr)" : "repeat(2, 1fr)",
                                 gap: 8,
                                 minWidth: "100%",
                                 flexShrink: 0,
@@ -321,6 +324,7 @@ export function WidgetCompactGrid({
     subtitle,
     badgeText,
     labels,
+    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -335,6 +339,7 @@ export function WidgetCompactGrid({
     const accentColor = styles.primaryColor || "#303030";
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
+    const bodyFontSize = getFontSize(styles.bodySize);
 
     if (!products.length) {
         return (
@@ -385,7 +390,7 @@ export function WidgetCompactGrid({
                         style={{
                             color: "#fff",
                             fontSize: headingFontSize,
-                            fontWeight: 700,
+                            fontWeight: 600,
                         }}
                     >
                         {title || "Special Offer"}
@@ -394,7 +399,7 @@ export function WidgetCompactGrid({
                         <span
                             style={{
                                 color: "rgba(255,255,255,0.8)",
-                                fontSize: 12,
+                                fontSize: parseInt(bodyFontSize) - 4,
                                 fontWeight: 400,
                             }}
                         >
@@ -412,8 +417,8 @@ export function WidgetCompactGrid({
                             border: isOutline
                                 ? `2px solid ${accentColor}`
                                 : "none",
-                            fontSize: 11,
-                            fontWeight: 700,
+                            fontSize: parseInt(bodyFontSize) - 5,
+                            fontWeight: 600,
                             padding: "4px 12px",
                             borderRadius: badgeRadius,
                             letterSpacing: 0.3,
@@ -429,7 +434,8 @@ export function WidgetCompactGrid({
                 style={{
                     display: "flex",
                     alignItems: "stretch",
-                    gap: 0,
+                    flexDirection: activeDevice === "mobile" ? "column" : "row",
+                    gap: 4,
                     padding: "16px 16px 8px",
                 }}
             >
@@ -441,11 +447,11 @@ export function WidgetCompactGrid({
                     dotColor={primaryColor}
                     perPage={2}
                     flexVal={singleEach ? 1 : 2}
+                    activeDevice={activeDevice}
                 />
 
                 <div
                     style={{
-                        width: 32,
                         flexShrink: 0,
                         display: "flex",
                         alignItems: "center",
@@ -463,7 +469,7 @@ export function WidgetCompactGrid({
                             alignItems: "center",
                             justifyContent: "center",
                             fontSize: 16,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             color: "#9ca3af",
                         }}
                     >
@@ -479,6 +485,7 @@ export function WidgetCompactGrid({
                     dotColor={savingsColor}
                     perPage={1}
                     flexVal={1}
+                    activeDevice={activeDevice}
                 />
             </div>
 
@@ -490,40 +497,22 @@ export function WidgetCompactGrid({
                     justifyContent: "space-between",
                     padding: "8px 16px 16px",
                     gap: 12,
+                    flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}
             >
                 {pricing && (
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span
-                            style={{
-                                fontSize: 11,
-                                color: "#6b7280",
-                                fontWeight: 500,
-                            }}
-                        >
-                            {labels?.bogoTotalLabel ||
-                                DEFAULT_LABELS.bogoTotalLabel}
+                        <span style={{ fontSize: parseInt(bodyFontSize) - 3, color: "#6b7280", fontWeight: 500 }}>
+                            {labels?.bogoTotalLabel || DEFAULT_LABELS.bogoTotalLabel}
                         </span>
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "baseline",
-                                gap: 6,
-                            }}
-                        >
-                            <span
-                                style={{
-                                    fontSize: 20,
-                                    fontWeight: 700,
-                                    color: styles.textColor,
-                                }}
-                            >
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                            <span style={{ fontSize: headingFontSize, fontWeight: 600, color: styles.textColor }}>
                                 {pricing.finalPrice}
                             </span>
                             {pricing.hasDiscount && (
                                 <span
                                     style={{
-                                        fontSize: 13,
+                                        fontSize: parseInt(bodyFontSize) - 1,
                                         fontWeight: 600,
                                         color: savingsColor,
                                     }}

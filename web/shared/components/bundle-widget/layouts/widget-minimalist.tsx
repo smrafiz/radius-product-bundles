@@ -45,6 +45,9 @@ function MinimalistItem({
 }) {
     const isReward = product.role === "REWARD";
     const savingsColor = styles.savingsColor || "#16a34a";
+    const cardRadius = getCardRadius(styles.cornerStyle);
+    const bodyFontSize = getFontSize(styles.bodySize);
+
     return (
         <div
             style={{
@@ -54,17 +57,18 @@ function MinimalistItem({
                 padding: 10,
                 background: `color-mix(in srgb, ${roleColor} 6%, white)`,
                 border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
-                borderRadius: 10,
+                borderRadius: cardRadius,
                 minWidth: 0,
+                position: "relative",
             }}
         >
             {product.image && (
                 <div
                     style={{
-                        width: 56,
-                        height: 56,
+                        width: 60,
+                        height: 60,
                         flexShrink: 0,
-                        borderRadius: 8,
+                        borderRadius: cardRadius,
                         overflow: "hidden",
                         background: "#f9fafb",
                     }}
@@ -80,35 +84,30 @@ function MinimalistItem({
                     />
                 </div>
             )}
-            <div
-                style={{
-                    flex: 1,
-                    minWidth: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 3,
-                }}
-            >
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
                 <span
                     style={{
-                        fontSize: 10,
-                        fontWeight: 700,
+                        fontSize: parseInt(bodyFontSize) - 5,
+                        fontWeight: 500,
                         textTransform: "uppercase",
                         letterSpacing: 0.6,
                         padding: "2px 8px",
-                        borderRadius: 20,
+                        borderRadius: `0 ${cardRadius} 0 16px`,
                         lineHeight: "14px",
                         alignSelf: "flex-start",
                         color: roleColor,
                         background: `color-mix(in srgb, ${roleColor} 10%, transparent)`,
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
                     }}
                 >
                     {roleBadgeText}
                 </span>
                 <span
                     style={{
-                        fontSize: 13,
-                        fontWeight: 600,
+                        fontSize: bodyFontSize,
+                        fontWeight: 500,
                         color: styles.textColor,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -117,31 +116,12 @@ function MinimalistItem({
                 >
                     {product.title}
                 </span>
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "baseline",
-                        gap: 6,
-                        flexWrap: "wrap",
-                    }}
-                >
-                    <span
-                        style={{
-                            fontSize: 13,
-                            fontWeight: 700,
-                            color: isReward ? savingsColor : styles.textColor,
-                        }}
-                    >
+                <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: parseInt(bodyFontSize), fontWeight: 500, color: isReward ? savingsColor : styles.textColor }}>
                         {product.price}
                     </span>
                     {product.compareAtPrice && (
-                        <span
-                            style={{
-                                fontSize: 11,
-                                color: "#9ca3af",
-                                textDecoration: "line-through",
-                            }}
-                        >
+                        <span style={{ fontSize: parseInt(bodyFontSize) - 3, color: "#9ca3af", textDecoration: "line-through" }}>
                             {product.compareAtPrice}
                         </span>
                     )}
@@ -160,6 +140,7 @@ export function WidgetMinimalist({
     subtitle,
     badgeText,
     labels,
+    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProduct = products.find((p) => p.role === "TRIGGER");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
@@ -174,6 +155,7 @@ export function WidgetMinimalist({
     const primaryColor = styles.primaryColor || "#e0598b";
     const savingsColor = styles.savingsColor || "#16a34a";
     const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
+    const isFullWidth = styles.buttonWidth === "full";
 
     if (!products.length) {
         return (
@@ -243,7 +225,7 @@ export function WidgetMinimalist({
                             width: 110,
                             height: 110,
                             flexShrink: 0,
-                            borderRadius: 12,
+                            borderRadius: cardRadius,
                             overflow: "hidden",
                             background: "#f9fafb",
                         }}
@@ -265,7 +247,7 @@ export function WidgetMinimalist({
                         <h3
                             style={{
                                 fontSize: headingFontSize,
-                                fontWeight: 700,
+                                fontWeight: 600,
                                 color: styles.textColor,
                                 margin: "0 0 4px",
                                 lineHeight: "1.3",
@@ -296,8 +278,8 @@ export function WidgetMinimalist({
                         >
                             <span
                                 style={{
-                                    fontSize: 22,
-                                    fontWeight: 700,
+                                    fontSize: headingFontSize,
+                                    fontWeight: 600,
                                     color: primaryColor,
                                 }}
                             >
@@ -306,7 +288,7 @@ export function WidgetMinimalist({
                             {pricing.hasDiscount && pricing.originalPrice && (
                                 <span
                                     style={{
-                                        fontSize: 15,
+                                        fontSize: bodyFontSize,
                                         color: "#9ca3af",
                                         textDecoration: "line-through",
                                         fontWeight: 500,
@@ -324,7 +306,7 @@ export function WidgetMinimalist({
                 <div
                     style={{
                         display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
+                        gridTemplateColumns: activeDevice === "mobile" ? "repeat(1, 1fr)" : "repeat(2, 1fr)",
                         gap: 10,
                         marginBottom: 16,
                     }}
@@ -358,7 +340,7 @@ export function WidgetMinimalist({
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 8,
-                        width: "100%",
+                        width: isFullWidth ? "100%" : "auto",
                         padding: "14px 24px",
                         border: isButtonOutline
                             ? `2px solid ${buttonBg}`

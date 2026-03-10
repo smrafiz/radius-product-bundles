@@ -5,7 +5,7 @@
 .radius-bundle {
     &--compact_grid {
         .radius-bundle__inner {
-            padding: 0;
+            padding: 0 !important;
         }
         .radius-bundle__products {
             margin-bottom: 0;
@@ -79,7 +79,7 @@
     &__tiles {
         display: flex;
         align-items: stretch;
-        gap: 0;
+        gap: 4px;
         padding: 16px 16px 8px;
         position: relative;
     }
@@ -225,8 +225,9 @@
     &__tile-compare {
         font-size: calc(var(--rb-body-font-size) - 2px);
         color: var(--rb-text-color);
-        opacity: 0.5;
         text-decoration: line-through;
+        opacity: 0.5;
+        font-weight: 500;
     }
 
     // ── Tile group (trigger / reward slider wrapper) ───────────────
@@ -325,13 +326,13 @@
     }
 
     &__footer-label {
-        font-size: calc(var(--rb-body-font-size) - 4px);
-        color: #6b7280;
+        font-size: calc(var(--rb-body-font-size) - 3px);
+        color: var(--rb-text-color, #1a1a2e);
         font-weight: 500;
     }
 
     &__footer-total {
-        font-size: var(--rb-body-font-size, 14px);
+        font-size: var(--rb-heading-font-size, 16px);
         font-weight: 600;
         color: var(--rb-text-color, #1a1a2e);
         display: flex;
@@ -348,6 +349,18 @@
     &__actions-inline {
         margin: 0;
         flex-shrink: 0;
+    }
+}
+@media (max-width: 767px) {
+    .rb-cg__tiles {
+        flex-direction: column;
+    }
+    .rb-cg__footer {
+        flex-direction: column;
+    }
+    .rb-cg__dots {
+        right: 0;
+        left: 0;
     }
 }
 

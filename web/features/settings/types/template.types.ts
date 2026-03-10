@@ -12,6 +12,7 @@ export type PreviewTemplateId = BundleType | "CART_BANNER";
  */
 export interface BundleTemplateProps {
     activeLayout: WidgetLayout;
+    activeDevice?: "desktop" | "tablet" | "mobile";
 }
 
 /**

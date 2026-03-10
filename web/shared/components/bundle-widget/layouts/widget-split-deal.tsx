@@ -63,7 +63,7 @@ function SplitProductCard({
                 <div
                     style={{
                         fontSize: bodyFontSize,
-                        fontWeight: 600,
+                        fontWeight: 500,
                         color: styles.textColor,
                         lineHeight: "1.3",
                         overflow: "hidden",
@@ -80,13 +80,13 @@ function SplitProductCard({
                         display: "flex",
                         alignItems: "center",
                         gap: 5,
-                        marginTop: 2,
+                        marginTop: 5,
                     }}
                 >
                     <span
                         style={{
-                            fontSize: 14,
-                            fontWeight: 700,
+                            fontSize: bodyFontSize,
+                            fontWeight: 500,
                             color: hasDiscount
                                 ? styles.bogoFreeTagColor || "#16a34a"
                                 : styles.textColor,
@@ -97,7 +97,7 @@ function SplitProductCard({
                     {hasDiscount && (
                         <span
                             style={{
-                                fontSize: 12,
+                                fontSize: parseInt(bodyFontSize) - 2,
                                 color: "#9ca3af",
                                 textDecoration: "line-through",
                             }}
@@ -120,6 +120,7 @@ export function WidgetSplitDeal({
     subtitle,
     badgeText,
     labels,
+    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -136,6 +137,9 @@ export function WidgetSplitDeal({
         labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
     const rewardBadge =
         labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    const accentColor = styles.primaryColor || "#303030";
+    const isOutline = styles.badgeStyle === "outline";
+    const bodyFontSize = getFontSize(styles.bodySize);
 
     if (!products.length) {
         return (
@@ -172,10 +176,15 @@ export function WidgetSplitDeal({
                             display: "inline-flex",
                             alignItems: "center",
                             gap: 6,
-                            background: styles.primaryColor || "#303030",
-                            color: "#fff",
-                            fontSize: 12,
-                            fontWeight: 700,
+                            backgroundColor: isOutline
+                                ? "transparent"
+                                : accentColor,
+                            color: isOutline ? styles.primaryColor : "#ffffff",
+                            border: isOutline
+                                ? `2px solid ${accentColor}`
+                                : "none",
+                            fontSize: parseInt(bodyFontSize) - 4,
+                            fontWeight: 600,
                             padding: "5px 14px",
                             borderRadius: 20,
                             marginBottom: 10,
@@ -190,7 +199,7 @@ export function WidgetSplitDeal({
                     <h3
                         style={{
                             fontSize: headingFontSize,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             color: styles.textColor,
                             margin: 0,
                         }}
@@ -201,8 +210,9 @@ export function WidgetSplitDeal({
                 {subtitle && (
                     <p
                         style={{
-                            fontSize: 14,
-                            color: "#6b7280",
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            color: styles.textColor || "#6b7280",
+                            opacity: 0.7,
                             margin: "4px 0 0",
                         }}
                     >
@@ -216,7 +226,8 @@ export function WidgetSplitDeal({
                 style={{
                     display: "flex",
                     alignItems: "stretch",
-                    gap: spacingValues.gap,
+                    gap: 4,
+                    flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}
             >
                 {/* Trigger Column */}
@@ -230,8 +241,8 @@ export function WidgetSplitDeal({
                 >
                     <div
                         style={{
-                            fontSize: 11,
-                            fontWeight: 700,
+                            fontSize: parseInt(bodyFontSize) - 4,
+                            fontWeight: 600,
                             textTransform: "uppercase" as const,
                             letterSpacing: "0.06em",
                             padding: "6px 12px",
@@ -276,7 +287,6 @@ export function WidgetSplitDeal({
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
-                        width: 36,
                     }}
                 >
                     <span
@@ -309,8 +319,8 @@ export function WidgetSplitDeal({
                 >
                     <div
                         style={{
-                            fontSize: 11,
-                            fontWeight: 700,
+                            fontSize: parseInt(bodyFontSize) - 4,
+                            fontWeight: 600,
                             textTransform: "uppercase" as const,
                             letterSpacing: "0.06em",
                             padding: "6px 12px",
@@ -366,12 +376,12 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: 11,
+                                fontSize: parseInt(bodyFontSize) - 5,
                                 fontWeight: 600,
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
                                 marginBottom: 2,
-                                color: "#166534",
+                                color:"#15803d",
                             }}
                         >
                             {labels?.bogoYouPayLabel ||
@@ -380,9 +390,9 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: 18,
-                                fontWeight: 700,
-                                color: "#111827",
+                                fontSize: parseInt(headingFontSize) - 2,
+                                fontWeight: 600,
+                                color: styles.textColor,
                             }}
                         >
                             {pricing.finalPrice}
@@ -392,12 +402,12 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: 11,
+                                fontSize: parseInt(bodyFontSize) - 5,
                                 fontWeight: 600,
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
                                 marginBottom: 2,
-                                color: "#15803d",
+                                color:"#15803d",
                             }}
                         >
                             {labels?.bogoYouSaveLabel ||
@@ -406,8 +416,8 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: 18,
-                                fontWeight: 700,
+                                fontSize: parseInt(headingFontSize) - 2,
+                                fontWeight: 600,
                                 color: styles.savingsColor || "#16a34a",
                             }}
                         >

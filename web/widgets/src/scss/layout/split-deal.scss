@@ -16,13 +16,13 @@
 
     &__title {
         font-size: var(--rb-heading-font-size, 18px);
-        font-weight: 500;
+        font-weight: 600;
         color: var(--rb-text-color, inherit);
         margin: 0;
     }
 
     &__subtitle {
-        font-size: 14px;
+        font-size: calc(var(--rb-body-font-size) * 0.9);
         color: #6b7280;
         margin: 4px 0 0;
     }
@@ -32,10 +32,11 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: var(--rb-primary-color, #303030);
-        color: #fff;
-        font-size: 12px;
-        font-weight: 700;
+        background: var(--rb-badge-bg);
+        color: var(--rb-badge-text);
+        border: var(--rb-badge-border);
+        font-size: calc(var(--rb-body-font-size) * 0.9);
+        font-weight: 600;
         padding: 5px 14px;
         border-radius: 20px;
         margin-bottom: 10px;
@@ -47,7 +48,7 @@
     &__equation {
         display: flex;
         align-items: stretch;
-        gap: var(--rb-gap-spacing, 12px);
+        gap: 4px;
     }
 
     // ── Column (Buy / Get) ──────────────────────────────────────────
@@ -59,8 +60,8 @@
     }
 
     &__column-header {
-        font-size: 11px;
-        font-weight: 700;
+        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.06em;
         padding: 6px 12px;
@@ -106,7 +107,6 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        width: 36px;
 
         span {
             display: flex;
@@ -132,7 +132,7 @@
 
     &__product-image {
         width: 56px;
-        height: 56px;
+        height: 60px;
         flex-shrink: 0;
         border-radius: var(--rb-border-radius, 6px);
         overflow: hidden;
@@ -147,7 +147,7 @@
 
     &__product-placeholder {
         width: 56px;
-        height: 56px;
+        height: 60px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -162,8 +162,8 @@
     }
 
     &__product-title {
-        font-size: var(--rb-body-font-size, 13px);
-        font-weight: 600;
+        font-size: var(--rb-body-font-size, 16px);
+        font-weight: 500;
         color: var(--rb-text-color, inherit);
         margin: 0;
         line-height: 1.3;
@@ -182,8 +182,8 @@
     }
 
     &__price-current {
-        font-size: 14px;
-        font-weight: 700;
+        font-size: var(--rb-body-font-size);
+        font-weight: 600;
         color: var(--rb-text-color, inherit);
 
         &--reward {
@@ -192,16 +192,18 @@
     }
 
     &__price-compare {
-        font-size: 12px;
-        color: #9ca3af;
+        font-size: calc(var(--rb-body-font-size) - 2px);
+        color: var(--rb-text-color);
         text-decoration: line-through;
+        opacity: 0.5;
+        font-weight: 500;
     }
 
     &__product-savings {
         display: inline-flex;
         align-items: center;
-        font-size: 10px;
-        font-weight: 700;
+        font-size: calc(var(--rb-body-font-size) - 5px);
+        font-weight: 600;
         color: var(--rb-savings-color, #16a34a);
         background: rgba(22, 163, 74, 0.08);
         padding: 1px 6px;
@@ -228,26 +230,19 @@
 
     &__summary-label {
         display: block;
-        font-size: 11px;
+        font-size: calc(var(--rb-body-font-size) - 5px);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
         margin-bottom: 2px;
-    }
-
-    &__summary-pay {
-        color: #166534;
-    }
-
-    &__summary-save {
         color: #15803d;
     }
 
     &__summary-value {
         display: block;
-        font-size: 18px;
-        font-weight: 700;
-        color: #111827;
+        font-size: calc(var(--rb-heading-font-size) - 2px);
+        font-weight: 600;
+        color: var(--rb-text-color, #111827);
 
         &--savings {
             color: var(--rb-savings-color, #16a34a);
@@ -283,6 +278,11 @@
 }
 
 // Responsive: stack columns vertically on narrow containers
+@media (max-width: 767px) {
+    .rb-split__equation {
+        flex-direction: column;
+    }
+}
 @container (max-width: 380px) {
     .rb-split__equation {
         flex-direction: column;

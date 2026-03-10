@@ -119,6 +119,7 @@ export interface WidgetLayoutProps {
     subtitle?: string;
     badgeText?: string;
     labels?: WidgetLabels;
+    activeDevice?: "desktop" | "tablet" | "mobile";
 }
 
 export interface WidgetHeaderProps {
