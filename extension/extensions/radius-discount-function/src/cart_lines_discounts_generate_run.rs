@@ -286,26 +286,20 @@ fn calculate_bxgy_discount(
             )
         }
         "CUSTOM_PRICE" => {
-            let custom_price = bundle_settings.discount_value;
-            let discount_per_unit: f64 = reward_lines
-                .first()
-                .map(|bl| {
-                    let unit_price = bl.line.cost().amount_per_quantity().amount().0;
-                    (unit_price - custom_price).max(0.0)
-                })
-                .unwrap_or(0.0);
+            let custom_price_per_deal = bundle_settings.discount_value;
+            let total_custom_price = custom_price_per_deal * deal_count as f64;
+            let total_discount = (reward_total - total_custom_price).max(0.0);
 
-            if discount_per_unit <= 0.0 {
+            if total_discount <= 0.0 {
                 return None;
             }
 
-            let total_discount = discount_per_unit * total_reward_qty_to_discount as f64;
             (
                 total_discount,
                 ProductDiscountCandidateValue::FixedAmount(
                     ProductDiscountCandidateFixedAmount {
-                        amount: Decimal(discount_per_unit),
-                        applies_to_each_item: Some(true),
+                        amount: Decimal(total_discount),
+                        applies_to_each_item: None,
                     },
                 ),
             )

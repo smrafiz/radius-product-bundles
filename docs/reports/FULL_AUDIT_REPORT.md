@@ -12,14 +12,14 @@
 | Domain                      | Critical | High   | Medium | Low    | Score      |
 | --------------------------- | -------- | ------ | ------ | ------ | ---------- |
 | Security & OWASP            | ~~3~~ 0  | 5      | 4      | 2      | ~~62~~ 75/100 |
-| Data Integrity & Schema     | 2        | ~~4~~ 3 | 4      | 1      | ~~70~~ 74/100 |
+| Data Integrity & Schema     | 2        | ~~4~~ 1 | 4      | 1      | ~~70~~ 78/100 |
 | Architecture & Code Quality | 0        | 3      | 5      | 5      | 87/100     |
 | Performance & Optimization  | 3        | 5      | 4      | 0      | 58/100     |
-| Rust Discount Function      | ~~5~~ 2  | 8      | 4      | 0      | ~~45~~ 58/100 |
-| Webhooks & App Lifecycle    | ~~2~~ 1  | 6      | 4      | 4      | ~~55~~ 62/100 |
-| **Total**                   | ~~15~~ **8** | ~~31~~ **30** | **25** | **12** | ~~63~~ **69/100** |
+| Rust Discount Function      | ~~5~~ 0  | 8      | 4      | 0      | ~~45~~ 65/100 |
+| Webhooks & App Lifecycle    | ~~2~~ 1  | ~~6~~ 4 | 4      | 4      | ~~55~~ 68/100 |
+| **Total**                   | ~~15~~ **6** | ~~31~~ **26** | **25** | **12** | ~~63~~ **72/100** |
 
-**Verdict**: Week 1 critical fixes complete — **7 critical issues resolved** (XSS, CSP, CORS, uninstall handler, Rust division-by-zero, negative discounts, parse logging, session atomicity). Architecture remains solid (87/100). **8 critical issues remain** across Data Integrity (2), Performance (3), Rust (2), and Webhooks (1).
+**Verdict**: Week 1 + Week 2 (partial) fixes complete — **9 critical and 5 high issues resolved**. All Rust criticals eliminated (0 remaining). All security criticals eliminated. Architecture remains solid (87/100). **6 critical issues remain** across Data Integrity (2), Performance (3), and Webhooks (1). 2 Week 2 items pending (P-1, S-4).
 
 ---
 
@@ -605,16 +605,16 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 
 ### Week 2 — High Priority Fixes
 
-| Priority | ID  | Action                                           | Effort |
-| -------- | --- | ------------------------------------------------ | ------ |
-| 9        | R-3 | Add `checked_mul()` for quantity arithmetic      | 30 min |
-| 10       | R-4 | Fix CUSTOM_PRICE for multi-reward BXGY           | 45 min |
-| 11       | W-3 | Add webhook idempotency via delivery ID          | 2 hr   |
-| 12       | W-4 | Fix setup lock ordering (claim after success)    | 30 min |
-| 13       | D-3 | Inspect Promise.allSettled results (4 locations) | 45 min |
-| 14       | D-4 | Add `@@index([shopId])` to 6 models              | 20 min |
-| 15       | P-1 | Batch GraphQL calls in proxy products route      | 3 hr   |
-| 16       | S-4 | Always encrypt tokens; migrate plaintext         | 1 hr   |
+| Priority | ID  | Action                                           | Effort | Status |
+| -------- | --- | ------------------------------------------------ | ------ | ------ |
+| 9        | R-3 | Add `checked_mul()` for quantity arithmetic      | 30 min | ✅ Done |
+| 10       | R-4 | Fix CUSTOM_PRICE for multi-reward BXGY           | 45 min | ✅ Done |
+| 11       | W-3 | Add webhook idempotency via delivery ID          | 2 hr   | ✅ Done |
+| 12       | W-4 | Fix setup lock ordering (claim after success)    | 30 min | ✅ Done |
+| 13       | D-3 | Inspect Promise.allSettled results (4 locations) | 45 min | ✅ Done |
+| 14       | D-4 | Add `@@index([shopId])` to 6 models              | 20 min | ✅ Done |
+| 15       | P-1 | Batch GraphQL calls in proxy products route      | 3 hr   | ⬜     |
+| 16       | S-4 | Always encrypt tokens; migrate plaintext         | 1 hr   | ⬜     |
 
 ### Week 3 — Performance & Operational
 

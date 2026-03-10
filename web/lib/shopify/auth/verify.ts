@@ -13,7 +13,11 @@ import shopify from "../config/initialize-context";
 import { registerWebhooks } from "../webhooks/register";
 import { markWebhooksRegistered } from "@/features/webhooks";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
-import { claimSetupLock } from "@/features/webhooks/repositories/webhook.repository";
+import {
+    claimSetupLock,
+    releaseSetupLock,
+    markSetupComplete,
+} from "@/features/webhooks/repositories/webhook.repository";
 
 /**
  * Verify the request and return the shop and session
@@ -111,8 +115,10 @@ export async function handleSessionToken(
                     shop,
                 );
 
+                let setupSucceeded = false;
                 try {
                     await runAppSetup(session.accessToken!, shop);
+                    setupSucceeded = true;
                 } catch (setupErr) {
                     console.error(
                         "[Auth] Setup failed (use Force Register to retry):",
@@ -120,14 +126,22 @@ export async function handleSessionToken(
                     );
                 }
 
+                let webhooksSucceeded = false;
                 try {
                     await registerWebhooks(session);
                     await markWebhooksRegistered(shop);
+                    webhooksSucceeded = true;
                 } catch (webhookErr) {
                     console.error(
                         "[Auth] Webhook registration failed:",
                         webhookErr,
                     );
+                }
+
+                if (setupSucceeded && webhooksSucceeded) {
+                    await markSetupComplete(shop);
+                } else {
+                    await releaseSetupLock(shop);
                 }
             }
         } catch (err) {

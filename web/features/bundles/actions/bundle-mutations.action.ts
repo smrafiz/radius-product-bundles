@@ -58,6 +58,18 @@ import {
 } from "@/features/bundles/repositories";
 import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
 
+function logSettledFailures(label: string, results: PromiseSettledResult<unknown>[]) {
+    const failures = results.filter(
+        (r): r is PromiseRejectedResult => r.status === "rejected",
+    );
+    if (failures.length > 0) {
+        console.warn(
+            `[${label}] ${failures.length} metafield sync(s) failed:`,
+            failures.map((f) => f.reason?.message ?? f.reason),
+        );
+    }
+}
+
 /**
  * Update bundle status
  */
@@ -313,18 +325,19 @@ export async function deleteBundlesAction(
 
         const result = await deleteMultipleBundles({ bundleIds, shop });
 
-        await Promise.allSettled([
+        const deleteMetafieldResults = await Promise.allSettled([
             syncActiveBundlesToMetafield(sessionToken, shop),
             ...[...bundleProductMap.entries()].map(([bundleId, productIds]) =>
                 removeBundleIdFromProducts(sessionToken, bundleId, productIds),
             ),
         ]);
+        logSettledFailures("deleteBundles", deleteMetafieldResults);
         invalidateDashboardCache(shop);
 
         const BATCH_SIZE = 4;
         for (let i = 0; i < mainProductIds.length; i += BATCH_SIZE) {
             const batch = mainProductIds.slice(i, i + BATCH_SIZE);
-            await Promise.allSettled(
+            const batchResults = await Promise.allSettled(
                 batch.map((productId) =>
                     executeGraphQLMutation<ProductDeleteMutation>({
                         query: ProductDeleteDocument,
@@ -333,6 +346,7 @@ export async function deleteBundlesAction(
                     }),
                 ),
             );
+            logSettledFailures("deleteMainProducts", batchResults);
         }
 
         revalidatePath("/bundles");
@@ -531,7 +545,7 @@ export async function createBundleAction(
             allProductIds.push(result.bundle.mainProductId);
         }
 
-        await Promise.allSettled([
+        const createMetafieldResults = await Promise.allSettled([
             syncActiveBundlesToMetafield(sessionToken, shop),
             allProductIds.length > 0 && result.bundle?.id
                 ? addBundleIdToProducts(
@@ -541,6 +555,7 @@ export async function createBundleAction(
                   )
                 : Promise.resolve(),
         ]);
+        logSettledFailures("createBundle", createMetafieldResults);
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
@@ -674,7 +689,7 @@ export async function updateBundleAction(
             ? [...newProductIds, result.bundle.mainProductId]
             : newProductIds;
 
-        await Promise.allSettled([
+        const updateMetafieldResults = await Promise.allSettled([
             syncActiveBundlesToMetafield(sessionToken, shop),
             syncBundleProductMetafields(
                 sessionToken,
@@ -683,6 +698,7 @@ export async function updateBundleAction(
                 adjustedNewIds,
             ),
         ]);
+        logSettledFailures("updateBundle", updateMetafieldResults);
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);

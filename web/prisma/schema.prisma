@@ -215,6 +215,7 @@ model ABTest {
     results         TestResult[]
 
     @@index([shop, status])
+    @@index([shopId])
     @@map("ab_tests")
 }
 
@@ -255,6 +256,7 @@ model Automation {
     Shop          Shop?              @relation(fields: [shopId], references: [id])
 
     @@index([shop, status])
+    @@index([shopId])
     @@map("automations")
 }
 
@@ -302,6 +304,7 @@ model PricingRule {
     Shop              Shop?               @relation(fields: [shopId], references: [id])
 
     @@index([shop, priority])
+    @@index([shopId])
     @@map("pricing_rules")
 }
 
@@ -381,6 +384,7 @@ model AIInsight {
     Shop        Shop?         @relation(fields: [shopId], references: [id])
 
     @@index([shop, type, confidence])
+    @@index([shopId])
     @@map("ai_insights")
 }
 
@@ -439,6 +443,7 @@ model Notification {
     Shop        Shop?                @relation(fields: [shopId], references: [id])
 
     @@index([shop, read, createdAt])
+    @@index([shopId])
     @@map("notifications")
 }
 
@@ -461,6 +466,7 @@ model AlertRule {
     Shop            Shop?            @relation(fields: [shopId], references: [id])
 
     @@index([shop, status])
+    @@index([shopId])
     @@map("alert_rules")
 }
 
@@ -662,4 +668,15 @@ enum ShopStatus {
     SUSPENDED
     TRIAL_EXPIRED
     NOT_CONFIGURED
+}
+
+model WebhookDelivery {
+    id          String   @id
+    topic       String
+    shop        String
+    processedAt DateTime @default(now())
+
+    @@index([shop])
+    @@index([processedAt])
+    @@map("webhook_deliveries")
 }

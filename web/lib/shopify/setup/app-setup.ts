@@ -28,6 +28,10 @@ import {
     BUNDLE_DISCOUNT_TITLE,
     METAFIELD_DEFINITIONS,
 } from "@/shared/constants/metafields.constants";
+import {
+    markMetafieldSetupDone,
+    markDiscountSetupDone,
+} from "@/shared/repositories/shop.queries";
 
 /**
  * Function handle defined in shopify.extension.toml.
@@ -285,7 +289,9 @@ export async function runAppSetup(
     // Task 1: Create ALL metafield definitions
     const metafieldResult = await createMetafieldDefinitions(accessToken, shop);
 
-    if (!metafieldResult.success) {
+    if (metafieldResult.success) {
+        await markMetafieldSetupDone(shop);
+    } else {
         console.warn(
             `[Setup] ⚠️  Metafield setup warning: ${metafieldResult.error}`,
         );
@@ -297,7 +303,9 @@ export async function runAppSetup(
         shop,
     );
 
-    if (!discountResult.success) {
+    if (discountResult.success) {
+        await markDiscountSetupDone(shop);
+    } else {
         console.warn(
             `[Setup] ⚠️  Bundle discount setup warning: ${discountResult.error}`,
         );
