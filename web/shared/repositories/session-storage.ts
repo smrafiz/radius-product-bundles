@@ -1,7 +1,7 @@
 import prisma from "./prisma-connect";
 import { Session } from "@/prisma/generated/client";
 import { Session as ShopifySession } from "@shopify/shopify-api";
-import { encryptToken, decryptToken } from "@/lib/crypto";
+import { encryptToken, decryptToken, isEncrypted } from "@/lib/crypto";
 
 const apiKey = process.env.SHOPIFY_API_KEY || "";
 
@@ -122,12 +122,28 @@ export async function findSessionsByShop(shop: string) {
 }
 
 function generateShopifySessionFromDB(session: Session) {
+    let accessToken: string | undefined;
+
+    if (session.accessToken) {
+        if (isEncrypted(session.accessToken)) {
+            accessToken = decryptToken(session.accessToken);
+        } else {
+            accessToken = session.accessToken;
+            prisma.session
+                .update({
+                    where: { id: session.id },
+                    data: { accessToken: encryptToken(session.accessToken) },
+                })
+                .catch((err) =>
+                    console.error(`[Session] Failed to encrypt token for ${session.id}:`, err),
+                );
+        }
+    }
+
     return new ShopifySession({
         id: session.id,
         shop: session.shop,
-        accessToken: session.accessToken
-            ? decryptToken(session.accessToken)
-            : undefined,
+        accessToken,
         scope: session.scope || undefined,
         state: session.state,
         isOnline: session.isOnline,

@@ -24,10 +24,12 @@ export function encryptToken(plaintext: string): string {
     return `${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted.toString("hex")}`;
 }
 
+export function isEncrypted(token: string): boolean {
+    const parts = token.split(":");
+    return parts.length === 3 && !token.startsWith("shpat_");
+}
+
 export function decryptToken(encrypted: string): string {
-    if (encrypted.startsWith("shpat_")) {
-        return encrypted;
-    }
     const [ivHex, authTagHex, ciphertextHex] = encrypted.split(":");
     if (!ivHex || !authTagHex || !ciphertextHex) {
         throw new Error("Invalid encrypted token format");

@@ -11,15 +11,15 @@
 
 | Domain                      | Critical | High   | Medium | Low    | Score      |
 | --------------------------- | -------- | ------ | ------ | ------ | ---------- |
-| Security & OWASP            | ~~3~~ 0  | 5      | 4      | 2      | ~~62~~ 75/100 |
+| Security & OWASP            | ~~3~~ 0  | ~~5~~ 4 | 4      | 2      | ~~62~~ 78/100 |
 | Data Integrity & Schema     | 2        | ~~4~~ 1 | 4      | 1      | ~~70~~ 78/100 |
 | Architecture & Code Quality | 0        | 3      | 5      | 5      | 87/100     |
-| Performance & Optimization  | 3        | 5      | 4      | 0      | 58/100     |
+| Performance & Optimization  | ~~3~~ 2  | 5      | 4      | 0      | ~~58~~ 62/100 |
 | Rust Discount Function      | ~~5~~ 0  | 8      | 4      | 0      | ~~45~~ 65/100 |
 | Webhooks & App Lifecycle    | ~~2~~ 1  | ~~6~~ 4 | 4      | 4      | ~~55~~ 68/100 |
-| **Total**                   | ~~15~~ **6** | ~~31~~ **26** | **25** | **12** | ~~63~~ **72/100** |
+| **Total**                   | ~~15~~ **5** | ~~31~~ **25** | **25** | **12** | ~~63~~ **75/100** |
 
-**Verdict**: Week 1 + Week 2 (partial) fixes complete — **9 critical and 5 high issues resolved**. All Rust criticals eliminated (0 remaining). All security criticals eliminated. Architecture remains solid (87/100). **6 critical issues remain** across Data Integrity (2), Performance (3), and Webhooks (1). 2 Week 2 items pending (P-1, S-4).
+**Verdict**: Week 1 + Week 2 complete — **10 critical and 6 high issues resolved**. All Rust criticals eliminated (0 remaining). All security criticals eliminated. Architecture remains solid (87/100). **5 critical issues remain** across Data Integrity (2), Performance (2), and Webhooks (1).
 
 ---
 
@@ -613,8 +613,8 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 | 12       | W-4 | Fix setup lock ordering (claim after success)    | 30 min | ✅ Done |
 | 13       | D-3 | Inspect Promise.allSettled results (4 locations) | 45 min | ✅ Done |
 | 14       | D-4 | Add `@@index([shopId])` to 6 models              | 20 min | ✅ Done |
-| 15       | P-1 | Batch GraphQL calls in proxy products route      | 3 hr   | ⬜     |
-| 16       | S-4 | Always encrypt tokens; migrate plaintext         | 1 hr   | ⬜     |
+| 15       | P-1 | Batch GraphQL calls in proxy products route      | 3 hr   | ✅ Done |
+| 16       | S-4 | Always encrypt tokens; migrate plaintext         | 1 hr   | ✅ Done |
 
 ### Week 3 — Performance & Operational
 

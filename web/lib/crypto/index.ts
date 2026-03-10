@@ -1,1 +1,1 @@
-export { encryptToken, decryptToken } from "./token-encryption";
+export { encryptToken, decryptToken, isEncrypted } from "./token-encryption";
