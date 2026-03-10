@@ -17,6 +17,12 @@ use shopify_function::prelude::*;
 use shopify_function::Result;
 use std::collections::HashMap;
 
+const MAX_QUANTITY: i32 = 10_000;
+
+fn safe_mul(a: i32, b: i32) -> Option<i32> {
+    a.checked_mul(b).filter(|&v| v <= MAX_QUANTITY)
+}
+
 /// Bundle config from cart attribute (untrusted - only for identification).
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -198,7 +204,10 @@ fn calculate_bxgy_discount(
     for bl in &reward_lines {
         let qty_to_discount = if same_product_mode || is_same_product {
             let per_product_deals = *bl.line.quantity() / items_per_deal;
-            per_product_deals * get_qty
+            match safe_mul(per_product_deals, get_qty) {
+                Some(v) => v,
+                None => continue,
+            }
         } else {
             let expected = bl
                 .product_id
@@ -206,7 +215,10 @@ fn calculate_bxgy_discount(
                 .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
                 .copied()
                 .unwrap_or(1);
-            std::cmp::min(deal_count * expected, *bl.line.quantity())
+            match safe_mul(deal_count, expected) {
+                Some(v) => std::cmp::min(v, *bl.line.quantity()),
+                None => continue,
+            }
         };
 
         if qty_to_discount <= 0 {
@@ -229,10 +241,10 @@ fn calculate_bxgy_discount(
     // Total reward items being discounted (sum of per-product qty_to_discount)
     let total_reward_qty_to_discount: i32 = reward_lines
         .iter()
-        .map(|bl| {
+        .filter_map(|bl| {
             if same_product_mode || is_same_product {
                 let per_product_deals = *bl.line.quantity() / items_per_deal;
-                per_product_deals * get_qty
+                safe_mul(per_product_deals, get_qty)
             } else {
                 let expected = bl
                     .product_id
@@ -240,7 +252,7 @@ fn calculate_bxgy_discount(
                     .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
                     .copied()
                     .unwrap_or(1);
-                std::cmp::min(deal_count * expected, *bl.line.quantity())
+                safe_mul(deal_count, expected).map(|v| std::cmp::min(v, *bl.line.quantity()))
             }
         })
         .sum();
@@ -558,7 +570,7 @@ fn cart_lines_discounts_generate_run(
                     bl.product_id
                         .as_ref()
                         .and_then(|pid| qty_map.get(pid))
-                        .map(|expected_qty| complete_sets * expected_qty)
+                        .and_then(|expected_qty| safe_mul(complete_sets, *expected_qty))
                 } else {
                     None
                 };
@@ -602,7 +614,7 @@ fn cart_lines_discounts_generate_run(
                             .product_id
                             .as_ref()
                             .and_then(|pid| qty_map.get(pid))
-                            .map(|expected_qty| complete_sets * expected_qty)
+                            .and_then(|expected_qty| safe_mul(complete_sets, *expected_qty))
                             .unwrap_or(line_qty);
 
                         let per_unit = subtotal / line_qty as f64;

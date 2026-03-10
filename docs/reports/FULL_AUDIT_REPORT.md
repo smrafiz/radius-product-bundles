@@ -11,15 +11,15 @@
 
 | Domain                      | Critical | High   | Medium | Low    | Score      |
 | --------------------------- | -------- | ------ | ------ | ------ | ---------- |
-| Security & OWASP            | 3        | 5      | 4      | 2      | 62/100     |
-| Data Integrity & Schema     | 2        | 4      | 4      | 1      | 70/100     |
+| Security & OWASP            | ~~3~~ 0  | 5      | 4      | 2      | ~~62~~ 75/100 |
+| Data Integrity & Schema     | 2        | ~~4~~ 3 | 4      | 1      | ~~70~~ 74/100 |
 | Architecture & Code Quality | 0        | 3      | 5      | 5      | 87/100     |
 | Performance & Optimization  | 3        | 5      | 4      | 0      | 58/100     |
-| Rust Discount Function      | 5        | 8      | 4      | 0      | 45/100     |
-| Webhooks & App Lifecycle    | 2        | 6      | 4      | 4      | 55/100     |
-| **Total**                   | **15**   | **31** | **25** | **12** | **63/100** |
+| Rust Discount Function      | ~~5~~ 2  | 8      | 4      | 0      | ~~45~~ 58/100 |
+| Webhooks & App Lifecycle    | ~~2~~ 1  | 6      | 4      | 4      | ~~55~~ 62/100 |
+| **Total**                   | ~~15~~ **8** | ~~31~~ **30** | **25** | **12** | ~~63~~ **69/100** |
 
-**Verdict**: The app has solid architecture and module boundaries (87/100) but significant gaps in security hardening, Rust edge-case handling, and operational resilience. **15 critical issues** require immediate attention before production scale.
+**Verdict**: Week 1 critical fixes complete — **7 critical issues resolved** (XSS, CSP, CORS, uninstall handler, Rust division-by-zero, negative discounts, parse logging, session atomicity). Architecture remains solid (87/100). **8 critical issues remain** across Data Integrity (2), Performance (3), Rust (2), and Webhooks (1).
 
 ---
 
