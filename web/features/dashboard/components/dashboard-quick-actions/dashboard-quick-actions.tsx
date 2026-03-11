@@ -2,22 +2,23 @@
 
 import { useAppNavigation, sanitizeHtml } from "@/shared";
 import { getEnabledQuickActions } from "@/features/dashboard";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /*
  * Dashboard quick actions
  */
 export const DashboardQuickActions = () => {
     const { goTo } = useAppNavigation();
-    const actions = getEnabledQuickActions();
+    const t = useTranslations("Dashboard.QuickActions");
+    const actions = getEnabledQuickActions(t);
 
     return (
         <s-section>
             <s-grid paddingBlockEnd="large">
                 <s-stack gap="small-300">
-                    <s-heading>Quick Actions</s-heading>
+                    <s-heading>{t("heading")}</s-heading>
                     <s-text>
-                        Common tasks and shortcuts for managing your product
-                        bundles
+                        {t("description")}
                     </s-text>
                 </s-stack>
             </s-grid>
@@ -38,7 +39,7 @@ export const DashboardQuickActions = () => {
                                 borderRadius="base"
                                 padding="base"
                                 inlineSize="100%"
-                                accessibilityLabel="Manage Bundle"
+                                accessibilityLabel={action.title}
                             >
                                 <s-grid
                                     gridTemplateColumns="auto 1fr auto"

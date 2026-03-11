@@ -6,7 +6,8 @@ import type { DashboardVideoConfig } from "@/features/dashboard/types/components
 import { SkeletonLines } from "@/shared";
 import { useAnalytics } from "@/features/analytics";
 import React, { useCallback, useRef, useState } from "react";
-import { DASHBOARD_VIDEO_ITEMS } from "@/features/dashboard/constants/dashboard.constants";
+import { getDashboardVideoItems } from "@/features/dashboard/constants/dashboard.constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Dashboard video grid section displaying multiple video items
@@ -17,6 +18,7 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
         null,
     );
     const positionsRef = useRef<Record<number, number>>({});
+    const t = useTranslations("Dashboard.Videos");
 
     const handlePlay = useCallback((video: DashboardVideoConfig) => {
         setActiveVideo(video);
@@ -54,7 +56,7 @@ export function DashboardVideo({ lines = 8 }: { lines?: number }) {
                 gap="base"
                 justifyContent="center"
             >
-                {DASHBOARD_VIDEO_ITEMS.map((video) => (
+                {getDashboardVideoItems(t).map((video) => (
                     <s-grid-item key={video.id} gridColumn="auto">
                         <DashboardVideoItem
                             video={video}

@@ -52,15 +52,13 @@ const bundleSettingsSchema = z
             .default("STORE_DEFAULT"),
         title: z
             .string()
-            .min(1, "Offer title is required")
             .max(100)
-            .default("Bundle Offers"),
+            .default(""),
         subtitle: z.string().max(300).optional().default(""),
         cartButtonText: z
             .string()
-            .min(1, "Cart button text is required")
             .max(50)
-            .default("Add bundle to cart"),
+            .default(""),
         showImages: z.boolean().default(true),
         showSavingsBadge: z.boolean().default(true),
         showPrices: z.boolean().default(true),

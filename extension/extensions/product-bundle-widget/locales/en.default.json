@@ -1,10 +1,26 @@
 {
-    "ratings": {
-        "stars": {
-            "label": "Ratings"
-        },
-        "home": {
-            "recommendationText": "Recommended Product!"
-        }
-    }
+  "bundle": {
+    "title": "Bundle & Save",
+    "savingsBadgeText": "Save {percent}%",
+    "addToCartText": "Add bundle to cart",
+    "regularPriceLabel": "Regular price:",
+    "bundlePriceLabel": "Bundle price:",
+    "youSaveLabel": "You save:",
+    "freeShippingLabel": "Free shipping",
+    "quantityLabel": "Qty:",
+    "addingText": "Adding...",
+    "addedText": "Added!",
+    "outOfStockText": "Out of Stock",
+    "maxBundlesReachedText": "Maximum {count} bundle(s) per order allowed",
+    "bogoYouPayLabel": "You Pay Only",
+    "bogoYouSaveLabel": "You Save",
+    "bogoTriggerBadgeText": "You Buy",
+    "bogoRewardBadgeText": "You Get FREE",
+    "bogoBadgeText": "",
+    "bogoFreeText": "FREE",
+    "bogoTotalLabel": "Total",
+    "bogoSaveText": "Save {amount}",
+    "moreProductsText": "+ {count} more products",
+    "showLessText": "Show less"
+  }
 }

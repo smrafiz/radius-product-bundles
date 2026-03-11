@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { DashboardVideoConfig } from "@/features/dashboard/types/components.types";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Extracts YouTube video ID from various URL formats
@@ -38,6 +39,7 @@ export function DashboardVideoItem({
 }) {
     const isYouTube = isYouTubeUrl(video.videoUrl);
     const ytId = getYouTubeId(video.videoUrl);
+    const t = useTranslations("Dashboard.Videos");
 
     return (
         <s-box padding="none">
@@ -50,7 +52,7 @@ export function DashboardVideoItem({
                     {isYouTube && ytId ? (
                         <img
                             src={`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`}
-                            alt={video.title || "Video thumbnail"}
+                            alt={video.title || t("watchVideo")}
                             className="w-full h-auto object-cover rounded-lg"
                         />
                     ) : (
@@ -70,7 +72,7 @@ export function DashboardVideoItem({
 
                 {/* Content */}
                 <s-stack gap="small-300">
-                    <s-heading>{video.title || "Watch Video"}</s-heading>
+                    <s-heading>{video.title || t("watchVideo")}</s-heading>
                     {video.description && <s-text>{video.description}</s-text>}
                 </s-stack>
 
@@ -79,7 +81,7 @@ export function DashboardVideoItem({
                     tone="auto"
                     onClick={() => onPlayAction(video)}
                 >
-                    Watch Video
+                    {t("watchVideo")}
                 </s-button>
             </s-stack>
         </s-box>

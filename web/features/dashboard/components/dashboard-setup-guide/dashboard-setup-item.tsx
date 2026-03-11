@@ -1,6 +1,7 @@
 "use client";
 
 import { SetupItemProps } from "@/features/dashboard";
+import { useTranslations } from "@/lib/i18n/provider";
 
 const DashedCircle = () => (
     <svg
@@ -54,6 +55,7 @@ export const DashboardSetupItem = ({
     primaryButton,
     secondaryButton,
 }: SetupItemProps) => {
+    const t = useTranslations("Dashboard.SetupGuide");
     const canToggle = !autoDetected;
 
     const handleCircleClick = (e: React.MouseEvent) => {
@@ -82,8 +84,8 @@ export const DashboardSetupItem = ({
                         title={
                             canToggle
                                 ? complete
-                                    ? "Mark as incomplete"
-                                    : "Mark as complete"
+                                    ? t("markIncomplete")
+                                    : t("markComplete")
                                 : undefined
                         }
                     >

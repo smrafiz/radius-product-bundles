@@ -2,9 +2,11 @@
 
 import { useAppNavigation } from "@/shared";
 import { ROUTES } from "@/shared/constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardFeatures() {
     const { goTo } = useAppNavigation();
+    const t = useTranslations("Dashboard.Features");
 
     return (
         <s-section padding="none">
@@ -26,30 +28,26 @@ export function DashboardFeatures() {
                 {/* RIGHT SIDE: Feature highlights */}
                 <s-grid-item gridColumn="auto">
                     <s-stack gap="base" padding="base">
-                        <s-heading>Powerful Bundle Features</s-heading>
+                        <s-heading>{t("heading")}</s-heading>
                         <s-unordered-list>
                             <s-list-item>
-                                Multiple bundle types — Fixed, BOGO, Volume, Mix
-                                & Match
+                                {t("bundleTypes")}
                             </s-list-item>
                             <s-list-item>
-                                Flexible discounts — Percentage, fixed amount,
-                                custom pricing
+                                {t("discounts")}
                             </s-list-item>
                             <s-list-item>
-                                Style customizer — Match your store's branding
-                                with zero code
+                                {t("styleCustomizer")}
                             </s-list-item>
                             <s-list-item>
-                                Built-in analytics — Track views, conversions,
-                                and revenue
+                                {t("analytics")}
                             </s-list-item>
                         </s-unordered-list>
                         <s-button
                             variant="primary"
                             onClick={goTo(ROUTES.BUNDLE_CREATE)}
                         >
-                            Create a bundle
+                            {t("createBundle")}
                         </s-button>
                     </s-stack>
                 </s-grid-item>

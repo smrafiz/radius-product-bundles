@@ -1,9 +1,11 @@
 import "./globals.css";
 import "@/styles/main.css";
 import { Metadata } from "next";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { Inter } from "next/font/google";
 import { AppLayoutWrapper, GlobalLoader, ModalHost, Providers } from "@/shared";
+import { I18nProvider } from "@/lib/i18n/provider";
+import { I18nLoader } from "./i18n-loader";
 
 export const metadata: Metadata = {
     title: "Radius Product Bundles App for Shopify",
@@ -18,7 +20,7 @@ const inter = Inter({ subsets: ["latin"] });
 /*
  * Root Layout
  */
-export default async function RootLayout({
+export default function RootLayout({
     children,
 }: {
     children: ReactNode;
@@ -33,13 +35,17 @@ export default async function RootLayout({
                 className={`radius-app-wrapper ${inter.className}`}
                 suppressHydrationWarning
             >
-                <Providers>
-                    <GlobalLoader />
-                    <AppLayoutWrapper>
-                        {children}
-                        <ModalHost />
-                    </AppLayoutWrapper>
-                </Providers>
+                <Suspense>
+                    <I18nLoader>
+                        <Providers>
+                            <GlobalLoader />
+                            <AppLayoutWrapper>
+                                {children}
+                                <ModalHost />
+                            </AppLayoutWrapper>
+                        </Providers>
+                    </I18nLoader>
+                </Suspense>
             </body>
         </html>
     );

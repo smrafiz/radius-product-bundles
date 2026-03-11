@@ -1,5 +1,6 @@
 "use client";
 import { useAppNavigation } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardBundlesEmpty({
     error,
@@ -7,14 +8,15 @@ export function DashboardBundlesEmpty({
     error?: string | null;
 }) {
     const { bundleData } = useAppNavigation();
+    const t = useTranslations("Dashboard.Bundles");
 
     const heading = error
-        ? "Unable to load bundles"
-        : "No active bundles";
+        ? t("unableToLoad")
+        : t("noActive");
 
     const description = error
-        ? "Something went wrong while loading your bundles. Please try refreshing the page."
-        : "Create and activate a bundle to see it here.";
+        ? t("errorDesc")
+        : t("noActiveDesc");
 
     return (
         <s-section accessibilityLabel="Empty state section">
@@ -41,10 +43,10 @@ export function DashboardBundlesEmpty({
                         <s-button
                             icon="plus"
                             variant="primary"
-                            accessibilityLabel="Create Bundle"
+                            accessibilityLabel={t("createBundle")}
                             onClick={bundleData.create()}
                         >
-                            Create Bundle
+                            {t("createBundle")}
                         </s-button>
                     )}
                 </s-grid>

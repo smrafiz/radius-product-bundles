@@ -2,18 +2,28 @@
 
 import { RATING_MESSAGES } from "@/features/dashboard";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 
-const STAR_TOOLTIPS = ["Terrible", "Poor", "Average", "Good", "Excellent"];
 const MAX_RATING = 5;
 const MODAL_ID = "dashboard-review-modal";
 
 export function DashboardReviewBanner() {
     const [currentRating, setCurrentRating] = useState(0);
     const modalRef = useRef<HTMLElement | null>(null);
+    const t = useTranslations("Dashboard.Review");
 
-    const bannerMessage = RATING_MESSAGES[0];
-    const modalMessage =
-        RATING_MESSAGES[currentRating as keyof typeof RATING_MESSAGES];
+    const starTooltips = [
+        t("starTooltips.1"),
+        t("starTooltips.2"),
+        t("starTooltips.3"),
+        t("starTooltips.4"),
+        t("starTooltips.5"),
+    ];
+
+    const bannerTitle = t("ratings.0.title");
+    const bannerDescription = t("ratings.0.description");
+    const modalTitle = t(`ratings.${currentRating}.title`);
+    const modalDescription = t(`ratings.${currentRating}.description`);
 
     const openModal = useCallback((star: number) => {
         setCurrentRating(star);
@@ -43,9 +53,9 @@ export function DashboardReviewBanner() {
                         gap="small"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{bannerMessage.title}</s-heading>
+                            <s-heading>{bannerTitle}</s-heading>
                             <s-text color="subdued">
-                                {bannerMessage.description}
+                                {bannerDescription}
                             </s-text>
                         </s-stack>
                     </s-grid>
@@ -58,11 +68,11 @@ export function DashboardReviewBanner() {
                         ).map((star) => (
                             <React.Fragment key={star}>
                                 <s-tooltip id={`star-${star}-tooltip`}>
-                                    {STAR_TOOLTIPS[star - 1]}
+                                    {starTooltips[star - 1]}
                                 </s-tooltip>
                                 <s-button
                                     variant="tertiary"
-                                    accessibilityLabel={STAR_TOOLTIPS[star - 1]}
+                                    accessibilityLabel={starTooltips[star - 1]}
                                     onClick={() => openModal(star)}
                                     interestFor={`star-${star}-tooltip`}
                                     icon="star"
@@ -78,14 +88,14 @@ export function DashboardReviewBanner() {
                 size="base"
                 id={MODAL_ID}
                 ref={modalRef as any}
-                heading="Share your feedback"
-                accessibilityLabel="Rate our app"
+                heading={t("shareYourFeedback")}
+                accessibilityLabel={t("shareYourFeedback")}
             >
                 <s-stack gap="base">
                     <s-stack gap="small-200">
-                        <s-heading>{modalMessage.title}</s-heading>
+                        <s-heading>{modalTitle}</s-heading>
                         <s-text color="subdued">
-                            {modalMessage.description}
+                            {modalDescription}
                         </s-text>
                     </s-stack>
 
@@ -97,7 +107,7 @@ export function DashboardReviewBanner() {
                         ).map((star) => (
                             <s-button
                                 key={star}
-                                accessibilityLabel={STAR_TOOLTIPS[star - 1]}
+                                accessibilityLabel={starTooltips[star - 1]}
                                 variant="tertiary"
                                 onClick={() => setCurrentRating(star)}
                                 icon={
@@ -115,8 +125,8 @@ export function DashboardReviewBanner() {
                     <s-text-area
                         label={
                             currentRating <= 3
-                                ? "What can we improve?"
-                                : "What did you like most?"
+                                ? t("whatCanWeImprove")
+                                : t("whatDidYouLikeMost")
                         }
                         rows={3}
                     />
@@ -130,13 +140,13 @@ export function DashboardReviewBanner() {
                             borderRadius="base"
                         >
                             <s-heading>
-                                Help us by sharing your experience
+                                {t("helpBySharing")}
                             </s-heading>
                             <s-stack direction="inline" gap="small">
                                 <s-button icon="external">
-                                    Rate on App Store
+                                    {t("rateOnAppStore")}
                                 </s-button>
-                                <s-button>Share with friends</s-button>
+                                <s-button>{t("shareWithFriends")}</s-button>
                             </s-stack>
                         </s-stack>
                     )}
@@ -149,13 +159,13 @@ export function DashboardReviewBanner() {
                             background="subdued"
                             borderRadius="base"
                         >
-                            <s-heading>Need immediate help?</s-heading>
+                            <s-heading>{t("needImmediateHelp")}</s-heading>
                             <s-stack direction="inline" gap="small">
                                 <s-button icon="email">
-                                    Contact Support
+                                    {t("contactSupport")}
                                 </s-button>
                                 <s-button icon="question-circle">
-                                    View Help Center
+                                    {t("viewHelpCenter")}
                                 </s-button>
                             </s-stack>
                         </s-stack>
@@ -168,7 +178,7 @@ export function DashboardReviewBanner() {
                     commandFor={MODAL_ID}
                     command="--hide"
                 >
-                    Submit feedback
+                    {t("submitFeedback")}
                 </s-button>
             </s-modal>
         </>

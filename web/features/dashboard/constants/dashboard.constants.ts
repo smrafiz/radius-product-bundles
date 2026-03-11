@@ -41,51 +41,53 @@ const DASHBOARD_METRICS_SVG = {
 /*
  * Dashboard Metrics
  */
-export const DASHBOARD_METRICS: DashboardMetricConfig[] = [
-    {
-        key: "activeBundles",
-        title: "Active bundles",
-        format: "number",
-        action: { label: "View details", url: ROUTES.BUNDLES },
-        img: {
-            svg: DASHBOARD_METRICS_SVG["activeBundles"],
+export function getDashboardMetrics(t: (key: string) => string): DashboardMetricConfig[] {
+    return [
+        {
+            key: "activeBundles",
+            title: t("activeBundles"),
+            format: "number",
+            action: { label: t("viewDetails"), url: ROUTES.BUNDLES },
+            img: {
+                svg: DASHBOARD_METRICS_SVG["activeBundles"],
+            },
         },
-    },
-    {
-        key: "totalRevenue",
-        title: "Total revenue",
-        format: "currency",
-        tone: "success",
-        icon: "arrow-up",
-        action: { label: "View details", url: ROUTES.ANALYTICS },
-        img: {
-            svg: DASHBOARD_METRICS_SVG["totalRevenue"],
+        {
+            key: "totalRevenue",
+            title: t("totalRevenue"),
+            format: "currency",
+            tone: "success",
+            icon: "arrow-up",
+            action: { label: t("viewDetails"), url: ROUTES.ANALYTICS },
+            img: {
+                svg: DASHBOARD_METRICS_SVG["totalRevenue"],
+            },
         },
-    },
-    {
-        key: "avgConversionRate",
-        title: "Conversion rate",
-        format: "percentage",
-        tone: "warning",
-        icon: "arrow-up",
-        action: { label: "View details", url: ROUTES.ANALYTICS },
-        img: {
-            svg: DASHBOARD_METRICS_SVG["conversionRate"],
+        {
+            key: "avgConversionRate",
+            title: t("conversionRate"),
+            format: "percentage",
+            tone: "warning",
+            icon: "arrow-up",
+            action: { label: t("viewDetails"), url: ROUTES.ANALYTICS },
+            img: {
+                svg: DASHBOARD_METRICS_SVG["conversionRate"],
+            },
         },
-    },
-    {
-        key: "totalViews",
-        title: "Total views",
-        format: "number",
-        tone: "info",
-        icon: "arrow-down",
-        comparisonLabel: "Last 30 days",
-        action: { label: "View details", url: ROUTES.ANALYTICS },
-        img: {
-            svg: DASHBOARD_METRICS_SVG["totalViews"],
+        {
+            key: "totalViews",
+            title: t("totalViews"),
+            format: "number",
+            tone: "info",
+            icon: "arrow-down",
+            comparisonLabel: t("last30Days"),
+            action: { label: t("viewDetails"), url: ROUTES.ANALYTICS },
+            img: {
+                svg: DASHBOARD_METRICS_SVG["totalViews"],
+            },
         },
-    },
-];
+    ];
+}
 
 /*
  * Metric card SVGs
@@ -101,195 +103,196 @@ const DASHBOARD_QUICK_ACTIONS_SVG = {
 /*
  * Dashboard Quick Actions
  */
-export const DASHBOARD_QUICK_ACTIONS: DashboardQuickActionItem[] = [
-    {
-        id: "bundles",
-        title: "Manage bundle",
-        description: "Create and edit bundle offers",
-        icon: "text-in-rows",
-        tone: "success",
-        url: ROUTES.BUNDLES,
-        ...ACTION_THEMES.success,
-        enabled: true,
-        img: {
-            svg: DASHBOARD_QUICK_ACTIONS_SVG["manageBundle"],
+export function getDashboardQuickActions(t: (key: string) => string): DashboardQuickActionItem[] {
+    return [
+        {
+            id: "bundles",
+            title: t("manageBundle"),
+            description: t("manageBundleDesc"),
+            icon: "text-in-rows",
+            tone: "success",
+            url: ROUTES.BUNDLES,
+            ...ACTION_THEMES.success,
+            enabled: true,
+            img: {
+                svg: DASHBOARD_QUICK_ACTIONS_SVG["manageBundle"],
+            },
         },
-    },
-    {
-        id: "analytics",
-        title: "View analytics",
-        description: "Track performance metrics",
-        icon: "chart-histogram-second-last",
-        tone: "info",
-        url: ROUTES.ANALYTICS,
-        ...ACTION_THEMES.info,
-        enabled: true,
-        img: {
-            svg: DASHBOARD_QUICK_ACTIONS_SVG["vewAnalytics"],
+        {
+            id: "analytics",
+            title: t("viewAnalytics"),
+            description: t("viewAnalyticsDesc"),
+            icon: "chart-histogram-second-last",
+            tone: "info",
+            url: ROUTES.ANALYTICS,
+            ...ACTION_THEMES.info,
+            enabled: true,
+            img: {
+                svg: DASHBOARD_QUICK_ACTIONS_SVG["vewAnalytics"],
+            },
         },
-    },
-    {
-        id: "settings",
-        title: "App settings",
-        description: "Customize your preferences",
-        icon: "database",
-        tone: "info",
-        url: ROUTES.SETTINGS,
-        ...ACTION_THEMES.info,
-        enabled: true,
-        img: {
-            svg: DASHBOARD_QUICK_ACTIONS_SVG["bundleStudio"],
+        {
+            id: "settings",
+            title: t("appSettings"),
+            description: t("appSettingsDesc"),
+            icon: "database",
+            tone: "info",
+            url: ROUTES.SETTINGS,
+            ...ACTION_THEMES.info,
+            enabled: true,
+            img: {
+                svg: DASHBOARD_QUICK_ACTIONS_SVG["bundleStudio"],
+            },
         },
-    },
-];
+    ];
+}
 
 /*
  * Dashboard Callout Cards
  */
 
-export const DASHBOARD_CALLOUT_CARDS: DashboardCalloutCardsItem[] = [
-    {
-        title: "Need any support?",
-        description:
-            "Step by step guide to install and activate BundleSuite on your store.",
-        primaryButton: {
-            content: "Send us mail",
-            props: {
-                url: "https://www.example.com",
-                external: true,
+export function getDashboardCalloutCards(t: (key: string) => string): DashboardCalloutCardsItem[] {
+    return [
+        {
+            title: t("support.title"),
+            description: t("support.description"),
+            primaryButton: {
+                content: t("support.button"),
+                props: {
+                    url: "https://www.example.com",
+                    external: true,
+                },
+                tone: "critical",
             },
-            tone: "critical",
+            icon: "email",
         },
-        icon: "email",
-    },
-    {
-        title: "Upcoming new features",
-        description:
-            "Watch our video tutorials to learn how to use BundleSuite.",
-        primaryButton: {
-            content: "See all features",
-            props: {
-                url: "https://www.example.com",
-                external: true,
+        {
+            title: t("features.title"),
+            description: t("features.description"),
+            primaryButton: {
+                content: t("features.button"),
+                props: {
+                    url: "https://www.example.com",
+                    external: true,
+                },
+                tone: "neutral",
             },
-            tone: "neutral",
+            icon: "star",
         },
-        icon: "star",
-    },
-    {
-        title: "Help docs",
-        description: "Explore app features with video & documentation guides.",
-        primaryButton: {
-            content: "See help doc",
-            props: {
-                url: "https://www.example.com",
-                external: true,
+        {
+            title: t("helpDocs.title"),
+            description: t("helpDocs.description"),
+            primaryButton: {
+                content: t("helpDocs.button"),
+                props: {
+                    url: "https://www.example.com",
+                    external: true,
+                },
+                tone: "neutral",
             },
-            tone: "neutral",
+            icon: "book",
         },
-        icon: "book",
-    },
-];
+    ];
+}
 
 /*
  * Setup Guide Steps
  */
-export const SETUP_GUIDE_STEPS: SetupGuideStep[] = [
-    {
-        id: 0,
-        stepKey: SETUP_STEP_KEYS.APP_EMBED,
-        title: "Enable the app embed",
-        description:
-            "Activate the Product Bundles app embed in your theme editor. This is required for bundle widgets, analytics tracking, and storefront functionality to work on your store.",
-        image: {
-            url: "/assets/setup-guide-step-one.svg",
-            alt: "Enable app embed in theme editor",
+export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[] {
+    return [
+        {
+            id: 0,
+            stepKey: SETUP_STEP_KEYS.APP_EMBED,
+            title: t("steps.enableAppEmbed.title"),
+            description: t("steps.enableAppEmbed.description"),
+            image: {
+                url: "/assets/setup-guide-step-one.svg",
+                alt: "Enable app embed in theme editor",
+            },
+            primaryButton: { content: t("steps.enableAppEmbed.primaryButton") },
+            secondaryButton: { content: t("steps.enableAppEmbed.secondaryButton") },
         },
-        primaryButton: { content: "Open theme editor" },
-        secondaryButton: { content: "Check status" },
-    },
-    {
-        id: 1,
-        stepKey: SETUP_STEP_KEYS.FIRST_BUNDLE,
-        title: "Create your first product bundle",
-        description:
-            "Select a bundle type — Fixed Bundle, BOGO, Volume Discount, or Mix & Match — add products, configure pricing, and publish to start selling.",
-        image: {
-            url: "/assets/setup-guide-step-two.svg",
-            alt: "Create a product bundle",
+        {
+            id: 1,
+            stepKey: SETUP_STEP_KEYS.FIRST_BUNDLE,
+            title: t("steps.createFirstBundle.title"),
+            description: t("steps.createFirstBundle.description"),
+            image: {
+                url: "/assets/setup-guide-step-two.svg",
+                alt: "Create a product bundle",
+            },
+            primaryButton: {
+                content: t("steps.createFirstBundle.primaryButton"),
+                internalUrl: ROUTES.BUNDLE_CREATE,
+            },
         },
-        primaryButton: {
-            content: "Create bundle",
-            internalUrl: ROUTES.BUNDLE_CREATE,
+        {
+            id: 2,
+            stepKey: SETUP_STEP_KEYS.WIDGET_CUSTOMIZED,
+            title: t("steps.customizeSettings.title"),
+            description: t("steps.customizeSettings.description"),
+            image: {
+                url: "/assets/setup-guide-step-three.svg",
+                alt: "Configure settings and style customizer",
+            },
+            primaryButton: {
+                content: t("steps.customizeSettings.primaryButton"),
+                internalUrl: ROUTES.SETTINGS,
+            },
         },
-    },
-    {
-        id: 2,
-        stepKey: SETUP_STEP_KEYS.WIDGET_CUSTOMIZED,
-        title: "Customize your settings",
-        description:
-            "Configure your global display preferences and style the bundle widget to match your store's branding — adjust layout, colors, typography, and button styles.",
-        image: {
-            url: "/assets/setup-guide-step-three.svg",
-            alt: "Configure settings and style customizer",
+        {
+            id: 3,
+            stepKey: SETUP_STEP_KEYS.STOREFRONT_PREVIEW,
+            title: t("steps.previewStorefront.title"),
+            description: t("steps.previewStorefront.description"),
+            image: {
+                url: "/assets/setup-guide-step-four.svg",
+                alt: "Preview bundle on storefront",
+            },
+            primaryButton: { content: t("steps.previewStorefront.primaryButton") },
         },
-        primaryButton: {
-            content: "Go to settings",
-            internalUrl: ROUTES.SETTINGS,
+        {
+            id: 4,
+            stepKey: SETUP_STEP_KEYS.ANALYTICS_VIEWED,
+            title: t("steps.monitorAnalytics.title"),
+            description: t("steps.monitorAnalytics.description"),
+            image: {
+                url: "/assets/setup-guide-step-five.svg",
+                alt: "Bundle analytics dashboard",
+            },
+            primaryButton: {
+                content: t("steps.monitorAnalytics.primaryButton"),
+                internalUrl: ROUTES.ANALYTICS,
+            },
         },
-    },
-    {
-        id: 3,
-        stepKey: SETUP_STEP_KEYS.STOREFRONT_PREVIEW,
-        title: "Preview your live storefront",
-        description:
-            "Visit your online store to verify how bundles appear to customers. Check the widget layout, discount display, and add-to-cart experience on a real product page.",
-        image: {
-            url: "/assets/setup-guide-step-four.svg",
-            alt: "Preview bundle on storefront",
-        },
-        primaryButton: { content: "View storefront" },
-    },
-    {
-        id: 4,
-        stepKey: SETUP_STEP_KEYS.ANALYTICS_VIEWED,
-        title: "Monitor bundle analytics",
-        description:
-            "Track key metrics like bundle views, add-to-cart rate, conversion rate, and revenue generated across all your bundles from the analytics dashboard.",
-        image: {
-            url: "/assets/setup-guide-step-five.svg",
-            alt: "Bundle analytics dashboard",
-        },
-        primaryButton: {
-            content: "Go to analytics",
-            internalUrl: ROUTES.ANALYTICS,
-        },
-    },
-];
+    ];
+}
 
 /*
  * Dashboard Video Items Link
  */
-export const DASHBOARD_VIDEO_ITEMS: DashboardVideoConfig[] = [
-    {
-        id: 1,
-        videoUrl: "https://www.youtube.com/watch?v=sRWcJrMTtMI",
-        title: "See it in action",
-        description: "Bundles are a great way to increase average order value.",
-    },
-    {
-        id: 2,
-        videoUrl: "https://www.youtube.com/watch?v=-S0FiZnAmTk",
-        title: "Getting started",
-        description: "Bundles are a great way to increase average order value.",
-    },
-    {
-        id: 3,
-        videoUrl: "https://www.youtube.com/watch?v=ANmgjWMt6tg",
-        title: "Advanced tips",
-        description: "Bundles are a great way to increase average order value.",
-    },
-];
+export function getDashboardVideoItems(t: (key: string) => string): DashboardVideoConfig[] {
+    return [
+        {
+            id: 1,
+            videoUrl: "https://www.youtube.com/watch?v=sRWcJrMTtMI",
+            title: t("seeInAction"),
+            description: t("videoDescription"),
+        },
+        {
+            id: 2,
+            videoUrl: "https://www.youtube.com/watch?v=-S0FiZnAmTk",
+            title: t("gettingStarted"),
+            description: t("videoDescription"),
+        },
+        {
+            id: 3,
+            videoUrl: "https://www.youtube.com/watch?v=ANmgjWMt6tg",
+            title: t("advancedTips"),
+            description: t("videoDescription"),
+        },
+    ];
+}
 
 /*
  * Dashboard Review Messages

@@ -3,6 +3,7 @@
 import ReactPlayer from "react-player";
 import type { DashboardVideoModalProps } from "@/features/dashboard/types/components.types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 const MODAL_ID = "dashboard-video-modal";
 
@@ -18,6 +19,7 @@ export function DashboardVideoModal({
     const modalRef = useRef<HTMLElement | null>(null);
     const playerRef = useRef<HTMLVideoElement | null>(null);
     const [playing, setPlaying] = useState(false);
+    const t = useTranslations("Dashboard.Videos");
 
     // Show/hide modal + autoplay when video changes
     useEffect(() => {
@@ -76,8 +78,8 @@ export function DashboardVideoModal({
             size="large-100"
             id={MODAL_ID}
             ref={modalRef as any}
-            heading={video?.title || "Video Tutorial"}
-            accessibilityLabel={video?.title || "Video Tutorial"}
+            heading={video?.title || t("videoTutorial")}
+            accessibilityLabel={video?.title || t("videoTutorial")}
         >
             <div
                 className="rounded-lg overflow-hidden"
@@ -105,7 +107,7 @@ export function DashboardVideoModal({
                 commandFor={MODAL_ID}
                 command="--hide"
             >
-                Close
+                {t("close")}
             </s-button>
         </s-modal>
     );

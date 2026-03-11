@@ -3,14 +3,16 @@
 import { useMemo } from "react";
 import { MetricCard } from "@/shared/components";
 import { useAnalyticsMetrics } from "@/features/analytics";
-import { DASHBOARD_METRICS } from "@/features/dashboard";
+import { getDashboardMetrics } from "@/features/dashboard";
 import { formatByType } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Dashboard Metrics Component
  */
 export function DashboardMetrics() {
     const { metrics, isFetching } = useAnalyticsMetrics(9999);
+    const t = useTranslations("Dashboard.Metrics");
 
     const cards = useMemo(() => {
         const metricsData: Record<string, number> = {
@@ -25,7 +27,7 @@ export function DashboardMetrics() {
             avgConversionRate: metrics?.growth?.conversion,
         };
 
-        return DASHBOARD_METRICS.map((cfg) => ({
+        return getDashboardMetrics(t).map((cfg) => ({
             title: cfg.title,
             icon: cfg.icon,
             tone: cfg.tone,
@@ -34,7 +36,7 @@ export function DashboardMetrics() {
             growth: growthData[cfg.key],
             action: cfg.action,
         }));
-    }, [metrics]);
+    }, [metrics, t]);
 
     return (
         <s-grid

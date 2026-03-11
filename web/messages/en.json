@@ -1,0 +1,195 @@
+{
+  "Common": {
+    "Navigation": {
+      "dashboard": "Dashboard",
+      "home": "Home",
+      "bundles": "Bundles",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "abTesting": "A/B Testing",
+      "automation": "Automation",
+      "pricing": "Pricing",
+      "templates": "Templates",
+      "integrations": "Integrations"
+    }
+  },
+  "Dashboard": {
+    "title": "Welcome to Radius Bundles",
+    "description": "Manage your product bundles and increase your average order value.",
+    "createBundle": "Create Bundle",
+    "setupGuide": "Setup guide",
+    "SetupGuide": {
+      "tasksComplete": "{completed} of {total} tasks complete",
+      "heading": "Get started with Product Bundles",
+      "subheading": "Use this personalized guide to get your app up and running.",
+      "dismiss": "Dismiss",
+      "collapse": "Collapse",
+      "expand": "Expand",
+      "upNext": "Up next:",
+      "resumeGuide": "Resume guide",
+      "allComplete": "All tasks complete",
+      "dismissGuide": "Dismiss guide",
+      "markComplete": "Mark as complete",
+      "markIncomplete": "Mark as incomplete",
+      "steps": {
+        "enableAppEmbed": {
+          "title": "Enable the app embed",
+          "description": "Activate the Product Bundles app embed in your theme editor. This is required for bundle widgets, analytics tracking, and storefront functionality to work on your store.",
+          "primaryButton": "Open theme editor",
+          "secondaryButton": "Check status"
+        },
+        "createFirstBundle": {
+          "title": "Create your first product bundle",
+          "description": "Select a bundle type — Fixed Bundle, BOGO, Volume Discount, or Mix & Match — add products, configure pricing, and publish to start selling.",
+          "primaryButton": "Create bundle"
+        },
+        "customizeSettings": {
+          "title": "Customize your settings",
+          "description": "Configure your global display preferences and style the bundle widget to match your store's branding — adjust layout, colors, typography, and button styles.",
+          "primaryButton": "Go to settings"
+        },
+        "previewStorefront": {
+          "title": "Preview your live storefront",
+          "description": "Visit your online store to verify how bundles appear to customers. Check the widget layout, discount display, and add-to-cart experience on a real product page.",
+          "primaryButton": "View storefront"
+        },
+        "monitorAnalytics": {
+          "title": "Monitor bundle analytics",
+          "description": "Track key metrics like bundle views, add-to-cart rate, conversion rate, and revenue generated across all your bundles from the analytics dashboard.",
+          "primaryButton": "Go to analytics"
+        }
+      }
+    },
+    "Metrics": {
+      "activeBundles": "Active bundles",
+      "totalRevenue": "Total revenue",
+      "conversionRate": "Conversion rate",
+      "totalViews": "Total views",
+      "viewDetails": "View details",
+      "last30Days": "Last 30 days"
+    },
+    "QuickActions": {
+      "heading": "Quick Actions",
+      "description": "Common tasks and shortcuts for managing your product bundles",
+      "manageBundle": "Manage bundle",
+      "manageBundleDesc": "Create and edit bundle offers",
+      "viewAnalytics": "View analytics",
+      "viewAnalyticsDesc": "Track performance metrics",
+      "appSettings": "App settings",
+      "appSettingsDesc": "Customize your preferences"
+    },
+    "Features": {
+      "heading": "Powerful Bundle Features",
+      "bundleTypes": "Multiple bundle types — Fixed, BOGO, Volume, Mix & Match",
+      "discounts": "Flexible discounts — Percentage, fixed amount, custom pricing",
+      "styleCustomizer": "Style customizer — Match your store's branding with zero code",
+      "analytics": "Built-in analytics — Track views, conversions, and revenue",
+      "createBundle": "Create a bundle"
+    },
+    "Bundles": {
+      "recentActive": "Recent Active Bundles",
+      "recentActiveDesc": "Your most recently updated active bundles.",
+      "viewAll": "View All",
+      "unableToLoad": "Unable to load bundles",
+      "errorDesc": "Something went wrong while loading your bundles. Please try refreshing the page.",
+      "noActive": "No active bundles",
+      "noActiveDesc": "Create and activate a bundle to see it here.",
+      "createBundle": "Create Bundle",
+      "item": "Item",
+      "name": "Name",
+      "type": "Type",
+      "views": "Views",
+      "conversion": "Conversion",
+      "revenue": "Revenue",
+      "status": "Status"
+    },
+    "MediaCard": {
+      "title": "Update your plan",
+      "description": "Unlock advanced features and priority support. Upgrade today to get the most out of your bundles.",
+      "button": "See details"
+    },
+    "CalloutCards": {
+      "support": {
+        "title": "Need any support?",
+        "description": "Step by step guide to install and activate BundleSuite on your store.",
+        "button": "Send us mail"
+      },
+      "features": {
+        "title": "Upcoming new features",
+        "description": "Watch our video tutorials to learn how to use BundleSuite.",
+        "button": "See all features"
+      },
+      "helpDocs": {
+        "title": "Help docs",
+        "description": "Explore app features with video & documentation guides.",
+        "button": "See help doc"
+      }
+    },
+    "Videos": {
+      "seeInAction": "See it in action",
+      "gettingStarted": "Getting started",
+      "advancedTips": "Advanced tips",
+      "videoDescription": "Bundles are a great way to increase average order value.",
+      "watchVideo": "Watch Video",
+      "close": "Close",
+      "videoTutorial": "Video Tutorial"
+    },
+    "Review": {
+      "shareYourFeedback": "Share your feedback",
+      "submitFeedback": "Submit feedback",
+      "whatCanWeImprove": "What can we improve?",
+      "whatDidYouLikeMost": "What did you like most?",
+      "helpBySharing": "Help us by sharing your experience",
+      "rateOnAppStore": "Rate on App Store",
+      "shareWithFriends": "Share with friends",
+      "needImmediateHelp": "Need immediate help?",
+      "contactSupport": "Contact Support",
+      "viewHelpCenter": "View Help Center",
+      "starTooltips": {
+        "1": "Terrible",
+        "2": "Poor",
+        "3": "Average",
+        "4": "Good",
+        "5": "Excellent"
+      },
+      "ratings": {
+        "0": {
+          "title": "How would you rate our app?",
+          "description": "Your feedback helps us improve the experience for everyone. It will take you less than a minute."
+        },
+        "1": {
+          "title": "We're sorry to hear that!",
+          "description": "Help us improve by telling us what went wrong."
+        },
+        "2": {
+          "title": "We can do better!",
+          "description": "Let us know what we can improve to make your experience better."
+        },
+        "3": {
+          "title": "Thanks for the feedback!",
+          "description": "We'd love to know how we can make this even better for you."
+        },
+        "4": {
+          "title": "Great to hear!",
+          "description": "What did you like most? Your feedback helps us keep improving."
+        },
+        "5": {
+          "title": "Awesome!",
+          "description": "We're thrilled you love our app! Consider sharing your experience."
+        }
+      }
+    },
+    "AppEmbed": {
+      "notEnabled": "App embed is not enabled",
+      "notEnabledDesc": "The bundle functionalities and analytics won't work correctly on your storefront until the app embed is activated in your theme editor.",
+      "enableButton": "Enable app embed",
+      "isActive": "App embed is active",
+      "notEnabledYet": "App embed is not enabled yet"
+    }
+  },
+  "Settings": {
+    "title": "App Settings",
+    "save": "Save Settings",
+    "saved": "Settings Saved Successfully."
+  }
+}

@@ -1,15 +1,18 @@
 "use client";
 import { CalloutCard } from "@/shared";
-import { DASHBOARD_CALLOUT_CARDS } from "@/features/dashboard";
+import { getDashboardCalloutCards } from "@/features/dashboard";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardCalloutCards() {
+    const t = useTranslations("Dashboard.CalloutCards");
+
     return (
         <s-grid
             gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
             gap="base"
             justifyContent="center"
         >
-            {DASHBOARD_CALLOUT_CARDS.map(
+            {getDashboardCalloutCards(t).map(
                 ({ title, icon, description, primaryButton }, index) => (
                     <s-grid-item key={index} gridColumn="auto">
                         <CalloutCard

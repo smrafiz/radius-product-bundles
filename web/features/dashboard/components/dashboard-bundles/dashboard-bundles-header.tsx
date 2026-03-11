@@ -1,6 +1,7 @@
 "use client";
 
 import { ROUTES, SkeletonLine, useAppNavigation } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardBundlesHeader({
     isLoading = false,
@@ -8,6 +9,7 @@ export function DashboardBundlesHeader({
     isLoading?: boolean;
 }) {
     const { goTo } = useAppNavigation();
+    const t = useTranslations("Dashboard.Bundles");
 
     return (
         <s-grid
@@ -18,9 +20,9 @@ export function DashboardBundlesHeader({
             alignItems="center"
         >
             <s-stack gap="small-300">
-                <s-heading>Recent Active Bundles</s-heading>
+                <s-heading>{t("recentActive")}</s-heading>
                 <s-text>
-                    Your most recently updated active bundles.
+                    {t("recentActiveDesc")}
                 </s-text>
             </s-stack>
             <s-stack>
@@ -32,10 +34,10 @@ export function DashboardBundlesHeader({
                     <s-button
                         icon="view"
                         variant="secondary"
-                        accessibilityLabel="View All"
+                        accessibilityLabel={t("viewAll")}
                         onClick={goTo(ROUTES.BUNDLES)}
                     >
-                        View All
+                        {t("viewAll")}
                     </s-button>
                 )}
             </s-stack>

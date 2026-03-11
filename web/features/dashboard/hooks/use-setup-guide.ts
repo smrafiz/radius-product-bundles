@@ -14,14 +14,17 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { SETUP_GUIDE_STEPS } from "@/features/dashboard/constants/dashboard.constants";
+import { getSetupGuideSteps } from "@/features/dashboard/constants/dashboard.constants";
 import {
     AUTO_DETECTED_STEPS,
     SETUP_STEP_KEYS,
 } from "@/features/dashboard/constants/setup-guide.constants";
 import { invalidateBundleCache } from "@/features/bundles/utils/bundle-cache";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function useSetupGuide() {
+    const t = useTranslations("Dashboard.SetupGuide");
+    const tEmbed = useTranslations("Dashboard.AppEmbed");
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const queries = setupGuideQueries(app);
@@ -114,7 +117,7 @@ export function useSetupGuide() {
     const shopDomain = data?.shopDomain ?? "";
     const apiKey = data?.apiKey ?? "";
 
-    const items = SETUP_GUIDE_STEPS.map((step) => ({
+    const items = getSetupGuideSteps(t).map((step) => ({
         ...step,
         complete: progress ? progress[step.stepKey] : false,
         autoDetected: AUTO_DETECTED_STEPS.has(step.stepKey),
@@ -216,7 +219,7 @@ export function useSetupGuide() {
                         key: item.stepKey as SetupStepKey,
                         value: true,
                     });
-                    shopify.toast.show("App embed is active");
+                    shopify.toast.show(tEmbed("isActive"));
                 } else {
                     if (item.complete) {
                         await completeStepMutation.mutateAsync({
@@ -224,7 +227,7 @@ export function useSetupGuide() {
                             value: false,
                         });
                     }
-                    shopify.toast.show("App embed is not enabled yet", {
+                    shopify.toast.show(tEmbed("notEnabledYet"), {
                         isError: true,
                     });
                 }

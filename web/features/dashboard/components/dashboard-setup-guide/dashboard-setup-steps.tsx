@@ -5,6 +5,7 @@ import {
     DashboardSetupGuideProps,
     DashboardSetupItem,
 } from "@/features/dashboard";
+import { useTranslations } from "@/lib/i18n/provider";
 
 const RING_SIZE = 16;
 const RING_STROKE = 3;
@@ -69,6 +70,7 @@ export function DashboardSetupSteps({
     onPrimaryClick,
     onSecondaryClick,
 }: DashboardSetupGuideProps) {
+    const t = useTranslations("Dashboard.SetupGuide");
     const nextIncompleteItem = items.find((item) => !item.complete);
 
     return (
@@ -89,13 +91,12 @@ export function DashboardSetupSteps({
                                 />
                                 <s-text>
                                     <span className="text-[12px]">
-                                        {completedItemsLength} of {items.length}{" "}
-                                        tasks complete
+                                        {t("tasksComplete", { completed: String(completedItemsLength), total: String(items.length) })}
                                     </span>
                                 </s-text>
                             </div>
                             <s-tooltip id="dismiss-guide-tooltip">
-                                Dismiss
+                                {t("dismiss")}
                             </s-tooltip>
                             <s-button
                                 interestFor="dismiss-guide-tooltip"
@@ -108,7 +109,7 @@ export function DashboardSetupSteps({
                                 loading={isDismissing}
                             />
                             <s-tooltip id="toggle-guide-tooltip">
-                                {isGuideOpen ? "Collapse" : "Expand"}
+                                {isGuideOpen ? t("collapse") : t("expand")}
                             </s-tooltip>
                             <s-button
                                 interestFor="toggle-guide-tooltip"
@@ -125,12 +126,11 @@ export function DashboardSetupSteps({
                         <s-stack gap="small-300">
                             <s-heading>
                                 <span className="text-[14px]">
-                                    Get started with Product Bundles
+                                    {t("heading")}
                                 </span>
                             </s-heading>
                             <s-paragraph>
-                                Use this personalized guide to get your app up
-                                and running.
+                                {t("subheading")}
                             </s-paragraph>
                         </s-stack>
                     </s-grid>
@@ -185,7 +185,7 @@ export function DashboardSetupSteps({
                                 <s-text>
                                     <s-text>
                                         <span className="font-semibold">
-                                            Up next:{" "}
+                                            {t("upNext")}{" "}
                                         </span>
                                     </s-text>
                                     {nextIncompleteItem.title}
@@ -194,7 +194,7 @@ export function DashboardSetupSteps({
                                     variant="secondary"
                                     onClick={toggleGuide}
                                 >
-                                    Resume guide
+                                    {t("resumeGuide")}
                                 </s-button>
                             </div>
                         </s-box>
@@ -221,7 +221,7 @@ export function DashboardSetupSteps({
                                         tone="success"
                                     />
                                     <s-text type="strong">
-                                        All tasks complete
+                                        {t("allComplete")}
                                     </s-text>
                                 </s-stack>
                                 <s-button
@@ -229,7 +229,7 @@ export function DashboardSetupSteps({
                                     onClick={onDismiss}
                                     disabled={isDismissing}
                                 >
-                                    Dismiss guide
+                                    {t("dismissGuide")}
                                 </s-button>
                             </div>
                         </s-box>

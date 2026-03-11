@@ -1,35 +1,40 @@
+"use client";
+
 import Link from "next/link";
 import { NavMenu } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function Navigation() {
+    const t = useTranslations("Common.Navigation");
+
     return (
         <NavMenu>
             <Link href="/dashboard" rel="home" data-sprogress>
-                Dashboard
+                {t("dashboard")}
             </Link>
             <Link href="/bundles" data-sprogress>
-                Bundles
+                {t("bundles")}
             </Link>
             <Link href="/analytics" data-sprogress>
-                Analytics
+                {t("analytics")}
             </Link>
             <Link href="/settings" data-sprogress>
-                Settings
+                {t("settings")}
             </Link>
             <Link href="/ab-testing" data-sprogress>
-                A/B Testing
+                {t("abTesting")}
             </Link>
             <Link href="/automation" data-sprogress>
-                Automation
+                {t("automation")}
             </Link>
             <Link href="/pricing" data-sprogress>
-                Pricing
+                {t("pricing")}
             </Link>
             <Link href="/templates" data-sprogress>
-                Templates
+                {t("templates")}
             </Link>
             <Link href="/integrations" data-sprogress>
-                Integrations
+                {t("integrations")}
             </Link>
         </NavMenu>
     );

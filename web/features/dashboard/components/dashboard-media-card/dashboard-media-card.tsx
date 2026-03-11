@@ -3,15 +3,17 @@
 import { ROUTES } from "@/shared/constants";
 import { PlanIcon } from "@/features/dashboard";
 import { MediaCard, useAppNavigation } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardMediaCard() {
     const { goTo } = useAppNavigation();
+    const t = useTranslations("Dashboard.MediaCard");
 
     return (
         <MediaCard
-            title="Update your plan"
-            description="Unlock advanced features and priority support. Upgrade today to get the most out of your bundles."
-            buttonLabel="See details"
+            title={t("title")}
+            description={t("description")}
+            buttonLabel={t("button")}
             onButtonClick={goTo(ROUTES.PRICING)}
             icon={<PlanIcon />}
         />

@@ -1,0 +1,195 @@
+{
+  "Common": {
+    "Navigation": {
+      "dashboard": "Tableau de bord",
+      "home": "Accueil",
+      "bundles": "Offres groupées",
+      "analytics": "Analyses",
+      "settings": "Paramètres",
+      "abTesting": "Tests A/B",
+      "automation": "Automatisation",
+      "pricing": "Tarification",
+      "templates": "Modèles",
+      "integrations": "Intégrations"
+    }
+  },
+  "Dashboard": {
+    "title": "Bienvenue dans Radius Bundles",
+    "description": "Gérez vos packs de produits et augmentez la valeur moyenne de vos commandes.",
+    "createBundle": "Créer une offre groupée",
+    "setupGuide": "Guide de configuration",
+    "SetupGuide": {
+      "tasksComplete": "{completed} sur {total} tâches terminées",
+      "heading": "Démarrer avec les packs de produits",
+      "subheading": "Utilisez ce guide personnalisé pour configurer votre application.",
+      "dismiss": "Fermer",
+      "collapse": "Réduire",
+      "expand": "Développer",
+      "upNext": "Prochaine étape :",
+      "resumeGuide": "Reprendre le guide",
+      "allComplete": "Toutes les tâches sont terminées",
+      "dismissGuide": "Fermer le guide",
+      "markComplete": "Marquer comme terminé",
+      "markIncomplete": "Marquer comme non terminé",
+      "steps": {
+        "enableAppEmbed": {
+          "title": "Activer l'intégration de l'application",
+          "description": "Activez l'intégration de l'application Packs de produits dans l'éditeur de thème. Cela est nécessaire pour que les widgets, le suivi analytique et les fonctionnalités de la vitrine fonctionnent sur votre boutique.",
+          "primaryButton": "Ouvrir l'éditeur de thème",
+          "secondaryButton": "Vérifier le statut"
+        },
+        "createFirstBundle": {
+          "title": "Créer votre première offre groupée",
+          "description": "Sélectionnez un type d'offre — Forfait, un acheté = un offert, remise par quantité ou mix & match — ajoutez des produits, configurez les prix et publiez pour commencer à vendre.",
+          "primaryButton": "Créer une offre groupée"
+        },
+        "customizeSettings": {
+          "title": "Personnaliser vos paramètres",
+          "description": "Configurez vos préférences d'affichage globales et stylisez le widget de pack pour correspondre à l'identité visuelle de votre boutique — ajustez la mise en page, les couleurs, la typographie et les styles de boutons.",
+          "primaryButton": "Aller aux paramètres"
+        },
+        "previewStorefront": {
+          "title": "Prévisualiser votre vitrine",
+          "description": "Visitez votre boutique en ligne pour vérifier comment les offres groupées apparaissent aux clients. Vérifiez la disposition du widget, l'affichage des remises et l'expérience d'ajout au panier sur une vraie page produit.",
+          "primaryButton": "Voir la vitrine"
+        },
+        "monitorAnalytics": {
+          "title": "Suivre les analyses des offres groupées",
+          "description": "Suivez les métriques clés comme les vues, le taux d'ajout au panier, le taux de conversion et les revenus générés par toutes vos offres groupées depuis le tableau de bord analytique.",
+          "primaryButton": "Aller aux analyses"
+        }
+      }
+    },
+    "Metrics": {
+      "activeBundles": "Offres groupées actives",
+      "totalRevenue": "Chiffre d'affaires total",
+      "conversionRate": "Taux de conversion",
+      "totalViews": "Nombre total de vues",
+      "viewDetails": "Afficher les détails",
+      "last30Days": "30 derniers jours"
+    },
+    "QuickActions": {
+      "heading": "Actions rapides",
+      "description": "Tâches courantes et raccourcis pour la gestion de vos offres groupées de produits",
+      "manageBundle": "Gérer l'offre groupée",
+      "manageBundleDesc": "Créer et modifier des offres groupées",
+      "viewAnalytics": "Afficher les statistiques",
+      "viewAnalyticsDesc": "Suivre les indicateurs de performance",
+      "appSettings": "Paramètres de l'application",
+      "appSettingsDesc": "Personnaliser vos préférences"
+    },
+    "Features": {
+      "heading": "Fonctionnalités avancées pour les offres groupées",
+      "bundleTypes": "Plusieurs types d'offres groupées — Forfait, un acheté = un offert, volume, mix & match",
+      "discounts": "Remises flexibles — Pourcentage, montant fixe, tarification personnalisée",
+      "styleCustomizer": "Outil de personnalisation du style — Adaptez l'offre à l'image de marque de votre boutique, sans code",
+      "analytics": "Analyses intégrées — Suivez les vues, les conversions et le chiffre d'affaires",
+      "createBundle": "Créer une offre groupée"
+    },
+    "Bundles": {
+      "recentActive": "Offres groupées actives récentes",
+      "recentActiveDesc": "Vos offres groupées actives les plus récemment mises à jour",
+      "viewAll": "Tout afficher",
+      "unableToLoad": "Impossible de charger les offres groupées",
+      "errorDesc": "Une erreur s'est produite lors du chargement de vos offres groupées. Veuillez essayer d'actualiser la page.",
+      "noActive": "Aucune offre groupée active",
+      "noActiveDesc": "Créez et activez une offre groupée pour qu'elle s'affiche ici.",
+      "createBundle": "Créer une offre groupée",
+      "item": "Article",
+      "name": "Nom",
+      "type": "Type",
+      "views": "Vues",
+      "conversion": "Conversion",
+      "revenue": "Chiffre d'affaires",
+      "status": "Statut"
+    },
+    "MediaCard": {
+      "title": "Mettre à jour votre formule",
+      "description": "Bénéficiez de fonctionnalités avancées et d'une assistance prioritaire. Passez à la formule supérieure dès aujourd'hui pour tirer le meilleur parti de vos offres groupées.",
+      "button": "Voir les détails"
+    },
+    "CalloutCards": {
+      "support": {
+        "title": "Besoin d'aide ?",
+        "description": "Guide étape par étape pour installer et activer BundleSuite sur votre boutique.",
+        "button": "Nous envoyer un e-mail"
+      },
+      "features": {
+        "title": "Nouvelles fonctionnalités à venir",
+        "description": "Regardez nos tutoriels vidéo pour apprendre à utiliser BundleSuite.",
+        "button": "Voir toutes les fonctionnalités"
+      },
+      "helpDocs": {
+        "title": "Documents d'aide",
+        "description": "Découvrez les fonctionnalités de l'application grâce à des tutoriels vidéo et à de la documentation.",
+        "button": "Consulter le document d'aide"
+      }
+    },
+    "Videos": {
+      "seeInAction": "Voir l'application en action",
+      "gettingStarted": "Premiers pas",
+      "advancedTips": "Conseils avancés",
+      "videoDescription": "Les offres groupées sont un excellent moyen d'augmenter la valeur moyenne des commandes.",
+      "watchVideo": "Regarder la vidéo",
+      "close": "Fermer",
+      "videoTutorial": "Tutoriel vidéo"
+    },
+    "Review": {
+      "shareYourFeedback": "Faites-nous part de vos commentaires",
+      "submitFeedback": "Envoyer des commentaires",
+      "whatCanWeImprove": "Que pouvons-nous améliorer ?",
+      "whatDidYouLikeMost": "Qu'avez-vous le plus apprécié ?",
+      "helpBySharing": "Aidez-nous en partageant votre expérience",
+      "rateOnAppStore": "Évaluer sur l'App Store",
+      "shareWithFriends": "Partager avec des amis",
+      "needImmediateHelp": "Besoin d'une aide immédiate ?",
+      "contactSupport": "Contacter l'assistance",
+      "viewHelpCenter": "Consulter le Centre d'aide",
+      "starTooltips": {
+        "1": "Très mauvais",
+        "2": "Médiocre",
+        "3": "Moyen",
+        "4": "Bien",
+        "5": "Excellent"
+      },
+      "ratings": {
+        "0": {
+          "title": "Comment évaluez-vous notre application ?",
+          "description": "Vos commentaires nous aident à améliorer l'expérience de tous. Cela vous prendra moins d'une minute."
+        },
+        "1": {
+          "title": "Nous sommes navrés d'apprendre cela !",
+          "description": "Aidez-nous à nous améliorer en nous indiquant ce qui n'a pas fonctionné."
+        },
+        "2": {
+          "title": "Nous pouvons faire mieux !",
+          "description": "Dites-nous ce que nous pouvons améliorer pour vous offrir une meilleure expérience."
+        },
+        "3": {
+          "title": "Merci pour vos commentaires !",
+          "description": "Nous serions ravis de savoir comment nous pourrions encore améliorer votre expérience."
+        },
+        "4": {
+          "title": "Nous en sommes ravis !",
+          "description": "Qu'avez-vous le plus apprécié ? Vos commentaires nous aident à nous améliorer en permanence."
+        },
+        "5": {
+          "title": "Formidable !",
+          "description": "Nous sommes ravis que vous aimiez notre application ! Nous vous serions reconnaissants de bien vouloir nous faire part de votre expérience."
+        }
+      }
+    },
+    "AppEmbed": {
+      "notEnabled": "L'intégration de l'application n'est pas activée",
+      "notEnabledDesc": "Les fonctionnalités et les statistiques des offres groupées ne fonctionneront pas correctement sur votre vitrine tant que l'intégration de l'application n'aura pas été activée dans votre éditeur de thème.",
+      "enableButton": "Activer l'intégration de l'application",
+      "isActive": "Intégration de l'application activée",
+      "notEnabledYet": "L'intégration de l'application n'est pas encore activée"
+    }
+  },
+  "Settings": {
+    "title": "Paramètres de l'application",
+    "save": "Enregistrer les paramètres",
+    "saved": "Paramètres enregistrés avec succès."
+  }
+}

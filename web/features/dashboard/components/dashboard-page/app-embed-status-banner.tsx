@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "@/lib/i18n/provider";
+
 /**
  * Persistent warning banner when the app embed is not enabled.
  */
@@ -12,6 +16,8 @@ export function AppEmbedStatusBanner({
     shopDomain: string;
     apiKey: string;
 }) {
+    const t = useTranslations("Dashboard.AppEmbed");
+
     if (!dismissed || appEmbedEnabled) {
         return null;
     }
@@ -19,18 +25,16 @@ export function AppEmbedStatusBanner({
     const themeEditorUrl = `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`;
 
     return (
-        <s-banner tone="warning" heading="App embed is not enabled">
+        <s-banner tone="warning" heading={t("notEnabled")}>
             <s-paragraph>
-                The bundle functionalities and analytics won&apos;t work
-                correctly on your storefront until the app embed is activated in
-                your theme editor.
+                {t("notEnabledDesc")}
             </s-paragraph>
             <s-button
                 slot="secondary-actions"
                 variant="secondary"
                 onClick={() => window.open(themeEditorUrl, "_blank")}
             >
-                Enable app embed
+                {t("enableButton")}
             </s-button>
         </s-banner>
     );

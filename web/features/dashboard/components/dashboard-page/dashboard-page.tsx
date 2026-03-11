@@ -18,8 +18,10 @@ import { TitleBar } from "@shopify/app-bridge-react";
 import { useSettingsStore } from "@/features/settings";
 import { GlobalBanner, useNavigationActions } from "@/shared";
 import { AnalyticsDisabledBanner } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardPage() {
+    const t = useTranslations("Dashboard");
     const { onCreateBundle } = useBundlesPage();
     const setupGuide = useSetupGuide();
     const isAnalyticsDisabled = useSettingsStore((state) => {
@@ -45,7 +47,7 @@ export function DashboardPage() {
                             loading={bundlesLoading}
                             disabled={setupGuide.isShowing}
                         >
-                            Create Bundle
+                            {t("createBundle")}
                         </s-button>
                         <s-button
                             slot="secondary-actions"
@@ -53,7 +55,7 @@ export function DashboardPage() {
                             disabled={guideVisible || bundlesLoading}
                             loading={setupGuide.isShowing}
                         >
-                            Setup guide
+                            {t("setupGuide")}
                         </s-button>
                     </>
                 ) : (
@@ -63,13 +65,13 @@ export function DashboardPage() {
                             onClick={actions.create}
                             disabled={bundlesLoading}
                         >
-                            Create Bundle
+                            {t("createBundle")}
                         </button>
                         <button
                             onClick={setupGuide.showGuide}
                             disabled={guideVisible || setupGuide.isShowing}
                         >
-                            Setup guide
+                            {t("setupGuide")}
                         </button>
                     </>
                 )}

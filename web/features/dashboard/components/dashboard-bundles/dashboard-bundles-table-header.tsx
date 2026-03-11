@@ -1,29 +1,35 @@
+"use client";
+
+import { useTranslations } from "@/lib/i18n/provider";
+
 /*
  * Table Header
  */
 export function DashboardBundlesTableHeader() {
+    const t = useTranslations("Dashboard.Bundles");
+
     return (
         <s-table-header-row>
             <s-table-header listSlot="primary">
-                <s-stack padding="small-300">Item</s-stack>
+                <s-stack padding="small-300">{t("item")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Name</s-stack>
+                <s-stack paddingBlock="small-300">{t("name")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Type</s-stack>
+                <s-stack paddingBlock="small-300">{t("type")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Views</s-stack>
+                <s-stack paddingBlock="small-300">{t("views")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Conversion</s-stack>
+                <s-stack paddingBlock="small-300">{t("conversion")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Revenue</s-stack>
+                <s-stack paddingBlock="small-300">{t("revenue")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Status</s-stack>
+                <s-stack paddingBlock="small-300">{t("status")}</s-stack>
             </s-table-header>
         </s-table-header-row>
     );

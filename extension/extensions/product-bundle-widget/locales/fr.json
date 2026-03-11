@@ -1,0 +1,26 @@
+{
+  "bundle": {
+    "title": "Produits souvent achetés ensemble",
+    "savingsBadgeText": "Économisez {percent}%",
+    "addToCartText": "Ajouter le pack au panier",
+    "regularPriceLabel": "Prix régulier :",
+    "bundlePriceLabel": "Prix du pack :",
+    "youSaveLabel": "Vous économisez :",
+    "freeShippingLabel": "Livraison gratuite",
+    "quantityLabel": "Qté :",
+    "addingText": "Ajout...",
+    "addedText": "Ajouté !",
+    "outOfStockText": "Rupture de stock",
+    "maxBundlesReachedText": "Maximum {count} pack(s) par commande autorisé",
+    "bogoYouPayLabel": "Vous payez seulement",
+    "bogoYouSaveLabel": "Vous économisez",
+    "bogoTriggerBadgeText": "Achetez",
+    "bogoRewardBadgeText": "Recevez GRATUITEMENT",
+    "bogoBadgeText": "",
+    "bogoFreeText": "GRATUIT",
+    "bogoTotalLabel": "Total",
+    "bogoSaveText": "Économisez {amount}",
+    "moreProductsText": "+ {count} autres produits",
+    "showLessText": "Voir moins"
+  }
+}
