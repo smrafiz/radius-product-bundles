@@ -141,7 +141,17 @@ export class ExpiredTokenError extends Error {
  * Utility function to extract shop domain from various formats
  */
 export function normalizeShopDomain(shop: string): string {
-    return shop.replace("https://", "").replace("http://", "");
+    const normalized = shop
+        .replace("https://", "")
+        .replace("http://", "")
+        .replace(/\/+$/, "")
+        .toLowerCase();
+
+    if (!isValidShopDomain(normalized)) {
+        throw new Error(`Invalid shop domain: ${normalized}`);
+    }
+
+    return normalized;
 }
 
 /**

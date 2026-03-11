@@ -11,15 +11,15 @@
 
 | Domain                      | Critical | High   | Medium | Low    | Score      |
 | --------------------------- | -------- | ------ | ------ | ------ | ---------- |
-| Security & OWASP            | ~~3~~ 0  | ~~5~~ 4 | 4      | 2      | ~~62~~ 78/100 |
+| Security & OWASP            | ~~3~~ 0  | ~~5~~ **3** | 4      | 2      | ~~62~~ ~~78~~ **82/100** |
 | Data Integrity & Schema     | ~~2~~ **0** | ~~4~~ **1** | ~~4~~ 3 | 1      | ~~70~~ ~~80~~ ~~85~~ **88/100** |
-| Architecture & Code Quality | 0        | 3      | ~~5~~ 4 | 5      | ~~87~~ **89/100** |
-| Performance & Optimization  | ~~3~~ **0** | ~~5~~ 4 | ~~4~~ 2 | 0      | ~~58~~ **72/100** |
+| Architecture & Code Quality | 0        | ~~3~~ **2** | ~~5~~ 4 | 5      | ~~87~~ **90/100** |
+| Performance & Optimization  | ~~3~~ **0** | ~~5~~ **3** | ~~4~~ 2 | 0      | ~~58~~ ~~72~~ **76/100** |
 | Rust Discount Function      | ~~5~~ 0  | ~~8~~ **0** | ~~4~~ **0** | 0      | ~~45~~ ~~65~~ **92/100** |
-| Webhooks & App Lifecycle    | ~~2~~ **0** | ~~6~~ **2** | 4      | 4      | ~~55~~ **74/100** |
-| **Total**                   | ~~15~~ **0** | ~~31~~ **14** | ~~25~~ **17** | **12** | ~~63~~ ~~80~~ ~~85~~ ~~87~~ **89/100** |
+| Webhooks & App Lifecycle    | ~~2~~ **0** | ~~6~~ **1** | 4      | 4      | ~~55~~ ~~74~~ **78/100** |
+| **Total**                   | ~~15~~ **0** | ~~31~~ **10** | ~~25~~ **17** | **12** | ~~63~~ ~~80~~ ~~85~~ ~~87~~ ~~89~~ **91/100** |
 
-**Verdict**: Weeks 1–3 + Rust hardening complete — **all 15 critical issues resolved** (0 remaining). D-2 downgraded to HIGH (deferred to schema cleanup). Score: **89/100**. Remaining Week 4: A-1, P-5, S-10, W-9.
+**Verdict**: All 15 critical issues resolved, 21 high issues fixed. Score: **91/100**. Remaining HIGH: S-6, P-2, W-6, W-9, W-10. Remaining MEDIUM: 17 items (mostly code quality).
 
 ---
 
@@ -69,11 +69,10 @@
 - **Issue**: Tokens starting with `shpat_` skip decryption — stored in plaintext
 - **Fix**: Always encrypt; add migration for unencrypted tokens
 
-#### S-5. Weak Shop Domain Validation
+#### S-5. Weak Shop Domain Validation — ✅ Done
 
-- **File**: `web/shared/utils/shopify/shopify-helpers.ts:143-145`
-- **Issue**: `normalizeShopDomain()` only strips protocol; doesn't validate format
-- **Fix**: Call `isValidShopDomain()` after normalization; reject invalid domains
+- **File**: `web/shared/utils/shopify/shopify-helpers.ts`
+- **Fix**: `normalizeShopDomain()` now strips protocol, trailing slashes, lowercases, then validates against `isValidShopDomain()` regex. Throws on invalid domains.
 
 #### S-6. Incomplete Bearer Token Extraction
 
@@ -514,11 +513,10 @@
 - **Issue**: Concurrent requests both see missing handlers → double registration
 - **Fix**: Use atomic DB flag or distributed lock
 
-#### W-7. Weak CRON_SECRET Validation
+#### W-7. Weak CRON_SECRET Validation — ✅ Done
 
-- **Files**: `web/app/api/cron/bundle-scheduler/route.ts:15`, `web/app/api/cron/keep-alive/route.ts:12`
-- **Issue**: If `CRON_SECRET` is unset, comparison becomes `Bearer undefined`
-- **Fix**: Validate CRON_SECRET at startup; reject if missing or looks like shell command
+- **Files**: `web/app/api/cron/bundle-scheduler/route.ts`, `web/app/api/cron/keep-alive/route.ts`
+- **Fix**: Both cron routes now validate `CRON_SECRET` exists and is ≥16 chars before comparing. Returns 500 "Server misconfigured" if missing/short.
 
 #### W-8. Missing Env Var Validation (Silent Failure)
 

@@ -7,9 +7,14 @@ import { prisma } from "@/shared/repositories";
  * the Neon compute endpoint warm, avoiding 500ms-2s cold start penalty.
  */
 export async function GET(request: Request) {
-    const authHeader = request.headers.get("authorization");
+    const cronSecret = process.env.CRON_SECRET;
+    if (!cronSecret || cronSecret.length < 16) {
+        console.error("[Cron] CRON_SECRET is missing or too short");
+        return Response.json({ error: "Server misconfigured" }, { status: 500 });
+    }
 
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== `Bearer ${cronSecret}`) {
         return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
