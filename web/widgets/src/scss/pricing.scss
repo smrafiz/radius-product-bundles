@@ -73,9 +73,9 @@
         }
 
         &--compact {
-            padding: 0;
-            border: none;
-            margin: 0;
+            border-bottom: 1px dashed var(--rb-border-color);
+            padding-bottom: var(--rb-spacing-sm);
+            padding-top: 0;
         }
     }
 
@@ -121,14 +121,9 @@
             transparent
         );
         border-radius: var(--rb-border-radius);
-        margin-top: var(--rb-spacing-sm);
+        margin-top: calc(var(--rb-spacing-sm) + 3px);
         color: var(--rb-savings-color);
         line-height: 1.2;
-
-        &--compact {
-            padding: var(--rb-spacing-sm);
-            margin-top: var(--rb-spacing-xs);
-        }
     }
 
     &__savings-label {
@@ -159,22 +154,6 @@
 
         svg {
             flex-shrink: 0;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Compact Pricing (for compact layout)
-    // -------------------------------------------------------------------------
-
-    &__pricing--compact {
-        .radius-bundle__savings {
-            padding: var(--rb-spacing-sm);
-            margin-top: var(--rb-spacing-xs);
-        }
-
-        .radius-bundle__free-shipping {
-            padding: var(--rb-spacing-sm);
-            margin-top: var(--rb-spacing-xs);
         }
     }
 }

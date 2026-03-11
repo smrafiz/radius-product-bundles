@@ -8,6 +8,7 @@ export function WidgetPricingDisplay({
     styles,
     displayOptions,
     pricing,
+    hideOriginalPrice,
 }: WidgetPricingProps) {
     const fontSize = getFontSize(styles.bodySize);
     const borderRadius = getCardRadius(styles.cornerStyle);
@@ -63,39 +64,43 @@ export function WidgetPricingDisplay({
         return null;
     }
 
+    console.log('HELLppppp', hideOriginalPrice);
+
     return (
         <div
             className="radius-bundle__pricing"
             style={{ fontSize, color: textColor, ...getContainerStyles() }}
         >
-            <div
-                className="radius-bundle__pricing-row"
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "8px",
-                }}
-            >
-                <span className="radius-bundle__pricing-label">
-                    {DEFAULT_LABELS.regularPriceLabel}
-                </span>
-                <span
-                    className="radius-bundle__price-original"
-                    style={{ textDecoration: "line-through", opacity: 0.7 }}
+            {!hideOriginalPrice && (
+                <div
+                    className="radius-bundle__pricing-row"
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginBottom: "8px",
+                    }}
                 >
-                    {pricing.originalPrice}
-                </span>
-            </div>
+                    <span className="radius-bundle__pricing-label">
+                        {DEFAULT_LABELS.regularPriceLabel}
+                    </span>
+                    <span
+                        className="radius-bundle__price-original"
+                        style={{ textDecoration: "line-through", opacity: 0.7 }}
+                    >
+                        {pricing.originalPrice}
+                    </span>
+                </div>
+            )}
 
             <div
-                className="radius-bundle__pricing-row radius-bundle__pricing-row--highlight"
+                className={`radius-bundle__pricing-row radius-bundle__pricing-row--highlight`}
                 style={{
                     display: "flex",
                     justifyContent: "space-between",
                     color: highlightColor,
-                    fontWeight: 600,
                     marginBottom: "10px",
-                    borderTop: `1px dashed ${borderColor}`,
+                    padding: "10px 0",
+                    borderTop: !hideOriginalPrice ? `1px dashed ${borderColor}` : "",
                     borderBottom: `1px dashed ${borderColor}`,
                 }}
             >
@@ -114,7 +119,6 @@ export function WidgetPricingDisplay({
                         display: "flex",
                         justifyContent: "space-between",
                         color: savingsColor,
-                        fontWeight: 600,
                         marginBottom: "8px",
                         borderRadius: borderRadius,
                         background: `color-mix(in srgb, ${savingsColor} 15%, transparent)`,
@@ -130,7 +134,7 @@ export function WidgetPricingDisplay({
                 </div>
             )}
 
-            {displayOptions.showFreeShipping && (
+            {displayOptions.showFreeShipping && !hideOriginalPrice && (
                 <div
                     className="radius-bundle__free-shipping"
                     style={{

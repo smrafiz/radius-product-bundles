@@ -59,6 +59,10 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                                 bundleType === "BOGO" ||
                                 bundleType === "BUY_X_GET_Y"
                             }
+                            hideOriginalPrice={
+                                activeLayout === "COMPACT" &&
+                                bundleType === "FIXED_BUNDLE"
+                            }
                         >
                             <Template
                                 activeLayout={activeLayout}

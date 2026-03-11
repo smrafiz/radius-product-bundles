@@ -16,6 +16,7 @@ export function BundleWidget({
     cartButtonText,
     hideFooter,
     hideHeader,
+    hideOriginalPrice,
     children,
 }: BundleWidgetProps) {
     return (
@@ -36,6 +37,7 @@ export function BundleWidget({
                         styles={styles}
                         displayOptions={displayOptions}
                         pricing={pricing}
+                        hideOriginalPrice={hideOriginalPrice}
                     />
                     <WidgetAddToCart
                         styles={styles}

@@ -422,8 +422,6 @@
 					{% assign layout = block.settings.layout %}
 				{% endif %}
 
-				{% comment %}{{ g_type_overrides }}{% endcomment %}
-
 				{% assign grid_columns = g_type_overrides.gridColumns
 						| default: g_styles.gridColumns
 						| default: 3 %}

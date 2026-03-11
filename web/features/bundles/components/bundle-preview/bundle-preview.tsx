@@ -46,14 +46,18 @@ import "@/styles/components/bundle.css";
 
 function useWidgetStyles(): CustomizerStyles {
     const serverData = useSettingsStore((s) => s.serverData);
+    const bundleType = useBundleStore((s) => s.bundleData.type);
 
-    return useMemo(
-        () => ({
+    return useMemo(() => {
+        const base = {
             ...DEFAULT_CUSTOMIZER_STYLES,
             ...(serverData?.globalStyles as Partial<CustomizerStyles>),
-        }),
-        [serverData],
-    );
+        };
+        const typeOverride = bundleType
+            ? base.bundleTypeOverrides?.[bundleType]
+            : null;
+        return typeOverride ? { ...base, ...typeOverride } : base;
+    }, [serverData, bundleType]);
 }
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
@@ -555,6 +559,10 @@ export function BundlePreview() {
                                     hideHeader={BOGO_LAYOUT_VALUES.includes(
                                         displaySettings.layout,
                                     )}
+                                    hideOriginalPrice={
+                                        displaySettings.layout === "COMPACT" &&
+                                        bundleData.type === "FIXED_BUNDLE"
+                                    }
                                 >
                                     <RenderLayout
                                         layout={displaySettings.layout}

@@ -151,6 +151,11 @@ export function WidgetProductCard({
                     style={{
                         fontWeight: 500,
                         marginBottom: "8px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         textAlign:
                             styles.imagePosition === "top"
                                 ? "center"
@@ -195,7 +200,17 @@ export function WidgetProductCard({
                 </div>
             )}
             <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 500, marginBottom: "4px" }}>
+                <div
+                    style={{
+                        fontWeight: 500,
+                        marginBottom: "4px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                }}
+                >
                     {titleEl}
                 </div>
                 {quantityEl}

@@ -102,6 +102,7 @@ export interface BundleWidgetProps {
     cartButtonText?: string;
     hideFooter?: boolean;
     hideHeader?: boolean;
+    hideOriginalPrice?: boolean;
     children: ReactNode;
 }
 
@@ -134,6 +135,7 @@ export interface WidgetPricingProps {
     styles: CustomizerStyles;
     displayOptions: WidgetDisplayOptions;
     pricing: WidgetPricing;
+    hideOriginalPrice?: boolean;
 }
 
 export interface WidgetProductCardProps {

@@ -19,7 +19,7 @@
     &__progress-subtitle {
         font-size: calc(var(--rb-body-font-size) * 0.8);
         color: var(--rb-text-color, #6b7280);
-        margin-bottom: 8px;
+        margin: 0 0 8px;
         line-height: 1.3;
         opacity: 0.8;
     }
