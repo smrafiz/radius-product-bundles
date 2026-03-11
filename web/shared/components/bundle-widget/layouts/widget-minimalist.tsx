@@ -294,9 +294,10 @@ export function WidgetMinimalist({
                         <p
                             style={{
                                 fontSize: bodyFontSize,
-                                color: "#6b7280",
+                                color: styles.textColor,
                                 margin: "0 0 8px",
-                                lineHeight: "1.4",
+                                lineHeight: "1.3",
+                                opacity: 0.8,
                             }}
                         >
                             {subtitle}
@@ -322,10 +323,11 @@ export function WidgetMinimalist({
                             {pricing.hasDiscount && pricing.originalPrice && (
                                 <span
                                     style={{
-                                        fontSize: bodyFontSize,
-                                        color: "#9ca3af",
+                                        fontSize: parseInt(bodyFontSize) - 2,
+                                        color: styles.textColor,
                                         textDecoration: "line-through",
                                         fontWeight: 500,
+                                        opacity: 0.5,
                                     }}
                                 >
                                     {pricing.originalPrice}

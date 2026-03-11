@@ -88,7 +88,7 @@
     }
 
     &__subtitle {
-        font-size: calc(var(--rb-body-font-size) * 0.8);
+        font-size: var(--rb-body-font-size);
         color: var(--rb-text-color, #6b7280);
         margin-bottom: 8px;
         line-height: 1.3;

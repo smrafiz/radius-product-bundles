@@ -38,6 +38,7 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                 <div className="rtpb-blur-top" />
                 <PreviewContainer
                     activeDevice={activeDevice}
+                    activeLayout={activeLayout}
                     styles={styles}
                     isCartBanner={isCartBanner}
                 >

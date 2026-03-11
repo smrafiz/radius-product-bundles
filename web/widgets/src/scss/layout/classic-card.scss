@@ -42,10 +42,11 @@
     }
 
     &__header-subtitle {
-        font-size: calc(var(--rb-body-font-size) * 0.8);
-        color: #6b7280;
+        font-size: var(--rb-body-font-size);
+        color: var(--rb-text-color);
         text-align: center;
         line-height: 1.3;
+        opacity: 0.8;
     }
 
     &__grid {

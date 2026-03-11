@@ -31,6 +31,7 @@ export interface LayoutSidebarProps {
  */
 export interface PreviewContainerProps {
     activeDevice: "desktop" | "tablet" | "mobile";
+    activeLayout?: string;
     styles: CustomizerStyles;
     isCartBanner?: boolean;
     children: ReactNode;

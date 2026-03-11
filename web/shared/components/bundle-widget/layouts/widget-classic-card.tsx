@@ -252,9 +252,9 @@ export function WidgetClassicCard({
                 {subtitle && (
                     <div
                         style={{
-                            fontSize: parseInt(bodyFontSize) - 2,
+                            fontSize: bodyFontSize,
                             color: styles.textColor || "#6b7280",
-                            opacity: 0.7,
+                            opacity: 0.8,
                             textAlign: "center",
                         }}
                     >

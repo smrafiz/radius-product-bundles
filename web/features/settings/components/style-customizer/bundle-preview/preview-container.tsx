@@ -8,6 +8,7 @@ import {
 
 export function PreviewContainer({
     activeDevice,
+    activeLayout,
     styles,
     isCartBanner,
     children,
@@ -47,7 +48,7 @@ export function PreviewContainer({
                     }}
                 >
                     <div
-                        className="radius-bundle__inner"
+                        className={`radius-bundle__inner${activeLayout === "COMPACT_GRID" ? " compact-grid" : ""}`}
                         style={{
                             backgroundColor: styles.backgroundColor,
                             color: styles.textColor,

@@ -11,6 +11,7 @@ import {
     getCardRadius,
     getBadgeRadius,
     getHeadingFontSize,
+    getPadding,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -342,6 +343,7 @@ export function WidgetCompactGrid({
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
+    const padding = getPadding(styles.spacing);
 
     if (!products.length) {
         return (
@@ -401,7 +403,7 @@ export function WidgetCompactGrid({
                         <span
                             style={{
                                 color: "rgba(255,255,255,0.8)",
-                                fontSize: parseInt(bodyFontSize) - 4,
+                                fontSize: bodyFontSize,
                                 fontWeight: 400,
                             }}
                         >
@@ -438,7 +440,10 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                     gap: 4,
-                    padding: "16px 16px 8px",
+                    paddingTop: parseInt(padding) - 4,
+                    paddingLeft: parseInt(padding) - 4,
+                    paddingRight: parseInt(padding) - 4,
+                    paddingBottom: "8px",
                 }}
             >
                 <TileSlider
@@ -497,13 +502,16 @@ export function WidgetCompactGrid({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "8px 16px 16px",
+                    paddingTop: "8px",
+                    paddingLeft: parseInt(padding) - 4,
+                    paddingRight: parseInt(padding) - 4,
+                    paddingBottom: parseInt(padding) - 4,
                     gap: 12,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}
             >
                 {pricing && (
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap:"3px" }}>
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 3,
@@ -533,8 +541,8 @@ export function WidgetCompactGrid({
                             {pricing.hasDiscount && (
                                 <span
                                     style={{
-                                        fontSize: parseInt(bodyFontSize) - 1,
-                                        fontWeight: 600,
+                                        fontSize: parseInt(bodyFontSize) - 2,
+                                        fontWeight: 500,
                                         color: savingsColor,
                                     }}
                                 >

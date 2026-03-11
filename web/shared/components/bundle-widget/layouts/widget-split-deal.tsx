@@ -210,10 +210,10 @@ export function WidgetSplitDeal({
                 {subtitle && (
                     <p
                         style={{
-                            fontSize: parseInt(bodyFontSize) - 2,
+                            fontSize: bodyFontSize,
                             color: styles.textColor || "#6b7280",
-                            opacity: 0.7,
-                            margin: "4px 0 0",
+                            opacity: 0.8,
+                            margin: "8px 0 0",
                         }}
                     >
                         {subtitle}

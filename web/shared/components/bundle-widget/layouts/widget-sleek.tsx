@@ -123,7 +123,7 @@ function SleekProductCard({
                         <span
                             style={{
                                 display: "inline-block",
-                                fontSize: parseInt(bodyFontSize) - 4,
+                                fontSize: parseInt(bodyFontSize) - 3,
                                 fontWeight: 500,
                                 color: savingsColor,
                                 background: `${savingsColor}1F`,

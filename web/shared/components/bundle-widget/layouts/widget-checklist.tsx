@@ -311,7 +311,13 @@ export function WidgetChecklist({
                     </div>
                 )}
                 {subtitle && (
-                    <div style={{ fontSize: bodyFontSize, color: "#6b7280" }}>
+                    <div style={{
+                        fontSize: bodyFontSize,
+                        color: styles.textColor,
+                        margin: "0 0 8px",
+                        lineHeight: "1.3",
+                        opacity: 0.8,
+                    }}>
                         {subtitle}
                     </div>
                 )}
