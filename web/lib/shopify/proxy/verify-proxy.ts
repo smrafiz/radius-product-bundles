@@ -1,6 +1,38 @@
 import { createHmac } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 100;
+const CLEANUP_INTERVAL_MS = 300_000;
+
+const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+
+let lastCleanup = Date.now();
+
+function checkRateLimit(shop: string): boolean {
+    const now = Date.now();
+
+    // Periodic cleanup of expired entries
+    if (now - lastCleanup > CLEANUP_INTERVAL_MS) {
+        lastCleanup = now;
+        for (const [key, entry] of rateLimitMap) {
+            if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+                rateLimitMap.delete(key);
+            }
+        }
+    }
+
+    const entry = rateLimitMap.get(shop);
+
+    if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+        rateLimitMap.set(shop, { count: 1, windowStart: now });
+        return true;
+    }
+
+    entry.count++;
+    return entry.count <= RATE_LIMIT_MAX_REQUESTS;
+}
+
 /**
  * Verifies Shopify App Proxy request signature.
  *
@@ -74,6 +106,13 @@ export function verifyProxyRequest(
             `[Proxy] Invalid signature for shop: ${shop}, path: ${request.nextUrl.pathname}`,
         );
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!checkRateLimit(shop)) {
+        return NextResponse.json(
+            { error: "Too many requests" },
+            { status: 429 },
+        );
     }
 
     return { shop };

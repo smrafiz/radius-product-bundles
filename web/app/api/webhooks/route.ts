@@ -9,14 +9,13 @@ export async function POST(req: Request) {
     const shop = headerList.get("x-shopify-shop-domain") || "unknown";
     const webhookId = headerList.get("x-shopify-webhook-id");
 
+    // Idempotency: skip if this delivery was already processed.
+    // Safe before HMAC — only matches IDs previously stored after successful HMAC verification.
     if (webhookId) {
         const existing = await prisma.webhookDelivery.findUnique({
             where: { id: webhookId },
         });
         if (existing) {
-            console.log(
-                `[Webhook] Duplicate delivery ${webhookId} for ${topic}, skipping`,
-            );
             return new Response(null, { status: 200 });
         }
     }
@@ -27,17 +26,20 @@ export async function POST(req: Request) {
     const handlers = shopify.webhooks.getHandlers(topic);
     if (!handlers || handlers.length === 0) {
         console.warn(
-            `⚠️ No handlers found for topic: ${topic}, re-adding handlers.`,
+            `[Webhook] No handlers found for topic: ${topic}, re-adding handlers.`,
         );
         addHandlers();
     }
 
     try {
+        // HMAC validation happens inside shopify.webhooks.process() —
+        // verifies X-Shopify-Hmac-Sha256 using apiSecretKey before invoking handlers.
         const { statusCode } = await shopify.webhooks.process({
             rawBody,
             rawRequest: req,
         });
 
+        // Record delivery ID only after HMAC-verified processing succeeds
         if (webhookId) {
             await prisma.webhookDelivery
                 .create({
@@ -60,7 +62,7 @@ export async function POST(req: Request) {
         return new Response(null, { status: statusCode });
     } catch (err) {
         console.error(
-            `❌ Webhook processing failed for ${topic} from ${shop}:`,
+            `[Webhook] Processing failed for ${topic} from ${shop}:`,
             err,
         );
         return new Response("Webhook processing failed", { status: 500 });
