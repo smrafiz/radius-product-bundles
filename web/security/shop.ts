@@ -53,7 +53,9 @@ function extractShopFromSession(session: string): string | null {
         if (data?.shop) {
             return data.shop;
         }
-    } catch {}
+    } catch {
+        // URL-decode parse failed, try base64 next
+    }
 
     try {
         const jsonStr = Buffer.from(session, "base64").toString("utf-8");
@@ -62,7 +64,9 @@ function extractShopFromSession(session: string): string | null {
         if (data?.shop) {
             return data.shop;
         }
-    } catch {}
+    } catch {
+        // Base64 parse failed, try regex next
+    }
 
     const match = session.match(/([a-z0-9-]+\.myshopify\.com)/i);
 

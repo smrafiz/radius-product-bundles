@@ -125,7 +125,9 @@ export async function releaseSetupLock(shop: string): Promise<void> {
             where: { domain: shop, setupComplete: false },
             data: { lastSetupCheck: null },
         })
-        .catch(() => {});
+        .catch((err) => {
+            console.warn("[Webhook] Failed to release setup lock:", err);
+        });
 }
 
 /**

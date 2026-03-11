@@ -206,11 +206,10 @@
 
 ### HIGH
 
-#### A-1. Empty Catch Blocks (7 instances)
+#### A-1. Empty Catch Blocks (7 instances) — ✅ Done
 
-- **Files**: `web/security/shop.ts:56,65`, `web/widgets/src/bundle-widget.ts` (2), `web/widgets/src/cart-attributes.ts`, `web/widgets/src/cart.ts`, `web/widgets/src/radius-bundles.ts`
-- **Pattern**: `.catch(() => {})` silently swallows errors
-- **Fix**: Add logging or user feedback
+- **Files**: `web/security/shop.ts`, `web/features/settings/services/settings.service.ts`, `web/features/webhooks/repositories/webhook.repository.ts`
+- **Fix**: Added `console.warn` logging to settings reset and webhook setup lock catches. Added fallback comments to security/shop.ts decode chain. Widget catches are intentional parse fallbacks (graceful degradation on storefront).
 
 #### A-2. `as any` in Proxy Routes (5 instances)
 

@@ -96,7 +96,9 @@ export async function resetSettingsService(
         throw new Error(`Shop not found: ${shop}`);
     }
 
-    await deleteSettingsByShopId(shopRecord.id).catch(() => {});
+    await deleteSettingsByShopId(shopRecord.id).catch((err) => {
+        console.warn("[Settings] Failed to delete settings on reset:", err);
+    });
 
     // Return null to indicate defaults should be used
     return null as any;
