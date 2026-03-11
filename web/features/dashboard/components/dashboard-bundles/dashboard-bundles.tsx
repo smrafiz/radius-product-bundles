@@ -6,14 +6,13 @@ import {
     DashboardBundlesList,
     DashboardBundlesTableHeader,
     DashboardTopBundlesSkeleton,
+    useRecentBundles,
 } from "@/features/dashboard";
-import { useAnalyticsMetrics, useTopBundles } from "@/features/analytics";
 
 export function DashboardBundles() {
-    const { data: bundles, isLoading, error } = useTopBundles(5);
-    const { metrics, isLoading: isMetricsLoading } = useAnalyticsMetrics(30);
+    const { data: bundles, isLoading, error } = useRecentBundles(5);
 
-    if (isLoading || isMetricsLoading) {
+    if (isLoading) {
         return (
             <DashboardTopBundlesSkeleton
                 Header={DashboardBundlesHeader}
@@ -22,11 +21,7 @@ export function DashboardBundles() {
         );
     }
 
-    const activeBundles = (bundles ?? []).filter(
-        (b) => b.status.toUpperCase() === "ACTIVE",
-    );
-
-    const hasBundles = (metrics?.totals?.totalBundles ?? 0) > 0;
+    const activeBundles = bundles ?? [];
 
     return (
         <s-section padding="none">
@@ -36,10 +31,7 @@ export function DashboardBundles() {
                     <DashboardBundlesList bundles={activeBundles} />
                 </>
             ) : (
-                <DashboardBundlesEmpty
-                    error={error?.message || null}
-                    hasBundles={hasBundles}
-                />
+                <DashboardBundlesEmpty error={error?.message || null} />
             )}
         </s-section>
     );

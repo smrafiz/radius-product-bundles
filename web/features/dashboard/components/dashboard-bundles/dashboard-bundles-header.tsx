@@ -18,9 +18,9 @@ export function DashboardBundlesHeader({
             alignItems="center"
         >
             <s-stack gap="small-300">
-                <s-heading>Top Performing Bundles</s-heading>
+                <s-heading>Recent Active Bundles</s-heading>
                 <s-text>
-                    Check out the top performing bundles across your store.
+                    Your most recently updated active bundles.
                 </s-text>
             </s-stack>
             <s-stack>
@@ -33,9 +33,7 @@ export function DashboardBundlesHeader({
                         icon="view"
                         variant="secondary"
                         accessibilityLabel="View All"
-                        onClick={goTo(
-                            ROUTES.ANALYTICS + "?tab=bundle-performance",
-                        )}
+                        onClick={goTo(ROUTES.BUNDLES)}
                     >
                         View All
                     </s-button>

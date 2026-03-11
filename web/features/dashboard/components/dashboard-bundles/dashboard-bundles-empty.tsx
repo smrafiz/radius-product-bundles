@@ -1,28 +1,20 @@
 "use client";
 import { useAppNavigation } from "@/shared";
 
-interface DashboardBundlesEmptyProps {
-    error?: string | null;
-    hasBundles?: boolean;
-}
-
 export function DashboardBundlesEmpty({
     error,
-    hasBundles = false,
-}: DashboardBundlesEmptyProps) {
+}: {
+    error?: string | null;
+}) {
     const { bundleData } = useAppNavigation();
 
     const heading = error
         ? "Unable to load bundles"
-        : hasBundles
-          ? "No performance data yet"
-          : "No bundles created yet";
+        : "No active bundles";
 
     const description = error
         ? "Something went wrong while loading your bundles. Please try refreshing the page."
-        : hasBundles
-          ? "Your bundles don't have enough analytics data to show top performers. Share your store to start getting views."
-          : "Get started by creating your first bundle to manage product offers.";
+        : "Create and activate a bundle to see it here.";
 
     return (
         <s-section accessibilityLabel="Empty state section">
@@ -45,7 +37,7 @@ export function DashboardBundlesEmpty({
                             <div className="text-center">{description}</div>
                         </s-paragraph>
                     </s-stack>
-                    {!hasBundles && !error && (
+                    {!error && (
                         <s-button
                             icon="plus"
                             variant="primary"
