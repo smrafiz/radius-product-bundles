@@ -548,6 +548,17 @@ model AppSettings {
     @@map("app_settings")
 }
 
+model WebhookDelivery {
+    id          String   @id
+    topic       String
+    shop        String
+    processedAt DateTime @default(now())
+
+    @@index([shop])
+    @@index([processedAt])
+    @@map("webhook_deliveries")
+}
+
 /// *
 /// * Enumerations
 enum BundleType {
@@ -668,15 +679,4 @@ enum ShopStatus {
     SUSPENDED
     TRIAL_EXPIRED
     NOT_CONFIGURED
-}
-
-model WebhookDelivery {
-    id          String   @id
-    topic       String
-    shop        String
-    processedAt DateTime @default(now())
-
-    @@index([shop])
-    @@index([processedAt])
-    @@map("webhook_deliveries")
 }

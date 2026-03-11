@@ -69,15 +69,10 @@ model Bundle {
     buyQuantity          Int?
     getQuantity          Int?
     usesPerOrderLimit    Int?
-    minimumItems         Int?
-    maximumItems         Int?
     discountType         DiscountType
     discountValue        Decimal              @db.Decimal(10, 2)
     minOrderValue        Decimal?             @db.Decimal(10, 2)
     maxDiscountAmount    Decimal?             @db.Decimal(10, 2)
-    volumeTiers          Json?
-    allowMixAndMatch     Boolean              @default(false)
-    mixAndMatchPrice     Decimal?             @db.Decimal(10, 2)
     discountApplication  String?              @default("bundle")
     discountedProductIds String[]             @default([])
     freeShipping         Boolean              @default(false)
@@ -284,6 +279,17 @@ model AppSettings {
     shop Shop @relation("ShopAppSettings", fields: [shopId], references: [id])
 
     @@map("app_settings")
+}
+
+model WebhookDelivery {
+    id          String   @id
+    topic       String
+    shop        String
+    processedAt DateTime @default(now())
+
+    @@index([shop])
+    @@index([processedAt])
+    @@map("webhook_deliveries")
 }
 
 /// *
