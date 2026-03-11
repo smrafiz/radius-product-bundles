@@ -166,8 +166,17 @@ fn calculate_bxgy_discount(
                 .iter()
                 .filter_map(|bl| {
                     let pid = bl.product_id.as_ref()?;
-                    let expected = *qm.get(pid).unwrap_or(&1);
-                    if expected <= 0 { return None; }
+                    let expected = match qm.get(pid) {
+                        Some(&qty) if qty > 0 => qty,
+                        Some(&qty) => {
+                            log!("[RadiusDiscount] Invalid quantity {} for product {}", qty, pid);
+                            return None;
+                        }
+                        None => {
+                            log!("[RadiusDiscount] Missing quantity for product {}", pid);
+                            return None;
+                        }
+                    };
                     Some(*bl.line.quantity() / expected)
                 })
                 .min()
@@ -177,8 +186,17 @@ fn calculate_bxgy_discount(
                 .iter()
                 .filter_map(|bl| {
                     let pid = bl.product_id.as_ref()?;
-                    let expected = *qm.get(pid).unwrap_or(&1);
-                    if expected <= 0 { return None; }
+                    let expected = match qm.get(pid) {
+                        Some(&qty) if qty > 0 => qty,
+                        Some(&qty) => {
+                            log!("[RadiusDiscount] Invalid quantity {} for product {}", qty, pid);
+                            return None;
+                        }
+                        None => {
+                            log!("[RadiusDiscount] Missing quantity for product {}", pid);
+                            return None;
+                        }
+                    };
                     Some(*bl.line.quantity() / expected)
                 })
                 .min()
@@ -209,12 +227,10 @@ fn calculate_bxgy_discount(
                 None => continue,
             }
         } else {
-            let expected = bl
-                .product_id
-                .as_ref()
-                .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
-                .copied()
-                .unwrap_or(1);
+            let expected = match bl.product_id.as_ref().and_then(|pid| qty_map.and_then(|qm| qm.get(pid))) {
+                Some(&qty) if qty > 0 => qty,
+                _ => continue,
+            };
             match safe_mul(deal_count, expected) {
                 Some(v) => std::cmp::min(v, *bl.line.quantity()),
                 None => continue,
@@ -225,6 +241,7 @@ fn calculate_bxgy_discount(
             continue;
         }
 
+        // BXGY uses unit price (discounts specific qty); non-BXGY uses subtotal (discounts whole line)
         let unit_price = bl.line.cost().amount_per_quantity().amount().0;
         reward_total += unit_price * qty_to_discount as f64;
 
@@ -246,12 +263,10 @@ fn calculate_bxgy_discount(
                 let per_product_deals = *bl.line.quantity() / items_per_deal;
                 safe_mul(per_product_deals, get_qty)
             } else {
-                let expected = bl
-                    .product_id
-                    .as_ref()
-                    .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
-                    .copied()
-                    .unwrap_or(1);
+                let expected = match bl.product_id.as_ref().and_then(|pid| qty_map.and_then(|qm| qm.get(pid))) {
+                    Some(&qty) if qty > 0 => qty,
+                    _ => return None,
+                };
                 safe_mul(deal_count, expected).map(|v| std::cmp::min(v, *bl.line.quantity()))
             }
         })
@@ -402,6 +417,11 @@ fn cart_lines_discounts_generate_run(
     let mut candidates: Vec<ProductDiscountCandidate> = vec![];
 
     for cart_config in cart_configs {
+        if cart_config.bundle_id.is_empty() || cart_config.bundle_id.len() > 100 {
+            log!("[RadiusDiscount] Invalid bundle ID length: {}", cart_config.bundle_id.len());
+            continue;
+        }
+
         let bundle_settings = match active_bundles.get(&cart_config.bundle_id) {
             Some(settings) => settings,
             None => continue,
@@ -489,6 +509,7 @@ fn cart_lines_discounts_generate_run(
 
                 for (expected_product_id, expected_qty) in qty_map.iter() {
                     if *expected_qty <= 0 {
+                        log!("[RadiusDiscount] Invalid quantity {} for product {}", expected_qty, expected_product_id);
                         continue;
                     }
 
