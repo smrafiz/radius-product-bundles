@@ -39,7 +39,7 @@ export const bundlesQueries = (
             };
         },
         staleTime: 5 * 60 * 1000,
-        cacheTime: 10 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     },
 
@@ -57,7 +57,7 @@ export const bundlesQueries = (
         },
         enabled: !!bundleId,
         staleTime: 5 * 60 * 1000,
-        cacheTime: 10 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     }),
 
@@ -74,7 +74,7 @@ export const bundlesQueries = (
             return result.data as BundleMetricsData;
         },
         staleTime: 10 * 60 * 1000,
-        cacheTime: 15 * 60 * 1000,
+        gcTime: 15 * 60 * 1000,
         refetchOnWindowFocus: false,
     },
 });

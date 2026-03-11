@@ -208,6 +208,8 @@ import "./scss/radius-bundles.scss";
         private isRunning: boolean = false;
         private debounceTimer: number | null = null;
         private readonly debounceDelay: number = 500;
+        private originalFetch: typeof window.fetch | null = null;
+        private boundTrigger: (() => void) | null = null;
 
         constructor(config: RadiusBundlesConfig) {
             this.config = config;
@@ -412,7 +414,8 @@ import "./scss/radius-bundles.scss";
         }
 
         private interceptFetch(): void {
-            const originalFetch = window.fetch;
+            this.originalFetch = window.fetch;
+            const originalFetch = this.originalFetch;
 
             window.fetch = (
                 input: RequestInfo | URL,
@@ -441,8 +444,25 @@ import "./scss/radius-bundles.scss";
         }
 
         private attachEventListeners(): void {
-            document.addEventListener("cart:refresh", () => this.trigger());
-            document.addEventListener("cart:updated", () => this.trigger());
+            this.boundTrigger = () => this.trigger();
+            document.addEventListener("cart:refresh", this.boundTrigger);
+            document.addEventListener("cart:updated", this.boundTrigger);
+        }
+
+        public destroy(): void {
+            if (this.debounceTimer !== null) {
+                clearTimeout(this.debounceTimer);
+                this.debounceTimer = null;
+            }
+            if (this.originalFetch) {
+                window.fetch = this.originalFetch;
+                this.originalFetch = null;
+            }
+            if (this.boundTrigger) {
+                document.removeEventListener("cart:refresh", this.boundTrigger);
+                document.removeEventListener("cart:updated", this.boundTrigger);
+                this.boundTrigger = null;
+            }
         }
     }
 
@@ -455,6 +475,8 @@ import "./scss/radius-bundles.scss";
         private pollInterval: number | null = null;
         private lastCartToken: string | null = null;
         private lastItemCount: number | null = null;
+        private boundUpdate: (() => void) | null = null;
+        private boundCartChange: (() => void) | null = null;
 
         constructor(config: RadiusBundlesConfig, cartCleanup: CartCleanup) {
             this.config = config;
@@ -469,12 +491,14 @@ import "./scss/radius-bundles.scss";
                 return;
             }
 
+            this.boundUpdate = () => this.update();
+            this.boundCartChange = () => this.update();
+
             setTimeout(() => this.update(), 100);
 
-            document.addEventListener("cart:updated", () => this.update());
-            document.addEventListener("radiusBundles:cleanup", () =>
-                this.update(),
-            );
+            document.addEventListener("cart:updated", this.boundUpdate);
+            document.addEventListener("radiusBundles:cleanup", this.boundUpdate);
+            document.addEventListener("cart:change", this.boundCartChange);
 
             this.startPolling();
         }
@@ -528,6 +552,15 @@ import "./scss/radius-bundles.scss";
             if (this.pollInterval !== null) {
                 clearInterval(this.pollInterval);
                 this.pollInterval = null;
+            }
+            if (this.boundUpdate) {
+                document.removeEventListener("cart:updated", this.boundUpdate);
+                document.removeEventListener("radiusBundles:cleanup", this.boundUpdate);
+                this.boundUpdate = null;
+            }
+            if (this.boundCartChange) {
+                document.removeEventListener("cart:change", this.boundCartChange);
+                this.boundCartChange = null;
             }
         }
 
@@ -712,7 +745,7 @@ import "./scss/radius-bundles.scss";
                 } catch {
                     // Silently fail
                 }
-            }, 1500);
+            }, 10000);
         }
 
         private escapeHtml(text: string): string {
@@ -769,6 +802,11 @@ import "./scss/radius-bundles.scss";
             (window as any).RadiusBundles.savingsBanner = this.savingsBanner;
 
             console.log("[RadiusBundles] Initialized successfully");
+        }
+
+        public destroy(): void {
+            this.cartCleanup.destroy();
+            this.savingsBanner.destroy();
         }
 
         private isAnalyticsRelevantPage(): boolean {

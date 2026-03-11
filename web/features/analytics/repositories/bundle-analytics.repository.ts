@@ -166,7 +166,10 @@ export async function getAllBundlesWithAnalytics(
         | "views"
         | "purchases"
         | "conversion"
-        | "created" = "revenue",
+        | "created"
+        | "name"
+        | "status"
+        | "type" = "revenue",
     sortOrder: "asc" | "desc" = "desc",
 ): Promise<BundleWithAnalytics[]> {
     const result = await fetchBundlesWithAnalyticsCore({
@@ -197,7 +200,9 @@ export async function getPaginatedBundlesWithAnalytics(
         search = "",
     } = params;
 
-    // Fetch all matching bundles with analytics
+    const DB_SORTABLE_FIELDS = ["name", "status", "createdAt", "type", "created"];
+    const useDbPagination = DB_SORTABLE_FIELDS.includes(sortBy);
+
     const { bundles, totalCount } = await fetchBundlesWithAnalyticsCore({
         shop,
         startDate,
@@ -205,13 +210,17 @@ export async function getPaginatedBundlesWithAnalytics(
         sortBy,
         sortOrder,
         search,
+        ...(useDbPagination ? { page, perPage } : {}),
     });
 
-    // Apply pagination
-    const startIndex = (page - 1) * perPage;
-    const paginatedBundles = bundles.slice(startIndex, startIndex + perPage);
+    let paginatedBundles;
+    if (useDbPagination) {
+        paginatedBundles = bundles;
+    } else {
+        const startIndex = (page - 1) * perPage;
+        paginatedBundles = bundles.slice(startIndex, startIndex + perPage);
+    }
 
-    // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / perPage);
 
     return {
@@ -257,14 +266,17 @@ export async function getBundleStatusCounts(shop: string) {
 export async function fetchBundlesWithAnalyticsCore(
     params: CoreBundleFetchParams,
 ): Promise<CoreBundleFetchResult> {
-    const { shop, startDate, endDate, sortBy, sortOrder, search = "" } = params;
+    const { shop, startDate, endDate, sortBy, sortOrder, search = "", page, perPage } = params;
 
-    // Build the where clause for bundles
+    const DB_SORTABLE_FIELDS = ["name", "status", "createdAt", "type", "created"];
+    const useDbPagination = page && perPage && DB_SORTABLE_FIELDS.includes(sortBy);
+
+    const dbSortField = sortBy === "created" ? "createdAt" : sortBy;
+
     const bundleWhereClause: any = {
         shop,
     };
 
-    // Add search filter if provided
     if (search && search.trim() !== "") {
         bundleWhereClause.name = {
             contains: search.trim(),
@@ -272,7 +284,6 @@ export async function fetchBundlesWithAnalyticsCore(
         };
     }
 
-    // Parallel Execution: Get bundles, analytics, and count
     const [bundles, bundleAnalytics, totalCount] = await Promise.all([
         prisma.bundle.findMany({
             where: bundleWhereClause,
@@ -287,6 +298,11 @@ export async function fetchBundlesWithAnalyticsCore(
                 publishedAt: true,
                 isPublished: true,
             },
+            ...(useDbPagination ? {
+                skip: (page - 1) * perPage,
+                take: perPage,
+                orderBy: { [dbSortField]: sortOrder || "desc" },
+            } : {}),
         }),
         prisma.bundleAnalytics.groupBy({
             by: ["bundleId"],
@@ -378,7 +394,7 @@ export function transformBundleWithAnalytics(
  */
 export function sortBundles(
     bundles: BundleWithAnalytics[],
-    sortBy: "revenue" | "views" | "purchases" | "conversion" | "created",
+    sortBy: "revenue" | "views" | "purchases" | "conversion" | "created" | "name" | "status" | "type",
     sortOrder: "asc" | "desc",
 ): BundleWithAnalytics[] {
     const multiplier = sortOrder === "desc" ? -1 : 1;
@@ -397,6 +413,12 @@ export function sortBundles(
                 return (
                     (a.createdAt.getTime() - b.createdAt.getTime()) * multiplier
                 );
+            case "name":
+                return a.title.localeCompare(b.title) * multiplier;
+            case "status":
+                return a.status.localeCompare(b.status) * multiplier;
+            case "type":
+                return a.type.localeCompare(b.type) * multiplier;
             default:
                 return 0;
         }

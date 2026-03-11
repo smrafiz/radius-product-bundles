@@ -40,7 +40,10 @@ export type SortField =
     | "views"
     | "purchases"
     | "conversion"
-    | "created";
+    | "created"
+    | "name"
+    | "status"
+    | "type";
 
 /**
  * Sort order for bundle analytics

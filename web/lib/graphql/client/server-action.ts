@@ -7,9 +7,22 @@ import { GraphQLRequest, GraphQLResponse } from "@/shared";
 import { SHOPIFY_API_VERSION } from "@/shared/constants";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
-/**
- * Execute GraphQL query against Shopify Admin API
- */
+const RETRYABLE_STATUS_CODES = [429, 502, 503, 504];
+const MAX_RETRIES = 3;
+const BACKOFF_MS = [0, 1000, 3000];
+
+function getRetryDelay(retryCount: number): number {
+    return BACKOFF_MS[retryCount] ?? 3000;
+}
+
+function isRetryableError(error: unknown): number | null {
+    if (error && typeof error === "object" && "response" in error) {
+        const status = (error as any).response?.status;
+        if (RETRYABLE_STATUS_CODES.includes(status)) return status;
+    }
+    return null;
+}
+
 export async function executeGraphQLQuery<T = any>(
     request: GraphQLRequest,
 ): Promise<GraphQLResponse<T>> {
@@ -134,6 +147,23 @@ export async function executeGraphQLQuery<T = any>(
                         : retryError,
                 );
             }
+        }
+
+        const retryableStatus = isRetryableError(error);
+        const retryCount = request._retryCount ?? 0;
+
+        if (retryableStatus && retryCount < MAX_RETRIES) {
+            const delay = getRetryDelay(retryCount);
+            if (delay > 0) {
+                await new Promise((r) => setTimeout(r, delay));
+            }
+            console.warn(
+                `[GraphQL] ${retryableStatus} — retry ${retryCount + 1}/${MAX_RETRIES}`,
+            );
+            return executeGraphQLQuery<T>({
+                ...request,
+                _retryCount: retryCount + 1,
+            });
         }
 
         console.error("GraphQL server action error:", error);

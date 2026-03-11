@@ -12,14 +12,14 @@
 | Domain                      | Critical | High   | Medium | Low    | Score      |
 | --------------------------- | -------- | ------ | ------ | ------ | ---------- |
 | Security & OWASP            | ~~3~~ 0  | ~~5~~ 4 | 4      | 2      | ~~62~~ 78/100 |
-| Data Integrity & Schema     | 2        | ~~4~~ 1 | 4      | 1      | ~~70~~ 78/100 |
-| Architecture & Code Quality | 0        | 3      | 5      | 5      | 87/100     |
-| Performance & Optimization  | ~~3~~ 2  | 5      | 4      | 0      | ~~58~~ 62/100 |
+| Data Integrity & Schema     | 2        | ~~4~~ **0** | ~~4~~ 3 | 1      | ~~70~~ **80/100** |
+| Architecture & Code Quality | 0        | 3      | ~~5~~ 4 | 5      | ~~87~~ **89/100** |
+| Performance & Optimization  | ~~3~~ **0** | ~~5~~ 4 | ~~4~~ 2 | 0      | ~~58~~ **72/100** |
 | Rust Discount Function      | ~~5~~ 0  | 8      | 4      | 0      | ~~45~~ 65/100 |
-| Webhooks & App Lifecycle    | ~~2~~ 1  | ~~6~~ 4 | 4      | 4      | ~~55~~ 68/100 |
-| **Total**                   | ~~15~~ **5** | ~~31~~ **25** | **25** | **12** | ~~63~~ **75/100** |
+| Webhooks & App Lifecycle    | ~~2~~ **0** | ~~6~~ **2** | 4      | 4      | ~~55~~ **74/100** |
+| **Total**                   | ~~15~~ **2** | ~~31~~ **21** | ~~25~~ **21** | **12** | ~~63~~ **80/100** |
 
-**Verdict**: Week 1 + Week 2 complete — **10 critical and 6 high issues resolved**. All Rust criticals eliminated (0 remaining). All security criticals eliminated. Architecture remains solid (87/100). **5 critical issues remain** across Data Integrity (2), Performance (2), and Webhooks (1).
+**Verdict**: Weeks 1–3 complete — **13 critical and 10 high issues resolved** (24 items total). All Rust, Security, Performance, and Webhook criticals eliminated. Architecture solid (89/100). **2 critical issues remain** in Data Integrity (D-1 cascade, D-2 JSON validation).
 
 ---
 
@@ -618,16 +618,16 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 
 ### Week 3 — Performance & Operational
 
-| Priority | ID  | Action                                                 | Effort |
-| -------- | --- | ------------------------------------------------------ | ------ |
-| 17       | P-3 | Reduce widget polling to 5s; use `cart:updated` events | 2 hr   |
-| 18       | P-4 | Dynamic import Recharts; replace Framer Motion         | 1 hr   |
-| 19       | P-9 | Fix widget memory leaks (fetch, listeners, intervals)  | 2 hr   |
-| 20       | W-5 | Add GraphQL retry with exponential backoff             | 1 hr   |
-| 21       | A-6 | Replace `cacheTime` → `gcTime` across codebase         | 15 min |
-| 22       | P-6 | Add cache invalidation after mutations                 | 1 hr   |
-| 23       | W-8 | Throw on missing critical env vars                     | 30 min |
-| 24       | D-6 | Fix client-side pagination to DB-level take/skip       | 1 hr   |
+| Priority | ID  | Action                                                 | Effort | Status |
+| -------- | --- | ------------------------------------------------------ | ------ | ------ |
+| 17       | P-3 | Reduce widget polling to 10s; use cart events          | 2 hr   | ✅ Done |
+| 18       | P-4 | Dynamic import Recharts; replace Framer Motion w/ CSS  | 1 hr   | ✅ Done |
+| 19       | P-9 | Fix widget memory leaks (fetch, listeners, intervals)  | 2 hr   | ✅ Done |
+| 20       | W-5 | Add GraphQL retry with exponential backoff             | 1 hr   | ✅ Done |
+| 21       | A-6 | Replace `cacheTime` → `gcTime` across codebase         | 15 min | ✅ Done |
+| 22       | P-6 | Add cache invalidation after mutations                 | 1 hr   | ✅ Done |
+| 23       | W-8 | Throw on missing critical env vars                     | 30 min | ✅ Done |
+| 24       | D-6 | Fix client-side pagination to DB-level take/skip       | 1 hr   | ✅ Done |
 
 ### Week 4 — Polish & Hardening
 

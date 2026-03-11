@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
 import { SettingsTabConfig, SettingsTabId } from "@/features/settings";
 import { AnimatedTabPanel } from "../settings-page/animated-tab-panel";
@@ -43,13 +42,11 @@ export function SettingsTab() {
 
                 {/* Right: Tab Content */}
                 <s-grid-item>
-                    <AnimatePresence mode="wait">
-                        {activeTabConfig && (
-                            <AnimatedTabPanel tabKey={activeTabConfig.id}>
-                                <DynamicSettingsTab config={activeTabConfig} />
-                            </AnimatedTabPanel>
-                        )}
-                    </AnimatePresence>
+                    {activeTabConfig && (
+                        <AnimatedTabPanel tabKey={activeTabConfig.id}>
+                            <DynamicSettingsTab config={activeTabConfig} />
+                        </AnimatedTabPanel>
+                    )}
                 </s-grid-item>
             </s-grid>
         </s-box>

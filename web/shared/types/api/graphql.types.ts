@@ -10,6 +10,7 @@ export interface GraphQLRequest<TResult = any, TVariables = any> {
     accessToken?: string;
     /** Internal: prevents infinite retry on 401 */
     _retried?: boolean;
+    _retryCount?: number;
 }
 
 export interface GraphQLResponse<T = any> {

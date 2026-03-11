@@ -8,27 +8,13 @@ import {
     ReviewStep,
     useBundleStore,
 } from "@/features/bundles";
-import { AnimatePresence, motion } from "framer-motion";
 
 export function StepContent({ bundleType }: { bundleType: BundleType }) {
     const { currentStep, previousStep } = useBundleStore();
 
     const direction = currentStep > previousStep ? 1 : -1;
-
-    const stepVariants = {
-        enter: (direction: number) => ({
-            opacity: 0,
-            x: direction > 0 ? 8 : -8,
-        }),
-        center: {
-            opacity: 1,
-            x: 0,
-        },
-        exit: (direction: number) => ({
-            opacity: 0,
-            x: direction > 0 ? -8 : 8,
-        }),
-    };
+    const animName =
+        direction > 0 ? "rpbStepSlideLeft" : "rpbStepSlideRight";
 
     const renderCurrentStep = () => {
         switch (currentStep) {
@@ -46,21 +32,11 @@ export function StepContent({ bundleType }: { bundleType: BundleType }) {
     };
 
     return (
-        <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-                key={currentStep}
-                custom={direction}
-                variants={stepVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                    duration: 0.22,
-                    ease: "easeOut",
-                }}
-            >
-                {renderCurrentStep()}
-            </motion.div>
-        </AnimatePresence>
+        <div
+            key={currentStep}
+            style={{ animation: `${animName} 0.22s ease-out` }}
+        >
+            {renderCurrentStep()}
+        </div>
     );
 }

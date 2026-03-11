@@ -3,18 +3,29 @@
 import {
     AllBundlesTable,
     AnalyticsBasedBundles,
-    AnalyticsChart,
-    AnalyticsComparisonCharts,
     AnalyticsDate,
     AnalyticsMetrics,
 } from "@/features/analytics";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
-/**
- * Analytics Tabs Component
- */
+const AnalyticsChart = dynamic(
+    () =>
+        import("../analytics-charts/analytics-chart").then((m) => ({
+            default: m.AnalyticsChart,
+        })),
+    { ssr: false },
+);
+
+const AnalyticsComparisonCharts = dynamic(
+    () =>
+        import("../analytics-charts/analytics-comparison-charts").then((m) => ({
+            default: m.AnalyticsComparisonCharts,
+        })),
+    { ssr: false },
+);
+
 const TABS = [
     { key: "overview", label: "Overview", icon: "chart-vertical" },
     { key: "bundle-performance", label: "Bundle Performance", icon: "package" },
@@ -30,18 +41,9 @@ export function AnalyticsTabs() {
             ? tabParam
             : "overview";
     const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
-    const shouldReduceMotion = useReducedMotion();
-
-    // Framer Motion variants
-    const tabContentVariants = {
-        initial: { opacity: 0, y: 5 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -3 },
-    };
 
     return (
         <s-stack gap="base">
-            {/* Header with tabs and date picker */}
             <s-stack
                 direction="inline"
                 alignItems="center"
@@ -51,7 +53,6 @@ export function AnalyticsTabs() {
                 padding="small-400"
                 background="base"
             >
-                {/* Tab buttons */}
                 <s-stack
                     direction="inline"
                     gap="small-300"
@@ -73,7 +74,6 @@ export function AnalyticsTabs() {
                     ))}
                 </s-stack>
 
-                {/* Date picker */}
                 <s-stack
                     direction="inline"
                     gap="none"
@@ -85,36 +85,25 @@ export function AnalyticsTabs() {
                 </s-stack>
             </s-stack>
 
-            {/* Metrics cards */}
             <AnalyticsMetrics />
 
-            {/* Tab content with animation */}
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={activeTab}
-                    variants={tabContentVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={
-                        shouldReduceMotion
-                            ? { duration: 0 }
-                            : { duration: 0.15, ease: "easeOut" }
-                    }
-                >
-                    {activeTab === "overview" ? (
-                        <s-stack gap="base">
-                            <AnalyticsChart />
-                            <AnalyticsComparisonCharts />
-                        </s-stack>
-                    ) : (
-                        <s-stack gap="base">
-                            <AnalyticsBasedBundles />
-                            <AllBundlesTable />
-                        </s-stack>
-                    )}
-                </motion.div>
-            </AnimatePresence>
+            <div
+                key={activeTab}
+                style={{ animation: "rpbFadeIn 0.15s ease-out" }}
+            >
+                {activeTab === "overview" ? (
+                    <s-stack gap="base">
+                        <AnalyticsChart />
+                        <AnalyticsComparisonCharts />
+                    </s-stack>
+                ) : (
+                    <s-stack gap="base">
+                        <AnalyticsBasedBundles />
+                        <AllBundlesTable />
+                    </s-stack>
+                )}
+            </div>
+
         </s-stack>
     );
 }

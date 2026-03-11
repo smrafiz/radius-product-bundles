@@ -11,7 +11,7 @@
         "dev:auto-base": "./scripts/dev-with-auto-host.sh",
         "dev:full": "node scripts/update-and-generate.js",
         "dev": "concurrently --raw \"bun:dev:app\" \"bun:dev:widgets\" \"bun:watch:schema\"",
-        "build:widgets": "cd web/widgets-src && vite build",
+        "build:widgets": "cd web/widgets && vite build",
         "info": "shopify app info",
         "build": "shopify app build",
         "generate": "shopify app generate",
@@ -38,7 +38,7 @@
         "@types/node": "^25.4.0",
         "concurrently": "^9.2.1",
         "nodemon": "^3.1.14",
-        "sass-embedded": "^1.97.3",
+        "sass-embedded": "^1.98.0",
         "vite": "^7.3.1"
     },
     "overrides": {

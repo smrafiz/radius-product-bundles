@@ -256,13 +256,16 @@ export async function getPaginatedBundlesAnalytics(
  */
 function mapSortFieldToRepo(
     sortBy: SortField,
-): "revenue" | "views" | "purchases" | "conversion" | "created" {
+): "revenue" | "views" | "purchases" | "conversion" | "created" | "name" | "status" | "type" {
     return sortBy as
         | "revenue"
         | "views"
         | "purchases"
         | "conversion"
-        | "created";
+        | "created"
+        | "name"
+        | "status"
+        | "type";
 }
 
 /**
