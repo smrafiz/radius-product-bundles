@@ -120,13 +120,12 @@ fn calculate_bxgy_discount(
         return None;
     }
 
-    // Same-product mode: when trigger and reward are the same product,
-    // the productRoles HashMap can only store one role per product ID,
-    // so TRIGGER gets overwritten by REWARD. Detect this when no triggers found.
-    let same_product_mode = trigger_lines.is_empty();
-
-    // Check if same-product mode via explicit trigger/reward overlap
-    let is_same_product = if !same_product_mode {
+    // Same-product detection (unified):
+    // Case 1: No triggers found — HashMap overwrote TRIGGER role with REWARD (same product ID)
+    // Case 2: Trigger and reward product ID sets are identical
+    let is_same_product = if trigger_lines.is_empty() {
+        true
+    } else {
         let trigger_product_ids: std::collections::HashSet<&str> = trigger_lines
             .iter()
             .filter_map(|bl| bl.product_id.as_deref())
@@ -136,8 +135,6 @@ fn calculate_bxgy_discount(
             .filter_map(|bl| bl.product_id.as_deref())
             .collect();
         trigger_product_ids == reward_product_ids
-    } else {
-        true
     };
 
     // BOGO quantities (used for same-product per-line deal calculation)
@@ -150,7 +147,7 @@ fn calculate_bxgy_discount(
     }
 
     // Calculate deal count
-    let deal_count: i32 = if same_product_mode || is_same_product {
+    let deal_count: i32 = if is_same_product {
         // Same product (BOGO): guard check — at least one product must have enough qty
         reward_lines
             .iter()
@@ -220,7 +217,7 @@ fn calculate_bxgy_discount(
     let mut reward_total: f64 = 0.0;
 
     for bl in &reward_lines {
-        let qty_to_discount = if same_product_mode || is_same_product {
+        let qty_to_discount = if is_same_product {
             let per_product_deals = *bl.line.quantity() / items_per_deal;
             match safe_mul(per_product_deals, get_qty) {
                 Some(v) => v,
@@ -259,7 +256,7 @@ fn calculate_bxgy_discount(
     let total_reward_qty_to_discount: i32 = reward_lines
         .iter()
         .filter_map(|bl| {
-            if same_product_mode || is_same_product {
+            if is_same_product {
                 let per_product_deals = *bl.line.quantity() / items_per_deal;
                 safe_mul(per_product_deals, get_qty)
             } else {
@@ -323,9 +320,15 @@ fn calculate_bxgy_discount(
         _ => return None,
     };
 
-    // Apply max discount cap
+    // Apply max discount cap — converts any discount type to FixedAmount when capped,
+    // because Shopify's discount API has no way to cap a percentage directly.
     let final_value = if let Some(max_discount) = bundle_settings.max_discount_amount {
         if max_discount > 0.0 && discount_amount > max_discount {
+            log!(
+                "[RadiusDiscount] Capping discount from {:.2} to {:.2} (max_discount_amount)",
+                discount_amount,
+                max_discount
+            );
             ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
                 amount: Decimal(max_discount),
                 applies_to_each_item: None,
@@ -407,7 +410,7 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    let cart_total: f64 = input
+    let cart_subtotal: f64 = input
         .cart()
         .lines()
         .iter()
@@ -432,7 +435,7 @@ fn cart_lines_discounts_generate_run(
         }
 
         if let Some(min_order) = bundle_settings.min_order_value {
-            if min_order > 0.0 && cart_total < min_order {
+            if min_order > 0.0 && cart_subtotal < min_order {
                 continue;
             }
         }
