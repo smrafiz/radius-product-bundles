@@ -35,15 +35,6 @@ export async function trackBundleView(
     customerId?: string,
     sessionId?: string,
 ) {
-    const bundle = await prisma.bundle.findUnique({
-        where: { id: bundleId },
-        select: { status: true },
-    });
-
-    if (!bundle || bundle.status === "DELETED") {
-        return;
-    }
-
     const dateObj =
         typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
@@ -54,7 +45,6 @@ export async function trackBundleView(
     let isNewView = false;
 
     if (customerId) {
-        // For logged-in users: Check if the customer already viewed this bundle today
         try {
             await prisma.bundleView.create({
                 data: {
@@ -65,21 +55,12 @@ export async function trackBundleView(
                 },
             });
             isNewView = true;
-            console.log(
-                `[Analytics] New view tracked: bundle=${bundleId}, customer=${customerId}`,
-            );
         } catch (error: any) {
-            if (error.code === "P2002") {
-                // Customer already viewed today
-                console.log(
-                    `[Analytics] Deduplicated view: bundle=${bundleId}, customer=${customerId}, date=${dateKey}`,
-                );
-                return;
-            }
+            if (error.code === "P2002") return;
+            if (error.code === "P2003") return;
             throw error;
         }
     } else if (sessionId) {
-        // For anonymous users: Check if the session already viewed this bundle today
         try {
             await prisma.bundleView.create({
                 data: {
@@ -90,41 +71,38 @@ export async function trackBundleView(
                 },
             });
             isNewView = true;
-            console.log(
-                `[Analytics] New view tracked: bundle=${bundleId}, session=${sessionId}`,
-            );
         } catch (error: any) {
-            if (error.code === "P2002") {
-                console.log(
-                    `[Analytics] Deduplicated view: bundle=${bundleId}, session=${sessionId}, date=${dateKey}`,
-                );
-                return;
-            }
+            if (error.code === "P2002") return;
+            if (error.code === "P2003") return;
             throw error;
         }
     } else {
-        // No customer or session ID - count as anonymous view
         isNewView = true;
     }
 
     if (isNewView) {
-        return prisma.bundleAnalytics.upsert({
-            where: {
-                bundleId_date_hour: { bundleId, date, hour },
-            },
-            update: {
-                bundleViews: { increment: 1 },
-            },
-            create: {
-                bundleId,
-                date,
-                hour,
-                bundleViews: 1,
-                bundleAddToCarts: 0,
-                bundlePurchases: 0,
-                bundleRevenue: 0,
-            },
-        });
+        try {
+            return await prisma.bundleAnalytics.upsert({
+                where: {
+                    bundleId_date_hour: { bundleId, date, hour },
+                },
+                update: {
+                    bundleViews: { increment: 1 },
+                },
+                create: {
+                    bundleId,
+                    date,
+                    hour,
+                    bundleViews: 1,
+                    bundleAddToCarts: 0,
+                    bundlePurchases: 0,
+                    bundleRevenue: 0,
+                },
+            });
+        } catch (error: any) {
+            if (error.code === "P2003") return;
+            throw error;
+        }
     }
 }
 
@@ -135,38 +113,34 @@ export async function trackAddToCart(
     bundleId: string,
     timestamp: Date = new Date(),
 ) {
-    const bundle = await prisma.bundle.findUnique({
-        where: { id: bundleId },
-        select: { status: true },
-    });
-
-    if (!bundle || bundle.status === "DELETED") {
-        return;
-    }
-
     const dateObj =
         typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
     const hour = dateObj.getHours();
     const date = startOfDay(dateObj);
 
-    return prisma.bundleAnalytics.upsert({
-        where: {
-            bundleId_date_hour: { bundleId, date, hour },
-        },
-        update: {
-            bundleAddToCarts: { increment: 1 },
-        },
-        create: {
-            bundleId,
-            date,
-            hour,
-            bundleViews: 0,
-            bundleAddToCarts: 1,
-            bundlePurchases: 0,
-            bundleRevenue: 0,
-        },
-    });
+    try {
+        return await prisma.bundleAnalytics.upsert({
+            where: {
+                bundleId_date_hour: { bundleId, date, hour },
+            },
+            update: {
+                bundleAddToCarts: { increment: 1 },
+            },
+            create: {
+                bundleId,
+                date,
+                hour,
+                bundleViews: 0,
+                bundleAddToCarts: 1,
+                bundlePurchases: 0,
+                bundleRevenue: 0,
+            },
+        });
+    } catch (error: any) {
+        if (error.code === "P2003") return;
+        throw error;
+    }
 }
 
 /**
@@ -179,15 +153,6 @@ export async function trackBundlePurchase(params: {
     isNewCustomer?: boolean;
     timestamp?: Date;
 }) {
-    const bundle = await prisma.bundle.findUnique({
-        where: { id: params.bundleId },
-        select: { status: true },
-    });
-
-    if (!bundle || bundle.status === "DELETED") {
-        return;
-    }
-
     const timestampObj = params.timestamp
         ? typeof params.timestamp === "string"
             ? new Date(params.timestamp)
@@ -197,36 +162,41 @@ export async function trackBundlePurchase(params: {
     const hour = timestampObj.getHours();
     const date = startOfDay(timestampObj);
 
-    return prisma.bundleAnalytics.upsert({
-        where: {
-            bundleId_date_hour: {
+    try {
+        return await prisma.bundleAnalytics.upsert({
+            where: {
+                bundleId_date_hour: {
+                    bundleId: params.bundleId,
+                    date,
+                    hour,
+                },
+            },
+            update: {
+                bundlePurchases: { increment: 1 },
+                bundleRevenue: { increment: params.revenue },
+                newCustomerPurchases: params.isNewCustomer
+                    ? { increment: 1 }
+                    : undefined,
+                returningCustomerPurchases: !params.isNewCustomer
+                    ? { increment: 1 }
+                    : undefined,
+            },
+            create: {
                 bundleId: params.bundleId,
                 date,
                 hour,
+                bundleViews: 0,
+                bundleAddToCarts: 0,
+                bundlePurchases: 1,
+                bundleRevenue: params.revenue,
+                newCustomerPurchases: params.isNewCustomer ? 1 : 0,
+                returningCustomerPurchases: !params.isNewCustomer ? 1 : 0,
             },
-        },
-        update: {
-            bundlePurchases: { increment: 1 },
-            bundleRevenue: { increment: params.revenue },
-            newCustomerPurchases: params.isNewCustomer
-                ? { increment: 1 }
-                : undefined,
-            returningCustomerPurchases: !params.isNewCustomer
-                ? { increment: 1 }
-                : undefined,
-        },
-        create: {
-            bundleId: params.bundleId,
-            date,
-            hour,
-            bundleViews: 0,
-            bundleAddToCarts: 0,
-            bundlePurchases: 1,
-            bundleRevenue: params.revenue,
-            newCustomerPurchases: params.isNewCustomer ? 1 : 0,
-            returningCustomerPurchases: !params.isNewCustomer ? 1 : 0,
-        },
-    });
+        });
+    } catch (error: any) {
+        if (error.code === "P2003") return;
+        throw error;
+    }
 }
 
 /**

@@ -122,7 +122,10 @@ export async function processScheduledBundlesForShop(
     return result;
 }
 
+const TIMEOUT_BUDGET_MS = 55_000;
+
 export async function processScheduledBundles(): Promise<SchedulerResult> {
+    const startTime = Date.now();
     const result: SchedulerResult = {
         processedShops: 0,
         activated: 0,
@@ -142,6 +145,16 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
         );
 
         for (const shop of shops) {
+            if (Date.now() - startTime > TIMEOUT_BUDGET_MS) {
+                console.warn(
+                    `[Scheduler] Time budget exceeded after ${result.processedShops}/${shops.length} shops`,
+                );
+                result.errors.push({
+                    shop: "global",
+                    error: `Time budget exceeded — processed ${result.processedShops}/${shops.length} shops`,
+                });
+                break;
+            }
             try {
                 let session;
                 try {

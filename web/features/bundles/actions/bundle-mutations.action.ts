@@ -58,7 +58,7 @@ import {
 } from "@/features/bundles/repositories";
 import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
 
-function logSettledFailures(label: string, results: PromiseSettledResult<unknown>[]) {
+function logSettledFailures(label: string, results: PromiseSettledResult<unknown>[]): boolean {
     const failures = results.filter(
         (r): r is PromiseRejectedResult => r.status === "rejected",
     );
@@ -67,7 +67,9 @@ function logSettledFailures(label: string, results: PromiseSettledResult<unknown
             `[${label}] ${failures.length} metafield sync(s) failed:`,
             failures.map((f) => f.reason?.message ?? f.reason),
         );
+        return true;
     }
+    return false;
 }
 
 /**
@@ -331,7 +333,7 @@ export async function deleteBundlesAction(
                 removeBundleIdFromProducts(sessionToken, bundleId, productIds),
             ),
         ]);
-        logSettledFailures("deleteBundles", deleteMetafieldResults);
+        const hadSyncFailures = logSettledFailures("deleteBundles", deleteMetafieldResults);
         invalidateDashboardCache(shop);
 
         const BATCH_SIZE = 4;
@@ -360,6 +362,9 @@ export async function deleteBundlesAction(
         return {
             status: "success" as const,
             ...result,
+            message: hadSyncFailures
+                ? "Bundles deleted, but storefront sync failed. Try syncing from Settings → Tools."
+                : result.message,
         };
     } catch (error) {
         console.error("[deleteMultipleBundles] Error:", error);
@@ -555,7 +560,7 @@ export async function createBundleAction(
                   )
                 : Promise.resolve(),
         ]);
-        logSettledFailures("createBundle", createMetafieldResults);
+        const hadSyncFailures = logSettledFailures("createBundle", createMetafieldResults);
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
@@ -563,7 +568,9 @@ export async function createBundleAction(
 
         return {
             status: "success",
-            message: "Bundle created successfully",
+            message: hadSyncFailures
+                ? "Bundle created, but storefront sync failed. Try syncing from Settings → Tools."
+                : "Bundle created successfully",
             data: {
                 id: result.bundle!.id,
                 name: result.bundle!.name,
@@ -698,7 +705,7 @@ export async function updateBundleAction(
                 adjustedNewIds,
             ),
         ]);
-        logSettledFailures("updateBundle", updateMetafieldResults);
+        const hadSyncFailures = logSettledFailures("updateBundle", updateMetafieldResults);
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
@@ -706,7 +713,9 @@ export async function updateBundleAction(
 
         return {
             status: "success",
-            message: "Bundle updated successfully",
+            message: hadSyncFailures
+                ? "Bundle updated, but storefront sync failed. Try syncing from Settings → Tools."
+                : "Bundle updated successfully",
             data: {
                 id: result.bundle!.id,
                 name: result.bundle!.name,

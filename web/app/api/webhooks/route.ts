@@ -3,6 +3,25 @@ import { addHandlers } from "@/lib/shopify";
 import shopify from "@/lib/shopify/config/initialize-context";
 import prisma from "@/shared/repositories/prisma-connect";
 
+let handlerInitPromise: Promise<void> | null = null;
+
+function ensureHandlers(topic: string): Promise<void> {
+    const handlers = shopify.webhooks.getHandlers(topic);
+    if (handlers && handlers.length > 0) {
+        return Promise.resolve();
+    }
+
+    if (!handlerInitPromise) {
+        console.warn(
+            `[Webhook] No handlers found for topic: ${topic}, re-adding handlers.`,
+        );
+        handlerInitPromise = Promise.resolve().then(() => {
+            addHandlers();
+        });
+    }
+    return handlerInitPromise;
+}
+
 export async function POST(req: Request) {
     const headerList = await headers();
     const topic = headerList.get("x-shopify-topic") || "unknown";
@@ -22,14 +41,8 @@ export async function POST(req: Request) {
 
     const rawBody = await req.text();
 
-    // Re-add handlers if none are found (likely cold start on serverless)
-    const handlers = shopify.webhooks.getHandlers(topic);
-    if (!handlers || handlers.length === 0) {
-        console.warn(
-            `[Webhook] No handlers found for topic: ${topic}, re-adding handlers.`,
-        );
-        addHandlers();
-    }
+    // Re-add handlers if none are found (likely cold start — uses lock to prevent double registration)
+    await ensureHandlers(topic);
 
     try {
         // HMAC validation happens inside shopify.webhooks.process() —

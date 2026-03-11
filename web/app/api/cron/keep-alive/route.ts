@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        await prisma.$queryRawUnsafe("SELECT 1");
+        await prisma.$queryRaw`SELECT 1`;
         return Response.json({ ok: true, timestamp: new Date().toISOString() });
     } catch (error) {
         console.error("[Cron] Keep-alive ping failed:", error);

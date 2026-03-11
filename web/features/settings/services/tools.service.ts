@@ -23,16 +23,11 @@ const GDPR_COMPLIANCE_TOPICS = [
     "SHOP_REDACT",
 ];
 
-export async function clearCacheService(
-    sessionToken: string,
-    shop: string,
-): Promise<ClearCacheResult> {
+export async function clearCacheService(): Promise<ClearCacheResult> {
     try {
         revalidatePath("/bundles");
         revalidatePath("/dashboard");
         revalidatePath("/settings");
-
-        await syncAllSettingsToMetafields(sessionToken, shop);
 
         return { success: true };
     } catch (error) {

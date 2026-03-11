@@ -166,6 +166,24 @@ export async function executeGraphQLQuery<T = any>(
             });
         }
 
+        if (retryableStatus && retryCount >= MAX_RETRIES) {
+            console.error(
+                `[GraphQL] Shopify API unavailable (${retryableStatus}) after ${MAX_RETRIES} retries`,
+            );
+            return {
+                errors: [
+                    {
+                        message: `Shopify API is temporarily unavailable (HTTP ${retryableStatus}). Please try again later.`,
+                        extensions: {
+                            code: "SHOPIFY_UNAVAILABLE",
+                            statusCode: retryableStatus,
+                            timestamp: new Date().toISOString(),
+                        },
+                    },
+                ],
+            } as GraphQLResponse<T>;
+        }
+
         console.error("GraphQL server action error:", error);
 
         if (error && typeof error === "object" && "response" in error) {

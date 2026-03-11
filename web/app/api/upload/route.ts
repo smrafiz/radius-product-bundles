@@ -31,7 +31,14 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Read file data
+        const MAX_FILE_SIZE = 5 * 1024 * 1024;
+        if (file.size > MAX_FILE_SIZE) {
+            return NextResponse.json(
+                { error: "File too large. Maximum size is 5MB." },
+                { status: 413, headers: corsHeaders },
+            );
+        }
+
         const fileArrayBuffer = await file.arrayBuffer();
         const fileBuffer = Buffer.from(fileArrayBuffer);
 
@@ -55,12 +62,24 @@ export async function POST(request: NextRequest) {
         } else {
             console.log("[Upload API] Using POST method with FormData...");
 
-            const params = paramsJson
-                ? (JSON.parse(paramsJson) as Array<{
-                      name: string;
-                      value: string;
-                  }>)
-                : [];
+            let params: Array<{ name: string; value: string }> = [];
+            if (paramsJson) {
+                try {
+                    const parsed = JSON.parse(paramsJson);
+                    if (!Array.isArray(parsed)) {
+                        return NextResponse.json(
+                            { error: "Invalid params format: expected array" },
+                            { status: 400, headers: corsHeaders },
+                        );
+                    }
+                    params = parsed;
+                } catch {
+                    return NextResponse.json(
+                        { error: "Invalid params JSON" },
+                        { status: 400, headers: corsHeaders },
+                    );
+                }
+            }
 
             const shopifyFormData = new FormData();
 

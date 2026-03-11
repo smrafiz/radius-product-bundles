@@ -23,7 +23,7 @@ export async function clearCacheAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const data = await clearCacheService(sessionToken, shop);
+        const data = await clearCacheService();
 
         return { status: "success", data };
     } catch (error) {

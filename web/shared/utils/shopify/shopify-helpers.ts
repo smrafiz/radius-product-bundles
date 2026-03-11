@@ -173,10 +173,11 @@ export function isSessionExpired(expires: Date | null | undefined): boolean {
  * Utility function to extract authorization header
  */
 export function extractBearerToken(authHeader: string | null): string | null {
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader) {
         return null;
     }
-    return authHeader.replace("Bearer ", "");
+    const match = authHeader.match(/^Bearer\s+(.+)$/);
+    return match?.[1] ?? null;
 }
 
 const SHOP_DOMAIN_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$/;
