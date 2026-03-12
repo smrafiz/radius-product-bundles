@@ -32,7 +32,9 @@
 				{% if badge_style == 'outline' %}{% assign outline_class = ' rb-classic__badge--outline' %}{% endif %}
 				<div class="rb-classic__header">
 					{% if show_savings_badge %}
-						<span class="rb-classic__header-badge radius-bundle__skeleton-text" style="display:inline-block;width:180px;height:28px;border-radius:20px;"></span>
+						<div class="rb-classic__header-badge radius-bundle__skeleton-text" style="min-height:28px;">
+							<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
+						</div>
 					{% endif %}
 					<div class="rb-classic__header-title">{{ name }}</div>
 					{% if subtitle != blank %}
@@ -143,7 +145,9 @@
 				<div class="rb-split__container">
 					<div class="rb-split__header">
 						{% if show_savings_badge %}
-							<span class="rb-split__deal-badge radius-bundle__skeleton-text" style="display:inline-block;width:160px;height:28px;border-radius:20px;"></span>
+							<div class="rb-split__deal-badge" style="justify-content:center;width:166px;height:29px;">
+								<span class="radius-bundle__skeleton-text" style="display: inline-block; width: 140px; border-radius: 30px;"></span>
+							</div>
 						{% endif %}
 						<h3 class="rb-split__title">{{ name }}</h3>
 						{% if subtitle != blank %}
@@ -207,7 +211,9 @@
 							{% if subtitle != blank %}<span class="rb-cg__banner-subtitle">{{ subtitle }}</span>{% endif %}
 						</div>
 						{% if show_savings_badge %}
-							<span class="rb-cg__banner-badge radius-bundle__skeleton-text" style="display:inline-block;width:80px;height:24px;border-radius:20px;"></span>
+							<div class="rb-cg__banner-badge radius-bundle__skeleton-text">
+								<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
+							</div>
 						{% endif %}
 					</div>
 					<div class="rb-cg__tiles">
@@ -288,7 +294,9 @@
 				{% assign reward_count = count | minus: trigger_count %}
 				<div class="rb-minimalist__container">
 					{% if show_savings_badge %}
-						<span class="rb-minimalist__badge radius-bundle__skeleton-text" style="display:inline-block;width:120px;height:22px;"></span>
+						<div class="rb-minimalist__badge radius-bundle__badge--skeleton" style="display:inline-block;width:92px;height:28px;">
+							<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge" style="position: absolute"></span>
+						</div>
 					{% endif %}
 					<div class="rb-minimalist__hero">
 						{%- if show_images -%}
@@ -369,6 +377,4 @@
 			{% endcase %}
 		</div>
 	</div>
-
-	{% comment %}{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}{% endcomment %}
 </div>
