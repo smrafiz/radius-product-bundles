@@ -28,3 +28,12 @@ query GetPublications($first: Int!) {
         }
     }
 }
+
+query GetShopLocales {
+    shopLocales {
+        locale
+        name
+        primary
+        published
+    }
+}

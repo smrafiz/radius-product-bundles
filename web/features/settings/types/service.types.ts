@@ -5,6 +5,7 @@ import { AppSettingsFormData } from "@/features/settings";
  */
 export interface GetSettingsInput {
     shop: string;
+    locale?: string;
 }
 
 /**
@@ -13,4 +14,5 @@ export interface GetSettingsInput {
 export interface SaveSettingsInput {
     shop: string;
     data: AppSettingsFormData;
+    locale?: string;
 }

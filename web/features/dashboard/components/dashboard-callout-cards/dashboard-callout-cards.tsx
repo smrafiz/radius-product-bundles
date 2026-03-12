@@ -1,7 +1,8 @@
 "use client";
+
 import { CalloutCard } from "@/shared";
-import { getDashboardCalloutCards } from "@/features/dashboard";
 import { useTranslations } from "@/lib/i18n/provider";
+import { getDashboardCalloutCards } from "@/features/dashboard";
 
 export function DashboardCalloutCards() {
     const t = useTranslations("Dashboard.CalloutCards");

@@ -15,7 +15,8 @@ import { AppSettings } from "@/prisma/generated/client";
 interface MetafieldGlobalSettings {
     // Required for Liquid rendering
     styles: CustomizerStyles;
-    labels: GlobalLabels;
+    labels: Record<string, Record<string, string>>;
+    primaryLocale: string;
 
     // Required for JS cart behavior
     cart: {
@@ -94,28 +95,70 @@ function isRecord(value: unknown): value is Record<string, unknown> {
     return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
-function getValidGlobalLabels(labels: unknown): Partial<GlobalLabels> {
+/**
+ * Validates a flat labels object against DEFAULT_LABELS keys
+ */
+function validateFlatLabels(parsed: Record<string, unknown>): Partial<GlobalLabels> {
+    const result: Partial<GlobalLabels> = {};
+    for (const key of Object.keys(DEFAULT_LABELS) as Array<keyof GlobalLabels>) {
+        const value = parsed[key];
+        if (typeof value === "string" && value.trim() !== "") {
+            result[key] = value;
+        }
+    }
+    return result;
+}
+
+/**
+ * Detects if labels are locale-keyed (e.g. { "en": {...}, "fr": {...} })
+ * vs flat (e.g. { "headingLabel": "...", ... })
+ */
+function isLocaleKeyedLabels(obj: Record<string, unknown>): boolean {
+    const keys = Object.keys(obj);
+    if (keys.length === 0) return false;
+    const firstKey = keys[0];
+    return firstKey.length <= 5 && !firstKey.includes("Label") && !firstKey.includes("Text");
+}
+
+/**
+ * Parses labels from DB and returns locale-keyed structure with defaults merged per locale.
+ */
+function getValidLocaleKeyedLabels(
+    labels: unknown,
+    primaryLocale: string,
+): Record<string, Record<string, string>> {
     try {
         const parsed = typeof labels === "string" ? JSON.parse(labels) : labels;
 
-        if (!parsed || typeof parsed !== "object") {
-            return {};
+        if (!isRecord(parsed)) {
+            return { [primaryLocale]: { ...DEFAULT_LABELS } };
         }
 
-        const result: Partial<GlobalLabels> = {};
+        // Handle flat structure (legacy)
+        if (!isLocaleKeyedLabels(parsed)) {
+            const validated = validateFlatLabels(parsed);
+            return {
+                [primaryLocale]: { ...DEFAULT_LABELS, ...validated },
+            };
+        }
 
-        for (const key of Object.keys(DEFAULT_LABELS) as Array<
-            keyof GlobalLabels
-        >) {
-            const value = parsed[key];
-            if (typeof value === "string") {
-                result[key] = value;
+        // Handle locale-keyed structure
+        const result: Record<string, Record<string, string>> = {};
+        for (const [locale, localeLabels] of Object.entries(parsed)) {
+            if (isRecord(localeLabels)) {
+                const validated = validateFlatLabels(localeLabels);
+                result[locale] = { ...DEFAULT_LABELS, ...validated };
             }
+        }
+
+        // Ensure primary locale exists
+        if (!result[primaryLocale]) {
+            result[primaryLocale] = { ...DEFAULT_LABELS };
         }
 
         return result;
     } catch {
-        return {};
+        return { [primaryLocale]: { ...DEFAULT_LABELS } };
     }
 }
 
@@ -146,9 +189,12 @@ function getValidGlobalStyles(styles: any): GlobalStyleSettings {
 
 /**
  * Builds global settings metafield value.
+ * @param appSettings
+ * @param primaryLocale - The store's primary locale code (from Shop.primaryLocale)
  */
 export function buildGlobalSettingsMetafieldValue(
     appSettings: AppSettings | null,
+    primaryLocale = "en",
 ): string {
     const mergedStyles: CustomizerStyles = {
         ...DEFAULT_CUSTOMIZER_STYLES,
@@ -165,13 +211,9 @@ export function buildGlobalSettingsMetafieldValue(
         // Styles for Liquid
         styles: mergedStyles,
 
-        // Labels for Liquid
-        labels: {
-            ...DEFAULT_LABELS,
-            ...(appSettings?.labels
-                ? getValidGlobalLabels(appSettings.labels)
-                : {}),
-        } as GlobalLabels,
+        // Labels for Liquid — locale-keyed with defaults merged per locale
+        labels: getValidLocaleKeyedLabels(appSettings?.labels, primaryLocale),
+        primaryLocale,
 
         // Cart behavior for JS
         cart: {

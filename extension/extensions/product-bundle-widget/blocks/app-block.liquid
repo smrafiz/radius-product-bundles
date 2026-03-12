@@ -3,7 +3,17 @@
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
 	{% assign global = shop.metafields['$app'].global_settings.value %}
 	{% assign bundles = shop.metafields['$app'].active_bundles.value %}
-	{% assign g_labels = global.labels %}
+	{% assign customer_locale = request.locale.iso_code | downcase %}
+	{% assign primary_locale = global.primaryLocale | default: 'en' %}
+	{% if global.labels[customer_locale] %}
+		{% assign g_labels = global.labels[customer_locale] %}
+	{% elsif global.labels[primary_locale] %}
+		{% assign g_labels = global.labels[primary_locale] %}
+	{% elsif global.labels['en'] %}
+		{% assign g_labels = global.labels['en'] %}
+	{% else %}
+		{% assign g_labels = global.labels %}
+	{% endif %}
 	{% assign g_styles = global.styles %}
 	{% assign g_tablet = g_styles.tablet %}
 	{% assign g_mobile = g_styles.mobile %}

@@ -32,6 +32,7 @@ import { executeGraphQLMutation, executeGraphQLQuery } from "@/lib";
 import { findActiveBundlesByShop } from "@/features/bundles/repositories";
 import { findSettingsByShopDomain } from "@/features/settings/repositories";
 import { transformFormDataToAppSettings } from "@/features/settings/services/settings.service";
+import prisma from "@/shared/repositories/prisma-connect";
 import { calculateDiscountAmount } from "@/features/bundles/utils/calculators/bundle-calculations";
 
 const METAFIELD_KEY = METAFIELD_KEYS["BUNDLE_IDS"];
@@ -754,22 +755,35 @@ export async function syncAllSettingsToMetafields(
         }
 
         // Use provided settings or fetch from DB
-        const [globalSettings, activeBundles] = await Promise.all([
+        const [globalSettings, activeBundles, shopRecord] = await Promise.all([
             savedSettings
                 ? Promise.resolve(transformFormDataToAppSettings(savedSettings))
                 : findSettingsByShopDomain(shop),
             findActiveBundlesByShop(shop),
+            prisma.shop.findUnique({
+                where: { domain: shop },
+                select: { primaryLocale: true },
+            }),
         ]);
+
+        const primaryLocale = shopRecord?.primaryLocale ?? "en";
 
         // Fetch product prices for effective savings calculation
         const priceMap = await buildPriceMapForBundles(auth, activeBundles);
 
-        // Extract freeShippingMethodTitle from labels JSON
-        const labels = globalSettings?.labels as Record<string, string> | null;
-        const freeShippingMethodTitle = labels?.freeShippingMethodTitle;
+        // Extract freeShippingMethodTitle from labels JSON (handles both flat and locale-keyed)
+        const rawLabels = globalSettings?.labels as Record<string, any> | null;
+        let freeShippingMethodTitle: string | undefined;
+        if (rawLabels) {
+            if (rawLabels.freeShippingMethodTitle) {
+                freeShippingMethodTitle = rawLabels.freeShippingMethodTitle;
+            } else if (rawLabels[primaryLocale]?.freeShippingMethodTitle) {
+                freeShippingMethodTitle = rawLabels[primaryLocale].freeShippingMethodTitle;
+            }
+        }
 
         const globalSettingsValue =
-            buildGlobalSettingsMetafieldValue(globalSettings);
+            buildGlobalSettingsMetafieldValue(globalSettings, primaryLocale);
         const shopBundlesValue = buildShopBundlesMetafieldValue(
             activeBundles,
             freeShippingMethodTitle,

@@ -47,7 +47,7 @@ export async function findShopByDomain(
     const client = tx || prisma;
     return client.shop.findUnique({
         where: { domain },
-        select: { id: true },
+        select: { id: true, primaryLocale: true },
     });
 }
 

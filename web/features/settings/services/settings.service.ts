@@ -21,6 +21,7 @@ import {
     upsertSettings,
 } from "@/features/settings/repositories";
 import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Get app settings for a shop
@@ -28,7 +29,7 @@ import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generat
 export async function getSettingsService(
     input: GetSettingsInput,
 ): Promise<AppSettingsFormData | null> {
-    const { shop } = input;
+    const { shop, locale } = input;
 
     const settings = await findSettingsByShopDomain(shop);
 
@@ -36,8 +37,10 @@ export async function getSettingsService(
         return null;
     }
 
-    // Transform database model to form data
-    return transformSettingsToFormData(settings);
+    const shopRecord = await findShopByDomain(shop);
+    const effectiveLocale = locale ?? shopRecord?.primaryLocale ?? "en";
+
+    return transformSettingsToFormData(settings, effectiveLocale);
 }
 
 /**
@@ -46,7 +49,7 @@ export async function getSettingsService(
 export async function saveSettingsService(
     input: SaveSettingsInput,
 ): Promise<AppSettingsFormData> {
-    const { shop, data } = input;
+    const { shop, data, locale } = input;
 
     // Validate input data with Zod schema
     const validationResult = appSettingsSchema.safeParse(data);
@@ -76,10 +79,30 @@ export async function saveSettingsService(
         throw new Error(`Shop not found: ${shop}`);
     }
 
-    const dbData = transformFormDataToSettings(validatedData);
+    // If locale is provided, merge labels under that locale key
+    if (locale && validatedData.labels) {
+        const existingSettings = await findSettingsByShopDomain(shop);
+        const existingLabels = existingSettings?.labels as Record<string, any> | null;
+
+        const allLocaleLabels = isLocaleKeyed(existingLabels)
+            ? { ...existingLabels }
+            : existingLabels
+              ? { [shopRecord.primaryLocale || "en"]: existingLabels }
+              : {};
+
+        // Strip empty strings — they should fall back to defaults on the storefront
+        const sanitizedLabels = stripEmptyStrings(
+            sanitizeLabels(validatedData.labels as Record<string, string>),
+        );
+
+        allLocaleLabels[locale] = sanitizedLabels;
+        validatedData.labels = allLocaleLabels as any;
+    }
+
+    const dbData = transformFormDataToSettings(validatedData, !!locale);
     const savedSettings = await upsertSettings(shopRecord.id, dbData);
 
-    return transformSettingsToFormData(savedSettings);
+    return transformSettingsToFormData(savedSettings, locale);
 }
 
 /**
@@ -105,9 +128,65 @@ export async function resetSettingsService(
 }
 
 /**
+ * Check if labels JSON is locale-keyed (has locale codes as top-level keys)
+ * vs flat (has label field names as top-level keys like "headingLabel")
+ */
+function isLocaleKeyed(labels: any): boolean {
+    if (!labels || typeof labels !== "object") {
+        return false;
+    }
+
+    const keys = Object.keys(labels);
+    if (keys.length === 0) {
+        return false;
+    }
+    // Flat labels have keys like "headingLabel", "addToCartText"
+    // Locale-keyed has keys like "en", "fr", "de" (2-5 char locale codes)
+    const firstKey = keys[0];
+    return firstKey.length <= 5 && !firstKey.includes("Label") && !firstKey.includes("Text");
+}
+
+/**
+ * Extract labels for a specific locale from locale-keyed or flat structure
+ */
+function extractLocaleLabels(labels: any, locale: string): any {
+    if (!labels) {
+        return undefined;
+    }
+
+    if (isLocaleKeyed(labels)) {
+        return labels[locale] ?? undefined;
+    }
+
+    // Flat structure — return as-is (backward compat)
+    return labels;
+}
+
+/**
+ * Sanitize label string values
+ */
+function sanitizeLabels(labels: Record<string, string>): Record<string, string> {
+    return Object.fromEntries(
+        Object.entries(labels).map(([k, v]) => [
+            k,
+            typeof v === "string" ? sanitizeText(v) : v,
+        ]),
+    );
+}
+
+/**
+ * Strip empty strings from labels — empty fields fall back to defaults on storefront
+ */
+function stripEmptyStrings(labels: Record<string, string>): Record<string, string> {
+    return Object.fromEntries(
+        Object.entries(labels).filter(([, v]) => typeof v === "string" && v.trim() !== ""),
+    );
+}
+
+/**
  * Transform database settings to form data
  */
-function transformSettingsToFormData(settings: any): AppSettingsFormData {
+function transformSettingsToFormData(settings: any, locale?: string): AppSettingsFormData {
     return {
         // General - Defaults
         defaultDiscountType: settings.defaultDiscountType,
@@ -130,8 +209,8 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
         // General - Performance
         lazyLoadImages: settings.lazyLoadImages,
 
-        // Labels (JSON field)
-        labels: settings.labels ?? undefined,
+        // Labels — extract for requested locale or return flat for backward compat
+        labels: locale ? extractLocaleLabels(settings.labels, locale) : settings.labels,
 
         // Style (JSON field) - flat structure
         globalStyles: settings.globalStyles ?? undefined,
@@ -147,8 +226,10 @@ function transformSettingsToFormData(settings: any): AppSettingsFormData {
 
 /**
  * Transform form data to database settings
+ * @param data
+ * @param localePreMerged - if true, labels are already locale-keyed (pre-merged in saveSettingsService)
  */
-function transformFormDataToSettings(data: AppSettingsFormData): any {
+function transformFormDataToSettings(data: AppSettingsFormData, localePreMerged = false): any {
     return {
         // General - Defaults
         defaultDiscountType: data.defaultDiscountType,
@@ -171,14 +252,11 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
         // General - Performance
         lazyLoadImages: data.lazyLoadImages,
 
-        // Labels (JSON field) — sanitize all string values
+        // Labels (JSON field) — if locale pre-merged, pass through; otherwise sanitize flat labels
         labels: data.labels
-            ? Object.fromEntries(
-                  Object.entries(data.labels).map(([k, v]) => [
-                      k,
-                      typeof v === "string" ? sanitizeText(v) : v,
-                  ]),
-              )
+            ? localePreMerged
+                ? data.labels
+                : sanitizeLabels(data.labels as Record<string, string>)
             : null,
 
         // Style (JSON field)
@@ -195,7 +273,6 @@ function transformFormDataToSettings(data: AppSettingsFormData): any {
 
 /**
  * Transform form data to AppSettings format for metafield sync.
- * This converts AppSettingsFormData to the AppSettings interface.
  */
 export async function transformFormDataToAppSettings(
     data: AppSettingsFormData,

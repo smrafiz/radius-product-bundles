@@ -42,10 +42,22 @@
     {% assign show_savings_banner = false %}
 {% endunless %}
 
-{% assign banner_saving_text = global.labels.bannerSavingText %}
-{% assign banner_custom_price_text = global.labels.bannerCustomPriceText %}
-{% assign banner_free_shipping_qualify_text = global.labels.bannerFreeShippingQualifyText %}
-{% assign banner_free_shipping_text = global.labels.bannerFreeShippingText %}
+{% assign customer_locale = request.locale.iso_code | downcase %}
+{% assign primary_locale = global.primaryLocale | default: 'en' %}
+{% if global.labels[customer_locale] %}
+	{% assign g_labels_embed = global.labels[customer_locale] %}
+{% elsif global.labels[primary_locale] %}
+	{% assign g_labels_embed = global.labels[primary_locale] %}
+{% elsif global.labels['en'] %}
+	{% assign g_labels_embed = global.labels['en'] %}
+{% else %}
+	{% assign g_labels_embed = global.labels %}
+{% endif %}
+
+{% assign banner_saving_text = g_labels_embed.bannerSavingText %}
+{% assign banner_custom_price_text = g_labels_embed.bannerCustomPriceText %}
+{% assign banner_free_shipping_qualify_text = g_labels_embed.bannerFreeShippingQualifyText %}
+{% assign banner_free_shipping_text = g_labels_embed.bannerFreeShippingText %}
 
 {% if banner_saving_text == blank %}{% assign banner_saving_text = "You're saving {discount} with {name}" %}{% endif %}
 {% if banner_custom_price_text == blank %}{% assign banner_custom_price_text = "Special price: {price} for {name}" %}{% endif %}

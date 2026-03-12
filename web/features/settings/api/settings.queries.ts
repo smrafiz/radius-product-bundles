@@ -1,4 +1,4 @@
-import { getSettingsAction } from "@/features/settings/actions/settings.action";
+import { getSettingsAction, getLocalesAction } from "@/features/settings/actions/settings.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { settingsQueryKeys } from "@/features/settings";
 import { queryOptions } from "@tanstack/react-query";
@@ -24,6 +24,25 @@ export function settingsQueries(app: ReturnType<typeof useAppBridge>) {
                 },
                 staleTime: 5 * 60 * 1000,
                 gcTime: 10 * 60 * 1000,
+                refetchOnWindowFocus: false,
+                retry: 2,
+            }),
+
+        locales: () =>
+            queryOptions({
+                queryKey: settingsQueryKeys.locales(),
+                queryFn: async () => {
+                    const token = await app.idToken();
+                    const result = await getLocalesAction(token);
+
+                    if (result.status === "error") {
+                        throw new Error(result.message);
+                    }
+
+                    return result.data;
+                },
+                staleTime: 30 * 60 * 1000,
+                gcTime: 60 * 60 * 1000,
                 refetchOnWindowFocus: false,
                 retry: 2,
             }),

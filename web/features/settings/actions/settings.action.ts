@@ -15,19 +15,21 @@ import {
 import { invalidateSetupGuideCache } from "@/lib/cache";
 import { AppSettingsFormData } from "@/features/settings";
 import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
+import { CachedLocale, fetchAndCacheShopLocales } from "@/lib/graphql/operations/locale.operations";
 
 /**
  * Get app settings for the current shop.
  */
 export async function getSettingsAction(
     sessionToken: string,
+    locale?: string,
 ): Promise<ApiResponse<AppSettingsFormData | null>> {
     try {
         const {
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const settings = await getSettingsService({ shop });
+        const settings = await getSettingsService({ shop, locale });
 
         return {
             status: "success",
@@ -55,6 +57,7 @@ export async function getSettingsAction(
 export async function saveSettingsAction(
     sessionToken: string,
     data: AppSettingsFormData,
+    locale?: string,
 ): Promise<ApiResponse<AppSettingsFormData>> {
     try {
         const {
@@ -62,10 +65,12 @@ export async function saveSettingsAction(
         } = await handleSessionToken(sessionToken);
 
         // Save to database
-        const savedSettings = await saveSettingsService({ shop, data });
+        const savedSettings = await saveSettingsService({ shop, data, locale });
 
         const syncOps: Promise<any>[] = [
-            syncAllSettingsToMetafields(sessionToken, shop, savedSettings),
+            // Don't pass savedSettings here because it may contain partial labels (only for current locale)
+            // We want syncAllSettingsToMetafields to fetch the full merged settings from DB
+            syncAllSettingsToMetafields(sessionToken, shop),
         ];
         if (
             data.allowDiscountStacking !== undefined &&
@@ -102,6 +107,37 @@ export async function saveSettingsAction(
                     ? error.message
                     : "Failed to save settings",
             data: null as any,
+        };
+    }
+}
+
+/**
+ * Get published locales for the current shop.
+ */
+export async function getLocalesAction(
+    sessionToken: string,
+): Promise<ApiResponse<CachedLocale[]>> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const locales = await fetchAndCacheShopLocales(sessionToken, shop);
+
+        return {
+            status: "success",
+            data: locales,
+        };
+    } catch (error) {
+        console.error("[getLocales] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to fetch locales",
+            data: [],
         };
     }
 }

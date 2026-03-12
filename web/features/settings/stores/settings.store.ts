@@ -15,6 +15,7 @@ export const useSettingsStore = create(
         // Initial state
         serverData: null,
         localData: null,
+        labelsLocale: null,
         isLoading: false,
         isSaving: false,
         isExporting: false,
@@ -71,6 +72,13 @@ export const useSettingsStore = create(
                 state.isDirty = true;
             });
             triggerSaveBar();
+        },
+
+        // Set labels locale
+        setLabelsLocale: (locale) => {
+            set((state) => {
+                state.labelsLocale = locale;
+            });
         },
 
         // Mark as dirty

@@ -5,6 +5,7 @@ import {
     resetSettingsAction,
     saveSettingsAction,
 } from "@/features/settings/actions/settings.action";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
 
 /**
  * Settings mutation options factory.
@@ -21,7 +22,8 @@ export function settingsMutations(app: ReturnType<typeof useAppBridge>) {
         > => ({
             mutationFn: async (data: AppSettingsFormData) => {
                 const token = await app.idToken();
-                const result = await saveSettingsAction(token, data);
+                const locale = useSettingsStore.getState().labelsLocale;
+                const result = await saveSettingsAction(token, data, locale ?? undefined);
 
                 if (result.status === "error") {
                     throw new Error(result.message);

@@ -3,6 +3,7 @@
 import { SettingsTabConfig } from "@/features/settings";
 import { CustomizerModal } from "../style-customizer/customizer-modal";
 import { DynamicSection } from "./dynamic-section";
+import { LabelsLocalePicker } from "./labels-locale-picker";
 import { SectionHeader } from "./section-header";
 import { SettingsTools } from "./settings-tools";
 
@@ -17,6 +18,7 @@ export function DynamicSettingsTab({ config }: { config: SettingsTabConfig }) {
 
     return (
         <s-stack gap="large">
+            {config.id === "labels" && <LabelsLocalePicker />}
             {config.sections.map((section) => {
                 // Check if section has a custom component
                 const customField = section.fields.find(

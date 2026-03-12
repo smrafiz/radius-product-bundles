@@ -6,3 +6,4 @@ export { useSettingsSubmit } from "./use-settings-submit";
 export { useRefetchSettings } from "./use-refetch-settings";
 export { useSaveSettingsMutation } from "./use-save-settings";
 export { useResetSettingsMutation } from "./use-reset-settings";
+export { useLocales } from "./use-locales";

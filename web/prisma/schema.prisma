@@ -486,6 +486,10 @@ model Shop {
     webhooksRegistered  Boolean   @default(false)
     lastSetupCheck      DateTime?
 
+    // Locales (cached from Shopify shopLocales query)
+    locales       Json?
+    primaryLocale String @default("en")
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

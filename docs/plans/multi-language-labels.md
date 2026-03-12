@@ -114,7 +114,9 @@ No additional Liquid file KB used. No schema changes to the app block.
 }
 ```
 
-**Migration strategy**: No Prisma schema change needed — `labels` is already a `Json?` column. A data migration script will wrap existing flat labels under the store's primary locale key (detected via Admin API `shopLocales` query).
+**Migration strategy**: No Prisma schema change needed — `labels` is already a `Json?` column. A data migration script will wrap existing flat labels under the store's primary locale key (detected via Admin API `shopLocales` query). If the API call fails during migration, default to `"en"` with a log warning.
+
+**Backward compatibility**: The label validation in `settings-metafield.operations.ts` must detect both flat (legacy) and locale-keyed (new) structures and handle accordingly during the transition period.
 
 ---
 
@@ -165,7 +167,15 @@ When switching to a non-primary locale, show **placeholder text** from the prima
 
 ### 4. Metafield Sync
 
-The existing metafield sync that writes `global_settings` to the store's `$app` metafield needs to include the full locale-keyed labels structure. No change to the sync flow — just the shape of `labels` changes from flat to nested.
+The existing metafield sync that writes `global_settings` to the store's `$app` metafield needs to include the full locale-keyed labels structure. Changes:
+
+1. **`labels` shape** changes from flat to locale-keyed (nested)
+2. **Add `primaryLocale`** field to `global_settings` metafield so Liquid knows the fallback locale without hardcoding `'en'`
+3. **Save must merge** — saving labels for locale B must preserve locale A's labels (read-modify-write, not replace)
+
+#### Important: Empty string handling
+
+When a merchant clears a label field, the save logic must **strip empty strings** (remove the key or set to `null`) rather than saving `""`. In Liquid, `== blank` catches both `""` and `nil`, but saving empty strings bloats the metafield and creates ambiguity between "explicitly cleared" and "never set".
 
 ---
 
@@ -184,8 +194,12 @@ Then update banner label assignments:
 ```liquid
 {% assign locale_labels = global.labels[customer_locale] %}
 {% unless locale_labels %}
-  {% assign primary_locale = global.labels['en'] %}
-  {% assign locale_labels = primary_locale %}
+  {% comment %} Fall back to store's primary locale, not hardcoded 'en' {% endcomment %}
+  {% assign locale_labels = global.labels[global.primaryLocale] %}
+{% endunless %}
+{% unless locale_labels %}
+  {% comment %} Final fallback: try 'en' if primaryLocale is missing {% endcomment %}
+  {% assign locale_labels = global.labels['en'] %}
 {% endunless %}
 
 {% assign banner_saving_text = locale_labels.bannerSavingText %}
@@ -207,6 +221,9 @@ Same pattern — add locale detection and resolve `g_labels` from the locale-key
 ```liquid
 {% assign customer_locale = request.locale.iso_code | downcase | split: '-' | first %}
 {% assign locale_labels = global.labels[customer_locale] %}
+{% unless locale_labels %}
+  {% assign locale_labels = global.labels[global.primaryLocale] %}
+{% endunless %}
 {% unless locale_labels %}
   {% assign locale_labels = global.labels['en'] %}
 {% endunless %}

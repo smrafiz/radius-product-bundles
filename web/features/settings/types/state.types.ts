@@ -9,6 +9,8 @@ export type SettingsStoreState = {
     serverData: AppSettingsFormData | null;
     localData: AppSettingsFormData | null;
 
+    labelsLocale: string | null;
+
     isLoading: boolean;
     isSaving: boolean;
     isExporting: boolean;
@@ -43,6 +45,8 @@ export type SettingsStoreState = {
         childKey: C,
         value: AppSettingsFormData[P][C],
     ) => void;
+
+    setLabelsLocale: (locale: string | null) => void;
 
     markDirty: () => void;
     resetDirty: () => void;
