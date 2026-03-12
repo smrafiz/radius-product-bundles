@@ -2,7 +2,11 @@
 // Split Deal Layout — BXGY Only
 // Two-column "equation" layout: BUY + GET = DEAL
 // ==========================================================================
-
+.radius-bundle__products {
+    &--split_deal {
+        margin-bottom: 0;
+    }
+}
 .rb-split {
     &__container {
         container-type: inline-size;

@@ -95,6 +95,8 @@
 					</div>
 				{% endif %}
 
+				{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
+
 			{% when 'checklist' %}
 				{% assign reward_count = count | minus: trigger_count %}
 				<div class="rb-checklist__container">
@@ -133,6 +135,7 @@
 							{% endfor %}
 						</div>
 					</div>
+					{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
 				</div>
 
 			{% when 'split_deal' %}
@@ -190,6 +193,7 @@
 						</div>
 					</div>
 					{% endif %}
+					{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
 				</div>
 
 			{% when 'compact_grid' %}
@@ -244,6 +248,7 @@
 							<span class="rb-cg__footer-label">{{ bogo_total_label | default: 'Total' }}</span>
 							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
 						</div>
+						{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
 					</div>
 				</div>
 
@@ -275,6 +280,7 @@
 					<div class="rb-sleek__separator"></div>
 					<div class="rb-sleek__footer">
 						<span class="rb-sleek__total">{{ bogo_total_label | default: 'Total' }}: <span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="display:inline-block;width:60px;height:16px;vertical-align:middle;"></span></span>
+						{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
 					</div>
 				</div>
 
@@ -318,6 +324,7 @@
 						</div>
 						{% endfor %}
 					</div>
+					{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
 				</div>
 
 			{% else %}
@@ -363,5 +370,5 @@
 		</div>
 	</div>
 
-	{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
+	{% comment %}{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}{% endcomment %}
 </div>

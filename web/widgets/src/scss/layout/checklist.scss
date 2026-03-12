@@ -1,7 +1,11 @@
 // ==========================================================================
 // Checklist Layout — BOGO/BXGY Progress-Based Checklist
 // ==========================================================================
-
+.radius-bundle__products{
+    &--checklist {
+        margin-bottom: 0;
+    }
+}
 .rb-checklist {
     &__container {
         display: flex;

@@ -353,9 +353,14 @@ export function renderClassicCardProducts(
         `;
     }
 
+    const actionsEl = container.querySelector(".radius-bundle__actions");
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
+
+    if (actionsEl) {
+        container.appendChild(actionsEl);
+    }
     enableCartButton(ctx.container);
 }
 
@@ -469,11 +474,11 @@ export function renderBogoSleekProducts(
     html += `</div>`;
     html += `</div>`;
 
+    const actionsEl = container.querySelector(".radius-bundle__actions");
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
 
-    const actionsEl = ctx.container.querySelector(".radius-bundle__actions");
     const footerEl = container.querySelector(".rb-sleek__footer");
     if (actionsEl && footerEl) {
         actionsEl.classList.add("rb-sleek__actions-inline");
@@ -633,11 +638,11 @@ export function renderBogoMinimalistProducts(
     html += itemsHtml;
     html += `</div>`;
 
+    const actionsEl = container.querySelector(".radius-bundle__actions");
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
 
-    const actionsEl = ctx.container.querySelector(".radius-bundle__actions");
     const minimalistContainer = container.querySelector(
         ".rb-minimalist__container",
     );
@@ -816,11 +821,11 @@ export function renderBogoCompactGridProducts(
     html += `</div>`;
 
     html += `</div>`;
+    const actionsEl = container.querySelector(".radius-bundle__actions");
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
 
-    const actionsEl = ctx.container.querySelector(".radius-bundle__actions");
     const footerEl = container.querySelector(".rb-cg__footer");
     if (actionsEl && footerEl) {
         actionsEl.classList.add("rb-cg__actions-inline");
@@ -1088,11 +1093,17 @@ export function renderBogoChecklistProducts(
 
     html += `</div>`;
 
+    const actionsEl = container.querySelector(".radius-bundle__actions");
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
 
-    const realBtn = ctx.container.querySelector(
+    const checklistContainer = container.querySelector(".rb-checklist__container");
+    if (actionsEl && checklistContainer) {
+        checklistContainer.appendChild(actionsEl);
+    }
+
+    const realBtn = container.querySelector(
         "[data-bundle-add-to-cart]",
     ) as HTMLButtonElement | null;
     const items = container.querySelectorAll(".rb-checklist__item");
@@ -1366,8 +1377,14 @@ export function renderSplitDealProducts(
 
     html += `</div>`;
 
+    const actionsEl = container.querySelector(".radius-bundle__actions");
     container.innerHTML = html;
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
+
+    const splitContainer = container.querySelector(".rb-split__container");
+    if (actionsEl && splitContainer) {
+        splitContainer.appendChild(actionsEl);
+    }
     enableCartButton(ctx.container);
 }
