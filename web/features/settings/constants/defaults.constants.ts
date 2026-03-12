@@ -79,74 +79,56 @@ export const DEFAULT_GLOBAL_STYLES: GlobalStyleSettings = {
     },
 };
 
-export const DEFAULT_RESPONSIVE_SETTINGS: ResponsiveSettings = {
-    mobile: {
-        layout: "LIST",
-        columns: 1,
-        hideImages: false,
-        compactMode: false,
-    },
-    tablet: {
-        layout: "GRID",
-        columns: 2,
-    },
-    breakpoints: {
-        mobile: 480,
-        tablet: 768,
-        desktop: 1024,
-    },
-};
-
 /**
  * Default labels for bundle widgets
  */
 export const DEFAULT_LABELS = {
     // Widget Text
-    headingLabel: "Bundle & Save",
-    addToCartText: "Add Bundle to Cart",
-    quantityLabel: "Qty:",
+    headingLabel: "",
+    addToCartText: "",
+    quantityLabel: "",
 
     // Button States
-    addingText: "Adding...",
-    addedText: "Added!",
-    outOfStockText: "Out of Stock",
+    addingText: "",
+    addedText: "",
+    outOfStockText: "",
 
     // Price Labels
-    regularPriceLabel: "Regular Price:",
-    bundlePriceLabel: "Bundle Price:",
-    youSaveLabel: "You Save:",
-    savingsBadgeText: "Save {amount}",
+    regularPriceLabel: "",
+    bundlePriceLabel: "",
+    youSaveLabel: "",
+    savingsBadgeText: "",
 
     // Shipping Labels
-    freeShippingLabel: "Free Shipping",
+    freeShippingLabel: "",
     freeShippingMethodTitle: "Free shipping with {name}",
 
     // Cart Limits
-    maxBundlesReachedText: "Maximum {count} bundle(s) per order allowed",
+    maxBundlesReachedText: "",
 
     // BOGO / Buy X Get Y Labels
-    bogoYouPayLabel: "You Pay Only",
-    bogoYouSaveLabel: "You Save",
-    bogoTriggerBadgeText: "You Buy",
-    bogoRewardBadgeText: "You Get FREE",
+    bogoYouPayLabel: "",
+    bogoYouSaveLabel: "",
+    bogoTriggerBadgeText: "",
+    bogoRewardBadgeText: "",
     bogoBadgeText: "",
-    bogoFreeText: "FREE",
-    bogoTotalLabel: "Total",
-    bogoSaveText: "Save {amount}",
+    bogoFreeText: "",
+    bogoTotalLabel: "",
+    bogoSaveText: "",
 
     // Checklist Layout Labels
-    checklistProgressText: "{count}/{total} items added",
-    checklistHintText: "{remaining} more to unlock!",
-    checklistCompletedText: "Unlocked!",
-    checklistLockedLabel: "Unlock by adding all items above",
-    checklistUnlockedLabel: "Reward Unlocked",
-    checklistPricingLockedText: "Select all items to see your price",
+    checklistProgressText: "",
+    checklistHintText: "",
+    checklistCompletedText: "",
+    checklistLockedLabel: "",
+    checklistUnlockedLabel: "",
+    checklistPricingLockedText: "",
 
     // Cart Banner
-    bannerSavingText: "You're saving {discount} with {name}",
-    bannerCustomPriceText: "Special price: {price} for {name}",
-    bannerFreeShippingQualifyText: "{name} qualifies for free shipping!",
-    bannerFreeShippingText: "Free shipping included!",
+    bannerSavingText: "",
+    bannerCustomPriceText: "",
+    bannerFreeShippingQualifyText: "",
+    bannerFreeShippingText: "",
 } as const;
 
 /**

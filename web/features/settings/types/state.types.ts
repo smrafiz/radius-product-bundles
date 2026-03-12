@@ -10,6 +10,7 @@ export type SettingsStoreState = {
     localData: AppSettingsFormData | null;
 
     labelsLocale: string | null;
+    isLocaleLoading: boolean;
 
     isLoading: boolean;
     isSaving: boolean;
@@ -47,6 +48,7 @@ export type SettingsStoreState = {
     ) => void;
 
     setLabelsLocale: (locale: string | null) => void;
+    setLocaleLoading: (loading: boolean) => void;
 
     markDirty: () => void;
     resetDirty: () => void;

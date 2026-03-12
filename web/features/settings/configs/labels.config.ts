@@ -26,7 +26,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Bundle heading",
                     placeholder: "Bundle & Save",
                     details: "Main heading displayed above the bundle widget.",
-                    defaultValue: "Bundle & Save",
                     validation: {
                         maxLength: {
                             value: 100,
@@ -40,7 +39,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Add to cart button",
                     placeholder: "Add Bundle to Cart",
                     details: "Text on the add to cart button.",
-                    defaultValue: "Add bundle to cart",
                     validation: {
                         maxLength: {
                             value: 50,
@@ -54,7 +52,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Quantity label",
                     placeholder: "Qty:",
                     details: "Label before quantity selector.",
-                    defaultValue: "Qty:",
                     validation: {
                         maxLength: {
                             value: 20,
@@ -81,7 +78,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Adding text",
                     placeholder: "Adding...",
                     details: "Shown while adding to cart.",
-                    defaultValue: "Adding...",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -95,7 +91,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Added text",
                     placeholder: "Added!",
                     details: "Shown after successful add.",
-                    defaultValue: "Added!",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -109,7 +104,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Out of stock text",
                     placeholder: "Out of Stock",
                     details: "Shown when unavailable.",
-                    defaultValue: "Out of Stock",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -136,7 +130,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Regular price label",
                     placeholder: "Regular Price:",
                     details: "Label for the original total price.",
-                    defaultValue: "Regular Price:",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -151,7 +144,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Bundle price label",
                     placeholder: "Bundle Price:",
                     details: "Label for the discounted bundle price.",
-                    defaultValue: "Bundle Price:",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -166,7 +158,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Savings label",
                     placeholder: "You Save:",
                     details: "Label for the savings amount.",
-                    defaultValue: "You Save:",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -182,7 +173,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Save {amount}",
                     details:
                         "Text on savings badge. Use {amount} for the discount value.",
-                    defaultValue: "Save {amount}",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -209,7 +199,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Free shipping label",
                     placeholder: "Free Shipping",
                     details: "Displayed when bundle includes free shipping.",
-                    defaultValue: "Free Shipping",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -225,7 +214,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Free shipping with {name}",
                     details:
                         "Shipping discount message shown at checkout. Use {name} for bundle name.",
-                    defaultValue: "Free shipping with {name}",
                     validation: {
                         maxLength: {
                             value: 80,
@@ -253,7 +241,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Maximum {count} bundle(s) per order allowed",
                     details:
                         "Shown when customer tries to exceed the max bundles per order limit. Use {count} for the limit number.",
-                    defaultValue: "Maximum {count} bundle(s) per order allowed",
                     validation: {
                         maxLength: {
                             value: 100,
@@ -280,7 +267,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Buy 1 Get 1 Free",
                     details:
                         "Custom deal badge text. Leave empty to auto-generate from quantities and discount.",
-                    defaultValue: "",
                     validation: {
                         maxLength: {
                             value: 50,
@@ -295,7 +281,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "FREE",
                     details:
                         "Text shown on reward products when they are free (100% discount).",
-                    defaultValue: "FREE",
                     validation: {
                         maxLength: {
                             value: 20,
@@ -309,7 +294,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "You pay label",
                     placeholder: "You Pay Only",
                     details: "Label above the final price in the pricing bar.",
-                    defaultValue: "You Pay Only",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -324,7 +308,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "You Save",
                     details:
                         "Label above the savings amount in the pricing bar.",
-                    defaultValue: "You Save",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -338,7 +321,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Trigger badge text",
                     placeholder: "You Buy",
                     details: "Badge on the trigger (buy) product card.",
-                    defaultValue: "You Buy",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -352,7 +334,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Reward badge text",
                     placeholder: "You Get FREE",
                     details: "Badge on the reward (get) product card.",
-                    defaultValue: "You Get FREE",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -366,7 +347,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Total label",
                     placeholder: "Total",
                     details: "Label before the total price in the footer.",
-                    defaultValue: "Total",
                     validation: {
                         maxLength: {
                             value: 20,
@@ -381,7 +361,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Save {amount}",
                     details:
                         "Savings text in the footer. Use {amount} for the value.",
-                    defaultValue: "Save {amount}",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -396,7 +375,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "{count}/{total} items added",
                     details:
                         "Progress count text. Use {count} for checked items and {total} for total items.",
-                    defaultValue: "{count}/{total} items added",
                     validation: {
                         maxLength: {
                             value: 50,
@@ -411,7 +389,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "{remaining} more to unlock!",
                     details:
                         "Hint shown when items remain. Use {remaining} for remaining count.",
-                    defaultValue: "{remaining} more to unlock!",
                     validation: {
                         maxLength: {
                             value: 50,
@@ -425,7 +402,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     label: "Checklist completed text",
                     placeholder: "Unlocked!",
                     details: "Hint shown when all items are selected.",
-                    defaultValue: "Unlocked!",
                     validation: {
                         maxLength: {
                             value: 30,
@@ -440,7 +416,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Unlock by adding all items above",
                     details:
                         "Reward section heading when items are not yet selected.",
-                    defaultValue: "Unlock by adding all items above",
                     validation: {
                         maxLength: {
                             value: 60,
@@ -455,7 +430,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Reward Unlocked",
                     details:
                         "Reward section heading when all items are selected.",
-                    defaultValue: "Reward Unlocked",
                     validation: {
                         maxLength: {
                             value: 60,
@@ -470,7 +444,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Select all items to see your price",
                     details:
                         "Text shown in pricing box before all items are selected.",
-                    defaultValue: "Select all items to see your price",
                     validation: {
                         maxLength: {
                             value: 60,
@@ -497,7 +470,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "You're saving {discount} with {name}",
                     details:
                         "Use {discount} for savings value and {name} for bundle name.",
-                    defaultValue: "You're saving {discount} with {name}",
                     validation: {
                         maxLength: {
                             value: 100,
@@ -512,7 +484,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Special price: {price} for {name}",
                     details:
                         "Use {price} for bundle price and {name} for bundle name.",
-                    defaultValue: "Special price: {price} for {name}",
                     validation: {
                         maxLength: {
                             value: 100,
@@ -527,7 +498,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "{name} qualifies for free shipping!",
                     details:
                         "Use {name} for bundle name. Shown for bundles with free shipping only.",
-                    defaultValue: "{name} qualifies for free shipping!",
                     validation: {
                         maxLength: {
                             value: 100,
@@ -542,7 +512,6 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Free shipping included!",
                     details:
                         "Additional message when bundle includes free shipping.",
-                    defaultValue: "Free shipping included!",
                     validation: {
                         maxLength: {
                             value: 100,

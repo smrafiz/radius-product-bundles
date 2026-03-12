@@ -4,12 +4,15 @@ import {
     AppSettingsFormData,
     useSettingsSubmit,
     useSettingsQuery,
+    useLocales,
 } from "@/features/settings";
-import { SettingsFormProvider } from "../settings-form/settings-form-provider";
-import { SettingsTab } from "../settings-tabs/settings-tab";
 import { GlobalForm } from "@/shared";
-import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
+import {
+    SettingsFormProvider,
+    SettingsTab,
+} from "@/features/settings/components";
 import { TitleBar } from "@shopify/app-bridge-react";
+import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 
 /**
  * Settings page content component.
@@ -39,10 +42,15 @@ function SettingsPageContent() {
  * Fetches settings from API and wraps content with form provider.
  */
 export function SettingsPage() {
-    const { data: settingsData, isLoading, error } = useSettingsQuery();
+    const {
+        data: settingsData,
+        isLoading: isSettingsLoading,
+        error,
+    } = useSettingsQuery();
+    const { isLoading: isLocalesLoading } = useLocales();
 
     // Show loading state
-    if (isLoading) {
+    if (isSettingsLoading || isLocalesLoading) {
         return <SettingsPageSkeleton />;
     }
 

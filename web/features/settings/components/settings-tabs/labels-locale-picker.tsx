@@ -1,16 +1,19 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { useLocales } from "@/features/settings/hooks/settings/use-locales";
-import { useSettingsStore } from "@/features/settings/stores/settings.store";
-import { useSettingsForm } from "@/features/settings/hooks/settings/use-settings-form";
+import {
+    useLocales,
+    useSettingsStore,
+    useSettingsForm,
+} from "@/features/settings";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { getSettingsAction } from "@/features/settings/actions/settings.action";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 export function LabelsLocalePicker() {
     const { data: locales, isLoading } = useLocales();
-    const { labelsLocale, setLabelsLocale } = useSettingsStore();
+    const { labelsLocale, setLabelsLocale, setLocaleLoading, isLocaleLoading } =
+        useSettingsStore();
     const { reset, getValues } = useSettingsForm();
     const app = useAppBridge();
 
@@ -19,6 +22,7 @@ export function LabelsLocalePicker() {
     const fetchLocaleLabels = useCallback(
         async (locale: string) => {
             try {
+                setLocaleLoading(true);
                 const token = await app.idToken();
                 const result = await getSettingsAction(token, locale);
 
@@ -33,61 +37,123 @@ export function LabelsLocalePicker() {
                     });
                 }
             } catch (err) {
-                console.warn("[LabelsLocalePicker] Failed to fetch locale labels:", err);
+                console.warn(
+                    "[LabelsLocalePicker] Failed to fetch locale labels:",
+                    err,
+                );
+            } finally {
+                setLocaleLoading(false);
             }
         },
-        [app, getValues, reset],
+        [app, getValues, reset, setLocaleLoading],
     );
 
     useEffect(() => {
         if (!labelsLocale && locales && locales.length > 1) {
             setLabelsLocale(primaryLocale);
-            fetchLocaleLabels(primaryLocale);
+            void fetchLocaleLabels(primaryLocale);
         }
-    }, [locales, labelsLocale, primaryLocale, setLabelsLocale, fetchLocaleLabels]);
+    }, [
+        locales,
+        labelsLocale,
+        primaryLocale,
+        setLabelsLocale,
+        fetchLocaleLabels,
+    ]);
 
     const handleLocaleChange = useCallback(
         (locale: string) => {
+            if (isLocaleLoading || labelsLocale === locale) {
+                return;
+            }
             setLabelsLocale(locale);
-            fetchLocaleLabels(locale);
+            void fetchLocaleLabels(locale);
         },
-        [setLabelsLocale, fetchLocaleLabels],
+        [setLabelsLocale, fetchLocaleLabels, isLocaleLoading, labelsLocale],
     );
 
     if (isLoading || !locales || locales.length <= 1) {
-        return null;
+        return null; // Don't show tabs for single-language stores
     }
+
+    const sortedLocales = [...locales].sort((a, b) => {
+        if (a.primary) {
+            return -1;
+        }
+
+        if (b.primary) {
+            return 1;
+        }
+
+        return a.name.localeCompare(b.name);
+    });
 
     return (
         <s-section>
-            <s-stack gap="small-200">
-                <s-text type="strong">Language</s-text>
-                <s-stack direction="inline" gap="small-200" alignItems="center">
-                    {locales.map((locale) => (
-                        <button
-                            key={locale.locale}
-                            type="button"
-                            onClick={() => handleLocaleChange(locale.locale)}
-                            className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
-                                labelsLocale === locale.locale
-                                    ? "bg-[#303030] text-white border-[#303030]"
-                                    : "bg-white text-[#303030] border-[#d1d1d1] hover:bg-[#f7f7f7]"
-                            }`}
-                        >
-                            {locale.name}
-                            {locale.primary && (
-                                <span className="ml-1 text-xs opacity-60">
-                                    (Primary)
-                                </span>
-                            )}
-                        </button>
-                    ))}
+            <s-stack gap="base">
+                {/* Section Header */}
+                <s-stack
+                    direction="inline"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <s-heading>Languages</s-heading>
+
+                    <s-stack
+                        direction="inline"
+                        gap="small-400"
+                        alignItems="center"
+                    >
+                        {isLocaleLoading && <s-spinner size="base" />}
+                        {labelsLocale && labelsLocale !== primaryLocale && (
+                            <>
+                                <s-tooltip id="language-tooltip">
+                                    <s-text>
+                                        Empty fields will fall back to the
+                                        primary language (
+                                        {locales.find((l) => l.primary)?.name}).
+                                    </s-text>
+                                </s-tooltip>
+                                <s-icon
+                                    tone="neutral"
+                                    type="info"
+                                    interestFor="language-tooltip"
+                                />
+                            </>
+                        )}
+                    </s-stack>
                 </s-stack>
-                {labelsLocale && labelsLocale !== primaryLocale && (
-                    <s-text tone="neutral">
-                        Empty fields will fall back to the primary language ({locales.find((l) => l.primary)?.name}).
-                    </s-text>
-                )}
+                <div>
+                    <s-stack
+                        direction="inline"
+                        gap="small-300"
+                        borderRadius="base"
+                        padding="none"
+                        background="base"
+                    >
+                        {sortedLocales.map((locale) => (
+                            <s-button
+                                key={locale.locale}
+                                variant={
+                                    labelsLocale === locale.locale
+                                        ? "secondary"
+                                        : "tertiary"
+                                }
+                                onClick={() =>
+                                    handleLocaleChange(locale.locale)
+                                }
+                                disabled={isLocaleLoading}
+                            >
+                                {locale.name}
+                                {locale.primary && (
+                                    <span className="ml-1 opacity-60">
+                                        (Primary)
+                                    </span>
+                                )}
+                            </s-button>
+                        ))}
+                    </s-stack>
+                </div>
             </s-stack>
         </s-section>
     );

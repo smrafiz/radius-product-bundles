@@ -16,6 +16,7 @@ export const useSettingsStore = create(
         serverData: null,
         localData: null,
         labelsLocale: null,
+        isLocaleLoading: false,
         isLoading: false,
         isSaving: false,
         isExporting: false,
@@ -78,6 +79,13 @@ export const useSettingsStore = create(
         setLabelsLocale: (locale) => {
             set((state) => {
                 state.labelsLocale = locale;
+            });
+        },
+
+        // Set locale loading state
+        setLocaleLoading: (loading) => {
+            set((state) => {
+                state.isLocaleLoading = loading;
             });
         },
 

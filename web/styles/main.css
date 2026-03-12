@@ -90,6 +90,18 @@
     overflow: hidden;
 }
 
+/* Locale fields transitioning state */
+.rpb-locale-fields-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.rpb-locale-fields-loaded {
+    opacity: 1;
+    pointer-events: auto;
+    animation: rpbFadeIn 0.2s ease-out;
+}
+
 @keyframes rpbTabSlide {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }

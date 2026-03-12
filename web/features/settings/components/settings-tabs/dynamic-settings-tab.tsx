@@ -1,61 +1,77 @@
 "use client";
 
-import { SettingsTabConfig } from "@/features/settings";
-import { CustomizerModal } from "../style-customizer/customizer-modal";
-import { DynamicSection } from "./dynamic-section";
-import { LabelsLocalePicker } from "./labels-locale-picker";
-import { SectionHeader } from "./section-header";
-import { SettingsTools } from "./settings-tools";
+import {
+    SettingsTabConfig,
+    CustomizerModal,
+    DynamicSection,
+    LabelsLocalePicker,
+    SectionHeader,
+    SettingsTools,
+    useSettingsStore,
+} from "@/features/settings";
 
 /**
  * Universal tab renderer - renders any tab from config.
  */
 export function DynamicSettingsTab({ config }: { config: SettingsTabConfig }) {
+    const { isLocaleLoading, labelsLocale } = useSettingsStore();
+
     // If tab has no sections, check for special components
     if (!config.sections || config.sections.length === 0) {
         return renderSpecialTab(config.id);
     }
 
+    const sectionsContent = config.sections.map((section) => {
+        // Check if section has a custom component
+        const customField = section.fields.find((f) => f.type === "custom");
+
+        if (customField) {
+            return (
+                <s-section key={section.id}>
+                    <s-stack gap="base">
+                        <SectionHeader
+                            id={section.id}
+                            title={section.title}
+                            tooltip={section.tooltip}
+                        />
+                        {section.description && (
+                            <s-text tone="neutral">
+                                {section.description}
+                            </s-text>
+                        )}
+                        {renderCustomComponent((customField as any).component)}
+                    </s-stack>
+                </s-section>
+            );
+        }
+
+        // Regular section with fields
+        return (
+            <DynamicSection
+                key={section.id}
+                config={section}
+                parentPath={config.parentPath}
+            />
+        );
+    });
+
     return (
         <s-stack gap="large">
             {config.id === "labels" && <LabelsLocalePicker />}
-            {config.sections.map((section) => {
-                // Check if section has a custom component
-                const customField = section.fields.find(
-                    (f) => f.type === "custom",
-                );
-
-                if (customField) {
-                    return (
-                        <s-section key={section.id}>
-                            <s-stack gap="base">
-                                <SectionHeader
-                                    id={section.id}
-                                    title={section.title}
-                                    tooltip={section.tooltip}
-                                />
-                                {section.description && (
-                                    <s-text tone="neutral">
-                                        {section.description}
-                                    </s-text>
-                                )}
-                                {renderCustomComponent(
-                                    (customField as any).component,
-                                )}
-                            </s-stack>
-                        </s-section>
-                    );
-                }
-
-                // Regular section with fields
-                return (
-                    <DynamicSection
-                        key={section.id}
-                        config={section}
-                        parentPath={config.parentPath}
-                    />
-                );
-            })}
+            {config.id === "labels" ? (
+                <div
+                    key={labelsLocale ?? "initial"}
+                    className={`transition-all duration-200 ease-in-out ${
+                        isLocaleLoading
+                            ? "rpb-locale-fields-loading"
+                            : "rpb-locale-fields-loaded"
+                    }`}
+                >
+                    <s-stack gap="large">{sectionsContent}</s-stack>
+                </div>
+            ) : (
+                sectionsContent
+            )}
         </s-stack>
     );
 }
