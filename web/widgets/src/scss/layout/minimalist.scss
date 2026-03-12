@@ -4,6 +4,9 @@
 
 .radius-bundle {
     &--minimalist {
+        .radius-bundle__inner {
+            padding: 0 !important;
+        }
         .radius-bundle__products {
             margin-bottom: 0;
         }
@@ -14,8 +17,6 @@
     &__container {
         position: relative;
         background: #fff;
-        border-radius: var(--rb-border-radius, 16px);
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         padding: var(--rb-box-spacing, 20px);
         overflow: hidden;
     }
@@ -83,7 +84,7 @@
         font-size: var(--rb-heading-font-size, 18px);
         font-weight: 600;
         color: var(--rb-text-color, #1a1a2e);
-        margin-bottom: 4px;
+        margin: 0 0 4px;
         line-height: 1.3;
     }
 
@@ -227,6 +228,15 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        margin: 0;
+        a {
+            color: var(--rb-text-color);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 
     &__item-price {

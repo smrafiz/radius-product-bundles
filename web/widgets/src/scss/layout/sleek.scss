@@ -95,6 +95,14 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        a {
+            color: var(--rb-text-color);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 
     &__label {

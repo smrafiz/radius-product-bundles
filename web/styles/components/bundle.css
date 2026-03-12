@@ -24,7 +24,7 @@
     border: 1px solid transparent;
     border-radius: 12px;
     padding: 16px;
-    &.compact-grid {
+    &.compact-grid, &.minimalist-inner {
         padding: 0 !important;
     }
 

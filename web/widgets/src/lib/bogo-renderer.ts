@@ -114,8 +114,8 @@ export function renderBxgyProducts(
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
         const titleHtml = ctx.enableHyperLink
-            ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h4>`
-            : `<h4 class="radius-bundle__product-title">${escapeHtml(product.title)}</h4>`;
+            ? `<h3 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
+            : `<h3 class="radius-bundle__product-title">${escapeHtml(product.title)}</h3>`;
 
         let priceHtml: string;
         if (
@@ -248,11 +248,18 @@ export function renderClassicCardProducts(
             ? `<div class="rb-classic__image ${aspectClass}">${imageHtml}</div>`
             : "";
 
+        const productUrl = product.handle
+            ? getLocalePath(`/products/${product.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-classic__title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
+            : `<h3 class="rb-classic__title">${escapeHtml(product.title)}</h3>`;
+
         return `
             <div class="rb-classic__product${isHorizontal ? " rb-classic__product--horizontal" : ""}">
                 ${imageBlock}
                 <div class="rb-classic__text">
-                    <h4 class="rb-classic__title">${escapeHtml(product.title)}</h4>
+                    ${titleHtml}
                     ${priceHtml}
                 </div>
             </div>
@@ -285,7 +292,7 @@ export function renderClassicCardProducts(
     if (headerBadge) {
         html += `<span class="rb-classic__header-badge">${escapeHtml(headerBadge)}</span>`;
     }
-    html += `<div class="rb-classic__header-title">${escapeHtml(bundle.name)}</div>`;
+    html += `<h2 class="rb-classic__header-title">${escapeHtml(bundle.name)}</h2>`;
     if (structure.subtitle) {
         html += `<div class="rb-classic__header-subtitle">${escapeHtml(structure.subtitle)}</div>`;
     }
@@ -419,11 +426,18 @@ export function renderBogoSleekProducts(
 
         const cardClass = `rb-sleek__card rb-sleek__card--${isReward ? "reward" : "trigger"}`;
 
+        const productUrl = product.handle
+            ? getLocalePath(`/products/${product.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-sleek__title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
+            : `<h3 class="rb-sleek__title">${escapeHtml(product.title)}</h3>`;
+
         return `
             <div class="${cardClass}">
                 ${imageBlock}
                 <div class="rb-sleek__info">
-                    <h4 class="rb-sleek__title">${escapeHtml(product.title)}</h4>
+                    ${titleHtml}
                     ${labelHtml}${badgeHtml}
                 </div>
                 ${priceHtml}
@@ -439,7 +453,7 @@ export function renderBogoSleekProducts(
         );
 
     let html = `<div class="rb-sleek__container">`;
-    html += `<h3 class="rb-sleek__header">${escapeHtml(bundle.name)}</h3>`;
+    html += `<h2 class="rb-sleek__header">${escapeHtml(bundle.name)}</h2>`;
 
     triggers.forEach((p) => {
         html += renderCard(p, false);
@@ -584,11 +598,18 @@ export function renderBogoMinimalistProducts(
             }
         }
 
+        const productUrl = p.handle
+            ? getLocalePath(`/products/${p.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-minimalist__item-title"><a href="${productUrl}">${escapeHtml(p.title)}</a></h3>`
+            : `<h3 class="rb-minimalist__item-title">${escapeHtml(p.title)}</h3>`;
+
         return `<div class="rb-minimalist__item rb-minimalist__item--${roleClass}">
             ${img}
             <div class="rb-minimalist__item-info">
                 <span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>
-                <span class="rb-minimalist__item-title">${escapeHtml(p.title)}</span>
+                ${titleHtml}
                 ${priceHtml}
             </div>
         </div>`;
@@ -604,7 +625,7 @@ export function renderBogoMinimalistProducts(
     itemsHtml += `</div>`;
 
     let html = `<div class="rb-minimalist__container">${badgeHtml}<div class="rb-minimalist__hero">${heroImageHtml}<div class="rb-minimalist__hero-info">`;
-    html += `<div class="rb-minimalist__title">${escapeHtml(bundle.name)}</div>`;
+    html += `<h2 class="rb-minimalist__title">${escapeHtml(bundle.name)}</h2>`;
     if (structure.subtitle) {
         html += `<div class="rb-minimalist__subtitle">${escapeHtml(structure.subtitle)}</div>`;
     }
@@ -705,11 +726,18 @@ export function renderBogoCompactGridProducts(
         }
         const tileClass = `rb-cg__tile rb-cg__tile--${isReward ? "reward" : "trigger"}`;
 
+        const productUrl = product.handle
+            ? getLocalePath(`/products/${product.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-cg__tile-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
+            : `<h3 class="rb-cg__tile-title">${escapeHtml(product.title)}</h3>`;
+
         return `
             <div class="${tileClass}">
                 ${imageHtml}
                 <span class="rb-cg__tile-role rb-cg__tile-role--${isReward ? "reward" : "trigger"}">${roleLabel}</span>
-                <div class="rb-cg__tile-title">${escapeHtml(product.title)}</div>
+                ${titleHtml}
                 ${priceHtml}
             </div>
         `;
@@ -719,7 +747,7 @@ export function renderBogoCompactGridProducts(
 
     html += `<div class="rb-cg__banner">`;
     html += `<div class="rb-cg__banner-text">`;
-    html += `<span class="rb-cg__banner-title">${escapeHtml(bundle.name)}</span>`;
+    html += `<h2 class="rb-cg__banner-title">${escapeHtml(bundle.name)}</h2>`;
     if (structure.subtitle) {
         html += `<span class="rb-cg__banner-subtitle">${escapeHtml(structure.subtitle)}</span>`;
     }
@@ -933,7 +961,7 @@ export function renderBogoChecklistProducts(
     let html = `<div class="rb-checklist__container">`;
 
     html += `<div class="rb-checklist__progress">`;
-    html += `<h3 class="rb-checklist__progress-title">${escapeHtml(bundle.name)}</h3>`;
+    html += `<h2 class="rb-checklist__progress-title">${escapeHtml(bundle.name)}</h2>`;
     if (structure.subtitle) {
         html += `<p class="rb-checklist__progress-subtitle">${escapeHtml(structure.subtitle)}</p>`;
     }
@@ -953,11 +981,18 @@ export function renderBogoChecklistProducts(
                   ? `<div class="rb-checklist__item-placeholder">📦</div>`
                   : "";
 
+        const productUrl = p.handle
+            ? getLocalePath(`/products/${p.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-checklist__item-title"><a href="${productUrl}">${escapeHtml(p.title)}</a></h3>`
+            : `<h3 class="rb-checklist__item-title">${escapeHtml(p.title)}</h3>`;
+
         html += `<div class="rb-checklist__item" data-product-id="${p.id}" data-variant-id="${p.variantId}">`;
         html += `<div class="rb-checklist__checkbox"></div>`;
         html += imageHtml;
         html += `<div class="rb-checklist__item-info">`;
-        html += `<div class="rb-checklist__item-title">${escapeHtml(p.title)}</div>`;
+        html += titleHtml;
         if (ctx.showQuantity && p.quantity > 1) {
             html += `<div class="rb-checklist__item-qty">${ctx.quantityLabel} ${p.quantity}</div>`;
         }
@@ -989,10 +1024,17 @@ export function renderBogoChecklistProducts(
                   ? `<div class="rb-checklist__reward-placeholder">🎁</div>`
                   : "";
 
+        const productUrl = p.handle
+            ? getLocalePath(`/products/${p.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-checklist__reward-title"><a href="${productUrl}">${escapeHtml(p.title)}</a></h3>`
+            : `<h3 class="rb-checklist__reward-title">${escapeHtml(p.title)}</h3>`;
+
         html += `<div class="rb-checklist__reward-item">`;
         html += imageHtml;
         html += `<div class="rb-checklist__reward-info">`;
-        html += `<div class="rb-checklist__reward-title">${escapeHtml(p.title)}</div>`;
+        html += titleHtml;
         if (ctx.showPrices) {
             const discountedPrice = calculateBxgyRewardPrice(
                 p.price,
@@ -1243,11 +1285,18 @@ export function renderSplitDealProducts(
             }
         }
 
+        const productUrl = product.handle
+            ? getLocalePath(`/products/${product.handle}`)
+            : "#";
+        const titleHtml = ctx.enableHyperLink
+            ? `<h3 class="rb-split__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
+            : `<h3 class="rb-split__product-title">${escapeHtml(product.title)}</h3>`;
+
         return `
             <div class="rb-split__product" data-product-id="${product.id}" data-variant-id="${product.variantId}">
                 ${imageBlock}
                 <div class="rb-split__product-info">
-                    <h4 class="rb-split__product-title">${escapeHtml(product.title)}</h4>
+                    ${titleHtml}
                     ${priceHtml}
                 </div>
             </div>
@@ -1260,7 +1309,7 @@ export function renderSplitDealProducts(
     if (badgeText && ctx.showSavingsBadge) {
         html += `<div class="rb-split__deal-badge">${escapeHtml(badgeText)}</div>`;
     }
-    html += `<h3 class="rb-split__title">${escapeHtml(bundle.name)}</h3>`;
+    html += `<h2 class="rb-split__title">${escapeHtml(bundle.name)}</h2>`;
     if (structure.subtitle) {
         html += `<p class="rb-split__subtitle">${escapeHtml(structure.subtitle)}</p>`;
     }

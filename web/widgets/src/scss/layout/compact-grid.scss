@@ -44,6 +44,7 @@
     &__banner-title {
         font-size: var(--rb-heading-font-size);
         color: #fff;
+        margin: 0;
         font-weight: 600;
         line-height: 1.3;
     }
@@ -198,6 +199,15 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 100%;
+        margin: 0;
+        a {
+            color: var(--rb-text-color);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 
     &__tile-prices {

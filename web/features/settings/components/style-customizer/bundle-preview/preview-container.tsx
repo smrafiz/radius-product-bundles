@@ -48,7 +48,7 @@ export function PreviewContainer({
                     }}
                 >
                     <div
-                        className={`radius-bundle__inner${activeLayout === "COMPACT_GRID" ? " compact-grid" : ""}`}
+                        className={`radius-bundle__inner${activeLayout === "COMPACT_GRID" ? " compact-grid" : ""}${activeLayout === "MINIMALIST" ? " minimalist-inner" : ""}`}
                         style={{
                             backgroundColor: styles.backgroundColor,
                             color: styles.textColor,

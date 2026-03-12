@@ -133,8 +133,8 @@ export function renderProductCard(
         ? getLocalePath(`/products/${product.handle}`)
         : "#";
     const productTitleHtml = ctx.enableHyperLink
-        ? `<h4 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h4>`
-        : `<h4 class="radius-bundle__product-title">${escapeHtml(product.title)}</h4>`;
+        ? `<h3 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
+        : `<h3 class="radius-bundle__product-title">${escapeHtml(product.title)}</h3>`;
 
     if (layout === "list") {
         const initialVisibleCount = getInitialVisibleCount(ctx);

@@ -442,10 +442,7 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                     gap: 4,
-                    paddingTop: parseInt(gap),
-                    paddingLeft: parseInt(gap),
-                    paddingRight: parseInt(gap),
-                    paddingBottom: "8px",
+                    padding: `${parseInt(gap)}px ${parseInt(gap)}px 8px`,
                 }}
             >
                 <TileSlider
@@ -504,10 +501,7 @@ export function WidgetCompactGrid({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    paddingTop: "8px",
-                    paddingLeft: parseInt(gap),
-                    paddingRight: parseInt(gap),
-                    paddingBottom: parseInt(gap),
+                    padding: `8px ${parseInt(gap)}px ${parseInt(gap)}px`,
                     gap: 12,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}

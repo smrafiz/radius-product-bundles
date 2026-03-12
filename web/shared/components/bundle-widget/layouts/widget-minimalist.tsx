@@ -212,11 +212,7 @@ export function WidgetMinimalist({
         <div
             style={{
                 position: "relative",
-                background: "#fff",
-                borderRadius: cardRadius,
-                boxShadow: getShadow("soft"),
                 padding: spacingValues.padding,
-                overflow: "hidden",
             }}
         >
             {badgeText && pricing?.hasDiscount && (
