@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { BundleTableHeaderProps } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /*
  * Bundle table header components
@@ -9,6 +10,7 @@ export const BundleTableHeader = memo(function BundleTableHeader({
     allResourcesSelected,
     toggleAllSelection,
 }: BundleTableHeaderProps) {
+    const t = useTranslations("Bundles.Listing.Table");
     const isIndeterminate =
         selectedResources.length > 0 && !allResourcesSelected;
 
@@ -24,16 +26,16 @@ export const BundleTableHeader = memo(function BundleTableHeader({
                             toggleAllSelection();
                         }}
                     />
-                    <s-stack paddingBlock="small-400">Bundle Name</s-stack>
+                    <s-stack paddingBlock="small-400">{t("name")}</s-stack>
                 </s-stack>
             </s-table-header>
 
-            <s-table-header>Products</s-table-header>
-            <s-table-header>Type</s-table-header>
-            <s-table-header>Discount</s-table-header>
-            <s-table-header>Status</s-table-header>
+            <s-table-header>{t("products")}</s-table-header>
+            <s-table-header>{t("type")}</s-table-header>
+            <s-table-header>{t("discount")}</s-table-header>
+            <s-table-header>{t("status")}</s-table-header>
             <s-table-header>
-                <span className="block text-center">Actions</span>
+                <span className="block text-center">{t("actions")}</span>
             </s-table-header>
         </s-table-header-row>
     );

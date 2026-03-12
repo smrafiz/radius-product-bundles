@@ -2,6 +2,7 @@
 
 import { LoadingSpinner } from "@/shared";
 import { BUNDLE_FILTERS, useBundleFilters } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundle index filters component
@@ -30,6 +31,7 @@ export function BundleIndexFilters({
         handleSortFieldChange,
         handleSortDirectionClick,
     } = useBundleFilters();
+    const t = useTranslations("Bundles.Listing.Filters");
 
     return (
         <>
@@ -53,9 +55,9 @@ export function BundleIndexFilters({
                         >
                             <s-search-field
                                 name="search"
-                                label="Search bundles"
+                                label={t("searchLabel")}
                                 labelAccessibilityVisibility="exclusive"
-                                placeholder={BUNDLE_FILTERS.search.placeholder}
+                                placeholder={t("searchPlaceholder")}
                                 value={queryValue}
                                 onInput={handleSearchInput}
                             />
@@ -101,15 +103,15 @@ export function BundleIndexFilters({
                                 variant={
                                     hasStatusFilter ? "primary" : "secondary"
                                 }
-                                accessibilityLabel="Filter by status"
+                                accessibilityLabel={t("filterByStatus")}
                                 interestFor="status-filter-tooltip"
                                 commandFor="status-filter-popover"
                             />
                             <s-tooltip id="status-filter-tooltip">
                                 <s-text>
                                     {hasStatusFilter
-                                        ? `Filtered by: ${filters.selectedTab !== undefined ? BUNDLE_FILTERS.tabs.items[filters.selectedTab] : "All"}`
-                                        : "Filter by Status"}
+                                        ? `${t("filterByStatus")}: ${filters.selectedTab !== undefined ? BUNDLE_FILTERS.tabs.items[filters.selectedTab] : t("allStatus")}`
+                                        : t("filterByStatusLabel")}
                                 </s-text>
                             </s-tooltip>
                         </s-grid-item>
@@ -126,7 +128,7 @@ export function BundleIndexFilters({
                                 icon={!showSearch ? "search" : "x"}
                                 onClick={toggleFilters}
                                 aria-expanded={showSearch}
-                                accessibilityLabel="search bundles"
+                                accessibilityLabel={t("searchLabel")}
                                 loading={showSearch && loading}
                                 interestFor="search-close-tooltip"
                             />
@@ -134,10 +136,10 @@ export function BundleIndexFilters({
                         <s-tooltip id="search-close-tooltip">
                             <s-text>
                                 {showSearch
-                                    ? "Close search"
+                                    ? t("closeSearch")
                                     : hasSearchQuery
-                                      ? "Search active"
-                                      : "Search bundles"}
+                                      ? t("searchActive")
+                                      : t("searchLabel")}
                             </s-text>
                         </s-tooltip>
                     </s-grid-item>
@@ -147,12 +149,12 @@ export function BundleIndexFilters({
                         <s-button
                             icon="sort"
                             variant="secondary"
-                            accessibilityLabel="Sort bundles"
+                            accessibilityLabel={t("sortLabel")}
                             interestFor="sort-tooltip"
                             commandFor="sort-popover"
                         />
                         <s-tooltip id="sort-tooltip">
-                            <s-text>Sort</s-text>
+                            <s-text>{t("sortTooltip")}</s-text>
                         </s-tooltip>
                     </s-grid-item>
 
@@ -161,7 +163,7 @@ export function BundleIndexFilters({
                         <form>
                             <s-box padding="small">
                                 <s-choice-list
-                                    label="Filter by Status"
+                                    label={t("filterByStatusLabel")}
                                     name="status-filter"
                                     onChange={handleStatusFilterChange}
                                 >
@@ -190,7 +192,7 @@ export function BundleIndexFilters({
                             {/* Sort Field Selection */}
                             <s-box padding="small">
                                 <s-choice-list
-                                    label="Sort by"
+                                    label={t("sortByLabel")}
                                     name="sort-field"
                                     onChange={handleSortFieldChange}
                                 >

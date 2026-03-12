@@ -9,6 +9,7 @@ import {
 import { useAppNavigation } from "@/shared";
 import { useEffect, useMemo, useState } from "react";
 import { useAnalytics } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundles page hook
@@ -16,6 +17,7 @@ import { useAnalytics } from "@/features/analytics";
  * Manages bundle listing page state and data fetching.
  */
 export function useBundlesPage() {
+    const t = useTranslations("Bundles.Listing.Metrics");
     const { isLoading } = useBundlesData();
     const { metrics: analyticsMetrics, isMetricsFetching } = useAnalytics();
     const { bundleData } = useAppNavigation();
@@ -55,7 +57,7 @@ export function useBundlesPage() {
     }, [toast.active, toast.message, hideToast]);
 
     return {
-        metrics: BUNDLE_LISTING_METRICS(transformedMetrics),
+        metrics: BUNDLE_LISTING_METRICS(transformedMetrics, t),
         isMetricsLoading: isMetricsFetching,
         showTableSkeleton: showSkeleton,
         toast,

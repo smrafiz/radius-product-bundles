@@ -35,46 +35,35 @@ export const BUNDLE_TYPE_FILTER_OPTIONS = Object.values(BUNDLE_TYPES).map(
 /**
  * Sort options for bundle listing
  */
-export const BUNDLE_SORT_OPTIONS = [
-    { label: "Name", field: "name", direction: "asc", directionLabel: "A-Z" },
-    { label: "Name", field: "name", direction: "desc", directionLabel: "Z-A" },
-    // {
-    //     label: "Revenue",
-    //     field: "revenue",
-    //     direction: "asc",
-    //     directionLabel: "Low to High",
-    // },
-    // {
-    //     label: "Revenue",
-    //     field: "revenue",
-    //     direction: "desc",
-    //     directionLabel: "High to Low",
-    // },
-    // {
-    //     label: "Views",
-    //     field: "views",
-    //     direction: "asc",
-    //     directionLabel: "Low to High",
-    // },
-    // {
-    //     label: "Views",
-    //     field: "views",
-    //     direction: "desc",
-    //     directionLabel: "High to Low",
-    // },
-    {
-        label: "Created",
-        field: "createdAt",
-        direction: "asc",
-        directionLabel: "Oldest first",
-    },
-    {
-        label: "Created",
-        field: "createdAt",
-        direction: "desc",
-        directionLabel: "Newest first",
-    },
-] as const;
+export const getBundleSortOptions = (t: (key: string) => string) =>
+    [
+        { label: t("sortByName"), field: "name", direction: "asc", directionLabel: t("sortAtoZ") },
+        { label: t("sortByName"), field: "name", direction: "desc", directionLabel: t("sortZtoA") },
+        {
+            label: t("sortByCreated"),
+            field: "createdAt",
+            direction: "asc",
+            directionLabel: t("sortOldestFirst"),
+        },
+        {
+            label: t("sortByCreated"),
+            field: "createdAt",
+            direction: "desc",
+            directionLabel: t("sortNewestFirst"),
+        },
+    ] as const;
+
+export const BUNDLE_SORT_OPTIONS = getBundleSortOptions((key) => {
+    const fallbacks: Record<string, string> = {
+        sortByName: "Name",
+        sortAtoZ: "A-Z",
+        sortZtoA: "Z-A",
+        sortByCreated: "Created",
+        sortOldestFirst: "Oldest first",
+        sortNewestFirst: "Newest first",
+    };
+    return fallbacks[key] || key;
+});
 
 /**
  * Default sort option
@@ -112,12 +101,10 @@ export const BUNDLE_FILTERS = {
     status: {
         options: BUNDLE_STATUS_FILTER_OPTIONS,
         key: "bundleStatus",
-        label: "Status",
     },
     type: {
         options: BUNDLE_TYPE_FILTER_OPTIONS,
         key: "bundleType",
-        label: "Bundle type",
     },
     sort: {
         options: BUNDLE_SORT_OPTIONS,

@@ -4,14 +4,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDebounce } from "@/shared";
 import {
     BUNDLE_FILTERS,
-    BUNDLE_SORT_OPTIONS,
+    getBundleSortOptions,
     useBundleListingStore,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Hook for bundle filters
  */
 export function useBundleFilters() {
+    const t = useTranslations("Bundles.Listing.Filters");
     const {
         filters,
         setSearch,
@@ -22,6 +24,8 @@ export function useBundleFilters() {
         queryValue,
         setQueryValue,
     } = useBundleListingStore();
+
+    const translatedSortOptions = useMemo(() => getBundleSortOptions(t), [t]);
 
     // Debounced search
     const debouncedQuery = useDebounce(
@@ -128,14 +132,14 @@ export function useBundleFilters() {
         () =>
             Array.from(
                 new Map(
-                    BUNDLE_SORT_OPTIONS.map((opt) => [opt.field, opt]),
+                    translatedSortOptions.map((opt) => [opt.field, opt]),
                 ).values(),
             ),
         [],
     );
 
     const sortDirections = useMemo(
-        () => BUNDLE_SORT_OPTIONS.filter((opt) => opt.field === sortField),
+        () => translatedSortOptions.filter((opt) => opt.field === sortField),
         [sortField],
     );
 
@@ -152,7 +156,7 @@ export function useBundleFilters() {
             const newField = formData.get("sort-field") as string;
             if (!newField) return;
 
-            const firstOption = BUNDLE_SORT_OPTIONS.find(
+            const firstOption = translatedSortOptions.find(
                 (opt) => opt.field === newField,
             );
             if (firstOption) {

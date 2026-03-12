@@ -1,16 +1,14 @@
 import "./globals.css";
 import "@/styles/main.css";
 import { Metadata } from "next";
-import { ReactNode, Suspense } from "react";
 import { Inter } from "next/font/google";
-import { AppLayoutWrapper, GlobalLoader, ModalHost, Providers } from "@/shared";
-import { I18nProvider } from "@/lib/i18n/provider";
 import { I18nLoader } from "./i18n-loader";
+import { ReactNode, Suspense } from "react";
+import { AppLayoutWrapper, GlobalLoader, ModalHost, Providers } from "@/shared";
 
 export const metadata: Metadata = {
     title: "Radius Product Bundles App for Shopify",
     other: {
-        "shopify-api-key": process.env.NEXT_PUBLIC_SHOPIFY_API_KEY || "",
         "shopify-app-origins": process.env.NEXT_PUBLIC_HOST || "",
     },
 };
@@ -28,6 +26,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
+                <meta name="shopify-api-key" content={process.env.NEXT_PUBLIC_SHOPIFY_API_KEY || ""} />
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
                 <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
             </head>
@@ -35,17 +34,17 @@ export default function RootLayout({
                 className={`radius-app-wrapper ${inter.className}`}
                 suppressHydrationWarning
             >
-                <Suspense>
-                    <I18nLoader>
-                        <Providers>
-                            <GlobalLoader />
+                <Providers>
+                    <GlobalLoader />
+                    <Suspense>
+                        <I18nLoader>
                             <AppLayoutWrapper>
                                 {children}
                                 <ModalHost />
                             </AppLayoutWrapper>
-                        </Providers>
-                    </I18nLoader>
-                </Suspense>
+                        </I18nLoader>
+                    </Suspense>
+                </Providers>
             </body>
         </html>
     );

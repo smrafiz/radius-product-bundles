@@ -7,22 +7,17 @@ import {
     type ReactNode,
 } from "react";
 
-// ─── Types ───────────────────────────────────────────────────────────
 type MessageValue = string | Record<string, unknown>;
 type Messages = Record<string, Record<string, MessageValue>>;
 
-interface I18nContextValue {
+const I18nContext = createContext<{
     locale: string;
     messages: Messages;
-}
-
-// ─── Context ─────────────────────────────────────────────────────────
-const I18nContext = createContext<I18nContextValue>({
+}>({
     locale: "en",
     messages: {},
 });
 
-// ─── Provider (drop-in replacement for NextIntlClientProvider) ───────
 export function I18nProvider({
     locale,
     messages,
@@ -39,7 +34,6 @@ export function I18nProvider({
     );
 }
 
-// ─── Hook (drop-in replacement for useTranslations) ──────────────────
 export function useTranslations(namespace: string) {
     const { messages } = useContext(I18nContext);
 

@@ -7,6 +7,7 @@ import {
     useBundleListingStore,
     useBundleTableBulkActions,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /*
  * Bundle bulk actions bar components
@@ -19,6 +20,7 @@ export const BundleBulkActionsBar = memo(function BundleBulkActionsBar({
     clearSelection,
 }: BundleBulkActionsBarProps) {
     const { showToast } = useBundleListingStore();
+    const t = useTranslations("Bundles.Listing.BulkActions");
 
     const { actions: selectedBundleActions } = useBundleActions(
         selectedBundle,
@@ -30,7 +32,7 @@ export const BundleBulkActionsBar = memo(function BundleBulkActionsBar({
 
     const handleClear = useCallback(() => {
         clearSelection();
-        showToast("Selection cleared");
+        showToast(t("selectionCleared"));
     }, [clearSelection, showToast]);
 
     const promotedActions = [
@@ -39,7 +41,7 @@ export const BundleBulkActionsBar = memo(function BundleBulkActionsBar({
             selectedBundle,
             selectedBundleActions,
         ),
-        { content: "Cancel", onAction: handleClear },
+        { content: t("cancel"), onAction: handleClear },
     ];
 
     const bulkActions = getBulkActions(
@@ -70,7 +72,7 @@ export const BundleBulkActionsBar = memo(function BundleBulkActionsBar({
                         />
                         <s-text>
                             <span className="font-medium">
-                                {selectedResources.length} selected
+                                {t("itemsSelected", { count: selectedResources.length })}
                             </span>
                         </s-text>
                     </s-stack>

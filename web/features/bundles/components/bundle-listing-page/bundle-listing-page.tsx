@@ -12,6 +12,7 @@ import {
     BundleTableSkeleton,
     useBundlesPage,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/features/settings";
 import { AnalyticsDisabledBanner } from "@/features/analytics";
 
@@ -27,6 +28,7 @@ export function BundleListingPage() {
         onBundleStudio,
     } = useBundlesPage();
     const { analytics } = useAppNavigation();
+    const t = useTranslations("Bundles.Listing");
 
     const isAnalyticsDisabled = useSettingsStore((state) => {
         const settings = state.getEffectiveData();
@@ -52,7 +54,7 @@ export function BundleListingPage() {
                             disabled={analyticsLoading}
                             loading={bundlesLoading}
                         >
-                            Create Bundle
+                            {t("createBundle")}
                         </s-button>
                         <s-button
                             slot="secondary-actions"
@@ -60,7 +62,7 @@ export function BundleListingPage() {
                             disabled={bundlesLoading}
                             loading={analyticsLoading}
                         >
-                            View Analytics
+                            {t("viewAnalytics")}
                         </s-button>
                     </>
                 ) : (
@@ -70,13 +72,13 @@ export function BundleListingPage() {
                             onClick={actions.create}
                             disabled={bundlesLoading}
                         >
-                            Create Bundle
+                            {t("createBundle")}
                         </button>
                         <button
                             onClick={actions.analytics}
                             disabled={analyticsLoading}
                         >
-                            View Analytics
+                            {t("viewAnalytics")}
                         </button>
                     </>
                 )}
@@ -91,11 +93,11 @@ export function BundleListingPage() {
                     <div className="text-center">
                         <s-heading>
                             <div className="text-base text-center">
-                                Bundle Management
+                                {t("title")}
                             </div>
                         </s-heading>
                         <s-text color="subdued">
-                            Create and manage your product bundle offers
+                            {t("description")}
                         </s-text>
                     </div>
                 </s-stack>

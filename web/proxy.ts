@@ -68,7 +68,7 @@ export default function proxy(request: NextRequest) {
 
     if (locale) {
         // Shopify injects the 'locale' search parameter into iframe URLs.
-        // Save it so `next-intl` can read the merchant's active language
+        // Save it so I18nLoader can read the merchant's active language
         responseWithHeaders.cookies.set('NEXT_LOCALE', locale, {
           path: '/',
           maxAge: 60 * 60 * 24 * 365, // 1 year

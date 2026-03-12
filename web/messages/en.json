@@ -187,6 +187,67 @@
       "notEnabledYet": "App embed is not enabled yet"
     }
   },
+  "Bundles": {
+    "Listing": {
+      "title": "Bundle Management",
+      "description": "Create and manage your product bundle offers",
+      "createBundle": "Create Bundle",
+      "viewAnalytics": "View Analytics",
+      "Table": {
+        "name": "Bundle Name",
+        "products": "Products",
+        "type": "Type",
+        "discount": "Discount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "EmptyState": {
+        "noDataTitle": "No bundles created yet",
+        "noDataDescription": "Get started by creating your first bundle to manage product offers.",
+        "noFilterResultsTitle": "No bundles match your filters",
+        "noFilterResultsDescription": "Try adjusting your search terms or filters to see more results."
+      },
+      "Filters": {
+        "searchPlaceholder": "Search bundles...",
+        "searchLabel": "Search bundles",
+        "closeSearch": "Close search",
+        "searchActive": "Search active",
+        "filterByStatus": "Filter by status",
+        "filterByStatusLabel": "Filter by Status",
+        "statusLabel": "Status",
+        "bundleTypeLabel": "Bundle type",
+        "sortLabel": "Sort bundles",
+        "sortTooltip": "Sort",
+        "sortByLabel": "Sort by",
+        "sortByName": "Name",
+        "sortAtoZ": "A-Z",
+        "sortZtoA": "Z-A",
+        "sortByCreated": "Created",
+        "sortOldestFirst": "Oldest first",
+        "sortNewestFirst": "Newest first",
+        "allStatus": "All"
+      },
+      "BulkActions": {
+        "selectionCleared": "Selection cleared",
+        "cancel": "Cancel",
+        "itemsSelected": "{count} selected",
+        "moreActions": "More actions"
+      },
+      "Metrics": {
+        "activeBundles": "Active Bundles",
+        "totalBundles": "Total Bundles",
+        "totalViews": "Total Views",
+        "totalRevenue": "Total Revenue",
+        "totalCreated": "Total created"
+      },
+      "Pagination": {
+        "loading": "Loading..."
+      },
+      "errors": {
+        "loadFailed": "Failed to load bundle data"
+      }
+    }
+  },
   "Settings": {
     "title": "App Settings",
     "save": "Save Settings",

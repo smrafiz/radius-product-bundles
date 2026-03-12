@@ -7,31 +7,34 @@ import { formatByType, MetricCardProps } from "@/shared";
 /**
  * Bundle listing metrics
  */
-export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
+export const BUNDLE_LISTING_METRICS = (
+    metrics: any,
+    t: (key: string) => string,
+): MetricCardProps[] => [
     {
-        title: "Active Bundles",
+        title: t("activeBundles"),
         value:
             metrics?.activeBundles !== undefined
                 ? formatByType(metrics.activeBundles, "number")
                 : "",
-        comparisonLabel: "Total created",
+        comparisonLabel: t("totalCreated"),
         img: {
             svg: METRIC_CARD_SVG["activeBundles"],
         },
     },
     {
-        title: "Total Bundles",
+        title: t("totalBundles"),
         value:
             metrics?.totalBundles !== undefined
                 ? formatByType(metrics.totalBundles, "number")
                 : "",
-        comparisonLabel: "Total created",
+        comparisonLabel: t("totalCreated"),
         img: {
             svg: METRIC_CARD_SVG["totalBundles"],
         },
     },
     {
-        title: "Total Views",
+        title: t("totalViews"),
         value:
             metrics?.totalViews !== undefined
                 ? formatByType(metrics.totalViews, "number")
@@ -42,7 +45,7 @@ export const BUNDLE_LISTING_METRICS = (metrics: any): MetricCardProps[] => [
         },
     },
     {
-        title: "Total Revenue",
+        title: t("totalRevenue"),
         value:
             metrics?.revenueAllTime !== undefined
                 ? formatByType(metrics.revenueAllTime, "currency")

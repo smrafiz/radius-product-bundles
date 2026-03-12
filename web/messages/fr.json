@@ -187,6 +187,67 @@
       "notEnabledYet": "L'intégration de l'application n'est pas encore activée"
     }
   },
+  "Bundles": {
+    "Listing": {
+      "title": "Gestion des offres groupées",
+      "description": "Créer et gérer vos offres de lots de produits",
+      "createBundle": "Créer un lot",
+      "viewAnalytics": "Afficher les analyses",
+      "Table": {
+        "name": "Nom de l'offre groupée",
+        "products": "Produits",
+        "type": "Type",
+        "discount": "Remise",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "EmptyState": {
+        "noDataTitle": "Aucune offre groupée créée pour le moment",
+        "noDataDescription": "Commencez par créer votre première offre groupée pour gérer vos offres de produits.",
+        "noFilterResultsTitle": "Aucune offre groupée ne correspond à vos filtres",
+        "noFilterResultsDescription": "Essayez de modifier vos termes de recherche ou vos filtres pour obtenir plus de résultats."
+      },
+      "Filters": {
+        "searchPlaceholder": "Rechercher des offres groupées...",
+        "searchLabel": "Rechercher des offres groupées",
+        "closeSearch": "Fermer la recherche",
+        "searchActive": "Recherche activée",
+        "filterByStatus": "Filtrer par statut",
+        "filterByStatusLabel": "Filtrer par statut",
+        "statusLabel": "Statut",
+        "bundleTypeLabel": "Type d'offre groupée",
+        "sortLabel": "Trier les offres groupées",
+        "sortTooltip": "Trier",
+        "sortByLabel": "Trier par",
+        "sortByName": "Nom",
+        "sortAtoZ": "A-Z",
+        "sortZtoA": "Z-A",
+        "sortByCreated": "Créé",
+        "sortOldestFirst": "Du plus ancien au plus récent",
+        "sortNewestFirst": "Du plus récent au plus ancien",
+        "allStatus": "Tous"
+      },
+      "BulkActions": {
+        "selectionCleared": "Sélection effacée",
+        "cancel": "Annuler",
+        "itemsSelected": "{count} sélectionnés",
+        "moreActions": "Plus d'actions"
+      },
+      "Metrics": {
+        "activeBundles": "Offres groupées actives",
+        "totalBundles": "Nombre total d'offres groupées",
+        "totalViews": "Nombre total de vues",
+        "totalRevenue": "Revenu total",
+        "totalCreated": "Total créé"
+      },
+      "Pagination": {
+        "loading": "Chargement en cours…"
+      },
+      "errors": {
+        "loadFailed": "Échec du chargement des données de l'offre groupée"
+      }
+    }
+  },
   "Settings": {
     "title": "Paramètres de l'application",
     "save": "Enregistrer les paramètres",

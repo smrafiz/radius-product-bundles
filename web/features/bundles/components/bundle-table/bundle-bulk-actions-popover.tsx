@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /*
  * Bundle bulk actions popover components
@@ -13,13 +14,14 @@ export const BundleBulkActionsPopover = memo(function BundleBulkActionsPopover({
         onAction?: () => void;
     }>;
 }) {
+    const t = useTranslations("Bundles.Listing.BulkActions");
     return (
         <s-stack direction="inline">
             <s-button
                 variant="secondary"
                 commandFor="bulk-actions-popover"
                 icon="menu-horizontal"
-                accessibilityLabel="More actions"
+                accessibilityLabel={t("moreActions")}
             />
             <s-popover id="bulk-actions-popover">
                 <s-box padding="small">
