@@ -64,8 +64,6 @@ export function WidgetPricingDisplay({
         return null;
     }
 
-    console.log('HELLppppp', hideOriginalPrice);
-
     return (
         <div
             className="radius-bundle__pricing"

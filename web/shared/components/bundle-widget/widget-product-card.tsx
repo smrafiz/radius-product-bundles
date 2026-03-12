@@ -6,6 +6,7 @@ import {
     getFontSize,
     getImageSize,
     getSpacing,
+    PLACEHOLDER_IMAGES,
 } from "@/features/settings";
 import { WidgetProductCardProps } from "@/shared";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
@@ -22,6 +23,18 @@ export function WidgetProductCard({
     const fontSize = getFontSize(styles.bodySize);
     const gap = getSpacing(styles.spacing);
     const cardBackground = getCardBgColor(styles);
+
+    // 🔹 Select random placeholder
+    const placeholderKeys = Object.keys(PLACEHOLDER_IMAGES).map(Number);
+    const randomPlaceholder =
+        PLACEHOLDER_IMAGES[
+            placeholderKeys[Math.floor(Math.random() * placeholderKeys.length)] as keyof typeof PLACEHOLDER_IMAGES
+        ];
+
+    const imageSrc =
+        product.image && product.image.trim() !== ""
+            ? product.image
+            : randomPlaceholder;
 
     const truncatedTitle =
         product.title.length > 40
@@ -64,9 +77,12 @@ export function WidgetProductCard({
 
     const imageEl = displayOptions.showImages && (
         <img
-            src={product.image || "/assets/product-image-placeholder.webp"}
+            src={imageSrc}
             alt={product.title}
             loading="lazy"
+            onError={(e) => {
+                e.currentTarget.src = PLACEHOLDER_IMAGES[1];
+            }}
             style={{
                 width: "100%",
                 height: "100%",
@@ -98,6 +114,7 @@ export function WidgetProductCard({
             >
                 {product.price}
             </span>
+
             {displayOptions.showComparePrices && product.compareAtPrice && (
                 <span
                     className="radius-bundle__product-price-compare"
@@ -105,6 +122,7 @@ export function WidgetProductCard({
                         textDecoration: "line-through",
                         opacity: 0.6,
                         fontSize: "0.9em",
+                        marginLeft: "6px",
                     }}
                 >
                     {product.compareAtPrice}
@@ -132,6 +150,7 @@ export function WidgetProductCard({
                 }}
             >
                 {badgeEl}
+
                 {displayOptions.showImages && (
                     <div
                         className="radius-bundle__product-image"
@@ -147,6 +166,7 @@ export function WidgetProductCard({
                         {imageEl}
                     </div>
                 )}
+
                 <div
                     style={{
                         fontWeight: 500,
@@ -164,7 +184,9 @@ export function WidgetProductCard({
                 >
                     {titleEl}
                 </div>
+
                 <div style={{ marginBottom: "8px" }}>{priceEl}</div>
+
                 {quantityEl}
             </div>
         );
@@ -183,6 +205,7 @@ export function WidgetProductCard({
             }}
         >
             {badgeEl}
+
             {displayOptions.showImages && (
                 <div
                     className="radius-bundle__product-image"
@@ -199,6 +222,7 @@ export function WidgetProductCard({
                     {imageEl}
                 </div>
             )}
+
             <div style={{ flex: 1 }}>
                 <div
                     style={{
@@ -209,12 +233,14 @@ export function WidgetProductCard({
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
-                }}
+                    }}
                 >
                     {titleEl}
                 </div>
+
                 {quantityEl}
             </div>
+
             <div style={{ textAlign: "right" }}>{priceEl}</div>
         </div>
     );

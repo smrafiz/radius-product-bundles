@@ -222,10 +222,7 @@
         color: var(--rb-text-color, #1a1a2e);
 
         &--reward {
-            color: var(
-                --rb-bogo-free-tag-color,
-                var(--rb-savings-color, #16a34a)
-            );
+            color: var(--rb-savings-color, #16a34a);
         }
     }
 

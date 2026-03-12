@@ -57,4 +57,8 @@ export const PREVIEW_TEMPLATE_OPTIONS: ReadonlyArray<{
 export const PLACEHOLDER_IMAGES = {
     1: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-1_large.png",
     2: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-2_large.png",
+    3: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-3_large.png",
+    4: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-4_large.png",
+    5: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-5_large.png",
+    6: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-6_large.png",
 };
