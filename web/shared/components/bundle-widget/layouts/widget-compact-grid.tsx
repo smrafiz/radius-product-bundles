@@ -12,6 +12,7 @@ import {
     getBadgeRadius,
     getHeadingFontSize,
     getPadding,
+    getSpacing,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -344,6 +345,7 @@ export function WidgetCompactGrid({
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
     const padding = getPadding(styles.spacing);
+    const gap = getSpacing(styles.spacing);
 
     if (!products.length) {
         return (
@@ -440,9 +442,9 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                     gap: 4,
-                    paddingTop: parseInt(padding) - 4,
-                    paddingLeft: parseInt(padding) - 4,
-                    paddingRight: parseInt(padding) - 4,
+                    paddingTop: parseInt(gap),
+                    paddingLeft: parseInt(gap),
+                    paddingRight: parseInt(gap),
                     paddingBottom: "8px",
                 }}
             >
@@ -503,9 +505,9 @@ export function WidgetCompactGrid({
                     alignItems: "center",
                     justifyContent: "space-between",
                     paddingTop: "8px",
-                    paddingLeft: parseInt(padding) - 4,
-                    paddingRight: parseInt(padding) - 4,
-                    paddingBottom: parseInt(padding) - 4,
+                    paddingLeft: parseInt(gap),
+                    paddingRight: parseInt(gap),
+                    paddingBottom: parseInt(gap),
                     gap: 12,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}
