@@ -13,6 +13,7 @@ import {
 } from "@/features/settings/components";
 import { TitleBar } from "@shopify/app-bridge-react";
 import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Settings page content component.
@@ -20,14 +21,16 @@ import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 function SettingsPageContent() {
     const { handleSubmit, resetDirty } = useSettingsSubmit();
 
+    const t = useTranslations("Settings");
+
     return (
         <GlobalForm<AppSettingsFormData>
             formId="settings"
             onSubmit={handleSubmit}
             resetDirty={resetDirty}
         >
-            <s-page>
-                <TitleBar></TitleBar>
+            <s-page heading={t("pageTitle")}>
+                <TitleBar title={t("pageTitle")}></TitleBar>
                 <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
                     <SettingsTab />
                 </s-stack>
@@ -48,6 +51,7 @@ export function SettingsPage() {
         error,
     } = useSettingsQuery();
     const { isLoading: isLocalesLoading } = useLocales();
+    const t = useTranslations("Settings");
 
     // Show loading state
     if (isSettingsLoading || isLocalesLoading) {
@@ -57,8 +61,8 @@ export function SettingsPage() {
     // Show error state
     if (error) {
         return (
-            <s-page heading="Settings">
-                <s-banner tone="critical" heading="Failed to load settings">
+            <s-page heading={t("title")}>
+                <s-banner tone="critical" heading={t("errorLoading")}>
                     {error.message}
                 </s-banner>
             </s-page>

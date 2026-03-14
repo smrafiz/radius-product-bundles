@@ -11,6 +11,7 @@ import {
 import { DynamicCustomizerSection } from "./dynamic-customizer-section";
 import { useModalStore } from "@/shared";
 import { useEffect, useMemo, useRef } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Dynamic customizer panel with conditional section visibility.
@@ -37,6 +38,7 @@ export function DynamicCustomizerPanel({
     }, [openSectionId, onAccordionChange]);
 
     const { openModal } = useModalStore();
+    const t = useTranslations("Settings.Customizer");
 
     // Create condition context
     const context: ConditionContext = useMemo(
@@ -71,7 +73,9 @@ export function DynamicCustomizerPanel({
     const handleRestoreClick = () => {
         openModal({
             type: "restore-defaults",
-            confirmText: "Restore",
+            title: t("restoreDefaultsModal.heading"),
+            message: t("restoreDefaultsModal.message"),
+            confirmText: t("restoreDefaultsModal.confirm"),
             onConfirm: handleRestoreDefaults,
         });
     };
@@ -97,7 +101,7 @@ export function DynamicCustomizerPanel({
                     tone="critical"
                     onClick={handleRestoreClick}
                 >
-                    Restore defaults
+                    {t("restoreDefaults")}
                 </s-button>
             </s-stack>
         </div>

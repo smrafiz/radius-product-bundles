@@ -1,6 +1,8 @@
 import { useSettingsTools } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function SettingsTools() {
+    const t = useTranslations("Settings.Tools");
     const {
         isExporting,
         isImporting,
@@ -36,9 +38,9 @@ export function SettingsTools() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Data Management</s-heading>
+                        <s-heading>{t("dataManagement.title")}</s-heading>
                         <s-tooltip id="data-management-tooltip">
-                            <s-text>Export or import your app settings.</s-text>
+                            <s-text>{t("dataManagement.description")}</s-text>
                         </s-tooltip>
                         <s-icon
                             tone="neutral"
@@ -54,9 +56,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Export settings</s-heading>
+                            <s-heading>{t("dataManagement.export.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                Download a backup of all your current settings.
+                                {t("dataManagement.export.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -65,7 +67,7 @@ export function SettingsTools() {
                             onClick={handleExport}
                             loading={isExporting}
                         >
-                            Export
+                            {t("dataManagement.export.button")}
                         </s-button>
                     </s-stack>
 
@@ -78,10 +80,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Import settings</s-heading>
+                            <s-heading>{t("dataManagement.import.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                Restore settings from a previously exported JSON
-                                file.
+                                {t("dataManagement.import.description")}
                             </s-paragraph>
                         </s-stack>
                         <input
@@ -97,7 +98,7 @@ export function SettingsTools() {
                             onClick={triggerImport}
                             loading={isImporting}
                         >
-                            Import
+                            {t("dataManagement.import.button")}
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -111,11 +112,10 @@ export function SettingsTools() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Sync & Cache</s-heading>
+                        <s-heading>{t("syncCache.title")}</s-heading>
                         <s-tooltip id="sync-cache-tooltip">
                             <s-text>
-                                Manually sync data or clear cache if you
-                                experience issues.
+                                {t("syncCache.description")}
                             </s-text>
                         </s-tooltip>
                         <s-icon
@@ -132,10 +132,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Sync to Shopify</s-heading>
+                            <s-heading>{t("syncCache.sync.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                Force sync all settings and bundle data to
-                                Shopify metafields.
+                                {t("syncCache.sync.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -144,7 +143,7 @@ export function SettingsTools() {
                             onClick={handleSyncMetafields}
                             loading={isSyncing}
                         >
-                            Sync
+                            {t("syncCache.sync.button")}
                         </s-button>
                     </s-stack>
 
@@ -157,10 +156,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Clear app cache</s-heading>
+                            <s-heading>{t("syncCache.clearCache.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                Clear all cached data including bundles,
-                                analytics, and settings.
+                                {t("syncCache.clearCache.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -169,7 +167,7 @@ export function SettingsTools() {
                             onClick={handleClearCache}
                             loading={isClearing}
                         >
-                            Clear
+                            {t("syncCache.clearCache.button")}
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -183,11 +181,10 @@ export function SettingsTools() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Webhook Management</s-heading>
+                        <s-heading>{t("webhookManagement.title")}</s-heading>
                         <s-tooltip id="webhook-management-tooltip">
                             <s-text>
-                                Check or re-register webhook subscriptions with
-                                Shopify from Radius product bundles app.
+                                {t("webhookManagement.description")}
                             </s-text>
                         </s-tooltip>
                         <s-icon
@@ -204,7 +201,7 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Check webhooks</s-heading>
+                            <s-heading>{t("webhookManagement.check.title")}</s-heading>
                             <s-paragraph color="subdued">
                                 View all currently registered webhook
                                 subscriptions from Radius product bundles app.
@@ -216,7 +213,7 @@ export function SettingsTools() {
                             onClick={handleCheckWebhooks}
                             loading={isCheckingWebhooks}
                         >
-                            Check
+                            {t("webhookManagement.check.button")}
                         </s-button>
                     </s-stack>
 
@@ -229,9 +226,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Force register webhooks</s-heading>
+                            <s-heading>{t("webhookManagement.register.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                Reset and re-register all webhooks with Shopify.
+                                {t("webhookManagement.register.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -240,7 +237,7 @@ export function SettingsTools() {
                             onClick={handleForceRegister}
                             loading={isRegisteringWebhooks}
                         >
-                            Register
+                            {t("webhookManagement.register.button")}
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -255,7 +252,7 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-text tone="critical">
-                            <s-heading>Danger Zone</s-heading>
+                            <s-heading>{t("dangerZone.title")}</s-heading>
                         </s-text>
                         <s-tooltip id="danger-zone-tooltip">
                             <s-text>
@@ -276,10 +273,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>Reset app settings</s-heading>
+                            <s-heading>{t("dangerZone.reset.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                Reset all settings to their default values. This
-                                action cannot be undone.
+                                {t("dangerZone.reset.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -296,7 +292,7 @@ export function SettingsTools() {
             </s-section>
 
             {/* Reset Confirmation Modal */}
-            <s-modal id="reset-confirm-modal" heading="Reset all settings?">
+            <s-modal id="reset-confirm-modal" heading={t("resetModal.title")}>
                 <s-stack gap="base">
                     <s-text>
                         This will reset all your settings to their default
@@ -314,7 +310,7 @@ export function SettingsTools() {
                     variant="primary"
                     loading={isResetting}
                 >
-                    Reset all settings
+                    {t("resetModal.confirmButton")}
                 </s-button>
 
                 <s-button
@@ -322,7 +318,7 @@ export function SettingsTools() {
                     command="--hide"
                     commandFor="reset-confirm-modal"
                 >
-                    Cancel
+                    {t("resetModal.cancelButton")}
                 </s-button>
             </s-modal>
 
@@ -343,7 +339,7 @@ export function SettingsTools() {
             </div>
 
             {/* Sync Result Modal */}
-            <s-modal id="sync-result-modal" heading="Metafield Sync Results">
+            <s-modal id="sync-result-modal" heading={t("syncResultsModal.title")}>
                 {syncResult ? (
                     <s-stack gap="base">
                         <s-stack
@@ -358,8 +354,8 @@ export function SettingsTools() {
                                 }
                             >
                                 {syncResult.success
-                                    ? "Sync complete"
-                                    : "Sync failed"}
+                                    ? t("syncResultsModal.syncComplete")
+                                    : t("syncResultsModal.syncFailed")}
                             </s-badge>
                         </s-stack>
 
@@ -389,7 +385,7 @@ export function SettingsTools() {
                                 <s-heading>Error</s-heading>
                                 <s-text>
                                     {syncResult.error ||
-                                        "An unknown error occurred"}
+                                        t("syncResultsModal.unknownError")}
                                 </s-text>
                             </s-stack>
                         )}
@@ -408,7 +404,7 @@ export function SettingsTools() {
             </s-modal>
 
             {/* Webhook Check Modal */}
-            <s-modal id="webhook-check-modal" heading="Registered Webhooks">
+            <s-modal id="webhook-check-modal" heading={t("webhookCheckModal.title")}>
                 {webhookCheckResult ? (
                     <s-stack gap="base">
                         <s-grid
@@ -419,12 +415,11 @@ export function SettingsTools() {
                             <s-heading>Status</s-heading>
                             {webhookCheckResult.missingTopics.length === 0 ? (
                                 <s-badge tone="success">
-                                    All webhooks registered
+                                    {t("webhookCheckModal.allRegistered")}
                                 </s-badge>
                             ) : (
                                 <s-badge tone="warning">
-                                    {webhookCheckResult.missingTopics.length}{" "}
-                                    missing webhook(s)
+                                    {t("webhookCheckModal.missingCount", { count: String(webhookCheckResult.missingTopics.length) })}
                                 </s-badge>
                             )}
                         </s-grid>
@@ -437,7 +432,7 @@ export function SettingsTools() {
                             gap="large-400"
                         >
                             <s-heading>
-                                Registered ({webhookCheckResult.totalCount})
+                                {t("webhookCheckModal.statusRegistered", { count: String(webhookCheckResult.totalCount) })}
                             </s-heading>
 
                             <s-grid
@@ -488,7 +483,7 @@ export function SettingsTools() {
                             gap="large-400"
                         >
                             <s-heading>
-                                GDPR ({webhookCheckResult.gdprTopics.length})
+                                {t("webhookCheckModal.statusGdpr", { count: String(webhookCheckResult.gdprTopics.length) })}
                             </s-heading>
                             <s-grid
                                 gridTemplateColumns="repeat(3, auto)"
@@ -518,7 +513,7 @@ export function SettingsTools() {
             {/* Webhook Register Modal */}
             <s-modal
                 id="webhook-register-modal"
-                heading="Webhook Registration Results"
+                heading={t("webhookRegisterModal.title")}
             >
                 {webhookRegisterResult ? (
                     <s-stack gap="base">
@@ -539,10 +534,10 @@ export function SettingsTools() {
                                 }
                             >
                                 {webhookRegisterResult.success
-                                    ? "All registered successfully"
+                                    ? t("webhookRegisterModal.allSuccess")
                                     : webhookRegisterResult.failed.length > 0
-                                      ? "Partial success"
-                                      : "Registration failed"}
+                                      ? t("webhookRegisterModal.partialSuccess")
+                                      : t("webhookRegisterModal.failedTitle")}
                             </s-badge>
                         </s-grid>
 

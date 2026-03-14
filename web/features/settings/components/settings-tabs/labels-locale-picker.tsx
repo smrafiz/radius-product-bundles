@@ -9,6 +9,7 @@ import {
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { getSettingsAction } from "@/features/settings/actions/settings.action";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function LabelsLocalePicker() {
     const { data: locales, isLoading } = useLocales();
@@ -16,6 +17,7 @@ export function LabelsLocalePicker() {
         useSettingsStore();
     const { reset, getValues } = useSettingsForm();
     const app = useAppBridge();
+    const t = useTranslations("Settings.Locales");
 
     const primaryLocale = locales?.find((l) => l.primary)?.locale ?? "en";
 
@@ -97,7 +99,7 @@ export function LabelsLocalePicker() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>Languages</s-heading>
+                    <s-heading>{t("title")}</s-heading>
 
                     <s-stack
                         direction="inline"
@@ -109,9 +111,11 @@ export function LabelsLocalePicker() {
                             <>
                                 <s-tooltip id="language-tooltip">
                                     <s-text>
-                                        Empty fields will fall back to the
-                                        primary language (
-                                        {locales.find((l) => l.primary)?.name}).
+                                        {t("fallbackTooltip", {
+                                            primary:
+                                                locales.find((l) => l.primary)
+                                                    ?.name ?? "",
+                                        })}
                                     </s-text>
                                 </s-tooltip>
                                 <s-icon
@@ -147,7 +151,7 @@ export function LabelsLocalePicker() {
                                 {locale.name}
                                 {locale.primary && (
                                     <span className="ml-1 opacity-60">
-                                        (Primary)
+                                        {t("primaryBadge")}
                                     </span>
                                 )}
                             </s-button>

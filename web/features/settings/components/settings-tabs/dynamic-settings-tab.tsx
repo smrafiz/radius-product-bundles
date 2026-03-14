@@ -9,6 +9,7 @@ import {
     SettingsTools,
     useSettingsStore,
 } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Universal tab renderer - renders any tab from config.
@@ -20,6 +21,8 @@ export function DynamicSettingsTab({ config }: { config: SettingsTabConfig }) {
     if (!config.sections || config.sections.length === 0) {
         return renderSpecialTab(config.id);
     }
+
+    const t = useTranslations("Settings.Tabs");
 
     const sectionsContent = config.sections.map((section) => {
         // Check if section has a custom component
@@ -33,10 +36,11 @@ export function DynamicSettingsTab({ config }: { config: SettingsTabConfig }) {
                             id={section.id}
                             title={section.title}
                             tooltip={section.tooltip}
+                            tabId={config.parentPath || config.id}
                         />
                         {section.description && (
                             <s-text tone="neutral">
-                                {section.description}
+                                {t(`${config.parentPath || config.id}.Sections.${section.id}.description`, undefined, section.description)}
                             </s-text>
                         )}
                         {renderCustomComponent((customField as any).component)}
@@ -51,6 +55,7 @@ export function DynamicSettingsTab({ config }: { config: SettingsTabConfig }) {
                 key={section.id}
                 config={section}
                 parentPath={config.parentPath}
+                tabId={config.parentPath || config.id}
             />
         );
     });

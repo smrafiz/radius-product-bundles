@@ -1,6 +1,7 @@
 "use client";
 
 import type { LayoutSidebarProps, WidgetLayout } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function LayoutSidebar({
     layouts,
@@ -8,7 +9,10 @@ export function LayoutSidebar({
     onLayoutChange,
     primaryColor,
     heading,
-}: LayoutSidebarProps & { heading: string }) {
+    bundleType,
+}: LayoutSidebarProps & { heading: string; bundleType?: string }) {
+    const t = useTranslations("Settings.Customizer");
+
     return (
         <div className="md:w-64 border-r border-gray-200 bg-white">
             <s-stack padding="base">
@@ -36,7 +40,9 @@ export function LayoutSidebar({
                                 color: isActive ? primaryColor : undefined,
                             }}
                         >
-                            {label}
+                            {bundleType === "CART_BANNER" 
+                                ? t(`layoutNames.CART_BANNER_${value}`, undefined, label) 
+                                : t(`layoutNames.${value}`, undefined, label)}
                         </button>
                     );
                 })}

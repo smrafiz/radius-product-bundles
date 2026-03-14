@@ -1,6 +1,7 @@
 "use client";
 
 import { ResponsiveFieldIndicatorProps } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function ResponsiveFieldIndicator({
     activeDevice,
@@ -11,6 +12,8 @@ export function ResponsiveFieldIndicator({
     if (activeDevice === "desktop") {
         return null;
     }
+
+    const t = useTranslations("Settings.Customizer");
 
     const deviceLabel =
         activeDevice.charAt(0).toUpperCase() + activeDevice.slice(1);
@@ -34,8 +37,9 @@ export function ResponsiveFieldIndicator({
                 </s-stack>
                 <s-tooltip id={`responsive-inherit-${activeDevice}`}>
                     <s-text>
-                        Inheriting from Desktop. Click to customize for{" "}
-                        {deviceLabel}.
+                        {t("responsive.inheritTooltip", {
+                            deviceLabel: deviceLabel
+                        })}
                     </s-text>
                 </s-tooltip>
             </s-text>
@@ -57,8 +61,9 @@ export function ResponsiveFieldIndicator({
                 </button>
                 <s-tooltip id={`responsive-override-${activeDevice}`}>
                     <s-text>
-                        Customized for {deviceLabel}. Click to reset to Desktop
-                        value.
+                        {t("responsive.overrideTooltip", {
+                            deviceLabel: deviceLabel
+                        })}
                     </s-text>
                 </s-tooltip>
             </s-stack>

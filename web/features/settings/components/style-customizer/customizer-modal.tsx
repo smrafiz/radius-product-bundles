@@ -2,12 +2,14 @@
 
 import { ROUTES } from "@/shared";
 import { useCustomizerModal } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Customizer modal launcher component.
  */
 export function CustomizerModal() {
     const { appWindowRef } = useCustomizerModal();
+    const t = useTranslations("Settings.Customizer");
 
     return (
         <div>
@@ -22,7 +24,7 @@ export function CustomizerModal() {
                 commandFor="rtpb-window"
                 icon="edit"
             >
-                Open style customizer
+                {t("openStyleCustomizer")}
             </s-button>
         </div>
     );

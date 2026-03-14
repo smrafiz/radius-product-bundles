@@ -2,6 +2,7 @@
 
 import { getGridClass, SectionConfig } from "@/features/settings";
 import { DynamicField } from "./dynamic-field";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Universal section renderer - renders ANY section from config.
@@ -9,9 +10,11 @@ import { DynamicField } from "./dynamic-field";
 export function DynamicSection({
     config,
     parentPath,
+    tabId,
 }: {
     config: SectionConfig;
     parentPath?: string;
+    tabId: string;
 }) {
     const { id, title, tooltip, fields, columns = 1 } = config;
 
@@ -23,8 +26,12 @@ export function DynamicSection({
         (f) => f.type !== "switch" && f.fullWidth,
     );
     const gridClass = getGridClass(columns);
+    const t = useTranslations("Settings.Tabs");
 
     const tooltipId = `${id}-tooltip`;
+    const tabKey = parentPath || tabId || "global"; // "global" fallback string
+    const sectionTitleKey = `${tabKey}.Sections.${id}.title`;
+    const sectionTooltipKey = `${tabKey}.Sections.${id}.tooltip`;
 
     return (
         <s-section>
@@ -35,11 +42,11 @@ export function DynamicSection({
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>{title}</s-heading>
+                    <s-heading>{t(sectionTitleKey, undefined, title)}</s-heading>
                     {tooltip && (
                         <>
                             <s-tooltip id={tooltipId}>
-                                <s-text>{tooltip}</s-text>
+                                <s-text>{t(sectionTooltipKey, undefined, tooltip)}</s-text>
                             </s-tooltip>
                             <s-icon
                                 tone="neutral"
@@ -50,6 +57,13 @@ export function DynamicSection({
                     )}
                 </s-stack>
 
+                {/* Section Description */}
+                {config.description && (
+                    <s-text tone="neutral">
+                        {t(`${tabKey}.Sections.${id}.description`, undefined, config.description)}
+                    </s-text>
+                )}
+
                 {/* Grid Fields (text, number, select, textarea) */}
                 {gridFields.length > 0 && (
                     <div className={gridClass}>
@@ -58,6 +72,7 @@ export function DynamicSection({
                                 key={String(field.name)}
                                 config={field}
                                 parentPath={parentPath}
+                                tabId={tabId}
                             />
                         ))}
                     </div>
@@ -69,6 +84,7 @@ export function DynamicSection({
                         key={String(field.name)}
                         config={field}
                         parentPath={parentPath}
+                        tabId={tabId}
                     />
                 ))}
 
@@ -80,6 +96,7 @@ export function DynamicSection({
                                 key={String(field.name)}
                                 config={field}
                                 parentPath={parentPath}
+                                tabId={tabId}
                             />
                         ))}
                     </s-stack>

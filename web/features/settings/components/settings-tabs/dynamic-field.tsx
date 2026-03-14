@@ -3,6 +3,7 @@
 import { triggerSaveBar } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { AppSettingsFormData, FieldConfig } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /** Form ID for settings - must match GlobalForm formId */
 const SETTINGS_FORM_ID = "settings";
@@ -15,9 +16,11 @@ const SETTINGS_FORM_ID = "settings";
 export function DynamicField({
     config,
     parentPath,
+    tabId,
 }: {
     config: FieldConfig;
     parentPath?: string;
+    tabId: string;
 }) {
     const {
         setValue,
@@ -29,6 +32,16 @@ export function DynamicField({
     const value = watch(fieldPath as any);
     const error = getNestedError(errors, fieldPath);
     const defaultValue = (config as any).defaultValue;
+    const t = useTranslations("Settings.Tabs");
+
+    const tabKey = parentPath || tabId || "global";
+    // Construct key using name if possible, or fallback
+    const fieldI18nKey = `${tabKey}.Fields.${config.name}`;
+    
+    // Translated labels and details
+    const label = t(`${fieldI18nKey}.label`, undefined, config.label);
+    const details = config.details ? t(`${fieldI18nKey}.details`, undefined, config.details) : undefined;
+    const placeholder = config.placeholder ? t(`${fieldI18nKey}.placeholder`, undefined, config.placeholder) : undefined;
 
     /**
      * Handles field value change and triggers SaveBar.
@@ -59,11 +72,11 @@ export function DynamicField({
             return (
                 <s-text-field
                     name={fieldPath}
-                    label={config.label}
+                    label={label}
                     value={String(value ?? defaultValue ?? "")}
                     onChange={handleChange}
-                    placeholder={config.placeholder}
-                    details={config.details}
+                    placeholder={placeholder}
+                    details={details}
                     error={error}
                 />
             );
@@ -72,11 +85,11 @@ export function DynamicField({
             return (
                 <s-text-area
                     name={fieldPath}
-                    label={config.label}
+                    label={label}
                     value={String(value ?? defaultValue ?? "")}
                     onChange={handleChange}
-                    placeholder={config.placeholder}
-                    details={config.details}
+                    placeholder={placeholder}
+                    details={details}
                     rows={config.rows ?? 4}
                     error={error}
                 />
@@ -86,12 +99,12 @@ export function DynamicField({
             return (
                 <s-number-field
                     name={fieldPath}
-                    label={config.label}
+                    label={label}
                     value={String(value ?? defaultValue ?? 0)}
                     onChange={handleChange}
                     min={config.min}
                     max={config.max}
-                    details={config.details}
+                    details={details}
                     readOnly={config.readOnly}
                     error={error}
                 />
@@ -101,15 +114,15 @@ export function DynamicField({
             return (
                 <s-select
                     name={fieldPath}
-                    label={config.label}
+                    label={label}
                     value={String(value ?? defaultValue ?? "")}
                     onChange={handleChange}
-                    details={config.details}
+                    details={details}
                     error={error}
                 >
                     {config.options.map((option) => (
                         <s-option key={option.value} value={option.value}>
-                            {option.label}
+                            {t(`${fieldI18nKey}.options.${option.value}`, undefined, option.label)}
                         </s-option>
                     ))}
                 </s-select>
@@ -119,8 +132,8 @@ export function DynamicField({
             return (
                 <s-switch
                     name={fieldPath}
-                    label={config.label}
-                    details={config.details}
+                    label={label}
+                    details={details}
                     checked={Boolean(value ?? defaultValue ?? false)}
                     onInput={handleChange}
                 />

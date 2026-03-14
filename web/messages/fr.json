@@ -250,7 +250,675 @@
   },
   "Settings": {
     "title": "Paramètres de l'application",
+    "pageTitle": "Paramètres – Gérer vos préférences pour l’offre groupée",
     "save": "Enregistrer les paramètres",
-    "saved": "Paramètres enregistrés avec succès."
+    "saved": "Paramètres enregistrés avec succès.",
+    "errorLoading": "Échec du chargement des paramètres",
+    "Locales": {
+      "title": "Langues",
+      "fallbackTooltip": "Pour les champs vides, la langue par défaut sera la langue principale ({primary}).",
+      "primaryBadge": "(Principale)"
+    },
+    "Tabs": {
+      "general": {
+        "title": "Général",
+        "Sections": {
+          "defaults": {
+            "title": "Valeurs par défaut",
+            "tooltip": "Valeurs par défaut appliquées lors de la création de nouvelles offres groupées."
+          },
+          "cart-behavior": {
+            "title": "Comportement du panier",
+            "tooltip": "Contrôlez la manière dont l’application interagit avec le panier et le paiement."
+          },
+          "privacy": {
+            "title": "Confidentialité",
+            "tooltip": "Contrôlez la collecte de données et le comportement de suivi."
+          },
+          "performance": {
+            "title": "Performances",
+            "tooltip": "Contrôlez la manière dont les données de la vitrine sont mises en cache afin d’accélérer le chargement des pages."
+          }
+        },
+        "Fields": {
+          "defaultDiscountType": {
+            "label": "Type de remise par défaut",
+            "details": "Appliquée par défaut aux nouvelles offres groupées",
+            "options": {
+              "PERCENTAGE": "Pourcentage",
+              "FIXED_AMOUNT": "Montant fixe",
+              "CUSTOM_PRICE": "Prix personnalisé",
+              "NO_DISCOUNT": "Aucune remise"
+            }
+          },
+          "defaultDiscountValue": {
+            "label": "Valeur de remise par défaut",
+            "details": "Pourcentage par défaut ou montant fixe"
+          },
+          "maxBundleProducts": {
+            "label": "Nombre maximal de produits par offre groupée",
+            "details": "Nombre maximal de produits autorisés dans une seule offre groupée"
+          },
+          "maxBundlesPerShop": {
+            "label": "Nombre maximal d’offres groupées par boutique",
+            "details": "Limite totale d’offres groupées (en fonction de votre formule)"
+          },
+          "bundlePriorityType": {
+            "label": "Stratégie de priorité des offres groupées",
+            "details": "Lorsque plusieurs offres groupées s’appliquent à un produit, cette stratégie détermine laquelle est affichée. L’option basée sur l’index utilise des numéros de priorité manuels ; l’option basée sur la remise sélectionne l’offre groupée permettant de réaliser les économies effectives les plus importantes.",
+            "options": {
+              "index_based": "Basé sur l’index (priorité manuelle)",
+              "discount_based": "Basé sur la remise (l’offre la plus avantageuse l’emporte)"
+            }
+          },
+          "redirectAfterCart": {
+            "label": "Après l’ajout au panier",
+            "details": "Sélectionnez ce qui doit se produire après qu’un client a ajouté une offre groupée au panier.",
+            "options": {
+              "default": "Comportement par défaut du thème",
+              "cart": "Rediriger vers la page du panier",
+              "checkout": "Rediriger vers le paiement",
+              "none": "Rester sur la page (afficher la notification)"
+            }
+          },
+          "hidePaymentButtons": {
+            "label": "Masquer les boutons de paiement tiers",
+            "details": "Masque PayPal, Apple Pay, etc. sur les pages de produits et de panier. N’affecte pas la page de paiement."
+          },
+          "enableStockValidation": {
+            "label": "Activer la validation des stocks",
+            "details": "Désactive le bouton de l’offre groupée lorsqu’un des produits de l’offre groupée est en rupture de stock."
+          },
+          "maxBundlesPerOrder": {
+            "label": "Nombre maximal d’offres groupées par commande",
+            "details": "Limite le nombre d’offres groupées qu’un client peut ajouter à son panier. Permet d’éviter les abus en matière de remises. 0 = illimité."
+          },
+          "showSavingsBanner": {
+            "label": "Afficher la bannière d’économies dans le panier",
+            "details": "Affiche une bannière sur la page du panier indiquant le montant que les clients économisent grâce à leurs offres groupées."
+          },
+          "allowDiscountStacking": {
+            "label": "Autoriser le cumul des remises",
+            "details": "Autorisez la combinaison des remises sur les offres groupées avec d’autres remises de la boutique (codes promo, remises automatiques, remises sur la livraison)."
+          },
+          "enableAnalytics": {
+            "label": "Activer le suivi analytique",
+            "details": "Suivez les vues, les ajouts au panier et les achats des offres groupées. Désactivez cette option pour vous conformer au RGPD ou si vous utilisez des outils d’analyse externes."
+          },
+          "cacheTtl": {
+            "label": "Durée du cache de la vitrine",
+            "details": "Durée pendant laquelle les navigateurs mettent en cache les données des produits. Plus longue = pages plus rapides, mais les modifications de prix/disponibilité mettent plus de temps à apparaître.",
+            "options": {
+              "0": "Pas de cache",
+              "60": "1 minute",
+              "300": "5 minutes (recommandé)",
+              "900": "15 minutes",
+              "3600": "1 heure"
+            }
+          },
+          "lazyLoadImages": {
+            "label": "Chargement différé des images de produits",
+            "details": "Différer le chargement des images des produits jusqu’à ce qu’elles soient visibles à l’écran. Améliore la vitesse de chargement initial de la page."
+          }
+        }
+      },
+      "style": {
+        "title": "Style",
+        "Sections": {
+          "style-customizer": {
+            "title": "Personnalisateur de style",
+            "tooltip": "Définissez les couleurs, la typographie et le style globaux pour tous les widgets de l’offre groupée.",
+            "description": "Personnalisez les couleurs, la typographie, les boutons, les badges et plus encore. Ces styles s'appliquent à tous les widgets de bundle et peuvent être remplacés par page dans l'Éditeur de thème."
+          }
+        }
+      },
+      "labels": {
+        "title": "Libellés",
+        "Sections": {
+          "widget-text": {
+            "title": "Textes des widgets",
+            "tooltip": "Personnalisez les principaux textes affichés dans les widgets d’offre groupée."
+          },
+          "button-states": {
+            "title": "États des boutons",
+            "tooltip": "Texte affiché pour les différents états des boutons."
+          },
+          "price-labels": {
+            "title": "Étiquettes de prix",
+            "tooltip": "Étiquettes affichées à côté des prix dans le widget d’offre groupée."
+          },
+          "shipping-labels": {
+            "title": "Étiquettes d’expédition",
+            "tooltip": "Texte relatif à l’expédition affiché dans le widget."
+          },
+          "cart-limits": {
+            "title": "Limites du panier",
+            "tooltip": "Texte affiché lorsque les limites de l’offre groupée du panier sont atteintes."
+          },
+          "bogo-labels": {
+            "title": "Libellés « 1 acheté, 1 offert » / « Achetez X, obtenez Y »",
+            "tooltip": "Étiquettes spécifiques aux présentations des offres groupées « Un acheté, un offert » et « Achetez X, obtenez Y »."
+          },
+          "cart-banner": {
+            "title": "Bannière d’économies sur la page du panier",
+            "tooltip": "Texte affiché dans la bannière d’économies de la page du panier."
+          }
+        },
+        "Fields": {
+          "headingLabel": {
+            "label": "Titre de l’offre groupée",
+            "details": "Titre principal affiché au-dessus du widget d’offre groupée.",
+            "placeholder": "Offre groupée et économies"
+          },
+          "addToCartText": {
+            "label": "Bouton « Ajouter au panier »",
+            "details": "Texte du bouton « Ajouter au panier ».",
+            "placeholder": "Ajouter l’offre groupée au panier"
+          },
+          "quantityLabel": {
+            "label": "Étiquette de quantité",
+            "details": "Étiquette avant le sélecteur de quantité.",
+            "placeholder": "Qté :"
+          },
+          "addingText": {
+            "label": "Texte d’ajout",
+            "details": "Affiché lors de l’ajout au panier.",
+            "placeholder": "Ajout en cours…"
+          },
+          "addedText": {
+            "label": "Texte après l’ajout",
+            "details": "Affiché après un ajout réussi.",
+            "placeholder": "Ajouté !"
+          },
+          "outOfStockText": {
+            "label": "Texte « Rupture de stock »",
+            "details": "Affiché en cas d’indisponibilité.",
+            "placeholder": "En rupture de stock"
+          },
+          "regularPriceLabel": {
+            "label": "Étiquette du prix normal",
+            "details": "Étiquette indiquant le prix total initial.",
+            "placeholder": "Prix normal :"
+          },
+          "bundlePriceLabel": {
+            "label": "Étiquette du prix du lot",
+            "details": "Étiquette pour le prix de l’offre groupée avec réduction.",
+            "placeholder": "Prix du lot :"
+          },
+          "youSaveLabel": {
+            "label": "Libellé des économies",
+            "details": "Libellé du montant de l’économie.",
+            "placeholder": "Vous économisez :"
+          },
+          "savingsBadgeText": {
+            "label": "Texte du badge d’économies",
+            "details": "Texte du badge d’économies. Utiliser {amount} pour la valeur de la réduction.",
+            "placeholder": "Économisez {amount}"
+          },
+          "freeShippingLabel": {
+            "label": "Libellé de la livraison gratuite",
+            "details": "Affiché lorsque l’offre groupée comprend la livraison gratuite.",
+            "placeholder": "Livraison gratuite"
+          },
+          "freeShippingMethodTitle": {
+            "label": "Titre du mode de livraison gratuite",
+            "details": "Message concernant la réduction sur la livraison, affiché au moment du paiement. Utiliser {name} comme nom de l’offre groupée.",
+            "placeholder": "Livraison gratuite avec {name}"
+          },
+          "maxBundlesReachedText": {
+            "label": "Message « Nombre maximal d’offres groupées atteint »",
+            "details": "Affiché lorsque le client tente de dépasser la limite maximale d’offres groupées par commande. Utiliser {count} pour le nombre limite.",
+            "placeholder": "Maximum de {count} lot(s) autorisé(s) par commande"
+          },
+          "bogoBadgeText": {
+            "label": "Texte du badge d’offre",
+            "details": "Texte personnalisé du badge d’offre. Laissez ce champ vide pour que le texte soit généré automatiquement à partir des quantités et de la réduction.",
+            "placeholder": "1 acheté, 1 offert"
+          },
+          "bogoFreeText": {
+            "label": "Texte « Gratuit »",
+            "details": "Texte affiché sur les produits en récompense lorsqu’ils sont gratuits (100 % de réduction).",
+            "placeholder": "GRATUIT"
+          },
+          "bogoYouPayLabel": {
+            "label": "Libellé « Vous payez »",
+            "details": "Libellé situé au-dessus du prix final dans la barre de prix.",
+            "placeholder": "Vous ne payez que"
+          },
+          "bogoYouSaveLabel": {
+            "label": "Libellé « Vous économisez »",
+            "details": "Libellé situé au-dessus du montant de l’économie dans la barre de prix.",
+            "placeholder": "Vous économisez"
+          },
+          "bogoTriggerBadgeText": {
+            "label": "Texte du badge d’incitation",
+            "details": "Badge sur la carte du produit déclencheur (à acheter).",
+            "placeholder": "Vous achetez"
+          },
+          "bogoRewardBadgeText": {
+            "label": "Texte du badge de récompense",
+            "details": "Badge sur la carte du produit en récompense (à obtenir).",
+            "placeholder": "Vous obtenez GRATUITEMENT"
+          },
+          "bogoTotalLabel": {
+            "label": "Étiquette du total",
+            "details": "Libellé placé avant le prix total dans le pied de page.",
+            "placeholder": "Total"
+          },
+          "bogoSaveText": {
+            "label": "Texte d’économie",
+            "details": "Texte relatif aux économies dans le pied de page. Utiliser {amount} pour la valeur.",
+            "placeholder": "Économisez {amount}"
+          },
+          "checklistProgressText": {
+            "label": "Texte de progression de la liste de contrôle",
+            "details": "Texte de la progression. Utilisez {count} pour les éléments cochés et {total} pour le nombre total d’éléments.",
+            "placeholder": "{count}/{total} éléments ajoutés"
+          },
+          "checklistHintText": {
+            "label": "Texte d’indication de la liste de contrôle",
+            "details": "Indice affiché lorsqu’il reste des éléments. Utiliser {remaining} pour le nombre d’éléments restants.",
+            "placeholder": "Encore {remaining} pour débloquer !"
+          },
+          "checklistCompletedText": {
+            "label": "Texte de liste de contrôle terminée",
+            "details": "Indice affiché lorsque tous les éléments sont sélectionnés.",
+            "placeholder": "Déverrouillé !"
+          },
+          "checklistLockedLabel": {
+            "label": "Libellé de récompense verrouillée",
+            "details": "Titre de la section des récompenses lorsque les éléments ne sont pas encore sélectionnés.",
+            "placeholder": "Débloquez la récompense en ajoutant tous les éléments ci-dessus"
+          },
+          "checklistUnlockedLabel": {
+            "label": "Libellé de récompense débloquée",
+            "details": "Titre de la section des récompenses lorsque tous les articles sont sélectionnés.",
+            "placeholder": "Récompense débloquée"
+          },
+          "checklistPricingLockedText": {
+            "label": "Texte « Tarification verrouillée »",
+            "details": "Texte affiché dans la zone de tarification avant que tous les articles ne soient sélectionnés.",
+            "placeholder": "Sélectionnez tous les articles pour voir votre prix"
+          },
+          "bannerSavingText": {
+            "label": "Message sur les économies réalisées",
+            "details": "Utilisez {discount} pour le montant de l’économie et {name} pour le nom de l’offre groupée.",
+            "placeholder": "Vous économisez {discount} avec {name}"
+          },
+          "bannerCustomPriceText": {
+            "label": "Message sur le prix personnalisé",
+            "details": "Utilisez {price} pour le prix de l’offre groupée et {name} pour le nom de l’offre groupée.",
+            "placeholder": "Prix spécial : {price} pour {name}"
+          },
+          "bannerFreeShippingQualifyText": {
+            "label": "Message d’éligibilité à la livraison gratuite",
+            "details": "Utiliser {name} pour le nom de l’offre groupée. Affiché uniquement pour les lots avec livraison gratuite.",
+            "placeholder": "{name} donne droit à la livraison gratuite !"
+          },
+          "bannerFreeShippingText": {
+            "label": "Message « Livraison gratuite incluse »",
+            "details": "Message supplémentaire lorsque l’offre groupée inclut la livraison gratuite.",
+            "placeholder": "Livraison gratuite incluse !"
+          }
+        }
+      },
+      "advanced": {
+        "title": "Avancé",
+        "Sections": {
+          "custom-css": {
+            "title": "CSS personnalisé",
+            "tooltip": "Ajoutez du CSS personnalisé pour un style avancé. À utiliser uniquement si vous avez des connaissances en CSS."
+          }
+        },
+        "Fields": {
+          "customCssClass": {
+            "label": "Classe CSS personnalisée",
+            "details": "Ajoutez une classe personnalisée au conteneur du widget de l’offre groupée pour un style ciblé."
+          },
+          "customCss": {
+            "label": "CSS personnalisé",
+            "details": "Écrivez du code CSS personnalisé pour obtenir des personnalisations visuelles uniques. Appliqué à toutes les pages sur lesquelles le widget d’offre groupée est chargé.",
+            "placeholder": ".radius-bundle { /* Vos styles personnalisés */ }"
+          }
+        }
+      },
+      "tools": {
+        "title": "Outils"
+      }
+    },
+    "Tools": {
+      "dataManagement": {
+        "title": "Gestion des données",
+        "description": "Exportez ou importez les paramètres de votre application.",
+        "export": {
+          "title": "Exporter les paramètres",
+          "description": "Téléchargez une sauvegarde de tous vos paramètres actuels.",
+          "button": "Exporter"
+        },
+        "import": {
+          "title": "Importer les paramètres",
+          "description": "Restaurer les paramètres à partir d'un fichier JSON précédemment exporté.",
+          "button": "Importer"
+        }
+      },
+      "syncCache": {
+        "title": "Synchronisation et cache",
+        "description": "Synchronisez manuellement les données ou videz le cache si vous rencontrez des problèmes.",
+        "sync": {
+          "title": "Synchroniser avec Shopify",
+          "description": "Forcer la synchronisation de tous les paramètres et regrouper les données dans les métachamps Shopify.",
+          "button": "Synchroniser"
+        },
+        "clearCache": {
+          "title": "Vider le cache de l'application",
+          "description": "Effacez toutes les données mises en cache, y compris les offres groupées, les analyses et les paramètres.",
+          "button": "Effacer"
+        }
+      },
+      "webhookManagement": {
+        "title": "Gestion des webhooks",
+        "description": "Vérifier ou réenregistrer les abonnements aux webhooks auprès de Shopify depuis l'application d'offres groupées de produits Radius.",
+        "check": {
+          "title": "Vérifier les webhooks",
+          "description": "Afficher tous les abonnements Webhook actuellement enregistrés depuis l'application d'offres groupées de produits Radius.",
+          "button": "Vérifier"
+        },
+        "register": {
+          "title": "Forcer l'enregistrement des webhooks",
+          "description": "Réinitialiser et réenregistrer tous les webhooks auprès de Shopify.",
+          "button": "Enregistrer"
+        }
+      },
+      "dangerZone": {
+        "title": "Zone dangereuse",
+        "description": "Actions destructrices qui ne peuvent pas être annulées.",
+        "reset": {
+          "title": "Réinitialiser les paramètres de l'application",
+          "description": "Rétablir les valeurs par défaut de tous les paramètres. Cette action est irréversible.",
+          "button": "Réinitialiser"
+        }
+      },
+      "resetModal": {
+        "title": "Réinitialiser tous les paramètres ?",
+        "description1": "Cette opération réinitialisera tous vos paramètres à leurs valeurs par défaut. Vos offres groupées ne seront pas affectées, mais toutes les personnalisations des couleurs, des étiquettes et des autres paramètres seront perdues.",
+        "description2": "Cette action est irréversible.",
+        "confirmButton": "Réinitialiser tous les paramètres",
+        "cancelButton": "Annuler"
+      },
+      "syncResultsModal": {
+        "title": "Résultats de la synchronisation des métachamps",
+        "statusCol": "Statut",
+        "syncComplete": "Synchronisation terminée",
+        "syncFailed": "Échec de la synchronisation",
+        "statusSynced": "Synchronisé",
+        "statusError": "Erreur",
+        "unknownError": "Une erreur inconnue s'est produite",
+        "noResults": "Aucun résultat pour le moment.",
+        "close": "Fermer"
+      },
+      "webhookCheckModal": {
+        "title": "Webhooks enregistrés",
+        "statusCol": "Statut",
+        "allRegistered": "Tous les webhooks enregistrés",
+        "missingCount": "{count} webhook(s) manquant(s)",
+        "statusRegistered": "Enregistré(s) ({count})",
+        "statusMissing": "Manquant",
+        "statusGdpr": "RGPD ({count})",
+        "noResults": "Aucun résultat pour le moment.",
+        "close": "Fermer"
+      },
+      "webhookRegisterModal": {
+        "title": "Résultats de l'enregistrement des webhooks",
+        "statusCol": "Statut",
+        "allSuccess": "Tous enregistrés avec succès",
+        "partialSuccess": "Succès partiel",
+        "failedTitle": "Échec de l'enregistrement",
+        "statusRegistered": "Enregistré",
+        "statusFailed": "Échoué",
+        "noResults": "Aucun résultat pour le moment.",
+        "close": "Fermer"
+      }
+    },
+    "Customizer": {
+      "templateType": {
+        "title": "Sélectionner le type de modèle",
+        "label": "Type de modèle"
+      },
+      "responsive": {
+        "inheritTooltip": "Hérité du bureau. Cliquez pour personnaliser pour {deviceLabel}.",
+        "overrideTooltip": "Personnalisé pour {deviceLabel}. Cliquez pour réinitialiser à la valeur du bureau."
+      },
+      "preview": {
+        "cartBannerLayout": "Mise en page de la bannière du panier",
+        "bundleLayout": "Mise en page {label}"
+      },
+      "layoutNames": {
+        "LIST": "Liste",
+        "GRID": "Grille",
+        "CAROUSEL": "Curseur",
+        "COMPACT": "Compact",
+        "COMPACT_GRID": "Grille compacte",
+        "MINIMALIST": "Minimaliste",
+        "SLEEK": "Élégant",
+        "CHECKLIST": "Liste de contrôle",
+        "SPLIT_DEAL": "Offre partagée",
+        "CLASSIC_CARD": "Carte classique",
+        "DETAILED": "Détaillé",
+        "MINIMAL": "Minimal",
+        "CART_BANNER_LIST": "Détaillé",
+        "CART_BANNER_GRID": "Minimal"
+      },
+      "openStyleCustomizer": "Ouvrir le personnalisateur de style",
+      "heading": "Outil de personnalisation global - Gérer les styles des offres groupées",
+      "discard": "Abandonner",
+      "save": "Enregistrer",
+      "restoreDefaults": "Restaurer les valeurs par défaut",
+      "restoreDefaultsModal": {
+        "heading": "Rétablir les valeurs par défaut ?",
+        "message": "Cette opération réinitialisera tous les paramètres de style à leurs valeurs par défaut. Cette action est irréversible.",
+        "confirm": "Restaurer"
+      },
+      "inherit": "Hériter",
+      "selectColor": "Sélectionner la couleur",
+      "Config": {
+        "section_appearance_title": "Apparence",
+        "field_stylePreset_label": "Démarrage rapide",
+        "field_stylePreset_details": "Choisissez un préréglage et personnalisez-le à partir de là",
+        "field_idx_appearance_1_label": "Couleurs",
+        "field_primaryColor_label": "Couleur d’accentuation",
+        "field_primaryColor_details": "Boutons, badges et éléments interactifs",
+        "field_textColor_label": "Couleur du texte",
+        "field_textColor_details": "Titres, noms de produits et corps de texte",
+        "field_backgroundColor_label": "Arrière-plan",
+        "field_backgroundColor_details": "Arrière-plan du conteneur de widgets",
+        "field_borderColor_label": "Couleur de la bordure",
+        "field_borderColor_details": "Bordures et séparateurs",
+        "field_savingsColor_label": "Couleur des économies",
+        "field_savingsColor_details": "Texte de la réduction et mises en évidence des économies",
+        "field_idx_appearance_7_label": "Forme et profondeur",
+        "field_cornerStyle_label": "Arrondi des coins",
+        "field_cornerStyle_option_sharp": "Angulaire",
+        "field_cornerStyle_option_modern": "Moderne",
+        "field_cornerStyle_option_rounded": "Arrondi",
+        "field_shadow_label": "Profondeur de l’ombre",
+        "field_shadow_option_none": "Aucune",
+        "field_shadow_option_soft": "Faible",
+        "field_shadow_option_strong": "Importante",
+        "field_spacing_label": "Espacement",
+        "field_spacing_option_compact": "Compact",
+        "field_spacing_option_comfortable": "Confortable",
+        "field_spacing_option_spacious": "Spacieux",
+        "section_productCards_title": "Fiches produits",
+        "field_idx_productCards_0_label": "Images",
+        "field_imageSize_label": "Taille de l’image",
+        "field_imageSize_option_small": "Petite",
+        "field_imageSize_option_medium": "Moyenne",
+        "field_imageSize_option_large": "Grande",
+        "field_imageFit_label": "Ajustement de l’image",
+        "field_imageFit_option_cover": "Couvrir",
+        "field_imageFit_option_contain": "Contenir",
+        "field_imagePosition_label": "Position de l’image",
+        "field_imagePosition_option_left": "Gauche",
+        "field_imagePosition_option_top": "Haut",
+        "field_idx_productCards_4_label": "Style de carte",
+        "field_customizeCardStyle_label": "Personnaliser le style de la carte",
+        "field_customizeCardStyle_details": "Remplacer les styles hérités de l’apparence",
+        "field_productCardBg_label": "Arrière-plan de la carte",
+        "field_productCardBorder_label": "Afficher la bordure de la carte",
+        "field_productCardShadow_label": "Ombre de la carte",
+        "section_buttonBadge_title": "Bouton et badge",
+        "field_idx_buttonBadge_0_label": "Bouton « Ajouter au panier »",
+        "field_buttonStyle_label": "Style du bouton",
+        "field_buttonStyle_option_filled": "Plein",
+        "field_buttonStyle_option_outline": "Contour",
+        "field_buttonSize_label": "Taille du bouton",
+        "field_buttonSize_option_small": "Petite",
+        "field_buttonSize_option_medium": "Moyenne",
+        "field_buttonSize_option_large": "Grande",
+        "field_buttonWidth_label": "Largeur du bouton",
+        "field_buttonWidth_option_auto": "Automatique",
+        "field_buttonWidth_option_full": "Pleine largeur",
+        "field_buttonBgColor_label": "Couleur du bouton",
+        "field_buttonBgColor_details": "Laisser vide pour utiliser la couleur d’accentuation",
+        "field_idx_buttonBadge_5_label": "Badge d’économies",
+        "field_badgePosition_label": "Position du badge",
+        "field_badgePosition_option_top-left": "Gauche",
+        "field_badgePosition_option_top-right": "Droite",
+        "field_badgePosition_option_inline": "Aligné",
+        "field_badgeStyle_label": "Style du badge",
+        "field_badgeStyle_option_filled": "Plein",
+        "field_badgeStyle_option_outline": "Contour",
+        "field_idx_buttonBadge_8_label": "Récapitulatif des prix",
+        "field_pricingSummaryBox_label": "Afficher la zone de récapitulatif",
+        "field_pricingSummaryBg_label": "Arrière-plan du récapitulatif",
+        "field_pricingSummaryStyle_label": "Style du récapitulatif",
+        "field_pricingSummaryStyle_option_minimal": "Minimal",
+        "field_pricingSummaryStyle_option_card": "Carte",
+        "field_pricingSummaryStyle_option_highlight": "Surlignage",
+        "section_advanced_title": "Avancé",
+        "field_idx_advanced_0_label": "Conteneur",
+        "field_boxMaxWidth_label": "Largeur maximale du widget",
+        "field_boxAlignment_label": "Alignement du widget",
+        "field_boxAlignment_option_left": "Gauche",
+        "field_boxAlignment_option_center": "Centré",
+        "field_boxAlignment_option_right": "Droite",
+        "field_showBorder_label": "Bordure du widget",
+        "field_idx_advanced_4_label": "Points d’arrêt",
+        "field_breakpointPreset_label": "Préréglage des points d’arrêt",
+        "field_breakpointPreset_details": "Standard (1 024/768), Compact (960/640), Large (1 200/768)",
+        "field_breakpointPreset_option_standard": "Standard",
+        "field_breakpointPreset_option_compact": "Compact",
+        "field_breakpointPreset_option_wide": "Large",
+        "field_customBreakpoints_label": "Utiliser des valeurs personnalisées",
+        "field_customBreakpoints_details": "Remplacer le préréglage par des valeurs en pixels exactes",
+        "field_tabletBreakpoint_label": "Point d’arrêt pour tablette",
+        "field_mobileBreakpoint_label": "Point d’arrêt pour mobile",
+        "field_idx_advanced_9_label": "Typographie",
+        "field_headingSize_label": "Taille du titre",
+        "field_headingSize_option_small": "Petite",
+        "field_headingSize_option_medium": "Moyenne",
+        "field_headingSize_option_large": "Grande",
+        "field_bodySize_label": "Taille du corps du texte",
+        "field_bodySize_option_small": "Petite",
+        "field_bodySize_option_medium": "Moyenne",
+        "field_bodySize_option_large": "Grande",
+        "field_idx_advanced_12_label": "Mise en page de la liste",
+        "field_dividerStyle_label": "Style du séparateur",
+        "field_dividerStyle_option_none": "Aucune",
+        "field_dividerStyle_option_line": "Ligne",
+        "field_dividerStyle_option_plus": "Plus",
+        "field_idx_advanced_14_label": "Disposition de la grille",
+        "field_gridColumns_label": "Colonnes",
+        "field_gridColumns_option_2": "2",
+        "field_gridColumns_option_3": "3",
+        "field_gridColumns_option_4": "4",
+        "field_idx_advanced_16_label": "Mise en page du diaporama",
+        "field_slidesPerView_label": "Diapositives visibles",
+        "field_slidesPerView_option_2": "2",
+        "field_slidesPerView_option_3": "3",
+        "field_slidesPerView_option_4": "4",
+        "field_carouselNavigation_label": "Navigation",
+        "field_carouselNavigation_option_none": "Aucune",
+        "field_carouselNavigation_option_arrows": "Flèches",
+        "field_carouselNavigation_option_dots": "Points",
+        "field_carouselNavigation_option_both": "Les deux",
+        "field_autoplay_label": "Lecture automatique",
+        "field_autoplaySpeed_label": "Vitesse de lecture automatique",
+        "field_idx_advanced_21_label": "Paramètres BOGO",
+        "field_bogoFreeTagColor_label": "Couleur de l’étiquette GRATUIT",
+        "field_bogoFreeTagColor_details": "Couleur de l’étiquette GRATUIT",
+        "field_bogoCardBorderStyle_label": "Style de bordure de la carte",
+        "field_bogoCardBorderStyle_option_solid": "Pleine",
+        "field_bogoCardBorderStyle_option_dashed": "Tiret",
+        "field_bogoCardBorderStyle_option_dotted": "En pointillés",
+        "field_idx_advanced_24_label": "Paramètres « Achetez X, obtenez Y »",
+        "field_buyGetTierStyle_label": "Affichage des niveaux",
+        "field_buyGetTierStyle_option_cards": "Cartes",
+        "field_buyGetTierStyle_option_list": "Liste",
+        "field_buyGetTierStyle_option_tabs": "Onglets",
+        "field_idx_advanced_26_label": "Paramètres de la remise sur volume",
+        "field_volumeTierHighlightColor_label": "Couleur de surbrillance du niveau",
+        "field_volumeTierHighlightColor_details": "Couleur du niveau actif/populaire",
+        "field_volumeTierStyle_label": "Affichage des niveaux",
+        "field_volumeTierStyle_option_table": "Tableau",
+        "field_volumeTierStyle_option_cards": "Cartes",
+        "field_idx_advanced_29_label": "Paramètres d’assortiment",
+        "field_mixMatchGroupHeaderColor_label": "Couleur de l’en-tête de groupe",
+        "field_mixMatchGroupHeaderColor_details": "Couleur des en-têtes de section de groupe",
+        "field_mixMatchSelectionStyle_label": "Style de sélection",
+        "field_mixMatchSelectionStyle_option_checkbox": "Case à cocher",
+        "field_mixMatchSelectionStyle_option_radio": "Bouton radio",
+        "field_mixMatchSelectionStyle_option_highlight": "Surlignage",
+        "field_idx_advanced_32_label": "Paramètres FBT",
+        "field_fbtSeparatorStyle_label": "Style du séparateur",
+        "field_fbtSeparatorStyle_option_plus": "Plus",
+        "field_fbtSeparatorStyle_option_line": "Ligne",
+        "field_fbtSeparatorStyle_option_none": "Aucune",
+        "field_fbtCheckboxColor_label": "Couleur de la case à cocher",
+        "field_fbtCheckboxColor_details": "Couleur des cases à cocher pour la sélection des produits",
+        "section_cartBanner_title": "Bannière du panier",
+        "field_idx_cartBanner_0_label": "Couleurs",
+        "field_cartBannerTextColor_label": "Couleur du texte",
+        "field_cartBannerTextColor_details": "Corps du texte dans la bannière",
+        "field_cartBannerBgColor_label": "Arrière-plan",
+        "field_cartBannerBgColor_details": "Arrière-plan du conteneur de la bannière",
+        "field_cartBannerBorderColor_label": "Couleur de la bordure",
+        "field_cartBannerBorderColor_details": "Accentuation de la bordure de la bannière",
+        "field_cartBannerHighlightColor_label": "Couleur de surlignage",
+        "field_cartBannerHighlightColor_details": "Mise en avant du prix et des économies",
+        "field_idx_cartBanner_5_label": "Forme et profondeur",
+        "field_cartBannerCornerStyle_label": "Arrondi des coins",
+        "field_cartBannerCornerStyle_option_sharp": "Angulaire",
+        "field_cartBannerCornerStyle_option_modern": "Moderne",
+        "field_cartBannerCornerStyle_option_rounded": "Arrondi",
+        "field_cartBannerShadow_label": "Profondeur de l’ombre",
+        "field_cartBannerShadow_option_none": "Aucune",
+        "field_cartBannerShadow_option_soft": "Faible",
+        "field_cartBannerShadow_option_strong": "Importante",
+        "field_cartBannerSpacing_label": "Espacement",
+        "field_cartBannerSpacing_option_compact": "Compact",
+        "field_cartBannerSpacing_option_comfortable": "Confortable",
+        "field_cartBannerSpacing_option_spacious": "Spacieux",
+        "field_cartBannerBorderStyle_label": "Ligne de bordure",
+        "field_cartBannerBorderStyle_option_solid": "Pleine",
+        "field_cartBannerBorderStyle_option_dashed": "Tiret",
+        "field_cartBannerBorderStyle_option_dotted": "En pointillés",
+        "field_idx_cartBanner_10_label": "Typographie",
+        "field_cartBannerBodySize_label": "Taille du texte",
+        "field_cartBannerBodySize_option_small": "Petite",
+        "field_cartBannerBodySize_option_medium": "Moyenne",
+        "field_cartBannerBodySize_option_large": "Grande",
+        "field_idx_cartBanner_12_label": "Icône",
+        "field_cartBannerIconType_label": "Icône",
+        "field_cartBannerIconType_option_tag": "Étiquette de prix",
+        "field_cartBannerIconType_option_percent": "Badge de pourcentage",
+        "field_cartBannerIconType_option_gift": "Cadeau",
+        "field_cartBannerIconType_option_sparkle": "Éclat",
+        "field_cartBannerIconType_option_fire": "Offre spéciale",
+        "field_cartBannerIconType_option_check": "Coche",
+        "field_cartBannerIconType_option_none": "Aucune icône",
+        "field_cartBannerIconColor_label": "Couleur de l’icône"
+      }
+    }
   }
 }

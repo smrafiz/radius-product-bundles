@@ -250,7 +250,680 @@
   },
   "Settings": {
     "title": "App Settings",
+    "pageTitle": "Settings - Manage Your Bundle Preferences",
     "save": "Save Settings",
-    "saved": "Settings Saved Successfully."
+    "saved": "Settings Saved Successfully.",
+    "errorLoading": "Failed to load settings",
+    "Locales": {
+      "title": "Languages",
+      "fallbackTooltip": "Empty fields will fall back to the primary language ({primary}).",
+      "primaryBadge": "(Primary)"
+    },
+    "Tabs": {
+      "general": {
+        "title": "General",
+        "Sections": {
+          "defaults": {
+            "title": "Defaults",
+            "tooltip": "Default values applied when creating new bundles."
+          },
+          "cart-behavior": {
+            "title": "Cart Behavior",
+            "tooltip": "Control how the app interacts with the cart and checkout."
+          },
+          "privacy": {
+            "title": "Privacy",
+            "tooltip": "Control data collection and tracking behavior."
+          },
+          "performance": {
+            "title": "Performance",
+            "tooltip": "Control how storefront data is cached for faster page loads."
+          }
+        },
+        "Fields": {
+          "defaultDiscountType": {
+            "label": "Default discount type",
+            "details": "Applied to new bundles by default",
+            "options": {
+              "PERCENTAGE": "Percentage",
+              "FIXED_AMOUNT": "Fixed amount",
+              "CUSTOM_PRICE": "Custom price",
+              "NO_DISCOUNT": "No discount"
+            }
+          },
+          "defaultDiscountValue": {
+            "label": "Default discount value",
+            "details": "Default percentage or fixed amount"
+          },
+          "maxBundleProducts": {
+            "label": "Max products per bundle",
+            "details": "Maximum products allowed in a single bundle"
+          },
+          "maxBundlesPerShop": {
+            "label": "Max bundles per shop",
+            "details": "Total bundles limit (based on your plan)"
+          },
+          "bundlePriorityType": {
+            "label": "Bundle priority strategy",
+            "details": "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
+            "options": {
+              "index_based": "Index based (manual priority)",
+              "discount_based": "Discount based (highest savings wins)"
+            }
+          },
+          "redirectAfterCart": {
+            "label": "After add to cart",
+            "details": "Select what should happen after a customer adds a bundle to the cart.",
+            "options": {
+              "default": "Default theme behavior",
+              "cart": "Redirect to cart page",
+              "checkout": "Redirect to checkout",
+              "none": "Stay on page (show notification)"
+            }
+          },
+          "hidePaymentButtons": {
+            "label": "Hide third-party payment buttons",
+            "details": "Hides PayPal, Apple Pay, etc. on product and cart pages. Does not affect checkout page."
+          },
+          "enableStockValidation": {
+            "label": "Enable stock validation",
+            "details": "Disables the bundle button when any product in the bundle is out of stock."
+          },
+          "maxBundlesPerOrder": {
+            "label": "Max bundles per order",
+            "details": "Limit how many bundles a customer can add to their cart. Prevents discount abuse. 0 = unlimited."
+          },
+          "showSavingsBanner": {
+            "label": "Show savings banner in cart",
+            "details": "Display a banner on the cart page showing how much customers save with their bundles."
+          },
+          "allowDiscountStacking": {
+            "label": "Allow discount stacking",
+            "details": "Let bundle discounts combine with other store discounts (coupon codes, automatic discounts, shipping discounts)."
+          },
+          "enableAnalytics": {
+            "label": "Enable analytics tracking",
+            "details": "Track bundle views, add-to-carts, and purchases. Disable for GDPR compliance or if you use external analytics."
+          },
+          "cacheTtl": {
+            "label": "Storefront cache duration",
+            "details": "How long browsers cache product data. Longer = faster pages, but price/availability changes take longer to appear.",
+            "options": {
+              "0": "No cache",
+              "60": "1 minute",
+              "300": "5 minutes (recommended)",
+              "900": "15 minutes",
+              "3600": "1 hour"
+            }
+          },
+          "lazyLoadImages": {
+            "label": "Lazy load product images",
+            "details": "Defer loading of product images until they are visible on screen. Improves initial page load speed."
+          }
+        }
+      },
+      "style": {
+        "title": "Style",
+        "Sections": {
+          "style-customizer": {
+            "title": "Style Customizer",
+            "tooltip": "Set global colors, typography, and styling for all bundle widgets.",
+            "description": "Customize colors, typography, buttons, badges, and more. These styles apply to all bundle widgets and can be overridden per-page in the Theme Editor."
+          }
+        },
+        "Fields": {}
+      },
+      "labels": {
+        "title": "Labels",
+        "Sections": {
+          "widget-text": {
+            "title": "Widget Texts",
+            "tooltip": "Customize the main texts displayed in bundle widgets."
+          },
+          "button-states": {
+            "title": "Button States",
+            "tooltip": "Text shown during different button states."
+          },
+          "price-labels": {
+            "title": "Price Labels",
+            "tooltip": "Labels displayed next to prices in the bundle widget."
+          },
+          "shipping-labels": {
+            "title": "Shipping Labels",
+            "tooltip": "Text related to shipping displayed in the widget."
+          },
+          "cart-limits": {
+            "title": "Cart Limits",
+            "tooltip": "Text shown when cart bundle limits are reached."
+          },
+          "bogo-labels": {
+            "title": "BOGO / Buy X Get Y Labels",
+            "tooltip": "Labels specific to BOGO and Buy X Get Y bundle layouts."
+          },
+          "cart-banner": {
+            "title": "Cart Page Savings Banner",
+            "tooltip": "Text displayed in the cart page savings banner."
+          }
+        },
+        "Fields": {
+          "headingLabel": {
+            "label": "Bundle heading",
+            "details": "Main heading displayed above the bundle widget.",
+            "placeholder": "Bundle & Save"
+          },
+          "addToCartText": {
+            "label": "Add to cart button",
+            "details": "Text on the add to cart button.",
+            "placeholder": "Add Bundle to Cart"
+          },
+          "quantityLabel": {
+            "label": "Quantity label",
+            "details": "Label before quantity selector.",
+            "placeholder": "Qty:"
+          },
+          "addingText": {
+            "label": "Adding text",
+            "details": "Shown while adding to cart.",
+            "placeholder": "Adding..."
+          },
+          "addedText": {
+            "label": "Added text",
+            "details": "Shown after successful add.",
+            "placeholder": "Added!"
+          },
+          "outOfStockText": {
+            "label": "Out of stock text",
+            "details": "Shown when unavailable.",
+            "placeholder": "Out of Stock"
+          },
+          "regularPriceLabel": {
+            "label": "Regular price label",
+            "details": "Label for the original total price.",
+            "placeholder": "Regular Price:"
+          },
+          "bundlePriceLabel": {
+            "label": "Bundle price label",
+            "details": "Label for the discounted bundle price.",
+            "placeholder": "Bundle Price:"
+          },
+          "youSaveLabel": {
+            "label": "Savings label",
+            "details": "Label for the savings amount.",
+            "placeholder": "You Save:"
+          },
+          "savingsBadgeText": {
+            "label": "Savings badge text",
+            "details": "Text on savings badge. Use {amount} for the discount value.",
+            "placeholder": "Save {amount}"
+          },
+          "freeShippingLabel": {
+            "label": "Free shipping label",
+            "details": "Displayed when bundle includes free shipping.",
+            "placeholder": "Free Shipping"
+          },
+          "freeShippingMethodTitle": {
+            "label": "Free shipping method title",
+            "details": "Shipping discount message shown at checkout. Use {name} for bundle name.",
+            "placeholder": "Free shipping with {name}"
+          },
+          "maxBundlesReachedText": {
+            "label": "Max bundles reached message",
+            "details": "Shown when customer tries to exceed the max bundles per order limit. Use {count} for the limit number.",
+            "placeholder": "Maximum {count} bundle(s) per order allowed"
+          },
+          "bogoBadgeText": {
+            "label": "Deal badge text",
+            "details": "Custom deal badge text. Leave empty to auto-generate from quantities and discount.",
+            "placeholder": "Buy 1 Get 1 Free"
+          },
+          "bogoFreeText": {
+            "label": "Free text",
+            "details": "Text shown on reward products when they are free (100% discount).",
+            "placeholder": "FREE"
+          },
+          "bogoYouPayLabel": {
+            "label": "You pay label",
+            "details": "Label above the final price in the pricing bar.",
+            "placeholder": "You Pay Only"
+          },
+          "bogoYouSaveLabel": {
+            "label": "You save label",
+            "details": "Label above the savings amount in the pricing bar.",
+            "placeholder": "You Save"
+          },
+          "bogoTriggerBadgeText": {
+            "label": "Trigger badge text",
+            "details": "Badge on the trigger (buy) product card.",
+            "placeholder": "You Buy"
+          },
+          "bogoRewardBadgeText": {
+            "label": "Reward badge text",
+            "details": "Badge on the reward (get) product card.",
+            "placeholder": "You Get FREE"
+          },
+          "bogoTotalLabel": {
+            "label": "Total label",
+            "details": "Label before the total price in the footer.",
+            "placeholder": "Total"
+          },
+          "bogoSaveText": {
+            "label": "Save text",
+            "details": "Savings text in the footer. Use {amount} for the value.",
+            "placeholder": "Save {amount}"
+          },
+          "checklistProgressText": {
+            "label": "Checklist progress text",
+            "details": "Progress count text. Use {count} for checked items and {total} for total items.",
+            "placeholder": "{count}/{total} items added"
+          },
+          "checklistHintText": {
+            "label": "Checklist hint text",
+            "details": "Hint shown when items remain. Use {remaining} for remaining count.",
+            "placeholder": "{remaining} more to unlock!"
+          },
+          "checklistCompletedText": {
+            "label": "Checklist completed text",
+            "details": "Hint shown when all items are selected.",
+            "placeholder": "Unlocked!"
+          },
+          "checklistLockedLabel": {
+            "label": "Locked reward label",
+            "details": "Reward section heading when items are not yet selected.",
+            "placeholder": "Unlock by adding all items above"
+          },
+          "checklistUnlockedLabel": {
+            "label": "Unlocked reward label",
+            "details": "Reward section heading when all items are selected.",
+            "placeholder": "Reward Unlocked"
+          },
+          "checklistPricingLockedText": {
+            "label": "Pricing locked text",
+            "details": "Text shown in pricing box before all items are selected.",
+            "placeholder": "Select all items to see your price"
+          },
+          "bannerSavingText": {
+            "label": "Savings message",
+            "details": "Use {discount} for savings value and {name} for bundle name.",
+            "placeholder": "You're saving {discount} with {name}"
+          },
+          "bannerCustomPriceText": {
+            "label": "Custom price message",
+            "details": "Use {price} for bundle price and {name} for bundle name.",
+            "placeholder": "Special price: {price} for {name}"
+          },
+          "bannerFreeShippingQualifyText": {
+            "label": "Free shipping qualify message",
+            "details": "Use {name} for bundle name. Shown for bundles with free shipping only.",
+            "placeholder": "{name} qualifies for free shipping!"
+          },
+          "bannerFreeShippingText": {
+            "label": "Free shipping included message",
+            "details": "Additional message when bundle includes free shipping.",
+            "placeholder": "Free shipping included!"
+          }
+        }
+      },
+      "advanced": {
+        "title": "Advanced",
+        "Sections": {
+          "custom-css": {
+            "title": "Custom CSS",
+            "tooltip": "Add custom CSS for advanced styling. Only use if you have CSS knowledge."
+          }
+        },
+        "Fields": {
+          "customCssClass": {
+            "label": "Custom CSS class",
+            "details": "Add a custom class to the bundle widget container for targeted styling."
+          },
+          "customCss": {
+            "label": "Custom CSS",
+            "details": "Write custom CSS for unique visual customizations. Applied to all pages where the bundle widget loads.",
+            "placeholder": ".radius-bundle { /* Your custom styles */ }"
+          }
+        }
+      },
+      "tools": {
+        "title": "Tools",
+        "Sections": {},
+        "Fields": {}
+      }
+    },
+    "Tools": {
+      "dataManagement": {
+        "title": "Data Management",
+        "tooltip": "Export or import your app settings.",
+        "export": {
+          "title": "Export settings",
+          "description": "Download a backup of all your current settings.",
+          "action": "Export"
+        },
+        "import": {
+          "title": "Import settings",
+          "description": "Restore settings from a previously exported JSON file.",
+          "action": "Import"
+        }
+      },
+      "syncCache": {
+        "title": "Sync & Cache",
+        "tooltip": "Manually sync data or clear cache if you experience issues.",
+        "sync": {
+          "title": "Sync to Shopify",
+          "description": "Force sync all settings and bundle data to Shopify metafields.",
+          "action": "Sync"
+        },
+        "clear": {
+          "title": "Clear app cache",
+          "description": "Clear all cached data including bundles, analytics, and settings.",
+          "action": "Clear"
+        }
+      },
+      "webhooks": {
+        "title": "Webhook Management",
+        "tooltip": "Check or re-register webhook subscriptions with Shopify from Radius product bundles app.",
+        "check": {
+          "title": "Check webhooks",
+          "description": "View all currently registered webhook subscriptions from Radius product bundles app.",
+          "action": "Check"
+        },
+        "register": {
+          "title": "Force register webhooks",
+          "description": "Reset and re-register all webhooks with Shopify.",
+          "action": "Register"
+        }
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "tooltip": "Destructive actions that cannot be undone.",
+        "reset": {
+          "title": "Reset app settings",
+          "description": "Reset all settings to their default values. This action cannot be undone.",
+          "action": "Reset"
+        }
+      },
+      "modals": {
+        "reset": {
+          "heading": "Reset all settings?",
+          "body1": "This will reset all your settings to their default values. Your bundles will not be affected, but all customizations to colors, labels, and other settings will be lost.",
+          "body2": "This action cannot be undone.",
+          "primaryAction": "Reset all settings",
+          "cancel": "Cancel"
+        },
+        "syncResult": {
+          "heading": "Metafield Sync Results",
+          "status": "Status",
+          "complete": "Sync complete",
+          "failed": "Sync failed",
+          "synced": "Synced",
+          "error": "Error",
+          "unknownError": "An unknown error occurred",
+          "noResults": "No results yet.",
+          "close": "Close"
+        },
+        "webhookCheck": {
+          "heading": "Registered Webhooks",
+          "status": "Status",
+          "allRegistered": "All webhooks registered",
+          "missingCount": "{count} missing webhook(s)",
+          "registeredCount": "Registered ({count})",
+          "missing": "Missing",
+          "gdprCount": "GDPR ({count})",
+          "noResults": "No results yet.",
+          "close": "Close"
+        },
+        "webhookRegister": {
+          "heading": "Webhook Registration Results",
+          "status": "Status",
+          "success": "All registered successfully",
+          "partial": "Partial success",
+          "failedStatus": "Registration failed",
+          "registered": "Registered",
+          "failed": "Failed",
+          "noResults": "No results yet.",
+          "close": "Close"
+        }
+      }
+    },
+    "Customizer": {
+      "templateType": {
+        "title": "Select Template Type",
+        "label": "Template Type"
+      },
+      "responsive": {
+        "inheritTooltip": "Inheriting from Desktop. Click to customize for {deviceLabel}.",
+        "overrideTooltip": "Customized for {deviceLabel}. Click to reset to Desktop value."
+      },
+      "preview": {
+        "cartBannerLayout": "Cart Banner Layout",
+        "bundleLayout": "{label} Layout"
+      },
+      "layoutNames": {
+        "LIST": "List",
+        "GRID": "Grid",
+        "CAROUSEL": "Slider",
+        "COMPACT": "Compact",
+        "COMPACT_GRID": "Compact Grid",
+        "MINIMALIST": "Minimalist",
+        "SLEEK": "Sleek",
+        "CHECKLIST": "Checklist",
+        "SPLIT_DEAL": "Split Deal",
+        "CLASSIC_CARD": "Classic Card",
+        "DETAILED": "Detailed",
+        "MINIMAL": "Minimal",
+        "CART_BANNER_LIST": "Detailed",
+        "CART_BANNER_GRID": "Minimal"
+      },
+      "openStyleCustomizer": "Open style customizer",
+      "heading": "Global Customizer - Manage Bundle Styles",
+      "discard": "Discard",
+      "save": "Save",
+      "restoreDefaults": "Restore defaults",
+      "restoreDefaultsModal": {
+        "heading": "Restore defaults?",
+        "message": "This will reset all style settings to their default values. This action cannot be undone.",
+        "confirm": "Restore"
+      },
+      "inherit": "Inherit",
+      "selectColor": "Select color",
+      "Config": {
+        "section_appearance_title": "Appearance",
+        "field_stylePreset_label": "Quick Start",
+        "field_stylePreset_details": "Choose a preset and customize from there",
+        "field_idx_appearance_1_label": "Colors",
+        "field_primaryColor_label": "Accent color",
+        "field_primaryColor_details": "Buttons, badges, and interactive elements",
+        "field_textColor_label": "Text color",
+        "field_textColor_details": "Headings, product names, and body text",
+        "field_backgroundColor_label": "Background",
+        "field_backgroundColor_details": "Widget container background",
+        "field_borderColor_label": "Border color",
+        "field_borderColor_details": "Borders and dividers",
+        "field_savingsColor_label": "Savings color",
+        "field_savingsColor_details": "Discount text and savings highlights",
+        "field_idx_appearance_7_label": "Shape & Depth",
+        "field_cornerStyle_label": "Corner roundness",
+        "field_cornerStyle_option_sharp": "Sharp",
+        "field_cornerStyle_option_modern": "Modern",
+        "field_cornerStyle_option_rounded": "Rounded",
+        "field_shadow_label": "Shadow depth",
+        "field_shadow_option_none": "None",
+        "field_shadow_option_soft": "Soft",
+        "field_shadow_option_strong": "Strong",
+        "field_spacing_label": "Spacing",
+        "field_spacing_option_compact": "Compact",
+        "field_spacing_option_comfortable": "Comfortable",
+        "field_spacing_option_spacious": "Spacious",
+        "section_productCards_title": "Product Cards",
+        "field_idx_productCards_0_label": "Images",
+        "field_imageSize_label": "Image size",
+        "field_imageSize_option_small": "Small",
+        "field_imageSize_option_medium": "Medium",
+        "field_imageSize_option_large": "Large",
+        "field_imageFit_label": "Image fit",
+        "field_imageFit_option_cover": "Cover",
+        "field_imageFit_option_contain": "Contain",
+        "field_imagePosition_label": "Image position",
+        "field_imagePosition_option_left": "Left",
+        "field_imagePosition_option_top": "Top",
+        "field_idx_productCards_4_label": "Card Style",
+        "field_customizeCardStyle_label": "Customize card style",
+        "field_customizeCardStyle_details": "Override inherited styles from Appearance",
+        "field_productCardBg_label": "Card background",
+        "field_productCardBorder_label": "Show card border",
+        "field_productCardShadow_label": "Card shadow",
+        "section_buttonBadge_title": "Button & Badge",
+        "field_idx_buttonBadge_0_label": "Add to Cart Button",
+        "field_buttonStyle_label": "Button style",
+        "field_buttonStyle_option_filled": "Filled",
+        "field_buttonStyle_option_outline": "Outline",
+        "field_buttonSize_label": "Button size",
+        "field_buttonSize_option_small": "Small",
+        "field_buttonSize_option_medium": "Medium",
+        "field_buttonSize_option_large": "Large",
+        "field_buttonWidth_label": "Button width",
+        "field_buttonWidth_option_auto": "Auto",
+        "field_buttonWidth_option_full": "Full Width",
+        "field_buttonBgColor_label": "Button color",
+        "field_buttonBgColor_details": "Leave empty to use accent color",
+        "field_idx_buttonBadge_5_label": "Savings Badge",
+        "field_badgePosition_label": "Badge position",
+        "field_badgePosition_option_top-left": "Left",
+        "field_badgePosition_option_top-right": "Right",
+        "field_badgePosition_option_inline": "Inline",
+        "field_badgeStyle_label": "Badge style",
+        "field_badgeStyle_option_filled": "Filled",
+        "field_badgeStyle_option_outline": "Outline",
+        "field_idx_buttonBadge_8_label": "Pricing Summary",
+        "field_pricingSummaryBox_label": "Show summary box",
+        "field_pricingSummaryBg_label": "Summary background",
+        "field_pricingSummaryStyle_label": "Summary style",
+        "field_pricingSummaryStyle_option_minimal": "Minimal",
+        "field_pricingSummaryStyle_option_card": "Card",
+        "field_pricingSummaryStyle_option_highlight": "Highlight",
+        "section_advanced_title": "Advanced",
+        "field_idx_advanced_0_label": "Container",
+        "field_boxMaxWidth_label": "Widget max width",
+        "field_boxAlignment_label": "Widget alignment",
+        "field_boxAlignment_option_left": "Left",
+        "field_boxAlignment_option_center": "Center",
+        "field_boxAlignment_option_right": "Right",
+        "field_showBorder_label": "Widget border",
+        "field_idx_advanced_4_label": "Breakpoints",
+        "field_breakpointPreset_label": "Breakpoint preset",
+        "field_breakpointPreset_details": "Standard (1024/768), Compact (960/640), Wide (1200/768)",
+        "field_breakpointPreset_option_standard": "Standard",
+        "field_breakpointPreset_option_compact": "Compact",
+        "field_breakpointPreset_option_wide": "Wide",
+        "field_customBreakpoints_label": "Use custom values",
+        "field_customBreakpoints_details": "Override preset with exact pixel values",
+        "field_tabletBreakpoint_label": "Tablet breakpoint",
+        "field_mobileBreakpoint_label": "Mobile breakpoint",
+        "field_idx_advanced_9_label": "Typography",
+        "field_headingSize_label": "Heading size",
+        "field_headingSize_option_small": "Small",
+        "field_headingSize_option_medium": "Medium",
+        "field_headingSize_option_large": "Large",
+        "field_bodySize_label": "Body text size",
+        "field_bodySize_option_small": "Small",
+        "field_bodySize_option_medium": "Medium",
+        "field_bodySize_option_large": "Large",
+        "field_idx_advanced_12_label": "List Layout",
+        "field_dividerStyle_label": "Divider style",
+        "field_dividerStyle_option_none": "None",
+        "field_dividerStyle_option_line": "Line",
+        "field_dividerStyle_option_plus": "Plus",
+        "field_idx_advanced_14_label": "Grid Layout",
+        "field_gridColumns_label": "Columns",
+        "field_gridColumns_option_2": "2",
+        "field_gridColumns_option_3": "3",
+        "field_gridColumns_option_4": "4",
+        "field_idx_advanced_16_label": "Slider Layout",
+        "field_slidesPerView_label": "Slides visible",
+        "field_slidesPerView_option_2": "2",
+        "field_slidesPerView_option_3": "3",
+        "field_slidesPerView_option_4": "4",
+        "field_carouselNavigation_label": "Navigation",
+        "field_carouselNavigation_option_none": "None",
+        "field_carouselNavigation_option_arrows": "Arrows",
+        "field_carouselNavigation_option_dots": "Dots",
+        "field_carouselNavigation_option_both": "Both",
+        "field_autoplay_label": "Autoplay",
+        "field_autoplaySpeed_label": "Autoplay speed",
+        "field_idx_advanced_21_label": "BOGO Settings",
+        "field_bogoFreeTagColor_label": "FREE tag color",
+        "field_bogoFreeTagColor_details": "Color of the FREE label",
+        "field_bogoCardBorderStyle_label": "Card border style",
+        "field_bogoCardBorderStyle_option_solid": "Solid",
+        "field_bogoCardBorderStyle_option_dashed": "Dashed",
+        "field_bogoCardBorderStyle_option_dotted": "Dotted",
+        "field_idx_advanced_24_label": "Buy X Get Y Settings",
+        "field_buyGetTierStyle_label": "Tier display",
+        "field_buyGetTierStyle_option_cards": "Cards",
+        "field_buyGetTierStyle_option_list": "List",
+        "field_buyGetTierStyle_option_tabs": "Tabs",
+        "field_idx_advanced_26_label": "Volume Discount Settings",
+        "field_volumeTierHighlightColor_label": "Tier highlight color",
+        "field_volumeTierHighlightColor_details": "Color for the active/popular tier",
+        "field_volumeTierStyle_label": "Tier display",
+        "field_volumeTierStyle_option_table": "Table",
+        "field_volumeTierStyle_option_cards": "Cards",
+        "field_idx_advanced_29_label": "Mix & Match Settings",
+        "field_mixMatchGroupHeaderColor_label": "Group header color",
+        "field_mixMatchGroupHeaderColor_details": "Color for group section headings",
+        "field_mixMatchSelectionStyle_label": "Selection style",
+        "field_mixMatchSelectionStyle_option_checkbox": "Checkbox",
+        "field_mixMatchSelectionStyle_option_radio": "Radio",
+        "field_mixMatchSelectionStyle_option_highlight": "Highlight",
+        "field_idx_advanced_32_label": "FBT Settings",
+        "field_fbtSeparatorStyle_label": "Separator style",
+        "field_fbtSeparatorStyle_option_plus": "Plus",
+        "field_fbtSeparatorStyle_option_line": "Line",
+        "field_fbtSeparatorStyle_option_none": "None",
+        "field_fbtCheckboxColor_label": "Checkbox color",
+        "field_fbtCheckboxColor_details": "Color for product selection checkboxes",
+        "section_cartBanner_title": "Cart Banner",
+        "field_idx_cartBanner_0_label": "Colors",
+        "field_cartBannerTextColor_label": "Text color",
+        "field_cartBannerTextColor_details": "Body text in the banner",
+        "field_cartBannerBgColor_label": "Background",
+        "field_cartBannerBgColor_details": "Banner container background",
+        "field_cartBannerBorderColor_label": "Border color",
+        "field_cartBannerBorderColor_details": "Banner border accent",
+        "field_cartBannerHighlightColor_label": "Highlight color",
+        "field_cartBannerHighlightColor_details": "Price and savings emphasis",
+        "field_idx_cartBanner_5_label": "Shape & Depth",
+        "field_cartBannerCornerStyle_label": "Corner roundness",
+        "field_cartBannerCornerStyle_option_sharp": "Sharp",
+        "field_cartBannerCornerStyle_option_modern": "Modern",
+        "field_cartBannerCornerStyle_option_rounded": "Rounded",
+        "field_cartBannerShadow_label": "Shadow depth",
+        "field_cartBannerShadow_option_none": "None",
+        "field_cartBannerShadow_option_soft": "Soft",
+        "field_cartBannerShadow_option_strong": "Strong",
+        "field_cartBannerSpacing_label": "Spacing",
+        "field_cartBannerSpacing_option_compact": "Compact",
+        "field_cartBannerSpacing_option_comfortable": "Comfortable",
+        "field_cartBannerSpacing_option_spacious": "Spacious",
+        "field_cartBannerBorderStyle_label": "Border line",
+        "field_cartBannerBorderStyle_option_solid": "Solid",
+        "field_cartBannerBorderStyle_option_dashed": "Dashed",
+        "field_cartBannerBorderStyle_option_dotted": "Dotted",
+        "field_idx_cartBanner_10_label": "Typography",
+        "field_cartBannerBodySize_label": "Text size",
+        "field_cartBannerBodySize_option_small": "Small",
+        "field_cartBannerBodySize_option_medium": "Medium",
+        "field_cartBannerBodySize_option_large": "Large",
+        "field_idx_cartBanner_12_label": "Icon",
+        "field_cartBannerIconType_label": "Icon",
+        "field_cartBannerIconType_option_tag": "Price Tag",
+        "field_cartBannerIconType_option_percent": "Percent Badge",
+        "field_cartBannerIconType_option_gift": "Gift",
+        "field_cartBannerIconType_option_sparkle": "Sparkle",
+        "field_cartBannerIconType_option_fire": "Hot Deal",
+        "field_cartBannerIconType_option_check": "Checkmark",
+        "field_cartBannerIconType_option_none": "No Icon",
+        "field_cartBannerIconColor_label": "Icon color"
+      }
+    }
   }
 }

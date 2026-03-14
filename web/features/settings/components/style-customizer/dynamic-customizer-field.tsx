@@ -12,6 +12,7 @@ import { ResponsiveFieldIndicator } from "./responsive-field-indicator";
 import { RtpbRangeSlider } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Renders a single preset card.
@@ -83,6 +84,7 @@ export function DynamicCustomizerField({
     onFieldChangeAction,
     resetKey = 0,
 }: DynamicCustomizerFieldProps) {
+    const t = useTranslations("Settings.Customizer");
     // For non-form fields, we don't need the hook
     const isFormField = !["preset", "heading", "divider"].includes(config.type);
 
@@ -262,7 +264,7 @@ export function DynamicCustomizerField({
                         name={config.name}
                         alpha
                         placeholder={
-                            config.allowInherit ? "Inherit" : "Select color"
+                            config.allowInherit ? t("inherit") : t("selectColor")
                         }
                         value={String(value ?? "")}
                         error={error || undefined}

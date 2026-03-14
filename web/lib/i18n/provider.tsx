@@ -52,7 +52,7 @@ export function useTranslations(namespace: string) {
     const resolvedSection = (section || {}) as Record<string, unknown>;
 
     return useCallback(
-        (key: string, params?: Record<string, string | number>) => {
+        (key: string, params?: Record<string, string | number>, defaultValue?: string) => {
             // Support dot-notation keys like "steps.enableAppEmbed.title"
             const parts = key.split(".");
             let value: unknown = resolvedSection;
@@ -60,11 +60,11 @@ export function useTranslations(namespace: string) {
                 if (value && typeof value === "object" && part in value) {
                     value = (value as Record<string, unknown>)[part];
                 } else {
-                    return key; // fallback to key if not found
+                    return defaultValue ?? key; // fallback to key or default if not found
                 }
             }
 
-            if (typeof value !== "string") return key;
+            if (typeof value !== "string") return defaultValue ?? key;
 
             // Simple parameter interpolation: {paramName}
             if (params) {
