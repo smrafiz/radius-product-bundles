@@ -21,6 +21,7 @@ function ProductTile({
     product,
     variant,
     styles,
+    displayOptions,
     labels,
 }: {
     product: {
@@ -31,6 +32,7 @@ function ProductTile({
     };
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
 }) {
     const isTrigger = variant === "trigger";
@@ -66,7 +68,7 @@ function ProductTile({
                 border: `1.5px solid ${accentColor}22`,
             }}
         >
-            {product.image && (
+            {product.image && displayOptions.showImages && (
                 <div
                     style={{
                         width: 80,
@@ -89,6 +91,7 @@ function ProductTile({
                 </div>
             )}
 
+            {displayOptions.showSavingsBadge && (
             <span
                 style={{
                     fontSize: parseInt(bodyFontSize) - 4,
@@ -108,6 +111,7 @@ function ProductTile({
                       ? freeText
                       : rewardBadgeText}
             </span>
+                )}
 
             <div
                 style={{
@@ -126,6 +130,7 @@ function ProductTile({
             </div>
 
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                {displayOptions.showPrices && (
                 <span
                     style={{
                         fontSize: styles.bodySize,
@@ -135,7 +140,8 @@ function ProductTile({
                 >
                     {isFreePrice ? freeText : product.price}
                 </span>
-                {hasDiscount && product.compareAtPrice && (
+                )}
+                {hasDiscount && product.compareAtPrice && displayOptions.showComparePrices && (
                     <span
                         style={{
                             fontSize: 12,
@@ -163,6 +169,7 @@ function TileSlider({
     products,
     variant,
     styles,
+    displayOptions,
     labels,
     dotColor,
     perPage,
@@ -172,6 +179,7 @@ function TileSlider({
     products: PreviewProduct[];
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
     dotColor: string;
     perPage: number;
@@ -282,6 +290,7 @@ function TileSlider({
                                     product={p}
                                     variant={variant}
                                     styles={styles}
+                                    displayOptions={displayOptions}
                                     labels={labels}
                                 />
                             ))}
@@ -326,6 +335,7 @@ function TileSlider({
 export function WidgetCompactGrid({
     products,
     styles,
+    displayOptions,
     pricing,
     cartButtonText,
     title,
@@ -452,6 +462,7 @@ export function WidgetCompactGrid({
                     products={triggerProducts}
                     variant="trigger"
                     styles={styles}
+                    displayOptions={displayOptions}
                     labels={labels}
                     dotColor={primaryColor}
                     perPage={2}
@@ -490,6 +501,7 @@ export function WidgetCompactGrid({
                     products={rewardProducts}
                     variant="reward"
                     styles={styles}
+                    displayOptions={displayOptions}
                     labels={labels}
                     dotColor={savingsColor}
                     perPage={1}

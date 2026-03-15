@@ -17,10 +17,12 @@ function SplitProductCard({
     product,
     isReward,
     styles,
+    displayOptions,
 }: {
     product: PreviewProduct;
     isReward: boolean;
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -37,7 +39,7 @@ function SplitProductCard({
                 alignItems: "center",
             }}
         >
-            {product.image && (
+            {product.image && displayOptions.showImages && (
                 <div
                     style={{
                         width: 56,
@@ -83,6 +85,7 @@ function SplitProductCard({
                         marginTop: 5,
                     }}
                 >
+                    {displayOptions.showPrices && (
                     <span
                         style={{
                             fontSize: bodyFontSize,
@@ -94,7 +97,8 @@ function SplitProductCard({
                     >
                         {isFreePrice ? freeText : product.price}
                     </span>
-                    {hasDiscount && (
+                    )}
+                    {hasDiscount && displayOptions.showComparePrices &&(
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 2,
@@ -116,6 +120,7 @@ function SplitProductCard({
 export function WidgetSplitDeal({
     products,
     styles,
+    displayOptions,
     pricing,
     cartButtonText,
     title,
@@ -277,6 +282,7 @@ export function WidgetSplitDeal({
                                 product={p}
                                 isReward={false}
                                 styles={styles}
+                                displayOptions={displayOptions}
                             />
                         ))}
                     </div>
@@ -355,6 +361,7 @@ export function WidgetSplitDeal({
                                 product={p}
                                 isReward={true}
                                 styles={styles}
+                                displayOptions={displayOptions}
                             />
                         ))}
                     </div>

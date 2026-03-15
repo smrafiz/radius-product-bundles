@@ -46,9 +46,11 @@ const CART_SVG = (
 function ChecklistTriggerItem({
     product,
     styles,
+    displayOptions,
 }: {
     product: PreviewProduct;
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -75,7 +77,7 @@ function ChecklistTriggerItem({
                     background: styles.backgroundColor || "#fff",
                 }}
             />
-            {product.image && (
+            {product.image && displayOptions.showImages && (
                 <div
                     style={{
                         width: 56,
@@ -111,6 +113,7 @@ function ChecklistTriggerItem({
                     {product.title}
                 </div>
             </div>
+            {displayOptions.showPrices && (
             <div
                 style={{
                     fontSize: bodyFontSize,
@@ -121,6 +124,7 @@ function ChecklistTriggerItem({
             >
                 {product.price}
             </div>
+                )}
             <div
                 style={{
                     color: styles.textColor || "#9ca3af",
@@ -148,9 +152,11 @@ function ChecklistTriggerItem({
 function ChecklistRewardItem({
     product,
     styles,
+    displayOptions,
 }: {
     product: PreviewProduct;
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -161,7 +167,7 @@ function ChecklistRewardItem({
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {product.image && (
+            {product.image && displayOptions.showImages && (
                 <div
                     style={{
                         width: 48,
@@ -204,6 +210,7 @@ function ChecklistRewardItem({
                         marginTop: 2,
                     }}
                 >
+                    {displayOptions.showPrices && (
                     <span
                         style={{
                             fontSize: bodyFontSize,
@@ -213,7 +220,8 @@ function ChecklistRewardItem({
                     >
                         {isFreePrice ? freeText : product.price}
                     </span>
-                    {hasDiscount && (
+                    )}
+                    {hasDiscount && displayOptions.showComparePrices && (
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 3,
@@ -234,6 +242,7 @@ function ChecklistRewardItem({
 export function WidgetChecklist({
     products,
     styles,
+    displayOptions,
     pricing,
     cartButtonText,
     title,
@@ -395,6 +404,7 @@ export function WidgetChecklist({
                         key={p.id}
                         product={p}
                         styles={styles}
+                        displayOptions={displayOptions}
                     />
                 ))}
             </div>
@@ -465,6 +475,7 @@ export function WidgetChecklist({
                             key={p.id}
                             product={p}
                             styles={styles}
+                            displayOptions={displayOptions}
                         />
                     ))}
                 </div>

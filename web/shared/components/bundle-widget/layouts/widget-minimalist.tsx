@@ -36,11 +36,13 @@ function MinimalistItem({
     product,
     roleColor,
     roleBadgeText,
+    displayOptions,
     styles,
 }: {
     product: PreviewProduct;
     roleColor: string;
     roleBadgeText: string;
+    displayOptions: WidgetLayoutProps["displayOptions"];
     styles: WidgetLayoutProps["styles"];
 }) {
     const isReward = product.role === "REWARD";
@@ -62,7 +64,7 @@ function MinimalistItem({
                 position: "relative",
             }}
         >
-            {product.image && (
+            {product.image && displayOptions.showImages && (
                 <div
                     style={{
                         width: 60,
@@ -132,6 +134,7 @@ function MinimalistItem({
                         flexWrap: "wrap",
                     }}
                 >
+                    {displayOptions.showPrices && (
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize),
@@ -141,7 +144,8 @@ function MinimalistItem({
                     >
                         {product.price}
                     </span>
-                    {product.compareAtPrice && (
+                    )}
+                    {product.compareAtPrice && displayOptions.showComparePrices && (
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 3,
@@ -161,6 +165,7 @@ function MinimalistItem({
 export function WidgetMinimalist({
     products,
     styles,
+    displayOptions,
     pricing,
     cartButtonText,
     title,
@@ -247,7 +252,7 @@ export function WidgetMinimalist({
                     paddingTop: 8,
                 }}
             >
-                {triggerProduct?.image && (
+                {triggerProduct?.image && displayOptions.showImages && (
                     <div
                         style={{
                             width: 110,
@@ -360,6 +365,7 @@ export function WidgetMinimalist({
                                 product={product}
                                 roleColor={roleColor}
                                 roleBadgeText={roleBadgeText}
+                                displayOptions={displayOptions}
                                 styles={styles}
                             />
                         );

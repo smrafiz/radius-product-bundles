@@ -704,15 +704,17 @@ export function renderBogoCompactGridProducts(
             : product.price;
         const isFree = hasRewardDiscount && discountedPrice === 0;
 
-        if (hasRewardDiscount) {
-            priceHtml = `<div class="rb-cg__tile-prices">`;
-            priceHtml += `<div class="rb-cg__tile-price rb-cg__tile-price--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</div>`;
-            if (ctx.showComparePrices) {
-                priceHtml += `<div class="rb-cg__tile-compare">${formatMoney(product.price)}</div>`;
+        if (ctx.showPrices) {
+            if (hasRewardDiscount) {
+                priceHtml = `<div class="rb-cg__tile-prices">`;
+                priceHtml += `<div class="rb-cg__tile-price rb-cg__tile-price--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</div>`;
+                if (ctx.showComparePrices) {
+                    priceHtml += `<div class="rb-cg__tile-compare">${formatMoney(product.price)}</div>`;
+                }
+                priceHtml += `</div>`;
+            } else {
+                priceHtml = `<div class="rb-cg__tile-prices"><div class="rb-cg__tile-price">${formatMoney(product.price)}</div></div>`;
             }
-            priceHtml += `</div>`;
-        } else {
-            priceHtml = `<div class="rb-cg__tile-prices"><div class="rb-cg__tile-price">${formatMoney(product.price)}</div></div>`;
         }
 
         const cgFreeText = labels?.bogoFreeText || "FREE";

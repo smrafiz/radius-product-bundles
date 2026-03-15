@@ -16,11 +16,13 @@ function SleekProductCard({
     product,
     variant,
     styles,
+    displayOptions,
     labels,
 }: {
     product: PreviewProduct;
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
 }) {
     const isTrigger = variant === "trigger";
@@ -62,7 +64,7 @@ function SleekProductCard({
                 ...cardStyle,
             }}
         >
-            {product.image && (
+            {product.image && displayOptions.showImages && (
                 <div
                     style={{
                         width: 48,
@@ -149,6 +151,7 @@ function SleekProductCard({
                     gap: 1,
                 }}
             >
+                {displayOptions.showPrices && (
                 <span
                     style={{
                         fontSize: bodyFontSize,
@@ -158,7 +161,8 @@ function SleekProductCard({
                 >
                     {isFreePrice ? freeText : product.price}
                 </span>
-                {hasDiscount && product.compareAtPrice && (
+                )}
+                {hasDiscount && product.compareAtPrice && displayOptions.showComparePrices && (
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 3,
@@ -179,6 +183,7 @@ function SleekProductCard({
 export function WidgetSleek({
     products,
     styles,
+    displayOptions,
     pricing,
     cartButtonText,
     title,
@@ -230,6 +235,7 @@ export function WidgetSleek({
                     variant="trigger"
                     styles={styles}
                     labels={labels}
+                    displayOptions={displayOptions}
                 />
             ))}
 
@@ -270,6 +276,7 @@ export function WidgetSleek({
                     variant="reward"
                     styles={styles}
                     labels={labels}
+                    displayOptions={displayOptions}
                 />
             ))}
 
