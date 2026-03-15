@@ -19,13 +19,17 @@ import { useTranslations } from "@/lib/i18n/provider";
  */
 function PresetCard({
     preset,
+    presetKey,
     isActive,
     onSelect,
 }: {
     preset: StylePreset;
+    presetKey: string;
     isActive: boolean;
     onSelect: () => void;
 }) {
+    const tp = useTranslations("Settings.Customizer.Presets");
+
     return (
         <div
             className={`
@@ -38,9 +42,8 @@ function PresetCard({
             `}
             onClick={onSelect}
         >
-            {/* Color preview swatches */}
             {preset.preview && (
-                <s-text interestFor={`${preset.name}-preset-tooltip`}>
+                <s-text interestFor={`${presetKey}-preset-tooltip`}>
                     <div className="flex p-2">
                         <div
                             className="w-6 h-6 rounded-full border border-gray-200"
@@ -59,8 +62,8 @@ function PresetCard({
                             style={{ backgroundColor: preset.preview.accent }}
                             title="Accent"
                         />
-                        <s-tooltip id={`${preset.name}-preset-tooltip`}>
-                            <s-text>{preset.name}</s-text>
+                        <s-tooltip id={`${presetKey}-preset-tooltip`}>
+                            <s-text>{tp(`${presetKey}.name`)}</s-text>
                         </s-tooltip>
                     </div>
                 </s-text>
@@ -180,6 +183,7 @@ export function DynamicCustomizerField({
                             <PresetCard
                                 key={key}
                                 preset={preset}
+                                presetKey={key}
                                 isActive={activePreset === key}
                                 onSelect={() => {
                                     applyPreset(key);

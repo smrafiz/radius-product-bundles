@@ -52,8 +52,9 @@ const bundleSettingsSchema = z
             .default("STORE_DEFAULT"),
         title: z
             .string()
+            .min(1, VALIDATION_MESSAGES.REQUIRED_FIELD)
             .max(100)
-            .default(""),
+            .default("Bundle & Save"),
         subtitle: z.string().max(300).optional().default(""),
         cartButtonText: z
             .string()

@@ -26,7 +26,9 @@ export const PricingFaq = () => {
             {PRICING_FAQ_ITEM.map((item) => (
                 <PricingFaqItem
                     key={item.id}
-                    {...item}
+                    id={item.id}
+                    title={t(`faqs.${item.id}.title`)}
+                    description={t(`faqs.${item.id}.description`)}
                     expanded={expandedId === item.id}
                     onToggle={() => handleToggle(item.id)}
                 />

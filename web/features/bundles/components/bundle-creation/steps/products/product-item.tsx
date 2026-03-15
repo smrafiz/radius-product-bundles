@@ -132,8 +132,7 @@ export function ProductItem({
                                 gap="small"
                             >
                                 <s-text tone="caution">
-                                    {selectedCount} of {originalTotal} variants
-                                    selected
+                                    {t("variantsSelected", { count: String(selectedCount), total: String(originalTotal) })}
                                 </s-text>
                                 <s-link
                                     tone="neutral"
@@ -176,7 +175,7 @@ export function ProductItem({
                         {/* Quantity */}
                         {quantityLocked ? (
                             <div className="w-[40px] text-center">
-                                <s-text tone="neutral">Qty: 1</s-text>
+                                <s-text tone="neutral">{t("qty")} 1</s-text>
                             </div>
                         ) : (
                             <div className="w-[80px]">
@@ -201,7 +200,7 @@ export function ProductItem({
                                 variant="tertiary"
                                 icon="delete"
                                 onClick={onRemove ?? handleRemoveProduct}
-                                accessibilityLabel={`Remove ${product.title}`}
+                                accessibilityLabel={`${t("remove")} ${product.title}`}
                             />
                         ) : (
                             <div className="w-7" />

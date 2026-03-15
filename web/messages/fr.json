@@ -1,6 +1,7 @@
 {
   "Meta": {
     "error": "Une erreur inattendue s'est produite",
+    "tryAgain": "Réessayer",
     "appTitle": "Application Radius Product Bundles pour Shopify",
     "pages": {
       "dashboard": {
@@ -56,7 +57,60 @@
     },
     "previousPage": "Page précédente",
     "nextPage": "Page suivante",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "emptySearchAlt": "Aucun résultat de recherche",
+    "emptyStateAlt": "Aucun lot créé pour le moment",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
+  },
+  "Modals": {
+    "confirm": "Confirmer",
+    "confirmAction": "Confirmer l'action",
+    "confirmContinue": "Souhaitez-vous vraiment continuer ?",
+    "duplicate": {
+      "heading": "Dupliquer l'offre groupée",
+      "draftCreated": "Nouveau brouillon créé."
+    },
+    "delete": {
+      "heading": "Supprimer l'offre groupée",
+      "cannotUndo": "Cette action est irréversible."
+    },
+    "status": {
+      "heading": "Confirmer le changement de statut"
+    },
+    "deleteProduct": {
+      "heading": "Supprimer l'offre groupée ?",
+      "message": "Si vous désactivez ce bouton, ce produit sera définitivement supprimé de votre boutique lors de l'enregistrement. Cette action est irréversible.",
+      "thisProduct": "Ce produit"
+    },
+    "restoreDefaults": {
+      "heading": "Rétablir les valeurs par défaut ?",
+      "message": "Cette opération réinitialisera tous les paramètres de style à leurs valeurs par défaut. Cette action est irréversible."
+    },
+    "importSettings": {
+      "heading": "Importer les paramètres ?",
+      "message": "Cette opération remplacera vos paramètres actuels par les données du fichier. Cette action est irréversible."
+    }
+  },
+  "Validation": {
+    "REQUIRED_FIELD": "Ce champ est obligatoire",
+    "MAX_LENGTH": "Nom du lot : 100 caractères max.",
+    "MAX_DESC_LENGTH": "Description : 500 caractères max.",
+    "PRODUCT_ID": "ID du produit requis",
+    "MAX_PRODUCTS": "Offre groupée : 10 produits maximum",
+    "MIN_QUANTITY": "Quantité : 1 au minimum",
+    "MAX_QUANTITY": "Quantité : 99 maximum",
+    "DUPLICATE_PRODUCTS": "Aucun produit en double n'est autorisé dans l'offre groupée",
+    "INVALID_DISCOUNT_VALUE": "Valeur de la remise : supérieure à 0",
+    "INVALID_PERCENTAGE": "Pourcentage de remise : 100 % max.",
+    "NEGATIVE_VALUE": "Valeur négative non autorisée",
+    "NO_PRODUCTS_SELECTED": "Veuillez sélectionner au moins deux produits",
+    "INVALID_MIN_ORDER": "Valeur minimale de la commande : supérieure à 0",
+    "INVALID_MAX_DISCOUNT": "Montant maximal de la remise : supérieur à 0",
+    "DISCOUNT_TYPE_REQUIRED": "Type de remise requis",
+    "END_DATE_AFTER_START": "Date de fin postérieure à la date de début",
+    "MAX_DISCOUNT_NOT_APPLICABLE": "Le montant maximal de la remise ne s'applique pas au prix personnalisé",
+    "CUSTOM_PRICE_INVALID": "Prix personnalisé : supérieur à 0"
   },
   "Dashboard": {
     "title": "Bienvenue dans Radius Bundles",
@@ -74,6 +128,7 @@
       "resumeGuide": "Reprendre le guide",
       "allComplete": "Toutes les tâches sont terminées",
       "dismissGuide": "Fermer le guide",
+      "toggleGuide": "Activer/désactiver le guide de configuration",
       "markComplete": "Marquer comme terminé",
       "markIncomplete": "Marquer comme non terminé",
       "steps": {
@@ -358,7 +413,11 @@
         "roleGet": "Obtenir",
         "role": "Rôle",
         "quantity": "Quantité",
-        "editVariants": "Modifier les variantes"
+        "editVariants": "Modifier les variantes",
+        "remove": "Supprimer",
+        "qty": "Qté :",
+        "maxReached": "Nombre maximal de {count} produits atteint pour cette offre groupée.",
+        "variantsSelected": "{count} variantes sélectionnées sur {total}"
       },
       "Discount": {
         "heading": "Paramètres de remise",
@@ -445,12 +504,83 @@
         "heading": "Aperçu",
         "globalCustomizer": "Personnalisateur global",
         "globalCustomizerTooltip": "Utilisez les paramètres de personnalisation globaux pour définir le style d'affichage de votre offre groupée, notamment les couleurs et les éléments visuels, afin qu'il corresponde à l'image de marque de votre boutique.",
+        "customizerDesktop": "Personnaliser pour ordinateur",
+        "customizerTablet": "Personnaliser pour tablette",
+        "customizerMobile": "Personnaliser pour mobile",
         "priorityHeading": "Priorité de l'offre groupée",
         "priorityTooltipIndex": "Lorsque plusieurs offres groupées s'appliquent à un produit, l'offre groupée la plus prioritaire s'affiche.",
         "priorityTooltipDiscount": "Lorsque plusieurs offres groupées s'appliquent à un produit, celle dont la remise est la plus élevée est affichée.",
         "changeStrategy": "Stratégie de changement",
         "priority": "Priorité",
-        "priorityDetails": "Numéro plus élevé = priorité plus élevée (0–500)"
+        "priorityDetails": "Numéro plus élevé = priorité plus élevée (0–500)",
+        "bogoBadgeFree": "Achetez {buy} articles, obtenez {get} articles gratuits",
+        "bogoBadgePercent": "Achetez {buy}, obtenez {get} avec {discount} % de réduction",
+        "bogoBadgeFixed": "Achetez {buy} produits, obtenez {get} produit(s) gratuit(s) – {amount} $ de réduction",
+        "bogoBadgeDefault": "Achetez {buy}, obtenez {get}"
+      }
+    },
+    "Types": {
+      "FIXED_BUNDLE": { "label": "Offre groupée à prix fixe", "description": "Regrouper des produits à un prix fixe avec remise", "features": ["Prix fixe de l'offre groupée", "Plusieurs produits"] },
+      "BUY_X_GET_Y": { "label": "Achetez X, obtenez Y", "description": "Pour l'achat de X articles, le client obtient Y articles gratuits ou à prix réduit", "features": ["2 achetés, 1 offert", "Pour 3 articles achetés, le 2e à -50 %"] },
+      "BOGO": { "label": "BOGO", "description": "Offre classique « 1 acheté, 1 offert » avec diverses options de réduction", "features": ["1 acheté, 1 offert", "1 acheté, 1 à -50 %"] },
+      "VOLUME_DISCOUNT": { "label": "Remise sur quantité", "description": "Remises en fonction de la quantité achetée", "features": ["2 achetés : -10 %", "-20 % pour 5 articles achetés"] },
+      "MIX_AND_MATCH": { "label": "Assortiment", "description": "Choisissez n'importe quelle combinaison de produits", "features": ["Choisissez 3 produits au choix pour 50 $", "Associer différentes catégories"] },
+      "FREQUENTLY_BOUGHT_TOGETHER": { "label": "Produits fréquemment achetés ensemble", "description": "Produits fréquemment achetés ensemble", "features": ["Suggestions de produits intelligentes", "Recommandations basées sur l'IA"] },
+      "comingSoon": "Bientôt disponible !"
+    },
+    "DiscountTypes": {
+      "PERCENTAGE": { "label": "Pourcentage de remise", "description": "Pourcentage de réduction par rapport au prix d'origine" },
+      "FIXED_AMOUNT": { "label": "Montant de la remise", "description": "Remise forfaitaire en euros" },
+      "CUSTOM_PRICE": { "label": "Prix de l'offre groupée", "description": "Définir un prix spécifique pour l'offre groupée" },
+      "NO_DISCOUNT": { "label": "Pas de remise", "description": "Offre groupée sans remise" },
+      "BUY_X_GET_Y": { "label": "Achetez X, obtenez Y", "description": "Achetez une certaine quantité et obtenez des articles gratuits/à prix réduit" },
+      "QUANTITY_BREAKS": { "label": "Remises sur quantité", "description": "Tarification au volume avec paliers de quantité" }
+    },
+    "DetailsConstants": {
+      "fieldLabels": {
+        "bundleName": "Nom du pack",
+        "products": "Produits",
+        "discountType": "Type de remise",
+        "discountValue": "Montant de la remise",
+        "minOrderValue": "Montant minimum de commande",
+        "maxDiscount": "Remise maximale",
+        "discountApplication": "Application de la remise",
+        "freeShipping": "Livraison gratuite",
+        "createProduct": "Créer un produit",
+        "productTitle": "Nom du produit",
+        "productDescription": "Description du produit",
+        "offerTitle": "Intitulé de l'offre",
+        "cartButtonText": "Texte du bouton du panier",
+        "displaySettings": "Paramètres d'affichage",
+        "priority": "Priorité"
+      },
+      "steps": {
+        "products": { "title": "Produits", "description": "Sélectionnez les produits de votre offre groupée" },
+        "discount": { "title": "Remise", "description": "Définir les règles et le fonctionnement des remises" },
+        "display": { "title": "Affichage", "description": "Personnaliser l'apparence et la mise en page" },
+        "review": { "title": "Vérifier", "description": "Vérifier et publier votre offre groupée" }
+      },
+      "layouts": {
+        "GRID": "Grille",
+        "LIST": "Liste",
+        "CAROUSEL": "Diaporama",
+        "COMPACT": "Compact",
+        "CLASSIC_CARD": "Carte classique",
+        "COMPACT_GRID": "Grille compacte",
+        "MINIMALIST": "Minimaliste",
+        "SLEEK": "Épuré",
+        "CHECKLIST": "Liste de contrôle",
+        "SPLIT_DEAL": "Offre partagée"
+      },
+      "displaySettings": {
+        "showImages": { "label": "Afficher les images des produits", "details": "Afficher les images de produit pour chaque article de l'offre groupée." },
+        "showSavingsBadge": { "label": "Afficher le badge d'économies", "details": "Mettez en évidence les économies réalisées au moyen d'un badge sur les articles éligibles de l'offre groupée." },
+        "showPrices": { "label": "Afficher les prix de chaque produit", "details": "Affichez le prix de chaque produit inclus dans l'offre groupée." },
+        "showComparePrices": { "label": "Afficher les prix de comparaison", "details": "Afficher le prix d'origine (de comparaison) à côté du prix actuel." },
+        "showQuantity": { "label": "Afficher les quantités de produits", "details": "Afficher la quantité de chaque produit inclus dans l'offre groupée." },
+        "showSavings": { "label": "Afficher l'économie totale sur l'offre groupée", "details": "Affichez le montant total que les clients économisent en achetant l'offre groupée." },
+        "showFreeShipping": { "label": "Afficher le message de livraison gratuite", "details": "Informez les clients lorsque l'offre groupée donne droit à la livraison gratuite." },
+        "enableHyperLink": { "label": "Activer le lien vers la page produit", "details": "Associez les noms des produits à leurs pages respectives." }
       }
     },
     "Listing": {
@@ -990,6 +1120,18 @@
       },
       "inherit": "Hériter",
       "selectColor": "Sélectionner la couleur",
+      "Presets": {
+        "minimal": { "name": "Minimaliste", "description": "Épuré et simple, aux angles nets" },
+        "soft": { "name": "Doux", "description": "Courbes douces, profondeur subtile" },
+        "bold": { "name": "Audacieux", "description": "Contraste élevé, attire l'attention" },
+        "elegant": { "name": "Élégant", "description": "Sophistiqué, détails raffinés" },
+        "dark": { "name": "Sombre", "description": "Sombre et épuré, avec des touches vives" },
+        "nature": { "name": "Nature", "description": "Tons naturels, style organique" },
+        "warm": { "name": "Chaud", "description": "Tons chauds et accueillants, conviviaux et humains" },
+        "professional": { "name": "Professionnel", "description": "Neutre, structuré, axé sur la confiance" }
+      },
+      "cartPageBanner": "Bannière de la page du panier",
+      "bundleProduct": "Offre groupée",
       "Config": {
         "section_appearance_title": "Apparence",
         "field_stylePreset_label": "Démarrage rapide",
@@ -1261,6 +1403,31 @@
       "endDate": "Date de fin",
       "previousMonth": "Mois précédent",
       "nextMonth": "Mois suivant"
+    },
+    "DatePresets": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "last7": "7 derniers jours",
+      "last30": "30 derniers jours",
+      "last90": "90 derniers jours",
+      "last365": "365 derniers jours",
+      "lastWeek": "Semaine dernière",
+      "lastMonth": "Mois dernier"
+    },
+    "Metrics": {
+      "totalRevenue": "Chiffre d'affaires total",
+      "revenueGrowth": "Croissance du chiffre d'affaires",
+      "conversionGrowth": "Croissance du taux de conversion",
+      "avgConversionRate": "Taux de conversion moyen",
+      "revenueLabel": "Chiffre d'affaires",
+      "revenueDesc": "Chiffre d'affaires total des ventes d'offres groupées, remises comprises, hors frais de livraison, taxes et frais divers.",
+      "revenueFormula": "Chiffre d'affaires = Prix des produits - Remises",
+      "viewsLabel": "Vues",
+      "viewsDesc": "Nombre total de vues des offres groupées par les clients. Chaque client compte une fois par session et par offre groupée.",
+      "viewsFormula": "Vues = Visites uniques par session",
+      "purchasesLabel": "Achats",
+      "purchasesDesc": "Total des achats d'offres groupées effectués par l'ensemble des clients.",
+      "purchasesFormula": "Achats = Commandes contenant des offres groupées"
     }
   },
   "Pricing": {
@@ -1272,7 +1439,51 @@
     "devStoreTitle": "Boutique de développement détectée !",
     "devStoreDesc": "Vous pouvez utiliser gratuitement toutes les fonctionnalités de BundleSuite (offres groupées illimitées, analyses, etc.) sur votre boutique de développement. Ne choisissez votre formule payante qu'au moment de la mise en ligne !",
     "dismissCard": "Masquer la carte",
-    "pleaseWait": "Veuillez patienter…"
+    "pleaseWait": "Veuillez patienter…",
+    "plans": {
+      "0": {
+        "title": "Développement uniquement",
+        "description": "Formule idéale pour les boutiques qui démarrent",
+        "button": "Abonné(e) actuellement"
+      },
+      "1": {
+        "title": "Formule Starter",
+        "featured": "Le plus populaire",
+        "description": "Pour les boutiques en pleine croissance qui ont besoin d'une solution fiable pour évoluer avec elles",
+        "button": "Choisir cette formule"
+      },
+      "2": {
+        "title": "Premium",
+        "description": "Le nec plus ultra, pour les boutiques ayant les besoins les plus élevés en matière de traitement des commandes",
+        "button": "Choisir cette formule"
+      },
+      "features": {
+        "orders": "Traitez jusqu'à 1 000 commandes/mois",
+        "feature1": "Fonctionnalité exceptionnelle",
+        "feature2": "Autre fonctionnalité très intéressante",
+        "support": "Assistance client 24 h/24, 7 j/7"
+      },
+      "month": "mois",
+      "year": "année"
+    },
+    "faqs": {
+      "0": {
+        "title": "Quelle est la formule la plus adaptée pour les offres groupées à prix élevé ?",
+        "description": "Pour les entreprises dont la valeur moyenne des commandes (VMC) est élevée, un paiement sur mesure est essentiel. Nous sommes à votre disposition pour vous aider à développer votre activité grâce à des formules sur mesure conçues pour répondre à vos besoins spécifiques. Veuillez nous contacter afin que nous puissions déterminer la meilleure manière de soutenir votre entreprise."
+      },
+      "1": {
+        "title": "Puis-je utiliser l'application gratuitement ?",
+        "description": "Vous pouvez tester l'application gratuitement dans le cadre de l'essai de sept jours proposé pour toutes les formules. En outre, les boutiques de développement et les boutiques de test peuvent accéder à l'application gratuitement, sans avoir à approuver de facturation."
+      },
+      "2": {
+        "title": "Les frais d'abonnement sont-ils automatiquement ajustés en fonction de mes ventes d'offres groupées ?",
+        "description": "Les frais d'abonnement restent constants, sauf si vous approuvez expressément des modifications. Si vous prévoyez une baisse de vos ventes, vous pouvez passer à une formule inférieure en conséquence. À l'inverse, si vos ventes dépassent la limite de votre formule, vous recevrez une notification par e-mail et pourrez approuver le passage à une formule supérieure."
+      },
+      "3": {
+        "title": "Que se passe-t-il si je souhaite modifier ou résilier mon abonnement ?",
+        "description": "Vous pouvez tester l'application de manière approfondie au cours de la période d'essai de sept jours et la résilier sans aucun frais. Au-delà de cette période, les passages à une formule inférieure sont facturés au prorata, contrairement aux résiliations. Veuillez contacter l'assistance afin d'examiner les possibilités de remboursement."
+      }
+    }
   },
   "ABTesting": {
     "title": "A/B Testing",

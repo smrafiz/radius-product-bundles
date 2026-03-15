@@ -41,6 +41,7 @@ export function useCustomizerPage() {
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
     const layoutParam = searchParams.get("layout");
+    const deviceParam = searchParams.get("device") as "desktop" | "tablet" | "mobile" | null;
     const initialType =
         types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
     const [resetCounter, setResetCounter] = useState(0);
@@ -62,8 +63,11 @@ export function useCustomizerPage() {
     const setActiveLayout = useCustomizerStore(
         (state) => state.setActiveLayout,
     );
+    const setActiveDevice = useCustomizerStore(
+        (state) => state.setActiveDevice,
+    );
 
-    // Initialize active bundle type and layout from URL params
+    // Initialize active bundle type, layout, and device from URL params
     useEffect(() => {
         if (!activeBundleType) {
             setActiveBundleType(initialType as BundleType);
@@ -71,12 +75,17 @@ export function useCustomizerPage() {
                 setActiveLayout(layoutParam as WidgetLayout);
             }
         }
+        if (deviceParam) {
+            setActiveDevice(deviceParam);
+        }
     }, [
         activeBundleType,
         initialType,
         layoutParam,
+        deviceParam,
         setActiveBundleType,
         setActiveLayout,
+        setActiveDevice,
     ]);
 
     const { handleSubmit: submitToServer, isLoading: isSaving } =

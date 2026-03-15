@@ -8,7 +8,6 @@ import {
 } from "@/features/settings";
 import { useMemo } from "react";
 import type { BundleType } from "@/features/bundles";
-import { BUNDLE_TYPES } from "@/features/bundles/constants/bundle-types.constants";
 import { TEMPLATE_REGISTRY } from "@/features/settings/constants/template.constants";
 import { CUSTOMIZER_LAYOUTS_MAPPING } from "@/features/settings/constants/customizer.constants";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -22,12 +21,13 @@ export function usePreviewShell(bundleType: PreviewTemplateId) {
     const Template = TEMPLATE_REGISTRY[bundleType];
 
     const t = useTranslations("Settings.Customizer");
+    const tt = useTranslations("Bundles.Types");
 
     const heading =
         bundleType === "CART_BANNER"
             ? t("preview.cartBannerLayout")
             : t("preview.bundleLayout", {
-                  label: BUNDLE_TYPES[bundleType as BundleType].label
+                  label: tt(`${bundleType as BundleType}.label`)
               });
 
     const isCartBanner = bundleType === "CART_BANNER";

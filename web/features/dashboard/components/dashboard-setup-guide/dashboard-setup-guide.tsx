@@ -6,12 +6,14 @@ import {
     DashboardSetupSteps,
 } from "@/features/dashboard";
 import { SkeletonLine } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardSetUpGuide({
     isLoading,
     dismissed,
     ...rest
 }: DashboardSetUpGuideProps) {
+    const t = useTranslations("Dashboard.SetupGuide");
     if (isLoading) {
         return (
             <s-section padding="none">
@@ -33,13 +35,13 @@ export function DashboardSetUpGuide({
                                 </div>
                             </div>
                             <s-button
-                                accessibilityLabel="Dismiss setup guide"
+                                accessibilityLabel={t("dismissGuide")}
                                 variant="tertiary"
                                 tone="neutral"
                                 icon="x"
                             />
                             <s-button
-                                accessibilityLabel="Toggle setup guide"
+                                accessibilityLabel={t("toggleGuide")}
                                 variant="tertiary"
                                 tone="neutral"
                                 icon="chevron-up"

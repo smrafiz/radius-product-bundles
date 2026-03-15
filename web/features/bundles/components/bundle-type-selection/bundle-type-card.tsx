@@ -7,6 +7,7 @@ import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
 
 export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
     const t = useTranslations("Bundles.Selection");
+    const tt = useTranslations("Bundles.Types");
     const { bundleData } = useAppNavigation();
     const { selectingBundleId, setSelectingBundleId, reset } =
         useBundleSelectionStore();
@@ -36,7 +37,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                     <div className="absolute right-4 top-4">
                         {bundleType.badge && (
                             <s-badge tone={bundleType.badge.tone}>
-                                {bundleType.badge.text}
+                                {tt("comingSoon")}
                             </s-badge>
                         )}
                     </div>
@@ -47,7 +48,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                 <s-image
                                     aspectRatio="16/9"
                                     src={bundleType.bundleImage}
-                                    alt={bundleType.label}
+                                    alt={tt(bundleType.id + ".label")}
                                 />
                             </div>
                         </s-box>
@@ -55,7 +56,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                 </s-stack>
                 <s-stack gap="small-300">
                     <s-stack>
-                        <s-heading>{bundleType.label}</s-heading>
+                        <s-heading>{tt(bundleType.id + ".label")}</s-heading>
                     </s-stack>
 
                     <s-stack
@@ -86,21 +87,21 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
 
                         <s-modal
                             id={`modal-${bundleType.id}`}
-                            heading={bundleType.label}
-                            accessibilityLabel={bundleType.label}
+                            heading={tt(bundleType.id + ".label")}
+                            accessibilityLabel={tt(bundleType.id + ".label")}
                         >
                             <s-stack gap="base">
                                 {bundleType.modalImage && (
                                     <s-stack>
                                         <img
                                             src={bundleType.modalImage}
-                                            alt={bundleType.label}
+                                            alt={tt(bundleType.id + ".label")}
                                         />
                                     </s-stack>
                                 )}
                                 <div className="grid grid-cols-2 gap-4">
                                     <s-heading>
-                                        {bundleType.description}
+                                        {tt(bundleType.id + ".description")}
                                     </s-heading>
                                     {bundleType.features &&
                                         bundleType.features.length > 0 && (

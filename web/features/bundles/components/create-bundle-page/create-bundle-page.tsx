@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
     BundleCreationForm,
     BundleFormData,
@@ -11,10 +11,26 @@ import {
     useBundleSubmit,
 } from "@/features/bundles";
 import { GlobalForm } from "@/shared";
-import {
-    BUNDLE_FIELD_LABELS,
-    BUNDLE_STEP_FIELD_MAP,
-} from "@/features/bundles/constants/bundle-details.constants";
+import { BUNDLE_STEP_FIELD_MAP } from "@/features/bundles/constants/bundle-details.constants";
+import { useTranslations } from "@/lib/i18n/provider";
+
+const FIELD_LABEL_MAP: Record<string, string> = {
+    name: "bundleName",
+    products: "products",
+    discountType: "discountType",
+    discountValue: "discountValue",
+    minOrderValue: "minOrderValue",
+    maxDiscountAmount: "maxDiscount",
+    discountApplication: "discountApplication",
+    freeShipping: "freeShipping",
+    createProduct: "createProduct",
+    productTitle: "productTitle",
+    productDescription: "productDescription",
+    "settings.title": "offerTitle",
+    "settings.cartButtonText": "cartButtonText",
+    settings: "displaySettings",
+    priority: "priority",
+};
 
 export function CreateBundlePage({
     params,
@@ -23,6 +39,15 @@ export function CreateBundlePage({
 }) {
     const { bundleType: bundleTypeParam } = params;
     const bundleType = bundleTypeMap[bundleTypeParam] as BundleType;
+    const tf = useTranslations("Bundles.DetailsConstants.fieldLabels");
+
+    const fieldLabels = useMemo(() => {
+        const labels: Record<string, string> = {};
+        for (const [field, key] of Object.entries(FIELD_LABEL_MAP)) {
+            labels[field] = tf(key);
+        }
+        return labels;
+    }, [tf]);
 
     const { handleSubmit, resetDirty } = useBundleSubmit("create");
     const { setStep, setValidationAttempted, resetBundle, setBundleData } =
@@ -52,7 +77,7 @@ export function CreateBundlePage({
                 resetDirty={resetDirty}
                 onDiscard={handleDiscard}
                 stepFieldMap={BUNDLE_STEP_FIELD_MAP}
-                fieldLabels={BUNDLE_FIELD_LABELS}
+                fieldLabels={fieldLabels}
                 onValidationError={handleValidationError}
             >
                 <BundleCreationForm bundleType={bundleType} />

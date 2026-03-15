@@ -1,6 +1,7 @@
 {
   "Meta": {
     "error": "An unexpected error occurred",
+    "tryAgain": "Try again",
     "appTitle": "Radius Product Bundles App for Shopify",
     "pages": {
       "dashboard": {
@@ -56,7 +57,60 @@
     },
     "previousPage": "Previous page",
     "nextPage": "Next page",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "emptySearchAlt": "Empty search results",
+    "emptyStateAlt": "No bundles created yet",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "Modals": {
+    "confirm": "Confirm",
+    "confirmAction": "Confirm Action",
+    "confirmContinue": "Are you sure you want to continue?",
+    "duplicate": {
+      "heading": "Duplicate Bundle",
+      "draftCreated": "A new draft will be created."
+    },
+    "delete": {
+      "heading": "Delete Bundle",
+      "cannotUndo": "This action cannot be undone."
+    },
+    "status": {
+      "heading": "Confirm Status Change"
+    },
+    "deleteProduct": {
+      "heading": "Delete bundle product?",
+      "message": "Turning off this switch will permanently delete this product from your store when you save. This action cannot be undone.",
+      "thisProduct": "this product"
+    },
+    "restoreDefaults": {
+      "heading": "Restore defaults?",
+      "message": "This will reset all style settings to their default values. This action cannot be undone."
+    },
+    "importSettings": {
+      "heading": "Import Settings?",
+      "message": "This will overwrite your current settings with the data from the file. This action cannot be undone."
+    }
+  },
+  "Validation": {
+    "REQUIRED_FIELD": "This field is required",
+    "MAX_LENGTH": "Bundle name cannot exceed 100 characters",
+    "MAX_DESC_LENGTH": "Description cannot exceed 500 characters",
+    "PRODUCT_ID": "Product ID is required",
+    "MAX_PRODUCTS": "Bundle cannot have more than 10 products",
+    "MIN_QUANTITY": "Quantity must be at least 1",
+    "MAX_QUANTITY": "Quantity cannot exceed 99",
+    "DUPLICATE_PRODUCTS": "Duplicate products are not allowed in the bundle",
+    "INVALID_DISCOUNT_VALUE": "Discount value must be greater than 0",
+    "INVALID_PERCENTAGE": "Percentage discount cannot exceed 100%",
+    "NEGATIVE_VALUE": "Value cannot be negative",
+    "NO_PRODUCTS_SELECTED": "At least two products must be selected",
+    "INVALID_MIN_ORDER": "Minimum order value must be greater than 0",
+    "INVALID_MAX_DISCOUNT": "Maximum discount amount must be greater than 0",
+    "DISCOUNT_TYPE_REQUIRED": "Discount type is required",
+    "END_DATE_AFTER_START": "End date must be after start date",
+    "MAX_DISCOUNT_NOT_APPLICABLE": "Maximum discount amount is not applicable for custom price",
+    "CUSTOM_PRICE_INVALID": "Custom price must be greater than 0"
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",
@@ -74,6 +128,7 @@
       "resumeGuide": "Resume guide",
       "allComplete": "All tasks complete",
       "dismissGuide": "Dismiss guide",
+      "toggleGuide": "Toggle setup guide",
       "markComplete": "Mark as complete",
       "markIncomplete": "Mark as incomplete",
       "steps": {
@@ -358,7 +413,11 @@
         "roleGet": "Get",
         "role": "Role",
         "quantity": "Quantity",
-        "editVariants": "Edit variants"
+        "qty": "Qty:",
+        "editVariants": "Edit variants",
+        "remove": "Remove",
+        "maxReached": "Maximum {count} products reached for this bundle.",
+        "variantsSelected": "{count} of {total} variants selected"
       },
       "Discount": {
         "heading": "Discount Settings",
@@ -445,12 +504,83 @@
         "heading": "Preview",
         "globalCustomizer": "Global customizer",
         "globalCustomizerTooltip": "Use the global customization settings to style your bundle display, including colors and visual elements, to align with your store's branding.",
+        "customizerDesktop": "Customize for desktop",
+        "customizerTablet": "Customize for tablet",
+        "customizerMobile": "Customize for mobile",
         "priorityHeading": "Bundle priority",
         "priorityTooltipIndex": "The bundle with the highest priority is displayed when multiple bundles apply to a product.",
         "priorityTooltipDiscount": "The bundle with the highest discount value is displayed when multiple bundles apply to a product.",
         "changeStrategy": "Change strategy",
         "priority": "Priority",
-        "priorityDetails": "Higher number = higher priority (0–500)"
+        "priorityDetails": "Higher number = higher priority (0–500)",
+        "bogoBadgeFree": "Buy {buy} Get {get} Free",
+        "bogoBadgePercent": "Buy {buy} Get {get} at {discount}% Off",
+        "bogoBadgeFixed": "Buy {buy} Get {get} - ${amount} Off",
+        "bogoBadgeDefault": "Buy {buy} Get {get}"
+      }
+    },
+    "Types": {
+      "FIXED_BUNDLE": { "label": "Fixed bundle", "description": "Bundle products together at a fixed price with discount", "features": ["Fixed bundle price", "Multiple products"] },
+      "BUY_X_GET_Y": { "label": "Buy X Get Y", "description": "Customer buys X items and gets Y items free or discounted", "features": ["Buy 2 Get 1 Free", "Buy 3 Get 2nd 50% Off"] },
+      "BOGO": { "label": "BOGO", "description": "Classic buy one get one offer with various discount options", "features": ["Buy 1 Get 1 Free", "Buy 1 Get 1 50% Off"] },
+      "VOLUME_DISCOUNT": { "label": "Volume discount", "description": "Offer discounts based on quantity purchased", "features": ["Buy 2 Save 10%", "Buy 5 Save 20%"] },
+      "MIX_AND_MATCH": { "label": "Mix & match", "description": "Choose any combination from products", "features": ["Pick any 3 for $50", "Mix different categories"] },
+      "FREQUENTLY_BOUGHT_TOGETHER": { "label": "Frequently bought together", "description": "Frequently bought together", "features": ["Smart product suggestions", "AI-powered recommendations"] },
+      "comingSoon": "Coming soon!"
+    },
+    "DiscountTypes": {
+      "PERCENTAGE": { "label": "Discount Percentage", "description": "Discount as a percentage of the original price" },
+      "FIXED_AMOUNT": { "label": "Discount Amount", "description": "Fixed dollar amount discount" },
+      "CUSTOM_PRICE": { "label": "Bundle Price", "description": "Set a specific price for the bundle" },
+      "NO_DISCOUNT": { "label": "No Discount", "description": "Bundle with no discount applied" },
+      "BUY_X_GET_Y": { "label": "Buy X Get Y", "description": "Buy certain quantity and get items free/discounted" },
+      "QUANTITY_BREAKS": { "label": "Quantity Breaks", "description": "Volume-based pricing with quantity tiers" }
+    },
+    "DetailsConstants": {
+      "fieldLabels": {
+        "bundleName": "Bundle Name",
+        "products": "Products",
+        "discountType": "Discount Type",
+        "discountValue": "Discount Value",
+        "minOrderValue": "Minimum Order Value",
+        "maxDiscount": "Maximum Discount",
+        "discountApplication": "Discount Application",
+        "freeShipping": "Free Shipping",
+        "createProduct": "Create Product",
+        "productTitle": "Product Title",
+        "productDescription": "Product Description",
+        "offerTitle": "Offer Title",
+        "cartButtonText": "Cart Button Text",
+        "displaySettings": "Display Settings",
+        "priority": "Priority"
+      },
+      "steps": {
+        "products": { "title": "Products", "description": "Select products for your bundle" },
+        "discount": { "title": "Discount", "description": "Set up discount rules and behavior" },
+        "display": { "title": "Display", "description": "Customize appearance and layout" },
+        "review": { "title": "Review", "description": "Review and publish your bundle" }
+      },
+      "layouts": {
+        "GRID": "Grid",
+        "LIST": "List",
+        "CAROUSEL": "Slider",
+        "COMPACT": "Compact",
+        "CLASSIC_CARD": "Classic Card",
+        "COMPACT_GRID": "Compact Grid",
+        "MINIMALIST": "Minimalist",
+        "SLEEK": "Sleek",
+        "CHECKLIST": "Checklist",
+        "SPLIT_DEAL": "Split Deal"
+      },
+      "displaySettings": {
+        "showImages": { "label": "Display product images", "details": "Show product images for each item included in the bundle." },
+        "showSavingsBadge": { "label": "Display savings badge", "details": "Highlight savings with a badge on eligible bundle items." },
+        "showPrices": { "label": "Display individual product prices", "details": "Show the price of each product included in the bundle." },
+        "showComparePrices": { "label": "Display compare-at prices", "details": "Show the original (compare-at) price alongside the current price." },
+        "showQuantity": { "label": "Display product quantities", "details": "Show the quantity of each product included in the bundle." },
+        "showSavings": { "label": "Display total bundle savings", "details": "Show the total amount customers save when purchasing the bundle." },
+        "showFreeShipping": { "label": "Display free shipping message", "details": "Inform customers when the bundle qualifies for free shipping." },
+        "enableHyperLink": { "label": "Enable product page link", "details": "Link product titles to their respective product pages." }
       }
     },
     "Listing": {
@@ -991,6 +1121,18 @@
       },
       "inherit": "Inherit",
       "selectColor": "Select color",
+      "Presets": {
+        "minimal": { "name": "Minimal", "description": "Clean and simple with sharp edges" },
+        "soft": { "name": "Soft", "description": "Gentle curves with subtle depth" },
+        "bold": { "name": "Bold", "description": "High contrast and attention-grabbing" },
+        "elegant": { "name": "Elegant", "description": "Sophisticated with refined details" },
+        "dark": { "name": "Dark", "description": "Sleek dark theme with vibrant accents" },
+        "nature": { "name": "Nature", "description": "Earthy tones with organic feel" },
+        "warm": { "name": "Warm", "description": "Inviting warm tones that feel friendly and human" },
+        "professional": { "name": "Professional", "description": "Neutral, structured, and trust-focused" }
+      },
+      "cartPageBanner": "Cart page banner",
+      "bundleProduct": "Bundle product",
       "Config": {
         "section_appearance_title": "Appearance",
         "field_stylePreset_label": "Quick Start",
@@ -1262,6 +1404,31 @@
       "endDate": "End Date",
       "previousMonth": "Previous month",
       "nextMonth": "Next month"
+    },
+    "DatePresets": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "last90": "Last 90 days",
+      "last365": "Last 365 days",
+      "lastWeek": "Last week",
+      "lastMonth": "Last month"
+    },
+    "Metrics": {
+      "totalRevenue": "Total Revenue",
+      "revenueGrowth": "Revenue Growth",
+      "conversionGrowth": "Conversion Growth",
+      "avgConversionRate": "Avg Conversion Rate",
+      "revenueLabel": "Revenue",
+      "revenueDesc": "Total revenue from bundle sales including discounts, excluding shipping, taxes, and fees.",
+      "revenueFormula": "Revenue = Product Prices - Bundle Discounts",
+      "viewsLabel": "Views",
+      "viewsDesc": "Total number of times bundles were viewed by customers. Each customer counts once per session per bundle.",
+      "viewsFormula": "Views = Unique bundle page visits per session",
+      "purchasesLabel": "Purchases",
+      "purchasesDesc": "Total number of completed bundle purchases from all customers.",
+      "purchasesFormula": "Purchases = Orders containing bundle products"
     }
   },
   "Pricing": {
@@ -1273,7 +1440,51 @@
     "devStoreTitle": "Development Store Detected!",
     "devStoreDesc": "You can use all BundleSuite features (unlimited bundles, analytics, etc.) completely free on your development store. Choose your paid plan only when you go live!",
     "dismissCard": "Dismiss card",
-    "pleaseWait": "Please wait..."
+    "pleaseWait": "Please wait...",
+    "plans": {
+      "0": {
+        "title": "Development Only",
+        "description": "This is a great plan for stores that are just starting out",
+        "button": "Currently subscribed"
+      },
+      "1": {
+        "title": "Starter Plan",
+        "featured": "Most Popular",
+        "description": "For stores that are growing and need a reliable solution to scale with them",
+        "button": "Select this plan"
+      },
+      "2": {
+        "title": "Premium",
+        "description": "The best of the best, for stores that have the highest order processing needs",
+        "button": "Select this plan"
+      },
+      "features": {
+        "orders": "Process up to 1,000 orders/mo",
+        "feature1": "Amazing feature",
+        "feature2": "Another really cool feature",
+        "support": "24/7 Customer Support"
+      },
+      "month": "month",
+      "year": "year"
+    },
+    "faqs": {
+      "0": {
+        "title": "What's the best plan for high-priced bundles?",
+        "description": "For businesses with high Average Order Value (AOV), tailored payment is key. We're here to help you grow with customized plans designed to fit your unique needs. Contact us to discuss how we can best support your business."
+      },
+      "1": {
+        "title": "Can I use the app for free?",
+        "description": "You can test the app for free within the 7-day trial on all plans. Moreover, development stores and test stores can access the app for free without approving any charges."
+      },
+      "2": {
+        "title": "Does the subscription fee automatically adjust based on my bundle sales?",
+        "description": "The subscription fee remains constant unless you explicitly approve changes. If you anticipate a decrease in sales, you can downgrade your plan accordingly. Conversely, if your sales exceed your plan's limit, you'll receive an email notification and can approve the upgrade."
+      },
+      "3": {
+        "title": "What if I want to change or cancel my plan?",
+        "description": "You can thoroughly test the app during the 7-day trial and cancel without any charges. After that, downgrades are prorated, but cancellations are not. Contact support to explore refund options."
+      }
+    }
   },
   "ABTesting": {
     "title": "A/B Testing",

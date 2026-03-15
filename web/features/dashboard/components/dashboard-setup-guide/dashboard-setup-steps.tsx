@@ -100,7 +100,7 @@ export function DashboardSetupSteps({
                             </s-tooltip>
                             <s-button
                                 interestFor="dismiss-guide-tooltip"
-                                accessibilityLabel="Dismiss setup guide"
+                                accessibilityLabel={t("dismissGuide")}
                                 variant="tertiary"
                                 tone="neutral"
                                 icon="x"
@@ -113,7 +113,7 @@ export function DashboardSetupSteps({
                             </s-tooltip>
                             <s-button
                                 interestFor="toggle-guide-tooltip"
-                                accessibilityLabel="Toggle setup guide"
+                                accessibilityLabel={t("toggleGuide")}
                                 variant="tertiary"
                                 tone="neutral"
                                 icon={

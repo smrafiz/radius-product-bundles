@@ -11,8 +11,20 @@ export const PREVIEW_LABELS: WidgetLabels = {
     bogoFreeText: "FREE",
     bogoYouPayLabel: "You Pay:",
     bogoYouSaveLabel: "You Save:",
-    bogoTotalLabel: "Bundle Total:",
+    bogoTotalLabel: "Bundle Total",
     bogoSaveText: "You Save:",
+    bogoTriggerBadgeText: "You Buy",
+    bogoRewardBadgeText: "You Get FREE",
+    checklistProgressText: "{count}/{total} items added",
+    checklistHintText: "{remaining} more to unlock!",
+    checklistCompletedText: "Unlocked!",
+    checklistLockedLabel: "Unlock by adding all items above",
+    checklistUnlockedLabel: "Reward Unlocked",
+    checklistPricingLockedText: "Select all items to see your price",
+    bannerSavingText: "You're saving {discount} with {name}",
+    bannerCustomPriceText: "Special price: {price} for {name}",
+    bannerFreeShippingQualifyText: "{name} qualifies for free shipping!",
+    bannerFreeShippingText: "Free shipping included!",
 };
 
 export const PLACEHOLDER_PRODUCTS: PreviewProduct[] = [

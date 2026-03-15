@@ -10,6 +10,7 @@ import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetLayout() {
     const t = useTranslations("Bundles.Creation.Appearance");
+    const tl = useTranslations("Bundles.DetailsConstants.layouts");
     const { displaySettings, updateDisplaySettings, bundleData } =
         useBundleStore();
     const layouts = useMemo(
@@ -44,14 +45,15 @@ export function WidgetLayout() {
                         gridTemplateColumns="repeat(4, minmax(110px, 1fr))"
                         gap="base"
                     >
-                        {layouts.map(({ label, widgetLayout, value }) => {
+                        {layouts.map(({ widgetLayout, value }) => {
                             const tooltipId = `layout-tooltip-${value}`;
+                            const translatedLabel = tl(value);
 
                             return (
                                 <s-grid-item key={value} gridColumn="auto">
                                     <s-stack>
                                         <s-tooltip id={tooltipId}>
-                                            <s-text>{label}</s-text>
+                                            <s-text>{translatedLabel}</s-text>
                                         </s-tooltip>
                                         <div
                                             className={`flex items-center justify-between border rounded-xl w-full h-25 p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[#f1f1f1]" : "border-[#e3e3e3] bg-[#f1f1f1] hover:border-blue-600"}`}
@@ -63,12 +65,12 @@ export function WidgetLayout() {
                                             }
                                         >
                                             <s-link
-                                                accessibilityLabel={label}
+                                                accessibilityLabel={translatedLabel}
                                                 interestFor={tooltipId}
                                             >
                                                 <s-image
                                                     src={widgetLayout}
-                                                    alt={label}
+                                                    alt={translatedLabel}
                                                 />
                                             </s-link>
                                         </div>

@@ -7,12 +7,15 @@ import {
     MODAL_CONTENT,
     useModalStore,
 } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Modal Host - Single Reusable Modal
  */
 export function ModalHost() {
     const { modal, closeModal, setLoading, setError } = useModalStore();
+    const t = useTranslations("Modals");
+    const tc = useTranslations("Common");
     const [dateRange, setDateRange] = useState("");
 
     const isScheduledModal =
@@ -70,7 +73,7 @@ export function ModalHost() {
         }
     };
 
-    const { heading, message, destructive } = MODAL_CONTENT(modal);
+    const { heading, message, destructive } = MODAL_CONTENT(modal, t);
     const hasActiveModal = modal && modal.type !== null;
 
     const renderMessage = (message: ReactNode) => {
@@ -164,7 +167,7 @@ export function ModalHost() {
                 onClick={closeModal}
                 disabled={hasActiveModal && modal.loading}
             >
-                Cancel
+                {tc("cancel", undefined, "Cancel")}
             </s-button>
 
             {/* Primary Action (Confirm) */}
@@ -180,7 +183,7 @@ export function ModalHost() {
                 }
             >
                 {(hasActiveModal && modal.confirmText) ||
-                    (destructive ? "Delete" : "Confirm")}
+                    (destructive ? tc("delete", undefined, "Delete") : t("confirm", undefined, "Confirm"))}
             </s-button>
         </s-modal>
     );

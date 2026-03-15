@@ -1,13 +1,15 @@
 import { ModalPayload } from "@/shared";
 import { BUNDLE_STATUSES, BundleStatus } from "@/features/bundles";
 
+type TranslatorFn = (key: string, params?: Record<string, string | number>, defaultValue?: string) => string;
+
 /**
  * Modal Content Configuration
  */
-export const MODAL_CONTENT = (modal: ModalPayload | { type: null }) => {
+export const MODAL_CONTENT = (modal: ModalPayload | { type: null }, t?: TranslatorFn) => {
     if (!modal || modal.type === null) {
         return {
-            heading: "Confirm",
+            heading: t?.("confirm") ?? "Confirm",
             message: "",
             destructive: false,
         };
@@ -16,25 +18,25 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }) => {
     switch (modal.type) {
         case "duplicate":
             return {
-                heading: modal.title || "Duplicate Bundle",
+                heading: modal.title || t?.("duplicate.heading") || "Duplicate Bundle",
                 message:
                     modal.message ||
-                    `Duplicate <strong>${modal.bundle?.name}?</strong> A new draft will be created.`,
+                    `Duplicate <strong>${modal.bundle?.name}?</strong> ${t?.("duplicate.draftCreated") || "A new draft will be created."}`,
                 destructive: false,
             };
 
         case "delete":
             return {
-                heading: modal.title || "Delete Bundle",
+                heading: modal.title || t?.("delete.heading") || "Delete Bundle",
                 message:
                     modal.message ||
-                    `Are you sure you want to delete <strong>${modal.bundle?.name}</strong>? This action cannot be undone.`,
+                    `Are you sure you want to delete <strong>${modal.bundle?.name}</strong>? ${t?.("delete.cannotUndo") || "This action cannot be undone."}`,
                 destructive: true,
             };
 
         case "status":
             return {
-                heading: modal.title || "Confirm Status Change",
+                heading: modal.title || t?.("status.heading") || "Confirm Status Change",
                 message:
                     modal.message ||
                     `Change the status of <strong>${modal.bundle?.name}</strong> to <strong>${
@@ -48,35 +50,37 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }) => {
 
         case "delete-product":
             return {
-                heading: modal.title || "Delete bundle product?",
+                heading: modal.title || t?.("deleteProduct.heading") || "Delete bundle product?",
                 message:
                     modal.message ||
-                    `Turning off this switch will permanently delete <strong>${modal.productTitle || "this product"}</strong> from your store when you save. This action cannot be undone.`,
+                    `${t?.("deleteProduct.message") || `Turning off this switch will permanently delete <strong>${modal.productTitle || t?.("deleteProduct.thisProduct") || "this product"}</strong> from your store when you save. This action cannot be undone.`}`,
                 destructive: true,
             };
 
         case "restore-defaults":
             return {
-                heading: modal.title || "Restore defaults?",
+                heading: modal.title || t?.("restoreDefaults.heading") || "Restore defaults?",
                 message:
                     modal.message ||
+                    t?.("restoreDefaults.message") ||
                     "This will reset all style settings to their default values. This action cannot be undone.",
                 destructive: true,
             };
 
         case "import-settings":
             return {
-                heading: modal.title || "Import Settings?",
+                heading: modal.title || t?.("importSettings.heading") || "Import Settings?",
                 message:
                     modal.message ||
+                    t?.("importSettings.message") ||
                     "This will overwrite your current settings with the data from the file. This action cannot be undone.",
                 destructive: true,
             };
 
         default:
             return {
-                heading: "Confirm Action",
-                message: "Are you sure you want to continue?",
+                heading: t?.("confirmAction") ?? "Confirm Action",
+                message: t?.("confirmContinue") ?? "Are you sure you want to continue?",
                 destructive: false,
             };
     }

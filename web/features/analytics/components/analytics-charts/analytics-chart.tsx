@@ -20,6 +20,7 @@ import {
     useSmartChartDisplay,
 } from "@/features/analytics";
 import { useState } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     Area,
     AreaChart,
@@ -37,6 +38,7 @@ export function AnalyticsChart() {
     const { chartData, isChartLoading } = useAnalytics();
     const { preset } = useAnalyticsStore();
     const display = useSmartChartDisplay(chartData, preset);
+    const t = useTranslations("Analytics.Metrics");
     const [activeMetric, setActiveMetric] = useState<
         "revenue" | "views" | "purchases"
     >("revenue");
@@ -104,11 +106,11 @@ export function AnalyticsChart() {
                     <s-stack gap="small-200">
                         <s-heading>
                             <ChartTitleTooltip
-                                title={`Total ${currentMetric.label}`}
-                                description={currentMetric.description}
-                                formula={currentMetric.formula}
+                                title={`Total ${t(currentMetric.key + "Label", undefined, currentMetric.label)}`}
+                                description={t(currentMetric.key + "Desc", undefined, currentMetric.description)}
+                                formula={t(currentMetric.key + "Formula", undefined, currentMetric.formula)}
                             >
-                                Total {currentMetric.label.toLowerCase()} over
+                                Total {t(currentMetric.key + "Label", undefined, currentMetric.label).toLowerCase()} over
                                 time
                             </ChartTitleTooltip>
                         </s-heading>
@@ -150,7 +152,7 @@ export function AnalyticsChart() {
                                                 : undefined
                                         }
                                     >
-                                        {metric.label}
+                                        {t(metric.key + "Label", undefined, metric.label)}
                                     </div>
                                 </s-button>
                             ))}
@@ -171,12 +173,13 @@ export function AnalyticsChart() {
                         <Tooltip
                             {...CHART_TOOLTIP_CONFIG}
                             formatter={(value) => {
+                                const label = t(currentMetric.key + "Label", undefined, currentMetric.label);
                                 if (value == null) {
-                                    return ["-", currentMetric.label];
+                                    return ["-", label];
                                 }
                                 return [
                                     currentMetric.formatter(Number(value)),
-                                    currentMetric.label,
+                                    label,
                                 ];
                             }}
                         />

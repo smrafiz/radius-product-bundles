@@ -259,7 +259,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                 ? bundleData.sameProductMode
                                     ? t("bogoSameProduct")
                                     : t("bogoTwoProducts")
-                                : `Maximum ${maxProducts} products reached for this bundle.`}
+                                : t("maxReached", { count: String(maxProducts) })}
                         </s-banner>
                     )}
                     <ProductList isBxgy={isBxgy} isBogo={isBogo} />

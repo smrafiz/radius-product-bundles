@@ -7,6 +7,7 @@ import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetDisplaySettings() {
     const t = useTranslations("Bundles.Creation.Appearance");
+    const td = useTranslations("Bundles.DetailsConstants.displaySettings");
     const { displaySettings, updateDisplaySettings, markFieldTouched } =
         useBundleStore();
     const { setValue } = useFormContext();
@@ -31,13 +32,13 @@ export function WidgetDisplaySettings() {
                         interestFor="product-page-settings-display-tooltip"
                     />
                 </s-stack>
-                {ADVANCED_OPTIONS.map(({ key, title, description }, index) => {
+                {ADVANCED_OPTIONS.map(({ key }, index) => {
                     const selected = displaySettings[key];
                     return (
                         <s-stack key={key} gap="base">
                             <s-switch
-                                label={title}
-                                details={description}
+                                label={td(key + ".label")}
+                                details={td(key + ".details")}
                                 checked={selected}
                                 onInput={(event: Event) => {
                                     const target =

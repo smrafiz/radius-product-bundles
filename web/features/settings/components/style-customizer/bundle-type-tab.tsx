@@ -4,9 +4,6 @@ import React from "react";
 import { PREVIEW_TEMPLATE_OPTIONS } from "@/features/settings/constants/customizer.constants";
 import { useTranslations } from "@/lib/i18n/provider";
 
-/**
- * Template type tab component.
- */
 export function BundleTypeTab({
     activeId,
     onChangeAction,
@@ -15,6 +12,7 @@ export function BundleTypeTab({
     onChangeAction: (id: string) => void;
 }) {
     const t = useTranslations("Settings.Customizer");
+    const tt = useTranslations("Bundles.Types");
 
     return (
         <s-section>
@@ -34,7 +32,9 @@ export function BundleTypeTab({
                         >
                             {PREVIEW_TEMPLATE_OPTIONS.map((opt) => (
                                 <s-option key={opt.id} value={opt.id}>
-                                    {opt.label}
+                                    {opt.id === "CART_BANNER"
+                                        ? t("cartPageBanner")
+                                        : tt(`${opt.id}.label`)}
                                 </s-option>
                             ))}
                         </s-select>

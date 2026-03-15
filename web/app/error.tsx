@@ -23,10 +23,10 @@ export default function Error({
         addMessage({
             type: "error",
             title: t("error"),
-            content: error.message || "An unexpected error occurred",
+            content: error.message || t("error"),
             dismissible: true,
             action: {
-                label: "Try again",
+                label: t("tryAgain"),
                 onAction: reset,
             },
         });

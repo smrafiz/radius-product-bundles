@@ -14,6 +14,7 @@ import { useTranslations } from "@/lib/i18n/provider";
  */
 export function AnalyticsDate() {
     const t = useTranslations("Analytics.DatePicker");
+    const tp = useTranslations("Analytics.DatePresets");
     const {
         range,
         startInput,
@@ -88,7 +89,7 @@ export function AnalyticsDate() {
                                                                         : "generic"
                                                                 }
                                                             >
-                                                                {preset.label}
+                                                                {tp(preset.key, undefined, preset.label)}
                                                             </s-text>
                                                             {activePreset ===
                                                                 preset.key && (

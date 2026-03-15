@@ -9,9 +9,12 @@ import { submitForm } from "@/shared";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/provider";
 
+const STEP_KEYS = ["products", "discount", "display", "review"] as const;
+
 export function HorizontalStepIndicator() {
     const t = useTranslations("Bundles.Creation.Steps");
     const tc = useTranslations("Bundles.Common");
+    const ts = useTranslations("Bundles.DetailsConstants.steps");
     const {
         steps,
         getStepStatus,
@@ -117,7 +120,7 @@ export function HorizontalStepIndicator() {
                                                       : undefined
                                             }
                                         >
-                                            {step.title}
+                                            {ts(STEP_KEYS[step.number - 1] + ".title")}
                                         </s-badge>
                                     </div>
 

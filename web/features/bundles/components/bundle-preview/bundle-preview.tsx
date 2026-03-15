@@ -1,21 +1,22 @@
 "use client";
 
+import type { WidgetLabels } from "@/shared";
 import {
     BundleWidget,
     PreviewProduct,
     ROUTES,
     useShopSettings,
     WidgetCarousel,
+    WidgetChecklist,
     WidgetClassicCard,
     WidgetCompact,
+    WidgetCompactGrid,
     WidgetDisplayOptions,
     WidgetGrid,
     WidgetList,
+    WidgetMinimalist,
     WidgetPricing,
     WidgetSleek,
-    WidgetMinimalist,
-    WidgetCompactGrid,
-    WidgetChecklist,
     WidgetSplitDeal,
 } from "@/shared";
 import {
@@ -34,13 +35,10 @@ import {
     useCustomizerModal,
     useSettingsStore,
 } from "@/features/settings";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
-import {
-    DEFAULT_CUSTOMIZER_STYLES,
-    DEFAULT_LABELS,
-} from "@/features/settings/constants/defaults.constants";
-import type { WidgetLabels } from "@/shared";
+import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 import { useTranslations } from "@/lib/i18n/provider";
 import "@/styles/components/bundle.css";
@@ -210,16 +208,24 @@ function useWidgetPricing(currencyCode?: string): WidgetPricing {
 
 function useWidgetLabels(): WidgetLabels {
     const serverData = useSettingsStore((s) => s.serverData);
+    const savedLabels = serverData?.labels as
+        | Record<string, string>
+        | undefined;
     return useMemo(
         () => ({
-            ...DEFAULT_LABELS,
-            ...(serverData?.labels as Partial<typeof DEFAULT_LABELS>),
+            ...PREVIEW_LABELS,
+            ...Object.fromEntries(
+                Object.entries(savedLabels ?? {}).filter(
+                    ([, val]) => val !== "",
+                ),
+            ),
         }),
-        [serverData],
+        [savedLabels],
     );
 }
 
 function useBadgeText(labels: WidgetLabels): string {
+    const tp = useTranslations("Bundles.Creation.Preview");
     const { bundleData, selectedItems } = useBundleStore();
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
@@ -234,15 +240,23 @@ function useBadgeText(labels: WidgetLabels): string {
     const discountValue = bundleData.discountValue ?? 0;
 
     if (discountType === "PERCENTAGE" && discountValue === 100) {
-        return `Buy ${buy} Get ${get} Free`;
+        return tp("bogoBadgeFree", { buy: String(buy), get: String(get) });
     }
     if (discountType === "PERCENTAGE" && discountValue > 0) {
-        return `Buy ${buy} Get ${get} at ${discountValue}% Off`;
+        return tp("bogoBadgePercent", {
+            buy: String(buy),
+            get: String(get),
+            discount: String(discountValue),
+        });
     }
     if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
-        return `Buy ${buy} Get ${get} - $${discountValue} Off`;
+        return tp("bogoBadgeFixed", {
+            buy: String(buy),
+            get: String(get),
+            amount: String(discountValue),
+        });
     }
-    return `Buy ${buy} Get ${get}`;
+    return tp("bogoBadgeDefault", { buy: String(buy), get: String(get) });
 }
 
 function RenderLayout({
@@ -363,10 +377,21 @@ export function BundlePreview() {
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
-    const [activeDevice, setActiveDevice] = useState<
-        "desktop" | "tablet" | "mobile"
-    >("desktop");
-    const isBogoLayout = BOGO_LAYOUT_VALUES.includes(displaySettings.layout);
+
+    const openCustomizer = useCallback(
+        (device: "desktop" | "tablet" | "mobile") => {
+            const appWindow = appWindowRef.current as any;
+            if (!appWindow) {
+                return;
+            }
+
+            appWindow.src = bundleData.type
+                ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}&device=${device}`
+                : ROUTES.CUSTOMIZER;
+            appWindow.show?.();
+        },
+        [appWindowRef, bundleData.type, displaySettings.layout],
+    );
     const customizerSrc = bundleData.type
         ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}`
         : ROUTES.CUSTOMIZER;
@@ -398,94 +423,51 @@ export function BundlePreview() {
                         <s-stack
                             direction="inline"
                             alignItems="center"
-                            gap="small-500"
+                            gap="small"
                         >
                             <s-app-window
                                 ref={appWindowRef}
                                 id="rtpb-preview-window"
                                 src={customizerSrc}
                             />
-                            {isBogoLayout && (
-                                <s-button-group gap="none">
-                                    <s-button
-                                        onClick={() =>
-                                            setActiveDevice("desktop")
-                                        }
-                                    >
-                                        <span
-                                            className={
-                                                activeDevice === "desktop"
-                                                    ? "opacity-100"
-                                                    : "opacity-50"
-                                            }
-                                        >
-                                            <s-icon
-                                                type="desktop"
-                                                tone={
-                                                    activeDevice === "desktop"
-                                                        ? "info"
-                                                        : "auto"
-                                                }
-                                            />
-                                        </span>
-                                    </s-button>
-                                    <s-button
-                                        onClick={() =>
-                                            setActiveDevice("tablet")
-                                        }
-                                    >
-                                        <span
-                                            className={
-                                                activeDevice === "tablet"
-                                                    ? "opacity-100"
-                                                    : "opacity-50"
-                                            }
-                                        >
-                                            <s-icon
-                                                type="tablet"
-                                                tone={
-                                                    activeDevice === "tablet"
-                                                        ? "info"
-                                                        : "auto"
-                                                }
-                                            />
-                                        </span>
-                                    </s-button>
-                                    <s-button
-                                        onClick={() =>
-                                            setActiveDevice("mobile")
-                                        }
-                                    >
-                                        <span
-                                            className={
-                                                activeDevice === "mobile"
-                                                    ? "opacity-100"
-                                                    : "opacity-50"
-                                            }
-                                        >
-                                            <s-icon
-                                                type="mobile"
-                                                tone={
-                                                    activeDevice === "mobile"
-                                                        ? "info"
-                                                        : "auto"
-                                                }
-                                            />
-                                        </span>
-                                    </s-button>
-                                </s-button-group>
-                            )}
-                            <s-button
-                                variant="tertiary"
-                                command="--show"
-                                commandFor="rtpb-preview-window"
-                            >
-                                {t("globalCustomizer")}
-                            </s-button>
+                            <s-tooltip id="tooltip-desktop">
+                                <s-text>{t("customizerDesktop")}</s-text>
+                            </s-tooltip>
+
+                            <s-tooltip id="tooltip-tablet">
+                                <s-text>{t("customizerTablet")}</s-text>
+                            </s-tooltip>
+
+                            <s-tooltip id="tooltip-mobile">
+                                <s-text>{t("customizerMobile")}</s-text>
+                            </s-tooltip>
+
+                            <s-button-group gap="none">
+                                <s-button
+                                    interestFor="tooltip-desktop"
+                                    slot="secondary-actions"
+                                    onClick={() => openCustomizer("desktop")}
+                                >
+                                    <s-icon type="desktop" />
+                                </s-button>
+                                <s-button
+                                    interestFor="tooltip-tablet"
+                                    slot="secondary-actions"
+                                    onClick={() => openCustomizer("tablet")}
+                                >
+                                    <s-icon type="tablet" />
+                                </s-button>
+                                <s-button
+                                    interestFor="tooltip-mobile"
+                                    slot="secondary-actions"
+                                    onClick={() => openCustomizer("mobile")}
+                                >
+                                    <s-icon type="mobile" tone="info" />
+                                </s-button>
+                            </s-button-group>
+
                             <s-tooltip id="customization-tooltip">
-                                <s-text>
-                                    {t("globalCustomizerTooltip")}
-                                </s-text>
+                                <s-text>{t("globalCustomizerTooltip")}</s-text>
                             </s-tooltip>
                             <s-icon
                                 tone="neutral"
@@ -496,28 +478,12 @@ export function BundlePreview() {
                     </s-stack>
                     <div
                         className="radius-bundle-widget"
-                        style={
-                            isBogoLayout
-                                ? {
-                                      maxWidth:
-                                          activeDevice === "mobile"
-                                              ? "400px"
-                                              : activeDevice === "tablet"
-                                                ? "768px"
-                                                : "100%",
-                                      margin: "0 auto",
-                                      transition: "max-width 0.3s ease-in-out",
-                                      borderLeft:
-                                          activeDevice !== "desktop"
-                                              ? "1px solid #e1e3e5"
-                                              : "none",
-                                      borderRight:
-                                          activeDevice !== "desktop"
-                                              ? "1px solid #e1e3e5"
-                                              : "none",
-                                  }
-                                : undefined
-                        }
+                        style={{
+                            maxWidth: "390px",
+                            margin: "0 auto",
+                            borderLeft: "1px solid #e1e3e5",
+                            borderRight: "1px solid #e1e3e5",
+                        }}
                     >
                         <div className="radius-bundle">
                             <div
@@ -576,7 +542,7 @@ export function BundlePreview() {
                                         subtitle={displaySettings.subtitle}
                                         badgeText={badgeText}
                                         labels={labels}
-                                        activeDevice={activeDevice}
+                                        activeDevice="mobile"
                                     />
                                 </BundleWidget>
                             </div>

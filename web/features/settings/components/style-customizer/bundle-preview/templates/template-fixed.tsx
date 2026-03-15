@@ -15,9 +15,11 @@ import {
     PLACEHOLDER_PRODUCTS,
     PREVIEW_LABELS,
 } from "@/shared/constants/bundle-widget.constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function TemplateFixed({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
+    const tc = useTranslations("Settings.Customizer");
     const serverData = useSettingsStore((s) => s.serverData);
     const savedLabels = serverData?.labels as Record<string, string> | undefined;
     const labels = {
@@ -27,21 +29,27 @@ export function TemplateFixed({ activeLayout }: BundleTemplateProps) {
         ),
     };
 
+    const translatedTitle = tc("bundleProduct");
+    const translatedProducts = PLACEHOLDER_PRODUCTS.map((p) => ({
+        ...p,
+        title: translatedTitle,
+    }));
+
     let products: PreviewProduct[];
 
     switch (activeLayout) {
         case "GRID":
         case "LIST":
-            products = PLACEHOLDER_PRODUCTS.slice(0, 3);
+            products = translatedProducts.slice(0, 3);
             break;
 
         case "COMPACT":
-            products = PLACEHOLDER_PRODUCTS.slice(0, 4);
+            products = translatedProducts.slice(0, 4);
             break;
 
         case "CAROUSEL":
         default:
-            products = PLACEHOLDER_PRODUCTS;
+            products = translatedProducts;
             break;
     }
 

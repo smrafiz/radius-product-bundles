@@ -7,9 +7,11 @@ import {
 } from "@/features/analytics";
 import { useMemo } from "react";
 import { formatByType, MetricCard } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function AnalyticsMetrics() {
     const { metrics, isFetching } = useAnalyticsMetrics();
+    const t = useTranslations("Analytics.Metrics");
 
     const cards = useMemo(() => {
         const metricsData: Partial<AnalyticsMetricsData> = {
@@ -28,14 +30,14 @@ export function AnalyticsMetrics() {
         };
 
         return ANALYTICS_METRICS.map((cfg) => ({
-            title: cfg.title,
+            title: t(cfg.key, undefined, cfg.title),
             icon: cfg.icon,
             tone: cfg.tone,
             img: cfg.img,
             value: formatByType(metricsData?.[cfg.key] ?? 0, cfg.format),
             growth: growthData[cfg.key],
         }));
-    }, [metrics]);
+    }, [metrics, t]);
 
     return (
         <s-grid
