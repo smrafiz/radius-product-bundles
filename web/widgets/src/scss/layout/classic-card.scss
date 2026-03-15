@@ -257,7 +257,7 @@
         color: var(--rb-text-color, inherit);
 
         &--reward {
-            color: var(--rb-bogo-free-tag-color, #16a34a);
+            color: var(--rb-savings-color, #16a34a);
         }
     }
 
@@ -280,17 +280,17 @@
 
     &__pricing-label {
         display: block;
-        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-size: calc(var(--rb-body-font-size) - 3px);
         font-weight: 500;
         margin-bottom: 2px;
     }
 
     &__pricing-pay {
-        color: var(--rb-savings-color, #16a34a);
+        color: var(--rb-bogo-free-tag-color, #16a34a);
     }
 
     &__pricing-save {
-        color: var(--rb-savings-color, #16a34a);
+        color: var(--rb-bogo-free-tag-color, #16a34a);
     }
 
     &__pricing-value {

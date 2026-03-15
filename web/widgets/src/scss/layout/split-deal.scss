@@ -243,7 +243,7 @@
 
     &__summary-label {
         display: block;
-        font-size: calc(var(--rb-body-font-size) - 5px);
+        font-size: calc(var(--rb-body-font-size) - 4px);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -253,7 +253,7 @@
 
     &__summary-value {
         display: block;
-        font-size: calc(var(--rb-heading-font-size) - 2px);
+        font-size: var(--rb-heading-font-size);
         font-weight: 600;
         color: var(--rb-text-color, #111827);
 

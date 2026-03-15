@@ -151,13 +151,13 @@
         &--reward {
             background: color-mix(
                 in srgb,
-                var(--rb-bogo-free-tag-color, #16a34a) 10%,
+                var(--rb-savings-color, #16a34a) 10%,
                 transparent
             );
             border: 1px solid
                 color-mix(
                     in srgb,
-                    var(--rb-bogo-free-tag-color, #16a34a) 12%,
+                    var(--rb-savings-color, #16a34a) 12%,
                     transparent
                 );
         }
@@ -210,12 +210,12 @@
 
         &--reward {
             color: var(
-                --rb-bogo-free-tag-color,
+                --rb-savings-color,
                 var(--rb-savings-color, #16a34a)
             );
             background: color-mix(
                 in srgb,
-                var(--rb-bogo-free-tag-color, #16a34a) 10%,
+                var(--rb-savings-color, #16a34a) 10%,
                 transparent
             );
         }
@@ -252,10 +252,7 @@
         color: var(--rb-text-color, #1a1a2e);
 
         &--reward {
-            color: var(
-                --rb-bogo-free-tag-color,
-                var(--rb-savings-color, #16a34a)
-            );
+            color: var(--rb-savings-color,var(--rb-savings-color, #16a34a));
         }
     }
 

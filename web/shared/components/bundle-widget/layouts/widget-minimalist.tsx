@@ -8,7 +8,6 @@ import {
     getHeadingFontSize,
     getFontSize,
     getCardRadius,
-    getShadow,
     getButtonPadding,
 } from "@/features/settings";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";

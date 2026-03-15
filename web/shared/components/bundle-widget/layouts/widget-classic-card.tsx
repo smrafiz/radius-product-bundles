@@ -164,6 +164,7 @@ export function WidgetClassicCard({
     const isFullWidth = styles.buttonWidth !== "auto";
     const isOutline = styles.badgeStyle === "outline";
     const accentColor = styles.primaryColor || "#303030";
+    const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
     const bodyFontSize = getFontSize(styles.bodySize);
     const borderStyle = styles.bogoCardBorderStyle || "solid";
     const showBorder = styles.customizeCardStyle
@@ -356,10 +357,10 @@ export function WidgetClassicCard({
                     <div>
                         <div
                             style={{
-                                fontSize: parseInt(bodyFontSize) - 4,
+                                fontSize: parseInt(bodyFontSize) - 3,
                                 fontWeight: 500,
-                                color: "#15803d",
-                                marginBottom: 2,
+                                color: freeTagColor,
+                                marginBottom: 4,
                             }}
                         >
                             {labels?.bogoYouPayLabel ||
@@ -378,10 +379,10 @@ export function WidgetClassicCard({
                     <div style={{ textAlign: "right" }}>
                         <div
                             style={{
-                                fontSize: parseInt(bodyFontSize) - 4,
+                                fontSize: parseInt(bodyFontSize) - 3,
                                 fontWeight: 500,
-                                color: "#15803d",
-                                marginBottom: 2,
+                                color: freeTagColor,
+                                marginBottom: 4,
                             }}
                         >
                             {labels?.bogoYouSaveLabel ||

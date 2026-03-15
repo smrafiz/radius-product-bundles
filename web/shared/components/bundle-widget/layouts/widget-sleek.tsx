@@ -109,7 +109,7 @@ function SleekProductCard({
                 {isTrigger ? (
                     <span
                         style={{
-                            fontSize: parseInt(bodyFontSize) - 4,
+                            fontSize: parseInt(bodyFontSize) - 3,
                             color: styles.textColor,
                             fontWeight: 500,
                             opacity: 0.7,

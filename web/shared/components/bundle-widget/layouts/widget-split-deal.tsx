@@ -376,7 +376,7 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: parseInt(bodyFontSize) - 5,
+                                fontSize: parseInt(bodyFontSize) - 4,
                                 fontWeight: 600,
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
@@ -390,7 +390,7 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: parseInt(headingFontSize) - 2,
+                                fontSize: parseInt(headingFontSize),
                                 fontWeight: 600,
                                 color: styles.textColor,
                             }}
@@ -402,7 +402,7 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: parseInt(bodyFontSize) - 5,
+                                fontSize: parseInt(bodyFontSize) - 4,
                                 fontWeight: 600,
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
@@ -416,7 +416,7 @@ export function WidgetSplitDeal({
                         <span
                             style={{
                                 display: "block",
-                                fontSize: parseInt(headingFontSize) - 2,
+                                fontSize: parseInt(headingFontSize),
                                 fontWeight: 600,
                                 color: styles.savingsColor || "#16a34a",
                             }}

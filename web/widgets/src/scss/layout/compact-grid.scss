@@ -19,7 +19,6 @@
         flex-direction: column;
         border-radius: var(--rb-border-radius, 12px);
         overflow: hidden;
-        background: #f8f9fa;
     }
 
     // ── Deal banner ─────────────────────────────────────────────────
@@ -90,7 +89,7 @@
         gap: 8px;
         padding: 16px 12px 12px;
         border-radius: var(--rb-border-radius, 12px);
-        background: #fff;
+        background: var(--rb-product-bg-color, #fff);
 
         &--trigger {
             border: 1.5px solid

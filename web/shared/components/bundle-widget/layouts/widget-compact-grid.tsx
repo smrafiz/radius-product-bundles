@@ -13,6 +13,7 @@ import {
     getHeadingFontSize,
     getPadding,
     getSpacing,
+    getCardBgColor,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -48,6 +49,9 @@ function ProductTile({
         hasDiscount && (product.price === "$0.00" || product.price === "$0");
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    const cardBg = styles.customizeCardStyle
+        ? getCardBgColor(styles)
+        : undefined;
 
     return (
         <div
@@ -58,7 +62,7 @@ function ProductTile({
                 gap: 8,
                 padding: "16px 12px 12px",
                 borderRadius: cardRadius,
-                background: "#fff",
+                backgroundColor: cardBg,
                 border: `1.5px solid ${accentColor}22`,
             }}
         >
@@ -126,7 +130,7 @@ function ProductTile({
                     style={{
                         fontSize: styles.bodySize,
                         fontWeight: 500,
-                        color: hasDiscount ? freeTagColor : styles.textColor,
+                        color: hasDiscount ? savingsColor : styles.textColor,
                     }}
                 >
                     {isFreePrice ? freeText : product.price}
@@ -371,7 +375,6 @@ export function WidgetCompactGrid({
                 flexDirection: "column",
                 borderRadius: cardRadius,
                 overflow: "hidden",
-                background: "#f8f9fa",
             }}
         >
             {/* Deal banner */}
