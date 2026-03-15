@@ -1,4 +1,19 @@
-import { PreviewProduct, WidgetDisplayOptions, WidgetPricing } from "@/shared";
+import { PreviewProduct, WidgetDisplayOptions, WidgetLabels, WidgetPricing } from "@/shared";
+
+export const PREVIEW_LABELS: WidgetLabels = {
+    headingLabel: "Bundle & Save",
+    addToCartText: "Add Bundle to Cart",
+    quantityLabel: "Qty:",
+    regularPriceLabel: "Regular Price:",
+    bundlePriceLabel: "Bundle Price:",
+    youSaveLabel: "You Save:",
+    freeShippingLabel: "Free Shipping",
+    bogoFreeText: "FREE",
+    bogoYouPayLabel: "You Pay:",
+    bogoYouSaveLabel: "You Save:",
+    bogoTotalLabel: "Bundle Total:",
+    bogoSaveText: "You Save:",
+};
 
 export const PLACEHOLDER_PRODUCTS: PreviewProduct[] = [
     {

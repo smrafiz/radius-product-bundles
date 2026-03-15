@@ -15,7 +15,7 @@ import {
     useEffectiveStyles,
     useSettingsStore,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 
 const BOGO_PRODUCTS: PreviewProduct[] = [
@@ -49,9 +49,14 @@ const BOGO_PRICING: WidgetPricing = {
 export function TemplateBogo({ activeLayout, activeDevice }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
+    const savedLabels = serverData?.labels as Record<string, string> | undefined;
     const labels = {
-        ...DEFAULT_LABELS,
-        ...(serverData?.labels as Partial<typeof DEFAULT_LABELS>),
+        ...PREVIEW_LABELS,
+        ...Object.fromEntries(
+            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== "")
+        ),
+        bogoTriggerBadgeText: "You Buy",
+        bogoRewardBadgeText: "50% Off",
     };
 
     const layoutProps = {

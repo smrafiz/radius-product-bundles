@@ -1,20 +1,17 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { checkBundleExists } from "@/features/bundles/services";
 import { EditBundlePage, BundleRedirect } from "@/features/bundles";
 
-/**
- * Generate metadata
- */
+
 export async function generateMetadata(): Promise<Metadata> {
+    const t = await getStaticTranslations("Meta.pages.bundleEdit");
     return {
-        title: "Bundle Builder - Edit Bundle",
-        description: "Edit your existing product bundle.",
+        title: t("title"),
+        description: t("description"),
     };
 }
 
-/**
- * Edit Bundle Page
- */
 export default async function EditBundleByIdPage(props: {
     params: Promise<{ id: string }>;
 }) {

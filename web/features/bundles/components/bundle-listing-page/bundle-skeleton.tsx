@@ -1,16 +1,16 @@
 "use client";
 
+import { useTranslations } from "@/lib/i18n/provider";
 import { PageSkeleton, SkeletonCard, SkeletonLines } from "@/shared";
 
-/**
- * Bundle table skeleton component
- */
 export function BundleSkeleton() {
+    const t = useTranslations("Bundles.Listing");
+
     return (
         <PageSkeleton
-            heading="Bundle Management"
+            heading={t("title")}
             showPrimaryAction={true}
-            primaryActionText="Create Bundle"
+            primaryActionText={t("createBundle")}
             showSecondaryAction={true}
             secondaryActionText="Bundle Studio"
             withPadding={false}
@@ -19,11 +19,11 @@ export function BundleSkeleton() {
                 <div className="text-center">
                     <s-heading>
                         <div className="text-base text-center">
-                            Bundle Management
+                            {t("title")}
                         </div>
                     </s-heading>
                     <s-text color="subdued">
-                        Create and manage your product bundle offers
+                        {t("description")}
                     </s-text>
                 </div>
             </s-stack>

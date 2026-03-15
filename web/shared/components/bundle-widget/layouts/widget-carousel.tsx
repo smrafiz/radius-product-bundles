@@ -9,6 +9,7 @@ export function WidgetCarousel({
     styles,
     displayOptions,
     showEmptyState = true,
+    labels,
 }: WidgetLayoutProps) {
     const carouselRef = useRef<HTMLDivElement>(null);
     const gap = getSpacing(styles.spacing);
@@ -136,6 +137,7 @@ export function WidgetCarousel({
                             product={product}
                             styles={styles}
                             displayOptions={displayOptions}
+                            labels={labels}
                             variant="vertical"
                         />
                     </div>

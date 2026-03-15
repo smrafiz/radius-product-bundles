@@ -11,6 +11,7 @@ import {
 } from "@/features/bundles";
 import { useCallback, useState } from "react";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 import { useQueryClient } from "@tanstack/react-query";
 import {
     deleteBundleAction,
@@ -32,6 +33,7 @@ export function BundleCreationForm({
     bundleName,
     bundleId,
 }: BundleCreationFormProps) {
+    const tc = useTranslations("Bundles.Common");
     const { bundleData } = useAppNavigation();
     const { pageProps, isEditMode } = useBundleFormManager({
         bundleType,
@@ -49,11 +51,11 @@ export function BundleCreationForm({
 
         openModal({
             type: "duplicate",
-            title: "Duplicate bundle",
+            title: tc("duplicateTitle"),
             message: isDirty
-                ? `You have unsaved changes that will be discarded. Are you sure you want to duplicate this bundle?`
-                : `Are you sure you want to duplicate this bundle?`,
-            confirmText: "Duplicate",
+                ? tc("duplicateConfirmUnsaved")
+                : tc("duplicateConfirm"),
+            confirmText: tc("duplicate"),
             onConfirm: async () => {
                 setIsDuplicating(true);
                 shopify?.loading(true);
@@ -68,18 +70,18 @@ export function BundleCreationForm({
                     ) {
                         await invalidateBundleCache(queryClient);
                         shopify?.toast?.show(
-                            result.message ?? "Bundle duplicated successfully",
+                            result.message ?? tc("duplicateSuccess"),
                         );
                         bundleData.edit(result.data.bundle.id);
                     } else {
                         shopify?.toast?.show(
-                            result.message ?? "Failed to duplicate bundle",
+                            result.message ?? tc("duplicateFailed"),
                             { isError: true },
                         );
                     }
                 } catch (error) {
                     console.error("Error duplicating bundle:", error);
-                    shopify?.toast?.show("Failed to duplicate bundle", {
+                    shopify?.toast?.show(tc("duplicateFailed"), {
                         isError: true,
                     });
                 } finally {
@@ -104,9 +106,9 @@ export function BundleCreationForm({
 
         openModal({
             type: "delete",
-            title: "Delete bundle",
-            message: `Are you sure you want to delete "${bundleName || "this bundle"}"? This action cannot be undone.`,
-            confirmText: "Delete",
+            title: tc("deleteBundle"),
+            message: tc("deleteConfirm", { name: bundleName || tc("breadcrumb") }),
+            confirmText: tc("delete"),
             onConfirm: async () => {
                 setIsDeleting(true);
                 try {
@@ -120,7 +122,7 @@ export function BundleCreationForm({
                             shopify.toast?.show
                         ) {
                             shopify.toast.show(
-                                result.message ?? "Bundle deleted successfully",
+                                result.message ?? tc("deleteSuccess"),
                             );
                         }
                         bundleData.list()();
@@ -130,7 +132,7 @@ export function BundleCreationForm({
                             shopify.toast?.show
                         ) {
                             shopify.toast.show(
-                                result.message ?? "Failed to delete bundle",
+                                result.message ?? tc("deleteFailed"),
                                 { isError: true },
                             );
                         }
@@ -138,7 +140,7 @@ export function BundleCreationForm({
                 } catch (error) {
                     console.error("Error deleting bundle:", error);
                     if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                        shopify.toast.show("Failed to delete bundle", {
+                        shopify.toast.show(tc("deleteFailed"), {
                             isError: true,
                         });
                     }
@@ -150,10 +152,10 @@ export function BundleCreationForm({
     }, [bundleId, bundleName, openModal, app, queryClient, bundleData]);
 
     return (
-        <s-page>
-            <TitleBar>
+        <s-page heading={isEditMode ? tc("edit") : tc("create")}>
+            <TitleBar title={isEditMode ? tc("edit") : tc("create")}>
                 <button variant="breadcrumb" onClick={bundleData.list()}>
-                    Bundles
+                    {tc("breadcrumb")}
                 </button>
 
                 {isSaving || isDeleting || isDuplicating ? (
@@ -163,14 +165,14 @@ export function BundleCreationForm({
                             disabled={isSaving || (isEditMode && !isDirty)}
                             loading={isSaving}
                         >
-                            {isEditMode ? "Update" : "Publish"}
+                            {isEditMode ? tc("update") : tc("publish")}
                         </s-button>
                         {isEditMode && bundleId && (
                             <s-button
                                 disabled={isDuplicating}
                                 loading={isDuplicating}
                             >
-                                Duplicate
+                                {tc("duplicate")}
                             </s-button>
                         )}
                     </>
@@ -181,10 +183,10 @@ export function BundleCreationForm({
                             onClick={() => submitForm()}
                             disabled={!isDirty}
                         >
-                            {isEditMode ? "Update" : "Publish"}
+                            {isEditMode ? tc("update") : tc("publish")}
                         </button>
                         {isEditMode && bundleId && (
-                            <button onClick={handleDuplicate}>Duplicate</button>
+                            <button onClick={handleDuplicate}>{tc("duplicate")}</button>
                         )}
                     </>
                 )}
@@ -201,7 +203,7 @@ export function BundleCreationForm({
                         <s-button
                             onClick={pageProps.onBack()}
                             icon="arrow-left"
-                            accessibilityLabel="Back"
+                            accessibilityLabel={tc("back")}
                         />
                     </s-stack>
 
@@ -229,9 +231,9 @@ export function BundleCreationForm({
                                 icon="delete"
                                 onClick={handleDelete}
                                 loading={isDeleting}
-                                accessibilityLabel="Delete bundle"
+                                accessibilityLabel={tc("deleteBundle")}
                             >
-                                Delete bundle
+                                {tc("deleteBundle")}
                             </s-button>
                         )}
                     </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     PageHeaderSkeleton,
     PageSkeleton,
@@ -5,19 +8,18 @@ import {
     SkeletonLines,
 } from "@/shared";
 
-/**
- * Bundle creation page skeleton
- */
 export function BundleCreationSkeleton({
     mode = "create",
 }: {
     mode: "create" | "edit";
 }) {
+    const tc = useTranslations("Bundles.Common");
+
     return (
         <PageSkeleton withPadding={false}>
             <PageHeaderSkeleton
                 showBackButton={true}
-                heading={mode === "create" ? "Create bundle" : "Edit bundle"}
+                heading={mode === "create" ? tc("create") : tc("edit")}
             />
 
             <s-stack gap="base">

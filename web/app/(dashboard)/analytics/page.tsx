@@ -1,10 +1,16 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { AnalyticsPage } from "@/features/analytics";
-export const metadata: Metadata = {
-    title: "Analytics - Bundle Performance Dashboard",
-    description:
-        "Analyze your bundle performance with detailed insights. View revenue, conversions, active bundles, and real-time metrics to optimize your product bundle strategy.",
-};
+
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getStaticTranslations("Meta.pages.analytics");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
+
 export default function Page() {
     return <AnalyticsPage />;
 }

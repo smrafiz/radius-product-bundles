@@ -44,8 +44,8 @@ export function BundleListingPage() {
     const analyticsLoading = isLoading("analytics");
 
     return (
-        <s-page>
-            <TitleBar>
+        <s-page heading={t("title")}>
+            <TitleBar title={t("title")}>
                 {bundlesLoading || analyticsLoading ? (
                     <>
                         <s-button

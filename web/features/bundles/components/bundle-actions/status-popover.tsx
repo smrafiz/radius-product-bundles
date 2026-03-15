@@ -3,16 +3,17 @@
 import {
     BUNDLE_STATUSES,
     BundleStatus,
-    getBundleStatusBadge,
     StatusPopoverProps,
     useBundleActions,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 import { useModalStore } from "@/shared";
 
 /**
  * Bundle status popover
  */
 export function StatusPopover({ bundle }: StatusPopoverProps) {
+    const ts = useTranslations("Bundles.Statuses");
     const { openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
     const popoverId = `bundle-status-popover-${bundle.id}`;
@@ -44,14 +45,14 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
         });
     };
 
-    const badge = getBundleStatusBadge(bundle.status);
+    const statusConfig = BUNDLE_STATUSES[bundle.status] ?? BUNDLE_STATUSES.DRAFT;
 
     return (
         <>
             {/* Clickable badge */}
             <s-clickable commandFor={popoverId} type="reset">
                 <s-stack direction="inline" gap="none" alignItems="center">
-                    <s-badge tone={badge.tone}>{badge.text}</s-badge>
+                    <s-badge tone={statusConfig.tone}>{ts(bundle.status)}</s-badge>
                     <s-icon type="caret-down" />
                 </s-stack>
             </s-clickable>
@@ -97,11 +98,11 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                             {isCurrentStatus ? (
                                                 <s-stack direction="inline">
                                                     <span className="font-semibold">
-                                                        {status.text}
+                                                        {ts(statusKey)}
                                                     </span>
                                                 </s-stack>
                                             ) : (
-                                                <s-text>{status.text}</s-text>
+                                                <s-text>{ts(statusKey)}</s-text>
                                             )}
                                         </s-clickable>
                                     </div>

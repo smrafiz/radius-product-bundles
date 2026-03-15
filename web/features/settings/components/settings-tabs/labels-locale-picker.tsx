@@ -1,13 +1,18 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     useLocales,
     useSettingsStore,
     useSettingsForm,
+    settingsQueryKeys,
 } from "@/features/settings";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { getSettingsAction } from "@/features/settings/actions/settings.action";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+    getSettingsAction,
+    refreshLocalesAction,
+} from "@/features/settings/actions/settings.action";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -17,7 +22,9 @@ export function LabelsLocalePicker() {
         useSettingsStore();
     const { reset, getValues } = useSettingsForm();
     const app = useAppBridge();
+    const queryClient = useQueryClient();
     const t = useTranslations("Settings.Locales");
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const primaryLocale = locales?.find((l) => l.primary)?.locale ?? "en";
 
@@ -63,6 +70,22 @@ export function LabelsLocalePicker() {
         fetchLocaleLabels,
     ]);
 
+    const handleRefresh = useCallback(async () => {
+        if (isRefreshing) return;
+        try {
+            setIsRefreshing(true);
+            const token = await app.idToken();
+            await refreshLocalesAction(token);
+            await queryClient.invalidateQueries({
+                queryKey: settingsQueryKeys.locales(),
+            });
+        } catch (err) {
+            console.warn("[LabelsLocalePicker] Failed to refresh locales:", err);
+        } finally {
+            setIsRefreshing(false);
+        }
+    }, [app, isRefreshing, queryClient]);
+
     const handleLocaleChange = useCallback(
         (locale: string) => {
             if (isLocaleLoading || labelsLocale === locale) {
@@ -106,7 +129,19 @@ export function LabelsLocalePicker() {
                         gap="small-400"
                         alignItems="center"
                     >
-                        {isLocaleLoading && <s-spinner size="base" />}
+                        {(isLocaleLoading || isRefreshing) && (
+                            <s-spinner size="base" />
+                        )}
+                        <s-tooltip id="refresh-languages-tooltip">
+                            <s-text>{t("refresh")}</s-text>
+                        </s-tooltip>
+                        <s-button
+                            variant="tertiary"
+                            icon="refresh"
+                            onClick={handleRefresh}
+                            disabled={isRefreshing || isLocaleLoading}
+                            interestFor="refresh-languages-tooltip"
+                        />
                         {labelsLocale && labelsLocale !== primaryLocale && (
                             <>
                                 <s-tooltip id="language-tooltip">

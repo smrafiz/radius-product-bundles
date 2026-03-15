@@ -1,15 +1,17 @@
+"use client";
+
+import { useTranslations } from "@/lib/i18n/provider";
 import { PageHeaderSkeleton, PageSkeleton, SkeletonLines } from "@/shared";
 
-/**
- * Bundle creation page skeleton
- */
 export function BundleSelectionSkeleton() {
+    const t = useTranslations("Bundles.Selection");
+
     return (
         <PageSkeleton withPadding={true}>
             <PageHeaderSkeleton
                 showBackButton={true}
-                heading="Select bundle type"
-                subtext="Choose the type of bundle that best fits your offer"
+                heading={t("title")}
+                subtext={t("description")}
             />
 
             <s-stack gap="base">

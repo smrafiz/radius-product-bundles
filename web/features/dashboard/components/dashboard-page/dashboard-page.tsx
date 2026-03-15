@@ -37,8 +37,8 @@ export function DashboardPage() {
     const guideVisible = !setupGuide.dismissed && !setupGuide.isLoading;
 
     return (
-        <s-page>
-            <TitleBar>
+        <s-page heading={t("title")}>
+            <TitleBar title={t("title")}>
                 {bundlesLoading || setupGuide.isShowing ? (
                     <>
                         <s-button

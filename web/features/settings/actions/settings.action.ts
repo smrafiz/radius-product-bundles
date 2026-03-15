@@ -15,7 +15,7 @@ import {
 import { invalidateSetupGuideCache } from "@/lib/cache";
 import { AppSettingsFormData } from "@/features/settings";
 import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
-import { CachedLocale, fetchAndCacheShopLocales } from "@/lib/graphql/operations/locale.operations";
+import { CachedLocale, fetchAndCacheShopLocales, getShopLocales } from "@/lib/graphql/operations/locale.operations";
 
 /**
  * Get app settings for the current shop.
@@ -122,7 +122,7 @@ export async function getLocalesAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const locales = await fetchAndCacheShopLocales(sessionToken, shop);
+        const locales = await getShopLocales(sessionToken, shop);
 
         return {
             status: "success",
@@ -137,6 +137,37 @@ export async function getLocalesAction(
                 error instanceof Error
                     ? error.message
                     : "Failed to fetch locales",
+            data: [],
+        };
+    }
+}
+
+/**
+ * Force-refresh locales from Shopify API and update cache.
+ */
+export async function refreshLocalesAction(
+    sessionToken: string,
+): Promise<ApiResponse<CachedLocale[]>> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const locales = await fetchAndCacheShopLocales(sessionToken, shop);
+
+        return {
+            status: "success",
+            data: locales,
+        };
+    } catch (error) {
+        console.error("[refreshLocales] Error:", error);
+
+        return {
+            status: "error",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to refresh locales",
             data: [],
         };
     }

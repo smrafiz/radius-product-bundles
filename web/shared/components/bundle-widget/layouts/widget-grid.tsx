@@ -10,6 +10,7 @@ export function WidgetGrid({
     displayOptions,
     showEmptyState = true,
     initialVisibleCount = 4,
+    labels,
 }: WidgetLayoutProps) {
     const [showAll, setShowAll] = useState(false);
     const gap = getSpacing(styles.spacing);
@@ -69,6 +70,7 @@ export function WidgetGrid({
                         product={product}
                         styles={styles}
                         displayOptions={displayOptions}
+                        labels={labels}
                         variant="vertical"
                     />
                 ))}

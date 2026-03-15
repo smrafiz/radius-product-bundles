@@ -10,6 +10,7 @@ export function WidgetCompact({
     displayOptions,
     showEmptyState = true,
     initialVisibleCount = 4,
+    labels,
 }: WidgetLayoutProps) {
     const [showAll, setShowAll] = useState(false);
     const gap = getSpacing(styles.spacing);
@@ -65,6 +66,7 @@ export function WidgetCompact({
                         product={product}
                         styles={styles}
                         displayOptions={displayOptions}
+                        labels={labels}
                         showCardStyle={false}
                     />
                 ))}

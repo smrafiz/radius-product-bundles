@@ -8,8 +8,11 @@ import {
     getAvailableStatuses,
     useBundleStore,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function BundlePreviewStatus() {
+    const t = useTranslations("Bundles.Schedule");
+    const ts = useTranslations("Bundles.Statuses");
     const { bundleData, updateBundleField } = useBundleStore();
     const mode = bundleData.id ? "edit" : "create";
     const availableStatuses = getAvailableStatuses(mode);
@@ -102,11 +105,10 @@ export function BundlePreviewStatus() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>Bundle status</s-heading>
+                    <s-heading>{t("status")}</s-heading>
                     <s-tooltip id="widget-layout-tooltip">
                         <s-text>
-                            Shows the current state of this bundle and how it
-                            appears in your store.
+                            {t("statusTooltip")}
                         </s-text>
                     </s-tooltip>
                     <s-icon
@@ -133,11 +135,7 @@ export function BundlePreviewStatus() {
                         <div className="w-full flex justify-between items-center">
                             <s-text>
                                 <div className="font-[550]">
-                                    {
-                                        BUNDLE_STATUSES[
-                                            bundleData.status ?? "DRAFT"
-                                        ].text
-                                    }
+                                    {ts(bundleData.status ?? "DRAFT")}
                                 </div>
                             </s-text>
                             <div className="chevrons flex flex-col relative">
@@ -174,10 +172,10 @@ export function BundlePreviewStatus() {
                                     >
                                         <s-stack gap="none">
                                             <s-heading>
-                                                {BUNDLE_STATUSES[key].text}
+                                                {ts(key)}
                                             </s-heading>
                                             <s-paragraph color="subdued">
-                                                {BUNDLE_STATUSES[key].desc}
+                                                {ts(`${key}_desc`)}
                                             </s-paragraph>
                                         </s-stack>
                                     </div>
@@ -190,7 +188,7 @@ export function BundlePreviewStatus() {
                 {bundleData.status === "SCHEDULED" && (
                     <s-stack gap="small">
                         <s-text color="subdued">
-                            Set the date range when this bundle will be active.
+                            {t("dateRangeHint")}
                         </s-text>
 
                         <s-stack
@@ -223,7 +221,7 @@ export function BundlePreviewStatus() {
                                         gap="small-300"
                                     >
                                         <s-icon type="calendar" />
-                                        Set schedule dates
+                                        {t("setDates")}
                                     </s-stack>
                                 )}
                             </s-button>
@@ -232,11 +230,11 @@ export function BundlePreviewStatus() {
                                     variant="tertiary"
                                     tone="critical"
                                     onClick={handleResetDates}
-                                    accessibilityLabel="Reset dates"
+                                    accessibilityLabel={t("resetDates")}
                                     interestFor="schedule-tooltip"
                                 >
                                     <s-tooltip id="schedule-tooltip">
-                                        <s-text>Reset dates</s-text>
+                                        <s-text>{t("resetDates")}</s-text>
                                     </s-tooltip>
                                     <s-icon type="reset" />
                                 </s-button>
@@ -246,7 +244,7 @@ export function BundlePreviewStatus() {
                         <s-popover id="date-popover">
                             <s-box padding="base">
                                 <s-stack gap="base">
-                                    <s-heading>Schedule bundle</s-heading>
+                                    <s-heading>{t("scheduleBundle")}</s-heading>
                                     <s-date-picker
                                         type="range"
                                         disallow={disallowPast}
@@ -265,8 +263,7 @@ export function BundlePreviewStatus() {
 
                         {!bundleData.startDate || !bundleData.endDate ? (
                             <s-banner tone="info">
-                                Please set both start and end dates for
-                                scheduled bundles.
+                                {t("dateRequired")}
                             </s-banner>
                         ) : null}
                     </s-stack>

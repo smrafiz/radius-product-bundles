@@ -7,16 +7,19 @@ import {
 } from "@/features/bundles";
 import { PlanIcon } from "@/features/dashboard";
 import { TitleBar } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 import { MediaCard, useAppNavigation, ROUTES } from "@/shared";
 
 export function BundleTypeSelection() {
+    const t = useTranslations("Bundles.Selection");
+    const tc = useTranslations("Bundles.Common");
     const { goBack, goTo, bundleData } = useAppNavigation();
 
     return (
-        <s-page>
-            <TitleBar>
+        <s-page heading={t("title")}>
+            <TitleBar title={t("title")}>
                 <button variant="breadcrumb" onClick={bundleData.list()}>
-                    Bundles
+                    {tc("breadcrumb")}
                 </button>
             </TitleBar>
             <s-stack
@@ -29,15 +32,15 @@ export function BundleTypeSelection() {
                         <s-button
                             onClick={() => goBack()}
                             icon="arrow-left"
-                            accessibilityLabel="Back"
+                            accessibilityLabel={tc("back")}
                         ></s-button>
                     </s-stack>
                     <s-stack>
                         <s-heading>
-                            <div className="text-xl">Select bundle type</div>
+                            <div className="text-xl">{t("title")}</div>
                         </s-heading>
                         <s-text>
-                            Choose the type of bundle that best fits your offer
+                            {t("description")}
                         </s-text>
                     </s-stack>
                 </s-stack>
@@ -56,9 +59,9 @@ export function BundleTypeSelection() {
                 </s-stack>
                 <s-stack>
                     <MediaCard
-                        title="Update your plan"
-                        description="Unlock advanced features and priority support. Upgrade today to get the most out of your bundles."
-                        buttonLabel="See details"
+                        title={t("upgradePlan")}
+                        description={t("upgradePlanDesc")}
+                        buttonLabel={t("seeDetails")}
                         onButtonClick={goTo(ROUTES.PRICING)}
                         icon={<PlanIcon />}
                     />

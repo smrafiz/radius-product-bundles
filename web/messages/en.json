@@ -1,4 +1,46 @@
 {
+  "Meta": {
+    "error": "An unexpected error occurred",
+    "appTitle": "Radius Product Bundles App for Shopify",
+    "pages": {
+      "dashboard": {
+        "title": "Dashboard - Product Bundles Overview",
+        "description": "View your bundle performance at a glance. Track revenue, conversion rates, active bundles, and key metrics. Monitor your product bundle campaigns and optimize for maximum sales growth."
+      },
+      "bundles": {
+        "title": "Product Bundles - Bundle Manager",
+        "description": "Manage all your product bundles in one place. View performance metrics, edit active offers, track sales, and optimize your bundle campaigns to increase average order value."
+      },
+      "bundleCreate": {
+        "title": "Bundle Creation - Select Bundle Type",
+        "description": "Choose the perfect bundle type for your products. Create fixed bundles, volume discounts, mix & match, BOGO offers, and more to increase sales and average order value."
+      },
+      "bundleCreateFallback": {
+        "title": "Create Bundle",
+        "description": "Create a new product bundle to increase sales."
+      },
+      "bundleEdit": {
+        "title": "Bundle Builder - Edit Bundle",
+        "description": "Edit your existing product bundle."
+      },
+      "analytics": {
+        "title": "Analytics - Bundle Performance Dashboard",
+        "description": "Analyze your bundle performance with detailed insights. View revenue, conversions, active bundles, and real-time metrics to optimize your product bundle strategy."
+      },
+      "settings": {
+        "title": "Settings - Manage Your Bundle Preferences",
+        "description": "Customize your bundle app experience. Configure general settings, analytics preferences, and store integrations to optimize your workflow and performance tracking."
+      },
+      "customizer": {
+        "title": "Customizer - Manage Your Bundle Customization",
+        "description": "Customize your bundle app experience. Configure general settings, analytics preferences, and store integrations to optimize your workflow and performance tracking."
+      },
+      "pricing": {
+        "title": "Pricing - Flexible Plans for Every Business",
+        "description": "Choose the perfect plan for your store. Compare features, bundle limits, and analytics access. Start free and upgrade anytime to unlock advanced bundle performance insights and premium support."
+      }
+    }
+  },
   "Common": {
     "Navigation": {
       "dashboard": "Dashboard",
@@ -188,6 +230,100 @@
     }
   },
   "Bundles": {
+    "Statuses": {
+      "DRAFT": "Draft",
+      "DRAFT_desc": "Work in progress, not visible to customers",
+      "ACTIVE": "Active",
+      "ACTIVE_desc": "Live and available for purchase",
+      "SCHEDULED": "Scheduled",
+      "SCHEDULED_desc": "Will go live at the scheduled time",
+      "PAUSED": "Paused",
+      "PAUSED_desc": "Temporarily hidden, settings preserved",
+      "ARCHIVED": "Archived",
+      "ARCHIVED_desc": "Permanently deactivated and hidden",
+      "DELETED": "Deleted",
+      "DELETED_desc": "Permanently removed"
+    },
+    "Discounts": {
+      "noDiscount": "No Discount",
+      "off": "Off",
+      "customPrice": "Custom Price"
+    },
+    "Actions": {
+      "edit": "Edit bundle",
+      "view": "View bundle",
+      "duplicate": "Duplicate bundle",
+      "delete": "Delete bundle",
+      "includedProducts": "Included products",
+      "bundleProduct": "Bundle product",
+      "noProducts": "No products in this bundle",
+      "somethingWentWrong": "Something went wrong. Please try again.",
+      "statusUpdated": "Bundle status updated successfully",
+      "statusUpdateFailed": "Failed to update bundle status",
+      "statusFailed": "Status update failed",
+      "unexpectedError": "An unexpected error occurred."
+    },
+    "BulkActions": {
+      "edit": "Edit",
+      "setDraft": "Set as draft",
+      "setActive": "Set as active",
+      "deleteBundles": "Delete bundles",
+      "selectedBundles": "selected bundles",
+      "bundlesActivated": "bundles activated",
+      "bulkActivateFailed": "Bulk activation failed",
+      "bundlesDrafted": "bundles set as draft",
+      "bulkDraftFailed": "Bulk draft failed",
+      "bulkDeleteSuccess": "Selected bundles have been deleted successfully",
+      "bulkDeleteFailed": "Bulk delete failed"
+    },
+    "Schedule": {
+      "status": "Bundle status",
+      "statusTooltip": "Shows the current state of this bundle and how it appears in your store.",
+      "setDates": "Set schedule dates",
+      "resetDates": "Reset dates",
+      "scheduleBundle": "Schedule bundle",
+      "dateRangeHint": "Set the date range when this bundle will be active.",
+      "dateRequired": "Please set both start and end dates for scheduled bundles."
+    },
+    "Common": {
+      "breadcrumb": "Bundles",
+      "back": "Back",
+      "update": "Update",
+      "publish": "Publish",
+      "duplicate": "Duplicate",
+      "create": "Create bundle",
+      "edit": "Edit bundle",
+      "error": "Error",
+      "errorLoading": "Error loading bundle",
+      "deleteBundle": "Delete bundle",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "deleteSuccess": "Bundle deleted successfully",
+      "deleteFailed": "Failed to delete bundle",
+      "duplicateTitle": "Duplicate bundle",
+      "duplicateConfirm": "Are you sure you want to duplicate this bundle?",
+      "duplicateConfirmUnsaved": "You have unsaved changes that will be discarded. Are you sure you want to duplicate this bundle?",
+      "duplicateSuccess": "Bundle duplicated successfully",
+      "duplicateFailed": "Failed to duplicate bundle"
+    },
+    "Selection": {
+      "title": "Select bundle type",
+      "description": "Choose the type of bundle that best fits your offer",
+      "upgradePlan": "Update your plan",
+      "upgradePlanDesc": "Unlock advanced features and priority support. Upgrade today to get the most out of your bundles.",
+      "seeDetails": "See details",
+      "comingSoon": "Coming Soon",
+      "select": "Select",
+      "createBundle": "Create the bundle",
+      "helpTitle": "Need help choosing?",
+      "helpDescription": "Not sure which bundle type is right for your products? Here are some quick guidelines:",
+      "helpItems": {
+        "orderValue": "For increasing order value:",
+        "discovery": "For product discovery:",
+        "acquisition": "For customer acquisition:",
+        "campaigns": "For promotional campaigns:"
+      }
+    },
     "Listing": {
       "title": "Bundle Management",
       "description": "Create and manage your product bundle offers",
@@ -257,7 +393,8 @@
     "Locales": {
       "title": "Languages",
       "fallbackTooltip": "Empty fields will fall back to the primary language ({primary}).",
-      "primaryBadge": "(Primary)"
+      "primaryBadge": "(Primary)",
+      "refresh": "Refresh languages"
     },
     "Tabs": {
       "general": {
@@ -925,5 +1062,40 @@
         "field_cartBannerIconColor_label": "Icon color"
       }
     }
+  },
+  "Analytics": {
+    "title": "Bundle Analytics & Customer Insights",
+    "description": "Comprehensive insights into your bundle performance and customer behavior.",
+    "Tabs": {
+      "overview": "Overview",
+      "bundlePerformance": "Bundle Performance"
+    },
+    "EmptyStates": {
+      "noDataTitle": "No data available",
+      "noDataDesc": "Analytics data will appear here once your bundles start getting views and purchases.",
+      "collectingTitle": "Collecting more data",
+      "noActivityTitle": "No bundle activity yet",
+      "noActivityDesc": "Your bundles haven't been viewed yet. Share them with customers to start tracking performance.",
+      "viewBundles": "View bundles",
+      "noConversionsTitle": "No conversions yet",
+      "noConversionsDesc": "Your bundles have views but no add-to-cart actions yet. Consider optimizing your bundle presentation.",
+      "learnOptimization": "Learn about optimization",
+      "noPurchasesTitle": "No purchases yet",
+      "noPurchasesDesc": "Your bundles have been viewed but haven't been purchased yet. Keep promoting them to your customers!"
+    },
+    "DisabledBanner": {
+      "heading": "Analytics tracking is paused",
+      "description": "Tracking is currently paused. New events are not being collected, so recent bundle interactions will not appear in these reports. All data displayed here reflects activity recorded before tracking was disabled.",
+      "enableTracking": "Enable tracking"
+    }
+  },
+  "Pricing": {
+    "title": "Pricing & plans",
+    "description": "Choose the right plan for your business",
+    "back": "Back"
+  },
+  "ABTesting": {
+    "title": "A/B Testing",
+    "comingSoon": "A/B testing features coming soon..."
   }
 }

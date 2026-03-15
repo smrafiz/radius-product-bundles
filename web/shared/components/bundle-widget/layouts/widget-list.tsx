@@ -10,6 +10,7 @@ export function WidgetList({
     displayOptions,
     showEmptyState = true,
     initialVisibleCount = 4,
+    labels,
 }: WidgetLayoutProps) {
     const [showAll, setShowAll] = useState(false);
     const gap = getSpacing(styles.spacing);
@@ -70,6 +71,7 @@ export function WidgetList({
                             product={product}
                             styles={styles}
                             displayOptions={displayOptions}
+                            labels={labels}
                             variant={
                                 styles.imagePosition === "top"
                                     ? "vertical"

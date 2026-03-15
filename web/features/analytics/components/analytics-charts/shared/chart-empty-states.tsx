@@ -1,17 +1,9 @@
 "use client";
 
-/**
- * Empty State Components for Analytics Charts
- */
-
 import { useAppNavigation } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 import { ChartEmptyStateProps } from "@/features/analytics/types";
 
-/**
- * Generic Empty State Component
- *
- * Base component for all empty states with icon, title, description, and optional action
- */
 export function EmptyState({
     icon = "chart-horizontal",
     title,
@@ -39,59 +31,47 @@ export function EmptyState({
     );
 }
 
-/**
- * No Data State
- *
- * When there's no analytics data at all
- */
 export function NoDataState() {
+    const t = useTranslations("Analytics.EmptyStates");
     return (
         <EmptyState
             icon="chart-vertical"
-            title="No data available"
-            description="Analytics data will appear here once your bundles start getting views and purchases."
+            title={t("noDataTitle")}
+            description={t("noDataDesc")}
         />
     );
 }
 
-/**
- * Insufficient Data State
- *
- * When there are fewer than 2 data points
- */
 export function InsufficientDataState({
     currentPoints,
 }: {
     currentPoints: number;
 }) {
+    const t = useTranslations("Analytics.EmptyStates");
     return (
         <EmptyState
             icon="clock"
-            title="Collecting more data"
+            title={t("collectingTitle")}
             description={`Need at least 2 days of data to show trends. Currently have ${currentPoints} day${currentPoints !== 1 ? "s" : ""}. Check back tomorrow for your analytics!`}
         />
     );
 }
 
-/**
- * No Activity State
- *
- * When all values are zero
- */
 export function NoActivityState({
     onViewBundles,
 }: {
     onViewBundles?: () => void;
 }) {
+    const t = useTranslations("Analytics.EmptyStates");
     return (
         <EmptyState
             icon="product"
-            title="No bundle activity yet"
-            description="Your bundles haven't been viewed yet. Share them with customers to start tracking performance."
+            title={t("noActivityTitle")}
+            description={t("noActivityDesc")}
             action={
                 onViewBundles
                     ? {
-                          label: "View bundles",
+                          label: t("viewBundles"),
                           onClick: onViewBundles,
                           variant: "primary",
                       }
@@ -101,25 +81,21 @@ export function NoActivityState({
     );
 }
 
-/**
- * No Conversions State
- *
- * For conversion rate chart when there are views but no add-to-carts
- */
 export function NoConversionsState({
     onLearnMore,
 }: {
     onLearnMore?: () => void;
 }) {
+    const t = useTranslations("Analytics.EmptyStates");
     return (
         <EmptyState
             icon="cart"
-            title="No conversions yet"
-            description="Your bundles have views but no add-to-cart actions yet. Consider optimizing your bundle presentation."
+            title={t("noConversionsTitle")}
+            description={t("noConversionsDesc")}
             action={
                 onLearnMore
                     ? {
-                          label: "Learn about optimization",
+                          label: t("learnOptimization"),
                           onClick: onLearnMore,
                           variant: "secondary",
                       }
@@ -129,26 +105,17 @@ export function NoConversionsState({
     );
 }
 
-/**
- * No Purchases State
- *
- * For revenue chart when there are views/carts but no purchases
- */
 export function NoPurchasesState() {
+    const t = useTranslations("Analytics.EmptyStates");
     return (
         <EmptyState
             icon="orders"
-            title="No purchases yet"
-            description="Your bundles have been viewed but haven't been purchased yet. Keep promoting them to your customers!"
+            title={t("noPurchasesTitle")}
+            description={t("noPurchasesDesc")}
         />
     );
 }
 
-/**
- * Date Range Too Short Banner
- *
- * Warning banner when selected date range is too short
- */
 export function DateRangeTooShortBanner({ days }: { days: number }) {
     return (
         <s-banner tone="info">
@@ -165,11 +132,6 @@ export function DateRangeTooShortBanner({ days }: { days: number }) {
     );
 }
 
-/**
- * Limited Data Warning Banner
- *
- * Info banner when data exists but volume is low
- */
 export function LimitedDataBanner({
     days,
     minDays = 7,
@@ -188,9 +150,6 @@ export function LimitedDataBanner({
     );
 }
 
-/*
- * Message when a time period selected
- */
 export function InfoDuringTimePeriod({ message }: { message: string }) {
     return (
         <s-banner tone="info">
@@ -199,28 +158,21 @@ export function InfoDuringTimePeriod({ message }: { message: string }) {
     );
 }
 
-/**
- * Analytics Disabled Banner
- *
- * Warning when tracking is paused in settings
- */
 export function AnalyticsDisabledBanner() {
+    const t = useTranslations("Analytics.DisabledBanner");
     const { settings } = useAppNavigation();
 
     return (
-        <s-banner tone="warning" heading="Analytics tracking is paused">
+        <s-banner tone="warning" heading={t("heading")}>
             <s-paragraph>
-                Tracking is currently paused. New events are not being
-                collected, so recent bundle interactions will not appear in
-                these reports. All data displayed here reflects activity
-                recorded before tracking was disabled.
+                {t("description")}
             </s-paragraph>
             <s-button
                 slot="secondary-actions"
                 variant="secondary"
                 onClick={() => settings()}
             >
-                Enable tracking
+                {t("enableTracking")}
             </s-button>
         </s-banner>
     );

@@ -2,13 +2,14 @@
 
 import { WidgetPricingProps } from "@/shared";
 import { getCardRadius, getFontSize, getSpacing } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 export function WidgetPricingDisplay({
     styles,
     displayOptions,
     pricing,
     hideOriginalPrice,
+    labels,
 }: WidgetPricingProps) {
     const fontSize = getFontSize(styles.bodySize);
     const borderRadius = getCardRadius(styles.cornerStyle);
@@ -79,7 +80,7 @@ export function WidgetPricingDisplay({
                     }}
                 >
                     <span className="radius-bundle__pricing-label">
-                        {DEFAULT_LABELS.regularPriceLabel}
+                        {labels?.regularPriceLabel || PREVIEW_LABELS.regularPriceLabel}
                     </span>
                     <span
                         className="radius-bundle__price-original"
@@ -103,7 +104,7 @@ export function WidgetPricingDisplay({
                 }}
             >
                 <span className="radius-bundle__pricing-label">
-                    {DEFAULT_LABELS.bundlePriceLabel}
+                    {labels?.bundlePriceLabel || PREVIEW_LABELS.bundlePriceLabel}
                 </span>
                 <span className="radius-bundle__price-discounted">
                     {pricing.finalPrice}
@@ -124,7 +125,7 @@ export function WidgetPricingDisplay({
                     }}
                 >
                     <span className="radius-bundle__savings-label">
-                        {DEFAULT_LABELS.youSaveLabel}
+                        {labels?.youSaveLabel || PREVIEW_LABELS.youSaveLabel}
                     </span>
                     <span className="radius-bundle__savings-amount">
                         {pricing.savingsAmount} ({pricing.savingsPercentage}%)
@@ -156,7 +157,7 @@ export function WidgetPricingDisplay({
                         <circle cx="7" cy="18" r="2" />
                         <circle cx="17" cy="18" r="2" />
                     </svg>
-                    <span>{DEFAULT_LABELS.freeShippingLabel}</span>
+                    <span>{labels?.freeShippingLabel || PREVIEW_LABELS.freeShippingLabel}</span>
                 </div>
             )}
         </div>

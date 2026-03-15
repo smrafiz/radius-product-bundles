@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 import { useAppNavigation, withLoader } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
 
 export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
+    const t = useTranslations("Bundles.Selection");
     const { bundleData } = useAppNavigation();
     const { selectingBundleId, setSelectingBundleId, reset } =
         useBundleSelectionStore();
@@ -71,11 +73,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                     bundleType.comingSoon ||
                                     isAnotherCardSelecting
                                 }
-                                accessibilityLabel="Select App"
+                                accessibilityLabel={t("select")}
                             >
                                 {bundleType.comingSoon
-                                    ? "Coming Soon"
-                                    : "Select"}
+                                    ? t("comingSoon")
+                                    : t("select")}
                             </s-button>
                         </s-stack>
                         <s-button commandFor={`modal-${bundleType.id}`}>
@@ -85,7 +87,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         <s-modal
                             id={`modal-${bundleType.id}`}
                             heading={bundleType.label}
-                            accessibilityLabel="Modal bundle type"
+                            accessibilityLabel={bundleType.label}
                         >
                             <s-stack gap="base">
                                 {bundleType.modalImage && (
@@ -122,8 +124,8 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                         loading={isThisCardSelecting}
                                     >
                                         {bundleType.comingSoon
-                                            ? "Coming Soon"
-                                            : "Create the bundle"}
+                                            ? t("comingSoon")
+                                            : t("createBundle")}
                                     </s-button>
                                 </s-stack>
                             </s-stack>

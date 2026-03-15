@@ -2,12 +2,11 @@
 
 import { useAppNavigation } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 import { PricingCard, PricingFaq, PricingStore } from "@/features/pricing";
 
-/**
- * Pricing Page Component
- */
 export function PricingPage() {
+    const t = useTranslations("Pricing");
     const { goBack } = useAppNavigation();
 
     return (
@@ -23,15 +22,15 @@ export function PricingPage() {
                         <s-button
                             onClick={() => goBack()}
                             icon="arrow-left"
-                            accessibilityLabel="Back"
+                            accessibilityLabel={t("back")}
                         ></s-button>
                     </s-stack>
                     <s-stack>
                         <s-heading>
-                            <div className="text-lg">Pricing & plans</div>
+                            <div className="text-lg">{t("title")}</div>
                         </s-heading>
                         <s-text color="subdued">
-                            Choose the right plan for your business
+                            {t("description")}
                         </s-text>
                     </s-stack>
                 </s-stack>

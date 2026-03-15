@@ -40,7 +40,7 @@ export function SettingsTools() {
                     >
                         <s-heading>{t("dataManagement.title")}</s-heading>
                         <s-tooltip id="data-management-tooltip">
-                            <s-text>{t("dataManagement.description")}</s-text>
+                            <s-text>{t("dataManagement.tooltip")}</s-text>
                         </s-tooltip>
                         <s-icon
                             tone="neutral"
@@ -67,7 +67,7 @@ export function SettingsTools() {
                             onClick={handleExport}
                             loading={isExporting}
                         >
-                            {t("dataManagement.export.button")}
+                            {t("dataManagement.export.action")}
                         </s-button>
                     </s-stack>
 
@@ -98,7 +98,7 @@ export function SettingsTools() {
                             onClick={triggerImport}
                             loading={isImporting}
                         >
-                            {t("dataManagement.import.button")}
+                            {t("dataManagement.import.action")}
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -115,7 +115,7 @@ export function SettingsTools() {
                         <s-heading>{t("syncCache.title")}</s-heading>
                         <s-tooltip id="sync-cache-tooltip">
                             <s-text>
-                                {t("syncCache.description")}
+                                {t("syncCache.tooltip")}
                             </s-text>
                         </s-tooltip>
                         <s-icon
@@ -143,7 +143,7 @@ export function SettingsTools() {
                             onClick={handleSyncMetafields}
                             loading={isSyncing}
                         >
-                            {t("syncCache.sync.button")}
+                            {t("syncCache.sync.action")}
                         </s-button>
                     </s-stack>
 
@@ -156,9 +156,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{t("syncCache.clearCache.title")}</s-heading>
+                            <s-heading>{t("syncCache.clear.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                {t("syncCache.clearCache.description")}
+                                {t("syncCache.clear.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -167,7 +167,7 @@ export function SettingsTools() {
                             onClick={handleClearCache}
                             loading={isClearing}
                         >
-                            {t("syncCache.clearCache.button")}
+                            {t("syncCache.clear.action")}
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -181,10 +181,10 @@ export function SettingsTools() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>{t("webhookManagement.title")}</s-heading>
+                        <s-heading>{t("webhooks.title")}</s-heading>
                         <s-tooltip id="webhook-management-tooltip">
                             <s-text>
-                                {t("webhookManagement.description")}
+                                {t("webhooks.tooltip")}
                             </s-text>
                         </s-tooltip>
                         <s-icon
@@ -201,10 +201,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{t("webhookManagement.check.title")}</s-heading>
+                            <s-heading>{t("webhooks.check.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                View all currently registered webhook
-                                subscriptions from Radius product bundles app.
+                                {t("webhooks.check.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -213,7 +212,7 @@ export function SettingsTools() {
                             onClick={handleCheckWebhooks}
                             loading={isCheckingWebhooks}
                         >
-                            {t("webhookManagement.check.button")}
+                            {t("webhooks.check.action")}
                         </s-button>
                     </s-stack>
 
@@ -226,9 +225,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{t("webhookManagement.register.title")}</s-heading>
+                            <s-heading>{t("webhooks.register.title")}</s-heading>
                             <s-paragraph color="subdued">
-                                {t("webhookManagement.register.description")}
+                                {t("webhooks.register.description")}
                             </s-paragraph>
                         </s-stack>
                         <s-button
@@ -237,7 +236,7 @@ export function SettingsTools() {
                             onClick={handleForceRegister}
                             loading={isRegisteringWebhooks}
                         >
-                            {t("webhookManagement.register.button")}
+                            {t("webhooks.register.action")}
                         </s-button>
                     </s-stack>
                 </s-stack>
@@ -256,7 +255,7 @@ export function SettingsTools() {
                         </s-text>
                         <s-tooltip id="danger-zone-tooltip">
                             <s-text>
-                                Destructive actions that cannot be undone.
+                                {t("dangerZone.tooltip")}
                             </s-text>
                         </s-tooltip>
                         <s-icon
@@ -285,22 +284,19 @@ export function SettingsTools() {
                             command="--show"
                             commandFor="reset-confirm-modal"
                         >
-                            Reset
+                            {t("dangerZone.reset.action")}
                         </s-button>
                     </s-stack>
                 </s-stack>
             </s-section>
 
             {/* Reset Confirmation Modal */}
-            <s-modal id="reset-confirm-modal" heading={t("resetModal.title")}>
+            <s-modal id="reset-confirm-modal" heading={t("modals.reset.heading")}>
                 <s-stack gap="base">
                     <s-text>
-                        This will reset all your settings to their default
-                        values. Your bundles will not be affected, but all
-                        customizations to colors, labels, and other settings
-                        will be lost.
+                        {t("modals.reset.body1")}
                     </s-text>
-                    <s-text type="strong">This action cannot be undone.</s-text>
+                    <s-text type="strong">{t("modals.reset.body2")}</s-text>
                 </s-stack>
 
                 <s-button
@@ -310,7 +306,7 @@ export function SettingsTools() {
                     variant="primary"
                     loading={isResetting}
                 >
-                    {t("resetModal.confirmButton")}
+                    {t("modals.reset.primaryAction")}
                 </s-button>
 
                 <s-button
@@ -318,7 +314,7 @@ export function SettingsTools() {
                     command="--hide"
                     commandFor="reset-confirm-modal"
                 >
-                    {t("resetModal.cancelButton")}
+                    {t("modals.reset.cancel")}
                 </s-button>
             </s-modal>
 
@@ -339,7 +335,7 @@ export function SettingsTools() {
             </div>
 
             {/* Sync Result Modal */}
-            <s-modal id="sync-result-modal" heading={t("syncResultsModal.title")}>
+            <s-modal id="sync-result-modal" heading={t("modals.syncResult.heading")}>
                 {syncResult ? (
                     <s-stack gap="base">
                         <s-stack
@@ -347,15 +343,15 @@ export function SettingsTools() {
                             justifyContent="space-between"
                             alignItems="center"
                         >
-                            <s-heading>Status</s-heading>
+                            <s-heading>{t("modals.syncResult.status")}</s-heading>
                             <s-badge
                                 tone={
                                     syncResult.success ? "success" : "critical"
                                 }
                             >
                                 {syncResult.success
-                                    ? t("syncResultsModal.syncComplete")
-                                    : t("syncResultsModal.syncFailed")}
+                                    ? t("modals.syncResult.complete")
+                                    : t("modals.syncResult.failed")}
                             </s-badge>
                         </s-stack>
 
@@ -368,7 +364,7 @@ export function SettingsTools() {
                                     justifyContent="space-between"
                                     alignItems="start"
                                 >
-                                    <s-heading>Synced</s-heading>
+                                    <s-heading>{t("modals.syncResult.synced")}</s-heading>
                                     <s-stack gap="small-200" alignItems="end">
                                         {syncResult.syncedItems.map((item) => (
                                             <s-text key={item}>{item}</s-text>
@@ -382,16 +378,16 @@ export function SettingsTools() {
                                 justifyContent="space-between"
                                 alignItems="center"
                             >
-                                <s-heading>Error</s-heading>
+                                <s-heading>{t("modals.syncResult.error")}</s-heading>
                                 <s-text>
                                     {syncResult.error ||
-                                        t("syncResultsModal.unknownError")}
+                                        t("modals.syncResult.unknownError")}
                                 </s-text>
                             </s-stack>
                         )}
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">No results yet.</s-text>
+                    <s-text color="subdued">{t("modals.syncResult.noResults")}</s-text>
                 )}
 
                 <s-button
@@ -399,12 +395,12 @@ export function SettingsTools() {
                     command="--hide"
                     commandFor="sync-result-modal"
                 >
-                    Close
+                    {t("modals.syncResult.close")}
                 </s-button>
             </s-modal>
 
             {/* Webhook Check Modal */}
-            <s-modal id="webhook-check-modal" heading={t("webhookCheckModal.title")}>
+            <s-modal id="webhook-check-modal" heading={t("modals.webhookCheck.heading")}>
                 {webhookCheckResult ? (
                     <s-stack gap="base">
                         <s-grid
@@ -412,14 +408,14 @@ export function SettingsTools() {
                             alignItems="start"
                             gap="large-400"
                         >
-                            <s-heading>Status</s-heading>
+                            <s-heading>{t("modals.webhookCheck.status")}</s-heading>
                             {webhookCheckResult.missingTopics.length === 0 ? (
                                 <s-badge tone="success">
-                                    {t("webhookCheckModal.allRegistered")}
+                                    {t("modals.webhookCheck.allRegistered")}
                                 </s-badge>
                             ) : (
                                 <s-badge tone="warning">
-                                    {t("webhookCheckModal.missingCount", { count: String(webhookCheckResult.missingTopics.length) })}
+                                    {t("modals.webhookCheck.missingCount", { count: String(webhookCheckResult.missingTopics.length) })}
                                 </s-badge>
                             )}
                         </s-grid>
@@ -432,7 +428,7 @@ export function SettingsTools() {
                             gap="large-400"
                         >
                             <s-heading>
-                                {t("webhookCheckModal.statusRegistered", { count: String(webhookCheckResult.totalCount) })}
+                                {t("modals.webhookCheck.registeredCount", { count: String(webhookCheckResult.totalCount) })}
                             </s-heading>
 
                             <s-grid
@@ -455,7 +451,7 @@ export function SettingsTools() {
                                     alignItems="start"
                                     gap="large-400"
                                 >
-                                    <s-heading>Missing</s-heading>
+                                    <s-heading>{t("modals.webhookCheck.missing")}</s-heading>
                                     <s-grid
                                         gridTemplateColumns="repeat(3, auto)"
                                         gap="small"
@@ -483,7 +479,7 @@ export function SettingsTools() {
                             gap="large-400"
                         >
                             <s-heading>
-                                {t("webhookCheckModal.statusGdpr", { count: String(webhookCheckResult.gdprTopics.length) })}
+                                {t("modals.webhookCheck.gdprCount", { count: String(webhookCheckResult.gdprTopics.length) })}
                             </s-heading>
                             <s-grid
                                 gridTemplateColumns="repeat(3, auto)"
@@ -498,7 +494,7 @@ export function SettingsTools() {
                         </s-grid>
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">No results yet.</s-text>
+                    <s-text color="subdued">{t("modals.webhookCheck.noResults")}</s-text>
                 )}
 
                 <s-button
@@ -506,14 +502,14 @@ export function SettingsTools() {
                     command="--hide"
                     commandFor="webhook-check-modal"
                 >
-                    Close
+                    {t("modals.webhookCheck.close")}
                 </s-button>
             </s-modal>
 
             {/* Webhook Register Modal */}
             <s-modal
                 id="webhook-register-modal"
-                heading={t("webhookRegisterModal.title")}
+                heading={t("modals.webhookRegister.heading")}
             >
                 {webhookRegisterResult ? (
                     <s-stack gap="base">
@@ -522,7 +518,7 @@ export function SettingsTools() {
                             alignItems="start"
                             gap="large-400"
                         >
-                            <s-heading>Status</s-heading>
+                            <s-heading>{t("modals.webhookRegister.status")}</s-heading>
                             <s-badge
                                 tone={
                                     webhookRegisterResult.success
@@ -534,10 +530,10 @@ export function SettingsTools() {
                                 }
                             >
                                 {webhookRegisterResult.success
-                                    ? t("webhookRegisterModal.allSuccess")
+                                    ? t("modals.webhookRegister.success")
                                     : webhookRegisterResult.failed.length > 0
-                                      ? t("webhookRegisterModal.partialSuccess")
-                                      : t("webhookRegisterModal.failedTitle")}
+                                      ? t("modals.webhookRegister.partial")
+                                      : t("modals.webhookRegister.failedStatus")}
                             </s-badge>
                         </s-grid>
 
@@ -549,7 +545,7 @@ export function SettingsTools() {
                                     alignItems="start"
                                     gap="large-400"
                                 >
-                                    <s-heading>Registered</s-heading>
+                                    <s-heading>{t("modals.webhookRegister.registered")}</s-heading>
                                     <s-grid
                                         gridTemplateColumns="repeat(3, auto)"
                                         gap="small-200"
@@ -577,7 +573,7 @@ export function SettingsTools() {
                                     alignItems="start"
                                     gap="large-400"
                                 >
-                                    <s-heading>Failed</s-heading>
+                                    <s-heading>{t("modals.webhookRegister.failed")}</s-heading>
                                     <s-stack gap="small-200" alignItems="end">
                                         {webhookRegisterResult.failed.map(
                                             (f, i) => (
@@ -601,7 +597,7 @@ export function SettingsTools() {
                         )}
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">No results yet.</s-text>
+                    <s-text color="subdued">{t("modals.webhookRegister.noResults")}</s-text>
                 )}
 
                 <s-button
@@ -609,7 +605,7 @@ export function SettingsTools() {
                     command="--hide"
                     commandFor="webhook-register-modal"
                 >
-                    Close
+                    {t("modals.webhookRegister.close")}
                 </s-button>
             </s-modal>
         </s-stack>

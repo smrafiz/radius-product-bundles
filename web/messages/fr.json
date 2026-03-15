@@ -1,4 +1,46 @@
 {
+  "Meta": {
+    "error": "Une erreur inattendue s'est produite",
+    "appTitle": "Application Radius Product Bundles pour Shopify",
+    "pages": {
+      "dashboard": {
+        "title": "Tableau de bord – Aperçu des offres groupées de produits",
+        "description": "Consultez en un coup d'œil les performances de vos offres groupées. Suivez votre chiffre d'affaires, vos taux de conversion, vos offres groupées actives et vos indicateurs clés. Suivez vos campagnes d'offres groupées de produits et optimisez-les pour maximiser la croissance des ventes."
+      },
+      "bundles": {
+        "title": "Offres groupées de produits – Gestionnaire d'offres groupées",
+        "description": "Gérez toutes vos offres groupées de produits au même endroit. Consultez les indicateurs de performance, modifiez les offres actives, suivez les ventes et optimisez vos campagnes d'offres groupées afin d'augmenter la valeur moyenne des commandes."
+      },
+      "bundleCreate": {
+        "title": "Création d'offres groupées – Sélectionnez le type d'offre groupée",
+        "description": "Choisissez le type d'offre groupée idéal pour vos produits. Créez des offres groupées fixes, des remises sur volume, des offres « mix & match », des offres « un acheté, un offert » et plus encore afin d'augmenter vos ventes et la valeur moyenne de vos commandes."
+      },
+      "bundleCreateFallback": {
+        "title": "Créer une offre groupée",
+        "description": "Créez une nouvelle offre groupée de produits pour augmenter vos ventes."
+      },
+      "bundleEdit": {
+        "title": "Créateur d'offres groupées – Modifier l'offre groupée",
+        "description": "Modifiez votre offre groupée de produits existante."
+      },
+      "analytics": {
+        "title": "Analyses – Tableau de bord des performances des offres groupées",
+        "description": "Analysez les performances de vos offres groupées grâce à des informations détaillées. Consultez votre chiffre d'affaires, vos conversions, vos offres groupées actives et des statistiques en temps réel afin d'optimiser votre stratégie d'offres groupées de produits."
+      },
+      "settings": {
+        "title": "Paramètres – Gérez vos préférences d'offres groupées",
+        "description": "Personnalisez votre expérience dans l'application d'offres groupées Radius. Configurez les paramètres généraux, les préférences d'analyse et les intégrations de votre boutique afin d'optimiser votre flux de travail et le suivi de vos performances."
+      },
+      "customizer": {
+        "title": "Outil de personnalisation – Gérez la personnalisation de votre offre groupée",
+        "description": "Personnalisez votre expérience dans l'application d'offres groupées Radius. Configurez les paramètres généraux, les préférences d'analyse et les intégrations de votre boutique afin d'optimiser votre flux de travail et le suivi de vos performances."
+      },
+      "pricing": {
+        "title": "Tarification – Des formules flexibles pour chaque entreprise",
+        "description": "Choisissez la formule idéale pour votre boutique. Comparez les fonctionnalités, les limites des offres groupées et l'accès aux analyses. Commencez gratuitement et passez à un forfait supérieur à tout moment pour bénéficier d'analyses avancées des performances de vos offres groupées et d'une assistance premium."
+      }
+    }
+  },
   "Common": {
     "Navigation": {
       "dashboard": "Tableau de bord",
@@ -188,6 +230,100 @@
     }
   },
   "Bundles": {
+    "Statuses": {
+      "DRAFT": "Brouillon",
+      "DRAFT_desc": "En cours, non visible par les clients",
+      "ACTIVE": "Actif",
+      "ACTIVE_desc": "En ligne et disponible à l'achat",
+      "SCHEDULED": "Programmé",
+      "SCHEDULED_desc": "Mise en ligne à l'heure prévue",
+      "PAUSED": "En pause",
+      "PAUSED_desc": "Temporairement masqué, paramètres conservés",
+      "ARCHIVED": "Archivé",
+      "ARCHIVED_desc": "Désactivé et masqué définitivement",
+      "DELETED": "Supprimé",
+      "DELETED_desc": "Supprimé définitivement"
+    },
+    "Discounts": {
+      "noDiscount": "Pas de réduction",
+      "off": "Réduction",
+      "customPrice": "Prix personnalisé"
+    },
+    "Actions": {
+      "edit": "Modifier l'offre groupée",
+      "view": "Afficher l'offre groupée",
+      "duplicate": "Dupliquer l'offre groupée",
+      "delete": "Supprimer l'offre groupée",
+      "includedProducts": "Produits inclus",
+      "bundleProduct": "Produit de l'offre groupée",
+      "noProducts": "Aucun produit dans cette offre groupée",
+      "somethingWentWrong": "Une erreur s'est produite. Veuillez réessayer.",
+      "statusUpdated": "Statut de l'offre groupée mis à jour avec succès",
+      "statusUpdateFailed": "Échec de la mise à jour du statut de l'offre groupée",
+      "statusFailed": "Échec de la mise à jour du statut",
+      "unexpectedError": "Erreur inattendue"
+    },
+    "BulkActions": {
+      "edit": "Modifier",
+      "setDraft": "Définir comme brouillon",
+      "setActive": "Activer",
+      "deleteBundles": "Supprimer les offres groupées",
+      "selectedBundles": "Offres groupées sélectionnées",
+      "bundlesActivated": "Offres groupées activées",
+      "bulkActivateFailed": "Échec de l'activation groupée",
+      "bundlesDrafted": "Offres groupées en brouillon",
+      "bulkDraftFailed": "Échec de la mise en brouillon groupée",
+      "bulkDeleteSuccess": "Les offres groupées sélectionnées ont bien été supprimées",
+      "bulkDeleteFailed": "Échec de la suppression groupée"
+    },
+    "Schedule": {
+      "status": "Statut de l'offre groupée",
+      "statusTooltip": "Affiche l'état actuel de cette offre groupée et son apparence dans votre boutique.",
+      "setDates": "Définir les dates de programmation",
+      "resetDates": "Réinitialiser les dates",
+      "scheduleBundle": "Programmer l'offre groupée",
+      "dateRangeHint": "Définissez la période d'activation de cette offre groupée.",
+      "dateRequired": "Veuillez définir les dates de début et de fin des offres groupées programmées."
+    },
+    "Common": {
+      "breadcrumb": "Offres groupées",
+      "back": "Retour",
+      "update": "Mettre à jour",
+      "publish": "Publier",
+      "duplicate": "Dupliquer",
+      "create": "Créer une offre groupée",
+      "edit": "Modifier l'offre groupée",
+      "error": "Erreur",
+      "errorLoading": "Erreur lors du chargement de l'offre groupée",
+      "deleteBundle": "Supprimer l'offre groupée",
+      "delete": "Supprimer",
+      "deleteConfirm": "Voulez-vous vraiment supprimer « {name} » ? Cette action est irréversible.",
+      "deleteSuccess": "Offre groupée supprimée",
+      "deleteFailed": "Échec de la suppression de l'offre groupée",
+      "duplicateTitle": "Dupliquer l'offre groupée",
+      "duplicateConfirm": "Souhaitez-vous vraiment dupliquer cette offre groupée ?",
+      "duplicateConfirmUnsaved": "Vous avez des modifications non enregistrées qui seront ignorées. Souhaitez-vous vraiment dupliquer cette offre groupée ?",
+      "duplicateSuccess": "Offre groupée dupliquée avec succès",
+      "duplicateFailed": "Échec de la duplication de l'offre groupée"
+    },
+    "Selection": {
+      "title": "Sélectionner le type d'offre groupée",
+      "description": "Choisissez le type d'offre groupée qui correspond le mieux à votre offre",
+      "upgradePlan": "Mettre à jour votre abonnement",
+      "upgradePlanDesc": "Accédez aux fonctionnalités avancées et à l'assistance prioritaire. Passez à la formule supérieure dès aujourd'hui pour tirer le meilleur parti de vos offres groupées.",
+      "seeDetails": "Voir les détails",
+      "comingSoon": "Bientôt disponible",
+      "select": "Sélectionner",
+      "createBundle": "Créer l'offre groupée",
+      "helpTitle": "Besoin d'aide pour choisir ?",
+      "helpDescription": "Vous ne savez pas quel type d'offre groupée convient à vos produits ? Voici quelques conseils rapides :",
+      "helpItems": {
+        "orderValue": "Pour augmenter la valeur des commandes :",
+        "discovery": "Pour la découverte de produits :",
+        "acquisition": "Pour l'acquisition de clients :",
+        "campaigns": "Pour les campagnes promotionnelles :"
+      }
+    },
     "Listing": {
       "title": "Gestion des offres groupées",
       "description": "Créer et gérer vos offres de lots de produits",
@@ -257,7 +393,8 @@
     "Locales": {
       "title": "Langues",
       "fallbackTooltip": "Pour les champs vides, la langue par défaut sera la langue principale ({primary}).",
-      "primaryBadge": "(Principale)"
+      "primaryBadge": "(Principale)",
+      "refresh": "Actualiser les langues"
     },
     "Tabs": {
       "general": {
@@ -583,100 +720,104 @@
         }
       },
       "tools": {
-        "title": "Outils"
+        "title": "Outils",
+        "Sections": {},
+        "Fields": {}
       }
     },
     "Tools": {
       "dataManagement": {
         "title": "Gestion des données",
-        "description": "Exportez ou importez les paramètres de votre application.",
+        "tooltip": "Exportez ou importez les paramètres de votre application.",
         "export": {
           "title": "Exporter les paramètres",
           "description": "Téléchargez une sauvegarde de tous vos paramètres actuels.",
-          "button": "Exporter"
+          "action": "Exporter"
         },
         "import": {
           "title": "Importer les paramètres",
           "description": "Restaurer les paramètres à partir d'un fichier JSON précédemment exporté.",
-          "button": "Importer"
+          "action": "Importer"
         }
       },
       "syncCache": {
         "title": "Synchronisation et cache",
-        "description": "Synchronisez manuellement les données ou videz le cache si vous rencontrez des problèmes.",
+        "tooltip": "Synchronisez manuellement les données ou videz le cache si vous rencontrez des problèmes.",
         "sync": {
           "title": "Synchroniser avec Shopify",
           "description": "Forcer la synchronisation de tous les paramètres et regrouper les données dans les métachamps Shopify.",
-          "button": "Synchroniser"
+          "action": "Synchroniser"
         },
-        "clearCache": {
+        "clear": {
           "title": "Vider le cache de l'application",
           "description": "Effacez toutes les données mises en cache, y compris les offres groupées, les analyses et les paramètres.",
-          "button": "Effacer"
+          "action": "Effacer"
         }
       },
-      "webhookManagement": {
+      "webhooks": {
         "title": "Gestion des webhooks",
-        "description": "Vérifier ou réenregistrer les abonnements aux webhooks auprès de Shopify depuis l'application d'offres groupées de produits Radius.",
+        "tooltip": "Vérifier ou réenregistrer les abonnements aux webhooks auprès de Shopify depuis l'application d'offres groupées de produits Radius.",
         "check": {
           "title": "Vérifier les webhooks",
           "description": "Afficher tous les abonnements Webhook actuellement enregistrés depuis l'application d'offres groupées de produits Radius.",
-          "button": "Vérifier"
+          "action": "Vérifier"
         },
         "register": {
           "title": "Forcer l'enregistrement des webhooks",
           "description": "Réinitialiser et réenregistrer tous les webhooks auprès de Shopify.",
-          "button": "Enregistrer"
+          "action": "Enregistrer"
         }
       },
       "dangerZone": {
         "title": "Zone dangereuse",
-        "description": "Actions destructrices qui ne peuvent pas être annulées.",
+        "tooltip": "Actions destructrices qui ne peuvent pas être annulées.",
         "reset": {
           "title": "Réinitialiser les paramètres de l'application",
           "description": "Rétablir les valeurs par défaut de tous les paramètres. Cette action est irréversible.",
-          "button": "Réinitialiser"
+          "action": "Réinitialiser"
         }
       },
-      "resetModal": {
-        "title": "Réinitialiser tous les paramètres ?",
-        "description1": "Cette opération réinitialisera tous vos paramètres à leurs valeurs par défaut. Vos offres groupées ne seront pas affectées, mais toutes les personnalisations des couleurs, des étiquettes et des autres paramètres seront perdues.",
-        "description2": "Cette action est irréversible.",
-        "confirmButton": "Réinitialiser tous les paramètres",
-        "cancelButton": "Annuler"
-      },
-      "syncResultsModal": {
-        "title": "Résultats de la synchronisation des métachamps",
-        "statusCol": "Statut",
-        "syncComplete": "Synchronisation terminée",
-        "syncFailed": "Échec de la synchronisation",
-        "statusSynced": "Synchronisé",
-        "statusError": "Erreur",
-        "unknownError": "Une erreur inconnue s'est produite",
-        "noResults": "Aucun résultat pour le moment.",
-        "close": "Fermer"
-      },
-      "webhookCheckModal": {
-        "title": "Webhooks enregistrés",
-        "statusCol": "Statut",
-        "allRegistered": "Tous les webhooks enregistrés",
-        "missingCount": "{count} webhook(s) manquant(s)",
-        "statusRegistered": "Enregistré(s) ({count})",
-        "statusMissing": "Manquant",
-        "statusGdpr": "RGPD ({count})",
-        "noResults": "Aucun résultat pour le moment.",
-        "close": "Fermer"
-      },
-      "webhookRegisterModal": {
-        "title": "Résultats de l'enregistrement des webhooks",
-        "statusCol": "Statut",
-        "allSuccess": "Tous enregistrés avec succès",
-        "partialSuccess": "Succès partiel",
-        "failedTitle": "Échec de l'enregistrement",
-        "statusRegistered": "Enregistré",
-        "statusFailed": "Échoué",
-        "noResults": "Aucun résultat pour le moment.",
-        "close": "Fermer"
+      "modals": {
+        "reset": {
+          "heading": "Réinitialiser tous les paramètres ?",
+          "body1": "Cette opération réinitialisera tous vos paramètres à leurs valeurs par défaut. Vos offres groupées ne seront pas affectées, mais toutes les personnalisations des couleurs, des étiquettes et des autres paramètres seront perdues.",
+          "body2": "Cette action est irréversible.",
+          "primaryAction": "Réinitialiser tous les paramètres",
+          "cancel": "Annuler"
+        },
+        "syncResult": {
+          "heading": "Résultats de la synchronisation des métachamps",
+          "status": "Statut",
+          "complete": "Synchronisation terminée",
+          "failed": "Échec de la synchronisation",
+          "synced": "Synchronisé",
+          "error": "Erreur",
+          "unknownError": "Une erreur inconnue s'est produite",
+          "noResults": "Aucun résultat pour le moment.",
+          "close": "Fermer"
+        },
+        "webhookCheck": {
+          "heading": "Webhooks enregistrés",
+          "status": "Statut",
+          "allRegistered": "Tous les webhooks enregistrés",
+          "missingCount": "{count} webhook(s) manquant(s)",
+          "registeredCount": "Enregistré(s) ({count})",
+          "missing": "Manquant",
+          "gdprCount": "RGPD ({count})",
+          "noResults": "Aucun résultat pour le moment.",
+          "close": "Fermer"
+        },
+        "webhookRegister": {
+          "heading": "Résultats de l'enregistrement des webhooks",
+          "status": "Statut",
+          "success": "Tous enregistrés avec succès",
+          "partial": "Succès partiel",
+          "failedStatus": "Échec de l'enregistrement",
+          "registered": "Enregistré",
+          "failed": "Échoué",
+          "noResults": "Aucun résultat pour le moment.",
+          "close": "Fermer"
+        }
       }
     },
     "Customizer": {
@@ -920,5 +1061,40 @@
         "field_cartBannerIconColor_label": "Couleur de l’icône"
       }
     }
+  },
+  "Analytics": {
+    "title": "Analyses des offres groupées et informations sur les clients",
+    "description": "Analyses complètes des performances de vos offres groupées et du comportement de vos clients",
+    "Tabs": {
+      "overview": "Aperçu",
+      "bundlePerformance": "Performances de l'offre groupée"
+    },
+    "EmptyStates": {
+      "noDataTitle": "Aucune donnée disponible",
+      "noDataDesc": "Les données d'analyse s'afficheront ici dès que vos offres groupées commenceront à enregistrer des vues et des achats.",
+      "collectingTitle": "Collecte de données supplémentaires",
+      "noActivityTitle": "Aucune activité pour vos offres groupées pour le moment",
+      "noActivityDesc": "Vos offres groupées n'ont pas encore été consultées. Partagez-les avec vos clients pour commencer à suivre leurs performances.",
+      "viewBundles": "Afficher les offres groupées",
+      "noConversionsTitle": "Aucune conversion pour le moment",
+      "noConversionsDesc": "Vos offres groupées ont été consultées, mais aucun client ne les a encore ajoutées au panier. Envisagez d'optimiser la présentation de vos offres groupées.",
+      "learnOptimization": "En savoir plus sur l'optimisation",
+      "noPurchasesTitle": "Aucun achat pour le moment",
+      "noPurchasesDesc": "Vos offres groupées ont été consultées, mais n'ont pas encore été achetées. Continuez à les promouvoir auprès de vos clients !"
+    },
+    "DisabledBanner": {
+      "heading": "Suivi analytique suspendu",
+      "description": "Suivi actuellement en pause. Aucun nouvel événement n'est collecté ; par conséquent, les interactions récentes avec les offres groupées n'apparaîtront pas dans ces rapports. Toutes les données affichées ici correspondent à l'activité enregistrée avant la désactivation du suivi.",
+      "enableTracking": "Activer le suivi"
+    }
+  },
+  "Pricing": {
+    "title": "Tarifs et formules",
+    "description": "Choisissez la formule adaptée à votre entreprise",
+    "back": "Retour"
+  },
+  "ABTesting": {
+    "title": "A/B Testing",
+    "comingSoon": "Fonctionnalités de tests A/B : bientôt disponibles…"
   }
 }

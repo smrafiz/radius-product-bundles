@@ -2,7 +2,6 @@
 
 import type { ProductCardProps } from "@/features/settings/types/template.types";
 import {
-    DEFAULT_LABELS,
     getCardRadius,
     getFontSize,
     getImageSize,
@@ -10,6 +9,7 @@ import {
     getCardBgColor,
     useCustomizerStore,
 } from "@/features/settings";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 export function ProductCard({
     label,
@@ -118,7 +118,7 @@ export function ProductCard({
                 </div>
 
                 <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
-                    {DEFAULT_LABELS.quantityLabel} 1
+                    {PREVIEW_LABELS.quantityLabel} 1
                 </div>
             </div>
         );
@@ -156,7 +156,7 @@ export function ProductCard({
                     {label}
                 </div>
                 <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
-                    {DEFAULT_LABELS.quantityLabel} 1
+                    {PREVIEW_LABELS.quantityLabel} 1
                 </div>
             </div>
 

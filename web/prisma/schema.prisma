@@ -487,8 +487,9 @@ model Shop {
     lastSetupCheck      DateTime?
 
     // Locales (cached from Shopify shopLocales query)
-    locales       Json?
-    primaryLocale String @default("en")
+    locales          Json?
+    primaryLocale    String    @default("en")
+    localesUpdatedAt DateTime?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

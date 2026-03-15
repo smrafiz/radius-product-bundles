@@ -1,14 +1,16 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { CustomizerBundleType } from "@/features/settings/components/style-customizer";
-export const metadata: Metadata = {
-    title: "Customizer - Manage Your Bundle Customization",
-    description:
-        "Customize your bundle app experience. Configure general settings, analytics preferences, and store integrations to optimize your workflow and performance tracking.",
-};
 
-/*
- * Setting Customizer Page
- */
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getStaticTranslations("Meta.pages.customizer");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
+
 export default function Page() {
     return <CustomizerBundleType />;
 }

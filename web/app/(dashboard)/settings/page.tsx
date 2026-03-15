@@ -1,15 +1,16 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { SettingsPage } from "@/features/settings/components/settings-page";
 
-export const metadata: Metadata = {
-    title: "Settings - Manage Your Bundle Preferences",
-    description:
-        "Customize your bundle app experience. Configure general settings, analytics preferences, and store integrations to optimize your workflow and performance tracking.",
-};
 
-/*
- * Settings Page
- */
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getStaticTranslations("Meta.pages.settings");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
+
 export default function Page() {
     return <SettingsPage />;
 }

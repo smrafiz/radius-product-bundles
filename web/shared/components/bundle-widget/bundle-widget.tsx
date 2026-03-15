@@ -14,6 +14,7 @@ export function BundleWidget({
     title,
     subtitle,
     cartButtonText,
+    labels,
     hideFooter,
     hideHeader,
     hideOriginalPrice,
@@ -26,7 +27,7 @@ export function BundleWidget({
                     styles={styles}
                     displayOptions={displayOptions}
                     pricing={pricing}
-                    title={title}
+                    title={title || labels?.headingLabel}
                     subtitle={subtitle}
                 />
             )}
@@ -38,10 +39,11 @@ export function BundleWidget({
                         displayOptions={displayOptions}
                         pricing={pricing}
                         hideOriginalPrice={hideOriginalPrice}
+                        labels={labels}
                     />
                     <WidgetAddToCart
                         styles={styles}
-                        cartButtonText={cartButtonText}
+                        cartButtonText={cartButtonText || labels?.addToCartText}
                     />
                 </>
             )}

@@ -39,11 +39,14 @@ export async function fetchAndCacheShopLocales(
         data: {
             locales: published,
             primaryLocale,
+            localesUpdatedAt: new Date(),
         },
     });
 
     return published;
 }
+
+const LOCALES_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export async function getShopLocales(
     sessionToken: string,
@@ -51,10 +54,14 @@ export async function getShopLocales(
 ): Promise<CachedLocale[]> {
     const shop = await prisma.shop.findUnique({
         where: { domain },
-        select: { locales: true, primaryLocale: true },
+        select: { locales: true, primaryLocale: true, localesUpdatedAt: true },
     });
 
-    if (shop?.locales && Array.isArray(shop.locales) && shop.locales.length > 0) {
+    const isFresh =
+        shop?.localesUpdatedAt &&
+        Date.now() - new Date(shop.localesUpdatedAt).getTime() < LOCALES_TTL_MS;
+
+    if (shop?.locales && Array.isArray(shop.locales) && shop.locales.length > 0 && isFresh) {
         return shop.locales as unknown as CachedLocale[];
     }
 

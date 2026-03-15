@@ -1,12 +1,14 @@
+import { connection } from "next/server";
 import { cookies } from "next/headers";
 
 type MessageValue = string | Record<string, unknown>;
 type Messages = Record<string, Record<string, MessageValue>>;
 
-export async function getTranslations(namespace: string) {
-    const cookieStore = await cookies();
-    const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
-
+/**
+ * Resolve translations for the given namespace and locale.
+ * Shared logic used by both dynamic and static variants.
+ */
+async function resolve(namespace: string, locale: string) {
     let messages: Messages;
     try {
         messages = (await import(`../../messages/${locale}.json`)).default;
@@ -48,4 +50,15 @@ export async function getTranslations(namespace: string) {
         }
         return value;
     };
+}
+
+export async function getTranslations(namespace: string) {
+    await connection();
+    const cookieStore = await cookies();
+    const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
+    return resolve(namespace, locale);
+}
+
+export async function getStaticTranslations(namespace: string, locale = "en") {
+    return resolve(namespace, locale);
 }

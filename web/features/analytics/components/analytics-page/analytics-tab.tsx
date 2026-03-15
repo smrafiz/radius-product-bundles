@@ -7,6 +7,7 @@ import {
     AnalyticsMetrics,
 } from "@/features/analytics";
 import { useState } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 
@@ -26,21 +27,23 @@ const AnalyticsComparisonCharts = dynamic(
     { ssr: false },
 );
 
-const TABS = [
-    { key: "overview", label: "Overview", icon: "chart-vertical" },
-    { key: "bundle-performance", label: "Bundle Performance", icon: "package" },
-] as const;
-
-type TabKey = (typeof TABS)[number]["key"];
+const TAB_KEYS = ["overview", "bundle-performance"] as const;
+type TabKey = (typeof TAB_KEYS)[number];
 
 export function AnalyticsTabs() {
+    const t = useTranslations("Analytics.Tabs");
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab") as TabKey | null;
     const initialTab =
-        tabParam && TABS.some((t) => t.key === tabParam)
+        tabParam && TAB_KEYS.includes(tabParam)
             ? tabParam
             : "overview";
     const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
+
+    const TABS = [
+        { key: "overview" as const, label: t("overview"), icon: "chart-vertical" as const },
+        { key: "bundle-performance" as const, label: t("bundlePerformance"), icon: "package" as const },
+    ];
 
     return (
         <s-stack gap="base">

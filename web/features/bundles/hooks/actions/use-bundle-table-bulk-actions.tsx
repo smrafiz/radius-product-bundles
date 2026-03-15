@@ -13,6 +13,7 @@ import {
 } from "@/features/bundles/actions";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Get bundle table bulk actions
@@ -26,6 +27,9 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         (s) => s.updateBundleInStore,
     );
     const showToast = useBundleListingStore((s) => s.showToast);
+    const t = useTranslations("Bundles.Actions");
+    const tb = useTranslations("Bundles.BulkActions");
+    const tc = useTranslations("Bundles.Common");
 
     /**
      * Toggle bundle status (ACTIVE ↔ DRAFT)
@@ -66,16 +70,16 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                         await invalidateBundleCache(queryClient);
                         showToast(
                             result.message ||
-                                "Bundle status updated successfully",
+                                t("statusUpdated"),
                         );
                     } else {
-                        showError("Status update failed", {
+                        showError(t("statusFailed"), {
                             content: result.message,
                         });
                     }
                 } catch {
-                    showError("Status update failed", {
-                        content: "An unexpected error occurred.",
+                    showError(t("statusFailed"), {
+                        content: t("unexpectedError"),
                     });
                 }
             },
@@ -93,7 +97,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         openModal({
             type: "status",
             newStatus: "ACTIVE",
-            bundle: { name: "selected bundles" } as any,
+            bundle: { name: tb("selectedBundles") } as any,
             onConfirm: async () => {
                 try {
                     const sessionToken = await app.idToken();
@@ -106,16 +110,16 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                         await invalidateBundleCache(queryClient);
                         showToast(
                             result.message ||
-                                `${result.data.updatedCount} bundles activated`,
+                                `${result.data.updatedCount} ${tb("bundlesActivated")}`,
                         );
                     } else {
-                        showError("Bulk activation failed", {
+                        showError(tb("bulkActivateFailed"), {
                             content: result.message,
                         });
                     }
                 } catch {
-                    showError("Bulk activation failed", {
-                        content: "An unexpected error occurred.",
+                    showError(tb("bulkActivateFailed"), {
+                        content: t("unexpectedError"),
                     });
                 } finally {
                     setLoading(false);
@@ -134,7 +138,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
 
         openModal({
             type: "status",
-            bundle: { name: "selected bundles" } as any,
+            bundle: { name: tb("selectedBundles") } as any,
             newStatus: "DRAFT",
             onConfirm: async () => {
                 setLoading(true);
@@ -149,16 +153,16 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                         await invalidateBundleCache(queryClient);
                         showToast(
                             result.message ||
-                                `${result.data.updatedCount} bundles set as draft`,
+                                `${result.data.updatedCount} ${tb("bundlesDrafted")}`,
                         );
                     } else {
-                        showError("Bulk draft failed", {
+                        showError(tb("bulkDraftFailed"), {
                             content: result.message,
                         });
                     }
                 } catch {
-                    showError("Bulk draft failed", {
-                        content: "An unexpected error occurred.",
+                    showError(tb("bulkDraftFailed"), {
+                        content: t("unexpectedError"),
                     });
                 } finally {
                     setLoading(false);
@@ -175,7 +179,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
 
         openModal({
             type: "delete",
-            bundle: { name: "selected bundles" } as any,
+            bundle: { name: tb("selectedBundles") } as any,
             onConfirm: async () => {
                 setLoading(true);
                 try {
@@ -189,19 +193,19 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                         await invalidateBundleCache(queryClient);
                         showToast(
                             result.message ||
-                                "Selected bundles have been deleted successfully",
+                                tb("bulkDeleteSuccess"),
                         );
                         if (clearSelection) {
                             clearSelection();
                         }
                     } else {
-                        showError("Bulk delete failed", {
+                        showError(tb("bulkDeleteFailed"), {
                             content: result.message,
                         });
                     }
                 } catch {
-                    showError("Bulk delete failed", {
-                        content: "An unexpected error occurred.",
+                    showError(tb("bulkDeleteFailed"), {
+                        content: t("unexpectedError"),
                     });
                 } finally {
                     setLoading(false);
@@ -223,14 +227,14 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         if (selectedResources.length === 1 && selectedBundle) {
             actions.push(
                 {
-                    content: "Edit",
+                    content: tb("edit"),
                     onAction: withLoader(rowActions.edit),
                 },
                 {
                     content:
                         selectedBundle.status === "ACTIVE"
-                            ? "Set as draft"
-                            : "Set as active",
+                            ? tb("setDraft")
+                            : tb("setActive"),
                     onAction: () => {
                         handleToggleBundleStatus(
                             selectedBundle.id,
@@ -243,11 +247,11 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         } else if (selectedResources.length > 1) {
             actions.push(
                 {
-                    content: "Set as active",
+                    content: tb("setActive"),
                     onAction: () => handleBulkActivate(selectedResources),
                 },
                 {
-                    content: "Set as draft",
+                    content: tb("setDraft"),
                     onAction: () => handleBulkDraft(selectedResources),
                 },
             );
@@ -272,7 +276,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         if (selectedResources.length === 1 && selectedBundle) {
             return [
                 {
-                    content: "Duplicate",
+                    content: tc("duplicate"),
                     icon: "duplicate",
                     onAction: () => {
                         openModal({
@@ -286,7 +290,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                     },
                 },
                 {
-                    content: "Delete bundle",
+                    content: tc("deleteBundle"),
                     icon: "delete",
                     destructive: true,
                     onAction: () => {
@@ -304,7 +308,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         } else if (selectedResources.length > 1) {
             return [
                 {
-                    content: "Delete bundles",
+                    content: tb("deleteBundles"),
                     icon: "delete",
                     destructive: true,
                     onAction: () => handleBulkDelete(selectedResources),

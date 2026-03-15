@@ -10,9 +10,11 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 import { useMemo, useState } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 import { formatDateLong, useShopSettings } from "@/shared";
 
 export function BxgyReviewSection() {
+    const ts = useTranslations("Bundles.Statuses");
     const { bundleData, getTriggerProducts, getRewardProducts } =
         useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
@@ -309,7 +311,7 @@ export function BxgyReviewSection() {
                     >
                         <s-heading>Status</s-heading>
                         <s-badge tone={statusInfo.tone}>
-                            {statusInfo.text}
+                            {ts(bundleData.status ?? "DRAFT")}
                         </s-badge>
                     </s-stack>
                     {bundleData.status === "SCHEDULED" && (

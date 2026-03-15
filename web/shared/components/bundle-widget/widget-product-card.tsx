@@ -17,6 +17,7 @@ export function WidgetProductCard({
     displayOptions,
     variant = "horizontal",
     showCardStyle = true,
+    labels,
 }: WidgetProductCardProps) {
     const imageSizePx = getImageSize(styles.imageSize);
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -133,7 +134,7 @@ export function WidgetProductCard({
 
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
-            {DEFAULT_LABELS.quantityLabel} {product.quantity}
+            {labels?.quantityLabel || DEFAULT_LABELS.quantityLabel} {product.quantity}
         </div>
     );
 

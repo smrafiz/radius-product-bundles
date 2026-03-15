@@ -6,6 +6,7 @@ import {
     BundleActionsGroupProps,
     BundleListItem,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundle actions group
@@ -15,6 +16,7 @@ export function BundleActionsGroup({
     onAction,
 }: BundleActionsGroupProps) {
     const { openModal } = useModalStore();
+    const t = useTranslations("Bundles.Actions");
     const popoverId = `bundle-view-popover-${bundle.id}`;
     const { settings } = useShopSettingsStore();
     const shopDomain = settings?.myshopifyDomain;
@@ -69,7 +71,7 @@ export function BundleActionsGroup({
                 const tooltipId = `${action.key}-${bundle.id}`;
                 return (
                     <s-tooltip key={`tooltip-${action.key}`} id={tooltipId}>
-                        <s-text>{action.tooltip}</s-text>
+                        <s-text>{t(action.key)}</s-text>
                     </s-tooltip>
                 );
             })}
@@ -87,7 +89,7 @@ export function BundleActionsGroup({
                             slot="secondary-actions"
                             interestFor={tooltipId}
                             commandFor={popoverId}
-                            accessibilityLabel={action.tooltip}
+                            accessibilityLabel={t(action.key)}
                             icon={action.icon}
                             tone={action.tone}
                         />
@@ -96,7 +98,7 @@ export function BundleActionsGroup({
                             key={action.key}
                             slot="secondary-actions"
                             interestFor={tooltipId}
-                            accessibilityLabel={action.tooltip}
+                            accessibilityLabel={t(action.key)}
                             icon={action.icon}
                             tone={action.tone}
                             {...(isModalAction
@@ -120,7 +122,7 @@ export function BundleActionsGroup({
                             }
                         >
                             <s-stack gap="small-200">
-                                <s-heading>Included products</s-heading>
+                                <s-heading>{t("includedProducts")}</s-heading>
                                 {bundle.products?.length ? (
                                     [
                                         ...new Map(
@@ -142,12 +144,12 @@ export function BundleActionsGroup({
                                         </s-stack>
                                     ))
                                 ) : (
-                                    <s-text>No products in this bundle</s-text>
+                                    <s-text>{t("noProducts")}</s-text>
                                 )}
                                 {bundle.mainProduct && (
                                     <>
                                         <s-divider />
-                                        <s-heading>Bundle product</s-heading>
+                                        <s-heading>{t("bundleProduct")}</s-heading>
                                         <a
                                             href={`https://${shopDomain}/products/${bundle.mainProduct.handle}`}
                                             target="_blank"

@@ -1,11 +1,15 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { BundleTypeSelection } from "@/features/bundles";
 
-export const metadata: Metadata = {
-    title: "Bundle Creation - Select Bundle Type",
-    description:
-        "Choose the perfect bundle type for your products. Create fixed bundles, volume discounts, mix & match, BOGO offers, and more to increase sales and average order value.",
-};
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getStaticTranslations("Meta.pages.bundleCreate");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 export default function BundleTypeSelectionPage() {
     return <BundleTypeSelection />;

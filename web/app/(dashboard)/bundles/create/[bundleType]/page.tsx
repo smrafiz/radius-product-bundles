@@ -1,18 +1,14 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { BUNDLE_TYPES, BundleType, CreateBundlePage } from "@/features/bundles";
 
-/**
- * Pre-generate all bundle type pages at build time
- */
+
 export function generateStaticParams() {
     return Object.values(BUNDLE_TYPES).map((type) => ({
         bundleType: type.slug,
     }));
 }
 
-/**
- * Generate metadata dynamically based on the bundle type
- */
 export async function generateMetadata({
     params,
 }: {
@@ -27,9 +23,10 @@ export async function generateMetadata({
     );
 
     if (!bundleConfig) {
+        const t = await getStaticTranslations("Meta.pages.bundleCreateFallback");
         return {
-            title: "Create Bundle",
-            description: "Create a new product bundle to increase sales.",
+            title: t("title"),
+            description: t("description"),
         };
     }
 

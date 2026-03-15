@@ -14,6 +14,7 @@ import {
 } from "@/features/bundles";
 import { useCallback } from "react";
 import { TitleBar } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 import { GlobalForm, useAppNavigation } from "@/shared";
 import {
     BUNDLE_FIELD_LABELS,
@@ -21,6 +22,7 @@ import {
 } from "@/features/bundles/constants/bundle-details.constants";
 
 export function EditBundlePage({ params }: { params: { id: string } }) {
+    const tc = useTranslations("Bundles.Common");
     const { id: bundleId } = params;
     const { bundleData, isLoading, isError, errorMessage, productsQuery } =
         useEditBundle(bundleId);
@@ -190,7 +192,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                         variant="breadcrumb"
                         onClick={navigationData.list()}
                     >
-                        Bundles
+                        {tc("breadcrumb")}
                     </button>
                 </TitleBar>
                 <BundleCreationSkeleton mode="edit" />
@@ -200,9 +202,9 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
 
     if (isError || !bundleData) {
         return (
-            <s-page heading="Error">
+            <s-page heading={tc("error")}>
                 <s-stack paddingBlockStart="large" paddingBlockEnd="large">
-                    <s-banner tone="critical" heading="Error loading bundle">
+                    <s-banner tone="critical" heading={tc("errorLoading")}>
                         {errorMessage}
                     </s-banner>
                 </s-stack>

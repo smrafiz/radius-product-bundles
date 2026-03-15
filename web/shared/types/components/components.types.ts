@@ -100,6 +100,7 @@ export interface BundleWidgetProps {
     title?: string;
     subtitle?: string;
     cartButtonText?: string;
+    labels?: WidgetLabels;
     hideFooter?: boolean;
     hideHeader?: boolean;
     hideOriginalPrice?: boolean;
@@ -136,6 +137,7 @@ export interface WidgetPricingProps {
     displayOptions: WidgetDisplayOptions;
     pricing: WidgetPricing;
     hideOriginalPrice?: boolean;
+    labels?: WidgetLabels;
 }
 
 export interface WidgetProductCardProps {
@@ -144,6 +146,7 @@ export interface WidgetProductCardProps {
     displayOptions: WidgetDisplayOptions;
     variant?: "horizontal" | "vertical";
     showCardStyle?: boolean;
+    labels?: WidgetLabels;
 }
 
 export interface MediaCardProps {

@@ -11,12 +11,14 @@ import {
     useBundlePreviewPricing,
     useBundleStore,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 import { formatDateLong, useShopSettings } from "@/shared";
 
 /**
  * Displays a summary of the bundle configuration in the review step.
  */
 export function BundleSummary() {
+    const ts = useTranslations("Bundles.Statuses");
     const { bundleData, getGroupedItems } = useBundleStore();
     const groupedItems = getGroupedItems();
     const nameField = useBundleField<string>("name");
@@ -145,7 +147,7 @@ export function BundleSummary() {
                     >
                         <s-heading>Status</s-heading>
                         <s-badge tone={statusInfo.tone}>
-                            {statusInfo.text}
+                            {ts(bundleData.status ?? "DRAFT")}
                         </s-badge>
                     </s-stack>
 

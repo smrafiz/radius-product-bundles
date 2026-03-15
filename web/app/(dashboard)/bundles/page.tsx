@@ -1,15 +1,16 @@
 import { Metadata } from "next";
+import { getStaticTranslations } from "@/lib/i18n/server";
 import { BundleListingPage } from "@/features/bundles";
 
-export const metadata: Metadata = {
-    title: "Product Bundles - Bundle Manager",
-    description:
-        "Manage all your product bundles in one place. View performance metrics, edit active offers, track sales, and optimize your bundle campaigns to increase average order value.",
-};
 
-/*
- * Bundle Management Page
- */
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getStaticTranslations("Meta.pages.bundles");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
+
 export default function Page() {
     return <BundleListingPage />;
 }

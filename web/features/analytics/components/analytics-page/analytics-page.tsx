@@ -2,11 +2,13 @@
 
 import { useEffect } from "react";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/features/settings";
 import { AnalyticsDisabledBanner, AnalyticsTabs } from "@/features/analytics";
 import { updateSetupStepAction } from "@/features/dashboard/actions/setup-guide.action";
 
 export function AnalyticsPage() {
+    const t = useTranslations("Analytics");
     const app = useAppBridge();
 
     // Mark "analyticsViewed" setup step as complete on mount
@@ -22,8 +24,8 @@ export function AnalyticsPage() {
     });
 
     return (
-        <s-page>
-            <TitleBar></TitleBar>
+        <s-page heading={t("title")}>
+            <TitleBar title={t("title")}></TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"
@@ -33,12 +35,11 @@ export function AnalyticsPage() {
                     <div className="text-center">
                         <s-heading>
                             <div className="text-base text-center">
-                                Bundle Analytics & Customer Insights
+                                {t("title")}
                             </div>
                         </s-heading>
                         <s-text color="subdued">
-                            Comprehensive insights into your bundle performance
-                            and customer behavior.
+                            {t("description")}
                         </s-text>
                     </div>
                 </s-stack>

@@ -4,6 +4,8 @@ import { LoadingSpinner } from "@/shared";
 import { BUNDLE_FILTERS, useBundleFilters } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
+const TAB_STATUS_KEYS = ["ALL", "DRAFT", "ACTIVE", "SCHEDULED", "PAUSED", "ARCHIVED"] as const;
+
 /**
  * Bundle index filters component
  */
@@ -32,6 +34,12 @@ export function BundleIndexFilters({
         handleSortDirectionClick,
     } = useBundleFilters();
     const t = useTranslations("Bundles.Listing.Filters");
+    const ts = useTranslations("Bundles.Statuses");
+
+    const getTabLabel = (index: number) => {
+        const key = TAB_STATUS_KEYS[index];
+        return key === "ALL" ? t("allStatus") : ts(key);
+    };
 
     return (
         <>
@@ -70,10 +78,10 @@ export function BundleIndexFilters({
                             }`}
                         >
                             <s-stack direction="inline" gap="small-400">
-                                {BUNDLE_FILTERS.tabs.items.map(
-                                    (item, index) => (
+                                {TAB_STATUS_KEYS.map(
+                                    (key, index) => (
                                         <s-button
-                                            key={`${item}-${index}`}
+                                            key={`${key}-${index}`}
                                             tone="neutral"
                                             variant={
                                                 filters.selectedTab === index
@@ -87,7 +95,7 @@ export function BundleIndexFilters({
                                                 filters.selectedTab === index
                                             }
                                         >
-                                            {item}
+                                            {getTabLabel(index)}
                                         </s-button>
                                     ),
                                 )}
@@ -110,7 +118,7 @@ export function BundleIndexFilters({
                             <s-tooltip id="status-filter-tooltip">
                                 <s-text>
                                     {hasStatusFilter
-                                        ? `${t("filterByStatus")}: ${filters.selectedTab !== undefined ? BUNDLE_FILTERS.tabs.items[filters.selectedTab] : t("allStatus")}`
+                                        ? `${t("filterByStatus")}: ${filters.selectedTab !== undefined ? getTabLabel(filters.selectedTab) : t("allStatus")}`
                                         : t("filterByStatusLabel")}
                                 </s-text>
                             </s-tooltip>
@@ -167,17 +175,17 @@ export function BundleIndexFilters({
                                     name="status-filter"
                                     onChange={handleStatusFilterChange}
                                 >
-                                    {BUNDLE_FILTERS.tabs.items.map(
-                                        (item, index) => (
+                                    {TAB_STATUS_KEYS.map(
+                                        (key, index) => (
                                             <s-choice
                                                 key={`status-${index}`}
-                                                value={item.toLowerCase()}
+                                                value={key.toLowerCase()}
                                                 selected={
                                                     filters.selectedTab ===
                                                     index
                                                 }
                                             >
-                                                {item}
+                                                {getTabLabel(index)}
                                             </s-choice>
                                         ),
                                     )}
