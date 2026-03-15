@@ -88,7 +88,7 @@ function SplitProductCard({
                             fontSize: bodyFontSize,
                             fontWeight: 500,
                             color: hasDiscount
-                                ? styles.bogoFreeTagColor || "#16a34a"
+                                ? styles.savingsColor || "#16a34a"
                                 : styles.textColor,
                         }}
                     >
@@ -98,7 +98,9 @@ function SplitProductCard({
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 2,
-                                color: "#9ca3af",
+                                color: styles.textColor,
+                                fontWeight: 500,
+                                opacity: 0.5,
                                 textDecoration: "line-through",
                             }}
                         >

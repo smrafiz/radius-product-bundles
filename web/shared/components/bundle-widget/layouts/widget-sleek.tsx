@@ -36,15 +36,16 @@ function SleekProductCard({
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
+    const bgBase = styles.backgroundColor || "#fff";
     const cardStyle: React.CSSProperties = isTrigger
         ? {
-              background: styles.productCardBg || "#fff",
+              background: styles.productCardBg || bgBase,
               border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
           }
         : {
               background: hasDiscount
-                  ? `linear-gradient(to right, ${savingsColor}1A, white)`
-                  : styles.productCardBg || "#fff",
+                  ? `linear-gradient(to right, ${savingsColor}1A, ${bgBase})`
+                  : styles.productCardBg || bgBase,
               border: hasDiscount
                   ? `1px solid ${savingsColor}33`
                   : `1px solid ${styles.borderColor || "#e5e7eb"}`,
@@ -69,7 +70,7 @@ function SleekProductCard({
                         flexShrink: 0,
                         borderRadius: 8,
                         overflow: "hidden",
-                        background: "#f9fafb",
+                        background: styles.productCardBg || "#f9fafb",
                     }}
                 >
                     <img
@@ -161,7 +162,8 @@ function SleekProductCard({
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 3,
-                            color: "#9ca3af",
+                            color: styles.textColor || "#9ca3af",
+                            opacity: 0.5,
                             textDecoration: "line-through",
                             fontWeight: 500,
                         }}
@@ -239,26 +241,26 @@ export function WidgetSleek({
                     padding: "4px 0",
                 }}
             >
-                <div style={{ flex: 1, height: 1, background: "#e5e7eb" }} />
+                <div style={{ flex: 1, height: 1, background: styles.borderColor || "#e5e7eb" }} />
                 <div
                     style={{
                         width: 28,
                         height: 28,
                         borderRadius: "50%",
-                        background: "#fff",
-                        border: "1.5px solid #e5e7eb",
+                        background: styles.backgroundColor || "#fff",
+                        border: `1.5px solid ${styles.borderColor || "#e5e7eb"}`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         fontSize: 15,
                         fontWeight: 700,
-                        color: "#9ca3af",
+                        color: styles.textColor || "#9ca3af",
                         flexShrink: 0,
                     }}
                 >
                     +
                 </div>
-                <div style={{ flex: 1, height: 1, background: "#e5e7eb" }} />
+                <div style={{ flex: 1, height: 1, background: styles.borderColor || "#e5e7eb" }} />
             </div>
 
             {rewardProducts.map((p) => (

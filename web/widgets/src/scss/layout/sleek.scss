@@ -38,8 +38,8 @@
         &--reward {
             background: linear-gradient(
                 to right,
-                color-mix(in srgb, var(--rb-savings-color, #16a34a) 10%, white),
-                white
+                color-mix(in srgb, var(--rb-savings-color, #16a34a) 10%, var(--rb-background-color, white)),
+                var(--rb-background-color, white)
             );
             border: 1px solid
                 color-mix(
@@ -57,7 +57,7 @@
         flex-shrink: 0;
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
-        background: #f9fafb;
+        background: var(--rb-product-bg-color, #f9fafb);
 
         img {
             width: 100%;
@@ -73,7 +73,7 @@
         align-items: center;
         justify-content: center;
         font-size: 20px;
-        background: #f9fafb;
+        background: var(--rb-product-bg-color, #f9fafb);
         border-radius: 8px;
     }
 
@@ -120,7 +120,7 @@
         background: color-mix(
             in srgb,
             var(--rb-savings-color, #16a34a) 12%,
-            white
+            var(--rb-background-color, white)
         );
         padding: 1px 8px;
         border-radius: 10px;
@@ -168,21 +168,21 @@
         content: "";
         flex: 1;
         height: 1px;
-        background: #e5e7eb;
+        background: var(--rb-border-color, #e5e7eb);
     }
 
     &__divider-icon {
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        background: #fff;
-        border: 1.5px solid #e5e7eb;
+        background: var(--rb-background-color, #fff);
+        border: 1.5px solid var(--rb-border-color, #e5e7eb);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 15px;
         font-weight: 700;
-        color: #9ca3af;
+        color: var(--rb-text-color, #9ca3af);
         flex-shrink: 0;
     }
 
