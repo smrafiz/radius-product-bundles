@@ -1,6 +1,6 @@
 {% assign count = product_count | default: 2 %}
 {% unless trigger_count > 0 %}
-	{% assign trigger_count = count | minus: 1 %}
+	{% assign trigger_count = count | divided_by: 2 %}
 	{% if trigger_count < 1 %}{% assign trigger_count = 1 %}{% endif %}
 {% endunless %}
 
