@@ -7,8 +7,11 @@ import {
 } from "@/features/bundles";
 import { submitForm } from "@/shared";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function HorizontalStepIndicator() {
+    const t = useTranslations("Bundles.Creation.Steps");
+    const tc = useTranslations("Bundles.Common");
     const {
         steps,
         getStepStatus,
@@ -45,15 +48,15 @@ export function HorizontalStepIndicator() {
             case 1:
             case 2:
             case 3:
-                return "Continue";
+                return t("continue");
             case 4:
-                return isEditMode ? "Update" : "Publish";
+                return isEditMode ? tc("update") : tc("publish");
             default:
-                return "Continue";
+                return t("continue");
         }
     };
 
-    const getPrevButtonText = () => "Previous";
+    const getPrevButtonText = () => t("previous");
 
     return (
         <s-section>
@@ -68,7 +71,7 @@ export function HorizontalStepIndicator() {
                         onClick={prevStep}
                         disabled={!canGoPrev || isSaving}
                         variant="secondary"
-                        accessibilityLabel="Back"
+                        accessibilityLabel={t("previous")}
                     >
                         <s-icon type="arrow-left" size="small" />
                         {getPrevButtonText()}
@@ -160,7 +163,7 @@ export function HorizontalStepIndicator() {
                         }
                         disabled={isSaving}
                         variant={isLastStep ? "primary" : "secondary"}
-                        accessibilityLabel="Next"
+                        accessibilityLabel={t("next")}
                     >
                         {getNextButtonText()}
                         <s-icon type="arrow-right" size="small" />

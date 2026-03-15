@@ -53,7 +53,10 @@
       "pricing": "Pricing",
       "templates": "Templates",
       "integrations": "Integrations"
-    }
+    },
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "loading": "Loading..."
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",
@@ -322,6 +325,132 @@
         "discovery": "For product discovery:",
         "acquisition": "For customer acquisition:",
         "campaigns": "For promotional campaigns:"
+      }
+    },
+    "Creation": {
+      "Steps": {
+        "continue": "Continue",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "Details": {
+        "heading": "Bundle details",
+        "tooltip": "Name and describe your bundle. These fields are used internally to identify this bundle in your admin.",
+        "name": "Bundle name",
+        "namePlaceholderGenerating": "Generating unique name...",
+        "namePlaceholder": "Enter bundle name",
+        "nameDetails": "Unique identifier for your bundle.",
+        "description": "Description",
+        "descriptionPlaceholder": "Describe your bundle offer",
+        "descriptionDetails": "Used internally to describe the bundle."
+      },
+      "Products": {
+        "selectProducts": "Select products",
+        "addProducts": "Add products",
+        "clearAll": "Clear all",
+        "minProductHint": "Add at least one more product to create a bundle.",
+        "bogoSameProduct": "BOGO: 1 product selected. The same product will be used for both Buy and Get.",
+        "bogoTwoProducts": "BOGO: 2 products selected (1 Buy + 1 Get).",
+        "sameProductLabel": "Same product for both",
+        "sameProductBogoDetails": "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)",
+        "sameProductBxgyDetails": "Use the same products for both Buy and Get groups",
+        "roleBuy": "Buy",
+        "roleGet": "Get",
+        "role": "Role",
+        "quantity": "Quantity",
+        "editVariants": "Edit variants"
+      },
+      "Discount": {
+        "heading": "Discount Settings",
+        "tooltip": "Configure the discount type and value applied when customers purchase this bundle.",
+        "discountType": "Discount Type",
+        "selectType": "Select discount type",
+        "minOrderValue": "Minimum Order Value (Optional)",
+        "maxDiscount": "Maximum Discount Amount (Optional)",
+        "noLimit": "No limit",
+        "rewardHeading": "Reward Discount",
+        "rewardTooltip": "This discount applies only to the reward product(s) the customer gets. Trigger products are always at full price.",
+        "rewardOnly": "Discount applies to reward products only",
+        "rewardPrice": "Set price for reward product",
+        "rewardProductPrice": "Reward product price",
+        "behaviorHeading": "Bundle Behavior",
+        "behaviorTooltip": "Control how the discount is distributed across products and whether free shipping is included.",
+        "application": "Discount Application",
+        "applyEntire": "Apply discount to entire bundle",
+        "applySpecific": "Apply discount to specific products only",
+        "editSelection": "Edit selection",
+        "selectForDiscount": "Select products for discount",
+        "chooseProducts": "Choose which products should receive the discount.",
+        "noProductsYet": "No products in bundle. Add products first.",
+        "cancel": "Cancel",
+        "freeShipping": "Include free shipping",
+        "freeShippingDetails": "Offer free shipping when this bundle is purchased."
+      },
+      "BundleAsProduct": {
+        "heading": "Bundle as product",
+        "willCreate": "This bundle will create a product with its own product page.",
+        "willNotCreate": "This bundle will NOT create a standalone product.",
+        "editProduct": "Edit Shopify product",
+        "createProduct": "Create product for bundle",
+        "loading": "Loading product data...",
+        "syncBanner": "Any changes to the title, description, or media images will automatically update the Shopify product when you save the bundle.",
+        "title": "Title",
+        "media": "Media",
+        "addMediaFromProducts": "Add media from included products",
+        "syncedWithName": "Automatically synced with bundle name",
+        "editToUpdate": "Edit to update the shopify product title",
+        "addMediaModal": "Add media from products",
+        "noImages": "No images available from selected products.",
+        "addMedia": "Add Media",
+        "removeImage": "Remove image",
+        "uploadImage": "Upload image",
+        "uploadMore": "Upload additional images"
+      },
+      "Appearance": {
+        "displayHeading": "Display Settings",
+        "displayTooltip": "Toggle visual features of the bundle widget, such as images, prices, and savings badges.",
+        "layoutHeading": "Widget Layout",
+        "layoutTooltip": "Select the layout for your bundle widget to display.",
+        "productPage": "Product page",
+        "productPageTooltip": "Customize the widget title and button text shown on product pages where this bundle appears.",
+        "offerTitle": "Offer title",
+        "offerSubtitle": "Offer subtitle",
+        "subtitlePlaceholder": "Optional subtitle text",
+        "addToCartText": "'Add to cart' button text"
+      },
+      "Review": {
+        "fixErrors": "Please fix the following errors:",
+        "notSet": "Not set",
+        "title": "Title",
+        "description": "Description",
+        "discountType": "Discount type",
+        "discountValue": "Discount value",
+        "status": "Status",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "total": "Total",
+        "minOrder": "Min Order",
+        "maxDiscount": "Max Discount",
+        "selectedProducts": "Selected products",
+        "customerBuys": "Customer Buys",
+        "customerGets": "Customer Gets",
+        "free": "FREE",
+        "deal": "Deal",
+        "sameProductDeal": "Same product deal",
+        "mode": "Mode"
+      },
+      "Preview": {
+        "heading": "Preview",
+        "globalCustomizer": "Global customizer",
+        "globalCustomizerTooltip": "Use the global customization settings to style your bundle display, including colors and visual elements, to align with your store's branding.",
+        "priorityHeading": "Bundle priority",
+        "priorityTooltipIndex": "The bundle with the highest priority is displayed when multiple bundles apply to a product.",
+        "priorityTooltipDiscount": "The bundle with the highest discount value is displayed when multiple bundles apply to a product.",
+        "changeStrategy": "Change strategy",
+        "priority": "Priority",
+        "priorityDetails": "Higher number = higher priority (0–500)"
       }
     },
     "Listing": {
@@ -1087,12 +1216,64 @@
       "heading": "Analytics tracking is paused",
       "description": "Tracking is currently paused. New events are not being collected, so recent bundle interactions will not appear in these reports. All data displayed here reflects activity recorded before tracking was disabled.",
       "enableTracking": "Enable tracking"
+    },
+    "Charts": {
+      "funnelTitle": "Customer Journey Funnel",
+      "funnelFormula": "Flow: Views → Add-to-Cart → Purchases",
+      "views": "Views",
+      "addToCart": "Add to Cart",
+      "purchases": "Purchases",
+      "conversionTitle": "Conversion Performance",
+      "avgViewToCart": "Avg View-to-Cart",
+      "avgCartToPurchase": "Avg Cart-to-Purchase",
+      "viewToCart": "View → Cart",
+      "cartToPurchase": "Cart → Purchase",
+      "revenueTitle": "Revenue Analysis",
+      "totalRevenue": "Total Revenue",
+      "avgOrderValue": "Avg Order Value",
+      "revenue": "Revenue"
+    },
+    "TopBundles": {
+      "heading": "Top Performing Bundles",
+      "tooltip": "Bundles are ranked by total revenue. Low-traffic bundles are excluded to avoid noise. Trends compare current period with previous period of equal length.",
+      "noData": "No bundle data yet",
+      "lowSampleSize": "Low sample size - conversion rate may fluctuate"
+    },
+    "AllBundles": {
+      "heading": "All Bundles Performance",
+      "tooltip": "Detailed performance metrics for all bundles, including revenue, traffic, conversion, and quality signals. Use this view to diagnose opportunities, identify underperforming bundles, and understand funnel behavior.",
+      "searchLabel": "Search bundles",
+      "closeSearch": "Close search",
+      "searchActive": "Search active",
+      "noResults": "No bundles found",
+      "noBundles": "No bundles yet",
+      "noResultsHint": "Try adjusting your filters or search query",
+      "noBundlesHint": "Create your first bundle to see analytics here",
+      "healthHealthy": "Healthy",
+      "healthNeedsWork": "Needs Work",
+      "healthPoor": "Poor",
+      "healthNew": "New",
+      "healthUnknown": "Unknown"
+    },
+    "DatePicker": {
+      "cancel": "Cancel",
+      "apply": "Apply",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month"
     }
   },
   "Pricing": {
     "title": "Pricing & plans",
     "description": "Choose the right plan for your business",
-    "back": "Back"
+    "back": "Back",
+    "faq": "FAQ",
+    "faqDescription": "Find answers to the most common questions about our pricing and billing model below.",
+    "devStoreTitle": "Development Store Detected!",
+    "devStoreDesc": "You can use all BundleSuite features (unlimited bundles, analytics, etc.) completely free on your development store. Choose your paid plan only when you go live!",
+    "dismissCard": "Dismiss card",
+    "pleaseWait": "Please wait..."
   },
   "ABTesting": {
     "title": "A/B Testing",

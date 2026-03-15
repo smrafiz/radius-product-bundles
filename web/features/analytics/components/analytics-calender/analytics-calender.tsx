@@ -7,6 +7,7 @@ import {
     useCalendar,
 } from "@/features/analytics";
 
+import { useTranslations } from "@/lib/i18n/provider";
 import "@/styles/components/calendar.css";
 
 /**
@@ -20,6 +21,7 @@ export function AnalyticsCalendar({
     startInput,
     endInput,
 }: AnalyticsCalendarProps) {
+    const t = useTranslations("Analytics.DatePicker");
     const {
         leftMonth,
         hoverDate,
@@ -235,7 +237,7 @@ export function AnalyticsCalendar({
                     <s-stack direction="inline" gap="small" alignItems="center">
                         <div className="custom-calendar-input-group">
                             <s-text-field
-                                label="Start Date"
+                                label={t("startDate")}
                                 labelAccessibilityVisibility="exclusive"
                                 value={startInput}
                                 placeholder="YYYY-MM-DD"
@@ -247,7 +249,7 @@ export function AnalyticsCalendar({
 
                         <div className="custom-calendar-input-group">
                             <s-text-field
-                                label="End Date"
+                                label={t("endDate")}
                                 labelAccessibilityVisibility="exclusive"
                                 value={endInput}
                                 placeholder="YYYY-MM-DD"
@@ -271,7 +273,7 @@ export function AnalyticsCalendar({
                                     type="button"
                                     className="custom-calendar-nav-btn"
                                     onClick={() => navigateMonth("prev")}
-                                    aria-label="Previous month"
+                                    aria-label={t("previousMonth")}
                                 >
                                     <s-icon type="arrow-left" tone="neutral" />
                                 </button>
@@ -279,7 +281,7 @@ export function AnalyticsCalendar({
                                     type="button"
                                     className="custom-calendar-nav-btn"
                                     onClick={() => navigateMonth("next")}
-                                    aria-label="Next month"
+                                    aria-label={t("nextMonth")}
                                 >
                                     <s-icon type="arrow-right" tone="neutral" />
                                 </button>

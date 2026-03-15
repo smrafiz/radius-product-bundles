@@ -3,8 +3,10 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { ADVANCED_OPTIONS, useBundleStore } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetDisplaySettings() {
+    const t = useTranslations("Bundles.Creation.Appearance");
     const { displaySettings, updateDisplaySettings, markFieldTouched } =
         useBundleStore();
     const { setValue } = useFormContext();
@@ -17,11 +19,10 @@ export function WidgetDisplaySettings() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>Display Settings</s-heading>
+                    <s-heading>{t("displayHeading")}</s-heading>
                     <s-tooltip id="product-page-settings-display-tooltip">
                         <s-text>
-                            Toggle visual features of the bundle widget, such as
-                            images, prices, and savings badges.
+                            {t("displayTooltip")}
                         </s-text>
                     </s-tooltip>
                     <s-icon

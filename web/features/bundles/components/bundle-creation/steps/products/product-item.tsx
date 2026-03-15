@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { useProductPicker } from "@/shared";
 import { useSortable } from "@dnd-kit/sortable";
 import { ProductGroup, useBundleStore } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 // Sortable wrapper component
 function SortableWrapper({
@@ -37,11 +38,6 @@ function SortableWrapper({
     );
 }
 
-const ROLE_LABELS: Record<string, string> = {
-    TRIGGER: "Buy",
-    REWARD: "Get",
-};
-
 interface ProductItemProps {
     group: ProductGroup;
     role?: "TRIGGER" | "REWARD";
@@ -59,11 +55,17 @@ export function ProductItem({
     onRemove,
     sortableId,
 }: ProductItemProps) {
+    const t = useTranslations("Bundles.Creation.Products");
     const {
         updateSelectedItemQuantity,
         removeProductAndAllVariants,
         getVariantInfo,
     } = useBundleStore();
+
+    const ROLE_LABELS: Record<string, string> = {
+        TRIGGER: t("roleBuy"),
+        REWARD: t("roleGet"),
+    };
 
     const { editProductVariants } = useProductPicker();
 
@@ -137,7 +139,7 @@ export function ProductItem({
                                     tone="neutral"
                                     onClick={handleEditVariants}
                                 >
-                                    Edit variants
+                                    {t("editVariants")}
                                 </s-link>
                             </s-stack>
                         )}
@@ -149,7 +151,7 @@ export function ProductItem({
                         {role && onRoleChange && (
                             <div className="w-[80px]">
                                 <s-select
-                                    label="Role"
+                                    label={t("role")}
                                     labelAccessibilityVisibility="exclusive"
                                     value={role}
                                     onChange={(event: Event) => {
@@ -179,7 +181,7 @@ export function ProductItem({
                         ) : (
                             <div className="w-[80px]">
                                 <s-number-field
-                                    label="Quantity"
+                                    label={t("quantity")}
                                     labelAccessibilityVisibility="exclusive"
                                     value={(product.quantity || 1).toString()}
                                     step={1}

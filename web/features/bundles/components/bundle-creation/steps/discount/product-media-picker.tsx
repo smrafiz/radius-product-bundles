@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useBundleStore } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Modal to select media from included bundle products
@@ -11,6 +12,8 @@ export function ProductMediaPicker({
 }: {
     action: (images: string[]) => void;
 }) {
+    const t = useTranslations("Bundles.Creation.BundleAsProduct");
+    const td = useTranslations("Bundles.Creation.Discount");
     const { selectedItems } = useBundleStore();
     const [selectedImages, setSelectedImages] = useState<Set<string>>(
         new Set(),
@@ -76,8 +79,8 @@ export function ProductMediaPicker({
     return (
         <s-modal
             id="product-media-picker-modal"
-            heading="Add media from products"
-            accessibilityLabel="Add media from products"
+            heading={t("addMediaModal")}
+            accessibilityLabel={t("addMediaModal")}
             onHide={handleHide}
         >
             <s-stack gap="base">
@@ -142,7 +145,7 @@ export function ProductMediaPicker({
                     </s-stack>
                 ) : (
                     <s-text color="subdued">
-                        No images available from selected products.
+                        {t("noImages")}
                     </s-text>
                 )}
             </s-stack>
@@ -152,7 +155,7 @@ export function ProductMediaPicker({
                 commandFor="product-media-picker-modal"
                 command="--hide"
             >
-                Cancel
+                {td("cancel")}
             </s-button>
 
             <s-button
@@ -163,7 +166,7 @@ export function ProductMediaPicker({
                 command="--hide"
                 disabled={selectedImages.size === 0}
             >
-                Add Media
+                {t("addMedia")}
             </s-button>
         </s-modal>
     );

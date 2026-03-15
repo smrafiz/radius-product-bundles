@@ -6,11 +6,13 @@ import {
     useBundleFormManager,
     useBundleValidation,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundle details input component for name and description
  */
 export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
+    const t = useTranslations("Bundles.Creation.Details");
     const { getFieldError } = useBundleValidation();
     const { isGeneratingName } = useBundleFormManager({
         bundleType,
@@ -27,11 +29,10 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <s-heading>Bundle details</s-heading>
+                <s-heading>{t("heading")}</s-heading>
                 <s-tooltip id="bundle-details-tooltip">
                     <s-text>
-                        Name and describe your bundle. These fields are used
-                        internally to identify this bundle in your admin.
+                        {t("tooltip")}
                     </s-text>
                 </s-tooltip>
                 <s-icon
@@ -42,7 +43,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
             </s-stack>
             <s-stack>
                 <s-text-field
-                    label="Bundle name"
+                    label={t("name")}
                     value={nameField.value || ""}
                     onChange={(event: Event) => {
                         const target = event.target as HTMLInputElement;
@@ -51,10 +52,10 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                     onBlur={nameField.handleBlur}
                     placeholder={
                         isGeneratingName
-                            ? "Generating unique name..."
-                            : "Enter bundle name"
+                            ? t("namePlaceholderGenerating")
+                            : t("namePlaceholder")
                     }
-                    details="Unique identifier for your bundle."
+                    details={t("nameDetails")}
                     error={getFieldError("name")}
                     disabled={isGeneratingName}
                     maxLength={100}
@@ -63,7 +64,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
             </s-stack>
 
             <s-text-area
-                label="Description"
+                label={t("description")}
                 value={descriptionField.value || ""}
                 onChange={(event: Event) => {
                     const target = event.target as HTMLTextAreaElement;
@@ -71,8 +72,8 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                 }}
                 onBlur={descriptionField.handleBlur}
                 rows={3}
-                placeholder="Describe your bundle offer"
-                details="Used internally to describe the bundle."
+                placeholder={t("descriptionPlaceholder")}
+                details={t("descriptionDetails")}
                 error={getFieldError("description")}
                 maxLength={300}
             />

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { PRICING_FAQ_ITEM, PricingFaqItem } from "@/features/pricing";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export const PricingFaq = () => {
+    const t = useTranslations("Pricing");
     const [expandedId, setExpandedId] = useState<string | number | null>(
         PRICING_FAQ_ITEM.length > 0 ? PRICING_FAQ_ITEM[0].id : null,
     );
@@ -15,10 +17,9 @@ export const PricingFaq = () => {
     return (
         <s-section padding="none">
             <s-stack padding="base">
-                <div className="text-base font-semibold">FAQ</div>
+                <div className="text-base font-semibold">{t("faq")}</div>
                 <s-text color="subdued">
-                    Find answers to the most common questions about our pricing
-                    and billing model below.
+                    {t("faqDescription")}
                 </s-text>
             </s-stack>
 

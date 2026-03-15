@@ -11,10 +11,12 @@ import { useCallback, useEffect, useRef } from "react";
 import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { useSettingsStore } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
 
 export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
+    const t = useTranslations("Bundles.Creation.Products");
     const {
         selectedItems,
         setSelectedItems,
@@ -210,7 +212,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Select products</s-heading>
+                        <s-heading>{t("selectProducts")}</s-heading>
                         {selectedItems.length > 0 && (
                             <s-stack
                                 direction="inline"
@@ -228,7 +230,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                         hasProductError ? "critical" : undefined
                                     }
                                 >
-                                    Add products
+                                    {t("addProducts")}
                                 </s-button>
                                 <s-button
                                     variant="secondary"
@@ -236,7 +238,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                     icon="delete"
                                     onClick={handleClearAll}
                                 >
-                                    Clear all
+                                    {t("clearAll")}
                                 </s-button>
                             </s-stack>
                         )}
@@ -248,27 +250,26 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                     )}
                     {showProductHint && (
                         <s-banner tone="info">
-                            Add at least one more product to create a bundle. (
-                            {selectedItems.length}/2 minimum)
+                            {t("minProductHint")} ({selectedItems.length}/2)
                         </s-banner>
                     )}
                     {isAtLimit && (
                         <s-banner tone="info">
                             {isBogo
                                 ? bundleData.sameProductMode
-                                    ? "BOGO: 1 product selected. The same product will be used for both Buy and Get."
-                                    : "BOGO: 2 products selected (1 Buy + 1 Get)."
+                                    ? t("bogoSameProduct")
+                                    : t("bogoTwoProducts")
                                 : `Maximum ${maxProducts} products reached for this bundle.`}
                         </s-banner>
                     )}
                     <ProductList isBxgy={isBxgy} isBogo={isBogo} />
                     {isBxgy && (
                         <s-switch
-                            label="Same product for both"
+                            label={t("sameProductLabel")}
                             details={
                                 isBogo
-                                    ? "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)"
-                                    : "Use the same products for both Buy and Get groups"
+                                    ? t("sameProductBogoDetails")
+                                    : t("sameProductBxgyDetails")
                             }
                             checked={bundleData.sameProductMode || false}
                             onInput={(event: Event) => {

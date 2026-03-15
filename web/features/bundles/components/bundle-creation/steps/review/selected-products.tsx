@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useBundleStore } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function SelectedProducts() {
+    const t = useTranslations("Bundles.Creation.Review");
     const { getGroupedItems } = useBundleStore();
     const [open, setOpen] = useState(true);
 
@@ -27,7 +29,7 @@ export function SelectedProducts() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>Selected products ({itemCount})</s-heading>
+                    <s-heading>{t("selectedProducts")} ({itemCount})</s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>

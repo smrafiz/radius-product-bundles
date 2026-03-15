@@ -8,8 +8,10 @@ import {
     useBundleValidation,
 } from "@/features/bundles";
 import { useSettingsStore } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function BundlePriority() {
+    const t = useTranslations("Bundles.Creation.Preview");
     const { bundleData, updateBundleField, markDirty, markFieldTouched } =
         useBundleStore();
     const { setValue, trigger } = useBundleFormMethods();
@@ -33,12 +35,12 @@ export function BundlePriority() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>Bundle priority</s-heading>
+                    <s-heading>{t("priorityHeading")}</s-heading>
                     <s-tooltip id="bundle-priority-tooltip">
                         <s-text>
                             {globalPriorityType === "index_based"
-                                ? "The bundle with the highest priority is displayed when multiple bundles apply to a product."
-                                : "The bundle with the highest discount value is displayed when multiple bundles apply to a product."}
+                                ? t("priorityTooltipIndex")
+                                : t("priorityTooltipDiscount")}
                         </s-text>
                     </s-tooltip>
                     <s-icon
@@ -60,15 +62,15 @@ export function BundlePriority() {
                         </s-text>
                         <s-link onClick={settings}>
                             <span className="underline text-[#303030]">
-                                Change strategy
+                                {t("changeStrategy")}
                             </span>
                         </s-link>
                     </s-stack>
 
                     {globalPriorityType === "index_based" && (
                         <s-number-field
-                            label="Priority"
-                            details="Higher number = higher priority (0–500)"
+                            label={t("priority")}
+                            details={t("priorityDetails")}
                             placeholder="0"
                             step={1}
                             min={0}

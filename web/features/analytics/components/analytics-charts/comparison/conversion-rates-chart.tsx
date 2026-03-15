@@ -21,6 +21,7 @@ import {
     useFormattedChartData,
     useSmartChartDisplay,
 } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     CartesianGrid,
     Legend,
@@ -36,6 +37,7 @@ import {
  * Conversion Rates Chart - Using useSmartChartDisplay Hook
  */
 export function ConversionRatesChart() {
+    const t = useTranslations("Analytics.Charts");
     const { chartData, isChartLoading } = useAnalytics();
     const { preset } = useAnalyticsStore();
     const display = useSmartChartDisplay(chartData, preset);
@@ -97,16 +99,16 @@ export function ConversionRatesChart() {
     return (
         <>
             <ChartWrapper
-                title="Conversion Performance"
+                title={t("conversionTitle")}
                 description="Track how effectively you convert views to cart additions and cart additions to purchases. Higher percentages indicate better funnel optimization."
                 formula="View→Cart = (Add-to-Cart / Views) × 100%
                 Cart→Purchase = (Purchases / Add-to-Cart) × 100%"
                 showInfoBanner={display.showInfoBanner}
                 infoBannerMessage={display.bannerMessage}
                 summaryStats={[
-                    { label: "Avg View-to-Cart", value: `${avgViewToCart}%` },
+                    { label: t("avgViewToCart"), value: `${avgViewToCart}%` },
                     {
-                        label: "Avg Cart-to-Purchase",
+                        label: t("avgCartToPurchase"),
                         value: `${avgCartToPurchase}%`,
                     },
                     { label: ".", value: "" },
@@ -139,14 +141,14 @@ export function ConversionRatesChart() {
                         <Line
                             dataKey="viewToCartRate"
                             stroke="#008CFF"
-                            name="View → Cart"
+                            name={t("viewToCart")}
                             {...getLineConfig("#008CFF", 2.5)}
                         />
 
                         <Line
                             dataKey="cartToPurchaseRate"
                             stroke="#9B59B6"
-                            name="Cart → Purchase"
+                            name={t("cartToPurchase")}
                             {...getLineConfig("#9B59B6", 2.5)}
                         />
 

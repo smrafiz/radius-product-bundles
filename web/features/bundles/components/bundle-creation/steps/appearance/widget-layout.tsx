@@ -6,8 +6,10 @@ import {
     WIDGET_LAYOUTS,
     LAYOUTS_BY_BUNDLE_TYPE,
 } from "@/features/bundles/constants/bundle-details.constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetLayout() {
+    const t = useTranslations("Bundles.Creation.Appearance");
     const { displaySettings, updateDisplaySettings, bundleData } =
         useBundleStore();
     const layouts = useMemo(
@@ -24,10 +26,10 @@ export function WidgetLayout() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>Widget Layout</s-heading>
+                    <s-heading>{t("layoutHeading")}</s-heading>
                     <s-tooltip id="widget-layout-tooltip">
                         <s-text>
-                            Select the layout for your bundle widget to display.
+                            {t("layoutTooltip")}
                         </s-text>
                     </s-tooltip>
                     <s-icon

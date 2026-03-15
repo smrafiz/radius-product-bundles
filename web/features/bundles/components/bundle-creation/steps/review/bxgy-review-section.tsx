@@ -15,6 +15,7 @@ import { formatDateLong, useShopSettings } from "@/shared";
 
 export function BxgyReviewSection() {
     const ts = useTranslations("Bundles.Statuses");
+    const t = useTranslations("Bundles.Creation.Review");
     const { bundleData, getTriggerProducts, getRewardProducts } =
         useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
@@ -50,7 +51,7 @@ export function BxgyReviewSection() {
 
     const formatDate = (date: Date | string | undefined): string => {
         const dateObj = toDate(date);
-        if (!dateObj) return "Not set";
+        if (!dateObj) return t("notSet");
         return formatDateLong(dateObj.toISOString().split("T")[0]);
     };
 
@@ -61,7 +62,7 @@ export function BxgyReviewSection() {
     let discountLabel = "at a discount";
     if (discountType === "PERCENTAGE" && discountValue) {
         discountLabel =
-            discountValue === 100 ? "FREE" : `at ${discountValue}% off`;
+            discountValue === 100 ? t("free") : `at ${discountValue}% off`;
     } else if (discountType === "FIXED_AMOUNT" && discountValue) {
         discountLabel = `at ${currencyFormatter(discountValue)} off`;
     } else if (discountType === "CUSTOM_PRICE" && discountValue) {
@@ -184,8 +185,8 @@ export function BxgyReviewSection() {
                                 tone={role === "TRIGGER" ? "info" : "success"}
                             >
                                 {role === "TRIGGER"
-                                    ? "Customer Buys"
-                                    : "Customer Gets"}
+                                    ? t("customerBuys")
+                                    : t("customerGets")}
                             </s-badge>
                         </s-stack>
                     </s-stack>
@@ -209,7 +210,7 @@ export function BxgyReviewSection() {
                             <s-text type="strong">
                                 {hasDiscount
                                     ? finalPrice === 0
-                                        ? "FREE"
+                                        ? t("free")
                                         : currencyFormatter(finalPrice)
                                     : currencyFormatter(originalPrice)}
                             </s-text>
@@ -226,16 +227,16 @@ export function BxgyReviewSection() {
             <s-section>
                 <s-stack gap="small">
                     <s-stack>
-                        <s-heading>Title</s-heading>
+                        <s-heading>{t("title")}</s-heading>
                         <s-text color="subdued">
-                            {nameField.value || "Not set"}
+                            {nameField.value || t("notSet")}
                         </s-text>
                     </s-stack>
                     <s-stack>
-                        <s-heading>Description</s-heading>
+                        <s-heading>{t("description")}</s-heading>
                         <div className="block">
                             <s-paragraph color="subdued">
-                                {descriptionField.value || "Not set"}
+                                {descriptionField.value || t("notSet")}
                             </s-paragraph>
                         </div>
                     </s-stack>
@@ -250,7 +251,7 @@ export function BxgyReviewSection() {
                         justifyContent="space-between"
                         direction="inline"
                     >
-                        <s-heading>Deal</s-heading>
+                        <s-heading>{t("deal")}</s-heading>
                         <s-text color="subdued">
                             Buy {buyQty} × {triggerNames || "—"} → Get {getQty}{" "}
                             × {rewardNames || "—"} {discountLabel}
@@ -262,8 +263,8 @@ export function BxgyReviewSection() {
                             justifyContent="space-between"
                             direction="inline"
                         >
-                            <s-heading>Mode</s-heading>
-                            <s-badge tone="info">Same product deal</s-badge>
+                            <s-heading>{t("mode")}</s-heading>
+                            <s-badge tone="info">{t("sameProductDeal")}</s-badge>
                         </s-stack>
                     )}
                 </s-stack>
@@ -278,13 +279,13 @@ export function BxgyReviewSection() {
                         direction="inline"
                         gap="small-300"
                     >
-                        <s-heading>Discount type</s-heading>
+                        <s-heading>{t("discountType")}</s-heading>
                         <s-text color="subdued">
                             {discountType
                                 ? DISCOUNT_TYPES[
                                       discountType as keyof typeof DISCOUNT_TYPES
                                   ]?.label
-                                : "Not set"}
+                                : t("notSet")}
                         </s-text>
                     </s-stack>
                     <s-stack
@@ -293,7 +294,7 @@ export function BxgyReviewSection() {
                         direction="inline"
                         gap="small-300"
                     >
-                        <s-heading>Discount value</s-heading>
+                        <s-heading>{t("discountValue")}</s-heading>
                         <s-text color="subdued">
                             {isLoading ? "•" : formatDiscount()}
                         </s-text>
@@ -309,7 +310,7 @@ export function BxgyReviewSection() {
                         justifyContent="space-between"
                         direction="inline"
                     >
-                        <s-heading>Status</s-heading>
+                        <s-heading>{t("status")}</s-heading>
                         <s-badge tone={statusInfo.tone}>
                             {ts(bundleData.status ?? "DRAFT")}
                         </s-badge>
@@ -321,7 +322,7 @@ export function BxgyReviewSection() {
                                 justifyContent="space-between"
                                 direction="inline"
                             >
-                                <s-text color="subdued">Start Date</s-text>
+                                <s-text color="subdued">{t("startDate")}</s-text>
                                 <s-text>
                                     {formatDate(bundleData.startDate)}
                                 </s-text>
@@ -331,7 +332,7 @@ export function BxgyReviewSection() {
                                 justifyContent="space-between"
                                 direction="inline"
                             >
-                                <s-text color="subdued">End Date</s-text>
+                                <s-text color="subdued">{t("endDate")}</s-text>
                                 <s-text>
                                     {formatDate(bundleData.endDate)}
                                 </s-text>
@@ -356,7 +357,7 @@ export function BxgyReviewSection() {
                             aria-expanded={open}
                         >
                             <s-heading>
-                                Selected products (
+                                {t("selectedProducts")} (
                                 {triggerProducts.length + rewardProducts.length}
                                 )
                             </s-heading>
@@ -397,7 +398,7 @@ export function BxgyReviewSection() {
                         justifyContent="space-between"
                         direction="inline"
                     >
-                        <s-text>Subtotal</s-text>
+                        <s-text>{t("subtotal")}</s-text>
                         <s-text>{currencyFormatter(subtotal)}</s-text>
                     </s-stack>
                     {discount > 0 && (
@@ -406,7 +407,7 @@ export function BxgyReviewSection() {
                             justifyContent="space-between"
                             direction="inline"
                         >
-                            <s-text>Discount</s-text>
+                            <s-text>{t("discount")}</s-text>
                             <s-text>- {currencyFormatter(discount)}</s-text>
                         </s-stack>
                     )}
@@ -415,7 +416,7 @@ export function BxgyReviewSection() {
                         justifyContent="space-between"
                         direction="inline"
                     >
-                        <s-text type="strong">Total</s-text>
+                        <s-text type="strong">{t("total")}</s-text>
                         <s-text type="strong">
                             {currencyFormatter(total)}
                         </s-text>

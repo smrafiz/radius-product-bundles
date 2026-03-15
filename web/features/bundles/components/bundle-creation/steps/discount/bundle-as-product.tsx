@@ -9,11 +9,13 @@ import {
     useBundleValidation,
     useProductMediaPicker,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundle as product configuration component
  */
 export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
+    const t = useTranslations("Bundles.Creation.BundleAsProduct");
     const { getFieldError } = useBundleValidation();
     const {
         isEnabled,
@@ -47,7 +49,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <s-heading>Bundle as product</s-heading>
+                <s-heading>{t("heading")}</s-heading>
                 <s-stack
                     direction="inline"
                     justifyContent="space-between"
@@ -58,8 +60,8 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     <s-tooltip id="bundle-as-product-tooltip">
                         <s-text>
                             {isEnabled
-                                ? "This bundle will create a product with its own product page."
-                                : "This bundle will NOT create a standalone product."}
+                                ? t("willCreate")
+                                : t("willNotCreate")}
                         </s-text>
                     </s-tooltip>
 
@@ -93,7 +95,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                                         }
                                     }}
                                 >
-                                    Edit Shopify product
+                                    {t("editProduct")}
                                 </s-button>
                             ) : (
                                 <s-icon
@@ -110,7 +112,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         id="bundle-product-switch"
                         name="createProduct"
                         label="This bundle creates a product with its own product page."
-                        accessibilityLabel="Create product for bundle"
+                        accessibilityLabel={t("createProduct")}
                         labelAccessibilityVisibility="exclusive"
                         checked={isEnabled}
                         onInput={(event: Event) => {
@@ -125,7 +127,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
             {isLoadingProduct && (
                 <s-stack alignItems="center" gap="base">
                     <s-spinner size="base" />
-                    <s-text tone="neutral">Loading product data...</s-text>
+                    <s-text tone="neutral">{t("loading")}</s-text>
                 </s-stack>
             )}
 
@@ -134,14 +136,12 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                 <s-stack gap="base">
                     {mode === "edit" && mainProductId && (
                         <s-banner tone="info">
-                            Any changes to the title, description, or media
-                            images will automatically update the Shopify product
-                            when you save the bundle.
+                            {t("syncBanner")}
                         </s-banner>
                     )}
                     {/* Title field */}
                     <s-text-field
-                        label="Title"
+                        label={t("title")}
                         name="productTitle"
                         placeholder="Bundle Product #5"
                         value={productTitle || ""}
@@ -154,8 +154,8 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         error={getFieldError("productTitle")}
                         details={
                             mode === "create"
-                                ? "Automatically synced with bundle name"
-                                : "Edit to update the shopify product title"
+                                ? t("syncedWithName")
+                                : t("editToUpdate")
                         }
                     />
 
@@ -169,13 +169,13 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                             justifyContent="space-between"
                             alignItems="center"
                         >
-                            <s-text>Media</s-text>
+                            <s-text>{t("media")}</s-text>
                             <s-button
                                 variant="secondary"
                                 commandFor="product-media-picker-modal"
                                 command="--show"
                             >
-                                Add media from included products
+                                {t("addMediaFromProducts")}
                             </s-button>
                         </s-stack>
 

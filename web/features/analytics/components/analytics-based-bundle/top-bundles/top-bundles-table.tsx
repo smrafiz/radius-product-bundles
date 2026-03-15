@@ -7,6 +7,7 @@ import {
     useTopBundles,
 } from "@/features/analytics";
 import { EmptyState, formatByType, useAppNavigation } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Calculate Average Order Value
@@ -105,6 +106,8 @@ function hasLowConfidence(views: number): boolean {
  * Top Performing Bundles Table
  */
 export function TopBundlesTable() {
+    const t = useTranslations("Analytics.TopBundles");
+    const ta = useTranslations("Analytics.AllBundles");
     const { data: bundles, isLoading, error } = useTopBundles(5);
     const { bundleData } = useAppNavigation();
 
@@ -146,7 +149,7 @@ export function TopBundlesTable() {
                 <TopBundlesHeader />
                 <s-box padding="base">
                     <EmptyState
-                        heading="No bundle data yet"
+                        heading={t("noData")}
                         description="Bundle performance will appear here once you have at least 10 views and 1 purchase per bundle."
                     />
                 </s-box>
@@ -316,7 +319,7 @@ export function TopBundlesTable() {
                                                 >
                                                     <s-text tone="neutral">
                                                         {lowConfidence
-                                                            ? "Low sample size - conversion rate may fluctuate"
+                                                            ? t("lowSampleSize")
                                                             : `Conversion rate based on ${bundle.views} views`}
                                                     </s-text>
                                                 </s-tooltip>

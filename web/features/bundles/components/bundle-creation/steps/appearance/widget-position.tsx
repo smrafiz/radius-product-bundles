@@ -3,8 +3,10 @@
 import React, { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { useBundleStore, useBundleValidation } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetPosition() {
+    const t = useTranslations("Bundles.Creation.Appearance");
     const { displaySettings, updateDisplaySettings, markFieldTouched } =
         useBundleStore();
     const { getFieldError } = useBundleValidation();
@@ -66,11 +68,10 @@ export function WidgetPosition() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>Product page</s-heading>
+                    <s-heading>{t("productPage")}</s-heading>
                     <s-tooltip id="product-page-display-tooltip">
                         <s-text>
-                            Customize the widget title and button text shown on
-                            product pages where this bundle appears.
+                            {t("productPageTooltip")}
                         </s-text>
                     </s-tooltip>
                     <s-icon
@@ -81,7 +82,7 @@ export function WidgetPosition() {
                 </s-stack>
 
                 <s-text-field
-                    label="Offer title"
+                    label={t("offerTitle")}
                     value={displaySettings.title || ""}
                     onChange={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
@@ -94,7 +95,7 @@ export function WidgetPosition() {
                 />
 
                 <s-text-area
-                    label="Offer subtitle"
+                    label={t("offerSubtitle")}
                     value={displaySettings.subtitle || ""}
                     onChange={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
@@ -104,11 +105,11 @@ export function WidgetPosition() {
                     onBlur={handleSubtitleBlur}
                     error={getFieldError("settings.subtitle")}
                     maxLength={300}
-                    placeholder="Optional subtitle text"
+                    placeholder={t("subtitlePlaceholder")}
                 />
 
                 <s-text-field
-                    label="'Add to cart' button text"
+                    label={t("addToCartText")}
                     value={displaySettings.cartButtonText || ""}
                     onChange={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;

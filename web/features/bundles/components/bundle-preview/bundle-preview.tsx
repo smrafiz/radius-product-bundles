@@ -42,6 +42,7 @@ import {
 } from "@/features/settings/constants/defaults.constants";
 import type { WidgetLabels } from "@/shared";
 
+import { useTranslations } from "@/lib/i18n/provider";
 import "@/styles/components/bundle.css";
 
 function useWidgetStyles(): CustomizerStyles {
@@ -358,6 +359,7 @@ function RenderLayout({
 }
 
 export function BundlePreview() {
+    const t = useTranslations("Bundles.Creation.Preview");
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
@@ -392,7 +394,7 @@ export function BundlePreview() {
                         alignItems="center"
                         paddingBlockEnd="small-200"
                     >
-                        <s-heading>Preview</s-heading>
+                        <s-heading>{t("heading")}</s-heading>
                         <s-stack
                             direction="inline"
                             alignItems="center"
@@ -478,14 +480,11 @@ export function BundlePreview() {
                                 command="--show"
                                 commandFor="rtpb-preview-window"
                             >
-                                Global customizer
+                                {t("globalCustomizer")}
                             </s-button>
                             <s-tooltip id="customization-tooltip">
                                 <s-text>
-                                    Use the global customization settings to
-                                    style your bundle display, including colors
-                                    and visual elements, to align with your
-                                    store’s branding.
+                                    {t("globalCustomizerTooltip")}
                                 </s-text>
                             </s-tooltip>
                             <s-icon

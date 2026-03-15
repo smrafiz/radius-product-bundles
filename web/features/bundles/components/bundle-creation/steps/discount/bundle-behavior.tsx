@@ -1,11 +1,13 @@
 "use client";
 
 import { useBundleBehavior } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundle behavior configuration component
  */
 export function BundleBehavior() {
+    const t = useTranslations("Bundles.Creation.Discount");
     const {
         discountApplication,
         discountedProductIds,
@@ -30,11 +32,10 @@ export function BundleBehavior() {
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <s-heading>Bundle Behavior</s-heading>
+                <s-heading>{t("behaviorHeading")}</s-heading>
                 <s-tooltip id="bundle-behavior-tooltip">
                     <s-text>
-                        Control how the discount is distributed across products
-                        and whether free shipping is included.
+                        {t("behaviorTooltip")}
                     </s-text>
                 </s-tooltip>
                 <s-icon
@@ -48,7 +49,7 @@ export function BundleBehavior() {
             <s-stack gap="small-200">
                 <s-choice-list
                     name="discountApplication"
-                    label="Discount Application"
+                    label={t("application")}
                     labelAccessibilityVisibility="exclusive"
                     disabled={isDiscountDisabled}
                     onChange={(e: Event) => {
@@ -65,13 +66,13 @@ export function BundleBehavior() {
                         value="bundle"
                         selected={discountApplication === "bundle"}
                     >
-                        Apply discount to entire bundle
+                        {t("applyEntire")}
                     </s-choice>
                     <s-choice
                         value="products"
                         selected={discountApplication === "products"}
                     >
-                        Apply discount to specific products only
+                        {t("applySpecific")}
                     </s-choice>
                 </s-choice-list>
 
@@ -92,8 +93,8 @@ export function BundleBehavior() {
                             onClick={handleOpenModal}
                         >
                             {discountedProductIds.size > 0
-                                ? "Edit selection"
-                                : "Select products"}
+                                ? t("editSelection")
+                                : t("selectForDiscount")}
                         </s-button>
                     </s-stack>
                 )}
@@ -104,8 +105,8 @@ export function BundleBehavior() {
             {/* Free Shipping */}
             <s-switch
                 name="freeShipping"
-                label="Include free shipping"
-                details="Offer free shipping when this bundle is purchased."
+                label={t("freeShipping")}
+                details={t("freeShippingDetails")}
                 checked={freeShipping}
                 onInput={(e: Event) => {
                     const target = e.target as HTMLInputElement;
@@ -116,13 +117,13 @@ export function BundleBehavior() {
             {/* Product Selection Modal */}
             <s-modal
                 id="discount-products-modal"
-                heading="Select products for discount"
-                accessibilityLabel="Products discount"
+                heading={t("selectForDiscount")}
+                accessibilityLabel={t("selectForDiscount")}
                 onHide={handleModalHide}
             >
                 <s-stack gap="base">
                     <s-text color="subdued">
-                        Choose which products should receive the discount.
+                        {t("chooseProducts")}
                     </s-text>
 
                     {/* Select All */}
@@ -197,7 +198,7 @@ export function BundleBehavior() {
                         </s-stack>
                     ) : (
                         <s-text color="subdued">
-                            No products in bundle. Add products first.
+                            {t("noProductsYet")}
                         </s-text>
                     )}
                 </s-stack>
@@ -207,7 +208,7 @@ export function BundleBehavior() {
                     commandFor="discount-products-modal"
                     command="--hide"
                 >
-                    Cancel
+                    {t("cancel")}
                 </s-button>
 
                 <s-button

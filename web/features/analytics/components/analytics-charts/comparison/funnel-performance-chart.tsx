@@ -20,6 +20,7 @@ import {
     useFormattedChartData,
     useSmartChartDisplay,
 } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     CartesianGrid,
     Legend,
@@ -35,6 +36,7 @@ import {
  * Funnel Performance Chart
  */
 export function FunnelPerformanceChart() {
+    const t = useTranslations("Analytics.Charts");
     const { chartData, isChartLoading } = useAnalytics();
     const { preset } = useAnalyticsStore();
     const display = useSmartChartDisplay(chartData, preset);
@@ -79,15 +81,15 @@ export function FunnelPerformanceChart() {
 
     return (
         <ChartWrapper
-            title="Customer Journey Funnel"
+            title={t("funnelTitle")}
             description="Track how customers progress through your bundle funnel from initial view to final purchase. Identify drop-off points to optimize conversion."
-            formula="Flow: Views → Add-to-Cart → Purchases"
+            formula={t("funnelFormula")}
             showInfoBanner={display.showInfoBanner}
             infoBannerMessage={display.bannerMessage}
             summaryStats={[
-                { label: "Views", value: totals.views },
-                { label: "Add to Cart", value: totals.addToCarts },
-                { label: "Purchases", value: totals.purchases },
+                { label: t("views"), value: totals.views },
+                { label: t("addToCart"), value: totals.addToCarts },
+                { label: t("purchases"), value: totals.purchases },
             ]}
         >
             <ResponsiveContainer width="100%" height={240}>
@@ -107,7 +109,7 @@ export function FunnelPerformanceChart() {
                     <Line
                         dataKey="views"
                         stroke="#00C896"
-                        name="Views"
+                        name={t("views")}
                         {...getLineConfig("#00C896")}
                     />
 
@@ -121,7 +123,7 @@ export function FunnelPerformanceChart() {
                     <Line
                         dataKey="purchases"
                         stroke="#FF6B6B"
-                        name="Purchases"
+                        name={t("purchases")}
                         {...getLineConfig("#FF6B6B")}
                     />
 

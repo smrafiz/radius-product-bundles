@@ -7,10 +7,12 @@ import {
     useBundleFormMethods,
     useBundleStore,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
 
 export function ReviewStep() {
+    const t = useTranslations("Bundles.Creation.Review");
     const { formState } = useBundleFormMethods();
     const bundleType = useBundleStore((s) => s.bundleData.type);
     const isBxgy = BXGY_TYPES.includes(bundleType as BundleType);
@@ -26,7 +28,7 @@ export function ReviewStep() {
         <s-stack gap="base">
             {hasErrors && (
                 <s-banner
-                    heading="Please fix the following errors:"
+                    heading={t("fixErrors")}
                     tone="critical"
                     dismissible
                 >

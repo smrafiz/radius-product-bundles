@@ -13,25 +13,26 @@ import {
     useAppNavigation,
 } from "@/shared";
 import { getBundleStatusBadge, stripDeletedSuffix } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Get health status badge config
  */
-function getHealthBadge(status: string): {
+function getHealthBadge(status: string, t: (key: string) => string): {
     color: string;
     label: string;
 } {
     switch (status) {
         case "healthy":
-            return { color: "#047b5d", label: "Healthy" };
+            return { color: "#047b5d", label: t("healthHealthy") };
         case "needs-work":
-            return { color: "#b28400", label: "Needs Work" };
+            return { color: "#b28400", label: t("healthNeedsWork") };
         case "poor":
-            return { color: "#e22c38", label: "Poor" };
+            return { color: "#e22c38", label: t("healthPoor") };
         case "new":
-            return { color: "#0094d5", label: "New" };
+            return { color: "#0094d5", label: t("healthNew") };
         default:
-            return { color: "#0094d5", label: "Unknown" };
+            return { color: "#0094d5", label: t("healthUnknown") };
     }
 }
 
@@ -135,6 +136,7 @@ function FunnelBar({
  * Shows table loading state for search, sort, and pagination changes.
  */
 export function AllBundlesTable() {
+    const t = useTranslations("Analytics.AllBundles");
     const {
         bundles,
         pagination,
@@ -205,12 +207,12 @@ export function AllBundlesTable() {
                 <s-box padding="base">
                     <EmptyState
                         heading={
-                            hasFilters ? "No bundles found" : "No bundles yet"
+                            hasFilters ? t("noResults") : t("noBundles")
                         }
                         description={
                             hasFilters
-                                ? "Try adjusting your filters or search query"
-                                : "Create your first bundle to see analytics here"
+                                ? t("noResultsHint")
+                                : t("noBundlesHint")
                         }
                         isSearch={hasFilters}
                     />
@@ -244,6 +246,7 @@ export function AllBundlesTable() {
                         );
                         const healthBadge = getHealthBadge(
                             bundle.healthStatus || "unknown",
+                            t,
                         );
 
                         return (

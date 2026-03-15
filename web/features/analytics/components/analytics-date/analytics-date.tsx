@@ -7,11 +7,13 @@ import {
 } from "@/features/analytics/constants";
 import { useShopSettings } from "@/shared";
 import { AnalyticsCalendar, useDateRangePicker } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Analytics date range picker component
  */
 export function AnalyticsDate() {
+    const t = useTranslations("Analytics.DatePicker");
     const {
         range,
         startInput,
@@ -139,7 +141,7 @@ export function AnalyticsDate() {
                                 commandFor="analytics-date-popover"
                                 onClick={handleCancel}
                             >
-                                Cancel
+                                {t("cancel")}
                             </s-button>
                             <s-button
                                 variant="primary"
@@ -148,7 +150,7 @@ export function AnalyticsDate() {
                                 onClick={(event) => handleApply(event)}
                                 disabled={!isValidRange()}
                             >
-                                Apply
+                                {t("apply")}
                             </s-button>
                         </s-stack>
                     </s-stack>

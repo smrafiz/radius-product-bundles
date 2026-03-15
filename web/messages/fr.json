@@ -53,7 +53,10 @@
       "pricing": "Tarification",
       "templates": "Modèles",
       "integrations": "Intégrations"
-    }
+    },
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "loading": "Chargement…"
   },
   "Dashboard": {
     "title": "Bienvenue dans Radius Bundles",
@@ -322,6 +325,132 @@
         "discovery": "Pour la découverte de produits :",
         "acquisition": "Pour l'acquisition de clients :",
         "campaigns": "Pour les campagnes promotionnelles :"
+      }
+    },
+    "Creation": {
+      "Steps": {
+        "continue": "Continuer",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "Details": {
+        "heading": "Détails de l'offre groupée",
+        "tooltip": "Nom et description de votre offre groupée. Ces champs sont utilisés en interne pour identifier cette offre groupée dans votre espace d'administration.",
+        "name": "Nom de l'offre groupée",
+        "namePlaceholderGenerating": "Génération du nom unique…",
+        "namePlaceholder": "Saisir le nom de l'offre groupée",
+        "nameDetails": "Identifiant unique de votre offre groupée",
+        "description": "Description",
+        "descriptionPlaceholder": "Description de votre offre groupée",
+        "descriptionDetails": "Description interne de l'offre groupée"
+      },
+      "Products": {
+        "selectProducts": "Sélectionner des produits",
+        "addProducts": "Ajouter des produits",
+        "clearAll": "Tout effacer",
+        "minProductHint": "Ajoutez au moins un produit supplémentaire pour créer une offre groupée.",
+        "bogoSameProduct": "BOGO : 1 produit sélectionné. Même produit pour l'achat et l'offre.",
+        "bogoTwoProducts": "BOGO : 2 produits sélectionnés (1 acheté + 1 offert).",
+        "sameProductLabel": "Même produit pour les deux",
+        "sameProductBogoDetails": "Le client achète et reçoit le même produit (p. ex. : BOGO)",
+        "sameProductBxgyDetails": "Utiliser les mêmes produits pour les groupes « Acheter » et « Obtenir »",
+        "roleBuy": "Acheter",
+        "roleGet": "Obtenir",
+        "role": "Rôle",
+        "quantity": "Quantité",
+        "editVariants": "Modifier les variantes"
+      },
+      "Discount": {
+        "heading": "Paramètres de remise",
+        "tooltip": "Configurez le type et la valeur de la remise appliquée lorsque les clients achètent cette offre groupée.",
+        "discountType": "Type de remise",
+        "selectType": "Sélectionner le type de remise",
+        "minOrderValue": "Montant minimum de commande (facultatif)",
+        "maxDiscount": "Montant maximal de la remise (facultatif)",
+        "noLimit": "Aucune limite",
+        "rewardHeading": "Remise de récompense",
+        "rewardTooltip": "Cette remise s'applique uniquement au(x) produit(s) offert(s) en récompense au client. Les produits déclencheurs sont toujours au prix plein.",
+        "rewardOnly": "Remise valable uniquement sur les produits de récompense",
+        "rewardPrice": "Définir le prix du produit en récompense",
+        "rewardProductPrice": "Prix du produit en récompense",
+        "behaviorHeading": "Comportement de l'offre groupée",
+        "behaviorTooltip": "Déterminez la répartition de la réduction entre les produits et si la livraison gratuite est incluse.",
+        "application": "Application de la réduction",
+        "applyEntire": "Appliquer la réduction à l'ensemble du lot",
+        "applySpecific": "Appliquer la réduction à certains produits uniquement",
+        "editSelection": "Modifier la sélection",
+        "selectForDiscount": "Sélectionner les produits à réduire",
+        "chooseProducts": "Sélectionnez les produits bénéficiant de la réduction.",
+        "noProductsYet": "Aucun produit dans l'offre groupée. Veuillez d'abord ajouter des produits.",
+        "cancel": "Annuler",
+        "freeShipping": "Inclure la livraison gratuite",
+        "freeShippingDetails": "Offrir la livraison gratuite pour l'achat de ce lot."
+      },
+      "BundleAsProduct": {
+        "heading": "Offre groupée en tant que produit",
+        "willCreate": "Cette offre groupée créera un produit avec sa propre page produit.",
+        "willNotCreate": "Cette offre groupée ne créera PAS de produit indépendant.",
+        "editProduct": "Modifier le produit Shopify",
+        "createProduct": "Créer un produit pour l'offre groupée",
+        "loading": "Chargement des données du produit…",
+        "syncBanner": "Lorsque vous enregistrez l'offre groupée, toute modification du titre, de la description ou des images multimédias mettra automatiquement à jour le produit Shopify.",
+        "title": "Titre",
+        "media": "Médias",
+        "addMediaFromProducts": "Ajouter un média des produits inclus",
+        "syncedWithName": "Synchronisation automatique avec le nom de l'offre groupée",
+        "editToUpdate": "Modifier pour mettre à jour le nom du produit Shopify",
+        "addMediaModal": "Ajouter un média depuis les produits",
+        "noImages": "Aucune image disponible pour les produits sélectionnés.",
+        "addMedia": "Ajouter un média",
+        "removeImage": "Supprimer l'image",
+        "uploadImage": "Importer une image",
+        "uploadMore": "Importer d'autres images"
+      },
+      "Appearance": {
+        "displayHeading": "Paramètres d'affichage",
+        "displayTooltip": "Activer/désactiver les éléments visuels du widget d'offre groupée : images, prix et badges d'économies.",
+        "layoutHeading": "Mise en page du widget",
+        "layoutTooltip": "Sélectionnez la mise en page de votre widget d'offre groupée.",
+        "productPage": "Page produit",
+        "productPageTooltip": "Personnalisez le titre du widget et le texte du bouton affichés sur les pages produit où cette offre groupée apparaît.",
+        "offerTitle": "Titre de l'offre",
+        "offerSubtitle": "Sous-titre de l'offre",
+        "subtitlePlaceholder": "Sous-titre facultatif",
+        "addToCartText": "Texte du bouton « Ajouter au panier »"
+      },
+      "Review": {
+        "fixErrors": "Veuillez corriger les erreurs suivantes :",
+        "notSet": "Non défini",
+        "title": "Titre",
+        "description": "Description",
+        "discountType": "Type de remise",
+        "discountValue": "Montant de la remise",
+        "status": "Statut",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "subtotal": "Sous-total",
+        "discount": "Remise",
+        "total": "Total",
+        "minOrder": "Commande min.",
+        "maxDiscount": "Remise max.",
+        "selectedProducts": "Produits sélectionnés",
+        "customerBuys": "Le client achète",
+        "customerGets": "Le client reçoit",
+        "free": "GRATUIT",
+        "deal": "Offre",
+        "sameProductDeal": "Offre sur le même produit",
+        "mode": "Mode"
+      },
+      "Preview": {
+        "heading": "Aperçu",
+        "globalCustomizer": "Personnalisateur global",
+        "globalCustomizerTooltip": "Utilisez les paramètres de personnalisation globaux pour définir le style d'affichage de votre offre groupée, notamment les couleurs et les éléments visuels, afin qu'il corresponde à l'image de marque de votre boutique.",
+        "priorityHeading": "Priorité de l'offre groupée",
+        "priorityTooltipIndex": "Lorsque plusieurs offres groupées s'appliquent à un produit, l'offre groupée la plus prioritaire s'affiche.",
+        "priorityTooltipDiscount": "Lorsque plusieurs offres groupées s'appliquent à un produit, celle dont la remise est la plus élevée est affichée.",
+        "changeStrategy": "Stratégie de changement",
+        "priority": "Priorité",
+        "priorityDetails": "Numéro plus élevé = priorité plus élevée (0–500)"
       }
     },
     "Listing": {
@@ -1086,12 +1215,64 @@
       "heading": "Suivi analytique suspendu",
       "description": "Suivi actuellement en pause. Aucun nouvel événement n'est collecté ; par conséquent, les interactions récentes avec les offres groupées n'apparaîtront pas dans ces rapports. Toutes les données affichées ici correspondent à l'activité enregistrée avant la désactivation du suivi.",
       "enableTracking": "Activer le suivi"
+    },
+    "Charts": {
+      "funnelTitle": "Entonnoir du parcours client",
+      "funnelFormula": "Flux : Vues → Ajout au panier → Achats",
+      "views": "Vues",
+      "addToCart": "Ajouter au panier",
+      "purchases": "Achats",
+      "conversionTitle": "Performance de conversion",
+      "avgViewToCart": "Délai moyen vue-panier",
+      "avgCartToPurchase": "Délai moyen panier-achat",
+      "viewToCart": "Vue → Panier",
+      "cartToPurchase": "Panier → Achat",
+      "revenueTitle": "Analyse du chiffre d'affaires",
+      "totalRevenue": "Chiffre d'affaires total",
+      "avgOrderValue": "Valeur moyenne des commandes",
+      "revenue": "Chiffre d'affaires"
+    },
+    "TopBundles": {
+      "heading": "Offres groupées les plus performantes",
+      "tooltip": "Offres groupées classées par chiffre d'affaires total. Les offres à faible trafic sont exclues. Tendances : comparaison avec la période précédente de même durée.",
+      "noData": "Aucune donnée sur les offres groupées pour le moment",
+      "lowSampleSize": "Échantillon faible – le taux de conversion peut fluctuer"
+    },
+    "AllBundles": {
+      "heading": "Performances de tous les packs",
+      "tooltip": "Indicateurs de performance détaillés pour tous les packs, notamment le chiffre d'affaires, le trafic, le taux de conversion et les signaux de qualité. Utilisez cette vue pour identifier les opportunités, repérer les offres groupées peu performantes et comprendre le comportement de l'entonnoir.",
+      "searchLabel": "Rechercher des offres groupées",
+      "closeSearch": "Fermer la recherche",
+      "searchActive": "Recherche active",
+      "noResults": "Aucun lot trouvé",
+      "noBundles": "Aucune offre groupée pour le moment",
+      "noResultsHint": "Essayez de modifier vos filtres ou votre recherche",
+      "noBundlesHint": "Créez votre première offre groupée pour afficher les statistiques ici",
+      "healthHealthy": "Bon",
+      "healthNeedsWork": "À améliorer",
+      "healthPoor": "Médiocre",
+      "healthNew": "Nouveau",
+      "healthUnknown": "Inconnu"
+    },
+    "DatePicker": {
+      "cancel": "Annuler",
+      "apply": "Appliquer",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant"
     }
   },
   "Pricing": {
     "title": "Tarifs et formules",
     "description": "Choisissez la formule adaptée à votre entreprise",
-    "back": "Retour"
+    "back": "Retour",
+    "faq": "FAQ",
+    "faqDescription": "Vous trouverez ci-dessous les réponses aux questions les plus fréquentes sur notre modèle de tarification et de facturation.",
+    "devStoreTitle": "Boutique de développement détectée !",
+    "devStoreDesc": "Vous pouvez utiliser gratuitement toutes les fonctionnalités de BundleSuite (offres groupées illimitées, analyses, etc.) sur votre boutique de développement. Ne choisissez votre formule payante qu'au moment de la mise en ligne !",
+    "dismissCard": "Masquer la carte",
+    "pleaseWait": "Veuillez patienter…"
   },
   "ABTesting": {
     "title": "A/B Testing",

@@ -20,6 +20,7 @@ import {
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
     return items.map((item) => ({
@@ -39,6 +40,7 @@ export function ProductList({
     isBxgy?: boolean;
     isBogo?: boolean;
 }) {
+    const t = useTranslations("Bundles.Creation.Products");
     const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
         useBundleStore();
     const sameProductMode = useBundleStore((s) => s.bundleData.sameProductMode);
@@ -122,7 +124,7 @@ export function ProductList({
                         onClick={openProductPicker}
                         loading={isLoading}
                     >
-                        Add products
+                        {t("addProducts")}
                     </s-button>
                 </s-stack>
             </s-box>

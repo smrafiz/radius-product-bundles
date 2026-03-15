@@ -1,9 +1,11 @@
 import { getDateRangeLabel, useAnalyticsStore } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Top Bundles Header
  */
 export function TopBundlesHeader() {
+    const t = useTranslations("Analytics.TopBundles");
     const { startDate, endDate } = useAnalyticsStore();
 
     const dateLabel = getDateRangeLabel(startDate, endDate);
@@ -17,7 +19,7 @@ export function TopBundlesHeader() {
                 justifyContent="space-between"
             >
                 <s-stack direction="inline" gap="small-200" alignItems="center">
-                    <s-heading>Top Performing Bundles</s-heading>
+                    <s-heading>{t("heading")}</s-heading>
                     <s-icon
                         tone="neutral"
                         type="info"
@@ -25,9 +27,7 @@ export function TopBundlesHeader() {
                     />
                     <s-tooltip id="top-bundle-tooltip">
                         <s-text>
-                            Bundles are ranked by total revenue. Low-traffic
-                            bundles are excluded to avoid noise. Trends compare
-                            current period with previous period of equal length.
+                            {t("tooltip")}
                         </s-text>
                     </s-tooltip>
                 </s-stack>

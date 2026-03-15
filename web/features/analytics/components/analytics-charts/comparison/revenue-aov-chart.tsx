@@ -19,6 +19,7 @@ import {
     useFormattedChartData,
     useSmartChartDisplay,
 } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 import { formatCurrency } from "@/shared";
 import {
     Bar,
@@ -38,6 +39,7 @@ import {
  * Shows Revenue (bars) + Average Order Value (line)
  */
 export function RevenueAOVChart() {
+    const t = useTranslations("Analytics.Charts");
     const { chartData, isChartLoading } = useAnalytics();
     const { preset } = useAnalyticsStore();
     const display = useSmartChartDisplay(chartData, preset);
@@ -82,17 +84,17 @@ export function RevenueAOVChart() {
 
     return (
         <ChartWrapper
-            title="Revenue Analysis"
+            title={t("revenueTitle")}
             description="Understand both volume (total revenue) and quality (average order value) of your bundle sales. Increasing AOV means customers are buying more valuable bundles."
             formula="AOV = Total Revenue / Number of Purchases"
             showInfoBanner={display.showInfoBanner}
             infoBannerMessage={display.bannerMessage}
             summaryStats={[
                 {
-                    label: "Total Revenue",
+                    label: t("totalRevenue"),
                     value: formatCurrency(totals.revenue),
                 },
-                { label: "Avg Order Value", value: formatCurrency(avgAOV) },
+                { label: t("avgOrderValue"), value: formatCurrency(avgAOV) },
             ]}
         >
             <ResponsiveContainer width="100%" height={240}>
@@ -149,7 +151,7 @@ export function RevenueAOVChart() {
                         fill="#008CFF"
                         fillOpacity={0.7}
                         radius={[4, 4, 0, 0]}
-                        name="Revenue"
+                        name={t("revenue")}
                     />
 
                     {/* AOV Line */}
@@ -159,7 +161,7 @@ export function RevenueAOVChart() {
                         dataKey="aov"
                         stroke="#FF6B6B"
                         strokeWidth={2.5}
-                        name="Avg Order Value"
+                        name={t("avgOrderValue")}
                         dot={false}
                         activeDot={getActiveDotConfig("#FF6B6B")}
                     />

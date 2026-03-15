@@ -6,12 +6,18 @@ import {
     BundleProductsPreview,
     BundleTableHeader,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
+
+const TAB_STATUS_KEYS = ["ALL", "DRAFT", "ACTIVE", "SCHEDULED", "PAUSED", "ARCHIVED"] as const;
 
 /**
  * Bundle table skeleton component
  * Matches the real table structure: status tabs + search/sort + table rows
  */
 export function BundleTableSkeleton({ rows = 5 }: { rows?: number }) {
+    const t = useTranslations("Bundles.Listing.Filters");
+    const ts = useTranslations("Bundles.Statuses");
+    const tc = useTranslations("Common");
     return (
         <s-box background="base" borderRadius="large" border="base">
             {/* Status tabs + search + sort */}
@@ -24,16 +30,16 @@ export function BundleTableSkeleton({ rows = 5 }: { rows?: number }) {
                     {/* Status tabs skeleton */}
                     <s-grid-item>
                         <s-stack direction="inline" gap="small-400">
-                            {BUNDLE_FILTERS.tabs.items.map((item, index) => (
+                            {TAB_STATUS_KEYS.map((key, index) => (
                                 <s-button
-                                    key={`${item}-${index}`}
+                                    key={`${key}-${index}`}
                                     tone="neutral"
                                     variant={
                                         index === 0 ? "secondary" : "tertiary"
                                     }
                                     disabled
                                 >
-                                    {item}
+                                    {key === "ALL" ? t("allStatus") : ts(key)}
                                 </s-button>
                             ))}
                         </s-stack>
@@ -45,7 +51,7 @@ export function BundleTableSkeleton({ rows = 5 }: { rows?: number }) {
                             variant="secondary"
                             icon="search"
                             disabled
-                            accessibilityLabel="search bundles"
+                            accessibilityLabel={t("searchLabel")}
                         />
                     </s-grid-item>
 
@@ -55,7 +61,7 @@ export function BundleTableSkeleton({ rows = 5 }: { rows?: number }) {
                             icon="sort"
                             variant="secondary"
                             disabled
-                            accessibilityLabel="Sort bundles"
+                            accessibilityLabel={t("sortLabel")}
                         />
                     </s-grid-item>
                 </s-grid>
@@ -124,7 +130,7 @@ export function BundleTableSkeleton({ rows = 5 }: { rows?: number }) {
             <TablePagination
                 hasPrevious={false}
                 hasNext={false}
-                label="Loading..."
+                label={tc("loading")}
                 onPrevious={() => {}}
                 onNext={() => {}}
                 loading

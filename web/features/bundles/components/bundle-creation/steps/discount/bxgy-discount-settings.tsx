@@ -1,8 +1,10 @@
 "use client";
 
 import { useDiscountSettings } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function BxgyDiscountSettings() {
+    const t = useTranslations("Bundles.Creation.Discount");
     const {
         discountType,
         discountValue,
@@ -24,12 +26,10 @@ export function BxgyDiscountSettings() {
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <s-heading>Reward Discount</s-heading>
+                <s-heading>{t("rewardHeading")}</s-heading>
                 <s-tooltip id="bxgy-discount-tooltip">
                     <s-text>
-                        This discount applies only to the reward product(s) the
-                        customer gets. Trigger products are always at full
-                        price.
+                        {t("rewardTooltip")}
                     </s-text>
                 </s-tooltip>
                 <s-icon
@@ -40,12 +40,12 @@ export function BxgyDiscountSettings() {
             </s-stack>
 
             <s-banner tone="info">
-                Discount applies to reward products only
+                {t("rewardOnly")}
             </s-banner>
 
             <s-select
-                label="Discount Type"
-                placeholder="Select discount type"
+                label={t("discountType")}
+                placeholder={t("selectType")}
                 value={discountType || ""}
                 error={getFieldError("discountType")}
                 onChange={(event: Event) => {
@@ -57,7 +57,7 @@ export function BxgyDiscountSettings() {
                 {availableDiscountTypes.map((config) => (
                     <s-option key={config.id} value={config.id}>
                         {config.id === "CUSTOM_PRICE"
-                            ? "Set price for reward product"
+                            ? t("rewardPrice")
                             : config.label}
                     </s-option>
                 ))}
@@ -67,7 +67,7 @@ export function BxgyDiscountSettings() {
                 <s-number-field
                     label={
                         discountType === "CUSTOM_PRICE"
-                            ? "Reward product price"
+                            ? t("rewardProductPrice")
                             : getDiscountValueLabel()
                     }
                     value={discountValue?.toString() || ""}

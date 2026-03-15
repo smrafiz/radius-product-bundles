@@ -1,11 +1,13 @@
 "use client";
 
 import { useDiscountSettings } from "@/features/bundles/hooks/ui/use-discount-settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Discount settings configuration component
  */
 export function DiscountSettings() {
+    const t = useTranslations("Bundles.Creation.Discount");
     const {
         discountType,
         discountValue,
@@ -33,11 +35,10 @@ export function DiscountSettings() {
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <s-heading>Discount Settings</s-heading>
+                <s-heading>{t("heading")}</s-heading>
                 <s-tooltip id="discount-settings-tooltip">
                     <s-text>
-                        Configure the discount type and value applied when
-                        customers purchase this bundle.
+                        {t("tooltip")}
                     </s-text>
                 </s-tooltip>
                 <s-icon
@@ -48,8 +49,8 @@ export function DiscountSettings() {
             </s-stack>
 
             <s-select
-                label="Discount Type"
-                placeholder="Select discount type"
+                label={t("discountType")}
+                placeholder={t("selectType")}
                 value={discountType || ""}
                 error={getFieldError("discountType")}
                 onChange={(event: Event) => {
@@ -87,7 +88,7 @@ export function DiscountSettings() {
             <s-stack gap="base">
                 <div className="flex-1">
                     <s-number-field
-                        label="Minimum Order Value (Optional)"
+                        label={t("minOrderValue")}
                         value={minOrderValue?.toString() || ""}
                         step={1}
                         min={0}
@@ -105,11 +106,11 @@ export function DiscountSettings() {
                 {showMaxDiscountAmount && (
                     <div className="flex-1">
                         <s-number-field
-                            label="Maximum Discount Amount (Optional)"
+                            label={t("maxDiscount")}
                             value={maxDiscountAmount?.toString() || ""}
                             step={1}
                             min={0}
-                            placeholder="No limit"
+                            placeholder={t("noLimit")}
                             prefix={getCurrency()}
                             onChange={(event: Event) => {
                                 const target = event.target as HTMLInputElement;

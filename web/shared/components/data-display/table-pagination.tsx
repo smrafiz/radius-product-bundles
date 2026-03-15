@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { TablePaginationProps } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Table pagination component
@@ -14,6 +15,7 @@ export const TablePagination = memo(function TablePagination({
     onNext,
     loading = false,
 }: TablePaginationProps) {
+    const t = useTranslations("Common");
     return (
         <s-stack
             direction="inline"
@@ -29,7 +31,7 @@ export const TablePagination = memo(function TablePagination({
                 disabled={!hasPrevious || loading}
                 onClick={onPrevious}
                 icon="caret-left"
-                accessibilityLabel="Previous page"
+                accessibilityLabel={t("previousPage")}
             />
 
             <s-text color="subdued">{label}</s-text>
@@ -39,7 +41,7 @@ export const TablePagination = memo(function TablePagination({
                 disabled={!hasNext || loading}
                 onClick={onNext}
                 icon="caret-right"
-                accessibilityLabel="Next page"
+                accessibilityLabel={t("nextPage")}
             />
         </s-stack>
     );

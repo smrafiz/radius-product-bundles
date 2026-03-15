@@ -2,6 +2,7 @@
 
 import { LoadingSpinner } from "@/shared";
 import { BUNDLE_FILTERS } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     getDateRangeLabel,
     useAllBundlesSearch,
@@ -14,6 +15,7 @@ import {
  * Contains the title, tooltip, date range indicator, and collapsible search field.
  */
 export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
+    const t = useTranslations("Analytics.AllBundles");
     const {
         searchQuery,
         showSearch,
@@ -44,7 +46,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                         >
                             <s-search-field
                                 name="bundle-search"
-                                label="Search bundles"
+                                label={t("searchLabel")}
                                 labelAccessibilityVisibility="exclusive"
                                 placeholder={BUNDLE_FILTERS.search.placeholder}
                                 value={searchQuery}
@@ -61,7 +63,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                                 gap="small-200"
                                 alignItems="center"
                             >
-                                <s-heading>All Bundles Performance</s-heading>
+                                <s-heading>{t("heading")}</s-heading>
                                 <s-icon
                                     tone="neutral"
                                     type="info"
@@ -69,12 +71,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                                 />
                                 <s-tooltip id="all-bundle-perf-tooltip">
                                     <s-text>
-                                        Detailed performance metrics for all
-                                        bundles, including revenue, traffic,
-                                        conversion, and quality signals. Use
-                                        this view to diagnose opportunities,
-                                        identify underperforming bundles, and
-                                        understand funnel behavior.
+                                        {t("tooltip")}
                                     </s-text>
                                 </s-tooltip>
                             </s-stack>
@@ -114,7 +111,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                                 icon={!showSearch ? "search" : "x"}
                                 onClick={toggleSearch}
                                 aria-expanded={showSearch}
-                                accessibilityLabel="search bundles"
+                                accessibilityLabel={t("searchLabel")}
                                 loading={showSearch && loading}
                                 interestFor="search-toggle-tooltip"
                             />
@@ -122,10 +119,10 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                         <s-tooltip id="search-toggle-tooltip">
                             <s-text>
                                 {showSearch
-                                    ? "Close search"
+                                    ? t("closeSearch")
                                     : hasSearchQuery
-                                      ? "Search active"
-                                      : "Search bundles"}
+                                      ? t("searchActive")
+                                      : t("searchLabel")}
                             </s-text>
                         </s-tooltip>
                     </s-grid-item>

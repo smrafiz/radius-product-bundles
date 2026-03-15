@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PricingCardItemInfo } from "@/features/pricing";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function PricingCardItem({
     title,
@@ -12,6 +13,7 @@ export function PricingCardItem({
     primaryButton,
     frequency,
 }: PricingCardItemInfo) {
+    const t = useTranslations("Pricing");
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -86,7 +88,7 @@ export function PricingCardItem({
                             disabled={loading}
                             onClick={handleClick}
                         >
-                            {loading ? "Please wait..." : primaryButton.content}
+                            {loading ? t("pleaseWait") : primaryButton.content}
                         </s-button>
                     </s-stack>
                 </s-stack>
