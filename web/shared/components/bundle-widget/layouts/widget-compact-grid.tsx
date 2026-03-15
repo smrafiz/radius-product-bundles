@@ -426,7 +426,7 @@ export function WidgetCompactGrid({
                         </span>
                     )}
                 </div>
-                {badgeText && pricing?.hasDiscount && (
+                {badgeText && pricing?.hasDiscount && displayOptions.showSavingsBadge && (
                     <span
                         style={{
                             backgroundColor: isOutline

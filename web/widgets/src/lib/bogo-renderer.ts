@@ -675,7 +675,7 @@ export function renderBogoCompactGridProducts(
     const savings = totalOriginal - totalDiscounted;
 
     let badgeText = "";
-    if (savings > 0) {
+    if (savings > 0 && ctx.showSavingsBadge) {
         const badgeRaw = labels?.savingsBadgeText || "Save {amount}";
         let badgeAmount = "";
         if (structure.discountType === "PERCENTAGE") {
@@ -740,10 +740,14 @@ export function renderBogoCompactGridProducts(
             ? `<h3 class="rb-cg__tile-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
             : `<h3 class="rb-cg__tile-title">${escapeHtml(product.title)}</h3>`;
 
+        const roleLabelHtml = ctx.showSavingsBadge
+            ? `<span class="rb-cg__tile-role rb-cg__tile-role--${isReward ? "reward" : "trigger"}">${roleLabel}</span>`
+            : "";
+
         return `
             <div class="${tileClass}">
                 ${imageHtml}
-                <span class="rb-cg__tile-role rb-cg__tile-role--${isReward ? "reward" : "trigger"}">${roleLabel}</span>
+                ${roleLabelHtml}
                 ${titleHtml}
                 ${priceHtml}
             </div>
