@@ -55,7 +55,7 @@ function MinimalistItem({
                 alignItems: "center",
                 gap: 10,
                 padding: "15px 10px",
-                background: `color-mix(in srgb, ${roleColor} 6%, white)`,
+                background: `color-mix(in srgb, ${roleColor} 6%, ${styles.backgroundColor || "white"})`,
                 border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
                 borderRadius: cardRadius,
                 minWidth: 0,
@@ -70,7 +70,7 @@ function MinimalistItem({
                         flexShrink: 0,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        background: "#f9fafb",
+                        background: styles.productCardBg || "#f9fafb",
                     }}
                 >
                     <img
@@ -256,7 +256,7 @@ export function WidgetMinimalist({
                             borderRadius: cardRadius,
                             border: `1px solid ${styles.borderColor}`,
                             overflow: "hidden",
-                            background: "#f9fafb",
+                            background: styles.productCardBg || "#f9fafb",
                         }}
                     >
                         <img

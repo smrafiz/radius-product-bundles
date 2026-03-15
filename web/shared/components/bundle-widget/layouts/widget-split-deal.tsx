@@ -45,7 +45,7 @@ function SplitProductCard({
                         flexShrink: 0,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        backgroundColor: "#f3f4f6",
+                        backgroundColor: styles.productCardBg || "#f3f4f6",
                     }}
                 >
                     <img
@@ -381,7 +381,7 @@ export function WidgetSplitDeal({
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
                                 marginBottom: 2,
-                                color: "#15803d",
+                                color: styles.savingsColor || "#15803d",
                             }}
                         >
                             {labels?.bogoYouPayLabel ||
@@ -407,7 +407,7 @@ export function WidgetSplitDeal({
                                 textTransform: "uppercase" as const,
                                 letterSpacing: "0.04em",
                                 marginBottom: 2,
-                                color: "#15803d",
+                                color: styles.savingsColor || "#15803d",
                             }}
                         >
                             {labels?.bogoYouSaveLabel ||

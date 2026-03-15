@@ -119,6 +119,7 @@
 							{% assign background_color = '#1f2937' %}
 							{% assign border_color = '#374151' %}
 							{% assign savings_color = '#34d399' %}
+							{% assign product_card_bg = '#4b5563' %}
 						{% when 'nature' %}
 							{% assign primary_color = '#059669' %}
 							{% assign text_color = '#1f2937' %}
@@ -222,8 +223,8 @@
 				{% endif %}
 				{% if override_card_settings and block.settings.product_card_bg != blank %}
 					{% assign product_card_bg = block.settings.product_card_bg %}
-				{% elsif g_type_overrides.customizeCardStyle == true or g_styles.customizeCardStyle == true %}
-					{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg %}
+				{% elsif product_card_bg == blank %}
+					{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg | default: '#f9fafb' %}
 				{% endif %}
 				{% assign product_card_border = true %}
 				{% if override_card_settings %}

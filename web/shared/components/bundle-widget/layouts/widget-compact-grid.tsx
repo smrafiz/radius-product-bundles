@@ -73,7 +73,7 @@ function ProductTile({
                         height: 80,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        background: "#f9fafb",
+                        background: styles.productCardBg || "#f9fafb",
                         border: `2px solid ${accentColor}33`,
                     }}
                 >
@@ -472,14 +472,14 @@ export function WidgetCompactGrid({
                             width: 32,
                             height: 32,
                             borderRadius: "50%",
-                            background: "#fff",
-                            border: "2px solid #e5e7eb",
+                            background: styles.backgroundColor || "#fff",
+                            border: `2px solid ${styles.borderColor || "#e5e7eb"}`,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontSize: 16,
                             fontWeight: 600,
-                            color: "#9ca3af",
+                            color: styles.textColor || "#9ca3af",
                         }}
                     >
                         +
@@ -514,7 +514,8 @@ export function WidgetCompactGrid({
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 3,
-                                color: "#6b7280",
+                                color: styles.textColor || "#6b7280",
+                                opacity: 0.7,
                                 fontWeight: 500,
                             }}
                         >

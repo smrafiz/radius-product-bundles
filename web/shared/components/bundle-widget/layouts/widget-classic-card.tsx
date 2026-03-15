@@ -47,7 +47,7 @@ function ClassicProductItem({
                 aspectRatio: IMAGE_ASPECT_RATIOS[styles.imageSize] ?? "1/1",
                 borderRadius: cardRadius,
                 overflow: "hidden",
-                backgroundColor: "#f9fafb",
+                backgroundColor: styles.productCardBg || "#f9fafb",
             }}
         >
             <img

@@ -452,6 +452,7 @@ export const STYLE_PRESETS: StylePresetsMap = {
             backgroundColor: "#1f2937",
             borderColor: "#4b5563",
             savingsColor: "#34d399",
+            productCardBg: "#374151",
             cornerStyle: "modern",
             shadow: "strong",
             spacing: "comfortable",
