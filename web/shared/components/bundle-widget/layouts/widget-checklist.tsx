@@ -60,9 +60,9 @@ function ChecklistTriggerItem({
                 alignItems: "center",
                 gap: 12,
                 padding: 12,
-                border: "2px solid #d1d5db",
+                border: `2px solid ${styles.borderColor || "#d1d5db"}`,
                 borderRadius: cardRadius,
-                background: "#fff",
+                background: styles.productCardBg || styles.backgroundColor || "#fff",
             }}
         >
             <div
@@ -71,8 +71,8 @@ function ChecklistTriggerItem({
                     height: 20,
                     minWidth: 20,
                     borderRadius: 4,
-                    border: "2px solid #d1d5db",
-                    background: "#fff",
+                    border: `2px solid ${styles.borderColor || "#d1d5db"}`,
+                    background: styles.backgroundColor || "#fff",
                 }}
             />
             {product.image && (
@@ -83,7 +83,7 @@ function ChecklistTriggerItem({
                         minWidth: 56,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        background: "#f9fafb",
+                        background: styles.productCardBg || "#f9fafb",
                     }}
                 >
                     <img
@@ -123,7 +123,8 @@ function ChecklistTriggerItem({
             </div>
             <div
                 style={{
-                    color: "#9ca3af",
+                    color: styles.textColor || "#9ca3af",
+                    opacity: 0.4,
                     display: "flex",
                     alignItems: "center",
                     flexShrink: 0,
@@ -168,7 +169,7 @@ function ChecklistRewardItem({
                         minWidth: 48,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        background: "#f9fafb",
+                        background: styles.productCardBg || "#f9fafb",
                     }}
                 >
                     <img
@@ -216,7 +217,8 @@ function ChecklistRewardItem({
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 3,
-                                color: "#9ca3af",
+                                color: styles.textColor || "#9ca3af",
+                                opacity: 0.5,
                                 textDecoration: "line-through",
                             }}
                         >
@@ -351,7 +353,7 @@ export function WidgetChecklist({
                     style={{
                         width: "100%",
                         height: 8,
-                        background: "#e5e7eb",
+                        background: styles.borderColor || "#e5e7eb",
                         borderRadius: 4,
                         overflow: "hidden",
                     }}
@@ -402,10 +404,10 @@ export function WidgetChecklist({
                 style={{
                     border: isUnlocked
                         ? `2px dashed ${styles.savingsColor || "#16a34a"}`
-                        : "2px solid #d1d5db",
+                        : `2px solid ${styles.borderColor || "#d1d5db"}`,
                     borderRadius: cardRadius,
                     padding: 16,
-                    background: isUnlocked ? "#fff" : "#f9fafb",
+                    background: styles.productCardBg || styles.backgroundColor || "#fff",
                     opacity: isUnlocked ? 1 : 0.5,
                     transition: "all 0.3s ease",
                 }}
@@ -444,7 +446,8 @@ export function WidgetChecklist({
                             marginLeft: "auto",
                             color: isUnlocked
                                 ? styles.savingsColor || "#16a34a"
-                                : "#9ca3af",
+                                : styles.textColor || "#9ca3af",
+                            opacity: isUnlocked ? 1 : 0.4,
                         }}
                     >
                         {LOCK_SVG}
@@ -471,10 +474,10 @@ export function WidgetChecklist({
             {pricing && (
                 <div
                     style={{
-                        border: "1px solid #e5e7eb",
+                        border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
                         borderRadius: getCardRadius(styles.cornerStyle),
                         padding: 16,
-                        background: "#f9fafb",
+                        background: styles.productCardBg || styles.backgroundColor || "#f9fafb",
                         opacity: 0.5,
                         transition: "all 0.3s ease",
                     }}
@@ -482,7 +485,7 @@ export function WidgetChecklist({
                     <div
                         style={{
                             fontSize: 13,
-                            color: "#9ca3af",
+                            color: styles.textColor || "#9ca3af",
                             textAlign: "center",
                             padding: "4px 0",
                         }}
@@ -502,8 +505,8 @@ export function WidgetChecklist({
                         fontWeight: 700,
                         borderRadius: buttonRadius,
                         border: "none",
-                        background: isUnlocked ? buttonBg : "#e5e7eb",
-                        color: isUnlocked ? "#fff" : "#9ca3af",
+                        background: isUnlocked ? buttonBg : styles.borderColor || "#e5e7eb",
+                        color: isUnlocked ? "#fff" : styles.textColor || "#9ca3af",
                         cursor: isUnlocked ? "pointer" : "not-allowed",
                         display: "flex",
                         alignItems: "center",
