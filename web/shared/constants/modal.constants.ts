@@ -6,7 +6,11 @@ type TranslatorFn = (key: string, params?: Record<string, string | number>, defa
 /**
  * Modal Content Configuration
  */
-export const MODAL_CONTENT = (modal: ModalPayload | { type: null }, t?: TranslatorFn) => {
+export const MODAL_CONTENT = (
+    modal: ModalPayload | { type: null },
+    t?: TranslatorFn,
+    ts?: TranslatorFn,
+) => {
     if (!modal || modal.type === null) {
         return {
             heading: t?.("confirm") ?? "Confirm",
@@ -15,13 +19,16 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }, t?: Translat
         };
     }
 
+    const bundleName = modal.bundle?.name ?? "";
+
     switch (modal.type) {
         case "duplicate":
             return {
                 heading: modal.title || t?.("duplicate.heading") || "Duplicate Bundle",
                 message:
                     modal.message ||
-                    `Duplicate <strong>${modal.bundle?.name}?</strong> ${t?.("duplicate.draftCreated") || "A new draft will be created."}`,
+                    t?.("duplicate.message", { name: `<strong>${bundleName}</strong>` }) ||
+                    `Duplicate <strong>${bundleName}?</strong> A new draft will be created.`,
                 destructive: false,
             };
 
@@ -30,32 +37,36 @@ export const MODAL_CONTENT = (modal: ModalPayload | { type: null }, t?: Translat
                 heading: modal.title || t?.("delete.heading") || "Delete Bundle",
                 message:
                     modal.message ||
-                    `Are you sure you want to delete <strong>${modal.bundle?.name}</strong>? ${t?.("delete.cannotUndo") || "This action cannot be undone."}`,
+                    t?.("delete.message", { name: `<strong>${bundleName}</strong>` }) ||
+                    `Are you sure you want to delete <strong>${bundleName}</strong>? This action cannot be undone.`,
                 destructive: true,
             };
 
-        case "status":
+        case "status": {
+            const statusText = modal.newStatus
+                ? (ts?.(modal.newStatus as string) ?? BUNDLE_STATUSES[modal.newStatus as BundleStatus]?.text ?? "")
+                : "";
             return {
                 heading: modal.title || t?.("status.heading") || "Confirm Status Change",
                 message:
                     modal.message ||
-                    `Change the status of <strong>${modal.bundle?.name}</strong> to <strong>${
-                        modal.newStatus
-                            ? BUNDLE_STATUSES[modal.newStatus as BundleStatus]
-                                  ?.text
-                            : ""
-                    }</strong>?`,
+                    t?.("status.message", { name: `<strong>${bundleName}</strong>`, status: `<strong>${statusText}</strong>` }) ||
+                    `Change the status of <strong>${bundleName}</strong> to <strong>${statusText}</strong>?`,
                 destructive: false,
             };
+        }
 
-        case "delete-product":
+        case "delete-product": {
+            const productName = modal.productTitle || t?.("deleteProduct.thisProduct") || "this product";
             return {
                 heading: modal.title || t?.("deleteProduct.heading") || "Delete bundle product?",
                 message:
                     modal.message ||
-                    `${t?.("deleteProduct.message") || `Turning off this switch will permanently delete <strong>${modal.productTitle || t?.("deleteProduct.thisProduct") || "this product"}</strong> from your store when you save. This action cannot be undone.`}`,
+                    t?.("deleteProduct.message", { product: `<strong>${productName}</strong>` }) ||
+                    `Turning off this switch will permanently delete <strong>${productName}</strong> from your store when you save. This action cannot be undone.`,
                 destructive: true,
             };
+        }
 
         case "restore-defaults":
             return {

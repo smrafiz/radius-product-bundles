@@ -7,8 +7,10 @@ import {
 } from "@/features/bundles";
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function useBundleFormMethods() {
+    const v = useTranslations("Validation");
     const form = useFormContext<BundleFormData>();
     const { nextStep, setValidationAttempted, markDirty } = useBundleStore();
     const { validateCurrentStep, canProceedToNextStep, getFieldError } =
@@ -41,7 +43,7 @@ export function useBundleFormMethods() {
 
         if (!isValid) {
             if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                shopify.toast.show("Please fill in all required fields", {
+                shopify.toast.show(v("FILL_REQUIRED_FIELDS"), {
                     duration: 3000,
                     isError: true,
                 });

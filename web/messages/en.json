@@ -69,18 +69,21 @@
     "confirmContinue": "Are you sure you want to continue?",
     "duplicate": {
       "heading": "Duplicate Bundle",
-      "draftCreated": "A new draft will be created."
+      "draftCreated": "A new draft will be created.",
+      "message": "Duplicate {name}? A new draft will be created."
     },
     "delete": {
       "heading": "Delete Bundle",
-      "cannotUndo": "This action cannot be undone."
+      "cannotUndo": "This action cannot be undone.",
+      "message": "Are you sure you want to delete {name}? This action cannot be undone."
     },
     "status": {
-      "heading": "Confirm Status Change"
+      "heading": "Confirm Status Change",
+      "message": "Change the status of {name} to {status}?"
     },
     "deleteProduct": {
       "heading": "Delete bundle product?",
-      "message": "Turning off this switch will permanently delete this product from your store when you save. This action cannot be undone.",
+      "message": "Turning off this switch will permanently delete {product} from your store when you save. This action cannot be undone.",
       "thisProduct": "this product"
     },
     "restoreDefaults": {
@@ -110,7 +113,21 @@
     "DISCOUNT_TYPE_REQUIRED": "Discount type is required",
     "END_DATE_AFTER_START": "End date must be after start date",
     "MAX_DISCOUNT_NOT_APPLICABLE": "Maximum discount amount is not applicable for custom price",
-    "CUSTOM_PRICE_INVALID": "Custom price must be greater than 0"
+    "CUSTOM_PRICE_INVALID": "Custom price must be greater than 0",
+    "PERCENTAGE_EXCEED": "Percentage discount cannot exceed 100%",
+    "PERCENTAGE_POSITIVE": "Percentage discount must be greater than 0",
+    "FIXED_AMOUNT_POSITIVE": "Fixed amount must be greater than 0",
+    "BXGY_QUANTITIES_REQUIRED": "Buy X Get Y bundles require buyQuantity and getQuantity",
+    "BOGO_BUY_QTY": "BOGO buy quantity must be 1",
+    "BOGO_GET_QTY": "BOGO get quantity must be 1",
+    "TRIGGER_REQUIRED": "At least one trigger product is required",
+    "REWARD_REQUIRED": "At least one reward product is required",
+    "VOLUME_TIERS_REQUIRED": "Volume discount bundles require volume tiers",
+    "MIX_MATCH_PRICING": "Mix and match bundles require pricing configuration",
+    "SCHEDULED_DATES_REQUIRED": "Scheduled bundles require both start and end dates",
+    "MAX_PRODUCTS_20": "Cannot have more than 20 products in a bundle",
+    "GROUP_NAME_REQUIRED": "Group name is required",
+    "FILL_REQUIRED_FIELDS": "Please fill in all required fields"
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",

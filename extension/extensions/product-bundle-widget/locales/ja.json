@@ -1,0 +1,45 @@
+{
+    "bundle": {
+        "headingLabel": "セット購入でお得",
+        "addToCartText": "セットをカートに追加",
+        "quantityLabel": "数量：",
+
+        "addingText": "追加中...",
+        "addedText": "追加されました！",
+        "outOfStockText": "在庫切れ",
+
+        "regularPriceLabel": "通常価格：",
+        "bundlePriceLabel": "セット価格：",
+        "youSaveLabel": "お得になる金額：",
+        "savingsBadgeText": "{percent}%お得",
+
+        "freeShippingLabel": "送料無料",
+        "freeShippingMethodTitle": "送料無料",
+
+        "maxBundlesReachedText": "1回の注文につき最大{count}セットまで可能",
+
+        "bogoYouPayLabel": "お支払い額：",
+        "bogoYouSaveLabel": "お得になる金額：",
+        "bogoTriggerBadgeText": "お買い上げ商品",
+        "bogoRewardBadgeText": "無料で差し上げます",
+        "bogoBadgeText": "",
+        "bogoFreeText": "無料",
+        "bogoTotalLabel": "セットの合計",
+        "bogoSaveText": "節約額：",
+
+        "checklistProgressText": "{count}/{total}個のアイテムが追加されました",
+        "checklistHintText": "あと{remaining}個でロック解除！",
+        "checklistCompletedText": "ロック解除されました！",
+        "checklistLockedLabel": "上記のすべてのアイテムを追加してロック解除",
+        "checklistUnlockedLabel": "特典がロック解除されました",
+        "checklistPricingLockedText": "すべてのアイテムを選択して価格を確認してください",
+
+        "bannerSavingText": "{name}で{discount}お得になります",
+        "bannerCustomPriceText": "{name}の特別価格：{price}",
+        "bannerFreeShippingQualifyText": "{name}は送料無料の対象です！",
+        "bannerFreeShippingText": "送料無料です！",
+
+        "moreProductsText": "+ {count}点の商品",
+        "showLessText": "表示を減らす"
+    }
+}

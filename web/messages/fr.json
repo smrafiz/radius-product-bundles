@@ -69,18 +69,21 @@
     "confirmContinue": "Souhaitez-vous vraiment continuer ?",
     "duplicate": {
       "heading": "Dupliquer l'offre groupée",
-      "draftCreated": "Nouveau brouillon créé."
+      "draftCreated": "Nouveau brouillon créé.",
+      "message": "Dupliquer {name} ? Un nouveau brouillon sera créé."
     },
     "delete": {
       "heading": "Supprimer l'offre groupée",
-      "cannotUndo": "Cette action est irréversible."
+      "cannotUndo": "Cette action est irréversible.",
+      "message": "Souhaitez-vous vraiment supprimer {name} ? Cette action est irréversible."
     },
     "status": {
-      "heading": "Confirmer le changement de statut"
+      "heading": "Confirmer le changement de statut",
+      "message": "Souhaitez-vous faire passer le statut de {name} à {status} ?"
     },
     "deleteProduct": {
       "heading": "Supprimer l'offre groupée ?",
-      "message": "Si vous désactivez ce bouton, ce produit sera définitivement supprimé de votre boutique lors de l'enregistrement. Cette action est irréversible.",
+      "message": "Si vous désactivez ce bouton, {product} sera définitivement supprimé de votre boutique lorsque vous enregistrerez. Cette action est irréversible.",
       "thisProduct": "Ce produit"
     },
     "restoreDefaults": {
@@ -110,7 +113,21 @@
     "DISCOUNT_TYPE_REQUIRED": "Type de remise requis",
     "END_DATE_AFTER_START": "Date de fin postérieure à la date de début",
     "MAX_DISCOUNT_NOT_APPLICABLE": "Le montant maximal de la remise ne s'applique pas au prix personnalisé",
-    "CUSTOM_PRICE_INVALID": "Prix personnalisé : supérieur à 0"
+    "CUSTOM_PRICE_INVALID": "Prix personnalisé : supérieur à 0",
+    "PERCENTAGE_EXCEED": "Pourcentage de réduction : 100 % max.",
+    "PERCENTAGE_POSITIVE": "Pourcentage de réduction > 0",
+    "FIXED_AMOUNT_POSITIVE": "Montant fixe > 0",
+    "BXGY_QUANTITIES_REQUIRED": "Offres « Achetez X, obtenez Y » : buyQuantity et getQuantity requis",
+    "BOGO_BUY_QTY": "Quantité d'achat BOGO : 1",
+    "BOGO_GET_QTY": "Quantité d'articles offerts : 1",
+    "TRIGGER_REQUIRED": "Au moins un produit déclencheur est requis",
+    "REWARD_REQUIRED": "Au moins un produit de récompense est requis",
+    "VOLUME_TIERS_REQUIRED": "Offres groupées avec remise sur volume : niveaux de volume requis",
+    "MIX_MATCH_PRICING": "Offres groupées « Mix and Match » : configuration tarifaire requise",
+    "SCHEDULED_DATES_REQUIRED": "Offres groupées programmées : dates de début et de fin requises",
+    "MAX_PRODUCTS_20": "Une offre groupée ne peut pas contenir plus de 20 produits",
+    "GROUP_NAME_REQUIRED": "Nom du groupe requis",
+    "FILL_REQUIRED_FIELDS": "Veuillez remplir tous les champs obligatoires."
   },
   "Dashboard": {
     "title": "Bienvenue dans Radius Bundles",

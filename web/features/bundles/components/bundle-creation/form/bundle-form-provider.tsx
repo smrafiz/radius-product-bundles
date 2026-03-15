@@ -3,7 +3,7 @@
 import {
     BundleFormData,
     BundleFormProviderProps,
-    bundleSchema,
+    createBundleSchema,
     DiscountType,
     getDefaultLayout,
     initialDisplaySettings,
@@ -11,8 +11,9 @@ import {
     useBundleStore,
 } from "@/features/bundles";
 import type { z } from "zod";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/features/settings";
 import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
 import { BundleCreationSkeleton } from "@/features/bundles";
@@ -26,6 +27,9 @@ export function BundleFormProvider({
     bundleType,
     initialData,
 }: BundleFormProviderProps) {
+    const v = useTranslations("Validation");
+    const schema = useMemo(() => createBundleSchema(v), [v]);
+
     const {
         selectedItems,
         setBundleData,
@@ -47,9 +51,9 @@ export function BundleFormProvider({
     const isWaitingForSettings =
         isNewBundle && isSettingsLoading && !serverData;
 
-    const form = useForm<z.infer<typeof bundleSchema>>({
-        resolver: zodResolver(bundleSchema) as Resolver<
-            z.infer<typeof bundleSchema>
+    const form = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema) as Resolver<
+            z.infer<typeof schema>
         >,
         defaultValues: {
             name: initialData?.name || "",

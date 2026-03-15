@@ -1,0 +1,45 @@
+{
+    "bundle": {
+        "headingLabel": "Acquista in bundle e risparmia",
+        "addToCartText": "Aggiungi pacchetto al carrello",
+        "quantityLabel": "Q.tà:",
+
+        "addingText": "Aggiunta in corso...",
+        "addedText": "Aggiunto!",
+        "outOfStockText": "Esaurito",
+
+        "regularPriceLabel": "Prezzo normale:",
+        "bundlePriceLabel": "Prezzo del pacchetto:",
+        "youSaveLabel": "Risparmi:",
+        "savingsBadgeText": "Risparmia il {percent}%",
+
+        "freeShippingLabel": "Spedizione gratuita",
+        "freeShippingMethodTitle": "Spedizione gratuita",
+
+        "maxBundlesReachedText": "È consentito un massimo di {count} pacchetto/i per ordine",
+
+        "bogoYouPayLabel": "Paghi:",
+        "bogoYouSaveLabel": "Risparmi:",
+        "bogoTriggerBadgeText": "Acquisti",
+        "bogoRewardBadgeText": "Ricevi GRATIS",
+        "bogoBadgeText": "",
+        "bogoFreeText": "GRATIS",
+        "bogoTotalLabel": "Totale pacchetto",
+        "bogoSaveText": "Risparmi:",
+
+        "checklistProgressText": "{count}/{total} articoli aggiunti",
+        "checklistHintText": "Ancora {remaining} per sbloccare!",
+        "checklistCompletedText": "Sbloccato!",
+        "checklistLockedLabel": "Sblocca aggiungendo tutti gli articoli sopra",
+        "checklistUnlockedLabel": "Ricompensa sbloccata",
+        "checklistPricingLockedText": "Seleziona tutti gli articoli per visualizzare il prezzo",
+
+        "bannerSavingText": "Risparmi {discount} con {name}",
+        "bannerCustomPriceText": "Prezzo speciale: {price} per {name}",
+        "bannerFreeShippingQualifyText": "{name} dà diritto alla spedizione gratuita!",
+        "bannerFreeShippingText": "Spedizione gratuita inclusa!",
+
+        "moreProductsText": "+ {count} altri prodotti",
+        "showLessText": "Mostra meno"
+    }
+}

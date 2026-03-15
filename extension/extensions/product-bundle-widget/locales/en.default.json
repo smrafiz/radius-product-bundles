@@ -1,26 +1,45 @@
 {
-  "bundle": {
-    "title": "Bundle & Save",
-    "savingsBadgeText": "Save {percent}%",
-    "addToCartText": "Add bundle to cart",
-    "regularPriceLabel": "Regular price:",
-    "bundlePriceLabel": "Bundle price:",
-    "youSaveLabel": "You save:",
-    "freeShippingLabel": "Free shipping",
-    "quantityLabel": "Qty:",
-    "addingText": "Adding...",
-    "addedText": "Added!",
-    "outOfStockText": "Out of Stock",
-    "maxBundlesReachedText": "Maximum {count} bundle(s) per order allowed",
-    "bogoYouPayLabel": "You Pay Only",
-    "bogoYouSaveLabel": "You Save",
-    "bogoTriggerBadgeText": "You Buy",
-    "bogoRewardBadgeText": "You Get FREE",
-    "bogoBadgeText": "",
-    "bogoFreeText": "FREE",
-    "bogoTotalLabel": "Total",
-    "bogoSaveText": "Save {amount}",
-    "moreProductsText": "+ {count} more products",
-    "showLessText": "Show less"
-  }
+    "bundle": {
+        "headingLabel": "Bundle & Save",
+        "addToCartText": "Add bundle to cart",
+        "quantityLabel": "Qty:",
+
+        "addingText": "Adding...",
+        "addedText": "Added!",
+        "outOfStockText": "Out of Stock",
+
+        "regularPriceLabel": "Regular Price:",
+        "bundlePriceLabel": "Bundle Price:",
+        "youSaveLabel": "You Save:",
+        "savingsBadgeText": "Save {percent}%",
+
+        "freeShippingLabel": "Free Shipping",
+        "freeShippingMethodTitle": "Free Shipping",
+
+        "maxBundlesReachedText": "Maximum {count} bundle(s) per order allowed",
+
+        "bogoYouPayLabel": "You Pay:",
+        "bogoYouSaveLabel": "You Save:",
+        "bogoTriggerBadgeText": "You Buy",
+        "bogoRewardBadgeText": "You Get FREE",
+        "bogoBadgeText": "",
+        "bogoFreeText": "FREE",
+        "bogoTotalLabel": "Bundle Total",
+        "bogoSaveText": "You Save:",
+
+        "checklistProgressText": "{count}/{total} items added",
+        "checklistHintText": "{remaining} more to unlock!",
+        "checklistCompletedText": "Unlocked!",
+        "checklistLockedLabel": "Unlock by adding all items above",
+        "checklistUnlockedLabel": "Reward Unlocked",
+        "checklistPricingLockedText": "Select all items to see your price",
+
+        "bannerSavingText": "You're saving {discount} with {name}",
+        "bannerCustomPriceText": "Special price: {price} for {name}",
+        "bannerFreeShippingQualifyText": "{name} qualifies for free shipping!",
+        "bannerFreeShippingText": "Free shipping included!",
+
+        "moreProductsText": "+ {count} more products",
+        "showLessText": "Show less"
+    }
 }

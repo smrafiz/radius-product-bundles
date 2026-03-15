@@ -16,6 +16,7 @@ export function ModalHost() {
     const { modal, closeModal, setLoading, setError } = useModalStore();
     const t = useTranslations("Modals");
     const tc = useTranslations("Common");
+    const ts = useTranslations("Bundles.Statuses");
     const [dateRange, setDateRange] = useState("");
 
     const isScheduledModal =
@@ -73,7 +74,7 @@ export function ModalHost() {
         }
     };
 
-    const { heading, message, destructive } = MODAL_CONTENT(modal, t);
+    const { heading, message, destructive } = MODAL_CONTENT(modal, t, ts);
     const hasActiveModal = modal && modal.type !== null;
 
     const renderMessage = (message: ReactNode) => {

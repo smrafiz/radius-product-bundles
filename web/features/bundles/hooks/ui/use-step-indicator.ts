@@ -4,8 +4,10 @@ import {
     useBundleValidation,
 } from "@/features/bundles";
 import { useCallback } from "react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function useStepIndicator() {
+    const v = useTranslations("Validation");
     const { currentStep, setStep, setValidationAttempted } = useBundleStore();
     const { validateCurrentStep } = useBundleValidation();
 
@@ -57,7 +59,7 @@ export function useStepIndicator() {
 
             if (!isValid) {
                 if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                    shopify.toast.show("Please fill in all required fields", {
+                    shopify.toast.show(v("FILL_REQUIRED_FIELDS"), {
                         duration: 3000,
                         isError: true,
                     });

@@ -41,6 +41,10 @@ function buildFieldSchema(field: FieldConfig): z.ZodTypeAny {
             if (field.defaultValue !== undefined) {
                 return finalSchema.default(field.defaultValue);
             }
+            // No default and not required → field may be absent
+            if (!validation?.required) {
+                return finalSchema.optional();
+            }
             return finalSchema;
         }
 

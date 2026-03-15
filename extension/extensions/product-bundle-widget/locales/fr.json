@@ -1,26 +1,45 @@
 {
-  "bundle": {
-    "title": "Produits souvent achetés ensemble",
-    "savingsBadgeText": "Économisez {percent}%",
-    "addToCartText": "Ajouter le pack au panier",
-    "regularPriceLabel": "Prix régulier :",
-    "bundlePriceLabel": "Prix du pack :",
-    "youSaveLabel": "Vous économisez :",
-    "freeShippingLabel": "Livraison gratuite",
-    "quantityLabel": "Qté :",
-    "addingText": "Ajout...",
-    "addedText": "Ajouté !",
-    "outOfStockText": "Rupture de stock",
-    "maxBundlesReachedText": "Maximum {count} pack(s) par commande autorisé",
-    "bogoYouPayLabel": "Vous payez seulement",
-    "bogoYouSaveLabel": "Vous économisez",
-    "bogoTriggerBadgeText": "Achetez",
-    "bogoRewardBadgeText": "Recevez GRATUITEMENT",
-    "bogoBadgeText": "",
-    "bogoFreeText": "GRATUIT",
-    "bogoTotalLabel": "Total",
-    "bogoSaveText": "Économisez {amount}",
-    "moreProductsText": "+ {count} autres produits",
-    "showLessText": "Voir moins"
-  }
+    "bundle": {
+        "headingLabel": "Achetez en lot et économisez",
+        "addToCartText": "Ajouter l'offre groupée au panier",
+        "quantityLabel": "Qté :",
+
+        "addingText": "Ajout en cours…",
+        "addedText": "Ajouté !",
+        "outOfStockText": "En rupture de stock",
+
+        "regularPriceLabel": "Prix normal :",
+        "bundlePriceLabel": "Prix du lot :",
+        "youSaveLabel": "Vous économisez :",
+        "savingsBadgeText": "Économisez {percent} %",
+
+        "freeShippingLabel": "Livraison gratuite",
+        "freeShippingMethodTitle": "Livraison gratuite",
+
+        "maxBundlesReachedText": "Maximum de {count} lot(s) autorisé(s) par commande",
+
+        "bogoYouPayLabel": "Vous payez :",
+        "bogoYouSaveLabel": "Vous économisez :",
+        "bogoTriggerBadgeText": "Vous achetez",
+        "bogoRewardBadgeText": "Vous obtenez GRATUITEMENT",
+        "bogoBadgeText": "",
+        "bogoFreeText": "GRATUIT",
+        "bogoTotalLabel": "Total du lot",
+        "bogoSaveText": "Vous économisez :",
+
+        "checklistProgressText": "{count}/{total} articles ajoutés",
+        "checklistHintText": "Encore {remaining} à ajouter pour débloquer !",
+        "checklistCompletedText": "Déverrouillé !",
+        "checklistLockedLabel": "Déverrouillez en ajoutant tous les articles ci-dessus",
+        "checklistUnlockedLabel": "Récompense débloquée",
+        "checklistPricingLockedText": "Sélectionnez tous les articles pour voir votre prix",
+
+        "bannerSavingText": "Vous économisez {discount} avec {name}",
+        "bannerCustomPriceText": "Prix spécial : {price} pour {name}",
+        "bannerFreeShippingQualifyText": "{name} donne droit à la livraison gratuite !",
+        "bannerFreeShippingText": "Livraison gratuite incluse !",
+
+        "moreProductsText": "+ {count} produits supplémentaires",
+        "showLessText": "Afficher moins"
+    }
 }
