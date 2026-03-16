@@ -317,11 +317,9 @@ export type BundleLayoutType = FixedBundleLayout | BogoLayout;
 
 export interface DisplaySettings {
     layout: BundleLayoutType;
-    theme: "LIGHT" | "DARK" | "STORE_DEFAULT" | "CUSTOM";
     title: string;
     subtitle: string;
     cartButtonText: string;
-    // colorTheme: "brand" | "success" | "warning" | "critical";
     showImages: boolean;
     showSavingsBadge: boolean;
     showPrices: boolean;
@@ -330,53 +328,6 @@ export interface DisplaySettings {
     showSavings: boolean;
     showFreeShipping: boolean;
     enableHyperLink: boolean;
-    style?: {
-        // General
-        primaryColor?: string;
-        secondaryColor?: string;
-        textColor?: string;
-        // Add to Cart button
-        buttonFontSize?: number;
-        buttonBgColor?: string;
-        buttonTextColor?: string;
-        buttonRadius?: number;
-        // Saving badge
-        badgeFontSize?: number;
-        badgeBgColor?: string;
-        badgeTextColor?: string;
-        badgeRadius?: number;
-        // Product
-        productBgColor?: string;
-        productTextColor?: string;
-        productBorderColor?: string;
-        productRadius?: number;
-        productFontSize?: number;
-        // Box
-        boxBgColor?: string;
-        boxBorderColor?: string;
-        boxRadius?: number;
-        boxBorderWidth?: number;
-        boxMaxWidth?: number;
-        boxAlignment?: "left" | "center" | "right";
-        //Image
-        imageRadius?: number;
-        imageSize?: number;
-        imageFit?: "cover" | "contain" | "fill";
-        //Heading
-        headingFontSize?: number;
-        headingColor?: string;
-        headingTransform?: string;
-        // label
-        headingLabel?: string;
-        quantityLabel?: string;
-        regularPriceLabel?: string;
-        bundlePriceLabel?: string;
-        youSaveLabel?: string;
-        freeShippingLabel?: string;
-    };
-    widget?: {
-        showOnMobile: boolean;
-    };
 }
 
 export interface BundleConfiguration {

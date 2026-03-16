@@ -161,14 +161,9 @@ model BundleSettings {
     id             String      @id @default(cuid())
     bundleId       String      @unique
     layout         String      @default("GRID")
-    theme          WidgetTheme @default(STORE_DEFAULT)
     title          String?
     subtitle       String?
     cartButtonText String?
-    widget         Json?
-    variant        String?
-    misc           Json?
-    responsive     Json?
 
     // Display settings
     showImages        Boolean @default(true)
@@ -180,8 +175,6 @@ model BundleSettings {
     enableHyperLink   Boolean @default(false)
     showQuantity      Boolean @default(true)
 
-    // Style settings
-    style  Json?
     bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
@@ -599,13 +592,6 @@ enum BundleProductRole {
     INCLUDED
     OPTIONAL
     GROUP_OPTION
-}
-
-enum WidgetTheme {
-    LIGHT
-    DARK
-    STORE_DEFAULT
-    CUSTOM
 }
 
 enum TestType {

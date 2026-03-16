@@ -276,7 +276,6 @@ export async function GET(request: NextRequest) {
             settings: topBundle.settings
                 ? {
                       layout: topBundle.settings.layout,
-                      theme: topBundle.settings.theme,
                       showImages: topBundle.settings.showImages,
                       showComparePrices:
                           topBundle.settings.showComparePrices,

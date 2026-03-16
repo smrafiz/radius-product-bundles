@@ -749,11 +749,9 @@ export async function updateBundleAction(
  * @returns Sanitized settings object
  */
 function sanitizeSettings(settings: any) {
-    if (!settings) return undefined;
+    if (!settings) {
+        return undefined;
+    }
 
-    return {
-        ...settings,
-        style: settings.style ?? undefined,
-        widget: settings.widget ?? undefined,
-    };
+    return { ...settings };
 }

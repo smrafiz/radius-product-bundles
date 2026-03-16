@@ -30,9 +30,6 @@ const bundleSettingsSchema = (v: T) =>
     z
         .object({
             layout: z.string().default("GRID"),
-            theme: z
-                .enum(["LIGHT", "DARK", "STORE_DEFAULT", "CUSTOM"])
-                .default("STORE_DEFAULT"),
             title: z
                 .string()
                 .max(100)
@@ -47,49 +44,6 @@ const bundleSettingsSchema = (v: T) =>
             showSavings: z.boolean().default(true),
             showFreeShipping: z.boolean().default(true),
             enableHyperLink: z.boolean().default(false),
-            style: z
-                .object({
-                    primaryColor: z.string().optional(),
-                    secondaryColor: z.string().optional(),
-                    textColor: z.string().optional(),
-                    buttonFontSize: z.number().optional(),
-                    buttonBgColor: z.string().optional(),
-                    buttonTextColor: z.string().optional(),
-                    buttonRadius: z.number().optional(),
-                    badgeFontSize: z.number().optional(),
-                    badgeBgColor: z.string().optional(),
-                    badgeTextColor: z.string().optional(),
-                    badgeRadius: z.number().optional(),
-                    productBgColor: z.string().optional(),
-                    productTextColor: z.string().optional(),
-                    productBorderColor: z.string().optional(),
-                    productRadius: z.number().optional(),
-                    productFontSize: z.number().optional(),
-                    boxBgColor: z.string().optional(),
-                    boxBorderColor: z.string().optional(),
-                    boxRadius: z.number().optional(),
-                    boxBorderWidth: z.number().optional(),
-                    boxMaxWidth: z.number().optional(),
-                    boxAlignment: z.string().optional(),
-                    imageRadius: z.number().optional(),
-                    imageSize: z.number().optional(),
-                    imageFit: z.enum(["cover", "contain", "fill"]).optional(),
-                    headingFontSize: z.number().optional(),
-                    headingColor: z.string().optional(),
-                    headingTransform: z.string().optional(),
-                    headingLabel: z.string().optional(),
-                    quantityLabel: z.string().optional(),
-                    regularPriceLabel: z.string().optional(),
-                    bundlePriceLabel: z.string().optional(),
-                    youSaveLabel: z.string().optional(),
-                    freeShippingLabel: z.string().optional(),
-                })
-                .optional(),
-            widget: z
-                .object({
-                    showOnMobile: z.boolean().optional(),
-                })
-                .optional(),
         })
         .optional();
 
