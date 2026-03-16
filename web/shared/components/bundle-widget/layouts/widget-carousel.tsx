@@ -78,7 +78,7 @@ export function WidgetCarousel({
                         onClick={() => scroll("left")}
                         style={{
                             position: "absolute",
-                            left: "8px",
+                            insetInlineStart: "8px",
                             top: "50%",
                             transform: "translateY(-50%)",
                             zIndex: 10,

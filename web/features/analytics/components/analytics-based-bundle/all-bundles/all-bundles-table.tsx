@@ -257,7 +257,7 @@ export function AllBundlesTable() {
                                         <s-heading>
                                             <s-text>
                                                 {bundle.status === "DELETED" ? (
-                                                    <span className="text-left font-semibold max-w-50">
+                                                    <span className="text-start font-semibold max-w-50">
                                                         {stripDeletedSuffix(
                                                             bundle.title,
                                                         )}
@@ -270,7 +270,7 @@ export function AllBundlesTable() {
                                                                 bundle.id,
                                                             )
                                                         }
-                                                        className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0 max-w-50"
+                                                        className="text-start font-semibold hover:underline cursor-pointer bg-transparent border-none p-0 max-w-50"
                                                     >
                                                         {bundle.title}
                                                     </button>

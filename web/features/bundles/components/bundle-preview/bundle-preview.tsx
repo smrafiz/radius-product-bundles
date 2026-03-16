@@ -508,13 +508,13 @@ export function BundlePreview() {
                                     borderColor: styles.borderColor,
                                     boxShadow: shadow,
                                     padding,
-                                    marginLeft: styles.showBorder
+                                    marginInlineStart: styles.showBorder
                                         ? "-17px"
                                         : "-16px",
-                                    marginRight: styles.showBorder
+                                    marginInlineEnd: styles.showBorder
                                         ? "-17px"
                                         : "-16px",
-                                    marginBottom: styles.showBorder
+                                    marginBlockEnd: styles.showBorder
                                         ? "-17px"
                                         : "-16px",
                                 }}

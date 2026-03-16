@@ -539,21 +539,81 @@
       }
     },
     "Types": {
-      "FIXED_BUNDLE": { "label": "Fixed bundle", "description": "Bundle products together at a fixed price with discount", "features": ["Fixed bundle price", "Multiple products"] },
-      "BUY_X_GET_Y": { "label": "Buy X Get Y", "description": "Customer buys X items and gets Y items free or discounted", "features": ["Buy 2 Get 1 Free", "Buy 3 Get 2nd 50% Off"] },
-      "BOGO": { "label": "BOGO", "description": "Classic buy one get one offer with various discount options", "features": ["Buy 1 Get 1 Free", "Buy 1 Get 1 50% Off"] },
-      "VOLUME_DISCOUNT": { "label": "Volume discount", "description": "Offer discounts based on quantity purchased", "features": ["Buy 2 Save 10%", "Buy 5 Save 20%"] },
-      "MIX_AND_MATCH": { "label": "Mix & match", "description": "Choose any combination from products", "features": ["Pick any 3 for $50", "Mix different categories"] },
-      "FREQUENTLY_BOUGHT_TOGETHER": { "label": "Frequently bought together", "description": "Frequently bought together", "features": ["Smart product suggestions", "AI-powered recommendations"] },
+      "FIXED_BUNDLE": {
+        "label": "Fixed bundle",
+        "description": "Bundle products together at a fixed price with discount",
+        "features": [
+          "Fixed bundle price",
+          "Multiple products"
+        ]
+      },
+      "BUY_X_GET_Y": {
+        "label": "Buy X Get Y",
+        "description": "Customer buys X items and gets Y items free or discounted",
+        "features": [
+          "Buy 2 Get 1 Free",
+          "Buy 3 Get 2nd 50% Off"
+        ]
+      },
+      "BOGO": {
+        "label": "BOGO",
+        "description": "Classic buy one get one offer with various discount options",
+        "features": [
+          "Buy 1 Get 1 Free",
+          "Buy 1 Get 1 50% Off"
+        ]
+      },
+      "VOLUME_DISCOUNT": {
+        "label": "Volume discount",
+        "description": "Offer discounts based on quantity purchased",
+        "features": [
+          "Buy 2 Save 10%",
+          "Buy 5 Save 20%"
+        ]
+      },
+      "MIX_AND_MATCH": {
+        "label": "Mix & match",
+        "description": "Choose any combination from products",
+        "features": [
+          "Pick any 3 for $50",
+          "Mix different categories"
+        ]
+      },
+      "FREQUENTLY_BOUGHT_TOGETHER": {
+        "label": "Frequently bought together",
+        "description": "Frequently bought together",
+        "features": [
+          "Smart product suggestions",
+          "AI-powered recommendations"
+        ]
+      },
       "comingSoon": "Coming soon!"
     },
     "DiscountTypes": {
-      "PERCENTAGE": { "label": "Discount Percentage", "description": "Discount as a percentage of the original price" },
-      "FIXED_AMOUNT": { "label": "Discount Amount", "description": "Fixed dollar amount discount" },
-      "CUSTOM_PRICE": { "label": "Bundle Price", "description": "Set a specific price for the bundle" },
-      "NO_DISCOUNT": { "label": "No Discount", "description": "Bundle with no discount applied" },
-      "BUY_X_GET_Y": { "label": "Buy X Get Y", "description": "Buy certain quantity and get items free/discounted" },
-      "QUANTITY_BREAKS": { "label": "Quantity Breaks", "description": "Volume-based pricing with quantity tiers" }
+      "PERCENTAGE": {
+        "label": "Discount Percentage",
+        "description": "Discount as a percentage of the original price"
+      },
+      "FIXED_AMOUNT": {
+        "label": "Discount Amount",
+        "description": "Fixed dollar amount discount"
+      },
+      "CUSTOM_PRICE": {
+        "label": "Bundle Price",
+        "description": "Set a specific price for the bundle"
+      },
+      "NO_DISCOUNT": {
+        "label": "No Discount",
+        "description": "Bundle with no discount applied"
+      },
+      "BUY_X_GET_Y": {
+        "label": "Buy X Get Y",
+        "description": "Buy certain quantity and get items free/discounted"
+      },
+      "QUANTITY_BREAKS": {
+        "label": "Quantity Breaks",
+        "description": "Volume-based pricing with quantity tiers"
+      }
     },
     "DetailsConstants": {
       "fieldLabels": {
@@ -574,10 +634,22 @@
         "priority": "Priority"
       },
       "steps": {
-        "products": { "title": "Products", "description": "Select products for your bundle" },
-        "discount": { "title": "Discount", "description": "Set up discount rules and behavior" },
-        "display": { "title": "Display", "description": "Customize appearance and layout" },
-        "review": { "title": "Review", "description": "Review and publish your bundle" }
+        "products": {
+          "title": "Products",
+          "description": "Select products for your bundle"
+        },
+        "discount": {
+          "title": "Discount",
+          "description": "Set up discount rules and behavior"
+        },
+        "display": {
+          "title": "Display",
+          "description": "Customize appearance and layout"
+        },
+        "review": {
+          "title": "Review",
+          "description": "Review and publish your bundle"
+        }
       },
       "layouts": {
         "GRID": "Grid",
@@ -592,14 +664,38 @@
         "SPLIT_DEAL": "Split Deal"
       },
       "displaySettings": {
-        "showImages": { "label": "Display product images", "details": "Show product images for each item included in the bundle." },
-        "showSavingsBadge": { "label": "Display savings badge", "details": "Highlight savings with a badge on eligible bundle items." },
-        "showPrices": { "label": "Display individual product prices", "details": "Show the price of each product included in the bundle." },
-        "showComparePrices": { "label": "Display compare-at prices", "details": "Show the original (compare-at) price alongside the current price." },
-        "showQuantity": { "label": "Display product quantities", "details": "Show the quantity of each product included in the bundle." },
-        "showSavings": { "label": "Display total bundle savings", "details": "Show the total amount customers save when purchasing the bundle." },
-        "showFreeShipping": { "label": "Display free shipping message", "details": "Inform customers when the bundle qualifies for free shipping." },
-        "enableHyperLink": { "label": "Enable product page link", "details": "Link product titles to their respective product pages." }
+        "showImages": {
+          "label": "Display product images",
+          "details": "Show product images for each item included in the bundle."
+        },
+        "showSavingsBadge": {
+          "label": "Display savings badge",
+          "details": "Highlight savings with a badge on eligible bundle items."
+        },
+        "showPrices": {
+          "label": "Display individual product prices",
+          "details": "Show the price of each product included in the bundle."
+        },
+        "showComparePrices": {
+          "label": "Display compare-at prices",
+          "details": "Show the original (compare-at) price alongside the current price."
+        },
+        "showQuantity": {
+          "label": "Display product quantities",
+          "details": "Show the quantity of each product included in the bundle."
+        },
+        "showSavings": {
+          "label": "Display total bundle savings",
+          "details": "Show the total amount customers save when purchasing the bundle."
+        },
+        "showFreeShipping": {
+          "label": "Display free shipping message",
+          "details": "Inform customers when the bundle qualifies for free shipping."
+        },
+        "enableHyperLink": {
+          "label": "Enable product page link",
+          "details": "Link product titles to their respective product pages."
+        }
       }
     },
     "Listing": {
@@ -670,9 +766,9 @@
     "errorLoading": "Failed to load settings",
     "Locales": {
       "title": "Languages",
-      "fallbackTooltip": "Empty fields will fall back to the primary language ({primary}).",
+      "fallbackTooltip": "If a translation is missing in the language file, the empty fields will fall back to the primary language ({primary}).",
       "primaryBadge": "(Primary)",
-      "refresh": "Refresh languages"
+      "refresh": "Languages are synced from your Shopify store settings. Use the refresh button to update the list if you've recently made changes in Shopify."
     },
     "Tabs": {
       "general": {
@@ -1141,14 +1237,38 @@
       "inherit": "Inherit",
       "selectColor": "Select color",
       "Presets": {
-        "minimal": { "name": "Minimal", "description": "Clean and simple with sharp edges" },
-        "soft": { "name": "Soft", "description": "Gentle curves with subtle depth" },
-        "bold": { "name": "Bold", "description": "High contrast and attention-grabbing" },
-        "elegant": { "name": "Elegant", "description": "Sophisticated with refined details" },
-        "dark": { "name": "Dark", "description": "Sleek dark theme with vibrant accents" },
-        "nature": { "name": "Nature", "description": "Earthy tones with organic feel" },
-        "warm": { "name": "Warm", "description": "Inviting warm tones that feel friendly and human" },
-        "professional": { "name": "Professional", "description": "Neutral, structured, and trust-focused" }
+        "minimal": {
+          "name": "Minimal",
+          "description": "Clean and simple with sharp edges"
+        },
+        "soft": {
+          "name": "Soft",
+          "description": "Gentle curves with subtle depth"
+        },
+        "bold": {
+          "name": "Bold",
+          "description": "High contrast and attention-grabbing"
+        },
+        "elegant": {
+          "name": "Elegant",
+          "description": "Sophisticated with refined details"
+        },
+        "dark": {
+          "name": "Dark",
+          "description": "Sleek dark theme with vibrant accents"
+        },
+        "nature": {
+          "name": "Nature",
+          "description": "Earthy tones with organic feel"
+        },
+        "warm": {
+          "name": "Warm",
+          "description": "Inviting warm tones that feel friendly and human"
+        },
+        "professional": {
+          "name": "Professional",
+          "description": "Neutral, structured, and trust-focused"
+        }
       },
       "cartPageBanner": "Cart page banner",
       "bundleProduct": "Bundle product",

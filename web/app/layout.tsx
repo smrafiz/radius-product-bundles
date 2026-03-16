@@ -18,13 +18,13 @@ const inter = Inter({ subsets: ["latin"] });
 /*
  * Root Layout
  */
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: {
     children: ReactNode;
 }) {
     return (
-        <html lang="en">
+        <html lang="en" dir="ltr">
             <head>
                 <meta name="shopify-api-key" content={process.env.NEXT_PUBLIC_SHOPIFY_API_KEY || ""} />
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>

@@ -25,9 +25,9 @@ export function PreviewContainer({
                           : "100%",
                 margin: "0 auto",
                 transition: "max-width 0.3s ease-in-out",
-                borderLeft:
+                borderInlineStart:
                     activeDevice !== "desktop" ? "1px solid #e1e3e5" : "none",
-                borderRight:
+                borderInlineEnd:
                     activeDevice !== "desktop" ? "1px solid #e1e3e5" : "none",
                 overflow: "hidden",
             }}

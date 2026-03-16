@@ -22,26 +22,25 @@
 
         // Widget alignment (data-box-align attribute)
         &[data-box-align="left"] {
-            margin-left: 0;
-            margin-right: auto;
+            margin-inline-start: 0;
+            margin-inline-end: auto;
             .radius-bundle__actions {
-                text-align: left;
+                text-align: start;
             }
         }
 
         &[data-box-align="center"] {
-            margin-left: auto;
-            margin-right: auto;
+            margin-inline: auto;
             .radius-bundle__actions {
                 text-align: center;
             }
         }
 
         &[data-box-align="right"] {
-            margin-left: auto;
-            margin-right: 0;
+            margin-inline-start: auto;
+            margin-inline-end: 0;
             .radius-bundle__actions {
-                text-align: right;
+                text-align: end;
             }
         }
     }
@@ -82,7 +81,7 @@
         background: none;
         border: none;
         padding: 0;
-        text-align: left;
+        text-align: start;
         color: var(--rb-text-color);
     }
 
@@ -188,7 +187,7 @@
         display: none;
         align-items: center;
         vertical-align: middle;
-        margin-right: 6px;
+        margin-inline-end: 6px;
     }
 
     // Dawn theme spinner
@@ -309,7 +308,7 @@
 
         .radius-bundle__product-price {
             width: 100%;
-            text-align: left;
+            text-align: start;
             margin-top: var(--rb-spacing-sm);
             padding-top: var(--rb-spacing-sm);
             border-top: 1px dashed var(--rb-border-color);

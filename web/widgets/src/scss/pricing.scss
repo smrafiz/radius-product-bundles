@@ -53,11 +53,9 @@
         }
     }
 
-    &[data-pricing-summary="highlight"] {
         .radius-bundle__pricing {
-            border-left: var(--rb-pricing-border-left);
+            border-inline-start: var(--rb-pricing-border-left);
         }
-    }
 
     &__pricing-row {
         display: flex;

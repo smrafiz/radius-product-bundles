@@ -69,14 +69,14 @@
 /* grid layout */
 .grid-layout {
     .radius-bundle__product-price-compare {
-        margin-left: 6px;
+        margin-inline-start: 6px;
     }
 }
 
 /* carousel layout */
 .slider-layout {
     .radius-bundle__product-price-compare {
-        margin-left: 6px;
+        margin-inline-start: 6px;
     }
 }
 

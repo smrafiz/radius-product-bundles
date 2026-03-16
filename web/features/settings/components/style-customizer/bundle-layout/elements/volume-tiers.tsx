@@ -37,8 +37,8 @@ export function VolumeTiers({ tiers, highlightColor }: VolumeTiersProps) {
                             <div
                                 style={{
                                     position: "absolute",
-                                    top: "-8px",
-                                    left: "50%",
+                                    insetBlockStart: "-8px",
+                                    insetInlineStart: "50%",
                                     transform: "translateX(-50%)",
                                     backgroundColor: highlightColor,
                                     color: "#fff",

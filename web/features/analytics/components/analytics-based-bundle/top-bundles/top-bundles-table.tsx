@@ -208,7 +208,7 @@ export function TopBundlesTable() {
                                                             bundle.bundleId,
                                                         )
                                                     }
-                                                    className="text-left font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
+                                                    className="text-start font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
                                                 >
                                                     {bundle.title}
                                                 </button>

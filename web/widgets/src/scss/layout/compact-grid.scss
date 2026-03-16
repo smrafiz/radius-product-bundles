@@ -112,7 +112,7 @@
         &--trigger,
         &--reward {
             &:not(:first-child) {
-                margin-left: -1.5px;
+                margin-inline-start: -1.5px;
             }
         }
     }
@@ -268,7 +268,7 @@
     &__dots {
         position: absolute;
         bottom: -6px;
-        right: 16%;
+        inset-inline-end: 16%;
         display: flex;
         justify-content: center;
         gap: 5px;
@@ -363,8 +363,7 @@
         flex-direction: column;
     }
     .rb-cg__dots {
-        right: 0;
-        left: 0;
+        inset-inline: 0;
     }
 }
 

@@ -50,7 +50,7 @@ export function WidgetPricingDisplay({
                     backgroundColor: summaryBg,
                     borderRadius,
                     padding,
-                    borderLeft: `4px solid ${highlightColor}`,
+                    borderInlineStart: `4px solid ${highlightColor}`,
                 };
             default:
                 return {

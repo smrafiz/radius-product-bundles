@@ -81,7 +81,7 @@
         }
 
         .radius-bundle__product-price-compare {
-            margin-left: 5px;
+            margin-inline-start: 5px;
         }
     }
 
@@ -110,11 +110,11 @@
             }
 
             .radius-bundle__slider-nav--prev {
-                left: 0;
+                inset-inline-start: 0;
             }
 
             .radius-bundle__slider-nav--next {
-                right: 0;
+                inset-inline-end: 0;
             }
         }
     }
@@ -162,11 +162,11 @@
         }
 
         &--prev {
-            left: -18px;
+            inset-inline-start: -18px;
         }
 
         &--next {
-            right: -18px;
+            inset-inline-end: -18px;
         }
     }
 

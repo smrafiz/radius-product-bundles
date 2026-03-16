@@ -539,21 +539,81 @@
       }
     },
     "Types": {
-      "FIXED_BUNDLE": { "label": "Offre groupée à prix fixe", "description": "Regrouper des produits à un prix fixe avec remise", "features": ["Prix fixe de l'offre groupée", "Plusieurs produits"] },
-      "BUY_X_GET_Y": { "label": "Achetez X, obtenez Y", "description": "Pour l'achat de X articles, le client obtient Y articles gratuits ou à prix réduit", "features": ["2 achetés, 1 offert", "Pour 3 articles achetés, le 2e à -50 %"] },
-      "BOGO": { "label": "BOGO", "description": "Offre classique « 1 acheté, 1 offert » avec diverses options de réduction", "features": ["1 acheté, 1 offert", "1 acheté, 1 à -50 %"] },
-      "VOLUME_DISCOUNT": { "label": "Remise sur quantité", "description": "Remises en fonction de la quantité achetée", "features": ["2 achetés : -10 %", "-20 % pour 5 articles achetés"] },
-      "MIX_AND_MATCH": { "label": "Assortiment", "description": "Choisissez n'importe quelle combinaison de produits", "features": ["Choisissez 3 produits au choix pour 50 $", "Associer différentes catégories"] },
-      "FREQUENTLY_BOUGHT_TOGETHER": { "label": "Produits fréquemment achetés ensemble", "description": "Produits fréquemment achetés ensemble", "features": ["Suggestions de produits intelligentes", "Recommandations basées sur l'IA"] },
+      "FIXED_BUNDLE": {
+        "label": "Offre groupée à prix fixe",
+        "description": "Regrouper des produits à un prix fixe avec remise",
+        "features": [
+          "Prix fixe de l'offre groupée",
+          "Plusieurs produits"
+        ]
+      },
+      "BUY_X_GET_Y": {
+        "label": "Achetez X, obtenez Y",
+        "description": "Pour l'achat de X articles, le client obtient Y articles gratuits ou à prix réduit",
+        "features": [
+          "2 achetés, 1 offert",
+          "Pour 3 articles achetés, le 2e à -50 %"
+        ]
+      },
+      "BOGO": {
+        "label": "BOGO",
+        "description": "Offre classique « 1 acheté, 1 offert » avec diverses options de réduction",
+        "features": [
+          "1 acheté, 1 offert",
+          "1 acheté, 1 à -50 %"
+        ]
+      },
+      "VOLUME_DISCOUNT": {
+        "label": "Remise sur quantité",
+        "description": "Remises en fonction de la quantité achetée",
+        "features": [
+          "2 achetés : -10 %",
+          "-20 % pour 5 articles achetés"
+        ]
+      },
+      "MIX_AND_MATCH": {
+        "label": "Assortiment",
+        "description": "Choisissez n'importe quelle combinaison de produits",
+        "features": [
+          "Choisissez 3 produits au choix pour 50 $",
+          "Associer différentes catégories"
+        ]
+      },
+      "FREQUENTLY_BOUGHT_TOGETHER": {
+        "label": "Produits fréquemment achetés ensemble",
+        "description": "Produits fréquemment achetés ensemble",
+        "features": [
+          "Suggestions de produits intelligentes",
+          "Recommandations basées sur l'IA"
+        ]
+      },
       "comingSoon": "Bientôt disponible !"
     },
     "DiscountTypes": {
-      "PERCENTAGE": { "label": "Pourcentage de remise", "description": "Pourcentage de réduction par rapport au prix d'origine" },
-      "FIXED_AMOUNT": { "label": "Montant de la remise", "description": "Remise forfaitaire en euros" },
-      "CUSTOM_PRICE": { "label": "Prix de l'offre groupée", "description": "Définir un prix spécifique pour l'offre groupée" },
-      "NO_DISCOUNT": { "label": "Pas de remise", "description": "Offre groupée sans remise" },
-      "BUY_X_GET_Y": { "label": "Achetez X, obtenez Y", "description": "Achetez une certaine quantité et obtenez des articles gratuits/à prix réduit" },
-      "QUANTITY_BREAKS": { "label": "Remises sur quantité", "description": "Tarification au volume avec paliers de quantité" }
+      "PERCENTAGE": {
+        "label": "Pourcentage de remise",
+        "description": "Pourcentage de réduction par rapport au prix d'origine"
+      },
+      "FIXED_AMOUNT": {
+        "label": "Montant de la remise",
+        "description": "Remise forfaitaire en euros"
+      },
+      "CUSTOM_PRICE": {
+        "label": "Prix de l'offre groupée",
+        "description": "Définir un prix spécifique pour l'offre groupée"
+      },
+      "NO_DISCOUNT": {
+        "label": "Pas de remise",
+        "description": "Offre groupée sans remise"
+      },
+      "BUY_X_GET_Y": {
+        "label": "Achetez X, obtenez Y",
+        "description": "Achetez une certaine quantité et obtenez des articles gratuits/à prix réduit"
+      },
+      "QUANTITY_BREAKS": {
+        "label": "Remises sur quantité",
+        "description": "Tarification au volume avec paliers de quantité"
+      }
     },
     "DetailsConstants": {
       "fieldLabels": {
@@ -574,10 +634,22 @@
         "priority": "Priorité"
       },
       "steps": {
-        "products": { "title": "Produits", "description": "Sélectionnez les produits de votre offre groupée" },
-        "discount": { "title": "Remise", "description": "Définir les règles et le fonctionnement des remises" },
-        "display": { "title": "Affichage", "description": "Personnaliser l'apparence et la mise en page" },
-        "review": { "title": "Vérifier", "description": "Vérifier et publier votre offre groupée" }
+        "products": {
+          "title": "Produits",
+          "description": "Sélectionnez les produits de votre offre groupée"
+        },
+        "discount": {
+          "title": "Remise",
+          "description": "Définir les règles et le fonctionnement des remises"
+        },
+        "display": {
+          "title": "Affichage",
+          "description": "Personnaliser l'apparence et la mise en page"
+        },
+        "review": {
+          "title": "Vérifier",
+          "description": "Vérifier et publier votre offre groupée"
+        }
       },
       "layouts": {
         "GRID": "Grille",
@@ -592,14 +664,38 @@
         "SPLIT_DEAL": "Offre partagée"
       },
       "displaySettings": {
-        "showImages": { "label": "Afficher les images des produits", "details": "Afficher les images de produit pour chaque article de l'offre groupée." },
-        "showSavingsBadge": { "label": "Afficher le badge d'économies", "details": "Mettez en évidence les économies réalisées au moyen d'un badge sur les articles éligibles de l'offre groupée." },
-        "showPrices": { "label": "Afficher les prix de chaque produit", "details": "Affichez le prix de chaque produit inclus dans l'offre groupée." },
-        "showComparePrices": { "label": "Afficher les prix de comparaison", "details": "Afficher le prix d'origine (de comparaison) à côté du prix actuel." },
-        "showQuantity": { "label": "Afficher les quantités de produits", "details": "Afficher la quantité de chaque produit inclus dans l'offre groupée." },
-        "showSavings": { "label": "Afficher l'économie totale sur l'offre groupée", "details": "Affichez le montant total que les clients économisent en achetant l'offre groupée." },
-        "showFreeShipping": { "label": "Afficher le message de livraison gratuite", "details": "Informez les clients lorsque l'offre groupée donne droit à la livraison gratuite." },
-        "enableHyperLink": { "label": "Activer le lien vers la page produit", "details": "Associez les noms des produits à leurs pages respectives." }
+        "showImages": {
+          "label": "Afficher les images des produits",
+          "details": "Afficher les images de produit pour chaque article de l'offre groupée."
+        },
+        "showSavingsBadge": {
+          "label": "Afficher le badge d'économies",
+          "details": "Mettez en évidence les économies réalisées au moyen d'un badge sur les articles éligibles de l'offre groupée."
+        },
+        "showPrices": {
+          "label": "Afficher les prix de chaque produit",
+          "details": "Affichez le prix de chaque produit inclus dans l'offre groupée."
+        },
+        "showComparePrices": {
+          "label": "Afficher les prix de comparaison",
+          "details": "Afficher le prix d'origine (de comparaison) à côté du prix actuel."
+        },
+        "showQuantity": {
+          "label": "Afficher les quantités de produits",
+          "details": "Afficher la quantité de chaque produit inclus dans l'offre groupée."
+        },
+        "showSavings": {
+          "label": "Afficher l'économie totale sur l'offre groupée",
+          "details": "Affichez le montant total que les clients économisent en achetant l'offre groupée."
+        },
+        "showFreeShipping": {
+          "label": "Afficher le message de livraison gratuite",
+          "details": "Informez les clients lorsque l'offre groupée donne droit à la livraison gratuite."
+        },
+        "enableHyperLink": {
+          "label": "Activer le lien vers la page produit",
+          "details": "Associez les noms des produits à leurs pages respectives."
+        }
       }
     },
     "Listing": {
@@ -670,9 +766,9 @@
     "errorLoading": "Échec du chargement des paramètres",
     "Locales": {
       "title": "Langues",
-      "fallbackTooltip": "Pour les champs vides, la langue par défaut sera la langue principale ({primary}).",
+      "fallbackTooltip": "Si une traduction est absente dans le fichier de langue, les champs vides reviendront à la langue principale ({primary})",
       "primaryBadge": "(Principale)",
-      "refresh": "Actualiser les langues"
+      "refresh": "Les langues sont synchronisées à partir des paramètres de votre boutique Shopify. Utilisez le bouton d’actualisation pour mettre à jour la liste si vous avez récemment effectué des modifications dans Shopify."
     },
     "Tabs": {
       "general": {
@@ -1140,14 +1236,38 @@
       "inherit": "Hériter",
       "selectColor": "Sélectionner la couleur",
       "Presets": {
-        "minimal": { "name": "Minimaliste", "description": "Épuré et simple, aux angles nets" },
-        "soft": { "name": "Doux", "description": "Courbes douces, profondeur subtile" },
-        "bold": { "name": "Audacieux", "description": "Contraste élevé, attire l'attention" },
-        "elegant": { "name": "Élégant", "description": "Sophistiqué, détails raffinés" },
-        "dark": { "name": "Sombre", "description": "Sombre et épuré, avec des touches vives" },
-        "nature": { "name": "Nature", "description": "Tons naturels, style organique" },
-        "warm": { "name": "Chaud", "description": "Tons chauds et accueillants, conviviaux et humains" },
-        "professional": { "name": "Professionnel", "description": "Neutre, structuré, axé sur la confiance" }
+        "minimal": {
+          "name": "Minimaliste",
+          "description": "Épuré et simple, aux angles nets"
+        },
+        "soft": {
+          "name": "Doux",
+          "description": "Courbes douces, profondeur subtile"
+        },
+        "bold": {
+          "name": "Audacieux",
+          "description": "Contraste élevé, attire l'attention"
+        },
+        "elegant": {
+          "name": "Élégant",
+          "description": "Sophistiqué, détails raffinés"
+        },
+        "dark": {
+          "name": "Sombre",
+          "description": "Sombre et épuré, avec des touches vives"
+        },
+        "nature": {
+          "name": "Nature",
+          "description": "Tons naturels, style organique"
+        },
+        "warm": {
+          "name": "Chaud",
+          "description": "Tons chauds et accueillants, conviviaux et humains"
+        },
+        "professional": {
+          "name": "Professionnel",
+          "description": "Neutre, structuré, axé sur la confiance"
+        }
       },
       "cartPageBanner": "Bannière de la page du panier",
       "bundleProduct": "Offre groupée",

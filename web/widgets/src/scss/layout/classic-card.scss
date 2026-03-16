@@ -140,7 +140,7 @@
     &__badge {
         position: absolute;
         top: -10px;
-        left: 12px;
+        inset-inline-start: 12px;
         color: #fff;
         font-size: calc(var(--rb-body-font-size) - 4px);
         font-weight: 500;
@@ -276,7 +276,7 @@
 
     &__pricing-col {
         &--right {
-            text-align: right;
+            text-align: end;
         }
     }
 

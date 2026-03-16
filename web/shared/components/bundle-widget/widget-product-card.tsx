@@ -127,7 +127,7 @@ export function WidgetProductCard({
                         textDecoration: "line-through",
                         opacity: 0.6,
                         fontSize: "0.9em",
-                        marginLeft: "6px",
+                        marginInlineStart: "6px",
                     }}
                 >
                     {product.compareAtPrice}
