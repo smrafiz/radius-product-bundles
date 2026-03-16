@@ -87,7 +87,7 @@
             align-items: center;
 
             .rb-classic__image {
-                width: 35%;
+                width: var(--rb-image-size);
                 flex-shrink: 0;
                 margin-top: 0;
                 margin-bottom: 0;
@@ -115,7 +115,8 @@
             align-items: center;
 
             .rb-classic__image {
-                width: 35%;
+                width: var(--rb-image-size);
+                height: var(--rb-image-size);
                 flex-shrink: 0;
                 margin-top: 0;
                 margin-bottom: 0;

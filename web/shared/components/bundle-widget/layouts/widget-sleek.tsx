@@ -9,6 +9,7 @@ import {
     getHeadingFontSize,
     getFontSize,
     getCardRadius,
+    getImageSize,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -27,6 +28,7 @@ function SleekProductCard({
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
+    const imageSizePx = getImageSize(styles.imageSize);
     const savingsColor = styles.savingsColor || "#16a34a";
     const borderRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
@@ -67,8 +69,8 @@ function SleekProductCard({
             {product.image && displayOptions.showImages && (
                 <div
                     style={{
-                        width: 48,
-                        height: 48,
+                        width: `calc(${imageSizePx} - 20px)`,
+                        height: `calc(${imageSizePx} - 20px)`,
                         flexShrink: 0,
                         borderRadius: 8,
                         overflow: "hidden",

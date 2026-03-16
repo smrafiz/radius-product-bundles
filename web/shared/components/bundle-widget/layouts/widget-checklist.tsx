@@ -7,6 +7,7 @@ import {
     getCardRadius,
     getHeadingFontSize,
     getFontSize,
+    getImageSize,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -54,6 +55,7 @@ function ChecklistTriggerItem({
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
+    const imageSizePx = getImageSize(styles.imageSize);
 
     return (
         <div
@@ -80,9 +82,8 @@ function ChecklistTriggerItem({
             {product.image && displayOptions.showImages && (
                 <div
                     style={{
-                        width: 56,
-                        height: 56,
-                        minWidth: 56,
+                        width: `calc(${imageSizePx} - 20px)`,
+                        height: `calc(${imageSizePx} - 20px)`,
                         borderRadius: cardRadius,
                         overflow: "hidden",
                         background: styles.productCardBg || "#f9fafb",
@@ -164,15 +165,15 @@ function ChecklistRewardItem({
     const hasDiscount = !!product.compareAtPrice;
     const isFreePrice =
         hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const imageSizePx = getImageSize(styles.imageSize);
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {product.image && displayOptions.showImages && (
                 <div
                     style={{
-                        width: 48,
-                        height: 48,
-                        minWidth: 48,
+                        width: `calc(${imageSizePx} - 20px)`,
+                        height: `calc(${imageSizePx} - 20px)`,
                         borderRadius: cardRadius,
                         overflow: "hidden",
                         background: styles.productCardBg || "#f9fafb",

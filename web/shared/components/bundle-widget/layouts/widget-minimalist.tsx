@@ -9,6 +9,7 @@ import {
     getFontSize,
     getCardRadius,
     getButtonPadding,
+    getImageSize,
 } from "@/features/settings";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
 
@@ -49,6 +50,7 @@ function MinimalistItem({
     const savingsColor = styles.savingsColor || "#16a34a";
     const cardRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
+    const imageSizePx = getImageSize(styles.imageSize);
 
     return (
         <div
@@ -67,8 +69,8 @@ function MinimalistItem({
             {product.image && displayOptions.showImages && (
                 <div
                     style={{
-                        width: 60,
-                        height: 60,
+                        width: `calc(${imageSizePx} - 20px)`,
+                        height: `calc(${imageSizePx} - 20px)`,
                         flexShrink: 0,
                         borderRadius: cardRadius,
                         overflow: "hidden",
@@ -219,6 +221,10 @@ export function WidgetMinimalist({
             style={{
                 position: "relative",
                 padding: spacingValues.padding,
+                borderRadius: cardRadius,
+                border: styles.showBorder
+                    ? `1px solid ${styles.borderColor}`
+                    : "none",
             }}
         >
             {badgeText && pricing?.hasDiscount && displayOptions.showSavingsBadge && (

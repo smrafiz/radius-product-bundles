@@ -12,6 +12,7 @@ import {
     getBadgeRadius,
     getShadow,
     getCardBgColor,
+    getImageSize,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
@@ -26,23 +27,27 @@ function ClassicProductItem({
     product,
     isReward,
     styles,
+    displayOptions,
 }: {
     product: PreviewProduct;
     isReward: boolean;
     styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
+    const imageSizePx = getImageSize(styles.imageSize);
     const isHorizontal = styles.imagePosition === "left";
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice =
         hasDiscount && (product.price === "$0.00" || product.price === "$0");
 
-    const imageBlock = product.image && (
+    const imageBlock = product.image && displayOptions.showImages && (
         <div
             style={{
-                width: isHorizontal ? "35%" : "100%",
+                width: isHorizontal ? imageSizePx : "100%",
+                height: isHorizontal ? imageSizePx : "100%",
                 flexShrink: isHorizontal ? 0 : undefined,
                 aspectRatio: IMAGE_ASPECT_RATIOS[styles.imageSize] ?? "1/1",
                 borderRadius: cardRadius,
@@ -88,7 +93,7 @@ function ClassicProductItem({
                     marginTop: 6,
                 }}
             >
-                {hasDiscount && (
+                {hasDiscount && displayOptions.showComparePrices && (
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 2,
@@ -99,6 +104,7 @@ function ClassicProductItem({
                         {product.compareAtPrice}
                     </span>
                 )}
+                {displayOptions.showPrices && (
                 <span
                     style={{
                         fontSize: bodyFontSize,
@@ -110,6 +116,7 @@ function ClassicProductItem({
                 >
                     {isFreePrice ? freeText : product.price}
                 </span>
+                    )}
             </div>
         </div>
     );
@@ -142,6 +149,7 @@ function ClassicProductItem({
 export function WidgetClassicCard({
     products,
     styles,
+    displayOptions,
     pricing,
     cartButtonText,
     title,
@@ -215,7 +223,7 @@ export function WidgetClassicCard({
                     gap: 6,
                 }}
             >
-                {badgeText && (
+                {badgeText && displayOptions.showSavingsBadge && (
                     <span
                         style={{
                             display: "inline-flex",
@@ -299,6 +307,7 @@ export function WidgetClassicCard({
                             boxShadow: cardShadow,
                         }}
                     >
+                        {displayOptions.showSavingsBadge && (
                         <span
                             style={{
                                 position: "absolute",
@@ -320,6 +329,7 @@ export function WidgetClassicCard({
                         >
                             {badge}
                         </span>
+                            )}
                         <div
                             style={{
                                 display: "grid",
@@ -336,6 +346,7 @@ export function WidgetClassicCard({
                                     product={p}
                                     isReward={variant === "reward"}
                                     styles={styles}
+                                    displayOptions={displayOptions}
                                 />
                             ))}
                         </div>

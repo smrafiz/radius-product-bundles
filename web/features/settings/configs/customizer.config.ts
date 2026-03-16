@@ -169,8 +169,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     layouts: [
                         "LIST",
                         "CLASSIC_CARD",
-                        "COMPACT_GRID",
-                        "MINIMALIST",
                     ],
                 },
 

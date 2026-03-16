@@ -52,8 +52,8 @@
 
     // ── Image ────────────────────────────────────────────────────────
     &__image {
-        width: 48px;
-        height: 48px;
+        width: calc(var(--rb-image-size) - 20px);
+        height: calc(var(--rb-image-size) - 20px);
         flex-shrink: 0;
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
