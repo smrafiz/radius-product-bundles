@@ -25,17 +25,21 @@ export function WidgetProductCard({
     const gap = getSpacing(styles.spacing);
     const cardBackground = getCardBgColor(styles);
 
-    // 🔹 Select random placeholder
     const placeholderKeys = Object.keys(PLACEHOLDER_IMAGES).map(Number);
-    const randomPlaceholder =
+    const stablePlaceholder =
         PLACEHOLDER_IMAGES[
-            placeholderKeys[Math.floor(Math.random() * placeholderKeys.length)] as keyof typeof PLACEHOLDER_IMAGES
+            placeholderKeys[
+                product.id
+                    .split("")
+                    .reduce((acc, c) => acc + c.charCodeAt(0), 0) %
+                    placeholderKeys.length
+            ] as keyof typeof PLACEHOLDER_IMAGES
         ];
 
     const imageSrc =
         product.image && product.image.trim() !== ""
             ? product.image
-            : randomPlaceholder;
+            : stablePlaceholder;
 
     const truncatedTitle =
         product.title.length > 40
