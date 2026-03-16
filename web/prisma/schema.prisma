@@ -104,7 +104,6 @@ model Bundle {
     bundleProducts       BundleProduct[]
     settings             BundleSettings?
     Shop                 Shop?                @relation(fields: [shopId], references: [id])
-    pricingRules         PricingRuleBundle[]
     bundleViews          BundleView[]
 
     @@unique([shop, name])
@@ -278,40 +277,6 @@ model AutomationLog {
     @@map("automation_logs")
 }
 
-model PricingRule {
-    id                String              @id @default(cuid())
-    shop              String
-    name              String
-    priority          Int                 @default(0)
-    status            PricingStatus       @default(ACTIVE)
-    conditions        Json
-    discountType      DiscountType
-    discountValue     Float
-    maxDiscountAmount Float?
-    applicationsCount Int                 @default(0)
-    revenueImpact     Float               @default(0)
-    createdAt         DateTime            @default(now())
-    updatedAt         DateTime            @updatedAt
-    shopId            String?
-    bundles           PricingRuleBundle[]
-    Shop              Shop?               @relation(fields: [shopId], references: [id])
-
-    @@index([shop, priority])
-    @@index([shopId])
-    @@map("pricing_rules")
-}
-
-model PricingRuleBundle {
-    id            String      @id @default(cuid())
-    pricingRuleId String
-    bundleId      String
-    bundle        Bundle      @relation(fields: [bundleId], references: [id], onDelete: Cascade)
-    pricingRule   PricingRule @relation(fields: [pricingRuleId], references: [id], onDelete: Cascade)
-
-    @@unique([pricingRuleId, bundleId])
-    @@map("pricing_rule_bundles")
-}
-
 model BundleAnalytics {
     id                         String   @id @default(cuid())
     bundleId                   String
@@ -379,44 +344,6 @@ model AIInsight {
     @@index([shop, type, confidence])
     @@index([shopId])
     @@map("ai_insights")
-}
-
-model Template {
-    id              String             @id @default(cuid())
-    name            String
-    description     String
-    category        String
-    bundleType      BundleType
-    difficulty      TemplateDifficulty
-    bundleConfig    Json
-    pricingConfig   Json
-    marketingConfig Json?
-    downloads       Int                @default(0)
-    rating          Float?
-    reviewCount     Int                @default(0)
-    createdBy       String
-    isPublic        Boolean            @default(false)
-    isOfficial      Boolean            @default(false)
-    createdAt       DateTime           @default(now())
-    updatedAt       DateTime           @updatedAt
-    reviews         TemplateReview[]
-
-    @@index([category, rating])
-    @@map("templates")
-}
-
-model TemplateReview {
-    id         String   @id @default(cuid())
-    templateId String
-    shop       String
-    rating     Int
-    review     String?
-    helpful    Int      @default(0)
-    createdAt  DateTime @default(now())
-    template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
-
-    @@unique([templateId, shop])
-    @@map("template_reviews")
 }
 
 model Notification {
@@ -494,7 +421,6 @@ model Shop {
     automations   Automation[]
     bundles       Bundle[]
     notifications Notification[]
-    pricingRules  PricingRule[]
 
     @@index([domain, setupComplete])
     @@map("shops")
@@ -621,22 +547,11 @@ enum TriggerType {
     CUSTOMER_BEHAVIOR
 }
 
-enum PricingStatus {
-    ACTIVE
-    INACTIVE
-}
-
 enum AIInsightType {
     RECOMMENDATION
     OPTIMIZATION
     PREDICTION
     WARNING
-}
-
-enum TemplateDifficulty {
-    EASY
-    MEDIUM
-    HARD
 }
 
 enum NotificationType {
