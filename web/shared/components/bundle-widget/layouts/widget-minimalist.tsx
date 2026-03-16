@@ -95,6 +95,7 @@ function MinimalistItem({
                     gap: 6,
                 }}
             >
+                {displayOptions.showSavingsBadge && (
                 <span
                     style={{
                         fontSize: parseInt(bodyFontSize) - 5,
@@ -114,6 +115,7 @@ function MinimalistItem({
                 >
                     {roleBadgeText}
                 </span>
+                    )}
                 <span
                     style={{
                         fontSize: bodyFontSize,
@@ -219,7 +221,7 @@ export function WidgetMinimalist({
                 padding: spacingValues.padding,
             }}
         >
-            {badgeText && pricing?.hasDiscount && (
+            {badgeText && pricing?.hasDiscount && displayOptions.showSavingsBadge && (
                 <span
                     style={{
                         position: "absolute",

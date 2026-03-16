@@ -43,7 +43,7 @@
 				</div>
 				<div class="rb-classic__grid">
 					<div class="rb-classic__card rb-classic__card--trigger" style="flex:1">
-						<span class="rb-classic__badge rb-classic__badge--trigger{{ outline_class }}">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>
+					{% if show_savings_badge %}<span class="rb-classic__badge rb-classic__badge--trigger{{ outline_class }}">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>{% endif %}
 						<div class="rb-classic__group-products"{% if trigger_count > 1 %} style="grid-template-columns:repeat({{ trigger_count }},1fr)"{% endif %}>
 							{% for i in (1..trigger_count) %}
 								<div class="rb-classic__product{% if is_horizontal %} rb-classic__product--horizontal{% endif %}">
@@ -63,7 +63,7 @@
 						</div>
 					</div>
 					<div class="rb-classic__card rb-classic__card--reward" style="flex:1">
-						<span class="rb-classic__badge rb-classic__badge--reward{{ outline_class }}">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>
+						{% if show_savings_badge %}<span class="rb-classic__badge rb-classic__badge--reward{{ outline_class }}">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>{% endif %}
 						<div class="rb-classic__group-products"{% if reward_count > 1 %} style="grid-template-columns:repeat({{ reward_count }},1fr)"{% endif %}>
 							{% for i in (1..reward_count) %}
 								<div class="rb-classic__product{% if is_horizontal %} rb-classic__product--horizontal{% endif %}">
@@ -118,8 +118,7 @@
 							<div class="rb-checklist__checkbox"></div>
 							{%- if show_images -%}<div class="rb-checklist__item-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
 							<div class="rb-checklist__item-info"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div></div>
-							<div class="rb-checklist__item-price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:50px"></div></div>
-							<span class="rb-checklist__item-chevron">›</span>
+							{%- if show_product_prices -%}<div class="rb-checklist__item-price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:50px"></div></div>{%- endif -%}
 						</div>
 						{% endfor %}
 					</div>
@@ -267,9 +266,9 @@
 						{%- if show_images -%}<div class="rb-sleek__image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
 						<div class="rb-sleek__info">
 							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-							<span class="rb-sleek__label">{{ bogo_you_pay_label | default: 'You pay' }}</span>
+							{%- if show_savings_badge -%}<span class="rb-sleek__label">{{ bogo_you_pay_label | default: 'You pay' }}</span>{%- endif -%}
 						</div>
-						<div class="rb-sleek__price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:60px"></div></div>
+						{%- if show_product_prices -%}<div class="rb-sleek__price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:60px"></div></div>{%- endif -%}
 					</div>
 					{% endfor %}
 					<div class="rb-sleek__divider"><span class="rb-sleek__divider-icon">+</span></div>
@@ -278,9 +277,9 @@
 						{%- if show_images -%}<div class="rb-sleek__image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
 						<div class="rb-sleek__info">
 							<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
-							<span class="rb-sleek__badge">{{ bogo_free_text | default: 'FREE' }}</span>
+							{%- if show_savings_badge -%}<span class="rb-sleek__badge">{{ bogo_free_text | default: 'FREE' }}</span>{%- endif -%}
 						</div>
-						<div class="rb-sleek__price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:60px"></div></div>
+						{%- if show_product_prices -%}<div class="rb-sleek__price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:60px"></div></div>{%- endif -%}
 					</div>
 					{% endfor %}
 					<div class="rb-sleek__separator"></div>
@@ -315,7 +314,7 @@
 						<div class="rb-minimalist__item rb-minimalist__item--trigger">
 							{%- if show_images -%}<div class="rb-minimalist__item-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
 							<div class="rb-minimalist__item-info">
-								<span class="rb-minimalist__item-role rb-minimalist__item-role--trigger">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>
+								{% if show_savings_badge %}<span class="rb-minimalist__item-role rb-minimalist__item-role--trigger">{{ bogo_trigger_badge_text | default: 'You Buy' }}</span>{% endif %}
 								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
 								{%- if show_product_prices -%}<div class="rb-minimalist__item-price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:50px"></div></div>{%- endif -%}
 							</div>
@@ -325,7 +324,7 @@
 						<div class="rb-minimalist__item rb-minimalist__item--reward">
 							{%- if show_images -%}<div class="rb-minimalist__item-image"><div class="radius-bundle__skeleton-image" style="width:100%;height:100%"></div></div>{%- endif -%}
 							<div class="rb-minimalist__item-info">
-								<span class="rb-minimalist__item-role rb-minimalist__item-role--reward">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>
+								{% if show_savings_badge %}<span class="rb-minimalist__item-role rb-minimalist__item-role--reward">{{ bogo_reward_badge_text | default: 'You Get FREE' }}</span>{% endif %}
 								<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--title"></div>
 								{%- if show_product_prices -%}<div class="rb-minimalist__item-price"><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price" style="width:50px"></div></div>{%- endif -%}
 							</div>

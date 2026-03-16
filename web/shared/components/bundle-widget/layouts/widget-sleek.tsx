@@ -109,7 +109,8 @@ function SleekProductCard({
                 >
                     {product.title}
                 </div>
-                {isTrigger ? (
+                {isTrigger && displayOptions.showSavingsBadge ? (
+
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 3,
@@ -122,7 +123,7 @@ function SleekProductCard({
                             DEFAULT_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
-                    hasDiscount && (
+                    hasDiscount && displayOptions.showSavingsBadge && (
                         <span
                             style={{
                                 display: "inline-block",

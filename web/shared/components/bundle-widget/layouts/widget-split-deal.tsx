@@ -177,7 +177,7 @@ export function WidgetSplitDeal({
             <div
                 style={{ textAlign: "center", marginBottom: spacingValues.gap }}
             >
-                {badgeText && (
+                {badgeText &&displayOptions.showSavingsBadge && (
                     <div
                         style={{
                             display: "inline-flex",

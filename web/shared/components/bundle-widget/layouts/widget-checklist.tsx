@@ -439,6 +439,7 @@ export function WidgetChecklist({
                     >
                         {lockedLabel}
                     </span>
+                    {displayOptions.showSavingsBadge && (
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 5,
@@ -451,6 +452,7 @@ export function WidgetChecklist({
                     >
                         {rewardBadgeText}
                     </span>
+                        )}
                     <span
                         style={{
                             marginLeft: "auto",

@@ -289,7 +289,7 @@ export function renderClassicCardProducts(
     }
 
     let html = `<div class="rb-classic__header">`;
-    if (headerBadge) {
+    if (headerBadge && ctx.showSavingsBadge) {
         html += `<span class="rb-classic__header-badge">${escapeHtml(headerBadge)}</span>`;
     }
     html += `<h2 class="rb-classic__header-title">${escapeHtml(bundle.name)}</h2>`;
@@ -302,7 +302,9 @@ export function renderClassicCardProducts(
 
     html += `<div class="rb-classic__grid">`;
     html += `<div class="rb-classic__card rb-classic__card--trigger">`;
-    html += `<span class="rb-classic__badge rb-classic__badge--trigger${outlineClass}">${escapeHtml(triggerBadge)}</span>`;
+    if (ctx.showSavingsBadge) {
+        html += `<span class="rb-classic__badge rb-classic__badge--trigger${outlineClass}">${escapeHtml(triggerBadge)}</span>`;
+    }
     const triggerCols =
         triggers.length > 1
             ? `grid-template-columns:repeat(${triggers.length},1fr)`
@@ -314,7 +316,9 @@ export function renderClassicCardProducts(
     html += `</div></div>`;
 
     html += `<div class="rb-classic__card rb-classic__card--reward">`;
-    html += `<span class="rb-classic__badge rb-classic__badge--reward${outlineClass}">${escapeHtml(rewardBadge)}</span>`;
+    if (ctx.showSavingsBadge) {
+        html += `<span class="rb-classic__badge rb-classic__badge--reward${outlineClass}">${escapeHtml(rewardBadge)}</span>`;
+    }
     const rewardCols =
         rewards.length > 1
             ? `grid-template-columns:repeat(${rewards.length},1fr)`
@@ -411,22 +415,26 @@ export function renderBogoSleekProducts(
             } else if (structure.discountType === "FIXED_AMOUNT") {
                 rewardLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             }
-            badgeHtml = rewardLabel
+            badgeHtml = rewardLabel && ctx.showSavingsBadge
                 ? `<span class="rb-sleek__badge">${escapeHtml(rewardLabel)}</span>`
                 : "";
-            priceHtml = `
+            if (ctx.showPrices) {
+                priceHtml = `
                 <div class="rb-sleek__price">
                     <span class="rb-sleek__price-current rb-sleek__price-current--reward">${isFree ? formatMoney(0) : formatMoney(discountedPrice)}</span>
                     ${ctx.showComparePrices ? `<span class="rb-sleek__price-compare">${formatMoney(product.price)}</span>` : ""}
                 </div>
             `;
+            }
         } else {
-            labelHtml = `<span class="rb-sleek__label">${escapeHtml(youPayLabel)}</span>`;
-            priceHtml = `
+            labelHtml = ctx.showSavingsBadge ? `<span class="rb-sleek__label">${escapeHtml(youPayLabel)}</span>` : "";
+            if (ctx.showPrices) {
+                priceHtml = `
                 <div class="rb-sleek__price">
                     <span class="rb-sleek__price-current">${formatMoney(product.price)}</span>
                 </div>
             `;
+            }
         }
 
         const cardClass = `rb-sleek__card rb-sleek__card--${isReward ? "reward" : "trigger"}`;
@@ -609,11 +617,14 @@ export function renderBogoMinimalistProducts(
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-minimalist__item-title"><a href="${productUrl}">${escapeHtml(p.title)}</a></h3>`
             : `<h3 class="rb-minimalist__item-title">${escapeHtml(p.title)}</h3>`;
+        const roleLabelHtml = ctx.showSavingsBadge
+            ? `<span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>`
+            : "";
 
         return `<div class="rb-minimalist__item rb-minimalist__item--${roleClass}">
             ${img}
             <div class="rb-minimalist__item-info">
-                <span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>
+                ${roleLabelHtml}
                 ${titleHtml}
                 ${priceHtml}
             </div>
@@ -1021,7 +1032,7 @@ export function renderBogoChecklistProducts(
     html += `<div class="rb-checklist__reward ${rewardStateClass}">`;
     html += `<div class="rb-checklist__reward-header">`;
     html += `<span class="rb-checklist__reward-label">${escapeHtml(lockedLabel)}</span>`;
-    if (rewardBadgeText) {
+    if (rewardBadgeText && ctx.showSavingsBadge) {
         html += `<span class="rb-checklist__reward-badge">${escapeHtml(rewardBadgeText)}</span>`;
     }
     html += `<span class="rb-checklist__lock-icon">${isUnlocked ? unlockSvg : lockSvg}</span>`;
