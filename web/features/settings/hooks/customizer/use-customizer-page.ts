@@ -1,6 +1,12 @@
 "use client";
 
 import {
+    extractFieldLabelsFromConfig,
+    startLoading,
+    stopLoading,
+    useGlobalBanner,
+} from "@/shared";
+import {
     CustomizerStyles,
     globalStylesSchema,
     useCustomizerStore,
@@ -8,12 +14,11 @@ import {
     useSettingsQuery,
     type WidgetLayout,
 } from "@/features/settings";
+import { BundleType } from "@/features/bundles";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Resolver, useForm } from "react-hook-form";
 import { BUNDLE_TYPES } from "@/features/bundles/constants";
-import { extractFieldLabelsFromConfig, useGlobalBanner } from "@/shared";
-import { BundleType } from "@/features/bundles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
@@ -41,7 +46,11 @@ export function useCustomizerPage() {
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
     const layoutParam = searchParams.get("layout");
-    const deviceParam = searchParams.get("device") as "desktop" | "tablet" | "mobile" | null;
+    const deviceParam = searchParams.get("device") as
+        | "desktop"
+        | "tablet"
+        | "mobile"
+        | null;
     const initialType =
         types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
     const [resetCounter, setResetCounter] = useState(0);
@@ -132,12 +141,13 @@ export function useCustomizerPage() {
     const handleSubmit = form.handleSubmit(
         async (data) => {
             removeMessageByKey("customizer-validation");
-            window.shopify?.loading(true);
+            startLoading();
 
-            // Pass the validated form data to the server
-            await submitToServer(data);
-
-            window.shopify?.loading(false);
+            try {
+                await submitToServer(data);
+            } finally {
+                stopLoading();
+            }
 
             // Update snapshot to new saved values
             serverSnapshotRef.current = JSON.parse(JSON.stringify(data));

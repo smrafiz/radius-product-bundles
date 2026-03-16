@@ -5,6 +5,15 @@
     --radius-accent: #f59e0b;
 }
 
+/* NProgress bar */
+#nprogress .bar {
+    background: #6366f1;
+    height: 3px;
+}
+#nprogress .peg {
+    box-shadow: 0 0 10px #6366f1, 0 0 5px #6366f1;
+}
+
 @keyframes shimmer {
     0% {
         transform: translateX(-100%);

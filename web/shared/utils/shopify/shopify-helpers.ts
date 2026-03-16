@@ -1,7 +1,9 @@
 /**
  * Shopify App Bridge helper utilities
  */
+import NProgress from "nprogress";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { NPROGRESS_ENABLED } from "@/shared/constants/ui.constants";
 
 /*
  * Type for the Shopify window object
@@ -28,9 +30,7 @@ export const withLoader = <T extends (...args: any[]) => void>(
     callback: T,
 ): ((...args: Parameters<T>) => void) => {
     return (...args: Parameters<T>) => {
-        if (isShopifyAvailable()) {
-            window.shopify!.loading(true);
-        }
+        startLoading();
         callback(...args);
     };
 };
@@ -42,16 +42,12 @@ export const withAsyncLoader = <T extends (...args: any[]) => any>(
     callback: T,
 ): ((...args: Parameters<T>) => Promise<void>) => {
     return async (...args: Parameters<T>): Promise<void> => {
-        if (isShopifyAvailable()) {
-            window.shopify!.loading(true);
-        }
+        startLoading();
 
         try {
             await callback(...args);
         } finally {
-            if (isShopifyAvailable()) {
-                window.shopify!.loading(false);
-            }
+            stopLoading();
         }
     };
 };
@@ -60,7 +56,9 @@ export const withAsyncLoader = <T extends (...args: any[]) => any>(
  * Manually start loading indicator
  */
 export const startLoading = (): void => {
-    if (isShopifyAvailable()) {
+    if (NPROGRESS_ENABLED) {
+        NProgress.start();
+    } else if (isShopifyAvailable()) {
         window.shopify!.loading(true);
     }
 };
@@ -69,7 +67,9 @@ export const startLoading = (): void => {
  * Manually stop loading indicator
  */
 export const stopLoading = (): void => {
-    if (isShopifyAvailable()) {
+    if (NPROGRESS_ENABLED) {
+        NProgress.done();
+    } else if (isShopifyAvailable()) {
         window.shopify!.loading(false);
     }
 };

@@ -1,3 +1,5 @@
+export const NPROGRESS_ENABLED = true;
+
 export const ACTION_THEMES = {
     success: {
         backgroundColor: "var(--p-color-bg-surface-success-hover)",

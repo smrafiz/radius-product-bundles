@@ -5,11 +5,12 @@ import {
     DISMISS_SAVE_BAR,
     getFormState,
     GlobalFormProps,
+    stopLoading,
     SUBMIT_FORM,
     TRIGGER_SAVE_BAR,
     useGlobalBannerStore,
     VALIDATION_ERROR,
-    withLoader,
+    withAsyncLoader,
 } from "@/shared";
 import { useEffect, useRef, useState } from "react";
 import { SaveBar } from "@shopify/app-bridge-react";
@@ -127,9 +128,8 @@ export function GlobalForm<T extends FieldValues>({
                 useGlobalBannerStore
                     .getState()
                     .removeMessageByKey(validationBannerKey);
-                withLoader(async () => {
+                await withAsyncLoader(async () => {
                     await onSubmit(data);
-                    window.shopify?.loading(false);
                     resetDirty?.();
                     setShowSaveBar(false);
                     getFormState(formId).hasUnsavedChanges = false;
@@ -139,7 +139,7 @@ export function GlobalForm<T extends FieldValues>({
             (errors) => {
                 console.log("GlobalForm validation errors:", errors);
                 handleValidationErrors(errors);
-                window.shopify?.loading(false);
+                stopLoading();
                 setIsSaving(false);
             },
         )();
