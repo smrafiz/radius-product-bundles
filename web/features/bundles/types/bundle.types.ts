@@ -113,7 +113,6 @@ export interface SelectedItem {
     role?: "TRIGGER" | "REWARD" | "INCLUDED" | "OPTIONAL" | "GROUP_OPTION";
     groupId?: string;
     customPrice?: number | null;
-    discountPercent?: number | null;
     isRequired?: boolean;
     selectedVariant?: {
         id: string;

@@ -1,5 +1,5 @@
 generator client {
-    provider = "prisma-client"
+    provider = "prisma-client-js"
     output   = "./generated"
 }
 
@@ -96,14 +96,12 @@ model Bundle {
     createdAt            DateTime             @default(now())
     updatedAt            DateTime             @updatedAt
     deletedAt            DateTime?
-    shopId               String?
     abTests              ABTest[]
     automations          AutomationBundle[]
     analytics            BundleAnalytics[]
     productGroups        BundleProductGroup[]
     bundleProducts       BundleProduct[]
     settings             BundleSettings?
-    Shop                 Shop?                @relation(fields: [shopId], references: [id])
     bundleViews          BundleView[]
 
     @@unique([shop, name])
@@ -125,7 +123,6 @@ model BundleProduct {
     role            BundleProductRole   @default(INCLUDED)
     groupId         String?
     customPrice     Float?
-    discountPercent Float?
     isRequired      Boolean             @default(true)
     minQuantity     Int?
     maxQuantity     Int?
@@ -419,7 +416,6 @@ model Shop {
     alertRules    AlertRule[]
     appSettings   AppSettings?   @relation("ShopAppSettings")
     automations   Automation[]
-    bundles       Bundle[]
     notifications Notification[]
 
     @@index([domain, setupComplete])

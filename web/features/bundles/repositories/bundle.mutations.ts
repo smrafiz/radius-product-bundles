@@ -671,7 +671,6 @@ export async function deleteAllBundleRelations(
         deleteBundleProductGroups(tx, bundleId),
         deleteBundleSettings(tx, bundleId),
         tx.automationBundle.deleteMany({ where: { bundleId } }),
-        tx.pricingRuleBundle.deleteMany({ where: { bundleId } }),
     ]);
 }
 
@@ -691,9 +690,6 @@ export async function deleteAllBundleRelationsForMany(
             where: { bundleId: { in: bundleIds } },
         }),
         tx.automationBundle.deleteMany({
-            where: { bundleId: { in: bundleIds } },
-        }),
-        tx.pricingRuleBundle.deleteMany({
             where: { bundleId: { in: bundleIds } },
         }),
     ]);

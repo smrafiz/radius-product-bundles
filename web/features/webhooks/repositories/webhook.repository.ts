@@ -294,13 +294,8 @@ export async function deleteShopData(shop: string): Promise<void> {
                 await tx.bundleAnalytics.deleteMany({
                     where: { bundleId: { in: bundleIds } },
                 });
-                await tx.testResult.deleteMany({
-                    where: { test: { controlBundleId: { in: bundleIds } } },
-                });
                 await tx.bundle.deleteMany({ where: { shop } });
             }
-
-            await tx.templateReview.deleteMany({ where: { shop } });
 
             if (shopRecord) {
                 const shopId = shopRecord.id;
@@ -313,10 +308,6 @@ export async function deleteShopData(shop: string): Promise<void> {
                     where: { automation: { shopId } },
                 });
                 await tx.automation.deleteMany({ where: { shopId } });
-                await tx.pricingRuleBundle.deleteMany({
-                    where: { pricingRule: { shopId } },
-                });
-                await tx.pricingRule.deleteMany({ where: { shopId } });
                 await tx.aIInsight.deleteMany({ where: { shopId } });
                 await tx.notification.deleteMany({ where: { shopId } });
                 await tx.alertRule.deleteMany({ where: { shopId } });

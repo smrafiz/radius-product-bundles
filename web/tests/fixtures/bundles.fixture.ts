@@ -51,7 +51,6 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         createdAt: new Date("2024-01-01"),
         updatedAt: new Date("2024-01-01"),
         deletedAt: null,
-        shopId: null,
         ...overrides,
     };
 }
