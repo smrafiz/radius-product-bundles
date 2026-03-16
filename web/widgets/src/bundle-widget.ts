@@ -602,16 +602,11 @@ import {
                         break;
 
                     case "FIXED_AMOUNT":
-                        badgeText = formatLabel(
-                            structure.labels?.savingsBadgeText ??
-                                "Save {amount}",
-                            {
-                                percent: structure.discountValue,
-                                amount: trimMoney(
-                                    formatMoney(structure.discountValue * 100),
-                                ),
-                            },
-                        );
+                        badgeText = formatLabel("Save {amount}", {
+                            amount: trimMoney(
+                                formatMoney(structure.discountValue * 100),
+                            ),
+                        });
                         break;
 
                     case "CUSTOM_PRICE":
@@ -911,6 +906,7 @@ import {
                 showComparePrices: this.showComparePrices,
                 showQuantity: this.showQuantity,
                 showSavings: this.showSavings,
+                showSavingsBadge: this.showSavingsBadge,
                 showFreeShipping: this.showFreeShipping,
                 lazyLoadImages: this.lazyLoadImages,
                 enableHyperLink: this.enableHyperLink,

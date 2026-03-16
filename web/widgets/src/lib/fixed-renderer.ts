@@ -5,11 +5,12 @@ import type {
     BundleStructure,
 } from "./types";
 import { calculateBxgyRewardPrice } from "./bogo-renderer";
-import { escapeHtml, formatMoney, getLocalePath } from "./utils";
+import { escapeHtml, formatLabel, formatMoney, getLocalePath, trimMoney } from "./utils";
 
 export interface FixedContext extends BaseRenderContext {
     bundle: Bundle | null;
     showSavings: boolean;
+    showSavingsBadge: boolean;
     showFreeShipping: boolean;
     dividerStyle: string;
     moreProductSettings: boolean;
@@ -354,7 +355,11 @@ function updatePricingDisplay(
     );
     if (savingsEl && savingsAmountEl) {
         if (discountAmount > 0 && ctx.showSavings) {
-            savingsAmountEl.textContent = formatMoney(discountAmount);
+            const savingsPct = sellingTotal > 0
+                ? Math.round((discountAmount / sellingTotal) * 100)
+                : 0;
+            savingsAmountEl.textContent =
+                `${formatMoney(discountAmount)} (${savingsPct}%)`;
             (savingsEl as HTMLElement).style.display = "flex";
         } else {
             (savingsEl as HTMLElement).style.display = "none";

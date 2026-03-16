@@ -91,7 +91,7 @@ export function WidgetPosition() {
                     onBlur={handleTitleBlur}
                     error={getFieldError("settings.title")}
                     maxLength={100}
-                    required
+                    placeholder={t("titlePlaceholder")}
                 />
 
                 <s-text-area
@@ -118,7 +118,7 @@ export function WidgetPosition() {
                     onBlur={handleCartButtonTextBlur}
                     error={getFieldError("settings.cartButtonText")}
                     maxLength={50}
-                    required
+                    placeholder={t("cartButtonTextPlaceholder")}
                 />
             </s-stack>
         </s-section>

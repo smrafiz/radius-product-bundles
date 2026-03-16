@@ -492,7 +492,9 @@
         "offerTitle": "Offer title",
         "offerSubtitle": "Offer subtitle",
         "subtitlePlaceholder": "Optional subtitle text",
-        "addToCartText": "'Add to cart' button text"
+        "addToCartText": "'Add to cart' button text",
+        "titlePlaceholder": "Bundle & Save",
+        "cartButtonTextPlaceholder": "Add Bundle to Cart"
       },
       "Review": {
         "fixErrors": "Please fix the following errors:",

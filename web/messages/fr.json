@@ -492,7 +492,9 @@
         "offerTitle": "Titre de l'offre",
         "offerSubtitle": "Sous-titre de l'offre",
         "subtitlePlaceholder": "Sous-titre facultatif",
-        "addToCartText": "Texte du bouton « Ajouter au panier »"
+        "addToCartText": "Texte du bouton « Ajouter au panier »",
+        "titlePlaceholder": "Achetez en lot et économisez",
+        "cartButtonTextPlaceholder": "Ajouter l'offre groupée au panier"
       },
       "Review": {
         "fixErrors": "Veuillez corriger les erreurs suivantes :",

@@ -35,9 +35,8 @@ const bundleSettingsSchema = (v: T) =>
                 .default("STORE_DEFAULT"),
             title: z
                 .string()
-                .min(1, v("REQUIRED_FIELD"))
                 .max(100)
-                .default("Bundle & Save"),
+                .optional(),
             subtitle: z.string().max(300).optional().default(""),
             cartButtonText: z.string().max(50).default(""),
             showImages: z.boolean().default(true),

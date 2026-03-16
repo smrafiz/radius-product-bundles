@@ -128,9 +128,9 @@ export const bundleTypeMap = Object.values(BUNDLE_TYPES).reduce(
 export const initialDisplaySettings: DisplaySettings = {
     layout: "LIST",
     theme: "STORE_DEFAULT",
-    title: "Bundle & Save",
+    title: "",
     subtitle: "",
-    cartButtonText: "Add bundle to Cart",
+    cartButtonText: "",
     // colorTheme: "brand",
     showImages: true,
     showSavingsBadge: true,

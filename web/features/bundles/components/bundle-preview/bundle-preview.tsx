@@ -286,87 +286,103 @@ function RenderLayout({
 }) {
     const layoutProps = { products, styles, displayOptions };
 
+    // Default values if empty or undefined
+    const safeTitle = title?.trim() ? title : "Bundle & Save";
+    const safeButtonText = cartButtonText?.trim()
+        ? cartButtonText
+        : "Add Bundle to Cart";
+
     switch (layout) {
         case "GRID":
             return <WidgetGrid {...layoutProps} />;
+
         case "LIST":
             return <WidgetList {...layoutProps} />;
+
         case "CAROUSEL":
             return <WidgetCarousel {...layoutProps} />;
+
         case "COMPACT":
             return <WidgetCompact {...layoutProps} />;
+
         case "SLEEK":
             return (
                 <WidgetSleek
                     {...layoutProps}
                     pricing={pricing}
-                    cartButtonText={cartButtonText}
-                    title={title}
+                    cartButtonText={safeButtonText}
+                    title={safeTitle}
                     subtitle={subtitle}
                     labels={labels}
                 />
             );
+
         case "COMPACT_GRID":
             return (
                 <WidgetCompactGrid
                     {...layoutProps}
                     pricing={pricing}
-                    cartButtonText={cartButtonText}
-                    title={title}
+                    cartButtonText={safeButtonText}
+                    title={safeTitle}
                     badgeText={badgeText}
                     labels={labels}
                     activeDevice={activeDevice}
                 />
             );
+
         case "MINIMALIST":
             return (
                 <WidgetMinimalist
                     {...layoutProps}
                     pricing={pricing}
-                    cartButtonText={cartButtonText}
-                    title={title}
+                    cartButtonText={safeButtonText}
+                    title={safeTitle}
                     subtitle={subtitle}
                     badgeText={badgeText}
                     activeDevice={activeDevice}
                 />
             );
+
         case "CHECKLIST":
             return (
                 <WidgetChecklist
                     {...layoutProps}
                     pricing={pricing}
-                    cartButtonText={cartButtonText}
-                    title={title}
+                    cartButtonText={safeButtonText}
+                    title={safeTitle}
                     subtitle={subtitle}
                     labels={labels}
                 />
             );
+
         case "SPLIT_DEAL":
             return (
                 <WidgetSplitDeal
                     {...layoutProps}
                     pricing={pricing}
-                    cartButtonText={cartButtonText}
-                    title={title}
+                    cartButtonText={safeButtonText}
+                    title={safeTitle}
                     subtitle={subtitle}
                     badgeText={badgeText}
                     labels={labels}
                     activeDevice={activeDevice}
                 />
             );
+
         case "CLASSIC_CARD":
             return (
                 <WidgetClassicCard
                     {...layoutProps}
                     pricing={pricing}
-                    cartButtonText={cartButtonText}
-                    title={title}
+                    cartButtonText={safeButtonText}
+                    title={safeTitle}
                     subtitle={subtitle}
                     badgeText={badgeText}
                     labels={labels}
                     activeDevice={activeDevice}
                 />
             );
+
         default:
             return <WidgetGrid {...layoutProps} />;
     }
@@ -374,6 +390,7 @@ function RenderLayout({
 
 export function BundlePreview() {
     const t = useTranslations("Bundles.Creation.Preview");
+    const ta = useTranslations("Bundles.Creation.Appearance");
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
@@ -417,7 +434,7 @@ export function BundlePreview() {
                         direction="inline"
                         justifyContent="space-between"
                         alignItems="center"
-                        paddingBlockEnd="small-200"
+                        paddingBlockEnd="base"
                     >
                         <s-heading>{t("heading")}</s-heading>
                         <s-stack
@@ -476,15 +493,7 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
-                    <div
-                        className="radius-bundle-widget"
-                        style={{
-                            maxWidth: "390px",
-                            margin: "0 auto",
-                            borderLeft: "1px solid #e1e3e5",
-                            borderRight: "1px solid #e1e3e5",
-                        }}
-                    >
+                    <div className="radius-bundle-widget">
                         <div className="radius-bundle">
                             <div
                                 className="radius-bundle__inner"
@@ -518,6 +527,7 @@ export function BundlePreview() {
                                     cartButtonText={
                                         displaySettings.cartButtonText
                                     }
+                                    labels={labels}
                                     hideFooter={BOGO_LAYOUT_VALUES.includes(
                                         displaySettings.layout,
                                     )}
@@ -536,9 +546,13 @@ export function BundlePreview() {
                                         displayOptions={displayOptions}
                                         pricing={pricing}
                                         cartButtonText={
-                                            displaySettings.cartButtonText
+                                            displaySettings.cartButtonText ||
+                                            ta("cartButtonTextPlaceholder")
                                         }
-                                        title={displaySettings.title}
+                                        title={
+                                            displaySettings.title ||
+                                            ta("titlePlaceholder")
+                                        }
                                         subtitle={displaySettings.subtitle}
                                         badgeText={badgeText}
                                         labels={labels}
