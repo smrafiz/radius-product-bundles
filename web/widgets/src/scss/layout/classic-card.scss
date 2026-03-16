@@ -56,7 +56,8 @@
     }
 
     &__grid {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--rb-gap-spacing, 12px);
         margin-top: calc(var(--rb-gap-spacing, 12px) * 2);
     }
@@ -309,11 +310,6 @@
 // Responsive: stack columns vertically on narrow containers
 @media (max-width: 767px) {
     .rb-classic__grid {
-        flex-direction: column;
-    }
-}
-@container (max-width: 400px) {
-    .rb-classic__grid {
-        flex-direction: column;
+        grid-template-columns: repeat(1, 1fr);
     }
 }
