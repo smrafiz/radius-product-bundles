@@ -233,8 +233,6 @@ function TileSlider({
             style={{
                 flex: flexVal,
                 minWidth: 0,
-                display: "grid",
-                gridTemplateRows: "1fr auto",
                 overflow: "hidden",
             }}
         >
@@ -306,6 +304,7 @@ function TileSlider({
                         justifyContent: "center",
                         gap: 5,
                         paddingTop: 8,
+                        paddingBottom: 8,
                     }}
                 >
                     {pages.map((_, i) => (
@@ -359,7 +358,6 @@ export function WidgetCompactGrid({
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const padding = getPadding(styles.spacing);
     const gap = getSpacing(styles.spacing);
 
     if (!products.length) {

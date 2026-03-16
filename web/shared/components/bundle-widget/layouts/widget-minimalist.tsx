@@ -221,6 +221,10 @@ export function WidgetMinimalist({
             style={{
                 position: "relative",
                 padding: spacingValues.padding,
+                borderRadius: cardRadius,
+                border: styles.showBorder
+                    ? `1px solid ${styles.borderColor}`
+                    : "none",
             }}
         >
             {badgeText && pricing?.hasDiscount && displayOptions.showSavingsBadge && (
