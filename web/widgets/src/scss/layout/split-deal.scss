@@ -136,8 +136,8 @@
     }
 
     &__product-image {
-        width: 56px;
-        height: 60px;
+        width: calc(var(--rb-image-size) - 20px);
+        height: calc(var(--rb-image-size) - 20px);
         flex-shrink: 0;
         border-radius: var(--rb-border-radius, 6px);
         overflow: hidden;

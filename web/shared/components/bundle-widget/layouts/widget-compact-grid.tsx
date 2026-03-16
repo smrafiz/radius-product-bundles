@@ -14,6 +14,7 @@ import {
     getPadding,
     getSpacing,
     getCardBgColor,
+    getImageSize,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -42,7 +43,7 @@ function ProductTile({
     const accentColor = isTrigger ? primaryColor : savingsColor;
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
+    const imageSizePx = getImageSize(styles.imageSize);
     const youPayLabel =
         labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel;
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
@@ -71,8 +72,8 @@ function ProductTile({
             {product.image && displayOptions.showImages && (
                 <div
                     style={{
-                        width: 80,
-                        height: 80,
+                        width: imageSizePx,
+                        height: imageSizePx,
                         borderRadius: cardRadius,
                         overflow: "hidden",
                         background: styles.productCardBg || "#f9fafb",

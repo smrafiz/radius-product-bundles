@@ -9,6 +9,7 @@ import {
     getHeadingFontSize,
     getFontSize,
     getCardRadius,
+    getImageSize,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
@@ -30,6 +31,7 @@ function SplitProductCard({
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice =
         hasDiscount && (product.price === "$0.00" || product.price === "$0");
+    const imageSizePx = getImageSize(styles.imageSize);
 
     return (
         <div
@@ -42,8 +44,8 @@ function SplitProductCard({
             {product.image && displayOptions.showImages && (
                 <div
                     style={{
-                        width: 56,
-                        height: 56,
+                        width: `calc(${imageSizePx} - 20px)`,
+                        height: `calc(${imageSizePx} - 20px)`,
                         flexShrink: 0,
                         borderRadius: cardRadius,
                         overflow: "hidden",
@@ -177,7 +179,7 @@ export function WidgetSplitDeal({
             <div
                 style={{ textAlign: "center", marginBottom: spacingValues.gap }}
             >
-                {badgeText &&displayOptions.showSavingsBadge && (
+                {badgeText && displayOptions.showSavingsBadge && (
                     <div
                         style={{
                             display: "inline-flex",
