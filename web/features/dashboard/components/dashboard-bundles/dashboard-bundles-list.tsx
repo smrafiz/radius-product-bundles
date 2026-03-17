@@ -1,9 +1,7 @@
 "use client";
 
-import {
-    DashboardBundlesListProps,
-    DashboardBundlesTableHeader,
-} from "@/features/dashboard";
+import { DashboardBundlesTableHeader } from "./dashboard-bundles-table-header";
+import { DashboardBundlesListProps } from "@/features/dashboard/types/components.types";
 import { formatByType, useAppNavigation } from "@/shared";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 
