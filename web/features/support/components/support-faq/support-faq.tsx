@@ -28,19 +28,17 @@ export function SupportFaq() {
 
             {/* FAQ rows */}
             {faqs.map(({ question, answer }, index) => (
-                <s-box
-                    key={index}
-                    padding="base"
-                    borderBlockStart="base"
-                >
-                    <s-grid gridTemplateColumns="1fr auto" alignItems="start" gap="base">
-                        <s-stack gap="small-100">
-                            <s-heading>{question}</s-heading>
-                            <s-text color="subdued">{answer}</s-text>
-                        </s-stack>
-                        <s-icon type="chevron-right" tone="subdued" />
-                    </s-grid>
-                </s-box>
+                <div key={index} style={{ borderTop: "1px solid var(--s-color-border)" }}>
+                    <s-box padding="base">
+                        <s-grid gridTemplateColumns="1fr auto" alignItems="start" gap="base">
+                            <s-stack gap="small-100">
+                                <s-heading>{question}</s-heading>
+                                <s-text color="subdued">{answer}</s-text>
+                            </s-stack>
+                            <s-icon type="chevron-right" tone="neutral" />
+                        </s-grid>
+                    </s-box>
+                </div>
             ))}
         </s-section>
     );
