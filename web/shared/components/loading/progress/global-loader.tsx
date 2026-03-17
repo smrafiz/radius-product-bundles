@@ -17,19 +17,15 @@ export function GlobalLoader() {
     }, [pathname]);
 
     useEffect(() => {
-        const links = document.querySelectorAll("a[data-sprogress]");
-        const buttons = document.querySelectorAll("button[data-sprogress]");
-        const handleClick = () => startLoading();
-
-        links.forEach((el) => el.addEventListener("click", handleClick));
-        buttons.forEach((el) => el.addEventListener("click", handleClick));
-
-        return () => {
-            links.forEach((el) => el.removeEventListener("click", handleClick));
-            buttons.forEach((el) =>
-                el.removeEventListener("click", handleClick),
-            );
+        const handleClick = (e: MouseEvent) => {
+            const el = e.target as HTMLElement;
+            if (el.closest?.("a[data-sprogress]") || el.closest?.("button[data-sprogress]")) {
+                startLoading();
+            }
         };
+
+        document.addEventListener("click", handleClick, true);
+        return () => document.removeEventListener("click", handleClick, true);
     }, []);
 
     return null;

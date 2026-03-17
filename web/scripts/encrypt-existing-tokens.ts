@@ -1,4 +1,4 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../prisma/generated/client";
 import { encryptToken } from "../lib/crypto/token-encryption";
 
@@ -7,7 +7,7 @@ async function main() {
     if (!connectionString) {
         throw new Error("DATABASE_URL environment variable is not set");
     }
-    const adapter = new PrismaNeon({ connectionString });
+    const adapter = new PrismaPg({ connectionString });
     const prisma = new PrismaClient({ adapter });
     const sessions = await prisma.session.findMany({
         where: { accessToken: { not: null } },
