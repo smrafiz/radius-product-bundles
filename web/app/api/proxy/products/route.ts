@@ -220,10 +220,10 @@ export async function GET(request: NextRequest) {
                 const shopifyProduct = productMap.get(bp.productId) as any;
                 const variant = shopifyProduct?.variants?.nodes?.[0];
                 const price = variant?.price
-                    ? parseFloat(variant.price)
+                    ? Math.round(parseFloat(variant.price) * 100)
                     : 0;
                 const compareAtPrice = variant?.compareAtPrice
-                    ? parseFloat(variant.compareAtPrice)
+                    ? Math.round(parseFloat(variant.compareAtPrice) * 100)
                     : 0;
 
                 // BOGO/BUY_X_GET_Y bundles created before role auto-assignment

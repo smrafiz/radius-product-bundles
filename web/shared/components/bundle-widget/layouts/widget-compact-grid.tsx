@@ -49,7 +49,7 @@ function ProductTile({
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice =
-        hasDiscount && (product.price === "$0.00" || product.price === "$0");
+        hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
     const cardBg = styles.customizeCardStyle

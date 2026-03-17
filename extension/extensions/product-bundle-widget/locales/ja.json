@@ -10,7 +10,7 @@
 
         "regularPriceLabel": "通常価格：",
         "bundlePriceLabel": "セット価格：",
-        "youSaveLabel": "お得になる金額：",
+        "youSaveLabel": "お得になる金額：{amount}",
         "savingsBadgeText": "{percent}%お得",
 
         "freeShippingLabel": "送料無料",
@@ -25,7 +25,7 @@
         "bogoBadgeText": "",
         "bogoFreeText": "無料",
         "bogoTotalLabel": "セットの合計",
-        "bogoSaveText": "節約額：",
+        "bogoSaveText": "節約額：{amount}",
 
         "checklistProgressText": "{count}/{total}個のアイテムが追加されました",
         "checklistHintText": "あと{remaining}個でロック解除！",

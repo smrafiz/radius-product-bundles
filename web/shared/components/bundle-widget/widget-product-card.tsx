@@ -160,7 +160,7 @@ export function WidgetProductCard({
                     <div
                         className="radius-bundle__product-image"
                         style={{
-                            height: "100%",
+                            height: imageSizePx,
                             borderRadius: cardRadius,
                             marginBottom: gap,
                             backgroundColor: "#f3f4f6",

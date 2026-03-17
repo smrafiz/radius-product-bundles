@@ -687,14 +687,28 @@ export function renderBogoCompactGridProducts(
 
     let badgeText = "";
     if (savings > 0 && ctx.showSavingsBadge) {
-        const badgeRaw = labels?.savingsBadgeText || "Save {amount}";
-        let badgeAmount = "";
-        if (structure.discountType === "PERCENTAGE") {
-            badgeAmount = `${structure.discountValue}%`;
-        } else {
-            badgeAmount = trimMoney(formatMoney(savings));
+        badgeText = labels?.bogoBadgeText || "";
+        if (!badgeText) {
+            const buyQty = triggers.length || structure.buyQuantity || 1;
+            const getQty = rewards.length || structure.getQuantity || 1;
+            const freeText = labels?.bogoFreeText || "FREE";
+            if (
+                structure.discountType === "PERCENTAGE" &&
+                structure.discountValue === 100
+            ) {
+                badgeText = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+            } else if (
+                structure.discountType === "PERCENTAGE" &&
+                structure.discountValue > 0
+            ) {
+                badgeText = `Save ${structure.discountValue}%`;
+            } else if (
+                structure.discountType === "FIXED_AMOUNT" &&
+                structure.discountValue > 0
+            ) {
+                badgeText = `Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+            }
         }
-        badgeText = formatLabel(badgeRaw, { amount: badgeAmount });
     }
 
     const renderTile = (product: BundleProduct, isReward: boolean): string => {

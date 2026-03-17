@@ -10,7 +10,7 @@
 
         "regularPriceLabel": "Regulärer Preis:",
         "bundlePriceLabel": "Paketpreis:",
-        "youSaveLabel": "Sie sparen:",
+        "youSaveLabel": "Sie sparen: {amount}",
         "savingsBadgeText": "{percent} % sparen",
 
         "freeShippingLabel": "Kostenloser Versand",
@@ -25,7 +25,7 @@
         "bogoBadgeText": "",
         "bogoFreeText": "KOSTENLOS",
         "bogoTotalLabel": "Gesamtbetrag des Pakets",
-        "bogoSaveText": "Du sparst:",
+        "bogoSaveText": "Du sparst: {amount}",
 
         "checklistProgressText": "{count}/{total} Artikel hinzugefügt",
         "checklistHintText": "Noch {remaining} zum Freischalten!",
