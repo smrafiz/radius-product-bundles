@@ -204,7 +204,7 @@
     }
 
     &__total {
-        font-size: calc(var(--rb-heading-font-size) - 3px);
+        font-size: calc(var(--rb-heading-font-size) - 2px);
         font-weight: 600;
         color: var(--rb-text-color, #111827);
     }

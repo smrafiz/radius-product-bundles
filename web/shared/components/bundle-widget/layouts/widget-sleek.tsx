@@ -19,12 +19,14 @@ function SleekProductCard({
     styles,
     displayOptions,
     labels,
+    pricing,
 }: {
     product: PreviewProduct;
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
+    pricing?: WidgetLayoutProps["pricing"];
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
@@ -36,9 +38,12 @@ function SleekProductCard({
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice =
-        hasDiscount && (product.price === "$0.00" || product.price === "$0");
-    const rewardBadgeText =
-        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+        hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const rewardBadgeText = isFreePrice
+        ? freeText
+        : pricing?.hasDiscount && pricing.savingsAmount
+          ? `${pricing.savingsAmount} Off`
+          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     const bgBase = styles.backgroundColor || "#fff";
     const cardStyle: React.CSSProperties = isTrigger
@@ -139,7 +144,7 @@ function SleekProductCard({
                                 width: "fit-content",
                             }}
                         >
-                            {isFreePrice ? freeText : rewardBadgeText}
+                            {rewardBadgeText}
                         </span>
                     )
                 )}
@@ -238,6 +243,7 @@ export function WidgetSleek({
                     variant="trigger"
                     styles={styles}
                     labels={labels}
+                    pricing={pricing}
                     displayOptions={displayOptions}
                 />
             ))}
@@ -279,6 +285,7 @@ export function WidgetSleek({
                     variant="reward"
                     styles={styles}
                     labels={labels}
+                    pricing={pricing}
                     displayOptions={displayOptions}
                 />
             ))}
@@ -301,7 +308,7 @@ export function WidgetSleek({
                 {pricing && (
                     <span
                         style={{
-                            fontSize: parseInt(headingFontSize) - 3,
+                            fontSize: parseInt(headingFontSize) - 2,
                             fontWeight: 600,
                             color: styles.textColor,
                         }}

@@ -24,6 +24,7 @@ function ProductTile({
     styles,
     displayOptions,
     labels,
+    pricing,
 }: {
     product: {
         title: string;
@@ -35,6 +36,7 @@ function ProductTile({
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
+    pricing?: WidgetLayoutProps["pricing"];
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
@@ -52,6 +54,11 @@ function ProductTile({
         hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    const rewardBadge = isFreePrice
+        ? freeText
+        : pricing?.hasDiscount && pricing.savingsAmount
+          ? `${pricing.savingsAmount} Off`
+          : rewardBadgeText;
     const cardBg = styles.customizeCardStyle
         ? getCardBgColor(styles)
         : undefined;
@@ -106,11 +113,7 @@ function ProductTile({
                     lineHeight: "14px",
                 }}
             >
-                {isTrigger
-                    ? youPayLabel
-                    : isFreePrice
-                      ? freeText
-                      : rewardBadgeText}
+                {isTrigger ? youPayLabel : rewardBadge}
             </span>
                 )}
 
@@ -172,6 +175,7 @@ function TileSlider({
     styles,
     displayOptions,
     labels,
+    pricing,
     dotColor,
     perPage,
     flexVal,
@@ -182,6 +186,7 @@ function TileSlider({
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
+    pricing?: WidgetLayoutProps["pricing"];
     dotColor: string;
     perPage: number;
     flexVal: number;
@@ -291,6 +296,7 @@ function TileSlider({
                                     styles={styles}
                                     displayOptions={displayOptions}
                                     labels={labels}
+                                    pricing={pricing}
                                 />
                             ))}
                         </div>
@@ -463,6 +469,7 @@ export function WidgetCompactGrid({
                     styles={styles}
                     displayOptions={displayOptions}
                     labels={labels}
+                    pricing={pricing}
                     dotColor={primaryColor}
                     perPage={2}
                     flexVal={singleEach ? 1 : 2}
@@ -502,6 +509,7 @@ export function WidgetCompactGrid({
                     styles={styles}
                     displayOptions={displayOptions}
                     labels={labels}
+                    pricing={pricing}
                     dotColor={savingsColor}
                     perPage={1}
                     flexVal={1}

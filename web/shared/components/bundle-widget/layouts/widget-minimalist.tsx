@@ -16,20 +16,14 @@ import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants
 function getRewardBadge(
     product: PreviewProduct,
     labels?: WidgetLayoutProps["labels"],
+    pricing?: WidgetLayoutProps["pricing"],
 ): string {
     const freeText = labels?.bogoFreeText || "FREE";
-    if (product.price === "$0.00" || product.price === "$0") return freeText;
-    if (product.compareAtPrice) {
-        const current = parseFloat(product.price.replace(/[^0-9.]/g, ""));
-        const original = parseFloat(
-            product.compareAtPrice.replace(/[^0-9.]/g, ""),
-        );
-        if (original > 0 && current === 0) return freeText;
-        if (original > 0) {
-            const pctOff = Math.round(((original - current) / original) * 100);
-            return `${pctOff}% Off`;
-        }
-    }
+    const hasDiscount = !!product.compareAtPrice;
+    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    if (isFreePrice) return freeText;
+    if (pricing?.hasDiscount && pricing.savingsAmount)
+        return `${pricing.savingsAmount} Off`;
     return labels?.bogoRewardBadgeText || "You Get";
 }
 
@@ -100,7 +94,7 @@ function MinimalistItem({
                 {displayOptions.showSavingsBadge && (
                 <span
                     style={{
-                        fontSize: parseInt(bodyFontSize) - 5,
+                        fontSize: parseInt(bodyFontSize) - 3,
                         fontWeight: 500,
                         textTransform: "uppercase",
                         letterSpacing: 0.6,
@@ -364,7 +358,7 @@ export function WidgetMinimalist({
                             ? savingsColor
                             : primaryColor;
                         const roleBadgeText = isReward
-                            ? getRewardBadge(product, labels)
+                            ? getRewardBadge(product, labels, pricing)
                             : triggerBadge;
 
                         return (

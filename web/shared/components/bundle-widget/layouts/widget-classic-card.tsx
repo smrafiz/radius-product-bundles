@@ -41,7 +41,7 @@ function ClassicProductItem({
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice =
-        hasDiscount && (product.price === "$0.00" || product.price === "$0");
+        hasDiscount && /^[^1-9]*$/.test(product.price || "");
 
     const imageBlock = product.image && displayOptions.showImages && (
         <div
@@ -187,8 +187,14 @@ export function WidgetClassicCard({
             : undefined;
     const triggerBadge =
         labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
-    const rewardBadge =
-        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+    const anyRewardFree = rewardProducts.some(
+        (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
+    );
+    const rewardBadge = anyRewardFree
+        ? (labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText)
+        : pricing?.hasDiscount && pricing.savingsAmount
+          ? `${pricing.savingsAmount} Off`
+          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     if (!products.length) {
         return (

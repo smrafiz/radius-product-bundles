@@ -30,7 +30,7 @@
         background: var(--rb-badge-bg);
         color: var(--rb-badge-text);
         border: var(--rb-badge-border);
-        font-size: calc(var(--rb-body-font-size) * 0.8);
+        font-size: calc(var(--rb-body-font-size) * 0.9);
         font-weight: 600;
         padding: 6px 16px;
         margin-bottom: 6px;
@@ -282,7 +282,7 @@
 
     &__pricing-label {
         display: block;
-        font-size: calc(var(--rb-body-font-size) - 3px);
+        font-size: calc(var(--rb-body-font-size) - 2px);
         font-weight: 500;
         margin-bottom: 2px;
     }
