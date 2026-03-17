@@ -35,7 +35,7 @@ export function SupportFaq() {
                 >
                     <s-grid gridTemplateColumns="1fr auto" alignItems="start" gap="base">
                         <s-stack gap="small-100">
-                            <s-text fontWeight="bold">{question}</s-text>
+                            <s-heading>{question}</s-heading>
                             <s-text color="subdued">{answer}</s-text>
                         </s-stack>
                         <s-icon type="chevron-right" tone="subdued" />

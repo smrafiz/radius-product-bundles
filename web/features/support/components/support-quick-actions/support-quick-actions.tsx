@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type { CSSProperties } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
     DOCS_URL,
@@ -8,7 +8,7 @@ import {
     SUPPORT_EMAIL,
 } from "@/features/support/constants/support.constants";
 
-const ICON_STYLES: Record<string, React.CSSProperties> = {
+const ICON_STYLES: Record<string, CSSProperties> = {
     docs:   { background: "linear-gradient(135deg,#ede9fe,#ddd6fe)" },
     videos: { background: "linear-gradient(135deg,#fce7f3,#fbcfe8)" },
     email:  { background: "linear-gradient(135deg,#d1fae5,#a7f3d0)" },
@@ -53,8 +53,8 @@ export function SupportQuickActions() {
                     gap="base"
                 >
                     {cards.map((card) => (
-                        <s-grid-item key={card.title}>
-                            <div className="transition-all hover:-translate-y-[3px]">
+                        <div key={card.title} className="transition-all hover:-translate-y-[3px]">
+                            <s-grid-item>
                                 <s-clickable
                                     border="base"
                                     borderRadius="base"
@@ -91,8 +91,8 @@ export function SupportQuickActions() {
                                         </s-box>
                                     </s-grid>
                                 </s-clickable>
-                            </div>
-                        </s-grid-item>
+                            </s-grid-item>
+                        </div>
                     ))}
                 </s-grid>
             </s-stack>

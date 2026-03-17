@@ -13,9 +13,7 @@ export function SupportSidePanel() {
                 <s-stack gap="small-300">
                     <s-heading>{t("supportHours")}</s-heading>
                     <s-stack gap="small-200">
-                        <s-grid gridTemplateColumns="1fr auto" alignItems="center">
-                            <s-text color="subdued">{t("schedule")}</s-text>
-                        </s-grid>
+                        <s-text color="subdued">{t("schedule")}</s-text>
                         <s-divider />
                         <s-grid gridTemplateColumns="1fr auto" alignItems="center">
                             <s-text color="subdued">{t("responseTime")}</s-text>
@@ -43,11 +41,8 @@ export function SupportSidePanel() {
             </s-section>
 
             {/* Pro Tip */}
-            <s-banner tone="warning">
-                <s-stack gap="small-200">
-                    <s-heading>{t("proTipTitle")}</s-heading>
-                    <s-text>{t("proTip")}</s-text>
-                </s-stack>
+            <s-banner tone="info" heading={t("proTipTitle")}>
+                <s-text>{t("proTip")}</s-text>
             </s-banner>
         </s-stack>
     );
