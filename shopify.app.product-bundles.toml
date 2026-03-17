@@ -1,52 +1,18 @@
-# Avoid writing to toml directly. Use your .env file instead
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "Product Bundles"
-handle = "product-bundles-112"
 client_id = "c0be16589ca5316fb5cf3f7ce5ee303b"
-application_url = https://shopify.radiusdirectory.net"
+name = "Product Bundles"
+application_url = "https://example.com"
 embedded = true
-extension_directories = [ "./extension/extensions/**" ]
-
-[app_proxy]
-url = https://shopify.radiusdirectory.net/api/proxy"
-subpath = "bundles"
-prefix = "apps"
-
-[build]
-automatically_update_urls_on_dev = true
-dev_store_url = "radiusappsdemo.myshopify.com"
 
 [webhooks]
 api_version = "2026-01"
 
-  [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled", "shop/update", "orders/create", "products/delete" ]
-  uri = "/api/webhooks"
-
-  [[webhooks.subscriptions]]
-  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-  uri = "/api/webhooks"
-
-[access.admin]
-direct_api_mode = "offline"
-embedded_app_direct_api_access = true
-
 [access_scopes]
-scopes = "read_customers,read_orders,read_price_rules,read_products,read_themes,write_files,write_app_proxy,write_price_rules,write_products,write_publications,write_script_tags,write_discounts"
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
 optional_scopes = [ ]
 use_legacy_install_flow = false
 
 [auth]
 redirect_urls = [ ]
-
-[pos]
-embedded = false
-
-[product.metafields.app.bundle_ids]
-type = "list.single_line_text_field"
-name = "Bundle IDs"
-description = "List of bundle IDs that include this product"
-
-  [product.metafields.app.bundle_ids.access]
-  admin = "merchant_read"
-  storefront = "public_read"

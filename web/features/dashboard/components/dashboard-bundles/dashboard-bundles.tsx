@@ -1,13 +1,11 @@
 "use client";
 
-import {
-    DashboardBundlesEmpty,
-    DashboardBundlesHeader,
-    DashboardBundlesList,
-    DashboardBundlesTableHeader,
-    DashboardTopBundlesSkeleton,
-    useRecentBundles,
-} from "@/features/dashboard";
+import { DashboardBundlesEmpty } from "./dashboard-bundles-empty";
+import { DashboardBundlesHeader } from "./dashboard-bundles-header";
+import { DashboardBundlesList } from "./dashboard-bundles-list";
+import { DashboardBundlesTableHeader } from "./dashboard-bundles-table-header";
+import { DashboardTopBundlesSkeleton } from "./dasboard-table-skeletons";
+import { useRecentBundles } from "@/features/dashboard/hooks/use-recent-bundles";
 
 export function DashboardBundles() {
     const { data: bundles, isLoading, error } = useRecentBundles(5);
