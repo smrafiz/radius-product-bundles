@@ -1,0 +1,57 @@
+# Avoid writing to toml directly. Use your .env file instead
+
+name = "Product Bundles"
+handle = "product-bundles-112"
+client_id = "669f6e833a3de3aa7a758c91373e5b85"
+application_url = "https://shopify.radiusdirectory.net"
+embedded = true
+extension_directories = [ "./extension/extensions/**" ]
+
+[app_proxy]
+url = "https://shopify.radiusdirectory.net/api/proxy"
+subpath = "radius-bundles"
+prefix = "apps"
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "radiusappsdemo.myshopify.com"
+
+[webhooks]
+api_version = "2026-01"
+
+  [[webhooks.subscriptions]]
+  topics = [
+  "app/uninstalled",
+  "shop/update",
+  "orders/create",
+  "products/delete"
+]
+  uri = "/api/webhooks"
+
+  [[webhooks.subscriptions]]
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+  uri = "/api/webhooks"
+
+[access.admin]
+direct_api_mode = "offline"
+embedded_app_direct_api_access = true
+
+[access_scopes]
+scopes = "read_locales,read_orders,read_products,write_app_proxy,write_discounts,write_files,write_products,write_publications"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ ]
+
+[pos]
+embedded = false
+
+[product.metafields.app.bundle_ids]
+type = "list.single_line_text_field"
+name = "Bundle IDs"
+description = "List of bundle IDs that include this product"
+
+  [product.metafields.app.bundle_ids.access]
+  admin = "merchant_read"
+  storefront = "public_read"
