@@ -24,6 +24,9 @@ export function Navigation() {
             <Link href="/pricing" data-sprogress>
                 {t("pricing")}
             </Link>
+            <Link href="/support" data-sprogress>
+                {t("support")}
+            </Link>
         </NavMenu>
     );
 }
