@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, Suspense, useEffect, useState } from "react";
+import { Navigation } from "@/shared/components/navigation/navigation";
 
 /**
  * App Layout Wrapper
@@ -25,5 +26,12 @@ export function AppLayoutWrapper({ children }: { children: ReactNode }) {
         return null;
     }
 
-    return <>{children}</>;
+    return (
+        <>
+            <Suspense fallback={null}>
+                <Navigation />
+            </Suspense>
+            {children}
+        </>
+    );
 }

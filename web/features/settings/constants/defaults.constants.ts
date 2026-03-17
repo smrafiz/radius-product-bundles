@@ -132,6 +132,44 @@ export const DEFAULT_LABELS = {
 } as const;
 
 /**
+ * Placeholder texts shown inside each label input.
+ * Used as translation source when the merchant hasn't saved custom labels.
+ */
+export const LABEL_PLACEHOLDERS: Record<string, string> = {
+    headingLabel: "Bundle & Save",
+    addToCartText: "Add Bundle to Cart",
+    quantityLabel: "Quantity",
+    addingText: "Adding...",
+    addedText: "Added!",
+    outOfStockText: "Out of Stock",
+    regularPriceLabel: "Regular Price:",
+    bundlePriceLabel: "Bundle Price:",
+    youSaveLabel: "You Save:",
+    savingsBadgeText: "Save {amount}",
+    freeShippingLabel: "Free Shipping",
+    freeShippingMethodTitle: "Free shipping with {name}",
+    maxBundlesReachedText: "Maximum {count} bundle(s) per order allowed",
+    bogoBadgeText: "Buy 1 Get 1 Free",
+    bogoFreeText: "FREE",
+    bogoYouPayLabel: "You Pay Only",
+    bogoYouSaveLabel: "You Save",
+    bogoTriggerBadgeText: "You Buy",
+    bogoRewardBadgeText: "You Get FREE",
+    bogoTotalLabel: "Total",
+    bogoSaveText: "Save {amount}",
+    checklistProgressText: "{count}/{total} items added",
+    checklistHintText: "{remaining} more to unlock!",
+    checklistCompletedText: "Unlocked!",
+    checklistLockedLabel: "Unlock by adding all items above",
+    checklistUnlockedLabel: "Reward Unlocked",
+    checklistPricingLockedText: "Select all items to see your price",
+    bannerSavingText: "You're saving {discount} with {name}",
+    bannerCustomPriceText: "Special price: {price} for {name}",
+    bannerFreeShippingQualifyText: "{name} qualifies for free shipping!",
+    bannerFreeShippingText: "Free shipping included!",
+};
+
+/**
  * Default global styles for bundle widgets
  */
 export const GLOBAL_STYLES = {

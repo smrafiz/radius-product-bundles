@@ -768,7 +768,11 @@
       "title": "Langues",
       "fallbackTooltip": "Si une traduction est absente dans le fichier de langue, les champs vides reviendront à la langue principale ({primary})",
       "primaryBadge": "(Principale)",
-      "refresh": "Les langues sont synchronisées à partir des paramètres de votre boutique Shopify. Utilisez le bouton d’actualisation pour mettre à jour la liste si vous avez récemment effectué des modifications dans Shopify."
+      "refresh": "Les langues sont synchronisées à partir des paramètres de votre boutique Shopify. Utilisez le bouton d’actualisation pour mettre à jour la liste si vous avez récemment effectué des modifications dans Shopify.",
+      "autoTranslate": "Traduction automatique",
+      "autoTranslateTooltip": "Traduit automatiquement les champs d'étiquettes vides depuis la langue principale par traduction automatique. Vous pouvez modifier les résultats avant d'enregistrer.",
+      "translating": "Traduction en cours...",
+      "translateError": "La traduction a échoué. Veuillez réessayer."
     },
     "Tabs": {
       "general": {

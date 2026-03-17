@@ -12,9 +12,12 @@ import {
     resetSettingsService,
     saveSettingsService,
 } from "@/features/settings/services/settings.service";
+import { translateLabels } from "@/lib/i18n/translate";
 import { invalidateSetupGuideCache } from "@/lib/cache";
 import { AppSettingsFormData } from "@/features/settings";
 import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
+import type { AppSettingsLabels } from "@/features/settings/types/app-settings.types";
+import { LABEL_PLACEHOLDERS } from "@/features/settings/constants/defaults.constants";
 import { CachedLocale, fetchAndCacheShopLocales, getShopLocales } from "@/lib/graphql/operations/locale.operations";
 
 /**
@@ -169,6 +172,59 @@ export async function refreshLocalesAction(
                     ? error.message
                     : "Failed to refresh locales",
             data: [],
+        };
+    }
+}
+
+// Per-shop cooldown (in-memory, resets on cold start) — prevents IP quota exhaustion on MyMemory
+const translateCooldowns = new Map<string, number>();
+const TRANSLATE_COOLDOWN_MS = 30_000;
+
+/**
+ * Auto-translate labels from the primary locale into the target locale.
+ * Returns translated labels without saving — user must still click Save.
+ */
+export async function autoTranslateLabelsAction(
+    sessionToken: string,
+    sourceLocale: string,
+    targetLocale: string,
+): Promise<ApiResponse<Partial<AppSettingsLabels>>> {
+    try {
+        const {
+            session: { shop },
+        } = await handleSessionToken(sessionToken);
+
+        const last = translateCooldowns.get(shop) ?? 0;
+        if (Date.now() - last < TRANSLATE_COOLDOWN_MS) {
+            return {
+                status: "error",
+                message: "Please wait a moment before translating again.",
+                data: {},
+            };
+        }
+        translateCooldowns.set(shop, Date.now());
+
+        const source = await getSettingsService({ shop, locale: sourceLocale });
+        const sourceLabels = (source?.labels ?? {}) as Record<string, string>;
+
+        // Merge saved labels with placeholders — saved values take priority,
+        // placeholders fill in anything the merchant hasn't customised yet
+        const merged = Object.fromEntries(
+            Object.keys(LABEL_PLACEHOLDERS).map((key) => [
+                key,
+                sourceLabels[key]?.trim() || LABEL_PLACEHOLDERS[key],
+            ]),
+        ) as Partial<AppSettingsLabels>;
+
+        const translated = await translateLabels(merged, sourceLocale, targetLocale);
+
+        return { status: "success", data: translated };
+    } catch (error) {
+        console.error("[autoTranslateLabels] Error:", error);
+        return {
+            status: "error",
+            message: error instanceof Error ? error.message : "Translation failed",
+            data: {},
         };
     }
 }

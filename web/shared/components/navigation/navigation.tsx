@@ -21,20 +21,8 @@ export function Navigation() {
             <Link href="/settings" data-sprogress>
                 {t("settings")}
             </Link>
-            <Link href="/ab-testing" data-sprogress>
-                {t("abTesting")}
-            </Link>
-            <Link href="/automation" data-sprogress>
-                {t("automation")}
-            </Link>
             <Link href="/pricing" data-sprogress>
                 {t("pricing")}
-            </Link>
-            <Link href="/templates" data-sprogress>
-                {t("templates")}
-            </Link>
-            <Link href="/integrations" data-sprogress>
-                {t("integrations")}
             </Link>
         </NavMenu>
     );

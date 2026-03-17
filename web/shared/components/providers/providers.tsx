@@ -4,7 +4,6 @@ import { DehydratedState } from "@tanstack/react-query";
 import { AppSettingsProvider } from "@/features/settings/components/app-settings-provider";
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import {
-    Navigation,
     ProtectedRoute,
     SessionProvider,
     TanstackProvider,
@@ -32,10 +31,6 @@ export function Providers({
 
     return (
         <>
-            <Suspense fallback={null}>
-                <Navigation />
-            </Suspense>
-
             <TanstackProvider dehydratedState={dehydratedState}>
                 <Suspense
                     fallback={

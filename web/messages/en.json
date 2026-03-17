@@ -768,7 +768,11 @@
       "title": "Languages",
       "fallbackTooltip": "If a translation is missing in the language file, the empty fields will fall back to the primary language ({primary}).",
       "primaryBadge": "(Primary)",
-      "refresh": "Languages are synced from your Shopify store settings. Use the refresh button to update the list if you've recently made changes in Shopify."
+      "refresh": "Languages are synced from your Shopify store settings. Use the refresh button to update the list if you've recently made changes in Shopify.",
+      "autoTranslate": "Auto Translate",
+      "autoTranslateTooltip": "Automatically translate empty label fields from the primary language using machine translation. You can edit the results before saving.",
+      "translating": "Translating...",
+      "translateError": "Translation failed. Please try again."
     },
     "Tabs": {
       "general": {
