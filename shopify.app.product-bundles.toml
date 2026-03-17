@@ -1,20 +1,20 @@
 # Avoid writing to toml directly. Use your .env file instead
 
 name = "Product Bundles"
-handle = "product-bundles-111"
-client_id = "b1cd6f12e536f4d86d04231d69a1fb35"
-application_url = "https://radius-product-bundles.vercel.app"
+handle = "product-bundles-112"
+client_id = "c0be16589ca5316fb5cf3f7ce5ee303b"
+application_url = https://shopify.radiusdirectory.net"
 embedded = true
 extension_directories = [ "./extension/extensions/**" ]
 
 [app_proxy]
-url = "https://radius-product-bundles.vercel.app/api/proxy"
+url = https://shopify.radiusdirectory.net/api/proxy"
 subpath = "bundles"
 prefix = "apps"
 
 [build]
 automatically_update_urls_on_dev = true
-dev_store_url = "bundlestesting-2.myshopify.com"
+dev_store_url = "radiusappsdemo.myshopify.com"
 
 [webhooks]
 api_version = "2026-01"
