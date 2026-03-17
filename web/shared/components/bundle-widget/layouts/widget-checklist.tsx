@@ -164,7 +164,7 @@ function ChecklistRewardItem({
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = !!product.compareAtPrice;
     const isFreePrice =
-        hasDiscount && (product.price === "$0.00" || product.price === "$0");
+        hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
 
     return (
@@ -278,11 +278,14 @@ export function WidgetChecklist({
         labels?.checklistPricingLockedText ||
         DEFAULT_LABELS.checklistPricingLockedText;
 
-    let rewardBadgeText =
-        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
-    if (pricing?.hasDiscount && pricing.savingsPercentage === 100) {
-        rewardBadgeText = freeText;
-    }
+    const anyRewardFree = rewardProducts.some(
+        (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
+    );
+    const rewardBadgeText = anyRewardFree
+        ? freeText
+        : pricing?.hasDiscount && pricing.savingsAmount
+          ? `${pricing.savingsAmount} Off`
+          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     if (!products.length) {
         return (
