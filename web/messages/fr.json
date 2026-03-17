@@ -39,6 +39,10 @@
       "pricing": {
         "title": "Tarification – Des formules flexibles pour chaque entreprise",
         "description": "Choisissez la formule idéale pour votre boutique. Comparez les fonctionnalités, les limites des offres groupées et l'accès aux analyses. Commencez gratuitement et passez à un forfait supérieur à tout moment pour bénéficier d'analyses avancées des performances de vos offres groupées et d'une assistance premium."
+      },
+      "support": {
+        "title": "Assistance - Aide & Ressources",
+        "description": "Consultez la documentation, regardez des tutoriels ou contactez l'équipe Radius Bundles."
       }
     }
   },
@@ -53,7 +57,8 @@
       "automation": "Automatisation",
       "pricing": "Tarification",
       "templates": "Modèles",
-      "integrations": "Intégrations"
+      "integrations": "Intégrations",
+      "support": "Assistance"
     },
     "previousPage": "Page précédente",
     "nextPage": "Page suivante",
@@ -1627,6 +1632,40 @@
         "description": "Vous pouvez tester l'application de manière approfondie au cours de la période d'essai de sept jours et la résilier sans aucun frais. Au-delà de cette période, les passages à une formule inférieure sont facturés au prorata, contrairement aux résiliations. Veuillez contacter l'assistance afin d'examiner les possibilités de remboursement."
       }
     }
+  },
+  "Support": {
+    "title": "Assistance",
+    "getHelp": "Obtenir de l'aide",
+    "docs": "Documentation",
+    "docsDescription": "Guides d'installation, références des fonctionnalités & docs d'intégration",
+    "videos": "Tutoriels vidéo",
+    "videosDescription": "Guides pas à pas pour chaque type de bundle",
+    "email": "Support par e-mail",
+    "emailDescription": "Nous répondons sous 24 heures les jours ouvrables",
+    "faqTitle": "Questions fréquentes",
+    "faqSubtitle": "Réponses rapides aux questions courantes",
+    "faqCount": "{count} articles",
+    "supportHours": "Horaires du support",
+    "schedule": "Lun – Ven, 9h – 18h EST",
+    "responseTime": "Délai de réponse",
+    "responseTimeValue": "Sous 24h",
+    "quickLinks": "Liens rapides",
+    "linkDocs": "Documentation complète",
+    "linkVideos": "Tutoriels YouTube",
+    "linkAppStore": "Noter sur l'App Store",
+    "linkCommunity": "Forum communautaire",
+    "proTipTitle": "Conseil",
+    "proTip": "Incluez l'URL de votre boutique et une capture d'écran lors de vos e-mails — cela nous aide à résoudre les problèmes 2× plus vite.",
+    "faq1Q": "Comment créer mon premier bundle ?",
+    "faq1A": "Allez dans Bundles → Créer un bundle, choisissez un type, ajoutez des produits, définissez une remise et publiez.",
+    "faq2Q": "Pourquoi le widget ne s'affiche pas sur ma boutique ?",
+    "faq2A": "Activez l'intégration de l'application : Boutique en ligne → Thèmes → Personnaliser → Intégrations d'applications → activez Radius Bundles.",
+    "faq3Q": "Les bundles peuvent-ils se combiner avec des codes de réduction ?",
+    "faq3A": "Oui — activez Autoriser le cumul des remises dans Paramètres → Général.",
+    "faq4Q": "Comment traduire les libellés des bundles ?",
+    "faq4A": "Paramètres → Libellés → basculez vers un onglet de langue non principale → cliquez sur Traduction automatique.",
+    "faq5Q": "L'application ralentit-elle ma boutique ?",
+    "faq5A": "Non — les remises s'exécutent côté serveur via une Shopify Function. Aucun impact sur les performances."
   },
   "ABTesting": {
     "title": "A/B Testing",

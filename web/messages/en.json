@@ -39,6 +39,10 @@
       "pricing": {
         "title": "Pricing - Flexible Plans for Every Business",
         "description": "Choose the perfect plan for your store. Compare features, bundle limits, and analytics access. Start free and upgrade anytime to unlock advanced bundle performance insights and premium support."
+      },
+      "support": {
+        "title": "Support - Help & Resources",
+        "description": "Browse docs, watch tutorials, or contact the Radius Bundles support team."
       }
     }
   },
@@ -53,7 +57,8 @@
       "automation": "Automation",
       "pricing": "Pricing",
       "templates": "Templates",
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "support": "Support"
     },
     "previousPage": "Previous page",
     "nextPage": "Next page",
@@ -1628,6 +1633,40 @@
         "description": "You can thoroughly test the app during the 7-day trial and cancel without any charges. After that, downgrades are prorated, but cancellations are not. Contact support to explore refund options."
       }
     }
+  },
+  "Support": {
+    "title": "Support",
+    "getHelp": "Get Help",
+    "docs": "Documentation",
+    "docsDescription": "Setup guides, feature references & integration docs",
+    "videos": "Video Tutorials",
+    "videosDescription": "Step-by-step walkthroughs for every bundle type",
+    "email": "Email Support",
+    "emailDescription": "We reply within 24 hours on business days",
+    "faqTitle": "Frequently Asked Questions",
+    "faqSubtitle": "Quick answers to common questions",
+    "faqCount": "{count} articles",
+    "supportHours": "Support Hours",
+    "schedule": "Mon – Fri, 9 AM – 6 PM EST",
+    "responseTime": "Response time",
+    "responseTimeValue": "Within 24h",
+    "quickLinks": "Quick Links",
+    "linkDocs": "Full Documentation",
+    "linkVideos": "YouTube Tutorials",
+    "linkAppStore": "Rate on App Store",
+    "linkCommunity": "Community Forum",
+    "proTipTitle": "Pro Tip",
+    "proTip": "Include your store URL and a screenshot when emailing — it helps us resolve issues 2× faster.",
+    "faq1Q": "How do I create my first bundle?",
+    "faq1A": "Go to Bundles → Create Bundle, choose a type, add products, set a discount, and publish.",
+    "faq2Q": "Why isn't the widget showing on my storefront?",
+    "faq2A": "Enable the app embed: Online Store → Themes → Customize → App Embeds → toggle Radius Bundles on.",
+    "faq3Q": "Can bundles combine with discount codes?",
+    "faq3A": "Yes — enable Allow discount stacking in Settings → General.",
+    "faq4Q": "How do I translate bundle labels?",
+    "faq4A": "Settings → Labels → switch to a non-primary language tab → click Auto Translate.",
+    "faq5Q": "Does the app slow down my store?",
+    "faq5A": "No — discounts run server-side via a Shopify Function. Zero storefront performance impact."
   },
   "ABTesting": {
     "title": "A/B Testing",
