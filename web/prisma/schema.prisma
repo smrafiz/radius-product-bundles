@@ -1,5 +1,5 @@
 generator client {
-    provider = "prisma-client-js"
+    provider = "prisma-client"
     output   = "./generated"
 }
 
@@ -114,22 +114,22 @@ model Bundle {
 }
 
 model BundleProduct {
-    id              String              @id @default(cuid())
-    bundleId        String
-    productId       String
-    variantId       String?
-    quantity        Int                 @default(1)
-    displayOrder    Int                 @default(0)
-    role            BundleProductRole   @default(INCLUDED)
-    groupId         String?
-    customPrice     Float?
-    isRequired      Boolean             @default(true)
-    minQuantity     Int?
-    maxQuantity     Int?
-    createdAt       DateTime            @default(now())
-    updatedAt       DateTime            @updatedAt
-    bundle          Bundle              @relation(fields: [bundleId], references: [id], onDelete: Cascade)
-    group           BundleProductGroup? @relation(fields: [groupId], references: [id])
+    id           String              @id @default(cuid())
+    bundleId     String
+    productId    String
+    variantId    String?
+    quantity     Int                 @default(1)
+    displayOrder Int                 @default(0)
+    role         BundleProductRole   @default(INCLUDED)
+    groupId      String?
+    customPrice  Float?
+    isRequired   Boolean             @default(true)
+    minQuantity  Int?
+    maxQuantity  Int?
+    createdAt    DateTime            @default(now())
+    updatedAt    DateTime            @updatedAt
+    bundle       Bundle              @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+    group        BundleProductGroup? @relation(fields: [groupId], references: [id])
 
     @@unique([bundleId, productId, variantId, role])
     @@index([bundleId, role])
@@ -154,9 +154,9 @@ model BundleProductGroup {
 }
 
 model BundleSettings {
-    id             String      @id @default(cuid())
-    bundleId       String      @unique
-    layout         String      @default("GRID")
+    id             String  @id @default(cuid())
+    bundleId       String  @unique
+    layout         String  @default("GRID")
     title          String?
     subtitle       String?
     cartButtonText String?
