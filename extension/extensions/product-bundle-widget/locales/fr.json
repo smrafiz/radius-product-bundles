@@ -10,7 +10,7 @@
 
         "regularPriceLabel": "Prix normal :",
         "bundlePriceLabel": "Prix du lot :",
-        "youSaveLabel": "Vous économisez : {amount}",
+        "youSaveLabel": "Vous économisez:",
         "savingsBadgeText": "Économisez {percent} %",
 
         "freeShippingLabel": "Livraison gratuite",

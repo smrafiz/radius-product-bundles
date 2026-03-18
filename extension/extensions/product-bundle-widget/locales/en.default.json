@@ -10,7 +10,7 @@
 
         "regularPriceLabel": "Regular Price:",
         "bundlePriceLabel": "Bundle Price:",
-        "youSaveLabel": "You Save: {amount}",
+        "youSaveLabel": "You Save:",
         "savingsBadgeText": "Save {percent}%",
 
         "freeShippingLabel": "Free Shipping",

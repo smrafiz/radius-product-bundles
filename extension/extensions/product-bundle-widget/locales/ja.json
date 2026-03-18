@@ -10,7 +10,7 @@
 
         "regularPriceLabel": "通常価格：",
         "bundlePriceLabel": "セット価格：",
-        "youSaveLabel": "お得になる金額：{amount}",
+        "youSaveLabel": "お得になる金額: ",
         "savingsBadgeText": "{percent}%お得",
 
         "freeShippingLabel": "送料無料",

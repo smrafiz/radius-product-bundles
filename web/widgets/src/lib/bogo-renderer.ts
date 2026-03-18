@@ -962,7 +962,7 @@ export function renderBogoChecklistProducts(
         labels?.checklistPricingLockedText ||
         "Select all items to see your price";
     const totalLabel = labels?.bogoTotalLabel || "Total";
-    const discountLabel = labels?.youSaveLabel || "You Save:";
+    const discountLabel = labels?.youSaveLabel || "You Save";
     const youPayLabel = labels?.bogoYouPayLabel || "You Pay";
 
     const totalTriggers = triggers.length;
