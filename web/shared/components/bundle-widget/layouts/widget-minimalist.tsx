@@ -12,6 +12,7 @@ import {
     getImageSize,
 } from "@/features/settings";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
+import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 function getRewardBadge(
     product: PreviewProduct,
@@ -289,7 +290,7 @@ export function WidgetMinimalist({
                                 lineHeight: "1.3",
                             }}
                         >
-                            {title}
+                            {title || DEFAULT_LABELS.headingLabel}
                         </h3>
                     )}
                     {subtitle && (
@@ -382,6 +383,7 @@ export function WidgetMinimalist({
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 8,
+                        margin:"auto",
                         width: isFullWidth ? "100%" : "auto",
                         padding: getButtonPadding(styles.buttonSize),
                         border: isButtonOutline
@@ -409,7 +411,7 @@ export function WidgetMinimalist({
                         <circle cx="20" cy="21" r="1" />
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                     </svg>
-                    {cartButtonText}
+                    {cartButtonText || DEFAULT_LABELS.addToCartText}
                 </button>
             )}
         </div>

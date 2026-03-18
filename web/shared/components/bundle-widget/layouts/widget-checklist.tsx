@@ -8,6 +8,7 @@ import {
     getHeadingFontSize,
     getFontSize,
     getImageSize,
+    getButtonPadding,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -256,7 +257,9 @@ export function WidgetChecklist({
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const buttonBg = getButtonBgColor(styles);
+    const buttonFontSize = getFontSize(styles.buttonSize);
     const buttonRadius = getButtonRadius(styles.cornerStyle);
+    const isButtonOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
 
     const totalTriggers = triggerProducts.length;
@@ -322,7 +325,7 @@ export function WidgetChecklist({
                             color: styles.textColor,
                         }}
                     >
-                        {title}
+                        {title || DEFAULT_LABELS.headingLabel}
                     </div>
                 )}
                 {subtitle && (
@@ -516,23 +519,39 @@ export function WidgetChecklist({
             {cartButtonText && (
                 <button
                     style={{
-                        width: isFullWidth ? "100%" : "auto",
-                        padding: "14px 24px",
-                        fontSize: 15,
-                        fontWeight: 700,
-                        borderRadius: buttonRadius,
-                        border: "none",
-                        background: isUnlocked ? buttonBg : styles.borderColor || "#e5e7eb",
-                        color: isUnlocked ? "#fff" : styles.textColor || "#9ca3af",
-                        cursor: isUnlocked ? "pointer" : "not-allowed",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 8,
+                        margin:"auto",
+                        width: isFullWidth ? "100%" : "auto",
+                        padding: getButtonPadding(styles.buttonSize),
+                        border: isButtonOutline
+                            ? `2px solid ${buttonBg}`
+                            : "none",
+                        borderRadius: buttonRadius,
+                        background: isButtonOutline ? "transparent" : buttonBg,
+                        color: isButtonOutline ? buttonBg : "#fff",
+                        fontSize: buttonFontSize,
+                        fontWeight: 600,
+                        cursor: "pointer",
                     }}
                 >
-                    {CART_SVG}
-                    {cartButtonText}
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    {cartButtonText || DEFAULT_LABELS.addToCartText}
                 </button>
             )}
         </div>

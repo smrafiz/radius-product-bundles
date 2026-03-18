@@ -232,7 +232,7 @@ export function WidgetSleek({
                         lineHeight: "1.3",
                     }}
                 >
-                    {title}
+                    {title || DEFAULT_LABELS.headingLabel}
                 </h3>
             )}
 
@@ -340,7 +340,7 @@ export function WidgetSleek({
                             whiteSpace: "nowrap",
                         }}
                     >
-                        {cartButtonText}
+                        {cartButtonText || DEFAULT_LABELS.addToCartText}
                     </button>
                 )}
             </div>

@@ -219,7 +219,7 @@ export function WidgetSplitDeal({
                             margin: 0,
                         }}
                     >
-                        {title}
+                        {title || DEFAULT_LABELS.headingLabel}
                     </h3>
                 )}
                 {subtitle && (
@@ -468,7 +468,7 @@ export function WidgetSplitDeal({
                         cursor: "pointer",
                     }}
                 >
-                    {cartButtonText}
+                    {cartButtonText || DEFAULT_LABELS.addToCartText}
                 </button>
             )}
         </div>
