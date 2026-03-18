@@ -11,6 +11,7 @@ import {
     showSetupGuideAction,
     updateSetupStepAction,
 } from "@/features/dashboard/actions/setup-guide.action";
+import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -85,32 +86,52 @@ export function useSetupGuide() {
     }, [data?.bundlesTransitioned]);
 
     useEffect(() => {
-        if (!data || data.dismissed || data.progress.appEmbedEnabled) return;
+        if (!data || data.dismissed) return;
+        const needsEmbedCheck = !data.progress.appEmbedEnabled;
+        const needsBlockCheck = !data.progress.widgetBlockAdded;
+        if (!needsEmbedCheck && !needsBlockCheck) return;
 
-        shopify.app.extensions().then((extensions) => {
-            const themeExt = extensions.find(
-                (e) => e.type === "theme_app_extension",
-            );
-            if (!themeExt) return;
+        // Check app-embed via App Bridge (theme-level toggle — reliable)
+        if (needsEmbedCheck) {
+            shopify.app.extensions().then((extensions) => {
+                const themeExt = extensions.find(
+                    (e) => e.type === "theme_app_extension",
+                );
+                if (!themeExt) return;
 
-            const activations = themeExt.activations as Array<{
-                handle: string;
-                target: string;
-                status: string;
-            }>;
-            const embedActive = activations.some(
-                (a) =>
-                    a.handle === "app-embed" &&
-                    a.target !== "section" &&
-                    a.status === "active",
-            );
-            if (embedActive) {
-                completeStepMutation.mutate({
-                    key: "appEmbedEnabled",
-                    value: true,
+                const activations = themeExt.activations as Array<{
+                    handle: string;
+                    target: string;
+                    status: string;
+                }>;
+                const embedActive = activations.some(
+                    (a) =>
+                        a.handle === "app-embed" &&
+                        a.target !== "section" &&
+                        a.status === "active",
+                );
+                if (embedActive) {
+                    completeStepMutation.mutate({
+                        key: "appEmbedEnabled",
+                        value: true,
+                    });
+                }
+            });
+        }
+
+        // Check app-block via REST API (template-level — App Bridge unreliable for this)
+        if (needsBlockCheck) {
+            app.idToken().then((token) => {
+                checkWidgetBlockStatusAction(token).then((result) => {
+                    if (result.status === "success" && result.data === true) {
+                        completeStepMutation.mutate({
+                            key: "widgetBlockAdded",
+                            value: true,
+                        });
+                    }
                 });
-            }
-        });
+            });
+        }
     }, [data]);
 
     const progress = data?.progress;
@@ -176,6 +197,10 @@ export function useSetupGuide() {
                 const url = `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`;
                 window.open(url, "_blank");
                 setButtonLoading(null);
+            } else if (item.stepKey === SETUP_STEP_KEYS.WIDGET_BLOCK_ADDED) {
+                const url = `https://${shopDomain}/admin/themes/current/editor?template=product&addAppBlockId=${apiKey}/app-block&target=newAppsSection`;
+                window.open(url, "_blank");
+                setButtonLoading(null);
             } else if (item.stepKey === SETUP_STEP_KEYS.STOREFRONT_PREVIEW) {
                 window.open(`https://${shopDomain}`, "_blank");
                 await completeStepMutation.mutateAsync({
@@ -228,6 +253,28 @@ export function useSetupGuide() {
                         });
                     }
                     shopify.toast.show(tEmbed("notEnabledYet"), {
+                        isError: true,
+                    });
+                }
+            } else if (item.stepKey === SETUP_STEP_KEYS.WIDGET_BLOCK_ADDED) {
+                const token = await app.idToken();
+                const result = await checkWidgetBlockStatusAction(token);
+                const blockActive =
+                    result.status === "success" && result.data === true;
+                if (blockActive) {
+                    await completeStepMutation.mutateAsync({
+                        key: item.stepKey as SetupStepKey,
+                        value: true,
+                    });
+                    shopify.toast.show(tEmbed("blockIsActive"));
+                } else {
+                    if (item.complete) {
+                        await completeStepMutation.mutateAsync({
+                            key: item.stepKey as SetupStepKey,
+                            value: false,
+                        });
+                    }
+                    shopify.toast.show(tEmbed("blockNotAddedYet"), {
                         isError: true,
                     });
                 }

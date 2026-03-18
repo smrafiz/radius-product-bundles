@@ -21,23 +21,24 @@
 
 ### 1. Bundle Creation & Management
 
-| Feature | Free | Pro |
-|---------|:----:|:---:|
-| FIXED_BUNDLE type | Yes | Yes |
-| BOGO type | Yes | Yes |
-| BUY_X_GET_Y type | Yes | Yes |
-| Active bundles | 5 | Unlimited |
-| Products per bundle | 10 | 10 |
-| Draft / Active / Paused statuses | Yes | Yes |
-| Archive bundles | Yes | Yes |
-| Edit bundles | Yes | Yes |
-| Delete bundles (soft delete) | Yes | Yes |
-| Bundle images | 1 image | Multiple images |
-| Marketing copy field | Yes | Yes |
-| Bundle duplication | — | Yes |
-| Bulk status changes | — | Yes |
+| Feature                           | Free | Pro |
+|-----------------------------------|:----:|:---:|
+| FIXED_BUNDLE type                 | Yes | Yes |
+| BOGO type                         | Yes | Yes |
+| BUY_X_GET_Y type                  | Yes | Yes |
+| Active bundles                    | 5 | Unlimited |
+| Products per bundle               | 10 | 10 |
+| Draft / Active statuses           | Yes | Yes |
+| Paused Bundles                    | — | Yes |
+| Archive bundles                   | Yes | Yes |
+| Edit bundles                      | Yes | Yes |
+| Delete bundles (soft delete)      | Yes | Yes |
+| Bundle images                     | 1 image | Multiple images |
+| Marketing copy field              | Yes | Yes |
+| Bundle duplication                | — | Yes |
+| Bulk status changes               | — | Yes |
 | Priority reordering (drag & drop) | — | Yes |
-| Bundle scheduling (date range) | — | Yes |
+| Bundle scheduling (date range)    | — | Yes |
 
 **Why**: All 3 bundle types free — this is our biggest differentiator vs competitors. Bundler locks mix & match behind $9.99, Fast Bundle locks everything behind $19+. We let merchants create BOGO/BXGY for free. 5 active bundles (vs Bundler's unlimited) is generous enough to prove value while still creating an upgrade path. Products per bundle stays at 10 for both — no artificial friction on the core offer.
 
@@ -72,9 +73,10 @@
 | Primary & accent colors | Yes | Yes |
 | Background & text colors | Yes | Yes |
 | Corner radius & shadow | Yes | Yes |
-| Layout: CLASSIC_CARD | Yes | Yes |
-| Layout: COMPACT_GRID | — | Yes |
-| Layout: LIST_VIEW | — | Yes |
+| Layout: CLASSIC_CARD (default for BOGO) | Yes | Yes |
+| Layout: COMPACT_GRID (default for BXGY) | Yes | Yes |
+| Layout: LIST (default for Fixed Bundle) | Yes | Yes |
+| Extra layouts (use any layout on any type) | — | Yes |
 | Spacing & padding controls | — | Yes |
 | Product card toggles (image, price, compare, savings badge, qty selector) | All on (default) | Full toggle control |
 | Button & badge styling | Default colors | Full customization |
@@ -83,9 +85,9 @@
 | Custom labels | — | Yes |
 | Per-bundle style overrides | — | Yes |
 
-**Why**: Free tier is more generous than before — presets, colors, AND shape controls (radius/shadow). This means free widgets can look genuinely good, not just "default." Layouts are the natural Pro gate: CLASSIC_CARD works well for most stores, but merchants who want COMPACT_GRID or LIST_VIEW to match their theme are already invested enough to pay. Responsive overrides and custom CSS are clearly power-user features.
+**Why**: Free tier is generous — presets, colors, shape controls, and every bundle type gets its default layout. BOGO → Classic Card, BXGY → Compact Grid, Fixed → List. Free merchants get the best-fit layout for each type automatically. Pro unlocks mixing layouts freely (e.g., using Classic Card on a Fixed Bundle, or List on BOGO), plus full customizer control, responsive overrides, and custom CSS.
 
-**Freebie advantage**: Bundler free only offers a "customizable widget" with no shape controls. We give presets + colors + shapes.
+**Freebie advantage**: Bundler free only offers a "customizable widget" with no shape controls. We give presets + colors + shapes + 3 layouts (one per type).
 
 ---
 
@@ -142,6 +144,8 @@
 | Max bundles per order | — | Yes |
 | Allow discount stacking | — | Yes |
 | Custom labels (JSON) | — | Yes |
+| Translatable labels | — | Yes |
+| Auto tranlations (labels) | — | Yes |
 | Custom CSS (global) | — | Yes |
 
 **Why**: All basic operational settings free. Discount stacking and per-order limits are power features for merchants running complex promotions — natural Pro territory.
@@ -186,7 +190,7 @@
 | **Active bundles** | 5 | Unlimited |
 | **Products per bundle** | 10 | 10 |
 | **Discount types** | Percentage, Fixed Amount, None | + Custom Price |
-| **Widget layouts** | Classic Card | + Compact Grid, List View |
+| **Widget layouts** | 1 per type (default) | Any layout on any type |
 | **Customizer** | Presets + colors + shapes | Full 4-section + responsive + CSS |
 | **Analytics** | Views, revenue, CVR per bundle | Full dashboard + charts + export |
 | **Dashboard KPIs** | Totals | + Trends & growth |
@@ -210,6 +214,7 @@
 | Fixed amount discount | Yes | Yes | Dev only | No discounts |
 | Per-bundle conversion rate | Yes | No ($19.99) | No | No |
 | Widget shape controls | Yes | No | No | No |
+| All 3 layouts (1 per type) | Yes | No | No | No |
 | Style presets | 6 themes | Basic | No | No |
 
 **Positioning statement**: "The only Shopify bundle app that gives you BOGO, Buy X Get Y, and conversion tracking — completely free."
@@ -233,7 +238,7 @@
 ### Enforcement Points
 
 1. **Bundle count limit** — Check in bundle creation server action; count active bundles (exclude DELETED/ARCHIVED) per shop. Show upgrade prompt at 5.
-2. **Layout restriction** — Disable COMPACT_GRID/LIST_VIEW in customizer on free plan with Pro badge overlay.
+2. **Layout restriction** — Free: lock layout to the default for that bundle type (BOGO→CLASSIC_CARD, BXGY→COMPACT_GRID, Fixed→LIST). Pro: unlock all 3 layouts for any bundle type. Show Pro badge on non-default layouts.
 3. **Customizer sections** — Section 1 (Appearance): fully open. Sections 2–4 (Product Cards, Button & Badge, Advanced): show preview but lock editing behind Pro.
 4. **Discount type restriction** — Disable CUSTOM_PRICE option on free plan with upgrade badge.
 5. **Analytics page** — Show summary stats table on free; blur/gate charts + export behind Pro upgrade card.

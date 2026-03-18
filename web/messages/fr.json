@@ -165,6 +165,12 @@
           "description": "Sélectionnez un type d'offre — Forfait, un acheté = un offert, remise par quantité ou mix & match — ajoutez des produits, configurez les prix et publiez pour commencer à vendre.",
           "primaryButton": "Créer une offre groupée"
         },
+        "addWidgetToTheme": {
+          "title": "Ajouter le widget de bundle à votre thème",
+          "description": "Ajoutez le bloc widget de bundle à vos pages produit dans l'éditeur de thème. Cela affiche vos offres groupées sur la vitrine pour que les clients puissent les voir et les ajouter à leur panier.",
+          "primaryButton": "Ouvrir l'éditeur de thème",
+          "secondaryButton": "Vérifier le statut"
+        },
         "customizeSettings": {
           "title": "Personnaliser vos paramètres",
           "description": "Configurez vos préférences d'affichage globales et stylisez le widget de pack pour correspondre à l'identité visuelle de votre boutique — ajustez la mise en page, les couleurs, la typographie et les styles de boutons.",
@@ -306,7 +312,14 @@
       "notEnabledDesc": "Les fonctionnalités et les statistiques des offres groupées ne fonctionneront pas correctement sur votre vitrine tant que l'intégration de l'application n'aura pas été activée dans votre éditeur de thème.",
       "enableButton": "Activer l'intégration de l'application",
       "isActive": "Intégration de l'application activée",
-      "notEnabledYet": "L'intégration de l'application n'est pas encore activée"
+      "notEnabledYet": "L'intégration de l'application n'est pas encore activée",
+      "blockIsActive": "Le widget de bundle est actif sur une page produit",
+      "blockNotAddedYet": "Le widget de bundle n'est pas encore ajouté à une page produit"
+    },
+    "WidgetBlock": {
+      "notAdded": "Le widget de bundle n'est pas ajouté à votre thème",
+      "notAddedDesc": "Votre widget de bundle n'a pas encore été ajouté à une page produit. Ajoutez-le à votre thème pour afficher les offres groupées sur votre vitrine.",
+      "addButton": "Ajouter le widget au thème"
     }
   },
   "Bundles": {

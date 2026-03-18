@@ -165,6 +165,12 @@
           "description": "Select a bundle type — Fixed Bundle, BOGO, Volume Discount, or Mix & Match — add products, configure pricing, and publish to start selling.",
           "primaryButton": "Create bundle"
         },
+        "addWidgetToTheme": {
+          "title": "Add bundle widget to your theme",
+          "description": "Add the bundle widget block to your product pages in the theme editor. This displays your bundles on the storefront so customers can see and add them to their cart.",
+          "primaryButton": "Open theme editor",
+          "secondaryButton": "Check status"
+        },
         "customizeSettings": {
           "title": "Customize your settings",
           "description": "Configure your global display preferences and style the bundle widget to match your store's branding — adjust layout, colors, typography, and button styles.",
@@ -306,7 +312,14 @@
       "notEnabledDesc": "The bundle functionalities and analytics won't work correctly on your storefront until the app embed is activated in your theme editor.",
       "enableButton": "Enable app embed",
       "isActive": "App embed is active",
-      "notEnabledYet": "App embed is not enabled yet"
+      "notEnabledYet": "App embed is not enabled yet",
+      "blockIsActive": "Bundle widget is active on a product page",
+      "blockNotAddedYet": "Bundle widget is not added to any product page yet"
+    },
+    "WidgetBlock": {
+      "notAdded": "Bundle widget not added to your theme",
+      "notAddedDesc": "Your bundle widget hasn't been added to any product page yet. Add it to your theme to display bundles on your storefront.",
+      "addButton": "Add widget to theme"
     }
   },
   "Bundles": {

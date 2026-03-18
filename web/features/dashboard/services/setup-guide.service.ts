@@ -40,6 +40,7 @@ export async function getSetupGuideService({
         firstBundleCreated:
             persisted.progress.firstBundleCreated ||
             autoDetected.firstBundleCreated,
+        widgetBlockAdded: persisted.progress.widgetBlockAdded,
         widgetCustomized:
             persisted.progress.widgetCustomized ||
             autoDetected.widgetCustomized,

@@ -40,7 +40,7 @@ export function BundleCreationForm({
         bundleName,
     });
     const { openModal } = useModalStore();
-    const { isSaving, isDirty, resetDirty } = useBundleStore();
+    const { isSaving, isDirty, resetDirty, resetBundle } = useBundleStore();
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const [isDeleting, setIsDeleting] = useState(false);
@@ -116,6 +116,8 @@ export function BundleCreationForm({
                     const result = await deleteBundleAction(token, bundleId);
 
                     if (result.status === "success") {
+                        resetBundle();
+                        dismissSaveBar();
                         await invalidateBundleCache(queryClient);
                         if (
                             typeof shopify !== "undefined" &&
@@ -149,7 +151,7 @@ export function BundleCreationForm({
                 }
             },
         });
-    }, [bundleId, bundleName, openModal, app, queryClient, bundleData]);
+    }, [bundleId, bundleName, openModal, app, queryClient, bundleData, resetBundle]);
 
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>

@@ -12,6 +12,7 @@ import {
     DashboardSetUpGuide,
     DashboardVideo,
     useSetupGuide,
+    WidgetStatusBanner,
 } from "@/features/dashboard";
 import { useBundlesPage } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
@@ -91,6 +92,12 @@ export function DashboardPage() {
 
                     {/* App Embed Status */}
                     <AppEmbedStatusBanner {...setupGuide} />
+
+                    {/* Widget Block Status */}
+                    {/*<WidgetStatusBanner*/}
+                    {/*    shopDomain={setupGuide.shopDomain}*/}
+                    {/*    apiKey={setupGuide.apiKey}*/}
+                    {/*/>*/}
 
                     {/* Analytics Disabled Warning */}
                     {isAnalyticsDisabled && <AnalyticsDisabledBanner />}

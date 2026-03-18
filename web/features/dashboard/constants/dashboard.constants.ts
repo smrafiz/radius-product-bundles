@@ -228,6 +228,18 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
         },
         {
             id: 2,
+            stepKey: SETUP_STEP_KEYS.WIDGET_BLOCK_ADDED,
+            title: t("steps.addWidgetToTheme.title"),
+            description: t("steps.addWidgetToTheme.description"),
+            image: {
+                url: "/assets/setup-guide-step-two.svg",
+                alt: "Add bundle widget to product page",
+            },
+            primaryButton: { content: t("steps.addWidgetToTheme.primaryButton") },
+            secondaryButton: { content: t("steps.addWidgetToTheme.secondaryButton") },
+        },
+        {
+            id: 3,
             stepKey: SETUP_STEP_KEYS.WIDGET_CUSTOMIZED,
             title: t("steps.customizeSettings.title"),
             description: t("steps.customizeSettings.description"),
@@ -241,7 +253,7 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
             },
         },
         {
-            id: 3,
+            id: 4,
             stepKey: SETUP_STEP_KEYS.STOREFRONT_PREVIEW,
             title: t("steps.previewStorefront.title"),
             description: t("steps.previewStorefront.description"),
@@ -252,7 +264,7 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
             primaryButton: { content: t("steps.previewStorefront.primaryButton") },
         },
         {
-            id: 4,
+            id: 5,
             stepKey: SETUP_STEP_KEYS.ANALYTICS_VIEWED,
             title: t("steps.monitorAnalytics.title"),
             description: t("steps.monitorAnalytics.description"),

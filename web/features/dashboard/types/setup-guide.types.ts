@@ -6,6 +6,7 @@ export type SetupStepKey =
 export interface SetupProgress {
     appEmbedEnabled: boolean;
     firstBundleCreated: boolean;
+    widgetBlockAdded: boolean;
     widgetCustomized: boolean;
     storefrontPreviewed: boolean;
     analyticsViewed: boolean;
