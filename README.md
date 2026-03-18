@@ -244,5 +244,6 @@ radius-product-bundles/
 - **Webhooks**: Real-time synchronization with Shopify data
 
 ---
+- update ci/cd
 
 Built with ❤️ by [RadiusTheme](https://radiustheme.com)
