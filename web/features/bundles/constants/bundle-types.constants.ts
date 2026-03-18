@@ -156,6 +156,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/fixed-bundle-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.FIXED_BUNDLE,
         comingSoon: false,
+        hidden: false,
     },
     BUY_X_GET_Y: {
         label: "Buy X Get Y",
@@ -168,6 +169,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/buy-x-get-y-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.BUY_X_GET_Y,
         comingSoon: false,
+        hidden: false,
     },
     BOGO: {
         label: "BOGO",
@@ -180,6 +182,7 @@ export const BUNDLE_TYPES = {
         modalImage: "/assets/bogo-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.BOGO,
         comingSoon: false,
+        hidden: false,
     },
     VOLUME_DISCOUNT: {
         label: "Volume discount",

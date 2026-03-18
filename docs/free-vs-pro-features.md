@@ -11,7 +11,9 @@
 | **Free** | $0/month | New merchants, small stores, evaluation |
 | **Pro** | $9.99/month | Growing stores, serious bundle sellers |
 
-**Rationale**: $9.99 undercuts most competitors while offering more value. Bundler charges $9.99 for mix & match alone, $19.99 to add analytics. Fast Bundle charges $19/mo with a $1K revenue cap. Our Pro plan includes everything with no revenue cap — strong value proposition.
+**Rationale**: $9.99 undercuts most competitors while offering more value. Bundler charges $9.99 for mix & match alone, $19.99 to add analytics. Fast Bundle charges $19/mo with a $1K revenue cap. Our Pro plan includes everything with no revenue cap.
+
+**Philosophy**: All bundle types free — let merchants create any offer they want. Gate the polish (layouts, customization, analytics depth) not the core product.
 
 ---
 
@@ -21,23 +23,25 @@
 
 | Feature | Free | Pro |
 |---------|:----:|:---:|
-| Create bundles | 3 active | Unlimited |
 | FIXED_BUNDLE type | Yes | Yes |
-| BOGO type | — | Yes |
-| BUY_X_GET_Y type | — | Yes |
+| BOGO type | Yes | Yes |
+| BUY_X_GET_Y type | Yes | Yes |
+| Active bundles | 5 | Unlimited |
+| Products per bundle | 10 | 10 |
 | Draft / Active / Paused statuses | Yes | Yes |
 | Archive bundles | Yes | Yes |
 | Edit bundles | Yes | Yes |
 | Delete bundles (soft delete) | Yes | Yes |
-| Products per bundle | Up to 5 | Up to 10 |
 | Bundle images | 1 image | Multiple images |
-| Marketing copy field | — | Yes |
+| Marketing copy field | Yes | Yes |
 | Bundle duplication | — | Yes |
 | Bulk status changes | — | Yes |
 | Priority reordering (drag & drop) | — | Yes |
 | Bundle scheduling (date range) | — | Yes |
 
-**Why**: 3 active bundles is enough to see value. Bundler offers unlimited free bundles but gates types — we gate count instead, which is simpler to enforce and still drives upgrades. BOGO/BXGY are high-value types that justify the Pro tier.
+**Why**: All 3 bundle types free — this is our biggest differentiator vs competitors. Bundler locks mix & match behind $9.99, Fast Bundle locks everything behind $19+. We let merchants create BOGO/BXGY for free. 5 active bundles (vs Bundler's unlimited) is generous enough to prove value while still creating an upgrade path. Products per bundle stays at 10 for both — no artificial friction on the core offer.
+
+**Freebie advantage**: No competitor offers all bundle types free with 5 active bundles. Bundler offers unlimited bundles but only basic types. We flip the model — all types, limited count.
 
 ---
 
@@ -46,14 +50,16 @@
 | Feature | Free | Pro |
 |---------|:----:|:---:|
 | PERCENTAGE discount | Yes | Yes |
+| FIXED_AMOUNT discount | Yes | Yes |
 | NO_DISCOUNT (grouping only) | Yes | Yes |
-| FIXED_AMOUNT discount | — | Yes |
 | CUSTOM_PRICE discount | — | Yes |
 | Max discount cap | — | Yes |
 | Free shipping on bundle | — | Yes |
 | Min/Max order value gate | — | Yes |
 
-**Why**: Percentage discounts cover 80%+ of use cases. Fixed amount, custom price, and free shipping are power features that advanced merchants need — natural Pro upsell.
+**Why**: Percentage + fixed amount both free — these cover 90%+ of real use cases. Merchants shouldn't have to upgrade just to say "$5 off this bundle." Custom price (set exact bundle price) is a power feature for advanced merchants. Free shipping and order gates drive Pro upgrades naturally — merchants only need these once they're serious about bundle strategy.
+
+**Freebie advantage**: Bundler free only offers percentage discounts. We give fixed amount too.
 
 ---
 
@@ -65,19 +71,21 @@
 | Style presets (6 themes) | Yes | Yes |
 | Primary & accent colors | Yes | Yes |
 | Background & text colors | Yes | Yes |
+| Corner radius & shadow | Yes | Yes |
 | Layout: CLASSIC_CARD | Yes | Yes |
 | Layout: COMPACT_GRID | — | Yes |
 | Layout: LIST_VIEW | — | Yes |
-| Corner radius & shadow | — | Yes |
 | Spacing & padding controls | — | Yes |
-| Product card toggles (image, price, compare, savings badge, qty selector) | Basic (all on) | Full control |
-| Button & badge styling | Default | Full customization |
+| Product card toggles (image, price, compare, savings badge, qty selector) | All on (default) | Full toggle control |
+| Button & badge styling | Default colors | Full customization |
 | Responsive overrides (tablet/mobile) | — | Yes |
 | Custom CSS | — | Yes |
 | Custom labels | — | Yes |
 | Per-bundle style overrides | — | Yes |
 
-**Why**: Free tier gets a good-looking widget with presets and color control. Pro unlocks full creative control — multiple layouts, responsive design, and custom CSS. This mirrors Bundler (basic widget free, advanced customization paid).
+**Why**: Free tier is more generous than before — presets, colors, AND shape controls (radius/shadow). This means free widgets can look genuinely good, not just "default." Layouts are the natural Pro gate: CLASSIC_CARD works well for most stores, but merchants who want COMPACT_GRID or LIST_VIEW to match their theme are already invested enough to pay. Responsive overrides and custom CSS are clearly power-user features.
+
+**Freebie advantage**: Bundler free only offers a "customizable widget" with no shape controls. We give presets + colors + shapes.
 
 ---
 
@@ -86,11 +94,11 @@
 | Feature | Free | Pro |
 |---------|:----:|:---:|
 | Enable/disable analytics tracking | Yes | Yes |
-| Basic metrics (total views, total revenue) | Yes | Yes |
-| Per-bundle view/revenue counts | Yes | Yes |
-| Full analytics dashboard | — | Yes |
-| Conversion rate tracking | — | Yes |
-| Add-to-cart rate tracking | — | Yes |
+| Total views & total revenue | Yes | Yes |
+| Per-bundle view & revenue counts | Yes | Yes |
+| Conversion rate (bundle-level) | Yes | Yes |
+| Add-to-cart rate | — | Yes |
+| Full analytics dashboard with charts | — | Yes |
 | Revenue & AOV trend charts | — | Yes |
 | Comparison charts (views vs purchases) | — | Yes |
 | Performance badges (High Converter, Revenue Star, etc.) | — | Yes |
@@ -100,7 +108,9 @@
 | Cross-sell metrics | — | Yes |
 | New vs returning customer splits | — | Yes |
 
-**Why**: Bundler charges $19.99/mo just for analytics. Including it in our $9.99 Pro plan is a major differentiator. Free tier still shows basic numbers so merchants can see bundles are working.
+**Why**: Free now includes per-bundle conversion rate — merchants can see which bundles actually convert, not just raw counts. This is a meaningful metric that helps them make decisions and proves the app's value. The full dashboard with trend charts, badges, and export is where Pro shines. Bundler charges $19.99/mo just for analytics — we include it all at $9.99.
+
+**Freebie advantage**: Most competitors show zero analytics on free. We show views, revenue, and conversion rate per bundle.
 
 ---
 
@@ -112,10 +122,10 @@
 | App embed status check | Yes | Yes |
 | Quick actions (create, analytics, customize) | Yes | Yes |
 | Recent bundles card | Yes | Yes |
-| KPI metric cards (revenue, growth, CVR) | — | Yes |
+| KPI metric cards (revenue, growth, CVR) | Totals only | Full with trends |
 | Demo videos | Yes | Yes |
 
-**Why**: Dashboard is the first thing merchants see — it should feel complete on free. KPI cards require analytics data, so they're Pro.
+**Why**: Dashboard should feel complete on both plans. Free shows total revenue and total CVR as static numbers. Pro adds growth percentages, trend arrows, and period comparisons.
 
 ---
 
@@ -129,13 +139,12 @@
 | Hide Shopify payment buttons | Yes | Yes |
 | Show savings banner | Yes | Yes |
 | Stock validation toggle | Yes | Yes |
-| Max products per bundle (configurable) | — | Yes |
 | Max bundles per order | — | Yes |
 | Allow discount stacking | — | Yes |
 | Custom labels (JSON) | — | Yes |
 | Custom CSS (global) | — | Yes |
 
-**Why**: Basic settings free, advanced configuration Pro. Discount stacking is a power feature that can affect revenue — worth gating.
+**Why**: All basic operational settings free. Discount stacking and per-order limits are power features for merchants running complex promotions — natural Pro territory.
 
 ---
 
@@ -151,7 +160,7 @@
 | App proxy (analytics tracking) | Yes | Yes |
 | Webhook processing | Yes | Yes |
 
-**Why**: Core discount logic must work on free — that's the product. Delivery discounts (free shipping) are a Pro feature aligned with the free shipping toggle above.
+**Why**: Core discount logic works fully on free for all bundle types. Delivery discounts (free shipping calculation) tied to Pro since the free shipping toggle is Pro.
 
 ---
 
@@ -173,19 +182,37 @@
 
 | Category | Free | Pro ($9.99/mo) |
 |----------|------|-----------------|
-| **Active bundles** | 3 | Unlimited |
-| **Bundle types** | Fixed Bundle | Fixed + BOGO + BXGY |
-| **Products per bundle** | 5 | 10 |
-| **Discount types** | Percentage, None | All 4 types |
-| **Widget layouts** | Classic Card | All 3 layouts |
-| **Customizer** | Presets + colors | Full 4-section + responsive |
-| **Analytics** | Basic counts | Full dashboard + charts + export |
+| **Bundle types** | All 3 (Fixed + BOGO + BXGY) | All 3 |
+| **Active bundles** | 5 | Unlimited |
+| **Products per bundle** | 10 | 10 |
+| **Discount types** | Percentage, Fixed Amount, None | + Custom Price |
+| **Widget layouts** | Classic Card | + Compact Grid, List View |
+| **Customizer** | Presets + colors + shapes | Full 4-section + responsive + CSS |
+| **Analytics** | Views, revenue, CVR per bundle | Full dashboard + charts + export |
+| **Dashboard KPIs** | Totals | + Trends & growth |
 | **Scheduling** | — | Date range automation |
 | **Bulk actions** | — | Yes |
 | **Duplication** | — | Yes |
 | **Free shipping** | — | Yes |
 | **Custom CSS/labels** | — | Yes |
+| **Discount stacking** | — | Yes |
 | **Priority support** | — | Yes |
+
+---
+
+## What Makes Our Free Tier Stand Out
+
+| Feature | Us (Free) | Bundler (Free) | Fast Bundle (Free) | Shopify Bundles |
+|---------|-----------|----------------|--------------------|----|
+| All bundle types | Yes (3 types) | No (basic only) | Dev stores only | Fixed only |
+| Active bundles | 5 | Unlimited | 0 (dev only) | Unlimited |
+| BOGO / BXGY | Yes | No ($9.99) | No ($19) | No |
+| Fixed amount discount | Yes | Yes | Dev only | No discounts |
+| Per-bundle conversion rate | Yes | No ($19.99) | No | No |
+| Widget shape controls | Yes | No | No | No |
+| Style presets | 6 themes | Basic | No | No |
+
+**Positioning statement**: "The only Shopify bundle app that gives you BOGO, Buy X Get Y, and conversion tracking — completely free."
 
 ---
 
@@ -193,11 +220,11 @@
 
 | App | Free Tier | First Paid Tier | Our Advantage |
 |-----|-----------|-----------------|---------------|
-| **Bundler** | Unlimited bundles, basic types | $9.99 (mix & match, landing pages) | We include BOGO/BXGY + analytics at same price |
-| **Fast Bundle** | Dev stores only | $19/mo (capped at $1K revenue) | We're cheaper, no revenue cap |
-| **PickyStory** | Limited | $99.50/mo | We're 10x cheaper |
-| **Wide Bundles** | No free tier | $18/mo | We have a free tier |
-| **Shopify Bundles** | Free (native) | N/A | We offer discounts, analytics, customization |
+| **Bundler** | Unlimited basic bundles, no analytics | $9.99 (mix & match, no analytics) | All types free + analytics at same price |
+| **Fast Bundle** | Dev stores only | $19/mo (capped at $1K revenue) | Real free tier, cheaper, no revenue cap |
+| **PickyStory** | Limited | $99.50/mo | 10x cheaper with comparable features |
+| **Wide Bundles** | No free tier | $18/mo | We have a generous free tier |
+| **Shopify Bundles** | Free (native, basic) | N/A | Discounts, BOGO/BXGY, analytics, customization |
 
 ---
 
@@ -205,13 +232,13 @@
 
 ### Enforcement Points
 
-1. **Bundle count limit** — Check in bundle creation server action; count active bundles (not DELETED/ARCHIVED) per shop
-2. **Bundle type restriction** — Check in bundle type selection step; disable BOGO/BXGY cards on free plan with upgrade badge
-3. **Product count limit** — Validate in Zod schema + server action (5 free vs 10 pro)
-4. **Discount type restriction** — Disable FIXED_AMOUNT/CUSTOM_PRICE options on free plan
-5. **Customizer sections** — Lock sections 2–4 behind Pro; show upgrade prompt
-6. **Analytics page** — Show basic stats on free; blur/gate charts + export behind Pro
-7. **Feature toggles** — Use `Shop.plan` field (already exists in schema) to gate features
+1. **Bundle count limit** — Check in bundle creation server action; count active bundles (exclude DELETED/ARCHIVED) per shop. Show upgrade prompt at 5.
+2. **Layout restriction** — Disable COMPACT_GRID/LIST_VIEW in customizer on free plan with Pro badge overlay.
+3. **Customizer sections** — Section 1 (Appearance): fully open. Sections 2–4 (Product Cards, Button & Badge, Advanced): show preview but lock editing behind Pro.
+4. **Discount type restriction** — Disable CUSTOM_PRICE option on free plan with upgrade badge.
+5. **Analytics page** — Show summary stats table on free; blur/gate charts + export behind Pro upgrade card.
+6. **Dashboard KPIs** — Show total numbers on free; hide trend/growth indicators behind Pro.
+7. **Feature toggles** — Use `Shop.plan` field (already exists in schema) to gate features.
 
 ### Required Schema Usage
 
@@ -224,6 +251,13 @@ No new tables needed. The existing `Shop.plan` field handles this.
 ### Billing Integration
 
 Shopify App Billing API (`appSubscriptionCreate` GraphQL mutation) for recurring charges. 7-day free trial recommended for Pro plan.
+
+### Upgrade Prompts (UX)
+
+- **Soft locks**: Show Pro features in UI with a lock icon + "Upgrade to Pro" badge. Don't hide them — let merchants see what they're missing.
+- **Contextual upsells**: When a free user hits 5 bundles → "You've created 5 bundles! Upgrade to Pro for unlimited."
+- **Analytics teaser**: Show blurred chart previews on free plan with "Unlock full analytics" overlay.
+- **Customizer preview**: Let free users see all sections but show lock on edit controls for sections 2–4.
 
 ---
 
@@ -239,9 +273,11 @@ Shopify App Billing API (`appSubscriptionCreate` GraphQL mutation) for recurring
 
 *Based on typical Shopify app conversion rates of 5–15% for well-priced apps.*
 
+*Note: Higher free-tier generosity typically improves conversion rates — merchants who see real results (BOGO working, CVR visible) are more likely to upgrade for the polish features.*
+
 ---
 
-*Document generated: March 18, 2026*
+*Document revised: March 18, 2026*
 *Based on competitive analysis of 5+ Shopify bundle apps and market standards*
 
 Sources:
