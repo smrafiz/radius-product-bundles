@@ -43,7 +43,7 @@
         "@tanstack/react-query-devtools": "^5.91.3",
         "date-fns": "^4.1.0",
         "graphql-request": "^7.4.0",
-        "isomorphic-dompurify": "^3.3.0",
+        "isomorphic-dompurify": "^3.5.1",
         "nanoid": "^5.1.7",
         "next": "16.1.7",
         "nprogress": "^0.2.0",

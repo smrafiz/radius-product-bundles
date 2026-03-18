@@ -94,16 +94,6 @@ export const DISCOUNT_TYPES = {
         format: (value = 0, formatCurrency, includeLabel = true) =>
             includeLabel ? "No Discount" : `${value}`,
     },
-    BUY_X_GET_Y: {
-        label: "Buy X Get Y",
-        id: "BUY_X_GET_Y",
-        slug: "buy-x-get-y",
-        description: "Buy certain quantity and get items free/discounted",
-        symbol: "",
-        suffix: "",
-        format: (value = 0, formatCurrency, includeLabel = true) =>
-            `Buy X Get Y (${value}% Off)`,
-    },
     QUANTITY_BREAKS: {
         label: "Quantity Breaks",
         id: "QUANTITY_BREAKS",

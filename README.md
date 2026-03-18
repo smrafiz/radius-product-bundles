@@ -1,247 +1,170 @@
-# Radius Product Bundles - Shopify App
+# Radius Product Bundles
 
-A comprehensive Shopify app for creating and managing product bundles with advanced analytics, automation, and customer management features. Built with Next.js 15, TypeScript, and Shopify Polaris.
+An embedded Shopify app for creating and managing product bundles. Includes a Rust-based discount function (WASM) and a Liquid storefront widget, with analytics and a 4-section style customizer.
 
-## 🚀 Overview
-
-Radius Product Bundles is a powerful Shopify application that enables merchants to create, manage, and optimize product bundles. The app provides a complete suite of tools including bundle creation, analytics dashboard, customer management, A/B testing, automation workflows, and pricing rules.
-
-## ✨ Key Features
-
-### 📦 Bundle Management
-
-- **Multiple Bundle Types**: Support for various bundle configurations and types
-- **Advanced Product Selection**: Enhanced modal with intelligent filtering and search
-- **Real-time Preview**: Live bundle preview with drag-and-drop reordering
-- **Bundle Templates**: Pre-built templates for quick bundle creation
-
-### 📊 Analytics & Dashboard
-
-- **Real-time Metrics**: Track bundle performance, revenue, and conversion rates
-- **Revenue Analytics**: Detailed revenue tracking and forecasting
-- **Performance Insights**: Bundle efficiency and optimization recommendations
-- **Custom Reports**: Generate detailed reports for business intelligence
-
-### 🎯 Customer Management
-
-- **Customer Segmentation**: Advanced customer grouping and targeting
-- **Purchase History**: Track customer bundle purchase patterns
-- **Personalization**: Tailored bundle recommendations based on customer behavior
-
-### 🧪 A/B Testing
-
-- **Bundle Testing**: Test different bundle configurations and pricing
-- **Performance Comparison**: Compare metrics across test variants
-- **Statistical Analysis**: Data-driven insights for optimization
-
-### ⚙️ Automation & Integrations
-
-- **Workflow Automation**: Automated bundle creation and management
-- **Third-party Integrations**: Connect with external tools and services
-- **Event-driven Actions**: Trigger actions based on customer behavior
-
-### 💰 Pricing Rules
-
-- **Dynamic Pricing**: Flexible pricing strategies for bundles
-- **Discount Management**: Advanced discount rules and conditions
-- **Price Optimization**: AI-driven pricing recommendations
-
-### 🛠️ Settings & Configuration
-
-- **App Configuration**: Comprehensive app settings and preferences
-- **Theme Integration**: Seamless integration with Shopify themes
-- **Permission Management**: Role-based access control
-
-## 🏗️ Tech Stack
+## Tech Stack
 
 ### Frontend
-
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **UI Library**: Shopify Polaris
-- **Styling**: Tailwind CSS 4.1
-- **State Management**: Zustand 5.0
-- **Animations**: @dnd-kit for drag-and-drop functionality
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Framework | Next.js (App Router) | 16.1.x |
+| Language | TypeScript | 5.9 |
+| UI | Polaris Web Components | — |
+| Styling | Tailwind CSS | 4.2 |
+| State (server) | TanStack React Query | 5.90 |
+| State (client) | Zustand + Immer | 5.0 |
+| Forms | React Hook Form + Zod | 7.71 / 4.3 |
+| Drag & Drop | @dnd-kit | 6.3 |
 
 ### Backend & Data
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| ORM | Prisma | 7.5 |
+| Database | PostgreSQL (AWS-hosted) | 15+ |
+| GraphQL | graphql-request + codegen | 7.4 |
+| Shopify API | @shopify/shopify-api | 13.x |
+| App Bridge | @shopify/app-bridge-react | 4.2 |
+| Runtime | Bun (scripts) + Node.js | 1.1+ |
 
-- **Runtime**: Node.js
-- **Database**: PostgreSQL with Prisma ORM 6.14
-- **GraphQL**: Apollo Client 3.13
-- **API**: Shopify Admin API
-- **Authentication**: Shopify App Bridge 4.2
+### Shopify Extensions
+| Extension | Type | Purpose |
+|-----------|------|---------|
+| `radius-discount-function` | Rust → WASM | Server-side line-item & delivery discount calculation |
+| `product-bundle-widget` | Liquid theme extension | Storefront bundle display widget |
 
-### Development Tools
+### Tooling
+- **Package manager**: pnpm (install) + bun (run/watch)
+- **GraphQL codegen**: `@shopify/api-codegen-preset` targeting Admin API 2026-01
+- **ESLint**: 10.x | **Prettier**: 3.8
+- **Testing**: Jest 30 + Testing Library
 
-- **Package Manager**: pnpm
-- **Code Generation**: GraphQL Code Generator 5.0
-- **Type Safety**: TypeScript 5.9
-- **Linting**: ESLint 9
-- **Formatting**: Prettier 3.6
+---
 
-### Shopify Integration
-
-- **Shopify CLI**: 3.83
-- **Shopify API**: 11.14
-- **App Bridge**: React integration for embedded apps
-- **Webhooks**: Real-time data synchronization
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
-
-- Node.js 18+
-- pnpm (recommended) or npm
-- Shopify CLI
-- PostgreSQL database
-- Shopify Partner account
-
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url>
-cd radius-product-bundles
-```
-
-### 2. Install Dependencies
-
-```bash
-# Install root dependencies
-pnpm install
-
-# Install web dependencies
-cd web
-pnpm install
-```
-
-### 3. Environment Setup
-
-```bash
-# Copy environment files
-cp .env.example .env
-cp web/.env.example web/.env
-
-# Configure your environment variables
-# DATABASE_URL, SHOPIFY_API_KEY, SHOPIFY_API_SECRET, etc.
-```
-
-### 4. Database Setup
-
-```bash
-# Generate Prisma client
-cd web
-pnpm run prepare
-
-# Run database migrations
-pnpm run prisma:migrate init
-
-# (Optional) Open Prisma Studio
-pnpm run prisma:studio
-```
-
-### 5. GraphQL Code Generation
-
-```bash
-# Generate TypeScript types from GraphQL schema
-pnpm run graphql-codegen
-```
-
-## 🚀 Development Commands
-
-### Starting Development Server
-
-```bash
-# Start the development server
-pnpm run dev
-
-# Alternative: Using Shopify CLI
-shopify app dev
-```
-
-### Database Commands
-
-```bash
-# Generate Prisma client
-pnpm run prepare
-
-# Create and apply migrations
-pnpm run prisma:migrate <migration-name>
-
-# Push schema changes without migration
-pnpm run prisma:push
-
-# Pull schema from database
-pnpm run prisma:pull
-
-# Open Prisma Studio
-pnpm run prisma:studio
-
-# Reset database
-npx prisma migrate reset
-```
-
-### GraphQL & Code Generation
-
-```bash
-# Generate GraphQL types
-pnpm run graphql-codegen
-
-# Watch for GraphQL changes (development)
-pnpm run graphql-codegen --watch
-```
-
-### Build & Deployment
-
-```bash
-# Build for production
-pnpm run build
-
-# Deploy to Shopify (production)
-shopify app deploy
-
-# Generate production build
-npm run build
-```
-
-## 📁 Example Project Structure
+## Monorepo Structure
 
 ```
-radius-product-bundles/
-├── web/                          # Main Next.js application
-│   ├── app/                      # Next.js 15 App Router
-│   │   ├── dashboard/           # Analytics dashboard
-│   │   ├── bundles/             # Bundle management
-│   │   │   ├── create/          # Bundle creation wizard
-│   │   │   └── [id]/            # Bundle details/editing
-│   │   ├── customers/           # Customer management
-│   │   ├── analytics/           # Advanced analytics
-│   │   ├── ab-testing/          # A/B testing suite
-│   │   ├── automation/          # Workflow automation
-│   │   ├── pricing-rules/       # Pricing management
-│   │   ├── integrations/        # Third-party integrations
-│   │   ├── templates/           # Bundle templates
-│   │   ├── settings/            # App configuration
-│   │   └── api/                 # API routes
-│   ├── components/              # Reusable UI components
-│   ├── lib/                     # Utilities and configurations
-│   │   ├── stores/              # Zustand state stores
-│   │   ├── gql/                 # GraphQL client setup
-│   │   └── queries/             # GraphQL queries & fragments
-│   ├── hooks/                   # Custom React hooks
-│   ├── types/                   # TypeScript type definitions
-│   ├── prisma/                  # Database schema and migrations
-│   └── providers/               # React context providers
-├── extension/                   # Shopify theme extensions (if any)
-└── docs/                        # Documentation
+/                                   # Root: orchestration scripts, shopify.app.toml
+├── web/                            # Next.js 16 app (frontend + backend)
+│   ├── app/                        # App Router pages & API routes
+│   │   └── api/                    # auth, webhooks, proxy, session, upload
+│   ├── features/                   # Feature modules (self-contained)
+│   │   ├── bundles/                # Core bundle CRUD
+│   │   ├── settings/               # App config + style customizer
+│   │   ├── analytics/              # Performance tracking
+│   │   ├── dashboard/              # Overview + setup guide
+│   │   ├── pricing/                # Pricing rules (partial)
+│   │   └── webhooks/               # Webhook handlers
+│   ├── shared/                     # Cross-feature: components, hooks, utils, stores
+│   ├── prisma/                     # Schema, migrations, generated client
+│   ├── lib/                        # GraphQL operations, codegen config
+│   └── widgets/                    # Storefront widget (Vite build)
+│       └── src/                    # Widget source (TypeScript)
+│
+└── extension/
+    ├── extensions/
+    │   ├── product-bundle-widget/  # Liquid theme extension
+    │   └── radius-discount-function/ # Rust WASM discount function
+    └── schema/                     # Widget schema definitions
 ```
 
-## 🔧 Key Configuration Files
+Each feature module follows the same internal structure:
+```
+features/<name>/
+  actions/        # Next.js server actions (API boundary)
+  api/            # React Query keys, queries, mutations
+  components/     # Feature-specific UI
+  hooks/          # Feature-specific hooks
+  repositories/   # Prisma data access
+  services/       # Business logic
+  stores/         # Zustand stores
+  types/          # TypeScript interfaces
+  constants/      # Feature constants
+  validation/     # Zod schemas
+```
 
-### Shopify App Configuration
+---
 
-- **Access Scopes**: `read_customers`, `read_orders`, `read_products`, `write_products`, `write_price_rules`
-- **App Type**: Embedded app with direct API access
-- **Webhooks**: Real-time synchronization with Shopify data
+## Features
+
+### Bundle Types
+`FIXED_BUNDLE` · `BUY_X_GET_Y` · `BOGO` · `VOLUME_DISCOUNT` · `MIX_AND_MATCH` · `FREQUENTLY_BOUGHT_TOGETHER`
+
+### Bundle Statuses
+`DRAFT` · `ACTIVE` · `PAUSED` · `ARCHIVED` · `SCHEDULED`
+
+### Discount Types
+`PERCENTAGE` · `FIXED_AMOUNT` · `CUSTOM_PRICE` · `NO_DISCOUNT` · `QUANTITY_BREAKS`
+
+## Shopify Integration
+
+- **App type**: Embedded, offline mode, direct API enabled
+- **Webhooks**: `app/uninstalled`, `shop/update`, `orders/create`, `products/delete`
+- **Access scopes**: `read_locales`, `read_orders`, `read_products`, `write_app_proxy`, `write_discounts`, `write_files`, `write_products`, `write_publications`
+
+---
+
+## Path Aliases (tsconfig)
+
+```
+@/*          → /web/*
+@/lib/*      → /web/lib/*
+@/features/* → /web/features/*
+@/shared/*   → /web/shared/*
+```
+
+---
+
+## Quick Command Reference
+
+### Development
+
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start full dev environment (app + widget watcher + schema watcher) |
+| `bun run dev:app` | Shopify CLI dev server only |
+| `bun run dev:widgets` | Vite watch-build for storefront widgets |
+
+### Build & Deploy
+
+| Command | Description |
+|---------|-------------|
+| `bun run build` | `shopify app build` |
+| `bun run deploy` | `shopify app deploy` |
+| `bun run build:widgets` | Vite build for storefront widgets |
+| `bun run build:schema` | Build extension schema from `/extension/schema/` |
+| `bun run update:config` | Regenerate `shopify.app.toml` from `.env`, then deploy config |
+
+### Database (run from `/web`)
+
+| Command | Description |
+|---------|-------------|
+| `bun migrate` | `prisma migrate dev` |
+| `bun prisma:push` | Push schema without creating a migration |
+| `bun prisma:pull` | Pull schema from database |
+| `bun prisma:migrate <name>` | Create a named migration |
+| `bun prisma:studio` | Open Prisma Studio |
+| `bun prepare` | Regenerate Prisma client |
+
+### Code Quality (run from `/web`)
+
+| Command | Description |
+|---------|-------------|
+| `bun graphql-codegen` | Generate types from Shopify Admin API 2026-01 |
+| `bun test` | Jest |
+| `bun test:watch` | Jest watch mode |
+| `bun test:coverage` | Jest with coverage report |
+
+### Formatting
+
+| Command | Description |
+|---------|-------------|
+| `bun run pretty` | Prettier on entire repo |
+
+---
+
+## Setup
+
+See **[INSTALLATION.md](./INSTALLATION.md)** for the full step-by-step setup guide including prerequisites, environment variables, database setup, Rust WASM build, and first-run instructions.
 
 ---
 - update ci/cd

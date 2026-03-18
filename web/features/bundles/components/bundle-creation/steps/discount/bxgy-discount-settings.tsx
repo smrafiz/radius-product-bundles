@@ -28,9 +28,7 @@ export function BxgyDiscountSettings() {
             >
                 <s-heading>{t("rewardHeading")}</s-heading>
                 <s-tooltip id="bxgy-discount-tooltip">
-                    <s-text>
-                        {t("rewardTooltip")}
-                    </s-text>
+                    <s-text>{t("rewardTooltip")}</s-text>
                 </s-tooltip>
                 <s-icon
                     tone="neutral"
@@ -39,9 +37,7 @@ export function BxgyDiscountSettings() {
                 />
             </s-stack>
 
-            <s-banner tone="info">
-                {t("rewardOnly")}
-            </s-banner>
+            <s-banner tone="info">{t("rewardOnly")}</s-banner>
 
             <s-select
                 label={t("discountType")}
@@ -62,6 +58,10 @@ export function BxgyDiscountSettings() {
                     </s-option>
                 ))}
             </s-select>
+
+            {discountType === "PERCENTAGE" && (
+                <s-banner tone="info">{t("bogoFreeHint")}</s-banner>
+            )}
 
             {showDiscountValue && (
                 <s-number-field

@@ -132,7 +132,6 @@ export function createBundleSchema(v: T) {
                 "FIXED_AMOUNT",
                 "CUSTOM_PRICE",
                 "NO_DISCOUNT",
-                "BUY_X_GET_Y",
                 "QUANTITY_BREAKS",
             ]),
 

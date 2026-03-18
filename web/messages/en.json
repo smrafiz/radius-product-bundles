@@ -454,6 +454,7 @@
         "rewardOnly": "Discount applies to reward products only",
         "rewardPrice": "Set price for reward product",
         "rewardProductPrice": "Reward product price",
+        "bogoFreeHint": "To give reward items completely free, set the value to 100%.",
         "behaviorHeading": "Bundle Behavior",
         "behaviorTooltip": "Control how the discount is distributed across products and whether free shipping is included.",
         "application": "Discount Application",

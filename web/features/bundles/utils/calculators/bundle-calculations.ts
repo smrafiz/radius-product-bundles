@@ -98,7 +98,6 @@ export function calculateDiscountedPrice(
         case "CUSTOM_PRICE":
             return originalPrice;
 
-        case "BUY_X_GET_Y":
         case "QUANTITY_BREAKS":
             return originalPrice;
 

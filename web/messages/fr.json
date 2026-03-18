@@ -454,6 +454,7 @@
         "rewardOnly": "Remise valable uniquement sur les produits de récompense",
         "rewardPrice": "Définir le prix du produit en récompense",
         "rewardProductPrice": "Prix du produit en récompense",
+        "bogoFreeHint": "Pour offrir des articles en récompense de manière totalement gratuite, définissez la valeur sur 100%.",
         "behaviorHeading": "Comportement de l'offre groupée",
         "behaviorTooltip": "Déterminez la répartition de la réduction entre les produits et si la livraison gratuite est incluse.",
         "application": "Application de la réduction",
