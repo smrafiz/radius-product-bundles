@@ -181,10 +181,6 @@ export function WidgetClassicCard({
     const cardBg = styles.customizeCardStyle
         ? getCardBgColor(styles)
         : undefined;
-    const cardShadow =
-        styles.customizeCardStyle && styles.productCardShadow
-            ? getShadow("soft")
-            : undefined;
     const triggerBadge =
         labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
     const anyRewardFree = rewardProducts.some(
@@ -310,7 +306,6 @@ export function WidgetClassicCard({
                             backgroundColor: cardBg,
                             flex: 1,
                             minWidth: 0,
-                            boxShadow: cardShadow,
                         }}
                     >
                         {displayOptions.showSavingsBadge && (

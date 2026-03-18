@@ -205,6 +205,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         operator: "equals",
                         value: true,
                     },
+                    bundleTypes: ["FIXED_BUNDLE"],
                 },
                 {
                     type: "switch",
@@ -216,6 +217,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         operator: "equals",
                         value: true,
                     },
+                    bundleTypes: ["FIXED_BUNDLE"],
                 },
             ],
         },
