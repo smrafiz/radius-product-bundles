@@ -35,13 +35,6 @@
     },
     {
         "type": "checkbox",
-        "id": "show_border",
-        "label": "Widget border",
-        "default": true,
-        "visible_if": "{{ block.settings.override_container_settings }}"
-    },
-    {
-        "type": "checkbox",
         "id": "override_typography_settings",
         "label": "Override typography settings",
         "default": false

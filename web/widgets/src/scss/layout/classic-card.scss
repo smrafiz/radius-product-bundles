@@ -150,26 +150,11 @@
         white-space: nowrap;
 
         &--trigger {
-            background: var(--rb-primary-color, #f97316);
+            background: var(--rb-primary-color, #303030);
         }
 
         &--reward {
             background: var(--rb-savings-color, #16a34a);
-        }
-
-        &--outline {
-            background: transparent;
-            border: 2px solid;
-
-            &.rb-classic__badge--trigger {
-                color: var(--rb-primary-color, #f97316);
-                border-color: var(--rb-primary-color, #f97316);
-            }
-
-            &.rb-classic__badge--reward {
-                color: var(--rb-savings-color, #16a34a);
-                border-color: var(--rb-savings-color, #16a34a);
-            }
         }
     }
 

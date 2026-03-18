@@ -314,13 +314,8 @@ export function WidgetClassicCard({
                                 position: "absolute",
                                 top: -10,
                                 left: 12,
-                                backgroundColor: isOutline
-                                    ? "transparent"
-                                    : color,
-                                color: isOutline ? color : "#fff",
-                                border: isOutline
-                                    ? `2px solid ${color}`
-                                    : "none",
+                                backgroundColor: color,
+                                color: "#fff",
                                 fontSize: parseInt(bodyFontSize) - 4,
                                 fontWeight: 600,
                                 padding: "2px 10px",

@@ -240,79 +240,57 @@
 				{% endif %}
 				{% assign bogo_free_tag_color = g_type_overrides.bogoFreeTagColor | default: g_styles.bogoFreeTagColor | default: '#16a34a' %}
 				{% assign bogo_card_border_style = g_type_overrides.bogoCardBorderStyle | default: g_styles.bogoCardBorderStyle | default: 'solid' %}
-				{% assign override_button_settings = block.settings.override_button_settings | default: false %}
-
 				{% assign button_style = 'filled' %}
-				{% if override_button_settings and block.settings.button_style != blank %}
-				  {% assign button_style = block.settings.button_style %}
-				{% elsif g_type_overrides.buttonStyle != blank %}
+				{% if g_type_overrides.buttonStyle != blank %}
 				  {% assign button_style = g_type_overrides.buttonStyle %}
 				{% elsif g_styles.buttonStyle != blank %}
 				  {% assign button_style = g_styles.buttonStyle %}
 				{% endif %}
 
 				{% assign button_size = 'medium' %}
-				{% if override_button_settings and block.settings.button_size != blank %}
-				  {% assign button_size = block.settings.button_size %}
-				{% elsif g_type_overrides.buttonSize != blank %}
+				{% if g_type_overrides.buttonSize != blank %}
 				  {% assign button_size = g_type_overrides.buttonSize %}
 				{% elsif g_styles.buttonSize != blank %}
 				  {% assign button_size = g_styles.buttonSize %}
 				{% endif %}
 
 				{% assign button_width = 'full' %}
-				{% if override_button_settings and block.settings.button_width != blank %}
-				  {% assign button_width = block.settings.button_width %}
-				{% elsif g_type_overrides.buttonWidth != blank %}
+				{% if g_type_overrides.buttonWidth != blank %}
 				  {% assign button_width = g_type_overrides.buttonWidth %}
 				{% elsif g_styles.buttonWidth != blank %}
 				  {% assign button_width = g_styles.buttonWidth %}
 				{% endif %}
 
 				{% assign button_bg_color = primary_color %}
-				{% if override_button_settings and block.settings.button_bg_color != blank %}
-				  {% assign button_bg_color = block.settings.button_bg_color %}
-				{% elsif g_type_overrides.buttonBgColor != blank %}
+				{% if g_type_overrides.buttonBgColor != blank %}
 				  {% assign button_bg_color = g_type_overrides.buttonBgColor %}
 				{% elsif g_styles.buttonBgColor != blank %}
 				  {% assign button_bg_color = g_styles.buttonBgColor %}
 				{% endif %}
 
-				{% assign override_badge_settings = block.settings.override_badge_settings | default: false %}
-
 				{% assign badge_position = 'top-right' %}
-				{% if override_badge_settings and block.settings.badge_position != blank %}
-				  {% assign badge_position = block.settings.badge_position %}
-				{% elsif g_type_overrides.badgePosition != blank %}
+				{% if g_type_overrides.badgePosition != blank %}
 				  {% assign badge_position = g_type_overrides.badgePosition %}
 				{% elsif g_styles.badgePosition != blank %}
 				  {% assign badge_position = g_styles.badgePosition %}
 				{% endif %}
 
 				{% assign badge_style = 'filled' %}
-				{% if override_badge_settings and block.settings.badge_style != blank %}
-				  {% assign badge_style = block.settings.badge_style %}
-				{% elsif g_type_overrides.badgeStyle != blank %}
+				{% if g_type_overrides.badgeStyle != blank %}
 				  {% assign badge_style = g_type_overrides.badgeStyle %}
 				{% elsif g_styles.badgeStyle != blank %}
 				  {% assign badge_style = g_styles.badgeStyle %}
 				{% endif %}
-				{% assign override_pricing_settings = block.settings.override_pricing_settings | default: false %}
-
 				{% assign pricing_summary_box = true %}
-				{% if override_pricing_settings %}
-				  {% assign pricing_summary_box = block.settings.pricing_summary_box | default: true %}
-				{% elsif g_type_overrides.pricingSummaryBox != blank %}
-				  {% assign pricing_summary_box = g_type_overrides.pricingSummaryBox %}
-				{% elsif g_styles.pricingSummaryBox != blank %}
-				  {% assign pricing_summary_box = g_styles.pricingSummaryBox %}
+				{% if g_type_overrides.pricingSummaryBox == false or g_type_overrides.pricingSummaryBox == 'false' %}
+				  {% assign pricing_summary_box = false %}
+				{% elsif g_styles.pricingSummaryBox == false or g_styles.pricingSummaryBox == 'false' %}
+				  {% assign pricing_summary_box = false %}
 				{% endif %}
 
 				{% assign pricing_summary_style = 'card' %}
 				{% if pricing_summary_box %}
-				  {% if override_pricing_settings and block.settings.pricing_summary_style != blank %}
-					{% assign pricing_summary_style = block.settings.pricing_summary_style %}
-				  {% elsif g_type_overrides.pricingSummaryStyle != blank %}
+				  {% if g_type_overrides.pricingSummaryStyle != blank %}
 					{% assign pricing_summary_style = g_type_overrides.pricingSummaryStyle %}
 				  {% elsif g_styles.pricingSummaryStyle != blank %}
 					{% assign pricing_summary_style = g_styles.pricingSummaryStyle %}
@@ -321,9 +299,7 @@
 
 				{% assign pricing_summary_bg = '#f9fafb' %}
 				{% if pricing_summary_box %}
-				  {% if override_pricing_settings and block.settings.pricing_summary_bg != blank %}
-					{% assign pricing_summary_bg = block.settings.pricing_summary_bg %}
-				  {% elsif g_type_overrides.pricingSummaryBg != blank %}
+				  {% if g_type_overrides.pricingSummaryBg != blank %}
 					{% assign pricing_summary_bg = g_type_overrides.pricingSummaryBg %}
 				  {% elsif g_styles.pricingSummaryBg != blank %}
 					{% assign pricing_summary_bg = g_styles.pricingSummaryBg %}
@@ -350,12 +326,10 @@
 				{% endif %}
 
 				{% assign show_border = true %}
-				{% if override_container_settings %}
-				  {% assign show_border = block.settings.show_border %}
-				{% elsif g_type_overrides.showBorder != blank %}
-				  {% assign show_border = g_type_overrides.showBorder %}
-				{% elsif g_styles.showBorder != blank %}
-				  {% assign show_border = g_styles.showBorder %}
+				{% if g_type_overrides.showBorder == false or g_type_overrides.showBorder == 'false' %}
+				  {% assign show_border = false %}
+				{% elsif g_styles.showBorder == false or g_styles.showBorder == 'false' %}
+				  {% assign show_border = false %}
 				{% endif %}
 				{% assign override_typography_settings = block.settings.override_typography_settings | default: false %}
 
@@ -874,5 +848,5 @@
 {% endif %}
 
 {% schema %}
-{"name":"Radius Bundles","target":"section","settings":[{"type":"header","content":"Appearance"},{"type":"paragraph","content":"Leave empty to use global settings from app"},{"type":"select","id":"style_preset","label":"Style preset","options":[{"value":"","label":"Use global default"},{"value":"minimal","label":"Minimal"},{"value":"soft","label":"Soft"},{"value":"bold","label":"Bold"},{"value":"elegant","label":"Elegant"},{"value":"dark","label":"Dark"},{"value":"nature","label":"Nature"},{"value":"warm","label":"Warm"},{"value":"professional","label":"Professional"},{"value":"custom","label":"Custom (use settings below)"}],"default":""},{"type":"color","id":"primary_color","label":"Accent color","info":"Buttons, badges, and interactive elements","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"text_color","label":"Text color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"background_color","label":"Background color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"border_color","label":"Border color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"savings_color","label":"Savings color","info":"Discount highlights","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"corner_style","label":"Corner style","options":[{"value":"","label":"Use global default"},{"value":"sharp","label":"Sharp"},{"value":"modern","label":"Modern"},{"value":"rounded","label":"Rounded"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"shadow","label":"Shadow depth","options":[{"value":"","label":"Use global default"},{"value":"none","label":"None"},{"value":"soft","label":"Soft"},{"value":"strong","label":"Strong"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"spacing","label":"Layout spacing","options":[{"value":"","label":"Use global default"},{"value":"compact","label":"Compact"},{"value":"comfortable","label":"Comfortable"},{"value":"spacious","label":"Spacious"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"header","content":"Product Cards"},{"type":"checkbox","id":"override_card_settings","label":"Override card settings","default":false},{"type":"select","id":"image_size","label":"Image size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_card_settings }}"},{"type":"select","id":"image_fit","label":"Image fit","options":[{"value":"","label":"Use global default"},{"value":"cover","label":"Cover"},{"value":"contain","label":"Contain"}],"default":"","visible_if":"{{ block.settings.override_card_settings }}"},{"type":"select","id":"image_position","label":"Image position","info":"Applies to list layout only","options":[{"value":"","label":"Use global default"},{"value":"left","label":"Left"},{"value":"top","label":"Top"}],"default":"","visible_if":"{{ block.settings.override_card_settings }}"},{"type":"color","id":"product_card_bg","label":"Card background","visible_if":"{{ block.settings.override_card_settings }}"},{"type":"checkbox","id":"product_card_border","label":"Show card border","default":true,"visible_if":"{{ block.settings.override_card_settings }}"},{"type":"checkbox","id":"product_card_shadow","label":"Card shadow","default":false,"visible_if":"{{ block.settings.override_card_settings }}"},{"type":"checkbox","id":"override_button_settings","label":"Override button settings","default":false},{"type":"select","id":"button_style","label":"Button style","options":[{"value":"","label":"Use global default"},{"value":"filled","label":"Filled"},{"value":"outline","label":"Outline"}],"default":"","visible_if":"{{ block.settings.override_button_settings }}"},{"type":"select","id":"button_size","label":"Button size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_button_settings }}"},{"type":"select","id":"button_width","label":"Button width","options":[{"value":"","label":"Use global default"},{"value":"auto","label":"Auto"},{"value":"full","label":"Full Width"}],"default":"","visible_if":"{{ block.settings.override_button_settings }}"},{"type":"color","id":"button_bg_color","label":"Button color","info":"Leave empty to inherit accent color","visible_if":"{{ block.settings.override_button_settings }}"},{"type":"checkbox","id":"override_badge_settings","label":"Override badge settings","default":false},{"type":"select","id":"badge_position","label":"Badge position","options":[{"value":"","label":"Use global default"},{"value":"top-left","label":"Left"},{"value":"top-right","label":"Right"},{"value":"inline","label":"Inline"}],"default":"","visible_if":"{{ block.settings.override_badge_settings }}"},{"type":"select","id":"badge_style","label":"Badge style","options":[{"value":"","label":"Use global default"},{"value":"filled","label":"Filled"},{"value":"outline","label":"Outline"}],"default":"","visible_if":"{{ block.settings.override_badge_settings }}"},{"type":"checkbox","id":"override_pricing_settings","label":"Override pricing summary settings","default":false},{"type":"checkbox","id":"pricing_summary_box","label":"Show summary box","default":true,"visible_if":"{{ block.settings.override_pricing_settings }}"},{"type":"color","id":"pricing_summary_bg","label":"Summary background","visible_if":"{{ block.settings.override_pricing_settings }}"},{"type":"select","id":"pricing_summary_style","label":"Summary style","options":[{"value":"","label":"Use global default"},{"value":"minimal","label":"Minimal"},{"value":"card","label":"Card"},{"value":"highlight","label":"Highlight"}],"default":"","visible_if":"{{ block.settings.override_pricing_settings }}"},{"type":"header","content":"Advanced"},{"type":"checkbox","id":"override_container_settings","label":"Override container settings","default":false},{"type":"range","id":"box_max_width","label":"Widget max width","min":300,"max":1200,"step":50,"unit":"px","default":600,"visible_if":"{{ block.settings.override_container_settings }}"},{"type":"select","id":"box_alignment","label":"Widget alignment","options":[{"value":"","label":"Use global default"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],"default":"","visible_if":"{{ block.settings.override_container_settings }}"},{"type":"checkbox","id":"show_border","label":"Widget border","default":true,"visible_if":"{{ block.settings.override_container_settings }}"},{"type":"checkbox","id":"override_typography_settings","label":"Override typography settings","default":false},{"type":"select","id":"heading_size","label":"Heading size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_typography_settings }}"},{"type":"select","id":"body_size","label":"Body text size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_typography_settings }}"},{"type":"checkbox","id":"more_product_settings","label":"More product settings","default":true},{"type":"range","id":"more_product_count","label":"Product count","min":2,"max":10,"step":1,"default":4,"visible_if":"{{ block.settings.more_product_settings }}"},{"type":"text","id":"more_products_text","label":"More products text","default":"+ {count} more products","visible_if":"{{ block.settings.more_product_settings }}"},{"type":"text","id":"show_less_text","label":"Show less text","default":"Show less","visible_if":"{{ block.settings.more_product_settings }}"}]}
+{"name":"Radius Bundles","target":"section","settings":[{"type":"header","content":"Appearance"},{"type":"paragraph","content":"Leave empty to use global settings from app"},{"type":"select","id":"style_preset","label":"Style preset","options":[{"value":"","label":"Use global default"},{"value":"minimal","label":"Minimal"},{"value":"soft","label":"Soft"},{"value":"bold","label":"Bold"},{"value":"elegant","label":"Elegant"},{"value":"dark","label":"Dark"},{"value":"nature","label":"Nature"},{"value":"warm","label":"Warm"},{"value":"professional","label":"Professional"},{"value":"custom","label":"Custom (use settings below)"}],"default":""},{"type":"color","id":"primary_color","label":"Accent color","info":"Buttons, badges, and interactive elements","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"text_color","label":"Text color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"background_color","label":"Background color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"border_color","label":"Border color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"savings_color","label":"Savings color","info":"Discount highlights","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"corner_style","label":"Corner style","options":[{"value":"","label":"Use global default"},{"value":"sharp","label":"Sharp"},{"value":"modern","label":"Modern"},{"value":"rounded","label":"Rounded"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"shadow","label":"Shadow depth","options":[{"value":"","label":"Use global default"},{"value":"none","label":"None"},{"value":"soft","label":"Soft"},{"value":"strong","label":"Strong"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"spacing","label":"Layout spacing","options":[{"value":"","label":"Use global default"},{"value":"compact","label":"Compact"},{"value":"comfortable","label":"Comfortable"},{"value":"spacious","label":"Spacious"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"header","content":"Advanced"},{"type":"checkbox","id":"override_container_settings","label":"Override container settings","default":false},{"type":"range","id":"box_max_width","label":"Widget max width","min":300,"max":1200,"step":50,"unit":"px","default":600,"visible_if":"{{ block.settings.override_container_settings }}"},{"type":"select","id":"box_alignment","label":"Widget alignment","options":[{"value":"","label":"Use global default"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],"default":"","visible_if":"{{ block.settings.override_container_settings }}"},{"type":"checkbox","id":"override_typography_settings","label":"Override typography settings","default":false},{"type":"select","id":"heading_size","label":"Heading size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_typography_settings }}"},{"type":"select","id":"body_size","label":"Body text size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_typography_settings }}"},{"type":"checkbox","id":"more_product_settings","label":"More product settings","default":true},{"type":"range","id":"more_product_count","label":"Product count","min":2,"max":10,"step":1,"default":4,"visible_if":"{{ block.settings.more_product_settings }}"},{"type":"text","id":"more_products_text","label":"More products text","default":"+ {count} more products","visible_if":"{{ block.settings.more_product_settings }}"},{"type":"text","id":"show_less_text","label":"Show less text","default":"Show less","visible_if":"{{ block.settings.more_product_settings }}"}]}
 {% endschema %}
