@@ -192,6 +192,7 @@ export const BUNDLE_TYPES = {
         badge: { text: "Coming soon!", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.VOLUME_DISCOUNT,
         comingSoon: false,
+        hidden: true,
     },
     MIX_AND_MATCH: {
         label: "Mix & match",
@@ -204,6 +205,7 @@ export const BUNDLE_TYPES = {
         badge: { text: "Coming soon!", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.MIX_AND_MATCH,
         comingSoon: false,
+        hidden: true,
     },
     FREQUENTLY_BOUGHT_TOGETHER: {
         label: "Frequently bought together",
@@ -216,5 +218,6 @@ export const BUNDLE_TYPES = {
         badge: { text: "Coming soon!", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.FREQUENTLY_BOUGHT_TOGETHER,
         comingSoon: false,
+        hidden: true,
     },
 } as const satisfies Record<BundleType, BundleConfig>;

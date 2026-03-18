@@ -541,7 +541,8 @@
         "bogoBadgeFree": "Achetez {buy} articles, obtenez {get} articles gratuits",
         "bogoBadgePercent": "Achetez {buy}, obtenez {get} avec {discount} % de réduction",
         "bogoBadgeFixed": "Achetez {buy} produits, obtenez {get} produit(s) gratuit(s) – {amount} $ de réduction",
-        "bogoBadgeDefault": "Achetez {buy}, obtenez {get}"
+        "bogoBadgeDefault": "Achetez {buy}, obtenez {get}",
+        "emptyState": "Veuillez choisir des produits pour voir l'aperçu du bundle"
       }
     },
     "Types": {

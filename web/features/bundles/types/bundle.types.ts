@@ -200,6 +200,7 @@ export type BundleConfig = {
     modalImage?: string;
     badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
     comingSoon?: boolean | undefined;
+    hidden?: boolean;
     namePatterns: readonly string[];
 };
 

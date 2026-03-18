@@ -493,76 +493,95 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
-                    <div className="radius-bundle-widget">
-                        <div className="radius-bundle">
-                            <div
-                                className="radius-bundle__inner"
-                                style={{
-                                    position: "relative",
-                                    backgroundColor: styles.backgroundColor,
-                                    borderRadius,
-                                    borderStyle: styles.showBorder
-                                        ? "solid"
-                                        : "none",
-                                    borderWidth: styles.showBorder ? "1px" : 0,
-                                    borderColor: styles.borderColor,
-                                    boxShadow: shadow,
-                                    padding,
-                                    marginInlineStart: styles.showBorder
-                                        ? "-17px"
-                                        : "-16px",
-                                    marginInlineEnd: styles.showBorder
-                                        ? "-17px"
-                                        : "-16px",
-                                    marginBlockEnd: styles.showBorder
-                                        ? "-17px"
-                                        : "-16px",
-                                }}
-                            >
-                                <BundleWidget
-                                    styles={styles}
-                                    displayOptions={displayOptions}
-                                    pricing={pricing}
-                                    title={displaySettings.title}
-                                    subtitle={displaySettings.subtitle}
-                                    cartButtonText={
-                                        displaySettings.cartButtonText
-                                    }
-                                    labels={labels}
-                                    hideFooter={BOGO_LAYOUT_VALUES.includes(
-                                        displaySettings.layout,
-                                    )}
-                                    hideHeader={BOGO_LAYOUT_VALUES.includes(
-                                        displaySettings.layout,
-                                    )}
-                                    hideOriginalPrice={
-                                        displaySettings.layout === "COMPACT" &&
-                                        bundleData.type === "FIXED_BUNDLE"
-                                    }
+                    {products.length === 0 ? (
+                        <div
+                            style={{
+                                minHeight: 200,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: styles.textColor,
+                                fontSize: 14,
+                            }}
+                        >
+                            {t("emptyState")}
+                        </div>
+                    ) : (
+                        <div className="radius-bundle-widget">
+                            <div className="radius-bundle">
+                                <div
+                                    className="radius-bundle__inner"
+                                    style={{
+                                        position: "relative",
+                                        backgroundColor:
+                                            styles.backgroundColor,
+                                        borderRadius,
+                                        borderStyle: styles.showBorder
+                                            ? "solid"
+                                            : "none",
+                                        borderWidth: styles.showBorder
+                                            ? "1px"
+                                            : 0,
+                                        borderColor: styles.borderColor,
+                                        boxShadow: shadow,
+                                        padding,
+                                        marginInlineStart: styles.showBorder
+                                            ? "-17px"
+                                            : "-16px",
+                                        marginInlineEnd: styles.showBorder
+                                            ? "-17px"
+                                            : "-16px",
+                                        marginBlockEnd: styles.showBorder
+                                            ? "-17px"
+                                            : "-16px",
+                                    }}
                                 >
-                                    <RenderLayout
-                                        layout={displaySettings.layout}
-                                        products={products}
+                                    <BundleWidget
                                         styles={styles}
                                         displayOptions={displayOptions}
                                         pricing={pricing}
-                                        cartButtonText={
-                                            displaySettings.cartButtonText ||
-                                            ta("cartButtonTextPlaceholder")
-                                        }
-                                        title={
-                                            displaySettings.title ||
-                                            ta("titlePlaceholder")
-                                        }
+                                        title={displaySettings.title}
                                         subtitle={displaySettings.subtitle}
-                                        badgeText={badgeText}
+                                        cartButtonText={
+                                            displaySettings.cartButtonText
+                                        }
                                         labels={labels}
-                                        activeDevice="mobile"
-                                    />
-                                </BundleWidget>
+                                        hideFooter={BOGO_LAYOUT_VALUES.includes(
+                                            displaySettings.layout,
+                                        )}
+                                        hideHeader={BOGO_LAYOUT_VALUES.includes(
+                                            displaySettings.layout,
+                                        )}
+                                        hideOriginalPrice={
+                                            displaySettings.layout ===
+                                                "COMPACT" &&
+                                            bundleData.type === "FIXED_BUNDLE"
+                                        }
+                                    >
+                                        <RenderLayout
+                                            layout={displaySettings.layout}
+                                            products={products}
+                                            styles={styles}
+                                            displayOptions={displayOptions}
+                                            pricing={pricing}
+                                            cartButtonText={
+                                                displaySettings.cartButtonText ||
+                                                ta("cartButtonTextPlaceholder")
+                                            }
+                                            title={
+                                                displaySettings.title ||
+                                                ta("titlePlaceholder")
+                                            }
+                                            subtitle={displaySettings.subtitle}
+                                            badgeText={badgeText}
+                                            labels={labels}
+                                            activeDevice="mobile"
+                                        />
+                                    </BundleWidget>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </s-stack>
             </s-section>
         </div>

@@ -50,7 +50,7 @@ export function BundleTypeSelection() {
                         gap="base"
                         justifyContent="center"
                     >
-                        {Object.values(BUNDLE_TYPES).map((bundleType) => (
+                        {Object.values(BUNDLE_TYPES).filter((bt) => !bt.hidden).map((bundleType) => (
                             <s-grid-item key={bundleType.id} gridColumn="auto">
                                 <BundleTypeCard bundleType={bundleType} />
                             </s-grid-item>
