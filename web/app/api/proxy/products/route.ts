@@ -162,15 +162,10 @@ export async function GET(request: NextRequest) {
         const allProductIds = new Set<string>();
         bundles.forEach((b) => {
             if (b.mainProductId) allProductIds.add(b.mainProductId);
-            b.bundleProducts?.forEach((bp) =>
-                allProductIds.add(bp.productId),
-            );
+            b.bundleProducts?.forEach((bp) => allProductIds.add(bp.productId));
         });
 
-        const allProducts = await fetchProductDetails(
-            [...allProductIds],
-            shop,
-        );
+        const allProducts = await fetchProductDetails([...allProductIds], shop);
         const productMap = buildProductMap(allProducts);
 
         const globalPriorityType =
@@ -184,7 +179,7 @@ export async function GET(request: NextRequest) {
                     b.bundleProducts?.reduce((sum, bp) => {
                         return (
                             sum +
-                            (getPrice(productMap.get(bp.productId))) * bp.quantity
+                            getPrice(productMap.get(bp.productId)) * bp.quantity
                         );
                     }, 0) || 0;
                 const savings = calculateDiscountAmount(
@@ -230,7 +225,8 @@ export async function GET(request: NextRequest) {
                 // may have all products stored with the default "INCLUDED" role.
                 // Fall back to positional assignment so the widget renders correctly.
                 const isBxgy =
-                    topBundle.type === "BOGO" || topBundle.type === "BUY_X_GET_Y";
+                    topBundle.type === "BOGO" ||
+                    topBundle.type === "BUY_X_GET_Y";
                 if (isBxgy) {
                     const hasExplicitRole = transformedProducts.some(
                         (p) => p.role === "TRIGGER" || p.role === "REWARD",
@@ -277,11 +273,9 @@ export async function GET(request: NextRequest) {
                 ? {
                       layout: topBundle.settings.layout,
                       showImages: topBundle.settings.showImages,
-                      showComparePrices:
-                          topBundle.settings.showComparePrices,
+                      showComparePrices: topBundle.settings.showComparePrices,
                       showQuantity: topBundle.settings.showQuantity,
-                      showFreeShipping:
-                          topBundle.settings.showFreeShipping,
+                      showFreeShipping: topBundle.settings.showFreeShipping,
                       showPrices: topBundle.settings.showPrices,
                       showSavings: topBundle.settings.showSavings,
                       enableHyperLink: topBundle.settings.enableHyperLink,
@@ -289,9 +283,8 @@ export async function GET(request: NextRequest) {
                 : null,
         };
 
-        const activeBundles = transformedBundle.status === "ACTIVE"
-            ? [transformedBundle]
-            : [];
+        const activeBundles =
+            transformedBundle.status === "ACTIVE" ? [transformedBundle] : [];
 
         return NextResponse.json(
             {

@@ -56,7 +56,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{t("dataManagement.export.title")}</s-heading>
+                            <s-heading>
+                                {t("dataManagement.export.title")}
+                            </s-heading>
                             <s-paragraph color="subdued">
                                 {t("dataManagement.export.description")}
                             </s-paragraph>
@@ -80,7 +82,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{t("dataManagement.import.title")}</s-heading>
+                            <s-heading>
+                                {t("dataManagement.import.title")}
+                            </s-heading>
                             <s-paragraph color="subdued">
                                 {t("dataManagement.import.description")}
                             </s-paragraph>
@@ -114,9 +118,7 @@ export function SettingsTools() {
                     >
                         <s-heading>{t("syncCache.title")}</s-heading>
                         <s-tooltip id="sync-cache-tooltip">
-                            <s-text>
-                                {t("syncCache.tooltip")}
-                            </s-text>
+                            <s-text>{t("syncCache.tooltip")}</s-text>
                         </s-tooltip>
                         <s-icon
                             tone="neutral"
@@ -183,9 +185,7 @@ export function SettingsTools() {
                     >
                         <s-heading>{t("webhooks.title")}</s-heading>
                         <s-tooltip id="webhook-management-tooltip">
-                            <s-text>
-                                {t("webhooks.tooltip")}
-                            </s-text>
+                            <s-text>{t("webhooks.tooltip")}</s-text>
                         </s-tooltip>
                         <s-icon
                             tone="neutral"
@@ -225,7 +225,9 @@ export function SettingsTools() {
                         alignItems="center"
                     >
                         <s-stack gap="small-200">
-                            <s-heading>{t("webhooks.register.title")}</s-heading>
+                            <s-heading>
+                                {t("webhooks.register.title")}
+                            </s-heading>
                             <s-paragraph color="subdued">
                                 {t("webhooks.register.description")}
                             </s-paragraph>
@@ -254,9 +256,7 @@ export function SettingsTools() {
                             <s-heading>{t("dangerZone.title")}</s-heading>
                         </s-text>
                         <s-tooltip id="danger-zone-tooltip">
-                            <s-text>
-                                {t("dangerZone.tooltip")}
-                            </s-text>
+                            <s-text>{t("dangerZone.tooltip")}</s-text>
                         </s-tooltip>
                         <s-icon
                             tone="neutral"
@@ -291,11 +291,12 @@ export function SettingsTools() {
             </s-section>
 
             {/* Reset Confirmation Modal */}
-            <s-modal id="reset-confirm-modal" heading={t("modals.reset.heading")}>
+            <s-modal
+                id="reset-confirm-modal"
+                heading={t("modals.reset.heading")}
+            >
                 <s-stack gap="base">
-                    <s-text>
-                        {t("modals.reset.body1")}
-                    </s-text>
+                    <s-text>{t("modals.reset.body1")}</s-text>
                     <s-text type="strong">{t("modals.reset.body2")}</s-text>
                 </s-stack>
 
@@ -335,7 +336,10 @@ export function SettingsTools() {
             </div>
 
             {/* Sync Result Modal */}
-            <s-modal id="sync-result-modal" heading={t("modals.syncResult.heading")}>
+            <s-modal
+                id="sync-result-modal"
+                heading={t("modals.syncResult.heading")}
+            >
                 {syncResult ? (
                     <s-stack gap="base">
                         <s-stack
@@ -343,7 +347,9 @@ export function SettingsTools() {
                             justifyContent="space-between"
                             alignItems="center"
                         >
-                            <s-heading>{t("modals.syncResult.status")}</s-heading>
+                            <s-heading>
+                                {t("modals.syncResult.status")}
+                            </s-heading>
                             <s-badge
                                 tone={
                                     syncResult.success ? "success" : "critical"
@@ -364,7 +370,9 @@ export function SettingsTools() {
                                     justifyContent="space-between"
                                     alignItems="start"
                                 >
-                                    <s-heading>{t("modals.syncResult.synced")}</s-heading>
+                                    <s-heading>
+                                        {t("modals.syncResult.synced")}
+                                    </s-heading>
                                     <s-stack gap="small-200" alignItems="end">
                                         {syncResult.syncedItems.map((item) => (
                                             <s-text key={item}>{item}</s-text>
@@ -378,7 +386,9 @@ export function SettingsTools() {
                                 justifyContent="space-between"
                                 alignItems="center"
                             >
-                                <s-heading>{t("modals.syncResult.error")}</s-heading>
+                                <s-heading>
+                                    {t("modals.syncResult.error")}
+                                </s-heading>
                                 <s-text>
                                     {syncResult.error ||
                                         t("modals.syncResult.unknownError")}
@@ -387,7 +397,9 @@ export function SettingsTools() {
                         )}
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">{t("modals.syncResult.noResults")}</s-text>
+                    <s-text color="subdued">
+                        {t("modals.syncResult.noResults")}
+                    </s-text>
                 )}
 
                 <s-button
@@ -400,7 +412,10 @@ export function SettingsTools() {
             </s-modal>
 
             {/* Webhook Check Modal */}
-            <s-modal id="webhook-check-modal" heading={t("modals.webhookCheck.heading")}>
+            <s-modal
+                id="webhook-check-modal"
+                heading={t("modals.webhookCheck.heading")}
+            >
                 {webhookCheckResult ? (
                     <s-stack gap="base">
                         <s-grid
@@ -408,14 +423,21 @@ export function SettingsTools() {
                             alignItems="start"
                             gap="large-400"
                         >
-                            <s-heading>{t("modals.webhookCheck.status")}</s-heading>
+                            <s-heading>
+                                {t("modals.webhookCheck.status")}
+                            </s-heading>
                             {webhookCheckResult.missingTopics.length === 0 ? (
                                 <s-badge tone="success">
                                     {t("modals.webhookCheck.allRegistered")}
                                 </s-badge>
                             ) : (
                                 <s-badge tone="warning">
-                                    {t("modals.webhookCheck.missingCount", { count: String(webhookCheckResult.missingTopics.length) })}
+                                    {t("modals.webhookCheck.missingCount", {
+                                        count: String(
+                                            webhookCheckResult.missingTopics
+                                                .length,
+                                        ),
+                                    })}
                                 </s-badge>
                             )}
                         </s-grid>
@@ -428,7 +450,11 @@ export function SettingsTools() {
                             gap="large-400"
                         >
                             <s-heading>
-                                {t("modals.webhookCheck.registeredCount", { count: String(webhookCheckResult.totalCount) })}
+                                {t("modals.webhookCheck.registeredCount", {
+                                    count: String(
+                                        webhookCheckResult.totalCount,
+                                    ),
+                                })}
                             </s-heading>
 
                             <s-grid
@@ -451,7 +477,9 @@ export function SettingsTools() {
                                     alignItems="start"
                                     gap="large-400"
                                 >
-                                    <s-heading>{t("modals.webhookCheck.missing")}</s-heading>
+                                    <s-heading>
+                                        {t("modals.webhookCheck.missing")}
+                                    </s-heading>
                                     <s-grid
                                         gridTemplateColumns="repeat(3, auto)"
                                         gap="small"
@@ -479,7 +507,11 @@ export function SettingsTools() {
                             gap="large-400"
                         >
                             <s-heading>
-                                {t("modals.webhookCheck.gdprCount", { count: String(webhookCheckResult.gdprTopics.length) })}
+                                {t("modals.webhookCheck.gdprCount", {
+                                    count: String(
+                                        webhookCheckResult.gdprTopics.length,
+                                    ),
+                                })}
                             </s-heading>
                             <s-grid
                                 gridTemplateColumns="repeat(3, auto)"
@@ -494,7 +526,9 @@ export function SettingsTools() {
                         </s-grid>
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">{t("modals.webhookCheck.noResults")}</s-text>
+                    <s-text color="subdued">
+                        {t("modals.webhookCheck.noResults")}
+                    </s-text>
                 )}
 
                 <s-button
@@ -518,7 +552,9 @@ export function SettingsTools() {
                             alignItems="start"
                             gap="large-400"
                         >
-                            <s-heading>{t("modals.webhookRegister.status")}</s-heading>
+                            <s-heading>
+                                {t("modals.webhookRegister.status")}
+                            </s-heading>
                             <s-badge
                                 tone={
                                     webhookRegisterResult.success
@@ -533,7 +569,9 @@ export function SettingsTools() {
                                     ? t("modals.webhookRegister.success")
                                     : webhookRegisterResult.failed.length > 0
                                       ? t("modals.webhookRegister.partial")
-                                      : t("modals.webhookRegister.failedStatus")}
+                                      : t(
+                                            "modals.webhookRegister.failedStatus",
+                                        )}
                             </s-badge>
                         </s-grid>
 
@@ -545,7 +583,9 @@ export function SettingsTools() {
                                     alignItems="start"
                                     gap="large-400"
                                 >
-                                    <s-heading>{t("modals.webhookRegister.registered")}</s-heading>
+                                    <s-heading>
+                                        {t("modals.webhookRegister.registered")}
+                                    </s-heading>
                                     <s-grid
                                         gridTemplateColumns="repeat(3, auto)"
                                         gap="small-200"
@@ -573,7 +613,9 @@ export function SettingsTools() {
                                     alignItems="start"
                                     gap="large-400"
                                 >
-                                    <s-heading>{t("modals.webhookRegister.failed")}</s-heading>
+                                    <s-heading>
+                                        {t("modals.webhookRegister.failed")}
+                                    </s-heading>
                                     <s-stack gap="small-200" alignItems="end">
                                         {webhookRegisterResult.failed.map(
                                             (f, i) => (
@@ -597,7 +639,9 @@ export function SettingsTools() {
                         )}
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">{t("modals.webhookRegister.noResults")}</s-text>
+                    <s-text color="subdued">
+                        {t("modals.webhookRegister.noResults")}
+                    </s-text>
                 )}
 
                 <s-button

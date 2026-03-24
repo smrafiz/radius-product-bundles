@@ -29,8 +29,7 @@ function SplitProductCard({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
-    const isFreePrice =
-        hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
 
     return (
@@ -88,19 +87,19 @@ function SplitProductCard({
                     }}
                 >
                     {displayOptions.showPrices && (
-                    <span
-                        style={{
-                            fontSize: bodyFontSize,
-                            fontWeight: 500,
-                            color: hasDiscount
-                                ? styles.savingsColor || "#16a34a"
-                                : styles.textColor,
-                        }}
-                    >
-                        {isFreePrice ? freeText : product.price}
-                    </span>
+                        <span
+                            style={{
+                                fontSize: bodyFontSize,
+                                fontWeight: 500,
+                                color: hasDiscount
+                                    ? styles.savingsColor || "#16a34a"
+                                    : styles.textColor,
+                            }}
+                        >
+                            {isFreePrice ? freeText : product.price}
+                        </span>
                     )}
-                    {hasDiscount && displayOptions.showComparePrices &&(
+                    {hasDiscount && displayOptions.showComparePrices && (
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 2,
@@ -148,7 +147,7 @@ export function WidgetSplitDeal({
         (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
     );
     const rewardBadge = anyRewardFree
-        ? (labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText)
+        ? labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText
         : pricing?.hasDiscount && pricing.savingsAmount
           ? `${pricing.savingsAmount} Off`
           : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;

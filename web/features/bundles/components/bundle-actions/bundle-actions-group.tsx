@@ -1,7 +1,11 @@
 "use client";
 
 import { useModalStore, useShopSettingsStore } from "@/shared";
-import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps, BundleListItem, } from "@/features/bundles";
+import {
+    BUNDLE_LISTING_ACTIONS,
+    BundleActionsGroupProps,
+    BundleListItem,
+} from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
 /**

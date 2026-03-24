@@ -166,10 +166,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "top", label: "Top" },
                     ],
                     defaultValue: "left",
-                    layouts: [
-                        "LIST",
-                        "CLASSIC_CARD",
-                    ],
+                    layouts: ["LIST", "CLASSIC_CARD"],
                 },
 
                 // Card customization (opt-in)

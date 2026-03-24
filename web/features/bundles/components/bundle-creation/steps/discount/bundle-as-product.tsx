@@ -59,9 +59,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     {/* Tooltips */}
                     <s-tooltip id="bundle-as-product-tooltip">
                         <s-text>
-                            {isEnabled
-                                ? t("willCreate")
-                                : t("willNotCreate")}
+                            {isEnabled ? t("willCreate") : t("willNotCreate")}
                         </s-text>
                     </s-tooltip>
 
@@ -135,9 +133,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
             {isEnabled && !isLoadingProduct && (
                 <s-stack gap="base">
                     {mode === "edit" && mainProductId && (
-                        <s-banner tone="info">
-                            {t("syncBanner")}
-                        </s-banner>
+                        <s-banner tone="info">{t("syncBanner")}</s-banner>
                     )}
                     {/* Title field */}
                     <s-text-field

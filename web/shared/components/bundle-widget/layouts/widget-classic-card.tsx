@@ -40,8 +40,7 @@ function ClassicProductItem({
     const isHorizontal = styles.imagePosition === "left";
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
-    const isFreePrice =
-        hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
 
     const imageBlock = product.image && displayOptions.showImages && (
         <div
@@ -105,18 +104,18 @@ function ClassicProductItem({
                     </span>
                 )}
                 {displayOptions.showPrices && (
-                <span
-                    style={{
-                        fontSize: bodyFontSize,
-                        fontWeight: 500,
-                        color: hasDiscount
-                            ? styles.bogoFreeTagColor || "#16a34a"
-                            : styles.textColor,
-                    }}
-                >
-                    {isFreePrice ? freeText : product.price}
-                </span>
-                    )}
+                    <span
+                        style={{
+                            fontSize: bodyFontSize,
+                            fontWeight: 500,
+                            color: hasDiscount
+                                ? styles.bogoFreeTagColor || "#16a34a"
+                                : styles.textColor,
+                        }}
+                    >
+                        {isFreePrice ? freeText : product.price}
+                    </span>
+                )}
             </div>
         </div>
     );
@@ -187,7 +186,7 @@ export function WidgetClassicCard({
         (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
     );
     const rewardBadge = anyRewardFree
-        ? (labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText)
+        ? labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText
         : pricing?.hasDiscount && pricing.savingsAmount
           ? `${pricing.savingsAmount} Off`
           : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
@@ -274,12 +273,14 @@ export function WidgetClassicCard({
                 )}
             </div>
 
-            <div style={{
+            <div
+                style={{
                     display: "flex",
                     gap: spacingValues.gap + 2,
-                    marginTop:10,
+                    marginTop: 10,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
-                }}>
+                }}
+            >
                 {[
                     {
                         items: triggerProducts,
@@ -309,23 +310,23 @@ export function WidgetClassicCard({
                         }}
                     >
                         {displayOptions.showSavingsBadge && (
-                        <span
-                            style={{
-                                position: "absolute",
-                                top: -10,
-                                left: 12,
-                                backgroundColor: color,
-                                color: "#fff",
-                                fontSize: parseInt(bodyFontSize) - 4,
-                                fontWeight: 600,
-                                padding: "2px 10px",
-                                borderRadius: badgeRadius,
-                                lineHeight: "16px",
-                            }}
-                        >
-                            {badge}
-                        </span>
-                            )}
+                            <span
+                                style={{
+                                    position: "absolute",
+                                    top: -10,
+                                    left: 12,
+                                    backgroundColor: color,
+                                    color: "#fff",
+                                    fontSize: parseInt(bodyFontSize) - 4,
+                                    fontWeight: 600,
+                                    padding: "2px 10px",
+                                    borderRadius: badgeRadius,
+                                    lineHeight: "16px",
+                                }}
+                            >
+                                {badge}
+                            </span>
+                        )}
                         <div
                             style={{
                                 display: "grid",

@@ -39,9 +39,7 @@ export function BundleTypeSelection() {
                         <s-heading>
                             <div className="text-xl">{t("title")}</div>
                         </s-heading>
-                        <s-text>
-                            {t("description")}
-                        </s-text>
+                        <s-text>{t("description")}</s-text>
                     </s-stack>
                 </s-stack>
                 <s-stack gap="base">
@@ -50,11 +48,16 @@ export function BundleTypeSelection() {
                         gap="base"
                         justifyContent="center"
                     >
-                        {Object.values(BUNDLE_TYPES).filter((bt) => !bt.hidden).map((bundleType) => (
-                            <s-grid-item key={bundleType.id} gridColumn="auto">
-                                <BundleTypeCard bundleType={bundleType} />
-                            </s-grid-item>
-                        ))}
+                        {Object.values(BUNDLE_TYPES)
+                            .filter((bt) => !bt.hidden)
+                            .map((bundleType) => (
+                                <s-grid-item
+                                    key={bundleType.id}
+                                    gridColumn="auto"
+                                >
+                                    <BundleTypeCard bundleType={bundleType} />
+                                </s-grid-item>
+                            ))}
                     </s-grid>
                 </s-stack>
                 <s-stack>

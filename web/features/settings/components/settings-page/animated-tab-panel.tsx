@@ -10,10 +10,7 @@ export function AnimatedTabPanel({
     children: ReactNode;
 }) {
     return (
-        <div
-            key={tabKey}
-            style={{ animation: "rpbTabSlide 0.22s ease-out" }}
-        >
+        <div key={tabKey} style={{ animation: "rpbTabSlide 0.22s ease-out" }}>
             {children}
         </div>
     );

@@ -18,7 +18,10 @@ import { useTranslations } from "@/lib/i18n/provider";
 /**
  * Get health status badge config
  */
-function getHealthBadge(status: string, t: (key: string) => string): {
+function getHealthBadge(
+    status: string,
+    t: (key: string) => string,
+): {
     color: string;
     label: string;
 } {
@@ -206,13 +209,9 @@ export function AllBundlesTable() {
                 <AllBundlesHeader loading={isFetching} />
                 <s-box padding="base">
                     <EmptyState
-                        heading={
-                            hasFilters ? t("noResults") : t("noBundles")
-                        }
+                        heading={hasFilters ? t("noResults") : t("noBundles")}
                         description={
-                            hasFilters
-                                ? t("noResultsHint")
-                                : t("noBundlesHint")
+                            hasFilters ? t("noResultsHint") : t("noBundlesHint")
                         }
                         isSearch={hasFilters}
                     />

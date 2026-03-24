@@ -144,9 +144,7 @@ export function ProductMediaPicker({
                         </s-grid>
                     </s-stack>
                 ) : (
-                    <s-text color="subdued">
-                        {t("noImages")}
-                    </s-text>
+                    <s-text color="subdued">{t("noImages")}</s-text>
                 )}
             </s-stack>
 

@@ -42,11 +42,15 @@ export function DynamicSection({
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <s-heading>{t(sectionTitleKey, undefined, title)}</s-heading>
+                    <s-heading>
+                        {t(sectionTitleKey, undefined, title)}
+                    </s-heading>
                     {tooltip && (
                         <>
                             <s-tooltip id={tooltipId}>
-                                <s-text>{t(sectionTooltipKey, undefined, tooltip)}</s-text>
+                                <s-text>
+                                    {t(sectionTooltipKey, undefined, tooltip)}
+                                </s-text>
                             </s-tooltip>
                             <s-icon
                                 tone="neutral"
@@ -60,7 +64,11 @@ export function DynamicSection({
                 {/* Section Description */}
                 {config.description && (
                     <s-text tone="neutral">
-                        {t(`${tabKey}.Sections.${id}.description`, undefined, config.description)}
+                        {t(
+                            `${tabKey}.Sections.${id}.description`,
+                            undefined,
+                            config.description,
+                        )}
                     </s-text>
                 )}
 

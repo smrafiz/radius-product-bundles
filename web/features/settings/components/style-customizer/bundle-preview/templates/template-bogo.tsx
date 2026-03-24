@@ -46,14 +46,19 @@ const BOGO_PRICING: WidgetPricing = {
     hasDiscount: true,
 };
 
-export function TemplateBogo({ activeLayout, activeDevice }: BundleTemplateProps) {
+export function TemplateBogo({
+    activeLayout,
+    activeDevice,
+}: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
-    const savedLabels = serverData?.labels as Record<string, string> | undefined;
+    const savedLabels = serverData?.labels as
+        | Record<string, string>
+        | undefined;
     const labels = {
         ...PREVIEW_LABELS,
         ...Object.fromEntries(
-            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== "")
+            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),
         bogoTriggerBadgeText: "You Buy",
         bogoRewardBadgeText: "50% Off",

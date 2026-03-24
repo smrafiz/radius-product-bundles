@@ -22,9 +22,7 @@ export function WidgetDisplaySettings() {
                 >
                     <s-heading>{t("displayHeading")}</s-heading>
                     <s-tooltip id="product-page-settings-display-tooltip">
-                        <s-text>
-                            {t("displayTooltip")}
-                        </s-text>
+                        <s-text>{t("displayTooltip")}</s-text>
                     </s-tooltip>
                     <s-icon
                         tone="neutral"

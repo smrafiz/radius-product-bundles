@@ -107,7 +107,9 @@ export function BundleCreationForm({
         openModal({
             type: "delete",
             title: tc("deleteBundle"),
-            message: tc("deleteConfirm", { name: bundleName || tc("breadcrumb") }),
+            message: tc("deleteConfirm", {
+                name: bundleName || tc("breadcrumb"),
+            }),
             confirmText: tc("delete"),
             onConfirm: async () => {
                 setIsDeleting(true);
@@ -151,7 +153,15 @@ export function BundleCreationForm({
                 }
             },
         });
-    }, [bundleId, bundleName, openModal, app, queryClient, bundleData, resetBundle]);
+    }, [
+        bundleId,
+        bundleName,
+        openModal,
+        app,
+        queryClient,
+        bundleData,
+        resetBundle,
+    ]);
 
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>
@@ -188,7 +198,9 @@ export function BundleCreationForm({
                             {isEditMode ? tc("update") : tc("publish")}
                         </button>
                         {isEditMode && bundleId && (
-                            <button onClick={handleDuplicate}>{tc("duplicate")}</button>
+                            <button onClick={handleDuplicate}>
+                                {tc("duplicate")}
+                            </button>
                         )}
                     </>
                 )}

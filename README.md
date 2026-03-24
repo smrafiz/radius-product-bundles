@@ -5,34 +5,38 @@ An embedded Shopify app for creating and managing product bundles. Includes a Ru
 ## Tech Stack
 
 ### Frontend
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | Next.js (App Router) | 16.1.x |
-| Language | TypeScript | 5.9 |
-| UI | Polaris Web Components | — |
-| Styling | Tailwind CSS | 4.2 |
-| State (server) | TanStack React Query | 5.90 |
-| State (client) | Zustand + Immer | 5.0 |
-| Forms | React Hook Form + Zod | 7.71 / 4.3 |
-| Drag & Drop | @dnd-kit | 6.3 |
+
+| Layer          | Technology             | Version    |
+| -------------- | ---------------------- | ---------- |
+| Framework      | Next.js (App Router)   | 16.1.x     |
+| Language       | TypeScript             | 5.9        |
+| UI             | Polaris Web Components | —          |
+| Styling        | Tailwind CSS           | 4.2        |
+| State (server) | TanStack React Query   | 5.90       |
+| State (client) | Zustand + Immer        | 5.0        |
+| Forms          | React Hook Form + Zod  | 7.71 / 4.3 |
+| Drag & Drop    | @dnd-kit               | 6.3        |
 
 ### Backend & Data
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| ORM | Prisma | 7.5 |
-| Database | PostgreSQL (AWS-hosted) | 15+ |
-| GraphQL | graphql-request + codegen | 7.4 |
-| Shopify API | @shopify/shopify-api | 13.x |
-| App Bridge | @shopify/app-bridge-react | 4.2 |
-| Runtime | Bun (scripts) + Node.js | 1.1+ |
+
+| Layer       | Technology                | Version |
+| ----------- | ------------------------- | ------- |
+| ORM         | Prisma                    | 7.5     |
+| Database    | PostgreSQL (AWS-hosted)   | 15+     |
+| GraphQL     | graphql-request + codegen | 7.4     |
+| Shopify API | @shopify/shopify-api      | 13.x    |
+| App Bridge  | @shopify/app-bridge-react | 4.2     |
+| Runtime     | Bun (scripts) + Node.js   | 1.1+    |
 
 ### Shopify Extensions
-| Extension | Type | Purpose |
-|-----------|------|---------|
-| `radius-discount-function` | Rust → WASM | Server-side line-item & delivery discount calculation |
-| `product-bundle-widget` | Liquid theme extension | Storefront bundle display widget |
+
+| Extension                  | Type                   | Purpose                                               |
+| -------------------------- | ---------------------- | ----------------------------------------------------- |
+| `radius-discount-function` | Rust → WASM            | Server-side line-item & delivery discount calculation |
+| `product-bundle-widget`    | Liquid theme extension | Storefront bundle display widget                      |
 
 ### Tooling
+
 - **Package manager**: pnpm (install) + bun (run/watch)
 - **GraphQL codegen**: `@shopify/api-codegen-preset` targeting Admin API 2026-01
 - **ESLint**: 10.x | **Prettier**: 3.8
@@ -68,6 +72,7 @@ An embedded Shopify app for creating and managing product bundles. Includes a Ru
 ```
 
 Each feature module follows the same internal structure:
+
 ```
 features/<name>/
   actions/        # Next.js server actions (API boundary)
@@ -87,12 +92,15 @@ features/<name>/
 ## Features
 
 ### Bundle Types
+
 `FIXED_BUNDLE` · `BUY_X_GET_Y` · `BOGO` · `VOLUME_DISCOUNT` · `MIX_AND_MATCH` · `FREQUENTLY_BOUGHT_TOGETHER`
 
 ### Bundle Statuses
+
 `DRAFT` · `ACTIVE` · `PAUSED` · `ARCHIVED` · `SCHEDULED`
 
 ### Discount Types
+
 `PERCENTAGE` · `FIXED_AMOUNT` · `CUSTOM_PRICE` · `NO_DISCOUNT` · `QUANTITY_BREAKS`
 
 ## Shopify Integration
@@ -118,46 +126,46 @@ features/<name>/
 
 ### Development
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start full dev environment (app + widget watcher + schema watcher) |
-| `bun run dev:app` | Shopify CLI dev server only |
-| `bun run dev:widgets` | Vite watch-build for storefront widgets |
+| Command               | Description                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| `bun run dev`         | Start full dev environment (app + widget watcher + schema watcher) |
+| `bun run dev:app`     | Shopify CLI dev server only                                        |
+| `bun run dev:widgets` | Vite watch-build for storefront widgets                            |
 
 ### Build & Deploy
 
-| Command | Description |
-|---------|-------------|
-| `bun run build` | `shopify app build` |
-| `bun run deploy` | `shopify app deploy` |
-| `bun run build:widgets` | Vite build for storefront widgets |
-| `bun run build:schema` | Build extension schema from `/extension/schema/` |
+| Command                 | Description                                                   |
+| ----------------------- | ------------------------------------------------------------- |
+| `bun run build`         | `shopify app build`                                           |
+| `bun run deploy`        | `shopify app deploy`                                          |
+| `bun run build:widgets` | Vite build for storefront widgets                             |
+| `bun run build:schema`  | Build extension schema from `/extension/schema/`              |
 | `bun run update:config` | Regenerate `shopify.app.toml` from `.env`, then deploy config |
 
 ### Database (run from `/web`)
 
-| Command | Description |
-|---------|-------------|
-| `bun migrate` | `prisma migrate dev` |
-| `bun prisma:push` | Push schema without creating a migration |
-| `bun prisma:pull` | Pull schema from database |
-| `bun prisma:migrate <name>` | Create a named migration |
-| `bun prisma:studio` | Open Prisma Studio |
-| `bun prepare` | Regenerate Prisma client |
+| Command                     | Description                              |
+| --------------------------- | ---------------------------------------- |
+| `bun migrate`               | `prisma migrate dev`                     |
+| `bun prisma:push`           | Push schema without creating a migration |
+| `bun prisma:pull`           | Pull schema from database                |
+| `bun prisma:migrate <name>` | Create a named migration                 |
+| `bun prisma:studio`         | Open Prisma Studio                       |
+| `bun prepare`               | Regenerate Prisma client                 |
 
 ### Code Quality (run from `/web`)
 
-| Command | Description |
-|---------|-------------|
+| Command               | Description                                   |
+| --------------------- | --------------------------------------------- |
 | `bun graphql-codegen` | Generate types from Shopify Admin API 2026-01 |
-| `bun test` | Jest |
-| `bun test:watch` | Jest watch mode |
-| `bun test:coverage` | Jest with coverage report |
+| `bun test`            | Jest                                          |
+| `bun test:watch`      | Jest watch mode                               |
+| `bun test:coverage`   | Jest with coverage report                     |
 
 ### Formatting
 
-| Command | Description |
-|---------|-------------|
+| Command          | Description             |
+| ---------------- | ----------------------- |
 | `bun run pretty` | Prettier on entire repo |
 
 ---
@@ -167,6 +175,7 @@ features/<name>/
 See **[INSTALLATION.md](./INSTALLATION.md)** for the full step-by-step setup guide including prerequisites, environment variables, database setup, Rust WASM build, and first-run instructions.
 
 ---
+
 - update ci/cd
 
 Built with ❤️ by [RadiusTheme](https://radiustheme.com)

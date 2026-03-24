@@ -1,4 +1,4 @@
-export const NPROGRESS_ENABLED = true;
+export const NPROGRESS_ENABLED = false;
 
 export const ACTION_THEMES = {
     success: {

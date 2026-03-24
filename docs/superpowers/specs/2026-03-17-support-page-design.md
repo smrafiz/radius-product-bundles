@@ -1,4 +1,5 @@
 # Support Page Design Spec
+
 **Date:** 2026-03-17
 **Status:** Approved
 
@@ -84,21 +85,28 @@ Root component — `"use client"`. Returns:
 
 ```tsx
 <s-page heading={t("title")}>
-  <TitleBar title={t("title")}>
-    <button variant="secondary" onClick={() => window.open(`mailto:${SUPPORT_EMAIL}`)}>
-      {t("email")}
-    </button>
-    <button onClick={() => window.open(DOCS_URL, "_blank")}>
-      {t("docs")}
-    </button>
-  </TitleBar>
-  <s-stack gap="large">
-    <SupportQuickActions />
-    <s-grid gridTemplateColumns="1fr 280px" gap="base" alignItems="start">
-      <s-grid-item><SupportFaq /></s-grid-item>
-      <s-grid-item><SupportSidePanel /></s-grid-item>
-    </s-grid>
-  </s-stack>
+    <TitleBar title={t("title")}>
+        <button
+            variant="secondary"
+            onClick={() => window.open(`mailto:${SUPPORT_EMAIL}`)}
+        >
+            {t("email")}
+        </button>
+        <button onClick={() => window.open(DOCS_URL, "_blank")}>
+            {t("docs")}
+        </button>
+    </TitleBar>
+    <s-stack gap="large">
+        <SupportQuickActions />
+        <s-grid gridTemplateColumns="1fr 280px" gap="base" alignItems="start">
+            <s-grid-item>
+                <SupportFaq />
+            </s-grid-item>
+            <s-grid-item>
+                <SupportSidePanel />
+            </s-grid-item>
+        </s-grid>
+    </s-stack>
 </s-page>
 ```
 
@@ -111,6 +119,7 @@ Three `<s-clickable>` cards inside `<s-grid gridTemplateColumns="repeat(3,1fr)" 
 External URLs are opened via `window.open(url, "_blank")` — not `goTo()`.
 
 Cards (inline config using URL constants from `support.constants.ts`, labels from `t()`):
+
 - **Documentation** — `DOCS_URL`, purple gradient icon
 - **Video Tutorials** — `VIDEOS_URL`, pink gradient icon
 - **Email Support** — `mailto:${SUPPORT_EMAIL}`, green gradient icon
@@ -118,6 +127,7 @@ Cards (inline config using URL constants from `support.constants.ts`, labels fro
 ### `SupportFaq`
 
 `<s-section>` with:
+
 - Header row: `<s-grid gridTemplateColumns="1fr auto">` — title/subtitle left, article count badge right
 - List of 5 FAQ rows, each: `<s-grid gridTemplateColumns="1fr auto">` with question + answer stack and `›` chevron
 
@@ -146,10 +156,10 @@ export const COMMUNITY_URL = "https://community.radiusbundles.com";
 export const FAQ_COUNT = 5; // number of FAQ items rendered
 
 export const QUICK_LINKS = [
-  { key: "linkDocs",      url: DOCS_URL,          external: true },
-  { key: "linkVideos",    url: VIDEOS_URL,         external: true },
-  { key: "linkAppStore",  url: APP_STORE_URL,      external: true },
-  { key: "linkCommunity", url: COMMUNITY_URL,      external: true },
+    { key: "linkDocs", url: DOCS_URL, external: true },
+    { key: "linkVideos", url: VIDEOS_URL, external: true },
+    { key: "linkAppStore", url: APP_STORE_URL, external: true },
+    { key: "linkCommunity", url: COMMUNITY_URL, external: true },
 ];
 ```
 

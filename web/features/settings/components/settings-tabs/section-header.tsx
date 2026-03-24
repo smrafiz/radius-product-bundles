@@ -31,7 +31,9 @@ export function SectionHeader({
             {tooltip && (
                 <>
                     <s-tooltip id={tooltipId}>
-                        <s-text>{t(sectionTooltipKey, undefined, tooltip)}</s-text>
+                        <s-text>
+                            {t(sectionTooltipKey, undefined, tooltip)}
+                        </s-text>
                     </s-tooltip>
                     <s-icon
                         tone="neutral"

@@ -1,4 +1,9 @@
-import { PreviewProduct, WidgetDisplayOptions, WidgetLabels, WidgetPricing } from "@/shared";
+import {
+    PreviewProduct,
+    WidgetDisplayOptions,
+    WidgetLabels,
+    WidgetPricing,
+} from "@/shared";
 
 export const PREVIEW_LABELS: WidgetLabels = {
     headingLabel: "Bundle & Save",

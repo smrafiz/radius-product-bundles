@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { getStaticTranslations } from "@/lib/i18n/server";
 import { BUNDLE_TYPES, BundleType, CreateBundlePage } from "@/features/bundles";
 
-
 export function generateStaticParams() {
     return Object.values(BUNDLE_TYPES).map((type) => ({
         bundleType: type.slug,
@@ -23,7 +22,9 @@ export async function generateMetadata({
     );
 
     if (!bundleConfig) {
-        const t = await getStaticTranslations("Meta.pages.bundleCreateFallback");
+        const t = await getStaticTranslations(
+            "Meta.pages.bundleCreateFallback",
+        );
         return {
             title: t("title"),
             description: t("description"),

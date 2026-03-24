@@ -17,9 +17,7 @@ export const DashboardQuickActions = () => {
             <s-grid paddingBlockEnd="large">
                 <s-stack gap="small-300">
                     <s-heading>{t("heading")}</s-heading>
-                    <s-text>
-                        {t("description")}
-                    </s-text>
+                    <s-text>{t("description")}</s-text>
                 </s-stack>
             </s-grid>
             <s-grid

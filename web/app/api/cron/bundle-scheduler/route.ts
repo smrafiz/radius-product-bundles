@@ -13,7 +13,10 @@ export async function GET(request: Request) {
     const cronSecret = process.env.CRON_SECRET;
     if (!cronSecret || cronSecret.length < 16) {
         console.error("[Cron] CRON_SECRET is missing or too short");
-        return Response.json({ error: "Server misconfigured" }, { status: 500 });
+        return Response.json(
+            { error: "Server misconfigured" },
+            { status: 500 },
+        );
     }
 
     const authHeader = request.headers.get("authorization");

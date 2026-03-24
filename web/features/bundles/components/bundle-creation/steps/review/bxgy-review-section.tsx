@@ -264,7 +264,9 @@ export function BxgyReviewSection() {
                             direction="inline"
                         >
                             <s-heading>{t("mode")}</s-heading>
-                            <s-badge tone="info">{t("sameProductDeal")}</s-badge>
+                            <s-badge tone="info">
+                                {t("sameProductDeal")}
+                            </s-badge>
                         </s-stack>
                     )}
                 </s-stack>
@@ -322,7 +324,9 @@ export function BxgyReviewSection() {
                                 justifyContent="space-between"
                                 direction="inline"
                             >
-                                <s-text color="subdued">{t("startDate")}</s-text>
+                                <s-text color="subdued">
+                                    {t("startDate")}
+                                </s-text>
                                 <s-text>
                                     {formatDate(bundleData.startDate)}
                                 </s-text>

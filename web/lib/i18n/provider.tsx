@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    createContext,
-    useContext,
-    useCallback,
-    type ReactNode,
-} from "react";
+import { createContext, useContext, useCallback, type ReactNode } from "react";
 
 type MessageValue = string | Record<string, unknown>;
 type Messages = Record<string, Record<string, MessageValue>>;
@@ -52,7 +47,11 @@ export function useTranslations(namespace: string) {
     const resolvedSection = (section || {}) as Record<string, unknown>;
 
     return useCallback(
-        (key: string, params?: Record<string, string | number>, defaultValue?: string) => {
+        (
+            key: string,
+            params?: Record<string, string | number>,
+            defaultValue?: string,
+        ) => {
             // Support dot-notation keys like "steps.enableAppEmbed.title"
             const parts = key.split(".");
             let value: unknown = resolvedSection;
@@ -68,9 +67,8 @@ export function useTranslations(namespace: string) {
 
             // Simple parameter interpolation: {paramName}
             if (params) {
-                return value.replace(
-                    /\{(\w+)\}/g,
-                    (_, k) => String(params[k] ?? `{${k}}`),
+                return value.replace(/\{(\w+)\}/g, (_, k) =>
+                    String(params[k] ?? `{${k}}`),
                 );
             }
             return value;

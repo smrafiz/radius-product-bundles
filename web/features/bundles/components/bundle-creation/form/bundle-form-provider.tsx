@@ -52,9 +52,7 @@ export function BundleFormProvider({
         isNewBundle && isSettingsLoading && !serverData;
 
     const form = useForm<z.infer<typeof schema>>({
-        resolver: zodResolver(schema) as Resolver<
-            z.infer<typeof schema>
-        >,
+        resolver: zodResolver(schema) as Resolver<z.infer<typeof schema>>,
         defaultValues: {
             name: initialData?.name || "",
             description: initialData?.description || "",

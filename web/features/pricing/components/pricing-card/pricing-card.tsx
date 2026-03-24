@@ -20,9 +20,15 @@ export const PricingCard = () => {
                         {...item}
                         title={t(`plans.${item.id}.title`)}
                         description={t(`plans.${item.id}.description`)}
-                        featuredText={item.featuredText ? t(`plans.${item.id}.featured`) : undefined}
+                        featuredText={
+                            item.featuredText
+                                ? t(`plans.${item.id}.featured`)
+                                : undefined
+                        }
                         frequency={t(`plans.${item.frequency}`)}
-                        features={FEATURE_KEYS.map((key) => t(`plans.features.${key}`))}
+                        features={FEATURE_KEYS.map((key) =>
+                            t(`plans.features.${key}`),
+                        )}
                         primaryButton={{
                             ...item.primaryButton,
                             content: t(`plans.${item.id}.button`),

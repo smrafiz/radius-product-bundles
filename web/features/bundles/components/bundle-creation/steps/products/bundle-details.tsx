@@ -31,9 +31,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
             >
                 <s-heading>{t("heading")}</s-heading>
                 <s-tooltip id="bundle-details-tooltip">
-                    <s-text>
-                        {t("tooltip")}
-                    </s-text>
+                    <s-text>{t("tooltip")}</s-text>
                 </s-tooltip>
                 <s-icon
                     tone="neutral"

@@ -68,10 +68,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
                             status: result.data.status,
                         });
                         await invalidateBundleCache(queryClient);
-                        showToast(
-                            result.message ||
-                                t("statusUpdated"),
-                        );
+                        showToast(result.message || t("statusUpdated"));
                     } else {
                         showError(t("statusFailed"), {
                             content: result.message,
@@ -191,10 +188,7 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
 
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
-                        showToast(
-                            result.message ||
-                                tb("bulkDeleteSuccess"),
-                        );
+                        showToast(result.message || tb("bulkDeleteSuccess"));
                         if (clearSelection) {
                             clearSelection();
                         }

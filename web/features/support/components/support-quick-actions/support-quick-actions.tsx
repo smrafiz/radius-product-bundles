@@ -9,9 +9,9 @@ import {
 } from "@/features/support/constants/support.constants";
 
 const ICON_STYLES: Record<string, CSSProperties> = {
-    docs:   { background: "linear-gradient(135deg,#ede9fe,#ddd6fe)" },
+    docs: { background: "linear-gradient(135deg,#ede9fe,#ddd6fe)" },
     videos: { background: "linear-gradient(135deg,#fce7f3,#fbcfe8)" },
-    email:  { background: "linear-gradient(135deg,#d1fae5,#a7f3d0)" },
+    email: { background: "linear-gradient(135deg,#d1fae5,#a7f3d0)" },
 };
 
 export function SupportQuickActions() {
@@ -53,7 +53,10 @@ export function SupportQuickActions() {
                     gap="base"
                 >
                     {cards.map((card) => (
-                        <div key={card.title} className="transition-all hover:-translate-y-[3px]">
+                        <div
+                            key={card.title}
+                            className="transition-all hover:-translate-y-[3px]"
+                        >
                             <s-grid-item>
                                 <s-clickable
                                     border="base"
@@ -86,8 +89,12 @@ export function SupportQuickActions() {
                                         </s-box>
                                         <s-box>
                                             <s-heading>{card.title}</s-heading>
-                                            <s-paragraph>{card.description}</s-paragraph>
-                                            <s-text color="subdued">{card.label}</s-text>
+                                            <s-paragraph>
+                                                {card.description}
+                                            </s-paragraph>
+                                            <s-text color="subdued">
+                                                {card.label}
+                                            </s-text>
                                         </s-box>
                                     </s-grid>
                                 </s-clickable>

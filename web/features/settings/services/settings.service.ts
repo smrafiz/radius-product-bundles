@@ -82,7 +82,10 @@ export async function saveSettingsService(
     // If locale is provided, merge labels under that locale key
     if (locale && validatedData.labels) {
         const existingSettings = await findSettingsByShopDomain(shop);
-        const existingLabels = existingSettings?.labels as Record<string, any> | null;
+        const existingLabels = existingSettings?.labels as Record<
+            string,
+            any
+        > | null;
 
         const allLocaleLabels = isLocaleKeyed(existingLabels)
             ? { ...existingLabels }
@@ -143,7 +146,11 @@ function isLocaleKeyed(labels: any): boolean {
     // Flat labels have keys like "headingLabel", "addToCartText"
     // Locale-keyed has keys like "en", "fr", "de" (2-5 char locale codes)
     const firstKey = keys[0];
-    return firstKey.length <= 5 && !firstKey.includes("Label") && !firstKey.includes("Text");
+    return (
+        firstKey.length <= 5 &&
+        !firstKey.includes("Label") &&
+        !firstKey.includes("Text")
+    );
 }
 
 /**
@@ -165,7 +172,9 @@ function extractLocaleLabels(labels: any, locale: string): any {
 /**
  * Sanitize label string values
  */
-function sanitizeLabels(labels: Record<string, string>): Record<string, string> {
+function sanitizeLabels(
+    labels: Record<string, string>,
+): Record<string, string> {
     return Object.fromEntries(
         Object.entries(labels).map(([k, v]) => [
             k,
@@ -177,16 +186,23 @@ function sanitizeLabels(labels: Record<string, string>): Record<string, string> 
 /**
  * Strip empty strings from labels — empty fields fall back to defaults on storefront
  */
-function stripEmptyStrings(labels: Record<string, string>): Record<string, string> {
+function stripEmptyStrings(
+    labels: Record<string, string>,
+): Record<string, string> {
     return Object.fromEntries(
-        Object.entries(labels).filter(([, v]) => typeof v === "string" && v.trim() !== ""),
+        Object.entries(labels).filter(
+            ([, v]) => typeof v === "string" && v.trim() !== "",
+        ),
     );
 }
 
 /**
  * Transform database settings to form data
  */
-function transformSettingsToFormData(settings: any, locale?: string): AppSettingsFormData {
+function transformSettingsToFormData(
+    settings: any,
+    locale?: string,
+): AppSettingsFormData {
     return {
         // General - Defaults
         defaultDiscountType: settings.defaultDiscountType,
@@ -210,7 +226,9 @@ function transformSettingsToFormData(settings: any, locale?: string): AppSetting
         lazyLoadImages: settings.lazyLoadImages,
 
         // Labels — extract for requested locale or return flat for backward compat
-        labels: locale ? extractLocaleLabels(settings.labels, locale) : settings.labels,
+        labels: locale
+            ? extractLocaleLabels(settings.labels, locale)
+            : settings.labels,
 
         // Style (JSON field) - flat structure
         globalStyles: settings.globalStyles ?? undefined,
@@ -229,7 +247,10 @@ function transformSettingsToFormData(settings: any, locale?: string): AppSetting
  * @param data
  * @param localePreMerged - if true, labels are already locale-keyed (pre-merged in saveSettingsService)
  */
-function transformFormDataToSettings(data: AppSettingsFormData, localePreMerged = false): any {
+function transformFormDataToSettings(
+    data: AppSettingsFormData,
+    localePreMerged = false,
+): any {
     return {
         // General - Defaults
         defaultDiscountType: data.defaultDiscountType,

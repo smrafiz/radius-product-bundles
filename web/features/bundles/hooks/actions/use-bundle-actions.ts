@@ -79,16 +79,11 @@ export function useBundleActions(
                             if (clearSelection) {
                                 clearSelection();
                             }
-                            showToast(
-                                result.message ??
-                                    tc("duplicateSuccess"),
-                            );
+                            showToast(result.message ?? tc("duplicateSuccess"));
                         }
                     } else {
                         showError(tc("duplicateFailed"), {
-                            content:
-                                result.message ??
-                                t("somethingWentWrong"),
+                            content: result.message ?? t("somethingWentWrong"),
                         });
                     }
                 } catch (error) {
@@ -111,9 +106,7 @@ export function useBundleActions(
                         if (clearSelection) {
                             clearSelection();
                         }
-                        showToast(
-                            result.message ?? tc("deleteSuccess"),
-                        );
+                        showToast(result.message ?? tc("deleteSuccess"));
                     } else {
                         showError(result.message ?? tc("deleteFailed"));
                     }
@@ -147,14 +140,9 @@ export function useBundleActions(
                             status: result.data.status,
                         });
                         await invalidateBundleCache(queryClient);
-                        showToast(
-                            result.message ??
-                                t("statusUpdated"),
-                        );
+                        showToast(result.message ?? t("statusUpdated"));
                     } else {
-                        showError(
-                            result.message ?? t("statusUpdateFailed"),
-                        );
+                        showError(result.message ?? t("statusUpdateFailed"));
                     }
                 } catch (error) {
                     console.error("Error updating bundle status:", error);

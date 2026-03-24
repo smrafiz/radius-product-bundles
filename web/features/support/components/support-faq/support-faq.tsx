@@ -30,7 +30,9 @@ export function SupportFaq() {
                     description={item.description}
                     expanded={expandedId === item.id}
                     onToggle={() =>
-                        setExpandedId((prev) => (prev === item.id ? null : item.id))
+                        setExpandedId((prev) =>
+                            prev === item.id ? null : item.id,
+                        )
                     }
                 />
             ))}

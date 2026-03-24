@@ -2,69 +2,95 @@
 
 /**
  * Analytics Hook
+ * Uses custom DB for all analytics data (bundle-specific views, carts, purchases)
+ * ShopifyQL code is available but not used (ready for AI features)
  */
 
-import {
-    analyticsQueries,
-    formatDate,
-    getTodayInShopTimezone,
-} from "@/features/analytics";
+import { analyticsQueries } from "@/features/analytics";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useAnalyticsStore } from "@/features/analytics";
+import type { ChartDataPoint } from "@/features/analytics";
 
 /**
- * Hook to fetch analytics data (metrics and chart only)
+ * Hook to fetch analytics data (metrics and chart)
+ * Uses custom DB for all data
  */
 export function useAnalytics() {
     const app = useAppBridge();
     const { days, startDate, endDate } = useAnalyticsStore();
+
     const queries = analyticsQueries(app);
+    const bundleMetricsQueryOptions = queries.metrics(days, startDate, endDate);
+    const chartQueryOptions = queries.chart(days, startDate, endDate);
 
-    const metricsQuery = useQuery({
-        ...queries.metrics(days, startDate, endDate),
-        staleTime: 10 * 60 * 1000, // 10 min (server-side cached for 5 min)
-    });
+    const bundleMetricsQuery = useQuery(bundleMetricsQueryOptions);
+    const chartQuery = useQuery(chartQueryOptions);
 
-    const chartQuery = useQuery({
-        ...queries.chart(days, startDate, endDate),
-        staleTime: 5 * 60 * 1000, // 5 min (server-side cached for 5 min)
-    });
+    const metrics = useMemo(() => {
+        const bundleData = bundleMetricsQuery.data;
+
+        return {
+            totals: {
+                revenue: bundleData?.totals?.revenue ?? 0,
+                views: bundleData?.totals?.views ?? 0,
+                purchases: bundleData?.totals?.purchases ?? 0,
+                addToCarts: bundleData?.totals?.addToCarts ?? 0,
+                activeBundles: bundleData?.totals?.activeBundles ?? 0,
+                totalBundles: bundleData?.totals?.totalBundles ?? 0,
+                revenueAllTime: bundleData?.totals?.revenueAllTime ?? 0,
+            },
+            metrics: {
+                conversionRate: bundleData?.metrics?.conversionRate ?? 0,
+                avgOrderValue: bundleData?.metrics?.avgOrderValue ?? 0,
+                cartConversionRate:
+                    bundleData?.metrics?.cartConversionRate ?? 0,
+            },
+            growth: {
+                revenue: bundleData?.growth?.revenue ?? 0,
+                conversion: bundleData?.growth?.conversion ?? 0,
+            },
+        };
+    }, [bundleMetricsQuery.data]);
+
+    const chartData = useMemo<ChartDataPoint[]>(() => {
+        const data = chartQuery.data ?? [];
+        return data.map((item: ChartDataPoint) => ({
+            date: item.date,
+            views: item.views ?? 0,
+            addToCarts: item.addToCarts ?? 0,
+            purchases: item.purchases ?? 0,
+            revenue: item.revenue ?? 0,
+        }));
+    }, [chartQuery.data]);
 
     return {
-        // Data
-        metrics: metricsQuery.data,
-        chartData: chartQuery.data,
-
-        // Loading states
-        isLoading: metricsQuery.isLoading || chartQuery.isLoading,
-        isMetricsLoading: metricsQuery.isLoading,
+        metrics,
+        chartData,
+        isLoading: bundleMetricsQuery.isLoading || chartQuery.isLoading,
+        isMetricsLoading: bundleMetricsQuery.isLoading,
         isChartLoading: chartQuery.isLoading,
-
-        // Fetching states (refetch in progress)
-        isFetching: metricsQuery.isFetching || chartQuery.isFetching,
-        isMetricsFetching: metricsQuery.isFetching,
+        isFetching: bundleMetricsQuery.isFetching || chartQuery.isFetching,
+        isMetricsFetching: bundleMetricsQuery.isFetching,
         isChartFetching: chartQuery.isFetching,
-
-        // Error states
-        error: metricsQuery.error || chartQuery.error,
-        metricsError: metricsQuery.error,
+        error: bundleMetricsQuery.error || chartQuery.error,
+        metricsError: bundleMetricsQuery.error,
         chartError: chartQuery.error,
-
-        // Refetch functions
         refetchAll: () => {
-            void metricsQuery.refetch();
+            void bundleMetricsQuery.refetch();
             void chartQuery.refetch();
         },
-        refetchMetrics: metricsQuery.refetch,
+        refetchMetrics: () => {
+            void bundleMetricsQuery.refetch();
+        },
         refetchChart: chartQuery.refetch,
     };
 }
 
 /**
  * Hook to fetch only metrics (lighter weight)
- * When overrideDays is provided, computes its own date range independent of the store.
+ * Uses custom DB for all data
  */
 export function useAnalyticsMetrics(overrideDays?: number) {
     const app = useAppBridge();
@@ -73,33 +99,52 @@ export function useAnalyticsMetrics(overrideDays?: number) {
         startDate: storeStart,
         endDate: storeEnd,
     } = useAnalyticsStore();
-    const queries = analyticsQueries(app);
 
     const isOverridden = overrideDays !== undefined;
     const days = overrideDays ?? storeDays;
 
-    // Compute fixed date range when overrideDays is provided
-    const { startDate, endDate } = useMemo(() => {
-        if (!isOverridden) return { startDate: storeStart, endDate: storeEnd };
-        const today = getTodayInShopTimezone();
-        const start = new Date(today);
-        start.setDate(start.getDate() - (days - 1));
-        return { startDate: formatDate(start), endDate: formatDate(today) };
-    }, [isOverridden, days, storeStart, storeEnd]);
-
-    const metricsQuery = useQuery({
-        ...queries.metrics(days, startDate, endDate),
-        staleTime: 10 * 60 * 1000, // 10 min (server-side cached for 5 min)
+    const queries = analyticsQueries(app);
+    const bundleMetricsQuery = useQuery({
+        ...queries.metrics(days, storeStart, storeEnd),
+        staleTime: 10 * 60 * 1000,
     });
 
+    const metrics = useMemo(() => {
+        const bundleData = bundleMetricsQuery.data;
+
+        return {
+            totals: {
+                revenue: bundleData?.totals?.revenue ?? 0,
+                views: bundleData?.totals?.views ?? 0,
+                purchases: bundleData?.totals?.purchases ?? 0,
+                addToCarts: bundleData?.totals?.addToCarts ?? 0,
+                activeBundles: bundleData?.totals?.activeBundles ?? 0,
+                totalBundles: bundleData?.totals?.totalBundles ?? 0,
+                revenueAllTime: bundleData?.totals?.revenueAllTime ?? 0,
+            },
+            metrics: {
+                conversionRate: bundleData?.metrics?.conversionRate ?? 0,
+                avgOrderValue: bundleData?.metrics?.avgOrderValue ?? 0,
+                cartConversionRate:
+                    bundleData?.metrics?.cartConversionRate ?? 0,
+            },
+            growth: {
+                revenue: bundleData?.growth?.revenue ?? 0,
+                conversion: bundleData?.growth?.conversion ?? 0,
+            },
+        };
+    }, [bundleMetricsQuery.data]);
+
     return {
-        metrics: metricsQuery.data,
-        isLoading: metricsQuery.isLoading,
-        isFetching: metricsQuery.isFetching,
-        error: metricsQuery.error,
-        refetch: metricsQuery.refetch,
+        metrics,
+        isLoading: bundleMetricsQuery.isLoading,
+        isFetching: bundleMetricsQuery.isFetching,
+        error: bundleMetricsQuery.error,
+        refetch: () => {
+            void bundleMetricsQuery.refetch();
+        },
         days,
-        startDate,
-        endDate,
+        startDate: storeStart,
+        endDate: storeEnd,
     };
 }

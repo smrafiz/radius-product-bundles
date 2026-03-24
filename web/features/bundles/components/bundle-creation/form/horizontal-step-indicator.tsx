@@ -120,7 +120,10 @@ export function HorizontalStepIndicator() {
                                                       : undefined
                                             }
                                         >
-                                            {ts(STEP_KEYS[step.number - 1] + ".title")}
+                                            {ts(
+                                                STEP_KEYS[step.number - 1] +
+                                                    ".title",
+                                            )}
                                         </s-badge>
                                     </div>
 

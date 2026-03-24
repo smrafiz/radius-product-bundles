@@ -497,7 +497,10 @@ import "./scss/radius-bundles.scss";
             setTimeout(() => this.update(), 100);
 
             document.addEventListener("cart:updated", this.boundUpdate);
-            document.addEventListener("radiusBundles:cleanup", this.boundUpdate);
+            document.addEventListener(
+                "radiusBundles:cleanup",
+                this.boundUpdate,
+            );
             document.addEventListener("cart:change", this.boundCartChange);
 
             this.startPolling();
@@ -555,11 +558,17 @@ import "./scss/radius-bundles.scss";
             }
             if (this.boundUpdate) {
                 document.removeEventListener("cart:updated", this.boundUpdate);
-                document.removeEventListener("radiusBundles:cleanup", this.boundUpdate);
+                document.removeEventListener(
+                    "radiusBundles:cleanup",
+                    this.boundUpdate,
+                );
                 this.boundUpdate = null;
             }
             if (this.boundCartChange) {
-                document.removeEventListener("cart:change", this.boundCartChange);
+                document.removeEventListener(
+                    "cart:change",
+                    this.boundCartChange,
+                );
                 this.boundCartChange = null;
             }
         }

@@ -30,18 +30,10 @@ export function DashboardFeatures() {
                     <s-stack gap="base" padding="base">
                         <s-heading>{t("heading")}</s-heading>
                         <s-unordered-list>
-                            <s-list-item>
-                                {t("bundleTypes")}
-                            </s-list-item>
-                            <s-list-item>
-                                {t("discounts")}
-                            </s-list-item>
-                            <s-list-item>
-                                {t("styleCustomizer")}
-                            </s-list-item>
-                            <s-list-item>
-                                {t("analytics")}
-                            </s-list-item>
+                            <s-list-item>{t("bundleTypes")}</s-list-item>
+                            <s-list-item>{t("discounts")}</s-list-item>
+                            <s-list-item>{t("styleCustomizer")}</s-list-item>
+                            <s-list-item>{t("analytics")}</s-list-item>
                         </s-unordered-list>
                         <s-button
                             variant="primary"

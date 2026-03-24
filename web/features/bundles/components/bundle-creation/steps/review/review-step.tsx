@@ -27,11 +27,7 @@ export function ReviewStep() {
     return (
         <s-stack gap="base">
             {hasErrors && (
-                <s-banner
-                    heading={t("fixErrors")}
-                    tone="critical"
-                    dismissible
-                >
+                <s-banner heading={t("fixErrors")} tone="critical" dismissible>
                     <s-unordered-list>
                         {formErrors.map(({ field, message }, index) => (
                             <s-list-item key={index}>

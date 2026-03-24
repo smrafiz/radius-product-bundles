@@ -132,7 +132,10 @@ export function ProductItem({
                                 gap="small"
                             >
                                 <s-text tone="caution">
-                                    {t("variantsSelected", { count: String(selectedCount), total: String(originalTotal) })}
+                                    {t("variantsSelected", {
+                                        count: String(selectedCount),
+                                        total: String(originalTotal),
+                                    })}
                                 </s-text>
                                 <s-link
                                     tone="neutral"

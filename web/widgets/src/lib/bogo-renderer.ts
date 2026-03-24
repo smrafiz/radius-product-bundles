@@ -415,9 +415,10 @@ export function renderBogoSleekProducts(
             } else if (structure.discountType === "FIXED_AMOUNT") {
                 rewardLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             }
-            badgeHtml = rewardLabel && ctx.showSavingsBadge
-                ? `<span class="rb-sleek__badge">${escapeHtml(rewardLabel)}</span>`
-                : "";
+            badgeHtml =
+                rewardLabel && ctx.showSavingsBadge
+                    ? `<span class="rb-sleek__badge">${escapeHtml(rewardLabel)}</span>`
+                    : "";
             if (ctx.showPrices) {
                 priceHtml = `
                 <div class="rb-sleek__price">
@@ -427,7 +428,9 @@ export function renderBogoSleekProducts(
             `;
             }
         } else {
-            labelHtml = ctx.showSavingsBadge ? `<span class="rb-sleek__label">${escapeHtml(youPayLabel)}</span>` : "";
+            labelHtml = ctx.showSavingsBadge
+                ? `<span class="rb-sleek__label">${escapeHtml(youPayLabel)}</span>`
+                : "";
             if (ctx.showPrices) {
                 priceHtml = `
                 <div class="rb-sleek__price">
@@ -1129,7 +1132,9 @@ export function renderBogoChecklistProducts(
     hideStandardHeader(ctx.container);
     hideStandardPricing(ctx.container);
 
-    const checklistContainer = container.querySelector(".rb-checklist__container");
+    const checklistContainer = container.querySelector(
+        ".rb-checklist__container",
+    );
     if (actionsEl && checklistContainer) {
         checklistContainer.appendChild(actionsEl);
     }

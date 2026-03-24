@@ -6,8 +6,8 @@ export const COMMUNITY_URL = "https://community.radiusbundles.com";
 export const FAQ_COUNT = 5;
 
 export const QUICK_LINKS = [
-    { key: "linkDocs",      url: DOCS_URL,       external: true },
-    { key: "linkVideos",    url: VIDEOS_URL,      external: true },
-    { key: "linkAppStore",  url: APP_STORE_URL,   external: true },
-    { key: "linkCommunity", url: COMMUNITY_URL,   external: true },
+    { key: "linkDocs", url: DOCS_URL, external: true },
+    { key: "linkVideos", url: VIDEOS_URL, external: true },
+    { key: "linkAppStore", url: APP_STORE_URL, external: true },
+    { key: "linkCommunity", url: COMMUNITY_URL, external: true },
 ] as const;

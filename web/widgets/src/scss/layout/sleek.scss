@@ -38,7 +38,11 @@
         &--reward {
             background: linear-gradient(
                 to right,
-                color-mix(in srgb, var(--rb-savings-color, #16a34a) 10%, var(--rb-background-color, white)),
+                color-mix(
+                    in srgb,
+                    var(--rb-savings-color, #16a34a) 10%,
+                    var(--rb-background-color, white)
+                ),
                 var(--rb-background-color, white)
             );
             border: 1px solid

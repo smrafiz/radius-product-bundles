@@ -37,11 +37,15 @@ export function DynamicField({
     const tabKey = parentPath || tabId || "global";
     // Construct key using name if possible, or fallback
     const fieldI18nKey = `${tabKey}.Fields.${config.name}`;
-    
+
     // Translated labels and details
     const label = t(`${fieldI18nKey}.label`, undefined, config.label);
-    const details = config.details ? t(`${fieldI18nKey}.details`, undefined, config.details) : undefined;
-    const placeholder = config.placeholder ? t(`${fieldI18nKey}.placeholder`, undefined, config.placeholder) : undefined;
+    const details = config.details
+        ? t(`${fieldI18nKey}.details`, undefined, config.details)
+        : undefined;
+    const placeholder = config.placeholder
+        ? t(`${fieldI18nKey}.placeholder`, undefined, config.placeholder)
+        : undefined;
 
     /**
      * Handles field value change and triggers SaveBar.
@@ -122,7 +126,11 @@ export function DynamicField({
                 >
                     {config.options.map((option) => (
                         <s-option key={option.value} value={option.value}>
-                            {t(`${fieldI18nKey}.options.${option.value}`, undefined, option.label)}
+                            {t(
+                                `${fieldI18nKey}.options.${option.value}`,
+                                undefined,
+                                option.label,
+                            )}
                         </s-option>
                     ))}
                 </s-select>

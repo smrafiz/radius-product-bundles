@@ -26,9 +26,7 @@ export function TopBundlesHeader() {
                         interestFor="top-bundle-tooltip"
                     />
                     <s-tooltip id="top-bundle-tooltip">
-                        <s-text>
-                            {t("tooltip")}
-                        </s-text>
+                        <s-text>{t("tooltip")}</s-text>
                     </s-tooltip>
                 </s-stack>
                 {/* Date range indicator */}

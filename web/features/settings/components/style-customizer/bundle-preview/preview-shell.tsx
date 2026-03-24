@@ -26,11 +26,13 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
     } = usePreviewShell(bundleType);
 
     const serverData = useSettingsStore((s) => s.serverData);
-    const savedLabels = serverData?.labels as Record<string, string> | undefined;
+    const savedLabels = serverData?.labels as
+        | Record<string, string>
+        | undefined;
     const previewLabels = {
         ...PREVIEW_LABELS,
         ...Object.fromEntries(
-            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== "")
+            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),
     };
 

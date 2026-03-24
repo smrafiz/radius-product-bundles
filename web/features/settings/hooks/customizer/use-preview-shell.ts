@@ -27,7 +27,7 @@ export function usePreviewShell(bundleType: PreviewTemplateId) {
         bundleType === "CART_BANNER"
             ? t("preview.cartBannerLayout")
             : t("preview.bundleLayout", {
-                  label: tt(`${bundleType as BundleType}.label`)
+                  label: tt(`${bundleType as BundleType}.label`),
               });
 
     const isCartBanner = bundleType === "CART_BANNER";

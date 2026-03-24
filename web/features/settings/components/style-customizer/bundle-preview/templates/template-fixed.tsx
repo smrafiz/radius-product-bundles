@@ -21,11 +21,13 @@ export function TemplateFixed({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const tc = useTranslations("Settings.Customizer");
     const serverData = useSettingsStore((s) => s.serverData);
-    const savedLabels = serverData?.labels as Record<string, string> | undefined;
+    const savedLabels = serverData?.labels as
+        | Record<string, string>
+        | undefined;
     const labels = {
         ...PREVIEW_LABELS,
         ...Object.fromEntries(
-            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== "")
+            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),
     };
 

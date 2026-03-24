@@ -9,14 +9,14 @@
 
 ## Executive Summary
 
-| Domain                      | Critical | High   | Medium | Low    | Score      |
-| --------------------------- | -------- | ------ | ------ | ------ | ---------- |
-| Security & OWASP            | ~~3~~ 0  | ~~5~~ **0** | ~~4~~ **2** | 2      | ~~62~~ ~~78~~ ~~82~~ ~~85~~ **90/100** |
-| Data Integrity & Schema     | ~~2~~ **0** | ~~4~~ **0** | ~~4~~ **2** | 1      | ~~70~~ ~~80~~ ~~85~~ ~~88~~ **92/100** |
-| Architecture & Code Quality | 0        | ~~3~~ **0** | ~~5~~ 4 | 5      | ~~87~~ ~~90~~ **92/100** |
-| Performance & Optimization  | ~~3~~ **0** | ~~5~~ **0** | ~~4~~ **1** | 0      | ~~58~~ ~~72~~ ~~80~~ **90/100** |
-| Rust Discount Function      | ~~5~~ 0  | ~~8~~ **0** | ~~4~~ **0** | 0      | ~~45~~ ~~65~~ **100/100** |
-| Webhooks & App Lifecycle    | ~~2~~ **0** | ~~6~~ **0** | ~~4~~ **2** | 4      | ~~55~~ ~~74~~ ~~82~~ **88/100** |
+| Domain                      | Critical     | High         | Medium        | Low    | Score                                                                            |
+| --------------------------- | ------------ | ------------ | ------------- | ------ | -------------------------------------------------------------------------------- |
+| Security & OWASP            | ~~3~~ 0      | ~~5~~ **0**  | ~~4~~ **2**   | 2      | ~~62~~ ~~78~~ ~~82~~ ~~85~~ **90/100**                                           |
+| Data Integrity & Schema     | ~~2~~ **0**  | ~~4~~ **0**  | ~~4~~ **2**   | 1      | ~~70~~ ~~80~~ ~~85~~ ~~88~~ **92/100**                                           |
+| Architecture & Code Quality | 0            | ~~3~~ **0**  | ~~5~~ 4       | 5      | ~~87~~ ~~90~~ **92/100**                                                         |
+| Performance & Optimization  | ~~3~~ **0**  | ~~5~~ **0**  | ~~4~~ **1**   | 0      | ~~58~~ ~~72~~ ~~80~~ **90/100**                                                  |
+| Rust Discount Function      | ~~5~~ 0      | ~~8~~ **0**  | ~~4~~ **0**   | 0      | ~~45~~ ~~65~~ **100/100**                                                        |
+| Webhooks & App Lifecycle    | ~~2~~ **0**  | ~~6~~ **0**  | ~~4~~ **2**   | 4      | ~~55~~ ~~74~~ ~~82~~ **88/100**                                                  |
 | **Total**                   | ~~15~~ **0** | ~~31~~ **0** | ~~25~~ **11** | **12** | ~~63~~ ~~80~~ ~~85~~ ~~87~~ ~~89~~ ~~91~~ ~~92~~ ~~93~~ ~~94~~ ~~95~~ **96/100** |
 
 **Verdict**: All 15 critical and 31 HIGH issues resolved. Score: **96/100**. Remaining: 11 MEDIUM + 12 LOW items (code quality, minor optimizations, and operational polish).
@@ -586,8 +586,8 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 
 ### Week 1 — Critical Security & Data Integrity
 
-| Priority | ID  | Action                                            | Effort | Status |
-| -------- | --- | ------------------------------------------------- | ------ | ------ |
+| Priority | ID  | Action                                            | Effort | Status  |
+| -------- | --- | ------------------------------------------------- | ------ | ------- |
 | 1        | S-1 | Remove `dangerouslySetInnerHTML` or add DOMPurify | 30 min | ✅ Done |
 | 2        | S-2 | Remove `unsafe-eval` from CSP script-src          | 15 min | ✅ Done |
 | 3        | S-3 | Restrict CORS to Shopify origins                  | 20 min | ✅ Done |
@@ -599,8 +599,8 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 
 ### Week 2 — High Priority Fixes
 
-| Priority | ID  | Action                                           | Effort | Status |
-| -------- | --- | ------------------------------------------------ | ------ | ------ |
+| Priority | ID  | Action                                           | Effort | Status  |
+| -------- | --- | ------------------------------------------------ | ------ | ------- |
 | 9        | R-3 | Add `checked_mul()` for quantity arithmetic      | 30 min | ✅ Done |
 | 10       | R-4 | Fix CUSTOM_PRICE for multi-reward BXGY           | 45 min | ✅ Done |
 | 11       | W-3 | Add webhook idempotency via delivery ID          | 2 hr   | ✅ Done |
@@ -612,44 +612,44 @@ From the original `CODE_REVIEW_REPORT.md`, these findings were re-checked:
 
 ### Week 3 — Performance & Operational
 
-| Priority | ID  | Action                                                 | Effort | Status |
-| -------- | --- | ------------------------------------------------------ | ------ | ------ |
-| 17       | P-3 | Reduce widget polling to 10s; use cart events          | 2 hr   | ✅ Done |
-| 18       | P-4 | Dynamic import Recharts; replace Framer Motion w/ CSS  | 1 hr   | ✅ Done |
-| 19       | P-9 | Fix widget memory leaks (fetch, listeners, intervals)  | 2 hr   | ✅ Done |
-| 20       | W-5 | Add GraphQL retry with exponential backoff             | 1 hr   | ✅ Done |
-| 21       | A-6 | Replace `cacheTime` → `gcTime` across codebase         | 15 min | ✅ Done |
-| 22       | P-6 | Add cache invalidation after mutations                 | 1 hr   | ✅ Done |
-| 23       | W-8 | Throw on missing critical env vars                     | 30 min | ✅ Done |
-| 24       | D-6 | Fix client-side pagination to DB-level take/skip       | 1 hr   | ✅ Done |
+| Priority | ID  | Action                                                | Effort | Status  |
+| -------- | --- | ----------------------------------------------------- | ------ | ------- |
+| 17       | P-3 | Reduce widget polling to 10s; use cart events         | 2 hr   | ✅ Done |
+| 18       | P-4 | Dynamic import Recharts; replace Framer Motion w/ CSS | 1 hr   | ✅ Done |
+| 19       | P-9 | Fix widget memory leaks (fetch, listeners, intervals) | 2 hr   | ✅ Done |
+| 20       | W-5 | Add GraphQL retry with exponential backoff            | 1 hr   | ✅ Done |
+| 21       | A-6 | Replace `cacheTime` → `gcTime` across codebase        | 15 min | ✅ Done |
+| 22       | P-6 | Add cache invalidation after mutations                | 1 hr   | ✅ Done |
+| 23       | W-8 | Throw on missing critical env vars                    | 30 min | ✅ Done |
+| 24       | D-6 | Fix client-side pagination to DB-level take/skip      | 1 hr   | ✅ Done |
 
 ### Week 4 — Polish & Hardening
 
-| Priority | ID     | Action                                          | Effort | Status |
-| -------- | ------ | ----------------------------------------------- | ------ | ------ |
-| 25       | R-6-17 | Remaining Rust hardening (validation, docs)     | 3 hr   | ✅ All done (R-10 skipped as feature request) |
-| 26       | A-1    | Replace empty catch blocks with logging         | 30 min | ✅ Done |
-| 27       | P-5    | Replace top bundles with recent active bundles  | 1 hr   | ✅ Done |
-| 28       | D-2    | Add Zod schemas for all JSON fields             | 3 hr   | ⏳ Deferred (schema cleanup) |
-| 29       | S-10   | Add rate limiting to proxy routes               | 2 hr   | ✅ Done |
-| 30       | W-9    | Add cron time-budget with checkpoint            | 1 hr   | ✅ Done |
+| Priority | ID     | Action                                         | Effort | Status                                        |
+| -------- | ------ | ---------------------------------------------- | ------ | --------------------------------------------- |
+| 25       | R-6-17 | Remaining Rust hardening (validation, docs)    | 3 hr   | ✅ All done (R-10 skipped as feature request) |
+| 26       | A-1    | Replace empty catch blocks with logging        | 30 min | ✅ Done                                       |
+| 27       | P-5    | Replace top bundles with recent active bundles | 1 hr   | ✅ Done                                       |
+| 28       | D-2    | Add Zod schemas for all JSON fields            | 3 hr   | ⏳ Deferred (schema cleanup)                  |
+| 29       | S-10   | Add rate limiting to proxy routes              | 2 hr   | ✅ Done                                       |
+| 30       | W-9    | Add cron time-budget with checkpoint           | 1 hr   | ✅ Done                                       |
 
 ### Week 5 — Additional Fixes (This Session)
 
-| Priority | ID     | Action                                          | Effort | Status |
-| -------- | ------ | ----------------------------------------------- | ------ | ------ |
-| 31       | S-5    | Shop domain validation with regex               | 20 min | ✅ Done |
-| 32       | S-6    | Bearer token extraction with regex              | 10 min | ✅ Done |
-| 33       | W-7    | CRON_SECRET length validation                   | 15 min | ✅ Done |
-| 34       | P-2    | Remove N+1 findUnique in analytics tracking     | 20 min | ✅ Done |
-| 35       | W-6    | Cold-start handler race (Promise lock)          | 15 min | ✅ Done |
-| 36       | W-10   | Shopify API graceful degradation                | 20 min | ✅ Done |
-| 37       | W-9    | Cron timeout budget (55s)                       | 15 min | ✅ Done |
-| 38       | S-8    | `$queryRawUnsafe` → `$queryRaw`                 | 5 min  | ✅ Done |
-| 39       | S-12   | Upload file size limit (5MB)                    | 10 min | ✅ Done |
-| 40       | S-7    | Upload JSON params validation                   | 15 min | ✅ Done |
-| 41       | D-9    | Surface metafield sync failures to user         | 20 min | ✅ Done |
-| 42       | P-8    | Database indexes verified complete              | 5 min  | ✅ Already resolved |
+| Priority | ID   | Action                                      | Effort | Status              |
+| -------- | ---- | ------------------------------------------- | ------ | ------------------- |
+| 31       | S-5  | Shop domain validation with regex           | 20 min | ✅ Done             |
+| 32       | S-6  | Bearer token extraction with regex          | 10 min | ✅ Done             |
+| 33       | W-7  | CRON_SECRET length validation               | 15 min | ✅ Done             |
+| 34       | P-2  | Remove N+1 findUnique in analytics tracking | 20 min | ✅ Done             |
+| 35       | W-6  | Cold-start handler race (Promise lock)      | 15 min | ✅ Done             |
+| 36       | W-10 | Shopify API graceful degradation            | 20 min | ✅ Done             |
+| 37       | W-9  | Cron timeout budget (55s)                   | 15 min | ✅ Done             |
+| 38       | S-8  | `$queryRawUnsafe` → `$queryRaw`             | 5 min  | ✅ Done             |
+| 39       | S-12 | Upload file size limit (5MB)                | 10 min | ✅ Done             |
+| 40       | S-7  | Upload JSON params validation               | 15 min | ✅ Done             |
+| 41       | D-9  | Surface metafield sync failures to user     | 20 min | ✅ Done             |
+| 42       | P-8  | Database indexes verified complete          | 5 min  | ✅ Already resolved |
 
 **Total estimated effort**: ~30 hours across 4 weeks + ~3 hours in week 5
 

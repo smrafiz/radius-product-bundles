@@ -15,9 +15,14 @@ export function SupportSidePanel() {
                     <s-stack gap="small-200">
                         <s-text color="subdued">{t("schedule")}</s-text>
                         <s-divider />
-                        <s-grid gridTemplateColumns="1fr auto" alignItems="center">
+                        <s-grid
+                            gridTemplateColumns="1fr auto"
+                            alignItems="center"
+                        >
                             <s-text color="subdued">{t("responseTime")}</s-text>
-                            <s-badge tone="success">{t("responseTimeValue")}</s-badge>
+                            <s-badge tone="success">
+                                {t("responseTimeValue")}
+                            </s-badge>
                         </s-grid>
                     </s-stack>
                 </s-stack>

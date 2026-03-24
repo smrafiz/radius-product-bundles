@@ -159,7 +159,9 @@ export function BundleSummary() {
                                 justifyContent="space-between"
                                 direction="inline"
                             >
-                                <s-text color="subdued">{t("startDate")}</s-text>
+                                <s-text color="subdued">
+                                    {t("startDate")}
+                                </s-text>
                                 <s-text>
                                     {formatDate(bundleData.startDate)}
                                 </s-text>

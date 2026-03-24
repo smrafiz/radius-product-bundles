@@ -3,11 +3,7 @@
 import { DehydratedState } from "@tanstack/react-query";
 import { AppSettingsProvider } from "@/features/settings/components/app-settings-provider";
 import { ReactNode, Suspense, useEffect, useState } from "react";
-import {
-    ProtectedRoute,
-    SessionProvider,
-    TanstackProvider,
-} from "@/shared";
+import { ProtectedRoute, SessionProvider, TanstackProvider } from "@/shared";
 
 /**
  * Root Providers Component

@@ -256,7 +256,15 @@ export async function getPaginatedBundlesAnalytics(
  */
 function mapSortFieldToRepo(
     sortBy: SortField,
-): "revenue" | "views" | "purchases" | "conversion" | "created" | "name" | "status" | "type" {
+):
+    | "revenue"
+    | "views"
+    | "purchases"
+    | "conversion"
+    | "created"
+    | "name"
+    | "status"
+    | "type" {
     return sortBy as
         | "revenue"
         | "views"

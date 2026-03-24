@@ -29,9 +29,7 @@ export function PricingPage() {
                         <s-heading>
                             <div className="text-lg">{t("title")}</div>
                         </s-heading>
-                        <s-text color="subdued">
-                            {t("description")}
-                        </s-text>
+                        <s-text color="subdued">{t("description")}</s-text>
                     </s-stack>
                 </s-stack>
 

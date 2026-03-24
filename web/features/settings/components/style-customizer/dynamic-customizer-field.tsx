@@ -268,7 +268,9 @@ export function DynamicCustomizerField({
                         name={config.name}
                         alpha
                         placeholder={
-                            config.allowInherit ? t("inherit") : t("selectColor")
+                            config.allowInherit
+                                ? t("inherit")
+                                : t("selectColor")
                         }
                         value={String(value ?? "")}
                         error={error || undefined}

@@ -40,7 +40,11 @@ export function DynamicSettingsTab({ config }: { config: SettingsTabConfig }) {
                         />
                         {section.description && (
                             <s-text tone="neutral">
-                                {t(`${config.parentPath || config.id}.Sections.${section.id}.description`, undefined, section.description)}
+                                {t(
+                                    `${config.parentPath || config.id}.Sections.${section.id}.description`,
+                                    undefined,
+                                    section.description,
+                                )}
                             </s-text>
                         )}
                         {renderCustomComponent((customField as any).component)}

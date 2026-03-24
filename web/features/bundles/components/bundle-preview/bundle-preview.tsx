@@ -513,8 +513,7 @@ export function BundlePreview() {
                                     className="radius-bundle__inner"
                                     style={{
                                         position: "relative",
-                                        backgroundColor:
-                                            styles.backgroundColor,
+                                        backgroundColor: styles.backgroundColor,
                                         borderRadius,
                                         borderStyle: styles.showBorder
                                             ? "solid"

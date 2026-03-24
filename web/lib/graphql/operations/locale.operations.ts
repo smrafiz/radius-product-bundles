@@ -31,8 +31,7 @@ export async function fetchAndCacheShopLocales(
         .filter((l) => l.published)
         .map(({ locale, name, primary }) => ({ locale, name, primary }));
 
-    const primaryLocale =
-        published.find((l) => l.primary)?.locale ?? "en";
+    const primaryLocale = published.find((l) => l.primary)?.locale ?? "en";
 
     await prisma.shop.update({
         where: { domain },
@@ -61,7 +60,12 @@ export async function getShopLocales(
         shop?.localesUpdatedAt &&
         Date.now() - new Date(shop.localesUpdatedAt).getTime() < LOCALES_TTL_MS;
 
-    if (shop?.locales && Array.isArray(shop.locales) && shop.locales.length > 0 && isFresh) {
+    if (
+        shop?.locales &&
+        Array.isArray(shop.locales) &&
+        shop.locales.length > 0 &&
+        isFresh
+    ) {
         return shop.locales as unknown as CachedLocale[];
     }
 

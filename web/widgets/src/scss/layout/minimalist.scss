@@ -209,10 +209,7 @@
         }
 
         &--reward {
-            color: var(
-                --rb-savings-color,
-                var(--rb-savings-color, #16a34a)
-            );
+            color: var(--rb-savings-color, var(--rb-savings-color, #16a34a));
             background: color-mix(
                 in srgb,
                 var(--rb-savings-color, #16a34a) 10%,
@@ -252,7 +249,7 @@
         color: var(--rb-text-color, #1a1a2e);
 
         &--reward {
-            color: var(--rb-savings-color,var(--rb-savings-color, #16a34a));
+            color: var(--rb-savings-color, var(--rb-savings-color, #16a34a));
         }
     }
 

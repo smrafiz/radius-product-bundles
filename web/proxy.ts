@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export default function proxy(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
-    const locale = searchParams.get('locale');
+    const locale = searchParams.get("locale");
 
     // Paths to skip completely - don't even detect shop
     const skipCompletely = [
@@ -69,11 +69,11 @@ export default function proxy(request: NextRequest) {
     if (locale) {
         // Shopify injects the 'locale' search parameter into iframe URLs.
         // Save it so I18nLoader can read the merchant's active language
-        responseWithHeaders.cookies.set('NEXT_LOCALE', locale, {
-          path: '/',
-          maxAge: 60 * 60 * 24 * 365, // 1 year
-          sameSite: 'none',
-          secure: true,
+        responseWithHeaders.cookies.set("NEXT_LOCALE", locale, {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            sameSite: "none",
+            secure: true,
         });
     }
 

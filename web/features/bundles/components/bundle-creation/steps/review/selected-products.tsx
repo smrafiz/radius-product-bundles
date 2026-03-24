@@ -29,7 +29,9 @@ export function SelectedProducts() {
                     gap="small"
                     aria-expanded={open}
                 >
-                    <s-heading>{t("selectedProducts")} ({itemCount})</s-heading>
+                    <s-heading>
+                        {t("selectedProducts")} ({itemCount})
+                    </s-heading>
                     <s-icon type={open ? "chevron-up" : "chevron-down"} />
                 </s-stack>
             </div>

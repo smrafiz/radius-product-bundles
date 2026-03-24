@@ -24,7 +24,9 @@
     // ── Deal banner ─────────────────────────────────────────────────
     &__banner {
         background: linear-gradient(
-            135deg,var(--rb-primary-color, #e0598b), color-mix(in srgb, var(--rb-primary-color, #e0598b) 80%, white)
+            135deg,
+            var(--rb-primary-color, #e0598b),
+            color-mix(in srgb, var(--rb-primary-color, #e0598b) 80%, white)
         );
         padding: 14px 20px;
         display: flex;
@@ -77,7 +79,8 @@
         display: flex;
         align-items: stretch;
         gap: 4px;
-        padding: var(--rb-gap-spacing, 12px) var(--rb-gap-spacing, 12px) 8px var(--rb-gap-spacing, 12px);
+        padding: var(--rb-gap-spacing, 12px) var(--rb-gap-spacing, 12px) 8px
+            var(--rb-gap-spacing, 12px);
         position: relative;
     }
 

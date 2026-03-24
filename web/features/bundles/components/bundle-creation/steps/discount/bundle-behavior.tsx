@@ -34,9 +34,7 @@ export function BundleBehavior() {
             >
                 <s-heading>{t("behaviorHeading")}</s-heading>
                 <s-tooltip id="bundle-behavior-tooltip">
-                    <s-text>
-                        {t("behaviorTooltip")}
-                    </s-text>
+                    <s-text>{t("behaviorTooltip")}</s-text>
                 </s-tooltip>
                 <s-icon
                     tone="neutral"
@@ -122,9 +120,7 @@ export function BundleBehavior() {
                 onHide={handleModalHide}
             >
                 <s-stack gap="base">
-                    <s-text color="subdued">
-                        {t("chooseProducts")}
-                    </s-text>
+                    <s-text color="subdued">{t("chooseProducts")}</s-text>
 
                     {/* Select All */}
                     <s-checkbox
@@ -197,9 +193,7 @@ export function BundleBehavior() {
                             })}
                         </s-stack>
                     ) : (
-                        <s-text color="subdued">
-                            {t("noProductsYet")}
-                        </s-text>
+                        <s-text color="subdued">{t("noProductsYet")}</s-text>
                     )}
                 </s-stack>
 

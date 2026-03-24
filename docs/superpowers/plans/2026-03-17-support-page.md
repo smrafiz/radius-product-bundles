@@ -12,26 +12,27 @@
 
 ## File Map
 
-| File | Action | Responsibility |
-|------|--------|----------------|
-| `web/app/(dashboard)/support/page.tsx` | Create | Server wrapper: `generateMetadata` + render `<SupportPage />` |
-| `web/app/(dashboard)/support/loading.tsx` | Create | Skeleton while page hydrates |
-| `web/features/support/index.ts` | Create | Barrel: re-exports components + constants |
-| `web/features/support/components/index.ts` | Create | Barrel: re-exports all 4 components |
-| `web/features/support/components/support-page/support-page.tsx` | Create | Root page shell: `<s-page>` + `<TitleBar>` + layout |
-| `web/features/support/components/support-quick-actions/support-quick-actions.tsx` | Create | 3-card resource row (Docs, Videos, Email) |
-| `web/features/support/components/support-faq/support-faq.tsx` | Create | FAQ list with 5 items |
-| `web/features/support/components/support-side-panel/support-side-panel.tsx` | Create | Support hours, quick links, pro tip |
-| `web/features/support/constants/support.constants.ts` | Create | All URLs and structural data |
-| `web/messages/en.json` | Modify | Add `Meta.pages.support` and `Support.*` keys |
-| `web/messages/fr.json` | Modify | Add same keys in French |
-| `web/shared/components/navigation/navigation.tsx` | Modify | Add `/support` nav link |
+| File                                                                              | Action | Responsibility                                                |
+| --------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------- |
+| `web/app/(dashboard)/support/page.tsx`                                            | Create | Server wrapper: `generateMetadata` + render `<SupportPage />` |
+| `web/app/(dashboard)/support/loading.tsx`                                         | Create | Skeleton while page hydrates                                  |
+| `web/features/support/index.ts`                                                   | Create | Barrel: re-exports components + constants                     |
+| `web/features/support/components/index.ts`                                        | Create | Barrel: re-exports all 4 components                           |
+| `web/features/support/components/support-page/support-page.tsx`                   | Create | Root page shell: `<s-page>` + `<TitleBar>` + layout           |
+| `web/features/support/components/support-quick-actions/support-quick-actions.tsx` | Create | 3-card resource row (Docs, Videos, Email)                     |
+| `web/features/support/components/support-faq/support-faq.tsx`                     | Create | FAQ list with 5 items                                         |
+| `web/features/support/components/support-side-panel/support-side-panel.tsx`       | Create | Support hours, quick links, pro tip                           |
+| `web/features/support/constants/support.constants.ts`                             | Create | All URLs and structural data                                  |
+| `web/messages/en.json`                                                            | Modify | Add `Meta.pages.support` and `Support.*` keys                 |
+| `web/messages/fr.json`                                                            | Modify | Add same keys in French                                       |
+| `web/shared/components/navigation/navigation.tsx`                                 | Modify | Add `/support` nav link                                       |
 
 ---
 
 ## Task 1: i18n Keys
 
 **Files:**
+
 - Modify: `web/messages/en.json`
 - Modify: `web/messages/fr.json`
 
@@ -149,6 +150,7 @@ git commit -m "feat(support): add i18n keys for support page"
 ## Task 2: Constants
 
 **Files:**
+
 - Create: `web/features/support/constants/support.constants.ts`
 
 - [ ] **Step 2.1: Create the constants file**
@@ -162,10 +164,10 @@ export const COMMUNITY_URL = "https://community.radiusbundles.com";
 export const FAQ_COUNT = 5;
 
 export const QUICK_LINKS = [
-    { key: "linkDocs",      url: DOCS_URL,       external: true },
-    { key: "linkVideos",    url: VIDEOS_URL,      external: true },
-    { key: "linkAppStore",  url: APP_STORE_URL,   external: true },
-    { key: "linkCommunity", url: COMMUNITY_URL,   external: true },
+    { key: "linkDocs", url: DOCS_URL, external: true },
+    { key: "linkVideos", url: VIDEOS_URL, external: true },
+    { key: "linkAppStore", url: APP_STORE_URL, external: true },
+    { key: "linkCommunity", url: COMMUNITY_URL, external: true },
 ] as const;
 ```
 
@@ -181,6 +183,7 @@ git commit -m "feat(support): add support constants (URLs, FAQ count, quick link
 ## Task 3: `SupportSidePanel`
 
 **Files:**
+
 - Create: `web/features/support/components/support-side-panel/support-side-panel.tsx`
 
 - [ ] **Step 3.1: Create the component**
@@ -254,6 +257,7 @@ git commit -m "feat(support): add SupportSidePanel component"
 ## Task 4: `SupportFaq`
 
 **Files:**
+
 - Create: `web/features/support/components/support-faq/support-faq.tsx`
 
 - [ ] **Step 4.1: Create the component**
@@ -320,6 +324,7 @@ git commit -m "feat(support): add SupportFaq component"
 ## Task 5: `SupportQuickActions`
 
 **Files:**
+
 - Create: `web/features/support/components/support-quick-actions/support-quick-actions.tsx`
 
 - [ ] **Step 5.1: Create the component**
@@ -428,7 +433,6 @@ export function SupportQuickActions() {
 }
 ```
 
-
 - [ ] **Step 5.2: Commit**
 
 ```bash
@@ -441,6 +445,7 @@ git commit -m "feat(support): add SupportQuickActions component"
 ## Task 6: `SupportPage`
 
 **Files:**
+
 - Create: `web/features/support/components/support-page/support-page.tsx`
 
 - [ ] **Step 6.1: Create the root page component**
@@ -508,6 +513,7 @@ git commit -m "feat(support): add SupportPage root component"
 ## Task 7: Barrel Exports
 
 **Files:**
+
 - Create: `web/features/support/components/index.ts`
 - Create: `web/features/support/index.ts`
 
@@ -539,6 +545,7 @@ git commit -m "feat(support): add barrel exports for support feature"
 ## Task 8: Page Route
 
 **Files:**
+
 - Create: `web/app/(dashboard)/support/page.tsx`
 - Create: `web/app/(dashboard)/support/loading.tsx`
 
@@ -598,6 +605,7 @@ git commit -m "feat(support): add /support route with page and loading skeleton"
 ## Task 9: Navigation Link
 
 **Files:**
+
 - Modify: `web/shared/components/navigation/navigation.tsx`
 
 - [ ] **Step 9.1: Add `/support` link**
@@ -634,6 +642,7 @@ Expected: no errors in support files. Fix any type errors before proceeding.
 - [ ] **Step 10.2: Fix any errors, commit fixes**
 
 Common issues to watch for:
+
 - `t(key)` with dynamic key strings — cast as `Parameters<typeof t>[0]` if TS complains
 - `s-link` missing from JSX type definitions — replace with `<s-button variant="plain">` if so
 - `s-badge` `tone` prop values — valid values are `"success"`, `"warning"`, `"critical"`, `"info"`, `"attention"`, `"new"`
@@ -657,6 +666,7 @@ bun run dev:app
 - [ ] **Step 11.2: Navigate to `/support`**
 
 Open the app in the Shopify Partners dashboard and navigate to the Support page. Verify:
+
 - [ ] All three quick-action cards render with correct icons and links
 - [ ] FAQ section shows 5 questions with answers
 - [ ] Side panel shows support hours, quick links, and pro tip banner

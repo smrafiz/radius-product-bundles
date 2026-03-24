@@ -164,9 +164,7 @@ export function AnalyticsDisabledBanner() {
 
     return (
         <s-banner tone="warning" heading={t("heading")}>
-            <s-paragraph>
-                {t("description")}
-            </s-paragraph>
+            <s-paragraph>{t("description")}</s-paragraph>
             <s-button
                 slot="secondary-actions"
                 variant="secondary"

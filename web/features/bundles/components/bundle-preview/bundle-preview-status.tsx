@@ -107,9 +107,7 @@ export function BundlePreviewStatus() {
                 >
                     <s-heading>{t("status")}</s-heading>
                     <s-tooltip id="widget-layout-tooltip">
-                        <s-text>
-                            {t("statusTooltip")}
-                        </s-text>
+                        <s-text>{t("statusTooltip")}</s-text>
                     </s-tooltip>
                     <s-icon
                         tone="neutral"
@@ -171,9 +169,7 @@ export function BundlePreviewStatus() {
                                             ${bundleData.status === key ? "bg-[#ebebeb]" : "hover:bg-[#f7f7f7]"}`}
                                     >
                                         <s-stack gap="none">
-                                            <s-heading>
-                                                {ts(key)}
-                                            </s-heading>
+                                            <s-heading>{ts(key)}</s-heading>
                                             <s-paragraph color="subdued">
                                                 {ts(`${key}_desc`)}
                                             </s-paragraph>
@@ -187,9 +183,7 @@ export function BundlePreviewStatus() {
 
                 {bundleData.status === "SCHEDULED" && (
                     <s-stack gap="small">
-                        <s-text color="subdued">
-                            {t("dateRangeHint")}
-                        </s-text>
+                        <s-text color="subdued">{t("dateRangeHint")}</s-text>
 
                         <s-stack
                             direction="inline"
@@ -262,9 +256,7 @@ export function BundlePreviewStatus() {
                         </s-popover>
 
                         {!bundleData.startDate || !bundleData.endDate ? (
-                            <s-banner tone="info">
-                                {t("dateRequired")}
-                            </s-banner>
+                            <s-banner tone="info">{t("dateRequired")}</s-banner>
                         ) : null}
                     </s-stack>
                 )}

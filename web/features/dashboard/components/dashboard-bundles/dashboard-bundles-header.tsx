@@ -21,9 +21,7 @@ export function DashboardBundlesHeader({
         >
             <s-stack gap="small-300">
                 <s-heading>{t("recentActive")}</s-heading>
-                <s-text>
-                    {t("recentActiveDesc")}
-                </s-text>
+                <s-text>{t("recentActiveDesc")}</s-text>
             </s-stack>
             <s-stack>
                 {isLoading ? (

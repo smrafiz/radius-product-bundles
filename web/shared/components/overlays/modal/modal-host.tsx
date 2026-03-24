@@ -184,7 +184,9 @@ export function ModalHost() {
                 }
             >
                 {(hasActiveModal && modal.confirmText) ||
-                    (destructive ? tc("delete", undefined, "Delete") : t("confirm", undefined, "Confirm"))}
+                    (destructive
+                        ? tc("delete", undefined, "Delete")
+                        : t("confirm", undefined, "Confirm"))}
             </s-button>
         </s-modal>
     );

@@ -4,9 +4,7 @@ import { VALIDATION_MESSAGES } from "@/shared/constants";
 
 type T = (key: string) => string;
 
-const productGidSchema = z
-    .string()
-    .regex(/^gid:\/\/shopify\/Product\/\d+$/);
+const productGidSchema = z.string().regex(/^gid:\/\/shopify\/Product\/\d+$/);
 
 const variantGidSchema = z
     .string()
@@ -30,10 +28,7 @@ const bundleSettingsSchema = (v: T) =>
     z
         .object({
             layout: z.string().default("GRID"),
-            title: z
-                .string()
-                .max(100)
-                .optional(),
+            title: z.string().max(100).optional(),
             subtitle: z.string().max(300).optional().default(""),
             cartButtonText: z.string().max(50).default(""),
             showImages: z.boolean().default(true),
@@ -154,9 +149,17 @@ export function createBundleSchema(v: T) {
 
             priority: z.number().int().min(0).max(500).default(0).optional(),
 
-            marketingCopy: z.string().max(1000).transform(sanitizeText).optional(),
+            marketingCopy: z
+                .string()
+                .max(1000)
+                .transform(sanitizeText)
+                .optional(),
             seoTitle: z.string().max(60).transform(sanitizeText).optional(),
-            seoDescription: z.string().max(160).transform(sanitizeText).optional(),
+            seoDescription: z
+                .string()
+                .max(160)
+                .transform(sanitizeText)
+                .optional(),
 
             startDate: z.date().optional(),
             endDate: z.date().optional(),
@@ -235,7 +238,9 @@ export function createBundleSchema(v: T) {
             const triggerProducts = data.products.filter(
                 (p) => p.role === "TRIGGER",
             );
-            const rewardProducts = data.products.filter((p) => p.role === "REWARD");
+            const rewardProducts = data.products.filter(
+                (p) => p.role === "REWARD",
+            );
 
             if (triggerProducts.length === 0) {
                 ctx.addIssue({
@@ -256,7 +261,9 @@ export function createBundleSchema(v: T) {
         .refine(
             (data) => {
                 if (data.type === "VOLUME_DISCOUNT") {
-                    return data.volumeTiers != null && data.volumeTiers.length > 0;
+                    return (
+                        data.volumeTiers != null && data.volumeTiers.length > 0
+                    );
                 }
                 return true;
             },
@@ -270,7 +277,8 @@ export function createBundleSchema(v: T) {
                 if (data.type === "MIX_AND_MATCH") {
                     return (
                         data.allowMixAndMatch &&
-                        (data.mixAndMatchPrice != null || data.discountValue > 0)
+                        (data.mixAndMatchPrice != null ||
+                            data.discountValue > 0)
                     );
                 }
                 return true;
@@ -310,5 +318,6 @@ export function createBundleSchema(v: T) {
  * Default schema with English messages (for server-side validation).
  */
 export const bundleSchema = createBundleSchema(
-    (key) => VALIDATION_MESSAGES[key as keyof typeof VALIDATION_MESSAGES] ?? key,
+    (key) =>
+        VALIDATION_MESSAGES[key as keyof typeof VALIDATION_MESSAGES] ?? key,
 );

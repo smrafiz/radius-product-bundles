@@ -89,7 +89,11 @@ export function AnalyticsDate() {
                                                                         : "generic"
                                                                 }
                                                             >
-                                                                {tp(preset.key, undefined, preset.label)}
+                                                                {tp(
+                                                                    preset.key,
+                                                                    undefined,
+                                                                    preset.label,
+                                                                )}
                                                             </s-text>
                                                             {activePreset ===
                                                                 preset.key && (

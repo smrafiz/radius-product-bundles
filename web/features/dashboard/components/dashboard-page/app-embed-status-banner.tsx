@@ -26,9 +26,7 @@ export function AppEmbedStatusBanner({
 
     return (
         <s-banner tone="warning" heading={t("notEnabled")}>
-            <s-paragraph>
-                {t("notEnabledDesc")}
-            </s-paragraph>
+            <s-paragraph>{t("notEnabledDesc")}</s-paragraph>
             <s-button
                 slot="secondary-actions"
                 variant="secondary"

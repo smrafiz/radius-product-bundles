@@ -1,29 +1,73 @@
 import type { AppSettingsLabels } from "@/features/settings/types/app-settings.types";
 
 const LOCALE_MAP: Record<string, string> = {
-    en: "en-US", "en-us": "en-US", "en-gb": "en-GB",
-    fr: "fr-FR", de: "de-DE", es: "es-ES", it: "it-IT",
-    nl: "nl-NL", pt: "pt-PT", "pt-br": "pt-BR", "pt-pt": "pt-PT",
-    ru: "ru-RU", ja: "ja-JP", zh: "zh-CN", "zh-cn": "zh-CN", "zh-tw": "zh-TW",
-    ko: "ko-KR", ar: "ar-SA", pl: "pl-PL", sv: "sv-SE", da: "da-DK",
-    fi: "fi-FI", nb: "nb-NO", cs: "cs-CZ", sk: "sk-SK", hu: "hu-HU",
-    ro: "ro-RO", bg: "bg-BG", hr: "hr-HR", sl: "sl-SI", et: "et-EE",
-    lv: "lv-LV", lt: "lt-LT", uk: "uk-UA", tr: "tr-TR", id: "id-ID",
-    el: "el-GR", he: "he-IL", th: "th-TH", vi: "vi-VN",
+    en: "en-US",
+    "en-us": "en-US",
+    "en-gb": "en-GB",
+    fr: "fr-FR",
+    de: "de-DE",
+    es: "es-ES",
+    it: "it-IT",
+    nl: "nl-NL",
+    pt: "pt-PT",
+    "pt-br": "pt-BR",
+    "pt-pt": "pt-PT",
+    ru: "ru-RU",
+    ja: "ja-JP",
+    zh: "zh-CN",
+    "zh-cn": "zh-CN",
+    "zh-tw": "zh-TW",
+    ko: "ko-KR",
+    ar: "ar-SA",
+    pl: "pl-PL",
+    sv: "sv-SE",
+    da: "da-DK",
+    fi: "fi-FI",
+    nb: "nb-NO",
+    cs: "cs-CZ",
+    sk: "sk-SK",
+    hu: "hu-HU",
+    ro: "ro-RO",
+    bg: "bg-BG",
+    hr: "hr-HR",
+    sl: "sl-SI",
+    et: "et-EE",
+    lv: "lv-LV",
+    lt: "lt-LT",
+    uk: "uk-UA",
+    tr: "tr-TR",
+    id: "id-ID",
+    el: "el-GR",
+    he: "he-IL",
+    th: "th-TH",
+    vi: "vi-VN",
 };
 
 function toLang(locale: string): string {
     return LOCALE_MAP[locale.toLowerCase()] ?? locale;
 }
 
-async function fetchTranslation(text: string, sourceLang: string, targetLang: string): Promise<string> {
-    const params = new URLSearchParams({ q: text, langpair: `${sourceLang}|${targetLang}` });
-    const res = await fetch(`https://api.mymemory.translated.net/get?${params}`, { cache: "no-store" });
+async function fetchTranslation(
+    text: string,
+    sourceLang: string,
+    targetLang: string,
+): Promise<string> {
+    const params = new URLSearchParams({
+        q: text,
+        langpair: `${sourceLang}|${targetLang}`,
+    });
+    const res = await fetch(
+        `https://api.mymemory.translated.net/get?${params}`,
+        { cache: "no-store" },
+    );
     if (!res.ok) {
         throw new Error(`MyMemory HTTP ${res.status}`);
     }
 
-    const json = await res.json() as { responseStatus: number; responseData: { translatedText: string } };
+    const json = (await res.json()) as {
+        responseStatus: number;
+        responseData: { translatedText: string };
+    };
     if (json.responseStatus !== 200) {
         throw new Error(`MyMemory error ${json.responseStatus}`);
     }
@@ -31,7 +75,11 @@ async function fetchTranslation(text: string, sourceLang: string, targetLang: st
     return json.responseData.translatedText;
 }
 
-async function translateOne(text: string, sourceLang: string, targetLang: string): Promise<string> {
+async function translateOne(
+    text: string,
+    sourceLang: string,
+    targetLang: string,
+): Promise<string> {
     // Split around {placeholders} — translate text segments only, keep placeholders verbatim
     const segments = text.split(/(\{\w+\})/g);
 
@@ -68,7 +116,13 @@ export async function translateLabels(
     }
 
     const translated = await Promise.all(
-        entries.map(async ([key, value]) => [key, await translateOne(value, sourceLang, targetLang)] as const),
+        entries.map(
+            async ([key, value]) =>
+                [
+                    key,
+                    await translateOne(value, sourceLang, targetLang),
+                ] as const,
+        ),
     );
 
     return Object.fromEntries(translated) as Partial<AppSettingsLabels>;

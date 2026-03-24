@@ -135,7 +135,10 @@ function generateShopifySessionFromDB(session: Session) {
                     data: { accessToken: encryptToken(session.accessToken) },
                 })
                 .catch((err) =>
-                    console.error(`[Session] Failed to encrypt token for ${session.id}:`, err),
+                    console.error(
+                        `[Session] Failed to encrypt token for ${session.id}:`,
+                        err,
+                    ),
                 );
         }
     }

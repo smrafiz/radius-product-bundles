@@ -22,9 +22,7 @@ export async function getRecentBundlesService({
     const bundleIds = bundles.map((b) => b.id);
     const analyticsRaw = await getAnalyticsForBundles(bundleIds);
 
-    const analyticsMap = new Map(
-        analyticsRaw.map((a) => [a.bundleId, a._sum]),
-    );
+    const analyticsMap = new Map(analyticsRaw.map((a) => [a.bundleId, a._sum]));
 
     return bundles.map((b) => {
         const stats = analyticsMap.get(b.id);

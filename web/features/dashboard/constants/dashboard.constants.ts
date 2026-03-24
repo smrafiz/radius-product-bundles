@@ -41,7 +41,9 @@ const DASHBOARD_METRICS_SVG = {
 /*
  * Dashboard Metrics
  */
-export function getDashboardMetrics(t: (key: string) => string): DashboardMetricConfig[] {
+export function getDashboardMetrics(
+    t: (key: string) => string,
+): DashboardMetricConfig[] {
     return [
         {
             key: "activeBundles",
@@ -103,7 +105,9 @@ const DASHBOARD_QUICK_ACTIONS_SVG = {
 /*
  * Dashboard Quick Actions
  */
-export function getDashboardQuickActions(t: (key: string) => string): DashboardQuickActionItem[] {
+export function getDashboardQuickActions(
+    t: (key: string) => string,
+): DashboardQuickActionItem[] {
     return [
         {
             id: "bundles",
@@ -151,7 +155,9 @@ export function getDashboardQuickActions(t: (key: string) => string): DashboardQ
  * Dashboard Callout Cards
  */
 
-export function getDashboardCalloutCards(t: (key: string) => string): DashboardCalloutCardsItem[] {
+export function getDashboardCalloutCards(
+    t: (key: string) => string,
+): DashboardCalloutCardsItem[] {
     return [
         {
             title: t("support.title"),
@@ -198,7 +204,9 @@ export function getDashboardCalloutCards(t: (key: string) => string): DashboardC
 /*
  * Setup Guide Steps
  */
-export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[] {
+export function getSetupGuideSteps(
+    t: (key: string) => string,
+): SetupGuideStep[] {
     return [
         {
             id: 0,
@@ -210,7 +218,9 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
                 alt: "Enable app embed in theme editor",
             },
             primaryButton: { content: t("steps.enableAppEmbed.primaryButton") },
-            secondaryButton: { content: t("steps.enableAppEmbed.secondaryButton") },
+            secondaryButton: {
+                content: t("steps.enableAppEmbed.secondaryButton"),
+            },
         },
         {
             id: 1,
@@ -235,8 +245,12 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
                 url: "/assets/setup-guide-step-two.svg",
                 alt: "Add bundle widget to product page",
             },
-            primaryButton: { content: t("steps.addWidgetToTheme.primaryButton") },
-            secondaryButton: { content: t("steps.addWidgetToTheme.secondaryButton") },
+            primaryButton: {
+                content: t("steps.addWidgetToTheme.primaryButton"),
+            },
+            secondaryButton: {
+                content: t("steps.addWidgetToTheme.secondaryButton"),
+            },
         },
         {
             id: 3,
@@ -261,7 +275,9 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
                 url: "/assets/setup-guide-step-four.svg",
                 alt: "Preview bundle on storefront",
             },
-            primaryButton: { content: t("steps.previewStorefront.primaryButton") },
+            primaryButton: {
+                content: t("steps.previewStorefront.primaryButton"),
+            },
         },
         {
             id: 5,
@@ -283,7 +299,9 @@ export function getSetupGuideSteps(t: (key: string) => string): SetupGuideStep[]
 /*
  * Dashboard Video Items Link
  */
-export function getDashboardVideoItems(t: (key: string) => string): DashboardVideoConfig[] {
+export function getDashboardVideoItems(
+    t: (key: string) => string,
+): DashboardVideoConfig[] {
     return [
         {
             id: 1,

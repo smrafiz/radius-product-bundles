@@ -55,6 +55,9 @@ export async function checkWidgetBlockStatusAction(
         return { status: "success", data: hasBlock };
     } catch (err) {
         console.error("[checkWidgetBlockStatus] Error:", err);
-        return { status: "error", message: "Failed to check widget block status" };
+        return {
+            status: "error",
+            message: "Failed to check widget block status",
+        };
     }
 }

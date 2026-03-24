@@ -15,6 +15,7 @@
 ### Task 1: A-6 — Replace deprecated `cacheTime` with `gcTime`
 
 **Files:**
+
 - Modify: `web/features/bundles/api/bundles.queries.ts:42,60,77`
 
 **Context:** React Query v5 renamed `cacheTime` → `gcTime`. The current `cacheTime` settings have no effect.
@@ -54,6 +55,7 @@ git commit -m "fix(A-6): replace deprecated cacheTime with gcTime in React Query
 ### Task 2: W-8 — Throw on missing critical env vars
 
 **Files:**
+
 - Modify: `web/lib/shopify/config/initialize-context.ts:5-19`
 
 **Context:** Currently all env vars fallback to `""`. If `SHOPIFY_API_KEY` or `SHOPIFY_API_SECRET` is missing, the app silently creates a broken Shopify client. Should throw early at module load.
@@ -106,15 +108,17 @@ git commit -m "fix(W-8): throw on missing critical Shopify env vars at startup"
 ### Task 3: P-3 — Reduce widget polling; use cart events
 
 **Files:**
+
 - Modify: `web/widgets/src/radius-bundles.ts`
-  - `SavingsBanner.startPolling()` (lines 700-716)
-  - `SavingsBanner.init()` (lines 464-480)
+    - `SavingsBanner.startPolling()` (lines 700-716)
+    - `SavingsBanner.init()` (lines 464-480)
 
 **Context:** Currently polls `/cart.js` every 1.5s on cart page — 40+ req/min per customer. Should use Shopify's `cart:updated` events as primary mechanism and fall back to polling at 10s for themes that don't fire events.
 
 - [ ] **Step 1: Increase polling interval from 1500ms to 10000ms**
 
 In `startPolling()` (line 715):
+
 ```typescript
 // Change from:
 }, 1500);
@@ -149,12 +153,13 @@ git commit -m "perf(P-3): reduce cart polling to 10s, rely on cart events for up
 ### Task 4: P-9 — Fix widget memory leaks
 
 **Files:**
+
 - Modify: `web/widgets/src/radius-bundles.ts`
-  - `CartCleanup.interceptFetch()` (lines 414-441)
-  - `CartCleanup.attachEventListeners()` (lines 443-446)
-  - `CartCleanup` class — add `destroy()` method
-  - `SavingsBanner` class — add event listener cleanup to `destroy()`
-  - `RadiusBundlesManager` class — add `destroy()` method
+    - `CartCleanup.interceptFetch()` (lines 414-441)
+    - `CartCleanup.attachEventListeners()` (lines 443-446)
+    - `CartCleanup` class — add `destroy()` method
+    - `SavingsBanner` class — add event listener cleanup to `destroy()`
+    - `RadiusBundlesManager` class — add `destroy()` method
 
 **Context:** Three memory leaks: (1) `window.fetch` overwritten without storing original — can't restore. (2) Event listeners added without removal tracking. (3) SavingsBanner event listeners not cleaned up in `destroy()`.
 
@@ -292,6 +297,7 @@ git commit -m "fix(P-9): fix widget memory leaks — restore fetch, remove liste
 ### Task 5: W-5 — Add GraphQL retry with exponential backoff
 
 **Files:**
+
 - Modify: `web/lib/graphql/client/server-action.ts:100-137`
 - Modify: `web/shared/types/api/graphql.types.ts:12` (add `_retryCount` field)
 
@@ -368,6 +374,7 @@ git commit -m "fix(W-5): add GraphQL retry with exponential backoff for 429/5xx 
 ### Task 6: P-6 — Improve cache invalidation after mutations
 
 **Files:**
+
 - Modify: `web/features/bundles/utils/bundle-cache.ts:13-31`
 
 **Context:** `invalidateBundleCache` uses `refetchType: "active"` which only refetches currently-mounted queries. Inactive queries stay stale until their `gcTime` expires (10-15 min). After bundle mutations, all cached data should be invalidated.
@@ -441,6 +448,7 @@ git commit -m "perf(P-6): remove inactive query cache on mutation, refetch activ
 ### Task 7: D-6 — Fix client-side pagination to DB-level take/skip
 
 **Files:**
+
 - Modify: `web/features/analytics/repositories/bundle-analytics.repository.ts:185-228,257-324`
 
 **Context:** `getPaginatedBundlesWithAnalytics()` calls `fetchBundlesWithAnalyticsCore()` which fetches ALL bundles, then `.slice()` in memory. Need to push `take`/`skip` to the Prisma query.
@@ -551,6 +559,7 @@ git commit -m "perf(D-6): push pagination to DB level for bundle-field sorting"
 ### Task 8: P-4 — Dynamic import Recharts; replace Framer Motion with CSS
 
 **Files:**
+
 - Modify: `web/features/analytics/components/analytics-charts/analytics-chart.tsx:31` — dynamic import
 - Modify: `web/features/analytics/components/analytics-charts/comparison/funnel-performance-chart.tsx:32` — dynamic import
 - Modify: `web/features/analytics/components/analytics-charts/comparison/conversion-rates-chart.tsx:33` — dynamic import
@@ -576,7 +585,10 @@ In `web/features/analytics/components/analytics-page/analytics-tab.tsx`, change 
 import dynamic from "next/dynamic";
 
 const AnalyticsChart = dynamic(
-    () => import("../analytics-charts/analytics-chart").then((m) => ({ default: m.AnalyticsChart })),
+    () =>
+        import("../analytics-charts/analytics-chart").then((m) => ({
+            default: m.AnalyticsChart,
+        })),
     { ssr: false },
 );
 ```
@@ -617,10 +629,17 @@ Replace `motion.div` with a regular `div` using CSS transitions. The animation i
 ```
 
 Add CSS (inline or in existing stylesheet):
+
 ```css
 @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 ```
 
@@ -638,7 +657,9 @@ Replace `AnimatePresence` + `motion` + `useReducedMotion` with CSS transitions. 
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-    .animated-tab-panel { animation: none; }
+    .animated-tab-panel {
+        animation: none;
+    }
 }
 ```
 
@@ -669,10 +690,10 @@ git commit -m "perf(P-4): replace framer-motion with CSS transitions, remove 68K
 
 ### Expected Score Impact
 
-| Domain | Before | After |
-|--------|--------|-------|
-| Performance | 62/100 | ~72/100 (P-3, P-4, P-6, P-9 fixed) |
-| Architecture | 87/100 | ~89/100 (A-6 fixed) |
-| Webhooks | 68/100 | ~72/100 (W-5, W-8 fixed) |
-| Data Integrity | 78/100 | ~80/100 (D-6 fixed) |
-| **Overall** | **75/100** | **~80/100** |
+| Domain         | Before     | After                              |
+| -------------- | ---------- | ---------------------------------- |
+| Performance    | 62/100     | ~72/100 (P-3, P-4, P-6, P-9 fixed) |
+| Architecture   | 87/100     | ~89/100 (A-6 fixed)                |
+| Webhooks       | 68/100     | ~72/100 (W-5, W-8 fixed)           |
+| Data Integrity | 78/100     | ~80/100 (D-6 fixed)                |
+| **Overall**    | **75/100** | **~80/100**                        |

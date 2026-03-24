@@ -778,12 +778,15 @@ export async function syncAllSettingsToMetafields(
             if (rawLabels.freeShippingMethodTitle) {
                 freeShippingMethodTitle = rawLabels.freeShippingMethodTitle;
             } else if (rawLabels[primaryLocale]?.freeShippingMethodTitle) {
-                freeShippingMethodTitle = rawLabels[primaryLocale].freeShippingMethodTitle;
+                freeShippingMethodTitle =
+                    rawLabels[primaryLocale].freeShippingMethodTitle;
             }
         }
 
-        const globalSettingsValue =
-            buildGlobalSettingsMetafieldValue(globalSettings, primaryLocale);
+        const globalSettingsValue = buildGlobalSettingsMetafieldValue(
+            globalSettings,
+            primaryLocale,
+        );
         const shopBundlesValue = buildShopBundlesMetafieldValue(
             activeBundles,
             freeShippingMethodTitle,

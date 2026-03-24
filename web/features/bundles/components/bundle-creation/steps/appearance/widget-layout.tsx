@@ -29,9 +29,7 @@ export function WidgetLayout() {
                 >
                     <s-heading>{t("layoutHeading")}</s-heading>
                     <s-tooltip id="widget-layout-tooltip">
-                        <s-text>
-                            {t("layoutTooltip")}
-                        </s-text>
+                        <s-text>{t("layoutTooltip")}</s-text>
                     </s-tooltip>
                     <s-icon
                         tone="neutral"
@@ -65,7 +63,9 @@ export function WidgetLayout() {
                                             }
                                         >
                                             <s-link
-                                                accessibilityLabel={translatedLabel}
+                                                accessibilityLabel={
+                                                    translatedLabel
+                                                }
                                                 interestFor={tooltipId}
                                             >
                                                 <s-image

@@ -16,9 +16,7 @@ export function SupportPage() {
     return (
         <s-page heading={t("title")}>
             <TitleBar title={t("title")}>
-                <button
-                    onClick={() => window.open(`mailto:${SUPPORT_EMAIL}`)}
-                >
+                <button onClick={() => window.open(`mailto:${SUPPORT_EMAIL}`)}>
                     {t("email")}
                 </button>
                 <button onClick={() => window.open(DOCS_URL, "_blank")}>

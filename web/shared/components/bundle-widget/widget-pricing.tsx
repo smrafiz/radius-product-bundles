@@ -80,7 +80,8 @@ export function WidgetPricingDisplay({
                     }}
                 >
                     <span className="radius-bundle__pricing-label">
-                        {labels?.regularPriceLabel || PREVIEW_LABELS.regularPriceLabel}
+                        {labels?.regularPriceLabel ||
+                            PREVIEW_LABELS.regularPriceLabel}
                     </span>
                     <span
                         className="radius-bundle__price-original"
@@ -99,12 +100,15 @@ export function WidgetPricingDisplay({
                     color: highlightColor,
                     marginBottom: "10px",
                     padding: "10px 0",
-                    borderTop: !hideOriginalPrice ? `1px dashed ${borderColor}` : "",
+                    borderTop: !hideOriginalPrice
+                        ? `1px dashed ${borderColor}`
+                        : "",
                     borderBottom: `1px dashed ${borderColor}`,
                 }}
             >
                 <span className="radius-bundle__pricing-label">
-                    {labels?.bundlePriceLabel || PREVIEW_LABELS.bundlePriceLabel}
+                    {labels?.bundlePriceLabel ||
+                        PREVIEW_LABELS.bundlePriceLabel}
                 </span>
                 <span className="radius-bundle__price-discounted">
                     {pricing.finalPrice}
@@ -157,7 +161,10 @@ export function WidgetPricingDisplay({
                         <circle cx="7" cy="18" r="2" />
                         <circle cx="17" cy="18" r="2" />
                     </svg>
-                    <span>{labels?.freeShippingLabel || PREVIEW_LABELS.freeShippingLabel}</span>
+                    <span>
+                        {labels?.freeShippingLabel ||
+                            PREVIEW_LABELS.freeShippingLabel}
+                    </span>
                 </div>
             )}
         </div>

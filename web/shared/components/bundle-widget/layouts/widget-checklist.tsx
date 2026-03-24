@@ -67,7 +67,8 @@ function ChecklistTriggerItem({
                 padding: 12,
                 border: `2px solid ${styles.borderColor || "#d1d5db"}`,
                 borderRadius: cardRadius,
-                background: styles.productCardBg || styles.backgroundColor || "#fff",
+                background:
+                    styles.productCardBg || styles.backgroundColor || "#fff",
             }}
         >
             <div
@@ -116,17 +117,17 @@ function ChecklistTriggerItem({
                 </div>
             </div>
             {displayOptions.showPrices && (
-            <div
-                style={{
-                    fontSize: bodyFontSize,
-                    fontWeight: 500,
-                    color: styles.textColor,
-                    whiteSpace: "nowrap",
-                }}
-            >
-                {product.price}
-            </div>
-                )}
+                <div
+                    style={{
+                        fontSize: bodyFontSize,
+                        fontWeight: 500,
+                        color: styles.textColor,
+                        whiteSpace: "nowrap",
+                    }}
+                >
+                    {product.price}
+                </div>
+            )}
             <div
                 style={{
                     color: styles.textColor || "#9ca3af",
@@ -164,8 +165,7 @@ function ChecklistRewardItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const freeText = DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = !!product.compareAtPrice;
-    const isFreePrice =
-        hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
 
     return (
@@ -213,15 +213,15 @@ function ChecklistRewardItem({
                     }}
                 >
                     {displayOptions.showPrices && (
-                    <span
-                        style={{
-                            fontSize: bodyFontSize,
-                            fontWeight: 500,
-                            color: styles.savingsColor || "#16a34a",
-                        }}
-                    >
-                        {isFreePrice ? freeText : product.price}
-                    </span>
+                        <span
+                            style={{
+                                fontSize: bodyFontSize,
+                                fontWeight: 500,
+                                color: styles.savingsColor || "#16a34a",
+                            }}
+                        >
+                            {isFreePrice ? freeText : product.price}
+                        </span>
                     )}
                     {hasDiscount && displayOptions.showComparePrices && (
                         <span
@@ -329,13 +329,15 @@ export function WidgetChecklist({
                     </div>
                 )}
                 {subtitle && (
-                    <div style={{
-                        fontSize: bodyFontSize,
-                        color: styles.textColor,
-                        margin: "0 0 8px",
-                        lineHeight: "1.3",
-                        opacity: 0.8,
-                    }}>
+                    <div
+                        style={{
+                            fontSize: bodyFontSize,
+                            color: styles.textColor,
+                            margin: "0 0 8px",
+                            lineHeight: "1.3",
+                            opacity: 0.8,
+                        }}
+                    >
                         {subtitle}
                     </div>
                 )}
@@ -424,7 +426,10 @@ export function WidgetChecklist({
                         : `2px solid ${styles.borderColor || "#d1d5db"}`,
                     borderRadius: cardRadius,
                     padding: 16,
-                    background: styles.productCardBg || styles.backgroundColor || "#fff",
+                    background:
+                        styles.productCardBg ||
+                        styles.backgroundColor ||
+                        "#fff",
                     opacity: isUnlocked ? 1 : 0.5,
                     transition: "all 0.3s ease",
                 }}
@@ -447,19 +452,19 @@ export function WidgetChecklist({
                         {lockedLabel}
                     </span>
                     {displayOptions.showSavingsBadge && (
-                    <span
-                        style={{
-                            fontSize: parseInt(bodyFontSize) - 5,
-                            fontWeight: 600,
-                            padding: "2px 10px",
-                            borderRadius: 12,
-                            color: "#fff",
-                            background: styles.savingsColor || "#16a34a",
-                        }}
-                    >
-                        {rewardBadgeText}
-                    </span>
-                        )}
+                        <span
+                            style={{
+                                fontSize: parseInt(bodyFontSize) - 5,
+                                fontWeight: 600,
+                                padding: "2px 10px",
+                                borderRadius: 12,
+                                color: "#fff",
+                                background: styles.savingsColor || "#16a34a",
+                            }}
+                        >
+                            {rewardBadgeText}
+                        </span>
+                    )}
                     <span
                         style={{
                             marginLeft: "auto",
@@ -497,7 +502,10 @@ export function WidgetChecklist({
                         border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
                         borderRadius: getCardRadius(styles.cornerStyle),
                         padding: 16,
-                        background: styles.productCardBg || styles.backgroundColor || "#f9fafb",
+                        background:
+                            styles.productCardBg ||
+                            styles.backgroundColor ||
+                            "#f9fafb",
                         opacity: 0.5,
                         transition: "all 0.3s ease",
                     }}
@@ -523,7 +531,7 @@ export function WidgetChecklist({
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 8,
-                        margin:"auto",
+                        margin: "auto",
                         width: isFullWidth ? "100%" : "auto",
                         padding: getButtonPadding(styles.buttonSize),
                         border: isButtonOutline

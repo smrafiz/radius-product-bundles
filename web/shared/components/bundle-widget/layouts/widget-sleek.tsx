@@ -37,8 +37,7 @@ function SleekProductCard({
     const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
-    const isFreePrice =
-        hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const rewardBadgeText = isFreePrice
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
@@ -117,7 +116,6 @@ function SleekProductCard({
                     {product.title}
                 </div>
                 {isTrigger && displayOptions.showSavingsBadge ? (
-
                     <span
                         style={{
                             fontSize: parseInt(bodyFontSize) - 3,
@@ -130,7 +128,8 @@ function SleekProductCard({
                             DEFAULT_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
-                    hasDiscount && displayOptions.showSavingsBadge && (
+                    hasDiscount &&
+                    displayOptions.showSavingsBadge && (
                         <span
                             style={{
                                 display: "inline-block",
@@ -160,29 +159,33 @@ function SleekProductCard({
                 }}
             >
                 {displayOptions.showPrices && (
-                <span
-                    style={{
-                        fontSize: bodyFontSize,
-                        fontWeight: 500,
-                        color: hasDiscount ? freeTagColor : styles.textColor,
-                    }}
-                >
-                    {isFreePrice ? freeText : product.price}
-                </span>
-                )}
-                {hasDiscount && product.compareAtPrice && displayOptions.showComparePrices && (
                     <span
                         style={{
-                            fontSize: parseInt(bodyFontSize) - 3,
-                            color: styles.textColor || "#9ca3af",
-                            opacity: 0.5,
-                            textDecoration: "line-through",
+                            fontSize: bodyFontSize,
                             fontWeight: 500,
+                            color: hasDiscount
+                                ? freeTagColor
+                                : styles.textColor,
                         }}
                     >
-                        {product.compareAtPrice}
+                        {isFreePrice ? freeText : product.price}
                     </span>
                 )}
+                {hasDiscount &&
+                    product.compareAtPrice &&
+                    displayOptions.showComparePrices && (
+                        <span
+                            style={{
+                                fontSize: parseInt(bodyFontSize) - 3,
+                                color: styles.textColor || "#9ca3af",
+                                opacity: 0.5,
+                                textDecoration: "line-through",
+                                fontWeight: 500,
+                            }}
+                        >
+                            {product.compareAtPrice}
+                        </span>
+                    )}
             </div>
         </div>
     );
@@ -256,7 +259,13 @@ export function WidgetSleek({
                     padding: "4px 0",
                 }}
             >
-                <div style={{ flex: 1, height: 1, background: styles.borderColor || "#e5e7eb" }} />
+                <div
+                    style={{
+                        flex: 1,
+                        height: 1,
+                        background: styles.borderColor || "#e5e7eb",
+                    }}
+                />
                 <div
                     style={{
                         width: 28,
@@ -275,7 +284,13 @@ export function WidgetSleek({
                 >
                     +
                 </div>
-                <div style={{ flex: 1, height: 1, background: styles.borderColor || "#e5e7eb" }} />
+                <div
+                    style={{
+                        flex: 1,
+                        height: 1,
+                        background: styles.borderColor || "#e5e7eb",
+                    }}
+                />
             </div>
 
             {rewardProducts.map((p) => (

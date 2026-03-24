@@ -1,7 +1,7 @@
 // ==========================================================================
 // Checklist Layout — BOGO/BXGY Progress-Based Checklist
 // ==========================================================================
-.radius-bundle__products{
+.radius-bundle__products {
     &--checklist {
         margin-bottom: 0;
     }
@@ -98,7 +98,10 @@
         padding: 12px;
         border: 2px solid var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 8px);
-        background: var(--rb-product-bg-color, var(--rb-background-color, #fff));
+        background: var(
+            --rb-product-bg-color,
+            var(--rb-background-color, #fff)
+        );
         cursor: pointer;
         user-select: none;
         transition:
@@ -107,7 +110,11 @@
 
         &--checked {
             border-color: var(--rb-savings-color, #16a34a);
-            background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 8%, var(--rb-background-color, white));
+            background: color-mix(
+                in srgb,
+                var(--rb-savings-color, #16a34a) 8%,
+                var(--rb-background-color, white)
+            );
         }
     }
 
@@ -221,7 +228,10 @@
         border: 2px solid var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 12px);
         padding: var(--rb-box-spacing, 16px);
-        background: var(--rb-product-bg-color, var(--rb-background-color, #fff));
+        background: var(
+            --rb-product-bg-color,
+            var(--rb-background-color, #fff)
+        );
         transition: all 0.3s ease;
 
         &--locked {
@@ -364,7 +374,10 @@
         border: 1px solid var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 8px);
         padding: 16px;
-        background: var(--rb-product-bg-color, var(--rb-background-color, #fff));
+        background: var(
+            --rb-product-bg-color,
+            var(--rb-background-color, #fff)
+        );
         transition: all 0.3s ease;
 
         &--locked {

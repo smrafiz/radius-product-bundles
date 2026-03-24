@@ -70,9 +70,7 @@ export function AllBundlesHeader({ loading = false }: { loading?: boolean }) {
                                     interestFor="all-bundle-perf-tooltip"
                                 />
                                 <s-tooltip id="all-bundle-perf-tooltip">
-                                    <s-text>
-                                        {t("tooltip")}
-                                    </s-text>
+                                    <s-text>{t("tooltip")}</s-text>
                                 </s-tooltip>
                             </s-stack>
                         </div>

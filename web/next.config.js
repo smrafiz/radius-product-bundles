@@ -3,6 +3,7 @@
  */
 
 const nextConfig = {
+    allowedDevOrigins: ["*.trycloudflare.com"],
     reactStrictMode: true,
     devIndicators: false,
     env: {

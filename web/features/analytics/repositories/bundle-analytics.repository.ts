@@ -200,7 +200,13 @@ export async function getPaginatedBundlesWithAnalytics(
         search = "",
     } = params;
 
-    const DB_SORTABLE_FIELDS = ["name", "status", "createdAt", "type", "created"];
+    const DB_SORTABLE_FIELDS = [
+        "name",
+        "status",
+        "createdAt",
+        "type",
+        "created",
+    ];
     const useDbPagination = DB_SORTABLE_FIELDS.includes(sortBy);
 
     const { bundles, totalCount } = await fetchBundlesWithAnalyticsCore({
@@ -266,10 +272,26 @@ export async function getBundleStatusCounts(shop: string) {
 export async function fetchBundlesWithAnalyticsCore(
     params: CoreBundleFetchParams,
 ): Promise<CoreBundleFetchResult> {
-    const { shop, startDate, endDate, sortBy, sortOrder, search = "", page, perPage } = params;
+    const {
+        shop,
+        startDate,
+        endDate,
+        sortBy,
+        sortOrder,
+        search = "",
+        page,
+        perPage,
+    } = params;
 
-    const DB_SORTABLE_FIELDS = ["name", "status", "createdAt", "type", "created"];
-    const useDbPagination = page && perPage && DB_SORTABLE_FIELDS.includes(sortBy);
+    const DB_SORTABLE_FIELDS = [
+        "name",
+        "status",
+        "createdAt",
+        "type",
+        "created",
+    ];
+    const useDbPagination =
+        page && perPage && DB_SORTABLE_FIELDS.includes(sortBy);
 
     const dbSortField = sortBy === "created" ? "createdAt" : sortBy;
 
@@ -298,11 +320,13 @@ export async function fetchBundlesWithAnalyticsCore(
                 publishedAt: true,
                 isPublished: true,
             },
-            ...(useDbPagination ? {
-                skip: (page - 1) * perPage,
-                take: perPage,
-                orderBy: { [dbSortField]: sortOrder || "desc" },
-            } : {}),
+            ...(useDbPagination
+                ? {
+                      skip: (page - 1) * perPage,
+                      take: perPage,
+                      orderBy: { [dbSortField]: sortOrder || "desc" },
+                  }
+                : {}),
         }),
         prisma.bundleAnalytics.groupBy({
             by: ["bundleId"],
@@ -394,7 +418,15 @@ export function transformBundleWithAnalytics(
  */
 export function sortBundles(
     bundles: BundleWithAnalytics[],
-    sortBy: "revenue" | "views" | "purchases" | "conversion" | "created" | "name" | "status" | "type",
+    sortBy:
+        | "revenue"
+        | "views"
+        | "purchases"
+        | "conversion"
+        | "created"
+        | "name"
+        | "status"
+        | "type",
     sortOrder: "asc" | "desc",
 ): BundleWithAnalytics[] {
     const multiplier = sortOrder === "desc" ? -1 : 1;

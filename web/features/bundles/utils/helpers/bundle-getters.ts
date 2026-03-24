@@ -175,7 +175,7 @@ export function getDefaultLayout(bundleType?: string): BundleLayoutType {
         return "CLASSIC_CARD";
     }
 
-    if (bundleType === "BUY_X_GET_Y"){
+    if (bundleType === "BUY_X_GET_Y") {
         return "COMPACT_GRID";
     }
 

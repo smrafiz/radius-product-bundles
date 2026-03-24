@@ -107,11 +107,24 @@ export function AnalyticsChart() {
                         <s-heading>
                             <ChartTitleTooltip
                                 title={`Total ${t(currentMetric.key + "Label", undefined, currentMetric.label)}`}
-                                description={t(currentMetric.key + "Desc", undefined, currentMetric.description)}
-                                formula={t(currentMetric.key + "Formula", undefined, currentMetric.formula)}
+                                description={t(
+                                    currentMetric.key + "Desc",
+                                    undefined,
+                                    currentMetric.description,
+                                )}
+                                formula={t(
+                                    currentMetric.key + "Formula",
+                                    undefined,
+                                    currentMetric.formula,
+                                )}
                             >
-                                Total {t(currentMetric.key + "Label", undefined, currentMetric.label).toLowerCase()} over
-                                time
+                                Total{" "}
+                                {t(
+                                    currentMetric.key + "Label",
+                                    undefined,
+                                    currentMetric.label,
+                                ).toLowerCase()}{" "}
+                                over time
                             </ChartTitleTooltip>
                         </s-heading>
                         <s-heading>
@@ -152,7 +165,11 @@ export function AnalyticsChart() {
                                                 : undefined
                                         }
                                     >
-                                        {t(metric.key + "Label", undefined, metric.label)}
+                                        {t(
+                                            metric.key + "Label",
+                                            undefined,
+                                            metric.label,
+                                        )}
                                     </div>
                                 </s-button>
                             ))}
@@ -173,7 +190,11 @@ export function AnalyticsChart() {
                         <Tooltip
                             {...CHART_TOOLTIP_CONFIG}
                             formatter={(value) => {
-                                const label = t(currentMetric.key + "Label", undefined, currentMetric.label);
+                                const label = t(
+                                    currentMetric.key + "Label",
+                                    undefined,
+                                    currentMetric.label,
+                                );
                                 if (value == null) {
                                     return ["-", label];
                                 }

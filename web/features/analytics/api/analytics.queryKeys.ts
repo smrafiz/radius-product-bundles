@@ -24,6 +24,58 @@ export const analyticsQueryKeys = {
         [...analyticsQueryKeys.all, "chart", days, startDate, endDate] as const,
 
     /**
+     * ShopifyQL query keys
+     */
+    shopifyql: {
+        all: () => [...analyticsQueryKeys.all, "shopifyql"] as const,
+
+        salesMetrics: (startDate?: string, endDate?: string) =>
+            [
+                ...analyticsQueryKeys.shopifyql.all(),
+                "sales",
+                startDate,
+                endDate,
+            ] as const,
+
+        productPerformance: (
+            startDate?: string,
+            endDate?: string,
+            limit?: number,
+        ) =>
+            [
+                ...analyticsQueryKeys.shopifyql.all(),
+                "products",
+                startDate,
+                endDate,
+                limit,
+            ] as const,
+
+        customerMetrics: (startDate?: string, endDate?: string) =>
+            [
+                ...analyticsQueryKeys.shopifyql.all(),
+                "customers",
+                startDate,
+                endDate,
+            ] as const,
+
+        sessionMetrics: (startDate?: string, endDate?: string) =>
+            [
+                ...analyticsQueryKeys.shopifyql.all(),
+                "sessions",
+                startDate,
+                endDate,
+            ] as const,
+
+        salesByDay: (startDate?: string, endDate?: string) =>
+            [
+                ...analyticsQueryKeys.shopifyql.all(),
+                "salesByDay",
+                startDate,
+                endDate,
+            ] as const,
+    },
+
+    /**
      * Bundle-related query keys
      */
     bundles: {

@@ -13,13 +13,16 @@ export function GlobalLoader() {
     const pathname = usePathname();
 
     useEffect(() => {
-        stopLoading()
+        stopLoading();
     }, [pathname]);
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
             const el = e.target as HTMLElement;
-            if (el.closest?.("a[data-sprogress]") || el.closest?.("button[data-sprogress]")) {
+            if (
+                el.closest?.("a[data-sprogress]") ||
+                el.closest?.("button[data-sprogress]")
+            ) {
                 startLoading();
             }
         };

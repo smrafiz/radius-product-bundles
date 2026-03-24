@@ -93,26 +93,26 @@ function MinimalistItem({
                 }}
             >
                 {displayOptions.showSavingsBadge && (
-                <span
-                    style={{
-                        fontSize: parseInt(bodyFontSize) - 3,
-                        fontWeight: 500,
-                        textTransform: "uppercase",
-                        letterSpacing: 0.6,
-                        padding: "2px 8px",
-                        borderRadius: `0 ${cardRadius} 0 16px`,
-                        lineHeight: "14px",
-                        alignSelf: "flex-start",
-                        color: roleColor,
-                        background: `color-mix(in srgb, ${roleColor} 10%, transparent)`,
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                    }}
-                >
-                    {roleBadgeText}
-                </span>
-                    )}
+                    <span
+                        style={{
+                            fontSize: parseInt(bodyFontSize) - 3,
+                            fontWeight: 500,
+                            textTransform: "uppercase",
+                            letterSpacing: 0.6,
+                            padding: "2px 8px",
+                            borderRadius: `0 ${cardRadius} 0 16px`,
+                            lineHeight: "14px",
+                            alignSelf: "flex-start",
+                            color: roleColor,
+                            background: `color-mix(in srgb, ${roleColor} 10%, transparent)`,
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                        }}
+                    >
+                        {roleBadgeText}
+                    </span>
+                )}
                 <span
                     style={{
                         fontSize: bodyFontSize,
@@ -134,27 +134,30 @@ function MinimalistItem({
                     }}
                 >
                     {displayOptions.showPrices && (
-                    <span
-                        style={{
-                            fontSize: parseInt(bodyFontSize),
-                            fontWeight: 500,
-                            color: isReward ? savingsColor : styles.textColor,
-                        }}
-                    >
-                        {product.price}
-                    </span>
-                    )}
-                    {product.compareAtPrice && displayOptions.showComparePrices && (
                         <span
                             style={{
-                                fontSize: parseInt(bodyFontSize) - 3,
-                                color: "#9ca3af",
-                                textDecoration: "line-through",
+                                fontSize: parseInt(bodyFontSize),
+                                fontWeight: 500,
+                                color: isReward
+                                    ? savingsColor
+                                    : styles.textColor,
                             }}
                         >
-                            {product.compareAtPrice}
+                            {product.price}
                         </span>
                     )}
+                    {product.compareAtPrice &&
+                        displayOptions.showComparePrices && (
+                            <span
+                                style={{
+                                    fontSize: parseInt(bodyFontSize) - 3,
+                                    color: "#9ca3af",
+                                    textDecoration: "line-through",
+                                }}
+                            >
+                                {product.compareAtPrice}
+                            </span>
+                        )}
                 </div>
             </div>
         </div>
@@ -222,29 +225,33 @@ export function WidgetMinimalist({
                     : "none",
             }}
         >
-            {badgeText && pricing?.hasDiscount && displayOptions.showSavingsBadge && (
-                <span
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        backgroundColor: isOutline
-                            ? "transparent"
-                            : accentColor,
-                        color: isOutline ? styles.primaryColor : "#ffffff",
-                        border: isOutline ? `2px solid ${accentColor}` : "none",
-                        fontSize: parseInt(bodyFontSize) - 5,
-                        fontWeight: 600,
-                        letterSpacing: 0.5,
-                        textTransform: "uppercase",
-                        padding: "6px 16px 6px 20px",
-                        borderRadius: `0 ${cardRadius} 0 16px`,
-                        lineHeight: "1.2",
-                    }}
-                >
-                    {badgeText}
-                </span>
-            )}
+            {badgeText &&
+                pricing?.hasDiscount &&
+                displayOptions.showSavingsBadge && (
+                    <span
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            backgroundColor: isOutline
+                                ? "transparent"
+                                : accentColor,
+                            color: isOutline ? styles.primaryColor : "#ffffff",
+                            border: isOutline
+                                ? `2px solid ${accentColor}`
+                                : "none",
+                            fontSize: parseInt(bodyFontSize) - 5,
+                            fontWeight: 600,
+                            letterSpacing: 0.5,
+                            textTransform: "uppercase",
+                            padding: "6px 16px 6px 20px",
+                            borderRadius: `0 ${cardRadius} 0 16px`,
+                            lineHeight: "1.2",
+                        }}
+                    >
+                        {badgeText}
+                    </span>
+                )}
 
             <div
                 style={{
@@ -383,7 +390,7 @@ export function WidgetMinimalist({
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 8,
-                        margin:"auto",
+                        margin: "auto",
                         width: isFullWidth ? "100%" : "auto",
                         padding: getButtonPadding(styles.buttonSize),
                         border: isButtonOutline

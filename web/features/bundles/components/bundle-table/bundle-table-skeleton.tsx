@@ -8,7 +8,14 @@ import {
 } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
-const TAB_STATUS_KEYS = ["ALL", "DRAFT", "ACTIVE", "SCHEDULED", "PAUSED", "ARCHIVED"] as const;
+const TAB_STATUS_KEYS = [
+    "ALL",
+    "DRAFT",
+    "ACTIVE",
+    "SCHEDULED",
+    "PAUSED",
+    "ARCHIVED",
+] as const;
 
 /**
  * Bundle table skeleton component

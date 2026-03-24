@@ -13,8 +13,7 @@ export function StepContent({ bundleType }: { bundleType: BundleType }) {
     const { currentStep, previousStep } = useBundleStore();
 
     const direction = currentStep > previousStep ? 1 : -1;
-    const animName =
-        direction > 0 ? "rpbStepSlideLeft" : "rpbStepSlideRight";
+    const animName = direction > 0 ? "rpbStepSlideLeft" : "rpbStepSlideRight";
 
     const renderCurrentStep = () => {
         switch (currentStep) {

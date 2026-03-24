@@ -17,37 +17,60 @@ import { useTranslations } from "@/lib/i18n/provider";
 import { useMemo } from "react";
 import { CustomizerPanelConfig } from "@/features/settings";
 
-function translateConfig(config: CustomizerPanelConfig, t: (key: string, defaultMessage?: string, ...args: any[]) => string): CustomizerPanelConfig {
+function translateConfig(
+    config: CustomizerPanelConfig,
+    t: (key: string, defaultMessage?: string, ...args: any[]) => string,
+): CustomizerPanelConfig {
     return {
         ...config,
-        sections: config.sections.map(section => {
+        sections: config.sections.map((section) => {
             const translatedSection = { ...section };
             if (section.title) {
-                translatedSection.title = t(`section_${section.id}_title`, undefined, section.title);
+                translatedSection.title = t(
+                    `section_${section.id}_title`,
+                    undefined,
+                    section.title,
+                );
             }
-            
+
             translatedSection.fields = section.fields.map((field, index) => {
                 const translatedField = { ...field } as any;
-                const fieldKeyPrefix = translatedField.name ? `field_${translatedField.name}` : `field_idx_${section.id}_${index}`;
-                
+                const fieldKeyPrefix = translatedField.name
+                    ? `field_${translatedField.name}`
+                    : `field_idx_${section.id}_${index}`;
+
                 if (translatedField.label) {
-                    translatedField.label = t(`${fieldKeyPrefix}_label`, undefined, translatedField.label);
+                    translatedField.label = t(
+                        `${fieldKeyPrefix}_label`,
+                        undefined,
+                        translatedField.label,
+                    );
                 }
                 if (translatedField.details) {
-                    translatedField.details = t(`${fieldKeyPrefix}_details`, undefined, translatedField.details);
+                    translatedField.details = t(
+                        `${fieldKeyPrefix}_details`,
+                        undefined,
+                        translatedField.details,
+                    );
                 }
-                
+
                 if (translatedField.options) {
-                    translatedField.options = translatedField.options.map((opt: any) => ({
-                        ...opt,
-                        label: t(`${fieldKeyPrefix}_option_${opt.value}`, undefined, opt.label)
-                    }));
+                    translatedField.options = translatedField.options.map(
+                        (opt: any) => ({
+                            ...opt,
+                            label: t(
+                                `${fieldKeyPrefix}_option_${opt.value}`,
+                                undefined,
+                                opt.label,
+                            ),
+                        }),
+                    );
                 }
-                
+
                 return translatedField as any;
             });
             return translatedSection;
-        })
+        }),
     };
 }
 
@@ -67,19 +90,19 @@ export function CustomizerBundleType() {
 
     const { activeLayout } = useCustomizerStore();
     const activeBundleType = (activeId || "FIXED_BUNDLE") as PreviewTemplateId;
-    
+
     const t = useTranslations("Settings.Customizer");
     const tConfig = useTranslations("Settings.Customizer.Config");
-    const translatedConfig = useMemo(() => translateConfig(CUSTOMIZER_CONFIG, tConfig as any), [tConfig]);
+    const translatedConfig = useMemo(
+        () => translateConfig(CUSTOMIZER_CONFIG, tConfig as any),
+        [tConfig],
+    );
 
     const leftPanelScroll = useScrollBlur();
     const rightPanelScroll = useScrollBlur();
 
     return (
-        <s-page
-            heading={t("heading")}
-            inlineSize="large"
-        >
+        <s-page heading={t("heading")} inlineSize="large">
             <s-button
                 slot="primary-action"
                 variant="primary"

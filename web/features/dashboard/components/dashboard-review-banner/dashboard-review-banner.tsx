@@ -54,9 +54,7 @@ export function DashboardReviewBanner() {
                     >
                         <s-stack gap="small-200">
                             <s-heading>{bannerTitle}</s-heading>
-                            <s-text color="subdued">
-                                {bannerDescription}
-                            </s-text>
+                            <s-text color="subdued">{bannerDescription}</s-text>
                         </s-stack>
                     </s-grid>
 
@@ -94,9 +92,7 @@ export function DashboardReviewBanner() {
                 <s-stack gap="base">
                     <s-stack gap="small-200">
                         <s-heading>{modalTitle}</s-heading>
-                        <s-text color="subdued">
-                            {modalDescription}
-                        </s-text>
+                        <s-text color="subdued">{modalDescription}</s-text>
                     </s-stack>
 
                     {/* Star Rating inside modal — no tooltips to avoid z-index conflicts */}
@@ -139,9 +135,7 @@ export function DashboardReviewBanner() {
                             background="subdued"
                             borderRadius="base"
                         >
-                            <s-heading>
-                                {t("helpBySharing")}
-                            </s-heading>
+                            <s-heading>{t("helpBySharing")}</s-heading>
                             <s-stack direction="inline" gap="small">
                                 <s-button icon="external">
                                     {t("rateOnAppStore")}

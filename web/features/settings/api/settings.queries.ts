@@ -1,4 +1,7 @@
-import { getSettingsAction, getLocalesAction } from "@/features/settings/actions/settings.action";
+import {
+    getSettingsAction,
+    getLocalesAction,
+} from "@/features/settings/actions/settings.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { settingsQueryKeys } from "@/features/settings";
 import { queryOptions } from "@tanstack/react-query";

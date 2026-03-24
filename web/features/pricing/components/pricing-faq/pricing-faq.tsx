@@ -18,9 +18,7 @@ export const PricingFaq = () => {
         <s-section padding="none">
             <s-stack padding="base">
                 <div className="text-base font-semibold">{t("faq")}</div>
-                <s-text color="subdued">
-                    {t("faqDescription")}
-                </s-text>
+                <s-text color="subdued">{t("faqDescription")}</s-text>
             </s-stack>
 
             {PRICING_FAQ_ITEM.map((item) => (

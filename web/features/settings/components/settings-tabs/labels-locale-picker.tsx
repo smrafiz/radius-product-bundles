@@ -20,8 +20,13 @@ import { triggerSaveBar } from "@/shared";
 
 export function LabelsLocalePicker() {
     const { data: locales, isLoading } = useLocales();
-    const { labelsLocale, setLabelsLocale, setLocaleLoading, isLocaleLoading, markDirty } =
-        useSettingsStore();
+    const {
+        labelsLocale,
+        setLabelsLocale,
+        setLocaleLoading,
+        isLocaleLoading,
+        markDirty,
+    } = useSettingsStore();
     const { reset, getValues, setValue } = useSettingsForm();
     const app = useAppBridge();
     const queryClient = useQueryClient();
@@ -47,7 +52,10 @@ export function LabelsLocalePicker() {
                 if (result.status === "success" && result.data) {
                     reset({
                         ...getValues(),
-                        labels: { ...emptyLabels, ...(result.data.labels ?? {}) },
+                        labels: {
+                            ...emptyLabels,
+                            ...(result.data.labels ?? {}),
+                        },
                     });
                 }
             } catch (err) {
@@ -76,16 +84,24 @@ export function LabelsLocalePicker() {
     ]);
 
     const handleAutoTranslate = useCallback(async () => {
-        if (!labelsLocale || labelsLocale === primaryLocale || isTranslating) return;
+        if (!labelsLocale || labelsLocale === primaryLocale || isTranslating)
+            return;
         try {
             setTranslateError(null);
             setIsTranslating(true);
             setLocaleLoading(true);
             const token = await app.idToken();
-            const result = await autoTranslateLabelsAction(token, primaryLocale, labelsLocale);
+            const result = await autoTranslateLabelsAction(
+                token,
+                primaryLocale,
+                labelsLocale,
+            );
 
             if (result.status === "success" && result.data) {
-                const currentLabels = (getValues("labels") ?? {}) as Record<string, string>;
+                const currentLabels = (getValues("labels") ?? {}) as Record<
+                    string,
+                    string
+                >;
                 // Only fill blank fields — don't overwrite existing translations
                 let filled = false;
                 for (const [key, value] of Object.entries(result.data)) {
@@ -108,7 +124,17 @@ export function LabelsLocalePicker() {
             setIsTranslating(false);
             setLocaleLoading(false);
         }
-    }, [app, labelsLocale, primaryLocale, isTranslating, setLocaleLoading, getValues, setValue, markDirty, t]);
+    }, [
+        app,
+        labelsLocale,
+        primaryLocale,
+        isTranslating,
+        setLocaleLoading,
+        getValues,
+        setValue,
+        markDirty,
+        t,
+    ]);
 
     const handleRefresh = useCallback(async () => {
         if (isRefreshing) return;
@@ -120,7 +146,10 @@ export function LabelsLocalePicker() {
                 queryKey: settingsQueryKeys.locales(),
             });
         } catch (err) {
-            console.warn("[LabelsLocalePicker] Failed to refresh locales:", err);
+            console.warn(
+                "[LabelsLocalePicker] Failed to refresh locales:",
+                err,
+            );
         } finally {
             setIsRefreshing(false);
         }

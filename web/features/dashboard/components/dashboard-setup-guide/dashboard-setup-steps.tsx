@@ -91,7 +91,11 @@ export function DashboardSetupSteps({
                                 />
                                 <s-text>
                                     <span className="text-[12px]">
-                                        {t("tasksComplete", { completed: String(completedItemsLength), total: String(items.length) })}
+                                        {t("tasksComplete", {
+                                            completed:
+                                                String(completedItemsLength),
+                                            total: String(items.length),
+                                        })}
                                     </span>
                                 </s-text>
                             </div>
@@ -129,9 +133,7 @@ export function DashboardSetupSteps({
                                     {t("heading")}
                                 </span>
                             </s-heading>
-                            <s-paragraph>
-                                {t("subheading")}
-                            </s-paragraph>
+                            <s-paragraph>{t("subheading")}</s-paragraph>
                         </s-stack>
                     </s-grid>
                 </s-box>

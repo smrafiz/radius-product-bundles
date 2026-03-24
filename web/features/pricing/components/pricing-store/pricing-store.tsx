@@ -30,9 +30,7 @@ export function PricingStore() {
                                 alignItems="center"
                             >
                                 <s-grid gap="small-200">
-                                    <s-heading>
-                                        {t("devStoreTitle")}
-                                    </s-heading>
+                                    <s-heading>{t("devStoreTitle")}</s-heading>
                                     <s-paragraph>
                                         {t("devStoreDesc")}
                                     </s-paragraph>

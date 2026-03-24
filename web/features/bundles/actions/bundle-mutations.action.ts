@@ -58,7 +58,10 @@ import {
 } from "@/features/bundles/repositories";
 import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
 
-function logSettledFailures(label: string, results: PromiseSettledResult<unknown>[]): boolean {
+function logSettledFailures(
+    label: string,
+    results: PromiseSettledResult<unknown>[],
+): boolean {
     const failures = results.filter(
         (r): r is PromiseRejectedResult => r.status === "rejected",
     );
@@ -333,7 +336,10 @@ export async function deleteBundlesAction(
                 removeBundleIdFromProducts(sessionToken, bundleId, productIds),
             ),
         ]);
-        const hadSyncFailures = logSettledFailures("deleteBundles", deleteMetafieldResults);
+        const hadSyncFailures = logSettledFailures(
+            "deleteBundles",
+            deleteMetafieldResults,
+        );
         invalidateDashboardCache(shop);
 
         const BATCH_SIZE = 4;
@@ -560,7 +566,10 @@ export async function createBundleAction(
                   )
                 : Promise.resolve(),
         ]);
-        const hadSyncFailures = logSettledFailures("createBundle", createMetafieldResults);
+        const hadSyncFailures = logSettledFailures(
+            "createBundle",
+            createMetafieldResults,
+        );
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
@@ -705,7 +714,10 @@ export async function updateBundleAction(
                 adjustedNewIds,
             ),
         ]);
-        const hadSyncFailures = logSettledFailures("updateBundle", updateMetafieldResults);
+        const hadSyncFailures = logSettledFailures(
+            "updateBundle",
+            updateMetafieldResults,
+        );
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);

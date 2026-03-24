@@ -38,7 +38,7 @@ export function ResponsiveFieldIndicator({
                 <s-tooltip id={`responsive-inherit-${activeDevice}`}>
                     <s-text>
                         {t("responsive.inheritTooltip", {
-                            deviceLabel: deviceLabel
+                            deviceLabel: deviceLabel,
                         })}
                     </s-text>
                 </s-tooltip>
@@ -62,7 +62,7 @@ export function ResponsiveFieldIndicator({
                 <s-tooltip id={`responsive-override-${activeDevice}`}>
                     <s-text>
                         {t("responsive.overrideTooltip", {
-                            deviceLabel: deviceLabel
+                            deviceLabel: deviceLabel,
                         })}
                     </s-text>
                 </s-tooltip>

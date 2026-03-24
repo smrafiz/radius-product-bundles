@@ -20,7 +20,9 @@ export function useWidgetStatus({
         app.idToken().then((token) => {
             checkWidgetBlockStatusAction(token).then((result) => {
                 setIsBlockActive(
-                    result.status === "success" ? (result.data ?? false) : false,
+                    result.status === "success"
+                        ? (result.data ?? false)
+                        : false,
                 );
             });
         });

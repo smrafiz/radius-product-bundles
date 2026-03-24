@@ -40,8 +40,12 @@ export function LayoutSidebar({
                                 color: isActive ? primaryColor : undefined,
                             }}
                         >
-                            {bundleType === "CART_BANNER" 
-                                ? t(`layoutNames.CART_BANNER_${value}`, undefined, label) 
+                            {bundleType === "CART_BANNER"
+                                ? t(
+                                      `layoutNames.CART_BANNER_${value}`,
+                                      undefined,
+                                      label,
+                                  )
                                 : t(`layoutNames.${value}`, undefined, label)}
                         </button>
                     );

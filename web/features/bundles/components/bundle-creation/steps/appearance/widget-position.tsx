@@ -70,9 +70,7 @@ export function WidgetPosition() {
                 >
                     <s-heading>{t("productPage")}</s-heading>
                     <s-tooltip id="product-page-display-tooltip">
-                        <s-text>
-                            {t("productPageTooltip")}
-                        </s-text>
+                        <s-text>{t("productPageTooltip")}</s-text>
                     </s-tooltip>
                     <s-icon
                         tone="neutral"

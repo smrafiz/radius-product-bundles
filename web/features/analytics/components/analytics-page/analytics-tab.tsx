@@ -35,14 +35,20 @@ export function AnalyticsTabs() {
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab") as TabKey | null;
     const initialTab =
-        tabParam && TAB_KEYS.includes(tabParam)
-            ? tabParam
-            : "overview";
+        tabParam && TAB_KEYS.includes(tabParam) ? tabParam : "overview";
     const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
 
     const TABS = [
-        { key: "overview" as const, label: t("overview"), icon: "chart-vertical" as const },
-        { key: "bundle-performance" as const, label: t("bundlePerformance"), icon: "package" as const },
+        {
+            key: "overview" as const,
+            label: t("overview"),
+            icon: "chart-vertical" as const,
+        },
+        {
+            key: "bundle-performance" as const,
+            label: t("bundlePerformance"),
+            icon: "package" as const,
+        },
     ];
 
     return (
@@ -106,7 +112,6 @@ export function AnalyticsTabs() {
                     </s-stack>
                 )}
             </div>
-
         </s-stack>
     );
 }

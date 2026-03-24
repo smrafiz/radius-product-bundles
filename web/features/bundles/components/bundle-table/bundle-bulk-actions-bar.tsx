@@ -72,7 +72,9 @@ export const BundleBulkActionsBar = memo(function BundleBulkActionsBar({
                         />
                         <s-text>
                             <span className="font-medium">
-                                {t("itemsSelected", { count: selectedResources.length })}
+                                {t("itemsSelected", {
+                                    count: selectedResources.length,
+                                })}
                             </span>
                         </s-text>
                     </s-stack>

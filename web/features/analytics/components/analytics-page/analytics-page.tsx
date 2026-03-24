@@ -38,9 +38,7 @@ export function AnalyticsPage() {
                                 {t("title")}
                             </div>
                         </s-heading>
-                        <s-text color="subdued">
-                            {t("description")}
-                        </s-text>
+                        <s-text color="subdued">{t("description")}</s-text>
                     </div>
                 </s-stack>
 

@@ -45,14 +45,17 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
         });
     };
 
-    const statusConfig = BUNDLE_STATUSES[bundle.status] ?? BUNDLE_STATUSES.DRAFT;
+    const statusConfig =
+        BUNDLE_STATUSES[bundle.status] ?? BUNDLE_STATUSES.DRAFT;
 
     return (
         <>
             {/* Clickable badge */}
             <s-clickable commandFor={popoverId} type="reset">
                 <s-stack direction="inline" gap="none" alignItems="center">
-                    <s-badge tone={statusConfig.tone}>{ts(bundle.status)}</s-badge>
+                    <s-badge tone={statusConfig.tone}>
+                        {ts(bundle.status)}
+                    </s-badge>
                     <s-icon type="caret-down" />
                 </s-stack>
             </s-clickable>

@@ -4,7 +4,14 @@ import { LoadingSpinner } from "@/shared";
 import { BUNDLE_FILTERS, useBundleFilters } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
-const TAB_STATUS_KEYS = ["ALL", "DRAFT", "ACTIVE", "SCHEDULED", "PAUSED", "ARCHIVED"] as const;
+const TAB_STATUS_KEYS = [
+    "ALL",
+    "DRAFT",
+    "ACTIVE",
+    "SCHEDULED",
+    "PAUSED",
+    "ARCHIVED",
+] as const;
 
 /**
  * Bundle index filters component
@@ -78,27 +85,23 @@ export function BundleIndexFilters({
                             }`}
                         >
                             <s-stack direction="inline" gap="small-400">
-                                {TAB_STATUS_KEYS.map(
-                                    (key, index) => (
-                                        <s-button
-                                            key={`${key}-${index}`}
-                                            tone="neutral"
-                                            variant={
-                                                filters.selectedTab === index
-                                                    ? "secondary"
-                                                    : "tertiary"
-                                            }
-                                            onClick={() =>
-                                                handleTabClick(index)
-                                            }
-                                            aria-selected={
-                                                filters.selectedTab === index
-                                            }
-                                        >
-                                            {getTabLabel(index)}
-                                        </s-button>
-                                    ),
-                                )}
+                                {TAB_STATUS_KEYS.map((key, index) => (
+                                    <s-button
+                                        key={`${key}-${index}`}
+                                        tone="neutral"
+                                        variant={
+                                            filters.selectedTab === index
+                                                ? "secondary"
+                                                : "tertiary"
+                                        }
+                                        onClick={() => handleTabClick(index)}
+                                        aria-selected={
+                                            filters.selectedTab === index
+                                        }
+                                    >
+                                        {getTabLabel(index)}
+                                    </s-button>
+                                ))}
                             </s-stack>
                         </div>
                     </s-grid-item>
@@ -175,20 +178,17 @@ export function BundleIndexFilters({
                                     name="status-filter"
                                     onChange={handleStatusFilterChange}
                                 >
-                                    {TAB_STATUS_KEYS.map(
-                                        (key, index) => (
-                                            <s-choice
-                                                key={`status-${index}`}
-                                                value={key.toLowerCase()}
-                                                selected={
-                                                    filters.selectedTab ===
-                                                    index
-                                                }
-                                            >
-                                                {getTabLabel(index)}
-                                            </s-choice>
-                                        ),
-                                    )}
+                                    {TAB_STATUS_KEYS.map((key, index) => (
+                                        <s-choice
+                                            key={`status-${index}`}
+                                            value={key.toLowerCase()}
+                                            selected={
+                                                filters.selectedTab === index
+                                            }
+                                        >
+                                            {getTabLabel(index)}
+                                        </s-choice>
+                                    ))}
                                 </s-choice-list>
                             </s-box>
                         </form>

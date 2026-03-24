@@ -29,7 +29,11 @@ async function resolve(namespace: string, locale: string) {
 
     const resolvedSection = (section || {}) as Record<string, unknown>;
 
-    return (key: string, params?: Record<string, string | number>, defaultValue?: string) => {
+    return (
+        key: string,
+        params?: Record<string, string | number>,
+        defaultValue?: string,
+    ) => {
         const parts = key.split(".");
         let value: unknown = resolvedSection;
         for (const part of parts) {
@@ -43,9 +47,8 @@ async function resolve(namespace: string, locale: string) {
         if (typeof value !== "string") return defaultValue ?? key;
 
         if (params) {
-            return value.replace(
-                /\{(\w+)\}/g,
-                (_, k) => String(params[k] ?? `{${k}}`),
+            return value.replace(/\{(\w+)\}/g, (_, k) =>
+                String(params[k] ?? `{${k}}`),
             );
         }
         return value;

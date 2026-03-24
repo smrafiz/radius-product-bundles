@@ -1,4 +1,5 @@
 # AI Insights Feature — Design Spec
+
 **Date**: 2026-03-16
 **Status**: Reviewed — awaiting user approval
 **Feature**: LLM-powered bundle insights with BYOK (Bring Your Own Key)
@@ -13,6 +14,7 @@ Merchants connect their own LLM API key (Claude, OpenAI, or Gemini) and the app 
 2. **Bundle Discovery** — analyzes the merchant's product catalog and recommends new high-converting bundle combinations, with a one-click "Create Bundle →" flow
 
 Insights are triggered two ways:
+
 - **On-demand**: merchant clicks "Generate Insights" button on the dashboard
 - **Scheduled**: infrastructure-agnostic cron endpoint (`POST /api/cron/ai-insights`) called by any scheduler (Vercel Cron, AWS EventBridge, GitHub Actions, etc.)
 
@@ -34,18 +36,20 @@ createLLMModel(provider, apiKey, model)
 ```
 
 All pipelines call:
+
 ```typescript
 const { output } = await generateText({
-  model: createLLMModel(provider, decryptedKey, model),
-  output: Output.object({ schema: InsightResponseSchema }),  // Zod
-  prompt: buildPrompt(data),
-  maxTokens: 2000,
-})
+    model: createLLMModel(provider, decryptedKey, model),
+    output: Output.object({ schema: InsightResponseSchema }), // Zod
+    prompt: buildPrompt(data),
+    maxTokens: 2000,
+});
 ```
 
 ### 2.2 Two Pipelines
 
 #### Pipeline 1 — Bundle Optimizer
+
 ```
 Input:  BundleAnalytics.groupBy (last 30 days) + Bundle metadata
 Prompt: Analyze metrics, return 3–5 actionable insights per underperforming bundle
@@ -53,6 +57,7 @@ Output: AIInsight rows (type: OPTIMIZATION | WARNING | RECOMMENDATION)
 ```
 
 #### Pipeline 2 — Bundle Discovery
+
 ```
 Input:  Shopify Admin GraphQL → up to 50 active products (title, type, tags, vendor, price)
         + existing Bundle names (to avoid duplicates)
@@ -151,20 +156,20 @@ Add missing indexes to support expiry filtering and cap deletion queries:
 
 Key fields utilized:
 
-| Field | Usage |
-|---|---|
-| `type` | OPTIMIZATION, WARNING, RECOMMENDATION |
-| `category` | "performance", "pricing", "product-mix", "new-bundle" |
-| `title` | Short insight headline |
-| `description` | Full explanation from LLM |
-| `confidence` | 0.0–1.0 float from LLM |
-| `impact` | "HIGH" \| "MEDIUM" \| "LOW" |
-| `actionable` | true for all AI-generated insights |
-| `actionType` | "create_bundle" \| "adjust_discount" \| "swap_product" \| null |
-| `actionData` | JSON config for the action (bundle pre-fill, discount change, etc.) |
-| `bundleId` | Set for Optimizer insights (null for Discovery) |
-| `expiresAt` | now + 30 days |
-| `shopId` | Required |
+| Field         | Usage                                                               |
+| ------------- | ------------------------------------------------------------------- |
+| `type`        | OPTIMIZATION, WARNING, RECOMMENDATION                               |
+| `category`    | "performance", "pricing", "product-mix", "new-bundle"               |
+| `title`       | Short insight headline                                              |
+| `description` | Full explanation from LLM                                           |
+| `confidence`  | 0.0–1.0 float from LLM                                              |
+| `impact`      | "HIGH" \| "MEDIUM" \| "LOW"                                         |
+| `actionable`  | true for all AI-generated insights                                  |
+| `actionType`  | "create_bundle" \| "adjust_discount" \| "swap_product" \| null      |
+| `actionData`  | JSON config for the action (bundle pre-fill, discount change, etc.) |
+| `bundleId`    | Set for Optimizer insights (null for Discovery)                     |
+| `expiresAt`   | now + 30 days                                                       |
+| `shopId`      | Required                                                            |
 
 ---
 
@@ -185,22 +190,22 @@ Added to the existing settings config-driven tab system.
 
 ### Fields
 
-| Field | Component | Notes |
-|---|---|---|
-| Enable AI Insights | Toggle | Master on/off |
-| LLM Provider | Select | Claude \| OpenAI \| Gemini |
-| API Key | Password input | Masked, never returned to client after save |
-| Model | Select (dynamic per provider) | See model list below |
-| Cron Frequency | Select | Daily \| Weekly |
-| Test Connection | Button | Makes a minimal `generateText()` call server-side |
+| Field              | Component                     | Notes                                             |
+| ------------------ | ----------------------------- | ------------------------------------------------- |
+| Enable AI Insights | Toggle                        | Master on/off                                     |
+| LLM Provider       | Select                        | Claude \| OpenAI \| Gemini                        |
+| API Key            | Password input                | Masked, never returned to client after save       |
+| Model              | Select (dynamic per provider) | See model list below                              |
+| Cron Frequency     | Select                        | Daily \| Weekly                                   |
+| Test Connection    | Button                        | Makes a minimal `generateText()` call server-side |
 
 ### Default Models per Provider
 
-| Provider | Default | Options |
-|---|---|---|
-| CLAUDE | claude-sonnet-4-6 | claude-sonnet-4-6, claude-haiku-4-5-20251001, claude-opus-4-6 |
-| OPENAI | gpt-4o | gpt-4o, gpt-4o-mini, gpt-4-turbo |
-| GEMINI | gemini-2.0-flash | gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash |
+| Provider | Default           | Options                                                       |
+| -------- | ----------------- | ------------------------------------------------------------- |
+| CLAUDE   | claude-sonnet-4-6 | claude-sonnet-4-6, claude-haiku-4-5-20251001, claude-opus-4-6 |
+| OPENAI   | gpt-4o            | gpt-4o, gpt-4o-mini, gpt-4-turbo                              |
+| GEMINI   | gemini-2.0-flash  | gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash            |
 
 ### Security: API Key Handling
 
@@ -213,6 +218,7 @@ Added to the existing settings config-driven tab system.
 ### Test Connection
 
 Standalone server action `testLLMConnection(shop)` (not wired through the settings save flow):
+
 1. Read encrypted key from DB
 2. Decrypt server-side
 3. `generateText({ model, prompt: "ping", maxTokens: 5 })`
@@ -225,13 +231,13 @@ Standalone server action `testLLMConnection(shop)` (not wired through the settin
 
 ### States
 
-| State | UI |
-|---|---|
-| Not configured | "Connect your AI provider in Settings to enable insights" + Settings link |
+| State                   | UI                                                                           |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| Not configured          | "Connect your AI provider in Settings to enable insights" + Settings link    |
 | Empty (no insights yet) | "No insights yet. Click Generate to analyze your bundles." + Generate button |
-| Loading | Skeleton cards + spinner |
-| Has insights | List of insight cards + Generate button |
-| Rate limited | "Please wait X minutes before generating again" |
+| Loading                 | Skeleton cards + spinner                                                     |
+| Has insights            | List of insight cards + Generate button                                      |
+| Rate limited            | "Please wait X minutes before generating again"                              |
 
 ### Insight Card
 
@@ -304,16 +310,16 @@ Impact: HIGH
 
 ### Modified Files
 
-| File | Change |
-|---|---|
-| `prisma/schema.prisma` | Add LLMProvider enum, CronFrequency enum, 8 AI fields to AppSettings, 2 indexes to AIInsight |
-| `features/settings/configs/tabs.config.ts` | Add AI tab entry with icon (e.g. `SparklesIcon`) |
-| `features/settings/types/settings.types.ts` | Add `"ai"` to `SettingsTabId`, add AI icon to `SettingsTabNavInfo` union |
-| `features/settings/types/app-settings.types.ts` | Add AI fields + `hasLlmApiKey: boolean` to `AppSettings` type |
-| `features/settings/services/settings.service.ts` | Update `transformSettingsToFormData()` + `transformFormDataToSettings()` for AI fields; encrypt key on save; preserve key when empty; warn on reset |
-| `features/settings/repositories/settings.mutations.ts` | Handle AI fields in upsert |
-| `features/dashboard/components/dashboard-page/` | Add AIInsights section |
-| `features/bundles/components/create-bundle-page/` | Consume `useAIPrefillStore.consumePrefill()` on mount |
+| File                                                   | Change                                                                                                                                              |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prisma/schema.prisma`                                 | Add LLMProvider enum, CronFrequency enum, 8 AI fields to AppSettings, 2 indexes to AIInsight                                                        |
+| `features/settings/configs/tabs.config.ts`             | Add AI tab entry with icon (e.g. `SparklesIcon`)                                                                                                    |
+| `features/settings/types/settings.types.ts`            | Add `"ai"` to `SettingsTabId`, add AI icon to `SettingsTabNavInfo` union                                                                            |
+| `features/settings/types/app-settings.types.ts`        | Add AI fields + `hasLlmApiKey: boolean` to `AppSettings` type                                                                                       |
+| `features/settings/services/settings.service.ts`       | Update `transformSettingsToFormData()` + `transformFormDataToSettings()` for AI fields; encrypt key on save; preserve key when empty; warn on reset |
+| `features/settings/repositories/settings.mutations.ts` | Handle AI fields in upsert                                                                                                                          |
+| `features/dashboard/components/dashboard-page/`        | Add AIInsights section                                                                                                                              |
+| `features/bundles/components/create-bundle-page/`      | Consume `useAIPrefillStore.consumePrefill()` on mount                                                                                               |
 
 ---
 
@@ -327,10 +333,10 @@ No other new npm dependencies. All other needs (Zod, Prisma, React Query, Zustan
 
 ### Required Environment Variables
 
-| Variable | Already exists? | Notes |
-|---|---|---|
+| Variable         | Already exists?     | Notes                                                                                                   |
+| ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
 | `ENCRYPTION_KEY` | Yes (S-4 audit fix) | 64-char hex string. Required for LLM API key encryption. Must be present in all deployment environments |
-| `CRON_SECRET` | Yes (S-5 audit fix) | Min 16 chars. Required for cron endpoint auth |
+| `CRON_SECRET`    | Yes (S-5 audit fix) | Min 16 chars. Required for cron endpoint auth                                                           |
 
 ---
 
@@ -342,42 +348,62 @@ Both pipelines use `Output.object({ schema })` with Vercel AI SDK. Schemas must 
 
 ```typescript
 const OptimizerInsightSchema = z.object({
-  insights: z.array(z.object({
-    type: z.enum(['OPTIMIZATION', 'WARNING', 'RECOMMENDATION']),
-    category: z.enum(['performance', 'pricing', 'product-mix']),
-    title: z.string().max(100),
-    description: z.string().max(500),
-    confidence: z.number().min(0).max(1),
-    impact: z.enum(['HIGH', 'MEDIUM', 'LOW']),
-    actionType: z.enum(['adjust_discount', 'swap_product']).nullable(),
-    actionData: z.record(z.unknown()).nullable(),
-    bundleId: z.string(),
-  })).max(5),
-})
+    insights: z
+        .array(
+            z.object({
+                type: z.enum(["OPTIMIZATION", "WARNING", "RECOMMENDATION"]),
+                category: z.enum(["performance", "pricing", "product-mix"]),
+                title: z.string().max(100),
+                description: z.string().max(500),
+                confidence: z.number().min(0).max(1),
+                impact: z.enum(["HIGH", "MEDIUM", "LOW"]),
+                actionType: z
+                    .enum(["adjust_discount", "swap_product"])
+                    .nullable(),
+                actionData: z.record(z.unknown()).nullable(),
+                bundleId: z.string(),
+            }),
+        )
+        .max(5),
+});
 ```
 
 ### Pipeline 2 — Bundle Discovery Response Schema
 
 ```typescript
 const DiscoveryInsightSchema = z.object({
-  recommendations: z.array(z.object({
-    suggestedName: z.string().max(100),
-    reasoning: z.string().max(500),
-    confidence: z.number().min(0).max(1),
-    impact: z.enum(['HIGH', 'MEDIUM', 'LOW']),
-    bundleType: z.enum(['FIXED_BUNDLE']),   // only supported type for AI creation
-    discountType: z.enum(['PERCENTAGE', 'FIXED_AMOUNT', 'NO_DISCOUNT']),
-    discountValue: z.number().min(0).max(100),
-    products: z.array(z.object({
-      productId: z.string(),   // Shopify GID: "gid://shopify/Product/123"
-      title: z.string(),
-      quantity: z.number().int().min(1).default(1),
-    })).min(2).max(10),
-  })).max(5),
-})
+    recommendations: z
+        .array(
+            z.object({
+                suggestedName: z.string().max(100),
+                reasoning: z.string().max(500),
+                confidence: z.number().min(0).max(1),
+                impact: z.enum(["HIGH", "MEDIUM", "LOW"]),
+                bundleType: z.enum(["FIXED_BUNDLE"]), // only supported type for AI creation
+                discountType: z.enum([
+                    "PERCENTAGE",
+                    "FIXED_AMOUNT",
+                    "NO_DISCOUNT",
+                ]),
+                discountValue: z.number().min(0).max(100),
+                products: z
+                    .array(
+                        z.object({
+                            productId: z.string(), // Shopify GID: "gid://shopify/Product/123"
+                            title: z.string(),
+                            quantity: z.number().int().min(1).default(1),
+                        }),
+                    )
+                    .min(2)
+                    .max(10),
+            }),
+        )
+        .max(5),
+});
 ```
 
 `maxTokens` per pipeline:
+
 - Pipeline 1 (Optimizer): `1500` (structured insights, bounded output)
 - Pipeline 2 (Discovery): `2500` (more products + reasoning per recommendation)
 
@@ -385,20 +411,20 @@ const DiscoveryInsightSchema = z.object({
 
 ## 10. Risks & Mitigations
 
-| Risk | Mitigation |
-|---|---|
-| LLM latency (10–30s on-demand) | Loading skeleton + optimistic UI feedback |
-| Invalid API key stored | Test Connection standalone action validates before save |
-| Prompt returns malformed JSON | Zod schema enforced by Vercel AI SDK — throws on parse failure, caught in service |
-| Merchant spams Generate button | Server-side rate limit: 1 call per 5 min per shop via `aiInsightsOnDemandLastRun` |
-| Cron resets on-demand rate limit | Two separate fields: `aiInsightsCronLastRun` + `aiInsightsOnDemandLastRun` |
-| Large product catalogs | Cap Discovery input at 50 products (`first: 50` in GraphQL query) |
-| Empty product catalog | Pipeline 2 short-circuits, writes INFO insight prompting merchant to add products |
-| Insight fatigue | 7-day dedup (with product hash for Discovery) + 20 insight cap + 30-day expiry |
-| Cron timeout | 55s budget with break in shop loop; pipelines run sequentially per shop |
-| Provider API outage | Caught in service, logged, surface error in dashboard card |
-| Settings reset deletes API key | Reset flow warns merchant; separate confirm required |
-| `ENCRYPTION_KEY` missing in deployment | Documented as required env var; throws on startup (existing behaviour) |
+| Risk                                   | Mitigation                                                                        |
+| -------------------------------------- | --------------------------------------------------------------------------------- |
+| LLM latency (10–30s on-demand)         | Loading skeleton + optimistic UI feedback                                         |
+| Invalid API key stored                 | Test Connection standalone action validates before save                           |
+| Prompt returns malformed JSON          | Zod schema enforced by Vercel AI SDK — throws on parse failure, caught in service |
+| Merchant spams Generate button         | Server-side rate limit: 1 call per 5 min per shop via `aiInsightsOnDemandLastRun` |
+| Cron resets on-demand rate limit       | Two separate fields: `aiInsightsCronLastRun` + `aiInsightsOnDemandLastRun`        |
+| Large product catalogs                 | Cap Discovery input at 50 products (`first: 50` in GraphQL query)                 |
+| Empty product catalog                  | Pipeline 2 short-circuits, writes INFO insight prompting merchant to add products |
+| Insight fatigue                        | 7-day dedup (with product hash for Discovery) + 20 insight cap + 30-day expiry    |
+| Cron timeout                           | 55s budget with break in shop loop; pipelines run sequentially per shop           |
+| Provider API outage                    | Caught in service, logged, surface error in dashboard card                        |
+| Settings reset deletes API key         | Reset flow warns merchant; separate confirm required                              |
+| `ENCRYPTION_KEY` missing in deployment | Documented as required env var; throws on startup (existing behaviour)            |
 
 ---
 

@@ -75,28 +75,30 @@ No additional Liquid file KB used. No schema changes to the app block.
 ### 1. Database — `AppSettings.labels` JSON Structure
 
 **Current** (flat):
+
 ```json
 {
-  "headingLabel": "Bundle Offers",
-  "addToCartText": "Add bundle to cart",
-  "regularPriceLabel": "Regular price:",
-  "bundlePriceLabel": "Bundle price:",
-  "youSaveLabel": "You save:",
-  "freeShippingLabel": "Free shipping",
-  "quantityLabel": "Qty:",
-  "savingsBadgeText": "Save {percent}%",
-  "addingText": "Adding...",
-  "addedText": "Added!",
-  "outOfStockText": "Out of Stock",
-  "maxBundlesReachedText": "Maximum {count} bundle(s) per order allowed",
-  "bannerSavingText": "You're saving {discount} with {name}",
-  "bannerCustomPriceText": "Special price: {price} for {name}",
-  "bannerFreeShippingQualifyText": "{name} qualifies for free shipping!",
-  "bannerFreeShippingText": "Free shipping included!"
+    "headingLabel": "Bundle Offers",
+    "addToCartText": "Add bundle to cart",
+    "regularPriceLabel": "Regular price:",
+    "bundlePriceLabel": "Bundle price:",
+    "youSaveLabel": "You save:",
+    "freeShippingLabel": "Free shipping",
+    "quantityLabel": "Qty:",
+    "savingsBadgeText": "Save {percent}%",
+    "addingText": "Adding...",
+    "addedText": "Added!",
+    "outOfStockText": "Out of Stock",
+    "maxBundlesReachedText": "Maximum {count} bundle(s) per order allowed",
+    "bannerSavingText": "You're saving {discount} with {name}",
+    "bannerCustomPriceText": "Special price: {price} for {name}",
+    "bannerFreeShippingQualifyText": "{name} qualifies for free shipping!",
+    "bannerFreeShippingText": "Free shipping included!"
 }
 ```
 
 **New** (locale-keyed):
+
 ```json
 {
   "en": {
@@ -126,12 +128,12 @@ Use the Shopify Admin API `shopLocales` query to get the store's published langu
 
 ```graphql
 query {
-  shopLocales {
-    locale
-    name
-    primary
-    published
-  }
+    shopLocales {
+        locale
+        name
+        primary
+        published
+    }
 }
 ```
 
@@ -145,11 +147,11 @@ Cache the result in the `Shop` model or in-memory to avoid repeated API calls.
 
 #### Components to modify
 
-| File | Change |
-|------|--------|
-| Settings labels form/component | Add locale picker (tabs or dropdown) at the top |
-| Settings API route | Accept `locale` parameter; save labels under the locale key |
-| Settings hook | Manage active locale state; load/save per locale |
+| File                           | Change                                                      |
+| ------------------------------ | ----------------------------------------------------------- |
+| Settings labels form/component | Add locale picker (tabs or dropdown) at the top             |
+| Settings API route             | Accept `locale` parameter; save labels under the locale key |
+| Settings hook                  | Manage active locale state; load/save per locale            |
 
 #### UX Flow
 
@@ -266,18 +268,21 @@ The full label resolution order (most specific → least specific):
 ## Implementation Phases
 
 ### Phase 1: Data Layer (Backend)
+
 - [ ] Create migration script to convert flat `labels` JSON → locale-keyed structure
 - [ ] Fetch and cache `shopLocales` from Admin API (add to shop sync flow)
 - [ ] Update settings save/load API to handle per-locale labels
 - [ ] Update metafield sync to write locale-keyed labels
 
 ### Phase 2: Settings UI (Admin)
+
 - [ ] Add locale picker component (tabs or dropdown)
 - [ ] Wire locale state management in settings form
 - [ ] Show primary locale labels as placeholders in secondary locales
 - [ ] Add "empty = use default translation" hint text
 
 ### Phase 3: Storefront (Liquid)
+
 - [ ] Add `customer_locale` detection to `app-embed.liquid`
 - [ ] Resolve `locale_labels` from `global.labels[customer_locale]` with fallback
 - [ ] Add `customer_locale` detection to `app-block.liquid`
@@ -285,6 +290,7 @@ The full label resolution order (most specific → least specific):
 - [ ] Test with Shopify language switcher
 
 ### Phase 4: Locale Files
+
 - [ ] Keep `en.default.json` and `fr.json` as final fallbacks
 - [ ] Add more locale files as needed (de, es, pt, etc.)
 - [ ] Consider using Lara MCP for bulk translation of new locales
@@ -293,28 +299,28 @@ The full label resolution order (most specific → least specific):
 
 ## File Impact Summary
 
-| File | Change |
-|------|--------|
-| `web/prisma/schema.prisma` | No change (labels is already `Json?`) |
-| `web/app/api/.../settings/route.ts` | Accept locale param, save per-locale |
-| `web/features/settings/...` | Add locale picker, manage active locale |
-| `web/features/settings/hooks/...` | Load/save labels by locale |
-| `extension/../app-embed.liquid` | Add ~5 lines for locale detection |
-| `extension/../app-block.liquid` | Add ~5 lines for locale-aware g_labels |
-| `extension/../locales/*.json` | Keep as fallbacks |
-| Migration script (new) | Convert existing flat labels → locale-keyed |
+| File                                | Change                                      |
+| ----------------------------------- | ------------------------------------------- |
+| `web/prisma/schema.prisma`          | No change (labels is already `Json?`)       |
+| `web/app/api/.../settings/route.ts` | Accept locale param, save per-locale        |
+| `web/features/settings/...`         | Add locale picker, manage active locale     |
+| `web/features/settings/hooks/...`   | Load/save labels by locale                  |
+| `extension/../app-embed.liquid`     | Add ~5 lines for locale detection           |
+| `extension/../app-block.liquid`     | Add ~5 lines for locale-aware g_labels      |
+| `extension/../locales/*.json`       | Keep as fallbacks                           |
+| Migration script (new)              | Convert existing flat labels → locale-keyed |
 
 ---
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| Existing stores have flat labels in DB | Migration script wraps under primary locale key |
-| Metafield size limit (64KB) | Label objects are tiny (~1KB per locale); 10 locales = ~10KB, well under limit |
-| Liquid `global.labels[variable]` dynamic key access | Shopify Liquid supports hash access with variable keys ✅ |
-| 100KB Liquid file cap | Only ~5 lines added per file; well within budget |
-| Merchant confusion | UI shows hint: "Leave empty to use default translation" |
+| Risk                                                | Mitigation                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Existing stores have flat labels in DB              | Migration script wraps under primary locale key                                |
+| Metafield size limit (64KB)                         | Label objects are tiny (~1KB per locale); 10 locales = ~10KB, well under limit |
+| Liquid `global.labels[variable]` dynamic key access | Shopify Liquid supports hash access with variable keys ✅                      |
+| 100KB Liquid file cap                               | Only ~5 lines added per file; well within budget                               |
+| Merchant confusion                                  | UI shows hint: "Leave empty to use default translation"                        |
 
 ---
 

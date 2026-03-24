@@ -37,9 +37,7 @@ export function BundleTableEmptyStates({
                     >
                         <s-stack alignItems="center">
                             <s-heading>{t("noDataTitle")}</s-heading>
-                            <s-paragraph>
-                                {t("noDataDescription")}
-                            </s-paragraph>
+                            <s-paragraph>{t("noDataDescription")}</s-paragraph>
                         </s-stack>
                         <s-button
                             icon="plus"

@@ -50,8 +50,7 @@ function ProductTile({
         labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel;
     const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
-    const isFreePrice =
-        hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
     const rewardBadge = isFreePrice
@@ -100,22 +99,22 @@ function ProductTile({
             )}
 
             {displayOptions.showSavingsBadge && (
-            <span
-                style={{
-                    fontSize: parseInt(bodyFontSize) - 4,
-                    fontWeight: 500,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.8,
-                    color: accentColor,
-                    background: `${accentColor}12`,
-                    padding: "3px 10px",
-                    borderRadius: 20,
-                    lineHeight: "14px",
-                }}
-            >
-                {isTrigger ? youPayLabel : rewardBadge}
-            </span>
-                )}
+                <span
+                    style={{
+                        fontSize: parseInt(bodyFontSize) - 4,
+                        fontWeight: 500,
+                        textTransform: "uppercase",
+                        letterSpacing: 0.8,
+                        color: accentColor,
+                        background: `${accentColor}12`,
+                        padding: "3px 10px",
+                        borderRadius: 20,
+                        lineHeight: "14px",
+                    }}
+                >
+                    {isTrigger ? youPayLabel : rewardBadge}
+                </span>
+            )}
 
             <div
                 style={{
@@ -135,27 +134,31 @@ function ProductTile({
 
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 {displayOptions.showPrices && (
-                <span
-                    style={{
-                        fontSize: styles.bodySize,
-                        fontWeight: 500,
-                        color: hasDiscount ? savingsColor : styles.textColor,
-                    }}
-                >
-                    {isFreePrice ? freeText : product.price}
-                </span>
-                )}
-                {hasDiscount && product.compareAtPrice && displayOptions.showComparePrices && (
                     <span
                         style={{
-                            fontSize: 12,
-                            color: "#9ca3af",
-                            textDecoration: "line-through",
+                            fontSize: styles.bodySize,
+                            fontWeight: 500,
+                            color: hasDiscount
+                                ? savingsColor
+                                : styles.textColor,
                         }}
                     >
-                        {product.compareAtPrice}
+                        {isFreePrice ? freeText : product.price}
                     </span>
                 )}
+                {hasDiscount &&
+                    product.compareAtPrice &&
+                    displayOptions.showComparePrices && (
+                        <span
+                            style={{
+                                fontSize: 12,
+                                color: "#9ca3af",
+                                textDecoration: "line-through",
+                            }}
+                        >
+                            {product.compareAtPrice}
+                        </span>
+                    )}
             </div>
         </div>
     );
@@ -431,26 +434,28 @@ export function WidgetCompactGrid({
                         </span>
                     )}
                 </div>
-                {badgeText && pricing?.hasDiscount && displayOptions.showSavingsBadge && (
-                    <span
-                        style={{
-                            backgroundColor: isOutline
-                                ? "transparent"
-                                : accentColor,
-                            color: "#ffffff",
-                            border: isOutline
-                                ? `2px solid ${accentColor}`
-                                : "none",
-                            fontSize: parseInt(bodyFontSize) - 5,
-                            fontWeight: 600,
-                            padding: "4px 12px",
-                            borderRadius: badgeRadius,
-                            letterSpacing: 0.3,
-                        }}
-                    >
-                        {badgeText}
-                    </span>
-                )}
+                {badgeText &&
+                    pricing?.hasDiscount &&
+                    displayOptions.showSavingsBadge && (
+                        <span
+                            style={{
+                                backgroundColor: isOutline
+                                    ? "transparent"
+                                    : accentColor,
+                                color: "#ffffff",
+                                border: isOutline
+                                    ? `2px solid ${accentColor}`
+                                    : "none",
+                                fontSize: parseInt(bodyFontSize) - 5,
+                                fontWeight: 600,
+                                padding: "4px 12px",
+                                borderRadius: badgeRadius,
+                                letterSpacing: 0.3,
+                            }}
+                        >
+                            {badgeText}
+                        </span>
+                    )}
             </div>
 
             {/* Product tiles — 2-col slider per side */}
@@ -529,7 +534,13 @@ export function WidgetCompactGrid({
                 }}
             >
                 {pricing && (
-                    <div style={{ display: "flex", flexDirection: "column", gap:"3px" }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "3px",
+                        }}
+                    >
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize) - 3,

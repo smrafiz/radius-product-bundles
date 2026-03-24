@@ -3,7 +3,6 @@ import { getStaticTranslations } from "@/lib/i18n/server";
 import { checkBundleExists } from "@/features/bundles/services";
 import { EditBundlePage, BundleRedirect } from "@/features/bundles";
 
-
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getStaticTranslations("Meta.pages.bundleEdit");
     return {

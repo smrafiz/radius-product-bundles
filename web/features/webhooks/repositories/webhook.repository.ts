@@ -106,7 +106,11 @@ export async function claimSetupLock(shop: string): Promise<boolean> {
                 setupComplete: false,
                 OR: [
                     { lastSetupCheck: null },
-                    { lastSetupCheck: { lt: new Date(Date.now() - 5 * 60 * 1000) } },
+                    {
+                        lastSetupCheck: {
+                            lt: new Date(Date.now() - 5 * 60 * 1000),
+                        },
+                    },
                 ],
             },
             data: { lastSetupCheck: new Date() },

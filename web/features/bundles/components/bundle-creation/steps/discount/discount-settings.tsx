@@ -37,9 +37,7 @@ export function DiscountSettings() {
             >
                 <s-heading>{t("heading")}</s-heading>
                 <s-tooltip id="discount-settings-tooltip">
-                    <s-text>
-                        {t("tooltip")}
-                    </s-text>
+                    <s-text>{t("tooltip")}</s-text>
                 </s-tooltip>
                 <s-icon
                     tone="neutral"

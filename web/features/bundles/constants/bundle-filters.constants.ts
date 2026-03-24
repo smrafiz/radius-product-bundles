@@ -37,8 +37,18 @@ export const BUNDLE_TYPE_FILTER_OPTIONS = Object.values(BUNDLE_TYPES).map(
  */
 export const getBundleSortOptions = (t: (key: string) => string) =>
     [
-        { label: t("sortByName"), field: "name", direction: "asc", directionLabel: t("sortAtoZ") },
-        { label: t("sortByName"), field: "name", direction: "desc", directionLabel: t("sortZtoA") },
+        {
+            label: t("sortByName"),
+            field: "name",
+            direction: "asc",
+            directionLabel: t("sortAtoZ"),
+        },
+        {
+            label: t("sortByName"),
+            field: "name",
+            direction: "desc",
+            directionLabel: t("sortZtoA"),
+        },
         {
             label: t("sortByCreated"),
             field: "createdAt",

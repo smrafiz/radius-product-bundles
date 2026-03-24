@@ -2,21 +2,13 @@
 import { useAppNavigation } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
-export function DashboardBundlesEmpty({
-    error,
-}: {
-    error?: string | null;
-}) {
+export function DashboardBundlesEmpty({ error }: { error?: string | null }) {
     const { bundleData } = useAppNavigation();
     const t = useTranslations("Dashboard.Bundles");
 
-    const heading = error
-        ? t("unableToLoad")
-        : t("noActive");
+    const heading = error ? t("unableToLoad") : t("noActive");
 
-    const description = error
-        ? t("errorDesc")
-        : t("noActiveDesc");
+    const description = error ? t("errorDesc") : t("noActiveDesc");
 
     return (
         <s-section accessibilityLabel="Empty state section">

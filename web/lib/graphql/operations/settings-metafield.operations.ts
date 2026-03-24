@@ -98,9 +98,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 /**
  * Validates a flat labels object against DEFAULT_LABELS keys
  */
-function validateFlatLabels(parsed: Record<string, unknown>): Partial<GlobalLabels> {
+function validateFlatLabels(
+    parsed: Record<string, unknown>,
+): Partial<GlobalLabels> {
     const result: Partial<GlobalLabels> = {};
-    for (const key of Object.keys(DEFAULT_LABELS) as Array<keyof GlobalLabels>) {
+    for (const key of Object.keys(DEFAULT_LABELS) as Array<
+        keyof GlobalLabels
+    >) {
         const value = parsed[key];
         if (typeof value === "string" && value.trim() !== "") {
             result[key] = value;
@@ -117,7 +121,11 @@ function isLocaleKeyedLabels(obj: Record<string, unknown>): boolean {
     const keys = Object.keys(obj);
     if (keys.length === 0) return false;
     const firstKey = keys[0];
-    return firstKey.length <= 5 && !firstKey.includes("Label") && !firstKey.includes("Text");
+    return (
+        firstKey.length <= 5 &&
+        !firstKey.includes("Label") &&
+        !firstKey.includes("Text")
+    );
 }
 
 /**

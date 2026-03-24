@@ -26,7 +26,10 @@ export default async function RootLayout({
     return (
         <html lang="en" dir="ltr">
             <head>
-                <meta name="shopify-api-key" content={process.env.NEXT_PUBLIC_SHOPIFY_API_KEY || ""} />
+                <meta
+                    name="shopify-api-key"
+                    content={process.env.NEXT_PUBLIC_SHOPIFY_API_KEY || ""}
+                />
                 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
                 <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
             </head>

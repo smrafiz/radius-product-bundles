@@ -92,7 +92,15 @@ export interface PaginatedBundleParams {
     shop: string;
     startDate: Date;
     endDate: Date;
-    sortBy?: "revenue" | "views" | "purchases" | "conversion" | "created" | "name" | "status" | "type";
+    sortBy?:
+        | "revenue"
+        | "views"
+        | "purchases"
+        | "conversion"
+        | "created"
+        | "name"
+        | "status"
+        | "type";
     sortOrder?: "asc" | "desc";
     page?: number;
     perPage?: number;
@@ -121,7 +129,15 @@ export interface CoreBundleFetchParams {
     shop: string;
     startDate: Date;
     endDate: Date;
-    sortBy: "revenue" | "views" | "purchases" | "conversion" | "created" | "name" | "status" | "type";
+    sortBy:
+        | "revenue"
+        | "views"
+        | "purchases"
+        | "conversion"
+        | "created"
+        | "name"
+        | "status"
+        | "type";
     sortOrder: "asc" | "desc";
     search?: string;
     page?: number;
