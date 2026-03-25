@@ -320,6 +320,12 @@
             "notAdded": "Bundle widget not added to your theme",
             "notAddedDesc": "Your bundle widget hasn't been added to any product page yet. Add it to your theme to display bundles on your storefront.",
             "addButton": "Add widget to theme"
+        },
+        "Integration": {
+            "setupIncomplete": "Theme setup incomplete",
+            "bothMissingDesc": "The app embed and bundle widget are not set up yet. Enable both in your theme editor for bundles to work on your storefront.",
+            "enableEmbed": "Enable app embed",
+            "addWidget": "Add widget to theme"
         }
     },
     "Bundles": {

@@ -60,9 +60,9 @@ export function useWidgetStatus({
                 return;
             }
 
-            // Only recheck if the widget isn't active yet
+            // Skip recheck only if both embed and block are active
             const { widgetStatus: current } = useWidgetStatusStore.getState();
-            if (current?.isFullyIntegrated) {
+            if (current?.hasAppEmbed && current?.isFullyIntegrated) {
                 return;
             }
 

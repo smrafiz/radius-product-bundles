@@ -320,6 +320,12 @@
             "notAdded": "Le widget de bundle n'est pas ajouté à votre thème",
             "notAddedDesc": "Votre widget de bundle n'a pas encore été ajouté à une page produit. Ajoutez-le à votre thème pour afficher les offres groupées sur votre vitrine.",
             "addButton": "Ajouter le widget au thème"
+        },
+        "Integration": {
+            "setupIncomplete": "Configuration du thème incomplète",
+            "bothMissingDesc": "L'intégration de l'application et le widget de bundle ne sont pas encore configurés. Activez les deux dans l'éditeur de thème pour que les offres groupées fonctionnent sur votre vitrine.",
+            "enableEmbed": "Activer l'intégration",
+            "addWidget": "Ajouter le widget au thème"
         }
     },
     "Bundles": {

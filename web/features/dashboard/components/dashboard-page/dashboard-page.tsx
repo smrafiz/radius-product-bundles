@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    AppEmbedStatusBanner,
     DashboardBundles,
     DashboardCalloutCards,
     DashboardFeatures,
@@ -90,10 +89,7 @@ export function DashboardPage() {
                     {/* Setup Guide */}
                     <DashboardSetUpGuide {...setupGuide} />
 
-                    {/* App Embed Status */}
-                    <AppEmbedStatusBanner {...setupGuide} />
-
-                    {/* Widget Block Status */}
+                    {/* Integration Status (app embed + widget block) */}
                     <WidgetStatusBanner
                         shopDomain={setupGuide.shopDomain}
                         apiKey={setupGuide.apiKey}

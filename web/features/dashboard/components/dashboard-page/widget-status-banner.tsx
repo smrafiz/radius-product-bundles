@@ -4,7 +4,7 @@ import { useTranslations } from "@/lib/i18n/provider";
 import { useWidgetStatus } from "@/features/dashboard";
 
 /**
- * Widget Status Banner
+ * Unified integration status banner.
  */
 export function WidgetStatusBanner({
     shopDomain,
@@ -15,26 +15,61 @@ export function WidgetStatusBanner({
     apiKey: string;
     setupGuideVisible: boolean;
 }) {
-    const t = useTranslations("Dashboard.WidgetBlock");
-    const { isBlockActive, isChecking, themeEditorUrl } = useWidgetStatus({
-        shopDomain,
-        apiKey,
-    });
+    const tEmbed = useTranslations("Dashboard.AppEmbed");
+    const tWidget = useTranslations("Dashboard.WidgetBlock");
+    const tBoth = useTranslations("Dashboard.Integration");
 
-    if (setupGuideVisible || isChecking || isBlockActive || !themeEditorUrl) {
+    const { hasAppEmbed, hasWidgetBlock, isChecking, themeEditorUrl } =
+        useWidgetStatus({ shopDomain, apiKey });
+
+    if (setupGuideVisible || isChecking) {
         return null;
     }
 
+    const embedMissing = !hasAppEmbed;
+    const blockMissing = !hasWidgetBlock;
+
+    if (!embedMissing && !blockMissing) {
+        return null;
+    }
+
+    const bothMissing = embedMissing && blockMissing;
+
+    const heading = bothMissing
+        ? tBoth("setupIncomplete")
+        : embedMissing
+          ? tEmbed("notEnabled")
+          : tWidget("notAdded");
+
+    const description = bothMissing
+        ? tBoth("bothMissingDesc")
+        : embedMissing
+          ? tEmbed("notEnabledDesc")
+          : tWidget("notAddedDesc");
+
+    const embedUrl = `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`;
+
     return (
-        <s-banner tone="warning" heading={t("notAdded")}>
-            <s-paragraph>{t("notAddedDesc")}</s-paragraph>
-            <s-button
-                slot="secondary-actions"
-                variant="secondary"
-                onClick={() => window.open(themeEditorUrl, "_blank")}
-            >
-                {t("addButton")}
-            </s-button>
+        <s-banner tone="warning" heading={heading}>
+            <s-paragraph>{description}</s-paragraph>
+            {embedMissing && (
+                <s-button
+                    slot="secondary-actions"
+                    variant="secondary"
+                    onClick={() => window.open(embedUrl, "_blank")}
+                >
+                    {bothMissing ? tBoth("enableEmbed") : tEmbed("enableButton")}
+                </s-button>
+            )}
+            {blockMissing && themeEditorUrl && (
+                <s-button
+                    slot="secondary-actions"
+                    variant="secondary"
+                    onClick={() => window.open(themeEditorUrl, "_blank")}
+                >
+                    {bothMissing ? tBoth("addWidget") : tWidget("addButton")}
+                </s-button>
+            )}
         </s-banner>
     );
 }

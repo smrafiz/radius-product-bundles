@@ -133,18 +133,33 @@ function hasWidgetBlockInAsset(assetValue: string | null): boolean {
 }
 
 /**
- * Checks if a theme settings file contains an app embed reference.
+ * Checks if a theme settings file contains an enabled app embed.
  */
 function hasAppEmbedInSettings(settingsValue: string | null): boolean {
     if (!settingsValue) {
         return false;
     }
 
-    const normalized = settingsValue.replaceAll("\\/", "/");
+    try {
+        const settings = JSON.parse(settingsValue);
+        const current = settings?.current;
+        if (!current) {
+            return false;
+        }
 
-    return APP_SLUGS.some((slug) =>
-        normalized.includes(`shopify://apps/${slug}/blocks/${EMBED_HANDLE}`),
-    );
+        const blocks: Record<string, { type?: string; disabled?: boolean }> =
+            current.blocks ?? {};
+
+        return Object.values(blocks).some((block) => {
+            if (block.disabled) return false;
+            const type = block.type ?? "";
+            return APP_SLUGS.some((slug) =>
+                type.includes(`shopify://apps/${slug}/blocks/${EMBED_HANDLE}`),
+            );
+        });
+    } catch {
+        return false;
+    }
 }
 
 /**
