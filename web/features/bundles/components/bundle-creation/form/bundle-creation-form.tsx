@@ -4,26 +4,11 @@ import {
     BundleCreationFormProps,
     BundlePreview,
     HorizontalStepIndicator,
-    invalidateBundleCache,
     StepContent,
-    useBundleFormManager,
-    useBundleStore,
+    useBundleCreationForm,
 } from "@/features/bundles";
-import { useCallback, useState } from "react";
-import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
-import { useTranslations } from "@/lib/i18n/provider";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-    deleteBundleAction,
-    duplicateBundleAction,
-} from "@/features/bundles/actions";
-import {
-    dismissSaveBar,
-    GlobalBanner,
-    submitForm,
-    useAppNavigation,
-    useModalStore,
-} from "@/shared";
+import { TitleBar } from "@shopify/app-bridge-react";
+import { GlobalBanner } from "@/shared";
 
 /**
  * Bundle Creation Form
@@ -33,135 +18,28 @@ export function BundleCreationForm({
     bundleName,
     bundleId,
 }: BundleCreationFormProps) {
-    const tc = useTranslations("Bundles.Common");
-    const { bundleData } = useAppNavigation();
-    const { pageProps, isEditMode } = useBundleFormManager({
-        bundleType,
-        bundleName,
-    });
-    const { openModal } = useModalStore();
-    const { isSaving, isDirty, resetDirty, resetBundle } = useBundleStore();
-    const app = useAppBridge();
-    const queryClient = useQueryClient();
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [isDuplicating, setIsDuplicating] = useState(false);
-
-    const handleDuplicate = useCallback(() => {
-        if (!bundleId) return;
-
-        openModal({
-            type: "duplicate",
-            title: tc("duplicateTitle"),
-            message: isDirty
-                ? tc("duplicateConfirmUnsaved")
-                : tc("duplicateConfirm"),
-            confirmText: tc("duplicate"),
-            onConfirm: async () => {
-                setIsDuplicating(true);
-                shopify?.loading(true);
-                resetDirty();
-                dismissSaveBar();
-                try {
-                    const token = await app.idToken();
-                    const result = await duplicateBundleAction(token, bundleId);
-                    if (
-                        result.status === "success" &&
-                        result.data?.bundle?.id
-                    ) {
-                        await invalidateBundleCache(queryClient);
-                        shopify?.toast?.show(
-                            result.message ?? tc("duplicateSuccess"),
-                        );
-                        bundleData.edit(result.data.bundle.id);
-                    } else {
-                        shopify?.toast?.show(
-                            result.message ?? tc("duplicateFailed"),
-                            { isError: true },
-                        );
-                    }
-                } catch (error) {
-                    console.error("Error duplicating bundle:", error);
-                    shopify?.toast?.show(tc("duplicateFailed"), {
-                        isError: true,
-                    });
-                } finally {
-                    shopify?.loading(false);
-                    setIsDuplicating(false);
-                }
-            },
-        });
-    }, [
-        bundleId,
-        bundleName,
+    const {
+        tc,
+        tEmbed,
+        tWidget,
+        tBoth,
+        bundleData,
+        pageProps,
+        isEditMode,
+        isSaving,
         isDirty,
-        openModal,
-        app,
-        queryClient,
-        bundleData,
-        resetDirty,
-    ]);
-
-    const handleDelete = useCallback(() => {
-        if (!bundleId) return;
-
-        openModal({
-            type: "delete",
-            title: tc("deleteBundle"),
-            message: tc("deleteConfirm", {
-                name: bundleName || tc("breadcrumb"),
-            }),
-            confirmText: tc("delete"),
-            onConfirm: async () => {
-                setIsDeleting(true);
-                try {
-                    const token = await app.idToken();
-                    const result = await deleteBundleAction(token, bundleId);
-
-                    if (result.status === "success") {
-                        resetBundle();
-                        dismissSaveBar();
-                        await invalidateBundleCache(queryClient);
-                        if (
-                            typeof shopify !== "undefined" &&
-                            shopify.toast?.show
-                        ) {
-                            shopify.toast.show(
-                                result.message ?? tc("deleteSuccess"),
-                            );
-                        }
-                        bundleData.list()();
-                    } else {
-                        if (
-                            typeof shopify !== "undefined" &&
-                            shopify.toast?.show
-                        ) {
-                            shopify.toast.show(
-                                result.message ?? tc("deleteFailed"),
-                                { isError: true },
-                            );
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error deleting bundle:", error);
-                    if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                        shopify.toast.show(tc("deleteFailed"), {
-                            isError: true,
-                        });
-                    }
-                } finally {
-                    setIsDeleting(false);
-                }
-            },
-        });
-    }, [
-        bundleId,
-        bundleName,
-        openModal,
-        app,
-        queryClient,
-        bundleData,
-        resetBundle,
-    ]);
+        isDeleting,
+        isDuplicating,
+        isCheckingStatus,
+        statusIssue,
+        statusBannerRef,
+        shopDomain,
+        apiKey,
+        handleCheckStatus,
+        handleDuplicate,
+        handleDelete,
+        handleSubmit,
+    } = useBundleCreationForm({ bundleType, bundleName, bundleId });
 
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>
@@ -192,7 +70,7 @@ export function BundleCreationForm({
                     <>
                         <button
                             variant="primary"
-                            onClick={() => submitForm()}
+                            onClick={handleSubmit}
                             disabled={!isDirty}
                         >
                             {isEditMode ? tc("update") : tc("publish")}
@@ -239,19 +117,87 @@ export function BundleCreationForm({
                         </s-stack>
 
                         {isEditMode && bundleId && (
-                            <s-button
-                                variant="secondary"
-                                tone="critical"
-                                icon="delete"
-                                onClick={handleDelete}
-                                loading={isDeleting}
-                                accessibilityLabel={tc("deleteBundle")}
-                            >
-                                {tc("deleteBundle")}
-                            </s-button>
+                            <s-stack direction="inline" gap="small">
+                                <s-button
+                                    variant="secondary"
+                                    icon="info"
+                                    onClick={handleCheckStatus}
+                                    loading={isCheckingStatus}
+                                    disabled={!!statusIssue}
+                                    accessibilityLabel={tc("checkStatus")}
+                                >
+                                    {tc("checkStatus")}
+                                </s-button>
+                                <s-button
+                                    variant="secondary"
+                                    tone="critical"
+                                    icon="delete"
+                                    onClick={handleDelete}
+                                    loading={isDeleting}
+                                    accessibilityLabel={tc("deleteBundle")}
+                                >
+                                    {tc("deleteBundle")}
+                                </s-button>
+                            </s-stack>
                         )}
                     </div>
                 </s-stack>
+
+                {/* Integration status banner */}
+                {statusIssue && (
+                    <s-banner
+                        ref={statusBannerRef}
+                        tone="warning"
+                        heading={
+                            statusIssue.embedMissing && statusIssue.blockMissing
+                                ? tBoth("setupIncomplete")
+                                : statusIssue.embedMissing
+                                  ? tEmbed("notEnabled")
+                                  : tWidget("notAdded")
+                        }
+                        dismissible
+                    >
+                        <s-paragraph>
+                            {statusIssue.embedMissing && statusIssue.blockMissing
+                                ? tBoth("bothMissingDesc")
+                                : statusIssue.embedMissing
+                                  ? tEmbed("notEnabledDesc")
+                                  : tWidget("notAddedDesc")}
+                        </s-paragraph>
+                        {statusIssue.embedMissing && (
+                            <s-button
+                                slot="secondary-actions"
+                                variant="secondary"
+                                onClick={() =>
+                                    window.open(
+                                        `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`,
+                                        "_blank",
+                                    )
+                                }
+                            >
+                                {statusIssue.blockMissing
+                                    ? tBoth("enableEmbed")
+                                    : tEmbed("enableButton")}
+                            </s-button>
+                        )}
+                        {statusIssue.blockMissing && (
+                            <s-button
+                                slot="secondary-actions"
+                                variant="secondary"
+                                onClick={() =>
+                                    window.open(
+                                        `https://${shopDomain}/admin/themes/current/editor?template=product&addAppBlockId=${apiKey}/app-block&target=newAppsSection`,
+                                        "_blank",
+                                    )
+                                }
+                            >
+                                {statusIssue.embedMissing
+                                    ? tBoth("addWidget")
+                                    : tWidget("addButton")}
+                            </s-button>
+                        )}
+                    </s-banner>
+                )}
 
                 {/* Content */}
                 <s-stack gap="base">

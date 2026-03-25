@@ -9,3 +9,4 @@ export { useBundleFormMethods } from "./use-bundle-form-methods";
 export { useInitialBundleState } from "./use-initial-bundle-state";
 export { useProductMediaPicker } from "./use-product-media-picker";
 export { useCreateBundleProduct } from "./use-create-bundle-product";
+export { useBundleCreationForm } from "./use-bundle-creation-form";

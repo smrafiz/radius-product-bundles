@@ -403,7 +403,9 @@
             "duplicateConfirm": "Souhaitez-vous vraiment dupliquer cette offre groupée ?",
             "duplicateConfirmUnsaved": "Vous avez des modifications non enregistrées qui seront ignorées. Souhaitez-vous vraiment dupliquer cette offre groupée ?",
             "duplicateSuccess": "Offre groupée dupliquée avec succès",
-            "duplicateFailed": "Échec de la duplication de l'offre groupée"
+            "duplicateFailed": "Échec de la duplication de l'offre groupée",
+            "checkStatus": "Vérifier le thème",
+            "themeReady": "Le thème est correctement configuré"
         },
         "Selection": {
             "title": "Sélectionner le type d'offre groupée",

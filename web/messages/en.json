@@ -403,7 +403,9 @@
             "duplicateConfirm": "Are you sure you want to duplicate this bundle?",
             "duplicateConfirmUnsaved": "You have unsaved changes that will be discarded. Are you sure you want to duplicate this bundle?",
             "duplicateSuccess": "Bundle duplicated successfully",
-            "duplicateFailed": "Failed to duplicate bundle"
+            "duplicateFailed": "Failed to duplicate bundle",
+            "checkStatus": "Health check",
+            "themeReady": "Theme is set up correctly"
         },
         "Selection": {
             "title": "Select bundle type",
