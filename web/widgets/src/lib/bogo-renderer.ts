@@ -290,11 +290,11 @@ export function renderClassicCardProducts(
 
     let html = `<div class="rb-classic__header">`;
     if (headerBadge && ctx.showSavingsBadge) {
-        html += `<span class="rb-classic__header-badge">${escapeHtml(headerBadge)}</span>`;
+        html += `<span class="rb-classic__header-badge">${headerBadge}</span>`;
     }
-    html += `<h2 class="rb-classic__header-title">${escapeHtml(bundle.name)}</h2>`;
+    html += `<h2 class="rb-classic__header-title">${bundle.name}</h2>`;
     if (structure.subtitle) {
-        html += `<div class="rb-classic__header-subtitle">${escapeHtml(structure.subtitle)}</div>`;
+        html += `<div class="rb-classic__header-subtitle">${structure.subtitle}</div>`;
     }
     html += `</div>`;
 
@@ -469,7 +469,7 @@ export function renderBogoSleekProducts(
         );
 
     let html = `<div class="rb-sleek__container">`;
-    html += `<h2 class="rb-sleek__header">${escapeHtml(bundle.name)}</h2>`;
+    html += `<h2 class="rb-sleek__header">${bundle.name}</h2>`;
 
     triggers.forEach((p) => {
         html += renderCard(p, false);
@@ -545,7 +545,7 @@ export function renderBogoMinimalistProducts(
             }
         }
         if (badgeText) {
-            badgeHtml = `<span class="rb-minimalist__badge">${escapeHtml(badgeText)}</span>`;
+            badgeHtml = `<span class="rb-minimalist__badge">${badgeText}</span>`;
         }
     }
 
@@ -644,9 +644,9 @@ export function renderBogoMinimalistProducts(
     itemsHtml += `</div>`;
 
     let html = `<div class="rb-minimalist__container">${badgeHtml}<div class="rb-minimalist__hero">${heroImageHtml}<div class="rb-minimalist__hero-info">`;
-    html += `<h2 class="rb-minimalist__title">${escapeHtml(bundle.name)}</h2>`;
+    html += `<h2 class="rb-minimalist__title">${bundle.name}</h2>`;
     if (structure.subtitle) {
-        html += `<div class="rb-minimalist__subtitle">${escapeHtml(structure.subtitle)}</div>`;
+        html += `<div class="rb-minimalist__subtitle">${structure.subtitle}</div>`;
     }
     html += `<div class="rb-minimalist__pricing">${pricingHtml}</div></div></div>`;
     html += itemsHtml;
@@ -786,13 +786,13 @@ export function renderBogoCompactGridProducts(
 
     html += `<div class="rb-cg__banner">`;
     html += `<div class="rb-cg__banner-text">`;
-    html += `<h2 class="rb-cg__banner-title">${escapeHtml(bundle.name)}</h2>`;
+    html += `<h2 class="rb-cg__banner-title">${bundle.name}</h2>`;
     if (structure.subtitle) {
-        html += `<span class="rb-cg__banner-subtitle">${escapeHtml(structure.subtitle)}</span>`;
+        html += `<span class="rb-cg__banner-subtitle">${structure.subtitle}</span>`;
     }
     html += `</div>`;
     if (badgeText) {
-        html += `<span class="rb-cg__banner-badge">${escapeHtml(badgeText)}</span>`;
+        html += `<span class="rb-cg__banner-badge">${badgeText}</span>`;
     }
     html += `</div>`;
 
@@ -1000,9 +1000,9 @@ export function renderBogoChecklistProducts(
     let html = `<div class="rb-checklist__container">`;
 
     html += `<div class="rb-checklist__progress">`;
-    html += `<h2 class="rb-checklist__progress-title">${escapeHtml(bundle.name)}</h2>`;
+    html += `<h2 class="rb-checklist__progress-title">${bundle.name}</h2>`;
     if (structure.subtitle) {
-        html += `<p class="rb-checklist__progress-subtitle">${escapeHtml(structure.subtitle)}</p>`;
+        html += `<p class="rb-checklist__progress-subtitle">${structure.subtitle}</p>`;
     }
     html += `<div class="rb-checklist__progress-row">`;
     html += `<span class="rb-checklist__progress-count">${formatLabel(progressText, { count: progress, total: totalTriggers })}</span>`;
@@ -1354,11 +1354,11 @@ export function renderSplitDealProducts(
 
     html += `<div class="rb-split__header">`;
     if (badgeText && ctx.showSavingsBadge) {
-        html += `<div class="rb-split__deal-badge">${escapeHtml(badgeText)}</div>`;
+        html += `<div class="rb-split__deal-badge">${badgeText}</div>`;
     }
-    html += `<h2 class="rb-split__title">${escapeHtml(bundle.name)}</h2>`;
+    html += `<h2 class="rb-split__title">${bundle.name}</h2>`;
     if (structure.subtitle) {
-        html += `<p class="rb-split__subtitle">${escapeHtml(structure.subtitle)}</p>`;
+        html += `<p class="rb-split__subtitle">${structure.subtitle}</p>`;
     }
     html += `</div>`;
 

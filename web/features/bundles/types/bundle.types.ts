@@ -295,6 +295,7 @@ export interface ExtendedBundleFormData extends BundleFormData {
     productTitle?: string;
     productDescription?: string;
     mainProductId?: string;
+    mainProductHandle?: string;
     mainVariantId?: string;
     discountApplication?: "bundle" | "products";
     discountedProductIds?: string[];

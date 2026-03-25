@@ -5,6 +5,7 @@ import {
     submitForm,
     useAppNavigation,
     useModalStore,
+    useShopSettingsStore,
 } from "@/shared";
 import {
     invalidateBundleCache,
@@ -33,6 +34,7 @@ export function useBundleCreationForm({
     bundleId?: string;
 }) {
     const tc = useTranslations("Bundles.Common");
+    const tActions = useTranslations("Bundles.Actions");
     const tEmbed = useTranslations("Dashboard.AppEmbed");
     const tWidget = useTranslations("Dashboard.WidgetBlock");
     const tBoth = useTranslations("Dashboard.Integration");
@@ -43,7 +45,16 @@ export function useBundleCreationForm({
         bundleName,
     });
     const { openModal } = useModalStore();
-    const { isSaving, isDirty, resetDirty, resetBundle } = useBundleStore();
+    const {
+        isSaving,
+        isDirty,
+        resetDirty,
+        resetBundle,
+        selectedItems,
+        bundleData: storeBundleData,
+    } = useBundleStore();
+    const { settings } = useShopSettingsStore();
+    const myshopifyDomain = settings?.myshopifyDomain;
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const { shopDomain, apiKey } = useSetupGuide();
@@ -211,9 +222,30 @@ export function useBundleCreationForm({
 
     const handleSubmit = useCallback(() => submitForm(), []);
 
+    const viewPopoverId = bundleId
+        ? `bundle-view-popover-edit-${bundleId}`
+        : undefined;
+
+    const uniqueProducts = selectedItems.length
+        ? [
+              ...new Map(
+                  selectedItems.map((p) => [p.productId, p]),
+              ).values(),
+          ]
+        : [];
+
+    const hasMainProduct =
+        !!storeBundleData.mainProductId && !!storeBundleData.mainProductHandle;
+    const mainProductUrl =
+        hasMainProduct && myshopifyDomain
+            ? `https://${myshopifyDomain}/products/${storeBundleData.mainProductHandle}`
+            : null;
+    const mainProductTitle = storeBundleData.productTitle;
+
     return {
         // Translations
         tc,
+        tActions,
         tEmbed,
         tWidget,
         tBoth,
@@ -233,6 +265,13 @@ export function useBundleCreationForm({
         isCheckingStatus,
         statusIssue,
         statusBannerRef,
+
+        // View bundle
+        viewPopoverId,
+        uniqueProducts,
+        mainProductUrl,
+        mainProductTitle,
+        myshopifyDomain,
 
         // Integration URLs
         shopDomain,

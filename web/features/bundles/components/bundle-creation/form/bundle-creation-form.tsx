@@ -20,6 +20,7 @@ export function BundleCreationForm({
 }: BundleCreationFormProps) {
     const {
         tc,
+        tActions,
         tEmbed,
         tWidget,
         tBoth,
@@ -33,6 +34,11 @@ export function BundleCreationForm({
         isCheckingStatus,
         statusIssue,
         statusBannerRef,
+        viewPopoverId,
+        uniqueProducts,
+        mainProductUrl,
+        mainProductTitle,
+        myshopifyDomain,
         shopDomain,
         apiKey,
         handleCheckStatus,
@@ -120,6 +126,14 @@ export function BundleCreationForm({
                             <s-stack direction="inline" gap="small">
                                 <s-button
                                     variant="secondary"
+                                    icon="view"
+                                    commandFor={viewPopoverId}
+                                    accessibilityLabel={tActions("view")}
+                                >
+                                    {tActions("view")}
+                                </s-button>
+                                <s-button
+                                    variant="secondary"
                                     icon="info"
                                     onClick={handleCheckStatus}
                                     loading={isCheckingStatus}
@@ -142,6 +156,60 @@ export function BundleCreationForm({
                         )}
                     </div>
                 </s-stack>
+
+                {/* View bundle popover */}
+                {viewPopoverId && (
+                    <s-popover id={viewPopoverId}>
+                        <s-box padding="small">
+                            <s-stack gap="small">
+                                <s-stack gap="small-200">
+                                    <s-heading>
+                                        {tActions("includedProducts")}
+                                    </s-heading>
+                                    {uniqueProducts.length ? (
+                                        uniqueProducts.map((product) => (
+                                            <s-stack key={product.productId}>
+                                                <a
+                                                    href={`https://${myshopifyDomain}${product.url}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="hover:underline"
+                                                >
+                                                    <s-text>
+                                                        {product.title}
+                                                    </s-text>
+                                                </a>
+                                            </s-stack>
+                                        ))
+                                    ) : (
+                                        <s-text>
+                                            {tActions("noProducts")}
+                                        </s-text>
+                                    )}
+                                    {mainProductUrl && (
+                                        <>
+                                            <s-divider />
+                                            <s-heading>
+                                                {tActions("bundleProduct")}
+                                            </s-heading>
+                                            <a
+                                                href={mainProductUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="hover:underline"
+                                            >
+                                                <s-text>
+                                                    {mainProductTitle ||
+                                                        bundleName}
+                                                </s-text>
+                                            </a>
+                                        </>
+                                    )}
+                                </s-stack>
+                            </s-stack>
+                        </s-box>
+                    </s-popover>
+                )}
 
                 {/* Integration status banner */}
                 {statusIssue && (

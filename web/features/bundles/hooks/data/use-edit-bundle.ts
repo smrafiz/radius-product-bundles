@@ -27,7 +27,8 @@ const isProductNode = (node: any): node is ProductNode => {
 
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
-    const { setDisplaySettings, setSelectedItems } = useBundleStore();
+    const { setDisplaySettings, setSelectedItems, setBundleData } =
+        useBundleStore();
 
     // Bundle detail query
     const {
@@ -37,11 +38,15 @@ export function useEditBundle(bundleId: string) {
         error,
     } = useQuery(bundlesQueries(app).detail(bundleId));
 
-    // Extract product IDs (deduplicated)
+    // Extract product IDs (deduplicated), including mainProductId for handle resolution
     const productIds = useMemo(() => {
         const products = bundleData?.products || [];
-        return Array.from(new Set(products.map((p: any) => p.id)));
-    }, [bundleData?.products]);
+        const ids = products.map((p: any) => p.id);
+        if (bundleData?.mainProductId) {
+            ids.push(bundleData.mainProductId);
+        }
+        return Array.from(new Set(ids));
+    }, [bundleData?.products, bundleData?.mainProductId]);
 
     // GraphQL variables for fetching products
     const productsVariables = useMemo(
@@ -68,6 +73,23 @@ export function useEditBundle(bundleId: string) {
             setDisplaySettings(bundleData.settings as DisplaySettings);
         }
     }, [bundleData?.settings, setDisplaySettings]);
+
+    // Sync main product handle to store
+    useEffect(() => {
+        if (!bundleData?.mainProductId || productsQuery.loading) return;
+        const nodes = productsQuery.data?.nodes || [];
+        const mainNode = nodes.find(
+            (n: any) => isProductNode(n) && n.id === bundleData.mainProductId,
+        );
+        if (mainNode && isProductNode(mainNode)) {
+            setBundleData({ mainProductHandle: mainNode.handle });
+        }
+    }, [
+        bundleData?.mainProductId,
+        productsQuery.data,
+        productsQuery.loading,
+        setBundleData,
+    ]);
 
     // Sync selected items to store once products are resolved
     useEffect(() => {

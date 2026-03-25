@@ -370,6 +370,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         // Update store
                         setBundleData({
                             mainProductId: undefined,
+                            mainProductHandle: undefined,
                             mainVariantId: undefined,
                         });
 
