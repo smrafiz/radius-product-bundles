@@ -23,8 +23,11 @@ const inputFiles = fs
 
 export default defineConfig({
     root: widgetSrcDir,
-    esbuild: {
-        drop: ["console"],
+    define: {
+        "console.log": "(() => {})",
+        "console.warn": "(() => {})",
+        "console.info": "(() => {})",
+        "console.debug": "(() => {})",
     },
     build: {
         outDir: assetOutputDir,

@@ -1,0 +1,46 @@
+/**
+ * Theme Editor Placeholder
+ *
+ * Shown in the Shopify theme editor when a product has no bundles,
+ * so the merchant can see, drag, and position the block.
+ * Never visible on the live storefront.
+ */
+
+// Package icon (Lucide "package" icon) as base64 SVG
+$rb-placeholder-icon: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4YThhOGEiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMSA4YTIgMiAwIDAgMC0xLTEuNzNsLTctNGEyIDIgMCAwIDAtMiAwbC03IDRBMiAyIDAgMCAwIDMgOHY4YTIgMiAwIDAgMCAxIDEuNzNsNyA0YTIgMiAwIDAgMCAyIDBsNy00QTIgMiAwIDAgMCAyMSAxNloiLz48cGF0aCBkPSJtMy4zIDcgOC43IDUgOC43LTUiLz48cGF0aCBkPSJNMTIgMjJWMTIiLz48L3N2Zz4=");
+
+.radius-bundle-placeholder {
+    border: 2px dashed #b4b4b4;
+    border-radius: 10px;
+    background: #f7f7f7;
+    padding: 32px 24px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif;
+    max-width: 600px;
+    margin-block: 16px;
+    margin-inline: auto;
+
+    &::before {
+        content: "";
+        display: block;
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 12px;
+        background: $rb-placeholder-icon no-repeat center / contain;
+    }
+
+    &__title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #333;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    &__desc {
+        font-size: 13px;
+        color: #777;
+        line-height: 1.4;
+    }
+}

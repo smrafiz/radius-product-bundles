@@ -4,25 +4,29 @@ import {
     setupGuideKeys,
     setupGuideQueries,
     SetupStepKey,
+    useWidgetStatusStore,
 } from "@/features/dashboard";
 import { useAppNavigation } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     dismissSetupGuideAction,
     showSetupGuideAction,
     updateSetupStepAction,
 } from "@/features/dashboard/actions/setup-guide.action";
-import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getSetupGuideSteps } from "@/features/dashboard/constants/dashboard.constants";
 import {
     AUTO_DETECTED_STEPS,
     SETUP_STEP_KEYS,
 } from "@/features/dashboard/constants/setup-guide.constants";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { invalidateBundleCache } from "@/features/bundles/utils/bundle-cache";
-import { useTranslations } from "@/lib/i18n/provider";
+import { getSetupGuideSteps } from "@/features/dashboard/constants/dashboard.constants";
+import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
 
+/**
+ * Custom hook for managing the setup guide.
+ */
 export function useSetupGuide() {
     const t = useTranslations("Dashboard.SetupGuide");
     const tEmbed = useTranslations("Dashboard.AppEmbed");
@@ -30,6 +34,7 @@ export function useSetupGuide() {
     const queryClient = useQueryClient();
     const queries = setupGuideQueries(app);
     const { goTo } = useAppNavigation();
+    const widgetStatusStore = useWidgetStatusStore();
 
     const { data, isLoading } = useQuery(queries.progress());
 
@@ -91,48 +96,84 @@ export function useSetupGuide() {
         const needsBlockCheck = !data.progress.widgetBlockAdded;
         if (!needsEmbedCheck && !needsBlockCheck) return;
 
+        let cancelled = false;
+
         // Check app-embed via App Bridge (theme-level toggle — reliable)
         if (needsEmbedCheck) {
-            shopify.app.extensions().then((extensions) => {
-                const themeExt = extensions.find(
-                    (e) => e.type === "theme_app_extension",
-                );
-                if (!themeExt) return;
+            shopify.app
+                .extensions()
+                .then((extensions) => {
+                    if (cancelled) return;
+                    const themeExt = extensions.find(
+                        (e) => e.type === "theme_app_extension",
+                    );
+                    if (!themeExt) return;
 
-                const activations = themeExt.activations as Array<{
-                    handle: string;
-                    target: string;
-                    status: string;
-                }>;
-                const embedActive = activations.some(
-                    (a) =>
-                        a.handle === "app-embed" &&
-                        a.target !== "section" &&
-                        a.status === "active",
-                );
-                if (embedActive) {
-                    completeStepMutation.mutate({
-                        key: "appEmbedEnabled",
-                        value: true,
-                    });
-                }
-            });
+                    const activations = themeExt.activations as Array<{
+                        handle: string;
+                        target: string;
+                        status: string;
+                    }>;
+                    const embedActive = activations.some(
+                        (a) =>
+                            a.handle === "app-embed" &&
+                            a.target !== "section" &&
+                            a.status === "active",
+                    );
+                    if (embedActive) {
+                        completeStepMutation.mutate({
+                            key: "appEmbedEnabled",
+                            value: true,
+                        });
+                    }
+                })
+                .catch(() => {});
         }
 
         // Check app-block via REST API (template-level — App Bridge unreliable for this)
         if (needsBlockCheck) {
-            app.idToken().then((token) => {
-                checkWidgetBlockStatusAction(token).then((result) => {
-                    if (result.status === "success" && result.data === true) {
-                        completeStepMutation.mutate({
-                            key: "widgetBlockAdded",
-                            value: true,
-                        });
+            app.idToken()
+                .then((token) => {
+                    if (cancelled) return;
+                    return checkWidgetBlockStatusAction(token);
+                })
+                .then((result) => {
+                    if (cancelled || !result) return;
+                    if (result.status === "success" && result.data) {
+                        widgetStatusStore.setWidgetStatus(result.data);
+                        if (result.data.isFullyIntegrated) {
+                            completeStepMutation.mutate({
+                                key: "widgetBlockAdded",
+                                value: true,
+                            });
+                        }
+                    } else {
+                        widgetStatusStore.markChecked();
                     }
+                })
+                .catch(() => {
+                    if (!cancelled) widgetStatusStore.markChecked();
                 });
+        }
+
+        return () => {
+            cancelled = true;
+        };
+    }, [data?.dismissed, data?.progress.appEmbedEnabled, data?.progress.widgetBlockAdded]);
+
+    // Auto-complete widget step when store updates (e.g. from visibilitychange recheck)
+    useEffect(() => {
+        if (
+            widgetStatusStore.widgetStatus?.isFullyIntegrated &&
+            data?.progress &&
+            !data.progress.widgetBlockAdded
+        ) {
+            completeStepMutation.mutate({
+                key: "widgetBlockAdded",
+                value: true,
             });
         }
-    }, [data]);
+    }, [widgetStatusStore.widgetStatus?.isFullyIntegrated, data?.progress?.widgetBlockAdded]);
 
     const progress = data?.progress;
     const shopDomain = data?.shopDomain ?? "";
@@ -259,8 +300,12 @@ export function useSetupGuide() {
             } else if (item.stepKey === SETUP_STEP_KEYS.WIDGET_BLOCK_ADDED) {
                 const token = await app.idToken();
                 const result = await checkWidgetBlockStatusAction(token);
+                if (result.status === "success" && result.data) {
+                    widgetStatusStore.setWidgetStatus(result.data);
+                }
                 const blockActive =
-                    result.status === "success" && result.data === true;
+                    result.status === "success" &&
+                    Boolean(result.data?.isFullyIntegrated);
                 if (blockActive) {
                     await completeStepMutation.mutateAsync({
                         key: item.stepKey as SetupStepKey,

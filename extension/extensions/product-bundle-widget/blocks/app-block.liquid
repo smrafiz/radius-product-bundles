@@ -844,6 +844,10 @@
 	{% endif %}
 
 	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
+{% elsif request.design_mode %}
+	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+	<div class="radius-bundle-placeholder"></div>
+	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
 
 {% schema %}

@@ -1228,6 +1228,31 @@ import {
     }
 
     /**
+     * Renders theme-editor placeholders for products without bundles.
+     * The placeholder div is output by Liquid when in design_mode.
+     */
+    function initPlaceholders(): void {
+        const placeholders = document.querySelectorAll<HTMLElement>(
+            ".radius-bundle-placeholder",
+        );
+
+        placeholders.forEach((el) => {
+            if (el.childElementCount > 0) return;
+
+            const title = document.createElement("div");
+            title.className = "radius-bundle-placeholder__title";
+            title.textContent = "Radius Bundles";
+
+            const desc = document.createElement("div");
+            desc.className = "radius-bundle-placeholder__desc";
+            desc.textContent =
+                "This widget displays only on products that are part of a bundle. Preview a bundled product to see the widget in action.";
+
+            el.append(title, desc);
+        });
+    }
+
+    /**
      * Initializes radius bundles
      */
     function initRadiusBundles(): void {
@@ -1245,6 +1270,8 @@ import {
                 );
             }
         });
+
+        initPlaceholders();
     }
 
     // Auto-initialize

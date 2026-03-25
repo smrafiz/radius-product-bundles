@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useEffect, useState } from "react";
+import { useWidgetStatusStore } from "@/features/dashboard";
 import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
 
+/**
+ * Custom hook for managing the widget status.
+ */
 export function useWidgetStatus({
     shopDomain,
     apiKey,
@@ -12,20 +16,69 @@ export function useWidgetStatus({
     apiKey: string;
 }) {
     const app = useAppBridge();
-    const [isBlockActive, setIsBlockActive] = useState<boolean | null>(null);
+    const { widgetStatus, isChecked, setWidgetStatus, markChecked } =
+        useWidgetStatusStore();
 
+    // Initial check — runs once per session
     useEffect(() => {
-        if (!app || !shopDomain) return;
+        if (!app || !shopDomain || isChecked) {
+            return;
+        }
 
-        app.idToken().then((token) => {
-            checkWidgetBlockStatusAction(token).then((result) => {
-                setIsBlockActive(
-                    result.status === "success"
-                        ? (result.data ?? false)
-                        : false,
-                );
+        let cancelled = false;
+
+        app.idToken()
+            .then((token) => {
+                if (cancelled) return;
+                return checkWidgetBlockStatusAction(token);
+            })
+            .then((result) => {
+                if (cancelled || !result) return;
+                if (result.status === "success" && result.data) {
+                    setWidgetStatus(result.data);
+                } else {
+                    markChecked();
+                }
+            })
+            .catch(() => {
+                if (!cancelled) markChecked();
             });
-        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [app, shopDomain, isChecked, setWidgetStatus, markChecked]);
+
+    // Background recheck when the tab regains focus (e.g. returning from theme editor)
+    useEffect(() => {
+        if (!app || !shopDomain) {
+            return;
+        }
+
+        const handleVisibility = () => {
+            if (document.visibilityState !== "visible") {
+                return;
+            }
+
+            // Only recheck if the widget isn't active yet
+            const { widgetStatus: current } = useWidgetStatusStore.getState();
+            if (current?.isFullyIntegrated) {
+                return;
+            }
+
+            app.idToken()
+                .then((token) => checkWidgetBlockStatusAction(token))
+                .then((result) => {
+                    if (result.status === "success" && result.data) {
+                        useWidgetStatusStore.getState().setWidgetStatus(result.data);
+                    }
+                })
+                .catch(() => {});
+        };
+
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () =>
+            document.removeEventListener("visibilitychange", handleVisibility);
     }, [app, shopDomain]);
 
     const themeEditorUrl =
@@ -34,8 +87,10 @@ export function useWidgetStatus({
             : null;
 
     return {
-        isBlockActive,
-        isChecking: isBlockActive === null,
+        isBlockActive: widgetStatus?.isFullyIntegrated ?? false,
+        hasWidgetBlock: widgetStatus?.hasWidgetBlock ?? false,
+        hasAppEmbed: widgetStatus?.hasAppEmbed ?? false,
+        isChecking: !isChecked,
         themeEditorUrl,
     };
 }

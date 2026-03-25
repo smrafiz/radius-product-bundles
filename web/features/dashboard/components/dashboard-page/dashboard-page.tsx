@@ -35,7 +35,7 @@ export function DashboardPage() {
     });
 
     const bundlesLoading = isLoading("create");
-    const guideVisible = !setupGuide.dismissed && !setupGuide.isLoading;
+    const guideVisible = setupGuide.isLoading || !setupGuide.dismissed;
 
     return (
         <s-page heading={t("title")}>
@@ -94,10 +94,11 @@ export function DashboardPage() {
                     <AppEmbedStatusBanner {...setupGuide} />
 
                     {/* Widget Block Status */}
-                    {/*<WidgetStatusBanner*/}
-                    {/*    shopDomain={setupGuide.shopDomain}*/}
-                    {/*    apiKey={setupGuide.apiKey}*/}
-                    {/*/>*/}
+                    <WidgetStatusBanner
+                        shopDomain={setupGuide.shopDomain}
+                        apiKey={setupGuide.apiKey}
+                        setupGuideVisible={guideVisible}
+                    />
 
                     {/* Analytics Disabled Warning */}
                     {isAnalyticsDisabled && <AnalyticsDisabledBanner />}

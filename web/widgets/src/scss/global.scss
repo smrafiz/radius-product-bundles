@@ -9,6 +9,11 @@
 // Root Container with CSS Variable Defaults
 // ==========================================================================
 
+.shopify-app-block:has(.radius-bundle-placeholder, .radius-bundle-widget) {
+    margin: auto;
+    width: 100%;
+}
+
 .radius-bundle-widget {
     opacity: 1 !important;
     transition: opacity 0.15s ease;

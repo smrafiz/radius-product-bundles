@@ -1,7 +1,7 @@
 # AI Sidekick Integration - Project Tracker
 
 **Last Updated:** March 24, 2026  
-**Status:** ShopifyQL Infrastructure Complete (Ready for AI Features)
+**Status:** Widget Detection Enhanced (ShopifyQL Ready for AI)
 
 ---
 
@@ -90,6 +90,7 @@ This document tracks the AI Sidekick integration project for the Radius Product 
 - [x] Date range validation and capping (max 365 days)
 - [x] **REVERTED:** Analytics UI back to Custom DB (simpler, working)
 - [x] ShopifyQL infrastructure preserved for future AI features
+- [x] **Widget Detection Enhanced:** Using Theme App Extensions API + template pattern matching
 
 ### 📋 To Do (AI Features)
 
@@ -257,6 +258,60 @@ The `sessions` table is the **only way** to get:
 - Use `shopify-dev-mcp` tools for continuing research
 - Memory also saved in AI knowledge graph
 - **March 24, 2026:** Reverted analytics to Custom DB. ShopifyQL ready for AI.
+- **March 24, 2026:** Widget detection enhanced with Theme App Extensions API.
+
+---
+
+## Widget Detection Fix (March 24, 2026)
+
+### Problem
+
+The "Add bundle widget to your theme" setup guide task was reporting "not added" even when the widget was added via Shopify CLI dev mode theme editor.
+
+### Root Causes Identified
+
+1. **Missing OAuth Scope:** Initial error was `read_themes` scope not granted → Fixed by adding to `shopify.app.toml`
+
+2. **Theme Type Mismatch:** Shopify CLI dev mode creates a **development theme** (role: "development"), not the main published theme. Code was only checking `role=main` → Fixed to check ALL themes
+
+3. **Pattern Detection Limited:** Only checking two templates (`templates/product.json`, `sections/main-product.liquid`) → Expanded to check more templates and use Theme App Extensions API
+
+### Solution Implemented
+
+**File:** `web/features/dashboard/actions/widget-block-status.action.ts`
+
+1. **Added Theme App Extensions API:** Uses `/admin/api/2025-10/theme/app_extensions.json` to check if app extensions are active for each theme
+
+2. **Expanded Template Detection:** Checks multiple templates:
+    - `templates/product.json`
+    - `sections/main-product.liquid`
+    - `templates/index.json`
+    - `templates/page.json`
+    - `templates/collection.json`
+
+3. **Multiple Pattern Matching:** Searches for multiple pattern formats:
+    - `shopify://apps/product-bundles47/blocks/app-block`
+    - `shopify://apps/product-bundle-widget/blocks/app-block`
+
+4. **App Embed Detection:** Checks theme settings for app embeds:
+    - `app-embed-product-bundles47`
+    - `app-embed-product-bundle-widget`
+
+### Key API Endpoints
+
+| Endpoint                                           | Purpose                 |
+| -------------------------------------------------- | ----------------------- |
+| `GET /admin/api/2025-10/themes.json`               | List all themes         |
+| `GET /admin/api/2025-10/themes/{id}/assets.json`   | Get theme assets        |
+| `GET /admin/api/2025-10/theme/app_extensions.json` | Check active extensions |
+
+### Files Modified
+
+```
+web/features/dashboard/actions/widget-block-status.action.ts  # Enhanced widget detection
+shopify.app.toml                                              # Added read_themes scope
+docs/ai-sidekick-progress.md                                   # Documented changes
+```
 
 ---
 

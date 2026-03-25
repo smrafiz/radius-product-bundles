@@ -1,14 +1,19 @@
 "use client";
 
 import { useTranslations } from "@/lib/i18n/provider";
-import { useWidgetStatus } from "@/features/dashboard/hooks/use-widget-status";
+import { useWidgetStatus } from "@/features/dashboard";
 
+/**
+ * Widget Status Banner
+ */
 export function WidgetStatusBanner({
     shopDomain,
     apiKey,
+    setupGuideVisible,
 }: {
     shopDomain: string;
     apiKey: string;
+    setupGuideVisible: boolean;
 }) {
     const t = useTranslations("Dashboard.WidgetBlock");
     const { isBlockActive, isChecking, themeEditorUrl } = useWidgetStatus({
@@ -16,7 +21,7 @@ export function WidgetStatusBanner({
         apiKey,
     });
 
-    if (isChecking || isBlockActive || !themeEditorUrl) {
+    if (setupGuideVisible || isChecking || isBlockActive || !themeEditorUrl) {
         return null;
     }
 

@@ -2,8 +2,8 @@
  * Validation & Sanitization utilities
  */
 
-import { Config, ExtractLabelsOptions, ValidationErrors } from "@/shared";
 import DOMPurify from "isomorphic-dompurify";
+import { Config, ExtractLabelsOptions, ValidationErrors } from "@/shared";
 
 // ─── Sanitization ────────────────────────────────────────────────────
 

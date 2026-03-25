@@ -54,3 +54,15 @@ export interface DashboardError {
     message: string;
     details?: Record<string, any>;
 }
+
+/**
+ * Widget status
+ */
+export interface WidgetStatus {
+    hasWidgetBlock: boolean;
+    hasAppEmbed: boolean;
+    isFullyIntegrated: boolean;
+    checkedTemplates: string[];
+    checkedSections: string[];
+    detectedInTheme: string | null;
+}

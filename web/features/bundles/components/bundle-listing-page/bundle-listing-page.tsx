@@ -15,6 +15,7 @@ import {
 import { useTranslations } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/features/settings";
 import { AnalyticsDisabledBanner } from "@/features/analytics";
+import { WidgetStatusBanner, useSetupGuide } from "@/features/dashboard";
 
 /**
  * Bundle listing page
@@ -28,6 +29,8 @@ export function BundleListingPage() {
         onBundleStudio,
     } = useBundlesPage();
     const { analytics } = useAppNavigation();
+    const { shopDomain, apiKey } = useSetupGuide();
+
     const t = useTranslations("Bundles.Listing");
 
     const isAnalyticsDisabled = useSettingsStore((state) => {
@@ -106,6 +109,13 @@ export function BundleListingPage() {
 
                     {/* Analytics Disabled Warning */}
                     {isAnalyticsDisabled && <AnalyticsDisabledBanner />}
+
+                    {/* Widget Block Status */}
+                    <WidgetStatusBanner
+                        shopDomain={shopDomain}
+                        apiKey={apiKey}
+                        setupGuideVisible={false}
+                    />
 
                     {/* Metrics overview */}
                     <s-stack gap="base">
