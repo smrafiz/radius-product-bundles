@@ -31,10 +31,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const MAX_FILE_SIZE = 5 * 1024 * 1024;
+        const MAX_FILE_SIZE = 20 * 1024 * 1024;
         if (file.size > MAX_FILE_SIZE) {
             return NextResponse.json(
-                { error: "File too large. Maximum size is 5MB." },
+                { error: "File too large. Maximum size is 20MB." },
                 { status: 413, headers: corsHeaders },
             );
         }

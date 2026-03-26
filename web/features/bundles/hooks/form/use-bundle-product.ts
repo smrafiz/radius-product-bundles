@@ -276,6 +276,35 @@ export function useBundleProduct(mode: "create" | "edit") {
         async (files: File[]) => {
             if (files.length === 0) return;
 
+            // Validate file size (max 20MB per Shopify docs) and type
+            const MAX_FILE_SIZE = 20 * 1024 * 1024;
+            const ALLOWED_TYPES = [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "image/heic",
+                "image/heif",
+            ];
+
+            const invalidFiles = files.filter((file) => {
+                if (file.size > MAX_FILE_SIZE) return true;
+                if (!ALLOWED_TYPES.includes(file.type)) return true;
+                return false;
+            });
+
+            if (invalidFiles.length > 0) {
+                if (typeof shopify !== "undefined" && shopify.toast?.show) {
+                    shopify.toast.show(
+                        invalidFiles.length === 1
+                            ? "File too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC"
+                            : `${invalidFiles.length} files too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC`,
+                        { isError: true },
+                    );
+                }
+                return;
+            }
+
             setIsUploading(true);
 
             try {
