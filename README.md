@@ -111,6 +111,14 @@ features/<name>/
 
 ---
 
+## Documentation
+
+| Document | Purpose |
+| --- | --- |
+| [**Agent Guardrails**](docs/AGENT_GUARDRAILS.md) | **MANDATORY** safety protocols for ALL AI agents |
+
+---
+
 ## Path Aliases (tsconfig)
 
 ```
@@ -167,6 +175,10 @@ features/<name>/
 | Command          | Description             |
 | ---------------- | ----------------------- |
 | `bun run pretty` | Prettier on entire repo |
+
+## Contributing
+
+> **AI Agents:** Before contributing, read [Agent Guardrails](docs/AGENT_GUARDRAILS.md)
 
 ---
 

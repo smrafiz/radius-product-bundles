@@ -17,6 +17,7 @@ declare global {
 export interface BundleProduct {
     id: string;
     variantId: string;
+    variantTitle?: string;
     quantity: number;
     role: "INCLUDED" | "OPTIONAL" | "TRIGGER" | "REWARD";
     displayOrder: number;
@@ -47,6 +48,7 @@ export interface BundleStructure {
     discountedProductIds: string[];
     productCount: number;
     productIds: string[];
+    productVariantIds?: Record<string, string>;
     productQuantities?: number[];
     mainProductId?: string;
     bundleType?: string;

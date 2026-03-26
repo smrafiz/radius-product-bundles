@@ -98,6 +98,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
                 return {
                     id: item.id,
                     title: item.title,
+                    variantId: item.variantId,
+                    variantTitle: item.selectedVariant?.title,
                     image: item.image,
                     price: formatPrice(discountedUnitPrice, currencyCode),
                     compareAtPrice: hasDiscount
@@ -160,6 +162,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
             return {
                 id: item.id,
                 title: item.title,
+                variantId: item.variantId,
+                variantTitle: item.selectedVariant?.title,
                 image: item.image,
                 price: formatPrice(discountedUnitPrice, currencyCode),
                 compareAtPrice: hasDiscount

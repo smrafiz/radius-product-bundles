@@ -646,7 +646,7 @@ import "./scss/radius-bundles.scss";
             name: string,
             highlightColor: string,
         ): string | null {
-            const escapedName = this.escapeHtml(name);
+            // Don't escape HTML - name comes from our own bundle config
             const hl = (text: string) =>
                 `<strong style="color:${highlightColor}">${text}</strong>`;
 
@@ -659,7 +659,7 @@ import "./scss/radius-bundles.scss";
                         "You're saving {discount} with {name}";
                     return template
                         .replace("{discount}", hl(bundle.discountValue + "%"))
-                        .replace("{name}", escapedName);
+                        .replace("{name}", name);
                 }
 
                 case "FIXED_AMOUNT": {
@@ -671,7 +671,7 @@ import "./scss/radius-bundles.scss";
                             "{discount}",
                             hl(this.formatMoney(bundle.discountValue)),
                         )
-                        .replace("{name}", escapedName);
+                        .replace("{name}", name);
                 }
 
                 case "CUSTOM_PRICE": {
@@ -683,7 +683,7 @@ import "./scss/radius-bundles.scss";
                             "{price}",
                             hl(this.formatMoney(bundle.discountValue)),
                         )
-                        .replace("{name}", escapedName);
+                        .replace("{name}", name);
                 }
 
                 case "NO_DISCOUNT":
@@ -691,7 +691,7 @@ import "./scss/radius-bundles.scss";
                         const template =
                             labels?.freeShippingQualifyText ||
                             "{name} qualifies for free shipping!";
-                        return template.replace("{name}", escapedName);
+                        return template.replace("{name}", name);
                     }
                     return null;
 

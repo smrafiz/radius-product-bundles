@@ -28,9 +28,17 @@ const bundleSettingsSchema = (v: T) =>
     z
         .object({
             layout: z.string().default("GRID"),
-            title: z.string().max(100).optional(),
-            subtitle: z.string().max(300).optional().default(""),
-            cartButtonText: z.string().max(50).default(""),
+            title: z
+                .string()
+                .max(100)
+                .transform((val) => (val ? sanitizeText(val) : val))
+                .optional(),
+            subtitle: z.string().max(300).default("").transform(sanitizeText),
+            cartButtonText: z
+                .string()
+                .max(50)
+                .default("")
+                .transform(sanitizeText),
             showImages: z.boolean().default(true),
             showSavingsBadge: z.boolean().default(true),
             showPrices: z.boolean().default(true),
@@ -83,8 +91,16 @@ export function createBundleSchema(v: T) {
                 .optional(),
 
             createProduct: z.boolean().default(true).optional(),
-            productTitle: z.string().max(120).optional(),
-            productDescription: z.string().max(5000).optional(),
+            productTitle: z
+                .string()
+                .max(120)
+                .optional()
+                .transform((val) => (val ? sanitizeText(val) : val)),
+            productDescription: z
+                .string()
+                .max(5000)
+                .optional()
+                .transform((val) => (val ? sanitizeText(val) : val)),
             images: z
                 .array(
                     z.string().regex(/^https?:\/\/.+\..+$/, {

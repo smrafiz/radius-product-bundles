@@ -41,10 +41,11 @@ export function WidgetProductCard({
             ? product.image
             : stablePlaceholder;
 
+    const fullTitle = product.variantTitle
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
     const truncatedTitle =
-        product.title.length > 40
-            ? `${product.title.slice(0, 40)}...`
-            : product.title;
+        fullTitle.length > 40 ? `${fullTitle.slice(0, 40)}...` : fullTitle;
 
     const cardStyle: React.CSSProperties = showCardStyle
         ? {

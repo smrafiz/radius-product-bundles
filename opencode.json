@@ -136,6 +136,17 @@
             "type": "local",
             "command": ["npx", "-y", "@liuyoshio/mcp-compass"],
             "enabled": true
+        },
+        "context7": {
+            "type": "local",
+            "command": [
+                "npx",
+                "-y",
+                "@upstash/context7-mcp",
+                "--api-key",
+                "ctx7sk-c242fbc0-b0c2-4d41-b3ec-47e705076d75"
+            ],
+            "enabled": true
         }
     }
 }

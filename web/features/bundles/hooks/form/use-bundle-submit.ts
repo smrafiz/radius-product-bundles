@@ -162,6 +162,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
             if (!uploadResult.success) {
                 console.error("File upload failed:", uploadResult.error);
+                showError(uploadResult.error || "File upload failed");
             } else {
                 uploadedFileUrls = uploadResult.resourceUrls;
                 console.log(`✅ Uploaded ${uploadedFileUrls.length} files`);

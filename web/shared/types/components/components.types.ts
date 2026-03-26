@@ -65,6 +65,8 @@ export interface TablePaginationProps {
 export interface PreviewProduct {
     id: string;
     title: string;
+    variantId?: string;
+    variantTitle?: string;
     image?: string;
     price: string;
     compareAtPrice?: string;

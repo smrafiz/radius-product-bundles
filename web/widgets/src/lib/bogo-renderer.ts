@@ -113,9 +113,12 @@ export function renderBxgyProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
+        const variantPart = product.variantTitle
+            ? ` / ${escapeHtml(product.variantTitle)}`
+            : "";
         const titleHtml = ctx.enableHyperLink
-            ? `<h3 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
-            : `<h3 class="radius-bundle__product-title">${escapeHtml(product.title)}</h3>`;
+            ? `<h3 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
+            : `<h3 class="radius-bundle__product-title">${escapeHtml(product.title)}${variantPart}</h3>`;
 
         let priceHtml: string;
         if (
@@ -251,9 +254,12 @@ export function renderClassicCardProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
+        const variantPart = product.variantTitle
+            ? ` / ${escapeHtml(product.variantTitle)}`
+            : "";
         const titleHtml = ctx.enableHyperLink
-            ? `<h3 class="rb-classic__title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
-            : `<h3 class="rb-classic__title">${escapeHtml(product.title)}</h3>`;
+            ? `<h3 class="rb-classic__title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
+            : `<h3 class="rb-classic__title">${escapeHtml(product.title)}${variantPart}</h3>`;
 
         return `
             <div class="rb-classic__product${isHorizontal ? " rb-classic__product--horizontal" : ""}">
@@ -445,9 +451,12 @@ export function renderBogoSleekProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
+        const variantPart = product.variantTitle
+            ? ` / ${escapeHtml(product.variantTitle)}`
+            : "";
         const titleHtml = ctx.enableHyperLink
-            ? `<h3 class="rb-sleek__title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
-            : `<h3 class="rb-sleek__title">${escapeHtml(product.title)}</h3>`;
+            ? `<h3 class="rb-sleek__title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
+            : `<h3 class="rb-sleek__title">${escapeHtml(product.title)}${variantPart}</h3>`;
 
         return `
             <div class="${cardClass}">
@@ -617,9 +626,12 @@ export function renderBogoMinimalistProducts(
         const productUrl = p.handle
             ? getLocalePath(`/products/${p.handle}`)
             : "#";
+        const variantPart = p.variantTitle
+            ? ` / ${escapeHtml(p.variantTitle)}`
+            : "";
         const titleHtml = ctx.enableHyperLink
-            ? `<h3 class="rb-minimalist__item-title"><a href="${productUrl}">${escapeHtml(p.title)}</a></h3>`
-            : `<h3 class="rb-minimalist__item-title">${escapeHtml(p.title)}</h3>`;
+            ? `<h3 class="rb-minimalist__item-title"><a href="${productUrl}">${escapeHtml(p.title)}${variantPart}</a></h3>`
+            : `<h3 class="rb-minimalist__item-title">${escapeHtml(p.title)}${variantPart}</h3>`;
         const roleLabelHtml = ctx.showSavingsBadge
             ? `<span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>`
             : "";
@@ -764,9 +776,12 @@ export function renderBogoCompactGridProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
+        const variantPart = product.variantTitle
+            ? ` / ${escapeHtml(product.variantTitle)}`
+            : "";
         const titleHtml = ctx.enableHyperLink
-            ? `<h3 class="rb-cg__tile-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
-            : `<h3 class="rb-cg__tile-title">${escapeHtml(product.title)}</h3>`;
+            ? `<h3 class="rb-cg__tile-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
+            : `<h3 class="rb-cg__tile-title">${escapeHtml(product.title)}${variantPart}</h3>`;
 
         const roleLabelHtml = ctx.showSavingsBadge
             ? `<span class="rb-cg__tile-role rb-cg__tile-role--${isReward ? "reward" : "trigger"}">${roleLabel}</span>`
@@ -1335,9 +1350,12 @@ export function renderSplitDealProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
+        const variantPart = product.variantTitle
+            ? ` / ${escapeHtml(product.variantTitle)}`
+            : "";
         const titleHtml = ctx.enableHyperLink
-            ? `<h3 class="rb-split__product-title"><a href="${productUrl}">${escapeHtml(product.title)}</a></h3>`
-            : `<h3 class="rb-split__product-title">${escapeHtml(product.title)}</h3>`;
+            ? `<h3 class="rb-split__product-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
+            : `<h3 class="rb-split__product-title">${escapeHtml(product.title)}${variantPart}</h3>`;
 
         return `
             <div class="rb-split__product" data-product-id="${product.id}" data-variant-id="${product.variantId}">

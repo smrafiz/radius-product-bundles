@@ -213,12 +213,24 @@ export async function GET(request: NextRequest) {
         const transformedProducts =
             topBundle.bundleProducts?.map((bp) => {
                 const shopifyProduct = productMap.get(bp.productId) as any;
-                const variant = shopifyProduct?.variants?.nodes?.[0];
-                const price = variant?.price
-                    ? Math.round(parseFloat(variant.price) * 100)
+                const allVariants = shopifyProduct?.variants?.nodes || [];
+                const firstVariant = allVariants[0];
+
+                // Find the selected variant using bp.variantId, fallback to first variant
+                const selectedVariantId =
+                    bp.variantId || firstVariant?.id || "";
+                const selectedVariant = selectedVariantId
+                    ? allVariants.find((v: any) => v.id === selectedVariantId)
+                    : firstVariant;
+
+                // Use SELECTED variant's price, not first variant
+                const price = selectedVariant?.price
+                    ? Math.round(parseFloat(selectedVariant.price) * 100)
                     : 0;
-                const compareAtPrice = variant?.compareAtPrice
-                    ? Math.round(parseFloat(variant.compareAtPrice) * 100)
+                const compareAtPrice = selectedVariant?.compareAtPrice
+                    ? Math.round(
+                          parseFloat(selectedVariant.compareAtPrice) * 100,
+                      )
                     : 0;
 
                 // BOGO/BUY_X_GET_Y bundles created before role auto-assignment
@@ -240,7 +252,8 @@ export async function GET(request: NextRequest) {
 
                 return {
                     id: bp.productId,
-                    variantId: bp.variantId || variant?.id || "",
+                    variantId: selectedVariantId,
+                    variantTitle: selectedVariant?.title || "",
                     quantity: bp.quantity,
                     role: bp.role,
                     displayOrder: bp.displayOrder,
@@ -251,7 +264,7 @@ export async function GET(request: NextRequest) {
                     featuredImage:
                         shopifyProduct?.featuredMedia?.image?.url || null,
                     handle: shopifyProduct?.handle || "",
-                    available: variant?.availableForSale ?? true,
+                    available: selectedVariant?.availableForSale ?? true,
                 };
             }) || [];
 

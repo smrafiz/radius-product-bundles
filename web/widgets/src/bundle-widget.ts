@@ -777,6 +777,7 @@ import {
                             product.price = variant.price;
                             product.compareAtPrice =
                                 variant.compare_at_price || 0;
+                            product.variantTitle = variant.title || "";
                         }
                     } catch {
                         // Silently fall back to Admin API prices
@@ -800,6 +801,7 @@ import {
 
             const quantities = this.bundleStructure.productQuantities;
             const roles = this.bundleStructure.productRoles;
+            const variantIdsMap = this.bundleStructure.productVariantIds || {};
             return this.bundleStructure.productIds.map((productId, index) => {
                 const product = productMap.get(productId);
                 const rawRole = roles?.[index] || "INCLUDED";
@@ -811,9 +813,13 @@ import {
                         : "INCLUDED"
                 ) as BundleProduct["role"];
 
+                // Use variant from productVariantIds map, fallback to product's variantId
+                const variantId =
+                    variantIdsMap[productId] || product?.variantId || "";
+
                 return {
                     id: productId,
-                    variantId: product?.variantId || "",
+                    variantId: variantId,
                     quantity: quantities?.[index] || 1,
                     role,
                     displayOrder: index,

@@ -46,6 +46,7 @@ struct MetafieldBundleConfig {
     discount_application: Option<String>,
     discounted_product_ids: Option<Vec<String>>,
     product_quantities: Option<HashMap<String, i32>>,
+    product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
     main_product_id: Option<String>,
     // BOGO/BXGY fields
     bundle_type: Option<String>,
@@ -55,16 +56,40 @@ struct MetafieldBundleConfig {
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
-fn is_product_in_bundle(product_gid: &str, settings: &MetafieldBundleConfig) -> bool {
+/// If variant_ids are specified in the bundle config, also validates variant match.
+fn is_product_in_bundle(
+    product_gid: &str,
+    variant_gid: Option<&str>,
+    settings: &MetafieldBundleConfig,
+) -> bool {
     if let Some(ref main_id) = settings.main_product_id {
         if main_id == product_gid {
             return true;
         }
     }
-    if let Some(ref qty_map) = settings.product_quantities {
-        return qty_map.contains_key(product_gid);
+
+    let in_bundle = if let Some(ref qty_map) = settings.product_quantities {
+        qty_map.contains_key(product_gid)
+    } else {
+        false
+    };
+
+    if !in_bundle {
+        return false;
     }
-    false
+
+    if let Some(ref variant_ids) = settings.product_variant_ids {
+        if let Some(expected_variant) = variant_ids.get(product_gid) {
+            match variant_gid {
+                Some(cart_variant) => {
+                    return cart_variant == expected_variant;
+                }
+                None => return false,
+            }
+        }
+    }
+
+    true
 }
 
 /// Extracts the Shopify product GID from a line's merchandise (tamper-proof).
@@ -77,10 +102,22 @@ fn get_product_gid(
     }
 }
 
+/// Extracts the Shopify variant GID from a line's merchandise.
+fn get_variant_gid(
+    line: &schema::cart_lines_discounts_generate_run::input::cart::Lines,
+) -> Option<String> {
+    match line.merchandise() {
+        Merchandise::ProductVariant(variant) => Some(variant.id().to_string()),
+        _ => None,
+    }
+}
+
 /// Info about a bundle cart line needed for quantity validation.
+#[allow(dead_code)]
 struct BundleLineInfo<'a> {
     line: &'a schema::cart_lines_discounts_generate_run::input::cart::Lines,
     product_id: Option<String>,
+    variant_id: Option<String>,
 }
 
 /// Calculate BXGY discount candidates for a bundle.
@@ -166,7 +203,11 @@ fn calculate_bxgy_discount(
                     let expected = match qm.get(pid) {
                         Some(&qty) if qty > 0 => qty,
                         Some(&qty) => {
-                            log!("[RadiusDiscount] Invalid quantity {} for product {}", qty, pid);
+                            log!(
+                                "[RadiusDiscount] Invalid quantity {} for product {}",
+                                qty,
+                                pid
+                            );
                             return None;
                         }
                         None => {
@@ -186,7 +227,11 @@ fn calculate_bxgy_discount(
                     let expected = match qm.get(pid) {
                         Some(&qty) if qty > 0 => qty,
                         Some(&qty) => {
-                            log!("[RadiusDiscount] Invalid quantity {} for product {}", qty, pid);
+                            log!(
+                                "[RadiusDiscount] Invalid quantity {} for product {}",
+                                qty,
+                                pid
+                            );
                             return None;
                         }
                         None => {
@@ -224,7 +269,11 @@ fn calculate_bxgy_discount(
                 None => continue,
             }
         } else {
-            let expected = match bl.product_id.as_ref().and_then(|pid| qty_map.and_then(|qm| qm.get(pid))) {
+            let expected = match bl
+                .product_id
+                .as_ref()
+                .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
+            {
                 Some(&qty) if qty > 0 => qty,
                 _ => continue,
             };
@@ -260,7 +309,11 @@ fn calculate_bxgy_discount(
                 let per_product_deals = *bl.line.quantity() / items_per_deal;
                 safe_mul(per_product_deals, get_qty)
             } else {
-                let expected = match bl.product_id.as_ref().and_then(|pid| qty_map.and_then(|qm| qm.get(pid))) {
+                let expected = match bl
+                    .product_id
+                    .as_ref()
+                    .and_then(|pid| qty_map.and_then(|qm| qm.get(pid)))
+                {
                     Some(&qty) if qty > 0 => qty,
                     _ => return None,
                 };
@@ -289,12 +342,10 @@ fn calculate_bxgy_discount(
             let amount = bundle_settings.discount_value * total_reward_qty_to_discount as f64;
             (
                 amount,
-                ProductDiscountCandidateValue::FixedAmount(
-                    ProductDiscountCandidateFixedAmount {
-                        amount: Decimal(bundle_settings.discount_value),
-                        applies_to_each_item: Some(true),
-                    },
-                ),
+                ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+                    amount: Decimal(bundle_settings.discount_value),
+                    applies_to_each_item: Some(true),
+                }),
             )
         }
         "CUSTOM_PRICE" => {
@@ -308,12 +359,10 @@ fn calculate_bxgy_discount(
 
             (
                 total_discount,
-                ProductDiscountCandidateValue::FixedAmount(
-                    ProductDiscountCandidateFixedAmount {
-                        amount: Decimal(total_discount),
-                        applies_to_each_item: None,
-                    },
-                ),
+                ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+                    amount: Decimal(total_discount),
+                    applies_to_each_item: None,
+                }),
             )
         }
         "NO_DISCOUNT" => return None,
@@ -421,7 +470,10 @@ fn cart_lines_discounts_generate_run(
 
     for cart_config in cart_configs {
         if cart_config.bundle_id.is_empty() || cart_config.bundle_id.len() > 100 {
-            log!("[RadiusDiscount] Invalid bundle ID length: {}", cart_config.bundle_id.len());
+            log!(
+                "[RadiusDiscount] Invalid bundle ID length: {}",
+                cart_config.bundle_id.len()
+            );
             continue;
         }
 
@@ -454,10 +506,16 @@ fn cart_lines_discounts_generate_run(
             })
             .filter_map(|line| {
                 let product_id = get_product_gid(line);
-                // Verify this product actually belongs to the bundle
+                let variant_id = get_variant_gid(line);
                 match &product_id {
-                    Some(pid) if is_product_in_bundle(pid, bundle_settings) => {
-                        Some(BundleLineInfo { line, product_id })
+                    Some(pid)
+                        if is_product_in_bundle(pid, variant_id.as_deref(), bundle_settings) =>
+                    {
+                        Some(BundleLineInfo {
+                            line,
+                            product_id,
+                            variant_id,
+                        })
                     }
                     _ => None,
                 }
@@ -487,10 +545,7 @@ fn cart_lines_discounts_generate_run(
         }
 
         if is_bxgy {
-            let bxgy_bundle_name = cart_config
-                .bundle_name
-                .as_deref()
-                .unwrap_or("Bundle");
+            let bxgy_bundle_name = cart_config.bundle_name.as_deref().unwrap_or("Bundle");
             if let Some(candidate) =
                 calculate_bxgy_discount(bundle_settings, &bundle_lines, bxgy_bundle_name)
             {
@@ -500,9 +555,7 @@ fn cart_lines_discounts_generate_run(
         }
 
         // --- Quantity validation: calculate complete bundle sets ---
-        let product_quantities = bundle_settings
-            .product_quantities
-            .as_ref();
+        let product_quantities = bundle_settings.product_quantities.as_ref();
 
         let complete_sets: i32 = if let Some(qty_map) = product_quantities {
             if qty_map.is_empty() {
@@ -512,7 +565,11 @@ fn cart_lines_discounts_generate_run(
 
                 for (expected_product_id, expected_qty) in qty_map.iter() {
                     if *expected_qty <= 0 {
-                        log!("[RadiusDiscount] Invalid quantity {} for product {}", expected_qty, expected_product_id);
+                        log!(
+                            "[RadiusDiscount] Invalid quantity {} for product {}",
+                            expected_qty,
+                            expected_product_id
+                        );
                         continue;
                     }
 
@@ -554,8 +611,7 @@ fn cart_lines_discounts_generate_run(
         }
 
         // Check if discount applies to specific products only
-        let apply_to_specific =
-            bundle_settings.discount_application.as_deref() == Some("products");
+        let apply_to_specific = bundle_settings.discount_application.as_deref() == Some("products");
         let discounted_ids = bundle_settings
             .discounted_product_ids
             .clone()
@@ -711,10 +767,7 @@ fn cart_lines_discounts_generate_run(
             .bundle_name
             .unwrap_or_else(|| "Bundle".to_string());
         let message = match bundle_settings.discount_type.as_str() {
-            "PERCENTAGE" => format!(
-                "{}: {}% off",
-                bundle_name, bundle_settings.discount_value
-            ),
+            "PERCENTAGE" => format!("{}: {}% off", bundle_name, bundle_settings.discount_value),
             "FIXED_AMOUNT" => format!("{} discount", bundle_name),
             "CUSTOM_PRICE" => format!("{}: Special price", bundle_name),
             _ => format!("{} discount", bundle_name),

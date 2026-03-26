@@ -451,6 +451,13 @@ function buildShopBundlesMetafieldValue(
             ? bundleProducts.map((bp) => bp.role || "INCLUDED")
             : undefined;
 
+        const productVariantIdsMap: Record<string, string> = {};
+        for (const bp of bundleProducts) {
+            if (bp.variantId) {
+                productVariantIdsMap[bp.productId] = bp.variantId;
+            }
+        }
+
         bundleMap[bundle.id] = {
             status: bundle.status,
             bundleType: bundle.type,
@@ -473,6 +480,10 @@ function buildShopBundlesMetafieldValue(
             productCount: productIds.length,
             productIds: productIds,
             productQuantities: productQuantities,
+            productVariantIds:
+                Object.keys(productVariantIdsMap).length > 0
+                    ? productVariantIdsMap
+                    : null,
             layout: bundle.settings?.layout || "list",
             buttonText: bundle.settings?.cartButtonText || "",
             showSavings: bundle.settings?.showSavings ?? true,
@@ -534,6 +545,13 @@ function buildDiscountBundlesMetafieldValue(
               })()
             : null;
 
+        const productVariantIdsMap: Record<string, string> = {};
+        for (const bp of bundleProducts) {
+            if (bp.variantId) {
+                productVariantIdsMap[bp.productId] = bp.variantId;
+            }
+        }
+
         bundleMap[bundle.id] = {
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
@@ -544,6 +562,10 @@ function buildDiscountBundlesMetafieldValue(
             discountApplication: bundle.discountApplication || "bundle",
             discountedProductIds: bundle.discountedProductIds || [],
             productQuantities: productQuantityMap,
+            productVariantIds:
+                Object.keys(productVariantIdsMap).length > 0
+                    ? productVariantIdsMap
+                    : null,
             freeShippingMethodTitle:
                 freeShippingMethodTitle || "Free shipping with {name}",
             mainProductId: bundle.mainProductId || null,
