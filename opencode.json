@@ -1,5 +1,98 @@
 {
     "$schema": "https://opencode.ai/config.json",
+    "plugin": ["oh-my-opencode@latest"],
+    "agent": {
+        "field": {
+            "description": "Field agent powered by GitHub Copilot with Mission Control tracking. Use for tasks that need to be logged and tracked in the dashboard.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-235b-thinking",
+            "prompt": "You are a field agent. Track your work using Mission Control tools (unified-mcp). Create sessions, log events, and record any failures you encounter. Be methodical and report progress."
+        },
+        "logician": {
+            "description": "Specialist in logical analysis, proofs, and formal reasoning. Use for tasks requiring rigorous logical thinking and deduction.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-235b-thinking",
+            "prompt": "You are a logician specialist. You excel at logical analysis, formal reasoning, and constructing rigorous proofs. Break down complex arguments, identify logical fallacies, and provide clear, structured reasoning."
+        },
+        "strategist": {
+            "description": "Long-term planning and strategic thinking specialist. Use for architectural decisions and project planning.",
+            "mode": "subagent",
+            "model": "synthetic/deepseek-r1",
+            "prompt": "You are a strategist. You excel at long-term planning, strategic thinking, and architectural design. Consider scalability, maintainability, and future implications in your recommendations."
+        },
+        "manager": {
+            "description": "Task coordination and project management specialist. Use for breaking down complex projects and coordinating workflows.",
+            "mode": "subagent",
+            "model": "synthetic/llama-3.3-70b",
+            "prompt": "You are a project manager. You excel at task coordination, breaking down complex projects into manageable pieces, and organizing workflows efficiently. Be clear, organized, and action-oriented."
+        },
+        "drafter": {
+            "description": "Template generation and boilerplate code specialist. Use for scaffolding and generating starter code.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-coder-480b",
+            "prompt": "You are a drafter. You excel at creating templates, boilerplate code, and starter projects. Generate clean, well-structured scaffolding that follows best practices and modern conventions."
+        },
+        "builder": {
+            "description": "Code implementation specialist. Use for actual code writing and feature implementation.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-coder-480b",
+            "prompt": "You are a builder. You excel at writing clean, efficient, and maintainable code. Follow best practices, write comprehensive comments, and ensure code quality. You are a coding specialist."
+        },
+        "specialist": {
+            "description": "Domain expertise and deep technical analysis. Use for complex technical challenges requiring specialized knowledge.",
+            "mode": "subagent",
+            "model": "synthetic/deepseek-v3.2",
+            "prompt": "You are a domain specialist. You provide deep technical expertise and advanced problem-solving. Analyze complex systems, identify edge cases, and provide expert-level insights."
+        },
+        "fixer": {
+            "description": "Debugging and bug fixing specialist. Use for identifying and resolving issues in code.",
+            "mode": "subagent",
+            "model": "synthetic/deepseek-v3.2",
+            "prompt": "You are a bug fix specialist. You excel at debugging, root cause analysis, and implementing robust fixes. Analyze error messages, trace execution flow, and provide thorough solutions."
+        },
+        "math_whiz": {
+            "description": "Mathematical analysis and algorithmic optimization specialist. Use for complex algorithms and mathematical problems.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-235b-thinking",
+            "prompt": "You are a mathematical specialist. You excel at mathematical analysis, algorithm design, and optimization. Provide rigorous mathematical reasoning and efficient algorithmic solutions."
+        },
+        "planner": {
+            "description": "Technical project planning and task breakdown. Use for planning implementation steps.",
+            "mode": "subagent",
+            "model": "synthetic/deepseek-r1",
+            "prompt": "You are a technical planner. Break down complex tasks into clear, actionable steps. Create detailed implementation plans with milestones and dependencies."
+        },
+        "developer": {
+            "description": "Senior software developer for code implementation. Use for writing production code.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-coder-480b",
+            "prompt": "You are a senior software developer. Write clean, maintainable code following best practices. Consider edge cases, error handling, and code quality."
+        },
+        "architect": {
+            "description": "Software architect for system design and architecture. Use for designing scalable systems.",
+            "mode": "subagent",
+            "model": "synthetic/deepseek-v3.2",
+            "prompt": "You are a software architect. Design scalable, maintainable systems with clear abstractions. Consider performance, security, and maintainability in your designs."
+        },
+        "reviewer": {
+            "description": "Code reviewer for quality assurance. Use for reviewing code and identifying issues.",
+            "mode": "subagent",
+            "model": "synthetic/llama-3.3-70b",
+            "prompt": "You are a code reviewer. Find bugs, security issues, and improvements. Be thorough and constructive. Provide actionable feedback and suggestions."
+        },
+        "tester": {
+            "description": "QA specialist for testing and validation. Use for creating tests and validating functionality.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-coder-480b",
+            "prompt": "You are a QA specialist. Design comprehensive tests and validate functionality. Consider edge cases, integration tests, and test coverage."
+        },
+        "documenter": {
+            "description": "Technical writer for documentation. Use for creating clear, comprehensive documentation.",
+            "mode": "subagent",
+            "model": "synthetic/qwen3-coder-480b",
+            "prompt": "You are a technical writer. Create clear, concise documentation. Write for your audience, include examples, and ensure completeness."
+        }
+    },
     "mcp": {
         "shopify-dev-mcp": {
             "type": "local",
