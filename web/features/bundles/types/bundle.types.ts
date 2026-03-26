@@ -292,8 +292,6 @@ export interface ExtendedBundleFormData extends BundleFormData {
     type: PrismaBundleType;
     status?: PrismaBundleStatus;
     createProduct?: boolean;
-    productTitle?: string;
-    productDescription?: string;
     mainProductId?: string;
     mainProductHandle?: string;
     mainVariantId?: string;
