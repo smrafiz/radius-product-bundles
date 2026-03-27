@@ -33,6 +33,7 @@ import {
     getPadding,
     getShadow,
     useCustomizerModal,
+    useCustomizerStore,
     useSettingsStore,
 } from "@/features/settings";
 import { useCallback, useMemo } from "react";
@@ -399,6 +400,11 @@ export function BundlePreview() {
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
 
+    const { setCustomizerSource } = useCustomizerStore();
+    const styles = useWidgetStyles();
+    const products = usePreviewProducts(currencyCode);
+    const displayOptions = useWidgetDisplayOptions();
+
     const openCustomizer = useCallback(
         (device: "desktop" | "tablet" | "mobile") => {
             const appWindow = appWindowRef.current as any;
@@ -406,19 +412,31 @@ export function BundlePreview() {
                 return;
             }
 
-            appWindow.src = bundleData.type
-                ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}&device=${device}`
-                : ROUTES.CUSTOMIZER;
+            const simplifiedProducts = products.map((p) => ({
+                id: p.id,
+                title: p.title,
+                image: p.image,
+                price: p.price,
+                quantity: p.quantity,
+                variantTitle: p.variantTitle,
+            }));
+            const productsParam = encodeURIComponent(
+                JSON.stringify(simplifiedProducts),
+            );
+
+            const baseUrl = bundleData.type
+                ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}&device=${device}&source=bundle-preview`
+                : `${ROUTES.CUSTOMIZER}?source=bundle-preview`;
+
+            appWindow.src = `${baseUrl}&products=${productsParam}`;
             appWindow.show?.();
         },
-        [appWindowRef, bundleData.type, displaySettings.layout],
+        [appWindowRef, bundleData.type, displaySettings.layout, products],
     );
+
     const customizerSrc = bundleData.type
         ? `${ROUTES.CUSTOMIZER}?bundleType=${bundleData.type}&layout=${displaySettings.layout}`
         : ROUTES.CUSTOMIZER;
-    const styles = useWidgetStyles();
-    const products = usePreviewProducts(currencyCode);
-    const displayOptions = useWidgetDisplayOptions();
     const pricing = useWidgetPricing(currencyCode);
 
     const labels = useWidgetLabels();

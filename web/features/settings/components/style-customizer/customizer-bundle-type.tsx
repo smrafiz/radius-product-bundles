@@ -6,6 +6,7 @@ import {
     useCustomizerPage,
     useCustomizerStore,
 } from "@/features/settings";
+import { useSearchParams } from "next/navigation";
 import { CustomizerHeader } from "./customizer-header";
 import { CustomizerSkeleton } from "./customizer-skeletons";
 import { DynamicCustomizerPanel } from "./dynamic-customizer-panel";
@@ -88,8 +89,16 @@ export function CustomizerBundleType() {
         handleReset,
     } = useCustomizerPage();
 
-    const { activeLayout } = useCustomizerStore();
+    const { activeLayout, customizerSource } = useCustomizerStore();
     const activeBundleType = (activeId || "FIXED_BUNDLE") as PreviewTemplateId;
+
+    const searchParams = useSearchParams();
+    const bundleTypeParam = searchParams.get("bundleType");
+
+    const availableTypes =
+        customizerSource === "bundle-preview" && bundleTypeParam
+            ? [bundleTypeParam as PreviewTemplateId]
+            : undefined;
 
     const t = useTranslations("Settings.Customizer");
     const tConfig = useTranslations("Settings.Customizer.Config");
@@ -154,6 +163,7 @@ export function CustomizerBundleType() {
                                     <CustomizerHeader
                                         activeBundleType={activeId}
                                         onBundleTypeChangeAction={setActiveId}
+                                        availableTypes={availableTypes}
                                     />
                                 </div>
                                 <PreviewShell

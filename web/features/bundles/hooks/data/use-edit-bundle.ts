@@ -141,7 +141,17 @@ export function useEditBundle(bundleId: string) {
                     const shopifyProduct = productNodes.find(
                         (p) => p.id === bp.id,
                     );
-                    const firstVariant = shopifyProduct?.variants?.nodes?.[0];
+                    const allVariants = shopifyProduct?.variants?.nodes || [];
+                    const firstVariant = allVariants[0];
+
+                    const selectedVariantId = bp.selectedVariant?.id;
+                    const selectedVariant = selectedVariantId
+                        ? allVariants.find(
+                              (v: any) => v.id === selectedVariantId,
+                          )
+                        : null;
+
+                    const activeVariant = selectedVariant || firstVariant;
                     const role = bp.role || "INCLUDED";
                     const isReward = role === "REWARD";
 
@@ -149,26 +159,46 @@ export function useEditBundle(bundleId: string) {
                         id: isReward ? `reward-${bp.id}` : `product-${bp.id}`,
                         productId: bp.id,
                         variantIds: bp.variantIds || [],
+                        variantId: selectedVariantId || firstVariant?.id || "",
                         quantity: bp.quantity || 1,
                         type: "product" as const,
                         title: shopifyProduct?.title || `Product ${index + 1}`,
                         url: shopifyProduct?.handle
                             ? `/products/${shopifyProduct.handle}`
                             : "",
-                        price: firstVariant?.price || "0.00",
-                        compareAtPrice: firstVariant?.compareAtPrice || null,
-                        image: shopifyProduct?.featuredMedia?.image?.url || "",
-                        sku: firstVariant?.sku || "",
+                        price: activeVariant?.price || "0.00",
+                        compareAtPrice: activeVariant?.compareAtPrice || null,
+                        image:
+                            selectedVariant?.image?.url ||
+                            shopifyProduct?.featuredMedia?.image?.url ||
+                            "",
+                        sku: activeVariant?.sku || "",
                         handle: shopifyProduct?.handle || "",
                         vendor: shopifyProduct?.vendor || "",
                         productType: shopifyProduct?.productType || "",
-                        totalVariants:
-                            shopifyProduct?.variants?.nodes?.length || 1,
+                        totalVariants: allVariants.length || 1,
                         displayOrder: bp.displayOrder || index,
                         isRequired: bp.isRequired !== false,
-                        inventoryQuantity: firstVariant?.inventoryQuantity || 0,
+                        inventoryQuantity:
+                            activeVariant?.inventoryQuantity || 0,
                         availableForSale:
-                            firstVariant?.availableForSale || false,
+                            activeVariant?.availableForSale || false,
+                        selectedVariant: selectedVariant
+                            ? {
+                                  id: selectedVariant.id,
+                                  title: selectedVariant.title || "",
+                                  price: selectedVariant.price || "0.00",
+                                  compareAtPrice:
+                                      selectedVariant.compareAtPrice || null,
+                                  image: selectedVariant.image || null,
+                                  availableForSale:
+                                      selectedVariant.availableForSale || false,
+                                  sku: selectedVariant.sku || "",
+                                  inventoryQuantity:
+                                      selectedVariant.inventoryQuantity || 0,
+                                  productId: bp.id,
+                              }
+                            : undefined,
                         role,
                     };
                 },

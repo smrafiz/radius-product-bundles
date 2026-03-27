@@ -51,6 +51,38 @@ export function useCustomizerPage() {
         | "tablet"
         | "mobile"
         | null;
+    const sourceParam = searchParams.get("source") as
+        | "settings"
+        | "bundle-preview"
+        | null;
+
+    const { setCustomizerSource, setPreviewProducts } = useCustomizerStore();
+    const productsParam = searchParams.get("products");
+
+    useEffect(() => {
+        if (sourceParam) {
+            setCustomizerSource(sourceParam);
+        }
+
+        // Read products from URL param
+        if (productsParam) {
+            try {
+                const products = JSON.parse(decodeURIComponent(productsParam));
+                if (Array.isArray(products) && products.length > 0) {
+                    setPreviewProducts(products);
+                    setCustomizerSource("bundle-preview");
+                } else {
+                    setPreviewProducts([]);
+                }
+            } catch (e) {
+                console.error("Failed to parse products param:", e);
+                setPreviewProducts([]);
+            }
+        } else {
+            setPreviewProducts([]);
+        }
+    }, [sourceParam, productsParam, setCustomizerSource, setPreviewProducts]);
+
     const initialType =
         types.find((t) => t.id === bundleTypeParam)?.id ?? types[0].id;
     const [resetCounter, setResetCounter] = useState(0);

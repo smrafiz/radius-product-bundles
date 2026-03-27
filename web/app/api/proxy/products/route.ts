@@ -250,10 +250,16 @@ export async function GET(request: NextRequest) {
                     }
                 }
 
+                const variantTitle = selectedVariant?.title;
+                const isDefaultVariant =
+                    variantTitle === "Default Title" ||
+                    variantTitle === "Default" ||
+                    !variantTitle;
+
                 return {
                     id: bp.productId,
                     variantId: selectedVariantId,
-                    variantTitle: selectedVariant?.title || "",
+                    variantTitle: isDefaultVariant ? "" : variantTitle || "",
                     quantity: bp.quantity,
                     role: bp.role,
                     displayOrder: bp.displayOrder,

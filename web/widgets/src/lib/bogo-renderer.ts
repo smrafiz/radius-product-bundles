@@ -113,9 +113,14 @@ export function renderBxgyProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
-        const variantPart = product.variantTitle
-            ? ` / ${escapeHtml(product.variantTitle)}`
-            : "";
+        const isDefaultVariant =
+            product.variantTitle === "Default Title" ||
+            product.variantTitle === "Default" ||
+            !product.variantTitle;
+        const variantPart =
+            product.variantTitle && !isDefaultVariant
+                ? ` / ${escapeHtml(product.variantTitle)}`
+                : "";
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="radius-bundle__product-title">${escapeHtml(product.title)}${variantPart}</h3>`;
@@ -254,9 +259,14 @@ export function renderClassicCardProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
-        const variantPart = product.variantTitle
-            ? ` / ${escapeHtml(product.variantTitle)}`
-            : "";
+        const isDefaultVariant =
+            product.variantTitle === "Default Title" ||
+            product.variantTitle === "Default" ||
+            !product.variantTitle;
+        const variantPart =
+            product.variantTitle && !isDefaultVariant
+                ? ` / ${escapeHtml(product.variantTitle)}`
+                : "";
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-classic__title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-classic__title">${escapeHtml(product.title)}${variantPart}</h3>`;
@@ -451,9 +461,14 @@ export function renderBogoSleekProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
-        const variantPart = product.variantTitle
-            ? ` / ${escapeHtml(product.variantTitle)}`
-            : "";
+        const isDefaultVariant =
+            product.variantTitle === "Default Title" ||
+            product.variantTitle === "Default" ||
+            !product.variantTitle;
+        const variantPart =
+            product.variantTitle && !isDefaultVariant
+                ? ` / ${escapeHtml(product.variantTitle)}`
+                : "";
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-sleek__title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-sleek__title">${escapeHtml(product.title)}${variantPart}</h3>`;
@@ -626,9 +641,14 @@ export function renderBogoMinimalistProducts(
         const productUrl = p.handle
             ? getLocalePath(`/products/${p.handle}`)
             : "#";
-        const variantPart = p.variantTitle
-            ? ` / ${escapeHtml(p.variantTitle)}`
-            : "";
+        const isDefaultVariantP =
+            p.variantTitle === "Default Title" ||
+            p.variantTitle === "Default" ||
+            !p.variantTitle;
+        const variantPart =
+            p.variantTitle && !isDefaultVariantP
+                ? ` / ${escapeHtml(p.variantTitle)}`
+                : "";
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-minimalist__item-title"><a href="${productUrl}">${escapeHtml(p.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-minimalist__item-title">${escapeHtml(p.title)}${variantPart}</h3>`;
@@ -776,9 +796,14 @@ export function renderBogoCompactGridProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
-        const variantPart = product.variantTitle
-            ? ` / ${escapeHtml(product.variantTitle)}`
-            : "";
+        const isDefaultVariant =
+            product.variantTitle === "Default Title" ||
+            product.variantTitle === "Default" ||
+            !product.variantTitle;
+        const variantPart =
+            product.variantTitle && !isDefaultVariant
+                ? ` / ${escapeHtml(product.variantTitle)}`
+                : "";
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-cg__tile-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-cg__tile-title">${escapeHtml(product.title)}${variantPart}</h3>`;
@@ -1350,9 +1375,14 @@ export function renderSplitDealProducts(
         const productUrl = product.handle
             ? getLocalePath(`/products/${product.handle}`)
             : "#";
-        const variantPart = product.variantTitle
-            ? ` / ${escapeHtml(product.variantTitle)}`
-            : "";
+        const isDefaultVariant =
+            product.variantTitle === "Default Title" ||
+            product.variantTitle === "Default" ||
+            !product.variantTitle;
+        const variantPart =
+            product.variantTitle && !isDefaultVariant
+                ? ` / ${escapeHtml(product.variantTitle)}`
+                : "";
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-split__product-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-split__product-title">${escapeHtml(product.title)}${variantPart}</h3>`;

@@ -10,6 +10,7 @@ import {
 } from "@/features/settings";
 import { WidgetProductCardProps } from "@/shared";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 export function WidgetProductCard({
     product,
@@ -41,9 +42,13 @@ export function WidgetProductCard({
             ? product.image
             : stablePlaceholder;
 
-    const fullTitle = product.variantTitle
-        ? `${product.title} / ${product.variantTitle}`
-        : product.title;
+    const isDefaultVariant =
+        product.variantTitle === "Default Title" ||
+        product.variantTitle === "Default";
+    const fullTitle =
+        product.variantTitle && !isDefaultVariant
+            ? `${product.title} / ${product.variantTitle}`
+            : product.title;
     const truncatedTitle =
         fullTitle.length > 40 ? `${fullTitle.slice(0, 40)}...` : fullTitle;
 
@@ -139,7 +144,7 @@ export function WidgetProductCard({
 
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
-            {labels?.quantityLabel || DEFAULT_LABELS.quantityLabel}{" "}
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
             {product.quantity}
         </div>
     );

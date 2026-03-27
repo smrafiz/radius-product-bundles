@@ -4,6 +4,7 @@ import {
     WidgetLayout,
 } from "@/features/settings";
 import { BundleType } from "@/features/bundles";
+import type { PreviewProduct } from "@/shared";
 
 export type SettingsStoreState = {
     serverData: AppSettingsFormData | null;
@@ -91,6 +92,10 @@ export interface CustomizerStoreState {
     activeBundleType: BundleType | null;
     activePreset: string | null;
 
+    // Preview products from bundle preview (when opened from bundle edit)
+    previewProducts: PreviewProduct[];
+    customizerSource: "settings" | "bundle-preview";
+
     initializeStyles: (styles: Partial<CustomizerStyles>) => void;
     initializeFromGlobalStyles: (
         globalStyles: Partial<CustomizerStyles> | null,
@@ -111,4 +116,6 @@ export interface CustomizerStoreState {
     getStyles: () => CustomizerStyles;
     getGlobalStyles: () => CustomizerStyles;
     markClean: () => void;
+    setPreviewProducts: (products: PreviewProduct[]) => void;
+    setCustomizerSource: (source: "settings" | "bundle-preview") => void;
 }

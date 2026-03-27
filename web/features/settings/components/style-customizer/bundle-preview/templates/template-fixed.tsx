@@ -7,7 +7,7 @@ import {
     WidgetGrid,
     WidgetList,
 } from "@/shared/components/bundle-widget";
-import { useEffectiveStyles } from "@/features/settings";
+import { useEffectiveStyles, usePreviewProducts } from "@/features/settings";
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import type { BundleTemplateProps } from "@/features/settings/types/template.types";
 import {
@@ -31,29 +31,22 @@ export function TemplateFixed({ activeLayout }: BundleTemplateProps) {
         ),
     };
 
-    const translatedTitle = tc("bundleProduct");
-    const translatedProducts = PLACEHOLDER_PRODUCTS.map((p) => ({
+    const maxCount =
+        activeLayout === "GRID" || activeLayout === "LIST"
+            ? 3
+            : activeLayout === "COMPACT"
+              ? 4
+              : undefined;
+
+    const translatedPlaceholders = PLACEHOLDER_PRODUCTS.map((p) => ({
         ...p,
-        title: translatedTitle,
+        title: tc("bundleProduct"),
     }));
 
-    let products: PreviewProduct[];
-
-    switch (activeLayout) {
-        case "GRID":
-        case "LIST":
-            products = translatedProducts.slice(0, 3);
-            break;
-
-        case "COMPACT":
-            products = translatedProducts.slice(0, 4);
-            break;
-
-        case "CAROUSEL":
-        default:
-            products = translatedProducts;
-            break;
-    }
+    const products = usePreviewProducts({
+        placeholderProducts: translatedPlaceholders,
+        maxCount,
+    });
 
     const layoutProps = {
         products,

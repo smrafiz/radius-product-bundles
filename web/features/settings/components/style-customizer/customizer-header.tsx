@@ -3,12 +3,16 @@
 import { useCustomizerStore } from "@/features/settings";
 import { BundleTypeTab } from "./bundle-type-tab";
 
+import type { PreviewTemplateId } from "@/features/settings";
+
 export function CustomizerHeader({
     activeBundleType,
     onBundleTypeChangeAction,
+    availableTypes,
 }: {
     activeBundleType: string;
     onBundleTypeChangeAction: (id: string) => void;
+    availableTypes?: PreviewTemplateId[];
 }) {
     const { activeDevice, setActiveDevice } = useCustomizerStore();
     const tone = activeDevice === "desktop" ? "info" : "auto";
@@ -25,6 +29,7 @@ export function CustomizerHeader({
                     <BundleTypeTab
                         activeId={activeBundleType}
                         onChangeAction={onBundleTypeChangeAction}
+                        availableTypes={availableTypes}
                     />
 
                     <s-button-group gap="none">

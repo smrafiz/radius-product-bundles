@@ -15,10 +15,11 @@ import {
     useEffectiveStyles,
     useSettingsStore,
 } from "@/features/settings";
+import { usePreviewProducts } from "@/features/settings/hooks/customizer/use-preview-products";
 import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 
-const BOGO_PRODUCTS: PreviewProduct[] = [
+const BOGO_PLACEHOLDERS: PreviewProduct[] = [
     {
         id: "trigger-1",
         title: "Trigger Product",
@@ -64,8 +65,12 @@ export function TemplateBogo({
         bogoRewardBadgeText: "50% Off",
     };
 
+    const products = usePreviewProducts({
+        placeholderProducts: BOGO_PLACEHOLDERS,
+    });
+
     const layoutProps = {
-        products: BOGO_PRODUCTS,
+        products,
         styles,
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
         showEmptyState: false,

@@ -6,6 +6,7 @@ import {
     WidgetLayout,
 } from "@/features/settings";
 import { BundleType } from "@/features/bundles";
+import { PreviewProduct } from "@/shared";
 import {
     DEFAULT_CUSTOMIZER_STYLES,
     STYLE_PRESETS,
@@ -34,6 +35,9 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             activeDevice: "desktop",
             activeBundleType: null as BundleType | null,
             activePreset: null,
+
+            previewProducts: [],
+            customizerSource: "settings",
 
             /**
              * Initializes styles from partial input.
@@ -284,6 +288,14 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 set({
                     originalStyles: deepClone(styles),
                 });
+            },
+
+            setPreviewProducts: (products: PreviewProduct[]) => {
+                set({ previewProducts: products });
+            },
+
+            setCustomizerSource: (source: "settings" | "bundle-preview") => {
+                set({ customizerSource: source });
             },
         }),
         { name: "customizer-store" },

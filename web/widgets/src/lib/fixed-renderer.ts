@@ -139,9 +139,14 @@ export function renderProductCard(
     const productUrl = product.handle
         ? getLocalePath(`/products/${product.handle}`)
         : "#";
-    const variantPart = product.variantTitle
-        ? ` / ${escapeHtml(product.variantTitle)}`
-        : "";
+    const isDefaultVariant =
+        product.variantTitle === "Default Title" ||
+        product.variantTitle === "Default" ||
+        !product.variantTitle;
+    const variantPart =
+        product.variantTitle && !isDefaultVariant
+            ? ` / ${escapeHtml(product.variantTitle)}`
+            : "";
     const productTitleHtml = ctx.enableHyperLink
         ? `<h3 class="radius-bundle__product-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
         : `<h3 class="radius-bundle__product-title">${escapeHtml(product.title)}${variantPart}</h3>`;
