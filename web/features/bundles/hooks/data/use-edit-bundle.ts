@@ -27,8 +27,13 @@ const isProductNode = (node: any): node is ProductNode => {
 
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
-    const { setDisplaySettings, setSelectedItems, setBundleData } =
+    const { setDisplaySettings, setSelectedItems, setBundleData, resetBundle } =
         useBundleStore();
+
+    // Reset store when bundleId changes to prevent data bleed from previous bundle
+    useEffect(() => {
+        resetBundle();
+    }, [bundleId, resetBundle]);
 
     // Bundle detail query
     const {

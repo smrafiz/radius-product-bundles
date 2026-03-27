@@ -238,6 +238,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
 
     return (
         <BundleFormProvider
+            key={bundleId}
             bundleType={bundleData.type}
             initialData={initialData}
         >

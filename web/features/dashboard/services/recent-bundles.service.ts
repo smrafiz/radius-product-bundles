@@ -5,6 +5,7 @@ import {
     getRecentActiveBundles,
     getAnalyticsForBundles,
 } from "@/features/dashboard/repositories/recent-bundles.repository";
+import { fetchProductsFromShopify } from "@/lib";
 
 export async function getRecentBundlesService({
     shop,
@@ -21,8 +22,22 @@ export async function getRecentBundlesService({
 
     const bundleIds = bundles.map((b) => b.id);
     const analyticsRaw = await getAnalyticsForBundles(bundleIds);
-
     const analyticsMap = new Map(analyticsRaw.map((a) => [a.bundleId, a._sum]));
+
+    // Get mainProductIds and fetch product data from Shopify
+    const mainProductIds = bundles
+        .filter((b) => b.mainProductId)
+        .map((b) => b.mainProductId!)
+        .filter(Boolean);
+
+    let productMap: Map<string, any> = new Map();
+    if (mainProductIds.length > 0) {
+        const productData = await fetchProductsFromShopify(
+            shop,
+            mainProductIds,
+        );
+        productMap = productData.productMap;
+    }
 
     return bundles.map((b) => {
         const stats = analyticsMap.get(b.id);
@@ -30,6 +45,13 @@ export async function getRecentBundlesService({
         const purchases = stats?.bundlePurchases ?? 0;
         const revenue = Number(stats?.bundleRevenue ?? 0);
         const addToCarts = stats?.bundleAddToCarts ?? 0;
+
+        // Get main product featured image as primary, fallback to bundle images
+        const mainProduct = b.mainProductId
+            ? productMap.get(b.mainProductId)
+            : null;
+        const mainProductImage = mainProduct?.featuredImage;
+        const displayImage = mainProductImage || b.images?.[0];
 
         return {
             bundleId: b.id,
@@ -39,7 +61,7 @@ export async function getRecentBundlesService({
             discountType: b.discountType,
             discountValue: b.discountValue ? Number(b.discountValue) : null,
             createdAt: b.createdAt,
-            images: b.images,
+            images: displayImage ? [displayImage] : b.images,
             revenue,
             purchases,
             views,

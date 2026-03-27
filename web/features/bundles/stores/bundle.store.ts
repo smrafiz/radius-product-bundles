@@ -709,6 +709,7 @@ export const useBundleStore = create(
                 state.pendingMedia = [];
                 state.existingMedia = [];
                 state.removedMediaIds = [];
+                state.selectedProductMediaUrls = [];
                 state.displaySettings = {
                     ...initialDisplaySettings,
                     layout: getDefaultLayout(bundleType),

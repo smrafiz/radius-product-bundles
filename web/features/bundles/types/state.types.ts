@@ -175,6 +175,8 @@ export interface BundleState {
     clearExistingMedia: (file: File) => void;
     removeExistingMedia: (id: string) => void;
 
+    selectedProductMediaUrls: string[];
+
     removedMediaIds: string[];
     clearRemovedMediaIds: () => void;
     getRemovedMediaIds: () => string[];

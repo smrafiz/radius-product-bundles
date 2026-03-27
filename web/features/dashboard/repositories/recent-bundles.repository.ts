@@ -19,6 +19,7 @@ export async function getRecentActiveBundles(shop: string, limit: number) {
             discountValue: true,
             createdAt: true,
             images: true,
+            mainProductId: true,
         },
     });
 }
