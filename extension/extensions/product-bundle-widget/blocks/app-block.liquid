@@ -220,7 +220,12 @@
 				{% assign image_position = g_type_overrides.imagePosition | default: g_styles.imagePosition | default: 'left' %}
 
 				{% if product_card_bg == blank %}
-					{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg | default: '#f9fafb' %}
+					{% assign customize_card_style = g_type_overrides.customizeCardStyle | default: g_styles.customizeCardStyle %}
+					{% if customize_card_style == true or customize_card_style == 'true' %}
+						{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg | default: '#f9fafb' %}
+					{% else %}
+						{% assign product_card_bg = background_color %}
+					{% endif %}
 				{% endif %}
 
 				{% assign product_card_border = true %}
