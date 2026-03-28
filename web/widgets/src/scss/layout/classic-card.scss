@@ -106,6 +106,24 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: var(--rb-gap-spacing, 12px);
+
+        // When slider is present, add bottom space for dots
+        &:has(.rb-cg__dots) {
+            padding-bottom: 20px;
+            position: relative;
+
+            .rb-cg__dots {
+                position: absolute;
+                bottom: 0;
+                inset-inline-start: 0;
+                inset-inline-end: 0;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                gap: 5px;
+                padding: 4px 0;
+            }
+        }
     }
 
     // ── Individual product (inside a group card) ────────────────────

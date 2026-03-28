@@ -10,6 +10,7 @@ export async function uploadFileToStagedUrl(
         resourceUrl: string;
         parameters: Array<{ name: string; value: string }>;
     },
+    sessionToken: string,
 ): Promise<string> {
     const formData = new FormData();
     formData.append("file", file);
@@ -19,13 +20,11 @@ export async function uploadFileToStagedUrl(
         formData.append("params", JSON.stringify(stagedTarget.parameters));
     }
 
-    console.log(
-        `[Upload] ${file.name} to ${stagedTarget.url.substring(0, 60)}...`,
-    );
-    console.log(`[Upload] Params:`, stagedTarget.parameters);
-
     const response = await fetch("/api/upload", {
         method: "POST",
+        headers: {
+            Authorization: `Bearer ${sessionToken}`,
+        },
         body: formData,
     });
 
@@ -51,6 +50,7 @@ export async function uploadFilesToShopify(
         resourceUrl: string;
         parameters: Array<{ name: string; value: string }>;
     }>,
+    sessionToken: string,
 ): Promise<string[]> {
     const resourceUrls: string[] = [];
 
@@ -59,12 +59,14 @@ export async function uploadFilesToShopify(
         const stagedTarget = stagedTargets[i];
 
         try {
-            console.log(`Uploading ${i + 1}/${files.length}: ${file.name}...`);
-            const resourceUrl = await uploadFileToStagedUrl(file, stagedTarget);
+            const resourceUrl = await uploadFileToStagedUrl(
+                file,
+                stagedTarget,
+                sessionToken,
+            );
             resourceUrls.push(resourceUrl);
-            console.log(`✅ Uploaded: ${file.name}`);
         } catch (error) {
-            console.error(`❌ Failed to upload ${file.name}:`, error);
+            console.error(`Failed to upload ${file.name}:`, error);
         }
     }
 

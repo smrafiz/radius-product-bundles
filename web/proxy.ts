@@ -11,16 +11,6 @@ export default function proxy(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
     const locale = searchParams.get("locale");
 
-    // Paths to skip completely - don't even detect shop
-    const skipCompletely = [
-        "/api/upload", // File upload - must not read body
-    ];
-
-    // Skip completely for the upload route
-    if (skipCompletely.some((p) => pathname.startsWith(p))) {
-        return NextResponse.next();
-    }
-
     // Paths to skip for performance because headers are unnecessary
     const skipPaths = [
         "/api/",

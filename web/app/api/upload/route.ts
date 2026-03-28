@@ -1,28 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
+import { handleSessionToken } from "@/lib/shopify";
+import { extractBearerToken } from "@/shared";
 
-/**
- * Proxy file uploads to Shopify's staged URLs
- */
-export async function POST(request: NextRequest) {
-    const origin = request.headers.get("origin") ?? "";
-    const allowedOrigins = [
-        "https://admin.shopify.com",
-        "https://extensions.shopifycdn.com",
-    ];
-    const corsHeaders = {
-        "Access-Control-Allow-Origin": allowedOrigins.includes(origin)
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+const ALLOWED_UPLOAD_HOSTS = [
+    "storage.googleapis.com",
+    "storage.shopifycdn.com",
+    "shopify-staged-uploads.storage.googleapis.com",
+];
+
+const ALLOWED_ORIGINS = [
+    "https://admin.shopify.com",
+    "https://extensions.shopifycdn.com",
+];
+
+function getCorsHeaders(origin: string) {
+    return {
+        "Access-Control-Allow-Origin": ALLOWED_ORIGINS.includes(origin)
             ? origin
             : "https://admin.shopify.com",
     };
+}
+
+function isAllowedUploadUrl(url: string): boolean {
+    try {
+        const parsed = new URL(url);
+        return ALLOWED_UPLOAD_HOSTS.some(
+            (host) =>
+                parsed.hostname === host ||
+                parsed.hostname.endsWith(`.${host}`),
+        );
+    } catch {
+        return false;
+    }
+}
+
+export async function POST(request: NextRequest) {
+    const origin = request.headers.get("origin") ?? "";
+    const corsHeaders = getCorsHeaders(origin);
 
     try {
-        const formData = await request.formData();
+        const authHeader = request.headers.get("authorization");
+        const sessionToken = extractBearerToken(authHeader);
 
+        if (!sessionToken) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401, headers: corsHeaders },
+            );
+        }
+
+        await handleSessionToken(sessionToken);
+
+        const formData = await request.formData();
         const file = formData.get("file") as File | null;
         const uploadUrl = formData.get("uploadUrl") as string | null;
         const paramsJson = formData.get("params") as string | null;
-
-        console.log("[Upload API] File:", file?.name, "Size:", file?.size);
 
         if (!file || !uploadUrl) {
             return NextResponse.json(
@@ -31,7 +65,13 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const MAX_FILE_SIZE = 20 * 1024 * 1024;
+        if (!isAllowedUploadUrl(uploadUrl)) {
+            return NextResponse.json(
+                { error: "Invalid upload destination" },
+                { status: 400, headers: corsHeaders },
+            );
+        }
+
         if (file.size > MAX_FILE_SIZE) {
             return NextResponse.json(
                 { error: "File too large. Maximum size is 20MB." },
@@ -42,7 +82,6 @@ export async function POST(request: NextRequest) {
         const fileArrayBuffer = await file.arrayBuffer();
         const fileBuffer = Buffer.from(fileArrayBuffer);
 
-        // Check if the URL has signed parameters (PUT method for images)
         const isPutMethod =
             uploadUrl.includes("X-Goog-Algorithm") &&
             uploadUrl.includes("X-Goog-Signature");
@@ -50,8 +89,6 @@ export async function POST(request: NextRequest) {
         let response: Response;
 
         if (isPutMethod) {
-            console.log("[Upload API] Using PUT method (signed URL)...");
-
             response = await fetch(uploadUrl, {
                 method: "PUT",
                 headers: {
@@ -60,15 +97,13 @@ export async function POST(request: NextRequest) {
                 body: fileBuffer,
             });
         } else {
-            console.log("[Upload API] Using POST method with FormData...");
-
             let params: Array<{ name: string; value: string }> = [];
             if (paramsJson) {
                 try {
                     const parsed = JSON.parse(paramsJson);
                     if (!Array.isArray(parsed)) {
                         return NextResponse.json(
-                            { error: "Invalid params format: expected array" },
+                            { error: "Invalid params format" },
                             { status: 400, headers: corsHeaders },
                         );
                     }
@@ -82,7 +117,6 @@ export async function POST(request: NextRequest) {
             }
 
             const shopifyFormData = new FormData();
-
             params.forEach((param) => {
                 shopifyFormData.append(param.name, param.value);
             });
@@ -96,38 +130,27 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        console.log("[Upload API] Response status:", response.status);
-
         if (!response.ok) {
             let errorText;
-
             try {
                 errorText = await response.text();
             } catch {
                 errorText = "Could not read error response";
             }
 
-            console.error(
-                "[Upload API] Error:",
-                response.status,
-                errorText.substring(0, 500),
-            );
+            console.error("[Upload] Failed:", response.status);
 
             return NextResponse.json(
-                {
-                    error: `Upload failed: ${response.status}`,
-                    details: errorText.substring(0, 200),
-                },
+                { error: `Upload failed: ${response.status}` },
                 { status: 502, headers: corsHeaders },
             );
         }
 
-        console.log("[Upload API] ✅ Success");
         return NextResponse.json({ success: true }, { headers: corsHeaders });
     } catch (error) {
-        console.error("[Upload API] Error:", error);
+        console.error("[Upload] Error:", error);
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Upload failed" },
+            { error: "Upload failed" },
             { status: 500, headers: corsHeaders },
         );
     }

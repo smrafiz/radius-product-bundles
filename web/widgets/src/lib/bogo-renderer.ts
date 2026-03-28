@@ -321,29 +321,43 @@ export function renderClassicCardProducts(
     if (ctx.showSavingsBadge) {
         html += `<span class="rb-classic__badge rb-classic__badge--trigger${outlineClass}">${escapeHtml(triggerBadge)}</span>`;
     }
-    const triggerCols =
-        triggers.length > 1
-            ? `grid-template-columns:repeat(${triggers.length},1fr)`
-            : "";
-    html += `<div class="rb-classic__group-products"${triggerCols ? ` style="${triggerCols}"` : ""}>`;
-    triggers.forEach((p) => {
-        html += renderProduct(p, false);
-    });
-    html += `</div></div>`;
+    const renderGroupProducts = (
+        products: BundleProduct[],
+        isReward: boolean,
+    ): string => {
+        if (products.length <= 1) {
+            let h = `<div class="rb-classic__group-products">`;
+            products.forEach((p) => {
+                h += renderProduct(p, isReward);
+            });
+            return h + `</div>`;
+        }
+        let h = `<div class="rb-classic__group-products" style="overflow:hidden">`;
+        h += `<div class="rb-cg__slider" data-cg-slider>`;
+        products.forEach((p) => {
+            h +=
+                `<div class="rb-cg__slide" style="min-width:100%;grid-template-columns:1fr">` +
+                renderProduct(p, isReward) +
+                `</div>`;
+        });
+        h += `</div>`;
+        h += `<div class="rb-cg__dots">`;
+        products.forEach((_, i) => {
+            h += `<button class="rb-cg__dot${i === 0 ? " rb-cg__dot--active" : ""}" data-cg-dot="${i}"></button>`;
+        });
+        h += `</div></div>`;
+        return h;
+    };
+
+    html += renderGroupProducts(triggers, false);
+    html += `</div>`;
 
     html += `<div class="rb-classic__card rb-classic__card--reward">`;
     if (ctx.showSavingsBadge) {
         html += `<span class="rb-classic__badge rb-classic__badge--reward${outlineClass}">${escapeHtml(rewardBadge)}</span>`;
     }
-    const rewardCols =
-        rewards.length > 1
-            ? `grid-template-columns:repeat(${rewards.length},1fr)`
-            : "";
-    html += `<div class="rb-classic__group-products"${rewardCols ? ` style="${rewardCols}"` : ""}>`;
-    rewards.forEach((p) => {
-        html += renderProduct(p, true);
-    });
-    html += `</div></div>`;
+    html += renderGroupProducts(rewards, true);
+    html += `</div>`;
     html += `</div>`;
 
     const totalOriginal = [...triggers, ...rewards].reduce(
@@ -382,6 +396,7 @@ export function renderClassicCardProducts(
         container.appendChild(actionsEl);
     }
     enableCartButton(ctx.container);
+    initCgSliders(container);
 }
 
 export function renderBogoSleekProducts(
@@ -698,6 +713,84 @@ export function renderBogoMinimalistProducts(
     enableCartButton(ctx.container);
 }
 
+function initCgSliders(container: Element): void {
+    container
+        .querySelectorAll<HTMLElement>("[data-cg-slider]")
+        .forEach((slider) => {
+            const group = slider.parentElement;
+            if (!group) return;
+            const dots =
+                group.querySelectorAll<HTMLButtonElement>("[data-cg-dot]");
+            const pageCount = slider.children.length;
+            let current = 0;
+
+            const sw = () => group.offsetWidth;
+
+            const goTo = (idx: number) => {
+                current = Math.max(0, Math.min(idx, pageCount - 1));
+                slider.style.transition = "transform 0.3s ease";
+                slider.style.transform = `translateX(-${current * sw()}px)`;
+                dots.forEach((d) => d.classList.remove("rb-cg__dot--active"));
+                dots[current]?.classList.add("rb-cg__dot--active");
+            };
+
+            dots.forEach((dot) => {
+                dot.addEventListener("click", () =>
+                    goTo(Number(dot.dataset.cgDot || 0)),
+                );
+            });
+
+            let startX = 0;
+            let dragging = false;
+
+            const onStart = (x: number) => {
+                startX = x;
+                dragging = true;
+                slider.style.transition = "none";
+                slider.classList.add("rb-cg__slider--dragging");
+            };
+            const onMove = (x: number) => {
+                if (!dragging) return;
+                const dx = x - startX;
+                slider.style.transform = `translateX(${-current * sw() + dx}px)`;
+            };
+            const onEnd = (x: number) => {
+                if (!dragging) return;
+                dragging = false;
+                slider.classList.remove("rb-cg__slider--dragging");
+                const dx = x - startX;
+                const threshold = sw() * 0.2;
+                if (dx < -threshold && current < pageCount - 1)
+                    goTo(current + 1);
+                else if (dx > threshold && current > 0) goTo(current - 1);
+                else goTo(current);
+            };
+
+            slider.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                onStart(e.clientX);
+            });
+            slider.addEventListener("mousemove", (e) => onMove(e.clientX));
+            slider.addEventListener("mouseup", (e) => onEnd(e.clientX));
+            slider.addEventListener("mouseleave", () => {
+                if (dragging) onEnd(startX);
+            });
+            slider.addEventListener(
+                "touchstart",
+                (e) => onStart(e.touches[0].clientX),
+                { passive: true },
+            );
+            slider.addEventListener(
+                "touchmove",
+                (e) => onMove(e.touches[0].clientX),
+                { passive: true },
+            );
+            slider.addEventListener("touchend", (e) =>
+                onEnd(e.changedTouches[0].clientX),
+            );
+        });
+}
+
 export function renderBogoCompactGridProducts(
     bundle: Bundle,
     container: Element,
@@ -869,14 +962,13 @@ export function renderBogoCompactGridProducts(
         return g;
     };
 
-    const singleEach = triggers.length <= 1 && rewards.length <= 1;
     html += `<div class="rb-cg__tiles">`;
     html += renderSliderGroup(
         triggers,
         false,
         "rb-cg__tile-group--trigger",
-        2,
-        singleEach ? 1 : 2,
+        1,
+        1,
     );
     html += `<div class="rb-cg__connector">+</div>`;
     html += renderSliderGroup(rewards, true, "rb-cg__tile-group--reward", 1, 1);
@@ -906,82 +998,7 @@ export function renderBogoCompactGridProducts(
         footerEl.appendChild(actionsEl);
     }
     enableCartButton(ctx.container);
-
-    container
-        .querySelectorAll<HTMLElement>("[data-cg-slider]")
-        .forEach((slider) => {
-            const group = slider.parentElement;
-            if (!group) return;
-            const dots =
-                group.querySelectorAll<HTMLButtonElement>("[data-cg-dot]");
-            const pageCount = slider.children.length;
-            let current = 0;
-
-            const sw = () => group.offsetWidth;
-
-            const goTo = (idx: number) => {
-                current = Math.max(0, Math.min(idx, pageCount - 1));
-                slider.style.transition = "transform 0.3s ease";
-                slider.style.transform = `translateX(-${current * sw()}px)`;
-                dots.forEach((d) => d.classList.remove("rb-cg__dot--active"));
-                dots[current]?.classList.add("rb-cg__dot--active");
-            };
-
-            dots.forEach((dot) => {
-                dot.addEventListener("click", () =>
-                    goTo(Number(dot.dataset.cgDot || 0)),
-                );
-            });
-
-            let startX = 0;
-            let dragging = false;
-
-            const onStart = (x: number) => {
-                startX = x;
-                dragging = true;
-                slider.style.transition = "none";
-                slider.classList.add("rb-cg__slider--dragging");
-            };
-            const onMove = (x: number) => {
-                if (!dragging) return;
-                const dx = x - startX;
-                slider.style.transform = `translateX(${-current * sw() + dx}px)`;
-            };
-            const onEnd = (x: number) => {
-                if (!dragging) return;
-                dragging = false;
-                slider.classList.remove("rb-cg__slider--dragging");
-                const dx = x - startX;
-                const threshold = sw() * 0.2;
-                if (dx < -threshold && current < pageCount - 1)
-                    goTo(current + 1);
-                else if (dx > threshold && current > 0) goTo(current - 1);
-                else goTo(current);
-            };
-
-            slider.addEventListener("mousedown", (e) => {
-                e.preventDefault();
-                onStart(e.clientX);
-            });
-            slider.addEventListener("mousemove", (e) => onMove(e.clientX));
-            slider.addEventListener("mouseup", (e) => onEnd(e.clientX));
-            slider.addEventListener("mouseleave", () => {
-                if (dragging) onEnd(startX);
-            });
-            slider.addEventListener(
-                "touchstart",
-                (e) => onStart(e.touches[0].clientX),
-                { passive: true },
-            );
-            slider.addEventListener(
-                "touchmove",
-                (e) => onMove(e.touches[0].clientX),
-                { passive: true },
-            );
-            slider.addEventListener("touchend", (e) =>
-                onEnd(e.changedTouches[0].clientX),
-            );
-        });
+    initCgSliders(container);
 }
 
 export function renderBogoChecklistProducts(

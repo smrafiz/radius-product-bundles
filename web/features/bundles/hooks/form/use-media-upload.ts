@@ -56,8 +56,6 @@ export function useMediaUpload() {
                 `✅ Got ${stagedResult.stagedTargets.length} staged URLs`,
             );
 
-            // Upload files to staged URLs
-            console.log("Uploading files to Shopify...");
             const resourceUrls = await uploadFilesToShopify(
                 files,
                 stagedResult.stagedTargets.map((target) => ({
@@ -68,6 +66,7 @@ export function useMediaUpload() {
                         value: param.value,
                     })),
                 })),
+                sessionToken,
             );
 
             if (resourceUrls.length === 0) {
