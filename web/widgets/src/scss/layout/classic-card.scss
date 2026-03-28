@@ -80,6 +80,9 @@
 
         &--reward {
             border-color: var(--rb-savings-color, #16a34a);
+            .rb-cg__dot--active {
+                background: var(--rb-savings-color, #16a34a);
+            }
         }
 
         &--horizontal {
