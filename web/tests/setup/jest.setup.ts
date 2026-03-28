@@ -21,6 +21,11 @@ jest.mock("@/features/bundles/repositories", () => ({}));
 jest.mock("@/features/bundles/api", () => ({}));
 jest.mock("@/features/bundles/services", () => ({}));
 jest.mock("@/features/bundles/actions", () => ({}));
+jest.mock("@/features/dashboard", () => ({}));
+jest.mock("@/features/bundles/hooks/form", () => ({}));
+jest.mock("@/features/bundles/hooks", () => ({}));
+jest.mock("@/features/bundles/stores", () => ({}));
+jest.mock("@/features/bundles/types", () => ({}));
 
 jest.mock("@/shared/repositories/prisma-connect", () => ({
     prisma: {},
@@ -28,6 +33,14 @@ jest.mock("@/shared/repositories/prisma-connect", () => ({
 
 jest.mock("@/lib/shopify/setup/ensure-setup", () => ({}));
 jest.mock("@/lib/shopify", () => ({}));
+
+jest.mock("@/shared/constants", () => ({}));
+jest.mock("@/shared/stores", () => ({}));
+jest.mock("@/shared/types", () => ({}));
+
+jest.mock("isomorphic-dompurify", () => ({
+    sanitize: (dirty: string) => dirty,
+}));
 
 jest.mock("zod", () => {
     const chainable = () => ({
@@ -53,26 +66,6 @@ jest.mock("zod", () => {
         nativeEnum: () => chainable(),
     };
 });
-
-jest.mock("@/features/dashboard", () => ({}));
-jest.mock("@/features/bundles/hooks/form", () => ({}));
-jest.mock("@/features/bundles/hooks", () => ({}));
-jest.mock("@/features/bundles/services", () => ({}));
-jest.mock("@/features/bundles/stores", () => ({}));
-jest.mock("@/features/bundles/types", () => ({}));
-jest.mock("@/features/bundles/components", () => ({}));
-jest.mock("@/features/settings/constants", () => ({
-    getDefaultValuesFromConfig: () => ({}),
-}));
-
-jest.mock("@/shared/constants", () => ({}));
-
-jest.mock("@/shared/stores", () => ({}));
-jest.mock("@/shared/types", () => ({}));
-
-jest.mock("isomorphic-dompurify", () => ({
-    sanitize: (dirty: string) => dirty,
-}));
 
 beforeEach(() => {
     resetPrismaMock();
