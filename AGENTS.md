@@ -2,6 +2,35 @@
 
 This file provides guidance for AI agents working with the Radius Product Bundles repository.
 
+## Safety & Guardrails (MANDATORY)
+
+**Read before ANY code changes:**
+
+1. **[Agent Guardrails](docs/AGENT_GUARDRAILS.md)** — Core safety protocols, Four Laws, forbidden actions
+2. **[Pre-Work Check](.guardrails/pre-work-check.md)** — Regression checklist, run before editing
+
+### The Four Laws of Agent Safety
+1. **Read Before Editing** — Never modify code without reading it first
+2. **Stay in Scope** — Only touch files explicitly authorized
+3. **Verify Before Committing** — Test all changes
+4. **Halt When Uncertain** — Ask instead of guessing
+
+### Pre-Work Commands
+```bash
+python scripts/regression_check.py --all      # Check for regressions
+python scripts/regression_check.py --staged    # Check staged changes only
+python scripts/log_failure.py --list           # List known bugs
+python scripts/log_failure.py --show FAIL-ID   # Show failure details
+python scripts/log_failure.py --resolve FAIL-ID # Mark resolved
+```
+
+### Halt Conditions — STOP and ask the user if:
+- Target file doesn't exist or has unexpected modifications
+- Any test fails after edit
+- Uncertain about ANY step
+- Test/production boundary is unclear
+- An operation has failed 3 times (Three Strikes Rule)
+
 ## Project Overview
 
 Embedded Shopify app for creating/managing product bundles. Built with Next.js 16 (App Router) + React 19, PostgreSQL + Prisma 7, Zustand state management, and Shopify Polaris UI. Includes a Rust WASM discount function and Liquid theme extension.

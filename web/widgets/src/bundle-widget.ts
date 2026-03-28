@@ -801,7 +801,7 @@ import {
 
             const quantities = this.bundleStructure.productQuantities;
             const roles = this.bundleStructure.productRoles;
-            const variantIdsMap = this.bundleStructure.productVariantIds || {};
+            const variantIdsList = this.bundleStructure.productVariantIds;
             return this.bundleStructure.productIds.map((productId, index) => {
                 const product = productMap.get(productId);
                 const rawRole = roles?.[index] || "INCLUDED";
@@ -813,9 +813,9 @@ import {
                         : "INCLUDED"
                 ) as BundleProduct["role"];
 
-                // Use variant from productVariantIds map, fallback to product's variantId
+                // Use variant from positional array (index-based), fallback to product's variantId
                 const variantId =
-                    variantIdsMap[productId] || product?.variantId || "";
+                    variantIdsList?.[index] || product?.variantId || "";
 
                 return {
                     id: productId,

@@ -451,12 +451,8 @@ function buildShopBundlesMetafieldValue(
             ? bundleProducts.map((bp) => bp.role || "INCLUDED")
             : undefined;
 
-        const productVariantIdsMap: Record<string, string> = {};
-        for (const bp of bundleProducts) {
-            if (bp.variantId) {
-                productVariantIdsMap[bp.productId] = bp.variantId;
-            }
-        }
+        const productVariantIdsList = bundleProducts.map((bp) => bp.variantId || null);
+        const hasVariants = productVariantIdsList.some((v) => v !== null);
 
         bundleMap[bundle.id] = {
             status: bundle.status,
@@ -480,10 +476,7 @@ function buildShopBundlesMetafieldValue(
             productCount: productIds.length,
             productIds: productIds,
             productQuantities: productQuantities,
-            productVariantIds:
-                Object.keys(productVariantIdsMap).length > 0
-                    ? productVariantIdsMap
-                    : null,
+            productVariantIds: hasVariants ? productVariantIdsList : null,
             layout: bundle.settings?.layout || "list",
             buttonText: bundle.settings?.cartButtonText || "",
             showSavings: bundle.settings?.showSavings ?? true,
@@ -522,7 +515,7 @@ function buildDiscountBundlesMetafieldValue(
         const bundleProducts = bundle.bundleProducts || [];
         const productQuantityMap: Record<string, number> = {};
         for (const bp of bundleProducts) {
-            productQuantityMap[bp.productId] = bp.quantity;
+            productQuantityMap[bp.productId] = (productQuantityMap[bp.productId] || 0) + bp.quantity;
         }
 
         const isBxgy = bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
@@ -545,12 +538,28 @@ function buildDiscountBundlesMetafieldValue(
               })()
             : null;
 
+        const discountProductIdCounts: Record<string, number> = {};
+        for (const bp of bundleProducts) {
+            discountProductIdCounts[bp.productId] = (discountProductIdCounts[bp.productId] || 0) + 1;
+        }
         const productVariantIdsMap: Record<string, string> = {};
         for (const bp of bundleProducts) {
-            if (bp.variantId) {
+            if (bp.variantId && discountProductIdCounts[bp.productId] === 1) {
                 productVariantIdsMap[bp.productId] = bp.variantId;
             }
         }
+
+        // For same-product BOGO with different variants, build variantId → role map
+        // so the Rust function can classify cart lines by variant (not just productId).
+        const variantRolesMap: Record<string, string> = {};
+        if (isBxgy) {
+            for (const bp of bundleProducts) {
+                if (bp.variantId && discountProductIdCounts[bp.productId] > 1) {
+                    variantRolesMap[bp.variantId] = bp.role || "INCLUDED";
+                }
+            }
+        }
+        const hasVariantRoles = Object.keys(variantRolesMap).length > 0;
 
         bundleMap[bundle.id] = {
             status: bundle.status,
@@ -575,6 +584,7 @@ function buildDiscountBundlesMetafieldValue(
                 getQuantity: bundle.getQuantity || 1,
                 usesPerOrderLimit: bundle.usesPerOrderLimit || null,
                 productRoles: productRoleMap,
+                variantRoles: hasVariantRoles ? variantRolesMap : null,
             }),
         };
     }

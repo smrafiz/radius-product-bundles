@@ -306,9 +306,12 @@ export const useBundleStore = create(
 
         updateProductVariants: (productId, variants, position) => {
             set((state) => {
-                const otherItems = state.selectedItems.filter(
-                    (item) => item.productId !== productId,
-                );
+                const incomingRole = variants[0]?.role;
+                const otherItems = state.selectedItems.filter((item) => {
+                    if (item.productId !== productId) return true;
+                    if (incomingRole !== undefined) return item.role !== incomingRole;
+                    return false;
+                });
 
                 if (typeof position === "number") {
                     const result = [...otherItems];
@@ -565,10 +568,12 @@ export const useBundleStore = create(
             );
         },
 
-        getVariantInfo: (productId) => {
+        getVariantInfo: (productId, role) => {
             const state = get();
             const items = state.selectedItems.filter(
-                (item) => item.productId === productId,
+                (item) =>
+                    item.productId === productId &&
+                    (role === undefined || item.role === role),
             );
 
             const selectedCount = items.reduce(

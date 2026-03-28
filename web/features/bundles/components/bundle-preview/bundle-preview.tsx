@@ -419,6 +419,7 @@ export function BundlePreview() {
                 price: p.price,
                 quantity: p.quantity,
                 variantTitle: p.variantTitle,
+                ...(p.role && { role: p.role }),
             }));
             const productsParam = encodeURIComponent(
                 JSON.stringify(simplifiedProducts),

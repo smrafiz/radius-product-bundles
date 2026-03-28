@@ -192,7 +192,7 @@ export interface BundleState {
     getGroupedItems: () => ProductGroup[];
     getTotalProducts: () => number;
     getTotalItems: () => number;
-    getVariantInfo: (productId: string) => {
+    getVariantInfo: (productId: string, role?: string) => {
         selectedCount: number;
         originalTotal: number;
     };

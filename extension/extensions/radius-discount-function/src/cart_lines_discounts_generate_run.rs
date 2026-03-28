@@ -53,6 +53,7 @@ struct MetafieldBundleConfig {
     buy_quantity: Option<i32>,
     get_quantity: Option<i32>,
     product_roles: Option<HashMap<String, String>>,
+    variant_roles: Option<HashMap<String, String>>, // variantId -> role (for same-product different-variant BOGO)
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -120,6 +121,88 @@ struct BundleLineInfo<'a> {
     variant_id: Option<String>,
 }
 
+/// Shared helper: build a ProductDiscountCandidate from pre-computed targets and totals.
+fn build_bxgy_candidate(
+    bundle_settings: &MetafieldBundleConfig,
+    targets: Vec<ProductDiscountCandidateTarget>,
+    reward_total: f64,
+    total_reward_qty: i32,
+    bundle_name: &str,
+) -> Option<ProductDiscountCandidate> {
+    if targets.is_empty() {
+        return None;
+    }
+
+    if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
+
+    let (discount_amount, value) = match bundle_settings.discount_type.as_str() {
+        "PERCENTAGE" => {
+            let calculated = reward_total * bundle_settings.discount_value / 100.0;
+            (
+                calculated,
+                ProductDiscountCandidateValue::Percentage(Percentage {
+                    value: Decimal(bundle_settings.discount_value),
+                }),
+            )
+        }
+        "FIXED_AMOUNT" => {
+            let amount = bundle_settings.discount_value * total_reward_qty as f64;
+            (
+                amount,
+                ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+                    amount: Decimal(bundle_settings.discount_value),
+                    applies_to_each_item: Some(true),
+                }),
+            )
+        }
+        "CUSTOM_PRICE" => {
+            let deal_count = if total_reward_qty > 0 { total_reward_qty } else { 1 };
+            let custom_price_per_deal = bundle_settings.discount_value;
+            let total_custom_price = custom_price_per_deal * deal_count as f64;
+            let total_discount = (reward_total - total_custom_price).max(0.0);
+            if total_discount <= 0.0 {
+                return None;
+            }
+            (
+                total_discount,
+                ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+                    amount: Decimal(total_discount),
+                    applies_to_each_item: None,
+                }),
+            )
+        }
+        "NO_DISCOUNT" => return None,
+        _ => return None,
+    };
+
+    let final_value = if let Some(max_discount) = bundle_settings.max_discount_amount {
+        if max_discount > 0.0 && discount_amount > max_discount {
+            log!(
+                "[RadiusDiscount] Capping discount from {:.2} to {:.2} (max_discount_amount)",
+                discount_amount,
+                max_discount
+            );
+            ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+                amount: Decimal(max_discount),
+                applies_to_each_item: None,
+            })
+        } else {
+            value
+        }
+    } else {
+        value
+    };
+
+    Some(ProductDiscountCandidate {
+        targets,
+        message: Some(bundle_name.to_string()),
+        value: final_value,
+        associated_discount_code: None,
+    })
+}
+
 /// Calculate BXGY discount candidates for a bundle.
 /// Returns Some(candidate) if discount should apply, None to skip.
 fn calculate_bxgy_discount(
@@ -127,8 +210,94 @@ fn calculate_bxgy_discount(
     bundle_lines: &[BundleLineInfo],
     bundle_name: &str,
 ) -> Option<ProductDiscountCandidate> {
-    let roles = bundle_settings.product_roles.as_ref()?;
     let qty_map = bundle_settings.product_quantities.as_ref();
+    let variant_roles = bundle_settings.variant_roles.as_ref();
+
+    // BOGO quantities
+    let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
+    let get_qty = bundle_settings.get_quantity.unwrap_or(1);
+    let items_per_deal = buy_qty + get_qty;
+
+    if items_per_deal <= 0 || buy_qty <= 0 || get_qty <= 0 {
+        return None;
+    }
+
+    // When variant_roles is set, use variantId for TRIGGER/REWARD classification.
+    // This handles same-product BOGO with different variants (e.g., Buy Blue / Get Black).
+    if let Some(vr) = variant_roles {
+        let trigger_lines: Vec<&BundleLineInfo> = bundle_lines
+            .iter()
+            .filter(|bl| {
+                bl.variant_id
+                    .as_ref()
+                    .and_then(|vid| vr.get(vid))
+                    .map(|r| r == "TRIGGER")
+                    .unwrap_or(false)
+            })
+            .collect();
+        let reward_lines: Vec<&BundleLineInfo> = bundle_lines
+            .iter()
+            .filter(|bl| {
+                bl.variant_id
+                    .as_ref()
+                    .and_then(|vid| vr.get(vid))
+                    .map(|r| r == "REWARD")
+                    .unwrap_or(false)
+            })
+            .collect();
+
+        if reward_lines.is_empty() {
+            return None;
+        }
+
+        // Each variant is a separate cart line — count total qty per role
+        let total_trigger: i32 = trigger_lines.iter().map(|bl| *bl.line.quantity()).sum();
+        let total_reward: i32 = reward_lines.iter().map(|bl| *bl.line.quantity()).sum();
+        let deal_count = std::cmp::min(total_trigger / buy_qty, total_reward / get_qty);
+
+        if deal_count < 1 {
+            return None;
+        }
+
+        let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
+        let mut reward_total: f64 = 0.0;
+
+        for bl in &reward_lines {
+            let qty_to_discount = std::cmp::min(
+                match safe_mul(deal_count, get_qty) { Some(v) => v, None => continue },
+                *bl.line.quantity(),
+            );
+            if qty_to_discount <= 0 { continue; }
+            reward_total += bl.line.cost().amount_per_quantity().amount().0 * qty_to_discount as f64;
+            targets.push(ProductDiscountCandidateTarget::CartLine(CartLineTarget {
+                id: bl.line.id().clone(),
+                quantity: Some(qty_to_discount),
+            }));
+        }
+
+        if targets.is_empty() {
+            return None;
+        }
+
+        let total_reward_qty: i32 = reward_lines
+            .iter()
+            .map(|bl| std::cmp::min(
+                safe_mul(deal_count, get_qty).unwrap_or(0),
+                *bl.line.quantity(),
+            ))
+            .sum();
+
+        return build_bxgy_candidate(
+            bundle_settings,
+            targets,
+            reward_total,
+            total_reward_qty,
+            bundle_name,
+        );
+    }
+
+    // Standard path: classify by productId using product_roles
+    let roles = bundle_settings.product_roles.as_ref()?;
 
     // Separate trigger and reward lines
     let trigger_lines: Vec<&BundleLineInfo> = bundle_lines
@@ -173,15 +342,6 @@ fn calculate_bxgy_discount(
             .collect();
         trigger_product_ids == reward_product_ids
     };
-
-    // BOGO quantities (used for same-product per-line deal calculation)
-    let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
-    let get_qty = bundle_settings.get_quantity.unwrap_or(1);
-    let items_per_deal = buy_qty + get_qty;
-
-    if items_per_deal <= 0 || buy_qty <= 0 || get_qty <= 0 {
-        return None;
-    }
 
     // Calculate deal count
     let deal_count: i32 = if is_same_product {

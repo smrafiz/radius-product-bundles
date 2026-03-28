@@ -117,11 +117,15 @@ export function useProductPicker() {
 
             try {
                 const currentPosition = selectedItems.findIndex(
-                    (item) => item.productId === product.productId,
+                    (item) =>
+                        item.productId === product.productId &&
+                        item.role === product.role,
                 );
 
                 const currentItem = selectedItems.find(
-                    (item) => item.productId === product.productId,
+                    (item) =>
+                        item.productId === product.productId &&
+                        item.role === product.role,
                 );
                 const currentVariantIds = currentItem?.variantIds || [];
 
@@ -140,6 +144,9 @@ export function useProductPicker() {
                     multiple: false,
                     query: product.title,
                     selectionIds: selectionIds,
+                    filter: {
+                        variants: true,
+                    },
                 });
 
                 if (result?.[0]) {
@@ -151,6 +158,10 @@ export function useProductPicker() {
                             currentItem?.displayOrder ?? currentPosition,
                         isRequired: currentItem?.isRequired,
                     });
+                    normalizedItem.role = currentItem?.role;
+                    if (normalizedItem.role === "REWARD") {
+                        normalizedItem.id = `reward-${product.productId}`;
+                    }
 
                     updateProductVariants(
                         product.productId,

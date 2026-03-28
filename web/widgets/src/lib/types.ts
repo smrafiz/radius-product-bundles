@@ -48,7 +48,7 @@ export interface BundleStructure {
     discountedProductIds: string[];
     productCount: number;
     productIds: string[];
-    productVariantIds?: Record<string, string>;
+    productVariantIds?: (string | null)[] | null;
     productQuantities?: number[];
     mainProductId?: string;
     bundleType?: string;

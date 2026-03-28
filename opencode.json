@@ -1,6 +1,14 @@
 {
     "$schema": "https://opencode.ai/config.json",
     "plugin": ["oh-my-opencode@latest"],
+    "instructions": [
+        "docs/AGENT_GUARDRAILS.md",
+        ".guardrails/pre-work-check.md",
+        ".guardrails/prevention-rules/*.json",
+        "docs/standards/TEST_PRODUCTION_SEPARATION.md",
+        "docs/workflows/COMMIT_WORKFLOW.md",
+        "docs/workflows/ROLLBACK_PROCEDURES.md"
+    ],
     "agent": {
         "field": {
             "description": "Field agent powered by GitHub Copilot with Mission Control tracking. Use for tasks that need to be logged and tracked in the dashboard.",
@@ -144,7 +152,7 @@
                 "-y",
                 "@upstash/context7-mcp",
                 "--api-key",
-                "ctx7sk-c242fbc0-b0c2-4d41-b3ec-47e705076d75"
+                "{env:CONTEXT7_API_KEY}"
             ],
             "enabled": true
         }

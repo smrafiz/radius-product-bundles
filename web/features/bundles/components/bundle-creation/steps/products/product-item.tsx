@@ -70,7 +70,7 @@ export function ProductItem({
     const { editProductVariants } = useProductPicker();
 
     const { product, originalTotalVariants } = group;
-    const { selectedCount, originalTotal } = getVariantInfo(product.productId);
+    const { selectedCount, originalTotal } = getVariantInfo(product.productId, product.role);
     const isMultiVariant =
         product.totalVariants &&
         product.totalVariants > 1 &&
