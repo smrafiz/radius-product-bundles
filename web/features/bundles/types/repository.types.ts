@@ -14,7 +14,7 @@ export interface CreateBundleInput {
     description?: string | null;
     products?: Array<{
         productId: string;
-        variantId: string;
+        variantId?: string | null;
         quantity: number;
     }>;
     type: BundleType;

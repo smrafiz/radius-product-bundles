@@ -193,7 +193,7 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
             break;
         }
 
-        if (!/^gid:\/\/shopify\/ProductVariant\/\d+$/.test(product.variantId)) {
+        if (product.variantId && !/^gid:\/\/shopify\/ProductVariant\/\d+$/.test(product.variantId)) {
             errors.products = {
                 _errors: ["Invalid Shopify ProductVariant GID format"],
             };

@@ -124,7 +124,7 @@ export function createBundleSchema(v: T) {
                 .array(
                     z.object({
                         productId: productGidSchema,
-                        variantId: variantGidSchema,
+                        variantId: variantGidSchema.optional().nullable(),
                         quantity: z.number().int().min(1).max(1000),
                         role: z.enum([
                             "TRIGGER",

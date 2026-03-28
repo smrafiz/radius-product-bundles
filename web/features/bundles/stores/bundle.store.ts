@@ -197,7 +197,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = items.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -217,7 +217,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -235,7 +235,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -253,7 +253,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -269,7 +269,7 @@ export const useBundleStore = create(
                 );
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -293,7 +293,7 @@ export const useBundleStore = create(
                     state.bundleData.products = state.selectedItems.map(
                         (item) => ({
                             productId: item.productId,
-                            variantId: item.variantId || "",
+                            variantId: item.variantId || null,
                             quantity: item.quantity,
                             role: item.role || "INCLUDED",
                         }),
@@ -321,7 +321,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -372,7 +372,7 @@ export const useBundleStore = create(
                     state.bundleData.products = state.selectedItems.map(
                         (item) => ({
                             productId: item.productId,
-                            variantId: item.variantId || "",
+                            variantId: item.variantId || null,
                             quantity: item.quantity,
                             role: item.role || "INCLUDED",
                         }),
@@ -590,7 +590,7 @@ export const useBundleStore = create(
                 });
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -607,7 +607,7 @@ export const useBundleStore = create(
                 }
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -653,7 +653,7 @@ export const useBundleStore = create(
                 }
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || "",
+                    variantId: item.variantId || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));

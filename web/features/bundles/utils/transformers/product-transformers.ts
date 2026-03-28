@@ -53,6 +53,7 @@ export function createSelectedItem(
     return {
         id: `product-${product.id}`,
         productId: product.id,
+        variantId: variantIds[0],
         variantIds: variantIds,
         quantity: options?.quantity || 1,
         type: "product" as const,
