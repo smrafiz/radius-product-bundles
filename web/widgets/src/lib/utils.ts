@@ -37,6 +37,45 @@ export function escapeHtml(text: string): string {
     return div.innerHTML;
 }
 
+const SRCSET_WIDTHS = [200, 400, 600];
+const DEFAULT_WIDTH = 400;
+
+function isShopifyCdn(url: string): boolean {
+    return url.includes("cdn.shopify.com");
+}
+
+function cdnUrl(url: string, width: number): string {
+    const sep = url.includes("?") ? "&" : "?";
+    return `${url.replace(/[&?]width=\d+/g, "")}${sep}width=${width}`;
+}
+
+export function responsiveImg(
+    src: string,
+    alt: string,
+    opts: { lazy?: boolean; size?: "card" | "thumb" | "hero" } = {},
+): string {
+    const safeSrc = escapeHtml(src);
+    const safeAlt = escapeHtml(alt);
+    const lazy = opts.lazy ? ' loading="lazy"' : "";
+
+    if (!isShopifyCdn(src)) {
+        return `<img src="${safeSrc}" alt="${safeAlt}"${lazy} />`;
+    }
+
+    const sizes =
+        opts.size === "thumb"
+            ? "70px"
+            : opts.size === "hero"
+              ? "(max-width: 768px) 80vw, 300px"
+              : "(max-width: 768px) 45vw, 200px";
+
+    const srcset = SRCSET_WIDTHS.map(
+        (w) => `${escapeHtml(cdnUrl(src, w))} ${w}w`,
+    ).join(", ");
+
+    return `<img src="${escapeHtml(cdnUrl(src, DEFAULT_WIDTH))}" srcset="${srcset}" sizes="${sizes}" alt="${safeAlt}" width="${DEFAULT_WIDTH}" height="${DEFAULT_WIDTH}"${lazy} />`;
+}
+
 export function extractNumericId(gid: string): string {
     if (!gid) return "";
     if (/^\d+$/.test(gid)) return gid;

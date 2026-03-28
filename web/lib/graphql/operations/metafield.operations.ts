@@ -432,7 +432,11 @@ function buildShopBundlesMetafieldValue(
 
         const bundlePrice = priceMap
             ? bundle.bundleProducts?.reduce((sum, bp) => {
-                  return sum + (priceMap.get(bp.productId) || 0) * bp.quantity;
+                  const price =
+                      (bp.variantId && priceMap.get(bp.variantId)) ||
+                      priceMap.get(bp.productId) ||
+                      0;
+                  return sum + price * bp.quantity;
               }, 0) || 0
             : 0;
 
@@ -616,6 +620,9 @@ async function buildPriceMapForBundles(
             (product as any).variants?.nodes || (product as any).variants || [];
         const price = parseFloat(variants[0]?.price || "0");
         priceMap.set(productId, price);
+        variants.forEach((v: any) => {
+            if (v.id) priceMap.set(v.id, parseFloat(v.price || "0"));
+        });
     });
 
     return priceMap;

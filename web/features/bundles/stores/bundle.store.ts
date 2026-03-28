@@ -197,7 +197,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = items.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || null,
+                    variantId: item.variantId || item.variantIds?.[0] || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));
@@ -217,7 +217,7 @@ export const useBundleStore = create(
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,
-                    variantId: item.variantId || null,
+                    variantId: item.variantId || item.variantIds?.[0] || null,
                     quantity: item.quantity,
                     role: item.role || "INCLUDED",
                 }));

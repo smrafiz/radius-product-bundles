@@ -9,6 +9,7 @@ import {
     formatLabel,
     formatMoney,
     getLocalePath,
+    responsiveImg,
     trimMoney,
 } from "./utils";
 
@@ -98,12 +99,12 @@ export function renderBxgyProducts(
     const structure = ctx.bundleStructure || bundle;
     const buyQty = structure.buyQuantity || 1;
     const getQty = structure.getQuantity || 1;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
 
     const renderCard = (product: BundleProduct, isReward: boolean): string => {
         const imageHtml =
             ctx.showImages && product.featuredImage
-                ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
+                ? responsiveImg(product.featuredImage, product.title, { lazy: imgLazy })
                 : ctx.showImages
                   ? `<div class="radius-bundle__product-placeholder">📦</div>`
                   : "";
@@ -184,7 +185,7 @@ export function renderClassicCardProducts(
 ): void {
     const { triggers, rewards } = splitByRole(bundle);
     const structure = ctx.bundleStructure || bundle;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
 
     const labels = structure.labels;
     const triggerBadge = labels?.bogoTriggerBadgeText || "You Buy";
@@ -222,7 +223,7 @@ export function renderClassicCardProducts(
     ): string => {
         const imageHtml =
             ctx.showImages && product.featuredImage
-                ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
+                ? responsiveImg(product.featuredImage, product.title, { lazy: imgLazy })
                 : ctx.showImages
                   ? `<div class="rb-classic__placeholder">📦</div>`
                   : "";
@@ -406,7 +407,7 @@ export function renderBogoSleekProducts(
 ): void {
     const { triggers, rewards } = splitByRole(bundle);
     const structure = ctx.bundleStructure || bundle;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
     const labels = structure.labels;
     const youPayLabel = labels?.bogoYouPayLabel || "You pay";
     const freeText = labels?.bogoFreeText || "FREE";
@@ -415,7 +416,7 @@ export function renderBogoSleekProducts(
     const renderCard = (product: BundleProduct, isReward: boolean): string => {
         const imageHtml =
             ctx.showImages && product.featuredImage
-                ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
+                ? responsiveImg(product.featuredImage, product.title, { lazy: imgLazy })
                 : ctx.showImages
                   ? `<div class="rb-sleek__placeholder">📦</div>`
                   : "";
@@ -545,7 +546,7 @@ export function renderBogoMinimalistProducts(
     const { triggers, rewards } = splitByRole(bundle);
     const allProducts = [...triggers, ...rewards];
     const structure = ctx.bundleStructure || bundle;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
 
     const totalOriginal = allProducts.reduce((sum, p) => sum + p.price, 0);
     const totalDiscounted =
@@ -590,7 +591,7 @@ export function renderBogoMinimalistProducts(
 
     let heroImageHtml = "";
     if (ctx.showImages && triggerProduct?.featuredImage) {
-        heroImageHtml = `<div class="rb-minimalist__hero-image"><img src="${escapeHtml(triggerProduct.featuredImage)}" alt="${escapeHtml(triggerProduct.title)}"${imgLoading} /></div>`;
+        heroImageHtml = `<div class="rb-minimalist__hero-image">${responsiveImg(triggerProduct.featuredImage, triggerProduct.title, { lazy: imgLazy, size: "hero" })}</div>`;
     } else if (ctx.showImages) {
         heroImageHtml = `<div class="rb-minimalist__hero-placeholder">📦</div>`;
     }
@@ -625,7 +626,7 @@ export function renderBogoMinimalistProducts(
     const renderMinItem = (p: BundleProduct, isReward: boolean): string => {
         const img =
             ctx.showImages && p.featuredImage
-                ? `<div class="rb-minimalist__item-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+                ? `<div class="rb-minimalist__item-image">${responsiveImg(p.featuredImage, p.title, { lazy: imgLazy })}</div>`
                 : "";
         const roleClass = isReward ? "reward" : "trigger";
         const roleBadge = isReward ? rewardBadge : triggerBadge;
@@ -798,7 +799,7 @@ export function renderBogoCompactGridProducts(
 ): void {
     const { triggers, rewards } = splitByRole(bundle);
     const structure = ctx.bundleStructure || bundle;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
     const labels = structure.labels;
 
     const totalOriginal = [...triggers, ...rewards].reduce(
@@ -842,7 +843,7 @@ export function renderBogoCompactGridProducts(
     const renderTile = (product: BundleProduct, isReward: boolean): string => {
         const imageHtml =
             ctx.showImages && product.featuredImage
-                ? `<div class="rb-cg__tile-image"><img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} /></div>`
+                ? `<div class="rb-cg__tile-image">${responsiveImg(product.featuredImage, product.title, { lazy: imgLazy })}</div>`
                 : ctx.showImages
                   ? `<div class="rb-cg__tile-image"><div class="rb-cg__tile-placeholder">📦</div></div>`
                   : "";
@@ -1008,7 +1009,7 @@ export function renderBogoChecklistProducts(
 ): void {
     const { triggers, rewards } = splitByRole(bundle);
     const structure = ctx.bundleStructure || bundle;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
     const labels = structure.labels;
     const freeText = labels?.bogoFreeText || "FREE";
     const progressText =
@@ -1072,7 +1073,7 @@ export function renderBogoChecklistProducts(
     triggers.forEach((p) => {
         const imageHtml =
             ctx.showImages && p.featuredImage
-                ? `<div class="rb-checklist__item-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+                ? `<div class="rb-checklist__item-image">${responsiveImg(p.featuredImage, p.title, { lazy: imgLazy })}</div>`
                 : ctx.showImages
                   ? `<div class="rb-checklist__item-placeholder">📦</div>`
                   : "";
@@ -1115,7 +1116,7 @@ export function renderBogoChecklistProducts(
     rewards.forEach((p) => {
         const imageHtml =
             ctx.showImages && p.featuredImage
-                ? `<div class="rb-checklist__reward-image"><img src="${escapeHtml(p.featuredImage)}" alt="${escapeHtml(p.title)}"${imgLoading} /></div>`
+                ? `<div class="rb-checklist__reward-image">${responsiveImg(p.featuredImage, p.title, { lazy: imgLazy })}</div>`
                 : ctx.showImages
                   ? `<div class="rb-checklist__reward-placeholder">🎁</div>`
                   : "";
@@ -1301,7 +1302,7 @@ export function renderSplitDealProducts(
 ): void {
     const { triggers, rewards } = splitByRole(bundle);
     const structure = ctx.bundleStructure || bundle;
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
+    const imgLazy = ctx.lazyLoadImages;
     const labels = structure.labels;
     const triggerLabel = labels?.bogoTriggerBadgeText || "Buy";
     const freeText = labels?.bogoFreeText || "FREE";
@@ -1356,7 +1357,7 @@ export function renderSplitDealProducts(
     ): string => {
         const imageHtml =
             ctx.showImages && product.featuredImage
-                ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
+                ? responsiveImg(product.featuredImage, product.title, { lazy: imgLazy })
                 : ctx.showImages
                   ? `<div class="rb-split__product-placeholder">📦</div>`
                   : "";

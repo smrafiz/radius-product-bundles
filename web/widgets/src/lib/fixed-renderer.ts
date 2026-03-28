@@ -10,6 +10,7 @@ import {
     formatLabel,
     formatMoney,
     getLocalePath,
+    responsiveImg,
     trimMoney,
 } from "./utils";
 
@@ -37,10 +38,9 @@ export function renderProductCard(
     index: number,
     ctx: FixedContext,
 ): string {
-    const imgLoading = ctx.lazyLoadImages ? ' loading="lazy"' : "";
     const imageHtml =
         ctx.showImages && product.featuredImage
-            ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}"${imgLoading} />`
+            ? responsiveImg(product.featuredImage, product.title, { lazy: ctx.lazyLoadImages })
             : ctx.showImages
               ? `<div class="radius-bundle__product-placeholder">📦</div>`
               : "";

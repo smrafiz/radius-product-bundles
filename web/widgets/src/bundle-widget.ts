@@ -777,10 +777,13 @@ import {
                             product.price = variant.price;
                             product.compareAtPrice =
                                 variant.compare_at_price || 0;
-                            product.variantTitle = variant.title || "";
+                            product.variantTitle =
+                                data.variants?.length === 1
+                                    ? ""
+                                    : variant.title || "";
                         }
-                    } catch {
-                        // Silently fall back to Admin API prices
+                    } catch (err) {
+                        console.warn("[BundleWidget] fetchStorefrontPrices failed for", product.handle, err);
                     }
                 });
 

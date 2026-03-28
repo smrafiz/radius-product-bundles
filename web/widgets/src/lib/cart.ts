@@ -1,5 +1,5 @@
 import type { Bundle } from "./types";
-import { escapeHtml, getLocalePath } from "./utils";
+import { escapeHtml, getLocalePath, responsiveImg } from "./utils";
 
 const CART_LINK_SELECTORS = [
     "#cart-icon-bubble",
@@ -178,7 +178,7 @@ function openDawnCartNotification(
                         <div class="cart-notification-product__image global-media-settings">
                             ${
                                 product.featuredImage
-                                    ? `<img src="${escapeHtml(product.featuredImage)}" alt="${escapeHtml(product.title)}" width="70" height="70"${lazyLoadImages ? ' loading="lazy"' : ""}>`
+                                    ? responsiveImg(product.featuredImage, product.title, { lazy: lazyLoadImages, size: "thumb" })
                                     : ""
                             }
                         </div>

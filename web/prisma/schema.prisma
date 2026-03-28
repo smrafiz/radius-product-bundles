@@ -146,6 +146,8 @@ model BundleProductGroup {
     minSelection Int             @default(0)
     maxSelection Int?
     displayOrder Int             @default(0)
+    createdAt    DateTime        @default(now())
+    updatedAt    DateTime        @updatedAt
     bundle       Bundle          @relation(fields: [bundleId], references: [id], onDelete: Cascade)
     products     BundleProduct[]
 
@@ -217,6 +219,7 @@ model TestResult {
     conversions Int      @default(0)
     revenue     Float    @default(0)
     recordedAt  DateTime @default(now())
+    updatedAt   DateTime @updatedAt
     test        ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
     @@unique([testId, variant, date])
@@ -334,6 +337,7 @@ model AIInsight {
     bundleId    String?
     testId      String?
     createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
     expiresAt   DateTime?
     shopId      String?
     Shop        Shop?         @relation(fields: [shopId], references: [id])
@@ -355,6 +359,7 @@ model Notification {
     actionLabel String?
     actionUrl   String?
     createdAt   DateTime             @default(now())
+    updatedAt   DateTime             @updatedAt
     expiresAt   DateTime?
     shopId      String?
     Shop        Shop?                @relation(fields: [shopId], references: [id])
