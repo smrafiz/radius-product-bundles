@@ -3,7 +3,6 @@
 /**
  * Analytics Hook
  * Uses custom DB for all analytics data (bundle-specific views, carts, purchases)
- * ShopifyQL code is available but not used (ready for AI features)
  */
 
 import { analyticsQueries } from "@/features/analytics";

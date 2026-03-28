@@ -3,7 +3,6 @@ export * from "./ui";
 export * from "./utils";
 export * from "./state";
 export * from "./shopify";
-export * from "./services";
 export * from "./components";
 export * from "./hooks/hooks.types";
 export * from "./models/product.types";

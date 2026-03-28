@@ -1,8 +1,8 @@
 # AI-Powered Product Bundles — Simplified Plan
 
-**Status:** Planning  
-**Last Updated:** March 2026  
-**Approach:** Shopify Native First → Rule-Based → Light AI → Sidekick
+**Status:** Planning
+**Last Updated:** March 28, 2026
+**Approach:** Custom DB + Admin API → Rule-Based → Light AI → Sidekick
 
 ---
 
@@ -23,56 +23,9 @@ Based on codebase analysis of `web/features/analytics/` and Prisma schema:
 | `crossSellViews`             | `bundle_analytics` | Custom                       |
 | `BundleView` (unique)        | `bundle_views`     | Custom per-customer tracking |
 
-### What ShopifyQL Provides
+### Data Strategy (Updated March 28, 2026)
 
-| Data Source     | Available Metrics                                                     |
-| --------------- | --------------------------------------------------------------------- |
-| **`sessions`**  | `sessions`, `product_views`, `add_to_carts`, `checkouts`, `orders`    |
-| **`sales`**     | `gross_sales`, `net_sales`, `total_sales`, `orders`, `aov`, `returns` |
-| **`customers`** | `new_customers`, `returning_customers`                                |
-| **`products`**  | `total_sales`, `orders`, `units_sold` by product                      |
-
-### Gap Analysis
-
-| Your Metric                  | Can Shopify Replace? | Recommendation                                |
-| ---------------------------- | -------------------- | --------------------------------------------- |
-| `bundleViews`                | ❌ No                | Keep - Shopify can't distinguish bundle views |
-| `bundleAddToCarts`           | ❌ No                | Keep - Need bundle-specific cart tracking     |
-| `bundlePurchases`            | ✅ Yes               | Could replace with ShopifyQL                  |
-| `bundleRevenue`              | ✅ Yes               | Could replace with ShopifyQL                  |
-| `newCustomerPurchases`       | ✅ Yes               | Use ShopifyQL `customers`                     |
-| `returningCustomerPurchases` | ✅ Yes               | Use ShopifyQL `customers`                     |
-| `crossSellViews`             | ❌ No                | Keep - custom metric                          |
-| `BundleView` (unique)        | ❌ No                | Keep - Shopify doesn't give unique tracking   |
-
-### Recommended Hybrid Approach
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    HYBRID ARCHITECTURE (Recommended)                      │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  ┌─────────────────────────┐    ┌─────────────────────────────────────┐│
-│  │  KEEP (Custom DB)      │    │  REPLACE (ShopifyQL)               ││
-│  │                         │    │                                     ││
-│  │  • Bundle views        │    │  • Revenue from ShopifyQL          ││
-│  │  • Bundle add-to-carts │    │  • New vs returning customers      ││
-│  │  • Unique tracking     │    │  • Product performance             ││
-│  │  • Cross-sell tracking │    │  • Session/visitor data           ││
-│  │                         │    │                                     ││
-│  └─────────────────────────┘    └─────────────────────────────────────┘│
-│                                                                          │
-│  ┌─────────────────────────────────────────────────────────────────────┐│
-│  │  BUILD NEW (ShopifyQL + Your Logic)                                 ││
-│  │                                                                       ││
-│  │  • Product pairing engine (co-purchase analysis)                    ││
-│  │  • Bundle health scoring (combine Shopify data + your views)        ││
-│  │  • Revenue predictions (time-series on Shopify sales)              ││
-│  │                                                                       ││
-│  └─────────────────────────────────────────────────────────────────────┘│
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+All analytics stay in **Custom DB**. Product recommendations use **Admin API orders query** for co-occurrence analysis. ShopifyQL was evaluated and removed — Admin API provides better raw line item access with existing `read_orders` scope. See `docs/ai-product-recommendations-plan.md`.
 
 ---
 
@@ -82,7 +35,7 @@ This is a **pragmatic implementation plan** that prioritizes speed-to-value over
 
 **Key Principles:**
 
-1. Use Shopify's native data before building anything custom
+1. Use Custom DB + Admin API before building anything new
 2. Rules over AI for decisions (deterministic > magical)
 3. AI for text only, not for critical business logic
 4. Ship fast, iterate faster
@@ -99,12 +52,11 @@ This is a **pragmatic implementation plan** that prioritizes speed-to-value over
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌─────────────┐                                               │
-│  │  Shopify    │  ← Use native APIs first                      │
-│  │  Native    │                                               │
-│  │  Data      │     • Admin API for metrics                   │
-│  └─────────────┘     • ShopifyQL for analytics                 │
-│         │            • Webhooks for events                      │
-│         ▼                                                       │
+│  │  Data       │  ← Use existing sources                       │
+│  │  Sources    │                                               │
+│  └─────────────┘     • Custom DB (BundleAnalytics)             │
+│         │            • Admin API orders (co-occurrence)          │
+│         ▼            • Webhooks for events                      │
 │  ┌─────────────┐                                               │
 │  │  Rules      │  ← Your value-add                            │
 │  │  Engine     │                                               │
@@ -127,65 +79,31 @@ This is a **pragmatic implementation plan** that prioritizes speed-to-value over
 
 ---
 
-## Phase 0: Shopify Native First (Week 1)
+## Phase 0: Data Strategy (Complete)
 
-### What to Use Instead of Building
+### Data Sources
 
-| Instead of building... | Use Shopify's...                   |
-| ---------------------- | ---------------------------------- |
-| Analytics pipeline     | **ShopifyQL** + Admin API          |
-| Product catalog        | **Admin API products** query       |
-| Order analysis         | **Orders API** + **Analytics API** |
-| Customer segments      | **Segments API**                   |
-| Inventory tracking     | **Inventory API**                  |
+| Data Need | Source | Status |
+| --- | --- | --- |
+| Bundle analytics | Custom DB (`BundleAnalytics`) | In use |
+| Product catalog | Admin API products query | In use |
+| Order co-occurrence | Admin API orders query | Planned (see `ai-product-recommendations-plan.md`) |
+| Webhooks | `orders/create`, `products/delete` | In use |
 
-### Implementation (Already Created)
+### What Stays in Custom DB
 
-**File:** `web/features/ai/services/shopify-analytics.service.ts`
-
-This service is ready to use:
-
-```typescript
-import {
-    getSalesMetrics,
-    getSalesByDay,
-    getProductPerformance,
-    getCustomerMetrics,
-    getSessionMetrics,
-} from "@/features/ai/services/shopify-analytics.service";
-
-// Example: Get sales for last 30 days
-const sales = await getSalesMetrics(shop, accessToken, {
-    from: subDays(new Date(), 30),
-    to: new Date(),
-});
-
-// Example: Get product performance for pairing analysis
-const products = await getProductPerformance(
-    shop,
-    accessToken,
-    {
-        from: subDays(new Date(), 30),
-        to: new Date(),
-    },
-    50,
-);
-```
-
-### What to Keep Building
-
-| Keep in Custom DB     | Why                                           |
-| --------------------- | --------------------------------------------- |
-| `bundleViews`         | Shopify has product views, not bundle views   |
-| `bundleAddToCarts`    | Need bundle-specific cart tracking            |
+| Metric | Why |
+| --- | --- |
+| `bundleViews` | Shopify has product views, not bundle views |
+| `bundleAddToCarts` | Need bundle-specific cart tracking |
 | `BundleView` (unique) | Shopify doesn't give unique customer tracking |
+| Revenue, purchases | Already tracked per-bundle with hourly granularity |
 
 ### Tasks
 
-- [x] **Created:** `shopify-analytics.service.ts` with ShopifyQL wrapper
-- [ ] Set up required OAuth scopes (`read_reports`)
-- [ ] Verify data accuracy with sample bundles
-- [ ] Decide what to migrate from custom DB
+- [x] Custom DB analytics working
+- [x] ShopifyQL evaluated and removed (Admin API is better for co-occurrence)
+- [ ] Build product recommendation engine (see `ai-product-recommendations-plan.md`)
 
 ---
 
@@ -309,90 +227,14 @@ function generateRecommendations(...scores: number[]): string[] {
 
 ### Product Pairing (Co-Purchase Matrix)
 
-**Simple but effective:**
+**Moved to dedicated plan:** See `docs/ai-product-recommendations-plan.md` for the full co-occurrence algorithm using Admin API orders query.
 
-```typescript
-// web/features/ai/services/product-pairing.service.ts
-
-interface ProductPairingResult {
-    productId: string;
-    pairedWith: { productId: string; frequency: number }[];
-    recommendation: "high" | "medium" | "low";
-    reasoning: string;
-}
-
-export async function findProductPairs(
-    productIds: string[],
-): Promise<ProductPairingResult[]> {
-    // Get orders containing these products
-    const orders = await getOrdersContainingProducts(productIds);
-
-    // Build co-purchase matrix
-    const coPurchaseMatrix = buildCoPurchaseMatrix(orders, productIds);
-
-    // Generate recommendations
-    return productIds.map((productId) => {
-        const pairs = coPurchaseMatrix[productId] || [];
-        const totalCoPurchases = pairs.reduce((sum, p) => sum + p.frequency, 0);
-
-        return {
-            productId,
-            pairedWith: pairs
-                .sort((a, b) => b.frequency - a.frequency)
-                .slice(0, 5),
-            recommendation:
-                totalCoPurchases > 50
-                    ? "high"
-                    : totalCoPurchases > 20
-                      ? "medium"
-                      : "low",
-            reasoning:
-                totalCoPurchases > 50
-                    ? "Frequently bought together - strong candidate for bundle"
-                    : totalCoPurchases > 20
-                      ? "Occasionally bought together - test with bundle"
-                      : "No strong co-purchase pattern - consider other factors",
-        };
-    });
-}
-
-function buildCoPurchaseMatrix(
-    orders: Order[],
-    productIds: string[],
-): Record<string, { productId: string; frequency: number }[]> {
-    const matrix: Record<string, { productId: string; frequency: number }[]> =
-        {};
-
-    for (const productId of productIds) {
-        matrix[productId] = [];
-
-        // Find orders containing this product
-        const ordersWithProduct = orders.filter((o) =>
-            o.lineItems.some((item) => item.productId === productId),
-        );
-
-        // Count co-purchases
-        const coPurchases: Record<string, number> = {};
-        for (const order of ordersWithProduct) {
-            for (const item of order.lineItems) {
-                if (
-                    item.productId !== productId &&
-                    productIds.includes(item.productId)
-                ) {
-                    coPurchases[item.productId] =
-                        (coPurchases[item.productId] || 0) + 1;
-                }
-            }
-        }
-
-        matrix[productId] = Object.entries(coPurchases)
-            .map(([pid, freq]) => ({ productId: pid, frequency: freq }))
-            .sort((a, b) => b.frequency - a.frequency);
-    }
-
-    return matrix;
-}
-```
+Key points:
+- Fetch last 250 paid orders via Admin API (`read_orders` scope)
+- Extract product pairs per order, filter out bundles via `LineItemGroup`
+- Rank by co-occurrence frequency + lift score
+- Store in existing `AIInsight` table (type: `RECOMMENDATION`)
+- Dashboard card with "Create Bundle" CTA
 
 ---
 
@@ -827,41 +669,26 @@ export function getSidekickReadyData(shop: string): SidekickReadyData {
 ```
 web/features/ai/
 ├── services/
-│   ├── shopify-analytics.service.ts   # ✅ NEW - ShopifyQL wrapper (Phase 0)
-│   ├── shopify-native.service.ts      # Phase 0
-│   ├── bundle-health.service.ts      # Phase 1
-│   ├── product-pairing.service.ts    # Phase 1
-│   ├── pricing-recommendation.service.ts  # Phase 1
-│   ├── ai-insights.service.ts        # Phase 2
-│   └── sidekick-ready.service.ts     # Phase 4
+│   ├── bundle-health.service.ts              # Phase 1
+│   ├── pricing-recommendation.service.ts     # Phase 1
+│   ├── ai-insights.service.ts                # Phase 2
+│   └── sidekick-ready.service.ts             # Phase 4
 ├── components/
-│   ├── bundle-intelligence-dashboard.tsx  # Phase 3
+│   ├── bundle-intelligence-dashboard.tsx      # Phase 3
 │   ├── health-score-chart.tsx
-│   ├── product-pairing-list.tsx
 │   ├── pricing-card.tsx
 │   ├── insight-summary.tsx
 │   └── quick-actions.tsx
 ├── hooks/
 │   ├── use-bundle-health.ts
-│   ├── use-product-pairing.ts
 │   └── use-ai-insights.ts
 ├── types/
 │   └── ai.types.ts
 └── index.ts
+
+web/features/recommendations/                  # Product pairing (separate feature)
+├── See docs/ai-product-recommendations-plan.md for full structure
 ```
-
-### ShopifyQL Service (Already Created)
-
-**File:** `web/features/ai/services/shopify-analytics.service.ts`
-
-This service wraps ShopifyQL to provide:
-
-- `getSalesMetrics()` - Revenue, orders, AOV
-- `getSalesByDay()` - Time-series data for charts
-- `getProductPerformance()` - Top products for pairing
-- `getCustomerMetrics()` - New vs returning customers
-- `getSessionMetrics()` - Visitor data
-- `findCoPurchasedProducts()` - Product pairing analysis
 
 ---
 
@@ -877,13 +704,12 @@ This service wraps ShopifyQL to provide:
 
 ---
 
-## Next Steps (This Week)
+## Next Steps
 
-1. [ ] Set up ShopifyQL in the app
-2. [ ] Create `shopify-native.service.ts` with metrics query
-3. [ ] Build simple health score calculator
-4. [ ] Test with 1-2 real bundles
-5. [ ] Get merchant feedback
+1. [ ] Build product recommendation engine (see `ai-product-recommendations-plan.md`)
+2. [ ] Build simple health score calculator
+3. [ ] Test with 1-2 real bundles
+4. [ ] Get merchant feedback
 
 ---
 
@@ -891,7 +717,7 @@ This service wraps ShopifyQL to provide:
 
 | Do This                   | Not This                |
 | ------------------------- | ----------------------- |
-| Shopify native data       | Rebuild analytics       |
+| Custom DB + Admin API     | Rebuild analytics       |
 | Rules for decisions       | AI for everything       |
 | Ship in weeks             | Ship in months          |
 | Simple and reliable       | Complex and magical     |
@@ -901,12 +727,11 @@ This service wraps ShopifyQL to provide:
 
 ## Resources
 
-- [ShopifyQL Documentation](https://shopify.dev/docs/api/shopifyql)
-- [Admin API Analytics](https://shopify.dev/docs/api/admin-rest/2024-01/resources/analytics)
+- [Admin API Orders](https://shopify.dev/docs/api/admin-graphql/latest/queries/orders)
 - [Anthropic Claude API](https://docs.anthropic.com/)
-- [Shopify Segments](https://shopify.dev/docs/api/admin-rest/2024-01/resources/segment)
+- [Product Recommendations Plan](docs/ai-product-recommendations-plan.md)
 
 ---
 
-_Document Version: 2.0 (Simplified)_  
-_Last Updated: March 2026_
+_Document Version: 3.0 (ShopifyQL removed, Admin API approach)_
+_Last Updated: March 28, 2026_

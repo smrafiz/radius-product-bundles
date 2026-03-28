@@ -1,5 +1,3 @@
-import { useAppBridge } from "@shopify/app-bridge-react";
-import { useQuery } from "@tanstack/react-query";
 import {
     AllBundlesData,
     analyticsQueryKeys,
@@ -16,7 +14,7 @@ import {
     getPaginatedBundlesAction,
     getTopBundlesAction,
 } from "@/features/analytics/actions";
-import type { DateRange } from "@/shared/types/services";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
 /**
  * Analytics queries for TanStack Query
@@ -199,149 +197,4 @@ export const analyticsQueries = (app: ReturnType<typeof useAppBridge>) => ({
         placeholderData: (previousData: PaginatedAllBundlesData | undefined) =>
             previousData,
     }),
-
-    /**
-     * ShopifyQL: Sales metrics (revenue, orders, AOV)
-     */
-    salesMetrics: (dateRange: DateRange) => {
-        const startDate = dateRange.from.toISOString();
-        const endDate = dateRange.to.toISOString();
-
-        return {
-            queryKey: analyticsQueryKeys.shopifyql.salesMetrics(
-                startDate,
-                endDate,
-            ),
-            queryFn: async () => {
-                const token = await app.idToken();
-                const { getSalesMetricsAction } =
-                    await import("@/features/analytics/actions/shopifyql-metrics.action");
-                return getSalesMetricsAction(token, dateRange);
-            },
-            staleTime: 5 * 60 * 1000,
-            gcTime: 10 * 60 * 1000,
-            enabled: !!app,
-        };
-    },
-
-    /**
-     * ShopifyQL: Product performance for pairing analysis
-     */
-    productPerformance: (dateRange: DateRange, limit: number = 50) => {
-        const startDate = dateRange.from.toISOString();
-        const endDate = dateRange.to.toISOString();
-
-        return {
-            queryKey: analyticsQueryKeys.shopifyql.productPerformance(
-                startDate,
-                endDate,
-                limit,
-            ),
-            queryFn: async () => {
-                const token = await app.idToken();
-                const { getProductPerformanceAction } =
-                    await import("@/features/analytics/actions/shopifyql-metrics.action");
-                return getProductPerformanceAction(token, dateRange, limit);
-            },
-            staleTime: 10 * 60 * 1000,
-            gcTime: 30 * 60 * 1000,
-            enabled: !!app,
-        };
-    },
-
-    /**
-     * ShopifyQL: Customer acquisition metrics
-     */
-    customerMetrics: (dateRange: DateRange) => {
-        const startDate = dateRange.from.toISOString();
-        const endDate = dateRange.to.toISOString();
-
-        return {
-            queryKey: analyticsQueryKeys.shopifyql.customerMetrics(
-                startDate,
-                endDate,
-            ),
-            queryFn: async () => {
-                const token = await app.idToken();
-                const { getCustomerMetricsAction } =
-                    await import("@/features/analytics/actions/shopifyql-metrics.action");
-                return getCustomerMetricsAction(token, dateRange);
-            },
-            staleTime: 5 * 60 * 1000,
-            gcTime: 10 * 60 * 1000,
-            enabled: !!app,
-        };
-    },
-
-    /**
-     * ShopifyQL: Session/visitor metrics
-     */
-    sessionMetrics: (dateRange: DateRange) => {
-        const startDate = dateRange.from.toISOString();
-        const endDate = dateRange.to.toISOString();
-
-        return {
-            queryKey: analyticsQueryKeys.shopifyql.sessionMetrics(
-                startDate,
-                endDate,
-            ),
-            queryFn: async () => {
-                const token = await app.idToken();
-                const { getSessionMetricsAction } =
-                    await import("@/features/analytics/actions/shopifyql-metrics.action");
-                return getSessionMetricsAction(token, dateRange);
-            },
-            staleTime: 5 * 60 * 1000,
-            gcTime: 10 * 60 * 1000,
-            enabled: !!app,
-        };
-    },
-
-    /**
-     * ShopifyQL: Sales broken down by day for charts
-     */
-    salesByDay: (dateRange: DateRange) => {
-        const startDate = dateRange.from.toISOString();
-        const endDate = dateRange.to.toISOString();
-
-        return {
-            queryKey: analyticsQueryKeys.shopifyql.salesByDay(
-                startDate,
-                endDate,
-            ),
-            queryFn: async () => {
-                const token = await app.idToken();
-                const { getSalesByDayAction } =
-                    await import("@/features/analytics/actions/shopifyql-metrics.action");
-                return getSalesByDayAction(token, dateRange);
-            },
-            staleTime: 5 * 60 * 1000,
-            gcTime: 10 * 60 * 1000,
-            enabled: !!app,
-        };
-    },
 });
-
-/**
- * ShopifyQL React Query hooks
- */
-export function shopifyQLQueries(app: ReturnType<typeof useAppBridge>) {
-    return {
-        salesMetrics: (dateRange: DateRange) =>
-            useQuery(analyticsQueries(app).salesMetrics(dateRange)),
-
-        productPerformance: (dateRange: DateRange, limit?: number) =>
-            useQuery(
-                analyticsQueries(app).productPerformance(dateRange, limit),
-            ),
-
-        customerMetrics: (dateRange: DateRange) =>
-            useQuery(analyticsQueries(app).customerMetrics(dateRange)),
-
-        sessionMetrics: (dateRange: DateRange) =>
-            useQuery(analyticsQueries(app).sessionMetrics(dateRange)),
-
-        salesByDay: (dateRange: DateRange) =>
-            useQuery(analyticsQueries(app).salesByDay(dateRange)),
-    };
-}

@@ -37,7 +37,7 @@ direct_api_mode = "offline"
 embedded_app_direct_api_access = true
 
 [access_scopes]
-scopes = "read_locales,read_orders,read_products,read_reports,read_themes,write_app_proxy,write_discounts,write_files,write_products,write_publications"
+scopes = "read_locales,read_orders,read_products,read_themes,write_app_proxy,write_discounts,write_files,write_products,write_publications"
 optional_scopes = [ ]
 use_legacy_install_flow = false
 
