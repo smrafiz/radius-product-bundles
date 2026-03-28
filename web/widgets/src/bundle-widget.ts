@@ -145,12 +145,6 @@ import {
             this.enableAnalytics =
                 container.dataset.enableAnalytics !== "false";
 
-            console.log(
-                "[RadiusBundle] Init - redirectAfterCart:",
-                this.redirectAfterCart,
-                "| raw:",
-                container.dataset.redirectAfterCart,
-            );
             // Parse style options from data attributes
             this.imagePosition = container.dataset.imagePosition || "top";
             this.badgeStyle = container.dataset.badgeStyle || "filled";
@@ -696,10 +690,6 @@ import {
                     return;
                 }
 
-                console.log(
-                    `[RadiusBundle] Fetching ${this.bundleStructure.productIds.length} products`,
-                );
-
                 // Fetch products by IDs only
                 const productIds = this.bundleStructure.productIds.join(",");
                 const url = `/apps/radius-bundles/products?shop=${encodeURIComponent(this.shop)}&ids=${encodeURIComponent(productIds)}`;
@@ -783,7 +773,11 @@ import {
                                     : variant.title || "";
                         }
                     } catch (err) {
-                        console.warn("[BundleWidget] fetchStorefrontPrices failed for", product.handle, err);
+                        console.warn(
+                            "[BundleWidget] fetchStorefrontPrices failed for",
+                            product.handle,
+                            err,
+                        );
                     }
                 });
 

@@ -56,8 +56,6 @@ export function handleCartRedirect(
     bundle: Bundle | null,
     lazyLoadImages: boolean,
 ): void {
-    console.log("[RadiusBundle] Redirect setting:", redirectAfterCart);
-
     switch (redirectAfterCart) {
         case "default":
             openCartDrawerOrRedirect(bundle, lazyLoadImages);
@@ -80,8 +78,6 @@ function openCartDrawerOrRedirect(
     bundle: Bundle | null,
     lazyLoadImages: boolean,
 ): void {
-    console.log("[RadiusBundle] Following theme cart behavior...");
-
     const cartDrawerEl = document.querySelector(
         "cart-drawer",
     ) as HTMLElement & { open?: () => void };
@@ -106,9 +102,6 @@ function openCartDrawerOrRedirect(
         return;
     }
 
-    console.log(
-        "[RadiusBundle] No drawer/notification found - redirecting to cart",
-    );
     window.location.href = getLocalePath("/cart");
 }
 
@@ -118,8 +111,6 @@ function openDawnCartDrawer(
     fetch(getLocalePath("/cart?section_id=cart-drawer"))
         .then((r) => r.text())
         .then((html) => {
-            console.log("[RadiusBundle] Fetched cart-drawer section");
-
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, "text/html");
 
@@ -127,7 +118,6 @@ function openDawnCartDrawer(
             const currentCartDrawer = document.querySelector("#CartDrawer");
 
             if (newCartDrawer && currentCartDrawer) {
-                console.log("[RadiusBundle] ✓ Updating #CartDrawer content");
                 currentCartDrawer.innerHTML = newCartDrawer.innerHTML;
             }
 
@@ -145,7 +135,6 @@ function openDawnCartDrawer(
             }
 
             if (typeof cartDrawerEl.open === "function") {
-                console.log("[RadiusBundle] ✓ Opening cart drawer");
                 cartDrawerEl.open();
             }
         })
@@ -178,7 +167,14 @@ function openDawnCartNotification(
                         <div class="cart-notification-product__image global-media-settings">
                             ${
                                 product.featuredImage
-                                    ? responsiveImg(product.featuredImage, product.title, { lazy: lazyLoadImages, size: "thumb" })
+                                    ? responsiveImg(
+                                          product.featuredImage,
+                                          product.title,
+                                          {
+                                              lazy: lazyLoadImages,
+                                              size: "thumb",
+                                          },
+                                      )
                                     : ""
                             }
                         </div>
@@ -198,9 +194,6 @@ function openDawnCartNotification(
                 ${productsHtml}
             </div>
         `;
-        console.log(
-            "[RadiusBundle] ✓ Updated cart-notification with bundle products",
-        );
     }
 
     fetch(getLocalePath("/cart.js"))
@@ -216,7 +209,6 @@ function openDawnCartNotification(
         .catch(() => {});
 
     if (typeof cartNotificationEl.open === "function") {
-        console.log("[RadiusBundle] ✓ Opening cart notification");
         cartNotificationEl.open();
     } else {
         const notification = document.getElementById("cart-notification");

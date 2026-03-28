@@ -120,12 +120,10 @@ import "./scss/radius-bundles.scss";
             data: Partial<AnalyticsEvent> = {},
         ): Promise<void> {
             if (!this.config.enableAnalytics) {
-                console.log("[RadiusBundles] Analytics disabled");
                 return;
             }
 
             if ((window as any).Shopify?.designMode) {
-                console.log("designmode");
                 return;
             }
 
@@ -157,7 +155,6 @@ import "./scss/radius-bundles.scss";
                 }
 
                 const result = await response.json();
-                console.log("[RadiusBundles] Tracked:", eventType, result);
             } catch (error) {
                 console.error("[RadiusBundles] Tracking error:", error);
             }
@@ -253,7 +250,6 @@ import "./scss/radius-bundles.scss";
                     bundles = JSON.parse(cart.attributes._radiusDiscounts);
                 } catch {
                     await this.updateAttributes({ _radiusDiscounts: "" });
-                    console.log("[RadiusBundles] Cleared invalid bundle data");
                     this.isRunning = false;
                     return;
                 }
@@ -276,12 +272,6 @@ import "./scss/radius-bundles.scss";
 
                     if (!hasItems || !isActive) {
                         hasChanges = true;
-                        if (!isActive) {
-                            console.log(
-                                "[RadiusBundles] Removed inactive bundle:",
-                                bundle.bundleId,
-                            );
-                        }
                         continue;
                     }
 
@@ -297,10 +287,6 @@ import "./scss/radius-bundles.scss";
 
                         if (settingsChanged) {
                             hasChanges = true;
-                            console.log(
-                                "[RadiusBundles] Synced settings for bundle:",
-                                bundle.bundleId,
-                            );
                         }
 
                         validBundles.push({
@@ -329,13 +315,6 @@ import "./scss/radius-bundles.scss";
                     await this.updateAttributes({ _radiusDiscounts: value });
 
                     const removed = bundles.length - validBundles.length;
-                    if (removed > 0) {
-                        console.log(
-                            "[RadiusBundles] Removed",
-                            removed,
-                            "bundle(s)",
-                        );
-                    }
 
                     this.dispatchCleanupEvent(
                         removed,
@@ -782,12 +761,6 @@ import "./scss/radius-bundles.scss";
         }
 
         public init(): void {
-            console.log("[RadiusBundles] Initializing...", {
-                shop: this.config.shop,
-                pageType: this.config.pageType,
-                analyticsEnabled: this.config.enableAnalytics,
-            });
-
             if (this.config.enableAnalytics && this.isAnalyticsRelevantPage()) {
                 if (document.readyState === "loading") {
                     document.addEventListener("DOMContentLoaded", () => {
@@ -809,8 +782,6 @@ import "./scss/radius-bundles.scss";
             (window as any).RadiusBundles.analytics = this.analytics;
             (window as any).RadiusBundles.cartCleanup = this.cartCleanup;
             (window as any).RadiusBundles.savingsBanner = this.savingsBanner;
-
-            console.log("[RadiusBundles] Initialized successfully");
         }
 
         public destroy(): void {
@@ -822,7 +793,6 @@ import "./scss/radius-bundles.scss";
             const pageType = this.config.pageType;
 
             if (pageType === "cart") {
-                console.log("cart page");
                 return true;
             }
 
@@ -853,10 +823,6 @@ import "./scss/radius-bundles.scss";
                 const viewKey = `${bundleId}:${window.location.pathname}`;
 
                 if (this.viewedBundles.has(viewKey)) {
-                    console.log(
-                        "[RadiusBundles] Bundle already viewed in this session:",
-                        bundleId,
-                    );
                     return;
                 }
 

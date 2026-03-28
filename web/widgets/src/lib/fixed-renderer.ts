@@ -40,7 +40,9 @@ export function renderProductCard(
 ): string {
     const imageHtml =
         ctx.showImages && product.featuredImage
-            ? responsiveImg(product.featuredImage, product.title, { lazy: ctx.lazyLoadImages })
+            ? responsiveImg(product.featuredImage, product.title, {
+                  lazy: ctx.lazyLoadImages,
+              })
             : ctx.showImages
               ? `<div class="radius-bundle__product-placeholder">📦</div>`
               : "";
@@ -414,11 +416,6 @@ export function validateStock(ctx: FixedContext): void {
             button.textContent = outOfStockLabel;
         }
     }
-
-    console.log(
-        "[RadiusBundle] Bundle unavailable - out of stock products:",
-        unavailableProducts.map((p) => p.title),
-    );
 }
 
 function getShowMoreButton(totalProducts: number, ctx: FixedContext): string {
