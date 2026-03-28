@@ -10,6 +10,7 @@ import {
     getFontSize,
     getCardRadius,
     getImageSize,
+    getCardBgColor,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -45,15 +46,16 @@ function SleekProductCard({
           : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
 
     const bgBase = styles.backgroundColor || "#fff";
+    const cardBg = getCardBgColor(styles);
     const cardStyle: React.CSSProperties = isTrigger
         ? {
-              background: styles.productCardBg || bgBase,
+              background: cardBg,
               border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
           }
         : {
               background: hasDiscount
                   ? `linear-gradient(to right, ${savingsColor}1A, ${bgBase})`
-                  : styles.productCardBg || bgBase,
+                  : cardBg,
               border: hasDiscount
                   ? `1px solid ${savingsColor}33`
                   : `1px solid ${styles.borderColor || "#e5e7eb"}`,
@@ -78,7 +80,7 @@ function SleekProductCard({
                         flexShrink: 0,
                         borderRadius: 8,
                         overflow: "hidden",
-                        background: styles.productCardBg || "#f9fafb",
+                        background: cardBg,
                     }}
                 >
                     <img
