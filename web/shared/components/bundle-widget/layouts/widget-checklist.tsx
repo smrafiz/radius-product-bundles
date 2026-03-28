@@ -120,7 +120,7 @@ function ChecklistTriggerItem({
                 <div
                     style={{
                         fontSize: bodyFontSize,
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: styles.textColor,
                         whiteSpace: "nowrap",
                     }}

@@ -136,8 +136,8 @@ function ProductTile({
                 {displayOptions.showPrices && (
                     <span
                         style={{
-                            fontSize: styles.bodySize,
-                            fontWeight: 500,
+                            fontSize: bodyFontSize,
+                            fontWeight: 600,
                             color: hasDiscount
                                 ? savingsColor
                                 : styles.textColor,

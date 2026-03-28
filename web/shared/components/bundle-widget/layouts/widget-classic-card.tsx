@@ -107,7 +107,7 @@ function ClassicProductItem({
                     <span
                         style={{
                             fontSize: bodyFontSize,
-                            fontWeight: 500,
+                            fontWeight: 600,
                             color: hasDiscount
                                 ? styles.bogoFreeTagColor || "#16a34a"
                                 : styles.textColor,

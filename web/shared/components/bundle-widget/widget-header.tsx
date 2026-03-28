@@ -25,7 +25,6 @@ export function WidgetHeader({
             style={{
                 display: "flex",
                 alignItems: "center",
-                flexWrap: "wrap",
                 gap: "20px",
                 borderColor: styles.borderColor,
                 flexDirection:

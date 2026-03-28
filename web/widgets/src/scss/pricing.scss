@@ -12,7 +12,7 @@
 
     &__product-price-current {
         font-size: var(--rb-body-font-size);
-        font-weight: 500;
+        font-weight: 600;
         color: var(--rb-text-color);
     }
 
@@ -50,11 +50,13 @@
     &[data-pricing-summary="minimal"] {
         .radius-bundle__pricing {
             border-radius: 0;
+            padding: 0;
         }
     }
-
-    .radius-bundle__pricing {
-        border-inline-start: var(--rb-pricing-border-left);
+    &[data-pricing-summary="highlight"] {
+        .radius-bundle__pricing {
+            border-inline-start: var(--rb-pricing-border-left);
+        }
     }
 
     &__pricing-row {

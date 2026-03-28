@@ -137,7 +137,7 @@ function MinimalistItem({
                         <span
                             style={{
                                 fontSize: parseInt(bodyFontSize),
-                                fontWeight: 500,
+                                fontWeight: 600,
                                 color: isReward
                                     ? savingsColor
                                     : styles.textColor,
