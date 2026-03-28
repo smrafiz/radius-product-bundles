@@ -218,10 +218,10 @@
 				{% assign image_fit = g_type_overrides.imageFit | default: g_styles.imageFit | default: 'contain' %}
 
 				{% assign image_position = g_type_overrides.imagePosition | default: g_styles.imagePosition | default: 'left' %}
+
 				{% if product_card_bg == blank %}
 					{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg | default: '#f9fafb' %}
 				{% endif %}
-
 
 				{% assign product_card_border = true %}
 				{% if g_type_overrides.productCardBorder == false or g_type_overrides.productCardBorder == 'false' %}
@@ -229,7 +229,6 @@
 				{% elsif g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
 					{% assign product_card_border = false %}
 				{% endif %}
-
 
 				{% assign product_card_shadow = false %}
 				{% if g_type_overrides.productCardShadow == true or g_type_overrides.productCardShadow == 'true' %}
