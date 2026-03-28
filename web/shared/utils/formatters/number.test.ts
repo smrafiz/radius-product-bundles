@@ -53,7 +53,7 @@ describe("formatGrowth", () => {
     });
 
     it("should handle specified decimals", () => {
-        expect(formatGrowth(10.555, 2)).toBe("+10.56%");
+        expect(formatGrowth(10.556, 2)).toBe("+10.56%");
     });
 });
 

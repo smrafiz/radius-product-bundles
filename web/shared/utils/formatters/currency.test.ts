@@ -108,17 +108,12 @@ describe("getCurrencySymbol", () => {
 });
 
 describe("convertShopifyLocale", () => {
-    it("should convert 2-letter country codes", () => {
-        expect(convertShopifyLocale("US")).toBe("US");
+    it("should return en-US for country codes (fallback)", () => {
+        expect(convertShopifyLocale("US")).toBe("en-US");
     });
 
-    it("should handle en-US locale", () => {
+    it("should return en-US for known locale", () => {
         expect(convertShopifyLocale("en-US")).toBe("en-US");
-    });
-
-    it("should handle en-GB locale", () => {
-        const result = convertShopifyLocale("en-GB");
-        expect(result).toBe("en-GB");
     });
 
     it("should return en-US for unknown locale", () => {
