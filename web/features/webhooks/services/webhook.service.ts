@@ -77,12 +77,7 @@ async function getBestSession(
     const offlineSession = await getOfflineSession(shop);
 
     if (offlineSession && offlineSession.accessToken) {
-        console.log("[Webhook Service] Found offline session:", {
-            shop: offlineSession.shop,
-            hasAccessToken: !!offlineSession.accessToken,
-            isOnline: offlineSession.isOnline,
-            scope: offlineSession.scope,
-        });
+        console.log("[Webhook Service] Found offline session for:", offlineSession.shop);
 
         return new Session({
             id: offlineSession.id,
@@ -190,12 +185,6 @@ export async function initializeApp(
     const errors: string[] = [];
 
     console.log(`[Webhook Service] Starting initialization for ${shop}`);
-    console.log(`[Webhook Service] Session info:`, {
-        shop: session.shop,
-        hasAccessToken: !!session.accessToken,
-        isOnline: session.isOnline,
-        scope: session.scope,
-    });
 
     try {
         // Check current status

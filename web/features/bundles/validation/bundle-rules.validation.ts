@@ -202,11 +202,12 @@ export function validateSecurity(data: BundleFormData): ValidationResult {
     }
 
     // 2. Check for duplicate products (skip for BOGO/BXGY — same product allowed as buy+get)
+    // Use variantId when present so multi-variant selections of the same product are allowed
     const allowsDuplicates =
         data.type === "BOGO" || data.type === "BUY_X_GET_Y";
     if (!allowsDuplicates) {
-        const productIds = data.products.map((p) => p.productId);
-        if (productIds.length !== new Set(productIds).size) {
+        const dedupeKeys = data.products.map((p) => p.variantId || p.productId);
+        if (dedupeKeys.length !== new Set(dedupeKeys).size) {
             errors.products = {
                 _errors: ["Duplicate products are not allowed"],
             };

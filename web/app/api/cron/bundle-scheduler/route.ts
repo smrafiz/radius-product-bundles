@@ -30,12 +30,7 @@ export async function GET(request: Request) {
     } catch (error) {
         console.error("[Cron] Bundle scheduler error:", error);
         return Response.json(
-            {
-                error:
-                    error instanceof Error
-                        ? error.message
-                        : "Internal server error",
-            },
+            { error: "Internal server error" },
             { status: 500 },
         );
     }

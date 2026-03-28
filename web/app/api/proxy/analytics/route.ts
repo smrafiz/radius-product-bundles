@@ -151,13 +151,7 @@ export async function POST(request: NextRequest) {
         console.error("[Analytics Proxy] Error:", error);
 
         return NextResponse.json(
-            {
-                success: false,
-                error:
-                    error instanceof Error
-                        ? error.message
-                        : "Failed to track analytics event",
-            },
+            { success: false, error: "Failed to track analytics event" },
             { status: 500 },
         );
     }
@@ -180,8 +174,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             success: true,
             message: "Analytics endpoint is active",
-            shop,
-            timestamp: new Date().toISOString(),
         });
     } catch (error) {
         if (

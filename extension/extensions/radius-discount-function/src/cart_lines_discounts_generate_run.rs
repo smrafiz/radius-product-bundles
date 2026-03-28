@@ -799,12 +799,17 @@ fn cart_lines_discounts_generate_run(
                 true
             })
             .map(|bl| {
-                // Calculate the quantity to discount for this line
+                // Calculate the quantity to discount for this line.
+                // Cap to the actual line quantity — when the same productId has multiple
+                // variant lines (e.g. Blue + Black each qty=1), product_quantities sums
+                // them to 2, but each individual line only holds 1 unit.
+                let line_qty = *bl.line.quantity();
                 let target_qty = if let Some(qty_map) = product_quantities {
                     bl.product_id
                         .as_ref()
                         .and_then(|pid| qty_map.get(pid))
                         .and_then(|expected_qty| safe_mul(complete_sets, *expected_qty))
+                        .map(|qty| qty.min(line_qty))
                 } else {
                     None
                 };
@@ -844,11 +849,15 @@ fn cart_lines_discounts_generate_run(
 
                 if let Some(qty_map) = product_quantities {
                     if line_qty > 0 {
+                        // Cap to line_qty: when the same productId has multiple variant
+                        // lines, product_quantities sums their quantities, but each line
+                        // only holds its own units.
                         let discountable_qty = bl
                             .product_id
                             .as_ref()
                             .and_then(|pid| qty_map.get(pid))
                             .and_then(|expected_qty| safe_mul(complete_sets, *expected_qty))
+                            .map(|qty| qty.min(line_qty))
                             .unwrap_or(line_qty);
 
                         let per_unit = subtotal / line_qty as f64;
