@@ -10,6 +10,7 @@ import {
     getFontSize,
     getCardRadius,
     getImageSize,
+    getCardBgColor,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
@@ -31,6 +32,7 @@ function SplitProductCard({
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
+    const cardBg = getCardBgColor(styles);
 
     return (
         <div
@@ -48,7 +50,7 @@ function SplitProductCard({
                         flexShrink: 0,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        backgroundColor: styles.productCardBg || "#f3f4f6",
+                        backgroundColor: cardBg,
                     }}
                 >
                     <img
@@ -141,6 +143,7 @@ export function WidgetSplitDeal({
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
     const isFullWidth = styles.buttonWidth !== "auto";
+    const cardBg = getCardBgColor(styles);
     const triggerBadge =
         labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
     const anyRewardFree = rewardProducts.some(
@@ -277,7 +280,7 @@ export function WidgetSplitDeal({
                             borderTop: "none",
                             borderRadius: `0 0 ${cardRadius} ${cardRadius}`,
                             padding: spacingValues.padding,
-                            background: styles.productCardBg || "#fff",
+                            background: cardBg,
                             display: "flex",
                             flexDirection: "column",
                             gap: spacingValues.gap,
@@ -356,7 +359,7 @@ export function WidgetSplitDeal({
                             borderTop: "none",
                             borderRadius: `0 0 ${cardRadius} ${cardRadius}`,
                             padding: spacingValues.padding,
-                            background: styles.productCardBg || "#fff",
+                            background: cardBg,
                             display: "flex",
                             flexDirection: "column",
                             gap: spacingValues.gap,

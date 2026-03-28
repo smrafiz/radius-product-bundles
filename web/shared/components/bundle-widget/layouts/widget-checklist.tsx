@@ -9,6 +9,7 @@ import {
     getFontSize,
     getImageSize,
     getButtonPadding,
+    getCardBgColor,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -57,6 +58,7 @@ function ChecklistTriggerItem({
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
+    const cardBg = getCardBgColor(styles);
 
     return (
         <div
@@ -67,8 +69,7 @@ function ChecklistTriggerItem({
                 padding: 12,
                 border: `2px solid ${styles.borderColor || "#d1d5db"}`,
                 borderRadius: cardRadius,
-                background:
-                    styles.productCardBg || styles.backgroundColor || "#fff",
+                background: cardBg,
             }}
         >
             <div
@@ -88,7 +89,7 @@ function ChecklistTriggerItem({
                         height: `calc(${imageSizePx} - 20px)`,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        background: styles.productCardBg || "#f9fafb",
+                        background: cardBg,
                     }}
                 >
                     <img
@@ -167,6 +168,7 @@ function ChecklistRewardItem({
     const hasDiscount = !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
+    const cardBg = getCardBgColor(styles);
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -177,7 +179,7 @@ function ChecklistRewardItem({
                         height: `calc(${imageSizePx} - 20px)`,
                         borderRadius: cardRadius,
                         overflow: "hidden",
-                        background: styles.productCardBg || "#f9fafb",
+                        background: cardBg,
                     }}
                 >
                     <img
@@ -261,6 +263,7 @@ export function WidgetChecklist({
     const buttonRadius = getButtonRadius(styles.cornerStyle);
     const isButtonOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
+    const cardBg = getCardBgColor(styles);
 
     const totalTriggers = triggerProducts.length;
     const progress = 0;
@@ -426,10 +429,7 @@ export function WidgetChecklist({
                         : `2px solid ${styles.borderColor || "#d1d5db"}`,
                     borderRadius: cardRadius,
                     padding: 16,
-                    background:
-                        styles.productCardBg ||
-                        styles.backgroundColor ||
-                        "#fff",
+                    background: cardBg,
                     opacity: isUnlocked ? 1 : 0.5,
                     transition: "all 0.3s ease",
                 }}
@@ -502,10 +502,7 @@ export function WidgetChecklist({
                         border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
                         borderRadius: getCardRadius(styles.cornerStyle),
                         padding: 16,
-                        background:
-                            styles.productCardBg ||
-                            styles.backgroundColor ||
-                            "#f9fafb",
+                        background: cardBg,
                         opacity: 0.5,
                         transition: "all 0.3s ease",
                     }}
