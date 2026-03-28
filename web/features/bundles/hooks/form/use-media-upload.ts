@@ -31,7 +31,6 @@ export function useMediaUpload() {
             const sessionToken = await app.idToken();
 
             // Get staged upload URLs
-            console.log("Getting staged upload URLs...");
             const fileMetadata = files.map((file) => ({
                 filename: file.name,
                 mimeType: file.type,
@@ -51,10 +50,6 @@ export function useMediaUpload() {
                     error: stagedResult.error || "Failed to stage uploads",
                 };
             }
-
-            console.log(
-                `✅ Got ${stagedResult.stagedTargets.length} staged URLs`,
-            );
 
             const resourceUrls = await uploadFilesToShopify(
                 files,
@@ -77,7 +72,6 @@ export function useMediaUpload() {
                 };
             }
 
-            console.log(`✅ Uploaded ${resourceUrls.length} files`);
             return { success: true, resourceUrls };
         } catch (error) {
             console.error("File upload error:", error);
@@ -112,7 +106,6 @@ export function useMediaUpload() {
             }
 
             // Attach to product
-            console.log("Attaching media to product...");
             const attachResult = await attachMediaToProductAction(
                 sessionToken,
                 productId,
@@ -124,7 +117,6 @@ export function useMediaUpload() {
                 return { success: false, error: attachResult.message };
             }
 
-            console.log("✅ Media attached successfully");
             return { success: true };
         } catch (error) {
             console.error("Media upload error:", error);

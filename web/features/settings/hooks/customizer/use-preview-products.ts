@@ -16,15 +16,6 @@ export function usePreviewProducts({
     const { previewProducts, customizerSource } = useCustomizerStore();
 
     return useMemo(() => {
-        console.log(
-            "[usePreviewProducts] customizerSource:",
-            customizerSource,
-            "previewProducts:",
-            previewProducts.length,
-            "placeholders:",
-            placeholderProducts.length,
-        );
-
         if (
             customizerSource === "bundle-preview" &&
             previewProducts.length > 0
@@ -32,20 +23,12 @@ export function usePreviewProducts({
             const result = maxCount
                 ? previewProducts.slice(0, maxCount)
                 : previewProducts;
-            console.log(
-                "[usePreviewProducts] returning preview products:",
-                result.length,
-            );
             return result;
         }
 
         const result = maxCount
             ? placeholderProducts.slice(0, maxCount)
             : placeholderProducts;
-        console.log(
-            "[usePreviewProducts] returning placeholder products:",
-            result.length,
-        );
         return result;
     }, [previewProducts, customizerSource, placeholderProducts, maxCount]);
 }

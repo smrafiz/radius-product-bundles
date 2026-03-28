@@ -143,10 +143,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             return [];
         }
 
-        console.log(
-            `Processing ${currentPendingMedia.length} pending media items in order...`,
-        );
-
         const filesToUpload = currentPendingMedia
             .filter(
                 (item): item is PendingMediaItem & { type: "file" } =>
@@ -157,14 +153,12 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         let uploadedFileUrls: string[] = [];
 
         if (filesToUpload.length > 0) {
-            console.log(`Uploading ${filesToUpload.length} files...`);
             const uploadResult = await uploadFilesOnly(filesToUpload);
 
             if (!uploadResult.success) {
                 console.error("File upload failed:", uploadResult.error);
             } else {
                 uploadedFileUrls = uploadResult.resourceUrls;
-                console.log(`✅ Uploaded ${uploadedFileUrls.length} files`);
             }
         }
 
@@ -184,10 +178,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         }
 
         if (orderedUrls.length > 0) {
-            console.log(
-                `Attaching ${orderedUrls.length} media items in order...`,
-            );
-
             const attachResult = await attachMediaToProductAction(
                 token,
                 productId,
@@ -197,8 +187,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
             if (attachResult.status === "error") {
                 console.error("Failed to attach media:", attachResult.message);
-            } else {
-                console.log("✅ All media attached in order");
             }
         }
 
@@ -218,8 +206,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         mainVariantId?: string;
         mediaUrls: string[];
     } | null> => {
-        console.log("Creating Shopify product...");
-
         const { bundlePrice, originalPrice } = calculateBundlePricing(data);
         const productData = await createProduct(
             data.productTitle || data.name,
@@ -234,8 +220,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
             console.error("Failed to create Shopify product");
             return null;
         }
-
-        console.log("✅ Product created:", productData);
 
         const mediaUrls = await processMediaForProduct(
             token,
@@ -336,8 +320,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                     // Delete product if switch was turned OFF
                     if (isPendingDeletion && currentMainProductId) {
-                        console.log("Deleting Shopify product...");
-
                         const deleteResult = await deleteBundleProductAction(
                             token,
                             currentMainProductId,
@@ -355,8 +337,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             });
                             return;
                         }
-
-                        console.log("✅ Product deleted");
 
                         // Clear product IDs
                         productWasDeleted = true;
@@ -387,7 +367,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         (data.productTitle || data.name);
 
                     if (needsProductCreation) {
-                        console.log("Creating product for existing bundle...");
                         const titleToUse = data.productTitle || data.name;
                         const productData = await createShopifyProduct(token, {
                             ...data,
@@ -408,11 +387,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         data.mainProductId = productData.mainProductId;
                         data.mainVariantId = productData.mainVariantId;
 
-                        console.log("🔍 Product created with:", {
-                            mainProductId: productData.mainProductId,
-                            mainVariantId: productData.mainVariantId,
-                        });
-
                         // Update store
                         setBundleData({
                             mainProductId: productData.mainProductId,
@@ -422,10 +396,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         if (currentMainProductId && currentMainVariantId) {
                             const { bundlePrice, originalPrice } =
                                 calculateBundlePricing(data);
-                            console.log("🔍 Updating price after creation:", {
-                                bundlePrice,
-                                originalPrice,
-                            });
 
                             const priceResult = await updateBundleProductAction(
                                 token,
@@ -445,7 +415,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                     priceResult.message,
                                 );
                             } else {
-                                console.log("✅ Price updated after creation");
                             }
                         }
                     }
@@ -471,9 +440,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                         productId: currentMainProductId,
                                         mediaIds: currentRemovedMediaIds,
                                     });
-                                console.log(
-                                    `✅ Media processed: ${deleteResult.deletedMediaIds.length} deleted`,
-                                );
                                 useBundleStore
                                     .getState()
                                     .clearRemovedMediaIds();
@@ -559,60 +525,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             data.productTitle ?? data.name ?? "";
                         const currentDescription =
                             data.productDescription ?? "";
-                        // Debug: log each field comparison
-                        console.log("[ProductSync] Snapshot comparison:", {
-                            hasSnapshot: !!snapshot,
-                            title: {
-                                snapshot: snapshot?.title,
-                                current: currentTitle,
-                                match: snapshot?.title === currentTitle,
-                            },
-                            description: {
-                                snapshot: snapshot?.description,
-                                current: currentDescription,
-                                match:
-                                    snapshot?.description ===
-                                    currentDescription,
-                            },
-                            status: {
-                                snapshot: snapshot?.status,
-                                current: data.status || "DRAFT",
-                                match:
-                                    snapshot?.status ===
-                                    (data.status || "DRAFT"),
-                            },
-                            discountType: {
-                                snapshot: snapshot?.discountType,
-                                current: data.discountType || "PERCENTAGE",
-                                match:
-                                    snapshot?.discountType ===
-                                    (data.discountType || "PERCENTAGE"),
-                            },
-                            discountValue: {
-                                snapshot: snapshot?.discountValue,
-                                current: data.discountValue ?? 0,
-                                match:
-                                    snapshot?.discountValue ===
-                                    (data.discountValue ?? 0),
-                            },
-                            maxDiscountAmount: {
-                                snapshot: snapshot?.maxDiscountAmount,
-                                current: data.maxDiscountAmount,
-                                snapshotNorm:
-                                    snapshot?.maxDiscountAmount ?? null,
-                                currentNorm: data.maxDiscountAmount ?? null,
-                                match:
-                                    (snapshot?.maxDiscountAmount ?? null) ===
-                                    (data.maxDiscountAmount ?? null),
-                            },
-                            productIds: {
-                                snapshot: snapshot?.productIds?.join(","),
-                                current: currentProductIds.join(","),
-                                match:
-                                    snapshot?.productIds?.join(",") ===
-                                    currentProductIds.join(","),
-                            },
-                        });
 
                         const hasProductChanges =
                             !snapshot ||
@@ -629,10 +541,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                 currentProductIds.join(",");
 
                         if (hasProductChanges) {
-                            console.log(
-                                "[ProductSync] Changes detected, updating Shopify product...",
-                            );
-
                             const productResult =
                                 await updateBundleProductAction(token, {
                                     productId: currentMainProductId,
@@ -666,9 +574,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                     });
                             }
                         } else {
-                            console.log(
-                                "Skipping Shopify product update (no changes)",
-                            );
                         }
                     }
                 } else {
