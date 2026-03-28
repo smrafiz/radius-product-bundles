@@ -7,6 +7,9 @@ import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widge
 
 /**
  * Custom hook for managing the widget status.
+ *
+ * App embed detection uses shopify.app.extensions() (App Bridge) — reliable.
+ * Widget block detection uses GraphQL theme files query — reads template JSON.
  */
 export function useWidgetStatus({
     shopDomain,
@@ -27,22 +30,40 @@ export function useWidgetStatus({
 
         let cancelled = false;
 
-        app.idToken()
-            .then((token) => {
+        async function check() {
+            try {
+                const token = await app.idToken();
                 if (cancelled) return;
-                return checkWidgetBlockStatusAction(token);
-            })
-            .then((result) => {
-                if (cancelled || !result) return;
-                if (result.status === "success" && result.data) {
-                    setWidgetStatus(result.data);
+
+                // Run both checks in parallel
+                const [blockResult, embedActive] = await Promise.all([
+                    checkWidgetBlockStatusAction(token),
+                    detectAppEmbed(),
+                ]);
+
+                if (cancelled) return;
+
+                if (blockResult.status === "success" && blockResult.data) {
+                    setWidgetStatus({
+                        ...blockResult.data,
+                        hasAppEmbed: embedActive || blockResult.data.hasAppEmbed,
+                    });
                 } else {
-                    markChecked();
+                    setWidgetStatus({
+                        hasWidgetBlock: false,
+                        hasAppEmbed: embedActive,
+                        isFullyIntegrated: false,
+                        checkedTemplates: [],
+                        checkedSections: [],
+                        detectedInTheme: null,
+                    });
                 }
-            })
-            .catch(() => {
+            } catch {
                 if (!cancelled) markChecked();
-            });
+            }
+        }
+
+        check();
 
         return () => {
             cancelled = true;
@@ -55,25 +76,31 @@ export function useWidgetStatus({
             return;
         }
 
-        const handleVisibility = () => {
+        const handleVisibility = async () => {
             if (document.visibilityState !== "visible") {
                 return;
             }
 
-            // Skip recheck only if both embed and block are active
             const { widgetStatus: current } = useWidgetStatusStore.getState();
             if (current?.hasAppEmbed && current?.isFullyIntegrated) {
                 return;
             }
 
-            app.idToken()
-                .then((token) => checkWidgetBlockStatusAction(token))
-                .then((result) => {
-                    if (result.status === "success" && result.data) {
-                        useWidgetStatusStore.getState().setWidgetStatus(result.data);
-                    }
-                })
-                .catch(() => {});
+            try {
+                const token = await app.idToken();
+                const [blockResult, embedActive] = await Promise.all([
+                    checkWidgetBlockStatusAction(token),
+                    detectAppEmbed(),
+                ]);
+
+                if (blockResult.status === "success" && blockResult.data) {
+                    useWidgetStatusStore.getState().setWidgetStatus({
+                        ...blockResult.data,
+                        hasAppEmbed:
+                            embedActive || blockResult.data.hasAppEmbed,
+                    });
+                }
+            } catch {}
         };
 
         document.addEventListener("visibilitychange", handleVisibility);
@@ -93,4 +120,33 @@ export function useWidgetStatus({
         isChecking: !isChecked,
         themeEditorUrl,
     };
+}
+
+/**
+ * Detects app embed status via App Bridge shopify.app.extensions().
+ * This is the same reliable method used by the setup guide.
+ */
+async function detectAppEmbed(): Promise<boolean> {
+    try {
+        const extensions = await shopify.app.extensions();
+        const themeExt = extensions.find(
+            (e) => e.type === "theme_app_extension",
+        );
+        if (!themeExt) return false;
+
+        const activations = themeExt.activations as Array<{
+            handle: string;
+            target: string;
+            status: string;
+        }>;
+
+        return activations.some(
+            (a) =>
+                a.handle === "app-embed" &&
+                a.target !== "section" &&
+                a.status === "active",
+        );
+    } catch {
+        return false;
+    }
 }

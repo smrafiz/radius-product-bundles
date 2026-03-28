@@ -1,9 +1,15 @@
 "use server";
 
+import {
+    GetMainThemeDocument,
+    GetThemeFilesDocument,
+    type GetMainThemeQuery,
+    type GetThemeFilesQuery,
+} from "@/lib/graphql/generated/graphql";
 import type { ApiResponse } from "@/shared";
+import { executeGraphQLQuery } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
 import type { WidgetStatus } from "@/features/dashboard";
-import { SHOPIFY_API_VERSION } from "@/shared/constants";
 
 const APP_SLUGS = [
     "product-bundles",
@@ -15,133 +21,47 @@ const APP_SLUGS = [
 const BLOCK_HANDLE = "app-block";
 const EMBED_HANDLE = "app-embed";
 
-/**
- * Fetches a single asset from a theme.
- * Returns null if the asset is not found.
- */
-async function fetchAsset(
-    shop: string,
-    themeId: string,
-    accessToken: string,
-    assetKey: string,
-): Promise<string | null> {
-    const res = await fetch(
-        `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/themes/${themeId}/assets.json?asset[key]=${encodeURIComponent(assetKey)}`,
-        {
-            headers: {
-                "X-Shopify-Access-Token": accessToken,
-                "Content-Type": "application/json",
-            },
-        },
-    );
-
-    if (!res.ok) {
-        return null;
-    }
-
-    const data = await res.json();
-    return data.asset?.value ?? null;
-}
+type ThemeFileNode = NonNullable<
+    GetThemeFilesQuery["theme"]
+>["files"] extends { nodes: (infer N)[] } | null | undefined
+    ? N
+    : never;
 
 /**
- * Lists all asset keys in a theme, then fetches JSON templates/sections
- * individually to check for widget block references.
- * The listing endpoint only returns keys (no values), so we must fetch
- * each candidate asset separately.
- *
- * Fetches up to 5 candidates concurrently to reduce total scan time.
+ * Extracts text content from a theme file body union type.
  */
-async function scanJsonAssetsForWidget(
-    shop: string,
-    themeId: string,
-    accessToken: string,
-): Promise<{ found: boolean; filesWithWidget: string[] }> {
-    const candidateKeys: string[] = [];
-
-    let pageInfo: string | null = null;
-    do {
-        let url = `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/themes/${themeId}/assets.json?limit=250`;
-        if (pageInfo) {
-            url += `&page_info=${pageInfo}`;
-        }
-
-        const res = await fetch(url, {
-            headers: {
-                "X-Shopify-Access-Token": accessToken,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!res.ok) {
-            break;
-        }
-
-        const linkHeader = res.headers.get("link");
-        if (linkHeader) {
-            const nextMatch = linkHeader.match(
-                /<[^>]*page_info=([^>]+)>; rel="next"/,
-            );
-            pageInfo = nextMatch ? nextMatch[1] : null;
-        } else {
-            pageInfo = null;
-        }
-
-        const data = await res.json();
-        for (const asset of data.assets ?? []) {
-            const key: string = asset.key;
-            if (
-                (key.startsWith("templates/") && key.endsWith(".json")) ||
-                (key.startsWith("sections/") && key.endsWith(".json"))
-            ) {
-                candidateKeys.push(key);
-            }
-        }
-    } while (pageInfo);
-
-    // Fetch candidates in parallel batches to reduce scan time
-    const BATCH_SIZE = 5;
-    for (let i = 0; i < candidateKeys.length; i += BATCH_SIZE) {
-        const batch = candidateKeys.slice(i, i + BATCH_SIZE);
-        const results = await Promise.all(
-            batch.map((key) => fetchAsset(shop, themeId, accessToken, key)),
-        );
-        for (let j = 0; j < results.length; j++) {
-            if (results[j] && hasWidgetBlockInAsset(results[j])) {
-                return { found: true, filesWithWidget: [batch[j]] };
-            }
-        }
+function getFileContent(body: ThemeFileNode["body"]): string | undefined {
+    if (body && "content" in body) {
+        return body.content;
     }
 
-    return { found: false, filesWithWidget: [] };
+    return undefined;
 }
 
 /**
  * Checks if a JSON template contains a widget block reference.
  */
-function hasWidgetBlockInAsset(assetValue: string | null): boolean {
-    if (!assetValue) {
+function hasWidgetBlockInContent(content: string | undefined): boolean {
+    if (!content) {
         return false;
     }
 
-    // Shopify JSON templates store URLs with escaped forward slashes (\/)
-    // Normalize before matching so "shopify:\/\/apps\/..." becomes "shopify://apps/..."
-    const normalized = assetValue.replaceAll("\\/", "/");
-
+    const normalized = content.replaceAll("\\/", "/");
     return APP_SLUGS.some((slug) =>
         normalized.includes(`shopify://apps/${slug}/blocks/${BLOCK_HANDLE}`),
     );
 }
 
 /**
- * Checks if a theme settings file contains an enabled app embed.
+ * Checks if settings_data.json contains an enabled app embed.
  */
-function hasAppEmbedInSettings(settingsValue: string | null): boolean {
-    if (!settingsValue) {
+function hasAppEmbedInSettings(content: string | undefined): boolean {
+    if (!content) {
         return false;
     }
 
     try {
-        const settings = JSON.parse(settingsValue);
+        const settings = JSON.parse(content);
         const current = settings?.current;
         if (!current) {
             return false;
@@ -151,7 +71,9 @@ function hasAppEmbedInSettings(settingsValue: string | null): boolean {
             current.blocks ?? {};
 
         return Object.values(blocks).some((block) => {
-            if (block.disabled) return false;
+            if (block.disabled) {
+                return false;
+            }
             const type = block.type ?? "";
             return APP_SLUGS.some((slug) =>
                 type.includes(`shopify://apps/${slug}/blocks/${EMBED_HANDLE}`),
@@ -163,80 +85,7 @@ function hasAppEmbedInSettings(settingsValue: string | null): boolean {
 }
 
 /**
- * Check a single theme for widget block and app embed presence.
- */
-async function checkThemeForWidget(
-    shop: string,
-    themeId: string,
-    themeName: string,
-    accessToken: string,
-): Promise<{
-    hasWidgetBlock: boolean;
-    hasAppEmbed: boolean;
-    checkedTemplates: string[];
-}> {
-    let hasWidgetBlock = false;
-    let hasAppEmbed = false;
-    const checkedTemplates: string[] = [];
-
-    // 1. Check well-known templates for widget block
-    const templatesToCheck = [
-        "templates/product.json",
-        "sections/main-product.liquid",
-        "templates/index.json",
-        "templates/page.json",
-        "templates/collection.json",
-    ];
-
-    for (const template of templatesToCheck) {
-        const assetValue = await fetchAsset(
-            shop,
-            themeId,
-            accessToken,
-            template,
-        );
-
-        if (assetValue !== null) {
-            checkedTemplates.push(`${themeName}:${template}`);
-            if (hasWidgetBlockInAsset(assetValue)) {
-                hasWidgetBlock = true;
-                break;
-            }
-        }
-    }
-
-    // 2. Fallback: scan remaining JSON templates/sections
-    if (!hasWidgetBlock) {
-        const scanResult = await scanJsonAssetsForWidget(
-            shop,
-            themeId,
-            accessToken,
-        );
-        if (scanResult.found) {
-            hasWidgetBlock = true;
-            checkedTemplates.push(
-                ...scanResult.filesWithWidget.map((f) => `${themeName}:${f}`),
-            );
-        }
-    }
-
-    // 3. Check app embed in settings
-    const settingsValue = await fetchAsset(
-        shop,
-        themeId,
-        accessToken,
-        "config/settings_data.json",
-    );
-
-    if (settingsValue && hasAppEmbedInSettings(settingsValue)) {
-        hasAppEmbed = true;
-    }
-
-    return { hasWidgetBlock, hasAppEmbed, checkedTemplates };
-}
-
-/**
- * Checks the widget block status for a given shop.
+ * Checks the widget block status for a given shop using GraphQL Theme API.
  */
 export async function checkWidgetBlockStatusAction(
     sessionToken: string,
@@ -250,45 +99,70 @@ export async function checkWidgetBlockStatusAction(
 
         const { accessToken } = session;
 
-        const themesRes = await fetch(
-            `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/themes.json`,
-            { headers: { "X-Shopify-Access-Token": accessToken } },
-        );
+        // 1. Get the main (published) theme
+        const themesResult = await executeGraphQLQuery<GetMainThemeQuery>({
+            query: GetMainThemeDocument,
+            shop,
+            accessToken,
+        });
 
-        if (!themesRes.ok) {
-            return { status: "error", message: "Failed to fetch themes" };
-        }
-
-        const { themes } = await themesRes.json();
-
-        const mainTheme = (themes ?? []).find(
-            (t: { role: string }) => t.role === "main",
-        );
+        const mainTheme = themesResult.data?.themes?.nodes?.[0];
 
         if (!mainTheme) {
             return { status: "error", message: "No published theme found" };
         }
 
+        // 2. Fetch well-known templates + settings_data.json in one query
+        const templateFiles = [
+            "templates/product.json",
+            "templates/index.json",
+            "templates/page.json",
+            "templates/collection.json",
+            "config/settings_data.json",
+        ];
+
+        const filesResult = await executeGraphQLQuery<GetThemeFilesQuery>({
+            query: GetThemeFilesDocument,
+            variables: { themeId: mainTheme.id, filenames: templateFiles },
+            shop,
+            accessToken,
+        });
+
+        const files = filesResult.data?.theme?.files?.nodes ?? [];
+
         let hasWidgetBlock = false;
         let hasAppEmbed = false;
-        let detectedInTheme: string | null = null;
-        const allCheckedTemplates: string[] = [];
+        const checkedTemplates: string[] = [];
 
-        // Check the published (main) theme — this is what customers see
-        const mainResult = await checkThemeForWidget(
-            shop,
-            mainTheme.id,
-            mainTheme.name,
-            accessToken,
-        );
-        allCheckedTemplates.push(...mainResult.checkedTemplates);
+        for (const file of files) {
+            const content = await getFileContent(file.body);
 
-        if (mainResult.hasWidgetBlock) {
-            hasWidgetBlock = true;
-            detectedInTheme = mainTheme.name;
+            if (file.filename === "config/settings_data.json") {
+                if (hasAppEmbedInSettings(content)) {
+                    hasAppEmbed = true;
+                }
+                continue;
+            }
+
+            checkedTemplates.push(`${mainTheme.name}:${file.filename}`);
+            if (!hasWidgetBlock && hasWidgetBlockInContent(content)) {
+                hasWidgetBlock = true;
+            }
         }
-        if (mainResult.hasAppEmbed) {
-            hasAppEmbed = true;
+
+        // 3. If not found in well-known templates, scan all JSON templates/sections
+        if (!hasWidgetBlock) {
+            const scanResult = await scanAllJsonTemplates(
+                shop,
+                accessToken,
+                mainTheme.id,
+                mainTheme.name,
+                templateFiles,
+            );
+            if (scanResult.found) {
+                hasWidgetBlock = true;
+                checkedTemplates.push(...scanResult.filesWithWidget);
+            }
         }
 
         return {
@@ -297,9 +171,9 @@ export async function checkWidgetBlockStatusAction(
                 hasWidgetBlock,
                 hasAppEmbed,
                 isFullyIntegrated: hasWidgetBlock,
-                checkedTemplates: allCheckedTemplates,
+                checkedTemplates,
                 checkedSections: [],
-                detectedInTheme,
+                detectedInTheme: hasWidgetBlock ? mainTheme.name : null,
             },
         };
     } catch (err) {
@@ -309,4 +183,56 @@ export async function checkWidgetBlockStatusAction(
             message: "Failed to check widget block status",
         };
     }
+}
+
+/**
+ * Fallback: fetch ALL JSON templates and sections to find widget blocks.
+ * Uses GraphQL theme files query with glob-style filenames.
+ */
+async function scanAllJsonTemplates(
+    shop: string,
+    accessToken: string,
+    themeId: string,
+    themeName: string,
+    alreadyChecked: string[],
+): Promise<{ found: boolean; filesWithWidget: string[] }> {
+    const additionalTemplates = [
+        "templates/article.json",
+        "templates/blog.json",
+        "templates/cart.json",
+        "templates/search.json",
+        "templates/list-collections.json",
+        "templates/404.json",
+        "templates/password.json",
+        "templates/gift_card.json",
+    ];
+
+    const toCheck = additionalTemplates.filter(
+        (f) => !alreadyChecked.includes(f),
+    );
+
+    if (toCheck.length === 0) {
+        return { found: false, filesWithWidget: [] };
+    }
+
+    const result = await executeGraphQLQuery<GetThemeFilesQuery>({
+        query: GetThemeFilesDocument,
+        variables: { themeId, filenames: toCheck },
+        shop,
+        accessToken,
+    });
+
+    const files = result.data?.theme?.files?.nodes ?? [];
+
+    for (const file of files) {
+        const content = await getFileContent(file.body);
+        if (hasWidgetBlockInContent(content)) {
+            return {
+                found: true,
+                filesWithWidget: [`${themeName}:${file.filename}`],
+            };
+        }
+    }
+
+    return { found: false, filesWithWidget: [] };
 }

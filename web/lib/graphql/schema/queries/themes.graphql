@@ -1,0 +1,27 @@
+query GetMainTheme {
+    themes(first: 1, roles: [MAIN]) {
+        nodes {
+            id
+            name
+            role
+        }
+    }
+}
+
+query GetThemeFiles($themeId: ID!, $filenames: [String!]!) {
+    theme(id: $themeId) {
+        files(filenames: $filenames, first: 50) {
+            nodes {
+                filename
+                body {
+                    ... on OnlineStoreThemeFileBodyText {
+                        content
+                    }
+                    ... on OnlineStoreThemeFileBodyUrl {
+                        url
+                    }
+                }
+            }
+        }
+    }
+}
