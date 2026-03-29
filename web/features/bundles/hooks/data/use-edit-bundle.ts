@@ -17,6 +17,10 @@ import { ProductNode, useGraphQL } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 const isProductNode = (node: any): node is ProductNode => {
+    if (node == null) {
+        return false;
+    }
+
     const hasId = typeof node.id === "string" && node.id.includes("Product");
     const hasTitle = typeof node.title === "string";
     const hasHandle = typeof node.handle === "string";
