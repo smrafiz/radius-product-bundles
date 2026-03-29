@@ -1,5 +1,4 @@
 {% assign bundle_ids = product.metafields['$app'].bundle_ids.value %}
-
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
 {% assign global = shop.metafields['$app'].global_settings.value %}
 {% assign bundles = shop.metafields['$app'].active_bundles.value %}
@@ -45,58 +44,30 @@
 {% endif %}
 {% endif %}
 {% endfor %}
-
 {% assign rtl_locales = 'ar,he,fa,ur' | split: ',' %}
 {% assign is_rtl = false %}
 {% if rtl_locales contains customer_locale_base %}
 {% assign is_rtl = true %}
 {% endif %}
-
 {{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-
-<div
-class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}"
-data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
-data-shop="{{ shop.permanent_domain }}"
-dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}"
-style="opacity: 0"
->
+<div class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}" data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}" data-shop="{{ shop.permanent_domain }}" dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}" style="opacity:0">
 {% for bundle_id in bundle_ids %}
 {% assign bundle = bundles[bundle_id] %}
-
 {% if bundle_id == best_bundle_id %}
 {% assign current_product_gid = product.id | prepend: 'gid://shopify/Product/' %}
 {% assign is_standalone = false %}
 {% if bundle.mainProductId and current_product_gid == bundle.mainProductId %}
 {% assign is_standalone = true %}
 {% endif %}
-
 {% assign bundle_type_key = bundle.bundleType | default: 'FIXED_BUNDLE' %}
 {% assign g_type_overrides = g_styles.bundleTypeOverrides[bundle_type_key] %}
-
-{% assign style_preset = block.settings.style_preset %}
 {% assign style_preset = block.settings.style_preset | default: '' %}
 {% if style_preset == 'custom' %}
-{% assign primary_color = block.settings.primary_color
-| default: g_type_overrides.primaryColor
-| default: g_styles.primaryColor
-| default: '#303030' %}
-{% assign text_color = block.settings.text_color
-| default: g_type_overrides.textColor
-| default: g_styles.textColor
-| default: '#333333' %}
-{% assign background_color = block.settings.background_color
-| default: g_type_overrides.backgroundColor
-| default: g_styles.backgroundColor
-| default: '#ffffff' %}
-{% assign border_color = block.settings.border_color
-| default: g_type_overrides.borderColor
-| default: g_styles.borderColor
-| default: '#e5e7eb' %}
-{% assign savings_color = block.settings.savings_color
-| default: g_type_overrides.savingsColor
-| default: g_styles.savingsColor
-| default: '#16a34a' %}
+{% assign primary_color = block.settings.primary_color | default: g_type_overrides.primaryColor | default: g_styles.primaryColor | default: '#303030' %}
+{% assign text_color = block.settings.text_color | default: g_type_overrides.textColor | default: g_styles.textColor | default: '#333333' %}
+{% assign background_color = block.settings.background_color | default: g_type_overrides.backgroundColor | default: g_styles.backgroundColor | default: '#ffffff' %}
+{% assign border_color = block.settings.border_color | default: g_type_overrides.borderColor | default: g_styles.borderColor | default: '#e5e7eb' %}
+{% assign savings_color = block.settings.savings_color | default: g_type_overrides.savingsColor | default: g_styles.savingsColor | default: '#16a34a' %}
 {% else %}
 {% case style_preset %}
 {% when 'minimal' %}
@@ -156,7 +127,6 @@ style="opacity: 0"
 {% assign savings_color = g_type_overrides.savingsColor | default: g_styles.savingsColor | default: '#16a34a' %}
 {% endcase %}
 {% endif %}
-
 {% if block.settings.style_preset != blank %}
 {% assign style_preset = block.settings.style_preset %}
 {% else %}
@@ -167,7 +137,6 @@ style="opacity: 0"
 {% else %}
 {% assign corner_style = g_type_overrides.cornerStyle | default: g_styles.cornerStyle %}
 {% endif %}
-
 {% assign corner_style = corner_style | default: 'modern' %}
 {% case corner_style %}
 {% when 'sharp' %}
@@ -177,21 +146,18 @@ style="opacity: 0"
 {% else %}
 {% assign border_radius = 8 %}
 {% endcase %}
-
 {% assign shadow = block.settings.shadow | default: 'soft' %}
 {% if style_preset == 'custom' and block.settings.shadow != blank %}
 {% assign shadow = block.settings.shadow %}
 {% else %}
 {% assign shadow = g_type_overrides.shadow | default: g_styles.shadow %}
 {% endif %}
-
 {% assign spacing = block.settings.spacing | default: 'comfortable' %}
 {% if style_preset == 'custom' and block.settings.spacing != blank %}
 {% assign spacing = block.settings.spacing %}
 {% else %}
 {% assign spacing = g_type_overrides.spacing | default: g_styles.spacing %}
 {% endif %}
-
 {% case spacing %}
 {% when 'compact' %}
 {% assign box_spacing = 12 %}
@@ -203,9 +169,7 @@ style="opacity: 0"
 {% assign box_spacing = 20 %}
 {% assign gap_spacing = 12 %}
 {% endcase %}
-
 {% assign image_size = g_type_overrides.imageSize | default: g_styles.imageSize | default: 'medium' %}
-
 {% case image_size %}
 {% when 'small' %}
 {% assign image_size_px = 60 %}
@@ -214,11 +178,8 @@ style="opacity: 0"
 {% else %}
 {% assign image_size_px = 80 %}
 {% endcase %}
-
 {% assign image_fit = g_type_overrides.imageFit | default: g_styles.imageFit | default: 'contain' %}
-
 {% assign image_position = g_type_overrides.imagePosition | default: g_styles.imagePosition | default: 'left' %}
-
 {% if product_card_bg == blank %}
 {% assign customize_card_style = g_type_overrides.customizeCardStyle | default: g_styles.customizeCardStyle %}
 {% if customize_card_style == true or customize_card_style == 'true' %}
@@ -227,14 +188,12 @@ style="opacity: 0"
 {% assign product_card_bg = background_color %}
 {% endif %}
 {% endif %}
-
 {% assign product_card_border = true %}
 {% if g_type_overrides.productCardBorder == false or g_type_overrides.productCardBorder == 'false' %}
 {% assign product_card_border = false %}
 {% elsif g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
 {% assign product_card_border = false %}
 {% endif %}
-
 {% assign product_card_shadow = false %}
 {% if g_type_overrides.productCardShadow == true or g_type_overrides.productCardShadow == 'true' %}
 {% assign product_card_shadow = true %}
@@ -249,35 +208,30 @@ style="opacity: 0"
 {% elsif g_styles.buttonStyle != blank %}
 {% assign button_style = g_styles.buttonStyle %}
 {% endif %}
-
 {% assign button_size = 'medium' %}
 {% if g_type_overrides.buttonSize != blank %}
 {% assign button_size = g_type_overrides.buttonSize %}
 {% elsif g_styles.buttonSize != blank %}
 {% assign button_size = g_styles.buttonSize %}
 {% endif %}
-
 {% assign button_width = 'full' %}
 {% if g_type_overrides.buttonWidth != blank %}
 {% assign button_width = g_type_overrides.buttonWidth %}
 {% elsif g_styles.buttonWidth != blank %}
 {% assign button_width = g_styles.buttonWidth %}
 {% endif %}
-
 {% assign button_bg_color = primary_color %}
 {% if g_type_overrides.buttonBgColor != blank %}
 {% assign button_bg_color = g_type_overrides.buttonBgColor %}
 {% elsif g_styles.buttonBgColor != blank %}
 {% assign button_bg_color = g_styles.buttonBgColor %}
 {% endif %}
-
 {% assign badge_position = 'top-right' %}
 {% if g_type_overrides.badgePosition != blank %}
 {% assign badge_position = g_type_overrides.badgePosition %}
 {% elsif g_styles.badgePosition != blank %}
 {% assign badge_position = g_styles.badgePosition %}
 {% endif %}
-
 {% assign badge_style = 'filled' %}
 {% if g_type_overrides.badgeStyle != blank %}
 {% assign badge_style = g_type_overrides.badgeStyle %}
@@ -290,7 +244,6 @@ style="opacity: 0"
 {% elsif g_styles.pricingSummaryBox == false or g_styles.pricingSummaryBox == 'false' %}
 {% assign pricing_summary_box = false %}
 {% endif %}
-
 {% assign pricing_summary_style = 'card' %}
 {% if pricing_summary_box %}
 {% if g_type_overrides.pricingSummaryStyle != blank %}
@@ -299,7 +252,6 @@ style="opacity: 0"
 {% assign pricing_summary_style = g_styles.pricingSummaryStyle %}
 {% endif %}
 {% endif %}
-
 {% assign pricing_summary_bg = '#f9fafb' %}
 {% if pricing_summary_box %}
 {% if g_type_overrides.pricingSummaryBg != blank %}
@@ -309,7 +261,6 @@ style="opacity: 0"
 {% endif %}
 {% endif %}
 {% assign override_container_settings = block.settings.override_container_settings | default: false %}
-
 {% assign box_max_width = 600 %}
 {% if override_container_settings %}
 {% assign box_max_width = block.settings.box_max_width | default: box_max_width %}
@@ -318,7 +269,6 @@ style="opacity: 0"
 {% elsif g_styles.boxMaxWidth != blank %}
 {% assign box_max_width = g_styles.boxMaxWidth %}
 {% endif %}
-
 {% assign box_alignment = 'center' %}
 {% if override_container_settings and block.settings.box_alignment != blank %}
 {% assign box_alignment = block.settings.box_alignment %}
@@ -327,7 +277,6 @@ style="opacity: 0"
 {% elsif g_styles.boxAlignment != blank %}
 {% assign box_alignment = g_styles.boxAlignment %}
 {% endif %}
-
 {% assign show_border = true %}
 {% if g_type_overrides.showBorder == false or g_type_overrides.showBorder == 'false' %}
 {% assign show_border = false %}
@@ -335,7 +284,6 @@ style="opacity: 0"
 {% assign show_border = false %}
 {% endif %}
 {% assign override_typography_settings = block.settings.override_typography_settings | default: false %}
-
 {% assign heading_size = 'medium' %}
 {% if override_typography_settings and block.settings.heading_size != blank %}
 {% assign heading_size = block.settings.heading_size %}
@@ -344,7 +292,6 @@ style="opacity: 0"
 {% elsif g_styles.headingSize != blank %}
 {% assign heading_size = g_styles.headingSize %}
 {% endif %}
-
 {% assign body_size = 'medium' %}
 {% if override_typography_settings and block.settings.body_size != blank %}
 {% assign body_size = block.settings.body_size %}
@@ -353,20 +300,16 @@ style="opacity: 0"
 {% elsif g_styles.bodySize != blank %}
 {% assign body_size = g_styles.bodySize %}
 {% endif %}
-
 {% assign more_product_settings = block.settings.more_product_settings %}
 {% assign more_product_count = block.settings.more_product_count %}
 {% assign product_count = bundle.productCount %}
 {% unless more_product_settings %}
 {% assign more_product_count = product_count %}
 {% endunless %}
-
-
 {% assign layout = 'list' %}
 {% if g_styles.layout != blank %}
 {% assign layout = g_styles.layout %}
 {% endif %}
-
 {% assign divider_style = 'plus' %}
 {% if layout == 'list' %}
 {% if g_type_overrides.dividerStyle != blank %}
@@ -375,28 +318,12 @@ style="opacity: 0"
 {% assign divider_style = g_styles.dividerStyle %}
 {% endif %}
 {% endif %}
-
-{% assign layout = bundle.layout
-| default: 'LIST' %}
-
-{% assign grid_columns = g_type_overrides.gridColumns
-| default: g_styles.gridColumns
-| default: 3 %}
-
-{% assign slides_per_view = g_type_overrides.slidesPerView
-| default: g_styles.slidesPerView
-| default: 3 %}
-
-{% assign carousel_navigation = g_type_overrides.carouselNavigation
-| default: g_styles.carouselNavigation
-| default: 'both' %}
-
+{% assign layout = bundle.layout | default: 'LIST' %}
+{% assign grid_columns = g_type_overrides.gridColumns | default: g_styles.gridColumns | default: 3 %}
+{% assign slides_per_view = g_type_overrides.slidesPerView | default: g_styles.slidesPerView | default: 3 %}
+{% assign carousel_navigation = g_type_overrides.carouselNavigation | default: g_styles.carouselNavigation | default: 'both' %}
 {% assign autoplay = g_type_overrides.autoplay | default: g_styles.autoplay | default: false %}
-
-{% assign autoplay_speed = g_type_overrides.autoplaySpeed
-| default: g_styles.autoplaySpeed
-| default: 5 %}
-
+{% assign autoplay_speed = g_type_overrides.autoplaySpeed | default: g_styles.autoplaySpeed | default: 5 %}
 {% assign show_images = bundle.showImages %}
 {% assign show_savings = bundle.showSavings %}
 {% assign show_product_prices = bundle.showPrices %}
@@ -408,7 +335,6 @@ style="opacity: 0"
 {% assign enable_stock_validation = global.cart.enableStockValidation %}
 {% assign enable_analytics = global.privacy.enableAnalytics %}
 {% assign lazy_load_images = global.cart.lazyLoadImages %}
-
 {% if show_images == null %}{% assign show_images = true %}{% endif %}
 {% if show_savings == null %}{% assign show_savings = true %}{% endif %}
 {% if show_product_prices == null %}{% assign show_product_prices = true %}{% endif %}
@@ -435,15 +361,12 @@ style="opacity: 0"
 {% else %}
 {% assign bundle_heading = 'bundle.headingLabel' | t | strip %}
 {% endif %}
-
 {% assign bundle_subtitle = bundle.subtitle | default: '' | strip %}
-
 {% if g_labels.savingsBadgeText != blank %}
 {% assign savings_badge_text = g_labels.savingsBadgeText %}
 {% else %}
 {% assign savings_badge_text = 'bundle.savingsBadgeText' | t %}
 {% endif %}
-
 {% if bundle.buttonText != blank %}
 {% assign button_text = bundle.buttonText | strip %}
 {% elsif g_labels.addToCartText != blank %}
@@ -451,61 +374,51 @@ style="opacity: 0"
 {% else %}
 {% assign button_text = 'bundle.addToCartText' | t | strip %}
 {% endif %}
-
 {% if g_labels.regularPriceLabel != blank %}
 {% assign regular_price_label = g_labels.regularPriceLabel %}
 {% else %}
 {% assign regular_price_label = 'bundle.regularPriceLabel' | t %}
 {% endif %}
-
 {% if g_labels.bundlePriceLabel != blank %}
 {% assign bundle_price_label = g_labels.bundlePriceLabel %}
 {% else %}
 {% assign bundle_price_label = 'bundle.bundlePriceLabel' | t %}
 {% endif %}
-
 {% if g_labels.youSaveLabel != blank %}
 {% assign you_save_label = g_labels.youSaveLabel %}
 {% else %}
 {% assign you_save_label = 'bundle.youSaveLabel' | t %}
 {% endif %}
-
 {% if g_labels.freeShippingLabel != blank %}
 {% assign free_shipping_label = g_labels.freeShippingLabel %}
 {% else %}
 {% assign free_shipping_label = 'bundle.freeShippingLabel' | t %}
 {% endif %}
-
 {% if g_labels.quantityLabel != blank %}
 {% assign quantity_label = g_labels.quantityLabel %}
 {% else %}
 {% assign quantity_label = 'bundle.quantityLabel' | t %}
 {% endif %}
-
 {% if g_labels.addingText != blank %}
 {% assign adding_text = g_labels.addingText %}
 {% else %}
 {% assign adding_text = 'bundle.addingText' | t %}
 {% endif %}
-
 {% if g_labels.addedText != blank %}
 {% assign added_text = g_labels.addedText %}
 {% else %}
 {% assign added_text = 'bundle.addedText' | t %}
 {% endif %}
-
 {% if g_labels.outOfStockText != blank %}
 {% assign out_of_stock_text = g_labels.outOfStockText %}
 {% else %}
 {% assign out_of_stock_text = 'bundle.outOfStockText' | t %}
 {% endif %}
-
 {% if g_labels.maxBundlesReachedText != blank %}
 {% assign max_bundles_reached_text = g_labels.maxBundlesReachedText %}
 {% else %}
 {% assign max_bundles_reached_text = 'bundle.maxBundlesReachedText' | t %}
 {% endif %}
-
 {% if g_labels.bogoYouPayLabel != blank %}
 {% assign bogo_you_pay_label = g_labels.bogoYouPayLabel %}
 {% else %}
@@ -546,7 +459,6 @@ style="opacity: 0"
 {% else %}
 {% assign bogo_save_text = 'bundle.bogoSaveText' | t %}
 {% endif %}
-
 {% if block.settings.more_products_text != blank %}
 {% assign more_products_text = block.settings.more_products_text %}
 {% else %}
@@ -557,14 +469,11 @@ style="opacity: 0"
 {% else %}
 {% assign show_less_text = 'bundle.showLessText' | t %}
 {% endif %}
-
 {% assign pv_ids = 'null' %}
 {% if bundle.productVariantIds %}
 {% assign pv_ids = bundle.productVariantIds | json %}
 {% endif %}
-
 {% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle_heading }}","subtitle": "{{ bundle_subtitle }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"productVariantIds": {{ pv_ids }},"productQuantities": {{ bundle.productQuantities | default: '[]' | json }},"mainProductId": "{{ bundle.mainProductId | default: '' }}","bundleType": "{{ bundle.bundleType | default: 'FIXED_BUNDLE' }}","buyQuantity": {{ bundle.buyQuantity | default: 1 }},"getQuantity": {{ bundle.getQuantity | default: 1 }},"usesPerOrderLimit": {{ bundle.usesPerOrderLimit | default: 0 }},"productRoles": {{ bundle.productRoles | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}","addingText": "{{ adding_text | escape }}","addedText": "{{ added_text | escape }}","outOfStockText": "{{ out_of_stock_text | escape }}","maxBundlesReachedText": "{{ max_bundles_reached_text | escape }}","bogoYouPayLabel": "{{ bogo_you_pay_label | escape }}","bogoYouSaveLabel": "{{ bogo_you_save_label | escape }}","bogoTriggerBadgeText": "{{ bogo_trigger_badge_text | escape }}","bogoRewardBadgeText": "{{ bogo_reward_badge_text | escape }}","bogoBadgeText": "{{ bogo_badge_text | escape }}","bogoFreeText": "{{ bogo_free_text | escape }}","bogoTotalLabel": "{{ bogo_total_label | escape }}","bogoSaveText": "{{ bogo_save_text | escape }}"}}{% endcapture %}
-
 {% capture responsive_json %}{"tablet": { {% if g_tablet.boxAlignment %}"boxAlignment": "{{ g_tablet.boxAlignment }}",{% endif %}{% if g_tablet.imagePosition %}"imagePosition": "{{ g_tablet.imagePosition }}",{% endif %}{% if g_tablet.imageFit %}"imageFit": "{{ g_tablet.imageFit }}",{% endif %}{% if g_tablet.imageSize %}"imageSize": "{{ g_tablet.imageSize }}",{% endif %}{% if g_tablet.dividerStyle %}"dividerStyle": "{{ g_tablet.dividerStyle }}",{% endif %}{% if g_tablet.carouselNavigation %}"carouselNavigation": "{{ g_tablet.carouselNavigation }}",{% endif %}{% if g_tablet.shadow %}"shadow": "{{ g_tablet.shadow }}",{% endif %}{% if g_tablet.spacing %}"spacing": "{{ g_tablet.spacing }}",{% endif %}{% if g_tablet.boxMaxWidth %}"boxMaxWidth": {{ g_tablet.boxMaxWidth }},{% endif %}{% if g_tablet.headingSize %}"headingSize": "{{ g_tablet.headingSize }}",{% endif %}{% if g_tablet.bodySize %}"bodySize": "{{ g_tablet.bodySize }}",{% endif %}{% if g_tablet.gridColumns %}"gridColumns": {{ g_tablet.gridColumns }},{% endif %}{% if g_tablet.slidesPerView %}"slidesPerView": {{ g_tablet.slidesPerView }},{% endif %}"_end": true},"mobile": { {% if g_mobile.boxAlignment %}"boxAlignment": "{{ g_mobile.boxAlignment }}",{% endif %}{% if g_mobile.imagePosition %}"imagePosition": "{{ g_mobile.imagePosition }}",{% endif %}{% if g_mobile.imageFit %}"imageFit": "{{ g_mobile.imageFit }}",{% endif %}{% if g_mobile.imageSize %}"imageSize": "{{ g_mobile.imageSize }}",{% endif %}{% if g_mobile.dividerStyle %}"dividerStyle": "{{ g_mobile.dividerStyle }}",{% endif %}{% if g_mobile.carouselNavigation %}"carouselNavigation": "{{ g_mobile.carouselNavigation }}",{% endif %}{% if g_mobile.shadow %}"shadow": "{{ g_mobile.shadow }}",{% endif %}{% if g_mobile.spacing %}"spacing": "{{ g_mobile.spacing }}",{% endif %}{% if g_mobile.boxMaxWidth %}"boxMaxWidth": {{ g_mobile.boxMaxWidth }},{% endif %}{% if g_mobile.headingSize %}"headingSize": "{{ g_mobile.headingSize }}",{% endif %}{% if g_mobile.bodySize %}"bodySize": "{{ g_mobile.bodySize }}",{% endif %}{% if g_mobile.gridColumns %}"gridColumns": {{ g_mobile.gridColumns }},{% endif %}{% if g_mobile.slidesPerView %}"slidesPerView": {{ g_mobile.slidesPerView }},{% endif %}"_end": true},"breakpoints": {"tablet": {{ tablet_bp }},"mobile": {{ mobile_bp }}}}{% endcapture %}
 {% if g_tablet.spacing %}
 {% case g_tablet.spacing %}
@@ -624,137 +533,124 @@ style="opacity: 0"
 {% endif %}
 <style>
 #radius-bundle-{{ bundle_id }} {
---rb-primary-color: {{ primary_color }};
---rb-text-color: {{ text_color }};
---rb-background-color: {{ background_color }};
---rb-border-color: {{ border_color }};
---rb-savings-color: {{ savings_color }};
---rb-product-bg-color: {{ product_card_bg }};
---rb-button-color: {{ button_bg_color }};
---rb-pricing-summary-bg: {{ pricing_summary_bg }};
---rb-border-radius: {{ border_radius }}px;
---rb-box-spacing: {{ box_spacing }}px;
---rb-gap-spacing: {{ gap_spacing }}px;
---rb-bundle-max-width: {{ box_max_width }}px;
---rb-box-border-width: {% if show_border %}1px{% else %}0{% endif %};
---rb-image-size: {{ image_size_px }}px;
---rb-image-fit: {{ image_fit }};
---rb-bogo-free-tag-color: {{ bogo_free_tag_color }};
---rb-bogo-card-border-style: {{ bogo_card_border_style }};
-
+--rb-primary-color:{{ primary_color }};
+--rb-text-color:{{ text_color }};
+--rb-background-color:{{ background_color }};
+--rb-border-color:{{ border_color }};
+--rb-savings-color:{{ savings_color }};
+--rb-product-bg-color:{{ product_card_bg }};
+--rb-button-color:{{ button_bg_color }};
+--rb-pricing-summary-bg:{{ pricing_summary_bg }};
+--rb-border-radius:{{ border_radius }}px;
+--rb-box-spacing:{{ box_spacing }}px;
+--rb-gap-spacing:{{ gap_spacing }}px;
+--rb-bundle-max-width:{{ box_max_width }}px;
+--rb-box-border-width:{% if show_border %}1px{% else %}0{% endif %};
+--rb-image-size:{{ image_size_px }}px;
+--rb-image-fit:{{ image_fit }};
+--rb-bogo-free-tag-color:{{ bogo_free_tag_color }};
+--rb-bogo-card-border-style:{{ bogo_card_border_style }};
 {% case shadow %}
 {% when 'none' %}
---rb-shadow: none;
---rb-shadow-hover: none;
+--rb-shadow:none;
+--rb-shadow-hover:none;
 {% when 'strong' %}
---rb-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
---rb-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
+--rb-shadow:0 4px 16px rgba(0, 0, 0, 0.15);
+--rb-shadow-hover:0 8px 24px rgba(0, 0, 0, 0.2);
 {% else %}
---rb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
---rb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+--rb-shadow:0 2px 8px rgba(0, 0, 0, 0.08);
+--rb-shadow-hover:0 4px 12px rgba(0, 0, 0, 0.12);
 {% endcase %}
-
 {% if product_card_shadow %}
---rb-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
---rb-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+--rb-card-shadow:0 2px 8px rgba(0, 0, 0, 0.08);
+--rb-card-shadow-hover:0 4px 12px rgba(0, 0, 0, 0.12);
 {% else %}
---rb-card-shadow: none;
---rb-card-shadow-hover: none;
+--rb-card-shadow:none;
+--rb-card-shadow-hover:none;
 {% endif %}
-
 {% if product_card_border %}
---rb-card-border: 1px solid var(--rb-border-color);
+--rb-card-border:1px solid var(--rb-border-color);
 {% else %}
---rb-card-border: none;
+--rb-card-border:none;
 {% endif %}
-
 {% case heading_size %}
 {% when 'small' %}
---rb-heading-font-size: 16px;
+--rb-heading-font-size:16px;
 {% when 'large' %}
---rb-heading-font-size: 24px;
+--rb-heading-font-size:24px;
 {% else %}
---rb-heading-font-size: 20px;
+--rb-heading-font-size:20px;
 {% endcase %}
-
 {% case body_size %}
 {% when 'small' %}
---rb-body-font-size: 14px;
+--rb-body-font-size:14px;
 {% when 'large' %}
---rb-body-font-size: 18px;
+--rb-body-font-size:18px;
 {% else %}
---rb-body-font-size: 16px;
+--rb-body-font-size:16px;
 {% endcase %}
-
 {% case button_size %}
 {% when 'small' %}
---rb-button-padding: 8px 16px;
---rb-button-font-size: 14px;
+--rb-button-padding:8px 16px;
+--rb-button-font-size:14px;
 {% when 'large' %}
---rb-button-padding: 16px 32px;
---rb-button-font-size: 18px;
+--rb-button-padding:16px 32px;
+--rb-button-font-size:18px;
 {% else %}
---rb-button-padding: 12px 24px;
---rb-button-font-size: 16px;
+--rb-button-padding:12px 24px;
+--rb-button-font-size:16px;
 {% endcase %}
-
 {% if button_style == 'outline' %}
---rb-button-bg: transparent;
---rb-button-text: var(--rb-button-color);
---rb-button-border: 2px solid var(--rb-button-color);
+--rb-button-bg:transparent;
+--rb-button-text:var(--rb-button-color);
+--rb-button-border:2px solid var(--rb-button-color);
 {% else %}
---rb-button-bg: var(--rb-button-color);
---rb-button-text: var(--rb-button-text-color);
---rb-button-border: none;
+--rb-button-bg:var(--rb-button-color);
+--rb-button-text:var(--rb-button-text-color);
+--rb-button-border:none;
 {% endif %}
-
 {% if button_width == 'full' %}
---rb-button-width: 100%;
+--rb-button-width:100%;
 {% else %}
---rb-button-width: auto;
+--rb-button-width:auto;
 {% endif %}
-
 {% if badge_style == 'outline' %}
---rb-badge-bg: transparent;
---rb-badge-text: var(--rb-primary-color);
---rb-badge-border: 2px solid var(--rb-primary-color);
+--rb-badge-bg:transparent;
+--rb-badge-text:var(--rb-primary-color);
+--rb-badge-border:2px solid var(--rb-primary-color);
 {% else %}
---rb-badge-bg: var(--rb-primary-color);
---rb-badge-text: #ffffff;
---rb-badge-border: none;
+--rb-badge-bg:var(--rb-primary-color);
+--rb-badge-text:#ffffff;
+--rb-badge-border:none;
 {% endif %}
-
-
 {% if style_preset == 'dark' %}
---rb-skeleton-text: #2f3b4c;
+--rb-skeleton-text:#2f3b4c;
 {% endif %}
-
 {% if pricing_summary_box %}
 {% case pricing_summary_style %}
 {% when 'minimal' %}
---rb-pricing-padding: 0;
---rb-pricing-bg: transparent;
---rb-pricing-border: none;
---rb-pricing-border-top: 1px solid var(--rb-border-color);
+--rb-pricing-padding:0;
+--rb-pricing-bg:transparent;
+--rb-pricing-border:none;
+--rb-pricing-border-top:1px solid var(--rb-border-color);
 {% when 'highlight' %}
---rb-pricing-padding: 16px;
---rb-pricing-bg: var(--rb-pricing-summary-bg);
---rb-pricing-border: none;
---rb-pricing-border-left: 4px solid var(--rb-primary-color);
+--rb-pricing-padding:16px;
+--rb-pricing-bg:var(--rb-pricing-summary-bg);
+--rb-pricing-border:none;
+--rb-pricing-border-left:4px solid var(--rb-primary-color);
 {% else %}
---rb-pricing-padding: 16px;
---rb-pricing-bg: var(--rb-pricing-summary-bg);
---rb-pricing-border: 1px solid var(--rb-border-color);
+--rb-pricing-padding:16px;
+--rb-pricing-bg:var(--rb-pricing-summary-bg);
+--rb-pricing-border:1px solid var(--rb-border-color);
 {% endcase %}
 {% else %}
---rb-pricing-padding: 8px 0;
---rb-pricing-bg: transparent;
---rb-pricing-border: none;
+--rb-pricing-padding:8px 0;
+--rb-pricing-bg:transparent;
+--rb-pricing-border:none;
 {% endif %}
---rb-grid-columns: {{ grid_columns }};
---rb-slides-per-view: {{ slides_per_view }};
+--rb-grid-columns:{{ grid_columns }};
+--rb-slides-per-view:{{ slides_per_view }};
 }
-
 {% if g_tablet %}
 @media (max-width: {{ tablet_bp }}px) {
 #radius-bundle-{{ bundle_id }} {
@@ -786,44 +682,7 @@ style="opacity: 0"
 }
 {% endif %}
 </style>
-
-<div
-id="radius-bundle-{{ bundle_id }}"
-class="radius-bundle radius-bundle--{{ layout | downcase }}"
-{% if is_standalone %}style="display: none;"{% endif %}
-data-bundle-id="{{ bundle_id }}"
-data-style-preset="{{ style_preset }}"
-data-box-align="{{ box_alignment }}"
-data-badge-position="{{ badge_position }}"
-data-divider-style="{{ divider_style }}"
-data-carousel-navigation="{{ carousel_navigation }}"
-data-autoplay="{{ autoplay }}"
-data-autoplay-speed="{{ autoplay_speed }}"
-data-image-position="{{ image_position }}"
-data-badge-style="{{ badge_style }}"
-data-image-size="{{ image_size }}"
-data-pricing-summary="{{ pricing_summary_style }}"
-data-responsive='{{ responsive_json | strip_newlines | strip }}'
-data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
-data-is-standalone="{{ is_standalone }}"
-data-show-images="{{ show_images }}"
-data-show-savings="{{ show_savings }}"
-data-show-prices="{{ show_product_prices }}"
-data-show-compare-prices="{{ show_compare_at_price }}"
-data-show-quantity="{{ show_quantity }}"
-data-show-free-shipping="{{ show_free_shipping }}"
-data-show-savings-badge="{{ show_savings_badge }}"
-data-enable-hyperlink="{{ enable_hyperlink }}"
-data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}"
-data-enable-stock-validation="{{ enable_stock_validation }}"
-data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
-data-enable-analytics="{{ enable_analytics }}"
-data-lazy-load-images="{{ lazy_load_images }}"
-data-more-product-settings="{{ more_product_settings }}"
-data-more-product-count="{{ more_product_count }}"
-data-more-products-text="{{ more_products_text }}"
-data-show-less-text="{{ show_less_text }}"
->
+<div id="radius-bundle-{{ bundle_id }}" class="radius-bundle radius-bundle--{{ layout | downcase }}" {% if is_standalone %}style="display:none;"{% endif %} data-bundle-id="{{ bundle_id }}" data-style-preset="{{ style_preset }}" data-box-align="{{ box_alignment }}" data-badge-position="{{ badge_position }}" data-divider-style="{{ divider_style }}" data-carousel-navigation="{{ carousel_navigation }}" data-autoplay="{{ autoplay }}" data-autoplay-speed="{{ autoplay_speed }}" data-image-position="{{ image_position }}" data-badge-style="{{ badge_style }}" data-image-size="{{ image_size }}" data-pricing-summary="{{ pricing_summary_style }}" data-responsive='{{ responsive_json | strip_newlines | strip }}' data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}' data-is-standalone="{{ is_standalone }}" data-show-images="{{ show_images }}" data-show-savings="{{ show_savings }}" data-show-prices="{{ show_product_prices }}" data-show-compare-prices="{{ show_compare_at_price }}" data-show-quantity="{{ show_quantity }}" data-show-free-shipping="{{ show_free_shipping }}" data-show-savings-badge="{{ show_savings_badge }}" data-enable-hyperlink="{{ enable_hyperlink }}" data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}" data-enable-stock-validation="{{ enable_stock_validation }}" data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}" data-enable-analytics="{{ enable_analytics }}" data-lazy-load-images="{{ lazy_load_images }}" data-more-product-settings="{{ more_product_settings }}" data-more-product-count="{{ more_product_count }}" data-more-products-text="{{ more_products_text }}" data-show-less-text="{{ show_less_text }}">
 {% unless is_standalone %}
 {% assign layout = layout | default: 'list' | downcase %}
 {% assign product_count = bundle.productCount | default: 0 %}
@@ -834,7 +693,6 @@ data-show-less-text="{{ show_less_text }}"
 {% if product_count == 0 %}
 {% assign product_count = 3 %}
 {% endif %}
-
 {% assign layout = layout | downcase %}
 {% if layout == 'classic_card' or layout == 'compact_grid' or layout == 'minimalist' or layout == 'sleek' or layout == 'checklist' or layout == 'split_deal' %}
 {% render 'radius-bundle-layout-bogo', bundle_id: bundle_id, layout: layout, name: bundle_heading, subtitle: bundle_subtitle, savings_badge_text: savings_badge_text, product_count: product_count, show_images: show_images, show_savings: show_savings, show_savings_badge: show_savings_badge, show_product_prices: show_product_prices, show_quantity: show_quantity, bogo_you_pay_label: bogo_you_pay_label, bogo_you_save_label: bogo_you_save_label, bogo_trigger_badge_text: bogo_trigger_badge_text, bogo_reward_badge_text: bogo_reward_badge_text, bogo_free_text: bogo_free_text, bogo_total_label: bogo_total_label, button_text: button_text, image_position: image_position, image_size: image_size, badge_style: badge_style %}
@@ -847,18 +705,15 @@ data-show-less-text="{{ show_less_text }}"
 {% endif %}
 {% endfor %}
 </div>
-
 {% if custom_css != blank %}
 <style>{{ custom_css }}</style>
 {% endif %}
-
 <script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% elsif request.design_mode %}
 {{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
 <div class="radius-bundle-placeholder"></div>
 <script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
-
 {% schema %}
 {"name":"Radius Bundles","target":"section","settings":[{"type":"header","content":"Appearance"},{"type":"paragraph","content":"Leave empty to use global settings from app"},{"type":"select","id":"style_preset","label":"Style preset","options":[{"value":"","label":"Use global default"},{"value":"minimal","label":"Minimal"},{"value":"soft","label":"Soft"},{"value":"bold","label":"Bold"},{"value":"elegant","label":"Elegant"},{"value":"dark","label":"Dark"},{"value":"nature","label":"Nature"},{"value":"warm","label":"Warm"},{"value":"professional","label":"Professional"},{"value":"custom","label":"Custom (use settings below)"}],"default":""},{"type":"color","id":"primary_color","label":"Accent color","info":"Buttons, badges, and interactive elements","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"text_color","label":"Text color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"background_color","label":"Background color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"border_color","label":"Border color","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"color","id":"savings_color","label":"Savings color","info":"Discount highlights","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"corner_style","label":"Corner style","options":[{"value":"","label":"Use global default"},{"value":"sharp","label":"Sharp"},{"value":"modern","label":"Modern"},{"value":"rounded","label":"Rounded"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"shadow","label":"Shadow depth","options":[{"value":"","label":"Use global default"},{"value":"none","label":"None"},{"value":"soft","label":"Soft"},{"value":"strong","label":"Strong"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"select","id":"spacing","label":"Layout spacing","options":[{"value":"","label":"Use global default"},{"value":"compact","label":"Compact"},{"value":"comfortable","label":"Comfortable"},{"value":"spacious","label":"Spacious"}],"default":"","visible_if":"{{ block.settings.style_preset == 'custom' }}"},{"type":"header","content":"Advanced"},{"type":"checkbox","id":"override_container_settings","label":"Override container settings","default":false},{"type":"range","id":"box_max_width","label":"Widget max width","min":300,"max":1200,"step":50,"unit":"px","default":600,"visible_if":"{{ block.settings.override_container_settings }}"},{"type":"select","id":"box_alignment","label":"Widget alignment","options":[{"value":"","label":"Use global default"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],"default":"","visible_if":"{{ block.settings.override_container_settings }}"},{"type":"checkbox","id":"override_typography_settings","label":"Override typography settings","default":false},{"type":"select","id":"heading_size","label":"Heading size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_typography_settings }}"},{"type":"select","id":"body_size","label":"Body text size","options":[{"value":"","label":"Use global default"},{"value":"small","label":"Small"},{"value":"medium","label":"Medium"},{"value":"large","label":"Large"}],"default":"","visible_if":"{{ block.settings.override_typography_settings }}"},{"type":"checkbox","id":"more_product_settings","label":"More product settings","default":true},{"type":"range","id":"more_product_count","label":"Product count","min":2,"max":10,"step":1,"default":4,"visible_if":"{{ block.settings.more_product_settings }}"},{"type":"text","id":"more_products_text","label":"More products text","default":"+ {count} more products","visible_if":"{{ block.settings.more_product_settings }}"},{"type":"text","id":"show_less_text","label":"Show less text","default":"Show less","visible_if":"{{ block.settings.more_product_settings }}"}]}
 {% endschema %}
