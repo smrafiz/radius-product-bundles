@@ -13,6 +13,10 @@
             display: grid;
             gap: var(--rb-gap-spacing);
 
+            &:has(.radius-bundle__loading--carousel) {
+                display: block;
+            }
+
             grid-auto-flow: column;
             grid-auto-columns: calc(
                 (
