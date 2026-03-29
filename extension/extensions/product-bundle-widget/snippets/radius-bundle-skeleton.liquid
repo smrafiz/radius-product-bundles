@@ -2,43 +2,31 @@
 {%- assign sk_trigger = trigger_count | default: 1 -%}
 {%- assign sk_reward = sk_count | minus: sk_trigger -%}
 {%- if sk_reward < 1 -%}{%- assign sk_reward = 1 -%}{%- endif -%}
-
-{% case layout %}
-
-{% when 'carousel' %}
+{%- case layout -%}
+{%- when 'carousel' -%}
 <div class="radius-bundle__loading radius-bundle__loading--carousel" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
-
-{% when 'grid' %}
+{%- when 'grid' -%}
 <div class="radius-bundle__loading radius-bundle__loading--grid" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
-
-{% when 'compact' %}
+{%- when 'compact' -%}
 <div class="radius-bundle__loading radius-bundle__loading--compact" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
-
-{% when 'classic_card' %}
+{%- when 'classic_card' -%}
 <div class="radius-bundle__loading radius-bundle__loading--classic-card" data-bundle-loading style="--sk-trigger:{{ sk_trigger }};--sk-reward:{{ sk_reward }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
-
-{% when 'checklist' %}
+{%- when 'checklist' -%}
 <div class="radius-bundle__loading radius-bundle__loading--checklist" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
-
-{% when 'split_deal' %}
+{%- when 'split_deal' -%}
 <div class="radius-bundle__loading radius-bundle__loading--split-deal" data-bundle-loading style="--sk-trigger:{{ sk_trigger }};--sk-reward:{{ sk_reward }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
-
-{% when 'compact_grid' %}
+{%- when 'compact_grid' -%}
 <div class="radius-bundle__loading radius-bundle__loading--compact-grid" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
-
-{% when 'sleek' %}
+{%- when 'sleek' -%}
 <div class="radius-bundle__loading radius-bundle__loading--sleek" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
-
-{% when 'minimalist' %}
+{%- when 'minimalist' -%}
 <div class="radius-bundle__loading radius-bundle__loading--minimalist" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
-
-{% else %}
+{%- else -%}
 <div class="radius-bundle__loading radius-bundle__loading--list" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
-
-{% endcase %}
+{%- endcase -%}

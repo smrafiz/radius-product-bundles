@@ -1,18 +1,9 @@
 <div class="radius-bundle__header">
 <div class="radius-bundle__title-wrapper">
-<h2 class="radius-bundle__title" data-bundle-title>
-{{ name }}
-</h2>
-{% if subtitle != blank %}
-<p class="radius-bundle__subtitle" data-bundle-subtitle>
-{{ subtitle }}
-</p>
-{% endif %}
+<h2 class="radius-bundle__title" data-bundle-title>{{ name }}</h2>
+{%- if subtitle != blank -%}<p class="radius-bundle__subtitle" data-bundle-subtitle>{{ subtitle }}</p>{%- endif -%}
 </div>
-
-{% if show_savings_badge %}
-<div class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge>
-<span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span>
-</div>
-{% endif %}
+{%- if show_savings_badge -%}
+<div class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge><span class="radius-bundle__skeleton-text radius-bundle__skeleton-text--badge"></span></div>
+{%- endif -%}
 </div>
