@@ -7,6 +7,7 @@ import {
     useState,
     type ReactNode,
 } from "react";
+import { useAppBridge } from "@shopify/app-bridge-react";
 import type {
     ClientPlanData,
     FeatureId,
@@ -16,7 +17,6 @@ import type {
 } from "@/shared/types/plan";
 import { PLAN_CONFIGS, DEFAULT_PLAN_ID } from "@/shared/constants";
 import { fetchPlanData } from "@/shared/actions/plan.actions";
-import { useShopStore } from "@/shared";
 
 const PlanContext = createContext<PlanContextValue | null>(null);
 
@@ -54,17 +54,30 @@ const DEFAULT_CONTEXT: PlanContextValue = buildContextValue({
 
 export function PlanProvider({ children }: { children: ReactNode }) {
     const [planData, setPlanData] = useState<PlanContextValue>(DEFAULT_CONTEXT);
-    const shopDomain = useShopStore((s) => s.shop?.domain);
+    const app = useAppBridge();
 
     useEffect(() => {
-        if (!shopDomain) return;
+        if (!app) return;
 
-        fetchPlanData(shopDomain).then((data) => {
-            setPlanData(buildContextValue(data));
-        }).catch((err) => {
-            console.warn("[PlanProvider] Failed to fetch plan data:", err);
-        });
-    }, [shopDomain]);
+        const loadPlanData = async () => {
+            try {
+                const token = await app.idToken();
+                if (!token) return;
+
+                const result = await fetchPlanData(token);
+
+                if (result.status === "success" && result.data) {
+                    setPlanData(buildContextValue(result.data));
+                } else {
+                    console.warn("[PlanProvider] Failed to fetch plan data:", result.message);
+                }
+            } catch (err) {
+                console.warn("[PlanProvider] Error fetching plan data:", err);
+            }
+        };
+
+        void loadPlanData();
+    }, [app]);
 
     return (
         <PlanContext.Provider value={planData}>{children}</PlanContext.Provider>
