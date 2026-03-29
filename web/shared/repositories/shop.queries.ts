@@ -103,3 +103,11 @@ export async function markDiscountSetupDone(domain: string): Promise<void> {
         },
     });
 }
+
+export async function getShopPlan(domain: string) {
+    const shop = await prisma.shop.findUnique({
+        where: { domain },
+        select: { plan: true },
+    });
+    return shop?.plan ?? null;
+}
