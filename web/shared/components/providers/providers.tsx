@@ -4,6 +4,7 @@ import { DehydratedState } from "@tanstack/react-query";
 import { AppSettingsProvider } from "@/features/settings/components/app-settings-provider";
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import { ProtectedRoute, SessionProvider, TanstackProvider } from "@/shared";
+import { PlanProvider } from "@/shared/components/plan-gate/plan-provider";
 
 /**
  * Root Providers Component
@@ -37,7 +38,9 @@ export function Providers({
                 >
                     <SessionProvider>
                         <AppSettingsProvider>
-                            <ProtectedRoute>{children}</ProtectedRoute>
+                            <PlanProvider>
+                                <ProtectedRoute>{children}</ProtectedRoute>
+                            </PlanProvider>
                         </AppSettingsProvider>
                     </SessionProvider>
                 </Suspense>
