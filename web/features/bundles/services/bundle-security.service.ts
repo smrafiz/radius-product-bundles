@@ -231,30 +231,24 @@ export async function canCreateBundle(shop: string): Promise<{
     current?: number;
     limit?: number;
 }> {
-    // Get shop settings
-    const shopSettings = await getShop(shop);
+    const { checkBundleQuota } = await import(
+        "@/shared/services/plan.service"
+    );
+    const quota = await checkBundleQuota(shop);
 
-    // If no limit configured, allow creation
-    if (!shopSettings?.appSettings?.maxBundlesPerShop) {
-        return { allowed: true };
-    }
-
-    // Check the current bundle count
-    const currentCount = await countBundlesByShop(shop);
-
-    if (currentCount >= shopSettings?.appSettings?.maxBundlesPerShop) {
+    if (!quota.allowed) {
         return {
             allowed: false,
-            reason: `Shop has reached maximum bundle limit (${shopSettings?.appSettings?.maxBundlesPerShop})`,
-            current: currentCount,
-            limit: shopSettings?.appSettings?.maxBundlesPerShop,
+            reason: `Shop has reached maximum bundle limit (${quota.limit})`,
+            current: quota.current,
+            limit: quota.limit,
         };
     }
 
     return {
         allowed: true,
-        current: currentCount,
-        limit: shopSettings?.appSettings?.maxBundlesPerShop,
+        current: quota.current,
+        limit: quota.limit,
     };
 }
 
@@ -268,12 +262,20 @@ export async function canCreateBundle(shop: string): Promise<{
 export async function validateShopPermissions(
     shop: string,
     operation: "create" | "update" | "delete",
+    bundleType?: string,
 ): Promise<SecurityCheckResult> {
-    // Get shop settings
-    const shopSettings = await getShop(shop);
-
-    // Add more permission checks as needed
-    // Example: plan-based restrictions, feature flags, etc.
+    if (operation === "create" && bundleType) {
+        const { checkBundleTypeAllowed } = await import(
+            "@/shared/services/plan.service"
+        );
+        const result = await checkBundleTypeAllowed(shop, bundleType);
+        if (!result.allowed) {
+            return {
+                passed: false,
+                reason: result.message,
+            };
+        }
+    }
 
     return { passed: true };
 }
