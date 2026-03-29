@@ -1,6 +1,6 @@
 "use client";
 
-import { useSessionStore } from "@/shared";
+import { useSessionStore, useShopStore } from "@/shared";
 import { storeToken } from "@/shared/actions";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
@@ -22,6 +22,8 @@ export function useSessionProvider() {
         isInitialized,
         sessionError,
     } = useSessionStore();
+
+    const { setShop, clearShop } = useShopStore();
 
     const [retryCount, setRetryCount] = useState(0);
     const tokenProcessed = useRef(false);
@@ -114,6 +116,15 @@ export function useSessionProvider() {
             (window as any).__APP_BRIDGE__ = app;
         }
     }, [app, isThemeExtension]);
+
+    // Sync shop store with session store
+    useEffect(() => {
+        if (shop) {
+            setShop(shop);
+        } else {
+            clearShop();
+        }
+    }, [shop, setShop, clearShop]);
 
     return {
         isThemeExtension,
