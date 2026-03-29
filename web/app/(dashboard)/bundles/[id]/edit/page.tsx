@@ -13,11 +13,17 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function EditBundleByIdPage(props: {
     params: Promise<{ id: string }>;
+    searchParams?: Promise<{ shop?: string }>;
 }) {
-    const params = await props.params;
-    const { exists, isDeleted } = await checkBundleExists(params.id);
+    const [params, searchParams] = await Promise.all([
+        props.params,
+        props.searchParams,
+    ]);
+    const shop = searchParams?.shop ?? "";
 
-    if (!exists || isDeleted) {
+    const { exists, isDeleted } = await checkBundleExists(params.id, shop);
+
+    if (shop && (!exists || isDeleted)) {
         return <BundleRedirect to="/bundles" />;
     }
 

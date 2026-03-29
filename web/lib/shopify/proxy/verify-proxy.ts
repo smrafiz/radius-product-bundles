@@ -1,4 +1,4 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -81,7 +81,11 @@ export function verifyAppProxySignature(
     // Compute HMAC-SHA256
     const computed = createHmac("sha256", secret).update(message).digest("hex");
 
-    return computed === signature;
+    if (computed.length !== signature.length) {
+        return false;
+    }
+
+    return timingSafeEqual(Buffer.from(computed, "hex"), Buffer.from(signature, "hex"));
 }
 
 /**

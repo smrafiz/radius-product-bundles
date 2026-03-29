@@ -29,8 +29,8 @@ import { transformBundle, transformBundles } from "@/features/bundles/services";
 /**
  * Check if a bundle exists and whether it's deleted
  */
-export async function checkBundleExists(bundleId: string) {
-    const bundle = await findBundleStatusById(bundleId);
+export async function checkBundleExists(bundleId: string, shop: string) {
+    const bundle = await findBundleStatusById(bundleId, shop);
 
     return {
         exists: !!bundle,

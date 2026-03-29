@@ -26,9 +26,9 @@ import {
 /**
  * Find bundle status by ID (lightweight query for access checks)
  */
-export async function findBundleStatusById(id: string) {
-    return prisma.bundle.findUnique({
-        where: { id },
+export async function findBundleStatusById(id: string, shop: string) {
+    return prisma.bundle.findFirst({
+        where: { id, shop },
         select: { id: true, status: true },
     });
 }
@@ -38,11 +38,12 @@ export async function findBundleStatusById(id: string) {
  */
 export async function findBundleById(
     id: string,
+    shop: string,
     tx?: Prisma.TransactionClient,
 ) {
     const client = tx || prisma;
-    return client.bundle.findUnique({
-        where: { id },
+    return client.bundle.findFirst({
+        where: { id, shop },
         include: INCLUDE_BUNDLE_DETAILS,
     });
 }
@@ -218,6 +219,7 @@ export async function findBundlesByIdsWithAllRelations(
  */
 export async function findMainProductIdsByBundleIds(
     bundleIds: string[],
+    shop: string,
     tx?: Prisma.TransactionClient,
 ): Promise<string[]> {
     if (!bundleIds.length) return [];
@@ -225,7 +227,7 @@ export async function findMainProductIdsByBundleIds(
     const client = tx || prisma;
 
     const bundles = await client.bundle.findMany({
-        where: { id: { in: bundleIds } },
+        where: { id: { in: bundleIds }, shop },
         select: { mainProductId: true },
     });
 

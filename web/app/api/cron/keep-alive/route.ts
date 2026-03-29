@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "crypto";
 import { prisma } from "@/shared/repositories";
 
 /**
@@ -17,7 +18,12 @@ export async function GET(request: Request) {
     }
 
     const authHeader = request.headers.get("authorization");
-    if (authHeader !== `Bearer ${cronSecret}`) {
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    if (
+        token.length === 0 ||
+        token.length !== cronSecret.length ||
+        !timingSafeEqual(Buffer.from(token), Buffer.from(cronSecret))
+    ) {
         return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 

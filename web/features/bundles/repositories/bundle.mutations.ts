@@ -462,6 +462,7 @@ export async function bulkUpdateBundleStatuses(
 
             const mainProductIds = await findMainProductIdsByBundleIds(
                 foundIds,
+                shop,
                 tx,
             );
 

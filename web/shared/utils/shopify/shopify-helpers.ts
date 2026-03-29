@@ -165,7 +165,9 @@ export function isValidShopifyToken(token: string): boolean {
  * Utility function to check if the session is expired
  */
 export function isSessionExpired(expires: Date | null | undefined): boolean {
-    if (!expires) return false;
+    if (!expires) {
+        return false;
+    }
     return new Date() > new Date(expires);
 }
 
