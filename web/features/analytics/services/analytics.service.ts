@@ -77,8 +77,6 @@ export async function trackAnalyticsEvent(event: TrackingEvent) {
             ? new Date(event.timestamp)
             : event.timestamp;
 
-    console.log("trackAnalyticsEvent", event);
-
     switch (event.type) {
         case "bundle_view":
             return await trackBundleView(

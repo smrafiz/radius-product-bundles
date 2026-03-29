@@ -15,7 +15,7 @@ export const useGlobalBannerStore = create(
                 id,
                 timestamp: Date.now(),
                 dismissible: message.dismissible ?? true,
-                autoHide: message.autoHide ?? false,
+                autoHide: (message.type === "error" || message.type === "warning") ? false : (message.autoHide ?? false),
                 duration: message.duration ?? 5000,
             };
 

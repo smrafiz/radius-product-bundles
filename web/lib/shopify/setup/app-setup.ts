@@ -89,14 +89,7 @@ export async function createMetafieldDefinitions(
     try {
         const results: { key: string; success: boolean }[] = [];
 
-        console.log(
-            `[Setup] Creating ${METAFIELD_DEFINITIONS.length} metafield definitions...`,
-        );
-
         for (const definition of METAFIELD_DEFINITIONS) {
-            console.log(
-                `[Setup] Processing: ${definition.ownerType} - ${definition.namespace}.${definition.key}`,
-            );
 
             const createResult =
                 await executeGraphQLWithToken<MetafieldDefinitionCreateMutation>(
@@ -118,7 +111,6 @@ export async function createMetafieldDefinitions(
                 );
 
                 if (alreadyExists) {
-                    console.log(`[Setup] ✓ ${definition.key} already exists`);
                     results.push({ key: definition.key, success: true });
                     continue;
                 }
@@ -131,7 +123,6 @@ export async function createMetafieldDefinitions(
                 continue;
             }
 
-            console.log(`[Setup] ✓ Created ${definition.key}`);
             results.push({ key: definition.key, success: true });
 
             // Rate limiting: small delay between requests
@@ -144,10 +135,6 @@ export async function createMetafieldDefinitions(
         if (failedCount > 0) {
             console.warn(
                 `[Setup] Metafield setup: ${successCount} succeeded, ${failedCount} failed`,
-            );
-        } else {
-            console.log(
-                `[Setup] ✓ All ${successCount} metafield definitions ready`,
             );
         }
 
@@ -188,7 +175,6 @@ export async function createBundleAutomaticDiscount(
             checkResult.data?.discountNodes?.edges?.[0]?.node;
 
         if (existingDiscount) {
-            console.log(`[Setup] ✓ Bundle discount already exists for ${shop}`);
             return {
                 success: true,
                 message: "Bundle discount already exists",
@@ -243,8 +229,6 @@ export async function createBundleAutomaticDiscount(
             result.data?.discountAutomaticAppCreate?.automaticAppDiscount
                 ?.discountId;
 
-        console.log(`[Setup] ✓ Created bundle discount: ${discountId}`);
-
         return {
             success: true,
             message: "Bundle discount created successfully",
@@ -271,8 +255,6 @@ export async function runAppSetup(
     accessToken: string,
     shop: string,
 ): Promise<SetupResult> {
-    console.log(`[Setup] 🚀 Running app setup for ${shop}`);
-
     // Task 0: Clean up stale Shopify resources from previous install
     // Safe: claimSetupLock only succeeds on fresh install or reinstall
     try {
@@ -310,8 +292,6 @@ export async function runAppSetup(
             `[Setup] ⚠️  Bundle discount setup warning: ${discountResult.error}`,
         );
     }
-
-    console.log(`[Setup] ✅ App setup completed for ${shop}`);
 
     return {
         success: true,

@@ -741,9 +741,6 @@ export const useBundleStore = create(
                 );
 
                 if (!bundleStillExists) {
-                    console.log(
-                        `Active bundle ${currentBundleId} was deleted, resetting store`,
-                    );
                     get().resetBundle();
                     return true;
                 }

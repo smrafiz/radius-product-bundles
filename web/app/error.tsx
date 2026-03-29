@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { useGlobalBannerStore } from "@/shared/stores/global-banner.store";
+import { GlobalBanner } from "@/shared/components/feedback/banner";
 
 export default function Error({
     error,
@@ -36,5 +37,5 @@ export default function Error({
         };
     }, [error, reset, addMessage, clearAllMessages]);
 
-    return null;
+    return <GlobalBanner />;
 }

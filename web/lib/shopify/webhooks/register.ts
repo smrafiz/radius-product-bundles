@@ -15,8 +15,6 @@ let webhooksInitialized = false;
  */
 export function addHandlers() {
     if (!webhooksInitialized) {
-        console.log("[Webhooks] Adding webhook handlers...");
-
         setupGDPRWebHooks("/api/webhooks");
 
         shopify.webhooks.addHandlers({
@@ -24,9 +22,6 @@ export function addHandlers() {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
                 callback: async (_topic, shop, body) => {
-                    console.log(
-                        `[Webhooks] APP_UNINSTALLED received for ${shop}`,
-                    );
                     await handleAppUninstalled(shop, body);
                 },
             },
@@ -34,7 +29,6 @@ export function addHandlers() {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
                 callback: async (_topic, shop, body) => {
-                    console.log(`[Webhooks] SHOP_UPDATE received for ${shop}`);
                     await handleShopUpdate(shop, body);
                 },
             },
@@ -42,9 +36,6 @@ export function addHandlers() {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
                 callback: async (_topic, shop, body) => {
-                    console.log(
-                        `[Webhooks] ORDERS_CREATE received for ${shop}`,
-                    );
                     await handleOrdersCreate(shop, body);
                 },
             },
@@ -52,18 +43,12 @@ export function addHandlers() {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
                 callback: async (_topic, shop, body) => {
-                    console.log(
-                        `[Webhooks] PRODUCTS_DELETE received for ${shop}`,
-                    );
                     await handleProductsDelete(shop, body);
                 },
             },
         });
 
         webhooksInitialized = true;
-        console.log("[Webhooks] ✅ Handlers added successfully");
-    } else {
-        console.log("[Webhooks] Handlers already initialized");
     }
 }
 
@@ -71,8 +56,6 @@ export function addHandlers() {
  * Register webhooks with Shopify
  */
 export async function registerWebhooks(session: Session) {
-    console.log("[Webhooks] registerWebhooks called for shop:", session.shop);
-
     // Add handlers first
     addHandlers();
 
@@ -89,15 +72,7 @@ export async function registerWebhooks(session: Session) {
         throw new Error(error);
     }
 
-    console.log("[Webhooks] Session validated:", {
-        shop: session.shop,
-        hasAccessToken: !!session.accessToken,
-        isOnline: session.isOnline,
-    });
-
     try {
-        console.log("[Webhooks] Calling shopify.webhooks.register...");
-
         const responses = await shopify.webhooks.register({ session });
 
         const failed = Object.entries(responses)
@@ -107,8 +82,6 @@ export async function registerWebhooks(session: Session) {
         if (failed.length > 0) {
             console.warn("[Webhooks] Failed topics:", failed.join(", "));
         }
-
-        console.log("[Webhooks] ✅ Registration complete");
 
         return responses;
     } catch (error) {

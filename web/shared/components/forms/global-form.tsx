@@ -110,8 +110,7 @@ export function GlobalForm<T extends FieldValues>({
             key: validationBannerKey,
             content: errorContent,
             isHtml: true,
-            autoHide: true,
-            duration: 15000,
+            autoHide: false,
         });
     };
 
@@ -137,7 +136,6 @@ export function GlobalForm<T extends FieldValues>({
                 })();
             },
             (errors) => {
-                console.log("GlobalForm validation errors:", errors);
                 handleValidationErrors(errors);
                 stopLoading();
                 setIsSaving(false);

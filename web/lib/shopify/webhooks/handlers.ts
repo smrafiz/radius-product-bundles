@@ -15,11 +15,6 @@ export async function handleProductUpdate(shop: string, rawBody: string) {
 export async function handleShopUpdate(shop: string, body: string) {
     try {
         const shopData: ShopifyShop = JSON.parse(body);
-        console.log("Shop update received:", {
-            shop,
-            currency: shopData.currency,
-            countryCode: shopData.country_code,
-        });
 
         if (typeof window !== "undefined") {
             window.dispatchEvent(

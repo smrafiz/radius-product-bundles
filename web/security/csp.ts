@@ -19,9 +19,5 @@ export function generateCSP(shop: string, isDev = false): string {
         "base-uri 'self';",
     ];
 
-    if (isDev) {
-        console.log(`[CSP][DEV] Generated CSP for shop: ${shop}`);
-    }
-
     return csp.join(" ");
 }

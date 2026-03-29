@@ -110,11 +110,6 @@ export async function handleSessionToken(
 
             // Atomically claim setup lock in DB to prevent concurrent/duplicate setup
             if (session.accessToken && (await claimSetupLock(shop))) {
-                console.log(
-                    "[Auth] First-time setup via token exchange for:",
-                    shop,
-                );
-
                 let setupSucceeded = false;
                 try {
                     await runAppSetup(session.accessToken!, shop);

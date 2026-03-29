@@ -18,15 +18,10 @@ import type { InitializationStatus } from "../types";
 export async function doWebhookRegistration(
     sessionToken: string,
 ): Promise<void> {
-    console.log("[Webhook Action] Starting webhook registration");
-
     try {
         const { session, shop } = await handleSessionToken(sessionToken);
 
-        console.log("[Webhook Action] Session obtained for:", session.shop);
-
         // Step 2: Initialize app
-        console.log("[Webhook Action] Step 2: Calling initializeApp...");
         const result = await initializeApp(sessionToken, session);
 
         // Step 3: Check result
@@ -39,8 +34,6 @@ export async function doWebhookRegistration(
             );
             throw new Error(errorMessage);
         }
-
-        console.log("[Webhook Action] Registration complete");
     } catch (error) {
         console.error(
             "[Webhook Action] Registration failed:",

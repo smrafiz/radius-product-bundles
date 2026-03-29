@@ -38,10 +38,6 @@ export const mediaMutations = (app: ReturnType<typeof useAppBridge>) => ({
                 return result.data!;
             },
             onSuccess: (data, variables) => {
-                console.log(
-                    `✅ Media cleanup: ${data.deletedMediaIds.length} deleted, ${data.sharedCount} kept`,
-                );
-
                 // Invalidate bundle queries since media changed
                 void queryClient.invalidateQueries({
                     queryKey: bundlesQueryKeys.all,

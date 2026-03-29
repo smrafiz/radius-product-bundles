@@ -21,7 +21,6 @@ export function initCrossTabSync(): BroadcastChannel | null {
     if (!channel) {
         try {
             channel = new BroadcastChannel(CHANNEL_NAME);
-            console.log("[CrossTabSync] Initialized");
         } catch (error) {
             console.error("[CrossTabSync] Failed to initialize:", error);
             return null;
@@ -48,10 +47,6 @@ export function broadcastInvalidation(type: InvalidationMessage["type"]) {
 
     try {
         channel.postMessage(message);
-        console.log(
-            `%c[CrossTabSync] 📤 Broadcasted: ${message.type}`,
-            "color: #00ff00; font-weight: bold",
-        );
     } catch (error) {
         console.error("[CrossTabSync] Broadcast failed:", error);
     }
@@ -70,10 +65,6 @@ export function listenForInvalidations(
     }
 
     const handler = (event: MessageEvent<InvalidationMessage>) => {
-        console.log(
-            `%c[CrossTabSync] 📥 Received: ${event.data.type}`,
-            "color: #00bfff; font-weight: bold",
-        );
         callback(event.data);
     };
 
@@ -91,6 +82,5 @@ export function closeCrossTabSync() {
     if (channel) {
         channel.close();
         channel = null;
-        console.log("[CrossTabSync] Channel closed");
     }
 }

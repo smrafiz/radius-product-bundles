@@ -15,7 +15,6 @@ export function setupGDPRWebHooks(path: string) {
             deliveryMethod: DeliveryMethod.Http,
             callbackUrl: path,
             callback: async (topic, shop, body) => {
-                console.log(`[GDPR] Customer data request from ${shop}`);
                 try {
                     const payload = JSON.parse(body);
                     const rawCustomerId = payload.customer?.id;
@@ -30,10 +29,6 @@ export function setupGDPRWebHooks(path: string) {
                     }
 
                     const customerId = String(rawCustomerId);
-
-                    console.log(
-                        `[GDPR] Data request ID: ${dataRequestId} for customer: ${customerEmail} (${customerId})`,
-                    );
 
                     // Extract all customer-specific data from our database
                     // BundleView is the only model that stores customer-identifiable data
@@ -61,15 +56,6 @@ export function setupGDPRWebHooks(path: string) {
                         note: "This app stores bundle view tracking data only. No personal information (name, email, address) is stored by this app.",
                     };
 
-                    // Log the compiled data for merchant retrieval
-                    // The merchant is responsible for delivering this to the customer
-                    console.log(
-                        `[GDPR] Customer data compiled for ${customerEmail}:`,
-                        JSON.stringify(customerData),
-                    );
-                    console.log(
-                        `[GDPR] Found ${customerViews.length} bundle view records for customer ${customerId}`,
-                    );
                 } catch (error) {
                     console.error("[GDPR] Data request error:", error);
                     throw error;
@@ -80,9 +66,6 @@ export function setupGDPRWebHooks(path: string) {
             deliveryMethod: DeliveryMethod.Http,
             callbackUrl: path,
             callback: async (topic, shop, body) => {
-                console.log(
-                    `[GDPR] Customer data redaction request from ${shop}`,
-                );
                 try {
                     const payload = JSON.parse(body);
                     const rawCustomerId = payload.customer?.id;
@@ -96,10 +79,6 @@ export function setupGDPRWebHooks(path: string) {
 
                     const customerId = String(rawCustomerId);
 
-                    console.log(
-                        `[GDPR] Redacting data for customer ${customerId} from shop ${shop}`,
-                    );
-
                     // Delete all BundleView records for this customer
                     // BundleView stores: customerId, sessionId, bundleId, date, timestamp
                     const deletedViews = await prisma.bundleView.deleteMany({
@@ -110,10 +89,6 @@ export function setupGDPRWebHooks(path: string) {
                     });
 
                     // BundleAnalytics is aggregated (no customer-level data) — nothing to redact
-
-                    console.log(
-                        `[GDPR] Redacted ${deletedViews.count} bundle view records for customer ${customerId}`,
-                    );
                 } catch (error) {
                     console.error("[GDPR] Redaction error:", error);
                     throw error;
@@ -124,10 +99,8 @@ export function setupGDPRWebHooks(path: string) {
             deliveryMethod: DeliveryMethod.Http,
             callbackUrl: path,
             callback: async (topic, shop, body) => {
-                console.log(`[GDPR] Shop data redaction request for ${shop}`);
                 try {
                     await deleteShopData(shop);
-                    console.log(`[GDPR] All data removed for shop: ${shop}`);
                 } catch (error) {
                     console.error("[GDPR] Shop redaction error:", error);
                     throw error;

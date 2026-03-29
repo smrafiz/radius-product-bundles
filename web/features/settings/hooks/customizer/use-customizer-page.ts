@@ -205,8 +205,7 @@ export function useCustomizerPage() {
                     key: "customizer-validation",
                     content: errorContent,
                     isHtml: true,
-                    autoHide: true,
-                    duration: 15000,
+                    autoHide: false,
                 },
             );
         },

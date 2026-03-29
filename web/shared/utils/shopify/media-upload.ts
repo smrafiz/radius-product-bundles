@@ -30,13 +30,11 @@ export async function uploadFileToStagedUrl(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error(`[Upload] Failed:`, errorData);
         throw new Error(
             errorData.error || `Failed to upload file: ${response.status}`,
         );
     }
 
-    console.log(`[Upload] ✅ Success: ${file.name}`);
     return stagedTarget.resourceUrl;
 }
 

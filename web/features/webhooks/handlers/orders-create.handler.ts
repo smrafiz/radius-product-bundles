@@ -17,10 +17,6 @@ export async function handleOrdersCreate(
     try {
         const order: ShopifyOrder = JSON.parse(body);
 
-        console.log(
-            `[Orders Handler] Processing order ${order.name} from ${shop}`,
-        );
-
         // Find line items with the bundle_id property
         const bundleItems = order.line_items.filter((item: ShopifyLineItem) =>
             item.properties?.some(
@@ -29,13 +25,8 @@ export async function handleOrdersCreate(
         );
 
         if (bundleItems.length === 0) {
-            console.log(`[Orders Handler] No bundles in order ${order.name}`);
             return;
         }
-
-        console.log(
-            `[Orders Handler] Found ${bundleItems.length} bundle item(s)`,
-        );
 
         // GROUP BY BUNDLE ID
         const bundlesMap = new Map<
@@ -68,12 +59,6 @@ export async function handleOrdersCreate(
                 // ✅ CORRECT: Original price - discount
                 const actualPrice = originalPrice - totalDiscount;
                 const itemRevenue = actualPrice * quantity;
-
-                console.log(`[Orders Handler] Item: ${item.title}`);
-                console.log(`  Original price: €${originalPrice.toFixed(2)}`);
-                console.log(`  Discount: €${totalDiscount.toFixed(2)}`);
-                console.log(`  Actual price: €${actualPrice.toFixed(2)}`);
-                console.log(`  Revenue: €${itemRevenue.toFixed(2)}`);
 
                 if (bundlesMap.has(bundleId)) {
                     const existing = bundlesMap.get(bundleId)!;
@@ -121,9 +106,6 @@ export async function handleOrdersCreate(
                 timestamp: new Date(order.created_at),
             });
 
-            console.log(
-                `[Orders Handler] ✅ Tracked: Bundle ${bundleId}, Items: ${bundleData.items.length}, Revenue: €${bundleData.totalRevenue.toFixed(2)}, Customer: ${isNewCustomer ? "NEW" : "RETURNING"}`,
-            );
         }
     } catch (error) {
         console.error(`[Orders Handler] ❌ Error:`, error);

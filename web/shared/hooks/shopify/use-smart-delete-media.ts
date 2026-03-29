@@ -32,9 +32,6 @@ export function useSmartDeleteMedia() {
             return result.data!;
         },
         onSuccess: (data) => {
-            console.log(`✅ Deleted: ${data.deletedMediaIds.length}`);
-            console.log(`📌 Kept: ${data.sharedCount} (shared)`);
-
             // Invalidate queries to refetch bundles
             queryClient.invalidateQueries({ queryKey: ["bundles"] });
         },

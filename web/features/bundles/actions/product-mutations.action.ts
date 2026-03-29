@@ -67,10 +67,6 @@ export async function createBundleProductAction(
             };
         }
 
-        console.log(
-            `[createBundleProduct] Creating product with status: ${variables.status}`,
-        );
-
         // Execute GraphQL mutation using codegen document
         const result = await executeGraphQLMutation<ProductCreateMutation>({
             query: ProductCreateDocument,
@@ -138,8 +134,6 @@ export async function createBundleProductAction(
         await publishProductToOnlineStore(sessionToken, product.id);
 
         const productData = formatProductForStorage(product);
-
-        console.log("Product created successfully:", productData);
 
         return {
             status: "success",
@@ -258,10 +252,6 @@ export async function updateBundleProductAction(
             status: productStatus,
         };
 
-        console.log(
-            `[updateBundleProduct] Updating product with status: ${productStatus}`,
-        );
-
         // Execute GraphQL mutation
         const result = await executeGraphQLMutation<ProductUpdateMutation>({
             query: ProductUpdateDocument,
@@ -300,8 +290,6 @@ export async function updateBundleProductAction(
                 data: null,
             };
         }
-
-        console.log("Product updated successfully:", input);
 
         // Update variant price if provided
         if (
@@ -363,10 +351,6 @@ export async function updateBundleProductStatusAction(
 
         const productStatus = getShopifyProductStatus(bundleStatus as any);
 
-        console.log(
-            `[updateBundleProductStatus] Setting product ${productId} to ${productStatus}`,
-        );
-
         const result = await executeGraphQLMutation<ProductUpdateMutation>({
             query: ProductUpdateDocument,
             variables: {
@@ -396,10 +380,6 @@ export async function updateBundleProductStatusAction(
                 data: null,
             };
         }
-
-        console.log(
-            `[updateBundleProductStatus] ✅ Product status updated to ${productStatus}`,
-        );
 
         return {
             status: "success",
@@ -440,8 +420,6 @@ export async function createStagedUploadsAction(
             fileSize: file.fileSize.toString(),
         }));
 
-        console.log("[createStagedUploads] Input:", input);
-
         const result =
             await executeGraphQLMutation<StagedUploadsCreateMutation>({
                 query: StagedUploadsCreateDocument,
@@ -473,11 +451,6 @@ export async function createStagedUploadsAction(
             };
         }
 
-        console.log(
-            "[createStagedUploads] Success, targets:",
-            result.data?.stagedUploadsCreate?.stagedTargets?.length,
-        );
-
         return {
             success: true,
             stagedTargets:
@@ -507,9 +480,6 @@ export async function attachMediaToProductAction(
 ): Promise<ApiResponse> {
     try {
         await handleSessionToken(sessionToken);
-
-        console.log("[attachMediaToProduct] Product:", productId);
-        console.log("[attachMediaToProduct] URLs:", resourceUrls);
 
         const media = resourceUrls.map((url) => ({
             originalSource: url,
@@ -550,8 +520,6 @@ export async function attachMediaToProductAction(
             };
         }
 
-        console.log("[attachMediaToProduct] ✅ Success");
-
         return {
             status: "success",
             message: "Media attached successfully",
@@ -579,8 +547,6 @@ export async function deleteBundleProductAction(
 ): Promise<ApiResponse> {
     try {
         await handleSessionToken(sessionToken);
-
-        console.log("[deleteBundleProduct] Deleting product:", productId);
 
         const result = await executeGraphQLMutation<ProductDeleteMutation>({
             query: ProductDeleteDocument,
@@ -613,8 +579,6 @@ export async function deleteBundleProductAction(
                 data: null,
             };
         }
-
-        console.log("[deleteBundleProduct] ✅ Product deleted");
 
         return {
             status: "success",

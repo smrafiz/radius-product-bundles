@@ -34,7 +34,6 @@ export async function fetchProductByIdAction(
         product.media?.edges
             ?.map((edge) => {
                 const node = edge.node;
-                console.log(node);
                 if (node.__typename === "MediaImage" && node.image) {
                     const image = node.image as {
                         url: string;

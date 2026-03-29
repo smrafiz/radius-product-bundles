@@ -21,14 +21,12 @@ export function useCrossTabSync() {
                     void queryClient.invalidateQueries({
                         queryKey: bundlesQueryKeys.all,
                     });
-                    console.log("[CrossTabSync] Invalidated bundles");
                     break;
 
                 case "INVALIDATE_ANALYTICS":
                     void queryClient.invalidateQueries({
                         queryKey: analyticsQueryKeys.all,
                     });
-                    console.log("[CrossTabSync] Invalidated analytics");
                     break;
 
                 case "INVALIDATE_ALL":
@@ -38,7 +36,6 @@ export function useCrossTabSync() {
                     void queryClient.invalidateQueries({
                         queryKey: analyticsQueryKeys.all,
                     });
-                    console.log("[CrossTabSync] Invalidated all");
                     break;
             }
         });

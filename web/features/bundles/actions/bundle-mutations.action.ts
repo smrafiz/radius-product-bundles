@@ -500,17 +500,12 @@ export async function createBundleAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        console.log(`[createBundleAction] Creating bundle for shop: ${shop}`);
-
         // Schema Validation (Fail Fast)
         const schemaValidation = bundleSchema.safeParse(bundleData);
 
         if (!schemaValidation.success) {
-            console.log("[Action] Schema validation failed");
             return handleZodValidationError(schemaValidation.error);
         }
-
-        console.log("[Action] Schema validation passed");
 
         const [metafieldSetupResult, discountSetupResult] = await Promise.all([
             ensureMetafieldDefinition(sessionToken),
@@ -614,21 +609,13 @@ export async function updateBundleAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        console.log(
-            `[updateBundleAction] Updating bundle: ${bundleId} for shop: ${shop}`,
-        );
-
         if (!bundleId) {
-            console.log("[updateBundleAction] Invalid bundle ID");
-
             return {
                 status: "error",
                 message: "Invalid bundle ID",
                 errors: ["Bundle ID is required and must be a string"],
             };
         }
-
-        console.log(`[updateBundleAction] Bundle ID validated: ${bundleId}`);
 
         const sanitizedData = {
             ...bundleData,
@@ -638,11 +625,8 @@ export async function updateBundleAction(
         const schemaValidation = bundleSchema.safeParse(sanitizedData);
 
         if (!schemaValidation.success) {
-            console.log("[updateBundleAction] Schema validation failed");
             return handleZodValidationError(schemaValidation.error);
         }
-
-        console.log("[updateBundleAction] Schema validation passed");
 
         // Get old product IDs before update for metafield sync
         const existingBundle = await findBundleByIdWithAllRelations(
@@ -681,10 +665,6 @@ export async function updateBundleAction(
         });
 
         if (!result.success) {
-            console.log(
-                `[updateBundleAction] Service failed: ${result.message}`,
-            );
-
             return {
                 status: "error",
                 message: result.message,
@@ -693,10 +673,6 @@ export async function updateBundleAction(
                     : [],
             };
         }
-
-        console.log(
-            `[updateBundleAction] Bundle updated successfully: ${result.bundle!.id}`,
-        );
 
         const newProductIds = schemaValidation.data.products.map(
             (p) => p.productId,

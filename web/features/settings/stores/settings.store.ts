@@ -203,7 +203,6 @@ export const useSettingsStore = create(
             });
             try {
                 // TODO: Implement sync logic
-                console.log("Syncing to Shopify...");
                 // Simulate delay
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 get().showToast("Sync completed successfully");

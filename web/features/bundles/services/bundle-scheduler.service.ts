@@ -140,10 +140,6 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
             return result;
         }
 
-        console.log(
-            `[Scheduler] Found ${shops.length} shop(s) with pending transitions`,
-        );
-
         for (const shop of shops) {
             if (Date.now() - startTime > TIMEOUT_BUDGET_MS) {
                 console.warn(
@@ -194,9 +190,6 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
                             "ACTIVE",
                         );
                     }
-                    console.log(
-                        `[Scheduler] Activated bundle ${bundle.id} (${bundle.name}) for ${shop}`,
-                    );
                     result.activated++;
                     transitioned = true;
                 }
@@ -214,9 +207,6 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
                             "PAUSED",
                         );
                     }
-                    console.log(
-                        `[Scheduler] Paused expired bundle ${bundle.id} (${bundle.name}) for ${shop}`,
-                    );
                     result.deactivated++;
                     transitioned = true;
                 }
@@ -258,10 +248,6 @@ export async function processScheduledBundles(): Promise<SchedulerResult> {
                 error instanceof Error ? error.message : "Unknown fatal error",
         });
     }
-
-    console.log(
-        `[Scheduler] Complete: ${result.activated} activated, ${result.deactivated} deactivated, ${result.errors.length} errors`,
-    );
 
     return result;
 }

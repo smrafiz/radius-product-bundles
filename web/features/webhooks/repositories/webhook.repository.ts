@@ -49,10 +49,6 @@ export async function getRegisteredWebhooks(
  * Uses the proven registerWebhooks function from the old system
  */
 export async function registerWebhooksWithShopify(session: Session) {
-    console.log(
-        "[Webhook Repository] Delegating to old system's registerWebhooks...",
-    );
-
     // Use the old system's registerWebhooks which:
     // 1. Calls addHandlers() to configure webhook callbacks
     // 2. Validates the session
@@ -115,7 +111,6 @@ export async function claimSetupLock(shop: string): Promise<boolean> {
             },
             data: { lastSetupCheck: new Date() },
         });
-        console.log(`[Setup Lock] domain=${shop}, claimed=${result.count > 0}`);
         return result.count > 0;
     } catch (err) {
         console.error("[Setup Lock] Error:", err);
@@ -152,9 +147,6 @@ export async function markSetupComplete(shop: string): Promise<void> {
             },
         });
 
-        console.log(
-            `[Webhook Repository] ✅ Marked setup complete for ${shop}`,
-        );
     } catch (error) {
         console.error(
             "[Webhook Repository] Error marking setup complete:",
@@ -182,9 +174,6 @@ export async function markWebhooksRegistered(shop: string): Promise<void> {
             },
         });
 
-        console.log(
-            `[Webhook Repository] ✅ Marked webhooks registered for ${shop}`,
-        );
     } catch (error) {
         console.error("[Webhook Repository] Error marking webhooks:", error);
         throw error;
@@ -219,7 +208,6 @@ export async function resetSetupStatus(shop: string): Promise<void> {
             },
         });
 
-        console.log(`[Webhook Repository] ⚠️ Reset setup status for ${shop}`);
     } catch (error) {
         console.error("[Webhook Repository] Error resetting status:", error);
         throw error;
@@ -250,8 +238,6 @@ export async function getOfflineSession(shop: string) {
  */
 export async function deleteShopData(shop: string): Promise<void> {
     try {
-        console.log(`[Webhook Repository] Deleting data for ${shop}...`);
-
         const shopRecord = await prisma.shop.findFirst({
             where: { domain: shop },
         });
@@ -319,7 +305,6 @@ export async function deleteShopData(shop: string): Promise<void> {
             }
         });
 
-        console.log(`[Webhook Repository] ✅ Data deleted for ${shop}`);
     } catch (error) {
         console.error("[Webhook Repository] Error deleting shop data:", error);
         throw error;

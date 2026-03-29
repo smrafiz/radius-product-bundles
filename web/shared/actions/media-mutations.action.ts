@@ -246,11 +246,6 @@ export async function smartDeleteProductMediaAction(
 
         // Files that are still used
         stillUsedFiles.push(...usedFiles);
-        if (usedFiles.length > 0) {
-            console.log(
-                `  [smartDelete] Keeping ${usedFiles.length} file(s) (still used)`,
-            );
-        }
 
         const sharedCount = stillUsedFiles.length;
 
@@ -305,16 +300,9 @@ async function checkFileOrphanedWithRetry(
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         if (attempt > 1) {
-            console.log(
-                `  [retry] Attempt ${attempt}/${maxAttempts} after ${currentDelay}ms...`,
-            );
             await new Promise((resolve) => setTimeout(resolve, currentDelay));
 
             currentDelay = Math.min(currentDelay * backoffMultiplier, maxDelay);
-        } else {
-            console.log(
-                `  [retry] Attempt ${attempt}/${maxAttempts} (immediate)...`,
-            );
         }
 
         try {
@@ -333,21 +321,13 @@ async function checkFileOrphanedWithRetry(
 
             if (edges.length > 0) {
                 const totalTime = Date.now() - startTime;
-                console.log(
-                    `  [retry] ✅ Found orphaned after ${attempt} attempt(s) in ${totalTime}ms`,
-                );
                 return { orphaned: true, attempts: attempt, totalTime };
             }
-
-            console.log(`  [retry] Not orphaned yet, will retry...`);
         } catch (error) {
             console.error(`  [retry] Error on attempt ${attempt}:`, error);
         }
     }
 
     const totalTime = Date.now() - startTime;
-    console.log(
-        `  [retry] ⚠️  Max attempts reached in ${totalTime}ms, assuming still used`,
-    );
     return { orphaned: false, attempts: maxAttempts, totalTime };
 }

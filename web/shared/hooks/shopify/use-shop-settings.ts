@@ -46,7 +46,6 @@ export const useShopSettings = (options: { enabled?: boolean } = {}) => {
     // Listen for webhook events and just refetch
     useEffect(() => {
         const handleWebhookRefresh = () => {
-            console.log("Webhook triggered, refreshing shop settings");
             shopQuery.refetch();
         };
 

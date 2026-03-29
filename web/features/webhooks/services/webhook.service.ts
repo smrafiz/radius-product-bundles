@@ -44,17 +44,13 @@ export async function runSetupIfNeeded(
     const { setupNeeded } = await checkInitializationNeeded(shop);
 
     if (!setupNeeded) {
-        console.log("[Webhook Service] Setup already complete, skipping");
         return { success: true };
     }
-
-    console.log("[Webhook Service] Running app setup...");
 
     const setupResult = await ensureAppSetup(sessionToken);
 
     if (setupResult.success) {
         await markSetupComplete(shop);
-        console.log("[Webhook Service] ✅ Setup complete");
     } else {
         console.warn(
             "[Webhook Service] ⚠️ Setup warnings:",
@@ -72,13 +68,9 @@ async function getBestSession(
     session: Session,
     shop: string,
 ): Promise<Session> {
-    // Try to find offline session first
-    console.log("[Webhook Service] Looking for offline session...");
     const offlineSession = await getOfflineSession(shop);
 
     if (offlineSession && offlineSession.accessToken) {
-        console.log("[Webhook Service] Found offline session for:", offlineSession.shop);
-
         return new Session({
             id: offlineSession.id,
             shop: offlineSession.shop,
@@ -90,9 +82,6 @@ async function getBestSession(
         });
     }
 
-    console.log(
-        "[Webhook Service] No offline session found, using current session",
-    );
     return session;
 }
 
@@ -106,11 +95,8 @@ export async function registerWebhooksIfNeeded(
     const { webhooksNeeded } = await checkInitializationNeeded(shop);
 
     if (!webhooksNeeded) {
-        console.log("[Webhook Service] Webhooks already registered, skipping");
         return;
     }
-
-    console.log("[Webhook Service] Registering webhooks...");
 
     // Get best session
     const sessionToUse = await getBestSession(session, shop);
@@ -118,8 +104,6 @@ export async function registerWebhooksIfNeeded(
     if (!sessionToUse || !sessionToUse.accessToken) {
         throw new Error("No valid session available for webhook registration");
     }
-
-    console.log("[Webhook Service] Attempting to register webhooks...");
 
     try {
         // Register with Shopify
@@ -146,14 +130,11 @@ export async function registerWebhooksIfNeeded(
                             JSON.stringify(userErrors, null, 2),
                         );
                     }
-                } else {
-                    console.log(`[Webhook Service] ✅ ${topic} registered`);
                 }
             }
         }
 
         await markWebhooksRegistered(shop);
-        console.log("[Webhook Service] ✅ Webhooks registered");
     } catch (webhookError) {
         console.error("[Webhook Service] ❌ Webhook registration error:", {
             error:
@@ -184,14 +165,9 @@ export async function initializeApp(
     const shop = session.shop;
     const errors: string[] = [];
 
-    console.log(`[Webhook Service] Starting initialization for ${shop}`);
-
     try {
         // Check current status
         const status = await checkInitializationNeeded(shop);
-        console.log(
-            `[Webhook Service] Status - Setup: ${!status.setupNeeded}, Webhooks: ${!status.webhooksNeeded}`,
-        );
 
         // Step 1: Run setup
         const setupResult = await runSetupIfNeeded(sessionToken, shop);
@@ -212,8 +188,6 @@ export async function initializeApp(
 
         // Step 3: Update last check
         await updateLastSetupCheck(shop);
-
-        console.log("[Webhook Service] ✅ Initialization complete");
 
         return {
             success: errors.length === 0,

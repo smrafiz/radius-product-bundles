@@ -47,8 +47,6 @@ export async function cleanupShopifyResources(
     accessToken: string,
     shop: string,
 ): Promise<void> {
-    console.log(`[Shopify Cleanup] Starting stale data cleanup for ${shop}`);
-
     const results = await Promise.allSettled([
         deleteShopMetafields(accessToken, shop),
         deleteAllProductBundleMetafields(accessToken, shop),
@@ -61,7 +59,6 @@ export async function cleanupShopifyResources(
         }
     }
 
-    console.log(`[Shopify Cleanup] Cleanup finished for ${shop}`);
 }
 
 async function deleteShopMetafields(
@@ -114,10 +111,6 @@ async function deleteShopMetafields(
         console.error(
             "[Shopify Cleanup] Shop metafield delete errors:",
             errors,
-        );
-    } else {
-        console.log(
-            `[Shopify Cleanup] Deleted ${metafieldsToDelete.length} shop metafields`,
         );
     }
 }
@@ -175,9 +168,6 @@ async function deleteAllProductBundleMetafields(
         cursor = pageInfo?.endCursor ?? null;
     }
 
-    console.log(
-        `[Shopify Cleanup] Deleted bundle_ids metafield from ${totalDeleted} products`,
-    );
 }
 
 async function deleteStaleDiscount(
@@ -193,7 +183,6 @@ async function deleteStaleDiscount(
 
     const discountId = result.data?.discountNodes?.edges?.[0]?.node?.id;
     if (!discountId) {
-        console.log("[Shopify Cleanup] No stale discount found");
         return;
     }
 
@@ -207,7 +196,5 @@ async function deleteStaleDiscount(
     const errors = deleteResult.data?.discountAutomaticDelete?.userErrors || [];
     if (errors.length > 0) {
         console.error("[Shopify Cleanup] Discount delete errors:", errors);
-    } else {
-        console.log(`[Shopify Cleanup] Deleted stale discount: ${discountId}`);
     }
 }

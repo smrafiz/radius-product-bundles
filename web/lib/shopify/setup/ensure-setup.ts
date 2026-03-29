@@ -63,8 +63,6 @@ export async function ensureMetafieldDefinition(
 
         // Create missing metafield definitions
         // This is a fallback - normally done during app setup
-        console.log("[EnsureSetup] Creating missing metafield definitions...");
-
         for (const definition of METAFIELD_DEFINITIONS) {
             const createResult =
                 await executeGraphQLMutation<MetafieldDefinitionCreateMutation>(
@@ -91,15 +89,12 @@ export async function ensureMetafieldDefinition(
                         userErrors[0]?.message,
                     );
                 }
-            } else {
-                console.log(`[EnsureSetup] ✓ Created ${definition.key}`);
             }
 
             // Rate limiting
             await new Promise((resolve) => setTimeout(resolve, 200));
         }
 
-        console.log("[EnsureSetup] Created metafield definitions for", shop);
         await markMetafieldSetupDone(shop);
         return { success: true };
     } catch (error) {
@@ -184,7 +179,6 @@ export async function ensureBundleDiscount(
             };
         }
 
-        console.log("[EnsureSetup] Created bundle discount");
         await markDiscountSetupDone(shop);
         return { success: true };
     } catch (error) {

@@ -30,11 +30,6 @@ export default function proxy(request: NextRequest) {
 
     const shop = detectShop(request, searchParams);
 
-    // Dev-only logs for debugging
-    if (process.env.NODE_ENV === "development") {
-        console.log(`[Proxy][DEV] Detected shop: ${shop}`);
-    }
-
     // Skip adding headers for static assets or API routes
     if (skipPaths.some((p) => pathname.startsWith(p))) {
         return NextResponse.next(); // just continue, no headers

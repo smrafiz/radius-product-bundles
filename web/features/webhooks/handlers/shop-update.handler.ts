@@ -12,12 +12,6 @@ export async function handleShopUpdate(
     try {
         const shopData: ShopifyShop = JSON.parse(body);
 
-        console.log("[Shop Update Handler] Processing update:", {
-            shop,
-            currency: shopData.currency,
-            countryCode: shopData.country_code,
-        });
-
         // Dispatch event for client-side listeners
         if (typeof window !== "undefined") {
             window.dispatchEvent(
@@ -27,7 +21,6 @@ export async function handleShopUpdate(
             );
         }
 
-        console.log("[Shop Update Handler] ✅ Update processed");
     } catch (error) {
         console.error("[Shop Update Handler] ❌ Error:", error);
     }

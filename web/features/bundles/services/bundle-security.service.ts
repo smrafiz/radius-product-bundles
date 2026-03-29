@@ -16,8 +16,6 @@ import { getShop, getShopStatus } from "@/shared/repositories";
 export async function performSecurityChecks(
     shop: string,
 ): Promise<SecurityCheckResult> {
-    console.log(`[Security] Performing security checks for shop: ${shop}`);
-
     // 1. Rate limiting check
     const rateLimitCheck = await checkRateLimit(shop);
     if (!rateLimitCheck.passed) {
@@ -35,8 +33,6 @@ export async function performSecurityChecks(
     if (!abuseCheck.passed) {
         return abuseCheck;
     }
-
-    console.log("[Security] All security checks passed");
 
     return { passed: true };
 }
@@ -71,10 +67,6 @@ export async function checkRateLimit(
             reason: `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour. Please try again later.`,
         };
     }
-
-    console.log(
-        `[Security] Rate limit check passed: ${recentBundleCount}/${maxPerHour}`,
-    );
 
     return { passed: true };
 }

@@ -123,12 +123,6 @@ export async function POST(request: NextRequest) {
             case "page_view": {
                 // Optional: Track general page views for analytics
                 // Can be used for understanding user behavior
-                console.log("[Analytics Proxy] Page view tracked:", {
-                    shop,
-                    pageType: data.pageType,
-                    url: data.url,
-                });
-
                 return NextResponse.json({
                     success: true,
                     event: "page_view",

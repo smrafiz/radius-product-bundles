@@ -185,23 +185,16 @@ export function validateBundleData(
     data: BundleFormData,
     context: BundleOperationContext,
 ): ValidationResult {
-    console.log("[Shared] Security validation (GIDs, duplicates)...");
-
     const securityValidation = validateSecurity(data);
 
     if (!securityValidation.success) {
-        console.log("[Shared] ✗ Security validation failed");
         return {
             success: false,
             errors: securityValidation.errors,
         };
     }
 
-    console.log("[Shared] ✓ Security validation passed");
-
     // Business rules validation (pure with context)
-    console.log("[Shared] Validating business rules...");
-
     const businessValidation = validateBusinessRules(data, {
         maxBundleProducts: context?.appSettings?.maxBundleProducts || 100,
         maxBundlesPerShop: context?.appSettings?.maxBundlesPerShop || 100,
@@ -209,14 +202,11 @@ export function validateBundleData(
     });
 
     if (!businessValidation.success) {
-        console.log("[Shared] ✗ Business validation failed");
         return {
             success: false,
             errors: businessValidation.errors,
         };
     }
-
-    console.log("[Shared] ✓ Business validation passed");
 
     return { errors: null, success: true };
 }

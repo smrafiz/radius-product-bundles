@@ -156,10 +156,6 @@ export async function addBundleIdToProducts(
         return { success: true };
     }
 
-    console.log(
-        `[Metafield] Adding bundle ${bundleId} to ${productIds.length} products`,
-    );
-
     try {
         const existingMetafields = await getProductsBundleIds(
             sessionToken,
@@ -204,9 +200,6 @@ export async function addBundleIdToProducts(
             }
         }
 
-        console.log(
-            `[Metafield] Added bundle ${bundleId} to ${productIds.length} products`,
-        );
         return { success: true };
     } catch (error) {
         console.error("[Metafield] Error adding bundle to products:", error);
@@ -228,10 +221,6 @@ export async function removeBundleIdFromProducts(
     if (productIds.length === 0) {
         return { success: true };
     }
-
-    console.log(
-        `[Metafield] Removing bundle ${bundleId} from ${productIds.length} products`,
-    );
 
     try {
         const existingMetafields = await getProductsBundleIds(
@@ -276,9 +265,6 @@ export async function removeBundleIdFromProducts(
             }
         }
 
-        console.log(
-            `[Metafield] Removed bundle ${bundleId} from ${productIds.length} products`,
-        );
         return { success: true };
     } catch (error) {
         console.error(
@@ -307,11 +293,6 @@ export async function syncBundleProductMetafields(
     const removedProducts = oldProductIds.filter(
         (id) => !newProductIds.includes(id),
     );
-
-    console.log(`[Metafield] Syncing bundle ${bundleId}:`, {
-        added: addedProducts.length,
-        removed: removedProducts.length,
-    });
 
     const ops: Promise<MetafieldResult>[] = [];
 
@@ -717,10 +698,6 @@ export async function syncActiveBundlesToMetafield(
             };
         }
 
-        console.log(
-            `[Metafield] Synced ${activeBundles.length} active bundles to discount + shop metafields for ${shop}`,
-        );
-
         return {
             success: true,
             bundleCount: activeBundles.length,
@@ -779,8 +756,6 @@ export async function syncAllSettingsToMetafields(
     savedSettings?: AppSettingsFormData,
 ): Promise<SyncResult> {
     try {
-        console.log("[Metafield] Starting full sync for:", shop);
-
         const [discountId, shopId] = await Promise.all([
             getBundleDiscountId(auth, shop),
             getShopId(auth, shop),
@@ -873,13 +848,10 @@ export async function syncAllSettingsToMetafields(
             };
         }
 
-        console.log("[Metafield] ✓ Shop and discount metafields synced");
-
         // ✅ Product bundle_ids are managed separately via
         // addBundleIdToProducts/removeBundleIdFromProducts
         // when bundles are created/updated
 
-        console.log(`[Metafield] ✅ Full sync complete for ${shop}`);
         return { success: true, bundleCount: activeBundles.length };
     } catch (error) {
         console.error("[Metafield] Error syncing all settings:", error);
