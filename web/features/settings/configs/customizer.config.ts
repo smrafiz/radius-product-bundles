@@ -665,14 +665,14 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "buttonGroup",
                     name: "splitDealStyle",
-                    label: "Split deal style",
+                    label: "Direction style",
                     options: [
                         { value: "column", label: "Column" },
                         { value: "row", label: "Row" },
                     ],
                     defaultValue: "row",
-                    layouts: ["SPLIT_DEAL"],
-                    bundleTypes: ["BUY_X_GET_Y"],
+                    layouts: ["SPLIT_DEAL", "CLASSIC_CARD"],
+                    bundleTypes: ["BUY_X_GET_Y", "BOGO"],
                 },
                 {
                     type: "buttonGroup",

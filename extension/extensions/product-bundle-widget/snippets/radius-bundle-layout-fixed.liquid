@@ -16,7 +16,7 @@
 </div>
 {% if show_dots %}<div class="radius-bundle__slider-dots" data-slider-dots></div>{% endif %}
 {% elsif layout == 'grid' %}
-<div class="radius-bundle__products radius-bundle__products--grid radius-bundle__skeleton--grid" data-bundle-products style="--rb-grid-columns:{{ grid_columns | default: 3 }};">
+<div class="radius-bundle__products radius-bundle__products--grid" data-bundle-products style="--rb-grid-columns:{{ grid_columns | default: 3 }};">
 {% render 'radius-bundle-skeleton', layout: 'grid', product_count: product_count, visible: visible, show_images: show_images, show_quantity: show_quantity %}
 </div>
 {% elsif layout == 'compact' %}

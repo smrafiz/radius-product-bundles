@@ -45,8 +45,8 @@ function ClassicProductItem({
     const imageBlock = product.image && displayOptions.showImages && (
         <div
             style={{
-                width: isHorizontal ? imageSizePx : "100%",
-                height: isHorizontal ? imageSizePx : "100%",
+                width: isHorizontal ? `calc(${imageSizePx} - 10px)` : "100%",
+                height: isHorizontal ? `calc(${imageSizePx} - 10px)` : "100%",
                 flexShrink: isHorizontal ? 0 : undefined,
                 aspectRatio: IMAGE_ASPECT_RATIOS[styles.imageSize] ?? "1/1",
                 borderRadius: cardRadius,
@@ -278,7 +278,7 @@ export function WidgetClassicCard({
                     display: "flex",
                     gap: spacingValues.gap + 2,
                     marginTop: 10,
-                    flexDirection: activeDevice === "mobile" ? "column" : "row",
+                    flexDirection: activeDevice === "mobile" ? "column" : (styles.splitDealStyle ?? "row"),
                 }}
             >
                 {[

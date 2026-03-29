@@ -60,6 +60,10 @@
         grid-template-columns: repeat(2, 1fr);
         gap: var(--rb-gap-spacing, 12px);
         margin-top: calc(var(--rb-gap-spacing, 12px) * 2);
+
+        &--column {
+            grid-template-columns: repeat(1, 1fr);
+        }
     }
 
     // ── Card ──────────────────────────────────────────────────────────
@@ -137,8 +141,8 @@
             align-items: center;
 
             .rb-classic__image {
-                width: var(--rb-image-size);
-                height: var(--rb-image-size);
+                width: calc(var(--rb-image-size) - 10px);
+                height: calc(var(--rb-image-size) - 10px);
                 flex-shrink: 0;
                 margin-top: 0;
                 margin-bottom: 0;
@@ -249,6 +253,8 @@
         align-items: center;
         gap: 6px;
         margin-top: 6px;
+        flex-wrap: wrap;
+        line-height: 1;
     }
 
     &__price-compare {

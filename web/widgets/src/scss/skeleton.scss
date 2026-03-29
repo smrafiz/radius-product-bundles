@@ -19,23 +19,6 @@
             flex-direction: column;
         }
 
-        &--grid {
-            display: grid;
-            grid-template-columns: repeat(var(--rb-grid-columns, 3), 1fr);
-            gap: var(--rb-gap-spacing);
-
-            @media (max-width: 1024px) {
-                grid-template-columns: repeat(
-                    min(var(--rb-grid-columns, 3), 2),
-                    1fr
-                );
-            }
-
-            @media (max-width: 640px) {
-                grid-template-columns: 1fr;
-            }
-        }
-
         &--compact {
             flex-direction: column;
             padding: 0;

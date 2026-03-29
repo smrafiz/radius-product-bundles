@@ -318,7 +318,8 @@ export function renderClassicCardProducts(
 
     const outlineClass = isOutlineBadge ? " rb-classic__badge--outline" : "";
 
-    html += `<div class="rb-classic__grid">`;
+    const classicSplitStyle = ctx.splitDealStyle ?? "row";
+    html += `<div class="rb-classic__grid rb-classic__grid--${classicSplitStyle}">`;
     html += `<div class="rb-classic__card rb-classic__card--trigger">`;
     if (ctx.showSavingsBadge) {
         html += `<span class="rb-classic__badge rb-classic__badge--trigger${outlineClass}">${escapeHtml(triggerBadge)}</span>`;
