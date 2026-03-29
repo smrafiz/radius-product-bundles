@@ -29,5 +29,8 @@
 // Utilities
 @use "toast";
 
+// Accessibility (WCAG 2.1 AA)
+@use "a11y";
+
 // Theme editor
 @use "placeholder";

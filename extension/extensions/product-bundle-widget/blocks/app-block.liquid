@@ -50,7 +50,7 @@
 {% assign is_rtl = true %}
 {% endif %}
 {{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-<div class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}" data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}" data-shop="{{ shop.permanent_domain }}" dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}" style="opacity:0">
+<div class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}" role="region" aria-label="{{ product.title | escape | append: ' bundle' }}" data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}" data-shop="{{ shop.permanent_domain }}" dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}" style="opacity:0">
 {% for bundle_id in bundle_ids %}
 {% assign bundle = bundles[bundle_id] %}
 {% if bundle_id == best_bundle_id %}

@@ -86,8 +86,9 @@ export function WidgetPricingDisplay({
                     <span
                         className="radius-bundle__price-original"
                         style={{ textDecoration: "line-through", opacity: 0.7 }}
+                        aria-label={`Original price: ${pricing.originalPrice}`}
                     >
-                        {pricing.originalPrice}
+                        <span aria-hidden="true">{pricing.originalPrice}</span>
                     </span>
                 </div>
             )}
@@ -110,8 +111,11 @@ export function WidgetPricingDisplay({
                     {labels?.bundlePriceLabel ||
                         PREVIEW_LABELS.bundlePriceLabel}
                 </span>
-                <span className="radius-bundle__price-discounted">
-                    {pricing.finalPrice}
+                <span
+                    className="radius-bundle__price-discounted"
+                    aria-label={`Bundle price: ${pricing.finalPrice}`}
+                >
+                    <span aria-hidden="true">{pricing.finalPrice}</span>
                 </span>
             </div>
 
@@ -131,8 +135,13 @@ export function WidgetPricingDisplay({
                     <span className="radius-bundle__savings-label">
                         {labels?.youSaveLabel || PREVIEW_LABELS.youSaveLabel}
                     </span>
-                    <span className="radius-bundle__savings-amount">
-                        {pricing.savingsAmount} ({pricing.savingsPercentage}%)
+                    <span
+                        className="radius-bundle__savings-amount"
+                        aria-label={`You save: ${pricing.savingsAmount} (${pricing.savingsPercentage}%)`}
+                    >
+                        <span aria-hidden="true">
+                            {pricing.savingsAmount} ({pricing.savingsPercentage}%)
+                        </span>
                     </span>
                 </div>
             )}
@@ -156,6 +165,8 @@ export function WidgetPricingDisplay({
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
+                        aria-hidden="true"
+                        focusable="false"
                     >
                         <path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
                         <circle cx="7" cy="18" r="2" />

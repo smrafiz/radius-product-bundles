@@ -36,6 +36,7 @@ export function GlobalBanner() {
     }
 
     return (
+        <div role="status" aria-live="polite" aria-atomic="false">
         <s-stack gap="base">
             {messages.map((message) => (
                 <s-banner
@@ -71,5 +72,6 @@ export function GlobalBanner() {
                 </s-banner>
             ))}
         </s-stack>
+        </div>
     );
 }

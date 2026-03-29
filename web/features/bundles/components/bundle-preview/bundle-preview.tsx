@@ -485,6 +485,7 @@ export function BundlePreview() {
                             <s-button-group gap="none">
                                 <s-button
                                     interestFor="tooltip-desktop"
+                                    accessibility-label="Open desktop customizer"
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("desktop")}
                                 >
@@ -492,6 +493,7 @@ export function BundlePreview() {
                                 </s-button>
                                 <s-button
                                     interestFor="tooltip-tablet"
+                                    accessibility-label="Open tablet customizer"
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("tablet")}
                                 >
@@ -499,6 +501,7 @@ export function BundlePreview() {
                                 </s-button>
                                 <s-button
                                     interestFor="tooltip-mobile"
+                                    accessibility-label="Open mobile customizer"
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("mobile")}
                                 >

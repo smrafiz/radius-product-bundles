@@ -1,6 +1,7 @@
 import { defineConfig } from "eslint/config";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import prettier from "eslint-plugin-prettier";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
@@ -20,8 +21,11 @@ export default defineConfig([
 
         plugins: {
             prettier,
+            "jsx-a11y": jsxA11y,
         },
 
-        rules: {},
+        rules: {
+            ...jsxA11y.configs.recommended.rules,
+        },
     },
 ]);

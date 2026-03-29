@@ -21,21 +21,23 @@ export function EditorWysiwyg({ mode }: { mode: "create" | "edit" }) {
     return (
         <div className={`rt-wysiwyg-editor ${focused ? "is-focused" : ""}`}>
             <s-stack gap="small-400">
-                <s-text>Description</s-text>
-                <Editor
-                    name="productDescription"
-                    value={productDescription}
-                    autoFocus={false}
-                    placeholder="Describe this bundle product..."
-                    onChange={(event: ContentEditableEvent) => {
-                        handleDescriptionChange(event.target.value);
-                    }}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => {
-                        setFocused(false);
-                        handleDescriptionBlur();
-                    }}
-                />
+                <s-text id="wysiwyg-description-label">Description</s-text>
+                <div aria-labelledby="wysiwyg-description-label" role="group">
+                    <Editor
+                        name="productDescription"
+                        value={productDescription}
+                        autoFocus={false}
+                        placeholder="Describe this bundle product..."
+                        onChange={(event: ContentEditableEvent) => {
+                            handleDescriptionChange(event.target.value);
+                        }}
+                        onFocus={() => setFocused(true)}
+                        onBlur={() => {
+                            setFocused(false);
+                            handleDescriptionBlur();
+                        }}
+                    />
+                </div>
             </s-stack>
         </div>
     );

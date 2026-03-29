@@ -1,0 +1,44 @@
+// ==========================================================================
+// Accessibility (WCAG 2.1 AA)
+// ==========================================================================
+
+// Focus visible — ensure all interactive elements have visible focus rings
+.radius-bundle-widget {
+    // Buttons
+    .radius-bundle__add-to-cart:focus-visible,
+    button:focus-visible,
+    a:focus-visible {
+        outline: 2px solid var(--rb-primary-color, #303030);
+        outline-offset: 2px;
+    }
+
+    // Carousel navigation buttons
+    [data-carousel-prev]:focus-visible,
+    [data-carousel-next]:focus-visible {
+        outline: 2px solid var(--rb-primary-color, #303030);
+        outline-offset: 2px;
+    }
+}
+
+// Reduced motion — respect user's OS preference
+@media (prefers-reduced-motion: reduce) {
+    .radius-bundle-widget,
+    .radius-bundle-widget * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    // Stop skeleton shimmer
+    .radius-bundle__skeleton-text,
+    .radius-bundle__skeleton-image {
+        animation: none !important;
+        background: var(--rb-skeleton-base, #e5e7eb) !important;
+    }
+
+    // Stop spinner
+    .radius-bundle__spinner {
+        animation: none !important;
+    }
+}

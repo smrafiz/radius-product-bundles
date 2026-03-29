@@ -35,6 +35,7 @@ export function CustomizerHeader({
                     <s-button-group gap="none">
                         <s-button
                             slot="secondary-actions"
+                            accessibility-label="Desktop preview"
                             onClick={() => setActiveDevice("desktop")}
                         >
                             <span
@@ -56,6 +57,7 @@ export function CustomizerHeader({
                         </s-button>
                         <s-button
                             slot="secondary-actions"
+                            accessibility-label="Tablet preview"
                             onClick={() => setActiveDevice("tablet")}
                         >
                             {" "}
@@ -78,6 +80,7 @@ export function CustomizerHeader({
                         </s-button>
                         <s-button
                             slot="secondary-actions"
+                            accessibility-label="Mobile preview"
                             onClick={() => setActiveDevice("mobile")}
                         >
                             {" "}

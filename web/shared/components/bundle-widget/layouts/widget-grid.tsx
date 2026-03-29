@@ -37,6 +37,7 @@ export function WidgetGrid({
     return (
         <Fragment>
             <div
+                id="bundle-product-grid"
                 className="grid-layout"
                 style={{
                     display: "grid",
@@ -60,6 +61,8 @@ export function WidgetGrid({
                 <button
                     className="mt-2 text-[12px] underline cursor-pointer"
                     onClick={() => setShowAll(!showAll)}
+                    aria-expanded={showAll}
+                    aria-controls="bundle-product-grid"
                     style={{
                         color: styles.textColor,
                     }}

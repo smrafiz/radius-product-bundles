@@ -9,7 +9,8 @@ export const RtpbRangeSlider: FC<{
     values?: number;
     maxValue?: number;
     action?: (value: number) => void;
-}> = ({ values = 0, action, maxValue = 30 }) => {
+    label?: string;
+}> = ({ values = 0, action, maxValue = 30, label = "Value" }) => {
     const [internalValue, setInternalValue] = useState([values]);
 
     useEffect(() => {
@@ -68,6 +69,7 @@ export const RtpbRangeSlider: FC<{
                         className="webkit-slider-thumb"
                         {...props}
                         key={props.key}
+                        aria-label={label}
                         style={{
                             ...props.style,
                             position: "relative",

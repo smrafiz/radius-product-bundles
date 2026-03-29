@@ -37,12 +37,17 @@ export default async function RootLayout({
                 className={`radius-app-wrapper ${inter.className}`}
                 suppressHydrationWarning
             >
+                <a href="#main-content" className="skip-to-content">
+                    Skip to content
+                </a>
                 <Providers>
                     <GlobalLoader />
                     <Suspense>
                         <I18nLoader>
                             <AppLayoutWrapper>
-                                {children}
+                                <main id="main-content">
+                                    {children}
+                                </main>
                                 <ModalHost />
                             </AppLayoutWrapper>
                         </I18nLoader>

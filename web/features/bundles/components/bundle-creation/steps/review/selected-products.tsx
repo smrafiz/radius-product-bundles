@@ -21,23 +21,29 @@ export function SelectedProducts() {
     return (
         <s-stack>
             {/* Header */}
-            <div className="cursor-pointer z-30" onClick={handleToggle}>
+            <button
+                type="button"
+                className="cursor-pointer z-30 w-full text-left bg-transparent border-0 p-0"
+                onClick={handleToggle}
+                aria-expanded={open}
+                aria-controls="selected-products-list"
+            >
                 <s-stack
                     direction="inline"
                     justifyContent="space-between"
                     alignItems="center"
                     gap="small"
-                    aria-expanded={open}
                 >
                     <s-heading>
                         {t("selectedProducts")} ({itemCount})
                     </s-heading>
-                    <s-icon type={open ? "chevron-up" : "chevron-down"} />
+                    <s-icon type={open ? "chevron-up" : "chevron-down"} aria-hidden="true" />
                 </s-stack>
-            </div>
+            </button>
 
             {/* Collapsible Body */}
             <div
+                id="selected-products-list"
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}`}
             >
                 <s-stack gap="small" paddingBlockStart="small">

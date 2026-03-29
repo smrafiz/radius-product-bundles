@@ -1058,6 +1058,7 @@ import {
 
             button.classList.add("is-loading");
             button.disabled = true;
+            button.setAttribute("aria-busy", "true");
 
             const buttonTextEl = button.querySelector(
                 "[data-button-text]",
@@ -1091,6 +1092,7 @@ import {
                         showToast(maxBundlesMsg, "error");
                         button.classList.remove("is-loading");
                         button.disabled = false;
+                        button.setAttribute("aria-busy", "false");
                         return;
                     }
                 }
@@ -1205,6 +1207,7 @@ import {
                 showToast(errorMessage, "error");
             } finally {
                 button.classList.remove("is-loading");
+                button.setAttribute("aria-busy", "false");
 
                 const addedLabel =
                     this.bundleStructure?.labels?.addedText ?? "Added!";

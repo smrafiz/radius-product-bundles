@@ -1,3 +1,22 @@
+/* Skip navigation link — visually hidden until focused */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #6366f1;
+    color: #fff;
+    padding: 8px 16px;
+    z-index: 9999;
+    border-radius: 0 0 4px 0;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.1s;
+
+    &:focus {
+        top: 0;
+    }
+}
+
 /* Radius Product Bundles - Minimal Styles */
 .radius-app-wrapper {
     word-break: break-word;
@@ -158,9 +177,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    [style*="rpbTabSlide"],
-    [style*="rpbFadeIn"],
-    [style*="rpbStepSlide"] {
-        animation-duration: 0s !important;
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .fade-wrapper.fade-visible {
+        transition: none !important;
     }
 }
