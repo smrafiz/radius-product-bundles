@@ -1,4 +1,4 @@
-import type { BundleType } from "@/features/bundles";
+import type { BundleType, BundleStatus } from "@/features/bundles";
 
 export type PlanId = "FREE" | (string & {});
 
@@ -24,6 +24,7 @@ export interface PlanLimits {
     maxBundles: number;
     maxProductsPerBundle: number;
     allowedBundleTypes: BundleType[];
+    allowedStatuses: BundleStatus[];
 }
 
 export interface PlanConfig {

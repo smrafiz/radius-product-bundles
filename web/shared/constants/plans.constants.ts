@@ -10,6 +10,7 @@ export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
             maxBundles: 5,
             maxProductsPerBundle: 10,
             allowedBundleTypes: ["FIXED_BUNDLE"],
+            allowedStatuses: ["DRAFT", "ACTIVE", "ARCHIVED"],
         },
         features: [
             { feature: "analytics_full", gateMode: "hidden" },

@@ -39,6 +39,7 @@ export async function getEffectiveLimits(
         maxProductsPerBundle:
             appSettings?.maxBundleProducts ?? plan.limits.maxProductsPerBundle,
         allowedBundleTypes: plan.limits.allowedBundleTypes,
+        allowedStatuses: plan.limits.allowedStatuses,
     };
 }
 
@@ -93,11 +94,31 @@ export async function checkBundleTypeAllowed(
     };
 }
 
+export async function checkBundleStatusAllowed(
+    domain: string,
+    status: string,
+): Promise<PlanGateResult> {
+    const limits = await getEffectiveLimits(domain);
+    const allowed = limits.allowedStatuses.includes(status as any);
+
+    return {
+        allowed,
+        gated: !allowed,
+        feature: status,
+        gateMode: allowed ? "enabled" : "lock-overlay",
+        message: allowed
+            ? "Bundle status available"
+            : `${status} status requires a paid plan`,
+    };
+}
+
 export async function checkBundleQuota(
     domain: string,
 ): Promise<QuotaResult> {
     const limits = await getEffectiveLimits(domain);
-    const current = await countBundlesByShop(domain);
+    const current = await countBundlesByShop(domain, {
+        status: limits.allowedStatuses,
+    });
 
     if (limits.maxBundles === -1) {
         return { allowed: true, current, limit: -1 };

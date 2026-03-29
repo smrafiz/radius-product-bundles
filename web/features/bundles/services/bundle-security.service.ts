@@ -263,12 +263,26 @@ export async function validateShopPermissions(
     shop: string,
     operation: "create" | "update" | "delete",
     bundleType?: string,
+    bundleStatus?: string,
 ): Promise<SecurityCheckResult> {
     if (operation === "create" && bundleType) {
         const { checkBundleTypeAllowed } = await import(
             "@/shared/services/plan.service"
         );
         const result = await checkBundleTypeAllowed(shop, bundleType);
+        if (!result.allowed) {
+            return {
+                passed: false,
+                reason: result.message,
+            };
+        }
+    }
+
+    if ((operation === "create" || operation === "update") && bundleStatus) {
+        const { checkBundleStatusAllowed } = await import(
+            "@/shared/services/plan.service"
+        );
+        const result = await checkBundleStatusAllowed(shop, bundleStatus);
         if (!result.allowed) {
             return {
                 passed: false,

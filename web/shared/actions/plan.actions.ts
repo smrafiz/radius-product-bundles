@@ -47,7 +47,6 @@ export async function fetchPlanData(
                 error instanceof Error
                     ? error.message
                     : "Failed to fetch plan data",
-            data: null,
         };
     }
 }
