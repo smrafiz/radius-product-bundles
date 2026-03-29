@@ -106,7 +106,7 @@
 
         &--large {
             width: 100%;
-            height: var(--rb-image-size);
+            aspect-ratio: 1 / 1;
             margin-bottom: var(--rb-gap-spacing);
         }
 
@@ -193,12 +193,60 @@
     }
 
     // -------------------------------------------------------------------------
-    // Loading State
+    // Loading State — slim single-div shimmer (replaces per-slot skeleton HTML)
     // -------------------------------------------------------------------------
 
     &__loading {
-        &[data-bundle-loading] {
-            // Container for skeleton content
+        width: 100%;
+        border-radius: var(--rb-border-radius);
+        @include skeleton-gradient;
+
+        &--list {
+            min-height: calc(var(--sk-count, 2) * (var(--rb-image-size, 80px) + 24px));
+        }
+
+        &--compact {
+            min-height: calc(var(--sk-count, 2) * 52px);
+        }
+
+        &--grid {
+            min-height: calc(var(--sk-count, 3) * (var(--rb-image-size, 80px) + 80px) / 2);
+        }
+
+        &--carousel {
+            min-height: calc(var(--rb-image-size, 80px) + 100px);
+        }
+
+        &--classic-card {
+            min-height: calc(var(--rb-image-size, 80px) + 160px);
+        }
+
+        &--checklist {
+            min-height: calc(var(--sk-count, 2) * 68px);
+        }
+
+        &--split-deal {
+            min-height: calc(var(--rb-image-size, 80px) + 160px);
+        }
+
+        &--compact-grid {
+            min-height: calc(var(--rb-image-size, 80px) + 120px);
+        }
+
+        &--sleek {
+            min-height: calc(var(--sk-count, 2) * (var(--rb-image-size, 80px) + 40px));
+        }
+
+        &--minimalist {
+            min-height: calc(var(--rb-image-size, 80px) + 120px);
+        }
+    }
+
+    &[data-style-preset="dark"] {
+        .radius-bundle__loading {
+            background: linear-gradient(90deg, #48597b 25%, #48597b 50%, #171f2e 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s ease-in-out infinite;
         }
     }
 }
