@@ -124,6 +124,7 @@ const baseStylesSchema = z.object({
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     buyGetTierStyle: z.enum(["cards", "list", "tabs"]).optional(),
+    splitDealStyle: z.enum(["column", "row"]).optional(),
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - VOLUME DISCOUNT SPECIFIC

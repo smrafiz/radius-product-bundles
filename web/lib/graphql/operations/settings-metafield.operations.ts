@@ -348,6 +348,7 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             "bogoFreeTagColor",
             "bogoCardBorderStyle",
             "buyGetTierStyle",
+            "splitDealStyle",
             "volumeTierHighlightColor",
             "volumeTierStyle",
             "mixMatchGroupHeaderColor",

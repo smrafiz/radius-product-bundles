@@ -238,6 +238,12 @@
 {% elsif g_styles.badgeStyle != blank %}
 {% assign badge_style = g_styles.badgeStyle %}
 {% endif %}
+{% assign split_deal_style = 'row' %}
+{% if g_type_overrides.splitDealStyle != blank %}
+{% assign split_deal_style = g_type_overrides.splitDealStyle %}
+{% elsif g_styles.splitDealStyle != blank %}
+{% assign split_deal_style = g_styles.splitDealStyle %}
+{% endif %}
 {% assign pricing_summary_box = true %}
 {% if g_type_overrides.pricingSummaryBox == false or g_type_overrides.pricingSummaryBox == 'false' %}
 {% assign pricing_summary_box = false %}
@@ -682,7 +688,7 @@
 }
 {% endif %}
 </style>
-<div id="radius-bundle-{{ bundle_id }}" class="radius-bundle radius-bundle--{{ layout | downcase }}" {% if is_standalone %}style="display:none;"{% endif %} data-bundle-id="{{ bundle_id }}" data-style-preset="{{ style_preset }}" data-box-align="{{ box_alignment }}" data-badge-position="{{ badge_position }}" data-divider-style="{{ divider_style }}" data-carousel-navigation="{{ carousel_navigation }}" data-autoplay="{{ autoplay }}" data-autoplay-speed="{{ autoplay_speed }}" data-image-position="{{ image_position }}" data-badge-style="{{ badge_style }}" data-image-size="{{ image_size }}" data-pricing-summary="{{ pricing_summary_style }}" data-responsive='{{ responsive_json | strip_newlines | strip }}' data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}' data-is-standalone="{{ is_standalone }}" data-show-images="{{ show_images }}" data-show-savings="{{ show_savings }}" data-show-prices="{{ show_product_prices }}" data-show-compare-prices="{{ show_compare_at_price }}" data-show-quantity="{{ show_quantity }}" data-show-free-shipping="{{ show_free_shipping }}" data-show-savings-badge="{{ show_savings_badge }}" data-enable-hyperlink="{{ enable_hyperlink }}" data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}" data-enable-stock-validation="{{ enable_stock_validation }}" data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}" data-enable-analytics="{{ enable_analytics }}" data-lazy-load-images="{{ lazy_load_images }}" data-more-product-settings="{{ more_product_settings }}" data-more-product-count="{{ more_product_count }}" data-more-products-text="{{ more_products_text }}" data-show-less-text="{{ show_less_text }}">
+<div id="radius-bundle-{{ bundle_id }}" class="radius-bundle radius-bundle--{{ layout | downcase }}" {% if is_standalone %}style="display:none;"{% endif %} data-bundle-id="{{ bundle_id }}" data-style-preset="{{ style_preset }}" data-box-align="{{ box_alignment }}" data-badge-position="{{ badge_position }}" data-divider-style="{{ divider_style }}" data-carousel-navigation="{{ carousel_navigation }}" data-autoplay="{{ autoplay }}" data-autoplay-speed="{{ autoplay_speed }}" data-image-position="{{ image_position }}" data-badge-style="{{ badge_style }}" data-split-deal-style="{{ split_deal_style }}" data-image-size="{{ image_size }}" data-pricing-summary="{{ pricing_summary_style }}" data-responsive='{{ responsive_json | strip_newlines | strip }}' data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}' data-is-standalone="{{ is_standalone }}" data-show-images="{{ show_images }}" data-show-savings="{{ show_savings }}" data-show-prices="{{ show_product_prices }}" data-show-compare-prices="{{ show_compare_at_price }}" data-show-quantity="{{ show_quantity }}" data-show-free-shipping="{{ show_free_shipping }}" data-show-savings-badge="{{ show_savings_badge }}" data-enable-hyperlink="{{ enable_hyperlink }}" data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}" data-enable-stock-validation="{{ enable_stock_validation }}" data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}" data-enable-analytics="{{ enable_analytics }}" data-lazy-load-images="{{ lazy_load_images }}" data-more-product-settings="{{ more_product_settings }}" data-more-product-count="{{ more_product_count }}" data-more-products-text="{{ more_products_text }}" data-show-less-text="{{ show_less_text }}">
 {% unless is_standalone %}
 {% assign layout = layout | default: 'list' | downcase %}
 {% assign product_count = bundle.productCount | default: 0 %}

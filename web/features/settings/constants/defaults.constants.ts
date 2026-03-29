@@ -338,6 +338,7 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
     buyGetTierStyle: "cards",
+    splitDealStyle: "row",
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - VOLUME DISCOUNT SPECIFIC

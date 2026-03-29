@@ -308,6 +308,8 @@ export interface CustomizerStyles {
     // ═══════════════════════════════════════════════════════════════════
     /** Tier display style */
     buyGetTierStyle: "cards" | "list" | "tabs";
+    /** Split deal layout direction (SPLIT_DEAL layout only) */
+    splitDealStyle: "column" | "row";
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - VOLUME DISCOUNT SPECIFIC

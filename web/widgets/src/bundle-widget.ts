@@ -75,6 +75,7 @@ import {
         private readonly imagePosition: string = "top";
         private readonly badgeStyle: string = "filled";
         private readonly imageSize: string = "medium";
+        private readonly splitDealStyle: "column" | "row" = "row";
 
         // Layout options
         private readonly dividerStyle: string = "plus";
@@ -149,6 +150,7 @@ import {
             this.imagePosition = container.dataset.imagePosition || "top";
             this.badgeStyle = container.dataset.badgeStyle || "filled";
             this.imageSize = container.dataset.imageSize || "medium";
+            this.splitDealStyle = (container.dataset.splitDealStyle as "column" | "row") || "row";
 
             // Parse layout options from data attributes
             this.dividerStyle = container.dataset.dividerStyle || "plus";
@@ -895,6 +897,7 @@ import {
                 imagePosition: this.imagePosition,
                 badgeStyle: this.badgeStyle,
                 imageSize: this.imageSize,
+                splitDealStyle: this.splitDealStyle,
                 quantityLabel: this.getQuantityLabel(),
             };
         }

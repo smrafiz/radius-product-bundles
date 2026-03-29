@@ -54,6 +54,10 @@
         display: flex;
         align-items: stretch;
         gap: 4px;
+
+        &--column {
+            flex-direction: column;
+        }
     }
 
     // ── Column (Buy / Get) ──────────────────────────────────────────

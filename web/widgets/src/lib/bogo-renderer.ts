@@ -20,6 +20,7 @@ export interface BogoContext extends BaseRenderContext {
     badgeStyle: string;
     imageSize: string;
     quantityLabel: string;
+    splitDealStyle?: "column" | "row";
 }
 
 function splitByRole(bundle: Bundle) {
@@ -1428,7 +1429,8 @@ export function renderSplitDealProducts(
     }
     html += `</div>`;
 
-    html += `<div class="rb-split__equation">`;
+    const splitStyle = ctx.splitDealStyle ?? "row";
+    html += `<div class="rb-split__equation rb-split__equation--${splitStyle}">`;
 
     html += `<div class="rb-split__column">`;
     html += `<div class="rb-split__column-header rb-split__column-header--trigger">${escapeHtml(triggerLabel)}</div>`;
