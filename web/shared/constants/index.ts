@@ -6,3 +6,4 @@ export * from "./currency.constants";
 export * from "./metafields.constants";
 export * from "./bundle-widget.constants";
 export * from "./validation-messages.constants";
+export * from "./plans.constants";
