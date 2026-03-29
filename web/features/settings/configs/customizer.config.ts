@@ -664,6 +664,18 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 },
                 {
                     type: "buttonGroup",
+                    name: "splitDealStyle",
+                    label: "Split deal style",
+                    options: [
+                        { value: "column", label: "Column" },
+                        { value: "row", label: "Row" },
+                    ],
+                    defaultValue: "row",
+                    layouts: ["SPLIT_DEAL"],
+                    bundleTypes: ["BUY_X_GET_Y"],
+                },
+                {
+                    type: "buttonGroup",
                     name: "buyGetTierStyle",
                     label: "Tier display",
                     options: [
@@ -674,7 +686,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     defaultValue: "cards",
                     bundleTypes: ["BUY_X_GET_Y"],
                 },
-
                 // Volume Discount Specific
                 {
                     type: "heading",

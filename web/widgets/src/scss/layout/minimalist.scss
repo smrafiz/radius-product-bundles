@@ -241,6 +241,8 @@
         align-items: baseline;
         gap: 6px;
         flex-wrap: wrap;
+        line-height: 1;
+        margin-top: 5px;
     }
 
     &__item-price-current {

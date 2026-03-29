@@ -340,6 +340,7 @@
         color: var(--rb-text-color, #1a1a2e);
         display: flex;
         align-items: baseline;
+        flex-wrap: wrap;
         gap: 6px;
     }
 
